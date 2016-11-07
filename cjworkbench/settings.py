@@ -11,10 +11,15 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+from os.path import abspath, basename, dirname, join, normpath
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# Replace BASE_DIR with this
+DJANGO_ROOT = dirname(dirname(abspath(__file__)))
+SITE_ROOT = dirname(DJANGO_ROOT)
+SITE_NAME = basename(DJANGO_ROOT)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -37,7 +42,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'server.apps.ServerConfig'
+    'server.apps.ServerConfig',
+    # Pipeline
+    'pipeline',
+    # DRF
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -55,8 +64,8 @@ ROOT_URLCONF = 'cjworkbench.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')]
-        ,
+#        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -78,7 +87,7 @@ WSGI_APPLICATION = 'cjworkbench.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
@@ -120,3 +129,38 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = normpath(join(DJANGO_ROOT, 'static'))
+STATICFILES_DIRS = ()
+
+# Django Pipeline (and browserify)
+STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'pipeline.finders.PipelineFinder',
+)
+
+PIPELINE = {
+    'COMPILERS': ('pipeline_browserify.compiler.BrowserifyCompiler',),
+    'BROWSERIFY_BINARY': '/usr/local/bin/browserify',
+    'BROWSERIFY_ARGUMENTS': '-t [ babelify --presets [ react es2015 ] ]',
+    'CSS_COMPRESSOR': 'pipeline.compressors.NoopCompressor',
+    'JS_COMPRESSOR': 'pipeline.compressors.NoopCompressor',
+    'STYLESHEETS': {
+        'cjworkbench_css': {
+            'source_filenames': (
+                'css/style.css',
+            ),
+            'output_filename': 'css/cjworkbench_css.css',
+        },
+    },
+    'JAVASCRIPT': {
+        'cjworkbench_js': {
+            'source_filenames': (
+                'js/app.browserify.js',
+            ),
+            'output_filename': 'js/cjworkbench_js.js',
+        }
+    }
+}
