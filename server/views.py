@@ -4,7 +4,7 @@ from django.http import HttpResponse
 
 
 def index(request):
-    return HttpResponse("Hello, world. You're at the workflow index.")
+    return HttpResponse("Hello, world. You're at the workflow index. <a href=\"/admin\">Admin</a>")
 
 def workflow(request, workflow_id):
     return HttpResponse("You're looking at workflow %s." % workflow_id)
