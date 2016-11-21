@@ -9,11 +9,13 @@ urlpatterns = [
 
     url(r'^$', TemplateView.as_view(template_name='index.html')),
 
+    # ex: /workflows/5/
+    url(r'^api/workflows/(?P<pk>[0-9]+)/$', views.workflow_detail),
+
     url(r'^workflows/$', TemplateView.as_view(template_name='workflows.html')),
     url(r'^api/workflows', views.workflow_list),
+    url(r'^api/simpleworkflows', views.simple_workflow_list),
 
-    # ex: /workflows/5/
-    url(r'^workflows/(?P<pk>[0-9]+)/$', views.workflow_detail),
 
     # ex: /workflows/5/
     #url(r'^workflows/(?P<workflow_id>[0-9]+)/$', views.workflow, name='workflow'),

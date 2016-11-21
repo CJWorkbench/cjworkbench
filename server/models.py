@@ -17,9 +17,13 @@ class ParameterVal(models.Model):
         choices=TYPE_CHOICES,
         default=NUMERIC,
     )
-    numDefaultVal = models.FloatField('numVal')
+    numVal = models.FloatField('numVal')
     strVal = models.CharField('strVal', max_length=20, blank=True)
-
+    def __str__(self):
+        if self.strVal is None:
+            return str(self.numDefaultVal)
+        else:
+            return self.strVal
 
 # Defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
@@ -42,7 +46,6 @@ class Module(models.Model):
 class Workflow(models.Model):
     name = models.CharField('name',max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
-
     modules = models.ManyToManyField('WfModule')  # quotes to resolve circular reference
 
     def __str__(self):
@@ -52,6 +55,7 @@ class Workflow(models.Model):
 class WfModule(models.Model):
     module = models.ForeignKey(Module, on_delete=models.SET_NULL, null=True)    # goes null if referenced Module disappears
     parameters = models.ManyToManyField(ParameterVal)
+    order = models.IntegerField('order')
 
     def __str__(self):
         return self.module.__str__() ## use name of underlying Module, for the moment
