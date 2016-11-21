@@ -36,7 +36,7 @@ class Module(models.Model):
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
     name = models.CharField('name',max_length=200)
-    creation_date = models.DateTimeField('creation date')
+    creation_date = models.DateTimeField(auto_now_add=True)
 
     modules = models.ManyToManyField('WfModule')  # quotes to resolve circular reference
 
