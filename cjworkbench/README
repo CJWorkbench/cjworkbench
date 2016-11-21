@@ -4,3 +4,7 @@ To compile assets:
 To migrate:
     python manage.py makemigrations
     python manage.py migrate
+
+Dependencies:
+    DjangoRestPipeline, browserify, babel
+    npm i react-sortable --save
