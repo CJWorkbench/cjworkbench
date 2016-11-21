@@ -168,6 +168,13 @@ PIPELINE = {
                 'js/workflows.browserify.js',
             ),
             'output_filename': 'js/workflows.js',
+        },
+
+        'workflow_js': {
+            'source_filenames': (
+                'js/workflow.browserify.js',
+            ),
+            'output_filename': 'js/workflow.js',
         }
     }
 }

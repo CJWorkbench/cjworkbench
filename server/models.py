@@ -17,7 +17,7 @@ class ParameterVal(models.Model):
         choices=TYPE_CHOICES,
         default=NUMERIC,
     )
-    numDefaultVal = models.FloatField('numVal')
+    numVal = models.FloatField('numVal')
     strVal = models.CharField('strVal', max_length=20, blank=True)
 
 
