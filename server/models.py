@@ -26,12 +26,17 @@ class ParameterSpec(models.Model):
     name = models.CharField('name', max_length=32)
     defaultVal = models.ForeignKey(ParameterVal, on_delete=models.PROTECT)  # can't delete ParameterVal referenced by Spec
 
+    def __str__(self):
+        return self.name
+
 
 # A module contains a name (which is used to bind to the actual function that executes) and parameterSpecs
 class Module(models.Model):
     name = models.CharField('name', max_length=200)
     parameterSpecs = models.ManyToManyField(ParameterSpec)
 
+    def __str__(self):
+        return self.name
 
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
@@ -43,13 +48,12 @@ class Workflow(models.Model):
     def __str__(self):
         return self.name
 
-
 # WfModule is a Module that has been applied in a Workflow
 class WfModule(models.Model):
     module = models.ForeignKey(Module, on_delete=models.SET_NULL, null=True)    # goes null if referenced Module disappears
     parameters = models.ManyToManyField(ParameterVal)
 
     def __str__(self):
-        return self.parameters
+        return self.module.__str__() ## use name of underlying Module, for the moment
 
 

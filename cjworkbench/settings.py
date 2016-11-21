@@ -156,11 +156,18 @@ PIPELINE = {
         },
     },
     'JAVASCRIPT': {
-        'cjworkbench_js': {
+        'app_js': {
             'source_filenames': (
                 'js/app.browserify.js',
             ),
-            'output_filename': 'js/cjworkbench_js.js',
+            'output_filename': 'js/app.js',
+        },
+
+        'workflows_js': {
+            'source_filenames': (
+                'js/workflows.browserify.js',
+            ),
+            'output_filename': 'js/workflows.js',
         }
     }
 }

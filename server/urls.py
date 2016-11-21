@@ -8,7 +8,8 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='index.html')),
 
     #    url(r'^$', views.index, name='index'),
-    url(r'^workflows/$', views.workflow_list),
+    url(r'^workflows/$', TemplateView.as_view(template_name='workflows.html')),
+    url(r'^workflows.json$', views.workflow_list),
 
     # ex: /workflows/5/
     url(r'^workflows/(?P<pk>[0-9]+)/$', views.workflow_detail),
@@ -20,6 +21,6 @@ urlpatterns = [
     url(r'^wfmodules/(?P<wfmodule_id>[0-9]+)/$', views.WfModule, name='WfModule'),
 ]
 
-from rest_framework.urlpatterns import format_suffix_patterns
-urlpatterns = format_suffix_patterns(urlpatterns)
+#from rest_framework.urlpatterns import format_suffix_patterns
+#urlpatterns = format_suffix_patterns(urlpatterns)
 

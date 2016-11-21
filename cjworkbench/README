@@ -1,0 +1,6 @@
+To compile assets:
+    python manage.py collectstatic
+
+To migrate:
+    python manage.py makemigrations
+    python manage.py migrate
