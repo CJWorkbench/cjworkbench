@@ -20,6 +20,7 @@ class ModuleSerializer(serializers.ModelSerializer):
 
 class WfModuleSerializer(serializers.ModelSerializer):
     module = ModuleSerializer(many=False, read_only=True)
+    parameters = ParameterValSerializer(many=True, read_only=True)
     class Meta:
         model = WfModule
         fields = ('order', 'module', 'parameters')
