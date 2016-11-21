@@ -3,10 +3,11 @@ from django.http import HttpResponse
 
 from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 from server.models import Workflow
 from server.serializers import WorkflowSerializer
-from django.views.generic import TemplateView
 
 
 def index(request):
@@ -22,8 +23,11 @@ def WfModule(request, wfmodule_id):
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])
+@renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
-    print("\nFormat = " + str(format) + '\n')
+    renderer_classes = (JSONRenderer,)
+
+    #print("\nFormat = " + str(format) + '\n')
 
     if request.method == 'GET':
         workflows = Workflow.objects.all()
