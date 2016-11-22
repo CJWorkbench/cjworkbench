@@ -23,7 +23,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
     parameters = ParameterValSerializer(many=True, read_only=True)
     class Meta:
         model = WfModule
-        fields = ('order', 'module', 'parameters')
+        fields = ('id', 'order', 'module', 'parameters')
 
 class WorkflowSerializer(serializers.ModelSerializer):
     modules = WfModuleSerializer(many=True, read_only=True)
