@@ -6,7 +6,7 @@ var ListItem = React.createClass({
   displayName: 'SortableListItem',
   render: function() {
     return (
-      <div {...this.props} className="list-item">{this.props.children}</div>
+      <div {...this.props} className="module-li">{this.props.children}</div>
     )
   }
 })
