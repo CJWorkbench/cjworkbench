@@ -42,12 +42,10 @@ def workflow_list(request, format=None):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', 'PUT', 'DELETE'])
+# Retrieve, update or delete a workflow instance.
+@api_view(['GET', 'PATCH', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def workflow_detail(request, pk, format=None):
-    """
-    Retrieve, update or delete a workflow instance.
-    """
     try:
         workflow = Workflow.objects.get(pk=pk)
     except Workflow.DoesNotExist:
@@ -57,58 +55,15 @@ def workflow_detail(request, pk, format=None):
         serializer = WorkflowSerializer(workflow)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':
-        serializer = WorkflowSerializer(workflow, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    # We use PATCH to set the order of the modules when the user drags
+    elif request.method == 'PATCH':
+        for record in request.data:
+            wfm = workflow.modules.get(pk=record['id'])
+            wfm.order = record['order']
+            wfm.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':
         workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
-# List all workflows, or create a new workflow.
-@api_view(['GET', 'POST'])
-@renderer_classes((JSONRenderer,))
-def simple_workflow_list(request, format=None):
-    renderer_classes = (JSONRenderer,)
 
-    #print("\nFormat = " + str(format) + '\n')
-
-    if request.method == 'GET':
-        workflows = Workflow.objects.all()
-        serializer = SimpleWorkflowSerializer(workflows, many=True)
-        return Response(serializer.data)
-
-    elif request.method == 'POST':
-        serializer = SimpleWorkflowSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['GET', 'PUT', 'DELETE'])
-def simple_workflow_detail(request, pk, format=None):
-    """
-    Retrieve, update or delete a workflow instance.
-    """
-    try:
-        workflow = Workflow.objects.get(pk=pk)
-    except Workflow.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        serializer = SimpleWorkflowSerializer(workflow)
-        return Response(serializer.data)
-
-    elif request.method == 'PUT':
-        serializer = SimpleWorkflowSerializer(workflow, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    elif request.method == 'DELETE':
-        workflow.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)

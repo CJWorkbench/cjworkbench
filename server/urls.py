@@ -14,7 +14,6 @@ urlpatterns = [
 
     url(r'^workflows/$', TemplateView.as_view(template_name='workflows.html')),
     url(r'^api/workflows', views.workflow_list),
-    url(r'^api/simpleworkflows', views.simple_workflow_list),
 
     # ex: /workflows/5/
     url(r'^workflows/(?P<pk>[0-9]+)/$', TemplateView.as_view(template_name='workflow.html')),
