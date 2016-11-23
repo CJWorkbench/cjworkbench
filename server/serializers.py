@@ -31,7 +31,3 @@ class WorkflowSerializer(serializers.ModelSerializer):
         model = Workflow
         fields = ('id', 'name', 'modules')
 
-class SimpleWorkflowSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Workflow
-        fields = ('id', 'name')

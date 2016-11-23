@@ -46,16 +46,19 @@ class Module(models.Model):
 class Workflow(models.Model):
     name = models.CharField('name',max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
-    modules = models.ManyToManyField('WfModule')  # quotes to resolve circular reference
 
     def __str__(self):
         return self.name
 
 # WfModule is a Module that has been applied in a Workflow
 class WfModule(models.Model):
-    module = models.ForeignKey(Module, on_delete=models.SET_NULL, null=True)    # goes null if referenced Module disappears
+    workflow = models.ForeignKey(Workflow, related_name='modules', on_delete=models.CASCADE)            # delete WfModule if Workflow deleted
+    module = models.ForeignKey(Module, on_delete=models.SET_NULL, null=True)    # goes null if referenced Module deletedp
     parameters = models.ManyToManyField(ParameterVal)
     order = models.IntegerField('order')
+
+    class Meta:
+        ordering = ['order']
 
     def __str__(self):
         return self.module.__str__() ## use name of underlying Module, for the moment

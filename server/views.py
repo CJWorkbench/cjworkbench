@@ -7,8 +7,9 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Workflow
+from server.models import WfModule
 from server.serializers import WorkflowSerializer
-from server.serializers import SimpleWorkflowSerializer
+from server.serializers import WfModuleSerializer
 
 
 def index(request):
@@ -16,10 +17,6 @@ def index(request):
 
 def workflow(request, workflow_id):
     return HttpResponse("You're looking at workflow %s." % workflow_id)
-
-def WfModule(request, wfmodule_id):
-    response = "You're looking at the workflow module %s."
-    return HttpResponse(response % wfmodule_id)
 
 
 # List all workflows, or create a new workflow.
@@ -67,3 +64,16 @@ def workflow_detail(request, pk, format=None):
         workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_detail(request, pk, format=None):
+    try:
+        print(pk)
+        wfmodule = WfModule.objects.get(pk=pk)
+    except WfModule.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = WfModuleSerializer(wfmodule)
+        return Response(serializer.data)

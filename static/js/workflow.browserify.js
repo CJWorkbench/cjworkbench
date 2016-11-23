@@ -45,7 +45,6 @@ var SortableList = React.createClass({
 
       // Generate a JSON paylod that has only module ID and order, then PATCH
       var newOrder = this.state.data.modules.map( (item, i) => ({id: item.id, order: i}) )
-      console.log(newOrder)
 
       fetch('/api/workflows/' + getPageID(), {
         method: 'patch',
@@ -54,7 +53,6 @@ var SortableList = React.createClass({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newOrder) })
-      .then( (data) => { console.log('Request succeeded with JSON response', data); })
       .catch( (error) => { console.log('Request failed', error); });
     }
   },
