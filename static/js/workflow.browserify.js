@@ -1,3 +1,5 @@
+// This is the main script for the Workflow view
+
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { sortable } from 'react-sortable';

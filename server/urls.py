@@ -24,8 +24,7 @@ urlpatterns = [
     # ex: /wfmodules/5/
     # url(r'^wfmodules/(?P<pk>[0-9]+)/$', views.WfModule, name='WfModule'),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
-]
 
-#from rest_framework.urlpatterns import format_suffix_patterns
-#urlpatterns = format_suffix_patterns(urlpatterns)
+    url(r'^api/initmodules/$', views.init_modules2)
+]
 

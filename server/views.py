@@ -10,6 +10,7 @@ from server.models import Workflow
 from server.models import WfModule
 from server.serializers import WorkflowSerializer
 from server.serializers import WfModuleSerializer
+from server.initmodules import init_modules
 
 
 def index(request):
@@ -18,6 +19,9 @@ def index(request):
 def workflow(request, workflow_id):
     return HttpResponse("You're looking at workflow %s." % workflow_id)
 
+def init_modules2(request):
+    init_modules()
+    return HttpResponse("Loaded module definitions.")
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])
