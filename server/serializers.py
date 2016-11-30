@@ -4,19 +4,19 @@ from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Modul
 class ParameterValSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParameterVal
-        fields = ('type', 'numVal', 'strVal')
+        fields = ('type', 'number', 'string', 'text')
 
 class ParameterSpecSerializer(serializers.ModelSerializer):
     defaultVal = ParameterValSerializer(many=False, read_only=True)
     class Meta:
         model = ParameterSpec
-        fields = ('name', 'defaultVal')
+        fields = ('name', 'default')
 
 class ModuleSerializer(serializers.ModelSerializer):
-    parameterSpecs = ParameterSpecSerializer(many=True, read_only=True)
+    #parameterSpecs = ParameterSpecSerializer(many=True, read_only=True)
     class Meta:
         model = Module
-        fields = ('name', 'parameterSpecs')
+        fields = ('name', 'parameter_specs')
 
 class WfModuleSerializer(serializers.ModelSerializer):
     module = ModuleSerializer(many=False, read_only=True)

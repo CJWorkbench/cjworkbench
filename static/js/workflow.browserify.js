@@ -17,7 +17,32 @@ var getPageID = function () {
   return id
 };
 
+// ---- Toolbar and buttons ----
 
+class ToolButton extends React.Component {
+  render() {
+    return (
+      <button className="toolbutton">
+        {this.props.text}
+      </button>
+    );
+  }
+}
+
+class ToolBar extends React.Component {
+  renderButton(_text) {
+    return <ToolButton text={_text}/>;
+  }
+  render() {
+    return (
+      <div className="toolbar">
+        {this.renderButton("+")}
+      </div>
+    );
+  }
+}
+
+// ---- Sortable Modules ----
 var ListItem = React.createClass({
   displayName: 'SortableListItem',
 
@@ -89,8 +114,19 @@ var SortableList = React.createClass({
   }
 });
 
+// ---------- Main ----------
 
+class WorkflowMain extends React.Component {
+  render() {
+    return (
+      <div>
+        <ToolBar/>
+        <SortableList/>
+      </div>
+    );
+  }
+}
 ReactDOM.render(
-    <SortableList/>,
+    <WorkflowMain/>,
     document.getElementById('root')
 );
