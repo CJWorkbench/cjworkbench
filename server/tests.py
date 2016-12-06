@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .views import simple_workflow_list, workflow_list
+from .views import workflow_list
 from rest_framework.test import APIRequestFactory
 from .models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
 
@@ -9,7 +9,7 @@ class WorkflowTests(TestCase):
 
     def test_status_workflows(self):
         request = self.factory.get('/workflows/')
-        response = simple_workflow_list(request)
+        response = workflow_list(request)
         self.assertIs(response.status_code, 200)
 
     def test_add_workflow(self):
@@ -29,12 +29,12 @@ class WorkflowTests(TestCase):
         response = workflow_list(request)
         self.assertIs(response.status_code, 201)
         request = self.factory.get('/api/workflows/')
-        response = simple_workflow_list(request)
+        response = workflow_list(request)
         content = response.render().content
         print(content)
 
     def test_number_workflows(self):
         request = self.factory.get('/api/workflows/')
-        response = simple_workflow_list(request)
+        response = workflow_list(request)
         content = response.render().content
         print(content)
