@@ -24,7 +24,7 @@ var TestApp = React.createClass({
         <h1>Workflows!</h1>
         <ul>
           {this.state.workflows.map(function(listValue){
-            return <li key={listValue.id}>{listValue.name}</li>;
+            return <li key={listValue.id}><a href={"/workflows/" + listValue.id}>{listValue.name}</a></li>;
           })}
         </ul>
       </div>

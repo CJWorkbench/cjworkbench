@@ -1,0 +1,10 @@
+{
+  "name": "Python Process",
+  "parameters": [
+    {
+      "name": "Code",
+      "type": "text",
+      "default": ""
+    }
+  ]
+}

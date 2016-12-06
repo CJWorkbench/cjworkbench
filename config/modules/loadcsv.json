@@ -1,0 +1,10 @@
+{
+  "name": "Load CSV",
+  "parameters": [
+    {
+      "name": "Source file",
+      "type": "string",
+      "default": ""
+    }
+  ]
+}
