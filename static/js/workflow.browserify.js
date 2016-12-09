@@ -17,29 +17,61 @@ var getPageID = function () {
   return id
 };
 
-// ---- Toolbar and buttons ----
 
-class ToolButton extends React.Component {
+// ---- ButtonMenu ----
+class ButtonMenu extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.state = { open: false, items: []};
+
+    // annoying bind to make 'this' accessible in handlers
+    this.click= this.click.bind(this);
+    this.blur= this.blur.bind(this);
+  }
+
+  componentDidMount() {
+    this.setState({open: false, items: ['one', 'two', 'three']});
+  }
+
+  click() {
+    var newOpen = !this.state.open;
+    this.setState( { open: newOpen});
+  }
+
+  // close the menu when user clicks anywhere else
+  blur() {
+    this.setState( { open: false});
+  }
+
   render() {
     return (
-      <button className="toolbutton">
-        {this.props.text}
-      </button>
+        <div className="toolMenuOuter" onBlur={this.blur}>
+            <button className="toolMenuButton" onClick={this.click}>+</button>
+            <ul className="toolMenuItemHolder" style={{display: this.state.open ? 'block' : 'none'}}>
+              {this.state.items.map(
+                  item => {return <li className="toolMenuItem" key={item}>{item}</li>;})
+              }
+            </ul>
+        </div>
     );
   }
 }
+
+
+// ---- Toolbar and buttons ----
+
 
 class ToolBar extends React.Component {
   renderButton(_text) {
     return <ToolButton text={_text}/>;
   }
+
   render() {
     return (
-      <div className="toolbar">
-        {this.renderButton("+")}
-      </div>
-    );
-  }
+         <ButtonMenu/>
+    ); 
+  } 
 }
 
 // ---- Sortable Modules ----
@@ -120,7 +152,9 @@ class WorkflowMain extends React.Component {
   render() {
     return (
       <div>
-        <ToolBar/>
+        <div className="toolbar">
+          <ToolBar/>
+        </div>
         <SortableList/>
       </div>
     );
