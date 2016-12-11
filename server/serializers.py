@@ -13,10 +13,9 @@ class ParameterSpecSerializer(serializers.ModelSerializer):
         fields = ('name', 'default')
 
 class ModuleSerializer(serializers.ModelSerializer):
-    #parameterSpecs = ParameterSpecSerializer(many=True, read_only=True)
     class Meta:
         model = Module
-        fields = ('name', 'parameter_specs')
+        fields = ('id','name')
 
 class WfModuleSerializer(serializers.ModelSerializer):
     module = ModuleSerializer(many=False, read_only=True)

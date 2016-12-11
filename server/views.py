@@ -6,8 +6,10 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from server.models import Module
 from server.models import Workflow
 from server.models import WfModule
+from server.serializers import ModuleSerializer
 from server.serializers import WorkflowSerializer
 from server.serializers import WfModuleSerializer
 from server.initmodules import init_modules
@@ -81,3 +83,13 @@ def wfmodule_detail(request, pk, format=None):
     if request.method == 'GET':
         serializer = WfModuleSerializer(wfmodule)
         return Response(serializer.data)
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def module_list(request, format=None):
+    if request.method == 'GET':
+        workflows = Module.objects.all()
+        serializer = ModuleSerializer(workflows, many=True)
+        return Response(serializer.data)
+

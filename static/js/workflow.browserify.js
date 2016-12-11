@@ -31,7 +31,11 @@ class ButtonMenu extends React.Component {
   }
 
   componentDidMount() {
-    this.setState({open: false, items: ['one', 'two', 'three']});
+     var _this = this;
+    fetch('/api/modules/')
+      .then(response => response.json())
+      .then(json => {
+        _this.setState({open: false, items: json}) })
   }
 
   click() {
@@ -50,7 +54,7 @@ class ButtonMenu extends React.Component {
             <button className="toolMenuButton" onClick={this.click}>+</button>
             <ul className="toolMenuItemHolder" style={{display: this.state.open ? 'block' : 'none'}}>
               {this.state.items.map(
-                  item => {return <li className="toolMenuItem" key={item}>{item}</li>;})
+                  item => {return <li className="toolMenuItem" key={item.id}>{item.name}</li>;})
               }
             </ul>
         </div>
