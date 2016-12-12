@@ -17,6 +17,19 @@ var getPageID = function () {
   return id
 };
 
+// Add a module to the current workflow
+var addModule = function(newModuleID) {
+
+  fetch('/api/workflows/' + getPageID() + "/addmodule", {
+    method: 'put',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({insertBefore: 0, moduleID: newModuleID})
+  })
+  .catch( (error) => { console.log('Request failed', error); })
+}
 
 // ---- ButtonMenu ----
 class ButtonMenu extends React.Component {
@@ -51,9 +64,8 @@ class ButtonMenu extends React.Component {
   }
 
   itemClick(evt) {
-    console.log('itemClick');
     var itemID = evt.target.getAttribute('data-id');
-    console.log("Clicked item " + itemID)
+    addModule(itemID)
     this.setState( { open: false});
   }
 
