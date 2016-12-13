@@ -29,10 +29,6 @@ def init_modules2(request):
 @api_view(['GET', 'POST'])
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
-    renderer_classes = (JSONRenderer,)
-
-    #print("\nFormat = " + str(format) + '\n')
-
     if request.method == 'GET':
         workflows = Workflow.objects.all()
         serializer = WorkflowSerializer(workflows, many=True)
@@ -74,9 +70,6 @@ def workflow_detail(request, pk, format=None):
 @api_view(['PUT'])
 @renderer_classes((JSONRenderer,))
 def workflow_addmodule(request, pk, format=None):
-
-
-
     try:
         workflow = Workflow.objects.get(pk=pk)
     except Workflow.DoesNotExist:
