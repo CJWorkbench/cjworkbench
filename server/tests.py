@@ -13,13 +13,11 @@ class WorkflowTests(TestCase):
         self.assertIs(response.status_code, 200)
 
     def test_add_workflow(self):
-        newParamVal = ParameterVal(numVal=3, strVal='')
-        newParamVal.save()
-        newParamSpec = ParameterSpec(name='test_param_spec', defaultVal=newParamVal)
+        newParamSpec = ParameterSpec(name='test_param_spec', module=newModule, default=newParamVal)
         newParamSpec.save()
+        newParamVal = ParameterVal(number=3, string='')
+        newParamVal.save()
         newModule = Module(name='module 1')
-        newModule.save()
-        newModule.parameterSpecs.add(newParamSpec)
         newModule.save()
         newWfModule = WfModule(order = 1, module=newModule)
         newWfModule.save()
