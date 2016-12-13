@@ -57,7 +57,7 @@ def workflow_detail(request, pk, format=None):
     # We use PATCH to set the order of the modules when the user drags.
     elif request.method == 'PATCH':
         for record in request.data:
-            wfm = workflow.modules.get(pk=record['id'])
+            wfm = workflow.wf_modules.get(pk=record['id'])
             wfm.order = record['order']
             wfm.save()
         return Response(status=status.HTTP_204_NO_CONTENT)

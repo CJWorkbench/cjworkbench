@@ -134,7 +134,7 @@ var SortableList = React.createClass({
     if (newState.draggingIndex === null) {
 
       // Generate a JSON paylod that has only module ID and order, then PATCH
-      var newOrder = this.props.data.modules.map( (item, i) => ({id: item.id, order: i}) )
+      var newOrder = this.props.data.wf_modules.map( (item, i) => ({id: item.id, order: i}) )
 
       fetch('/api/workflows/' + getPageID(), {
         method: 'patch',
@@ -149,12 +149,12 @@ var SortableList = React.createClass({
 
   render: function() {
     var childProps = { className: 'myClass1' };
-    var listItems = this.props.data.modules.map(function(item, i) {
+    var listItems = this.props.data.wf_modules.map(function(item, i) {
       return (
         <SortableListItem
           key={i}
           updateState={this.updateState}
-          items={this.props.data.modules}
+          items={this.props.data.wf_modules}
           draggingIndex={this.state.draggingIndex}
           sortId={i}
           outline="list"
@@ -189,7 +189,6 @@ class WorkflowMain extends React.Component {
 
 var renderWorkflow = function ()
 {
-  console.log("Render it up")
   ReactDOM.render(
       <WorkflowMain/>,
       document.getElementById('root')
@@ -201,7 +200,6 @@ var refreshWorkflow = function() {
   fetch('/api/workflows/' + getPageID())
   .then(response => response.json())
   .then(json => {
-    console.log(json)
     currentWorkflow = json;
     renderWorkflow();
   })
