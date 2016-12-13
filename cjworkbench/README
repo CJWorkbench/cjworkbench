@@ -8,7 +8,8 @@ To migrate:
 Dependencies:
     DjangoRestPipeline, browserify, babel
     npm i react-sortable --save
-
+    npm install --save rc-menu
+    npm install --save-dev babel-preset-stage-0
 
 To work with models in the shell
     python manage.py shell
