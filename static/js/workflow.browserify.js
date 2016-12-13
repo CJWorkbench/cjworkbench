@@ -27,11 +27,13 @@ var addModule = function(newModuleID) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({insertBefore: 0, moduleID: newModuleID})
-  })
-  .catch( (error) => { console.log('Request failed', error); })
+  }).then( (response) => { refreshWorkflow() } )
+  .catch( (error) => { console.log('Request failed', error); });
 }
 
 // ---- ButtonMenu ----
+// Currently hard wired to show module list
+
 class ButtonMenu extends React.Component {
 
   constructor(props) {
@@ -122,7 +124,6 @@ var SortableList = React.createClass({
   getInitialState: function() {
     return {
       draggingIndex: null,
-      data: { modules: [] }
     };
   },
 
@@ -133,7 +134,7 @@ var SortableList = React.createClass({
     if (newState.draggingIndex === null) {
 
       // Generate a JSON paylod that has only module ID and order, then PATCH
-      var newOrder = this.state.data.modules.map( (item, i) => ({id: item.id, order: i}) )
+      var newOrder = this.props.data.modules.map( (item, i) => ({id: item.id, order: i}) )
 
       fetch('/api/workflows/' + getPageID(), {
         method: 'patch',
@@ -146,22 +147,14 @@ var SortableList = React.createClass({
     }
   },
 
-  componentDidMount: function() {
-    var _this = this;
-    fetch('/api/workflows/' + getPageID())
-      .then(response => response.json())
-      .then(json => {
-        _this.setState({data: json}) })
-  },
-
   render: function() {
     var childProps = { className: 'myClass1' };
-    var listItems = this.state.data.modules.map(function(item, i) {
+    var listItems = this.props.data.modules.map(function(item, i) {
       return (
         <SortableListItem
           key={i}
           updateState={this.updateState}
-          items={this.state.data.modules}
+          items={this.props.data.modules}
           draggingIndex={this.state.draggingIndex}
           sortId={i}
           outline="list"
@@ -178,6 +171,9 @@ var SortableList = React.createClass({
 
 // ---------- Main ----------
 
+// Stores workflow as fetched from server
+var currentWorkflow = {}
+
 class WorkflowMain extends React.Component {
   render() {
     return (
@@ -185,12 +181,31 @@ class WorkflowMain extends React.Component {
         <div className="toolbar">
           <ToolBar/>
         </div>
-        <SortableList/>
+        <SortableList data={currentWorkflow} />
       </div>
     );
   }
 }
-ReactDOM.render(
-    <WorkflowMain/>,
-    document.getElementById('root')
-);
+
+var renderWorkflow = function ()
+{
+  console.log("Render it up")
+  ReactDOM.render(
+      <WorkflowMain/>,
+      document.getElementById('root')
+  );
+}
+
+// Reload workflow from server, set props
+var refreshWorkflow = function() {
+  fetch('/api/workflows/' + getPageID())
+  .then(response => response.json())
+  .then(json => {
+    console.log(json)
+    currentWorkflow = json;
+    renderWorkflow();
+  })
+}
+
+// Load the page!
+refreshWorkflow();
