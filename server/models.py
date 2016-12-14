@@ -35,6 +35,7 @@ class WfModule(models.Model):
 
 # Defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
+    # constants
     STRING = 'string'
     NUMERIC = 'number'
     TEXT = 'text'
@@ -43,6 +44,8 @@ class ParameterSpec(models.Model):
         (NUMERIC, 'Number'),
         (TEXT, 'Text')          # long strings, e.g. programs
     )
+
+    # fields
     type = models.CharField(
         max_length=8,
         choices=TYPE_CHOICES,
@@ -50,8 +53,10 @@ class ParameterSpec(models.Model):
     )
 
     name = models.CharField('name', max_length=32)
+
     module = models.ForeignKey(Module, related_name='parameter_specs',
                                on_delete=models.CASCADE)  # delete spec if Module deleted
+
     default_number = models.FloatField('number', null=True, blank=True)
     default_string = models.CharField('string', max_length=50, null=True, blank=True)
     default_text = models.TextField('text', null=True, blank=True)

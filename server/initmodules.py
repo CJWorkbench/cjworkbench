@@ -39,16 +39,15 @@ def load_module(fname):
             if not 'name' in d:
                 raise ValueError("Missing module name")
             module = Module(name=d['name'])
+            module.save()
 
             if 'parameters' in d:
                 pspecs = [ load_parameter_spec(p, module) for p in d['parameters']]
             else:
                 pspecs = []
 
-            module.save()
         except ValueError as e:
             logger.error("Error loading Module definition file " + fname + ": " + str(e))
-
 
 
 # Create a single ParameterSpec object from json def
@@ -57,33 +56,29 @@ def load_parameter_spec(d, module):
 
     if not 'name' in d:
         raise ValueError("Missing parameter name")
+    name = d['name']
 
-    defval = create_parameter_val_from_json(d)
-    defval.save()
+    if d['type'] == 'string':
+        p = ParameterSpec(type=d['type'], name=name, module=module, default_string=d['default'], default_number=0, default_text='')
 
-    if defval != None:
-        return ParameterSpec(name=d['name'], default=defval, module=module)
-    else:
-        raise ValueError("Missing default parameter value")
+    elif d['type'] == 'number':
+        p = ParameterSpec(type=d['type'], name=name, module=module, default_string='', default_number=d['default'], default_text='')
 
-
-# Instantiate a ParameterVal object, from name, type, default fields
-def create_parameter_val_from_json(d):
-
-    if d['type']=='string':
-        p = ParameterVal(type=d['type'], string=d['default'], number=0, text='')
-
-    elif d['type']=='number':
-        p = ParameterSpec(type=d['type'], string='', number=d['default'], text='')
-
-    elif d['type']=='text':
-        p = ParameterVal(type=d['type'], string='', number=0, text=d['default'])
+    elif d['type'] == 'text':
+        p = ParameterSpec(type=d['type'], name=name, module=module, default_string='', default_number=0, default_text=d['default'])
 
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
-
     else:
         raise ValueError("Missing parameter type")
+
+    p.save()
+    return p
+
+
+# Instantiate a ParameterVal object, from name, type, default fields
+def create_parameter_spec_from_json(d):
+
 
     p.save()
     return p

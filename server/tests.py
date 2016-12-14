@@ -36,3 +36,6 @@ class WorkflowTests(TestCase):
         response = workflow_list(request)
         content = response.render().content
         print(content)
+
+
+    def test_workflow_addmodule(self):

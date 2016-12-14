@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { sortable } from 'react-sortable';
+import ModuleMenu from './ModuleMenu.browserify.js'
 
 // return ID in URL of form "/workflows/id/" or "/workflows/id"
 var getPageID = function () {
@@ -31,65 +32,6 @@ var addModule = function(newModuleID) {
   .catch( (error) => { console.log('Request failed', error); });
 }
 
-// ---- ButtonMenu ----
-// Currently hard wired to show module list
-
-class ButtonMenu extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = { open: false, items: []};
-
-    // annoying bind to make 'this' accessible in handlers
-    this.buttonClick = this.buttonClick.bind(this);
-    this.itemMouseDown = this.itemMouseDown.bind(this);
-    this.itemClick = this.itemClick.bind(this);
-    this.blur = this.blur.bind(this);
-  }
-
-  componentDidMount() {
-    var _this = this;
-    fetch('/api/modules/')
-      .then(response => response.json())
-      .then(json => {
-        _this.setState({open: false, items: json}) })
-  }
-
-  buttonClick() {
-    // Toggle menu state
-    var newOpen = !this.state.open;
-    this.setState( { open: newOpen});
-  }
-
-  itemMouseDown(evt) {
-    evt.preventDefault()    // so the menu button doesn't lose focus and trigger blur, preventing item clicked
-  }
-
-  itemClick(evt) {
-    var itemID = evt.target.getAttribute('data-id');
-    addModule(itemID)
-    this.setState( { open: false});
-  }
-
-  // close the menu when user clicks anywhere but on a menu item
-  blur() {
-    this.setState({ open: false});
-  }
-
-  render() {
-    return (
-        <div className="toolMenuOuter" onBlur={this.blur}>
-            <button className="toolMenuButton" onClick={this.buttonClick}>+</button>
-            <ul className="toolMenuItemHolder" style={{display: this.state.open ? 'block' : 'none'}}>
-              {this.state.items.map(
-                  item => {return <li className="toolMenuItem" key={item.id} data-id={item.id} onMouseDown={this.itemMouseDown} onClick={this.itemClick}> {item.name} </li>;})
-              }
-            </ul>
-        </div>
-    );
-  }
-}
-
 
 // ---- Toolbar and buttons ----
 
@@ -101,7 +43,7 @@ class ToolBar extends React.Component {
 
   render() {
     return (
-         <ButtonMenu/>
+         <ModuleMenu addModule={addModule}/>
     ); 
   } 
 }
