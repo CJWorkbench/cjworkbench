@@ -84,3 +84,18 @@ body {
 .toolMenuItem:hover {
   background-color: #aaa;
 }
+
+.wfmoduleStringInput{
+  width: 90%;
+  resize: none;
+}
+
+.wfmoduleNumberInput{
+  width: 90%;
+  resize: none;
+}
+
+.wfmoduleTextInput{
+  width: 90%;
+  resize: vertical;
+}

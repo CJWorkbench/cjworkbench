@@ -9,7 +9,7 @@ class ParameterValSerializer(serializers.ModelSerializer):
 class ParameterSpecSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParameterSpec
-        fields = ('id', 'name', 'type', 'default_number', 'default_string', 'default_text')
+        fields = ('id', 'name', 'type', 'def_number', 'def_string', 'def_text')
 
 class ModuleSerializer(serializers.ModelSerializer):
     parameter_specs = ParameterSpecSerializer(many=True, read_only=True)

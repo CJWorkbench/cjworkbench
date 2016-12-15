@@ -57,9 +57,9 @@ class ParameterSpec(models.Model):
     module = models.ForeignKey(Module, related_name='parameter_specs',
                                on_delete=models.CASCADE)  # delete spec if Module deleted
 
-    default_number = models.FloatField('number', null=True, blank=True)
-    default_string = models.CharField('string', max_length=50, null=True, blank=True)
-    default_text = models.TextField('text', null=True, blank=True)
+    def_number = models.FloatField('number', null=True, blank=True)
+    def_string = models.CharField('string', max_length=50, null=True, blank=True)
+    def_text = models.TextField('text', null=True, blank=True)
 
     def __str__(self):
         return self.module.name + ' - ' + self.name
