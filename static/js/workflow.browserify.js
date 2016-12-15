@@ -91,7 +91,7 @@ var SortableList = React.createClass({
           draggingIndex={this.state.draggingIndex}
           sortId={i}
           outline="list"
-          childProps={ {'data-module': item.module} } />
+          childProps={ {'data-module': item.module, 'data-params': item.parameter_vals} } />
       );
     }, this);
 

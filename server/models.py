@@ -33,6 +33,18 @@ class WfModule(models.Model):
     def __str__(self):
         return self.workflow.__str__() + ' - order: ' + str(self.order) + ' - ' + self.module.__str__()
 
+    # Hydrates ParameterVal objects from ParameterSpec objects
+    def create_default_parameters(self):
+        for pspec in ParameterSpec.objects.filter(module=self.module):
+            pv = ParameterVal.objects.create(wf_module=self, \
+                                             parameter_spec=pspec, \
+                                             number=pspec.def_number, \
+                                             string=pspec.def_string, \
+                                             text=pspec.def_text)
+            pv.save()
+
+
+
 # Defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
     # constants

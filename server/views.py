@@ -45,7 +45,6 @@ def workflow_list(request, format=None):
 @api_view(['GET', 'PATCH', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def workflow_detail(request, pk, format=None):
-    print("workflow_detail ")
     try:
         workflow = Workflow.objects.get(pk=pk)
     except Workflow.DoesNotExist:
@@ -68,6 +67,7 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# Invoked when user pressess add_module button
 @api_view(['PUT'])
 @renderer_classes((JSONRenderer,))
 def workflow_addmodule(request, pk, format=None):
@@ -88,9 +88,12 @@ def workflow_addmodule(request, pk, format=None):
         if wfm.order >= insertBefore:
             wfm.order += 1
             wfm.save()
-    WfModule.objects.create(workflow=workflow, module=module, order=insertBefore)
+    newwfm = WfModule.objects.create(workflow=workflow, module=module, order=insertBefore)
+    newwfm.create_default_parameters()
 
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))

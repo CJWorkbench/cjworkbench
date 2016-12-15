@@ -6,14 +6,14 @@ import React from 'react'
 class WfParameter extends React.Component {
 
   render() {
-    var type = this.props.p.type;
-    var name = this.props.p.name;
+    var type = this.props.p.parameter_spec.type;
+    var name = this.props.p.parameter_spec.name;
     switch (type) {
       case 'string':
         return (
           <div>
             <div>{name}:</div>
-            <textarea className='wfmoduleStringInput' rows='1' defaultValue={this.props.p.def_string} />
+            <textarea className='wfmoduleStringInput' rows='1' defaultValue={this.props.p.string} />
           </div>
         );
 
@@ -21,7 +21,7 @@ class WfParameter extends React.Component {
         return (
           <div>
             <div>{name}:</div>
-            <textarea className='wfmoduleNumberInput' rows='1' defaultValue={this.props.p.def_number} />
+            <textarea className='wfmoduleNumberInput' rows='1' defaultValue={this.props.p.number} />
           </div>
         );
 
@@ -29,7 +29,7 @@ class WfParameter extends React.Component {
         return (
           <div>
             <div>{name}:</div>
-            <textarea className='wfmoduleTextInput' rows='4' defaultValue={this.props.p.def_text} />
+            <textarea className='wfmoduleTextInput' rows='4' defaultValue={this.props.p.text} />
           </div>
         );
     }
@@ -40,12 +40,13 @@ export default class WfModule extends React.Component {
 
   render() {
     var module = this.props['data-module'];
-    var params = module.parameter_specs.map((ps, i) => { return <WfParameter p={ps} key={i} /> } )
+    var params= this.props['data-params'];
+    var paramdivs = params.map((ps, i) => { return <WfParameter p={ps} key={i} /> } )
 
     return (
       <div {...this.props} className="module-li">
         <h1>{module.name}</h1>
-        {params}
+        {paramdivs}
       </div>
     ); 
   } 
