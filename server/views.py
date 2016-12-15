@@ -45,6 +45,7 @@ def workflow_list(request, format=None):
 @api_view(['GET', 'PATCH', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def workflow_detail(request, pk, format=None):
+    print("workflow_detail ")
     try:
         workflow = Workflow.objects.get(pk=pk)
     except Workflow.DoesNotExist:
@@ -94,7 +95,6 @@ def workflow_addmodule(request, pk, format=None):
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
-
     if request.method == 'GET':
         try:
             wfmodule = WfModule.objects.get(pk=pk)
@@ -113,3 +113,13 @@ def module_list(request, format=None):
         serializer = ModuleSerializer(workflows, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def module_detail(request, pk, format=None):
+    if request.method == 'GET':
+        try:
+            module = Module.objects.get(pk=pk)
+        except Module.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = ModuleSerializer(module)
+        return Response(serializer.data)

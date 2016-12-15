@@ -1,9 +1,10 @@
 // This is the main script for the Workflow view
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { sortable } from 'react-sortable';
-import ModuleMenu from './ModuleMenu.browserify.js'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { sortable } from 'react-sortable'
+import ModuleMenu from './ModuleMenu.browserify'
+import WfModule from './WfModule.browserify'
 
 // return ID in URL of form "/workflows/id/" or "/workflows/id"
 var getPageID = function () {
@@ -30,7 +31,7 @@ var addModule = function(newModuleID) {
     body: JSON.stringify({insertBefore: 0, moduleID: newModuleID})
   }).then( (response) => { refreshWorkflow() } )
   .catch( (error) => { console.log('Request failed', error); });
-}
+};
 
 
 // ---- Toolbar and buttons ----
@@ -49,17 +50,8 @@ class ToolBar extends React.Component {
 }
 
 // ---- Sortable Modules ----
-var ListItem = React.createClass({
-  displayName: 'SortableListItem',
 
-  render: function() {
-    return (
-      <div {...this.props} className="module-li">{this.props.children}</div>
-    )
-  }
-})
-
-var SortableListItem = sortable(ListItem);
+var SortableWfModule= sortable(WfModule);
 
 var SortableList = React.createClass({
 
@@ -90,18 +82,16 @@ var SortableList = React.createClass({
   },
 
   render: function() {
-    var childProps = { className: 'myClass1' };
     var listItems = this.props.data.wf_modules.map(function(item, i) {
       return (
-        <SortableListItem
+        <SortableWfModule
           key={i}
           updateState={this.updateState}
           items={this.props.data.wf_modules}
           draggingIndex={this.state.draggingIndex}
           sortId={i}
           outline="list"
-          childProps={childProps}
-          >{item.module.name}</SortableListItem>
+          childProps={ {'data-module': item.module} } />
       );
     }, this);
 
