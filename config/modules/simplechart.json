@@ -1,0 +1,10 @@
+{
+  "name": "Chart",
+  "parameters": [
+    {
+      "name": "Scaling",
+      "type": "number",
+      "default": "1"
+    }
+  ]
+}

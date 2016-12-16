@@ -33,37 +33,13 @@ def workflow_list(request, format=None):
         workflows = Workflow.objects.all()
         serializer = WorkflowSerializer(workflows, many=True)
         return Response(serializer.data)
+
     elif request.method == 'POST':
         serializer = WorkflowSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-@api_view(['PUT'])
-@renderer_classes((JSONRenderer,))
-def workflow_addmodule(request, pk, format=None):
-    try:
-        workflow = Workflow.objects.get(pk=pk)
-    except Workflow.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    try:
-        moduleID = request.data['moduleID']
-        module = Module.objects.get(pk=moduleID)
-    except Module.DoesNotExist:
-        return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    # create new WfModule, and increment order of every module below this in the workflow
-    insertBefore = int(request.data['insertBefore'])
-    for wfm in WfModule.objects.filter(workflow=workflow):
-        if wfm.order >= insertBefore:
-            wfm.order += 1
-            wfm.save()
-    WfModule.objects.create(workflow=workflow, module=module, order=insertBefore)
-
-    return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 # Retrieve, update or delete a workflow instance.
 @api_view(['GET', 'PATCH', 'DELETE'])
@@ -91,6 +67,34 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# Invoked when user pressess add_module button
+@api_view(['PUT'])
+@renderer_classes((JSONRenderer,))
+def workflow_addmodule(request, pk, format=None):
+    try:
+        workflow = Workflow.objects.get(pk=pk)
+    except Workflow.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    try:
+        moduleID = request.data['moduleID']
+        insertBefore = request.data['insertBefore']
+        module = Module.objects.get(pk=moduleID)
+    except Workflow.DoesNotExist:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # create new WfModule, and increment order of every module below this in the workflow
+    for wfm in WfModule.objects.filter(workflow=workflow):
+        if wfm.order >= insertBefore:
+            wfm.order += 1
+            wfm.save()
+    newwfm = WfModule.objects.create(workflow=workflow, module=module, order=insertBefore)
+    newwfm.create_default_parameters()
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
@@ -103,6 +107,7 @@ def wfmodule_detail(request, pk, format=None):
         return Response(serializer.data)
 
 
+
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def module_list(request, format=None):
@@ -111,3 +116,13 @@ def module_list(request, format=None):
         serializer = ModuleSerializer(workflows, many=True)
         return Response(serializer.data)
 
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def module_detail(request, pk, format=None):
+    if request.method == 'GET':
+        try:
+            module = Module.objects.get(pk=pk)
+        except Module.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        serializer = ModuleSerializer(module)
+        return Response(serializer.data)

@@ -1,8 +1,10 @@
 // This is the main script for the Workflow view
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import { sortable } from 'react-sortable';
+import React from 'react'
+import ReactDOM from 'react-dom'
+import { sortable } from 'react-sortable'
+import ModuleMenu from './ModuleMenu.browserify'
+import WfModule from './WfModule.browserify'
 
 // return ID in URL of form "/workflows/id/" or "/workflows/id"
 var getPageID = function () {
@@ -27,66 +29,9 @@ var addModule = function(newModuleID) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({insertBefore: 0, moduleID: newModuleID})
-  })
-  .catch( (error) => { console.log('Request failed', error); })
-}
-
-// ---- ButtonMenu ----
-class ButtonMenu extends React.Component {
-
-  constructor(props) {
-    super(props);
-    this.state = { open: false, items: []};
-
-    // annoying bind to make 'this' accessible in handlers
-    this.buttonClick = this.buttonClick.bind(this);
-    this.itemMouseDown = this.itemMouseDown.bind(this);
-    this.itemClick = this.itemClick.bind(this);
-    this.blur = this.blur.bind(this);
-  }
-
-  componentDidMount() {
-    var _this = this;
-    fetch('/api/modules/')
-      .then(response => response.json())
-      .then(json => {
-        _this.setState({open: false, items: json}) })
-  }
-
-  buttonClick() {
-    // Toggle menu state
-    var newOpen = !this.state.open;
-    this.setState( { open: newOpen});
-  }
-
-  itemMouseDown(evt) {
-    evt.preventDefault()    // so the menu button doesn't lose focus and trigger blur, preventing item clicked
-  }
-
-  itemClick(evt) {
-    var itemID = evt.target.getAttribute('data-id');
-    addModule(itemID)
-    this.setState( { open: false});
-  }
-
-  // close the menu when user clicks anywhere but on a menu item
-  blur() {
-    this.setState({ open: false});
-  }
-
-  render() {
-    return (
-        <div className="toolMenuOuter" onBlur={this.blur}>
-            <button className="toolMenuButton" onClick={this.buttonClick}>+</button>
-            <ul className="toolMenuItemHolder" style={{display: this.state.open ? 'block' : 'none'}}>
-              {this.state.items.map(
-                  item => {return <li className="toolMenuItem" key={item.id} data-id={item.id} onMouseDown={this.itemMouseDown} onClick={this.itemClick}> {item.name} </li>;})
-              }
-            </ul>
-        </div>
-    );
-  }
-}
+  }).then( (response) => { refreshWorkflow() } )
+  .catch( (error) => { console.log('Request failed', error); });
+};
 
 
 // ---- Toolbar and buttons ----
@@ -99,30 +44,20 @@ class ToolBar extends React.Component {
 
   render() {
     return (
-         <ButtonMenu/>
+         <ModuleMenu addModule={addModule}/>
     ); 
   } 
 }
 
 // ---- Sortable Modules ----
-var ListItem = React.createClass({
-  displayName: 'SortableListItem',
 
-  render: function() {
-    return (
-      <div {...this.props} className="module-li">{this.props.children}</div>
-    )
-  }
-})
-
-var SortableListItem = sortable(ListItem);
+var SortableWfModule= sortable(WfModule);
 
 var SortableList = React.createClass({
 
   getInitialState: function() {
     return {
       draggingIndex: null,
-      data: { modules: [] }
     };
   },
 
@@ -133,7 +68,7 @@ var SortableList = React.createClass({
     if (newState.draggingIndex === null) {
 
       // Generate a JSON paylod that has only module ID and order, then PATCH
-      var newOrder = this.state.data.modules.map( (item, i) => ({id: item.id, order: i}) )
+      var newOrder = this.props.data.wf_modules.map( (item, i) => ({id: item.id, order: i}) )
 
       fetch('/api/workflows/' + getPageID(), {
         method: 'patch',
@@ -146,27 +81,17 @@ var SortableList = React.createClass({
     }
   },
 
-  componentDidMount: function() {
-    var _this = this;
-    fetch('/api/workflows/' + getPageID())
-      .then(response => response.json())
-      .then(json => {
-        _this.setState({data: json}) })
-  },
-
   render: function() {
-    var childProps = { className: 'myClass1' };
-    var listItems = this.state.data.modules.map(function(item, i) {
+    var listItems = this.props.data.wf_modules.map(function(item, i) {
       return (
-        <SortableListItem
+        <SortableWfModule
           key={i}
           updateState={this.updateState}
-          items={this.state.data.modules}
+          items={this.props.data.wf_modules}
           draggingIndex={this.state.draggingIndex}
           sortId={i}
           outline="list"
-          childProps={childProps}
-          >{item.module.name}</SortableListItem>
+          childProps={ {'data-module': item.module, 'data-params': item.parameter_vals} } />
       );
     }, this);
 
@@ -178,6 +103,9 @@ var SortableList = React.createClass({
 
 // ---------- Main ----------
 
+// Stores workflow as fetched from server
+var currentWorkflow = {}
+
 class WorkflowMain extends React.Component {
   render() {
     return (
@@ -185,12 +113,29 @@ class WorkflowMain extends React.Component {
         <div className="toolbar">
           <ToolBar/>
         </div>
-        <SortableList/>
+        <SortableList data={currentWorkflow} />
       </div>
     );
   }
 }
-ReactDOM.render(
-    <WorkflowMain/>,
-    document.getElementById('root')
-);
+
+var renderWorkflow = function ()
+{
+  ReactDOM.render(
+      <WorkflowMain/>,
+      document.getElementById('root')
+  );
+}
+
+// Reload workflow from server, set props
+var refreshWorkflow = function() {
+  fetch('/api/workflows/' + getPageID())
+  .then(response => response.json())
+  .then(json => {
+    currentWorkflow = json;
+    renderWorkflow();
+  })
+}
+
+// Load the page!
+refreshWorkflow();

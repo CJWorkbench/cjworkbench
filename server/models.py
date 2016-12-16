@@ -33,8 +33,21 @@ class WfModule(models.Model):
     def __str__(self):
         return self.workflow.__str__() + ' - order: ' + str(self.order) + ' - ' + self.module.__str__()
 
+    # Hydrates ParameterVal objects from ParameterSpec objects
+    def create_default_parameters(self):
+        for pspec in ParameterSpec.objects.filter(module=self.module):
+            pv = ParameterVal.objects.create(wf_module=self, \
+                                             parameter_spec=pspec, \
+                                             number=pspec.def_number, \
+                                             string=pspec.def_string, \
+                                             text=pspec.def_text)
+            pv.save()
+
+
+
 # Defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
+    # constants
     STRING = 'string'
     NUMERIC = 'number'
     TEXT = 'text'
@@ -43,6 +56,8 @@ class ParameterSpec(models.Model):
         (NUMERIC, 'Number'),
         (TEXT, 'Text')          # long strings, e.g. programs
     )
+
+    # fields
     type = models.CharField(
         max_length=8,
         choices=TYPE_CHOICES,
@@ -50,11 +65,13 @@ class ParameterSpec(models.Model):
     )
 
     name = models.CharField('name', max_length=32)
+
     module = models.ForeignKey(Module, related_name='parameter_specs',
                                on_delete=models.CASCADE)  # delete spec if Module deleted
-    default_number = models.FloatField('number', null=True, blank=True)
-    default_string = models.CharField('string', max_length=50, null=True, blank=True)
-    default_text = models.TextField('text', null=True, blank=True)
+
+    def_number = models.FloatField('number', null=True, blank=True)
+    def_string = models.CharField('string', max_length=50, null=True, blank=True)
+    def_text = models.TextField('text', null=True, blank=True)
 
     def __str__(self):
         return self.module.name + ' - ' + self.name

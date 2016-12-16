@@ -11,7 +11,7 @@ var TestApp = React.createClass({
 
   componentDidMount: function() {
     var _this = this;
-    fetch('/api/workflows.json')
+    fetch('/api/workflows')
       .then(response => response.json())
       .then(json => {
         _this.setState({workflows: json})
