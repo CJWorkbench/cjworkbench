@@ -9,28 +9,25 @@ urlpatterns = [
 
     url(r'^$', TemplateView.as_view(template_name='index.html')),
 
-
+    # list all workflows
     url(r'^workflows/$', TemplateView.as_view(template_name='workflows.html')),
     url(r'^api/workflows/?$', views.workflow_list),
 
-    # ex: /workflows/5/
+    # list specific workflow ex: /workflows/5/
+    url(r'^workflows/(?P<pk>[0-9]+)/$', TemplateView.as_view(template_name='workflow.html')),
+
     url(r'^api/workflows/(?P<pk>[0-9]+)/?$', views.workflow_detail),
+
     url(r'^api/workflows/(?P<pk>[0-9]+)/addmodule/?$', views.workflow_addmodule),
 
+    # modules
     url(r'^api/modules/?$', views.module_list),
     url(r'^api/modules/(?P<pk>[0-9]+)/?$', views.module_detail),
 
-    # ex: /workflows/5/
-    url(r'^workflows/(?P<pk>[0-9]+)/$', TemplateView.as_view(template_name='workflow.html')),
+    url(r'^api/initmodules/$', views.init_modules2),
 
-    # ex: /workflows/5/
-    #url(r'^workflows/(?P<workflow_id>[0-9]+)/$', views.workflow, name='workflow'),
-
-    # ex: /wfmodules/5/
-    # url(r'^wfmodules/(?P<pk>[0-9]+)/$', views.WfModule, name='WfModule'),
+    # modules and parameters in a workflow
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
-
-
-    url(r'^api/initmodules/$', views.init_modules2)
+    url(r'^api/parameters/(?P<pk>[0-9]+)/?$', views.parameterval_detail)
 ]
 

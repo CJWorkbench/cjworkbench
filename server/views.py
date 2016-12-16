@@ -9,9 +9,11 @@ from rest_framework.renderers import JSONRenderer
 from server.models import Module
 from server.models import Workflow
 from server.models import WfModule
+from server.models import ParameterVal
 from server.serializers import ModuleSerializer
 from server.serializers import WorkflowSerializer
 from server.serializers import WfModuleSerializer
+from server.serializers import ParameterValSerializer
 from server.initmodules import init_modules
 
 
@@ -124,5 +126,31 @@ def module_detail(request, pk, format=None):
             module = Module.objects.get(pk=pk)
         except Module.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
+
         serializer = ModuleSerializer(module)
         return Response(serializer.data)
+
+
+@api_view(['GET', 'PATCH'])
+@renderer_classes((JSONRenderer,))
+def parameterval_detail(request, pk, format=None):
+    try:
+        param = ParameterVal.objects.get(pk=pk)
+    except ParameterVal.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = ParameterValSerializer(param)
+        return Response(serializer.data)
+
+    elif request.method == 'PATCH':
+        data = request.data
+        if 'string' in data.keys():
+            param.string = data['string']
+        elif 'text' in data.keys():
+            param.text = data['text']
+        elif 'number' in data.keys():
+            param.number = data['number']
+        param.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+

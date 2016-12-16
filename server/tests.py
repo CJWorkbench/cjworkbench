@@ -1,5 +1,5 @@
 from django.test import TestCase
-from .views import workflow_list, workflow_addmodule, workflow_detail, wfmodule_detail, module_list
+from .views import workflow_list, workflow_addmodule, workflow_detail, wfmodule_detail, module_list, parameterval_detail
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from .models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
@@ -192,3 +192,83 @@ class ModuleTests(TestCase):
         self.assertEqual(response.data[0]['name'], 'Module 1')
         self.assertEqual(response.data[1]['name'], 'Module 2')
         self.assertEqual(response.data[2]['name'], 'Module 3')
+
+class ParameterValTests(TestCase):
+    def setUp(self):
+        # Create a WfModule with one parameter of each type
+        self.factory = APIRequestFactory()
+        module = Module(name="TestModule")
+        module.save()
+        self.moduleID = module.id
+
+        stringSpec = ParameterSpec(name="StringParam", module=module, type='String', def_string='foo', def_number=0, def_text='')
+        stringSpec.save()
+        stringVal = ParameterVal()
+        numberSpec = ParameterSpec(name="NumberParam", module=module, type='Number', def_string='', def_number=10, def_text='')
+        numberSpec.save()
+        textSpec = ParameterSpec(name="TextParam", module=module, type='Text', def_string='', def_number=0, def_text='bar')
+        textSpec.save()
+
+        workflow = Workflow.objects.create(name="Test Workflow")
+        self.workflowID = workflow.id
+
+        wfmodule = WfModule.objects.create(module=module, workflow=workflow, order=0)
+        self.wfmoduleID = wfmodule.id
+
+        # set non-default values for vals in order to reveal certain types of bugs
+        stringVal = ParameterVal.objects.create(parameter_spec=stringSpec, wf_module=wfmodule, string='fooval')
+        self.stringID = stringVal.id
+
+        numberVal = ParameterVal.objects.create(parameter_spec=numberSpec, wf_module=wfmodule, number=20)
+        self.numberID = numberVal.id
+
+        textVal = ParameterVal.objects.create(parameter_spec=textSpec, wf_module=wfmodule, text='barval')
+        self.textID = textVal.id
+
+    # Ensure the correct parameter vals are reported in workflow def
+    def test_parameterval_detail_get(self):
+        request = self.factory.get('/api/workflows/%d/' % self.workflowID)
+        response = workflow_detail(request, pk = self.workflowID)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], 'Test Workflow')
+
+        # workflow has correct wfmodule
+        self.assertEqual(len(response.data['wf_modules']), 1)
+        self.assertEqual(response.data['wf_modules'][0]['module']['id'], self.moduleID)
+
+        # wfmodule has correct parameters
+        self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 3)
+        valIDs = [self.stringID, self.numberID, self.textID]
+        param_vals = response.data['wf_modules'][0]['parameter_vals']
+        responseIDs = [x['id'] for x in param_vals]
+        self.assertCountEqual(responseIDs, valIDs)
+
+        # parameters have correct types and values
+        str_val = [p for p in param_vals if p['id']==self.stringID][0]
+        self.assertEqual(str_val['parameter_spec']['name'], 'StringParam')
+        self.assertEqual(str_val['parameter_spec']['type'], 'String')
+        self.assertEqual(str_val['string'], 'fooval')
+
+        num_val = [p for p in param_vals if p['id']==self.numberID][0]
+        self.assertEqual(num_val['parameter_spec']['name'], 'NumberParam')
+        self.assertEqual(num_val['parameter_spec']['type'], 'Number')
+        self.assertEqual(num_val['number'], 20.0)
+
+        text_val = [p for p in param_vals if p['id']==self.textID][0]
+        self.assertEqual(text_val['parameter_spec']['name'], 'TextParam')
+        self.assertEqual(text_val['parameter_spec']['type'], 'Text')
+        self.assertEqual(text_val['text'], 'barval')
+
+
+    def test_parameterval_detail_patch(self):
+        print("oh yeah")
+        request = self.factory.patch('/api/parameters/%d/' % self.numberID,
+                                   {'number': '50.456' })
+        response = parameterval_detail(request, pk=self.numberID)
+        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
+
+        request = self.factory.get('/api/parameters/%d/' % self.numberID)
+        response = parameterval_detail(request, pk=self.numberID)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['number'], 50.456)
+

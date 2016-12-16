@@ -50,11 +50,11 @@ class ParameterSpec(models.Model):
     # constants
     STRING = 'string'
     NUMERIC = 'number'
-    TEXT = 'text'
+    TEXT = 'text'               # long strings, e.g. programs
     TYPE_CHOICES = (
         (STRING, 'String'),
         (NUMERIC, 'Number'),
-        (TEXT, 'Text')          # long strings, e.g. programs
+        (TEXT, 'Text')          #
     )
 
     # fields
