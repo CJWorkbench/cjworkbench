@@ -78,9 +78,9 @@ def workflow_addmodule(request, pk, format=None):
 
     try:
         moduleID = request.data['moduleID']
-        insertBefore = request.data['insertBefore']
+        insertBefore = int(request.data['insertBefore'])
         module = Module.objects.get(pk=moduleID)
-    except Workflow.DoesNotExist:
+    except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     # create new WfModule, and increment order of every module below this in the workflow
