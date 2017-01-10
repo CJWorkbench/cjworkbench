@@ -1,7 +1,6 @@
-from django.db import models
-
 # Create your models here.
 from django.db import models
+from server.dispatch import module_dispatch
 
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
@@ -11,9 +10,16 @@ class Workflow(models.Model):
     def __str__(self):
         return self.name
 
-# A module contains a name (which is used to bind to the actual function that executes) and parameterSpecs
+
 class Module(models.Model):
+    # UI name, can change
     name = models.CharField('name', max_length=200)
+
+    # internal name, cannot change if you want backwards compatibility with exported workflows
+    internal_name = models.CharField('internal_name', max_length=200)
+
+    # how do we run this module?
+    dispatch = models.CharField('dispatch', max_length=200)
 
     def __str__(self):
         return self.name
@@ -43,6 +49,17 @@ class WfModule(models.Model):
                                              text=pspec.def_text)
             pv.save()
 
+    # Retrieve current parameter values
+    def get_param_string(self, name):
+        pspec = ParameterSpec.objects.get(module=self.module, name="URL")
+        if pspec.type != ParameterSpec.STRING:
+            raise ValueError("Request for STRING parameter " + name + " but actual type is " + pspec.type)
+        pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
+        return pval.string
+
+    # Modules ingest and emit a table (though may do only one, if source or sink)
+    def execute(self, table):
+        return module_dispatch[self.module.dispatch](self, table)
 
 
 # Defines a parameter UI and defaults for a particular Module

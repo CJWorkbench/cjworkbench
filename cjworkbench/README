@@ -17,3 +17,4 @@ To work with models in the shell
 
 To completely wipe db:
     python manage.py flush
+    python manage.py createsuperuser

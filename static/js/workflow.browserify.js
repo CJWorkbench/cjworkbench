@@ -4,6 +4,7 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { sortable } from 'react-sortable'
 import ModuleMenu from './ModuleMenu.browserify'
+import ToolButton from './ToolButton.browserify'
 import WfModule from './WfModule.browserify'
 
 // return ID in URL of form "/workflows/id/" or "/workflows/id"
@@ -30,21 +31,33 @@ var addModule = function(newModuleID) {
     },
     body: JSON.stringify({insertBefore: 0, moduleID: newModuleID})
   }).then( (response) => { refreshWorkflow() } )
-  .catch( (error) => { console.log('Request failed', error); });
+  .catch( (error) => { console.log('Add Module request failed', error); });
 };
 
+// Run the current workflow
+var executeWorkflow = function() {
+
+  fetch('/api/workflows/' + getPageID() + "/execute", {
+    method: 'put',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  })
+  .catch( (error) => { console.log('Execute request failed', error); });
+};
 
 // ---- Toolbar and buttons ----
 
 
 class ToolBar extends React.Component {
-  renderButton(_text) {
-    return <ToolButton text={_text}/>;
-  }
 
   render() {
     return (
+      <div>
+        <ToolButton text="▶" click={executeWorkflow} />
          <ModuleMenu addModule={addModule}/>
+      </div>
     ); 
   } 
 }

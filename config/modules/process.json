@@ -1,5 +1,6 @@
 {
   "name": "Python Process",
+  "internal_name": "rawcode",
   "parameters": [
     {
       "name": "Code",

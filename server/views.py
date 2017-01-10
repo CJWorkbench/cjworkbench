@@ -15,7 +15,7 @@ from server.serializers import WorkflowSerializer
 from server.serializers import WfModuleSerializer
 from server.serializers import ParameterValSerializer
 from server.initmodules import init_modules
-
+from server.execute import execute_workflow
 
 def index(request):
     return HttpResponse("Hello, world. You're at the workflow index. <a href=\"/admin\">Admin</a>")
@@ -95,6 +95,18 @@ def workflow_addmodule(request, pk, format=None):
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+# User pressed execute button
+@api_view(['PUT'])
+@renderer_classes((JSONRenderer,))
+def workflow_execute(request, pk, format=None):
+    try:
+        workflow = Workflow.objects.get(pk=pk)
+    except Workflow.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    execute_workflow(workflow)
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['GET'])
@@ -109,7 +121,6 @@ def wfmodule_detail(request, pk, format=None):
         return Response(serializer.data)
 
 
-
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def module_list(request, format=None):
@@ -117,6 +128,7 @@ def module_list(request, format=None):
         workflows = Module.objects.all()
         serializer = ModuleSerializer(workflows, many=True)
         return Response(serializer.data)
+
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
@@ -131,6 +143,7 @@ def module_detail(request, pk, format=None):
         return Response(serializer.data)
 
 
+# Get or set parameter value
 @api_view(['GET', 'PATCH'])
 @renderer_classes((JSONRenderer,))
 def parameterval_detail(request, pk, format=None):

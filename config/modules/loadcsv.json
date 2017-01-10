@@ -1,8 +1,9 @@
 {
   "name": "Load CSV",
+  "internal_name": "loadcsv" ,
   "parameters": [
     {
-      "name": "Source file",
+      "name": "URL",
       "type": "string",
       "default": ""
     }

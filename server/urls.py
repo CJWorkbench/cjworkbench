@@ -15,16 +15,17 @@ urlpatterns = [
 
     # list specific workflow ex: /workflows/5/
     url(r'^workflows/(?P<pk>[0-9]+)/$', TemplateView.as_view(template_name='workflow.html')),
-
     url(r'^api/workflows/(?P<pk>[0-9]+)/?$', views.workflow_detail),
 
     url(r'^api/workflows/(?P<pk>[0-9]+)/addmodule/?$', views.workflow_addmodule),
+    url(r'^api/workflows/(?P<pk>[0-9]+)/execute/?$', views.workflow_execute),
 
     # modules
     url(r'^api/modules/?$', views.module_list),
     url(r'^api/modules/(?P<pk>[0-9]+)/?$', views.module_detail),
 
     url(r'^api/initmodules/$', views.init_modules2),
+
 
     # modules and parameters in a workflow
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),

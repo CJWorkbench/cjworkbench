@@ -1,5 +1,6 @@
 {
   "name": "Chart",
+  "internal_name": "simplechart",
   "parameters": [
     {
       "name": "Scaling",

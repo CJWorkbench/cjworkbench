@@ -38,7 +38,10 @@ def load_module(fname):
 
             if not 'name' in d:
                 raise ValueError("Missing module name")
-            module = Module(name=d['name'])
+            if not 'internal_name' in d:
+                raise ValueError("Missing module internal_name")
+
+            module = Module(name=d['name'], internal_name=d['internal_name'], dispatch=d['internal_name'])
             module.save()
 
             if 'parameters' in d:
@@ -59,13 +62,13 @@ def load_parameter_spec(d, module):
     name = d['name']
 
     if d['type'] == 'string':
-        p = ParameterSpec(type=d['type'], name=name, module=module, default_string=d['default'], default_number=0, default_text='')
+        p = ParameterSpec(type=d['type'], name=name, module=module, def_string=d['default'], def_number=0, def_text='')
 
     elif d['type'] == 'number':
-        p = ParameterSpec(type=d['type'], name=name, module=module, default_string='', default_number=d['default'], default_text='')
+        p = ParameterSpec(type=d['type'], name=name, module=module, def_string='', def_number=d['default'], def_text='')
 
     elif d['type'] == 'text':
-        p = ParameterSpec(type=d['type'], name=name, module=module, default_string='', default_number=0, default_text=d['default'])
+        p = ParameterSpec(type=d['type'], name=name, module=module, def_string='', def_number=0, def_text=d['default'])
 
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
@@ -75,11 +78,4 @@ def load_parameter_spec(d, module):
     p.save()
     return p
 
-
-# Instantiate a ParameterVal object, from name, type, default fields
-def create_parameter_spec_from_json(d):
-
-
-    p.save()
-    return p
 

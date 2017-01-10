@@ -1,0 +1,11 @@
+{
+  "name": "Formula",
+  "internal_name": "formula",
+  "parameters": [
+    {
+      "name": "Formula",
+      "type": "text",
+      "default": ""
+    }
+  ]
+}

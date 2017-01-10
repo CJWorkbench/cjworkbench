@@ -180,8 +180,8 @@ class ModuleTests(TestCase):
         self.add_new_module('Module 2')
         self.add_new_module('Module 3')
 
-    def add_new_module(self, name):
-        module = Module(name=name)
+    def add_new_module(self, internal_name, dispatch):
+        module = Module(name=name, internal_name=name+'_internal', dispatch=name+'_dispatch')
         module.save()
 
     def test_module_list_get(self):
@@ -225,7 +225,7 @@ class ParameterValTests(TestCase):
         textVal = ParameterVal.objects.create(parameter_spec=textSpec, wf_module=wfmodule, text='barval')
         self.textID = textVal.id
 
-    # Ensure the correct parameter vals are reported in workflow def
+    # Ensure the correct parameter vals are reported in workflow API
     def test_parameterval_detail_get(self):
         request = self.factory.get('/api/workflows/%d/' % self.workflowID)
         response = workflow_detail(request, pk = self.workflowID)
@@ -260,8 +260,8 @@ class ParameterValTests(TestCase):
         self.assertEqual(text_val['text'], 'barval')
 
 
+    # test parameter change API
     def test_parameterval_detail_patch(self):
-        print("oh yeah")
         request = self.factory.patch('/api/parameters/%d/' % self.numberID,
                                    {'number': '50.456' })
         response = parameterval_detail(request, pk=self.numberID)

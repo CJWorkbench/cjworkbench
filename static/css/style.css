@@ -51,6 +51,7 @@ body {
   margin: 5pt;
   width: 30pt;
   height: 30pt;
+  display: inline-block;
 }
 .toolMenuButton{
   border: 1px solid black;
