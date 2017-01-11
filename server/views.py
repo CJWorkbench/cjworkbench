@@ -15,17 +15,16 @@ from server.serializers import WorkflowSerializer
 from server.serializers import WfModuleSerializer
 from server.serializers import ParameterValSerializer
 from server.initmodules import init_modules
-from server.execute import execute_workflow
+from server.execute import execute_workflow, execute_wfmodule
 
+# ---- Home Page ----
 def index(request):
     return HttpResponse("Hello, world. You're at the workflow index. <a href=\"/admin\">Admin</a>")
 
+# ---- Workflow ----
+
 def workflow(request, workflow_id):
     return HttpResponse("You're looking at workflow %s." % workflow_id)
-
-def init_modules2(request):
-    init_modules()
-    return HttpResponse("Loaded module definitions.")
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])
@@ -108,6 +107,7 @@ def workflow_execute(request, pk, format=None):
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+# ---- WfModule ----
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
@@ -120,6 +120,26 @@ def wfmodule_detail(request, pk, format=None):
         serializer = WfModuleSerializer(wfmodule)
         return Response(serializer.data)
 
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_render(request, pk, format=None):
+    if request.method == 'GET':
+        try:
+            wfmodule = WfModule.objects.get(pk=pk)
+        except WfModule.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        table = execute_wfmodule(wfmodule)
+        json = table.to_json()
+        return Response(json)
+
+
+# ---- Module ----
+
+# Scaffolding: URL endpoint to trigger module reload from config file
+def init_modules2(request):
+    init_modules()
+    return HttpResponse("Loaded module definitions.")
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
@@ -142,6 +162,7 @@ def module_detail(request, pk, format=None):
         serializer = ModuleSerializer(module)
         return Response(serializer.data)
 
+# ---- Parameter ----
 
 # Get or set parameter value
 @api_view(['GET', 'PATCH'])

@@ -62,6 +62,7 @@ class WfModule(models.Model):
         return module_dispatch[self.module.dispatch](self, table)
 
 
+
 # Defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
     # constants

@@ -27,8 +27,11 @@ urlpatterns = [
     url(r'^api/initmodules/$', views.init_modules2),
 
 
-    # modules and parameters in a workflow
+    # WfModules (Modules applied in a workflow)
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/render?$', views.wfmodule_render),
+
+    # Parameters
     url(r'^api/parameters/(?P<pk>[0-9]+)/?$', views.parameterval_detail)
 ]
 

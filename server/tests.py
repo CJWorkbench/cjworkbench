@@ -1,8 +1,10 @@
 from django.test import TestCase
-from .views import workflow_list, workflow_addmodule, workflow_detail, wfmodule_detail, module_list, parameterval_detail
+from .views import workflow_list, workflow_addmodule, workflow_detail, wfmodule_detail, wfmodule_render, module_list, parameterval_detail
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from .models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
+from .dispatch import test_data_table
+import pandas as pd
 
 class WorkflowTests(TestCase):
     def setUp(self):
@@ -126,22 +128,23 @@ class WorkflowTests(TestCase):
         response = workflow_detail(request, pk = pk_workflow)
         self.assertEqual(Workflow.objects.filter(name='Workflow 1').count(), 0)
 
+
+
 class WfModuleTests(TestCase):
+
+    # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):
         self.factory = APIRequestFactory()
         workflow1 = Workflow(name='Workflow 1')
         workflow1.save()
         workflow2 = Workflow(name='Workflow 2')
         workflow2.save()
-        module1 = Module(name='Module 1')
-        module1.save()
-        module2 = Module(name='Module 2')
-        module2.save()
-        module3 = Module(name='Module 3')
-        module3.save()
-        self.add_new_wfmodule(workflow1, module1, 1)
-        self.add_new_wfmodule(workflow1, module2, 2)
-        self.add_new_wfmodule(workflow1, module3, 3)
+        module1 = self.add_new_module('Module 1', 'testdata')
+        module2 = self.add_new_module('Module 2', 'NOP')
+        module3 = self.add_new_module('Module 3', 'double_M_col')
+        self.wfmodule1 = self.add_new_wfmodule(workflow1, module1, 1)
+        self.wfmodule2 = self.add_new_wfmodule(workflow1, module2, 2)
+        self.wfmodule3 = self.add_new_wfmodule(workflow1, module3, 3)
         self.add_new_wfmodule(workflow2, module1, 1)
         self.add_new_wfmodule(workflow2, module2, 2)
         self.add_new_wfmodule(workflow2, module3, 3)
@@ -149,20 +152,24 @@ class WfModuleTests(TestCase):
     def add_new_wfmodule(self, workflow_aux, module_aux, order_aux):
         wf_module = WfModule(workflow=workflow_aux, module=module_aux, order=order_aux)
         wf_module.save()
+        return wf_module
 
     def add_new_workflow(self, name):
         workflow = Workflow(name=name)
         workflow.save()
 
-    def add_new_module(self, name):
-        module = Module(name=name)
+    def add_new_module(self, name, dispatch):
+        module = Module(name=name, dispatch=dispatch)
         module.save()
+        return module
 
     def test_wf_module_detail_get(self):
+        # Also tests [Workflow, Module, WfModule].get
         workflow_id = Workflow.objects.get(name='Workflow 1').id
         module_id = Module.objects.get(name='Module 1').id
         pk_wf_module = WfModule.objects.get(workflow_id=workflow_id,
                                            module_id = module_id).id
+
         request = self.factory.get('/api/wfmodules/%d/' % pk_wf_module)
         response = wfmodule_detail(request, pk = pk_wf_module)
         self.assertIs(response.status_code, status.HTTP_200_OK)
@@ -173,6 +180,29 @@ class WfModuleTests(TestCase):
         response = wfmodule_detail(request, pk = 10000)
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
+
+    def test_wf_module_render_get(self):
+
+        # First module: creates test data
+        request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
+        response = wfmodule_render(request, pk=self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, test_data_table.to_json())
+
+        # second module: NOP
+        request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule2.id)
+        response = wfmodule_render(request, pk=self.wfmodule2.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, test_data_table.to_json())
+
+        # Third module: doubles M column
+        request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule3.id)
+        response = wfmodule_render(request, pk=self.wfmodule3.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        double_test_data = pd.DataFrame(test_data_table['Class'], test_data_table['M']*2, test_data_table['F'])
+        self.assertEqual(response.data, double_test_data.to_json())
+
+
 class ModuleTests(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
@@ -180,7 +210,7 @@ class ModuleTests(TestCase):
         self.add_new_module('Module 2')
         self.add_new_module('Module 3')
 
-    def add_new_module(self, internal_name, dispatch):
+    def add_new_module(self, name):
         module = Module(name=name, internal_name=name+'_internal', dispatch=name+'_dispatch')
         module.save()
 

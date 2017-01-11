@@ -18,4 +18,18 @@ def execute_workflow(workflow):
 
     print(table)
 
+# Return the output of a particular module. No caching yet...
+def execute_wfmodule(wfmodule):
+    table = None
+    workflow = wfmodule.workflow
+    for wfm in workflow.wf_modules.all():
+        table = wfm.execute(table)
+
+        if wfm == wfmodule:
+            break
+
+    return table
+
+
+
 
