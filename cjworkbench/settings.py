@@ -43,9 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'server.apps.ServerConfig',
-    # Pipeline
-    'pipeline',
-    # DRF
+    'webpack_loader',
     'rest_framework',
 ]
 
@@ -115,13 +113,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/1.10/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
-
 USE_I18N = True
-
 USE_L10N = True
-
 USE_TZ = True
 
 
@@ -130,51 +124,20 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = normpath(join(DJANGO_ROOT, 'static'))
-STATICFILES_DIRS = ()
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'assets'), # We do this so that django's collectstatic copies or our bundles to the STATIC_ROOT or syncs them to whatever storage we use.
+)
 
-# Django Pipeline (and browserify)
-STATICFILES_STORAGE = 'pipeline.storage.PipelineCachedStorage'
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    'pipeline.finders.PipelineFinder',
 )
 
-PIPELINE = {
-    'COMPILERS': ('pipeline_browserify.compiler.BrowserifyCompiler',),
-    'BROWSERIFY_BINARY': '/usr/local/bin/browserify',
-    'BROWSERIFY_ARGUMENTS': '-t [ babelify --presets [ react es2015 ] ]',
-    'CSS_COMPRESSOR': 'pipeline.compressors.NoopCompressor',
-    'JS_COMPRESSOR': 'pipeline.compressors.NoopCompressor',
-    'STYLESHEETS': {
-        'cjworkbench_css': {
-            'source_filenames': (
-                'css/style.css',
-            ),
-            'output_filename': 'css/cjworkbench_css.css',
-        },
-    },
-    'JAVASCRIPT': {
-        'app_js': {
-            'source_filenames': (
-                'js/app.browserify.js',
-            ),
-            'output_filename': 'js/app.js',
-        },
-
-        'workflows_js': {
-            'source_filenames': (
-                'js/workflows.browserify.js',
-            ),
-            'output_filename': 'js/workflows.js',
-        },
-
-        'workflow_js': {
-            'source_filenames': (
-                'js/workflow.browserify.js',
-            ),
-            'output_filename': 'js/workflow.js',
-        }
+WEBPACK_LOADER = {
+    'DEFAULT': {
+        'BUNDLE_DIR_NAME': 'bundles/',
+        'STATS_FILE': os.path.join(BASE_DIR, 'webpack-stats.json'),
     }
 }

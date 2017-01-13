@@ -3,6 +3,9 @@
 import React from 'react'
 
 
+
+// ---- WfParameter - a single editable parameter ----
+
 class WfParameter extends React.Component {
 
   constructor(props) {
@@ -60,13 +63,14 @@ class WfParameter extends React.Component {
   }
 }
 
+// ---- WfModule ----
+
 export default class WfModule extends React.Component {
 
   render() {
     var module = this.props['data-module'];
     var params= this.props['data-params'];
     var paramdivs = params.map((ps, i) => { return <WfParameter p={ps} key={i} /> } )
-
     return (
       <div {...this.props} className="module-li">
         <h1>{module.name}</h1>

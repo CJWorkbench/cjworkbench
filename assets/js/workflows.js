@@ -1,6 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+require('../css/style.css');
+
 var TestApp = React.createClass({
 
   getInitialState: function() {

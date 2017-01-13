@@ -5,11 +5,13 @@ To migrate:
     python manage.py makemigrations
     python manage.py migrate
 
-Dependencies:
+Dependencies: (captured in package.json? should I be using virtualenv?)
     DjangoRestPipeline, browserify, babel
     npm i react-sortable --save
     npm install --save rc-menu
     npm install --save-dev babel-preset-stage-0
+    pip install django-webpack-loader
+
 
 To work with models in the shell
     python manage.py shell

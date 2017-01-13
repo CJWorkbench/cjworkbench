@@ -3,9 +3,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { sortable } from 'react-sortable'
-import ModuleMenu from './ModuleMenu.browserify'
-import ToolButton from './ToolButton.browserify'
-import WfModule from './WfModule.browserify'
+import ModuleMenu from './ModuleMenu'
+import ToolButton from './ToolButton'
+import WfModule from './WfModule'
+
+require('../css/style.css');
 
 // return ID in URL of form "/workflows/id/" or "/workflows/id"
 var getPageID = function () {
