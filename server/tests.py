@@ -234,7 +234,7 @@ class ParameterValTests(TestCase):
         stringSpec = ParameterSpec(name="StringParam", module=module, type='String', def_string='foo', def_number=0, def_text='')
         stringSpec.save()
         stringVal = ParameterVal()
-        numberSpec = ParameterSpec(name="NumberParam", module=module, type='Number', def_string='', def_number=10, def_text='')
+        numberSpec = ParameterSpec(name="NumberParam", module=module, type='Number', def_string='', def_number=10.11, def_text='')
         numberSpec.save()
         textSpec = ParameterSpec(name="TextParam", module=module, type='Text', def_string='', def_number=0, def_text='bar')
         textSpec.save()
@@ -242,20 +242,40 @@ class ParameterValTests(TestCase):
         workflow = Workflow.objects.create(name="Test Workflow")
         self.workflowID = workflow.id
 
-        wfmodule = WfModule.objects.create(module=module, workflow=workflow, order=0)
-        self.wfmoduleID = wfmodule.id
+        self.wfmodule = WfModule.objects.create(module=module, workflow=workflow, order=0)
+        self.wfmoduleID = self.wfmodule.id
 
         # set non-default values for vals in order to reveal certain types of bugs
-        stringVal = ParameterVal.objects.create(parameter_spec=stringSpec, wf_module=wfmodule, string='fooval')
+        stringVal = ParameterVal.objects.create(parameter_spec=stringSpec, wf_module=self.wfmodule, string='fooval')
         self.stringID = stringVal.id
 
-        numberVal = ParameterVal.objects.create(parameter_spec=numberSpec, wf_module=wfmodule, number=20)
+        numberVal = ParameterVal.objects.create(parameter_spec=numberSpec, wf_module=self.wfmodule, number=10.11)
         self.numberID = numberVal.id
 
-        textVal = ParameterVal.objects.create(parameter_spec=textSpec, wf_module=wfmodule, text='barval')
+        textVal = ParameterVal.objects.create(parameter_spec=textSpec, wf_module=self.wfmodule, text='barval')
         self.textID = textVal.id
 
-    # Ensure the correct parameter vals are reported in workflow API
+    # Value retrieval methods must return correct values and enforce type
+    def test_parameter_get_values(self):
+        s = self.wfmodule.get_param_string('StringParam')
+        self.assertEqual(s, 'fooval')
+
+        n = self.wfmodule.get_param_number('NumberParam')
+        self.assertEqual(n, 10.11)
+
+        t = self.wfmodule.get_param_text('TextParam')
+        self.assertEqual(t, 'barval')
+
+        with self.assertRaises(ValueError):
+            self.wfmodule.get_param_string('NumberParam')
+        with self.assertRaises(ValueError):
+            self.wfmodule.get_param_string('TextParam')
+        with self.assertRaises(ValueError):
+            self.wfmodule.get_param_number('StringParam')
+        with self.assertRaises(ValueError):
+            self.wfmodule.get_param_text('StringParam')
+
+    # Parameter API must return correct values
     def test_parameterval_detail_get(self):
         request = self.factory.get('/api/workflows/%d/' % self.workflowID)
         response = workflow_detail(request, pk = self.workflowID)
@@ -282,7 +302,7 @@ class ParameterValTests(TestCase):
         num_val = [p for p in param_vals if p['id']==self.numberID][0]
         self.assertEqual(num_val['parameter_spec']['name'], 'NumberParam')
         self.assertEqual(num_val['parameter_spec']['type'], 'Number')
-        self.assertEqual(num_val['number'], 20.0)
+        self.assertEqual(num_val['number'], 10.11)
 
         text_val = [p for p in param_vals if p['id']==self.textID][0]
         self.assertEqual(text_val['parameter_spec']['name'], 'TextParam')

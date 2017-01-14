@@ -1,15 +1,11 @@
 from django.shortcuts import render
-from django.http import HttpResponse
-
+from django.http import HttpResponse, JsonResponse
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server.models import Module
-from server.models import Workflow
-from server.models import WfModule
-from server.models import ParameterVal
+from server.models import Module, Workflow, WfModule, ParameterSpec, ParameterVal
 from server.serializers import ModuleSerializer
 from server.serializers import WorkflowSerializer
 from server.serializers import WfModuleSerializer
@@ -130,8 +126,8 @@ def wfmodule_render(request, pk, format=None):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         table = execute_wfmodule(wfmodule)
-        json = table.to_json()
-        return Response(json)
+        d = table.to_dict(orient='list')   # { column -> [values] } format, no indices
+        return JsonResponse(d)
 
 
 # ---- Module ----
@@ -179,12 +175,12 @@ def parameterval_detail(request, pk, format=None):
 
     elif request.method == 'PATCH':
         data = request.data
-        if 'string' in data.keys():
-            param.string = data['string']
-        elif 'text' in data.keys():
-            param.text = data['text']
-        elif 'number' in data.keys():
-            param.number = data['number']
+        if ParameterSpec.STRING in data.keys():
+            param.string = data[ParameterSpec.STRING]
+        elif ParameterSpec.TEXT in data.keys():
+            param.text = data[ParameterSpec.TEXT]
+        elif ParameterSpec.NUMBER in data.keys():
+            param.number = data[ParameterSpec.NUMBER]
         param.save()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

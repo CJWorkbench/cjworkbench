@@ -50,12 +50,27 @@ class WfModule(models.Model):
             pv.save()
 
     # Retrieve current parameter values
-    def get_param_string(self, name):
-        pspec = ParameterSpec.objects.get(module=self.module, name="URL")
-        if pspec.type != ParameterSpec.STRING:
-            raise ValueError("Request for STRING parameter " + name + " but actual type is " + pspec.type)
+    def get_param_typecheck(self, name, param_type):
+        pspec = ParameterSpec.objects.get(module=self.module, name=name)
+        if pspec.type != param_type:
+            raise ValueError('Request for ' + param_type + ' parameter ' + name + ' but actual type is ' + pspec.type)
         pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
-        return pval.string
+        if param_type == ParameterSpec.STRING:
+            return pval.string
+        elif param_type == ParameterSpec.NUMBER:
+            return pval.number
+        else:
+            return pval.text
+
+    def get_param_string(self, name):
+        return self.get_param_typecheck(name, ParameterSpec.STRING)
+
+    def get_param_number(self, name):
+        return self.get_param_typecheck(name, ParameterSpec.NUMBER)
+
+    def get_param_text(self, name):
+        return self.get_param_typecheck(name, ParameterSpec.TEXT)
+
 
     # Modules ingest and emit a table (though may do only one, if source or sink)
     def execute(self, table):
@@ -66,12 +81,12 @@ class WfModule(models.Model):
 # Defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
     # constants
-    STRING = 'string'
-    NUMERIC = 'number'
-    TEXT = 'text'               # long strings, e.g. programs
+    STRING = 'String'
+    NUMBER = 'Number'
+    TEXT = 'Text'               # long strings, e.g. programs
     TYPE_CHOICES = (
         (STRING, 'String'),
-        (NUMERIC, 'Number'),
+        (NUMBER, 'Number'),
         (TEXT, 'Text')          #
     )
 
@@ -79,7 +94,7 @@ class ParameterSpec(models.Model):
     type = models.CharField(
         max_length=8,
         choices=TYPE_CHOICES,
-        default=NUMERIC,
+        default=NUMBER,
     )
 
     name = models.CharField('name', max_length=32)

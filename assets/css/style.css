@@ -10,16 +10,15 @@ body {
   background-color: #eee;
   margin: 10px;
   padding: 10px;
-  width: 20%
+  width: 30%
 }
 
 .toolbar {
   border: 1px solid black;
   background-color: white;
   margin: 0px;
-  padding: 10px;
   width: 100%;
-  height: 30pt;
+  height: 50px;
 }
 
 .toolbutton {
@@ -27,9 +26,9 @@ body {
   border-radius: 2pt;
   background-color: #eee;
   margin: 10px;
-  width: 20pt;
-  height: 20pt;
-  font-size: 15pt;
+  width: 20px;
+  height: 20px;
+  font-size: 15px;
 }
 
 .toolbutton {
@@ -37,9 +36,9 @@ body {
   border-radius: 2pt;
   background-color: #eee;
   margin: 10px;
-  width: 20pt;
-  height: 20pt;
-  font-size: 15pt;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
 }
 
 .toolbutton:active {
@@ -48,20 +47,20 @@ body {
 
 /* spacer to provide margin for button */
 .toolMenuOuter {
-  margin: 5pt;
-  width: 30pt;
-  height: 30pt;
+  margin: 5px;
+  width: 30px;
+  height: 30px;
   display: inline-block;
 }
 .toolMenuButton{
   border: 1px solid black;
-  border-radius: 2pt;
+  border-radius: 2px;
   background-color: #eee;
-  margin-top: 2pt;
-  margin-left: 2pt;
-  width: 20pt;
-  height: 20pt;
-  font-size: 15pt;
+  margin-top: 2px;
+  margin-left: 2px;
+  width: 30px;
+  height: 30px;
+  font-size: 20px;
 }
 
 /* styles the ul */
@@ -70,15 +69,16 @@ body {
   position: absolute;
   background-color: #fff;
   margin: 0;
-  padding: 2pt;
-  font-size: 15pt;
+  padding: 5px;
+  font-size: 20px;
 }
 
 .toolMenuItem {
   background-color: #fff;
-  height: 10pt;
-  font-size: 15pt;
-  padding: 1pt;
+  height: 25px;
+  font-size: 20px;
+  margin: 5px;
+  padding: 0px;
   list-style-type: none;
 }
 

@@ -24,9 +24,11 @@ def execute_wfmodule(wfmodule):
     workflow = wfmodule.workflow
     for wfm in workflow.wf_modules.all():
         table = wfm.execute(table)
-
         if wfm == wfmodule:
             break
+
+    if table is None:
+        table = pd.DataFrame()
 
     return table
 

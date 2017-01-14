@@ -62,13 +62,13 @@ def load_parameter_spec(d, module):
     name = d['name']
 
     if d['type'] == 'string':
-        p = ParameterSpec(type=d['type'], name=name, module=module, def_string=d['default'], def_number=0, def_text='')
+        p = ParameterSpec(type=ParameterSpec.STRING, name=name, module=module, def_string=d['default'], def_number=0, def_text='')
 
     elif d['type'] == 'number':
-        p = ParameterSpec(type=d['type'], name=name, module=module, def_string='', def_number=d['default'], def_text='')
+        p = ParameterSpec(type=ParameterSpec.NUMBER, name=name, module=module, def_string='', def_number=d['default'], def_text='')
 
     elif d['type'] == 'text':
-        p = ParameterSpec(type=d['type'], name=name, module=module, def_string='', def_number=0, def_text=d['default'])
+        p = ParameterSpec(type=ParameterSpec.TEXT   , name=name, module=module, def_string='', def_number=0, def_text=d['default'])
 
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])

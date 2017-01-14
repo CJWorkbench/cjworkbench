@@ -8,9 +8,9 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "babelify": "^7.3.0",
+    "fixed-data-table": "^0.6.3",
     "pui-react-collapse": "^7.3.1",
     "pui-react-panels": "^7.3.1",
-    "rc-menu": "^5.0.7",
     "react": "^15.3.2",
     "react-dom": "^15.3.2",
     "react-dropdown": "^1.2.0",
@@ -23,6 +23,7 @@
     "css-loader": "^0.26.1",
     "react": "^15.4.2",
     "style-loader": "^0.13.1",
+    "svg-react-loader": "^0.3.7",
     "webpack": "^1.14.0",
     "webpack-bundle-tracker": "^0.2.0"
   },

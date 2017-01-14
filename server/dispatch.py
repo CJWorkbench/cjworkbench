@@ -4,22 +4,25 @@ import pandas as pd
 # ---- Module implementations ---
 
 # input table ignored
-def mimpl_load_csv(wf_module, table):
-    print("LoadCSV executing")
-    url = wf_module.get_param_string("URL")
+def mimpl_load_csv(wfmodule, table):
+    url = wfmodule.get_param_string("URL")
     table = pd.Series(['url', url])
     return table
 
 def mimpl_formula(module, table):
-    print("Formula executing")
     return table
 
 def mimpl_raw_code(module, table):
-    print("RawCode executing")
     return table
 
 def mimpl_chart(module, table):
-    print("SimpleChart executing")
+    return table
+
+def mimpl_test_data_N(wfmodule, table):
+    table = pd.DataFrame(columns=['N', 'N squared'])
+    rows = wfmodule.get_param_number('Rows')
+    for i in range(int(rows)):
+        table.loc[i] = [i+1, (i+1)*(i+1)]
     return table
 
 # ---- Test Support ----
@@ -46,6 +49,7 @@ module_dispatch = {
     'formula':      mimpl_formula,
     'rawcode':      mimpl_raw_code,
     'simplechart':  mimpl_chart,
+    'testdataN':    mimpl_test_data_N,
 
     # For testing
     'NOP':          mimpl_NOP,

@@ -1,5 +1,8 @@
 To compile assets:
-    python manage.py collectstatic
+    ./node_modules/.bin/webpack --config webpack.config.js
+    ./node_modules/.bin/webpack --config webpack.config.js --watch
+
+
 
 To migrate:
     python manage.py makemigrations
@@ -7,9 +10,6 @@ To migrate:
 
 Dependencies: (captured in package.json? should I be using virtualenv?)
     DjangoRestPipeline, browserify, babel
-    npm i react-sortable --save
-    npm install --save rc-menu
-    npm install --save-dev babel-preset-stage-0
     pip install django-webpack-loader
 
 
