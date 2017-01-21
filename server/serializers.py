@@ -30,4 +30,4 @@ class WorkflowSerializer(serializers.ModelSerializer):
     wf_modules = WfModuleSerializer(many=True, read_only=True)
     class Meta:
         model = Workflow
-        fields = ('id', 'name', 'creation_date', 'wf_modules')
+        fields = ('id', 'name', 'revision', 'wf_modules')

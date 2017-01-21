@@ -15,7 +15,10 @@
     "react-dom": "^15.3.2",
     "react-dropdown": "^1.2.0",
     "react-menu": "^0.0.10",
-    "react-sortable": "^1.2.0"
+    "react-redux": "^5.0.2",
+    "react-sortable": "^1.2.0",
+    "redux": "^3.6.0",
+    "redux-promise": "^0.5.3"
   },
   "devDependencies": {
     "babel": "^6.5.2",

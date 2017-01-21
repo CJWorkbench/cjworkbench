@@ -5,6 +5,7 @@ from rest_framework import status
 from .models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
 from .dispatch import test_data_table
 import pandas as pd
+import json
 
 class WorkflowTests(TestCase):
     def setUp(self):
@@ -187,20 +188,22 @@ class WfModuleTests(TestCase):
         request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
         response = wfmodule_render(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, test_data_table.to_json())
+        test_data_json = json.dumps(test_data_table.to_dict(orient='list')).encode('UTF=8')
+        self.assertEqual(response.content, test_data_json)
 
         # second module: NOP
         request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule2.id)
         response = wfmodule_render(request, pk=self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, test_data_table.to_json())
+        self.assertEqual(response.content, test_data_json)
 
         # Third module: doubles M column
         request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule3.id)
         response = wfmodule_render(request, pk=self.wfmodule3.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         double_test_data = pd.DataFrame(test_data_table['Class'], test_data_table['M']*2, test_data_table['F'])
-        self.assertEqual(response.data, double_test_data.to_json())
+        double_test_data = json.dumps(double_test_data.to_dict(orient='list')).encode('UTF=8')
+        self.assertEqual(response.content, double_test_data)
 
 
 class ModuleTests(TestCase):
@@ -231,18 +234,18 @@ class ParameterValTests(TestCase):
         module.save()
         self.moduleID = module.id
 
-        stringSpec = ParameterSpec(name="StringParam", module=module, type='String', def_string='foo', def_number=0, def_text='')
+        stringSpec = ParameterSpec(name="StringParam", module=module, type= ParameterSpec.STRING, def_string='foo', def_number=0, def_text='')
         stringSpec.save()
         stringVal = ParameterVal()
-        numberSpec = ParameterSpec(name="NumberParam", module=module, type='Number', def_string='', def_number=10.11, def_text='')
+        numberSpec = ParameterSpec(name="NumberParam", module=module, type=ParameterSpec.NUMBER, def_string='', def_number=10.11, def_text='')
         numberSpec.save()
-        textSpec = ParameterSpec(name="TextParam", module=module, type='Text', def_string='', def_number=0, def_text='bar')
+        textSpec = ParameterSpec(name="TextParam", module=module, type=ParameterSpec.TEXT, def_string='', def_number=0, def_text='bar')
         textSpec.save()
 
-        workflow = Workflow.objects.create(name="Test Workflow")
-        self.workflowID = workflow.id
+        self.workflow = Workflow.objects.create(name="Test Workflow")
+        self.workflowID = self.workflow.id
 
-        self.wfmodule = WfModule.objects.create(module=module, workflow=workflow, order=0)
+        self.wfmodule = WfModule.objects.create(module=module, workflow=self.workflow, order=0)
         self.wfmoduleID = self.wfmodule.id
 
         # set non-default values for vals in order to reveal certain types of bugs
@@ -296,29 +299,36 @@ class ParameterValTests(TestCase):
         # parameters have correct types and values
         str_val = [p for p in param_vals if p['id']==self.stringID][0]
         self.assertEqual(str_val['parameter_spec']['name'], 'StringParam')
-        self.assertEqual(str_val['parameter_spec']['type'], 'String')
+        self.assertEqual(str_val['parameter_spec']['type'], ParameterSpec.STRING)
         self.assertEqual(str_val['string'], 'fooval')
 
         num_val = [p for p in param_vals if p['id']==self.numberID][0]
         self.assertEqual(num_val['parameter_spec']['name'], 'NumberParam')
-        self.assertEqual(num_val['parameter_spec']['type'], 'Number')
+        self.assertEqual(num_val['parameter_spec']['type'], ParameterSpec.NUMBER)
         self.assertEqual(num_val['number'], 10.11)
 
         text_val = [p for p in param_vals if p['id']==self.textID][0]
         self.assertEqual(text_val['parameter_spec']['name'], 'TextParam')
-        self.assertEqual(text_val['parameter_spec']['type'], 'Text')
+        self.assertEqual(text_val['parameter_spec']['type'], ParameterSpec.TEXT)
         self.assertEqual(text_val['text'], 'barval')
 
 
     # test parameter change API
     def test_parameterval_detail_patch(self):
+        current_rev = self.workflow.revision
+
         request = self.factory.patch('/api/parameters/%d/' % self.numberID,
                                    {'number': '50.456' })
         response = parameterval_detail(request, pk=self.numberID)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
+        # see that we get the new value back
         request = self.factory.get('/api/parameters/%d/' % self.numberID)
         response = parameterval_detail(request, pk=self.numberID)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['number'], 50.456)
+
+        # changing a parameter should bump the version
+        self.workflow.refresh_from_db()
+        self.assertEqual(self.workflow.revision, current_rev+1)
 

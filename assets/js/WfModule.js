@@ -26,20 +26,12 @@ class WfParameter extends React.Component {
     var _body = {};
     _body[this.type] = e.target.value;
 
-    fetch('/api/parameters/' + this.props.p.id, {
-      method: 'patch',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(_body)
-    })
-    .catch( (error) => { console.log('Parameter change failed', error); });
+    this.props.onParamChanged(this.props.p.id, _body);
   }
 
   render() {
     switch (this.type) {
-      case 'String':
+      case 'string':
         return (
           <div>
             <div>{this.name}:</div>
@@ -47,7 +39,7 @@ class WfParameter extends React.Component {
           </div>
         );
 
-      case 'Number':
+      case 'number':
         return (
           <div>
             <div>{this.name}:</div>
@@ -55,7 +47,7 @@ class WfParameter extends React.Component {
           </div>
         );
 
-      case 'Text':
+      case 'text':
         return (
           <div>
             <div>{this.name}:</div>
@@ -72,28 +64,36 @@ export default class WfModule extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { tableData: {} };
+    this.state = { tableData: {}, loaded: false };
   }
 
   // Load table data from render API
-  componentDidMount() {
+  loadTable() {
     var wfmodule = this.props['data-wfmodule'];
     var url = '/api/wfmodules/' + wfmodule.id + '/render';
     var self=this;
     fetch(url)
       .then(response => response.json())
       .then(json => {
-        self.setState( { tableData : json } );
+        self.setState( { tableData : json, loaded : true } );
         }); // triggers re-render
   }
+
+  // If the revision changes from under us reload the table, which will trigger a setState and re-render
+  componentWillReceiveProps(nextProps) {
+    if (this.props['data-revision'] != nextProps['data-revision'])
+      this.loadTable();
+  }
+
 
   render() {
     var module = this.props['data-wfmodule']['module'];
     var params= this.props['data-wfmodule']['parameter_vals'];
+    var onParamChanged = this.props['data-onParamChanged'];
     var tableData = this.state.tableData;
 
     // Each parameter gets a WfParameter
-    var paramdivs = params.map((ps, i) => { return <WfParameter p={ps} key={i} /> } );
+    var paramdivs = params.map((ps, i) => { return <WfParameter p={ps} key={i} onParamChanged={onParamChanged} /> } );
 
     // Generate the table if there's any data
     var colNames = Object.keys(tableData);

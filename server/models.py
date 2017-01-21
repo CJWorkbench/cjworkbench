@@ -6,6 +6,8 @@ from server.dispatch import module_dispatch
 class Workflow(models.Model):
     name = models.CharField('name',max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
+    revision = models.IntegerField(default=1)
+    revision_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.name
@@ -81,9 +83,9 @@ class WfModule(models.Model):
 # Defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
     # constants
-    STRING = 'String'
-    NUMBER = 'Number'
-    TEXT = 'Text'               # long strings, e.g. programs
+    STRING = 'string'
+    NUMBER = 'number'
+    TEXT = 'text'               # long strings, e.g. programs
     TYPE_CHOICES = (
         (STRING, 'String'),
         (NUMBER, 'Number'),

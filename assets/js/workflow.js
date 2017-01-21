@@ -2,39 +2,24 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Provider, connect } from 'react-redux'
+import promiseMiddleware from 'redux-promise';
+import { createStore, applyMiddleware } from 'redux'
 import { sortable } from 'react-sortable'
 import ModuleMenu from './ModuleMenu'
 import ToolButton from './ToolButton'
 import WfModule from './WfModule'
+import { workflowReducer, paramChangedAction, addModuleAction, reloadWorkflowAction } from './workflow-reducer'
+import { getPageID } from './utils'
 
 require('../css/style.css');
 
-// return ID in URL of form "/workflows/id/" or "/workflows/id"
-var getPageID = function () {
-  var url = window.location.pathname;
+// ---- Our Store ----
+// Master state for the workflow
 
-  // trim trailing slash if needed
-  if (url.lastIndexOf('/' == url.length-1))
-    url = url.substring(0, url.length-1);
+let store = createStore(workflowReducer, applyMiddleware(promiseMiddleware));
 
-  // take everything after last slash as the id
-  var id = url.substring(url.lastIndexOf('/')+1);
-  return id
-};
 
-// Add a module to the current workflow
-var addModule = function(newModuleID) {
-
-  fetch('/api/workflows/' + getPageID() + "/addmodule", {
-    method: 'put',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({insertBefore: 0, moduleID: newModuleID})
-  }).then( (response) => { refreshWorkflow() } )
-  .catch( (error) => { console.log('Add Module request failed', error); });
-};
 
 // Run the current workflow
 var executeWorkflow = function() {
@@ -58,7 +43,7 @@ class ToolBar extends React.Component {
     return (
       <div>
         <ToolButton text="▶" click={executeWorkflow} />
-         <ModuleMenu addModule={addModule}/>
+         <ModuleMenu addModule={this.props.onAddModuleClick}/>
       </div>
     ); 
   } 
@@ -106,7 +91,7 @@ var SortableList = React.createClass({
           draggingIndex={this.state.draggingIndex}
           sortId={i}
           outline="list"
-          childProps={ {'data-wfmodule': item } } />
+          childProps={ {'data-wfmodule': item, 'data-onParamChanged': this.props.onParamChanged, 'data-revision': this.props.data.revision } } />
       );
     }, this);
 
@@ -118,39 +103,64 @@ var SortableList = React.createClass({
 
 // ---------- Main ----------
 
-// Stores workflow as fetched from server
-var currentWorkflow = {}
 
 class WorkflowMain extends React.Component {
   render() {
+    // Wait until we have a workflow to render
+    if (this.props.workflow === undefined) {
+      return null;
+    }
+
+    // We are a toolbar plus a sortable list of modules
     return (
       <div>
         <div className="toolbar">
-          <ToolBar/>
+          <ToolBar onAddModuleClick={this.props.onAddModuleClick}/>
         </div>
-        <SortableList data={currentWorkflow} />
+        <SortableList data={this.props.workflow} onParamChanged={this.props.onParamChanged}/>
       </div>
     );
   }
 }
 
-var renderWorkflow = function ()
-{
-  ReactDOM.render(
-      <WorkflowMain/>,
-      document.getElementById('root')
-  );
+
+// ---- Workflow container ----
+
+
+// Handles addModule (and any other actions that change top level workflow state)
+const mapStateToProps = (state) => {
+  return {
+    workflow: state.workflow,
+  }
 }
 
-// Reload workflow from server, set props
-var refreshWorkflow = function() {
-  fetch('/api/workflows/' + getPageID())
-  .then(response => response.json())
-  .then(json => {
-    currentWorkflow = json;
-    renderWorkflow();
-  })
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onAddModuleClick: (newModuleID) => {
+      dispatch(addModuleAction(newModuleID))
+    },
+    onParamChanged: (paramID, newVal) => {
+      dispatch(paramChangedAction(paramID, newVal))
+    }
+  }
 }
+
+const WorkflowContainer = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(WorkflowMain)
+
+
+
+// ---- Main ----
+
+// Render with Provider to root so all objects in the React DOM can access state
+ReactDOM.render(
+    <Provider store={store}>
+      <WorkflowContainer/>
+    </Provider>,
+    document.getElementById('root')
+);
 
 // Load the page!
-refreshWorkflow();
+store.dispatch(reloadWorkflowAction())
