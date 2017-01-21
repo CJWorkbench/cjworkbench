@@ -5,14 +5,8 @@ import { getPageID } from './utils'
 export const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
 export const CHANGE_PARAM = 'CHANGE_PARAM';
 
-/*
-export function changeParamAction(wfModule, paramID, newVal) {
-  return { type: CHANGE_PARAM, wfModule: wfModule, newVal }
-}
-*/
 
-// Load the whole workflow. Returns a promise which returns an action factory (function that returns an action)
-// redux-promise
+// Load the whole workflow. Returns a promise which returns an action to dispatch when it completes
 export function reloadWorkflowAction() {
   return fetch('/api/workflows/' + getPageID())
     .then(response => response.json())
@@ -50,8 +44,7 @@ export function workflowReducer(state = initialState, action) {
   switch (action.type) {
 
     case RELOAD_WORKFLOW:
-      console.log("Reducing RELOAD_WORKFLOW action")
-      console.log(action)
+      console.log("RELOAD_WORKFLOW")
       return Object.assign({}, state, {
         workflow: action.workflow,
       })

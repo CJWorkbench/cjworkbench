@@ -12,7 +12,7 @@ from server.serializers import WfModuleSerializer
 from server.serializers import ParameterValSerializer
 from server.initmodules import init_modules
 from server.execute import execute_workflow, execute_wfmodule
-import datetime
+from django.utils import timezone
 
 # ---- Home Page ----
 def index(request):
@@ -189,7 +189,7 @@ def parameterval_detail(request, pk, format=None):
         # increment workflow version number
         workflow = param.wf_module.workflow
         workflow.revision += 1
-        workflow.revision_date = datetime.datetime.now()
+        workflow.revision_date = timezone.now()
         workflow.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)

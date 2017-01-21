@@ -17,16 +17,28 @@ class WfParameter extends React.Component {
     this.type = this.props.p.parameter_spec.type;
     this.name = this.props.p.parameter_spec.name;
 
+    this.keyPress = this.keyPress.bind(this);
     this.blur = this.blur.bind(this);
   }
 
+  paramChanged(e) {
+    var newVal = {};
+    newVal[this.type] = e.target.value;
+    console.log(newVal);
+    this.props.onParamChanged(this.props.p.id, newVal);
+  }
 
-  // Save value to server when we lose focus (like user changing fields or clicking on render)
+  // Save value (and re-render) when user presses enter or we lose focus
+  // Applies only to non-text fields
+  keyPress(e) {
+    if (this.type != 'text' && e.key == 'Enter') {
+        this.paramChanged(e);
+        e.preventDefault();       // eat the Enter so it doesn't get in out input field
+    }
+  }
+
   blur(e) {
-    var _body = {};
-    _body[this.type] = e.target.value;
-
-    this.props.onParamChanged(this.props.p.id, _body);
+    this.paramChanged(e);
   }
 
   render() {
@@ -35,7 +47,7 @@ class WfParameter extends React.Component {
         return (
           <div>
             <div>{this.name}:</div>
-            <textarea className='wfmoduleStringInput' rows='1' defaultValue={this.props.p.string} onBlur={this.blur}/>
+            <textarea className='wfmoduleStringInput' rows='1' defaultValue={this.props.p.string} onBlur={this.blur} onKeyPress={this.keyPress} />
           </div>
         );
 
@@ -43,7 +55,7 @@ class WfParameter extends React.Component {
         return (
           <div>
             <div>{this.name}:</div>
-            <textarea className='wfmoduleNumberInput' rows='1' defaultValue={this.props.p.number} onBlur={this.blur}/>
+            <textarea className='wfmoduleNumberInput' rows='1' defaultValue={this.props.p.number} onBlur={this.blur} onKeyPress={this.keyPress} />
           </div>
         );
 
@@ -51,9 +63,12 @@ class WfParameter extends React.Component {
         return (
           <div>
             <div>{this.name}:</div>
-            <textarea className='wfmoduleTextInput' rows='4' defaultValue={this.props.p.text} onBlur={this.blur}/>
+            <textarea className='wfmoduleTextInput' rows='4' defaultValue={this.props.p.text} onBlur={this.blur} onKeyPress={this.keyPress} />
           </div>
         );
+
+      default:
+        return null;  // unrecognized parameter type
     }
   }
 }
@@ -64,7 +79,7 @@ export default class WfModule extends React.Component {
   constructor(props) {
     super(props);
 
-    this.state = { tableData: {}, loaded: false };
+    this.state = { tableData: {} };
   }
 
   // Load table data from render API
@@ -75,7 +90,7 @@ export default class WfModule extends React.Component {
     fetch(url)
       .then(response => response.json())
       .then(json => {
-        self.setState( { tableData : json, loaded : true } );
+        self.setState( { tableData : json } );
         }); // triggers re-render
   }
 
