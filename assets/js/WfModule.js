@@ -24,7 +24,6 @@ class WfParameter extends React.Component {
   paramChanged(e) {
     var newVal = {};
     newVal[this.type] = e.target.value;
-    console.log(newVal);
     this.props.onParamChanged(this.props.p.id, newVal);
   }
 
