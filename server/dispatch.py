@@ -28,7 +28,6 @@ def mimpl_test_data_N(wfmodule, table):
 # ---- Test Support ----
 # NOP -- do nothing
 def mimpl_NOP(module, table):
-    print("NOP executing")
     return table
 
 # Generate test data

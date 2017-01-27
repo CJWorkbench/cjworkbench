@@ -20,10 +20,11 @@ def ws_add(message):
     try:
         workflow = Workflow.objects.get(pk=id)
     except Workflow.DoesNotExist:
-        message.reply_channel.send({"accept": False})       # can't find that workflow, sorry
+        message.reply_channel.send({'accept': False})       # can't find that workflow, don't connect
+        return
 
     Group(ws_id_to_group(id)).add(message.reply_channel)
-    message.reply_channel.send({"accept": True})
+    message.reply_channel.send({'accept': True})
 
 
 # Remove from workflow->channel dict when client disconnects
