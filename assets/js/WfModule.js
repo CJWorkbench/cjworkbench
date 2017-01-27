@@ -72,42 +72,20 @@ class WfParameter extends React.Component {
   }
 }
 
-// ---- WfModule ----
-
-export default class WfModule extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = { tableData: {} };
-  }
-
-  // Load table data from render API
-  loadTable() {
-    var wfmodule = this.props['data-wfmodule'];
-    var url = '/api/wfmodules/' + wfmodule.id + '/render';
-    var self=this;
-    fetch(url)
-      .then(response => response.json())
-      .then(json => {
-        self.setState( { tableData : json } );
-        }); // triggers re-render
-  }
-
-  // If the revision changes from under us reload the table, which will trigger a setState and re-render
-  componentWillReceiveProps(nextProps) {
-    if (this.props['data-revision'] != nextProps['data-revision'])
-      this.loadTable();
-  }
-
-
+// ---- Status Light ----
+// Ready, Busy, or Error
+class StatusLight extends React.Component {
   render() {
-    var module = this.props['data-wfmodule']['module'];
-    var params= this.props['data-wfmodule']['parameter_vals'];
-    var onParamChanged = this.props['data-onParamChanged'];
-    var tableData = this.state.tableData;
+    return <div className={this.props.status + '-light'}></div>
+  }
+}
 
-    // Each parameter gets a WfParameter
-    var paramdivs = params.map((ps, i) => { return <WfParameter p={ps} key={i} onParamChanged={onParamChanged} /> } );
+// ---- TableView ----
+// Displays the module's rendered output, if any
+
+class TableView extends React.Component {
+  render() {
+    var tableData = this.props.tableData;
 
     // Generate the table if there's any data
     var colNames = Object.keys(tableData);
@@ -139,18 +117,69 @@ export default class WfModule extends React.Component {
             height={(rowCount+1)*50}>
             {cols}
           </Table>
-        </Collapse>
+        </Collapse>;
 
     }  else {
-      var table = <p>(no data)</p>
+      var table = <p>(no data)</p>;
     }
+
+    return table;
+  }
+}
+
+
+
+// ---- WfModule ----
+
+export default class WfModule extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { tableData: {} };
+  }
+
+  // Load table data from render API
+  loadTable() {
+    var wfmodule = this.props['data-wfmodule'];
+    var url = '/api/wfmodules/' + wfmodule.id + '/render';
+    var self=this;
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        self.setState( { tableData : json } );
+        }); // triggers re-render
+  }
+
+  // Load table when first rendered
+  componentDidMount() {
+    this.loadTable()
+  }
+
+  // If the revision changes from under us reload the table, which will trigger a setState and re-render
+  componentWillReceiveProps(nextProps) {
+    if (this.props['data-revision'] != nextProps['data-revision'])
+      this.loadTable();
+  }
+
+  render() {
+    var module = this.props['data-wfmodule']['module'];
+    var params= this.props['data-wfmodule']['parameter_vals'];
+    var status = this.props['data-wfmodule']['status']
+    var tableData = this.state.tableData;
+    var onParamChanged = this.props['data-onParamChanged'];
+
+    // Each parameter gets a WfParameter
+    var paramdivs = params.map((ps, i) => { return <WfParameter p={ps} key={i} onParamChanged={onParamChanged} /> } );
 
     // Putting it all together: name, parameters, output
     return (
       <div {...this.props} className="module-li">
-        <h1>{module.name}</h1>
+        <div>
+          <h1 className='moduleName'>{module.name}</h1>
+          <StatusLight status={status}/>
+        </div>
+        <div style={{'clear':'both'}}></div>
         {paramdivs}
-        {table}
+        <TableView tableData={tableData}/>
       </div>
     ); 
   } 

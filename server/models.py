@@ -35,6 +35,22 @@ class WfModule(models.Model):
                                null=True)  # goes null if referenced Module deletedp
     order = models.IntegerField('order')
 
+    # status light
+    READY = "ready"
+    BUSY = "busy"
+    ERROR = "error"
+    TYPE_CHOICES = (
+        (READY, 'Ready'),
+        (BUSY, 'Busy'),
+        (ERROR, 'Error')
+    )
+    status = models.CharField(
+        max_length=8,
+        choices=TYPE_CHOICES,
+        default=READY,
+    )
+    error_msg = models.CharField('error_msg', max_length=200, blank=True)
+
     class Meta:
         ordering = ['order']
 

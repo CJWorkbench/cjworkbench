@@ -5,13 +5,7 @@ body {
   margin: 0px;
 }
 
-.module-li {
-  border: 1px solid black;
-  background-color: #eee;
-  margin: 10px;
-  padding: 10px;
-  width: 30%
-}
+/* ---- Toolbar and buttons ---- */
 
 .toolbar {
   border: 1px solid black;
@@ -44,6 +38,8 @@ body {
 .toolbutton:active {
   background-color: #aaa;
 }
+
+/* ---- Toolbar menu ----- */
 
 /* spacer to provide margin for button */
 .toolMenuOuter {
@@ -86,6 +82,24 @@ body {
   background-color: #aaa;
 }
 
+/* ---- WfModule ---- */
+
+.module-li {
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #eee;
+  margin: 10px;
+  padding: 10px;
+  width: 30%
+}
+
+.moduleName {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  float: left;
+  font-size: 20px;
+}
+
 .wfmoduleStringInput{
   width: 90%;
   resize: none;
@@ -100,3 +114,30 @@ body {
   width: 90%;
   resize: vertical;
 }
+
+/* ---- Status lights ---- */
+.ready-light {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  float: right;
+  background-color: lightgreen;
+  background-image: -webkit-radial-gradient(5px 5px, circle cover, lightgreen, green);
+}
+
+.busy-light {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  float: right;
+  background-color: yellow;
+}
+
+.error-light {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  float: right;
+  background-color: red;
+}
+
