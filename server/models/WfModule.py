@@ -1,32 +1,10 @@
-# Create your models here.
-from django.db import models
-from server.dispatch import module_dispatch
-
-# A Workflow is the user's "document," a series of Modules
-class Workflow(models.Model):
-    name = models.CharField('name',max_length=200)
-    creation_date = models.DateTimeField(auto_now_add=True)
-    revision = models.IntegerField(default=1)
-    revision_date = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-
-
-class Module(models.Model):
-    # UI name, can change
-    name = models.CharField('name', max_length=200)
-
-    # internal name, cannot change if you want backwards compatibility with exported workflows
-    internal_name = models.CharField('internal_name', max_length=200)
-
-    # how do we run this module?
-    dispatch = models.CharField('dispatch', max_length=200)
-
-    def __str__(self):
-        return self.name
-
 # WfModule is a Module that has been applied in a Workflow
+# We also have ParameterSpec and ParameterVal in this file, to avoid circular reference problems
+
+from django.db import models
+from server.models.Module import *
+from server.models.Workflow import *
+
 class WfModule(models.Model):
     workflow = models.ForeignKey(Workflow, related_name='wf_modules',
                                  on_delete=models.CASCADE)  # delete WfModule if Workflow deleted
@@ -95,8 +73,7 @@ class WfModule(models.Model):
         return module_dispatch[self.module.dispatch](self, table)
 
 
-
-# Defines a parameter UI and defaults for a particular Module
+# ParameterSpec defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
     # constants
     STRING = 'string'
@@ -128,7 +105,7 @@ class ParameterSpec(models.Model):
         return self.module.name + ' - ' + self.name
 
 
-# A parameter value, which might be string or float atm
+# A parameter value, which might be string or float
 class ParameterVal(models.Model):
     number = models.FloatField(ParameterSpec.NUMBER, null=True, blank=True)
     string = models.CharField(ParameterSpec.STRING, max_length=50, null=True, blank=True)

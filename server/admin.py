@@ -1,10 +1,5 @@
 from django.contrib import admin
-
-# Register your models here.
-
-from django.contrib import admin
-
-from .models import ParameterVal,ParameterSpec,Module,Workflow,WfModule
+from .models import *
 
 admin.site.register(ParameterVal)
 admin.site.register(ParameterSpec)
