@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'server.apps.ServerConfig',
     'webpack_loader',
     'rest_framework',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -78,6 +79,12 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'cjworkbench.wsgi.application'
 
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'asgiref.inmemory.ChannelLayer',
+        'ROUTING': 'cjworkbench.routing.channel_routing',
+    },
+}
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
