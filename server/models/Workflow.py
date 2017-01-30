@@ -1,5 +1,4 @@
 from django.db import models
-from server.dispatch import module_dispatch
 
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):

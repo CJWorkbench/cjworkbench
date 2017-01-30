@@ -4,6 +4,7 @@
 from django.db import models
 from server.models.Module import *
 from server.models.Workflow import *
+from server.dispatch import module_dispatch_render
 
 class WfModule(models.Model):
     workflow = models.ForeignKey(Workflow, related_name='wf_modules',
@@ -66,7 +67,7 @@ class WfModule(models.Model):
 
     # Modules ingest and emit a table (though may do only one, if source or sink)
     def execute(self, table):
-        return module_dispatch[self.module.dispatch](self, table)
+        return module_dispatch_render(self, table)
 
 
 # ParameterSpec defines a parameter UI and defaults for a particular Module

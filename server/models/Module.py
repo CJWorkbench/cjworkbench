@@ -1,7 +1,6 @@
 # A Module defines a data processing action, with a set of paramters
 # Module is the class, WfModule is the instance (applied in a Workflow)
 from django.db import models
-from server.dispatch import module_dispatch
 
 class Module(models.Model):
     # UI name, can change

@@ -19,6 +19,7 @@ class WfParameter extends React.Component {
 
     this.keyPress = this.keyPress.bind(this);
     this.blur = this.blur.bind(this);
+    this.click = this.click.bind(this);
   }
 
   paramChanged(e) {
@@ -38,6 +39,22 @@ class WfParameter extends React.Component {
 
   blur(e) {
     this.paramChanged(e);
+  }
+
+  // Send event to server for button click
+  click(e) {
+    if (this.type == 'button') {
+      var url = '/api/parameters/' + this.props.p.id + '/event';
+      var eventData = {'type': 'click'};
+      fetch(url, {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(eventData)
+      })  // no .then, events act through the websocket channel
+    }
   }
 
   render() {
@@ -69,7 +86,7 @@ class WfParameter extends React.Component {
       case 'button':
         return (
           <div>
-            <button className='wfmoduleButton'>{this.name}</button>
+            <button className='wfmoduleButton' onClick={this.click}>{this.name}</button>
           </div>
         );
 
