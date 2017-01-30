@@ -13,7 +13,7 @@ class WfModule(models.Model):
                                null=True)  # goes null if referenced Module deletedp
     order = models.IntegerField('order')
 
-    # status light
+    # status light and current error message
     READY = "ready"
     BUSY = "busy"
     ERROR = "error"
@@ -38,11 +38,8 @@ class WfModule(models.Model):
     # Hydrates ParameterVal objects from ParameterSpec objects
     def create_default_parameters(self):
         for pspec in ParameterSpec.objects.filter(module=self.module):
-            pv = ParameterVal.objects.create(wf_module=self, \
-                                             parameter_spec=pspec, \
-                                             number=pspec.def_number, \
-                                             string=pspec.def_string, \
-                                             text=pspec.def_text)
+            pv = ParameterVal.objects.create(wf_module=self, parameter_spec=pspec)
+            pv.init_from_spec()
             pv.save()
 
     # Retrieve current parameter values
@@ -67,7 +64,6 @@ class WfModule(models.Model):
     def get_param_text(self, name):
         return self.get_param_typecheck(name, ParameterSpec.TEXT)
 
-
     # Modules ingest and emit a table (though may do only one, if source or sink)
     def execute(self, table):
         return module_dispatch[self.module.dispatch](self, table)
@@ -79,10 +75,12 @@ class ParameterSpec(models.Model):
     STRING = 'string'
     NUMBER = 'number'
     TEXT = 'text'               # long strings, e.g. programs
+    BUTTON = 'button'
     TYPE_CHOICES = (
         (STRING, 'String'),
         (NUMBER, 'Number'),
-        (TEXT, 'Text')          #
+        (TEXT, 'Text'),
+        (BUTTON, 'Button')
     )
 
     # fields
@@ -92,14 +90,15 @@ class ParameterSpec(models.Model):
         default=NUMBER,
     )
 
-    name = models.CharField('name', max_length=32)
+    name = models.CharField('name', max_length=64)
+    id_name = models.CharField('name', max_length=32)
 
     module = models.ForeignKey(Module, related_name='parameter_specs',
                                on_delete=models.CASCADE)  # delete spec if Module deleted
 
-    def_number = models.FloatField(NUMBER, null=True, blank=True)
-    def_string = models.CharField(STRING, max_length=50, null=True, blank=True)
-    def_text = models.TextField(TEXT, null=True, blank=True)
+    def_number = models.FloatField(NUMBER, null=True, blank=True, default=0.0)
+    def_string = models.CharField(STRING, max_length=50, blank=True, default='')
+    def_text = models.TextField(TEXT, blank=True, default='')
 
     def __str__(self):
         return self.module.name + ' - ' + self.name
@@ -112,14 +111,23 @@ class ParameterVal(models.Model):
     text = models.TextField(ParameterSpec.TEXT, null=True, blank=True)
 
     wf_module = models.ForeignKey(WfModule, related_name='parameter_vals',
-                               on_delete=models.CASCADE, null=True)  # delete spec if Module deleted
+                               on_delete=models.CASCADE, null=True)  # delete value if Module deleted
     parameter_spec = models.ForeignKey(ParameterSpec, related_name='parameter_vals',
-                               on_delete=models.CASCADE, null=True)  # delete spec if Module deleted
+                               on_delete=models.CASCADE, null=True)  # delete value if Spec deleted
+
+    def init_from_spec(self):
+        self.number = self.parameter_spec.def_number
+        self.string = self.parameter_spec.def_string
+        self.text = self.parameter_spec.def_text
 
     def __str__(self):
         if self.parameter_spec.type == ParameterSpec.STRING:
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + self.string
         elif self.parameter_spec.type == ParameterSpec.NUMBER:
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + str(self.number)
-        else:
+        elif self.parameter_spec.type == ParameterSpec.TEXT:
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + self.text
+        elif self.parameter_spec.type == ParameterSpec.BUTTON:
+            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - button'
+        else:
+            raise ValueError("Invalid parameter type")

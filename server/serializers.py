@@ -4,7 +4,7 @@ from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Modul
 class ParameterSpecSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParameterSpec
-        fields = ('id', 'name', 'type', 'def_number', 'def_string', 'def_text')
+        fields = ('id', 'name', 'id_name', 'type', 'def_number', 'def_string', 'def_text')
 
 class ParameterValSerializer(serializers.ModelSerializer):
     parameter_spec = ParameterSpecSerializer(many=False, read_only=True)

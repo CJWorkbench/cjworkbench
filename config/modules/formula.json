@@ -1,9 +1,10 @@
 {
   "name": "Formula",
-  "internal_name": "formula",
+  "id_name": "formula",
   "parameters": [
     {
       "name": "Formula",
+      "id_name" : "formula",
       "type": "text",
       "default": ""
     }

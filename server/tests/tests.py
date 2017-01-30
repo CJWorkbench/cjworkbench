@@ -142,7 +142,7 @@ class ModuleTests(TestCase):
         self.add_new_module('Module 3')
 
     def add_new_module(self, name):
-        module = Module(name=name, internal_name=name+'_internal', dispatch=name+'_dispatch')
+        module = Module(name=name, id_name=name+'_internal', dispatch=name+'_dispatch')
         module.save()
 
     def test_module_list_get(self):

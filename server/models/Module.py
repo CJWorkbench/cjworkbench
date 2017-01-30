@@ -8,7 +8,7 @@ class Module(models.Model):
     name = models.CharField('name', max_length=200)
 
     # internal name, cannot change if you want backwards compatibility with exported workflows
-    internal_name = models.CharField('internal_name', max_length=200)
+    id_name = models.CharField('id_name', max_length=200)
 
     # how do we run this module?
     dispatch = models.CharField('dispatch', max_length=200)

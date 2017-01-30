@@ -115,6 +115,10 @@ body {
   resize: vertical;
 }
 
+.wfmoduleButton{
+  width: 20%;
+}
+
 /* ---- Status lights ---- */
 .ready-light {
   width: 15px;

@@ -1,11 +1,17 @@
 {
   "name": "Load CSV",
-  "internal_name": "loadcsv" ,
+  "id_name": "loadcsv" ,
   "parameters": [
     {
       "name": "URL",
+      "id_name" : "url",
       "type": "string",
       "default": ""
+    },
+    {
+      "name": "Fetch",
+      "id_name" : "fetch",
+      "type": "button"
     }
   ]
 }

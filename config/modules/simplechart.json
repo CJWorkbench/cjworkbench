@@ -1,9 +1,10 @@
 {
   "name": "Chart",
-  "internal_name": "simplechart",
+  "id_name": "simplechart",
   "parameters": [
     {
       "name": "Scaling",
+      "id_name": "scaling",
       "type": "number",
       "default": "1"
     }

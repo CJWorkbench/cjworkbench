@@ -9,7 +9,7 @@ from server.tests.utils import add_new_module, add_new_workflow
 
 class ChannelTests(ChannelTestCase):
     def setUp(self):
-        self.wf_id = add_new_workflow('Workflow 1')
+        self.wf_id = add_new_workflow('Workflow 1').id
 
     def test_connect(self):
         client = HttpClient()

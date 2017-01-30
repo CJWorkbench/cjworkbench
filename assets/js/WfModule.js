@@ -66,6 +66,13 @@ class WfParameter extends React.Component {
           </div>
         );
 
+      case 'button':
+        return (
+          <div>
+            <button className='wfmoduleButton'>{this.name}</button>
+          </div>
+        );
+
       default:
         return null;  // unrecognized parameter type
     }

@@ -1,9 +1,10 @@
 {
   "name": "Test Data",
-  "internal_name": "testdataN",
+  "id_name": "testdataN",
   "parameters": [
     {
       "name": "Rows",
+      "id_name" : "rows",
       "type": "number",
       "default": 3
     }

@@ -1,9 +1,10 @@
 {
   "name": "Python Process",
-  "internal_name": "rawcode",
+  "id_name": "rawcode",
   "parameters": [
     {
       "name": "Code",
+      "id_name": "code",
       "type": "text",
       "default": ""
     }
