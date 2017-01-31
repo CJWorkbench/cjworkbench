@@ -112,10 +112,10 @@ class TableView extends React.Component {
     var tableData = this.props.tableData;
 
     // Generate the table if there's any data
-    var colNames = Object.keys(tableData);
-    if (colNames.length > 0) {
+    if (tableData.length > 0) {
 
-      var rowCount = tableData[colNames[0]].length;  // +1 for header row
+      var colNames = Object.keys(tableData[0]);
+      var rowCount = tableData.length;
       var cols = colNames.map( colName => {
         return(
           <Column
@@ -123,7 +123,7 @@ class TableView extends React.Component {
             header={<Cell>{colName}</Cell>}
             cell={props => (
               <Cell {...props}>
-                {tableData[colName][props.rowIndex]}
+                {tableData[props.rowIndex][colName]}
               </Cell>
             )}
             width={100}
@@ -137,7 +137,7 @@ class TableView extends React.Component {
             rowsCount={rowCount}
             rowHeight={50}
             headerHeight={50}
-            width={200}
+            width={500}
             height={(rowCount+1)*50}>
             {cols}
           </Table>
@@ -158,7 +158,7 @@ class TableView extends React.Component {
 export default class WfModule extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { tableData: {} };
+    this.state = { tableData: [] } ;
   }
 
   // Load table data from render API

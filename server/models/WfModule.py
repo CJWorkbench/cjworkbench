@@ -7,6 +7,13 @@ from server.models.Workflow import *
 from server.dispatch import module_dispatch_render
 
 class WfModule(models.Model):
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.workflow.__str__() + ' - order: ' + str(self.order) + ' - ' + self.module.__str__()
+
+    # --- Fields ----
     workflow = models.ForeignKey(Workflow, related_name='wf_modules',
                                  on_delete=models.CASCADE)  # delete WfModule if Workflow deleted
     module = models.ForeignKey(Module, related_name='wf_modules',
@@ -30,12 +37,19 @@ class WfModule(models.Model):
     )
     error_msg = models.CharField('error_msg', max_length=200, blank=True)
 
-    class Meta:
-        ordering = ['order']
+    # ---- Persistent storage ----
+    def store_text(self, key, text):
+        StoredObject.objects.create(wf_module=self, key=key, text=text)
 
-    def __str__(self):
-        return self.workflow.__str__() + ' - order: ' + str(self.order) + ' - ' + self.module.__str__()
+    def retrieve_text(self, key):
+        objs = StoredObject.objects.filter(wf_module=self, key=key)
+        if objs:
+            return objs.latest('stored_at').text
+        else:
+            return None
 
+
+    # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
     def create_default_parameters(self):
         for pspec in ParameterSpec.objects.filter(module=self.module):
@@ -64,6 +78,34 @@ class WfModule(models.Model):
 
     def get_param_text(self, name):
         return self.get_param_typecheck(name, ParameterSpec.TEXT)
+
+    # --- Status ----
+    # notify client of changes
+    def notify_client_status_change(self):
+        pass # fwd to workflow?
+
+    # set error codes and status lights
+    def set_ready(self):
+        status = self.READY
+        self.save()
+        self.notify_client_status_change()
+
+    def set_busy(self):
+        status = self.BUSY
+        self.save()
+        self.notify_client_status_change()
+
+    def set_error(self, message):
+        error_msg = message
+        status = self.ERROR
+        self.save()
+        self.notify_client_status_change()
+
+    # --- Persistence ----
+
+
+
+    # --- Rendering ----
 
     # Modules ingest and emit a table (though may do only one, if source or sink)
     def execute(self, table):
@@ -132,3 +174,17 @@ class ParameterVal(models.Model):
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - button'
         else:
             raise ValueError("Invalid parameter type")
+
+
+
+# StoredObject is our persistance layer.
+# Allows WfModules to store keyed, versioned text
+class StoredObject(models.Model):
+    wf_module = models.ForeignKey(WfModule, related_name='wf_module', on_delete=models.CASCADE)  # delete stored data if WfModule deleted
+
+    key = models.CharField('key', max_length = 64, blank=True, default='')
+
+    text = models.TextField('text', blank=True, default='')
+
+    stored_at = models.DateTimeField('stored_at', auto_now=True)
+

@@ -86,7 +86,7 @@ class WfModuleTests(TestCase):
         request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
         response = wfmodule_render(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = json.dumps(test_data_table.to_dict(orient='list')).encode('UTF=8')
+        test_data_json = test_data_table.to_json(orient='records').encode('UTF=8')
         self.assertEqual(response.content, test_data_json)
 
         # second module: NOP
@@ -100,5 +100,19 @@ class WfModuleTests(TestCase):
         response = wfmodule_render(request, pk=self.wfmodule3.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         double_test_data = pd.DataFrame(test_data_table['Class'], test_data_table['M']*2, test_data_table['F'])
-        double_test_data = json.dumps(double_test_data.to_dict(orient='list')).encode('UTF=8')
+        double_test_data = double_test_data.to_json(orient='records').encode('UTF=8')
         self.assertEqual(response.content, double_test_data)
+
+    # test that we can retrieve a stored fetch, going to the db and back
+    def test_wf_module_fetch(self):
+        data = 'just pretend this is json'
+        key = 'somekey'
+
+        nothing = self.wfmodule1.retrieve_text('somekey')
+        self.assertIsNone(nothing)
+
+        self.wfmodule1.store_text(key, data)
+        self.wfmodule1.save()
+        self.wfmodule1.refresh_from_db()
+        data2 = self.wfmodule1.retrieve_text(key)
+        self.assertEqual(data, data2)

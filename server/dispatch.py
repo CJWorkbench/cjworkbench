@@ -1,6 +1,9 @@
 # Module dispatch table and implementations
 from server.models import Module, WfModule
 import pandas as pd
+import requests
+import io
+import csv
 
 # ---- Module implementations ---
 
@@ -14,20 +17,46 @@ class ModuleImpl:
     def event(parameter, e):
         pass
 
-
 class LoadCSV(ModuleImpl):
 
     # input table ignored
     @staticmethod
     def render(wfmodule, table):
-        url = wfmodule.get_param_string("URL")
-        table = pd.DataFrame(columns=['url'])
-        table.loc[0] = url
+        table = wfmodule.retrieve_text('csv')
+        if table != None:
+            table = pd.read_csv(io.StringIO(table))
         return table
 
+    # Load a CSV from file when fetch pressed
     @staticmethod
     def event(parameter, e):
-        print('LoadCSV got event %s' % str(e))
+        wfm = parameter.wf_module
+
+        # fetching could take a while so notify clients/users that we're working on it
+        wfm.set_busy()
+        csvres = requests.get(wfm.get_param_string("URL"))
+
+        if csvres.status_code != requests.codes.ok:
+            wfm.set_error('Error %s fetching url' % str(csvres.status_code))
+            return
+
+#        reader = csv.reader(io.StringIO(csvres.text), delimiter=',')
+#        table = None
+#        i = 0
+#        for row in reader:
+#            if table is None:
+#                table = pd.DataFrame(columns=row) # assume first row is column names
+#            else:
+#                table.loc[i] = row
+#                i+=1
+
+        table = pd.read_csv(io.StringIO(csvres.text))
+        wfm.store_text('csv', table.to_csv(index=False))      # index=False to prevent pandas from adding an index col
+        wfm.set_ready()
+
+
+
+
 
 
 class Formula(ModuleImpl):
