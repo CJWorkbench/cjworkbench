@@ -9,7 +9,7 @@ import { sortable } from 'react-sortable'
 import ModuleMenu from './ModuleMenu'
 import ToolButton from './ToolButton'
 import WfModule from './WfModule'
-import { workflowReducer, paramChangedAction, addModuleAction, reloadWorkflowAction } from './workflow-reducer'
+import { workflowReducer, paramChangedAction, addModuleAction, reloadWorkflowAction, wfModuleStatusAction } from './workflow-reducer'
 import { getPageID } from './utils'
 
 require('../css/style.css');
@@ -164,3 +164,22 @@ ReactDOM.render(
 
 // Load the page!
 store.dispatch(reloadWorkflowAction())
+
+// Start listening for events
+const socket = new WebSocket("ws://" + window.location.host + "/workflows/" + getPageID());
+
+socket.onmessage = function(e) {
+  var data = JSON.parse(e.data);
+  if ('type' in data) {
+    switch (data.type) {
+
+      case 'wfmodule-status':
+        store.dispatch(wfModuleStatusAction(data.id, data.status));
+        return
+
+      case 'reload-workflow':
+        store.dispatch(reloadWorkflowAction());
+        return
+    }
+  }
+}

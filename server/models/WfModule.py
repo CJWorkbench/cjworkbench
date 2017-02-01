@@ -5,6 +5,7 @@ from django.db import models
 from server.models.Module import *
 from server.models.Workflow import *
 from server.dispatch import module_dispatch_render
+from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_status
 
 class WfModule(models.Model):
     class Meta:
@@ -80,30 +81,25 @@ class WfModule(models.Model):
         return self.get_param_typecheck(name, ParameterSpec.TEXT)
 
     # --- Status ----
-    # notify client of changes
-    def notify_client_status_change(self):
-        pass # fwd to workflow?
+    # set error codes and status lights, notify client of changes
 
-    # set error codes and status lights
-    def set_ready(self):
-        status = self.READY
-        self.save()
-        self.notify_client_status_change()
-
+    # busy just changes the light on a single module, no need to reload entire wf
     def set_busy(self):
-        status = self.BUSY
+        self.status = self.BUSY
+        ws_client_wf_module_status(self, self.status)
         self.save()
-        self.notify_client_status_change()
+
+    # re-render entire workflow when a module goes ready or error, on the assumption that new output data is available
+    def set_ready(self):
+        self.status = self.READY
+        ws_client_rerender_workflow(self.workflow)
+        self.save()
 
     def set_error(self, message):
         error_msg = message
-        status = self.ERROR
+        self.status = self.ERROR
+        ws_client_rerender_workflow(self.workflow)
         self.save()
-        self.notify_client_status_change()
-
-    # --- Persistence ----
-
-
 
     # --- Rendering ----
 

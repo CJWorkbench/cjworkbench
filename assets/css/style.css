@@ -123,25 +123,30 @@ body {
 .ready-light {
   width: 15px;
   height: 15px;
+  border: 1px solid black;
   border-radius: 50%;
   float: right;
   background-color: lightgreen;
-  background-image: -webkit-radial-gradient(5px 5px, circle cover, lightgreen, green);
+  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .busy-light {
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
+  border: 1px solid black;
   border-radius: 50%;
   float: right;
   background-color: yellow;
+  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 
 .error-light {
-  width: 10px;
-  height: 10px;
+  width: 15px;
+  height: 15px;
+  border: 1px solid black;
   border-radius: 50%;
   float: right;
   background-color: red;
+  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
 }
 

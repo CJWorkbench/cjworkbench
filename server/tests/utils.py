@@ -1,18 +1,12 @@
 # Utilities for testing, mostly around constructing test Workflows
 
-from server.models import Module, Workflow
+from server.models import Module, Workflow, WfModule
 
 def add_new_workflow(name):
-    workflow = Workflow(name=name)
-    workflow.save()
-    return workflow
+    return Workflow.objects.create(name=name)
 
 def add_new_module(name):
-    module = Module(name=name)
-    module.save()
-    return module
+    return Module.objects.create(name=name)
 
 def add_new_wf_module(module, workflow, order=1):
-    wf_module = WfModule(workflow=workflow, module=module, order=order)
-    wf_module.save()
-    return wf_module
+    return WfModule.objects.create(workflow=workflow, module=module, order=order)

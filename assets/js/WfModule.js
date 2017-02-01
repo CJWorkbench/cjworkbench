@@ -53,7 +53,7 @@ class WfParameter extends React.Component {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(eventData)
-      })  // no .then, events act through the websocket channel
+      }) // no .then, events act through the websocket channel
     }
   }
 
@@ -166,9 +166,11 @@ export default class WfModule extends React.Component {
     var wfmodule = this.props['data-wfmodule'];
     var url = '/api/wfmodules/' + wfmodule.id + '/render';
     var self=this;
+    console.log("Loading table data for module " + wfmodule.id)
     fetch(url)
       .then(response => response.json())
       .then(json => {
+        console.log("Got table data for module " + wfmodule.id)
         self.setState( { tableData : json } );
         }); // triggers re-render
   }

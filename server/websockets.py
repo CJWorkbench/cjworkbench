@@ -1,5 +1,6 @@
 # Receive and send websockets messages.
 # Clients open a socket on a specific workflow, and all clients viewing that workflow are a "group"
+import json
 from channels import Group
 from server.models import Workflow
 
@@ -15,7 +16,6 @@ def ws_id_to_group(id):
 
 # Client connects to URL to start monitoring for changes
 def ws_add(message):
-    print("Got ws_add, path=" + message.content['path'])
     id =  ws_url_to_id(message.content['path'])
     try:
         workflow = Workflow.objects.get(pk=id)
@@ -29,12 +29,24 @@ def ws_add(message):
 
 # Remove from workflow->channel dict when client disconnects
 def ws_disconnect(message):
-    print("Got ws_disconnect, path=" + message.content['path'])
     id =  ws_url_to_id(message.content['path'])
     Group(ws_id_to_group(id)).discard(message.reply_channel)
 
 
 # Send a message to all clients listening to a workflow
-def ws_send_workflow_update(workflow_id, update):
-    Group(ws_id_to_group(workflow_id)).send(update)
+def ws_send_workflow_update(workflow, message_dict):
+    print("Sending message to " + str(workflow.id) + ": " + str(message_dict))
+    Group(ws_id_to_group(workflow.id)).send({'text' : json.dumps(message_dict)})
+
+# Tell clients to reload entire workflow
+def ws_client_rerender_workflow(workflow):
+    message = { 'type': 'reload-workflow'}
+    ws_send_workflow_update(workflow, message)
+
+# Tell clients to reload specific wfmodule
+def ws_client_wf_module_status(wf_module, status):
+    workflow = wf_module.workflow
+    message = { 'type' : 'wfmodule-status', 'id' : wf_module.id, 'status' : status}
+    ws_send_workflow_update(workflow, message)
+
 

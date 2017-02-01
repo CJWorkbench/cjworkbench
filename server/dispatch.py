@@ -4,6 +4,7 @@ import pandas as pd
 import requests
 import io
 import csv
+from server.versions import bump_workflow_version
 
 # ---- Module implementations ---
 
@@ -40,21 +41,12 @@ class LoadCSV(ModuleImpl):
             wfm.set_error('Error %s fetching url' % str(csvres.status_code))
             return
 
-#        reader = csv.reader(io.StringIO(csvres.text), delimiter=',')
-#        table = None
-#        i = 0
-#        for row in reader:
-#            if table is None:
-#                table = pd.DataFrame(columns=row) # assume first row is column names
-#            else:
-#                table.loc[i] = row
-#                i+=1
-
         table = pd.read_csv(io.StringIO(csvres.text))
         wfm.store_text('csv', table.to_csv(index=False))      # index=False to prevent pandas from adding an index col
+
+        # we are done. notify of changes to the workflow, reset status light
+        bump_workflow_version(wfm.workflow)
         wfm.set_ready()
-
-
 
 
 
