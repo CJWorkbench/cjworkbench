@@ -84,21 +84,24 @@ class WfModule(models.Model):
     # set error codes and status lights, notify client of changes
 
     # busy just changes the light on a single module, no need to reload entire wf
-    def set_busy(self):
+    def set_busy(self, notify=True):
         self.status = self.BUSY
-        ws_client_wf_module_status(self, self.status)
+        if notify:
+            ws_client_wf_module_status(self, self.status)
         self.save()
 
     # re-render entire workflow when a module goes ready or error, on the assumption that new output data is available
-    def set_ready(self):
+    def set_ready(self, notify=True):
         self.status = self.READY
-        ws_client_rerender_workflow(self.workflow)
+        if notify:
+            ws_client_rerender_workflow(self.workflow)
         self.save()
 
-    def set_error(self, message):
+    def set_error(self, message, notify=True):
         error_msg = message
         self.status = self.ERROR
-        ws_client_rerender_workflow(self.workflow)
+        if notify:
+            ws_client_rerender_workflow(self.workflow)
         self.save()
 
     # --- Rendering ----

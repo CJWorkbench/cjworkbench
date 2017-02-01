@@ -44,9 +44,9 @@ class LoadCSV(ModuleImpl):
         table = pd.read_csv(io.StringIO(csvres.text))
         wfm.store_text('csv', table.to_csv(index=False))      # index=False to prevent pandas from adding an index col
 
-        # we are done. notify of changes to the workflow, reset status light
+        # we are done. notify of changes to the workflow, reset status
+        wfm.set_ready(notify=False)
         bump_workflow_version(wfm.workflow)
-        wfm.set_ready()
 
 
 
