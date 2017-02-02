@@ -38,6 +38,9 @@ def parameterval_detail(request, pk, format=None):
             param.number = data[ParameterSpec.NUMBER]
         param.save()
 
+        # TODO this isn't a real error handling framework, only clear the error if we caused it!
+        param.wf_module.set_ready(notify=False)
+
         # increment workflow version number, triggers global re-render
         bump_workflow_version(param.wf_module.workflow)
 

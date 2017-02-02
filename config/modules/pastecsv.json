@@ -1,0 +1,12 @@
+{
+  "name": "Paste CSV",
+  "id_name": "pastecsv",
+  "parameters": [
+    {
+      "name": "CSV",
+      "id_name": "csv",
+      "type": "text",
+      "default": ""
+    }
+  ]
+}

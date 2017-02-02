@@ -23,6 +23,7 @@ class WfParameter extends React.Component {
   }
 
   paramChanged(e) {
+    console.log("PARAM CHANGED");
     var newVal = {};
     newVal[this.type] = e.target.value;
     this.props.onParamChanged(this.props.p.id, newVal);
@@ -134,11 +135,11 @@ class TableView extends React.Component {
     if (this.props.statusReady) {
       var url = '/api/wfmodules/' + this.props.id + '/render';
       var self = this;
-      //console.log("Loading table data for module " + this.props.id )
+      console.log("Loading table data for module " + this.props.id )
       fetch(url)
         .then(response => response.json())
         .then(json => {
-          //console.log("Got table data for module " + this.props.id )
+          console.log("Got table data for module " + this.props.id )
           self.setState({tableData: json, loaded: true});
         }); // triggers re-render
     }
@@ -160,7 +161,7 @@ class TableView extends React.Component {
     var update =  (!this.state.loaded && nextState.loaded) ||
                   (this.props.revision != nextProps.revision) ||
                   (this.props.statusReady != nextProps.statusReady);
-    //console.log("shouldComponentUpdate " + this.props.id + " returning " + String(update));
+    console.log("shouldComponentUpdate " + this.props.id + " returning " + String(update));
     return update
   }
 

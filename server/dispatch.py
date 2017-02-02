@@ -1,6 +1,7 @@
 # Module dispatch table and implementations
 from server.models import Module, WfModule
 import pandas as pd
+from pandas.parser import CParserError
 import requests
 import io
 import csv
@@ -17,6 +18,8 @@ class ModuleImpl:
     @staticmethod
     def event(parameter, e):
         pass
+
+# ---- LoadCSV ----
 
 class LoadCSV(ModuleImpl):
 
@@ -36,7 +39,7 @@ class LoadCSV(ModuleImpl):
 
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()
-        csvres = requests.get(wfm.get_param_string("URL"))
+        csvres = requests.get(wfm.get_param_string("url"))
 
         if csvres.status_code != requests.codes.ok:
             wfm.set_error('Error %s fetching url' % str(csvres.status_code))
@@ -49,6 +52,27 @@ class LoadCSV(ModuleImpl):
         wfm.set_ready(notify=False)
         bump_workflow_version(wfm.workflow)
 
+
+# ---- PasteCSV ----
+# Lets the user paste in text which it interprets as a exce
+class PasteCSV(ModuleImpl):
+    def render(wf_module, table):
+        tablestr = wf_module.get_param_text("csv")
+
+        if (len(tablestr)==0):
+            wf_module.set_error('Please enter a CSV')
+            return None
+        try:
+            table = pd.read_csv(io.StringIO(tablestr))
+        except CParserError as e:
+            wf_module.set_error(str(e))
+            return None
+
+        wf_module.set_ready(notify=False)
+        return table
+
+
+# ---- Unimplemented ----
 
 class Formula(ModuleImpl):
     pass
@@ -63,7 +87,7 @@ class TestDataRows(ModuleImpl):
     @staticmethod
     def render(wfmodule, table):
         table = pd.DataFrame(columns=['N', 'N squared'])
-        rows = wfmodule.get_param_number('Rows')
+        rows = wfmodule.get_param_number('rows')
         for i in range(int(rows)):
             table.loc[i] = [i+1, (i+1)*(i+1)]
         return table
@@ -92,6 +116,7 @@ class DoubleMColumn(ModuleImpl):
 
 module_dispatch_tbl = {
     'loadcsv':      LoadCSV,
+    'pastecsv':     PasteCSV,
     'formula':      Formula,
     'rawcode':      RawCode,
     'simplechart':  Chart,

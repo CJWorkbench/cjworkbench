@@ -61,7 +61,11 @@ class WfModule(models.Model):
 
     # Retrieve current parameter values
     def get_param_typecheck(self, name, param_type):
-        pspec = ParameterSpec.objects.get(module=self.module, name=name)
+        try:
+            pspec = ParameterSpec.objects.get(module=self.module, id_name=name)
+        except ParameterSpec.DoesNotExist:
+            raise ValueError('Request for non-existent ' + param_type + ' parameter ' + name)
+
         if pspec.type != param_type:
             raise ValueError('Request for ' + param_type + ' parameter ' + name + ' but actual type is ' + pspec.type)
         pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
@@ -138,7 +142,7 @@ class ParameterSpec(models.Model):
     )
 
     name = models.CharField('name', max_length=64)
-    id_name = models.CharField('name', max_length=32)
+    id_name = models.CharField('id_name', max_length=32)
 
     module = models.ForeignKey(Module, related_name='parameter_specs',
                                on_delete=models.CASCADE)  # delete spec if Module deleted

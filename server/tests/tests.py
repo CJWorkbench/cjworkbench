@@ -131,9 +131,6 @@ class WorkflowTests(TestCase):
 
 
 
-
-
-
 class ModuleTests(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
@@ -162,12 +159,12 @@ class ParameterValTests(TestCase):
         module.save()
         self.moduleID = module.id
 
-        stringSpec = ParameterSpec(name="StringParam", module=module, type= ParameterSpec.STRING, def_string='foo', def_number=0, def_text='')
+        stringSpec = ParameterSpec(name="StringParam", id_name="stringparam", module=module, type= ParameterSpec.STRING, def_string='foo', def_number=0, def_text='')
         stringSpec.save()
         stringVal = ParameterVal()
-        numberSpec = ParameterSpec(name="NumberParam", module=module, type=ParameterSpec.NUMBER, def_string='', def_number=10.11, def_text='')
+        numberSpec = ParameterSpec(name="NumberParam", id_name="numberparam", module=module, type=ParameterSpec.NUMBER, def_string='', def_number=10.11, def_text='')
         numberSpec.save()
-        textSpec = ParameterSpec(name="TextParam", module=module, type=ParameterSpec.TEXT, def_string='', def_number=0, def_text='bar')
+        textSpec = ParameterSpec(name="TextParam", id_name="textparam", module=module, type=ParameterSpec.TEXT, def_string='', def_number=0, def_text='bar')
         textSpec.save()
 
         self.workflow = Workflow.objects.create(name="Test Workflow")
@@ -188,23 +185,27 @@ class ParameterValTests(TestCase):
 
     # Value retrieval methods must return correct values and enforce type
     def test_parameter_get_values(self):
-        s = self.wfmodule.get_param_string('StringParam')
+        s = self.wfmodule.get_param_string('stringparam')
         self.assertEqual(s, 'fooval')
 
-        n = self.wfmodule.get_param_number('NumberParam')
+        n = self.wfmodule.get_param_number('numberparam')
         self.assertEqual(n, 10.11)
 
-        t = self.wfmodule.get_param_text('TextParam')
+        t = self.wfmodule.get_param_text('textparam')
         self.assertEqual(t, 'barval')
 
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_string('NumberParam')
+            self.wfmodule.get_param_string('numberparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_string('TextParam')
+            self.wfmodule.get_param_string('textparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_number('StringParam')
+            self.wfmodule.get_param_number('stringparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_text('StringParam')
+            self.wfmodule.get_param_text('stringparam')
+
+        # error if no param by that name
+        with self.assertRaises(ValueError):
+            self.wfmodule.get_param_string('FooParam')
 
     # Parameter API must return correct values
     def test_parameterval_detail_get(self):
@@ -227,16 +228,19 @@ class ParameterValTests(TestCase):
         # parameters have correct types and values
         str_val = [p for p in param_vals if p['id']==self.stringID][0]
         self.assertEqual(str_val['parameter_spec']['name'], 'StringParam')
+        self.assertEqual(str_val['parameter_spec']['id_name'], 'stringparam')
         self.assertEqual(str_val['parameter_spec']['type'], ParameterSpec.STRING)
         self.assertEqual(str_val['string'], 'fooval')
 
         num_val = [p for p in param_vals if p['id']==self.numberID][0]
         self.assertEqual(num_val['parameter_spec']['name'], 'NumberParam')
+        self.assertEqual(num_val['parameter_spec']['id_name'], 'numberparam')
         self.assertEqual(num_val['parameter_spec']['type'], ParameterSpec.NUMBER)
         self.assertEqual(num_val['number'], 10.11)
 
         text_val = [p for p in param_vals if p['id']==self.textID][0]
         self.assertEqual(text_val['parameter_spec']['name'], 'TextParam')
+        self.assertEqual(text_val['parameter_spec']['id_name'], 'textparam')
         self.assertEqual(text_val['parameter_spec']['type'], ParameterSpec.TEXT)
         self.assertEqual(text_val['text'], 'barval')
 
