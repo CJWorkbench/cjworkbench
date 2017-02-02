@@ -2,6 +2,7 @@
 # We also have ParameterSpec and ParameterVal in this file, to avoid circular reference problems
 
 from django.db import models
+import pandas as pd
 from server.models.Module import *
 from server.models.Workflow import *
 from server.dispatch import module_dispatch_render
@@ -98,7 +99,7 @@ class WfModule(models.Model):
         self.save()
 
     def set_error(self, message, notify=True):
-        error_msg = message
+        self.error_msg = message
         self.status = self.ERROR
         if notify:
             ws_client_rerender_workflow(self.workflow)
@@ -107,8 +108,12 @@ class WfModule(models.Model):
     # --- Rendering ----
 
     # Modules ingest and emit a table (though may do only one, if source or sink)
+    # Returns data only if the module is ready
     def execute(self, table):
-        return module_dispatch_render(self, table)
+        if (self.status == self.READY):
+            return module_dispatch_render(self, table)
+        else:
+            return pd.DataFrame()
 
 
 # ParameterSpec defines a parameter UI and defaults for a particular Module

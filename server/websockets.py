@@ -35,7 +35,7 @@ def ws_disconnect(message):
 
 # Send a message to all clients listening to a workflow
 def ws_send_workflow_update(workflow, message_dict):
-    print("Sending message to " + str(workflow.id) + ": " + str(message_dict))
+    # print("Sending message to " + str(workflow.id) + ": " + str(message_dict))
     Group(ws_id_to_group(workflow.id)).send({'text' : json.dumps(message_dict)})
 
 # Tell clients to reload entire workflow

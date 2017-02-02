@@ -3,7 +3,6 @@
 import os
 import json
 from server.models import Workflow, Module, WfModule, ParameterVal
-
 import pandas as pd
 import numpy as np
 
@@ -20,7 +19,7 @@ def execute_workflow(workflow):
 
 # Return the output of a particular module. No caching yet...
 def execute_wfmodule(wfmodule):
-    table = None
+    table = pd.DataFrame()
     workflow = wfmodule.workflow
     for wfm in workflow.wf_modules.all():
         table = wfm.execute(table)

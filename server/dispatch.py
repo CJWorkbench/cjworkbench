@@ -20,13 +20,14 @@ class ModuleImpl:
 
 class LoadCSV(ModuleImpl):
 
-    # input table ignored
+    # Input table ignored.
     @staticmethod
-    def render(wfmodule, table):
-        table = wfmodule.retrieve_text('csv')
-        if table != None:
-            table = pd.read_csv(io.StringIO(table))
-        return table
+    def render(wf_module, table):
+        tablestr = wf_module.retrieve_text('csv')
+        if (tablestr != None) and (len(tablestr)>0):
+            return  pd.read_csv(io.StringIO(tablestr))
+        else:
+            return None
 
     # Load a CSV from file when fetch pressed
     @staticmethod
@@ -47,8 +48,6 @@ class LoadCSV(ModuleImpl):
         # we are done. notify of changes to the workflow, reset status
         wfm.set_ready(notify=False)
         bump_workflow_version(wfm.workflow)
-
-
 
 
 class Formula(ModuleImpl):

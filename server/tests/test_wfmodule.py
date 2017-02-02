@@ -67,41 +67,58 @@ class WfModuleTests(TestCase):
         pk_wf_module = WfModule.objects.get(workflow_id=workflow_id,
                                            module_id = module_id).id
 
-        request = self.factory.get('/api/wfmodules/%d/' % pk_wf_module)
-        response = wfmodule_detail(request, pk = pk_wf_module)
+        response = self.client.get('/api/wfmodules/%d/' % pk_wf_module)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], pk_wf_module)
         self.assertEqual(response.data['workflow']['id'], workflow_id)
         self.assertEqual(response.data['module']['id'], module_id)
         self.assertEqual(response.data['status'], WfModule.READY)
         self.assertEqual(response.data['error_msg'], '')
-        request = self.factory.get('/api/wfmodules/%d/' % 10000)
-        response = wfmodule_detail(request, pk = 10000)
+
+        response = self.client.get('/api/wfmodules/%d/' % 10000)
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
     def test_wf_module_render_get(self):
 
         # First module: creates test data
-        request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
-        response = wfmodule_render(request, pk=self.wfmodule1.id)
+        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         test_data_json = test_data_table.to_json(orient='records').encode('UTF=8')
         self.assertEqual(response.content, test_data_json)
 
         # second module: NOP
-        request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule2.id)
-        response = wfmodule_render(request, pk=self.wfmodule2.id)
+        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content, test_data_json)
 
         # Third module: doubles M column
-        request = self.factory.get('/api/wfmodules/%d/render' % self.wfmodule3.id)
-        response = wfmodule_render(request, pk=self.wfmodule3.id)
+        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule3.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         double_test_data = pd.DataFrame(test_data_table['Class'], test_data_table['M']*2, test_data_table['F'])
         double_test_data = double_test_data.to_json(orient='records').encode('UTF=8')
         self.assertEqual(response.content, double_test_data)
+
+        # Set status to busy/error, should get no result
+        self.wfmodule1.set_error('whoa error')
+        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
+        self.assertEqual(response.content, b'[]')
+        response = self.client.get('/api/wfmodules/%d' % self.wfmodule1.id)
+        self.assertEqual(response.data['error_msg'], 'whoa error')
+
+        self.wfmodule1.set_busy()
+        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
+        self.assertEqual(response.content, b'[]')
+
+        # no result from following NOP either
+        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule2.id)
+        self.assertEqual(response.content, b'[]')
+
+        # resetting the status should restore the output
+        self.wfmodule1.set_ready()
+        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
+        self.assertEqual(response.content, test_data_json)
+
 
     # test that we can retrieve a stored fetch, going to the db and back
     def test_wf_module_fetch(self):

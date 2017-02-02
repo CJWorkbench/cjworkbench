@@ -96,7 +96,7 @@ class WfParameter extends React.Component {
   }
 }
 
-// ---- Status Light ----
+// ---- StatusLight ----
 // Ready, Busy, or Error
 class StatusLight extends React.Component {
   render() {
@@ -104,27 +104,44 @@ class StatusLight extends React.Component {
   }
 }
 
+// ---- StatusLine ----
+// Display error message, if any
+class StatusLine extends React.Component {
+  render() {
+    if (this.props.status == 'error') {
+      return <div className='wfModuleErrorMsg'>{this.props.error_msg}</div>
+    } else if (this.props.status == 'busy') {
+      return <div className='wfModuleErrorMsg'>Working...</div>
+    } else {
+      return false
+    }
+  }
+}
+
+
 // ---- TableView ----
 // Displays the module's rendered output, if any
 
 class TableView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { tableData: [] };
+    this.state = { tableData: [], loaded: false };
   }
 
 
   // Load table data from render API
   loadTable() {
-    var url = '/api/wfmodules/' + this.props.wf_module_id  + '/render';
-    var self=this;
-    console.log("Loading table data for module " + this.props.wf_module_id )
-    fetch(url)
-      .then(response => response.json())
-      .then(json => {
-        console.log("Got table data for module " + this.props.wf_module_id )
-        self.setState( { tableData : json } );
+    if (this.props.statusReady) {
+      var url = '/api/wfmodules/' + this.props.id + '/render';
+      var self = this;
+      //console.log("Loading table data for module " + this.props.id )
+      fetch(url)
+        .then(response => response.json())
+        .then(json => {
+          //console.log("Got table data for module " + this.props.id )
+          self.setState({tableData: json, loaded: true});
         }); // triggers re-render
+    }
   }
 
   // Load table when first rendered
@@ -138,10 +155,12 @@ class TableView extends React.Component {
       this.loadTable();
   }
 
+  // Update only when we actually have some data
   shouldComponentUpdate(nextProps, nextState) {
-    var update = (this.props.revision != nextProps.revision) ||
-                  (this.state.tableData.length == 0 && nextState.tableData.length > 0);
-//    console.log("shouldComponentUpdate " + this.props.wf_module_id + " returning " + String(update));
+    var update =  (!this.state.loaded && nextState.loaded) ||
+                  (this.props.revision != nextProps.revision) ||
+                  (this.props.statusReady != nextProps.statusReady);
+    //console.log("shouldComponentUpdate " + this.props.id + " returning " + String(update));
     return update
   }
 
@@ -149,7 +168,7 @@ class TableView extends React.Component {
     var tableData = this.state.tableData;
 
     // Generate the table if there's any data
-    if (tableData.length > 0) {
+    if (tableData.length > 0 && this.props.statusReady) {
 
       var colNames = Object.keys(tableData[0]);
       var rowCount = tableData.length;
@@ -195,24 +214,25 @@ class TableView extends React.Component {
 export default class WfModule extends React.Component {
 
   render() {
-    var module = this.props['data-wfmodule']['module'];
-    var params= this.props['data-wfmodule']['parameter_vals'];
-    var status = this.props['data-wfmodule']['status']
+    var wf_module = this.props['data-wfmodule'];
+    var module = wf_module.module;
+    var params= wf_module.parameter_vals;
     var onParamChanged = this.props['data-onParamChanged'];
 
     // Each parameter gets a WfParameter
     var paramdivs = params.map((ps, i) => { return <WfParameter p={ps} key={i} onParamChanged={onParamChanged} /> } );
 
-    // Putting it all together: name, parameters, output
+    // Putting it all together: name, status, parameters, output
     return (
       <div {...this.props} className="module-li">
         <div>
           <h1 className='moduleName'>{module.name}</h1>
-          <StatusLight status={status}/>
+          <StatusLight status={wf_module.status}/>
         </div>
         <div style={{'clear':'both'}}></div>
+        <StatusLine status={wf_module.status} error_msg={wf_module.error_msg} />
         {paramdivs}
-        <TableView wf_module_id={this.props['data-wfmodule'].id} revision={this.props['data-revision']}/>
+        <TableView id={wf_module.id} statusReady={wf_module.status == 'ready'} revision={this.props['data-revision']}/>
       </div>
     ); 
   } 
