@@ -4,8 +4,9 @@ import React from 'react'
 
 // Libraries to provide a collapsable table view
 var Collapse = require('pui-react-collapse').Collapse;
-const {Table, Column, Cell} = require('fixed-data-table');
-require('fixed-data-table/dist/fixed-data-table.min.css');
+var DataGrid = require('react-datagrid');
+require('react-datagrid/index.css');
+
 
 // ---- WfParameter - a single editable parameter ----
 
@@ -123,6 +124,7 @@ class StatusLine extends React.Component {
 // ---- TableView ----
 // Displays the module's rendered output, if any
 
+
 class TableView extends React.Component {
   constructor(props) {
     super(props);
@@ -130,12 +132,11 @@ class TableView extends React.Component {
     this.state = { tableData: [], loading: false };           // componentDidMount will trigger first load
   }
 
-
   // Load table data from render API
   loadTable() {
-    var url = '/api/wfmodules/' + this.props.id + '/render';
     var self = this;
-    console.log("Loading table data for module " + this.props.id )
+    console.log("Loading table data for module " + this.props.id );
+    var url = '/api/wfmodules/' + this.props.id + '/render';
     fetch(url)
       .then(response => response.json())
       .then(json => {
@@ -146,14 +147,11 @@ class TableView extends React.Component {
 
   // Load table when first rendered
   componentDidMount() {
-//    console.log("componentDidMount " + this.props.id);
     this.loadTable()
   }
 
   // If the revision changes from under us reload the table, which will trigger a setState and re-render
   componentWillReceiveProps(nextProps) {
-//    console.log("componentWillReceiveProps " + this.props.id + " -- old version " + this.props.revision + " new version " +  nextProps.revision);
-//    console.log("componentWillReceiveProps " + this.props.id + " -- old status " + this.props.statusReady + " new status " +  nextProps.statusReady);
     if (this.props.revision != nextProps.revision) {
       this.setState(this.loadingState);               // "unload" the table
       this.loadTable();
@@ -162,8 +160,6 @@ class TableView extends React.Component {
 
   // Update only when we are not loading
   shouldComponentUpdate(nextProps, nextState) {
-//    console.log("shouldComponentUpdate " + this.props.id +  " -- old loading " + this.state.loading + " new loading " +  nextState.loading);
-//     console.log("shouldComponentUpdate " + this.props.id + " returning " + !nextState.loading);
     return !nextState.loading;
   }
 
@@ -171,36 +167,11 @@ class TableView extends React.Component {
     var tableData = this.state.tableData;
 
     // Generate the table if there's any data
-    if (tableData.length > 0 && this.props.statusReady) {
+    if (tableData.length > 0 && !this.state.loading && this.props.statusReady) {
 
-      var colNames = Object.keys(tableData[0]);
-      var rowCount = tableData.length;
-      var cols = colNames.map( colName => {
-        return(
-          <Column
-            key={colName}
-            header={<Cell>{colName}</Cell>}
-            cell={props => (
-              <Cell {...props}>
-                {tableData[props.rowIndex][colName]}
-              </Cell>
-            )}
-            width={100}
-          />
-        )
-      });
-
-      var table =
-        <Collapse header='Output'>
-          <Table
-            rowsCount={rowCount}
-            rowHeight={50}
-            headerHeight={50}
-            width={500}
-            height={(rowCount+1)*50}>
-            {cols}
-          </Table>
-        </Collapse>;
+      var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key } });
+      console.log(columns);
+      var table = <DataGrid idProperty="index" dataSource={tableData} columns={columns} />
 
     }  else {
       var table = <p>(no data)</p>;

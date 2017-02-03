@@ -43,7 +43,7 @@ def wfmodule_render(request, pk, format=None):
             return Response(status=status.HTTP_404_NOT_FOUND)
 
         table = execute_wfmodule(wfmodule)
-        d = table.to_json(orient='records')
+        d = table.reset_index().to_json(orient='records', )
         return HttpResponse(d, content_type="application/json")
 
 

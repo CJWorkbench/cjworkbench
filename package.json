@@ -12,6 +12,7 @@
     "pui-react-collapse": "^7.3.1",
     "pui-react-panels": "^7.3.1",
     "react": "^15.3.2",
+    "react-datagrid": "^2.1.2",
     "react-dom": "^15.3.2",
     "react-dropdown": "^1.2.0",
     "react-menu": "^0.0.10",
