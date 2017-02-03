@@ -127,6 +127,17 @@ class WorkflowMain extends React.Component {
 // ---- Workflow container ----
 
 
+function onParamChanged(paramID, newVal) {
+   fetch('/api/parameters/' + paramID, {
+      method: 'patch',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newVal)
+    })
+}
+
 // Handles addModule (and any other actions that change top level workflow state)
 const mapStateToProps = (state) => {
   return {
@@ -140,7 +151,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(addModuleAction(newModuleID))
     },
     onParamChanged: (paramID, newVal) => {
-      dispatch(paramChangedAction(paramID, newVal))
+      onParamChanged(paramID, newVal)
     }
   }
 }
@@ -170,6 +181,7 @@ const socket = new WebSocket("ws://" + window.location.host + "/workflows/" + ge
 
 socket.onmessage = function(e) {
   var data = JSON.parse(e.data);
+  console.log("Got ws message: " + e.data);
   if ('type' in data) {
     switch (data.type) {
 

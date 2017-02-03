@@ -25,18 +25,6 @@ export function addModuleAction(newModuleID) {
   }) .then( reloadWorkflowAction );
 }
 
-export function paramChangedAction(paramID, newVal) {
-   return fetch('/api/parameters/' + paramID, {
-      method: 'patch',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newVal)
-    })
-    .then( reloadWorkflowAction );
-}
-
 export function wfModuleStatusAction(wfModuleID, status) {
   return {
     type : WF_MODULE_STATUS_CHANGE,

@@ -75,7 +75,18 @@ class PasteCSV(ModuleImpl):
 # ---- Unimplemented ----
 
 class Formula(ModuleImpl):
-    pass
+    def render(wf_module, table):
+        column = wf_module.get_param_string('column')
+
+        print(table.columns)
+        if not column in table.columns:
+            wf_module.set_error('Column not found')
+            return None
+
+        scale = wf_module.get_param_number('scale')
+        table.loc[:, column] *= scale
+        wf_module.set_ready(notify=False)
+        return table
 
 class RawCode(ModuleImpl):
     pass

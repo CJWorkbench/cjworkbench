@@ -126,43 +126,45 @@ class StatusLine extends React.Component {
 class TableView extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { tableData: [], loaded: false };
+    this.loadingState = { tableData: [], loading: true };
+    this.state = { tableData: [], loading: false };           // componentDidMount will trigger first load
   }
 
 
   // Load table data from render API
   loadTable() {
-    if (this.props.statusReady) {
-      var url = '/api/wfmodules/' + this.props.id + '/render';
-      var self = this;
-      console.log("Loading table data for module " + this.props.id )
-      fetch(url)
-        .then(response => response.json())
-        .then(json => {
-          console.log("Got table data for module " + this.props.id )
-          self.setState({tableData: json, loaded: true});
-        }); // triggers re-render
-    }
+    var url = '/api/wfmodules/' + this.props.id + '/render';
+    var self = this;
+    console.log("Loading table data for module " + this.props.id )
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        console.log("Got table data for module " + this.props.id )
+        self.setState({tableData: json, loading: false});
+      }); // triggers re-render
   }
 
   // Load table when first rendered
   componentDidMount() {
+//    console.log("componentDidMount " + this.props.id);
     this.loadTable()
   }
 
   // If the revision changes from under us reload the table, which will trigger a setState and re-render
   componentWillReceiveProps(nextProps) {
-    if (this.props.revision != nextProps.revision)
+//    console.log("componentWillReceiveProps " + this.props.id + " -- old version " + this.props.revision + " new version " +  nextProps.revision);
+//    console.log("componentWillReceiveProps " + this.props.id + " -- old status " + this.props.statusReady + " new status " +  nextProps.statusReady);
+    if (this.props.revision != nextProps.revision) {
+      this.setState(this.loadingState);               // "unload" the table
       this.loadTable();
+    }
   }
 
-  // Update only when we actually have some data
+  // Update only when we are not loading
   shouldComponentUpdate(nextProps, nextState) {
-    var update =  (!this.state.loaded && nextState.loaded) ||
-                  (this.props.revision != nextProps.revision) ||
-                  (this.props.statusReady != nextProps.statusReady);
-    console.log("shouldComponentUpdate " + this.props.id + " returning " + String(update));
-    return update
+//    console.log("shouldComponentUpdate " + this.props.id +  " -- old loading " + this.state.loading + " new loading " +  nextState.loading);
+//     console.log("shouldComponentUpdate " + this.props.id + " returning " + !nextState.loading);
+    return !nextState.loading;
   }
 
   render() {

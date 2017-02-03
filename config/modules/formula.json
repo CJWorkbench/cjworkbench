@@ -3,10 +3,16 @@
   "id_name": "formula",
   "parameters": [
     {
-      "name": "Formula",
-      "id_name" : "formula",
-      "type": "text",
+      "name": "Column",
+      "id_name" : "column",
+      "type": "string",
       "default": ""
+    },
+    {
+      "name": "Scale",
+      "id_name" : "scale",
+      "type": "number",
+      "default": 1.0
     }
   ]
 }
