@@ -169,9 +169,12 @@ class TableView extends React.Component {
     // Generate the table if there's any data
     if (tableData.length > 0 && !this.state.loading && this.props.statusReady) {
 
-      var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key } });
+      var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key, 'title': key } });
       console.log(columns);
-      var table = <DataGrid idProperty="index" dataSource={tableData} columns={columns} />
+      var table =
+        <Collapse header='Output'>
+          <DataGrid idProperty="index" dataSource={tableData} columns={columns} />
+        </Collapse>
 
     }  else {
       var table = <p>(no data)</p>;

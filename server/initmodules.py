@@ -35,6 +35,7 @@ def load_module_from_file(fname):
 
 # Create a module from dictionary of properties, corresponding to the json in the config file
 # testable entrypoint
+# returns Module
 def load_module_from_dict(d):
     if not 'name' in d:
         raise ValueError("Missing module name")
@@ -73,6 +74,7 @@ def load_module_from_dict(d):
 # Load parameter spec from json def
 # If it's a brand new parameter spec, add it to all existing WfModules
 # Otherwise re-use existing spec object, and update all existing ParameterVal objects that point to it
+# returns ParameterSpec
 def load_parameter_spec(d, module):
     # require name and id_name
     if not 'name' in d:

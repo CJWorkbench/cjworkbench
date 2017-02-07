@@ -7,6 +7,7 @@ from server.dispatch import test_data_table
 import pandas as pd
 import json
 import copy
+from server.tests.utils import table_to_content
 
 class WfModuleTests(TestCase):
 
@@ -84,7 +85,7 @@ class WfModuleTests(TestCase):
         # First module: creates test data
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = test_data_table.to_json(orient='records').encode('UTF=8')
+        test_data_json = table_to_content(test_data_table)
         self.assertEqual(response.content, test_data_json)
 
         # second module: NOP
@@ -96,7 +97,7 @@ class WfModuleTests(TestCase):
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule3.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         double_test_data = pd.DataFrame(test_data_table['Class'], test_data_table['M']*2, test_data_table['F'])
-        double_test_data = double_test_data.to_json(orient='records').encode('UTF=8')
+        double_test_data = table_to_content(double_test_data)
         self.assertEqual(response.content, double_test_data)
 
         # Set status to busy/error, should get no result
