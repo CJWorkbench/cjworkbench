@@ -7,6 +7,63 @@ var Collapse = require('pui-react-collapse').Collapse;
 var DataGrid = require('react-datagrid');
 require('react-datagrid/index.css');
 
+import {BarChart} from 'react-easy-chart';
+
+// ---- CustomParameter ----
+// atm a shim for a simple chart
+
+class CustomParameter extends React.Component {
+  constructor(props) {
+    super(props);
+    this.loadingState = { tableData: [], loading: true };
+    this.state = { tableData: [], loading: false };           // componentDidMount will trigger first load
+  }
+
+  // Load table data from render API
+  loadTable() {
+    var self = this;
+    var url = '/api/wfmodules/' + this.props.id + '/input';
+    fetch(url)
+      .then(response => response.json())
+      .then(json => {
+        self.setState({tableData: json, loading: false});
+      }); // triggers re-render
+  }
+
+  // Load table when first rendered
+  componentDidMount() {
+    this.loadTable()
+  }
+
+  // If the revision changes from under us reload the table, which will trigger a setState and re-render
+  componentWillReceiveProps(nextProps) {
+    if (this.props.revision != nextProps.revision) {
+      this.setState(this.loadingState);               // "unload" the table
+      this.loadTable();
+    }
+  }
+
+  // Update only when we are not loading
+  shouldComponentUpdate(nextProps, nextState) {
+    return !nextState.loading;
+  }
+
+  render() {
+      var tableData = this.state.tableData;
+
+      if (tableData.length > 0 && !this.state.loading) {
+        var xcol = 'date';
+        var ycol = 'result';
+        var data = tableData.map( row => { return { 'x': row[xcol], 'y': row[ycol] } } );
+
+        return (
+          <BarChart width='1000' axes axisLabels={{x: xcol, y: ycol}} data={data}/>
+        )
+      } else {
+        return false;
+      }
+  }
+}
 
 // ---- WfParameter - a single editable parameter ----
 
@@ -24,7 +81,7 @@ class WfParameter extends React.Component {
   }
 
   paramChanged(e) {
-    console.log("PARAM CHANGED");
+    // console.log("PARAM CHANGED");
     var newVal = {};
     newVal[this.type] = e.target.value;
     this.props.onParamChanged(this.props.p.id, newVal);
@@ -92,6 +149,13 @@ class WfParameter extends React.Component {
           </div>
         );
 
+      case 'custom':
+        return (
+          <div>
+            <CustomParameter id={this.props.wf_module_id} type={this.props.p.string} revision={this.props.revision}  />
+          </div>
+        );
+
       default:
         return null;  // unrecognized parameter type
     }
@@ -135,12 +199,10 @@ class TableView extends React.Component {
   // Load table data from render API
   loadTable() {
     var self = this;
-    console.log("Loading table data for module " + this.props.id );
     var url = '/api/wfmodules/' + this.props.id + '/render';
     fetch(url)
       .then(response => response.json())
       .then(json => {
-        console.log("Got table data for module " + this.props.id )
         self.setState({tableData: json, loading: false});
       }); // triggers re-render
   }
@@ -165,19 +227,19 @@ class TableView extends React.Component {
 
   render() {
     var tableData = this.state.tableData;
+    var table;
 
     // Generate the table if there's any data
     if (tableData.length > 0 && !this.state.loading && this.props.statusReady) {
 
       var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key, 'title': key } });
-      console.log(columns);
-      var table =
+      table =
         <Collapse header='Output'>
           <DataGrid idProperty="index" dataSource={tableData} columns={columns} />
         </Collapse>
 
     }  else {
-      var table = <p>(no data)</p>;
+      table = <p>(no data)</p>;
     }
 
     return table;
@@ -195,9 +257,11 @@ export default class WfModule extends React.Component {
     var module = wf_module.module;
     var params= wf_module.parameter_vals;
     var onParamChanged = this.props['data-onParamChanged'];
+    var revision = this.props['data-revision'];
 
     // Each parameter gets a WfParameter
-    var paramdivs = params.map((ps, i) => { return <WfParameter p={ps} key={i} onParamChanged={onParamChanged} /> } );
+    var paramdivs = params.map((ps, i) =>
+      { return <WfParameter p={ps} key={i} onParamChanged={onParamChanged} wf_module_id={wf_module.id} revision={revision}/> } );
 
     // Putting it all together: name, status, parameters, output
     return (
@@ -209,7 +273,7 @@ export default class WfModule extends React.Component {
         <div style={{'clear':'both'}}></div>
         <StatusLine status={wf_module.status} error_msg={wf_module.error_msg} />
         {paramdivs}
-        <TableView id={wf_module.id} statusReady={wf_module.status == 'ready'} revision={this.props['data-revision']}/>
+        <TableView id={wf_module.id} statusReady={wf_module.status == 'ready'} revision={revision}/>
       </div>
     ); 
   } 

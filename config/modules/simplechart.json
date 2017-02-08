@@ -3,10 +3,22 @@
   "id_name": "simplechart",
   "parameters": [
     {
-      "name": "Scaling",
-      "id_name": "scaling",
-      "type": "number",
-      "default": "1"
+      "name": "Values",
+      "id_name": "val_col",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "Labels",
+      "id_name": "label_col",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "Chart",
+      "id_name": "chart",
+      "type": "custom",
+      "default": "chart"
     }
   ]
 }

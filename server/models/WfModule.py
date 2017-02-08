@@ -127,11 +127,13 @@ class ParameterSpec(models.Model):
     NUMBER = 'number'
     TEXT = 'text'               # long strings, e.g. programs
     BUTTON = 'button'
+    CUSTOM = 'custom'           # rendered in front end
     TYPE_CHOICES = (
         (STRING, 'String'),
         (NUMBER, 'Number'),
         (TEXT, 'Text'),
-        (BUTTON, 'Button')
+        (BUTTON, 'Button'),
+        (CUSTOM, 'Custom')
     )
 
     # fields

@@ -81,6 +81,12 @@ class Formula(ModuleImpl):
         colnames = list(table.columns)
         newcol = pd.Series(np.zeros(len(table)))
 
+        # hmm, this is going to need more work
+        globals = {
+            '__builtins__': {},      # disallow import etc. (though still not impossible!)
+            'str' : str
+        }
+
         # Catch errors with the formula and display to user
         try:
             code = compile(formula, '<string>', 'eval')
@@ -88,7 +94,7 @@ class Formula(ModuleImpl):
             # Much experimentation went into the form of this loop for good performance.
             # Note we don't use iterrows or any pandas indexing, and construct the values dict ourselves
             for i,row in enumerate(table.values):
-                newcol[i] = eval(code  , {'__builtins__':{}}, dict(zip(colnames, row)))
+                newcol[i] = eval(code  , globals, dict(zip(colnames, row)))
         except Exception as e:
             wf_module.set_error(str(e))
             return None

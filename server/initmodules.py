@@ -65,7 +65,7 @@ def load_module_from_dict(d):
 
     # delete all ParameterSpecs (and hence ParameterVals) for this module that were not in the new module description
     for ps in ParameterSpec.objects.filter(module=module):
-        if ps not in pspecs: # relies on model == comaparing .id
+        if ps not in pspecs: # relies on model == comaparing id field
             ps.delete()
 
     return module
@@ -99,9 +99,9 @@ def load_parameter_spec(d, module):
         pspec.def_string = ''
         pspec.def_text = ''
 
-        reloading = True
         type_changed = pspec.type != ptype
         pspec.type = ptype
+        reloading = True
     else:
         pspec = ParameterSpec(name=name, id_name=id_name, type=ptype, module=module)
         reloading = False
@@ -115,6 +115,8 @@ def load_parameter_spec(d, module):
         pspec.def_text=d['default']
     elif d['type'] == 'button':
         pass # no value
+    elif d['type'] == 'custom':
+        pspec.def_string = d['default']
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
     pspec.save()
@@ -133,32 +135,4 @@ def load_parameter_spec(d, module):
             pval.save()
 
     return pspec
-
-
-# Create a single ParameterSpec object from json def
-# Must pass in parent module
-def parse_parameter_spec(d, module):
-    name = d['name']  # existence checked in load_parameter_spec
-    id_name = d['id_name']
-
-    if d['type'] == 'string':
-        p = ParameterSpec(type=ParameterSpec.STRING, name=name, id_name=id_name, module=module, def_string=d['default'], def_number=0, def_text='')
-
-    elif d['type'] == 'number':
-        p = ParameterSpec(type=ParameterSpec.NUMBER, name=name, id_name=id_name, module=module, def_string='', def_number=d['default'], def_text='')
-
-    elif d['type'] == 'text':
-        p = ParameterSpec(type=ParameterSpec.TEXT, name=name, id_name=id_name, module=module, def_string='', def_number=0, def_text=d['default'])
-
-    elif d['type'] == 'button':
-        p = ParameterSpec(type=ParameterSpec.BUTTON, name=name, id_name=id_name, module=module, def_string='', def_number=0, def_text='')
-
-    elif d['type'] != None:
-        raise ValueError("Unknown parameter type " + d['type'])
-    else:
-        raise ValueError("Missing parameter type")
-
-    p.save()
-    return p
-
 
