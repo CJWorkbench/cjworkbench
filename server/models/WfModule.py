@@ -122,6 +122,9 @@ class WfModule(models.Model):
 
 # ParameterSpec defines a parameter UI and defaults for a particular Module
 class ParameterSpec(models.Model):
+    class Meta:
+        ordering = ['order']
+
     # constants
     STRING = 'string'
     NUMBER = 'number'
@@ -149,6 +152,8 @@ class ParameterSpec(models.Model):
     module = models.ForeignKey(Module, related_name='parameter_specs',
                                on_delete=models.CASCADE)  # delete spec if Module deleted
 
+    order = models.IntegerField('order', default=0)
+
     def_number = models.FloatField(NUMBER, null=True, blank=True, default=0.0)
     def_string = models.CharField(STRING, max_length=50, blank=True, default='')
     def_text = models.TextField(TEXT, blank=True, default='')
@@ -159,6 +164,9 @@ class ParameterSpec(models.Model):
 
 # A parameter value, which might be string or float
 class ParameterVal(models.Model):
+    class Meta:
+        ordering = ['order']
+
     number = models.FloatField(ParameterSpec.NUMBER, null=True, blank=True)
     string = models.CharField(ParameterSpec.STRING, max_length=50, null=True, blank=True)
     text = models.TextField(ParameterSpec.TEXT, null=True, blank=True)
@@ -168,10 +176,13 @@ class ParameterVal(models.Model):
     parameter_spec = models.ForeignKey(ParameterSpec, related_name='parameter_vals',
                                on_delete=models.CASCADE, null=True)  # delete value if Spec deleted
 
+    order = models.IntegerField('order', default=0)
+
     def init_from_spec(self):
         self.number = self.parameter_spec.def_number
         self.string = self.parameter_spec.def_string
         self.text = self.parameter_spec.def_text
+        self.order = self.parameter_spec.order
 
     def __str__(self):
         if self.parameter_spec.type == ParameterSpec.STRING:

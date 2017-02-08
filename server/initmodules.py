@@ -59,7 +59,7 @@ def load_module_from_dict(d):
 
     # load params
     if 'parameters' in d:
-        pspecs = [ load_parameter_spec(p, module) for p in d['parameters']]
+        pspecs = [ load_parameter_spec(p, module, order) for (order,p) in enumerate(d['parameters']) ]
     else:
         pspecs = []
 
@@ -75,7 +75,7 @@ def load_module_from_dict(d):
 # If it's a brand new parameter spec, add it to all existing WfModules
 # Otherwise re-use existing spec object, and update all existing ParameterVal objects that point to it
 # returns ParameterSpec
-def load_parameter_spec(d, module):
+def load_parameter_spec(d, module, order):
     # require name and id_name
     if not 'name' in d:
         raise ValueError("Missing parameter name")
@@ -119,6 +119,8 @@ def load_parameter_spec(d, module):
         pspec.def_string = d['default']
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
+
+    pspec.order = order
     pspec.save()
 
     # if parameter is newly added, add new ParameterVals to all existing modules
@@ -128,10 +130,12 @@ def load_parameter_spec(d, module):
             pval.init_from_spec()
             pval.save()
 
-    # If the parameter is reloading and the type changed, reset existing vals to default values
-    if reloading and type_changed:
+    # If the parameter is reloading, reset order in UI. If type also changed, reset existing value to default
+    if reloading:
         for pval in ParameterVal.objects.filter(parameter_spec=pspec):
-            pval.init_from_spec()
+            pval.order = pspec.order
+            if type_changed:
+                pval.init_from_spec()
             pval.save()
 
     return pspec

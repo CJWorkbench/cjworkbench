@@ -25,22 +25,22 @@ class InitmoduleTests(TestCase):
               ]
             }            
 
-        # a new version of LoadCSV that deletes one parameter, changes the type of another, and adds a new one
+        # a new version of LoadCSV that deletes one parameter, changes the type and order of another, and adds a new one
         self.loadcsv2 = {
             'name': 'Load CSV RELOADED',
             'id_name': 'loadcsv',
             'parameters': [
                 {
-                  'name': 'URL',
-                  'id_name' : 'url',
-                  'type': 'text',
-                  'default': 'new url'
-                },
-                {
                   'name': 'Retries',
                   'id_name' : 'retries',
                   'type': 'number',
                   'default' : 42
+                },
+                {
+                  'name': 'URL',
+                  'id_name': 'url',
+                  'type': 'text',
+                  'default': 'new url'
                 }
               ]
             }
@@ -81,12 +81,13 @@ class InitmoduleTests(TestCase):
         self.assertEqual(url_spec.id_name, 'url')
         self.assertEqual(url_spec.type, ParameterSpec.STRING)
         self.assertEqual(url_spec.def_string, 'http://foo.com')
+        self.assertEqual(url_spec.order, 0)
 
         button_spec = ParameterSpec.objects.get(id_name='fetch')
         self.assertEqual(button_spec.name, 'Fetch')
         self.assertEqual(button_spec.id_name, 'fetch')
         self.assertEqual(button_spec.type, ParameterSpec.BUTTON)
-
+        self.assertEqual(button_spec.order, 1)
 
     # we should bail when keys are missing
     def test_missing_keys(self):
@@ -136,26 +137,32 @@ class InitmoduleTests(TestCase):
         with self.assertRaises(ParameterSpec.DoesNotExist):
             ParameterSpec.objects.get(id_name='fetch')
 
-        # url spec should still exist with same id, new type
-        # existing parameterval should have new default
+        # url spec should still exist with same id, new type, new order
+        # existing parameterval should have new default, order
         url_spec2 = ParameterSpec.objects.get(id_name='url')
         self.assertEqual(url_spec1.id, url_spec2.id)
         self.assertEqual(url_spec2.type, ParameterSpec.TEXT)
+        self.assertEqual(url_spec2.order, 1)
         url_pval1.refresh_from_db()
         self.assertEqual(url_pval1.string, '')
         self.assertEqual(url_pval1.text, 'new url')
+        self.assertEqual(url_pval1.order, 1)
         url_pval2.refresh_from_db()
         self.assertEqual(url_pval2.string, '')
         self.assertEqual(url_pval2.text, 'new url')
+        self.assertEqual(url_pval2.order, 1)
 
         # new Numeric parameter should exist, with corresponding new values in WfModules
         retry_spec = ParameterSpec.objects.get(id_name='retries')
         self.assertEqual(retry_spec.type, ParameterSpec.NUMBER)
         self.assertEqual(retry_spec.def_number, 42)
+        self.assertEqual(retry_spec.order, 0)
         retry_pval1 = ParameterVal.objects.get(parameter_spec=retry_spec, wf_module=wfm1)
         self.assertEqual(retry_pval1.number, 42)
+        self.assertEqual(retry_pval1.order, 0)
         retry_pval2 = ParameterVal.objects.get(parameter_spec=retry_spec, wf_module=wfm2)
         self.assertEqual(retry_pval2.number, 42)
+        self.assertEqual(retry_pval1.order, 0)
 
 
 
