@@ -1,5 +1,5 @@
 from django.test import TestCase
-from server.views import wfmodule_detail, wfmodule_render
+from server.views.WfModule import wfmodule_detail, wfmodule_render
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from server.models import Module, WfModule, Workflow, ParameterSpec, ParameterVal
@@ -118,6 +118,25 @@ class WfModuleTests(TestCase):
         # resetting the status should restore the output
         self.wfmodule1.set_ready()
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
+        self.assertEqual(response.content, test_data_json)
+
+    # /input is just a /render on the previous module
+    def test_wf_module_input(self):
+        # First module: no prior input, should be empty result
+        response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        test_data_json = table_to_content(pd.DataFrame())
+        self.assertEqual(response.content, test_data_json)
+
+        # Second module: input should be test data produced by first module
+        response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule2.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        test_data_json = table_to_content(test_data_table)
+        self.assertEqual(response.content, test_data_json)
+
+        # Third module: should be same as second, as second module is NOP
+        response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule3.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content, test_data_json)
 
 

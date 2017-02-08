@@ -1,6 +1,7 @@
 from django.conf.urls import url
 from django.views.generic import TemplateView
 from . import views
+from .views.WfModule import wfmodule_detail,wfmodule_render,wfmodule_input
 
 
 urlpatterns = [
@@ -28,8 +29,9 @@ urlpatterns = [
 
 
     # WfModules (Modules applied in a workflow)
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/render?$', views.wfmodule_render),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', wfmodule_detail),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/render?$', wfmodule_render),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/input?$', wfmodule_input),
 
     # Parameters
     url(r'^api/parameters/(?P<pk>[0-9]+)/?$', views.parameterval_detail),

@@ -1,5 +1,6 @@
 from django.test import TestCase
-from server.views import workflow_list, workflow_addmodule, workflow_detail, wfmodule_detail, wfmodule_render, module_list, parameterval_detail
+from server.views import workflow_list, workflow_addmodule, workflow_detail, module_list, parameterval_detail
+from server.views.WfModule import wfmodule_detail,wfmodule_render
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from server.models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
