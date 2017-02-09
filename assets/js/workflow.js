@@ -3,21 +3,14 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider, connect } from 'react-redux'
-import promiseMiddleware from 'redux-promise';
-import { createStore, applyMiddleware } from 'redux'
 import { sortable } from 'react-sortable'
 import ModuleMenu from './ModuleMenu'
 import ToolButton from './ToolButton'
 import WfModule from './WfModule'
-import { workflowReducer, paramChangedAction, addModuleAction, reloadWorkflowAction, wfModuleStatusAction } from './workflow-reducer'
+import { store, wfModuleStatusAction, reloadWorkflowAction, addModuleAction } from './workflow-reducer'
 import { getPageID } from './utils'
 
 require('../css/style.css');
-
-// ---- Our Store ----
-// Master state for the workflow
-
-let store = createStore(workflowReducer, applyMiddleware(promiseMiddleware));
 
 
 
@@ -156,11 +149,11 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
+
 const WorkflowContainer = connect(
   mapStateToProps,
   mapDispatchToProps
 )(WorkflowMain)
-
 
 
 // ---- Main ----
@@ -186,7 +179,7 @@ socket.onmessage = function(e) {
     switch (data.type) {
 
       case 'wfmodule-status':
-        store.dispatch(wfModuleStatusAction(data.id, data.status));
+        store.dispatch(wfModuleStatusAction(data.id, data.status, data.error_msg ? data.error_msg : ''));
         return
 
       case 'reload-workflow':

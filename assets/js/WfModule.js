@@ -1,6 +1,7 @@
 // UI for a single module within a workflow
 
 import React from 'react'
+import { store, wfModuleStatusAction } from './workflow-reducer'
 
 // Libraries to provide a collapsable table view
 var Collapse = require('pui-react-collapse').Collapse;
@@ -53,11 +54,11 @@ class CustomParameter extends React.Component {
 
       if (tableData.length > 0 && !this.state.loading) {
         var xcol = 'date';
-        var ycol = 'result';
+        var ycol = 'value';
         var data = tableData.map( row => { return { 'x': row[xcol], 'y': row[ycol] } } );
 
         return (
-          <BarChart width='1000' axes axisLabels={{x: xcol, y: ycol}} data={data}/>
+          <BarChart width='700' axes axisLabels={{x: xcol, y: ycol}} data={data}/>
         )
       } else {
         return false;
@@ -112,7 +113,10 @@ class WfParameter extends React.Component {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(eventData)
-      }) // no .then, events act through the websocket channel
+      }).then(response => {
+        if (!response.ok)
+          store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', response.statusText))
+      });
     }
   }
 
@@ -230,7 +234,7 @@ class TableView extends React.Component {
     var table;
 
     // Generate the table if there's any data
-    if (tableData.length > 0 && !this.state.loading && this.props.statusReady) {
+    if (tableData.length > 0 && !this.state.loading) {
 
       var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key, 'title': key } });
       table =

@@ -1,10 +1,19 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
 import { getPageID } from './utils'
+import { createStore, applyMiddleware } from 'redux'
+import promiseMiddleware from 'redux-promise';
 
 export const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
 export const CHANGE_PARAM = 'CHANGE_PARAM';
 export const WF_MODULE_STATUS_CHANGE = 'WF_MODULE_STATUS_CHANGE';
+
+// ---- Our Store ----
+// Master state for the workflow. Export so that components can store.dispatch()
+
+export let store = createStore(workflowReducer, applyMiddleware(promiseMiddleware));
+
+// ---- Actions ----
 
 // Load the whole workflow. Returns a promise which returns an action to dispatch when it completes
 export function reloadWorkflowAction() {
@@ -25,18 +34,24 @@ export function addModuleAction(newModuleID) {
   }) .then( reloadWorkflowAction );
 }
 
-export function wfModuleStatusAction(wfModuleID, status) {
+export function wfModuleStatusAction(wfModuleID, status, error_msg) {
   return {
     type : WF_MODULE_STATUS_CHANGE,
     id : wfModuleID,
-    status : status
+    status : status,
+    error_msg: error_msg
   }
 }
 
-const initialState = {};
+// ---- Reducer ----
+// Maps actions to state changes, for that is the Redux way
 
 // Main dispatch for actions. Each action mutates the state to a new state, in typical Redux fashion
-export function workflowReducer(state = initialState, action) {
+export function workflowReducer(state, action) {
+  if (!state) {
+    state = {}; // initial state. we'll load a workflow soon.
+  }
+
   switch (action.type) {
 
     // Reload entire state
@@ -56,7 +71,7 @@ export function workflowReducer(state = initialState, action) {
         for (var wfm of newState.workflow.wf_modules) {
           if (wfm.id == action.id && wfm.status != action.status) {
             // Create a copy of the wf_module with new status
-            var newWfm = Object.assign({}, wfm, { status: action.status });
+            var newWfm = Object.assign({}, wfm, { status: action.status, error_msg: action.error_msg });
 
             // Clone the state, switch out this one wfm (keep position in wf_modules array )
             newState = Object.assign({}, state);
