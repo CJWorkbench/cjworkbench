@@ -100,6 +100,7 @@ class WfModule(models.Model):
     # busy just changes the light on a single module, no need to reload entire wf
     def set_busy(self, notify=True):
         self.status = self.BUSY
+        error_msg = ''
         if notify:
             ws_client_wf_module_status(self, self.status)
         self.save()
@@ -121,9 +122,9 @@ class WfModule(models.Model):
     # --- Rendering ----
 
     # Modules ingest and emit a table (though may do only one, if source or sink)
-    # Returns data only if the module is ready
+    # Returns data only if the module is not busy (modules can return error results in table form)
     def execute(self, table):
-        if (self.status == self.READY):
+        if (self.status != self.BUSY):
             return module_dispatch_render(self, table)
         else:
             return pd.DataFrame()
