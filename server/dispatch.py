@@ -37,24 +37,27 @@ class LoadCSV(ModuleImpl):
     @staticmethod
     def event(parameter, e):
         wfm = parameter.wf_module
+        table = None
 
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()
         url = wfm.get_param_string('url')
-        res = requests.get(url)
+        mimetypes = 'application/json, text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        res = requests.get(url, headers = {'accept': mimetypes})
 
         if res.status_code != requests.codes.ok:
-            wfm.set_error('Error %s fetching url' % str(csvres.status_code))
+            wfm.set_error('Error %s fetching url' % str(res.status_code))
             return
 
         content_type = res.headers.get('content-type')
-        print('content type of %s: %s' % (url, content_type))
+        # print('content type of %s: %s' % (url, content_type))
 
         if content_type == 'text/csv':
             try:
                 table = pd.read_csv(io.StringIO(res.text))
             except CParserError as e:
                 wf_module.set_error(str(e))
+                table = pd.DataFrame([{'result':rest.text}])
 
         elif content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
             try:
@@ -62,30 +65,31 @@ class LoadCSV(ModuleImpl):
             except CParserError as e:
                 wf_module.set_error(str(e))
 
-        elif content_type == 'aaplication/json':
+        elif content_type == 'application/json':
             try:
                 table_json = res.json()
                 path = wfm.get_param_string('json_path')
-                for p in path.split('.'):
-                    table_json = table_json[p]
+                if len(path)>0:
+                    table_json = table_json[path]
                 table = pd.DataFrame(table_json)
 
             except KeyError as e:
-                wf_module.set_error('JSON data has no field %s' % p)
+                wfm.set_error('Bad json path %s' % path)
+                table = pd.DataFrame([{'result':res.text}])
 
-            except CParserError as e:
-                wf_module.set_error(str(e))
+            except ValueError as e:
+                wfm.set_error(str(e))
+                table = pd.DataFrame([{'result': res.text}])
 
         else:
             wfm.set_error('Error fetching %s: unknown content type %s' % (url,content_type))
 
-        if wfm.status == WfModule.ERROR:
-            return None
-
         # we are done. save fetched data, notify of changes to the workflow, reset status
         wfm.store_text('csv', table.to_csv(index=False))      # index=False to prevent pandas from adding an index col
-        wfm.set_ready(notify=False)
-        bump_workflow_version(wfm.workflow)
+
+        if wfm.status != wfm.ERROR:
+            wfm.set_ready(notify=False)
+            bump_workflow_version(wfm.workflow)
 
 
 # ---- PasteCSV ----
