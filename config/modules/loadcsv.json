@@ -1,10 +1,16 @@
 {
-  "name": "Load CSV",
+  "name": "Load From URL",
   "id_name": "loadcsv" ,
   "parameters": [
     {
       "name": "URL",
       "id_name" : "url",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "Path (for json data)",
+      "id_name" : "json_path",
       "type": "string",
       "default": ""
     },

@@ -40,16 +40,50 @@ class LoadCSV(ModuleImpl):
 
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()
-        csvres = requests.get(wfm.get_param_string("url"))
+        url = wfm.get_param_string('url')
+        res = requests.get(url)
 
-        if csvres.status_code != requests.codes.ok:
+        if res.status_code != requests.codes.ok:
             wfm.set_error('Error %s fetching url' % str(csvres.status_code))
             return
 
-        table = pd.read_csv(io.StringIO(csvres.text))
-        wfm.store_text('csv', table.to_csv(index=False))      # index=False to prevent pandas from adding an index col
+        content_type = res.headers.get('content-type')
+        print('content type of %s: %s' % (url, content_type))
 
-        # we are done. notify of changes to the workflow, reset status
+        if content_type == 'text/csv':
+            try:
+                table = pd.read_csv(io.StringIO(res.text))
+            except CParserError as e:
+                wf_module.set_error(str(e))
+
+        elif content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+            try:
+                table = pd.read_excel(io.BytesIO(res.content))
+            except CParserError as e:
+                wf_module.set_error(str(e))
+
+        elif content_type == 'aaplication/json':
+            try:
+                table_json = res.json()
+                path = wfm.get_param_string('json_path')
+                for p in path.split('.'):
+                    table_json = table_json[p]
+                table = pd.DataFrame(table_json)
+
+            except KeyError as e:
+                wf_module.set_error('JSON data has no field %s' % p)
+
+            except CParserError as e:
+                wf_module.set_error(str(e))
+
+        else:
+            wfm.set_error('Error fetching %s: unknown content type %s' % (url,content_type))
+
+        if wfm.status == WfModule.ERROR:
+            return None
+
+        # we are done. save fetched data, notify of changes to the workflow, reset status
+        wfm.store_text('csv', table.to_csv(index=False))      # index=False to prevent pandas from adding an index col
         wfm.set_ready(notify=False)
         bump_workflow_version(wfm.workflow)
 
