@@ -142,14 +142,32 @@ class WfModuleTests(TestCase):
 
     # test that we can retrieve a stored fetch, going to the db and back
     def test_wf_module_fetch(self):
-        data = 'just pretend this is json'
-        key = 'somekey'
+        text1 = 'just pretend this is json'
+        textkey = 'somekey'
 
         nothing = self.wfmodule1.retrieve_text('somekey')
         self.assertIsNone(nothing)
 
-        self.wfmodule1.store_text(key, data)
+        self.wfmodule1.store_text(textkey, text1)
         self.wfmodule1.save()
         self.wfmodule1.refresh_from_db()
-        data2 = self.wfmodule1.retrieve_text(key)
-        self.assertEqual(data, data2)
+        text2 = self.wfmodule1.retrieve_text(textkey)
+        self.assertEqual(text1, text2)
+
+        # exercise binary storage mode
+        bytes1 = b'Let us try this again'
+        byteskey = 'newkey'
+        self.wfmodule1.store_bytes(byteskey, bytes1)
+        self.wfmodule1.save()
+        self.wfmodule1.refresh_from_db()
+        bytes2 = self.wfmodule1.retrieve_bytes(byteskey)
+        self.assertEqual(bytes1, bytes2)
+
+        # ensure data under a different key did not change
+        text2 = self.wfmodule1.retrieve_text(textkey)
+        self.assertEqual(text1, text2)
+
+
+
+
+

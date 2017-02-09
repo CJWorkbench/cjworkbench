@@ -40,16 +40,25 @@ class WfModule(models.Model):
     error_msg = models.CharField('error_msg', max_length=200, blank=True)
 
     # ---- Persistent storage ----
-    def store_text(self, key, text):
-        StoredObject.objects.create(wf_module=self, key=key, text=text)
+    def store_bytes(self, key, data):
+        StoredObject.objects.create(wf_module=self, key=key, data=data)
 
-    def retrieve_text(self, key):
+    def retrieve_bytes(self, key):
         objs = StoredObject.objects.filter(wf_module=self, key=key)
         if objs:
-            return objs.latest('stored_at').text
+            return objs.latest('stored_at').data
         else:
             return None
 
+    def store_text(self, key, text):
+        self.store_bytes(key, bytes(text, 'UTF-8'))
+
+    def retrieve_text(self, key):
+        data = self.retrieve_bytes(key)
+        if data:
+            return data.decode('UTF-8')
+        else:
+            return None
 
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
@@ -199,13 +208,19 @@ class ParameterVal(models.Model):
 
 
 # StoredObject is our persistance layer.
-# Allows WfModules to store keyed, versioned text
+# Allows WfModules to store keyed, versioned binary objects
 class StoredObject(models.Model):
     wf_module = models.ForeignKey(WfModule, related_name='wf_module', on_delete=models.CASCADE)  # delete stored data if WfModule deleted
 
     key = models.CharField('key', max_length = 64, blank=True, default='')
 
-    text = models.TextField('text', blank=True, default='')
+    data = models.BinaryField(blank=True)
 
     stored_at = models.DateTimeField('stored_at', auto_now=True)
 
+    # String accessors for ease of use
+    def set_string(self, s):
+        data = bytes(s, 'UTF-8')
+
+    def get_string(self):
+        return data.decode('UTF-8')
