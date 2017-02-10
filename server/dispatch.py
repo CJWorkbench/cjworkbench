@@ -3,6 +3,7 @@ from server.models import Module, WfModule
 import pandas as pd
 import numpy as np
 from pandas.parser import CParserError
+import re
 import requests
 import io
 import csv
@@ -21,6 +22,25 @@ class ModuleImpl:
         pass
 
 # ---- LoadCSV ----
+
+# Walks down through a dict through keys and arrays
+# e.g. "Results.series[0].data" -> jsondict['Results']['Series'][0]['data']
+def parse_json_path(d, path):
+    if path == '':
+        return d
+
+    pattern = re.compile('([^\[]+)\[([0-9]+)\]$') # 'key[8]' -> 'key','8'
+
+    # walk down keys and arrays
+    for p in path.split('.'):
+        m = pattern.match(p)
+        if m:
+            d = d[m.group(1)]           # d['key']
+            d = d[int(m.group(2))]      # d[8]
+        else:
+            d = d[p]
+
+    return d
 
 class LoadCSV(ModuleImpl):
 
@@ -70,7 +90,7 @@ class LoadCSV(ModuleImpl):
                 table_json = res.json()
                 path = wfm.get_param_string('json_path')
                 if len(path)>0:
-                    table_json = table_json[path]
+                    table_json = parse_json_path(table_json, path)
                 table = pd.DataFrame(table_json)
 
             except KeyError as e:
