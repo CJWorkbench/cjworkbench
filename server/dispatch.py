@@ -3,6 +3,7 @@ from server.models import Module, WfModule
 import pandas as pd
 import numpy as np
 from pandas.parser import CParserError
+from xlrd import XLRDError
 import re
 import requests
 import io
@@ -62,6 +63,7 @@ class LoadCSV(ModuleImpl):
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()
         url = wfm.get_param_string('url')
+
         mimetypes = 'application/json, text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         res = requests.get(url, headers = {'accept': mimetypes})
 
@@ -76,14 +78,15 @@ class LoadCSV(ModuleImpl):
             try:
                 table = pd.read_csv(io.StringIO(res.text))
             except CParserError as e:
-                wf_module.set_error(str(e))
-                table = pd.DataFrame([{'result':rest.text}])
+                wfm.set_error(str(e))
+                table = pd.DataFrame([{'result':res.text}])
 
         elif content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
             try:
                 table = pd.read_excel(io.BytesIO(res.content))
-            except CParserError as e:
-                wf_module.set_error(str(e))
+            except XLRDError as e:
+                wfm.set_error(str(e))
+                return
 
         elif content_type == 'application/json':
             try:
@@ -96,13 +99,16 @@ class LoadCSV(ModuleImpl):
             except KeyError as e:
                 wfm.set_error('Bad json path %s' % path)
                 table = pd.DataFrame([{'result':res.text}])
+                return
 
             except ValueError as e:
                 wfm.set_error(str(e))
                 table = pd.DataFrame([{'result': res.text}])
+                return
 
         else:
             wfm.set_error('Error fetching %s: unknown content type %s' % (url,content_type))
+            return
 
         # we are done. save fetched data, notify of changes to the workflow, reset status
         wfm.store_text('csv', table.to_csv(index=False))      # index=False to prevent pandas from adding an index col

@@ -124,7 +124,7 @@ class WfModule(models.Model):
     # Modules ingest and emit a table (though may do only one, if source or sink)
     # Returns data only if the module is not busy (modules can return error results in table form)
     def execute(self, table):
-        if (self.status != self.BUSY):
+        if (self.status == self.READY):
             return module_dispatch_render(self, table)
         else:
             return pd.DataFrame()
