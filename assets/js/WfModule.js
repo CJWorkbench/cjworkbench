@@ -1,70 +1,15 @@
 // UI for a single module within a workflow
 
 import React from 'react'
+import ChartParameter from './chart'
 import { store, wfModuleStatusAction } from './workflow-reducer'
+
 
 // Libraries to provide a collapsable table view
 var Collapse = require('pui-react-collapse').Collapse;
 var DataGrid = require('react-datagrid');
 require('react-datagrid/index.css');
 
-import {BarChart} from 'react-easy-chart';
-
-// ---- CustomParameter ----
-// atm a shim for a simple chart
-
-class CustomParameter extends React.Component {
-  constructor(props) {
-    super(props);
-    this.loadingState = { tableData: [], loading: true };
-    this.state = { tableData: [], loading: false };           // componentDidMount will trigger first load
-  }
-
-  // Load table data from render API
-  loadTable() {
-    var self = this;
-    var url = '/api/wfmodules/' + this.props.id + '/input';
-    fetch(url)
-      .then(response => response.json())
-      .then(json => {
-        self.setState({tableData: json, loading: false});
-      }); // triggers re-render
-  }
-
-  // Load table when first rendered
-  componentDidMount() {
-    this.loadTable()
-  }
-
-  // If the revision changes from under us reload the table, which will trigger a setState and re-render
-  componentWillReceiveProps(nextProps) {
-    if (this.props.revision != nextProps.revision) {
-      this.setState(this.loadingState);               // "unload" the table
-      this.loadTable();
-    }
-  }
-
-  // Update only when we are not loading
-  shouldComponentUpdate(nextProps, nextState) {
-    return !nextState.loading;
-  }
-
-  render() {
-      var tableData = this.state.tableData;
-
-      if (tableData.length > 0 && !this.state.loading) {
-        var xcol = 'date';
-        var ycol = 'value';
-        var data = tableData.map( row => { return { 'x': row[xcol], 'y': row[ycol] } } );
-
-        return (
-          <BarChart width='700' axes axisLabels={{x: xcol, y: ycol}} data={data}/>
-        )
-      } else {
-        return false;
-      }
-  }
-}
 
 // ---- WfParameter - a single editable parameter ----
 
@@ -156,7 +101,7 @@ class WfParameter extends React.Component {
       case 'custom':
         return (
           <div>
-            <CustomParameter id={this.props.wf_module_id} type={this.props.p.string} revision={this.props.revision}  />
+            <ChartParameter id={this.props.wf_module_id} type={this.props.p.string} revision={this.props.revision}  />
           </div>
         );
 
@@ -234,7 +179,7 @@ class TableView extends React.Component {
     var table;
 
     // Generate the table if there's any data
-    if (tableData.length > 0 && !this.state.loading) {
+    if (false && tableData.length > 0 && !this.state.loading) {
 
       var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key, 'title': key } });
       table =

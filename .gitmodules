@@ -1,0 +1,7 @@
+[submodule "chartbuilder"]
+	path = chartbuilder/chartbuilder
+	url = https://github.com/jstray/Chartbuilder.git
+	branch = library-style
+[submodule "chartbuilder-ui"]
+	path = chartbuilder/chartbuilder-ui
+	url = https://github.com/Quartz/chartbuilder-ui.git

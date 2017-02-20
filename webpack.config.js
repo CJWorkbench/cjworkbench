@@ -21,10 +21,11 @@ module.exports = {
   ],
 
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
-        exclude: /node_modules/,
+        // chartbuilder and included modules need their jsx compiled, but most node-modules do not
+        exclude: /node_modules(?!\/(react-tangle))/,
         loader: 'babel-loader',
         query: {presets: ['es2015', 'react']}  // to transform JSX into JS
       },
@@ -36,7 +37,7 @@ module.exports = {
   },
 
   resolve: {
-    modulesDirectories: ['node_modules'],
-    extensions: ['', '.js', '.jsx']
+    modules: ['node_modules', 'chartbuilder'],
+    extensions: ['.js', '.jsx']
   },
 }
