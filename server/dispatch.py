@@ -137,7 +137,7 @@ class PasteCSV(ModuleImpl):
         return table
 
 
-# ---- Unimplemented ----
+# ---- Formula ----
 
 class Formula(ModuleImpl):
     def render(wf_module, table):
@@ -178,26 +178,38 @@ class Formula(ModuleImpl):
         wf_module.set_ready(notify=False)
         return table
 
-class Scale(ModuleImpl):
+# ---- SelectColumns ----
+
+class SelectColumns(ModuleImpl):
     def render(wf_module, table):
-        column = wf_module.get_param_string('column')
+        cols = wf_module.get_param_string('colnames').split(',')
+        cols = [c.strip() for c in cols]
 
-        print(table.columns)
-        if not column in table.columns:
-            wf_module.set_error('Column not found')
-            return None
+        for c in cols:
+            if not c in table.columns:
+                wf_module.set_error('There is no column named %s' % c)
+                return None
 
-        scale = wf_module.get_param_number('scale')
-        table.loc[:, column] *= scale
         wf_module.set_ready(notify=False)
-        return table
+        newtab = table[cols]
+        return newtab
+
 
 class RawCode(ModuleImpl):
     pass
 
+# ---- Chart ----
 class Chart(ModuleImpl):
+    pass # no render logic, it's all front end
+
+
+# ---- Test Support ----
+# NOP -- do nothing
+
+class NOP(ModuleImpl):
     pass
 
+# Fixed test data with paramter number of rows
 class TestDataRows(ModuleImpl):
     @staticmethod
     def render(wfmodule, table):
@@ -207,11 +219,6 @@ class TestDataRows(ModuleImpl):
             table.loc[i] = [i+1, (i+1)*(i+1)]
         return table
 
-# ---- Test Support ----
-# NOP -- do nothing
-
-class NOP(ModuleImpl):
-    pass
 
 # Generate test data
 
@@ -233,13 +240,14 @@ module_dispatch_tbl = {
     'loadcsv':      LoadCSV,
     'pastecsv':     PasteCSV,
     'formula':      Formula,
+    'selectcolumns':SelectColumns,
     'rawcode':      RawCode,
     'simplechart':  Chart,
-    'testdataN':    TestDataRows,
 
     # For testing
     'NOP':          NOP,
     'testdata':     TestData,
+    'testdataN':    TestDataRows,
     'double_M_col': DoubleMColumn
 }
 

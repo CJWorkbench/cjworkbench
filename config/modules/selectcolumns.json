@@ -1,0 +1,12 @@
+{
+  "name": "Select Columns",
+  "id_name": "selectcolumns",
+  "parameters": [
+    {
+      "name": "Enter columns to keep",
+      "id_name": "colnames",
+      "type": "string",
+      "default": ""
+    }
+  ]
+}

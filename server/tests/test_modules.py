@@ -4,6 +4,7 @@ from rest_framework import status
 from server.models import Module, WfModule, Workflow, ParameterSpec, ParameterVal
 from server.tests.utils import *
 from server.initmodules import load_module_from_dict
+from server.execute import execute_wfmodule
 import requests_mock
 import pandas as pd
 import io
@@ -57,7 +58,12 @@ def load_and_add_module(workflow, module_spec):
 
     return wf_module
 
+# returns the ParameterVal defined by spec with given id_name
+# (error if more than one parameter with that spec)
+def get_param_by_id_name(id_name):
+    return ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name=id_name))
 
+# ---- PasteCSV ----
 
 class PasteCSVTests(TestCase):
     def setUp(self):
@@ -69,6 +75,8 @@ class PasteCSVTests(TestCase):
         table = pd.read_csv(io.StringIO(mock_csv_text))
         self.assertEqual(response.content, table_to_content(table))
 
+
+# ---- Formula ----
 
 class FormulaTests(TestCase):
     def setUp(self):
@@ -112,6 +120,7 @@ class FormulaTests(TestCase):
         self.assertEqual(response.content, table_to_content(pd.DataFrame()))
 
 
+# ---- LoadURL ----
 
 class LoadFromURLTests(TestCase):
     def setUp(self):
@@ -224,3 +233,44 @@ class LoadFromURLTests(TestCase):
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
             self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+
+
+# ---- SelectColumns ----
+
+class SelectColumnsTests(TestCase):
+    def setUp(self):
+        workflow = create_testdata_workflow()
+        module_def = load_module_def('selectcolumns')
+        self.wf_module = load_and_add_module(workflow, module_def)
+        self.cols_pval = get_param_by_id_name('colnames')
+
+    def test_render(self):
+        # select a single column
+        self.cols_pval.string = 'Month'
+        self.cols_pval.save()
+        out = execute_wfmodule(self.wf_module)
+        table = mock_csv_table[['Month']]
+        self.assertEqual(str(out), str(table))
+
+        # select a single column, with stripped whitespace
+        self.cols_pval.string = 'Month '
+        self.cols_pval.save()
+        out = execute_wfmodule(self.wf_module)
+        self.assertEqual(str(out), str(table))
+
+        # reverse column order
+        self.cols_pval.string = 'Amount,Month'
+        self.cols_pval.save()
+        out = execute_wfmodule(self.wf_module)
+        table = mock_csv_table[['Amount','Month']]
+        self.assertEqual(str(out), str(table))
+
+        # bad column name should produce error
+        self.cols_pval.string = 'Amountxxx,Month'
+        self.cols_pval.save()
+        out = execute_wfmodule(self.wf_module)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(self.wf_module.status, WfModule.ERROR)
+
+
+
