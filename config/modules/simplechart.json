@@ -3,18 +3,6 @@
   "id_name": "simplechart",
   "parameters": [
     {
-      "name": "Values",
-      "id_name": "val_col",
-      "type": "string",
-      "default": ""
-    },
-    {
-      "name": "Labels",
-      "id_name": "label_col",
-      "type": "string",
-      "default": ""
-    },
-    {
       "name": "Chart",
       "id_name": "chart",
       "type": "custom",

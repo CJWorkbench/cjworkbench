@@ -179,7 +179,7 @@ class TableView extends React.Component {
     var table;
 
     // Generate the table if there's any data
-    if (false && tableData.length > 0 && !this.state.loading) {
+    if (tableData.length > 0 && !this.state.loading) {
 
       var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key, 'title': key } });
       table =
