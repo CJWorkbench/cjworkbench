@@ -1,0 +1,18 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django stuff:
+*.log
+local_settings.py
+webpack-stats.json
+db.sqlite3
+
+# Asset bundles and collected static files
+/node_modules/
+/assets/bundles/
+/static/
+
+#pycharm
+.idea/
