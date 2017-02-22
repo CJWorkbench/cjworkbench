@@ -101,7 +101,7 @@ class WfParameter extends React.Component {
       case 'custom':
         return (
           <div>
-            <ChartParameter id={this.props.wf_module_id} type={this.props.p.string} revision={this.props.revision}  />
+            <ChartParameter wf_module_id={this.props.wf_module_id} type={this.props.p.string} revision={this.props.revision}  />
           </div>
         );
 

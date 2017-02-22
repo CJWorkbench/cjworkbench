@@ -120,6 +120,12 @@ def load_parameter_spec(d, module, order):
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
 
+    # Default visibility. We don't change visibility of existing ParameterVals
+    if 'visible' in d:
+        pspec.def_visible = d['visible']
+    else:
+        pspec.def_visible = True
+
     pspec.order = order
     pspec.save()
 

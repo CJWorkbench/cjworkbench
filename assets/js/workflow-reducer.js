@@ -34,7 +34,7 @@ export function addModuleAction(newModuleID) {
   }) .then( reloadWorkflowAction );
 }
 
-export function wfModuleStatusAction(wfModuleID, status, error_msg) {
+export function wfModuleStatusAction(wfModuleID, status, error_msg='') {
   return {
     type : WF_MODULE_STATUS_CHANGE,
     id : wfModuleID,

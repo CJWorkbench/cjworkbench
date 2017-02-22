@@ -164,6 +164,8 @@ class ParameterSpec(models.Model):
 
     order = models.IntegerField('order', default=0)
 
+    def_visible = models.BooleanField(default=True)
+
     def_number = models.FloatField(NUMBER, null=True, blank=True, default=0.0)
     def_string = models.CharField(STRING, max_length=50, blank=True, default='')
     def_text = models.TextField(TEXT, blank=True, default='')
@@ -188,11 +190,14 @@ class ParameterVal(models.Model):
 
     order = models.IntegerField('order', default=0)
 
+    visible = models.BooleanField(default=True)
+
     def init_from_spec(self):
         self.number = self.parameter_spec.def_number
         self.string = self.parameter_spec.def_string
         self.text = self.parameter_spec.def_text
         self.order = self.parameter_spec.order
+        self.visible = self.parameter_spec.def_visible
 
     def __str__(self):
         if self.parameter_spec.type == ParameterSpec.STRING:
