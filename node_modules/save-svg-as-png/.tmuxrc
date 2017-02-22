@@ -1,0 +1,7 @@
+rename-session svg
+
+rename-window vim
+send "vim saveSvgAsPng.js index.html +'tab all'" C-m
+
+new-window -t 9 -n daemons
+send "serve 8006" C-m

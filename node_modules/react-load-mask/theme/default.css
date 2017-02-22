@@ -1,0 +1,5 @@
+.react-load-mask--theme-default {
+  background: rgba(128, 128, 128, 0.5); }
+  .react-load-mask--theme-default .react-load-mask__loader-loadbar {
+    border-radius: 50px;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.2); }

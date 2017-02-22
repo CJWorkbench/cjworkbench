@@ -1,0 +1,13 @@
+language: node_js
+notifications:
+  email:
+  - yiminghe@gmail.com
+node_js:
+- 0.11
+before_script:
+- npm start &
+- npm install mocha-phantomjs -g
+- phantomjs --version
+script:
+- npm run browser-test
+- npm run browser-test-cover

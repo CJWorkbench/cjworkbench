@@ -5,7 +5,6 @@
   "main": "index.js",
   "dependencies": {
     "babelify": "^7.3.0",
-    "chartbuilder": "git+https://github.com/Quartz/Chartbuilder.git",
     "d3": "^4.5.0",
     "d3-array": "^1.0.2",
     "d3-scale": "^1.0.4",

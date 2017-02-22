@@ -1,0 +1,14 @@
+.react-tangle-input {
+  border:0;
+  -webkit-appearance:none;
+  text-align:left;
+  cursor:col-resize;
+  font:inherit;
+  border-bottom:2px dotted #000;
+  display:inline;
+  width:50px;
+}
+
+.react-tangle-input:focus {
+  cursor:text;
+}

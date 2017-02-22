@@ -1,0 +1,50 @@
+@import './round';
+
+@keyframes loader-fade {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0.25;
+  }
+}
+
+.react-load-mask {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  display: none;
+  top: 0;
+  left: 0;
+
+  &--visible {
+    display: block;
+  }
+}
+
+.react-load-mask__loader {
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+
+.react-load-mask__loader-loadbar {
+  animation: loader-fade 1s linear infinite;
+  position: absolute;
+  background: #000;
+  left: 44.5%;
+  top: 37%;
+  width: 12%;
+  height: 26%;
+  opacity: 0;
+}
+
+@for $index from 0 through 11 {
+  .react-load-mask__loader-loadbar--#{$index+1} {
+    transform: rotate(#{30*$index}deg) translate(0, -142%);
+    animation-delay: -($index*1s - decimal-round($index/12, 4));
+  }
+}

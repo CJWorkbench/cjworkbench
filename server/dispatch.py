@@ -1,5 +1,5 @@
 # Module dispatch table and implementations
-from server.models import Module, WfModule
+#from server.models import Module, WfModule
 import pandas as pd
 import numpy as np
 from pandas.parser import CParserError

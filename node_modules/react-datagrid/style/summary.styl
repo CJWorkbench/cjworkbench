@@ -1,0 +1,30 @@
+.react-datagrid
+  .z-footer-wrapper
+    background $datagrid-summary-row-background
+
+  .z-summary
+    border-top $datagrid-header-border-width $datagrid-header-border-style $datagrid-header-border-color
+    align-items stretch /* for vertical aligning text in header */
+
+    .z-cell
+      position relative
+      .z-inner
+        display flex
+
+        align-items center
+        align-content flex-start
+        flex-flow row
+
+        height 100%
+
+      .z-content
+        text-overflow ellipsis
+        white-space nowrap
+        overflow hidden
+
+      border-bottom $datagrid-header-border-width $datagrid-header-border-style $datagrid-header-border-color
+      &.z-last
+          border-right $datagrid-header-border-width $datagrid-header-border-style $datagrid-header-border-color
+
+      &:not(.z-first)
+          border-left $datagrid-header-border-width $datagrid-header-border-style $datagrid-header-border-color

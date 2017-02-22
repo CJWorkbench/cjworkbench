@@ -1,0 +1,90 @@
+{
+  "name": "react-datagrid",
+  "version": "1.0.14",
+  "description": "React DataGrid",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "make",
+    "lib": "./node_modules/.bin/gulp",
+    "build-style": "webpack --progress --colors --config build-style.config.js",
+    "stats": "./node_modules/.bin/webpack --profile --progress --colors --config dist.config.js --json > stats.json",
+    "dist": "./node_modules/.bin/webpack --progress --colors --config dist.config.js",
+    "dist.min": "./node_modules/.bin/webpack --progress --colors --optimize-minimize --optimize-occurence-order --optimize-dedupe --config dist.min.config.js",
+    "build": "npm run lib && npm run dist && npm run dist.min && npm run build-style",
+    "serve": "./node_modules/.bin/http-server -p 9091",
+    "server": "node server/index",
+    "dev": "./node_modules/.bin/webpack-dev-server --progress --colors --port 9090"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zippyui/react-datagrid.git"
+  },
+  "keywords": [
+    "grid",
+    "datagrid",
+    "data-grid",
+    "grid",
+    "widget",
+    "table",
+    "list",
+    "react-component",
+    "react",
+    "grid"
+  ],
+  "devDependencies": {
+    "css-loader": "^0.9.0",
+    "exports-loader": "^0.6.2",
+    "express": "^4.12.3",
+    "extract-text-webpack-plugin": "^0.3.8",
+    "faker": "^2.1.2",
+    "file-loader": "^0.8.1",
+    "guid": "0.0.12",
+    "gulp": "^3.8.11",
+    "gulp-react": "^3.0.0",
+    "http-server": "^0.7.3",
+    "jsdom": "^4.1.0",
+    "jsx-loader": "^0.12.2",
+    "mocha": "^2.2.1",
+    "raw-loader": "^0.5.1",
+    "react-hot-loader": "^1.2.4",
+    "should": "^5.2.0",
+    "sorty": "^1.2.0",
+    "style-loader": "^0.8.2",
+    "stylus-loader": "^0.4.0",
+    "webpack": "^1.8.4",
+    "webpack-dev-middleware": "^1.0.11",
+    "webpack-dev-server": "^1.6.6"
+  },
+  "dependencies": {
+    "buffer-function": "^1.0.0",
+    "clone": "^0.1.18",
+    "css-utils": "^0.4.2",
+    "drag-helper": "^1.2.3",
+    "es6-promise": "^2.1.0",
+    "has-touch": "^1.0.0",
+    "hasown": "^1.0.1",
+    "normalize.css": "^3.0.3",
+    "object-assign": "^2.0.0",
+    "react-event-names": "^1.0.0",
+    "react-load-mask": "^1.0.1",
+    "react-menus": "^1.1.1",
+    "react-prefixr": "^0.1.0",
+    "react-simple-toolbar": "^1.0.4",
+    "react-style-normalizer": "^1.2.0",
+    "region": "^2.1.2",
+    "region-align": "^2.1.2",
+    "scrollbar-size": "^1.0.4",
+    "ustring": "^1.4.1",
+    "whatwg-fetch": "^0.7.0"
+  },
+  "peerDependencies": {
+    "react": ">=0.13.0"
+  },
+  "author": "ZippyUI <contact@zippyui.com>",
+  "contributors": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/zippyui/react-datagrid/issues"
+  },
+  "homepage": "https://github.com/zippyui/react-datagrid"
+}

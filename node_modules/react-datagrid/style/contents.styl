@@ -1,0 +1,33 @@
+.react-datagrid
+    &.z-style-alternate
+        .z-odd.z-row
+            background $datagrid-row-odd-background
+
+    .z-column-content
+        overflow visible
+
+    &.z-cell-ellipsis
+        .z-row .z-cell .z-content
+            text-overflow ellipsis
+            white-space nowrap
+            overflow hidden
+
+    .z-row
+        &.z-over
+        &.z-over.z-odd
+            background $datagrid-row-over-background
+        &.z-selected
+        &.z-selected.z-odd
+            background $datagrid-row-selected-background
+        .z-cell
+            datagrid-cell()
+
+    .z-group-row
+        &.z-over
+        &.z-over.z-odd
+            background $datagrid-group-row-over-background
+
+    .z-group-cell
+        flex 1
+    .z-group-row
+        background $datagrid-group-row-background

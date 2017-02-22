@@ -1,0 +1,70 @@
+.z-scroller
+    overflow auto
+    position relative
+
+    //flex related
+    display flex
+    flex-flow column
+    flex 1 1 auto
+
+    .z-content-wrapper
+        flex 1 1 auto
+        display flex
+        align-items stretch
+        align-content flex-start
+        justify-content flex-start
+        flex-flow row
+        position relative
+        overflow hidden
+        z-index 10
+
+
+    .z-content-wrapper-fix
+        z-index -1
+        flex 1
+
+	.z-vertical-scroller
+	    overflow hidden
+	    overflow-y auto
+	    right 0px
+	    top 0px
+	    width 1px
+	    flex none
+	    visibility hidden
+
+	.z-horizontal-scroller
+	    height 0.1px
+	    visibility hidden
+
+	.z-vertical-scrollbar
+	    overflow hidden
+	    position absolute
+	    height 100%
+	    right 0px
+	    top 0px
+
+	.z-horizontal-scrollbar
+	    transform translate3d(0px, 0px, 1px)
+	    flex 0 0 auto
+	    height auto
+	    width 100%
+	    position relative
+	    left 0px
+	    bottom 0px
+	    overflow auto
+	    z-index 100
+
+	    &.mac-fix
+	        display flex
+	        flex-flow row
+	        align-items stretch
+	        align-content flex-start
+	        justify-content stretch
+
+	//needed for mac safari
+	.z-horizontal-scrollbar-fix
+	    flex 1
+	    overflow auto
+
+	.loadmask
+		z-index 100
