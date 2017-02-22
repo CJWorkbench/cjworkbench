@@ -121,6 +121,7 @@ class WorkflowMain extends React.Component {
 
 
 function onParamChanged(paramID, newVal) {
+  console.log('Changing parameter ' + paramID);
    fetch('/api/parameters/' + paramID, {
       method: 'patch',
       headers: {

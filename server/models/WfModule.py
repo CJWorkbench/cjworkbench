@@ -208,6 +208,8 @@ class ParameterVal(models.Model):
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + self.text
         elif self.parameter_spec.type == ParameterSpec.BUTTON:
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - button'
+        elif self.parameter_spec.type == ParameterSpec.CUSTOM:
+            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - custom'
         else:
             raise ValueError("Invalid parameter type")
 

@@ -1,6 +1,6 @@
 // UI for a single module within a workflow
 
-import React from 'react'
+import React, { PropTypes } from 'react'
 import ChartParameter from './chart'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 
@@ -16,7 +16,7 @@ require('react-datagrid/index.css');
 class WfParameter extends React.Component {
 
   constructor(props) {
-    super(props)
+    super(props);
 
     this.type = this.props.p.parameter_spec.type;
     this.name = this.props.p.parameter_spec.name;
@@ -66,6 +66,10 @@ class WfParameter extends React.Component {
   }
 
   render() {
+    if (!this.props.p.visible) {
+      return false; // nothing to see here
+    }
+
     switch (this.type) {
       case 'string':
         return (
@@ -99,9 +103,15 @@ class WfParameter extends React.Component {
         );
 
       case 'custom':
+
+        // Chart parameters load and save state to parameter with id_name=param value
+        var state_id_name = this.props.p.string;
+        var loadState = ( () => this.props.getParamText(state_id_name) );
+        var saveState = ( state => this.props.setParamText(state_id_name, state) );
+
         return (
           <div>
-            <ChartParameter wf_module_id={this.props.wf_module_id} type={this.props.p.string} revision={this.props.revision}  />
+            <ChartParameter wf_module_id={this.props.wf_module_id} revision={this.props.revision} saveState={saveState} loadState={loadState}  />
           </div>
         );
 
@@ -110,6 +120,16 @@ class WfParameter extends React.Component {
     }
   }
 }
+
+WfParameter.propTypes = {
+  p:                React.PropTypes.object,
+  wf_module_id:     React.PropTypes.number,
+	revision:         React.PropTypes.number,
+  onParamChanged:   React.PropTypes.func,
+	getParamText:     React.PropTypes.func,
+	setParamText:     React.PropTypes.func,
+};
+
 
 // ---- StatusLight ----
 // Ready, Busy, or Error
@@ -163,6 +183,9 @@ class TableView extends React.Component {
 
   // If the revision changes from under us reload the table, which will trigger a setState and re-render
   componentWillReceiveProps(nextProps) {
+    console.log("willRecieveProps " + this.props.id);
+    console.log('old revision ' + this.props.revision + ' new revision ' + nextProps.revision);
+
     if (this.props.revision != nextProps.revision) {
       this.setState(this.loadingState);               // "unload" the table
       this.loadTable();
@@ -201,28 +224,70 @@ class TableView extends React.Component {
 
 export default class WfModule extends React.Component {
 
+  constructor(props) {
+    super(props);
+    this.initFields(props);
+    this.setParamText = this.setParamText.bind(this);
+    this.getParamText = this.getParamText.bind(this);
+  }
+
+  componentWillReceiveProps(newProps) {
+    this.initFields(newProps)
+  }
+
+  // our props are annoying (we use data- because Sortable wants to put these props on the div if we don't)
+  // so save them into this
+  initFields(props) {
+    this.wf_module = props['data-wfmodule'];
+    this.module = this.wf_module.module;
+    this.params = this.wf_module.parameter_vals;
+    this.onParamChanged = props['data-onParamChanged'];
+    this.revision = props['data-revision'];
+  }
+
+  // These functions allow parameters to access each others value (text params only)
+  // Used e.g. for custom UI elements to save/restore their state from hidden parameters
+  // Suppresses reassignment of the same text, which can be important to avoid endless notification loops
+  setParamText(id_name, text) {
+    var p = this.params.find( p => p.parameter_spec.id_name == id_name );
+    if (p && text != p.text) {
+      this.onParamChanged(p.id, { text: text })
+    }
+  }
+
+  getParamText(id_name) {
+    //console.log("getParamText " + id_name)
+    var p = this.params.find( p => p.parameter_spec.id_name == id_name );
+    if (p) {
+      return p.text;
+    }
+  }
+
   render() {
-    var wf_module = this.props['data-wfmodule'];
-    var module = wf_module.module;
-    var params= wf_module.parameter_vals;
-    var onParamChanged = this.props['data-onParamChanged'];
-    var revision = this.props['data-revision'];
 
     // Each parameter gets a WfParameter
-    var paramdivs = params.map((ps, i) =>
-      { return <WfParameter p={ps} key={i} onParamChanged={onParamChanged} wf_module_id={wf_module.id} revision={revision}/> } );
+    var paramdivs = this.params.map((ps, i) => {
+          return <WfParameter
+                    key={i}
+                    p={ps}
+                    onParamChanged={this.onParamChanged}
+                    wf_module_id={this.wf_module.id}
+                    revision={this.revision}
+                    getParamText={this.getParamText}
+                    setParamText={this.setParamText} />
+        });
 
     // Putting it all together: name, status, parameters, output
     return (
       <div {...this.props} className="module-li">
         <div>
-          <h1 className='moduleName'>{module.name}</h1>
-          <StatusLight status={wf_module.status}/>
+          <h1 className='moduleName'>{this.module.name}</h1>
+          <StatusLight status={this.wf_module.status}/>
         </div>
         <div style={{'clear':'both'}}></div>
-        <StatusLine status={wf_module.status} error_msg={wf_module.error_msg} />
+        <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
         {paramdivs}
-        <TableView id={wf_module.id} statusReady={wf_module.status == 'ready'} revision={revision}/>
+        <TableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision}/>
       </div>
     ); 
   } 

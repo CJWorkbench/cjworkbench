@@ -1,6 +1,6 @@
 // Chart JSX component wraps a ChartBuilder
 
-import React from 'react'
+import React, { PropTypes } from 'react'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 
 var ChartbuilderLocalStorageAPI = require("chartbuilder/src/js/util/ChartbuilderLocalStorageAPI");
@@ -10,7 +10,7 @@ var ChartViewActions = require("chartbuilder/src/js/actions/ChartViewActions");
 
 require("chartbuilder/dist/css/core.css");
 
-// adapter, eventually obsolete with CSV format /input call, or better ChartBuilder integration
+// adapter, eventually obsolete with CSV format /input call, or direct edit of ChartBuilder data model
 function JSONtoCSV(d) {
   if (d && d.length > 0) {
     var colnames = Object.keys(d[0]).filter(key => key != 'index');
@@ -28,6 +28,7 @@ function JSONtoCSV(d) {
 }
 
 export default class ChartParameter extends React.Component {
+
   constructor(props) {
     super(props);
     this.loadingState = { loading: true };
@@ -44,20 +45,32 @@ export default class ChartParameter extends React.Component {
 
   // Turn ChartBuilder errors into module errors (so user gets the red light etc.)
   parseErrors(errors) {
-    var errs = errors.messages.filter(m => m.type=='error');
-    if (errs.length>0) {
-      store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', errs[0].text))
+    var first_err= errors.messages.find(m => m.type=='error');
+    if (first_err) {
+      store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', first_err.text))
     } else {
       store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'ready'))
     }
   }
 
-  // called when any change is made to chart
-  onStateChange(model) {
-    this.parseErrors(model.errors);
+  // Store ChartBuilder state into our hidden text parameter, when user changes it
+  // Don't store the data, that comes from input -- this suppresses parameter change when input changes)
+  // Even so, this relies on test in saveState to suppress re-saving the identical content,
+  // which would otherwise trigger a workflow version bump, a reload, and then another CB onChange,
+  // into an infinite loop.
+  saveState(model) {
+    //delete model.chartProps.
+    //delete model.errors;
+    this.props.saveState(JSON.stringify(model));
   }
 
-  // Load table data from render API
+  // called when any change is made to chart. Update error status, save to hidden 'chartstate' text field
+  onStateChange(model) {
+    this.parseErrors(model.errors);
+    this.saveState(model)
+  }
+
+  // Load our input data from render API
   loadTable() {
     this.setState(this.loadingState);
     var self = this;
@@ -74,9 +87,11 @@ export default class ChartParameter extends React.Component {
       });
   }
 
-  // Load table when first rendered
+  // Load input data, settings when first rendered
   componentDidMount() {
-    this.loadTable()
+    this.loadTable();
+    var model = JSON.parse(this.props.loadState());
+    ChartViewActions.updateAllChartProps(model);
   }
 
   // If the revision changes from under us reload the table, which will trigger a setState and re-render
@@ -94,4 +109,11 @@ export default class ChartParameter extends React.Component {
   render() {
     return (<Chartbuilder autosave={true} onStateChange={this.onStateChange}/>);
   }
+}
+
+ChartParameter.propTypes = {
+		wf_module_id: React.PropTypes.number,
+		revision:     React.PropTypes.number,
+		saveState:    React.PropTypes.func,
+		loadState:    React.PropTypes.func
 }

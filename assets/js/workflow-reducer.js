@@ -57,6 +57,7 @@ export function workflowReducer(state, action) {
     // Reload entire state
     case RELOAD_WORKFLOW:
       console.log("RELOAD_WORKFLOW");
+      console.log("new workflow revision " + action.workflow.revision)
       return Object.assign({}, state, {
         workflow: action.workflow,
       })
@@ -69,7 +70,13 @@ export function workflowReducer(state, action) {
         var newState = state;
 
         for (var wfm of newState.workflow.wf_modules) {
-          if (wfm.id == action.id && wfm.status != action.status) {
+
+          // Find matching module, and change state if status changed or error message changed
+          if (wfm.id == action.id &&
+              ((wfm.status != action.status) || (wfm.status=='error' && wfm.error_msg != action.error_msg))) {
+
+            console.log("actually changed status for " + wfm.id);
+
             // Create a copy of the wf_module with new status
             var newWfm = Object.assign({}, wfm, { status: action.status, error_msg: action.error_msg });
 
