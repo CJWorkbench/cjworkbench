@@ -16,4 +16,6 @@ To set up a development environment:
 To develop:
 - `python manage.py runserver` to start the Django server. It will automatically recompile any .py file you edit.
 - `./node_modules/.bin/webpack --config webpack.config.js --watch` to compile JS and CSS whenever changed
+- browse to `127.0.0.1:8000/api/initmodules` to load module definitions (needed on first run, or when modules changed)
 
+At the moment the home page `127.0.0.1:8000` does nothing. You will need to create new Workflow through Django admin, then `127.0.0.1:8000/workflows` will list available workflows.
