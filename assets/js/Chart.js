@@ -3,10 +3,11 @@
 import React, { PropTypes } from 'react'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 
-var ChartbuilderLocalStorageAPI = require("chartbuilder/src/js/util/ChartbuilderLocalStorageAPI");
-var ChartPropertiesStore = require("chartbuilder/src/js/stores/ChartPropertiesStore");
+// var ChartbuilderLocalStorageAPI = require("chartbuilder/src/js/util/ChartbuilderLocalStorageAPI");
+// var ChartPropertiesStore = require("chartbuilder/src/js/stores/ChartPropertiesStore");
 var Chartbuilder = require("chartbuilder/src/js/components/Chartbuilder");
-var ChartViewActions = require("chartbuilder/src/js/actions/ChartViewActions");
+var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
+var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
 
 require("chartbuilder/dist/css/core.css");
 
@@ -31,16 +32,9 @@ export default class ChartParameter extends React.Component {
 
   constructor(props) {
     super(props);
-    this.loadingState = { loading: true };
-    this.state = { loading: false }; // componentDidMount will trigger first load
-
+    this.loadingState = { loading: true, loaded_ever: true };
+    this.state = { loading: false, loaded_ever: false }; // componentDidMount will trigger first load
     this.onStateChange = this.onStateChange.bind(this);
-
-    ChartbuilderLocalStorageAPI.defaultChart();
-  }
-
-  setError(message) {
-
   }
 
   // Turn ChartBuilder errors into module errors (so user gets the red light etc.)
@@ -54,24 +48,26 @@ export default class ChartParameter extends React.Component {
   }
 
   // Store ChartBuilder state into our hidden text parameter, when user changes it
-  // Don't store the data, that comes from input -- this suppresses parameter change when input changes)
+  // Don't store the data, that comes from input -- this suppresses parameter change when input changes
   // Even so, this relies on test in saveState to suppress re-saving the identical content,
   // which would otherwise trigger a workflow version bump, a reload, and then another CB onChange,
   // into an infinite loop.
   saveState(model) {
-    //delete model.chartProps.
-    //delete model.errors;
+    delete model.chartProps.data;
+    delete model.chartProps.input;
+    delete model.errors;
     this.props.saveState(JSON.stringify(model));
   }
 
   // called when any change is made to chart. Update error status, save to hidden 'chartstate' text field
   onStateChange(model) {
+    console.log('onStateChange');
     this.parseErrors(model.errors);
     this.saveState(model)
   }
 
-  // Load our input data from render API
-  loadTable() {
+  // Load our input data from render API, restore start state from hidden param
+  loadChart() {
     this.setState(this.loadingState);
     var self = this;
     var url = '/api/wfmodules/' + this.props.wf_module_id + '/input';
@@ -79,25 +75,42 @@ export default class ChartParameter extends React.Component {
       .then(response => response.json())
       .then(json => {
 
-        var csv_text = JSONtoCSV(json);
-        var input = Object.assign( {}, ChartPropertiesStore.getAll(), { raw: csv_text, type: undefined } );
-        ChartViewActions.updateInput("input", input);
-        this.setState({loading: false})
+        var model;
+        var modelText = this.props.loadState();
+        if (modelText == '') {
+          // never had a chart before, start with defaults
+          model = Object.assign( {}, chartConfig.xy.defaultProps );
+          console.log("loading defaults");
+          console.log(chartConfig.xy.defaultProps);
+        } else {
+          model = JSON.parse(this.props.loadState()); // retrieve from hidden param
+          model.chartProps.data = [];
+          console.log("loading from param");
+          console.log("Are they equal?" + (JSON.stringify(model) === JSON.stringify(chartConfig.xy.defaultProps)));
+          console.log(JSON.stringify(model));
+          console.log(JSON.stringify(chartConfig.xy.defaultProps));
+        }
+
+        model.chartProps.input = { raw: JSONtoCSV(json) };
+
+        console.log("Updating chart");
+        console.log(model);
+        ChartServerActions.receiveModel(model);
+
+        this.setState({loading: false, loaded_ever: true});
 
       });
   }
 
   // Load input data, settings when first rendered
   componentDidMount() {
-    this.loadTable();
-    var model = JSON.parse(this.props.loadState());
-    ChartViewActions.updateAllChartProps(model);
+    this.loadChart();
   }
 
   // If the revision changes from under us reload the table, which will trigger a setState and re-render
   componentWillReceiveProps(nextProps) {
     if (this.props.revision != nextProps.revision) {
-      this.loadTable();
+      this.loadChart();
     }
   }
 
@@ -107,7 +120,12 @@ export default class ChartParameter extends React.Component {
   }
 
   render() {
-    return (<Chartbuilder autosave={true} onStateChange={this.onStateChange}/>);
+    // Don't render until we've set chart data at least once
+    if (this.state.loaded_ever) {
+      return (<Chartbuilder autosave={true} onStateChange={this.onStateChange}/>);
+    } else {
+      return false;
+    }
   }
 }
 

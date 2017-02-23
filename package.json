@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "babelify": "^7.3.0",
-    "d3": "^4.5.0",
+    "d3": "^3.5.5",
     "d3-array": "^1.0.2",
     "d3-scale": "^1.0.4",
     "d3-shape": "^1.0.4",
@@ -25,12 +25,12 @@
     "react-faux-dom": "^3.0.0",
     "react-redux": "^5.0.2",
     "react-sortable": "^1.2.0",
-    "react-tangle": "^2.2.0",
+    "react-tangle": "git://github.com/Quartz/react-tangle.git#mb-pages",
     "redux": "^3.6.0",
     "redux-promise": "^0.5.3",
     "save-svg-as-png": "^1.1.0",
     "sizeof": "^1.0.0",
-    "sugar-date": "^2.0.4",
+    "sugar-date": "^1.5.1",
     "svg-react": "^1.0.9"
   },
   "devDependencies": {
