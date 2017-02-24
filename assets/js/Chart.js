@@ -3,8 +3,6 @@
 import React, { PropTypes } from 'react'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 
-// var ChartbuilderLocalStorageAPI = require("chartbuilder/src/js/util/ChartbuilderLocalStorageAPI");
-// var ChartPropertiesStore = require("chartbuilder/src/js/stores/ChartPropertiesStore");
 var Chartbuilder = require("chartbuilder/src/js/components/Chartbuilder");
 var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
 var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
@@ -53,10 +51,9 @@ export default class ChartParameter extends React.Component {
   // which would otherwise trigger a workflow version bump, a reload, and then another CB onChange,
   // into an infinite loop.
   saveState(model) {
-    delete model.chartProps.data;
-    delete model.chartProps.input;
-    delete model.errors;
-    this.props.saveState(JSON.stringify(model));
+    var model2 = Object.assign({}, model, {errors: undefined}); // don't alter real model!
+    model2.chartProps = Object.assign({}, model2.chartProps, {data: undefined, input:undefined});
+    this.props.saveState(JSON.stringify(model2));
   }
 
   // called when any change is made to chart. Update error status, save to hidden 'chartstate' text field
@@ -81,14 +78,10 @@ export default class ChartParameter extends React.Component {
           // never had a chart before, start with defaults
           model = Object.assign( {}, chartConfig.xy.defaultProps );
           console.log("loading defaults");
-          console.log(chartConfig.xy.defaultProps);
         } else {
           model = JSON.parse(this.props.loadState()); // retrieve from hidden param
           model.chartProps.data = [];
           console.log("loading from param");
-          console.log("Are they equal?" + (JSON.stringify(model) === JSON.stringify(chartConfig.xy.defaultProps)));
-          console.log(JSON.stringify(model));
-          console.log(JSON.stringify(chartConfig.xy.defaultProps));
         }
 
         model.chartProps.input = { raw: JSONtoCSV(json) };
