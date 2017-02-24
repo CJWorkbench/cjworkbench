@@ -165,6 +165,7 @@ class ParameterSpec(models.Model):
     order = models.IntegerField('order', default=0)
 
     def_visible = models.BooleanField(default=True)
+    def_ui_only = models.BooleanField(default=False)
 
     def_number = models.FloatField(NUMBER, null=True, blank=True, default=0.0)
     def_string = models.CharField(STRING, max_length=50, blank=True, default='')
@@ -191,6 +192,7 @@ class ParameterVal(models.Model):
     order = models.IntegerField('order', default=0)
 
     visible = models.BooleanField(default=True)
+    ui_only = models.BooleanField(default=False)
 
     def init_from_spec(self):
         self.number = self.parameter_spec.def_number
@@ -198,6 +200,7 @@ class ParameterVal(models.Model):
         self.text = self.parameter_spec.def_text
         self.order = self.parameter_spec.order
         self.visible = self.parameter_spec.def_visible
+        self.ui_only = self.parameter_spec.def_ui_only
 
     def __str__(self):
         if self.parameter_spec.type == ParameterSpec.STRING:

@@ -41,8 +41,9 @@ def parameterval_detail(request, pk, format=None):
         # TODO this isn't a real error handling framework, only clear the error if we caused it!
         param.wf_module.set_ready(notify=False)
 
-        # increment workflow version number, triggers global re-render
-        bump_workflow_version(param.wf_module.workflow)
+        # increment workflow version number, triggers global re-render if this parameter can effect output
+        notify = not param.ui_only
+        bump_workflow_version(param.wf_module.workflow, notify_client=notify)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

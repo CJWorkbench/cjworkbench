@@ -13,7 +13,9 @@
       "id_name": "chartstate",
       "type": "text",
       "default": "",
-      "visible":false
+      "visible": false,
+      "ui-only": true,
+
     }
   ]
 }

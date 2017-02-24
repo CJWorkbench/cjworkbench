@@ -23,7 +23,7 @@ class WfModuleTests(TestCase):
         self.pspec13 = ParameterSpec.objects.create(module=module1, type=ParameterSpec.TEXT, def_text='bar')
         module2 = self.add_new_module('Module 2', 'NOP')
         module3 = self.add_new_module('Module 3', 'double_M_col')
-        self.pspec31 = ParameterSpec.objects.create(module=module3, type=ParameterSpec.BUTTON)
+        self.pspec31 = ParameterSpec.objects.create(module=module3, type=ParameterSpec.BUTTON, def_ui_only=True)
 
         self.wfmodule1 = self.add_new_wfmodule(workflow1, module1, 1)
         self.wfmodule2 = self.add_new_wfmodule(workflow1, module2, 2)
@@ -49,19 +49,23 @@ class WfModuleTests(TestCase):
         pval = ParameterVal.objects.get(parameter_spec=self.pspec11, wf_module=self.wfmodule1)
         self.assertEqual(pval.number, 3.14)
         self.assertEqual(pval.visible, False)
+        self.assertEqual(pval.ui_only, False)
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec12, wf_module=self.wfmodule1)
         self.assertEqual(pval.string, 'foo')
         self.assertEqual(pval.visible, True)
+        self.assertEqual(pval.ui_only, False)
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec13, wf_module=self.wfmodule1)
         self.assertEqual(pval.text, 'bar')
         self.assertEqual(pval.visible, True)
+        self.assertEqual(pval.ui_only, False)
 
         # button has no value, so just checking existence here
         self.wfmodule3.create_default_parameters()
         pval = ParameterVal.objects.get(parameter_spec=self.pspec31, wf_module=self.wfmodule3)
         self.assertEqual(pval.visible, True)
+        self.assertEqual(pval.ui_only, True)
 
     # TODO test parameter values returned from this call
     def test_wf_module_detail_get(self):
