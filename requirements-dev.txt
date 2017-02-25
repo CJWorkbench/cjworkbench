@@ -1,1 +1,1 @@
-django-webpack-laoder==0.4.1
+django-webpack-loader==0.4.1
