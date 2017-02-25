@@ -8,6 +8,7 @@ var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions
 var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
 
 require("chartbuilder/dist/css/core.css");
+require("chartbuilder-ui/dist/styles.css");
 
 // adapter, eventually obsolete with CSV format /input call, or direct edit of ChartBuilder data model
 function JSONtoCSV(d) {
@@ -58,7 +59,7 @@ export default class ChartParameter extends React.Component {
 
   // called when any change is made to chart. Update error status, save to hidden 'chartstate' text field
   onStateChange(model) {
-    console.log('onStateChange');
+    // console.log('onStateChange');
     this.parseErrors(model.errors);
     this.saveState(model)
   }
@@ -77,17 +78,18 @@ export default class ChartParameter extends React.Component {
         if (modelText == '') {
           // never had a chart before, start with defaults
           model = Object.assign( {}, chartConfig.xy.defaultProps );
-          console.log("loading defaults");
+          //console.log("loading defaults");
         } else {
           model = JSON.parse(this.props.loadState()); // retrieve from hidden param
           model.chartProps.data = [];
-          console.log("loading from param");
+          //console.log("loading from param");
         }
 
+        // Add this module's input data to the chart properties we just loaded
         model.chartProps.input = { raw: JSONtoCSV(json) };
 
-        console.log("Updating chart");
-        console.log(model);
+        //console.log("Updating chart");
+        //console.log(model);
         ChartServerActions.receiveModel(model);
 
         this.setState({loading: false, loaded_ever: true});
