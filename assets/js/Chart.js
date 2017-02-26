@@ -117,7 +117,7 @@ export default class ChartParameter extends React.Component {
   render() {
     // Don't render until we've set chart data at least once
     if (this.state.loaded_ever) {
-      return (<Chartbuilder autosave={true} onStateChange={this.onStateChange}/>);
+      return (<Chartbuilder autosave={true} onStateChange={this.onStateChange} showDataInput={false} showLoadPrevious={false}/>);
     } else {
       return false;
     }
