@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
@@ -14,6 +15,7 @@ from server.versions import bump_workflow_version
 # ---- Parameter ----
 
 # Get or set parameter value
+@login_required
 @api_view(['GET', 'PATCH'])
 @renderer_classes((JSONRenderer,))
 def parameterval_detail(request, pk, format=None):
@@ -50,6 +52,7 @@ def parameterval_detail(request, pk, format=None):
 
 # Handle a parameter event (like someone clicking the fetch button)
 # Get or set parameter value
+@login_required
 @api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def parameterval_event(request, pk, format=None):

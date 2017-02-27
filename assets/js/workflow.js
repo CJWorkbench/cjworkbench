@@ -13,20 +13,6 @@ import { getPageID } from './utils'
 require('../css/style.css');
 
 
-
-// Run the current workflow
-var executeWorkflow = function() {
-
-  fetch('/api/workflows/' + getPageID() + "/execute", {
-    method: 'put',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-    },
-  })
-  .catch( (error) => { console.log('Execute request failed', error); });
-};
-
 // ---- Toolbar and buttons ----
 
 
@@ -35,7 +21,6 @@ class ToolBar extends React.Component {
   render() {
     return (
       <div>
-        <ToolButton text="▶" click={executeWorkflow} />
          <ModuleMenu addModule={this.props.onAddModuleClick}/>
       </div>
     ); 
@@ -65,6 +50,7 @@ var SortableList = React.createClass({
 
       fetch('/api/workflows/' + getPageID(), {
         method: 'patch',
+        credentials: 'include',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -124,6 +110,7 @@ function onParamChanged(paramID, newVal) {
   console.log('Changing parameter ' + paramID);
    fetch('/api/parameters/' + paramID, {
       method: 'patch',
+      credentials: 'include',
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',

@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='index.html')),
 
     # list all workflows
-    url(r'^workflows/$', TemplateView.as_view(template_name='workflows.html')),
+    url(r'^workflows/$', views.workflows2),
     url(r'^api/workflows/?$', views.workflow_list),
 
     # list specific workflow ex: /workflows/5/

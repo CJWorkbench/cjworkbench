@@ -17,7 +17,7 @@ export let store = createStore(workflowReducer, applyMiddleware(promiseMiddlewar
 
 // Load the whole workflow. Returns a promise which returns an action to dispatch when it completes
 export function reloadWorkflowAction() {
-  return fetch('/api/workflows/' + getPageID())
+  return fetch('/api/workflows/' + getPageID(), { credentials: 'include'})
     .then(response => response.json())
     .then(json => ({  type: RELOAD_WORKFLOW, workflow: json }));
 }
@@ -26,6 +26,7 @@ export function reloadWorkflowAction() {
 export function addModuleAction(newModuleID) {
   return fetch('/api/workflows/' + getPageID() + "/addmodule", {
     method: 'put',
+    credentials: 'include',
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',

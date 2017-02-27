@@ -1,5 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.template.response import TemplateResponse
+from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
@@ -10,10 +12,13 @@ from server.serializers import WorkflowSerializer
 from server.execute import execute_workflow, execute_wfmodule
 
 
+# ---- Workflows list page ----
+@login_required
+def workflows2(request):
+    return TemplateResponse(request, 'workflows.html', {})
+
 # ---- Workflow ----
 
-def workflow(request, workflow_id):
-    return HttpResponse("You're looking at workflow %s." % workflow_id)
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])

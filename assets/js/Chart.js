@@ -69,7 +69,7 @@ export default class ChartParameter extends React.Component {
     this.setState(this.loadingState);
     var self = this;
     var url = '/api/wfmodules/' + this.props.wf_module_id + '/input';
-    fetch(url)
+    fetch(url, { credentials: 'include'})
       .then(response => response.json())
       .then(json => {
 

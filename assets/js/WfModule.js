@@ -53,6 +53,7 @@ class WfParameter extends React.Component {
       var eventData = {'type': 'click'};
       fetch(url, {
         method: 'post',
+        credentials: 'include',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
@@ -169,7 +170,7 @@ class TableView extends React.Component {
   loadTable() {
     var self = this;
     var url = '/api/wfmodules/' + this.props.id + '/render';
-    fetch(url)
+    fetch(url, { credentials: 'include'})
       .then(response => response.json())
       .then(json => {
         self.setState({tableData: json, loading: false});

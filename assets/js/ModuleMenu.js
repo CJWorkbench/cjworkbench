@@ -17,7 +17,7 @@ export default class ModuleMenu extends React.Component {
 
   componentDidMount() {
     var _this = this;
-    fetch('/api/modules/')
+    fetch('/api/modules/', { credentials: 'include'})
       .then(response => response.json())
       .then(json => {
         _this.setState({open: false, items: json}) })

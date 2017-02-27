@@ -77,6 +77,15 @@ TEMPLATES = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    )
+}
+
 WSGI_APPLICATION = 'cjworkbench.wsgi.application'
 
 CHANNEL_LAYERS = {
@@ -85,6 +94,7 @@ CHANNEL_LAYERS = {
         'ROUTING': 'cjworkbench.routing.channel_routing',
     },
 }
+
 
 # Database
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
@@ -115,6 +125,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/workflows'
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.10/topics/i18n/

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
+from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
@@ -9,7 +10,7 @@ from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
 import pandas as pd
 
-
+@login_required
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
@@ -21,7 +22,7 @@ def wfmodule_detail(request, pk, format=None):
         serializer = WfModuleSerializer(wfmodule)
         return Response(serializer.data)
 
-
+@login_required
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_render(request, pk, format=None):
@@ -37,6 +38,7 @@ def wfmodule_render(request, pk, format=None):
 
 
 # /input is just /render on the previous wfmodule
+@login_required
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_input(request, pk, format=None):
