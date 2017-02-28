@@ -5,3 +5,4 @@
 [submodule "chartbuilder-ui"]
 	path = chartbuilder/chartbuilder-ui
 	url = https://github.com/Quartz/chartbuilder-ui.git
+    branch = workbench-integration
