@@ -65,7 +65,7 @@ var SortableList = React.createClass({
     var listItems = this.props.data.wf_modules.map(function(item, i) {
       return (
         <SortableWfModule
-          key={i}
+          key={item.id}
           updateState={this.updateState}
           items={this.props.data.wf_modules}
           draggingIndex={this.state.draggingIndex}
