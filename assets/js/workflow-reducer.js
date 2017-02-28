@@ -23,7 +23,7 @@ export function reloadWorkflowAction() {
 }
 
 // Make an addModule call, then reload the workflow
-export function addModuleAction(newModuleID) {
+export function addModuleAction(module_id) {
   return fetch('/api/workflows/' + getPageID() + "/addmodule", {
     method: 'put',
     credentials: 'include',
@@ -32,8 +32,19 @@ export function addModuleAction(newModuleID) {
       'Content-Type': 'application/json',
       'X-CSRFToken': csrfToken
     },
-    body: JSON.stringify({insertBefore: 0, moduleID: newModuleID})
+    body: JSON.stringify({insertBefore: 0, moduleID: module_id})
   }) .then( reloadWorkflowAction );
+}
+
+// remove module and reload
+export function removeModuleAction(wf_module_id) {
+  return fetch('/api/wfmodules/' + wf_module_id, {
+    method: 'delete',
+    credentials: 'include',
+    headers: {
+      'X-CSRFToken': csrfToken
+    },
+  }).then( reloadWorkflowAction );
 }
 
 export function wfModuleStatusAction(wfModuleID, status, error_msg='') {

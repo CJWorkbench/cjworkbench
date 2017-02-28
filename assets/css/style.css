@@ -95,11 +95,22 @@ body {
   margin-right: 20%;
 }
 
-.moduleName {
+.wfModuleName {
   margin-top: 5px;
   margin-bottom: 5px;
   float: left;
   font-size: 20px;
+}
+
+.wfModuleCloseButton {
+  float: left;
+  border: 1px solid black;
+  border-radius: 2px;
+  background-color: #eee;
+  margin: 5px;
+  width: 20px;
+  height: 20px;
+  font-size: 15px;
 }
 
 .wfModuleErrorMsg {

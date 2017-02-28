@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
@@ -8,22 +8,30 @@ from rest_framework.renderers import JSONRenderer
 from server.models import Workflow, WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
+from server.versions import bump_workflow_version
 import pandas as pd
 
-@api_view(['GET'])
+@api_view(['GET', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
+    try:
+        wf_module = WfModule.objects.get(pk=pk)
+    except WfModule.DoesNotExist:
+        return HttpResponseNotFound()
+
+    if not wf_module.user_authorized(request.user):
+        return HttpResponseForbidden()
+
     if request.method == 'GET':
-        try:
-            wf_module = WfModule.objects.get(pk=pk)
-        except WfModule.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        if not wf_module.user_authorized(request.user):
-            return HttpResponseForbidden()
-
         serializer = WfModuleSerializer(wf_module)
         return Response(serializer.data)
+
+    elif request.method == 'DELETE':
+        workflow = wf_module.workflow
+        wf_module.delete()
+        bump_workflow_version(workflow, notify_client=False) # bump after delete in case delete fails
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))

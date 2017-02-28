@@ -7,7 +7,7 @@ import { sortable } from 'react-sortable'
 import ModuleMenu from './ModuleMenu'
 import ToolButton from './ToolButton'
 import WfModule from './WfModule'
-import { store, wfModuleStatusAction, reloadWorkflowAction, addModuleAction } from './workflow-reducer'
+import * as Actions from './workflow-reducer'
 import { getPageID, csrfToken } from './utils'
 
 require('../css/style.css');
@@ -71,7 +71,7 @@ var SortableList = React.createClass({
           draggingIndex={this.state.draggingIndex}
           sortId={i}
           outline="list"
-          childProps={ {'data-wfmodule': item, 'data-onParamChanged': this.props.onParamChanged, 'data-revision': this.props.data.revision } } />
+          childProps={ {'data-wfmodule': item, 'data-changeParam': this.props.changeParam, 'data-removeModule': this.props.removeModule, 'data-revision': this.props.data.revision } } />
       );
     }, this);
 
@@ -95,9 +95,9 @@ class WorkflowMain extends React.Component {
     return (
       <div>
         <div className="toolbar">
-          <ToolBar onAddModuleClick={this.props.onAddModuleClick}/>
+          <ToolBar onAddModuleClick={this.props.addModule}/>
         </div>
-        <SortableList data={this.props.workflow} onParamChanged={this.props.onParamChanged}/>
+        <SortableList data={this.props.workflow} changeParam={this.props.changeParam} removeModule={this.props.removeModule}/>
       </div>
     );
   }
@@ -129,10 +129,13 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onAddModuleClick: (newModuleID) => {
-      dispatch(addModuleAction(newModuleID))
+    addModule: (module_id) => {
+      dispatch(Actions.addModuleAction(module_id))
     },
-    onParamChanged: (paramID, newVal) => {
+    removeModule: (wf_module_id) => {
+      dispatch(Actions.removeModuleAction(wf_module_id))
+    },
+    changeParam: (paramID, newVal) => {
       onParamChanged(paramID, newVal)
     }
   }
@@ -149,14 +152,14 @@ const WorkflowContainer = connect(
 
 // Render with Provider to root so all objects in the React DOM can access state
 ReactDOM.render(
-    <Provider store={store}>
+    <Provider store={Actions.store}>
       <WorkflowContainer/>
     </Provider>,
     document.getElementById('root')
 );
 
 // Load the page!
-store.dispatch(reloadWorkflowAction())
+Actions.store.dispatch(Actions.reloadWorkflowAction())
 
 // Start listening for events
 const socket = new WebSocket("ws://" + window.location.host + "/workflows/" + getPageID());
@@ -168,11 +171,11 @@ socket.onmessage = function(e) {
     switch (data.type) {
 
       case 'wfmodule-status':
-        store.dispatch(wfModuleStatusAction(data.id, data.status, data.error_msg ? data.error_msg : ''));
+        Actions.store.dispatch(Actions.wfModuleStatusAction(data.id, data.status, data.error_msg ? data.error_msg : ''));
         return
 
       case 'reload-workflow':
-        store.dispatch(reloadWorkflowAction());
+        Actions.store.dispatch(Actions.reloadWorkflowAction());
         return
     }
   }

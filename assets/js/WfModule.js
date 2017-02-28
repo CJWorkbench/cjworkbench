@@ -29,7 +29,7 @@ class WfParameter extends React.Component {
     // console.log("PARAM CHANGED");
     var newVal = {};
     newVal[this.type] = e.target.value;
-    this.props.onParamChanged(this.props.p.id, newVal);
+    this.props.changeParam(this.props.p.id, newVal);
   }
 
   // Save value (and re-render) when user presses enter or we lose focus
@@ -126,7 +126,7 @@ WfParameter.propTypes = {
   p:                React.PropTypes.object,
   wf_module_id:     React.PropTypes.number,
 	revision:         React.PropTypes.number,
-  onParamChanged:   React.PropTypes.func,
+  changeParam:      React.PropTypes.func,
 	getParamText:     React.PropTypes.func,
 	setParamText:     React.PropTypes.func,
 };
@@ -184,8 +184,8 @@ class TableView extends React.Component {
 
   // If the revision changes from under us reload the table, which will trigger a setState and re-render
   componentWillReceiveProps(nextProps) {
-    console.log("willRecieveProps " + this.props.id);
-    console.log('old revision ' + this.props.revision + ' new revision ' + nextProps.revision);
+    //console.log("willRecieveProps " + this.props.id);
+    //console.log('old revision ' + this.props.revision + ' new revision ' + nextProps.revision);
 
     if (this.props.revision != nextProps.revision) {
       this.setState(this.loadingState);               // "unload" the table
@@ -230,19 +230,19 @@ export default class WfModule extends React.Component {
     this.initFields(props);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
+    this.removeModule = this.removeModule.bind(this);
   }
 
   componentWillReceiveProps(newProps) {
     this.initFields(newProps)
   }
 
-  // our props are annoying (we use data- because Sortable wants to put these props on the div if we don't)
+  // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
   // so save them into this
   initFields(props) {
     this.wf_module = props['data-wfmodule'];
     this.module = this.wf_module.module;
     this.params = this.wf_module.parameter_vals;
-    this.onParamChanged = props['data-onParamChanged'];
     this.revision = props['data-revision'];
   }
 
@@ -252,7 +252,7 @@ export default class WfModule extends React.Component {
   setParamText(id_name, text) {
     var p = this.params.find( p => p.parameter_spec.id_name == id_name );
     if (p && text != p.text) {
-      this.onParamChanged(p.id, { text: text })
+      this.props['data-changeParam'](p.id, { text: text })
     }
   }
 
@@ -264,6 +264,10 @@ export default class WfModule extends React.Component {
     }
   }
 
+  removeModule() {
+    this.props['data-removeModule'](this.wf_module.id);
+  }
+
   render() {
 
     // Each parameter gets a WfParameter
@@ -271,7 +275,7 @@ export default class WfModule extends React.Component {
           return <WfParameter
                     key={i}
                     p={ps}
-                    onParamChanged={this.onParamChanged}
+                    changeParam={this.props['data-changeParam']}
                     wf_module_id={this.wf_module.id}
                     revision={this.revision}
                     getParamText={this.getParamText}
@@ -282,7 +286,8 @@ export default class WfModule extends React.Component {
     return (
       <div {...this.props} className="module-li">
         <div>
-          <h1 className='moduleName'>{this.module.name}</h1>
+          <button className="wfModuleCloseButton" onClick={this.removeModule}>X</button>
+          <h1 className='wfModuleName'>{this.module.name}</h1>
           <StatusLight status={this.wf_module.status}/>
         </div>
         <div style={{'clear':'both'}}></div>
@@ -293,3 +298,4 @@ export default class WfModule extends React.Component {
     ); 
   } 
 }
+

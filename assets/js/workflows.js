@@ -32,7 +32,6 @@ class Workflows extends React.Component {
     .then(json => {
       var newWorkflows = this.state.workflows.slice();
       newWorkflows.push(json);
-      console.log(newWorkflows)
       this.setState({workflows: newWorkflows, newWorkflowName: ''})
     })
   }

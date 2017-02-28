@@ -15,34 +15,30 @@ class WfModuleTests(LoggedInTestCase):
     def setUp(self):
         super(WfModuleTests, self).setUp()  # log in
         self.factory = APIRequestFactory()
-        workflow1 = add_new_workflow(name='Workflow 1')
+        self.workflow1 = add_new_workflow(name='Workflow 1')
         workflow2 = add_new_workflow(name='Workflow 2')
 
-        module1 = self.add_new_module('Module 1', 'testdata')
-        self.pspec11 = ParameterSpec.objects.create(module=module1, type=ParameterSpec.NUMBER, def_number=3.14, def_visible=False)
-        self.pspec12 = ParameterSpec.objects.create(module=module1, type=ParameterSpec.STRING, def_string='foo')
-        self.pspec13 = ParameterSpec.objects.create(module=module1, type=ParameterSpec.TEXT, def_text='bar')
+        self.module1 = self.add_new_module('Module 1', 'testdata')
+        self.pspec11 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.NUMBER, def_number=3.14, def_visible=False)
+        self.pspec12 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.STRING, def_string='foo')
+        self.pspec13 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.TEXT, def_text='bar')
         module2 = self.add_new_module('Module 2', 'NOP')
         module3 = self.add_new_module('Module 3', 'double_M_col')
         self.pspec31 = ParameterSpec.objects.create(module=module3, type=ParameterSpec.BUTTON, def_ui_only=True)
 
-        self.wfmodule1 = self.add_new_wfmodule(workflow1, module1, 1)
-        self.wfmodule2 = self.add_new_wfmodule(workflow1, module2, 2)
-        self.wfmodule3 = self.add_new_wfmodule(workflow1, module3, 3)
-        self.add_new_wfmodule(workflow2, module1, 1)
+        self.wfmodule1 = self.add_new_wfmodule(self.workflow1, self.module1, 1)
+        self.wfmodule2 = self.add_new_wfmodule(self.workflow1, module2, 2)
+        self.wfmodule3 = self.add_new_wfmodule(self.workflow1, module3, 3)
+        self.add_new_wfmodule(workflow2, self.module1, 1)
         self.add_new_wfmodule(workflow2, module2, 2)
         self.add_new_wfmodule(workflow2, module3, 3)
 
 
     def add_new_wfmodule(self, workflow_aux, module_aux, order_aux):
-        wf_module = WfModule(workflow=workflow_aux, module=module_aux, order=order_aux)
-        wf_module.save()
-        return wf_module
+        return WfModule.objects.create(workflow=workflow_aux, module=module_aux, order=order_aux)
 
     def add_new_module(self, name, dispatch):
-        module = Module(name=name, dispatch=dispatch)
-        module.save()
-        return module
+        return Module.objects.create(name=name, dispatch=dispatch)
 
     # check that creating a wf_module correctly sets up new ParameterVals w/ defaults from ParameterSpec
     def test_default_parameters(self):
@@ -85,7 +81,7 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(response.data['error_msg'], '')
 
         response = self.client.get('/api/wfmodules/%d/' % 10000)
-        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
     def test_wf_module_render_get(self):
@@ -127,6 +123,18 @@ class WfModuleTests(LoggedInTestCase):
         self.wfmodule1.set_ready()
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
         self.assertEqual(response.content, test_data_json)
+
+
+    # can we take one out?
+    def test_wf_module_delete(self):
+        # add a new one to delete; don't mess with other tests
+        wfmodule4 = self.add_new_wfmodule(self.workflow1, self.module1, 4)
+
+        response = self.client.delete('/api/wfmodules/%d' % wfmodule4.id)
+        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
+        with self.assertRaises(WfModule.DoesNotExist):
+            WfModule.objects.get(pk=wfmodule4.id)  # must really be gone
+
 
     # /input is just a /render on the previous module
     def test_wf_module_input(self):
