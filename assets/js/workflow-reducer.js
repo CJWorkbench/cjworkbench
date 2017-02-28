@@ -1,6 +1,6 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
-import { getPageID } from './utils'
+import { getPageID, csrfToken } from './utils'
 import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise';
 
@@ -30,6 +30,7 @@ export function addModuleAction(newModuleID) {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
+      'X-CSRFToken': csrfToken
     },
     body: JSON.stringify({insertBefore: 0, moduleID: newModuleID})
   }) .then( reloadWorkflowAction );

@@ -7,15 +7,16 @@ from server.dispatch import test_data_table
 import pandas as pd
 import json
 import copy
-from server.tests.utils import table_to_content
+from server.tests.utils import *
 
-class WfModuleTests(TestCase):
+class WfModuleTests(LoggedInTestCase):
 
     # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):
+        super(WfModuleTests, self).setUp()  # log in
         self.factory = APIRequestFactory()
-        workflow1 = Workflow.objects.create(name='Workflow 1')
-        workflow2 = Workflow.objects.create(name='Workflow 2')
+        workflow1 = add_new_workflow(name='Workflow 1')
+        workflow2 = add_new_workflow(name='Workflow 2')
 
         module1 = self.add_new_module('Module 1', 'testdata')
         self.pspec11 = ParameterSpec.objects.create(module=module1, type=ParameterSpec.NUMBER, def_number=3.14, def_visible=False)

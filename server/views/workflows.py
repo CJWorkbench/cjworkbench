@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
@@ -25,14 +25,14 @@ def workflows2(request):
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     if request.method == 'GET':
-        workflows = Workflow.objects.all()
+        workflows = Workflow.objects.filter(owner=request.user)
         serializer = WorkflowSerializer(workflows, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':
         serializer = WorkflowSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
+            serializer.save(owner=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -44,6 +44,9 @@ def workflow_detail(request, pk, format=None):
         workflow = Workflow.objects.get(pk=pk)
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if not workflow.user_authorized(request.user):
+        return HttpResponseForbidden()
 
     if request.method == 'GET':
         serializer = WorkflowSerializer(workflow)
@@ -71,6 +74,9 @@ def workflow_addmodule(request, pk, format=None):
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
+    if not workflow.user_authorized(request.user):
+        return HttpResponseForbidden()
+
     try:
         moduleID = request.data['moduleID']
         insertBefore = int(request.data['insertBefore'])
@@ -88,16 +94,3 @@ def workflow_addmodule(request, pk, format=None):
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 
-
-# User pressed execute button
-@api_view(['PUT'])
-@renderer_classes((JSONRenderer,))
-def workflow_execute(request, pk, format=None):
-    try:
-        workflow = Workflow.objects.get(pk=pk)
-    except Workflow.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    execute_workflow(workflow)
-
-    return Response(status=status.HTTP_204_NO_CONTENT)

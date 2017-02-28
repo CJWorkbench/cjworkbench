@@ -1,5 +1,6 @@
-
 // ---- Utilities ---
+import * as Cookies from "js-cookie";
+
 
 // return ID in URL of form "/workflows/id/" or "/workflows/id"
 export function getPageID () {
@@ -13,3 +14,7 @@ export function getPageID () {
   var id = url.substring(url.lastIndexOf('/')+1);
   return id
 };
+
+
+// Current CSRF token
+export const csrfToken = Cookies.get('csrftoken');

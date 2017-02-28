@@ -12,6 +12,7 @@
     "d3-time-format": "^2.0.3",
     "fixed-data-table": "^0.6.3",
     "flux": "^3.1.2",
+    "js-cookie": "^2.1.3",
     "markdown-it": "^8.3.0",
     "pui-react-collapse": "^7.5.4",
     "pui-react-panels": "^7.5.4",

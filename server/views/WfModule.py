@@ -10,45 +10,52 @@ from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
 import pandas as pd
 
-@login_required
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
     if request.method == 'GET':
         try:
-            wfmodule = WfModule.objects.get(pk=pk)
+            wf_module = WfModule.objects.get(pk=pk)
         except WfModule.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
-        serializer = WfModuleSerializer(wfmodule)
+
+        if not wf_module.user_authorized(request.user):
+            return HttpResponseForbidden()
+
+        serializer = WfModuleSerializer(wf_module)
         return Response(serializer.data)
 
-@login_required
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_render(request, pk, format=None):
     if request.method == 'GET':
         try:
-            wfmodule = WfModule.objects.get(pk=pk)
+            wf_module = WfModule.objects.get(pk=pk)
         except WfModule.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        table = execute_wfmodule(wfmodule)
+        if not wf_module.user_authorized(request.user):
+            return HttpResponseForbidden()
+
+        table = execute_wfmodule(wf_module)
         d = table.reset_index().to_json(orient='records')
         return HttpResponse(d, content_type="application/json")
 
 
 # /input is just /render on the previous wfmodule
-@login_required
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_input(request, pk, format=None):
     if request.method == 'GET':
         try:
-            wfmodule = WfModule.objects.get(pk=pk)
+            wf_module = WfModule.objects.get(pk=pk)
         except WfModule.DoesNotExist:
             return Response(status=status.HTTP_404_NOT_FOUND)
 
-        prev_modules = WfModule.objects.filter(workflow=wfmodule.workflow, order__lt=wfmodule.order)
+        if not wf_module.user_authorized(request.user):
+            return HttpResponseForbidden()
+
+        prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
         if not prev_modules:
             table = pd.DataFrame()
         else:

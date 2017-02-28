@@ -5,10 +5,11 @@ from channels import Channel
 from channels.tests import ChannelTestCase, HttpClient
 from server.models import Module, Workflow
 from server.websockets import *
-from server.tests.utils import add_new_module, add_new_workflow, add_new_wf_module
+from server.tests.utils import *
 
-class ChannelTests(ChannelTestCase):
+class ChannelTests(ChannelTestCase, LoggedInTestCase):
     def setUp(self):
+        super(ChannelTests, self).setUp() # log in
         self.workflow = add_new_workflow('Workflow 1')
         self.wf_id = self.workflow.id
         self.module = add_new_module('Module')

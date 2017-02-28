@@ -3,13 +3,12 @@
 import React, { PropTypes } from 'react'
 import ChartParameter from './chart'
 import { store, wfModuleStatusAction } from './workflow-reducer'
-
+import { csrfToken } from './utils'
 
 // Libraries to provide a collapsable table view
 var Collapse = require('pui-react-collapse').Collapse;
 var DataGrid = require('react-datagrid');
 require('react-datagrid/index.css');
-
 
 // ---- WfParameter - a single editable parameter ----
 
@@ -57,6 +56,7 @@ class WfParameter extends React.Component {
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(eventData)
       }).then(response => {

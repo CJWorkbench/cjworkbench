@@ -65,8 +65,9 @@ def get_param_by_id_name(id_name):
 
 # ---- PasteCSV ----
 
-class PasteCSVTests(TestCase):
+class PasteCSVTests(LoggedInTestCase):
     def setUp(self):
+        super(PasteCSVTests, self).setUp()  # log in
         self.workflow = create_testdata_workflow()
         self.wf_module = WfModule.objects.all().first()
 
@@ -78,8 +79,9 @@ class PasteCSVTests(TestCase):
 
 # ---- Formula ----
 
-class FormulaTests(TestCase):
+class FormulaTests(LoggedInTestCase):
     def setUp(self):
+        super(FormulaTests, self).setUp()  # log in
         formula_def = load_module_def('formula')
         self.wfmodule = load_and_add_module(create_testdata_workflow(), formula_def)
         formula_pspec = ParameterSpec.objects.get(id_name='formula')
@@ -122,8 +124,9 @@ class FormulaTests(TestCase):
 
 # ---- LoadURL ----
 
-class LoadFromURLTests(TestCase):
+class LoadFromURLTests(LoggedInTestCase):
     def setUp(self):
+        super(LoadFromURLTests, self).setUp()  # log in
         loadurl_def = load_module_def('loadurl')
         self.wfmodule = load_and_add_module(None, loadurl_def)
 
@@ -237,8 +240,9 @@ class LoadFromURLTests(TestCase):
 
 # ---- SelectColumns ----
 
-class SelectColumnsTests(TestCase):
+class SelectColumnsTests(LoggedInTestCase):
     def setUp(self):
+        super(SelectColumnsTests, self).setUp()  # log in
         workflow = create_testdata_workflow()
         module_def = load_module_def('selectcolumns')
         self.wf_module = load_and_add_module(workflow, module_def)

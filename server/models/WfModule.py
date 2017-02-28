@@ -39,6 +39,11 @@ class WfModule(models.Model):
     )
     error_msg = models.CharField('error_msg', max_length=200, blank=True)
 
+    # ---- Authorization ----
+    # User can access wf_module if they can access workflow
+    def user_authorized(self, user):
+        return self.workflow.user_authorized(user)
+
     # ---- Persistent storage ----
     def store_bytes(self, key, data):
         StoredObject.objects.create(wf_module=self, key=key, data=data)
@@ -201,6 +206,10 @@ class ParameterVal(models.Model):
         self.order = self.parameter_spec.order
         self.visible = self.parameter_spec.def_visible
         self.ui_only = self.parameter_spec.def_ui_only
+
+    # User can access param if they can access wf_module
+    def user_authorized(self, user):
+        return self.wf_module.user_authorized(user)
 
     def __str__(self):
         if self.parameter_spec.type == ParameterSpec.STRING:

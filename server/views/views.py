@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
@@ -22,12 +23,11 @@ def index(request):
 # ---- Module ----
 
 # Scaffolding: URL endpoint to trigger module reload from config file
-@login_required
+@staff_member_required
 def init_modules2(request):
     init_modules()
     return HttpResponse("Loaded module definitions.")
 
-@login_required
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def module_list(request, format=None):
@@ -36,7 +36,6 @@ def module_list(request, format=None):
         serializer = ModuleSerializer(workflows, many=True)
         return Response(serializer.data)
 
-@login_required
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def module_detail(request, pk, format=None):

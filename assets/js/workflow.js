@@ -8,7 +8,7 @@ import ModuleMenu from './ModuleMenu'
 import ToolButton from './ToolButton'
 import WfModule from './WfModule'
 import { store, wfModuleStatusAction, reloadWorkflowAction, addModuleAction } from './workflow-reducer'
-import { getPageID } from './utils'
+import { getPageID, csrfToken } from './utils'
 
 require('../css/style.css');
 
@@ -54,6 +54,7 @@ var SortableList = React.createClass({
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(newOrder) })
       .catch( (error) => { console.log('Request failed', error); });
@@ -105,7 +106,6 @@ class WorkflowMain extends React.Component {
 
 // ---- Workflow container ----
 
-
 function onParamChanged(paramID, newVal) {
   console.log('Changing parameter ' + paramID);
    fetch('/api/parameters/' + paramID, {
@@ -114,6 +114,7 @@ function onParamChanged(paramID, newVal) {
       headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
       },
       body: JSON.stringify(newVal)
     })

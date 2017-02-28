@@ -2,11 +2,13 @@
 from django.test import TestCase
 from server.models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
 from server.initmodules import load_module_from_dict
+from server.tests.utils import *
 import json
 import copy
 
-class InitmoduleTests(TestCase):
+class InitmoduleTests(LoggedInTestCase):
     def setUp(self):
+        super(InitmoduleTests, self).setUp()  # log in
         self.loadcsv = {
             'name': 'Load CSV',
             'id_name': 'loadcsv',
@@ -118,11 +120,11 @@ class InitmoduleTests(TestCase):
         button_spec1 = ParameterSpec.objects.get(id_name='fetch')
 
         # create wf_modules in two different workflows that reference this module
-        wf1 = Workflow.objects.create(name='Worky')
-        wfm1 = WfModule.objects.create(module=m1, workflow=wf1, order=1)
+        wf1 = add_new_workflow(name='Worky')
+        wfm1 = add_new_wf_module(workflow=wf1, module=m1, order=1)
         wfm1.create_default_parameters()
-        wf2 = Workflow.objects.create(name='Worky 2')
-        wfm2 = WfModule.objects.create(module=m1, workflow=wf2, order=1)
+        wf2 = add_new_workflow(name='Worky 2')
+        wfm2 = add_new_wf_module(workflow=wf2, module=m1, order=1)
         wfm2.create_default_parameters()
 
         # precondition: corresponding parameter val exists for each wfm with correct default
