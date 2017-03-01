@@ -44,6 +44,10 @@ class WfModule(models.Model):
     def user_authorized(self, user):
         return self.workflow.user_authorized(user)
 
+    # For now, all render output is publicly acessible
+    def public_authorized(self):
+        return True
+
     # ---- Persistent storage ----
     def store_bytes(self, key, data):
         StoredObject.objects.create(wf_module=self, key=key, data=data)

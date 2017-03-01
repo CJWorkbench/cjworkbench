@@ -294,6 +294,7 @@ export default class WfModule extends React.Component {
         <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
         {paramdivs}
         <TableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision}/>
+        <a href={'/public/wfmodule/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/wfmodule/' + this.wf_module.id + '.json'}>JSON</a>
       </div>
     ); 
   } 

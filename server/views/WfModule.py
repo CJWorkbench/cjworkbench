@@ -40,7 +40,7 @@ def wfmodule_render(request, pk, format=None):
         try:
             wf_module = WfModule.objects.get(pk=pk)
         except WfModule.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return HttpResponseNotFound()
 
         if not wf_module.user_authorized(request.user):
             return HttpResponseForbidden()
@@ -58,7 +58,7 @@ def wfmodule_input(request, pk, format=None):
         try:
             wf_module = WfModule.objects.get(pk=pk)
         except WfModule.DoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
+            return HttpResponseNotFound()
 
         if not wf_module.user_authorized(request.user):
             return HttpResponseForbidden()
@@ -71,3 +71,26 @@ def wfmodule_input(request, pk, format=None):
 
         d = table.reset_index().to_json(orient='records')
         return HttpResponse(d, content_type="application/json")
+
+
+# Public access to wfmodule output. Basically just /render with different auth
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_public_output(request, pk, type, format=None):
+    try:
+        wf_module = WfModule.objects.get(pk=pk)
+    except WfModule.DoesNotExist:
+        return HttpResponseNotFound()
+
+    if not wf_module.public_authorized():
+        return HttpResponseForbidden()
+
+    table = execute_wfmodule(wf_module)
+    if type=='json':
+        d = table.to_json(orient='records')
+        return HttpResponse(d, content_type="application/json")
+    elif type=='csv':
+        d = table.to_csv(index=False)
+        return HttpResponse(d, content_type="text/csv")
+    else:
+        return HttpResponseNotFound()
