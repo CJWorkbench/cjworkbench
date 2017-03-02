@@ -4,5 +4,5 @@
 	branch = library-style
 [submodule "chartbuilder-ui"]
 	path = chartbuilder/chartbuilder-ui
-	url = https://github.com/Quartz/chartbuilder-ui.git
-    branch = workbench-integration
+	url = https://github.com/jstray/chartbuilder-ui.git
+	branch = workbench-integration
