@@ -1,7 +1,7 @@
 // UI for a single module within a workflow
 
 import React, { PropTypes } from 'react'
-import ChartParameter from './chart'
+import ChartParameter from './Chart'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 
