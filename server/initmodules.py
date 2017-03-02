@@ -120,13 +120,13 @@ def load_parameter_spec(d, module, order):
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
 
-    # Default visibility/ ui-only flag. We don't change these on existing ParameterVals
+    # Default visibility/ ui-only flag. We don't change these on existing ParameterVals, prolly should
     if 'visible' in d:
-            pspec.def_visible = d['visible']
+        pspec.def_visible = d['visible']
     else:
         pspec.def_visible = True
     if 'ui-only' in d:
-            pspec.def_visible = d['ui-only']
+        pspec.def_ui_only = d['ui-only']
     else:
         pspec.def_ui_only = False
 

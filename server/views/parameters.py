@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
+from django.http import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseBadRequest
+from django.views.decorators.http import require_GET
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -11,7 +12,7 @@ from server.serializers import ParameterValSerializer
 from server.execute import execute_workflow, execute_wfmodule
 from server.dispatch import module_dispatch_event
 from server.versions import bump_workflow_version
-
+import base64
 
 # ---- Parameter ----
 
@@ -71,3 +72,24 @@ def parameterval_event(request, pk, format=None):
     module_dispatch_event(param, data)
 
     return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# Return a parameter val that is actually an image
+@require_GET
+def parameterval_png(request, pk):
+    try:
+        param = ParameterVal.objects.get(pk=pk)
+    except ParameterVal.DoesNotExist:
+        return HttpResponseNotFound()
+
+    if not param.wf_module.public_authorized():
+        return HttpResponseForbidden()
+
+    # is this actually in image? totes hardcoded for nao
+    if param.parameter_spec.id_name != 'chart':
+        return HttpResponseBadRequest()
+
+    # decode the base64 payload of the data URI into a png
+    image_data = param.text.partition('base64,')[2]
+    binary = base64.b64decode(image_data)
+    return HttpResponse(binary, content_type='image/png')

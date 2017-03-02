@@ -29,13 +29,16 @@ urlpatterns = [
 
     # WfModules (Modules applied in a workflow)
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', wfmodule_detail),
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/render?$', wfmodule_render),
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/input?$', wfmodule_input),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/render$', wfmodule_render),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/input$', wfmodule_input),
 
-    url(r'^public/wfmodule/live/(?P<pk>[0-9]+)\.(?P<type>(csv|json))?$', wfmodule_public_output),
+    url(r'^public/moduledata/live/(?P<pk>[0-9]+)\.(?P<type>(csv|json))?$', wfmodule_public_output),
 
     # Parameters
     url(r'^api/parameters/(?P<pk>[0-9]+)/?$', views.parameterval_detail),
-    url(r'^api/parameters/(?P<pk>[0-9]+)/event/?$', views.parameterval_event)
+    url(r'^api/parameters/(?P<pk>[0-9]+)/event/?$', views.parameterval_event),
+
+    url(r'^public/paramdata/live/(?P<pk>[0-9]+).png$', views.parameterval_png)
+
 ]
 

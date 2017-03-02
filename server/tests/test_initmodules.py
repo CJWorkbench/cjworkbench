@@ -23,7 +23,8 @@ class InitmoduleTests(LoggedInTestCase):
                   'name': 'Fetch',
                   'id_name' : 'fetch',
                   'type': 'button',
-                  'visible': False
+                  'visible': False,
+                  'ui-only': True
                 }
               ]
             }            
@@ -85,6 +86,7 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(url_spec.type, ParameterSpec.STRING)
         self.assertEqual(url_spec.def_string, 'http://foo.com')
         self.assertEqual(url_spec.def_visible, True)
+        self.assertEqual(url_spec.def_ui_only, False)
         self.assertEqual(url_spec.order, 0)
 
         button_spec = ParameterSpec.objects.get(id_name='fetch')
@@ -92,6 +94,7 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(button_spec.id_name, 'fetch')
         self.assertEqual(button_spec.type, ParameterSpec.BUTTON)
         self.assertEqual(button_spec.def_visible, False)
+        self.assertEqual(button_spec.def_ui_only, True)
         self.assertEqual(button_spec.order, 1)
 
     # we should bail when keys are missing

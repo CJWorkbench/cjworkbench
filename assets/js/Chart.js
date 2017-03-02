@@ -6,6 +6,7 @@ import { store, wfModuleStatusAction } from './workflow-reducer'
 var Chartbuilder = require("chartbuilder/src/js/components/Chartbuilder");
 var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
 var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
+var saveSvgAsPng = require("save-svg-as-png");
 
 require("chartbuilder/dist/css/core.css");
 require("chartbuilder-ui/dist/styles.css");
@@ -46,15 +47,22 @@ export default class ChartParameter extends React.Component {
     }
   }
 
-  // Store ChartBuilder state into our hidden text parameter, when user changes it
-  // Don't store the data, that comes from input -- this suppresses parameter change when input changes
-  // Even so, this relies on test in saveState to suppress re-saving the identical content,
-  // which would otherwise trigger a workflow version bump, a reload, and then another CB onChange,
+  // Store ChartBuilder state and PNG image into our hidden parameters
   // into an infinite loop.
   saveState(model) {
+    // Store chart parameters. Don't store chart data, that comes from input
     var model2 = Object.assign({}, model, {errors: undefined}); // don't alter real model!
     model2.chartProps = Object.assign({}, model2.chartProps, {data: undefined, input:undefined});
     this.props.saveState(JSON.stringify(model2));
+
+    // Store most recently rendered chart image
+    var chartNode = document
+			.getElementsByClassName('renderer-svg-desktop')[0]
+			.getElementsByClassName('chartbuilder-svg')[0];
+
+    saveSvgAsPng.svgAsPngUri(chartNode, {}, dataURI => {
+      this.props.saveImageDataURI(dataURI)
+    })
   }
 
   // called when any change is made to chart. Update error status, save to hidden 'chartstate' text field
@@ -128,5 +136,6 @@ ChartParameter.propTypes = {
 		wf_module_id: React.PropTypes.number,
 		revision:     React.PropTypes.number,
 		saveState:    React.PropTypes.func,
-		loadState:    React.PropTypes.func
+		loadState:    React.PropTypes.func,
+		saveImageDataURI: React.PropTypes.func
 }

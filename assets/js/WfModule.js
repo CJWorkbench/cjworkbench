@@ -105,14 +105,22 @@ class WfParameter extends React.Component {
 
       case 'custom':
 
-        // Chart parameters load and save state to parameter with id_name=param value
-        var state_id_name = this.props.p.string;
-        var loadState = ( () => this.props.getParamText(state_id_name) );
-        var saveState = ( state => this.props.setParamText(state_id_name, state) );
+        // Load and save chart state, image to hidden parameters
+        var loadState = ( () => this.props.getParamText('chartstate') );
+        var saveState = ( state => this.props.setParamText('chartstate', state) );
+
+        var saveImageDataURI = ( state => this.props.setParamText('chart', state) );
 
         return (
           <div>
-            <ChartParameter wf_module_id={this.props.wf_module_id} revision={this.props.revision} saveState={saveState} loadState={loadState}  />
+            <a href={'/public/paramdata/live/' + this.props.p.id + '.png'}>PNG</a>
+            <ChartParameter
+              wf_module_id={this.props.wf_module_id}
+              revision={this.props.revision}
+              saveState={saveState}
+              loadState={loadState}
+              saveImageDataURI={saveImageDataURI}
+            />
           </div>
         );
 
@@ -294,7 +302,7 @@ export default class WfModule extends React.Component {
         <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
         {paramdivs}
         <TableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision}/>
-        <a href={'/public/wfmodule/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/wfmodule/live/' + this.wf_module.id + '.json'}>JSON</a>
+        <a href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
       </div>
     ); 
   } 
