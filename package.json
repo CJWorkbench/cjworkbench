@@ -4,6 +4,10 @@
   "description": "Computational Journalism Workbench",
   "main": "index.js",
   "dependencies": {
+
+    "lodash": "^4.17.4",
+    "classnames": "^2.2.5",
+    "react-addons-shallow-compare": "^0.14.8",
     "babelify": "^7.3.0",
     "d3": "^3.5.5",
     "d3-array": "^1.0.2",

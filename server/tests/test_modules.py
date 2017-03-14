@@ -12,6 +12,8 @@ import os
 import json
 
 
+# TODO JSONtoColumns
+
 mock_csv_text = 'Month,Amount\nJan,10\nFeb,20'
 mock_csv_table = pd.read_csv(io.StringIO(mock_csv_text))
 

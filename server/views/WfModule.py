@@ -94,3 +94,7 @@ def wfmodule_public_output(request, pk, type, format=None):
         return HttpResponse(d, content_type="text/csv")
     else:
         return HttpResponseNotFound()
+
+
+# TODO public image output?
+

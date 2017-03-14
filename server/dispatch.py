@@ -8,6 +8,7 @@ import re
 import requests
 import io
 import csv
+import json
 from server.versions import bump_workflow_version
 
 # ---- Module implementations ---
@@ -71,8 +72,8 @@ class LoadCSV(ModuleImpl):
             wfm.set_error('Error %s fetching url' % str(res.status_code))
             return
 
-        content_type = res.headers.get('content-type')
-        # print('content type of %s: %s' % (url, content_type))
+        # get content type, ignoring charset for now
+        content_type = res.headers.get('content-type').split(';')[0]
 
         if content_type == 'text/csv':
             try:
@@ -194,6 +195,41 @@ class SelectColumns(ModuleImpl):
         newtab = table[cols]
         return newtab
 
+# ---- JSONtoColumns ----
+class JSONtoColumns(ModuleImpl):
+    def render(wf_module, table):
+        col = wf_module.get_param_string('column')
+
+        if not col in table.columns:
+            wf_module.set_error('There is no column named %s' % col)
+            return None
+
+        # decode first row to get column names.
+        try:
+            firstrow = json.loads(table.loc[0,col])
+        except json.decoder.JSONDecodeError as e:
+            wf_module.set_error(str(e))
+            return None
+        colnames = list(firstrow.keys())
+        newtab = pd.DataFrame(columns=colnames)
+
+        # now actually decode every column
+        for i in range(len(table)):
+            row = json.loads(table[i,col])
+            for key in colnames:
+                try:
+                    newtab.loc[i,key] = row[key]
+                except KeyError as e:
+                    pass # json with key that wasn't in first row, skip it
+                except json.decoder.JSONDecodeError as e:
+                    wf_module.set_error(str(e) + ' at row ' + str(i))
+                    return None
+
+        wf_module.set_ready(notify=False)
+        return newtab
+
+
+# ---- RawCode ----
 
 class RawCode(ModuleImpl):
     pass
@@ -243,6 +279,7 @@ module_dispatch_tbl = {
     'selectcolumns':SelectColumns,
     'rawcode':      RawCode,
     'simplechart':  Chart,
+    'jsontocolumns':JSONtoColumns,
 
     # For testing
     'NOP':          NOP,
