@@ -6,7 +6,7 @@
       "name": "Chart",
       "id_name": "chart",
       "type": "custom",
-      "default": "chartstate"
+      "default": ""
     },
     {
       "name": "hidden chart state",
@@ -14,7 +14,7 @@
       "type": "text",
       "default": "",
       "visible": false,
-      "ui-only": true,
+      "ui-only": true
 
     }
   ]
