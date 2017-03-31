@@ -23,7 +23,7 @@ export function reloadWorkflowAction() {
 }
 
 // Make an addModule call, then reload the workflow
-export function addModuleAction(module_id) {
+export function addModuleAction(module_id, insertBefore) {
   return fetch('/api/workflows/' + getPageID() + "/addmodule", {
     method: 'put',
     credentials: 'include',
@@ -32,7 +32,7 @@ export function addModuleAction(module_id) {
       'Content-Type': 'application/json',
       'X-CSRFToken': csrfToken
     },
-    body: JSON.stringify({insertBefore: 0, moduleID: module_id})
+    body: JSON.stringify({insertBefore: insertBefore, moduleID: module_id})
   }) .then( reloadWorkflowAction );
 }
 

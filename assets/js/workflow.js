@@ -95,7 +95,7 @@ class WorkflowMain extends React.Component {
     return (
       <div>
         <div className="toolbar">
-          <ToolBar onAddModuleClick={this.props.addModule}/>
+          <ToolBar onAddModuleClick={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}/>
         </div>
         <SortableList data={this.props.workflow} changeParam={this.props.changeParam} removeModule={this.props.removeModule}/>
       </div>
@@ -129,8 +129,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addModule: (module_id) => {
-      dispatch(Actions.addModuleAction(module_id))
+    addModule: (module_id, insertBefore) => {
+      dispatch(Actions.addModuleAction(module_id, insertBefore))
     },
     removeModule: (wf_module_id) => {
       dispatch(Actions.removeModuleAction(wf_module_id))
