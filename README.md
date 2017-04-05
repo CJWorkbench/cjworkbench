@@ -13,7 +13,7 @@ To set up a development environment:
 - `python manage.py migrate` to initialize the database
 - `python manage.py createsuperuser` if you ever want to login to Django admin (you do)
 
-If you get a message about missing Chartbuilder, check that there are files in /chartbuilder/chartbuilder and /chartbuilder/chartbuilder-ui. If these directories are empty, try `git update submodule --init --recursive`
+If you get a message about missing Chartbuilder (probably when running webpack), check that there are files in /chartbuilder/chartbuilder and /chartbuilder/chartbuilder-ui. If these directories are empty, try `git submodule update --init --recursive`
 
 To develop:
 - `python manage.py runserver` to start the Django server. It will automatically recompile any .py file you edit.
