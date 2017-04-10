@@ -18,13 +18,14 @@ RUN cd cjworkbench && npm install
 RUN cd cjworkbench && \
     ./node_modules/.bin/webpack --config webpack.config.js
 
-# setup db, apply migrations
+# setup db, apply migrations, create initial admin user
 RUN cd cjworkbench && \
-    python manage.py migrate
+    python manage.py migrate && \
+    python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@cjworkbench.org', 'admin')"
 
 # go!
 CMD cd cjworkbench && \
-    python manage.py runserver
+    python manage.py runserver $(hostname -i):8000
 
 #CMD start redis && \
 #    python manage.py runworker && \
