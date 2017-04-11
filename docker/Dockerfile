@@ -26,7 +26,3 @@ RUN cd cjworkbench && \
 # go!
 CMD cd cjworkbench && \
     python manage.py runserver $(hostname -i):8000
-
-#CMD start redis && \
-#    python manage.py runworker && \
-#    daphne cjworkbench.asgi:channel_layer
