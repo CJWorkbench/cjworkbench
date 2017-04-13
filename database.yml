@@ -1,0 +1,19 @@
+# docker-compose file that brings up the database in a production configuration
+# Use this to edit and test production config, without rebuilding docker container over and over
+
+version: '2'
+
+services:
+
+  db:
+    image: postgres:9
+    environment:
+      - POSTGRES_USER=cjworkbench
+      - POSTGRES_PASSWORD=cjworkbench
+      - POSTGRES_DB=cjworkbench
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+
+

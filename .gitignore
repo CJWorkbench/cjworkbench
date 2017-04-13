@@ -8,6 +8,7 @@ __pycache__/
 local_settings.py
 webpack-stats.json
 db.sqlite3
+dbdata/
 
 # Asset bundles and collected static files
 /node_modules/
