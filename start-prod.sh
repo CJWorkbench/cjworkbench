@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Run the Workbench server in production configuration
-
-docker-compose -f database.yml up -d
+# Expects the database up, e.g. docker-compose -f database.yml up -d
 
 # Production env vars. Must set CJW_SECRET_KEY externally!
 export CJW_PRODUCTION=True
