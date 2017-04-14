@@ -8,4 +8,4 @@ export CJW_PRODUCTION=True
 export CJW_ALLOWED_HOST=*
 export CJW_DB_PASSWORD=cjworkbench
 
-python manage.py runserver --insecure
+python manage.py runserver --insecure 2>&1
