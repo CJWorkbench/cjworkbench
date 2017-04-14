@@ -64,6 +64,11 @@ class WfParameter extends React.Component {
           store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', response.statusText))
       });
     }
+    if (this.type == 'checkbox') {
+        var newVal = {};
+        newVal[this.type] = e.target.checked;
+        this.props.changeParam(this.props.p.id, newVal);
+    }
   }
 
   render() {
@@ -101,6 +106,15 @@ class WfParameter extends React.Component {
           <div>
             <button className='wfmoduleButton' onClick={this.click}>{this.name}</button>
           </div>
+        );
+
+      case 'checkbox':
+        console.log(this.props.p.checkbox)
+        return (
+            <div>
+                <div>{this.name}: </div>
+                <input type="checkbox" checked={this.props.p.checkbox} onChange={this.click}></input>
+            </div>
         );
 
       case 'custom':

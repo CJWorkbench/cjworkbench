@@ -7,6 +7,12 @@
       "id_name": "csv",
       "type": "text",
       "default": ""
+    },
+    {
+      "name": "Has Header Row",
+      "id_name": "has_header_row",
+      "type": "checkbox",
+      "default": "True"
     }
   ]
 }

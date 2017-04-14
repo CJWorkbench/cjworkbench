@@ -42,6 +42,8 @@ def parameterval_detail(request, pk, format=None):
             param.text = data[ParameterSpec.TEXT]
         elif ParameterSpec.NUMBER in data.keys():
             param.number = data[ParameterSpec.NUMBER]
+        elif ParameterSpec.CHECKBOX in data.keys():
+            param.checkbox = data[ParameterSpec.CHECKBOX]
         param.save()
 
         # TODO this isn't a real error handling framework, only clear the error if we caused it!
