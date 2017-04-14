@@ -5,7 +5,7 @@
 
 # Production env vars. Must set CJW_SECRET_KEY externally!
 export CJW_PRODUCTION=True
-export CJW_ALLOWED_HOST=localhost
+export CJW_ALLOWED_HOST=*
 export CJW_DB_PASSWORD=cjworkbench
 
 python manage.py runserver --insecure
