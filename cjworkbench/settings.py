@@ -11,7 +11,15 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+import sys
 from os.path import abspath, basename, dirname, join, normpath
+
+def env_or_else(key, default_val):
+    try:
+        v = os.environ[key]
+    except KeyError:
+        v = default_val
+    return v
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -24,17 +32,51 @@ SITE_NAME = basename(DJANGO_ROOT)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'e047upo3a#l71v#_#a2@g4oe%o-4y%i)=cg@)*83^bb9j&x=g^'
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = not env_or_else('CJW_PRODUCTION', False)
 
-ALLOWED_HOSTS = []
+# Various environment variables must be set in production
+if DEBUG==False:
+    try:
+        SECRET_KEY = os.environ['CJW_SECRET_KEY']
+    except KeyError:
+        sys.exit('Must set CJW_SECRET_KEY in production')
+
+    try:
+        ALLOWED_HOSTS = [ os.environ['CJW_ALLOWED_HOST'] ]
+    except KeyError:
+        sys.exit('Must set CJW_ALLOWED_HOST in production')
+
+    if 'CJW_DB_PASSWORD' not in os.environ:
+        sys.exit('Must set CJW_DB_PASSWORD in production')
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': 'cjworkbench',
+            'USER': 'cjworkbench',
+            'PASSWORD': os.environ['CJW_DB_PASSWORD'],
+            'HOST': 'localhost',
+            'PORT': '5432',
+        }
+    }
+
+else:
+    # We are running in debug
+    SECRET_KEY = 'my debug secret key is not a secret'
+
+    # Database
+    # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
+
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -96,15 +138,6 @@ CHANNEL_LAYERS = {
 }
 
 
-# Database
-# https://docs.djangoproject.com/en/1.10/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
 
 
 # Password validation
