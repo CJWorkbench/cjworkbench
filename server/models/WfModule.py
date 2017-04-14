@@ -91,6 +91,8 @@ class WfModule(models.Model):
             return pval.string
         elif param_type == ParameterSpec.NUMBER:
             return pval.number
+        elif param_type == ParameterSpec.CHECKBOX:
+            return pval.checkbox
         else:
             return pval.text
 
@@ -102,6 +104,9 @@ class WfModule(models.Model):
 
     def get_param_text(self, name):
         return self.get_param_typecheck(name, ParameterSpec.TEXT)
+
+    def get_param_checkbox(self, name):
+        return self.get_param_typecheck(name, ParameterSpec.CHECKBOX)
 
     # --- Status ----
     # set error codes and status lights, notify client of changes
@@ -150,11 +155,13 @@ class ParameterSpec(models.Model):
     TEXT = 'text'               # long strings, e.g. programs
     BUTTON = 'button'
     CUSTOM = 'custom'           # rendered in front end
+    CHECKBOX = 'checkbox'
     TYPE_CHOICES = (
         (STRING, 'String'),
         (NUMBER, 'Number'),
         (TEXT, 'Text'),
         (BUTTON, 'Button'),
+        (CHECKBOX, 'Checkbox'),
         (CUSTOM, 'Custom')
     )
 
@@ -179,6 +186,7 @@ class ParameterSpec(models.Model):
     def_number = models.FloatField(NUMBER, null=True, blank=True, default=0.0)
     def_string = models.CharField(STRING, max_length=50, blank=True, default='')
     def_text = models.TextField(TEXT, blank=True, default='')
+    def_checkbox = models.BooleanField(CHECKBOX, default=True)
 
     def __str__(self):
         return self.module.name + ' - ' + self.name
@@ -192,6 +200,7 @@ class ParameterVal(models.Model):
     number = models.FloatField(ParameterSpec.NUMBER, null=True, blank=True)
     string = models.CharField(ParameterSpec.STRING, max_length=50, null=True, blank=True)
     text = models.TextField(ParameterSpec.TEXT, null=True, blank=True)
+    checkbox = models.BooleanField(ParameterSpec.CHECKBOX, default=True)
 
     wf_module = models.ForeignKey(WfModule, related_name='parameter_vals',
                                on_delete=models.CASCADE, null=True)  # delete value if Module deleted
@@ -207,6 +216,7 @@ class ParameterVal(models.Model):
         self.number = self.parameter_spec.def_number
         self.string = self.parameter_spec.def_string
         self.text = self.parameter_spec.def_text
+        self.checkbox = self.parameter_spec.def_checkbox
         self.order = self.parameter_spec.order
         self.visible = self.parameter_spec.def_visible
         self.ui_only = self.parameter_spec.def_ui_only
@@ -226,6 +236,8 @@ class ParameterVal(models.Model):
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - button'
         elif self.parameter_spec.type == ParameterSpec.CUSTOM:
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - custom'
+        elif self.parameter_spec.checkbox == ParameterSpec.CHECKBOX:
+            return self.wf_module.__str__() + ' - ' + ' - checkbox'
         else:
             raise ValueError("Invalid parameter type")
 

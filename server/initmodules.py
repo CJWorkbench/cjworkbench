@@ -98,6 +98,7 @@ def load_parameter_spec(d, module, order):
         pspec.def_number = 0.0
         pspec.def_string = ''
         pspec.def_text = ''
+        pspec.def_checkbox = True
 
         type_changed = pspec.type != ptype
         pspec.type = ptype
@@ -117,6 +118,8 @@ def load_parameter_spec(d, module, order):
         pass # no value
     elif d['type'] == 'custom':
         pspec.def_string = d['default']
+    elif d['type'] == 'checkbox':
+         pspec.def_checkbox = d['default']
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
 
