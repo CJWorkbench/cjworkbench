@@ -14,13 +14,6 @@ import os
 import sys
 from os.path import abspath, basename, dirname, join, normpath
 
-def env_or_else(key, default_val):
-    try:
-        v = os.environ[key]
-    except KeyError:
-        v = default_val
-    return v
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -33,7 +26,10 @@ SITE_NAME = basename(DJANGO_ROOT)
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = not env_or_else('CJW_PRODUCTION', False)
+if 'CJW_PRODUCTION' in os.environ:
+    DEBUG = os.environ['CJW_PRODUCTION']
+else:
+    DEBUG=True
 
 # Various environment variables must be set in production
 if DEBUG==False:
@@ -42,10 +38,8 @@ if DEBUG==False:
     except KeyError:
         sys.exit('Must set CJW_SECRET_KEY in production')
 
-    try:
-        ALLOWED_HOSTS = [ os.environ['CJW_ALLOWED_HOST'] ]
-    except KeyError:
-        sys.exit('Must set CJW_ALLOWED_HOST in production')
+    if 'CJW_DB_HOST' not in os.environ:
+        sys.exit('Must set CJW_DB_HOST in production')
 
     if 'CJW_DB_PASSWORD' not in os.environ:
         sys.exit('Must set CJW_DB_PASSWORD in production')
@@ -55,8 +49,8 @@ if DEBUG==False:
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
             'NAME': 'cjworkbench',
             'USER': 'cjworkbench',
+            'HOST': os.environ['CJW_DB_HOST'],
             'PASSWORD': os.environ['CJW_DB_PASSWORD'],
-            'HOST': 'localhost',
             'PORT': '5432',
         }
     }
