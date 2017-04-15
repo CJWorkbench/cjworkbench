@@ -8,4 +8,7 @@ export CJW_PRODUCTION=True
 export CJW_ALLOWED_HOST=*
 export CJW_DB_PASSWORD=cjworkbench
 
-python manage.py runserver --insecure 2>&1
+# required or we won't get any logs when running in docker container
+export PYTHONUNBUFFERED=0
+
+python manage.py runserver --insecure
