@@ -8,6 +8,7 @@ module.exports = {
   // Each page gets its own bundle
   entry: {
     app: './assets/js/app',
+    login: './assets/js/login',
     workflows: './assets/js/workflows',
     workflow: './assets/js/workflow'
   },
