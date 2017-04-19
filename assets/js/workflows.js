@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { csrfToken } from './utils'
 
+require('bootstrap/dist/css/bootstrap.css');
 require('../css/style.css');
 
 class Workflows extends React.Component {
@@ -48,15 +49,35 @@ class Workflows extends React.Component {
 
   render() {
     return (
-      <div className="page">
-        <h1>Workflows!</h1>
-        <ul>
-          {this.state.workflows.map(function (listValue) {
-            return <li key={listValue.id}><a href={"/workflows/" + listValue.id}>{listValue.name}</a></li>;
-          })}
-        </ul>
-        <input type="text" className='newWorkflowName' value={this.state.value} onChange={this.handleTextChange}/>
-        <button className='newWorkflowButton' onClick={this.click}>New</button>
+      <div className="container">
+        <div className="card w-75 mx-auto">
+          <div className="card-block drop-shadow">
+
+            <h3 className="card-title">Your Workflows</h3>
+
+            <div className="list-group some-margin">
+              {this.state.workflows.map(function (listValue) {
+                return (
+                    <div className="list-group-item list-group-item-action" key={listValue.id}><a href={"/workflows/" + listValue.id}>{listValue.name}</a></div>
+                );
+              })}x
+            </div>
+
+            <div className="row justify-content-md-center some-margin">
+              <div className="col col-lg-2"></div>
+              <div className="col-12 col-md-auto">
+                <div className="input-group">
+                  <input type="text" className='newWorkflowName form-control' value={this.state.value} onChange={this.handleTextChange}/>
+                  <span className="input-group-btn">
+                    <button className='newWorkflowButton btn btn-secondary' onClick={this.click}>New</button>
+                  </span>
+                </div>
+              </div>
+              <div className="col col-lg-2"></div>
+            </div>
+
+          </div>
+        </div>
       </div>
     );
   }

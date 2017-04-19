@@ -25,6 +25,12 @@ body {
   box-shadow: 5px 5px 10px #555;
 }
 
+/* ---- Workflow list ---- */
+
+.some-margin {
+    margin: 0.5rem;
+}
+
 /* ---- Toolbar and buttons ---- */
 
 .toolbar {
