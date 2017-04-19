@@ -12,28 +12,24 @@
 
   <body>
 
+  <div class="login-fullscreen-container">
+
     <div class="container">
-      <div class="row" id="pwd-container">
-        <div class="col-md-4">
-        </div>
-
-        <div class="col-md-4">
-          <div class="modal-dialog">
-            <div class="loginmodal-container">
-              <h1 class="text-center">CJ Workbench</h1><br>
-              <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit" class="btn btn-lg btn-primary btn-block">Login</button>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-        </div>
+      <div class="card card-block login-card mx-auto drop-shadow" style="width: 20rem;">
+         <h1 class="text-center">CJ Workbench</h1>
+         <form method="post">
+           {% csrf_token %}
+           <p>
+            <input type="text" name="username" placeholder="User" autofocus="" required="" id="id_username">
+           </p>
+           <p>
+            <input type="password" name="password" placeholder="Password" required="" id="id_password">
+           </p>
+           <button type="submit" class="btn btn-lg btn-primary btn-block">Login</button>
+         </form>
       </div>
     </div>
+  </div>
 
     <!-- JavaScript scripts -->
     {% render_bundle 'login' 'js' %}

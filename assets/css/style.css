@@ -5,6 +5,26 @@ body {
   margin: 0px;
 }
 
+/* ---- Login ---- */
+.login-fullscreen-container {
+  height: 80vh;
+  display: flex;
+  align-items: center;
+}
+
+.login-card input {
+  width: 100%
+}
+
+.login-card ::-webkit-input-placeholder {
+  color: #ccc
+}
+
+.drop-shadow {
+  border-width: 2px;
+  box-shadow: 5px 5px 10px #555;
+}
+
 /* ---- Toolbar and buttons ---- */
 
 .toolbar {
