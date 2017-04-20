@@ -1,5 +1,6 @@
 from django.conf.urls import url
 from django.views.generic import TemplateView
+from django.views.generic.base import RedirectView
 from . import views
 from .views.WfModule import wfmodule_detail,wfmodule_render,wfmodule_input,wfmodule_public_output
 
@@ -8,7 +9,7 @@ urlpatterns = [
     # ex: /
     #    url(r'^$', views.index, name='index'),
 
-    url(r'^$', TemplateView.as_view(template_name='index.html')),
+    url(r'^$', RedirectView.as_view(url='/workflows')),
 
     # list all workflows
     url(r'^workflows/$', views.workflows2),
