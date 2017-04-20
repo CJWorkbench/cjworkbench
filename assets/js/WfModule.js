@@ -6,7 +6,7 @@ import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 
 // Libraries to provide a collapsable table view
-var Collapse = require('pui-react-collapse').Collapse;
+import Collapse, { Panel } from 'rc-collapse';
 var DataGrid = require('react-datagrid');
 require('react-datagrid/index.css');
 
@@ -229,8 +229,10 @@ class TableView extends React.Component {
 
       var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key, 'title': key } });
       table =
-        <Collapse header='Output'>
-          <DataGrid idProperty="index" dataSource={tableData} columns={columns} />
+        <Collapse>
+          <Panel header='Output'>
+            <DataGrid idProperty="index" dataSource={tableData} columns={columns} />
+          </Panel>
         </Collapse>
 
     }  else {

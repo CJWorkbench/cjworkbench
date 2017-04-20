@@ -33,13 +33,7 @@ body {
 
 /* ---- Toolbar and buttons ---- */
 
-.toolbar {
-  border: 1px solid black;
-  background-color: white;
-  margin: 0px;
-  width: 100%;
-  height: 50px;
-}
+
 
 .toolbutton {
   border: 1px solid black;

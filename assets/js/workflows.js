@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import NavBar from './navbar';
+import { NavBar } from './navbar';
 import { csrfToken } from './utils'
 
 require('bootstrap/dist/css/bootstrap.css');

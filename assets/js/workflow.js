@@ -5,11 +5,13 @@ import ReactDOM from 'react-dom'
 import { Provider, connect } from 'react-redux'
 import { sortable } from 'react-sortable'
 import ModuleMenu from './ModuleMenu'
-import ToolButton from './ToolButton'
+import { WorkflowNavBar } from './NavBar'
 import WfModule from './WfModule'
 import * as Actions from './workflow-reducer'
 import { getPageID, csrfToken } from './utils'
 
+require('bootstrap/dist/css/bootstrap.css');
+require('rc-collapse/assets/index.css');
 require('../css/style.css');
 
 
@@ -91,12 +93,12 @@ class WorkflowMain extends React.Component {
       return null;
     }
 
+    var moduleMenu = <ModuleMenu addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}/>
+
     // We are a toolbar plus a sortable list of modules
     return (
       <div>
-        <div className="toolbar">
-          <ToolBar onAddModuleClick={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}/>
-        </div>
+        <WorkflowNavBar addButton={moduleMenu} workflowTitle={this.props.workflow.name}/>
         <SortableList data={this.props.workflow} changeParam={this.props.changeParam} removeModule={this.props.removeModule}/>
       </div>
     );
