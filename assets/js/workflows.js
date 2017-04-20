@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import NavBar from './navbar';
 import { csrfToken } from './utils'
 
 require('bootstrap/dist/css/bootstrap.css');
@@ -49,33 +50,37 @@ class Workflows extends React.Component {
 
   render() {
     return (
-      <div className="container">
-        <div className="card w-75 mx-auto">
-          <div className="card-block drop-shadow">
+      <div>
+        <NavBar/>
 
-            <h3 className="card-title">Your Workflows</h3>
+        <div className="container">
+          <div className="card w-75 mx-auto">
+            <div className="card-block drop-shadow">
 
-            <div className="some-margin">
-              {this.state.workflows.map(function (listValue) {
-                return (
-                    <div className="card card-block some-margin" key={listValue.id}><a href={"/workflows/" + listValue.id}>{listValue.name}</a></div>
-                );
-              })}
-            </div>
+              <h3 className="card-title">Your Workflows</h3>
 
-            <div className="row justify-content-md-center some-margin">
-              <div className="col col-lg-2"></div>
-              <div className="col-12 col-md-auto">
-                <div className="input-group">
-                  <input type="text" className='newWorkflowName form-control' value={this.state.value} onChange={this.handleTextChange}/>
-                  <span className="input-group-btn">
-                    <button className='newWorkflowButton btn btn-secondary' onClick={this.click}>New</button>
-                  </span>
-                </div>
+              <div className="some-margin">
+                {this.state.workflows.map(function (listValue) {
+                  return (
+                      <div className="card card-block some-margin" key={listValue.id}><a href={"/workflows/" + listValue.id}>{listValue.name}</a></div>
+                  );
+                })}
               </div>
-              <div className="col col-lg-2"></div>
-            </div>
 
+              <div className="row justify-content-md-center some-margin">
+                <div className="col col-lg-2"></div>
+                <div className="col-12 col-md-auto">
+                  <div className="input-group">
+                    <input type="text" className='newWorkflowName form-control' value={this.state.value} onChange={this.handleTextChange}/>
+                    <span className="input-group-btn">
+                      <button className='newWorkflowButton btn btn-secondary' onClick={this.click}>New</button>
+                    </span>
+                  </div>
+                </div>
+                <div className="col col-lg-2"></div>
+              </div>
+
+            </div>
           </div>
         </div>
       </div>
