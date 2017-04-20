@@ -55,12 +55,12 @@ class Workflows extends React.Component {
 
             <h3 className="card-title">Your Workflows</h3>
 
-            <div className="list-group some-margin">
+            <div className="some-margin">
               {this.state.workflows.map(function (listValue) {
                 return (
-                    <div className="list-group-item list-group-item-action" key={listValue.id}><a href={"/workflows/" + listValue.id}>{listValue.name}</a></div>
+                    <div className="card card-block some-margin" key={listValue.id}><a href={"/workflows/" + listValue.id}>{listValue.name}</a></div>
                 );
-              })}x
+              })}
             </div>
 
             <div className="row justify-content-md-center some-margin">
