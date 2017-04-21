@@ -308,17 +308,23 @@ export default class WfModule extends React.Component {
 
     // Putting it all together: name, status, parameters, output
     return (
-      <div {...this.props} className="module-li">
-        <div>
-          <button className="wfModuleCloseButton" onClick={this.removeModule}>X</button>
-          <h1 className='wfModuleName'>{this.module.name}</h1>
-          <StatusLight status={this.wf_module.status}/>
+      <div className='container' {...this.props} >
+        <div className='card w-75 mx-auto mb-4 bg-faded'>
+          <div className='card-block drop-shadow'>
+
+            <div className='d-flex justify-content-between align-items-center mb-4'>
+                <button type='button' className='btn btn-secondary btn-sm' onClick={this.removeModule}>X</button>
+                <h3 className='text-center mb-0'>{this.module.name}</h3>
+                <StatusLight status={this.wf_module.status}/>
+            </div>
+            <div style={{'clear':'both'}}></div>
+            <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
+            {paramdivs}
+            <TableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision}/>
+            <a href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
+          </div>
+
         </div>
-        <div style={{'clear':'both'}}></div>
-        <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
-        {paramdivs}
-        <TableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision}/>
-        <a href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
       </div>
     ); 
   } 

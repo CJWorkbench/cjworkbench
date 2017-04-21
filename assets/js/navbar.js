@@ -28,7 +28,7 @@ export class WorkflowNavBar extends React.Component {
         <nav className="navbar navbar-toggleable-md navbar-light bg-faded">
           {this.props.addButton}
           <h1 className="mx-auto">{this.props.workflowTitle}</h1>
-          <a className="nav-link navbar-toggler-right" href="/logout">Logout</a>
+          <a className="nav-link" href="/logout">Logout</a>
         </nav>
       </div>
     );
