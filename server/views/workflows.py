@@ -84,11 +84,17 @@ def workflow_addmodule(request, pk, format=None):
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    # create new WfModule, and increment order of every module below this in the workflow
+    # create new WfModule in the right place
+    # this also makes wfm.order sequential, which is not strictly necessary but kinda nice
+    pos = 0
     for wfm in WfModule.objects.filter(workflow=workflow):
-        if wfm.order >= insertBefore:
-            wfm.order += 1
+        if pos == insertBefore:
+            pos += 1
+        if wfm.order != pos:
+            wfm.order = pos
             wfm.save()
+        pos +=1
+
     newwfm = WfModule.objects.create(workflow=workflow, module=module, order=insertBefore)
     newwfm.create_default_parameters()
 
