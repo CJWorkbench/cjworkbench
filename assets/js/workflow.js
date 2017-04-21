@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom'
 import { Provider, connect } from 'react-redux'
 import { sortable } from 'react-sortable'
 import ModuleMenu from './ModuleMenu'
-import { WorkflowNavBar } from './NavBar'
+import { WorkflowNavBar } from './navbar'
 import WfModule from './WfModule'
 import * as Actions from './workflow-reducer'
 import { getPageID, csrfToken } from './utils'
@@ -14,20 +14,6 @@ require('bootstrap/dist/css/bootstrap.css');
 require('rc-collapse/assets/index.css');
 require('../css/style.css');
 
-
-// ---- Toolbar and buttons ----
-
-
-class ToolBar extends React.Component {
-
-  render() {
-    return (
-      <div>
-         <ModuleMenu addModule={this.props.onAddModuleClick}/>
-      </div>
-    ); 
-  } 
-}
 
 // ---- Sortable Modules ----
 

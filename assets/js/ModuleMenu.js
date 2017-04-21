@@ -1,18 +1,18 @@
 // A menu to select a module addition
-
 import React from 'react';
+import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 export default class ModuleMenu extends React.Component {
-
   constructor(props) {
     super(props);
-    this.state = { open: false, items: []};
 
-    // annoying bind to make 'this' accessible in handlers
-    this.buttonClick = this.buttonClick.bind(this);
-    this.itemMouseDown = this.itemMouseDown.bind(this);
+    this.toggle = this.toggle.bind(this);
     this.itemClick = this.itemClick.bind(this);
-    this.blur = this.blur.bind(this);
+
+    this.state = {
+      dropdownOpen: false,
+      items: []
+    };
   }
 
   componentDidMount() {
@@ -20,17 +20,13 @@ export default class ModuleMenu extends React.Component {
     fetch('/api/modules/', { credentials: 'include'})
       .then(response => response.json())
       .then(json => {
-        _this.setState({open: false, items: json}) })
+        _this.setState({dropdownOpen: this.state.dropdownOpen, items: json}) })
   }
 
-  buttonClick() {
-    // Toggle menu state
-    var newOpen = !this.state.open;
-    this.setState( { open: newOpen});
-  }
-
-  itemMouseDown(evt) {
-    evt.preventDefault();    // so the menu button doesn't lose focus and trigger blur, preventing item clicked
+  toggle() {
+    this.setState({
+      dropdownOpen: !this.state.dropdownOpen
+    });
   }
 
   itemClick(evt) {
@@ -39,22 +35,22 @@ export default class ModuleMenu extends React.Component {
     this.setState( { open: false});
   }
 
-  // close the menu when user clicks anywhere but on a menu item
-  blur() {
-    this.setState({ open: false});
-  }
-
   render() {
     return (
-        <div className="toolMenuOuter" onBlur={this.blur}>
-            <button className="toolMenuButton" onClick={this.buttonClick}>+</button>
-            <ul className="toolMenuItemHolder" style={{display: this.state.open ? 'block' : 'none'}}>
-              {this.state.items.map(
-                  item => {return <li className="toolMenuItem" key={item.id} data-id={item.id} onMouseDown={this.itemMouseDown} onClick={this.itemClick}> {item.name} </li>;})
-              }
-            </ul>
-        </div>
+      <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+        <DropdownToggle caret>
+          Add Module
+        </DropdownToggle>
+        <DropdownMenu>
+          {this.state.items.map(
+            item => {return <DropdownItem key={item.id} data-id={item.id} onClick={this.itemClick}> {item.name} </DropdownItem>;})
+          }
+        </DropdownMenu>
+      </ButtonDropdown>
     );
   }
 }
 
+ModuleMenu.propTypes = {
+  addModule:  React.PropTypes.func,
+};
