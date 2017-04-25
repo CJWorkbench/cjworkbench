@@ -175,6 +175,33 @@ class StatusLine extends React.Component {
   }
 }
 
+// ---- CollapseSection ---
+// Higher-order component that does a classic twirly collapse, inside a rounded border
+
+function CollapseSection(WrappedComponent, title, startOpen ) {
+  return class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {isOpen: startOpen};           // componentDidMount will trigger first load
+      this.toggle = this.toggle.bind(this);
+    }
+
+    toggle() {
+      this.setState({isOpen: !this.state.isOpen});
+    }
+
+    render() {
+      return(
+        <div className='panel-wrapper ml-0 mr-0 mt-0 mb-2 p-2'>
+          <div onClick={this.toggle}> { (this.state.isOpen ? '\u25be' : '\u25b8') + ' ' + title}</div>
+          <Collapse className='mt-1' isOpen={this.state.isOpen}>
+            <WrappedComponent {...this.props}/>
+          </Collapse>
+        </div>
+      );
+    }
+  }
+}
 
 // ---- TableView ----
 // Displays the module's rendered output, if any
@@ -230,15 +257,8 @@ class TableView extends React.Component {
 
     // Generate the table if there's any data
     if (tableData.length > 0 && !this.state.loading) {
-
       var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key, 'title': key } });
-      table =
-        <div>
-          <div onClick={this.toggle}> { this.state.isOpen ? '\u25be' : '\u25b8' } Output</div>
-          <Collapse isOpen={this.state.isOpen}>
-            <DataGrid idProperty="index" dataSource={tableData} columns={columns} />
-          </Collapse>
-        </div>
+      table = <DataGrid idProperty='index' dataSource={tableData} columns={columns} />
     }  else {
       table = <p>(no data)</p>;
     }
@@ -250,6 +270,18 @@ class TableView extends React.Component {
 
 
 // ---- WfModule ----
+
+//  Some convenient components that collapse params, output
+const CollapsibleTableView = CollapseSection(
+  TableView,
+  'Output',
+  false);     // don't start open
+
+const ParamDivsComponent = (props) => <div>{props.paramDivs}</div>
+const CollapsibleParams = CollapseSection(
+  ParamDivsComponent,
+  'Settings',
+  true);         // start open
 
 export default class WfModule extends React.Component {
 
@@ -300,31 +332,33 @@ export default class WfModule extends React.Component {
 
     // Each parameter gets a WfParameter
     var paramdivs = this.params.map((ps, i) => {
-          return <WfParameter
-                    key={i}
-                    p={ps}
-                    changeParam={this.props['data-changeParam']}
-                    wf_module_id={this.wf_module.id}
-                    revision={this.revision}
-                    getParamText={this.getParamText}
-                    setParamText={this.setParamText} />
-        });
+        return <WfParameter
+          key={i}
+          p={ps}
+          changeParam={this.props['data-changeParam']}
+          wf_module_id={this.wf_module.id}
+          revision={this.revision}
+          getParamText={this.getParamText}
+          setParamText={this.setParamText} />
+      });
 
     // Putting it all together: name, status, parameters, output
     return (
       <div className='container' {...this.props} >
         <div className='card w-75 mx-auto mb-4 bg-faded'>
-          <div className='card-block drop-shadow'>
+          <div className='card-block drop-shadow p-1'>
 
-            <div className='d-flex justify-content-between align-items-center mb-4'>
+            <div className='d-flex justify-content-between align-items-center mb-2'>
                 <button type='button' className='btn btn-secondary btn-sm' onClick={this.removeModule}>X</button>
                 <h3 className='text-center mb-0'>{this.module.name}</h3>
                 <StatusLight status={this.wf_module.status}/>
             </div>
             <div style={{'clear':'both'}}></div>
             <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
-            {paramdivs}
-            <TableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision}/>
+            <div className='m-2'>
+              <CollapsibleParams paramDivs={paramdivs}/>
+              <CollapsibleTableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision} />
+            </div>
             <a href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
           </div>
 

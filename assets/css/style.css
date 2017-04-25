@@ -108,6 +108,11 @@ body {
   background-color: #eee;
 }
 
+.panel-wrapper {
+  border: 1px solid #ccc;
+  margin: 3px;
+  border-radius: 3px;
+}
 
 .wfModuleErrorMsg {
   border: 1px solid black;
