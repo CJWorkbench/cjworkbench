@@ -192,9 +192,9 @@ function CollapseSection(WrappedComponent, title, startOpen ) {
 
     render() {
       return(
-        <div className='panel-wrapper ml-0 mr-0 mt-0 mb-2 p-2'>
+        <div className='panel-wrapper m-0 p-1'>
           <div onClick={this.toggle}> { (this.state.isOpen ? '\u25be' : '\u25b8') + ' ' + title}</div>
-          <Collapse className='mt-1' isOpen={this.state.isOpen}>
+          <Collapse className='mt-1 pl-2 pr-2' isOpen={this.state.isOpen}>
             <WrappedComponent {...this.props}/>
           </Collapse>
         </div>
@@ -349,17 +349,14 @@ export default class WfModule extends React.Component {
           <div className='card-block drop-shadow p-1'>
 
             <div className='d-flex justify-content-between align-items-center mb-2'>
-                <button type='button' className='btn btn-secondary btn-sm' onClick={this.removeModule}>X</button>
+                <button type='button' className='btn btn-secondary btn-sm' onClick={this.removeModule}>&times;</button>
                 <h3 className='text-center mb-0'>{this.module.name}</h3>
                 <StatusLight status={this.wf_module.status}/>
             </div>
-            <div style={{'clear':'both'}}></div>
             <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
-            <div className='m-2'>
-              <CollapsibleParams paramDivs={paramdivs}/>
-              <CollapsibleTableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision} />
-            </div>
-            <a href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
+            <CollapsibleParams paramDivs={paramdivs}/>
+            <CollapsibleTableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision} />
+            <a className='ml-2' href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
           </div>
 
         </div>

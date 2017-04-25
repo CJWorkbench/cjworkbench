@@ -109,9 +109,6 @@ body {
 }
 
 .panel-wrapper {
-  border: 1px solid #ccc;
-  margin: 3px;
-  border-radius: 3px;
 }
 
 .wfModuleErrorMsg {
@@ -123,17 +120,17 @@ body {
 }
 
 .wfmoduleStringInput{
-  width: 90%;
+  width: 100%;
   resize: none;
 }
 
 .wfmoduleNumberInput{
-  width: 90%;
+  width: 100%;
   resize: none;
 }
 
 .wfmoduleTextInput{
-  width: 90%;
+  width: 100%;
   resize: vertical;
 }
 
