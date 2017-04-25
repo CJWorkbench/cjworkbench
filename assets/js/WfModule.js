@@ -6,7 +6,7 @@ import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 
 // Libraries to provide a collapsable table view
-import Collapse, { Panel } from 'rc-collapse';
+import { Collapse, Button, CardBlock, Card } from 'reactstrap';
 var DataGrid = require('react-datagrid');
 require('react-datagrid/index.css');
 
@@ -109,10 +109,9 @@ class WfParameter extends React.Component {
         );
 
       case 'checkbox':
-        console.log(this.props.p.checkbox)
         return (
             <div>
-                <div>{this.name}: </div>
+                <label className='mr-1'>{this.name}:</label>
                 <input type="checkbox" checked={this.props.p.checkbox} onChange={this.click}></input>
             </div>
         );
@@ -184,8 +183,9 @@ class StatusLine extends React.Component {
 class TableView extends React.Component {
   constructor(props) {
     super(props);
+    this.state = { tableData: [], loading: false, isOpen: false };           // componentDidMount will trigger first load
     this.loadingState = { tableData: [], loading: true };
-    this.state = { tableData: [], loading: false };           // componentDidMount will trigger first load
+    this.toggle= this.toggle.bind(this);
   }
 
   // Load table data from render API
@@ -195,7 +195,7 @@ class TableView extends React.Component {
     fetch(url, { credentials: 'include'})
       .then(response => response.json())
       .then(json => {
-        self.setState({tableData: json, loading: false});
+        self.setState(Object.assign({}, this.state, {tableData: json, loading: false}));
       }); // triggers re-render
   }
 
@@ -210,7 +210,7 @@ class TableView extends React.Component {
     //console.log('old revision ' + this.props.revision + ' new revision ' + nextProps.revision);
 
     if (this.props.revision != nextProps.revision) {
-      this.setState(this.loadingState);               // "unload" the table
+      this.setState(Object.assign({}, this.state, this.loadingState));               // "unload" the table
       this.loadTable();
     }
   }
@@ -218,6 +218,10 @@ class TableView extends React.Component {
   // Update only when we are not loading
   shouldComponentUpdate(nextProps, nextState) {
     return !nextState.loading;
+  }
+
+  toggle() {
+    this.setState(Object.assign({}, this.state, { isOpen: !this.state.isOpen}));
   }
 
   render() {
@@ -229,12 +233,12 @@ class TableView extends React.Component {
 
       var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key, 'title': key } });
       table =
-        <Collapse>
-          <Panel header='Output'>
+        <div>
+          <div onClick={this.toggle}> { this.state.isOpen ? '\u25be' : '\u25b8' } Output</div>
+          <Collapse isOpen={this.state.isOpen}>
             <DataGrid idProperty="index" dataSource={tableData} columns={columns} />
-          </Panel>
-        </Collapse>
-
+          </Collapse>
+        </div>
     }  else {
       table = <p>(no data)</p>;
     }
