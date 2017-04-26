@@ -45,8 +45,8 @@ export default class ModuleMenu extends React.Component {
     for (var item of this.state.items) {
       if (item.category != lastCategory) {
         if (lastCategory)
-          menuItems.push(<DropdownItem divider />);
-        menuItems.push(<DropdownItem header> {item.category} </DropdownItem>);
+          menuItems.push(<DropdownItem divider key={item.id*1000} />);
+        menuItems.push(<DropdownItem header key={item.id*1000 + 1}> {item.category} </DropdownItem>);
         lastCategory = item.category;
       }
       menuItems.push(<DropdownItem className='ml-2' key={item.id} data-id={item.id} onClick={this.itemClick}> {item.name} </DropdownItem>);
