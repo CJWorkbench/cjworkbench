@@ -1,0 +1,12 @@
+{
+  "name": "Melt",
+  "id_name": "melt",
+  "parameters": [
+    {
+      "name": "ID columns",
+      "id_name" : "idcols",
+      "type": "string"
+    }
+  ]
+}
+

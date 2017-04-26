@@ -104,7 +104,7 @@ class WfParameter extends React.Component {
       case 'button':
         return (
           <div>
-            <button className='wfmoduleButton' onClick={this.click}>{this.name}</button>
+            <button className='btn btn-secondary' onClick={this.click}>{this.name}</button>
           </div>
         );
 

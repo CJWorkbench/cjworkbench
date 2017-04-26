@@ -3,6 +3,9 @@
 from django.db import models
 
 class Module(models.Model):
+    class Meta:
+        ordering = ['name']
+
     # UI name, can change
     name = models.CharField('name', max_length=200)
 

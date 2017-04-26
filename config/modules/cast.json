@@ -1,0 +1,17 @@
+{
+  "name": "Cast",
+  "id_name": "cast",
+  "parameters": [
+    {
+      "name": "Row variables",
+      "id_name" : "rows",
+      "type": "string"
+    },
+    {
+      "name": "Column variables",
+      "id_name" : "columns",
+      "type": "string"
+    }
+  ]
+}
+

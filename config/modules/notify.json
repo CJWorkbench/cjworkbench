@@ -1,0 +1,11 @@
+{
+  "name": "Notify when data changes",
+  "id_name": "notify",
+  "parameters": [
+    {
+      "name": "Email",
+      "id_name" : "email",
+      "type": "string"
+    }
+  ]
+}
