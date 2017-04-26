@@ -1,6 +1,7 @@
 {
   "name": "Chart",
   "id_name": "simplechart",
+  "category" : "Visualize",
   "parameters": [
     {
       "name": "Chart",

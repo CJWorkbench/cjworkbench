@@ -1,6 +1,7 @@
 {
   "name": "Paste CSV",
   "id_name": "pastecsv",
+  "category" : "Sources",
   "parameters": [
     {
       "name": "CSV",

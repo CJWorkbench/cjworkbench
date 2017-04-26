@@ -1,6 +1,7 @@
 {
   "name": "Load From URL",
   "id_name": "loadcsv" ,
+  "category" : "Sources",
   "parameters": [
     {
       "name": "URL",

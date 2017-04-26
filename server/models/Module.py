@@ -9,6 +9,9 @@ class Module(models.Model):
     # UI name, can change
     name = models.CharField('name', max_length=200)
 
+    # Where it appears in menus and UI, can change
+    category = models.CharField('category', max_length=200)
+
     # internal name, cannot change if you want backwards compatibility with exported workflows
     id_name = models.CharField('id_name', max_length=200)
 

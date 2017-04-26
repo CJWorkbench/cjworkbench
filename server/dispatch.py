@@ -254,16 +254,6 @@ class Chart(ModuleImpl):
 class NOP(ModuleImpl):
     pass
 
-# Fixed test data with paramter number of rows
-class TestDataRows(ModuleImpl):
-    @staticmethod
-    def render(wfmodule, table):
-        table = pd.DataFrame(columns=['N', 'N squared'])
-        rows = wfmodule.get_param_number('rows')
-        for i in range(int(rows)):
-            table.loc[i] = [i+1, (i+1)*(i+1)]
-        return table
-
 
 # Generate test data
 
@@ -293,7 +283,6 @@ module_dispatch_tbl = {
     # For testing
     'NOP':          NOP,
     'testdata':     TestData,
-    'testdataN':    TestDataRows,
     'double_M_col': DoubleMColumn
 }
 

@@ -1,6 +1,7 @@
 {
   "name": "Select Columns",
   "id_name": "selectcolumns",
+  "category" : "Wrangle",
   "parameters": [
     {
       "name": "Enter columns to keep",

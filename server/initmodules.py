@@ -37,10 +37,11 @@ def load_module_from_file(fname):
 # testable entrypoint
 # returns Module
 def load_module_from_dict(d):
-    if not 'name' in d:
-        raise ValueError("Missing module name")
-    if not 'id_name' in d:
-        raise ValueError("Missing module id_name")
+    required = ['name', 'id_name', 'category']
+    for x in required:
+        if not x in d:
+            raise ValueError("Module specification missing field " + x)
+
     id_name = d['id_name']
 
     # If we can find an existing module with the same id_name, use that
@@ -53,6 +54,7 @@ def load_module_from_dict(d):
 
     # save module data
     module.name=d['name']
+    module.category=d['category']
     module.id_name=id_name
     module.dispatch=id_name
     module.save()
@@ -76,15 +78,14 @@ def load_module_from_dict(d):
 # Otherwise re-use existing spec object, and update all existing ParameterVal objects that point to it
 # returns ParameterSpec
 def load_parameter_spec(d, module, order):
-    # require name and id_name
-    if not 'name' in d:
-        raise ValueError("Missing parameter name")
+    # require certain fields
+    required = ['name', 'id_name', 'type']
+    for x in required:
+        if not x in d:
+            raise ValueError("Parameter specification missing field " + x)
+
     name = d['name']
-    if not 'id_name' in d:
-        raise ValueError("Missing parameter id_name")
     id_name = d['id_name']
-    if not 'type' in d:
-        raise ValueError("Missing parameter type")
     ptype = d['type']
 
     # Find any previous parameter specs with this id_name (including any we just loaded)

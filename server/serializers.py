@@ -13,15 +13,13 @@ class ParameterValSerializer(serializers.ModelSerializer):
         fields = ('id', 'parameter_spec', 'number', 'string', 'text', 'checkbox', 'visible')
 
 class ModuleSerializer(serializers.ModelSerializer):
-    parameter_vals = ParameterValSerializer(many=True, read_only=True)
     class Meta:
         model = Module
-        fields = ('id', 'name', 'parameter_vals')
+        fields = ('id', 'name', 'category')
 
 class WfModuleSerializer(serializers.ModelSerializer):
     parameter_vals = ParameterValSerializer(many=True, read_only=True)
     module = ModuleSerializer(many=False, read_only=True)
-    workflow = ModuleSerializer(many=False, read_only=True)
     class Meta:
         model = WfModule
         fields = ('id', 'module', 'workflow', 'status', 'error_msg', 'parameter_vals')

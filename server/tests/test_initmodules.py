@@ -12,6 +12,7 @@ class InitmoduleTests(LoggedInTestCase):
         self.loadcsv = {
             'name': 'Load CSV',
             'id_name': 'loadcsv',
+            'category': 'Sources',
             'parameters': [
                 {
                   'name': 'URL',
@@ -38,6 +39,7 @@ class InitmoduleTests(LoggedInTestCase):
         self.loadcsv2 = {
             'name': 'Load CSV RELOADED',
             'id_name': 'loadcsv',
+            'category' : 'Sources',
             'parameters': [
                 {
                   'name': 'Retries',
@@ -60,6 +62,9 @@ class InitmoduleTests(LoggedInTestCase):
 
         self.missing_id_name = copy.deepcopy(self.loadcsv)
         del self.missing_id_name['id_name']
+
+        self.missing_category = copy.deepcopy(self.loadcsv)
+        del self.missing_category['category']
 
         self.missing_param_name = copy.deepcopy(self.loadcsv)
         del self.missing_param_name['parameters'][0]['name']
@@ -114,6 +119,9 @@ class InitmoduleTests(LoggedInTestCase):
 
         with self.assertRaises(ValueError):
             load_module_from_dict(self.missing_id_name)
+
+        with self.assertRaises(ValueError):
+            load_module_from_dict(self.missing_category)
 
         with self.assertRaises(ValueError):
             load_module_from_dict(self.missing_param_name)

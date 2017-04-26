@@ -83,7 +83,7 @@ class WfModuleTests(LoggedInTestCase):
         response = self.client.get('/api/wfmodules/%d/' % pk_wf_module)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], pk_wf_module)
-        self.assertEqual(response.data['workflow']['id'], workflow_id)
+        self.assertEqual(response.data['workflow'], workflow_id)
         self.assertEqual(response.data['module']['id'], module_id)
         self.assertEqual(response.data['status'], WfModule.READY)
         self.assertEqual(response.data['error_msg'], '')

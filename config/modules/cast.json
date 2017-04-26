@@ -1,6 +1,7 @@
 {
   "name": "Cast",
   "id_name": "cast",
+  "category" : "Wrangle",
   "parameters": [
     {
       "name": "Row variables",

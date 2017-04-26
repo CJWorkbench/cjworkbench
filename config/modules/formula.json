@@ -1,6 +1,7 @@
 {
   "name": "Formula",
   "id_name": "formula",
+  "category" : "Analyze",
   "parameters": [
     {
       "name": "Formula",

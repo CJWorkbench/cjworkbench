@@ -1,6 +1,7 @@
 {
   "name": "Python Process",
   "id_name": "rawcode",
+  "category" : "Analyze",
   "parameters": [
     {
       "name": "Code",
