@@ -108,18 +108,24 @@ def load_parameter_spec(d, module, order):
         reloading = False
 
     # load default value
+    def default_or(x):
+        if 'default' in d:
+            return d['default']
+        else:
+            return x
+
     if ptype == 'string':
-        pspec.def_string=d['default']
+        pspec.def_string=default_or('')
     elif d['type'] == 'number':
-        pspec.def_number=d['default']
+        pspec.def_number=default_or(0)
     elif d['type'] == 'text':
-        pspec.def_text=d['default']
+        pspec.def_text=default_or('')
     elif d['type'] == 'button':
         pass # no value
     elif d['type'] == 'custom':
-        pspec.def_string = d['default']
+        pspec.def_string = default_or('')
     elif d['type'] == 'checkbox':
-         pspec.def_checkbox = d['default']
+         pspec.def_checkbox = default_or(False)
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
 

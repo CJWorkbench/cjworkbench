@@ -1,5 +1,6 @@
 # Module dispatch table and implementations
 #from server.models import Module, WfModule
+from django.conf import settings
 import pandas as pd
 import numpy as np
 from pandas.parser import CParserError
@@ -301,7 +302,10 @@ module_dispatch_tbl = {
 def module_dispatch_render(wf_module, table):
     dispatch = wf_module.module.dispatch
     if dispatch not in module_dispatch_tbl.keys():
-        raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
+        if not settings.DEBUG:
+            raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
+        else:
+            return table  # in debug it just becomes a NOP
 
     return module_dispatch_tbl[dispatch].render(wf_module,table)
 

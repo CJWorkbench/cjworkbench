@@ -25,6 +25,11 @@ class InitmoduleTests(LoggedInTestCase):
                   'type': 'button',
                   'visible': False,
                   'ui-only': True
+                },
+                {
+                  'name': 'No default',
+                  'id_name': 'nodefault',
+                  'type': 'string'
                 }
               ]
             }            
@@ -78,7 +83,7 @@ class InitmoduleTests(LoggedInTestCase):
 
         # parameters
         pspecs = ParameterSpec.objects.all()
-        self.assertEqual(len(pspecs), 2)
+        self.assertEqual(len(pspecs), 3)
 
         url_spec = ParameterSpec.objects.get(id_name='url')
         self.assertEqual(url_spec.name, 'URL')
@@ -96,6 +101,11 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(button_spec.def_visible, False)
         self.assertEqual(button_spec.def_ui_only, True)
         self.assertEqual(button_spec.order, 1)
+
+        # check missing default has a default
+        nodef_spec = ParameterSpec.objects.get(id_name='nodefault')
+        self.assertEqual(nodef_spec.type, ParameterSpec.STRING)
+        self.assertEqual(nodef_spec.def_string, '')
 
     # we should bail when keys are missing
     def test_missing_keys(self):
