@@ -7,8 +7,8 @@ import { csrfToken } from './utils'
 
 // Libraries to provide a collapsable table view
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
-var DataGrid = require('react-datagrid');
-require('react-datagrid/index.css');
+import ReactDataGrid from 'react-data-grid';
+
 
 // ---- WfParameter - a single editable parameter ----
 
@@ -257,8 +257,12 @@ class TableView extends React.Component {
 
     // Generate the table if there's any data
     if (tableData.length > 0 && !this.state.loading) {
-      var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'name': key, 'title': key } });
-      table = <DataGrid idProperty='index' dataSource={tableData} columns={columns} />
+      var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'key': key, 'name': key, 'resizable':true } });
+      table = <ReactDataGrid
+        columns={columns}
+        rowGetter={ i => tableData[i] }
+        rowsCount={tableData.length}
+        minHeight={500} />;
     }  else {
       table = <p>(no data)</p>;
     }
@@ -275,7 +279,7 @@ class TableView extends React.Component {
 const CollapsibleTableView = CollapseSection(
   TableView,
   'Output',
-  false);     // don't start open
+  true);     // don't start open
 
 const ParamDivsComponent = (props) => <div>{props.paramDivs}</div>
 const CollapsibleParams = CollapseSection(

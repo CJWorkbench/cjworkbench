@@ -18,7 +18,7 @@ def add_new_wf_module(workflow, module, order=1):
 
 # Encodes a DataFrame to the expected response format form render API
 def table_to_content(table):
-    return table.reset_index().to_json(orient='records').encode('UTF=8')
+    return table.to_json(orient='records').encode('UTF=8')
 
 # Derive from this to perform all tests logged in
 class LoggedInTestCase(TestCase):

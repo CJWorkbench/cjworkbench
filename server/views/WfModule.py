@@ -46,7 +46,7 @@ def wfmodule_render(request, pk, format=None):
             return HttpResponseForbidden()
 
         table = execute_wfmodule(wf_module)
-        d = table.reset_index().to_json(orient='records')
+        d = table.to_json(orient='records')
         return HttpResponse(d, content_type="application/json")
 
 
@@ -69,7 +69,7 @@ def wfmodule_input(request, pk, format=None):
         else:
             table = execute_wfmodule(prev_modules.last())
 
-        d = table.reset_index().to_json(orient='records')
+        d = table.to_json(orient='records')
         return HttpResponse(d, content_type="application/json")
 
 
