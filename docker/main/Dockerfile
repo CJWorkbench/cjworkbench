@@ -9,7 +9,7 @@ RUN git clone --recursive https://github.com/jstray/cjworkbench.git
 RUN npm install
 
 # build assets
-RUN ./node_modules/.bin/webpack --config webpack.config.js
+RUN ./node_modules/.bin/webpack -p --config webpack.config.js
 
 # setup db, apply migrations, create initial admin user
 RUN python manage.py migrate
