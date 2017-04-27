@@ -18,8 +18,16 @@ class Workflows extends React.Component {
     this.setState({workflows: this.state.workflows, newWorkflowName: event.target.value});
   }
 
+  isValid(name) {
+    // stub: need better valdiation
+    return name.length > 0;
+  }
+
   // Make a new workflow when button clicked
   click(e) {
+    if (!this.isValid(this.state.newWorkflowName))
+      return;
+
     fetch('/api/workflows', {
       method: 'post',
       credentials: 'include',
