@@ -14,6 +14,9 @@ import os
 import sys
 from os.path import abspath, basename, dirname, join, normpath
 
+if sys.version_info[0] < 3:
+    raise "CJ Workbench requires Python 3"
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
