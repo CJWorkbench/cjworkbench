@@ -8,9 +8,14 @@ export class NavBar extends React.Component {
 
   render() {
 
+    // fixed navbar (not visible) to space content below floating navbar, then real navbar
     return (
-      <div className="mb-5">
-        <nav className="navbar navbar-toggleable-md navbar-light bg-faded">
+      <div>
+        <nav className="navbar navbar-toggleable-md mb-3">
+          <h1 className="navbar-brand mb-0">CJ Workbench</h1>
+        </nav>
+
+        <nav className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1">
           <h1 className="navbar-brand mb-0">CJ Workbench</h1>
           <a className="nav-link navbar-toggler-right" href="/logout">Logout</a>
         </nav>
@@ -23,11 +28,16 @@ export class WorkflowNavBar extends React.Component {
 
   render() {
 
+    // fixed navbar (not visible) to space content below floating navbar, then real navbar
     return (
-      <div className="mb-5">
-        <nav className="navbar navbar-toggleable-md navbar-light bg-faded">
+      <div>
+        <nav className="navbar navbar-toggleable-md mb-3">
+          <h3>spacing text</h3>
+        </nav>
+
+        <nav className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1">
           {this.props.addButton}
-          <h1 className="mx-auto">{this.props.workflowTitle}</h1>
+          <h3 className="mx-auto">{this.props.workflowTitle}</h3>
           <a className="nav-link" href="/logout">Logout</a>
         </nav>
       </div>

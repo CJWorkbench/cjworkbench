@@ -212,7 +212,6 @@ class TableView extends React.Component {
     super(props);
     this.state = { tableData: [], loading: false, isOpen: false };           // componentDidMount will trigger first load
     this.loadingState = { tableData: [], loading: true };
-    this.toggle= this.toggle.bind(this);
   }
 
   // Load table data from render API
@@ -247,10 +246,6 @@ class TableView extends React.Component {
     return !nextState.loading;
   }
 
-  toggle() {
-    this.setState(Object.assign({}, this.state, { isOpen: !this.state.isOpen}));
-  }
-
   render() {
     var tableData = this.state.tableData;
     var table;
@@ -279,7 +274,7 @@ class TableView extends React.Component {
 const CollapsibleTableView = CollapseSection(
   TableView,
   'Output',
-  true);     // don't start open
+  false);     // don't start open
 
 const ParamDivsComponent = (props) => <div>{props.paramDivs}</div>
 const CollapsibleParams = CollapseSection(
@@ -354,7 +349,7 @@ export default class WfModule extends React.Component {
 
             <div className='d-flex justify-content-between align-items-center mb-2'>
                 <button type='button' className='btn btn-secondary btn-sm' onClick={this.removeModule}>&times;</button>
-                <h3 className='text-center mb-0'>{this.module.name}</h3>
+                <h4 className='text-center mb-0'>{this.module.name}</h4>
                 <StatusLight status={this.wf_module.status}/>
             </div>
             <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />

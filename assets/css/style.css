@@ -59,47 +59,10 @@ body {
   background-color: #aaa;
 }
 
-/* ---- Toolbar menu ----- */
+/* ---- Navbar ----- */
 
-/* spacer to provide margin for button */
-.toolMenuOuter {
-  margin: 5px;
-  width: 30px;
-  height: 30px;
-  display: inline-block;
-}
-.toolMenuButton{
-  border: 1px solid black;
-  border-radius: 2px;
-  background-color: #eee;
-  margin-top: 2px;
-  margin-left: 2px;
-  width: 30px;
-  height: 30px;
-  font-size: 20px;
-}
-
-/* styles the ul */
-.toolMenuItemHolder {
-  border: 1px solid black;
-  position: absolute;
-  background-color: #fff;
-  margin: 0;
-  padding: 5px;
-  font-size: 20px;
-}
-
-.toolMenuItem {
-  background-color: #fff;
-  height: 25px;
-  font-size: 20px;
-  margin: 5px;
-  padding: 0px;
-  list-style-type: none;
-}
-
-.toolMenuItem:hover {
-  background-color: #aaa;
+.border-bottom-1 {
+  border-bottom: 1px solid;
 }
 
 /* ---- WfModule ---- */
