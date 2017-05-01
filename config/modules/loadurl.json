@@ -16,7 +16,7 @@
       "default": ""
     },
     {
-      "name": "Fetch",
+      "name": "Fetch Now",
       "id_name" : "fetch",
       "type": "button"
     }
