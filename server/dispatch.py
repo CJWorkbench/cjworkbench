@@ -192,7 +192,7 @@ class Formula(ModuleImpl):
 
 class SelectColumns(ModuleImpl):
     def render(wf_module, table):
-        cols = wf_module.get_param_string('colnames').split(',')
+        cols = wf_module.get_param_text('colnames').split(',')
         cols = [c.strip() for c in cols]
 
         for c in cols:

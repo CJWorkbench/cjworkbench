@@ -4,10 +4,16 @@
   "category" : "Wrangle",
   "parameters": [
     {
-      "name": "Enter columns to keep",
+      "name": "Column Names",
       "id_name": "colnames",
-      "type": "string",
+      "type": "text",
       "default": ""
+    },
+    {
+      "name": "Select Columns",
+      "id_name": "colselect",
+      "type": "custom",
+      "ui-only": true
     }
   ]
 }

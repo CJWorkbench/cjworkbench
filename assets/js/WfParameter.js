@@ -3,6 +3,8 @@
 import React, { PropTypes } from 'react'
 import FetchModal from './FetchModal'
 import ChartParameter from './Chart'
+import ColumnSelector from './ColumnSelector'
+
 import { csrfToken } from './utils'
 
 
@@ -17,6 +19,7 @@ export default class WfParameter extends React.Component {
     this.keyPress = this.keyPress.bind(this);
     this.blur = this.blur.bind(this);
     this.click = this.click.bind(this);
+    this.getInputColNames = this.getInputColNames.bind(this);
   }
 
   paramChanged(e) {
@@ -65,6 +68,26 @@ export default class WfParameter extends React.Component {
     }
   }
 
+  // Return array of column names available to us, as a promise
+  getInputColNames() {
+    var url = '/api/wfmodules/' + this.props.wf_module_id + '/input';
+    return fetch(url, { credentials: 'include'})
+            .then(response => response.json())
+            .then( json => Object.keys(json[0]) );       // get column names from first row of data
+  }
+
+  // We need to update input contents when we get new props. Hmm, is there a managed form components library?
+  componentWillReceiveProps(newProps) {
+    this.type = newProps.p.parameter_spec.type;
+    this.name = newProps.p.parameter_spec.name;
+
+    if (this.stringRef) this.stringRef.value = newProps.p.string;
+    if (this.numberRef) this.numberRef.value = newProps.p.number;
+    if (this.textRef) this.textRef.value = newProps.p.text;
+    if (this.checkboxRef) this.checkboxRef.value = newProps.p.checkBox;
+  }
+
+
   render() {
     if (!this.props.p.visible) {
       return false; // nothing to see here
@@ -75,7 +98,13 @@ export default class WfParameter extends React.Component {
         return (
           <div>
             <div>{this.name}:</div>
-            <textarea className='wfmoduleStringInput' rows='1' defaultValue={this.props.p.string} onBlur={this.blur} onKeyPress={this.keyPress} />
+            <textarea
+              className='wfmoduleStringInput'
+              rows='1'
+              defaultValue={this.props.p.string}
+              onBlur={this.blur}
+              onKeyPress={this.keyPress}
+              ref={ el => this.stringRef = el}/>
           </div>
         );
 
@@ -83,7 +112,13 @@ export default class WfParameter extends React.Component {
         return (
           <div>
             <div>{this.name}:</div>
-            <textarea className='wfmoduleNumberInput' rows='1' defaultValue={this.props.p.number} onBlur={this.blur} onKeyPress={this.keyPress} />
+            <textarea
+              className='wfmoduleNumberInput'
+              rows='1'
+              defaultValue={this.props.p.number}
+              onBlur={this.blur}
+              onKeyPress={this.keyPress}
+              ref={ el => this.numberRef = el}/>
           </div>
         );
 
@@ -91,7 +126,13 @@ export default class WfParameter extends React.Component {
         return (
           <div>
             <div>{this.name}:</div>
-            <textarea className='wfmoduleTextInput' rows='4' defaultValue={this.props.p.text} onBlur={this.blur} onKeyPress={this.keyPress} />
+            <textarea
+              className='wfmoduleTextInput'
+              rows='4'
+              defaultValue={this.props.p.text}
+              onBlur={this.blur}
+              onKeyPress={this.keyPress}
+              ref={ el => this.textRef = el}/>
           </div>
         );
 
@@ -107,30 +148,44 @@ export default class WfParameter extends React.Component {
         return (
             <div>
                 <label className='mr-1'>{this.name}:</label>
-                <input type="checkbox" checked={this.props.p.checkbox} onChange={this.click}></input>
+                <input
+                  type="checkbox"
+                  checked={this.props.p.checkbox}
+                  onChange={this.click}
+                  ref={ el => this.checkboxRef = el}/>
             </div>
         );
 
       case 'custom':
 
-        // Load and save chart state, image to hidden parameters
-        var loadState = ( () => this.props.getParamText('chartstate') );
-        var saveState = ( state => this.props.setParamText('chartstate', state) );
+        if (this.props.p.parameter_spec.id_name == 'chart') {
 
-        var saveImageDataURI = ( state => this.props.setParamText('chart', state) );
+          // Load and save chart state, image to hidden parameters
+          var loadState = ( () => this.props.getParamText('chartstate') );
+          var saveState = ( state => this.props.setParamText('chartstate', state) );
 
-        return (
-          <div>
-            <a href={'/public/paramdata/live/' + this.props.p.id + '.png'}>PNG</a>
-            <ChartParameter
-              wf_module_id={this.props.wf_module_id}
-              revision={this.props.revision}
-              saveState={saveState}
-              loadState={loadState}
-              saveImageDataURI={saveImageDataURI}
-            />
-          </div>
-        );
+          var saveImageDataURI = ( state => this.props.setParamText('chart', state) );
+
+          return (
+            <div>
+              <a href={'/public/paramdata/live/' + this.props.p.id + '.png'}>PNG</a>
+              <ChartParameter
+                wf_module_id={this.props.wf_module_id}
+                revision={this.props.revision}
+                saveState={saveState}
+                loadState={loadState}
+                saveImageDataURI={saveImageDataURI}
+              />
+            </div>
+          );
+
+        } else if (this.props.p.parameter_spec.id_name == 'colselect') {
+
+          var loadState = ( () => this.props.getParamText('colnames') );
+          var saveState = ( state => this.props.setParamText('colnames', state) );
+          return (<ColumnSelector saveState={saveState} loadState={loadState} getColNames={this.getInputColNames}/> );
+
+        }
 
       default:
         return null;  // unrecognized parameter type

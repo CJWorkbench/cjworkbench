@@ -2,13 +2,12 @@
 
 import React, { PropTypes } from 'react'
 import WfParameter from './WfParameter'
-import ChartParameter from './Chart'
+import TableView from './TableView'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 
 // Libraries to provide a collapsable table view
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
-import ReactDataGrid from 'react-data-grid';
 
 
 // ---- StatusLight ----
@@ -34,7 +33,7 @@ class StatusLine extends React.Component {
 }
 
 // ---- CollapseSection ---
-// Higher-order component that does a classic twirly collapse, inside a rounded border
+// Higher-order component that does a classic twirly arrow toggle collapse
 
 function CollapseSection(WrappedComponent, title, startOpen ) {
   return class extends React.Component {
@@ -58,69 +57,6 @@ function CollapseSection(WrappedComponent, title, startOpen ) {
         </div>
       );
     }
-  }
-}
-
-// ---- TableView ----
-// Displays the module's rendered output, if any
-
-
-class TableView extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { tableData: [], loading: false, isOpen: false };           // componentDidMount will trigger first load
-    this.loadingState = { tableData: [], loading: true };
-  }
-
-  // Load table data from render API
-  loadTable() {
-    var self = this;
-    var url = '/api/wfmodules/' + this.props.id + '/render';
-    fetch(url, { credentials: 'include'})
-      .then(response => response.json())
-      .then(json => {
-        self.setState(Object.assign({}, this.state, {tableData: json, loading: false}));
-      }); // triggers re-render
-  }
-
-  // Load table when first rendered
-  componentDidMount() {
-    this.loadTable()
-  }
-
-  // If the revision changes from under us reload the table, which will trigger a setState and re-render
-  componentWillReceiveProps(nextProps) {
-    //console.log("willRecieveProps " + this.props.id);
-    //console.log('old revision ' + this.props.revision + ' new revision ' + nextProps.revision);
-
-    if (this.props.revision != nextProps.revision) {
-      this.setState(Object.assign({}, this.state, this.loadingState));               // "unload" the table
-      this.loadTable();
-    }
-  }
-
-  // Update only when we are not loading
-  shouldComponentUpdate(nextProps, nextState) {
-    return !nextState.loading;
-  }
-
-  render() {
-    var tableData = this.state.tableData;
-    var table;
-
-    // Generate the table if there's any data
-    if (tableData.length > 0 && !this.state.loading) {
-      var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'key': key, 'name': key, 'resizable':true } });
-      table = <ReactDataGrid
-        columns={columns}
-        rowGetter={ i => tableData[i] }
-        rowsCount={tableData.length}
-        minHeight={500} />;
-    }  else {
-      table = <p>(no data)</p>;
-    }
-
-    return table;
   }
 }
 
@@ -150,10 +86,6 @@ export default class WfModule extends React.Component {
     this.removeModule = this.removeModule.bind(this);
   }
 
-  componentWillReceiveProps(newProps) {
-    this.initFields(newProps)
-  }
-
   // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
   // so save them into this
   initFields(props) {
@@ -161,6 +93,11 @@ export default class WfModule extends React.Component {
     this.module = this.wf_module.module;
     this.params = this.wf_module.parameter_vals;
     this.revision = props['data-revision'];
+  }
+
+  // alas, the drawback of the convienence of initFields is we need to call it whenever props change
+  componentWillReceiveProps(newProps) {
+    this.initFields(newProps)
   }
 
   // These functions allow parameters to access each others value (text params only)
