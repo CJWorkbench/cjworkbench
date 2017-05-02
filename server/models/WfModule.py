@@ -236,7 +236,7 @@ class ParameterVal(models.Model):
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - button'
         elif self.parameter_spec.type == ParameterSpec.CUSTOM:
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - custom'
-        elif self.parameter_spec.checkbox == ParameterSpec.CHECKBOX:
+        elif self.parameter_spec.type == ParameterSpec.CHECKBOX:
             return self.wf_module.__str__() + ' - ' + ' - checkbox'
         else:
             raise ValueError("Invalid parameter type")
