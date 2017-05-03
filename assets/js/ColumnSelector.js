@@ -8,8 +8,35 @@ import { Form, FormGroup, Label, Input } from 'reactstrap';
 export default class ColumnSelector extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { colNames: [], selected: [] };
+    this.state = { colNames: [], selected: this.parseSelectedCols(props.selectedCols) };
     this.clicked = this.clicked.bind(this);
+  }
+
+  // selected columns string -> array of column names
+  parseSelectedCols(sc) {
+    var selectedColNames = sc.trim();
+    return  selectedColNames.length>0 ? selectedColNames.split(',') : [];   // empty string should give empty array
+  }
+
+  loadColNames() {
+    this.props.getColNames()
+      .then(cols => {
+        this.setState({colNames: cols, selected: this.state.selected});
+      });
+  }
+
+  // Load column names when first rendered
+  componentDidMount() {
+    this.loadColNames();
+  }
+
+  // Update our checkboxes when we get new props = new selected columns string
+  // And also column names when workflow revision bumps
+  componentWillReceiveProps(nextProps) {
+    this.setState({colNames: this.state.colNames, selected: this.parseSelectedCols(nextProps.selectedCols)});
+    if (this.props.revision != nextProps.revision) {
+      this.loadColNames();
+    }
   }
 
   clicked(e) {
@@ -30,16 +57,6 @@ export default class ColumnSelector extends React.Component {
       this.setState({colNames: this.state.colNames, selected: newSelected});
       this.props.saveState(newSelected.join())
     }
-  }
-
-  // Load column names when first rendered
-  componentDidMount() {
-    this.props.getColNames()
-      .then(cols => {
-        var selectedColNames = this.props.loadState().trim();
-        selectedColNames = selectedColNames.length>0 ? selectedColNames.split(',') : [];   // empty string should give empty array
-        this.setState({colNames: cols, selected: selectedColNames});
-      });
   }
 
   render() {
@@ -63,9 +80,10 @@ export default class ColumnSelector extends React.Component {
 }
 
 ColumnSelector.propTypes = {
+  selectedCols: React.PropTypes.string,
   saveState:    React.PropTypes.func,
-  loadState:    React.PropTypes.func,
-  getColNames:  React.PropTypes.func
+  getColNames:  React.PropTypes.func,
+  revision:     React.PropTypes.number
 };
 
 

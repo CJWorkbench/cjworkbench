@@ -84,7 +84,7 @@ export default class WfParameter extends React.Component {
     if (this.stringRef) this.stringRef.value = newProps.p.string;
     if (this.numberRef) this.numberRef.value = newProps.p.number;
     if (this.textRef) this.textRef.value = newProps.p.text;
-    if (this.checkboxRef) this.checkboxRef.value = newProps.p.checkBox;
+    if (this.checkboxRef) this.checkboxRef.value = newProps.p.checkbox;
   }
 
 
@@ -181,10 +181,13 @@ export default class WfParameter extends React.Component {
 
         } else if (this.props.p.parameter_spec.id_name == 'colselect') {
 
-          var loadState = ( () => this.props.getParamText('colnames') );
+          var selectedCols = this.props.getParamText('colnames');
           var saveState = ( state => this.props.setParamText('colnames', state) );
-          return (<ColumnSelector saveState={saveState} loadState={loadState} getColNames={this.getInputColNames}/> );
-
+          return (<ColumnSelector
+                    selectedCols={selectedCols}
+                    saveState={saveState}
+                    getColNames={this.getInputColNames}
+                    revision={this.props.revision} />);
         }
 
       default:

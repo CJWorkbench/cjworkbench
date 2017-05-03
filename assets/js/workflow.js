@@ -154,7 +154,6 @@ const socket = new WebSocket("ws://" + window.location.host + "/workflows/" + ge
 
 socket.onmessage = function(e) {
   var data = JSON.parse(e.data);
-  console.log("Got ws message: " + e.data);
   if ('type' in data) {
     switch (data.type) {
 
