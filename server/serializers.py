@@ -4,13 +4,13 @@ from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Modul
 class ParameterSpecSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParameterSpec
-        fields = ('id', 'name', 'id_name', 'type', 'def_number', 'def_string', 'def_text', 'def_checkbox')
+        fields = ('id', 'name', 'id_name', 'type', 'def_number', 'def_string', 'def_checkbox')
 
 class ParameterValSerializer(serializers.ModelSerializer):
     parameter_spec = ParameterSpecSerializer(many=False, read_only=True)
     class Meta:
         model = ParameterVal
-        fields = ('id', 'parameter_spec', 'number', 'string', 'text', 'checkbox', 'visible')
+        fields = ('id', 'parameter_spec', 'number', 'string', 'checkbox', 'visible', 'multiline')
 
 class ModuleSerializer(serializers.ModelSerializer):
     class Meta:

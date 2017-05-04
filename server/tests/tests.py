@@ -182,13 +182,9 @@ class ParameterValTests(LoggedInTestCase):
         module.save()
         self.moduleID = module.id
 
-        stringSpec = ParameterSpec(name="StringParam", id_name="stringparam", module=module, type= ParameterSpec.STRING, def_string='foo', def_number=0, def_text='')
-        stringSpec.save()
-        stringVal = ParameterVal()
-        numberSpec = ParameterSpec(name="NumberParam", id_name="numberparam", module=module, type=ParameterSpec.NUMBER, def_string='', def_number=10.11, def_text='')
-        numberSpec.save()
-        textSpec = ParameterSpec(name="TextParam", id_name="textparam", module=module, type=ParameterSpec.TEXT, def_string='', def_number=0, def_text='bar')
-        textSpec.save()
+        stringSpec = ParameterSpec.objects.create(name="StringParam", id_name="stringparam", module=module, type= ParameterSpec.STRING, def_string='foo')
+        numberSpec = ParameterSpec.objects.create(name="NumberParam", id_name="numberparam", module=module, type=ParameterSpec.NUMBER, def_number=10.11)
+        checkboxSpec = ParameterSpec.objects.create(name="CheckboxParam", id_name="checkboxparam", module=module, type=ParameterSpec.CHECKBOX, def_checkbox=True)
 
         self.workflow = add_new_workflow(name="Test Workflow")
         self.workflowID = self.workflow.id
@@ -203,8 +199,8 @@ class ParameterValTests(LoggedInTestCase):
         numberVal = ParameterVal.objects.create(parameter_spec=numberSpec, wf_module=self.wfmodule, number=10.11)
         self.numberID = numberVal.id
 
-        textVal = ParameterVal.objects.create(parameter_spec=textSpec, wf_module=self.wfmodule, text='barval')
-        self.textID = textVal.id
+        checkboxVal = ParameterVal.objects.create(parameter_spec=checkboxSpec, wf_module=self.wfmodule, checkbox='True')
+        self.checkboxID = checkboxVal.id
 
     # Value retrieval methods must return correct values and enforce type
     def test_parameter_get_values(self):
@@ -214,17 +210,17 @@ class ParameterValTests(LoggedInTestCase):
         n = self.wfmodule.get_param_number('numberparam')
         self.assertEqual(n, 10.11)
 
-        t = self.wfmodule.get_param_text('textparam')
-        self.assertEqual(t, 'barval')
+        t = self.wfmodule.get_param_checkbox('checkboxparam')
+        self.assertEqual(t, True)
 
         with self.assertRaises(ValueError):
             self.wfmodule.get_param_string('numberparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_string('textparam')
+            self.wfmodule.get_param_string('checkboxparam')
         with self.assertRaises(ValueError):
             self.wfmodule.get_param_number('stringparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_text('stringparam')
+            self.wfmodule.get_param_checkbox('stringparam')
 
         # error if no param by that name
         with self.assertRaises(ValueError):
@@ -244,7 +240,7 @@ class ParameterValTests(LoggedInTestCase):
 
         # wfmodule has correct parameters
         self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 3)
-        valIDs = [self.stringID, self.numberID, self.textID]
+        valIDs = [self.stringID, self.numberID, self.checkboxID]
         param_vals = response.data['wf_modules'][0]['parameter_vals']
         responseIDs = [x['id'] for x in param_vals]
         self.assertCountEqual(responseIDs, valIDs)
@@ -262,11 +258,11 @@ class ParameterValTests(LoggedInTestCase):
         self.assertEqual(num_val['parameter_spec']['type'], ParameterSpec.NUMBER)
         self.assertEqual(num_val['number'], 10.11)
 
-        text_val = [p for p in param_vals if p['id']==self.textID][0]
-        self.assertEqual(text_val['parameter_spec']['name'], 'TextParam')
-        self.assertEqual(text_val['parameter_spec']['id_name'], 'textparam')
-        self.assertEqual(text_val['parameter_spec']['type'], ParameterSpec.TEXT)
-        self.assertEqual(text_val['text'], 'barval')
+        checkbox_val = [p for p in param_vals if p['id']==self.checkboxID][0]
+        self.assertEqual(checkbox_val['parameter_spec']['name'], 'CheckboxParam')
+        self.assertEqual(checkbox_val['parameter_spec']['id_name'], 'checkboxparam')
+        self.assertEqual(checkbox_val['parameter_spec']['type'], ParameterSpec.CHECKBOX)
+        self.assertEqual(checkbox_val['checkbox'], True)
 
 
     # test parameter change API

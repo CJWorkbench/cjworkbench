@@ -30,11 +30,11 @@ export default class WfParameter extends React.Component {
   }
 
   // Save value (and re-render) when user presses enter or we lose focus
-  // Applies only to non-text fields
+  // Applies only to non-multline fields
   keyPress(e) {
-    if (this.type != 'text' && e.key == 'Enter') {
+    if ((this.type != 'string' || !this.props.p.multiline) && e.key == 'Enter') {
         this.paramChanged(e);
-        e.preventDefault();       // eat the Enter so it doesn't get in out input field
+        e.preventDefault();       // eat the Enter so it doesn't get in our input field
     }
   }
 
@@ -83,7 +83,6 @@ export default class WfParameter extends React.Component {
 
     if (this.stringRef) this.stringRef.value = newProps.p.string;
     if (this.numberRef) this.numberRef.value = newProps.p.number;
-    if (this.textRef) this.textRef.value = newProps.p.text;
     if (this.checkboxRef) this.checkboxRef.value = newProps.p.checkbox;
   }
 
@@ -95,18 +94,29 @@ export default class WfParameter extends React.Component {
 
     switch (this.type) {
       case 'string':
+        // Different size and style if it's a multiline string
+        var sclass, srows;
+        if (!this.props.p.multiline) {
+          sclass='wfmoduleStringInput';
+          srows = 1;
+        } else {
+          sclass='wfmoduleTextInput';
+          srows = 4;
+        }
+
         return (
           <div>
             <div>{this.name}:</div>
             <textarea
-              className='wfmoduleStringInput'
-              rows='1'
+              className={sclass}
+              rows={srows}
               defaultValue={this.props.p.string}
               onBlur={this.blur}
               onKeyPress={this.keyPress}
               ref={ el => this.stringRef = el}/>
           </div>
         );
+
 
       case 'number':
         return (
@@ -119,20 +129,6 @@ export default class WfParameter extends React.Component {
               onBlur={this.blur}
               onKeyPress={this.keyPress}
               ref={ el => this.numberRef = el}/>
-          </div>
-        );
-
-      case 'text':
-        return (
-          <div>
-            <div>{this.name}:</div>
-            <textarea
-              className='wfmoduleTextInput'
-              rows='4'
-              defaultValue={this.props.p.text}
-              onBlur={this.blur}
-              onKeyPress={this.keyPress}
-              ref={ el => this.textRef = el}/>
           </div>
         );
 
@@ -183,11 +179,15 @@ export default class WfParameter extends React.Component {
 
           var selectedCols = this.props.getParamText('colnames');
           var saveState = ( state => this.props.setParamText('colnames', state) );
-          return (<ColumnSelector
-                    selectedCols={selectedCols}
-                    saveState={saveState}
-                    getColNames={this.getInputColNames}
-                    revision={this.props.revision} />);
+          return (
+            <div>
+              <div>{this.name}:</div>
+              <ColumnSelector
+                selectedCols={selectedCols}
+                saveState={saveState}
+                getColNames={this.getInputColNames}
+                revision={this.props.revision} />
+            </div> );
         }
 
       default:

@@ -30,7 +30,8 @@ class InitmoduleTests(LoggedInTestCase):
                 {
                   'name': 'No default',
                   'id_name': 'nodefault',
-                  'type': 'string'
+                  'type': 'string',
+                  'multiline': True,
                 }
               ]
             }            
@@ -50,8 +51,8 @@ class InitmoduleTests(LoggedInTestCase):
                 {
                   'name': 'URL',
                   'id_name': 'url',
-                  'type': 'text',
-                  'default': 'new url'
+                  'type': 'number',
+                  'default': '42'
                 }
               ]
             }
@@ -97,6 +98,7 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(url_spec.def_string, 'http://foo.com')
         self.assertEqual(url_spec.def_visible, True)
         self.assertEqual(url_spec.def_ui_only, False)
+        self.assertEqual(url_spec.def_multiline, False)
         self.assertEqual(url_spec.order, 0)
 
         button_spec = ParameterSpec.objects.get(id_name='fetch')
@@ -107,10 +109,11 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(button_spec.def_ui_only, True)
         self.assertEqual(button_spec.order, 1)
 
-        # check missing default has a default
+        # check missing default has a default, and that multiline works
         nodef_spec = ParameterSpec.objects.get(id_name='nodefault')
         self.assertEqual(nodef_spec.type, ParameterSpec.STRING)
         self.assertEqual(nodef_spec.def_string, '')
+        self.assertEqual(nodef_spec.def_multiline, True)
 
     # we should bail when keys are missing
     def test_missing_keys(self):
@@ -167,15 +170,15 @@ class InitmoduleTests(LoggedInTestCase):
         # existing parameterval should have new default, order
         url_spec2 = ParameterSpec.objects.get(id_name='url')
         self.assertEqual(url_spec1.id, url_spec2.id)
-        self.assertEqual(url_spec2.type, ParameterSpec.TEXT)
+        self.assertEqual(url_spec2.type, ParameterSpec.NUMBER)
         self.assertEqual(url_spec2.order, 1)
         url_pval1.refresh_from_db()
         self.assertEqual(url_pval1.string, '')
-        self.assertEqual(url_pval1.text, 'new url')
+        self.assertEqual(url_pval1.number, 42)
         self.assertEqual(url_pval1.order, 1)
         url_pval2.refresh_from_db()
         self.assertEqual(url_pval2.string, '')
-        self.assertEqual(url_pval2.text, 'new url')
+        self.assertEqual(url_pval2.number, 42)
         self.assertEqual(url_pval2.order, 1)
 
         # new Numeric parameter should exist, with corresponding new values in WfModules

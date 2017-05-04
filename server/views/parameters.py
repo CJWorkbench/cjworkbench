@@ -38,8 +38,6 @@ def parameterval_detail(request, pk, format=None):
         data = request.data
         if ParameterSpec.STRING in data.keys():
             param.string = data[ParameterSpec.STRING]
-        elif ParameterSpec.TEXT in data.keys():
-            param.text = data[ParameterSpec.TEXT]
         elif ParameterSpec.NUMBER in data.keys():
             param.number = data[ParameterSpec.NUMBER]
         elif ParameterSpec.CHECKBOX in data.keys():
@@ -92,6 +90,6 @@ def parameterval_png(request, pk):
         return HttpResponseBadRequest()
 
     # decode the base64 payload of the data URI into a png
-    image_data = param.text.partition('base64,')[2]
+    image_data = param.string.partition('base64,')[2]
     binary = base64.b64decode(image_data)
     return HttpResponse(binary, content_type='image/png')

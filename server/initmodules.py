@@ -98,7 +98,6 @@ def load_parameter_spec(d, module, order):
         # reset to default defaults
         pspec.def_number = 0.0
         pspec.def_string = ''
-        pspec.def_text = ''
         pspec.def_checkbox = True
 
         type_changed = pspec.type != ptype
@@ -119,8 +118,6 @@ def load_parameter_spec(d, module, order):
         pspec.def_string=default_or('')
     elif d['type'] == 'number':
         pspec.def_number=default_or(0)
-    elif d['type'] == 'text':
-        pspec.def_text=default_or('')
     elif d['type'] == 'button':
         pass # no value
     elif d['type'] == 'custom':
@@ -130,15 +127,16 @@ def load_parameter_spec(d, module, order):
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
 
-    # Default visibility/ ui-only flag. We don't change these on existing ParameterVals, prolly should
-    if 'visible' in d:
-        pspec.def_visible = d['visible']
-    else:
-        pspec.def_visible = True
-    if 'ui-only' in d:
-        pspec.def_ui_only = d['ui-only']
-    else:
-        pspec.def_ui_only = False
+    # Default flags. We don't change these on existing ParameterVals, prolly should
+    def flag_default(fname, dval):
+        if fname in d:
+            return d[fname]
+        else:
+            return dval
+
+    pspec.def_visible = flag_default('visible', True)
+    pspec.def_ui_only = flag_default('ui-only', False)
+    pspec.def_multiline = flag_default('multiline', False)
 
     pspec.order = order
     pspec.save()

@@ -105,8 +105,8 @@ export default class WfModule extends React.Component {
   // Suppresses reassignment of the same text, which can be important to avoid endless notification loops
   setParamText(id_name, text) {
     var p = this.params.find( p => p.parameter_spec.id_name == id_name );
-    if (p && text != p.text) {
-      this.props['data-changeParam'](p.id, { text: text })
+    if (p && text != p.string) {
+      this.props['data-changeParam'](p.id, { string: text })
     }
   }
 
@@ -114,7 +114,7 @@ export default class WfModule extends React.Component {
     //console.log("getParamText " + id_name)
     var p = this.params.find( p => p.parameter_spec.id_name == id_name );
     if (p) {
-      return p.text;
+      return p.string;
     }
   }
 

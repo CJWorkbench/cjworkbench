@@ -21,8 +21,7 @@ class WfModuleTests(LoggedInTestCase):
         self.module1 = self.add_new_module('Module 1', 'testdata')
         self.pspec11 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.NUMBER, def_number=3.14, def_visible=False)
         self.pspec12 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.STRING, def_string='foo')
-        self.pspec13 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.TEXT, def_text='bar')
-        self.pspec14 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.CHECKBOX)
+        self.pspec13 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.CHECKBOX, def_checkbox=True)
 
         module2 = self.add_new_module('Module 2', 'NOP')
         module3 = self.add_new_module('Module 3', 'double_M_col')
@@ -54,14 +53,9 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(pval.string, 'foo')
         self.assertEqual(pval.visible, True)
         self.assertEqual(pval.ui_only, False)
+        self.assertEqual(pval.multiline, False) # test correct default
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec13, wf_module=self.wfmodule1)
-        self.assertEqual(pval.text, 'bar')
-        self.assertEqual(pval.visible, True)
-        self.assertEqual(pval.ui_only, False)
-
-        # test for default checkbox value
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec14, wf_module=self.wfmodule1)
         self.assertEqual(pval.checkbox, True)
         self.assertEqual(pval.visible, True)
         self.assertEqual(pval.ui_only, False)

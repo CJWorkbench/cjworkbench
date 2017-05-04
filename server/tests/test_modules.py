@@ -29,14 +29,14 @@ mock_xslx_path = os.path.join(settings.BASE_DIR, 'server/tests/test.xlsx')
 # returns workflow
 def create_testdata_workflow():
     csv_module = add_new_module('Module 1', 'pastecsv')
-    pspec = add_new_parameter_spec(csv_module, 'csv', ParameterSpec.TEXT)
+    pspec = add_new_parameter_spec(csv_module, 'csv', ParameterSpec.STRING)
     # use default value (i.e. has_header_row = True), as that's what the other workflows assume.
     add_new_parameter_spec(csv_module, 'has_header_row', ParameterSpec.CHECKBOX)
     workflow = add_new_workflow('Workflow 1')
     wfmodule = add_new_wf_module(workflow, csv_module, 0)
     wfmodule.create_default_parameters()
     pval = ParameterVal.objects.get(parameter_spec=pspec)
-    pval.text = mock_csv_text
+    pval.string = mock_csv_text
     pval.save()
 
     return workflow

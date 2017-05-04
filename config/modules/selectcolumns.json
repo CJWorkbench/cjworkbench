@@ -4,16 +4,15 @@
   "category" : "Wrangle",
   "parameters": [
     {
-      "name": "Column Names",
-      "id_name": "colnames",
-      "type": "text",
-      "default": ""
-    },
-    {
       "name": "Select Columns",
       "id_name": "colselect",
       "type": "custom",
       "ui-only": true
+    },
+    {
+      "name": "Column Names",
+      "id_name": "colnames",
+      "type": "string"
     }
   ]
 }

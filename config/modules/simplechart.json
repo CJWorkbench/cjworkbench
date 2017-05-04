@@ -12,11 +12,10 @@
     {
       "name": "hidden chart state",
       "id_name": "chartstate",
-      "type": "text",
+      "type": "string",
       "default": "",
       "visible": false,
       "ui-only": true
-
     }
   ]
 }

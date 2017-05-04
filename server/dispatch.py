@@ -125,7 +125,7 @@ class LoadCSV(ModuleImpl):
 class PasteCSV(ModuleImpl):
 
     def render(wf_module, table):
-        tablestr = wf_module.get_param_text("csv")
+        tablestr = wf_module.get_param_string("csv")
 
         has_header_row = wf_module.get_param_checkbox("has_header_row")
 
@@ -192,7 +192,7 @@ class Formula(ModuleImpl):
 
 class SelectColumns(ModuleImpl):
     def render(wf_module, table):
-        cols = wf_module.get_param_text('colnames').split(',')
+        cols = wf_module.get_param_string('colnames').split(',')
         cols = [c.strip() for c in cols]
 
         for c in cols:

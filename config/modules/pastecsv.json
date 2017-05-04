@@ -6,8 +6,8 @@
     {
       "name": "CSV",
       "id_name": "csv",
-      "type": "text",
-      "default": ""
+      "type": "string",
+      "multiline": "True"
     },
     {
       "name": "Has Header Row",
