@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<span
+  className="ml-2"
+>
+  <ei
+    color="secondary"
+    onClick={[Function]}
+    tag="button"
+  >
+     
+    ⏱
+     
+  </ei>
+  <ei
+    backdrop={true}
+    isOpen={false}
+    keyboard={true}
+    toggle={[Function]}
+    zIndex={1050}
+  >
+    <Ln
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      External Data Settings
+    </Ln>
+    <Rn
+      tag="div"
+    >
+      <ml
+        tag="div"
+      >
+        <Hl
+          for="exampleSelect"
+          tag="label"
+        >
+          Which version?
+        </Hl>
+        <ei
+          className="mb-3"
+          id="exampleSelect"
+          name="select"
+          tag="p"
+          type="select"
+        >
+          <option>
+            Most Recent
+          </option>
+          <option
+            disabled="disabled"
+            value=""
+          >
+            ──────────
+          </option>
+          <option>
+            April 28 at 4:40PM 
+          </option>
+          <option>
+            April 28 at 10:32AM 
+          </option>
+          <option>
+            April 26 at 6:06PM
+          </option>
+          <option>
+            April 12 at 2:51PM
+          </option>
+        </ei>
+        <Hl
+          for="exampleSelect2"
+          tag="label"
+        >
+          Update when?
+        </Hl>
+        <ei
+          id="exampleSelect2"
+          name="select"
+          tag="p"
+          type="select"
+        >
+          <option>
+            Manual only
+          </option>
+          <option
+            disabled="disabled"
+            value=""
+          >
+            ──────────
+          </option>
+          <option>
+            Every minute
+          </option>
+          <option>
+            Every five minutes
+          </option>
+          <option>
+            Hourly
+          </option>
+          <option>
+            Daily
+          </option>
+          <option>
+            Weekly
+          </option>
+        </ei>
+      </ml>
+    </Rn>
+    <Hn
+      tag="div"
+    >
+      <ei
+        color="primary"
+        onClick={[Function]}
+        tag="button"
+      >
+        Ok
+      </ei>
+       
+      <ei
+        color="secondary"
+        onClick={[Function]}
+        tag="button"
+      >
+        Cancel
+      </ei>
+    </Hn>
+  </ei>
+</span>
+`;
