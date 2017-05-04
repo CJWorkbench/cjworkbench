@@ -1,0 +1,160 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<Ms
+  isOpen={false}
+  toggle={[Function]}
+>
+  <ei
+    aria-haspopup={true}
+    caret={true}
+    color="secondary"
+    data-toggle="dropdown"
+  >
+    Add Module
+  </ei>
+  <Xo
+    tag="div"
+  />
+</Ms>
+`;
+
+exports[`renders correctly 2`] = `
+<Ms
+  isOpen={true}
+  toggle={[Function]}
+>
+  <ei
+    aria-haspopup={true}
+    caret={true}
+    color="secondary"
+    data-toggle="dropdown"
+  >
+    Add Module
+  </ei>
+  <Xo
+    tag="div"
+  >
+    <ei
+      header={true}
+      tag="button"
+      toggle={true}
+    >
+       
+      Wrangle
+       
+    </ei>
+    <ei
+      className="ml-2"
+      data-id={9}
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+       
+      Cast
+       
+    </ei>
+    <ei
+      divider={true}
+      tag="button"
+      toggle={true}
+    />
+    <ei
+      header={true}
+      tag="button"
+      toggle={true}
+    >
+       
+      Visualize
+       
+    </ei>
+    <ei
+      className="ml-2"
+      data-id={6}
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+       
+      Chart
+       
+    </ei>
+    <ei
+      divider={true}
+      tag="button"
+      toggle={true}
+    />
+    <ei
+      header={true}
+      tag="button"
+      toggle={true}
+    >
+       
+      Analyze
+       
+    </ei>
+    <ei
+      className="ml-2"
+      data-id={1}
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+       
+      Formula
+       
+    </ei>
+    <ei
+      divider={true}
+      tag="button"
+      toggle={true}
+    />
+    <ei
+      header={true}
+      tag="button"
+      toggle={true}
+    >
+       
+      Sources
+       
+    </ei>
+    <ei
+      className="ml-2"
+      data-id={2}
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+       
+      Load From URL
+       
+    </ei>
+    <ei
+      divider={true}
+      tag="button"
+      toggle={true}
+    />
+    <ei
+      header={true}
+      tag="button"
+      toggle={true}
+    >
+       
+      Wrangle
+       
+    </ei>
+    <ei
+      className="ml-2"
+      data-id={10}
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+       
+      Melt
+       
+    </ei>
+  </Xo>
+</Ms>
+`;

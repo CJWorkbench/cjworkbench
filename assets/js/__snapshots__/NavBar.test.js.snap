@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`NavBar renders correctly 1`] = `
+<div>
+  <nav
+    className="navbar navbar-toggleable-md mb-3"
+  >
+    <h1
+      className="navbar-brand mb-0"
+    >
+      CJ Workbench
+    </h1>
+  </nav>
+  <nav
+    className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1"
+  >
+    <h1
+      className="navbar-brand mb-0 mr-auto"
+    >
+      CJ Workbench
+    </h1>
+    <a
+      className="nav-link"
+      href="http://blog.cjworkbench.org"
+    >
+      Blog
+    </a>
+    <a
+      className="nav-link"
+      href="/logout"
+    >
+      Logout
+    </a>
+  </nav>
+</div>
+`;
+
+exports[`WorkflowNavBar renders correctly 1`] = `
+<div>
+  <nav
+    className="navbar navbar-toggleable-md mb-3"
+  >
+    <h3>
+      spacing text
+    </h3>
+  </nav>
+  <nav
+    className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1"
+  >
+    <div />
+    <h3
+      className="mx-auto"
+    >
+      Workflow Title
+    </h3>
+    <a
+      className="nav-link"
+      href="http://blog.cjworkbench.org"
+    >
+      Blog
+    </a>
+    <a
+      className="nav-link"
+      href="/logout"
+    >
+      Logout
+    </a>
+  </nav>
+</div>
+`;
