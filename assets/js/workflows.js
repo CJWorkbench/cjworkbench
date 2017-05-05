@@ -9,6 +9,7 @@ export default class Workflows extends React.Component {
     super(props);
     this.click = this.click.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
+    this.deleteWorkflow= this.deleteWorkflow.bind(this);
     this.state = { workflows: [], newWorkflowName: '' }
   }
 
@@ -26,13 +27,14 @@ export default class Workflows extends React.Component {
     if (!this.isValid(this.state.newWorkflowName))
       return;
 
-    fetch('/api/workflows', {
-      method: 'post',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken
+    fetch('/api/workflows',
+      {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
       },
       body: JSON.stringify({name: this.state.newWorkflowName})
     })
@@ -41,6 +43,30 @@ export default class Workflows extends React.Component {
       var newWorkflows = this.state.workflows.slice();
       newWorkflows.push(json);
       this.setState({workflows: newWorkflows, newWorkflowName: ''})
+    })
+  }
+
+  // Ask the user if they really wanna do this. If sure, post DELETE to server
+  deleteWorkflow(id) {
+    if (!confirm("Permanently delete this workflow?"))
+      return;
+    var _this = this;
+
+    fetch(
+      '/api/workflows/' + id ,
+      {
+        method: 'delete',
+        credentials: 'include',
+        headers: {
+          'X-CSRFToken': csrfToken
+        }
+      }
+    )
+    .then(response => {
+      if (response.ok) {
+        var workflowsMinusID = this.state.workflows.filter(wf => wf.id != id);
+        _this.setState({workflows: workflowsMinusID, newWorkflowName: this.state.newWorkflowName})
+      }
     })
   }
 
@@ -66,9 +92,14 @@ export default class Workflows extends React.Component {
               <h3 className="card-title">Your Workflows</h3>
 
               <div className="some-margin">
-                {this.state.workflows.map(function (listValue) {
+                {this.state.workflows.map( listValue => {
                   return (
-                      <div className="card card-block some-margin" key={listValue.id}><a href={"/workflows/" + listValue.id}>{listValue.name}</a></div>
+                      <div className="card card-block some-margin" key={listValue.id}>
+                        <div className='d-flex justify-content-between'>
+                          <a href={"/workflows/" + listValue.id}>{listValue.name}</a>
+                          <button type='button' className='btn btn-secondary btn-sm' onClick={() => this.deleteWorkflow(listValue.id)} >&times;</button>
+                        </div>
+                      </div>
                   );
                 })}
               </div>

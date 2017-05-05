@@ -88,6 +88,11 @@ export default class Workflow extends React.Component {
   }
 }
 
+Workflow.propTypes = {
+  workflow:       React.PropTypes.object,
+  addModule:      React.PropTypes.func,
+  removeModule:   React.PropTypes.func,
+};
 
 
 

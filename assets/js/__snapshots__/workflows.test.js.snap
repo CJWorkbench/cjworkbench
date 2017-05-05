@@ -82,38 +82,82 @@ exports[`renders correctly 2`] = `
           <div
             className="card card-block some-margin"
           >
-            <a
-              href="/workflows/1"
+            <div
+              className="d-flex justify-content-between"
             >
-              Charting
-            </a>
+              <a
+                href="/workflows/1"
+              >
+                Charting
+              </a>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={[Function]}
+                type="button"
+              >
+                ×
+              </button>
+            </div>
           </div>
           <div
             className="card card-block some-margin"
           >
-            <a
-              href="/workflows/7"
+            <div
+              className="d-flex justify-content-between"
             >
-              Messy data cleanup
-            </a>
+              <a
+                href="/workflows/7"
+              >
+                Messy data cleanup
+              </a>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={[Function]}
+                type="button"
+              >
+                ×
+              </button>
+            </div>
           </div>
           <div
             className="card card-block some-margin"
           >
-            <a
-              href="/workflows/8"
+            <div
+              className="d-flex justify-content-between"
             >
-              Document search
-            </a>
+              <a
+                href="/workflows/8"
+              >
+                Document search
+              </a>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={[Function]}
+                type="button"
+              >
+                ×
+              </button>
+            </div>
           </div>
           <div
             className="card card-block some-margin"
           >
-            <a
-              href="/workflows/9"
+            <div
+              className="d-flex justify-content-between"
             >
-              Visualization
-            </a>
+              <a
+                href="/workflows/9"
+              >
+                Visualization
+              </a>
+              <button
+                className="btn btn-secondary btn-sm"
+                onClick={[Function]}
+                type="button"
+              >
+                ×
+              </button>
+            </div>
           </div>
         </div>
         <div
