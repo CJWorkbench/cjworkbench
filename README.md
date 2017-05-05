@@ -1,12 +1,13 @@
 # cjworkbench
 A visual dataflow programming system for journalists. More at on the [public server](blog.cjworkbench.org)!
 
+
 To set up a development environment:
 
+- Requires Python 3.5 or greater
 - Install (virtualenv)[http://docs.python-guide.org/en/latest/dev/virtualenvs/]
 - Install (npm)[https://www.npmjs.com/]
 - git clone this repo with submodules: `git clone --recursive https://github.com/jstray/cjworkbench.git`
-- `source venv/bin/activate` to use the virtualenv
 - `pip install -r requirements.txt` to install Python packages
 - `pip install -r requirements-dev.txt` to install packages required for development
 - `npm install` to install JavaScript packages
