@@ -5,7 +5,6 @@ A visual dataflow programming system for journalists. More at on the [public ser
 To set up a development environment:
 
 - Requires Python 3.5 or greater
-- Install (virtualenv)[http://docs.python-guide.org/en/latest/dev/virtualenvs/]
 - Install (npm)[https://www.npmjs.com/]
 - git clone this repo with submodules: `git clone --recursive https://github.com/jstray/cjworkbench.git`
 - `pip install -r requirements.txt` to install Python packages
