@@ -11,7 +11,7 @@ To set up a development environment:
 - `pip install -r requirements-dev.txt` to install packages required for development
 - `npm install` to install JavaScript packages
 - `python manage.py migrate` to initialize the database
-- `python manage.py createsuperuser` if you ever want to login to Django admin (you do)
+- `python manage.py createsuperuser` or you won't be able to login
 
 If you get a message about missing Chartbuilder (probably when running webpack), check that there are files in /chartbuilder/chartbuilder and /chartbuilder/chartbuilder-ui. You may have missed the `--recursive` above when cloning. Fix that with `git submodule update --init --recursive`
 
