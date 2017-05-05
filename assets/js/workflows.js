@@ -1,12 +1,10 @@
+// Elements of /workflows. Navbar plus a list
+
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { NavBar } from './navbar';
 import { csrfToken } from './utils'
 
-require('bootstrap/dist/css/bootstrap.css');
-require('../css/style.css');
-
-class Workflows extends React.Component {
+export default class Workflows extends React.Component {
   constructor(props) {
     super(props);
     this.click = this.click.bind(this);
@@ -96,7 +94,3 @@ class Workflows extends React.Component {
   }
 }
 
-ReactDOM.render(
-  React.createElement(Workflows, null),
-  document.getElementById('root')
-);

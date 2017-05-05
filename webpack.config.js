@@ -9,8 +9,8 @@ module.exports = {
   entry: {
     app: './assets/js/app',
     login: './assets/js/login',
-    workflows: './assets/js/workflows',
-    workflow: './assets/js/workflow'
+    workflows: './assets/js/workflows.page',
+    workflow: './assets/js/workflow.page'
   },
 
   output: {

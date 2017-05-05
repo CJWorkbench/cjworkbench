@@ -1,0 +1,156 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <NavBar />
+  <div
+    className="container"
+  >
+    <div
+      className="card w-75 mx-auto"
+    >
+      <div
+        className="card-block drop-shadow"
+      >
+        <h3
+          className="card-title"
+        >
+          Your Workflows
+        </h3>
+        <div
+          className="some-margin"
+        />
+        <div
+          className="row justify-content-md-center some-margin"
+        >
+          <div
+            className="col col-lg-2"
+          />
+          <div
+            className="col-12 col-md-auto"
+          >
+            <div
+              className="input-group"
+            >
+              <input
+                className="newWorkflowName form-control"
+                onChange={[Function]}
+                type="text"
+              />
+              <span
+                className="input-group-btn"
+              >
+                <button
+                  className="newWorkflowButton btn btn-secondary"
+                  onClick={[Function]}
+                >
+                  New
+                </button>
+              </span>
+            </div>
+          </div>
+          <div
+            className="col col-lg-2"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`renders correctly 2`] = `
+<div>
+  <NavBar />
+  <div
+    className="container"
+  >
+    <div
+      className="card w-75 mx-auto"
+    >
+      <div
+        className="card-block drop-shadow"
+      >
+        <h3
+          className="card-title"
+        >
+          Your Workflows
+        </h3>
+        <div
+          className="some-margin"
+        >
+          <div
+            className="card card-block some-margin"
+          >
+            <a
+              href="/workflows/1"
+            >
+              Charting
+            </a>
+          </div>
+          <div
+            className="card card-block some-margin"
+          >
+            <a
+              href="/workflows/7"
+            >
+              Messy data cleanup
+            </a>
+          </div>
+          <div
+            className="card card-block some-margin"
+          >
+            <a
+              href="/workflows/8"
+            >
+              Document search
+            </a>
+          </div>
+          <div
+            className="card card-block some-margin"
+          >
+            <a
+              href="/workflows/9"
+            >
+              Visualization
+            </a>
+          </div>
+        </div>
+        <div
+          className="row justify-content-md-center some-margin"
+        >
+          <div
+            className="col col-lg-2"
+          />
+          <div
+            className="col-12 col-md-auto"
+          >
+            <div
+              className="input-group"
+            >
+              <input
+                className="newWorkflowName form-control"
+                onChange={[Function]}
+                type="text"
+              />
+              <span
+                className="input-group-btn"
+              >
+                <button
+                  className="newWorkflowButton btn btn-secondary"
+                  onClick={[Function]}
+                >
+                  New
+                </button>
+              </span>
+            </div>
+          </div>
+          <div
+            className="col col-lg-2"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

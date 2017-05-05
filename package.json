@@ -65,7 +65,8 @@
   "jest": {
     "automock": false,
     "setupFiles": [ "./setupJest.js" ],
-    "snapshotSerializers": [ "./node_modules/enzyme-to-json/serializer" ]
+    "snapshotSerializers": [ "./node_modules/enzyme-to-json/serializer" ],
+    "moduleNameMapper": { "\\.(css|less)$": "<rootDir>/assets/css/__mocks__/styleMock.js" }
   },
   "repository": {
     "type": "git",
