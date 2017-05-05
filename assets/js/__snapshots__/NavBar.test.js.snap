@@ -19,18 +19,45 @@ exports[`NavBar renders correctly 1`] = `
     >
       CJ Workbench
     </h1>
-    <a
-      className="nav-link"
-      href="http://blog.cjworkbench.org"
+    <div
+      className="dropdown"
     >
-      Blog
-    </a>
-    <a
-      className="nav-link"
-      href="/logout"
-    >
-      Logout
-    </a>
+      <button
+        aria-expanded={false}
+        aria-haspopup="true"
+        className="btn btn-secondary"
+        data-toggle="dropdown"
+        onClick={[Function]}
+        type="button"
+      >
+        ☰
+      </button>
+      <div
+        aria-hidden={true}
+        className="dropdown-menu dropdown-menu-right"
+        role="menu"
+        tabIndex="-1"
+      >
+        <a
+          className="dropdown-item"
+          href="http://blog.cjworkbench.org"
+          onClick={[Function]}
+          tabIndex="0"
+          type={undefined}
+        >
+           Help 
+        </a>
+        <a
+          className="dropdown-item"
+          href="/logout"
+          onClick={[Function]}
+          tabIndex="0"
+          type={undefined}
+        >
+           Logout 
+        </a>
+      </div>
+    </div>
   </nav>
 </div>
 `;
@@ -53,18 +80,54 @@ exports[`WorkflowNavBar renders correctly 1`] = `
     >
       Workflow Title
     </h3>
-    <a
-      className="nav-link"
-      href="http://blog.cjworkbench.org"
+    <div
+      className="dropdown"
     >
-      Blog
-    </a>
-    <a
-      className="nav-link"
-      href="/logout"
-    >
-      Logout
-    </a>
+      <button
+        aria-expanded={false}
+        aria-haspopup="true"
+        className="btn btn-secondary"
+        data-toggle="dropdown"
+        onClick={[Function]}
+        type="button"
+      >
+        ☰
+      </button>
+      <div
+        aria-hidden={true}
+        className="dropdown-menu dropdown-menu-right"
+        role="menu"
+        tabIndex="-1"
+      >
+        <a
+          className="dropdown-item"
+          href="/workflows"
+          onClick={[Function]}
+          tabIndex="0"
+          type={undefined}
+        >
+           Your Workflows 
+        </a>
+        <a
+          className="dropdown-item"
+          href="http://blog.cjworkbench.org"
+          onClick={[Function]}
+          tabIndex="0"
+          type={undefined}
+        >
+           Help 
+        </a>
+        <a
+          className="dropdown-item"
+          href="/logout"
+          onClick={[Function]}
+          tabIndex="0"
+          type={undefined}
+        >
+           Logout 
+        </a>
+      </div>
+    </div>
   </nav>
 </div>
 `;

@@ -2,7 +2,7 @@
 // May have various elements on different pages, including toolbar
 
 import React from 'react';
-
+import WorkflowHamburgerMenu from './WorkflowHamburgerMenu'
 
 export class NavBar extends React.Component {
 
@@ -17,8 +17,7 @@ export class NavBar extends React.Component {
 
         <nav className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1">
           <h1 className="navbar-brand mb-0 mr-auto">CJ Workbench</h1>
-          <a className="nav-link" href="http://blog.cjworkbench.org">Blog</a>
-          <a className="nav-link" href="/logout">Logout</a>
+          <WorkflowHamburgerMenu workflowsPage />
         </nav>
       </div>
     );
@@ -39,8 +38,7 @@ export class WorkflowNavBar extends React.Component {
         <nav className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1">
           {this.props.addButton}
           <h3 className="mx-auto">{this.props.workflowTitle}</h3>
-          <a className="nav-link" href="http://blog.cjworkbench.org">Blog</a>
-          <a className="nav-link" href="/logout">Logout</a>
+          <WorkflowHamburgerMenu />
         </nav>
       </div>
     );
