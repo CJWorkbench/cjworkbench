@@ -8,7 +8,7 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, Workflow, WfModule, ParameterSpec, ParameterVal
-from server.serializers import WorkflowSerializer
+from server.serializers import WorkflowSerializer, WorkflowSerializerLite
 from server.execute import execute_workflow, execute_wfmodule
 
 
@@ -26,7 +26,7 @@ def workflows2(request):
 def workflow_list(request, format=None):
     if request.method == 'GET':
         workflows = Workflow.objects.filter(owner=request.user)
-        serializer = WorkflowSerializer(workflows, many=True)
+        serializer = WorkflowSerializerLite(workflows, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':

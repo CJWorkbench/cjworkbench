@@ -29,3 +29,10 @@ class WorkflowSerializer(serializers.ModelSerializer):
     class Meta:
         model = Workflow
         fields = ('id', 'name', 'revision', 'wf_modules')
+
+
+# Lite Workflow: Don't include any of the modules, just name and ID. For /workflows page
+class WorkflowSerializerLite(serializers.ModelSerializer):
+    class Meta:
+        model = Workflow
+        fields = ('id', 'name')
