@@ -1,16 +1,12 @@
 // A menu to select a module addition
 import React from 'react';
-import { ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
 export default class ModuleMenu extends React.Component {
   constructor(props) {
     super(props);
-
-    this.toggle = this.toggle.bind(this);
     this.itemClick = this.itemClick.bind(this);
-
     this.state = {
-      dropdownOpen: false,
       items: []
     };
   }
@@ -25,16 +21,9 @@ export default class ModuleMenu extends React.Component {
         _this.setState({dropdownOpen: this.state.dropdownOpen, items: json}) })
   }
 
-  toggle() {
-    this.setState({
-      dropdownOpen: !this.state.dropdownOpen
-    });
-  }
-
   itemClick(evt) {
     var itemID = evt.target.getAttribute('data-id');
     this.props.addModule(itemID);
-    this.setState( { open: false});
   }
 
   render() {
@@ -53,14 +42,14 @@ export default class ModuleMenu extends React.Component {
     }
 
     return (
-      <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle}>
+      <UncontrolledDropdown>
         <DropdownToggle caret>
           Add Module
         </DropdownToggle>
         <DropdownMenu>
           {menuItems}
         </DropdownMenu>
-      </ButtonDropdown>
+      </UncontrolledDropdown>
     );
   }
 }

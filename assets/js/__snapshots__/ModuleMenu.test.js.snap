@@ -1,10 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<Ms
-  isOpen={false}
-  toggle={[Function]}
->
+<UncontrolledDropdown>
   <ei
     aria-haspopup={true}
     caret={true}
@@ -16,14 +13,11 @@ exports[`renders correctly 1`] = `
   <Xo
     tag="div"
   />
-</Ms>
+</UncontrolledDropdown>
 `;
 
 exports[`renders correctly 2`] = `
-<Ms
-  isOpen={true}
-  toggle={[Function]}
->
+<UncontrolledDropdown>
   <ei
     aria-haspopup={true}
     caret={true}
@@ -156,5 +150,5 @@ exports[`renders correctly 2`] = `
        
     </ei>
   </Xo>
-</Ms>
+</UncontrolledDropdown>
 `;
