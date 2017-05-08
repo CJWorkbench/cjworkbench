@@ -38,7 +38,7 @@ it('renders correctly', () => {
   expect(wrapper).toMatchSnapshot();
 
   // Now give it some actual menu items
-  wrapper.setState( {dropdownOpen: true, items: mockModules} )
+  wrapper.setState( {dropdownOpen: true, items: mockModules} );
   expect(wrapper).toMatchSnapshot();
 });
 

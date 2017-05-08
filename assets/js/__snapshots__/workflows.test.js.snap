@@ -1,200 +1,410 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<div>
-  <NavBar />
-  <div
-    className="container"
-  >
+<Workflows>
+  <div>
+    <NavBar>
+      <div>
+        <nav
+          className="navbar navbar-toggleable-md mb-3"
+        >
+          <h1
+            className="navbar-brand mb-0"
+          >
+            CJ Workbench
+          </h1>
+        </nav>
+        <nav
+          className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1"
+        >
+          <h1
+            className="navbar-brand mb-0 mr-auto"
+          >
+            CJ Workbench
+          </h1>
+          <WorkflowHamburgerMenu
+            workflowsPage={true}
+          >
+            <UncontrolledDropdown>
+              <ei
+                isOpen={false}
+                tag="div"
+                toggle={[Function]}
+              >
+                <div
+                  className="dropdown"
+                >
+                  <ei
+                    aria-haspopup={true}
+                    color="secondary"
+                    data-toggle="dropdown"
+                  >
+                    <ei
+                      aria-expanded={false}
+                      aria-haspopup="true"
+                      className=""
+                      color="secondary"
+                      data-toggle="dropdown"
+                      onClick={[Function]}
+                      tag="button"
+                    >
+                      <button
+                        aria-expanded={false}
+                        aria-haspopup="true"
+                        className="btn btn-secondary"
+                        data-toggle="dropdown"
+                        onClick={[Function]}
+                        type="button"
+                      >
+                        ☰
+                      </button>
+                    </ei>
+                  </ei>
+                  <Xo
+                    right={true}
+                    tag="div"
+                  >
+                    <div
+                      aria-hidden={true}
+                      className="dropdown-menu dropdown-menu-right"
+                      role="menu"
+                      tabIndex="-1"
+                    >
+                      <ei
+                        href="http://blog.cjworkbench.org"
+                        tag="a"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-item"
+                          href="http://blog.cjworkbench.org"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                           Help 
+                        </a>
+                      </ei>
+                      <ei
+                        href="/logout"
+                        tag="a"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-item"
+                          href="/logout"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                           Logout 
+                        </a>
+                      </ei>
+                    </div>
+                  </Xo>
+                </div>
+              </ei>
+            </UncontrolledDropdown>
+          </WorkflowHamburgerMenu>
+        </nav>
+      </div>
+    </NavBar>
     <div
-      className="card w-75 mx-auto"
+      className="container"
     >
       <div
-        className="card-block drop-shadow"
+        className="card w-75 mx-auto"
       >
-        <h3
-          className="card-title"
-        >
-          Your Workflows
-        </h3>
         <div
-          className="some-margin"
-        />
-        <div
-          className="row justify-content-md-center some-margin"
+          className="card-block drop-shadow"
         >
+          <h3
+            className="card-title"
+          >
+            Your Workflows
+          </h3>
           <div
-            className="col col-lg-2"
+            className="some-margin"
           />
           <div
-            className="col-12 col-md-auto"
+            className="row justify-content-md-center some-margin"
           >
             <div
-              className="input-group"
+              className="col col-lg-2"
+            />
+            <div
+              className="col-12 col-md-auto"
             >
-              <input
-                className="newWorkflowName form-control"
-                onChange={[Function]}
-                type="text"
-              />
-              <span
-                className="input-group-btn"
+              <div
+                className="input-group"
               >
-                <button
-                  className="newWorkflowButton btn btn-secondary"
-                  onClick={[Function]}
+                <input
+                  className="newWorkflowName form-control"
+                  onChange={[Function]}
+                  type="text"
+                />
+                <span
+                  className="input-group-btn"
                 >
-                  New
-                </button>
-              </span>
+                  <button
+                    className="newWorkflowButton btn btn-secondary"
+                    onClick={[Function]}
+                  >
+                    New
+                  </button>
+                </span>
+              </div>
             </div>
+            <div
+              className="col col-lg-2"
+            />
           </div>
-          <div
-            className="col col-lg-2"
-          />
         </div>
       </div>
     </div>
   </div>
-</div>
+</Workflows>
 `;
 
 exports[`renders correctly 2`] = `
-<div>
-  <NavBar />
-  <div
-    className="container"
-  >
+<Workflows>
+  <div>
+    <NavBar>
+      <div>
+        <nav
+          className="navbar navbar-toggleable-md mb-3"
+        >
+          <h1
+            className="navbar-brand mb-0"
+          >
+            CJ Workbench
+          </h1>
+        </nav>
+        <nav
+          className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1"
+        >
+          <h1
+            className="navbar-brand mb-0 mr-auto"
+          >
+            CJ Workbench
+          </h1>
+          <WorkflowHamburgerMenu
+            workflowsPage={true}
+          >
+            <UncontrolledDropdown>
+              <ei
+                isOpen={false}
+                tag="div"
+                toggle={[Function]}
+              >
+                <div
+                  className="dropdown"
+                >
+                  <ei
+                    aria-haspopup={true}
+                    color="secondary"
+                    data-toggle="dropdown"
+                  >
+                    <ei
+                      aria-expanded={false}
+                      aria-haspopup="true"
+                      className=""
+                      color="secondary"
+                      data-toggle="dropdown"
+                      onClick={[Function]}
+                      tag="button"
+                    >
+                      <button
+                        aria-expanded={false}
+                        aria-haspopup="true"
+                        className="btn btn-secondary"
+                        data-toggle="dropdown"
+                        onClick={[Function]}
+                        type="button"
+                      >
+                        ☰
+                      </button>
+                    </ei>
+                  </ei>
+                  <Xo
+                    right={true}
+                    tag="div"
+                  >
+                    <div
+                      aria-hidden={true}
+                      className="dropdown-menu dropdown-menu-right"
+                      role="menu"
+                      tabIndex="-1"
+                    >
+                      <ei
+                        href="http://blog.cjworkbench.org"
+                        tag="a"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-item"
+                          href="http://blog.cjworkbench.org"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                           Help 
+                        </a>
+                      </ei>
+                      <ei
+                        href="/logout"
+                        tag="a"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-item"
+                          href="/logout"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                           Logout 
+                        </a>
+                      </ei>
+                    </div>
+                  </Xo>
+                </div>
+              </ei>
+            </UncontrolledDropdown>
+          </WorkflowHamburgerMenu>
+        </nav>
+      </div>
+    </NavBar>
     <div
-      className="card w-75 mx-auto"
+      className="container"
     >
       <div
-        className="card-block drop-shadow"
+        className="card w-75 mx-auto"
       >
-        <h3
-          className="card-title"
-        >
-          Your Workflows
-        </h3>
         <div
-          className="some-margin"
+          className="card-block drop-shadow"
         >
+          <h3
+            className="card-title"
+          >
+            Your Workflows
+          </h3>
           <div
-            className="card card-block some-margin"
+            className="some-margin"
           >
             <div
-              className="d-flex justify-content-between"
+              className="card card-block some-margin item-test-class"
             >
-              <a
-                href="/workflows/1"
+              <div
+                className="d-flex justify-content-between"
               >
-                Charting
-              </a>
-              <button
-                className="btn btn-secondary btn-sm"
-                onClick={[Function]}
-                type="button"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-          <div
-            className="card card-block some-margin"
-          >
-            <div
-              className="d-flex justify-content-between"
-            >
-              <a
-                href="/workflows/7"
-              >
-                Messy data cleanup
-              </a>
-              <button
-                className="btn btn-secondary btn-sm"
-                onClick={[Function]}
-                type="button"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-          <div
-            className="card card-block some-margin"
-          >
-            <div
-              className="d-flex justify-content-between"
-            >
-              <a
-                href="/workflows/8"
-              >
-                Document search
-              </a>
-              <button
-                className="btn btn-secondary btn-sm"
-                onClick={[Function]}
-                type="button"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-          <div
-            className="card card-block some-margin"
-          >
-            <div
-              className="d-flex justify-content-between"
-            >
-              <a
-                href="/workflows/9"
-              >
-                Visualization
-              </a>
-              <button
-                className="btn btn-secondary btn-sm"
-                onClick={[Function]}
-                type="button"
-              >
-                ×
-              </button>
-            </div>
-          </div>
-        </div>
-        <div
-          className="row justify-content-md-center some-margin"
-        >
-          <div
-            className="col col-lg-2"
-          />
-          <div
-            className="col-12 col-md-auto"
-          >
-            <div
-              className="input-group"
-            >
-              <input
-                className="newWorkflowName form-control"
-                onChange={[Function]}
-                type="text"
-              />
-              <span
-                className="input-group-btn"
-              >
-                <button
-                  className="newWorkflowButton btn btn-secondary"
-                  onClick={[Function]}
+                <a
+                  href="/workflows/1"
                 >
-                  New
+                  Charting
+                </a>
+                <button
+                  className="btn btn-secondary btn-sm button-test-class"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  ×
                 </button>
-              </span>
+              </div>
+            </div>
+            <div
+              className="card card-block some-margin item-test-class"
+            >
+              <div
+                className="d-flex justify-content-between"
+              >
+                <a
+                  href="/workflows/7"
+                >
+                  Messy data cleanup
+                </a>
+                <button
+                  className="btn btn-secondary btn-sm button-test-class"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div
+              className="card card-block some-margin item-test-class"
+            >
+              <div
+                className="d-flex justify-content-between"
+              >
+                <a
+                  href="/workflows/8"
+                >
+                  Document search
+                </a>
+                <button
+                  className="btn btn-secondary btn-sm button-test-class"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <div
+              className="card card-block some-margin item-test-class"
+            >
+              <div
+                className="d-flex justify-content-between"
+              >
+                <a
+                  href="/workflows/9"
+                >
+                  Visualization
+                </a>
+                <button
+                  className="btn btn-secondary btn-sm button-test-class"
+                  onClick={[Function]}
+                  type="button"
+                >
+                  ×
+                </button>
+              </div>
             </div>
           </div>
           <div
-            className="col col-lg-2"
-          />
+            className="row justify-content-md-center some-margin"
+          >
+            <div
+              className="col col-lg-2"
+            />
+            <div
+              className="col-12 col-md-auto"
+            >
+              <div
+                className="input-group"
+              >
+                <input
+                  className="newWorkflowName form-control"
+                  onChange={[Function]}
+                  type="text"
+                />
+                <span
+                  className="input-group-btn"
+                >
+                  <button
+                    className="newWorkflowButton btn btn-secondary"
+                    onClick={[Function]}
+                  >
+                    New
+                  </button>
+                </span>
+              </div>
+            </div>
+            <div
+              className="col col-lg-2"
+            />
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
+</Workflows>
 `;

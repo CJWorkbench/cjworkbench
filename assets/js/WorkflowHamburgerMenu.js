@@ -8,6 +8,7 @@ export default class WorkflowHamburgerMenu extends React.Component {
     super(props);
   }
 
+  // \u2630 = hamburger menu in Unicode (actually, an I Ching trigram)
   render() {
     var homeLink;
     if (!this.props.workflowsPage)

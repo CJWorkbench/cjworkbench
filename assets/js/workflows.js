@@ -94,10 +94,10 @@ export default class Workflows extends React.Component {
               <div className="some-margin">
                 {this.state.workflows.map( listValue => {
                   return (
-                      <div className="card card-block some-margin" key={listValue.id}>
+                      <div className="card card-block some-margin item-test-class" key={listValue.id}>
                         <div className='d-flex justify-content-between'>
                           <a href={"/workflows/" + listValue.id}>{listValue.name}</a>
-                          <button type='button' className='btn btn-secondary btn-sm' onClick={() => this.deleteWorkflow(listValue.id)} >&times;</button>
+                          <button type='button' className='btn btn-secondary btn-sm button-test-class' onClick={() => this.deleteWorkflow(listValue.id)} >&times;</button>
                         </div>
                       </div>
                   );
