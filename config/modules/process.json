@@ -6,8 +6,8 @@
     {
       "name": "Code",
       "id_name": "code",
-      "type": "text",
-      "default": ""
+      "type": "string",
+      "multiline": true
     }
   ]
 }

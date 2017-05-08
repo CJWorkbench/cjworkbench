@@ -10,6 +10,7 @@ import requests
 import io
 import csv
 import json
+import math
 from server.versions import bump_workflow_version
 
 # ---- Module implementations ---
@@ -147,6 +148,16 @@ class PasteCSV(ModuleImpl):
         return table
 
 
+# Utility class: globals defined for user-entered python code
+custom_code_globals = {
+    '__builtins__': {},  # disallow import etc. (though still not impossible!)
+    'str': str,
+    'math' : math,
+    'pd' : pd,
+    'np' : np
+}
+
+
 # ---- Formula ----
 
 class Formula(ModuleImpl):
@@ -155,12 +166,6 @@ class Formula(ModuleImpl):
         colnames = list(table.columns)
         newcol = pd.Series(np.zeros(len(table)))
 
-        # hmm, this is going to need more work
-        globals = {
-            '__builtins__': {},      # disallow import etc. (though still not impossible!)
-            'str' : str
-        }
-
         # Catch errors with the formula and display to user
         try:
             code = compile(formula, '<string>', 'eval')
@@ -168,7 +173,7 @@ class Formula(ModuleImpl):
             # Much experimentation went into the form of this loop for good performance.
             # Note we don't use iterrows or any pandas indexing, and construct the values dict ourselves
             for i,row in enumerate(table.values):
-                newcol[i] = eval(code  , globals, dict(zip(colnames, row)))
+                newcol[i] = eval(code, custom_code_globals, dict(zip(colnames, row)))
         except Exception as e:
             wf_module.set_error(str(e))
             return None
@@ -188,6 +193,40 @@ class Formula(ModuleImpl):
         wf_module.set_ready(notify=False)
         return table
 
+
+
+# ---- RawCode ----
+
+# adds two spaces before every line
+def indent_lines(str):
+    return '  ' + str.replace('\n', '\n  ');
+
+class RawCode(ModuleImpl):
+    def render(wf_module, table):
+        code = wf_module.get_param_string('code')
+
+        # turn the user-supplied text into a function declaration
+        code = 'def process(table):\n' + indent_lines(code)
+
+        # this is where we will store the function we define
+        locals = {}
+
+        # Catch errors with the code and display to user
+        try:
+            exec(code, custom_code_globals, locals )
+
+        except Exception as e:
+            wf_module.set_error(str(e))
+            return None
+
+        if not 'process' in locals:
+            wf_module.set_error('Problem defining function')
+            return None
+
+        out_table = locals['process'](table)
+        return out_table
+
+
 # ---- SelectColumns ----
 
 class SelectColumns(ModuleImpl):
@@ -203,45 +242,6 @@ class SelectColumns(ModuleImpl):
         wf_module.set_ready(notify=False)
         newtab = table[cols]
         return newtab
-
-# ---- JSONtoColumns ----
-class JSONtoColumns(ModuleImpl):
-    def render(wf_module, table):
-        col = wf_module.get_param_string('column')
-
-        if not col in table.columns:
-            wf_module.set_error('There is no column named %s' % col)
-            return None
-
-        # decode first row to get column names.
-        try:
-            firstrow = json.loads(table.loc[0,col])
-        except json.decoder.JSONDecodeError as e:
-            wf_module.set_error(str(e))
-            return None
-        colnames = list(firstrow.keys())
-        newtab = pd.DataFrame(columns=colnames)
-
-        # now actually decode every column
-        for i in range(len(table)):
-            row = json.loads(table[i,col])
-            for key in colnames:
-                try:
-                    newtab.loc[i,key] = row[key]
-                except KeyError as e:
-                    pass # json with key that wasn't in first row, skip it
-                except json.decoder.JSONDecodeError as e:
-                    wf_module.set_error(str(e) + ' at row ' + str(i))
-                    return None
-
-        wf_module.set_ready(notify=False)
-        return newtab
-
-
-# ---- RawCode ----
-
-class RawCode(ModuleImpl):
-    pass
 
 # ---- Chart ----
 class Chart(ModuleImpl):
@@ -278,7 +278,6 @@ module_dispatch_tbl = {
     'selectcolumns':SelectColumns,
     'rawcode':      RawCode,
     'simplechart':  Chart,
-    'jsontocolumns':JSONtoColumns,
 
     # For testing
     'NOP':          NOP,

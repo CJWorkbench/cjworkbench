@@ -28,11 +28,15 @@ mock_xslx_path = os.path.join(settings.BASE_DIR, 'server/tests/test.xlsx')
 # setup a workflow with some test data loaded into a PasteCSV module
 # returns workflow
 def create_testdata_workflow():
+    # Define paste CSV module from scratch
     csv_module = add_new_module('Module 1', 'pastecsv')
     pspec = add_new_parameter_spec(csv_module, 'csv', ParameterSpec.STRING)
-    # use default value (i.e. has_header_row = True), as that's what the other workflows assume.
     add_new_parameter_spec(csv_module, 'has_header_row', ParameterSpec.CHECKBOX)
+
+    # New workflow
     workflow = add_new_workflow('Workflow 1')
+
+    # Create new WfModule and set param to mock_csv_text
     wfmodule = add_new_wf_module(workflow, csv_module, 0)
     wfmodule.create_default_parameters()
     pval = ParameterVal.objects.get(parameter_spec=pspec)
@@ -40,6 +44,7 @@ def create_testdata_workflow():
     pval.save()
 
     return workflow
+
 
 # Load module spec from same place initmodules gets it, return dict
 def load_module_def(filename):
@@ -280,5 +285,27 @@ class SelectColumnsTests(LoggedInTestCase):
         self.wf_module.refresh_from_db()
         self.assertEqual(self.wf_module.status, WfModule.ERROR)
 
+
+
+
+# ---- Python Code  ----
+
+class PythonCodeTest(LoggedInTestCase):
+    def setUp(self):
+        super(PythonCodeTest, self).setUp()  # log in
+        workflow = create_testdata_workflow()
+        module_def = load_module_def('process')
+        self.wf_module = load_and_add_module(workflow, module_def)
+        self.code_pval = get_param_by_id_name('code')
+
+    def test_render(self):
+        # Replace the output with our own data
+
+        code = "columns = ['A','B', 'C']\ndata = np.array([np.arange(5)]*3).T\nreturn pd.DataFrame(columns=columns, data=data)";
+        self.code_pval.string = code
+        self.code_pval.save()
+
+        out = execute_wfmodule(self.wf_module)
+        self.assertEqual(str(out), "   A  B  C\n0  0  0  0\n1  1  1  1\n2  2  2  2\n3  3  3  3\n4  4  4  4")
 
 
