@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div
+  className="dropdown"
+>
+  <button
+    aria-expanded={false}
+    aria-haspopup="true"
+    className="btn btn-secondary"
+    data-toggle="dropdown"
+    onClick={[Function]}
+    type="button"
+  >
+    ☰
+  </button>
+  <div
+    aria-hidden={true}
+    className="dropdown-menu dropdown-menu-right"
+    role="menu"
+    tabIndex="-1"
+  >
+    <a
+      className="dropdown-item"
+      href="/workflows"
+      onClick={[Function]}
+      tabIndex="0"
+      type={undefined}
+    >
+       Your Workflows 
+    </a>
+    <a
+      className="dropdown-item"
+      href="http://blog.cjworkbench.org"
+      onClick={[Function]}
+      tabIndex="0"
+      type={undefined}
+    >
+       Help 
+    </a>
+    <a
+      className="dropdown-item"
+      href="/logout"
+      onClick={[Function]}
+      tabIndex="0"
+      type={undefined}
+    >
+       Logout 
+    </a>
+  </div>
+</div>
+`;
+
+exports[`renders correctly for workflows list page 1`] = `
+<div
+  className="dropdown"
+>
+  <button
+    aria-expanded={false}
+    aria-haspopup="true"
+    className="btn btn-secondary"
+    data-toggle="dropdown"
+    onClick={[Function]}
+    type="button"
+  >
+    ☰
+  </button>
+  <div
+    aria-hidden={true}
+    className="dropdown-menu dropdown-menu-right"
+    role="menu"
+    tabIndex="-1"
+  >
+    <a
+      className="dropdown-item"
+      href="http://blog.cjworkbench.org"
+      onClick={[Function]}
+      tabIndex="0"
+      type={undefined}
+    >
+       Help 
+    </a>
+    <a
+      className="dropdown-item"
+      href="/logout"
+      onClick={[Function]}
+      tabIndex="0"
+      type={undefined}
+    >
+       Logout 
+    </a>
+  </div>
+</div>
+`;
