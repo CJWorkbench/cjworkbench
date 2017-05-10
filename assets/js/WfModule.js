@@ -48,11 +48,15 @@ function CollapseSection(WrappedComponent, title, startOpen ) {
     }
 
     render() {
+      var inside = undefined;
+      if (this.state.isOpen)
+        inside = <WrappedComponent {...this.props}/>;
+
       return(
         <div className='panel-wrapper m-0 p-1'>
           <div onClick={this.toggle}> { (this.state.isOpen ? '\u25be' : '\u25b8') + ' ' + title}</div>
           <Collapse className='mt-1 pl-2 pr-2' isOpen={this.state.isOpen}>
-            <WrappedComponent {...this.props}/>
+            {inside}
           </Collapse>
         </div>
       );
