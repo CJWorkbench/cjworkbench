@@ -56,11 +56,11 @@ export default class TableView extends React.Component {
         columns={columns}
         rowGetter={ i => tableData[i] }
         rowsCount={tableData.length}
-        minHeight={500} />;
+        minHeight={300} />;
     }  else {
       table = <p>(no data)</p>;
     }
 
-    return table;
+    return ( <div> {table} </div> );
   }
 }
