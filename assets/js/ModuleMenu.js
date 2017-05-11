@@ -17,7 +17,18 @@ export default class ModuleMenu extends React.Component {
       .then(response => response.json())
       .then(json => {
         // Sort modules first by category, then name
-        json.sort( (a,b) => { return a.category > b.category || (a.category==b.category && a.name > b.name) } );
+        json.sort( (a,b) => {
+          if (a.category > b.category)
+            return 1;
+          else if (a.category < b.category)
+            return -1;
+          else if (a.name > b.name)
+            return 1;
+          else if (a.name < b.name)
+            return -1;
+          else
+            return 0;
+        } );
         _this.setState({dropdownOpen: this.state.dropdownOpen, items: json}) })
   }
 
