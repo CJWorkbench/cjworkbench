@@ -5,9 +5,11 @@ import pandas as pd
 import numpy as np
 from pandas.parser import CParserError
 from xlrd import XLRDError
+from twarc import Twarc
 import re
 import requests
 import io
+import os
 import csv
 import json
 import math
@@ -248,6 +250,47 @@ class Chart(ModuleImpl):
     pass # no render logic, it's all front end
 
 
+# ---- Twitter ----
+
+class Twitter(ModuleImpl):
+
+    # Input table ignored.
+    @staticmethod
+    def render(wf_module, table):
+        tablestr = wf_module.retrieve_text('csv')
+        if (tablestr != None) and (len(tablestr) > 0):
+            return pd.read_csv(io.StringIO(tablestr))
+        else:
+            return None
+
+
+    # Load specified user's timeline
+    @staticmethod
+    def event(parameter, e):
+        wfm = parameter.wf_module
+        table = None
+
+        # fetching could take a while so notify clients/users that we're working on it
+        wfm.set_busy()
+        user = wfm.get_param_string('user')
+
+        consumer_key = os.environ['CJW_TWITTER_CONSUMER_KEY']
+        consumer_secret = os.environ['CJW_TWITTER_CONSUMER_SECRET']
+        access_token = os.environ['CJW_TWITTER_ACCESS_TOKEN']
+        access_token_secret = os.environ['CJW_TWITTER_ACCESS_TOKEN_SECRET']
+
+        tw = Twarc(consumer_key, consumer_secret, access_token, access_token_secret)
+        tweetsgen = tw.timeline(screen_name=user)
+
+        cols = ['id', 'created_at', 'text', 'in_reply_to_screen_name', 'in_reply_to_status_id', 'retweeted', 'retweet_count', 'favorited', 'favorite_count', 'source']
+        tweets = [ [t[x] for x in cols] for t in tweetsgen]
+        table = pd.DataFrame(tweets, columns=cols)
+        wfm.store_text('csv', table.to_csv(index=False))  # index=False to prevent pandas from adding an index col
+
+        wfm.set_ready(notify=False)
+        bump_workflow_version(wfm.workflow)
+
+
 # ---- Test Support ----
 # NOP -- do nothing
 
@@ -278,6 +321,7 @@ module_dispatch_tbl = {
     'selectcolumns':SelectColumns,
     'rawcode':      RawCode,
     'simplechart':  Chart,
+    'twitter':      Twitter,
 
     # For testing
     'NOP':          NOP,
