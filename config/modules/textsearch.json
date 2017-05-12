@@ -1,0 +1,36 @@
+{
+  "name": "Text Search",
+  "id_name": "textsearch",
+  "category" : "Analyze",
+  "parameters": [
+    {
+      "name": "Search For",
+      "id_name" : "query",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "In which columns?",
+      "id_name": "colselect",
+      "type": "custom",
+      "ui-only": true
+    },
+    {
+      "name": "Column Names",
+      "id_name": "colnames",
+      "type": "string"
+    },
+    {
+      "name": "Case sensitive",
+      "id_name": "casesensitive",
+      "type": "checkbox",
+      "default": "False"
+    },
+    {
+      "name": "Regular Expression",
+      "id_name": "regex",
+      "type": "checkbox",
+      "default": "False"
+    }
+  ]
+}

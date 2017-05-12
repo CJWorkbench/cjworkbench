@@ -254,14 +254,48 @@ class Chart(ModuleImpl):
 
 class Twitter(ModuleImpl):
 
-    # Input table ignored.
+    # Columns to retrieve and store from Twitter
+    # Also, we use this to figure ou the index the id field when merging old and new tweets
+    cols = ['id', 'created_at', 'text', 'in_reply_to_screen_name', 'in_reply_to_status_id', 'retweeted',
+            'retweet_count', 'favorited', 'favorite_count', 'source']
+
+
+    # Get dataframe of last tweets fron our storage,
     @staticmethod
-    def render(wf_module, table):
+    def get_stored_tweets(wf_module):
         tablestr = wf_module.retrieve_text('csv')
         if (tablestr != None) and (len(tablestr) > 0):
             return pd.read_csv(io.StringIO(tablestr))
         else:
             return None
+
+    # Get from Twitter, return as dataframe
+    @staticmethod
+    def get_new_tweets(user, cols):
+        consumer_key = os.environ['CJW_TWITTER_CONSUMER_KEY']
+        consumer_secret = os.environ['CJW_TWITTER_CONSUMER_SECRET']
+        access_token = os.environ['CJW_TWITTER_ACCESS_TOKEN']
+        access_token_secret = os.environ['CJW_TWITTER_ACCESS_TOKEN_SECRET']
+
+        tw = Twarc(consumer_key, consumer_secret, access_token, access_token_secret)
+        tweetsgen = tw.timeline(screen_name=user)
+
+        tweets = [ [t[x] for x in cols] for t in tweetsgen]
+        table = pd.DataFrame(tweets, columns=cols)
+        return table
+
+
+    # Combine this set of tweets with previous set of tweets
+    def merge_tweets(wf_module, new_table):
+        old_table = Twitter.get_stored_tweets()
+        if old_table != None:
+            new_table = pd.concat([new_table,old_table]).drop_duplicates().sort_values('id',ascending=False).reset_index(drop=True)
+        return new_table
+
+    # Render just returns previously retrieved tweets
+    @staticmethod
+    def render(wf_module, table):
+        return Twitter.get_stored_tweets(wf_module)
 
 
     # Load specified user's timeline
@@ -271,24 +305,56 @@ class Twitter(ModuleImpl):
         table = None
 
         # fetching could take a while so notify clients/users that we're working on it
-        wfm.set_busy()
+        wfm.set_busy(notify=True)
         user = wfm.get_param_string('user')
 
-        consumer_key = os.environ['CJW_TWITTER_CONSUMER_KEY']
-        consumer_secret = os.environ['CJW_TWITTER_CONSUMER_SECRET']
-        access_token = os.environ['CJW_TWITTER_ACCESS_TOKEN']
-        access_token_secret = os.environ['CJW_TWITTER_ACCESS_TOKEN_SECRET']
+        tweets = Twitter.get_new_tweets(user, cols)
 
-        tw = Twarc(consumer_key, consumer_secret, access_token, access_token_secret)
-        tweetsgen = tw.timeline(screen_name=user)
+        if wfm.get_param_checkbox('accumulate'):
+            tweets = Twitter.merge_tweets(wfm, tweets)
 
-        cols = ['id', 'created_at', 'text', 'in_reply_to_screen_name', 'in_reply_to_status_id', 'retweeted', 'retweet_count', 'favorited', 'favorite_count', 'source']
-        tweets = [ [t[x] for x in cols] for t in tweetsgen]
-        table = pd.DataFrame(tweets, columns=cols)
-        wfm.store_text('csv', table.to_csv(index=False))  # index=False to prevent pandas from adding an index col
+        wfm.store_text('csv', tweets.to_csv(index=False))  # index=False to prevent pandas from adding an index col
 
+        # all done, set to ready and re-render workflow
         wfm.set_ready(notify=False)
         bump_workflow_version(wfm.workflow)
+
+
+# ---- TextSearch ----
+# Returns only those rows which contain the query string in any of the specified columns
+
+class TextSearch(ModuleImpl):
+    def render(wf_module, table):
+        query = wf_module.get_param_string('query')
+        cols = wf_module.get_param_string('colnames').split(',')
+        cols = [c.strip() for c in cols]
+        case_sensitive = wf_module.get_param_checkbox('casesensitive')
+        regex = wf_module.get_param_checkbox('regex')
+
+        if cols == ['']:
+            return None     # no columns, no matches
+
+        if query=='':
+            return table    # no query, everything matches
+
+        keeprows = None
+        for c in cols:
+            if not c in table.columns:
+                wf_module.set_error('There is no column named %s' % c)
+                return None
+
+            kr = table[c].astype(str).str.contains(query, case=case_sensitive, regex=regex)
+
+            # logical OR of all matching columns
+            if keeprows is not None:
+                keeprows = keeprows | kr
+            else:
+                keeprows = kr
+
+        newtab = table[keeprows]
+        wf_module.set_ready(notify=False)
+        return newtab
+
 
 
 # ---- Test Support ----
@@ -322,6 +388,7 @@ module_dispatch_tbl = {
     'rawcode':      RawCode,
     'simplechart':  Chart,
     'twitter':      Twitter,
+    'textsearch':   TextSearch,
 
     # For testing
     'NOP':          NOP,

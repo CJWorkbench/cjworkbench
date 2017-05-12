@@ -1,0 +1,24 @@
+{
+  "name": "Twitter",
+  "id_name": "twitter",
+  "category" : "Sources",
+  "parameters": [
+    {
+      "name": "User",
+      "id_name" : "user",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "Fetch Now",
+      "id_name" : "fetch",
+      "type": "button"
+    },
+    {
+      "name": "Save previous tweets when fetching",
+      "id_name": "accumulate",
+      "type": "checkbox",
+      "default": "True"
+    }
+  ]
+}
