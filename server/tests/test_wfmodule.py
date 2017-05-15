@@ -19,11 +19,13 @@ class WfModuleTests(LoggedInTestCase):
         workflow2 = add_new_workflow(name='Workflow 2')
 
         self.module1 = self.add_new_module('Module 1', 'testdata')
-        self.pspec11 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.NUMBER, def_number=3.14, def_visible=False)
+        self.pspec11 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.NUMBER, def_float=3.14, def_visible=False)
         self.pspec12 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.STRING, def_string='foo')
-        self.pspec13 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.CHECKBOX, def_checkbox=True)
+        self.pspec13 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.CHECKBOX, def_boolean=True)
 
         module2 = self.add_new_module('Module 2', 'NOP')
+        self.pspec21 = ParameterSpec.objects.create(module=module2, type=ParameterSpec.MENU, def_menu_items='Apple|Banana|Kittens', def_integer=1)
+
         module3 = self.add_new_module('Module 3', 'double_M_col')
         self.pspec31 = ParameterSpec.objects.create(module=module3, type=ParameterSpec.BUTTON, def_ui_only=True)
 
@@ -45,7 +47,7 @@ class WfModuleTests(LoggedInTestCase):
     def test_default_parameters(self):
         self.wfmodule1.create_default_parameters()
         pval = ParameterVal.objects.get(parameter_spec=self.pspec11, wf_module=self.wfmodule1)
-        self.assertEqual(pval.number, 3.14)
+        self.assertEqual(pval.float, 3.14)
         self.assertEqual(pval.visible, False)
         self.assertEqual(pval.ui_only, False)
 
@@ -56,9 +58,14 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(pval.multiline, False) # test correct default
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec13, wf_module=self.wfmodule1)
-        self.assertEqual(pval.checkbox, True)
+        self.assertEqual(pval.boolean, True)
         self.assertEqual(pval.visible, True)
         self.assertEqual(pval.ui_only, False)
+
+        # Menu should have correct default item
+        self.wfmodule2.create_default_parameters()
+        pval = ParameterVal.objects.get(parameter_spec=self.pspec21, wf_module=self.wfmodule2)
+        self.assertEqual(pval.selected_menu_item_string(), 'Banana')
 
         # button has no value, so just checking existence here
         self.wfmodule3.create_default_parameters()

@@ -90,9 +90,9 @@ class WfModule(models.Model):
         if param_type == ParameterSpec.STRING:
             return pval.string
         elif param_type == ParameterSpec.NUMBER:
-            return pval.number
+            return pval.float
         elif param_type == ParameterSpec.CHECKBOX:
-            return pval.checkbox
+            return pval.boolean
 
     def get_param_string(self, name):
         return self.get_param_typecheck(name, ParameterSpec.STRING)
@@ -147,14 +147,16 @@ class ParameterSpec(models.Model):
     # constants
     STRING = 'string'
     NUMBER = 'number'
+    CHECKBOX = 'checkbox'
+    MENU = 'menu'               # menu like HTML <select>
     BUTTON = 'button'
     CUSTOM = 'custom'           # rendered in front end
-    CHECKBOX = 'checkbox'
     TYPE_CHOICES = (
         (STRING, 'String'),
         (NUMBER, 'Number'),
         (BUTTON, 'Button'),
         (CHECKBOX, 'Checkbox'),
+        (MENU, 'Menu'),
         (CUSTOM, 'Custom')
     )
 
@@ -173,9 +175,12 @@ class ParameterSpec(models.Model):
 
     order = models.IntegerField('order', default=0)
 
-    def_number = models.FloatField(NUMBER, null=True, blank=True, default=0.0)
-    def_string = models.TextField(STRING, blank=True, default='')
-    def_checkbox = models.BooleanField(CHECKBOX, default=True)
+    def_string = models.TextField('string', null=True, blank=True, default='')
+    def_float = models.FloatField('float', null=True, blank=True, default=0.0)
+    def_boolean = models.NullBooleanField('boolean', null=True, blank=True, default=True)
+    def_integer = models.IntegerField('integer', null=True, blank=True, default=0) # which item selected
+
+    def_menu_items = models.TextField(MENU, null=True, blank=True)       # menu items here
 
     def_visible = models.BooleanField(default=True)
     def_ui_only = models.BooleanField(default=False)
@@ -190,9 +195,10 @@ class ParameterVal(models.Model):
     class Meta:
         ordering = ['order']
 
-    number = models.FloatField(ParameterSpec.NUMBER, null=True, blank=True)
-    string = models.TextField(ParameterSpec.STRING, null=True, blank=True)
-    checkbox = models.BooleanField(ParameterSpec.CHECKBOX, default=True)
+    string = models.TextField("string", null=True, blank=True)
+    float = models.FloatField("float", null=True, blank=True)
+    integer = models.IntegerField("integer", blank=True, default='0')
+    boolean = models.BooleanField("boolean", default=True)
 
     wf_module = models.ForeignKey(WfModule, related_name='parameter_vals',
                                on_delete=models.CASCADE, null=True)  # delete value if Module deleted
@@ -201,15 +207,19 @@ class ParameterVal(models.Model):
 
     order = models.IntegerField('order', default=0)
 
+    menu_items = models.TextField(ParameterSpec.MENU, null=True, blank=True)
+
     visible = models.BooleanField(default=True)
     ui_only = models.BooleanField(default=False)
     multiline = models.BooleanField(default=False)
 
     def init_from_spec(self):
-        self.number = self.parameter_spec.def_number
         self.string = self.parameter_spec.def_string
-        self.checkbox = self.parameter_spec.def_checkbox
+        self.float = self.parameter_spec.def_float
+        self.boolean= self.parameter_spec.def_boolean
+        self.integer = self.parameter_spec.def_integer
         self.order = self.parameter_spec.order
+        self.menu_items = self.parameter_spec.def_menu_items
         self.visible = self.parameter_spec.def_visible
         self.ui_only = self.parameter_spec.def_ui_only
         self.multiline = self.parameter_spec.def_multiline
@@ -218,20 +228,36 @@ class ParameterVal(models.Model):
     def user_authorized(self, user):
         return self.wf_module.user_authorized(user)
 
+    # Return text of currently selected menu item
+    def selected_menu_item_string(self):
+        if self.parameter_spec.type != ParameterSpec.MENU:
+            raise ValueError('Request for current item of non-menu parameter ' + self.parameter_spec.name)
+
+        items = self.menu_items
+        if (items is not None):
+            items = items.split('|')
+            idx = self.integer
+            if items != [''] and idx >=0 and idx < len(items):
+                return items[idx]
+            else:
+                return ''  # be a little lenient, to allow for possible errors when menu items changed
+
+
     def __str__(self):
         if self.parameter_spec.type == ParameterSpec.STRING:
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + self.string
         elif self.parameter_spec.type == ParameterSpec.NUMBER:
-            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + str(self.number)
+            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + str(self.float)
         elif self.parameter_spec.type == ParameterSpec.BUTTON:
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - button'
+        elif self.parameter_spec.type == ParameterSpec.CHECKBOX:
+            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - checkbox ' + str(self.boolean)
+        elif self.parameter_spec.type == ParameterSpec.MENU:
+            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - menu ' + self.selected_menu_item_string()
         elif self.parameter_spec.type == ParameterSpec.CUSTOM:
             return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - custom'
-        elif self.parameter_spec.type == ParameterSpec.CHECKBOX:
-            return self.wf_module.__str__() + ' - ' + ' - checkbox'
         else:
             raise ValueError("Invalid parameter type")
-
 
 
 # StoredObject is our persistance layer.

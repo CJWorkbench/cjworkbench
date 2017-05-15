@@ -35,13 +35,21 @@ def parameterval_detail(request, pk, format=None):
     elif request.method == 'PATCH':
 
         # change parameter value
-        data = request.data
-        if ParameterSpec.STRING in data.keys():
-            param.string = data[ParameterSpec.STRING]
-        elif ParameterSpec.NUMBER in data.keys():
-            param.number = data[ParameterSpec.NUMBER]
-        elif ParameterSpec.CHECKBOX in data.keys():
-            param.checkbox = data[ParameterSpec.CHECKBOX]
+        value = request.data['value']
+        type = param.parameter_spec.type
+
+        if type == ParameterSpec.STRING:
+            param.string = value
+
+        elif type == ParameterSpec.NUMBER:
+            param.float = value
+
+        elif type == ParameterSpec.CHECKBOX:
+            param.boolean = value
+
+        elif type == ParameterSpec.MENU:
+            param.integer = value
+
         param.save()
 
         # TODO this isn't a real error handling framework, only clear the error if we caused it!

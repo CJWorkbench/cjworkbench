@@ -4,8 +4,15 @@
   "category" : "Sources",
   "parameters": [
     {
-      "name": "User",
-      "id_name" : "user",
+      "name" : "Query type",
+      "id_name" : "querytype",
+      "type" : "menu",
+      "menu_items" : "User|Search",
+      "default": "0"
+    },
+    {
+      "name": "Query",
+      "id_name" : "query",
       "type": "string",
       "default": ""
     },

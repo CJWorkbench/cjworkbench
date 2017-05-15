@@ -96,9 +96,10 @@ def load_parameter_spec(d, module, order):
         pspec.name = name
 
         # reset to default defaults
-        pspec.def_number = 0.0
+        pspec.def_float = 0.0
         pspec.def_string = ''
-        pspec.def_checkbox = True
+        pspec.def_boolean = True
+        pspec.def_integer = 0
 
         type_changed = pspec.type != ptype
         pspec.type = ptype
@@ -117,13 +118,18 @@ def load_parameter_spec(d, module, order):
     if ptype == 'string':
         pspec.def_string=default_or('')
     elif d['type'] == 'number':
-        pspec.def_number=default_or(0)
+        pspec.def_float=default_or(0)
+    elif d['type'] == 'checkbox':
+        pspec.def_boolean = default_or(False)
+    elif d['type'] == 'menu':
+        pspec.def_integer = default_or(0)
+        if (not 'menu_items' in d) or (d['menu_items']==''):
+            raise ValueError("Menu parameter specification missing menu_items")
+        pspec.def_menu_items = d['menu_items']
     elif d['type'] == 'button':
-        pass # no value
+        pass  # no value
     elif d['type'] == 'custom':
         pspec.def_string = default_or('')
-    elif d['type'] == 'checkbox':
-         pspec.def_checkbox = default_or(False)
     elif d['type'] != None:
         raise ValueError("Unknown parameter type " + d['type'])
 

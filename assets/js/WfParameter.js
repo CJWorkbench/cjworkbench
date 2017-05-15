@@ -1,6 +1,7 @@
 // WfParameter - a single editable parameter
 
 import React, { PropTypes } from 'react'
+import MenuParam from './MenuParam'
 import FetchModal from './FetchModal'
 import ChartParameter from './Chart'
 import ColumnSelector from './ColumnSelector'
@@ -22,24 +23,22 @@ export default class WfParameter extends React.Component {
     this.getInputColNames = this.getInputColNames.bind(this);
   }
 
-  paramChanged(e) {
+  paramChanged(newVal) {
     // console.log("PARAM CHANGED");
-    var newVal = {};
-    newVal[this.type] = e.target.value;
-    this.props.changeParam(this.props.p.id, newVal);
+    this.props.changeParam(this.props.p.id, {value : newVal});
   }
 
   // Save value (and re-render) when user presses enter or we lose focus
   // Applies only to non-multline fields
   keyPress(e) {
     if ((this.type != 'string' || !this.props.p.multiline) && e.key == 'Enter') {
-        this.paramChanged(e);
+        this.paramChanged(e.target.value);
         e.preventDefault();       // eat the Enter so it doesn't get in our input field
     }
   }
 
   blur(e) {
-    this.paramChanged(e);
+    this.paramChanged(e.target.value);
   }
 
   // Send event to server for button click
@@ -61,10 +60,9 @@ export default class WfParameter extends React.Component {
           store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', response.statusText))
       });
     }
+
     if (this.type == 'checkbox') {
-        var newVal = {};
-        newVal[this.type] = e.target.checked;
-        this.props.changeParam(this.props.p.id, newVal);
+      paramChanged(e.target.checked)
     }
   }
 
@@ -81,9 +79,10 @@ export default class WfParameter extends React.Component {
     this.type = newProps.p.parameter_spec.type;
     this.name = newProps.p.parameter_spec.name;
 
-    if (this.stringRef) this.stringRef.value = newProps.p.string;
-    if (this.numberRef) this.numberRef.value = newProps.p.number;
-    if (this.checkboxRef) this.checkboxRef.value = newProps.p.checkbox;
+    // update form controls to current values
+    if (this.stringRef) this.stringRef.value = newProps.p.value;
+    if (this.numberRef) this.numberRef.value = newProps.p.value;
+    if (this.checkboxRef) this.checkboxRef.value = newProps.p.value;
   }
 
 
@@ -91,6 +90,8 @@ export default class WfParameter extends React.Component {
     if (!this.props.p.visible) {
       return false; // nothing to see here
     }
+
+    //console.log("Creating parameter type " + this.type);
 
     switch (this.type) {
       case 'string':
@@ -110,13 +111,12 @@ export default class WfParameter extends React.Component {
             <textarea
               className={sclass}
               rows={srows}
-              defaultValue={this.props.p.string}
+              defaultValue={this.props.p.value}
               onBlur={this.blur}
               onKeyPress={this.keyPress}
               ref={ el => this.stringRef = el}/>
           </div>
         );
-
 
       case 'number':
         return (
@@ -125,7 +125,7 @@ export default class WfParameter extends React.Component {
             <textarea
               className='wfmoduleNumberInput'
               rows='1'
-              defaultValue={this.props.p.number}
+              defaultValue={this.props.p.value}
               onBlur={this.blur}
               onKeyPress={this.keyPress}
               ref={ el => this.numberRef = el}/>
@@ -146,11 +146,19 @@ export default class WfParameter extends React.Component {
                 <label className='mr-1'>{this.name}:</label>
                 <input
                   type="checkbox"
-                  checked={this.props.p.checkbox}
+                  checked={this.props.p.value}
                   onChange={this.click}
                   ref={ el => this.checkboxRef = el}/>
             </div>
         );
+
+      case 'menu':
+        return (<MenuParam
+                  name={this.name}
+                  items={this.props.p.menu_items}
+                  selectedIdx={this.props.p.value}
+                  onChange={ idx => { this.paramChanged(idx) }}
+                /> );
 
       case 'custom':
 

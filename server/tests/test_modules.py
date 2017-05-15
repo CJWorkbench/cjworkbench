@@ -325,7 +325,6 @@ class TextSearchTest(LoggedInTestCase):
     def test_render(self):
         # No columns specified, no output
         out = execute_wfmodule(self.wf_module)
-        print(out)
         self.assertTrue(out.empty)
 
         # Basic search
@@ -340,7 +339,7 @@ class TextSearchTest(LoggedInTestCase):
         # Case sensitive - should return nothing because no match
         self.query_pval.string = 'feb'
         self.query_pval.save()
-        self.case_pval.checkbox = True
+        self.case_pval.boolean = True
         self.case_pval.save()
 
         out = execute_wfmodule(self.wf_module)
@@ -349,7 +348,7 @@ class TextSearchTest(LoggedInTestCase):
         # Regex
         self.query_pval.string = 'Jan|Feb'
         self.query_pval.save()
-        self.regex_pval.checkbox = True
+        self.regex_pval.boolean = True
         self.regex_pval.save()
 
         out = execute_wfmodule(self.wf_module)

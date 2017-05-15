@@ -306,7 +306,7 @@ class Twitter(ModuleImpl):
 
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy(notify=True)
-        user = wfm.get_param_string('user')
+        user = wfm.get_param_string('query')
 
         tweets = Twitter.get_new_tweets(user, cols)
 

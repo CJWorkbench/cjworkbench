@@ -1,0 +1,33 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders correctly 1`] = `
+<div>
+  <label
+    className="mr-1"
+  >
+    SuperMenu
+    :
+  </label>
+  <select
+    className="custom-select"
+    onChange={[Function]}
+    value={1}
+  >
+    <option
+      value={0}
+    >
+      Apple
+    </option>
+    <option
+      value={1}
+    >
+      Kittens
+    </option>
+    <option
+      value={2}
+    >
+      Banana
+    </option>
+  </select>
+</div>
+`;

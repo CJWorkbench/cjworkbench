@@ -37,16 +37,18 @@ class InitmoduleTests(LoggedInTestCase):
             }            
 
         # a new version of LoadCSV that deletes one parameter, changes the type and order of another, and adds a new one
+        # Also tests menu param
         self.loadcsv2 = {
             'name': 'Load CSV RELOADED',
             'id_name': 'loadcsv',
             'category' : 'Sources',
             'parameters': [
                 {
-                  'name': 'Retries',
-                  'id_name' : 'retries',
-                  'type': 'number',
-                  'default' : 42
+                  'name': 'Cake type',
+                  'id_name' : 'caketype',
+                  'type': 'menu',
+                  'menu_items' : 'Cheese|Chocolate',
+                  'default' : 1
                 },
                 {
                   'name': 'URL',
@@ -174,24 +176,25 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(url_spec2.order, 1)
         url_pval1.refresh_from_db()
         self.assertEqual(url_pval1.string, '')
-        self.assertEqual(url_pval1.number, 42)
+        self.assertEqual(url_pval1.float, 42)
         self.assertEqual(url_pval1.order, 1)
         url_pval2.refresh_from_db()
         self.assertEqual(url_pval2.string, '')
-        self.assertEqual(url_pval2.number, 42)
+        self.assertEqual(url_pval2.float, 42)
         self.assertEqual(url_pval2.order, 1)
 
-        # new Numeric parameter should exist, with corresponding new values in WfModules
-        retry_spec = ParameterSpec.objects.get(id_name='retries')
-        self.assertEqual(retry_spec.type, ParameterSpec.NUMBER)
-        self.assertEqual(retry_spec.def_number, 42)
-        self.assertEqual(retry_spec.order, 0)
-        retry_pval1 = ParameterVal.objects.get(parameter_spec=retry_spec, wf_module=wfm1)
-        self.assertEqual(retry_pval1.number, 42)
-        self.assertEqual(retry_pval1.order, 0)
-        retry_pval2 = ParameterVal.objects.get(parameter_spec=retry_spec, wf_module=wfm2)
-        self.assertEqual(retry_pval2.number, 42)
-        self.assertEqual(retry_pval1.order, 0)
+        # new Menu parameter should exist, with corresponding new values in WfModules
+        menu_spec = ParameterSpec.objects.get(id_name='caketype')
+        self.assertEqual(menu_spec.type, ParameterSpec.MENU)
+        self.assertEqual(menu_spec.def_integer, 1)
+        self.assertEqual(menu_spec.def_menu_items, 'Cheese|Chocolate')
+        self.assertEqual(menu_spec.order, 0)
+        menu_pval1 = ParameterVal.objects.get(parameter_spec=menu_spec, wf_module=wfm1)
+        self.assertEqual(menu_pval1.integer, 1)
+        self.assertEqual(menu_pval1.order, 0)
+        menu_pval2 = ParameterVal.objects.get(parameter_spec=menu_spec, wf_module=wfm2)
+        self.assertEqual(menu_pval2.integer, 1)
+        self.assertEqual(menu_pval1.order, 0)
 
 
 
