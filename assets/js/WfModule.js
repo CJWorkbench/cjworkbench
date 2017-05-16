@@ -110,7 +110,7 @@ export default class WfModule extends React.Component {
   setParamText(id_name, text) {
     var p = this.params.find( p => p.parameter_spec.id_name == id_name );
     if (p && text != p.string) {
-      this.props['data-changeParam'](p.id, { string: text })
+      this.props['data-changeParam'](p.id, { value: text })
     }
   }
 
@@ -118,7 +118,7 @@ export default class WfModule extends React.Component {
     //console.log("getParamText " + id_name)
     var p = this.params.find( p => p.parameter_spec.id_name == id_name );
     if (p) {
-      return p.string;
+      return p.value;
     }
   }
 
