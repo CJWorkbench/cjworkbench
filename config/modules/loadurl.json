@@ -1,6 +1,6 @@
 {
   "name": "Load From URL",
-  "id_name": "loadcsv" ,
+  "id_name": "loadurl" ,
   "category" : "Sources",
   "parameters": [
     {
