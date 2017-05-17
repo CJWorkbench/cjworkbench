@@ -7,6 +7,9 @@ class SelectColumns(ModuleImpl):
         cols = wf_module.get_param_string('colnames').split(',')
         cols = [c.strip() for c in cols]
 
+        if cols == [] or cols == ['']:
+            return None # no columns, no data. harrumph
+
         for c in cols:
             if not c in table.columns:
                 wf_module.set_error('There is no column named %s' % c)

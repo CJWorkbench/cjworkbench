@@ -9,19 +9,13 @@ import numpy as np
 import logging
 logger = logging.getLogger(__name__)
 
-# Basic execution path: run each workflow in sequence, transforming the input table
-def execute_workflow(workflow):
-    table = None
-    for wf_module in workflow.wf_modules.all():
-        table = wf_module.execute(table)
-
-    print(table)
 
 # Return the output of a particular module. No caching yet...
 def execute_wfmodule(wfmodule):
     table = pd.DataFrame()
     workflow = wfmodule.workflow
     for wfm in workflow.wf_modules.all():
+        #wfm.set_ready(notify=True)          # reset errors when we re-render, as input has changed
         table = wfm.execute(table)
         if wfm == wfmodule:
             break

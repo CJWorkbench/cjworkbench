@@ -13,7 +13,6 @@ from server.serializers import WorkflowSerializer
 from server.serializers import WfModuleSerializer
 from server.serializers import ParameterValSerializer
 from server.initmodules import init_modules
-from server.execute import execute_workflow
 from pandas import *
 
 # ---- Home Page ----

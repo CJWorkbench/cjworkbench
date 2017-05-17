@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, Workflow, WfModule, ParameterSpec, ParameterVal
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite
-from server.execute import execute_workflow, execute_wfmodule
+from server.execute import execute_wfmodule
 
 
 # ---- Workflows list page ----
