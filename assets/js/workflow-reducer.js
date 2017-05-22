@@ -77,7 +77,7 @@ export function workflowReducer(state, action) {
 
     // Change status on a single module
     case WF_MODULE_STATUS_CHANGE:
-      console.log(WF_MODULE_STATUS_CHANGE);
+      console.log(WF_MODULE_STATUS_CHANGE + " " + action.id);
       if ('wf_modules' in state.workflow) {
 
         var newState = state;

@@ -6,6 +6,10 @@ import pandas as pd
 
 class Formula(ModuleImpl):
     def render(wf_module, table):
+
+        if table is None:
+            return None     # no rows to process
+
         formula = wf_module.get_param_string('formula')
         colnames = list(table.columns)
         newcol = pd.Series(np.zeros(len(table)))

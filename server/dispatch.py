@@ -77,6 +77,6 @@ def module_dispatch_render(wf_module, table):
 def module_dispatch_event(parameter, event):
     dispatch = parameter.wf_module.module.dispatch
     if dispatch not in module_dispatch_tbl.keys():
-        raise ValueError('Unknown event dispatch %s for parameter %s' % (dispatch, parameter.name))
+        raise ValueError("Unknown dispatch id '%s' while handling event for parameter '%s'" % (dispatch, parameter.parameter_spec.name))
 
     return module_dispatch_tbl[dispatch].event(parameter, event)

@@ -62,7 +62,7 @@ export default class WfParameter extends React.Component {
     }
 
     if (this.type == 'checkbox') {
-      paramChanged(e.target.checked)
+      this.paramChanged(e.target.checked)
     }
   }
 
@@ -71,7 +71,8 @@ export default class WfParameter extends React.Component {
     var url = '/api/wfmodules/' + this.props.wf_module_id + '/input';
     return fetch(url, { credentials: 'include'})
             .then(response => response.json())
-            .then( json => json ? Object.keys(json[0]) : [] );       // get column names from first row of data
+            .then( json => {
+                    return json && json.length>0 ? Object.keys(json[0]) : [] });       // get column names from first row of data
   }
 
   // We need to update input contents when we get new props. Hmm, is there a managed form components library?
