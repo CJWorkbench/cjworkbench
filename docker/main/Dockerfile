@@ -11,9 +11,8 @@ RUN npm install
 # build assets
 RUN ./node_modules/.bin/webpack -p --config webpack.config.js
 
-# setup db, apply migrations, create initial admin user
+# setup db, apply migrations
 RUN python manage.py migrate
-RUN python manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@cjworkbench.org', 'admin')"
 
 # go! default command runs in debug
 CMD python manage.py runserver $(hostname -i):8000

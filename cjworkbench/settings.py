@@ -30,7 +30,7 @@ SITE_NAME = basename(DJANGO_ROOT)
 
 # SECURITY WARNING: don't run with debug turned on in production!
 if 'CJW_PRODUCTION' in os.environ:
-    DEBUG = os.environ['CJW_PRODUCTION']
+    DEBUG = not os.environ['CJW_PRODUCTION']
 else:
     DEBUG=True
 
