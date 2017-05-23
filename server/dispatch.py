@@ -18,6 +18,7 @@ from .modules.textsearch import TextSearch
 from .modules.formula import Formula
 from .modules.pythoncode import PythonCode
 from .modules.chart import Chart
+from .modules.countvalues import CountValues
 
 # ---- Test Support ----
 
@@ -54,6 +55,7 @@ module_dispatch_tbl = {
     'simplechart':  Chart,
     'twitter':      Twitter,
     'textsearch':   TextSearch,
+    'countvalues':  CountValues,
 
     # For testing
     'NOP':          NOP,

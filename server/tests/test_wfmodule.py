@@ -113,26 +113,6 @@ class WfModuleTests(LoggedInTestCase):
         double_test_data = table_to_content(double_test_data)
         self.assertEqual(response.content, double_test_data)
 
-        # Set status to busy/error, should get no result
-        self.wfmodule1.set_error('whoa error')
-        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
-        self.assertEqual(response.content, b'[]')
-        response = self.client.get('/api/wfmodules/%d' % self.wfmodule1.id)
-        self.assertEqual(response.data['error_msg'], 'whoa error')
-
-        self.wfmodule1.set_busy()
-        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
-        self.assertEqual(response.content, b'[]')
-
-        # no result from following NOP either
-        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule2.id)
-        self.assertEqual(response.content, b'[]')
-
-        # resetting the status should restore the output
-        self.wfmodule1.set_ready()
-        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
-        self.assertEqual(response.content, test_data_json)
-
 
     # can we take one out?
     def test_wf_module_delete(self):

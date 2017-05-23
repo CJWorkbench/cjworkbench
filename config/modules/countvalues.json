@@ -1,0 +1,20 @@
+{
+  "name": "Count Values",
+  "id_name": "countvalues",
+  "category" : "Analyze",
+  "parameters": [
+    {
+      "name": "Column",
+      "id_name" : "column",
+      "type": "string"
+    },
+    {
+      "name": "Sort by",
+      "id_name" : "sortby",
+      "type" : "menu",
+      "menu_items" : "Value|Frequency",
+      "default": "0"
+    }
+  ]
+}
+

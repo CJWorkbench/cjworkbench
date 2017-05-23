@@ -46,8 +46,9 @@ def table_to_content(table):
     return table.to_json(orient='records').encode('UTF=8')
 
 # setup a workflow with some test data loaded into a PasteCSV module
+# If no data given, use standard mock data
 # returns workflow
-def create_testdata_workflow():
+def create_testdata_workflow(csv_text=mock_csv_text):
     # Define paste CSV module from scratch
     csv_module = add_new_module('Module 1', 'pastecsv')
     pspec = add_new_parameter_spec(csv_module, 'csv', ParameterSpec.STRING)
@@ -60,7 +61,7 @@ def create_testdata_workflow():
     wfmodule = add_new_wf_module(workflow, csv_module, 0)
     wfmodule.create_default_parameters()
     pval = ParameterVal.objects.get(parameter_spec=pspec)
-    pval.string = mock_csv_text
+    pval.string = csv_text
     pval.save()
 
     return workflow
@@ -70,6 +71,15 @@ def create_testdata_workflow():
 # (error if more than one parameter with that spec)
 def get_param_by_id_name(id_name):
     return ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name=id_name))
+
+# --- set parameters ---
+def set_string(pval, str):
+    pval.string = str
+    pval.save()
+
+def set_integer(pval, integer):
+    pval.integer = integer
+    pval.save()
 
 
 # ---- Load Modules ----
