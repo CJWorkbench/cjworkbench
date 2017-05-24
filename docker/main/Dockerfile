@@ -5,7 +5,7 @@ EXPOSE 8000
 RUN git clone --recursive https://github.com/jstray/cjworkbench.git
 
 # python deps already installed, but get node deps
- WORKDIR cjworkbench
+WORKDIR cjworkbench
 RUN npm install
 
 # build assets
