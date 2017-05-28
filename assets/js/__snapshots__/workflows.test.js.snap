@@ -26,7 +26,7 @@ exports[`renders correctly 1`] = `
             workflowsPage={true}
           >
             <UncontrolledDropdown>
-              <ei
+              <Dropdown
                 isOpen={false}
                 tag="div"
                 toggle={[Function]}
@@ -34,12 +34,12 @@ exports[`renders correctly 1`] = `
                 <div
                   className="dropdown"
                 >
-                  <ei
+                  <DropdownToggle
                     aria-haspopup={true}
                     color="secondary"
                     data-toggle="dropdown"
                   >
-                    <ei
+                    <Button
                       aria-expanded={false}
                       aria-haspopup="true"
                       className=""
@@ -58,9 +58,9 @@ exports[`renders correctly 1`] = `
                       >
                         ☰
                       </button>
-                    </ei>
-                  </ei>
-                  <Xo
+                    </Button>
+                  </DropdownToggle>
+                  <DropdownMenu
                     right={true}
                     tag="div"
                   >
@@ -70,7 +70,7 @@ exports[`renders correctly 1`] = `
                       role="menu"
                       tabIndex="-1"
                     >
-                      <ei
+                      <DropdownItem
                         href="http://blog.cjworkbench.org"
                         tag="a"
                         toggle={true}
@@ -83,8 +83,8 @@ exports[`renders correctly 1`] = `
                         >
                            Help 
                         </a>
-                      </ei>
-                      <ei
+                      </DropdownItem>
+                      <DropdownItem
                         href="/logout"
                         tag="a"
                         toggle={true}
@@ -97,11 +97,11 @@ exports[`renders correctly 1`] = `
                         >
                            Logout 
                         </a>
-                      </ei>
+                      </DropdownItem>
                     </div>
-                  </Xo>
+                  </DropdownMenu>
                 </div>
-              </ei>
+              </Dropdown>
             </UncontrolledDropdown>
           </WorkflowHamburgerMenu>
         </nav>
@@ -190,7 +190,7 @@ exports[`renders correctly 2`] = `
             workflowsPage={true}
           >
             <UncontrolledDropdown>
-              <ei
+              <Dropdown
                 isOpen={false}
                 tag="div"
                 toggle={[Function]}
@@ -198,12 +198,12 @@ exports[`renders correctly 2`] = `
                 <div
                   className="dropdown"
                 >
-                  <ei
+                  <DropdownToggle
                     aria-haspopup={true}
                     color="secondary"
                     data-toggle="dropdown"
                   >
-                    <ei
+                    <Button
                       aria-expanded={false}
                       aria-haspopup="true"
                       className=""
@@ -222,9 +222,9 @@ exports[`renders correctly 2`] = `
                       >
                         ☰
                       </button>
-                    </ei>
-                  </ei>
-                  <Xo
+                    </Button>
+                  </DropdownToggle>
+                  <DropdownMenu
                     right={true}
                     tag="div"
                   >
@@ -234,7 +234,7 @@ exports[`renders correctly 2`] = `
                       role="menu"
                       tabIndex="-1"
                     >
-                      <ei
+                      <DropdownItem
                         href="http://blog.cjworkbench.org"
                         tag="a"
                         toggle={true}
@@ -247,8 +247,8 @@ exports[`renders correctly 2`] = `
                         >
                            Help 
                         </a>
-                      </ei>
-                      <ei
+                      </DropdownItem>
+                      <DropdownItem
                         href="/logout"
                         tag="a"
                         toggle={true}
@@ -261,11 +261,11 @@ exports[`renders correctly 2`] = `
                         >
                            Logout 
                         </a>
-                      </ei>
+                      </DropdownItem>
                     </div>
-                  </Xo>
+                  </DropdownMenu>
                 </div>
-              </ei>
+              </Dropdown>
             </UncontrolledDropdown>
           </WorkflowHamburgerMenu>
         </nav>

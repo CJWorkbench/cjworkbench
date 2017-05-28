@@ -4,7 +4,7 @@ exports[`renders correctly 1`] = `
 <span
   className="ml-2"
 >
-  <ei
+  <Button
     color="secondary"
     onClick={[Function]}
     tag="button"
@@ -12,34 +12,38 @@ exports[`renders correctly 1`] = `
      
     ⏱
      
-  </ei>
-  <ei
+  </Button>
+  <Modal
+    autoFocus={true}
     backdrop={true}
+    backdropTransitionTimeout={150}
+    fade={true}
     isOpen={false}
     keyboard={true}
+    modalTransitionTimeout={300}
     toggle={[Function]}
     zIndex={1050}
   >
-    <Ln
+    <ModalHeader
       tag="h4"
       toggle={[Function]}
       wrapTag="div"
     >
       External Data Settings
-    </Ln>
-    <Rn
+    </ModalHeader>
+    <ModalBody
       tag="div"
     >
-      <ml
+      <FormGroup
         tag="div"
       >
-        <Hl
+        <Label
           for="exampleSelect"
           tag="label"
         >
           Which version?
-        </Hl>
-        <ei
+        </Label>
+        <Input
           className="mb-3"
           id="exampleSelect"
           name="select"
@@ -67,14 +71,14 @@ exports[`renders correctly 1`] = `
           <option>
             April 12 at 2:51PM
           </option>
-        </ei>
-        <Hl
+        </Input>
+        <Label
           for="exampleSelect2"
           tag="label"
         >
           Update when?
-        </Hl>
-        <ei
+        </Label>
+        <Input
           id="exampleSelect2"
           name="select"
           tag="p"
@@ -104,28 +108,28 @@ exports[`renders correctly 1`] = `
           <option>
             Weekly
           </option>
-        </ei>
-      </ml>
-    </Rn>
-    <Hn
+        </Input>
+      </FormGroup>
+    </ModalBody>
+    <ModalFooter
       tag="div"
     >
-      <ei
+      <Button
         color="primary"
         onClick={[Function]}
         tag="button"
       >
         Ok
-      </ei>
+      </Button>
        
-      <ei
+      <Button
         color="secondary"
         onClick={[Function]}
         tag="button"
       >
         Cancel
-      </ei>
-    </Hn>
-  </ei>
+      </Button>
+    </ModalFooter>
+  </Modal>
 </span>
 `;

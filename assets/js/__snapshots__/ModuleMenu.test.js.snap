@@ -2,15 +2,15 @@
 
 exports[`renders correctly 1`] = `
 <UncontrolledDropdown>
-  <ei
+  <DropdownToggle
     aria-haspopup={true}
     caret={true}
     color="secondary"
     data-toggle="dropdown"
   >
     Add Module
-  </ei>
-  <Xo
+  </DropdownToggle>
+  <DropdownMenu
     tag="div"
   />
 </UncontrolledDropdown>
@@ -18,18 +18,18 @@ exports[`renders correctly 1`] = `
 
 exports[`renders correctly 2`] = `
 <UncontrolledDropdown>
-  <ei
+  <DropdownToggle
     aria-haspopup={true}
     caret={true}
     color="secondary"
     data-toggle="dropdown"
   >
     Add Module
-  </ei>
-  <Xo
+  </DropdownToggle>
+  <DropdownMenu
     tag="div"
   >
-    <ei
+    <DropdownItem
       header={true}
       tag="button"
       toggle={true}
@@ -37,8 +37,8 @@ exports[`renders correctly 2`] = `
        
       Wrangle
        
-    </ei>
-    <ei
+    </DropdownItem>
+    <DropdownItem
       className="ml-2"
       data-id={9}
       onClick={[Function]}
@@ -48,13 +48,13 @@ exports[`renders correctly 2`] = `
        
       Cast
        
-    </ei>
-    <ei
+    </DropdownItem>
+    <DropdownItem
       divider={true}
       tag="button"
       toggle={true}
     />
-    <ei
+    <DropdownItem
       header={true}
       tag="button"
       toggle={true}
@@ -62,8 +62,8 @@ exports[`renders correctly 2`] = `
        
       Visualize
        
-    </ei>
-    <ei
+    </DropdownItem>
+    <DropdownItem
       className="ml-2"
       data-id={6}
       onClick={[Function]}
@@ -73,13 +73,13 @@ exports[`renders correctly 2`] = `
        
       Chart
        
-    </ei>
-    <ei
+    </DropdownItem>
+    <DropdownItem
       divider={true}
       tag="button"
       toggle={true}
     />
-    <ei
+    <DropdownItem
       header={true}
       tag="button"
       toggle={true}
@@ -87,8 +87,8 @@ exports[`renders correctly 2`] = `
        
       Analyze
        
-    </ei>
-    <ei
+    </DropdownItem>
+    <DropdownItem
       className="ml-2"
       data-id={1}
       onClick={[Function]}
@@ -98,13 +98,13 @@ exports[`renders correctly 2`] = `
        
       Formula
        
-    </ei>
-    <ei
+    </DropdownItem>
+    <DropdownItem
       divider={true}
       tag="button"
       toggle={true}
     />
-    <ei
+    <DropdownItem
       header={true}
       tag="button"
       toggle={true}
@@ -112,8 +112,8 @@ exports[`renders correctly 2`] = `
        
       Sources
        
-    </ei>
-    <ei
+    </DropdownItem>
+    <DropdownItem
       className="ml-2"
       data-id={2}
       onClick={[Function]}
@@ -123,13 +123,13 @@ exports[`renders correctly 2`] = `
        
       Load From URL
        
-    </ei>
-    <ei
+    </DropdownItem>
+    <DropdownItem
       divider={true}
       tag="button"
       toggle={true}
     />
-    <ei
+    <DropdownItem
       header={true}
       tag="button"
       toggle={true}
@@ -137,8 +137,8 @@ exports[`renders correctly 2`] = `
        
       Wrangle
        
-    </ei>
-    <ei
+    </DropdownItem>
+    <DropdownItem
       className="ml-2"
       data-id={10}
       onClick={[Function]}
@@ -148,7 +148,7 @@ exports[`renders correctly 2`] = `
        
       Melt
        
-    </ei>
-  </Xo>
+    </DropdownItem>
+  </DropdownMenu>
 </UncontrolledDropdown>
 `;
