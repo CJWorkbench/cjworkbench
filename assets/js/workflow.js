@@ -5,6 +5,8 @@ import { sortable } from 'react-sortable'
 import ModuleMenu from './ModuleMenu'
 import { WorkflowNavBar } from './navbar'
 import WfModule from './WfModule'
+import OutputPane from './OutputPane'
+
 import { getPageID, csrfToken } from './utils'
 
 require('bootstrap/dist/css/bootstrap.css');
@@ -78,11 +80,25 @@ export default class Workflow extends React.Component {
 
     var moduleMenu = <ModuleMenu addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}/>
 
+    var outputPane = null;
+    if (this.props.workflow.wf_modules.length > 0) {
+      outputPane = <OutputPane id={this.props.workflow.wf_modules[0].id} revision={this.props.workflow.revision}/>
+    }
+    
     // We are a toolbar plus a sortable list of modules
     return (
       <div>
         <WorkflowNavBar addButton={moduleMenu} workflowTitle={this.props.workflow.name}/>
-        <SortableList data={this.props.workflow} changeParam={this.props.changeParam} removeModule={this.props.removeModule}/>
+        <div className="container">
+          <div className="row">
+            <div className="col">
+              <SortableList data={this.props.workflow} changeParam={this.props.changeParam} removeModule={this.props.removeModule}/>
+            </div>
+            <div className="col">
+              {outputPane}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }

@@ -153,7 +153,7 @@ export default class WfModule extends React.Component {
             </div>
             <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
             <CollapsibleParams paramDivs={paramdivs}/>
-            <CollapsibleTableView id={this.wf_module.id} statusReady={this.wf_module.status == 'ready'} revision={this.revision} />
+            <CollapsibleTableView id={this.wf_module.id} revision={this.revision} />
             <a className='ml-2' href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
           </div>
 

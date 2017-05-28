@@ -64,3 +64,8 @@ export default class TableView extends React.Component {
     return ( <div> {table} </div> );
   }
 }
+
+TableView.propTypes = {
+  id: React.PropTypes.number,
+  revision: React.PropTypes.number
+};
