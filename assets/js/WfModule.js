@@ -5,6 +5,7 @@ import WfParameter from './WfParameter'
 import TableView from './TableView'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
+import * as Actions from './workflow-reducer'
 
 // Libraries to provide a collapsable table view
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
@@ -85,6 +86,7 @@ export default class WfModule extends React.Component {
   constructor(props) {
     super(props);
     this.initFields(props);
+    this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
     this.removeModule = this.removeModule.bind(this);
@@ -102,6 +104,12 @@ export default class WfModule extends React.Component {
   // alas, the drawback of the convienence of initFields is we need to call it whenever props change
   componentWillReceiveProps(newProps) {
     this.initFields(newProps)
+  }
+
+  // We become the selected module on any click
+  click(e) {
+    console.log("CLICKY");
+    Actions.store.dispatch(Actions.changeSelectedWfModuleAction(this.wf_module.id));
   }
 
   // These functions allow parameters to access each others value (text params only)
@@ -140,10 +148,14 @@ export default class WfModule extends React.Component {
           setParamText={this.setParamText} />
       });
 
+    var cardClass = this.props['data-selected'] ?
+      'card w-75 mx-auto mb-4 bg-info':
+      'card w-75 mx-auto mb-4 bg-faded';
+
     // Putting it all together: name, status, parameters, output
     return (
-      <div className='container' {...this.props} >
-        <div className='card w-75 mx-auto mb-4 bg-faded'>
+      <div className='container' {...this.props} onClick={this.click}>
+        <div className={cardClass}>
           <div className='card-block drop-shadow p-1'>
 
             <div className='d-flex justify-content-between align-items-center mb-2'>
@@ -163,3 +175,11 @@ export default class WfModule extends React.Component {
   } 
 }
 
+
+WfModule.propTypes = {
+  'data-wfmodule':      React.PropTypes.object,
+  'data-revison':       React.PropTypes.number,
+  'data-selected':      React.PropTypes.bool,
+  'data-changeParam':   React.PropTypes.func,
+  'data-removeModule':  React.PropTypes.func
+};

@@ -58,7 +58,14 @@ var SortableList = React.createClass({
           draggingIndex={this.state.draggingIndex}
           sortId={i}
           outline="list"
-          childProps={ {'data-wfmodule': item, 'data-changeParam': this.props.changeParam, 'data-removeModule': this.props.removeModule, 'data-revision': this.props.data.revision } } />
+          childProps={{
+            'data-wfmodule': item,
+            'data-changeParam': this.props.changeParam,
+            'data-removeModule': this.props.removeModule,
+            'data-revision': this.props.data.revision,
+            'data-selected': (item.id == this.props.selected_wf_module)
+          }}
+        />
       );
     }, this);
 
@@ -92,7 +99,12 @@ export default class Workflow extends React.Component {
         <div className="container">
           <div className="row">
             <div className="col">
-              <SortableList data={this.props.workflow} changeParam={this.props.changeParam} removeModule={this.props.removeModule}/>
+              <SortableList
+                data={this.props.workflow}
+                selected_wf_module={this.props.selected_wf_module}
+                changeParam={this.props.changeParam}
+                removeModule={this.props.removeModule}
+              />
             </div>
             <div className="col">
               {outputPane}
@@ -105,9 +117,10 @@ export default class Workflow extends React.Component {
 }
 
 Workflow.propTypes = {
-  workflow:       React.PropTypes.object,
-  addModule:      React.PropTypes.func,
-  removeModule:   React.PropTypes.func,
+  workflow:           React.PropTypes.object,
+  selected_wf_module: React.PropTypes.number,
+  addModule:          React.PropTypes.func,
+  removeModule:       React.PropTypes.func,
 };
 
 

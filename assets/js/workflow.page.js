@@ -15,22 +15,23 @@ require('../css/style.css');
 
 function onParamChanged(paramID, newVal) {
   console.log('Changing parameter ' + paramID);
-   fetch('/api/parameters/' + paramID, {
-      method: 'patch',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-      },
-      body: JSON.stringify(newVal)
-    })
+  fetch('/api/parameters/' + paramID, {
+    method: 'patch',
+    credentials: 'include',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+    },
+    body: JSON.stringify(newVal)
+  })
 }
 
 // Handles addModule (and any other actions that change top level workflow state)
 const mapStateToProps = (state) => {
   return {
     workflow: state.workflow,
+    selected_wf_module: state.selected_wf_module,
   }
 }
 
@@ -47,7 +48,6 @@ const mapDispatchToProps = (dispatch) => {
     }
   }
 }
-
 
 const WorkflowContainer = connect(
   mapStateToProps,

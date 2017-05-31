@@ -7,6 +7,7 @@ import promiseMiddleware from 'redux-promise';
 export const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
 export const CHANGE_PARAM = 'CHANGE_PARAM';
 export const WF_MODULE_STATUS_CHANGE = 'WF_MODULE_STATUS_CHANGE';
+const SELECTED_WF_MODULE_CHANGE = 'SELECTED_WF_MODULE_CHANGE';
 
 // ---- Our Store ----
 // Master state for the workflow. Export so that components can store.dispatch()
@@ -56,8 +57,19 @@ export function wfModuleStatusAction(wfModuleID, status, error_msg='') {
   }
 }
 
+export function changeSelectedWfModuleAction(wfModuleID) {
+  return {
+    type : SELECTED_WF_MODULE_CHANGE,
+    id : wfModuleID,
+  }
+}
+
 // ---- Reducer ----
 // Maps actions to state changes, for that is the Redux way
+// Our state fields:
+//
+//  workflow            - the current workflow as returned from /api/workflows/n
+//  selected_wf_module  - id of selected (usually last-clicked) module, drives output pane
 
 // Main dispatch for actions. Each action mutates the state to a new state, in typical Redux fashion
 export function workflowReducer(state, action) {
@@ -73,11 +85,23 @@ export function workflowReducer(state, action) {
       console.log("new workflow revision " + action.workflow.revision)
       return Object.assign({}, state, {
         workflow: action.workflow,
-      })
+      });
+
+
+    // Change id of module currently selected
+    case SELECTED_WF_MODULE_CHANGE:
+      console.log(SELECTED_WF_MODULE_CHANGE);
+      if (!'selected_wf_module' in state || (action.id != state.selected_wf_module)) {
+        return Object.assign({}, state, {
+          selected_wf_module: action.id,
+        });
+      } else {
+        return state;
+      }
 
     // Change status on a single module
     case WF_MODULE_STATUS_CHANGE:
-      console.log(WF_MODULE_STATUS_CHANGE + " " + action.id);
+      //console.log(WF_MODULE_STATUS_CHANGE + " " + action.id);
       if ('wf_modules' in state.workflow) {
 
         var newState = state;
@@ -99,7 +123,6 @@ export function workflowReducer(state, action) {
             newState.workflow.wf_modules = state.workflow.wf_modules.map(el => el!==wfm ? el : newWfm);
           }
         }
-
         return newState;
       } else {
         return state;
@@ -108,4 +131,6 @@ export function workflowReducer(state, action) {
     default:
       return state
   }
-};
+}
+
+
