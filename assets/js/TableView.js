@@ -5,7 +5,6 @@ import React, { PropTypes } from 'react'
 import { csrfToken } from './utils'
 import ReactDataGrid from 'react-data-grid';
 
-
 export default class TableView extends React.Component {
   constructor(props) {
     super(props);
@@ -14,9 +13,9 @@ export default class TableView extends React.Component {
   }
 
   // Load table data from render API
-  loadTable() {
+  loadTable(id) {
     var self = this;
-    var url = '/api/wfmodules/' + this.props.id + '/render';
+    var url = '/api/wfmodules/' + id + '/render';
     fetch(url, { credentials: 'include'})
       .then(response => response.json())
       .then(json => {
@@ -26,17 +25,14 @@ export default class TableView extends React.Component {
 
   // Load table when first rendered
   componentDidMount() {
-    this.loadTable()
+    this.loadTable(this.props.id)
   }
 
-  // If the revision changes from under us reload the table, which will trigger a setState and re-render
+  // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
-    //console.log("willRecieveProps " + this.props.id);
-    //console.log('old revision ' + this.props.revision + ' new revision ' + nextProps.revision);
-
-    if (this.props.revision != nextProps.revision) {
+    if (this.props.revision != nextProps.revision || this.props.id != nextProps.id) {
       this.setState(Object.assign({}, this.state, this.loadingState));               // "unload" the table
-      this.loadTable();
+      this.loadTable(nextProps.id);
     }
   }
 
@@ -51,7 +47,7 @@ export default class TableView extends React.Component {
 
     // Generate the table if there's any data
     if (tableData.length > 0 && !this.state.loading) {
-      var columns = Object.keys(tableData[0]).filter(key => key!='index').map( key => { return { 'key': key, 'name': key, 'resizable':true } });
+      var columns = Object.keys(tableData[0]).map( key => { return { 'key': key, 'name': key, 'resizable':true } });
       table = <ReactDataGrid
         columns={columns}
         rowGetter={ i => tableData[i] }

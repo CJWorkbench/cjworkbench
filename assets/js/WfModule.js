@@ -69,11 +69,6 @@ function CollapseSection(WrappedComponent, title, startOpen ) {
 
 // ---- WfModule ----
 
-//  Some convenient components that collapse params, output
-const CollapsibleTableView = CollapseSection(
-  TableView,
-  'Output',
-  false);     // don't start open
 
 const ParamDivsComponent = (props) => <div>{props.paramDivs}</div>
 const CollapsibleParams = CollapseSection(
@@ -108,7 +103,6 @@ export default class WfModule extends React.Component {
 
   // We become the selected module on any click
   click(e) {
-    console.log("CLICKY");
     Actions.store.dispatch(Actions.changeSelectedWfModuleAction(this.wf_module.id));
   }
 
@@ -149,7 +143,7 @@ export default class WfModule extends React.Component {
       });
 
     var cardClass = this.props['data-selected'] ?
-      'card w-75 mx-auto mb-4 bg-info':
+      'card w-75 mx-auto mb-4 bg-selected-module':
       'card w-75 mx-auto mb-4 bg-faded';
 
     // Putting it all together: name, status, parameters, output
@@ -165,7 +159,6 @@ export default class WfModule extends React.Component {
             </div>
             <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
             <CollapsibleParams paramDivs={paramdivs}/>
-            <CollapsibleTableView id={this.wf_module.id} revision={this.revision} />
             <a className='ml-2' href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
           </div>
 

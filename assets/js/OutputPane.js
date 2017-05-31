@@ -11,10 +11,14 @@ export default class OutputPane extends React.Component {
   }
 
   render() {
+    // Don't show anything if we don't have a selected WfModule to show
+    var tableView = null;
+    if (this.props.id)
+      tableView = <TableView id={this.props.id} revision={this.props.revision} />;
 
     return (
       <div className="bg-faded">
-        <TableView id={this.props.id} revision={this.props.revision} />
+        {tableView}
       </div>
     );
   }

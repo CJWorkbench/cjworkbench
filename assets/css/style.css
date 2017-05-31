@@ -67,8 +67,8 @@ body {
 
 /* ---- WfModule ---- */
 
-.module-card {
-  background-color: #eee;
+.bg-selected-module {
+  background-color: #abc;
 }
 
 .panel-wrapper {

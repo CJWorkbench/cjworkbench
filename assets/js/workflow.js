@@ -89,7 +89,7 @@ export default class Workflow extends React.Component {
 
     var outputPane = null;
     if (this.props.workflow.wf_modules.length > 0) {
-      outputPane = <OutputPane id={this.props.workflow.wf_modules[0].id} revision={this.props.workflow.revision}/>
+      outputPane = <OutputPane id={this.props.selected_wf_module} revision={this.props.workflow.revision}/>
     }
     
     // We are a toolbar plus a sortable list of modules

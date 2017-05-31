@@ -1,6 +1,5 @@
 import React from 'react';
 import { mount } from 'enzyme';
-
 import Workflows from './workflows';
 
 it('renders correctly', (done) => {

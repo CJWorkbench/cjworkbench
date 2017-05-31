@@ -90,7 +90,7 @@ export function workflowReducer(state, action) {
 
     // Change id of module currently selected
     case SELECTED_WF_MODULE_CHANGE:
-      console.log(SELECTED_WF_MODULE_CHANGE);
+      // console.log(SELECTED_WF_MODULE_CHANGE);
       if (!'selected_wf_module' in state || (action.id != state.selected_wf_module)) {
         return Object.assign({}, state, {
           selected_wf_module: action.id,
