@@ -70,12 +70,6 @@ function CollapseSection(WrappedComponent, title, startOpen ) {
 // ---- WfModule ----
 
 
-const ParamDivsComponent = (props) => <div>{props.paramDivs}</div>
-const CollapsibleParams = CollapseSection(
-  ParamDivsComponent,
-  'Settings',
-  true);         // start open
-
 export default class WfModule extends React.Component {
 
   constructor(props) {
@@ -158,7 +152,7 @@ export default class WfModule extends React.Component {
                 <StatusLight status={this.wf_module.status}/>
             </div>
             <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
-            <CollapsibleParams paramDivs={paramdivs}/>
+            {paramdivs}
             <a className='ml-2' href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
           </div>
 

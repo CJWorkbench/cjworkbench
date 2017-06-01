@@ -96,19 +96,17 @@ export default class Workflow extends React.Component {
     return (
       <div>
         <WorkflowNavBar addButton={moduleMenu} workflowTitle={this.props.workflow.name}/>
-        <div className="container">
-          <div className="row">
-            <div className="col">
-              <SortableList
-                data={this.props.workflow}
-                selected_wf_module={this.props.selected_wf_module}
-                changeParam={this.props.changeParam}
-                removeModule={this.props.removeModule}
-              />
-            </div>
-            <div className="col">
-              {outputPane}
-            </div>
+        <div>
+          <div className="modulestack-left">
+            <SortableList
+              data={this.props.workflow}
+              selected_wf_module={this.props.selected_wf_module}
+              changeParam={this.props.changeParam}
+              removeModule={this.props.removeModule}
+            />
+          </div>
+          <div className="outputpane-right mr-3">
+            {outputPane}
           </div>
         </div>
       </div>

@@ -31,34 +31,16 @@ body {
     margin: 0.5rem;
 }
 
-/* ---- Toolbar and buttons ---- */
+/* ---- Workflow page ---- */
 
-
-
-.toolbutton {
-  border: 1px solid black;
-  border-radius: 2pt;
-  background-color: #eee;
-  margin: 10px;
-  width: 20px;
-  height: 20px;
-  font-size: 15px;
+.modulestack-left {
+  width: 50%;
+  float: left;
 }
 
-.toolbutton {
-  border: 1px solid black;
-  border-radius: 2pt;
-  background-color: #eee;
-  margin: 10px;
-  width: 30px;
-  height: 30px;
-  font-size: 20px;
+.outputpane-right {
+  overflow: hidden;
 }
-
-.toolbutton:active {
-  background-color: #aaa;
-}
-
 /* ---- Navbar ----- */
 
 .border-bottom-1 {
