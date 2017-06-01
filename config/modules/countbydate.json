@@ -1,0 +1,20 @@
+{
+  "name": "Count By Date",
+  "id_name": "countbydate",
+  "category" : "Analyze",
+  "parameters": [
+    {
+      "name": "Date Column",
+      "id_name" : "column",
+      "type": "string"
+    },
+    {
+      "name": "Sort by",
+      "id_name" : "sortby",
+      "type" : "menu",
+      "menu_items" : "Value|Frequency",
+      "default": "0"
+    }
+  ]
+}
+

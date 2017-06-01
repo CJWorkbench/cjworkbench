@@ -19,6 +19,7 @@ from .modules.formula import Formula
 from .modules.pythoncode import PythonCode
 from .modules.chart import Chart
 from .modules.countvalues import CountValues
+from .modules.counybydate import CountByDate
 
 # ---- Test Support ----
 
@@ -56,6 +57,7 @@ module_dispatch_tbl = {
     'twitter':      Twitter,
     'textsearch':   TextSearch,
     'countvalues':  CountValues,
+    'countbydate':  CountByDate,
 
     # For testing
     'NOP':          NOP,
