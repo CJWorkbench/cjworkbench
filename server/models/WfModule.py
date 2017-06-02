@@ -65,7 +65,7 @@ class WfModule(models.Model):
     def retrieve_text(self, key):
         data = self.retrieve_bytes(key)
         if data:
-            return data.decode('UTF-8')
+            return bytearray(data).decode('UTF-8')  # copy to bytearray as data is a memoryview in prod, no decode method
         else:
             return None
 
