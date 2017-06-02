@@ -33,40 +33,6 @@ class StatusLine extends React.Component {
   }
 }
 
-// ---- CollapseSection ---
-// Higher-order component that does a classic twirly arrow toggle collapse
-
-function CollapseSection(WrappedComponent, title, startOpen ) {
-  return class extends React.Component {
-    constructor(props) {
-      super(props);
-      this.state = {isOpen: startOpen};           // componentDidMount will trigger first load
-      this.toggle = this.toggle.bind(this);
-    }
-
-    toggle() {
-      this.setState({isOpen: !this.state.isOpen});
-    }
-
-    render() {
-      var inside = undefined;
-      if (this.state.isOpen)
-        inside = <WrappedComponent {...this.props}/>;
-
-      return(
-        <div className='panel-wrapper m-0 p-1'>
-          <div onClick={this.toggle}> { (this.state.isOpen ? '\u25be' : '\u25b8') + ' ' + title}</div>
-          <Collapse className='mt-1 pl-2 pr-2' isOpen={this.state.isOpen}>
-            {inside}
-          </Collapse>
-        </div>
-      );
-    }
-  }
-}
-
-
-
 // ---- WfModule ----
 
 
@@ -118,8 +84,9 @@ export default class WfModule extends React.Component {
     }
   }
 
-  removeModule() {
+  removeModule(e) {
     this.props['data-removeModule'](this.wf_module.id);
+    e.stopPropagation();  // necessary, or we will select the module we just deleted => bad
   }
 
   render() {

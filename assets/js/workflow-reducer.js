@@ -4,10 +4,11 @@ import { getPageID, csrfToken } from './utils'
 import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise';
 
-export const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
-export const CHANGE_PARAM = 'CHANGE_PARAM';
-export const WF_MODULE_STATUS_CHANGE = 'WF_MODULE_STATUS_CHANGE';
-const SELECTED_WF_MODULE_CHANGE = 'SELECTED_WF_MODULE_CHANGE';
+const CHANGE_PARAM = 'CHANGE_PARAM';
+const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
+const REMOVE_MODULE_ACTION = 'REMOVE_MODULE';
+const MODULE_STATUS_CHANGE = 'MODULE_STATUS_CHANGE';
+const SELECTED_MODULE_CHANGE = 'SELECTED_MODULE_CHANGE';
 
 // ---- Our Store ----
 // Master state for the workflow. Export so that components can store.dispatch()
@@ -37,8 +38,18 @@ export function addModuleAction(module_id, insertBefore) {
   }) .then( reloadWorkflowAction );
 }
 
-// remove module and reload
+// Call delete API, then dispatch a reload
 export function removeModuleAction(wf_module_id) {
+
+  //console.log("Deleting module " + wf_module_id);
+  //console.log("Selected module " + store.getState().selected_module);
+
+  // If we are deleting the selected module, then no selected module
+  if (wf_module_id == store.getState().selected_wf_module) {
+    console.log("Deleting selected module");
+    store.dispatch(changeSelectedWfModuleAction(null))
+  }
+
   return fetch('/api/wfmodules/' + wf_module_id, {
     method: 'delete',
     credentials: 'include',
@@ -50,7 +61,7 @@ export function removeModuleAction(wf_module_id) {
 
 export function wfModuleStatusAction(wfModuleID, status, error_msg='') {
   return {
-    type : WF_MODULE_STATUS_CHANGE,
+    type : MODULE_STATUS_CHANGE,
     id : wfModuleID,
     status : status,
     error_msg: error_msg
@@ -59,7 +70,7 @@ export function wfModuleStatusAction(wfModuleID, status, error_msg='') {
 
 export function changeSelectedWfModuleAction(wfModuleID) {
   return {
-    type : SELECTED_WF_MODULE_CHANGE,
+    type : SELECTED_MODULE_CHANGE,
     id : wfModuleID,
   }
 }
@@ -82,15 +93,14 @@ export function workflowReducer(state, action) {
     // Reload entire state
     case RELOAD_WORKFLOW:
       console.log("RELOAD_WORKFLOW");
-      console.log("new workflow revision " + action.workflow.revision)
+      console.log("new workflow revision " + action.workflow.revision);
       return Object.assign({}, state, {
-        workflow: action.workflow,
+        workflow: action.workflow
       });
 
-
     // Change id of module currently selected
-    case SELECTED_WF_MODULE_CHANGE:
-      // console.log(SELECTED_WF_MODULE_CHANGE);
+    case SELECTED_MODULE_CHANGE:
+      // console.log(SELECTED_MODULE_CHANGE + " old " +  state.selected_wf_module + " new " + action.id);
       if (!'selected_wf_module' in state || (action.id != state.selected_wf_module)) {
         return Object.assign({}, state, {
           selected_wf_module: action.id,
@@ -100,7 +110,7 @@ export function workflowReducer(state, action) {
       }
 
     // Change status on a single module
-    case WF_MODULE_STATUS_CHANGE:
+    case MODULE_STATUS_CHANGE:
       //console.log(WF_MODULE_STATUS_CHANGE + " " + action.id);
       if ('wf_modules' in state.workflow) {
 
@@ -112,7 +122,7 @@ export function workflowReducer(state, action) {
           if (wfm.id == action.id &&
               ((wfm.status != action.status) || (wfm.status=='error' && wfm.error_msg != action.error_msg))) {
 
-            console.log("actually changed status for " + wfm.id);
+            // console.log("actually changed status for " + wfm.id);
 
             // Create a copy of the wf_module with new status
             var newWfm = Object.assign({}, wfm, { status: action.status, error_msg: action.error_msg });

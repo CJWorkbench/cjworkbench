@@ -10,7 +10,10 @@ class Formula(ModuleImpl):
         if table is None:
             return None     # no rows to process
 
-        formula = wf_module.get_param_string('formula')
+        formula = wf_module.get_param_string('formula').strip()
+        if formula == '':
+            return table    # nop if no formula
+
         colnames = list(table.columns)
         newcol = pd.Series(np.zeros(len(table)))
 
