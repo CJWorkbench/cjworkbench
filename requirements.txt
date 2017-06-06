@@ -25,4 +25,4 @@ pyxdg==0.25
 xlrd==1.0.0
 service_identity==16.0.0
 psycopg2==2.7.1
-twarc==1.1.2
+tweepy==3.5.0
