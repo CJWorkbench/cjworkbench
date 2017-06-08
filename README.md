@@ -17,9 +17,9 @@ If you get a message about missing Chartbuilder (probably when running webpack),
 
 To run:
 - `python manage.py runserver` to start the Django server. It will automatically recompile any .py file you edit.
-- browse to `127.0.0.1:8000/api/initmodules` to load module definitions (needed on first run, or when modules changed)
+- The first time you run, or when modules have changed, browse to `127.0.0.1:8000/api/initmodules` to load module definitions (needed on first run, or when modules changed)
 
-At the moment the home page `127.0.0.1:8000` does nothing. Go to `127.0.0.1:8000/workflows` to list available workflows.
+Go to `127.0.0.1:8000` to list available workflows.
 
 To develop:
 - `./node_modules/.bin/webpack --config webpack.config.js --watch` to compile JS and CSS whenever changed
