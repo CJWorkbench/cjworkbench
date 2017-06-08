@@ -1,8 +1,11 @@
-
+html {
+  height: 100%;
+}
 
 body {
-  background-color: #22A7F0;
+  background-color: #2267F0;
   margin: 0px;
+  height: 100%;  
 }
 
 /* ---- Login ---- */
@@ -41,6 +44,38 @@ body {
 .outputpane-right {
   overflow: hidden;
 }
+
+.outputpane-box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+}
+
+/* The flex: property is shorthand for:
+flex-grow: 0,
+flex-shrink: 1,
+flex-basis: auto
+*/
+.outputpane-header {
+  flex: 0 1 auto;
+  /*height: 100%;*/
+  
+}
+
+.outputpane-data {
+  flex: 1 1 auto;
+  /*height: 100%;*/
+  border: 2px solid black;
+  /*min-height: 100%;  */
+}
+
+.outputpane-footer {
+  flex: 0 1 40px;
+  /*height: 100%;*/
+  border: 2px solid purple;
+  /*min-height: 100%;  */
+}
+
 /* ---- Navbar ----- */
 
 .border-bottom-1 {

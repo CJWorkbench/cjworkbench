@@ -46,10 +46,15 @@ export default class OutputPane extends React.Component {
 
     if (this.props.id) {
       return (
-        <div className="container">
-          <div className="bg-faded">
+        <div className="outputpane-box">
+          <div className="bg-faded outputpane-header">
             Number of rows: {this.state.tableData.length}
+          </div>
+          <div className="outputpane-data bg-danger">
             <TableView tableData={this.state.tableData} />
+          </div>
+          <div className="outputpane-footer">
+            Copyright blah blach blach
           </div>
         </div>
       );

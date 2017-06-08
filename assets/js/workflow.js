@@ -10,7 +10,6 @@ import OutputPane from './OutputPane'
 import { getPageID, csrfToken } from './utils'
 
 require('bootstrap/dist/css/bootstrap.css');
-require('rc-collapse/assets/index.css');
 require('../css/style.css');
 
 
