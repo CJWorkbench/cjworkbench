@@ -2,14 +2,8 @@
 #from server.models import Module, WfModule
 from django.conf import settings
 import pandas as pd
-from pandas.parser import CParserError
-import re
-import io
-import os
-import csv
-import json
-from server.versions import bump_workflow_version
 from .modules.moduleimpl import ModuleImpl
+from .modules.importmodulefromgithub import ImportModuleFromGitHub
 from .modules.twitter import Twitter
 from .modules.loadurl import LoadURL
 from .modules.pastecsv import PasteCSV
@@ -58,6 +52,7 @@ module_dispatch_tbl = {
     'textsearch':   TextSearch,
     'countvalues':  CountValues,
     'countbydate':  CountByDate,
+    'importmodulefromgithub': ImportModuleFromGitHub,
 
     # For testing
     'NOP':          NOP,
@@ -67,13 +62,18 @@ module_dispatch_tbl = {
 
 # ---- Dispatch Entrypoints ----
 
+def load_dynamically(dispatch):
+    #check if dispatch is loadable dynamically; if so, load it.
+    print("Loading {} manually".format(dispatch))
+
 def module_dispatch_render(wf_module, table):
     dispatch = wf_module.module.dispatch
     if dispatch not in module_dispatch_tbl.keys():
-        if not settings.DEBUG:
-            raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
-        else:
-            return table  # in debug it just becomes a NOP
+        if not load_dynamically(dispatch):
+            if not settings.DEBUG:
+                raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
+            else:
+                return table  # in debug it just becomes a NOP
 
     return module_dispatch_tbl[dispatch].render(wf_module,table)
 
