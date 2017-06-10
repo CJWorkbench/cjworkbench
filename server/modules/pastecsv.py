@@ -1,7 +1,6 @@
 from .moduleimpl import ModuleImpl
 import pandas as pd
 from pandas.parser import CParserError
-import csv
 import io
 
 

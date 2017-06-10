@@ -63,7 +63,7 @@ export default class ColumnSelector extends React.Component {
     // use nowrap style to ensure checkbox label is always on same line as checkbox
     const checkboxes = this.state.colNames.map( n => {
       return (
-        <div className='col-sm' style={{'white-space': 'nowrap'}} key={n}>
+        <div className='col-sm' style={{'whiteSpace': 'nowrap'}} key={n}>
           <label className='mr-1'>{n}</label>
           <input type='checkbox' checked={this.state.selected.includes(n)} onChange={this.clicked} data-name={n}></input>
         </div>);

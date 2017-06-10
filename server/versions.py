@@ -1,6 +1,5 @@
 # Revision tracking and client notification methods
 
-import server.models
 from server.websockets import *
 from django.utils import timezone
 

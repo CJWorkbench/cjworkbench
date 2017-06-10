@@ -3,6 +3,7 @@
 
 import React from 'react';
 import WorkflowHamburgerMenu from './WorkflowHamburgerMenu'
+import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 
 export class NavBar extends React.Component {
 
