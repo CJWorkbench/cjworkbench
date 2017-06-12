@@ -26,3 +26,4 @@ xlrd==1.0.0
 service_identity==16.0.0
 psycopg2==2.7.1
 tweepy==3.5.0
+GitPython==2.1.3
