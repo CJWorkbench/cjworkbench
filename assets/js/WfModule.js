@@ -103,15 +103,20 @@ export default class WfModule extends React.Component {
           setParamText={this.setParamText} />
       });
 
+    // var cardClass = this.props['data-selected'] ?
+    //   'card w-75 mx-auto mb-4 bg-selected-module':
+    //   'card w-75 mx-auto mb-4 bg-faded';
+
+    // as above, but removing margins
     var cardClass = this.props['data-selected'] ?
-      'card w-75 mx-auto mb-4 bg-selected-module':
-      'card w-75 mx-auto mb-4 bg-faded';
+      'card w-75 mx-auto bg-selected-module':
+      'card w-75 mx-auto bg-faded';
 
     // Putting it all together: name, status, parameters, output
     return (
       <div className='container' {...this.props} onClick={this.click}>
         <div className={cardClass}>
-          <div className='card-block drop-shadow p-1'>
+          <div className='card-block p-1'>
 
             <div className='d-flex justify-content-between align-items-center mb-2'>
                 <button type='button' className='btn btn-secondary btn-sm' onClick={this.removeModule}>&times;</button>

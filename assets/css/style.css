@@ -24,13 +24,14 @@ body {
   color: #ccc
 }
 
-.drop-shadow {
+/*.drop-shadow {
   border-width: 2px;
   box-shadow: 5px 5px 10px #555;
-}
+}*/
 
 /* ---- Workflow list ---- */
 
+/*Which elements have this class name?*/
 .some-margin {
     margin: 0.5rem;
 }

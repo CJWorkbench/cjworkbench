@@ -58,9 +58,9 @@ export default class OutputPane extends React.Component {
           <div className="outputpane-data bg-danger">
             <TableView tableData={this.state.tableData} />
           </div>
-          <div className="outputpane-footer">
+          {/*<div className="outputpane-footer">
             Copyright blah blach blach
-          </div>
+          </div>*/}
         </div>
       );
     } else {
