@@ -101,8 +101,13 @@ flex-basis: auto
 
 /* ---- WfModule ---- */
 
+/*To be changed with new styles*/
 .bg-selected-module {
   background-color: #abc;
+}
+
+.border-selected-module {
+  border: 2px solid #FBAA6D;
 }
 
 .panel-wrapper {

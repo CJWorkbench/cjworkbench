@@ -108,8 +108,9 @@ export default class WfModule extends React.Component {
     //   'card w-75 mx-auto mb-4 bg-faded';
 
     // as above, but removing margins
+    // ToDo: examine bg-* classes here wrt mockup; may not be needed
     var cardClass = this.props['data-selected'] ?
-      'card w-75 mx-auto bg-selected-module':
+      'card w-75 mx-auto bg-selected-module border-selected-module':
       'card w-75 mx-auto bg-faded';
 
     // Putting it all together: name, status, parameters, output
