@@ -48,7 +48,12 @@ export default class OutputPane extends React.Component {
       return (
         <div className="outputpane-box">
           <div className="bg-faded outputpane-header">
-            Number of rows: {this.state.tableData.length}
+            <div>
+              Number of Rows: {this.state.tableData.length} 
+            </div>
+            <div>
+              Number of Columns: Placeholder         
+            </div>
           </div>
           <div className="outputpane-data bg-danger">
             <TableView tableData={this.state.tableData} />

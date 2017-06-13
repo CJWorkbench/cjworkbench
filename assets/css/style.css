@@ -3,9 +3,10 @@ html {
 }
 
 body {
-  background-color: #2267F0;
+  background-color: #f6f6f6;
   margin: 0px;
   height: 100%;  
+  font-family: Avenir;
 }
 
 /* ---- Login ---- */
@@ -36,6 +37,11 @@ body {
 
 /* ---- Workflow page ---- */
 
+.card-block {
+	background-color: #FFFFFF;
+  color: #686768
+}
+
 .modulestack-left {
   width: 50%;
   float: left;
@@ -49,6 +55,9 @@ body {
   display: flex;
   flex-flow: column;
   height: 100%;
+  border: 1px solid #EDECEC;
+  background-color: #F2F2F2;
+  padding: 15px;
 }
 
 /* The flex: property is shorthand for:
@@ -59,24 +68,31 @@ flex-basis: auto
 .outputpane-header {
   flex: 0 1 auto;
   /*height: 100%;*/
-  
+  border: 1px solid #EDECEC;
+  background-color: #FFFFFF;
+  color: #A2A2A2;
 }
 
 .outputpane-data {
   flex: 1 1 auto;
   /*height: 100%;*/
-  border: 2px solid black;
-  /*min-height: 100%;  */
+  /*min-height: 100%;  */  
+  border: 1px solid #EDECEC;
 }
 
 .outputpane-footer {
   flex: 0 1 40px;
   /*height: 100%;*/
-  border: 2px solid purple;
   /*min-height: 100%;  */
+  border: 2px solid purple;  
 }
 
 /* ---- Navbar ----- */
+
+.navbar {
+  background-color: #48C8D7;
+  color: #FFFFFF;
+}
 
 .border-bottom-1 {
   border-bottom: 1px solid;
