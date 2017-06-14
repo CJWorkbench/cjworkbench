@@ -3,9 +3,10 @@ html {
 }
 
 body {
-  background-color: #2267F0;
   margin: 0px;
   height: 100%;  
+  font-family: Avenir;
+  background-color: #f6f6f6;    
 }
 
 /* ---- Login ---- */
@@ -23,11 +24,6 @@ body {
   color: #ccc
 }
 
-.drop-shadow {
-  border-width: 2px;
-  box-shadow: 5px 5px 10px #555;
-}
-
 /* ---- Workflow list ---- */
 
 .some-margin {
@@ -36,9 +32,34 @@ body {
 
 /* ---- Workflow page ---- */
 
+.card-block {
+	/*background-color: #FFFFFF;*/
+  color: #686768
+}
+
+/* --- ugly borders for development only ---*/
 .modulestack-left {
   width: 50%;
   float: left;
+  /*border: 3px solid purple;*/
+  background-color: #F6F6F6; 
+}
+
+/* --- ugly borders for development only ---*/
+.modulestack-header {
+  /*border: 3px solid green;*/
+  color: #686768;
+  padding: 10px;
+}
+
+/* --- ugly borders/bg color for development only ---*/
+.modulestack-list {
+  background-color: #F2F2F2; 
+  /*background-color: pink; */
+  
+  padding: 10px;
+  border: 1px solid #EDECEC;
+  /*border: 2px dashed blue;  */
 }
 
 .outputpane-right {
@@ -49,6 +70,9 @@ body {
   display: flex;
   flex-flow: column;
   height: 100%;
+  border: 1px solid #EDECEC;
+  background-color: #F2F2F2;
+  padding: 15px;
 }
 
 /* The flex: property is shorthand for:
@@ -59,24 +83,32 @@ flex-basis: auto
 .outputpane-header {
   flex: 0 1 auto;
   /*height: 100%;*/
-  
+  border: 1px solid #EDECEC;
+  background-color: #FFFFFF;
+  color: #A2A2A2;
 }
 
 .outputpane-data {
   flex: 1 1 auto;
   /*height: 100%;*/
-  border: 2px solid black;
-  /*min-height: 100%;  */
+  /*min-height: 100%;  */  
+  border: 1px solid #EDECEC;
 }
 
+/*--- This element may be culled ---*/
 .outputpane-footer {
   flex: 0 1 40px;
   /*height: 100%;*/
-  border: 2px solid purple;
   /*min-height: 100%;  */
+  border: 2px solid purple;  
 }
 
 /* ---- Navbar ----- */
+
+.navbar {
+  background-color: #48C8D7;
+  color: #FFFFFF;
+}
 
 .border-bottom-1 {
   border-bottom: 1px solid;
@@ -84,8 +116,13 @@ flex-basis: auto
 
 /* ---- WfModule ---- */
 
+/*To be changed with new styles*/
 .bg-selected-module {
-  background-color: #abc;
+  /*background-color: #abc;*/
+}
+
+.border-selected-module {
+  border: 2px solid #FBAA6D;
 }
 
 .panel-wrapper {

@@ -103,15 +103,22 @@ export default class WfModule extends React.Component {
           setParamText={this.setParamText} />
       });
 
+    // ---- Original, keep until new version works --- //
+    // var cardClass = this.props['data-selected'] ?
+    //   'card w-75 mx-auto mb-4 bg-selected-module':
+    //   'card w-75 mx-auto mb-4 bg-faded';
+
+    // --- removing margins, bg-* classes
+    // --- moving w-75, mx-auto to parent class 'modulestack-left'
     var cardClass = this.props['data-selected'] ?
-      'card w-75 mx-auto mb-4 bg-selected-module':
-      'card w-75 mx-auto mb-4 bg-faded';
+      'card border-selected-module':
+      'card ';
 
     // Putting it all together: name, status, parameters, output
     return (
       <div className='container' {...this.props} onClick={this.click}>
         <div className={cardClass}>
-          <div className='card-block drop-shadow p-1'>
+          <div className='card-block p-1'>
 
             <div className='d-flex justify-content-between align-items-center mb-2'>
                 <button type='button' className='btn btn-secondary btn-sm' onClick={this.removeModule}>&times;</button>
