@@ -2050,11 +2050,6 @@ exports[`Fetches and renders 1`] = `
         </ReactDataGrid>
       </TableView>
     </div>
-    <div
-      className="outputpane-footer"
-    >
-      Copyright blah blach blach
-    </div>
   </div>
 </OutputPane>
 `;

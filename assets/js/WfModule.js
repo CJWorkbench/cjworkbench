@@ -103,15 +103,16 @@ export default class WfModule extends React.Component {
           setParamText={this.setParamText} />
       });
 
+    // ---- Original, keep until new version works --- //
     // var cardClass = this.props['data-selected'] ?
     //   'card w-75 mx-auto mb-4 bg-selected-module':
     //   'card w-75 mx-auto mb-4 bg-faded';
 
-    // as above, but removing margins
-    // ToDo: examine bg-* classes here wrt mockup; may not be needed
+    // --- removing margins, bg-* classes
+    // --- moving w-75, mx-auto to parent class 'modulestack-left'
     var cardClass = this.props['data-selected'] ?
-      'card w-75 mx-auto bg-selected-module border-selected-module':
-      'card w-75 mx-auto bg-faded';
+      'card border-selected-module':
+      'card ';
 
     // Putting it all together: name, status, parameters, output
     return (
