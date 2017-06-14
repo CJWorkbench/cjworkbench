@@ -27,6 +27,7 @@ urlpatterns = [
 
     url(r'^api/initmodules/$', views.init_modules2),
 
+    url(r'^api/importfromgithub/?$', views.import_from_github),
 
     # WfModules (Modules applied in a workflow)
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', wfmodule_detail),

@@ -1,6 +1,8 @@
 import React from 'react';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 
+import { csrfToken } from './utils'
+
 
 export default class ImportModuleFromGitHub extends React.Component {
   constructor(props) {
@@ -16,9 +18,8 @@ export default class ImportModuleFromGitHub extends React.Component {
   }
 
   handleSubmit(event) {
-    this.props.changeParam(this.props.p.id, {value : this.state.url})
-      var url = '/api/parameters/' + this.props.p.id + '/event';
-      var eventData = {'type': 'click'};
+      var url = '/api/importfromgithub/';
+      var eventData = {'url': this.state.url};
       fetch(url, {
         method: 'post',
         credentials: 'include',
@@ -28,9 +29,6 @@ export default class ImportModuleFromGitHub extends React.Component {
           'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(eventData)
-      }).then(response => {
-        if (!response.ok)
-          store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', response.statusText))
       });
   }
 

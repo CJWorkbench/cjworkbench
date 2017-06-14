@@ -38,6 +38,7 @@ export class WorkflowNavBar extends React.Component {
 
         <nav className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1">
           {this.props.addButton}
+          <ImportModuleFromGitHub />
           <h3 className="mx-auto">{this.props.workflowTitle}</h3>
           <WorkflowHamburgerMenu />
         </nav>
@@ -49,6 +50,7 @@ export class WorkflowNavBar extends React.Component {
 WorkflowNavBar.propTypes = {
   addButton:        React.PropTypes.object,
   workflowTitle:    React.PropTypes.string,
+  importModule:      React.PropTypes.object,
 };
 
 

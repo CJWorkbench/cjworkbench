@@ -1,19 +1,20 @@
 # Module dispatch table and implementations
 #from server.models import Module, WfModule
-from django.conf import settings
 import pandas as pd
-from .modules.moduleimpl import ModuleImpl
-from .modules.importmodulefromgithub import ImportModuleFromGitHub
-from .modules.twitter import Twitter
-from .modules.loadurl import LoadURL
-from .modules.pastecsv import PasteCSV
-from .modules.selectcolumns import SelectColumns
-from .modules.textsearch import TextSearch
-from .modules.formula import Formula
-from .modules.pythoncode import PythonCode
+from django.conf import settings
+
 from .modules.chart import Chart
 from .modules.countvalues import CountValues
 from .modules.counybydate import CountByDate
+from .modules.formula import Formula
+from .modules.loadurl import LoadURL
+from .modules.moduleimpl import ModuleImpl
+from .modules.pastecsv import PasteCSV
+from .modules.pythoncode import PythonCode
+from .modules.selectcolumns import SelectColumns
+from .modules.textsearch import TextSearch
+from .modules.twitter import Twitter
+
 
 # ---- Test Support ----
 
@@ -52,7 +53,6 @@ module_dispatch_tbl = {
     'textsearch':   TextSearch,
     'countvalues':  CountValues,
     'countbydate':  CountByDate,
-    'importmodulefromgithub': ImportModuleFromGitHub,
 
     # For testing
     'NOP':          NOP,
