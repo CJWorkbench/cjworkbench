@@ -75,6 +75,22 @@ exports[`WorkflowNavBar renders correctly 1`] = `
     className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1"
   >
     <div />
+    <form
+      onSubmit={[Function]}
+    >
+      <label>
+          Import module from GitHub:  
+        <input
+          onChange={[Function]}
+          type="text"
+          value={undefined}
+        />
+      </label>
+      <input
+        type="submit"
+        value="Import"
+      />
+    </form>
     <h3
       className="mx-auto"
     >

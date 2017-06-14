@@ -33,8 +33,52 @@ class StatusLine extends React.Component {
   }
 }
 
-// ---- WfModule ----
+// ---- CollapseSection ---
+// Higher-order component that does a classic twirly arrow toggle collapse
 
+function CollapseSection(WrappedComponent, title, startOpen ) {
+  return class extends React.Component {
+    constructor(props) {
+      super(props);
+      this.state = {isOpen: startOpen};           // componentDidMount will trigger first load
+      this.toggle = this.toggle.bind(this);
+    }
+
+    toggle() {
+      this.setState({isOpen: !this.state.isOpen});
+    }
+
+    render() {
+      var inside = undefined;
+      if (this.state.isOpen)
+        inside = <WrappedComponent {...this.props}/>;
+
+      return(
+        <div className='panel-wrapper m-0 p-1'>
+          <div onClick={this.toggle}> { (this.state.isOpen ? '\u25be' : '\u25b8') + ' ' + title}</div>
+          <Collapse className='mt-1 pl-2 pr-2' isOpen={this.state.isOpen}>
+            {inside}
+          </Collapse>
+        </div>
+      );
+    }
+  }
+}
+
+//  Some convenient components that collapse params, output
+const CollapsibleTableView = CollapseSection(
+  TableView,
+  'Output',
+  false);     // don't start open
+
+const ParamDivsComponent = (props) => <div>{props.paramDivs}</div>
+const CollapsibleParams = CollapseSection(
+  ParamDivsComponent,
+  'Settings',
+  true);         // start open
+
+
+// ---- WfModule ----
 
 export default class WfModule extends React.Component {
 
@@ -126,7 +170,10 @@ export default class WfModule extends React.Component {
                 <StatusLight status={this.wf_module.status}/>
             </div>
             <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
-            {paramdivs}
+            {/* --- section to collapse --- */}
+            <CollapsibleParams paramDivs={paramdivs}/>
+            {/* --- non-collapsing version --- */}
+            {/*{paramdivs}*/}
             <a className='ml-2' href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
           </div>
 
