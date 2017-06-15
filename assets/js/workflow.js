@@ -95,7 +95,7 @@ export default class Workflow extends React.Component {
     return (
       <div>
         <WorkflowNavBar addButton={moduleMenu} workflowTitle={this.props.workflow.name}/>
-        <div>
+        <div className="workflow-container">
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
               <h4>Workflow Title Placeholder</h4>
@@ -109,7 +109,7 @@ export default class Workflow extends React.Component {
               />
             </div>
           </div>
-          <div className="outputpane-right mr-3">
+          <div className="outputpane-right">
             {outputPane}
           </div>
         </div>

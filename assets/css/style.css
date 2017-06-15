@@ -37,12 +37,18 @@ body {
   color: #686768
 }
 
+.workflow-container {
+  display: flex;
+  flex-flow: row;
+}
+
 /* --- ugly borders for development only ---*/
 .modulestack-left {
-  width: 50%;
-  float: left;
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
   /*border: 3px solid purple;*/
-  background-color: #F6F6F6; 
+  background-color: #F6F6F6;
 }
 
 /* --- ugly borders for development only ---*/
@@ -63,7 +69,9 @@ body {
 }
 
 .outputpane-right {
-  overflow: hidden;
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
 }
 
 .outputpane-box {
