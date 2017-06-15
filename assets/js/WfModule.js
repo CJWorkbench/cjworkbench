@@ -65,17 +65,11 @@ function CollapseSection(WrappedComponent, title, startOpen ) {
   }
 }
 
-//  Some convenient components that collapse params, output
-const CollapsibleTableView = CollapseSection(
-  TableView,
-  'Output',
-  false);     // don't start open
-
 const ParamDivsComponent = (props) => <div>{props.paramDivs}</div>
 const CollapsibleParams = CollapseSection(
   ParamDivsComponent,
   'Settings',
-  true);         // start open
+  false);         // start closed
 
 
 // ---- WfModule ----
