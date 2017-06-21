@@ -15,6 +15,9 @@ export function getPageID () {
   return id
 };
 
+export function goToUrl(url) {
+  window.location.href = url;      
+}
 
 // Current CSRF token
 export const csrfToken = Cookies.get('csrftoken');

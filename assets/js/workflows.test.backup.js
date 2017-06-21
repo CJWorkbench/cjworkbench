@@ -1,17 +1,8 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import Workflows from './workflows';
+import fetchMock from 'fetch-mock';
 const Utils = require('./utils');
-
-const mockResponse = (status, statusText, response) => {
-  return new window.Response(response, {
-    status: status,
-    statusText: statusText,
-    headers: {
-      'Content-type': 'application/json'
-    }
-  });
-};
 
 it('renders correctly', (done) => {
 
@@ -34,11 +25,8 @@ it('renders correctly', (done) => {
       },
     ];
 
-  window.fetch = jest.fn().mockImplementation(()=>
-    Promise.resolve(mockResponse(200, null, null))
-  );
-
   // Start with no workflows on the initial fetch (won't get loaded before expects anyway, due to asynchrony)
+  fetchMock.get('*', []);
   const wrapper = mount( <Workflows /> );
   expect(wrapper).toMatchSnapshot();
   
@@ -54,6 +42,7 @@ it('renders correctly', (done) => {
 
   // Try deleting a workflow
   global.confirm = () => true;                       // pretend the user clicked OK
+  fetchMock.delete('*', {statusCode: 200});
   buttons.first().simulate('click');
   wrapper.update();
 
@@ -77,11 +66,9 @@ it('new workflow button', (done) => {
       id: 543,
       name: "New Workflow"
     };
-
+  fetchMock.post('*', testData);
   Utils.goToUrl = jest.fn();
-  window.fetch = jest.fn().mockImplementation(()=>
-    Promise.resolve(mockResponse(200, null, JSON.stringify(testData)))
-  );
+
   newButton.first().simulate('click');
 
   setImmediate( () => {

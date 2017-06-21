@@ -2,30 +2,18 @@
 
 import React from 'react';
 import { NavBar } from './navbar';
-import { csrfToken } from './utils'
+import { csrfToken, goToUrl } from './utils'
 
 export default class Workflows extends React.Component {
   constructor(props) {
     super(props);
     this.click = this.click.bind(this);
-    this.handleTextChange = this.handleTextChange.bind(this);
     this.deleteWorkflow= this.deleteWorkflow.bind(this);
-    this.state = { workflows: [], newWorkflowName: '' }
-  }
-
-  handleTextChange(event) {
-    this.setState({workflows: this.state.workflows, newWorkflowName: event.target.value});
-  }
-
-  isValid(name) {
-    // stub: need better valdiation
-    return name.length > 0;
+    this.state = { workflows: []}
   }
 
   // Make a new workflow when button clicked
   click(e) {
-    if (!this.isValid(this.state.newWorkflowName))
-      return;
 
     fetch('/api/workflows',
       {
@@ -36,13 +24,12 @@ export default class Workflows extends React.Component {
           'Content-Type': 'application/json',
           'X-CSRFToken': csrfToken
       },
-      body: JSON.stringify({name: this.state.newWorkflowName})
+      body: JSON.stringify({name: "New Workflow"})
     })
     .then(response => response.json())
     .then(json => {
-      var newWorkflows = this.state.workflows.slice();
-      newWorkflows.push(json);
-      this.setState({workflows: newWorkflows, newWorkflowName: ''})
+      // ID of new Workflow has been returned by this step, can navigate to new WF page
+      goToUrl('/workflows/' + json.id);      
     })
   }
 
@@ -86,10 +73,23 @@ export default class Workflows extends React.Component {
         <NavBar/>
 
         <div className="container">
-          <div className="card w-75 mx-auto">
-            <div className="card-block drop-shadow">
 
-              <h3 className="card-title">Your Workflows</h3>
+          <div className="row justify-content-md-center some-margin">
+            <div className="col col-lg-2"></div>
+            <div className="col-12 col-md-auto">
+              <div className="input-group">
+                <span className="input-group-btn">
+                  <button className='new-workflow-button btn btn-secondary' onClick={this.click}>New</button>
+                </span>
+              </div>
+            </div>
+            <div className="col col-lg-2"></div>
+          </div>
+
+          <div className="card w-75 mx-auto">
+            <div className="card-block">
+
+              <h3 className="card-title some-margin">Workflows</h3>
 
               <div className="some-margin">
                 {this.state.workflows.map( listValue => {
@@ -99,22 +99,14 @@ export default class Workflows extends React.Component {
                           <a href={"/workflows/" + listValue.id}>{listValue.name}</a>
                           <button type='button' className='btn btn-secondary btn-sm button-test-class' onClick={() => this.deleteWorkflow(listValue.id)} >&times;</button>
                         </div>
+                        <div className='d-flex align-items-start'>
+                          <div>Source: Placeholder - </div>
+                          <div>Updated: Placeholder - </div>
+                          <div>Public</div>                          
+                        </div>
                       </div>
                   );
                 })}
-              </div>
-
-              <div className="row justify-content-md-center some-margin">
-                <div className="col col-lg-2"></div>
-                <div className="col-12 col-md-auto">
-                  <div className="input-group">
-                    <input type="text" className='newWorkflowName form-control' value={this.state.value} onChange={this.handleTextChange}/>
-                    <span className="input-group-btn">
-                      <button className='newWorkflowButton btn btn-secondary' onClick={this.click}>New</button>
-                    </span>
-                  </div>
-                </div>
-                <div className="col col-lg-2"></div>
               </div>
 
             </div>

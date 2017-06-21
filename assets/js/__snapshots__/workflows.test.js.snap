@@ -22,6 +22,9 @@ exports[`renders correctly 1`] = `
           >
             CJ Workbench
           </h1>
+          <span>
+            User Name Placeholder
+          </span>
           <WorkflowHamburgerMenu
             workflowsPage={true}
           >
@@ -111,52 +114,47 @@ exports[`renders correctly 1`] = `
       className="container"
     >
       <div
+        className="row justify-content-md-center some-margin"
+      >
+        <div
+          className="col col-lg-2"
+        />
+        <div
+          className="col-12 col-md-auto"
+        >
+          <div
+            className="input-group"
+          >
+            <span
+              className="input-group-btn"
+            >
+              <button
+                className="new-workflow-button btn btn-secondary"
+                onClick={[Function]}
+              >
+                New
+              </button>
+            </span>
+          </div>
+        </div>
+        <div
+          className="col col-lg-2"
+        />
+      </div>
+      <div
         className="card w-75 mx-auto"
       >
         <div
-          className="card-block drop-shadow"
+          className="card-block"
         >
           <h3
-            className="card-title"
+            className="card-title some-margin"
           >
-            Your Workflows
+            Workflows
           </h3>
           <div
             className="some-margin"
           />
-          <div
-            className="row justify-content-md-center some-margin"
-          >
-            <div
-              className="col col-lg-2"
-            />
-            <div
-              className="col-12 col-md-auto"
-            >
-              <div
-                className="input-group"
-              >
-                <input
-                  className="newWorkflowName form-control"
-                  onChange={[Function]}
-                  type="text"
-                />
-                <span
-                  className="input-group-btn"
-                >
-                  <button
-                    className="newWorkflowButton btn btn-secondary"
-                    onClick={[Function]}
-                  >
-                    New
-                  </button>
-                </span>
-              </div>
-            </div>
-            <div
-              className="col col-lg-2"
-            />
-          </div>
         </div>
       </div>
     </div>
@@ -186,6 +184,9 @@ exports[`renders correctly 2`] = `
           >
             CJ Workbench
           </h1>
+          <span>
+            User Name Placeholder
+          </span>
           <WorkflowHamburgerMenu
             workflowsPage={true}
           >
@@ -275,15 +276,43 @@ exports[`renders correctly 2`] = `
       className="container"
     >
       <div
+        className="row justify-content-md-center some-margin"
+      >
+        <div
+          className="col col-lg-2"
+        />
+        <div
+          className="col-12 col-md-auto"
+        >
+          <div
+            className="input-group"
+          >
+            <span
+              className="input-group-btn"
+            >
+              <button
+                className="new-workflow-button btn btn-secondary"
+                onClick={[Function]}
+              >
+                New
+              </button>
+            </span>
+          </div>
+        </div>
+        <div
+          className="col col-lg-2"
+        />
+      </div>
+      <div
         className="card w-75 mx-auto"
       >
         <div
-          className="card-block drop-shadow"
+          className="card-block"
         >
           <h3
-            className="card-title"
+            className="card-title some-margin"
           >
-            Your Workflows
+            Workflows
           </h3>
           <div
             className="some-margin"
@@ -307,6 +336,19 @@ exports[`renders correctly 2`] = `
                   ×
                 </button>
               </div>
+              <div
+                className="d-flex align-items-start"
+              >
+                <div>
+                  Source: Placeholder - 
+                </div>
+                <div>
+                  Updated: Placeholder - 
+                </div>
+                <div>
+                  Public
+                </div>
+              </div>
             </div>
             <div
               className="card card-block some-margin item-test-class"
@@ -326,6 +368,19 @@ exports[`renders correctly 2`] = `
                 >
                   ×
                 </button>
+              </div>
+              <div
+                className="d-flex align-items-start"
+              >
+                <div>
+                  Source: Placeholder - 
+                </div>
+                <div>
+                  Updated: Placeholder - 
+                </div>
+                <div>
+                  Public
+                </div>
               </div>
             </div>
             <div
@@ -347,6 +402,19 @@ exports[`renders correctly 2`] = `
                   ×
                 </button>
               </div>
+              <div
+                className="d-flex align-items-start"
+              >
+                <div>
+                  Source: Placeholder - 
+                </div>
+                <div>
+                  Updated: Placeholder - 
+                </div>
+                <div>
+                  Public
+                </div>
+              </div>
             </div>
             <div
               className="card card-block some-margin item-test-class"
@@ -367,40 +435,20 @@ exports[`renders correctly 2`] = `
                   ×
                 </button>
               </div>
-            </div>
-          </div>
-          <div
-            className="row justify-content-md-center some-margin"
-          >
-            <div
-              className="col col-lg-2"
-            />
-            <div
-              className="col-12 col-md-auto"
-            >
               <div
-                className="input-group"
+                className="d-flex align-items-start"
               >
-                <input
-                  className="newWorkflowName form-control"
-                  onChange={[Function]}
-                  type="text"
-                />
-                <span
-                  className="input-group-btn"
-                >
-                  <button
-                    className="newWorkflowButton btn btn-secondary"
-                    onClick={[Function]}
-                  >
-                    New
-                  </button>
-                </span>
+                <div>
+                  Source: Placeholder - 
+                </div>
+                <div>
+                  Updated: Placeholder - 
+                </div>
+                <div>
+                  Public
+                </div>
               </div>
             </div>
-            <div
-              className="col col-lg-2"
-            />
           </div>
         </div>
       </div>
