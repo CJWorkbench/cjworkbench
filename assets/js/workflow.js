@@ -93,7 +93,7 @@ export default class Workflow extends React.Component {
     
     // We are a toolbar plus a sortable list of modules
     return (
-      <div>
+      <div className="workflow-root">
         <WorkflowNavBar addButton={moduleMenu} workflowTitle={this.props.workflow.name}/>
         <div className="workflow-container">
           <div className="modulestack-left ">

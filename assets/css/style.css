@@ -9,6 +9,11 @@ body {
   background-color: #f6f6f6;    
 }
 
+/* height 100% needed on all parents so that output pane flexbox can fill available vertical screen space  */
+#root {
+  height: 100%;
+}
+
 /* ---- Login ---- */
 .login-fullscreen-container {
   height: 80vh;
@@ -37,19 +42,28 @@ body {
 }
 
 .workflow-in-list {
-	background-color: #ffffff;
-  margin-bottom: 1px;	
-  color: #686768;	
+  background-color: #ffffff;
+  margin-bottom: 1px;
+  color: #686768;
   font-weight: 500;
   color: #686768;
-  border: 0;  
+  border: 0;
 }
 
 /* ---- Workflow page ---- */
 
+/* Contains navbar + workflow. Flex to stack nicely. */
+.workflow-root {
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+}
+
+/* Contains modulestack + output pane. */
 .workflow-container {
   display: flex;
   flex-flow: row;
+  height: 100%;
 }
 
 .modulestack-left {
@@ -85,14 +99,8 @@ body {
   padding: 15px;
 }
 
-/* The flex: property is shorthand for:
-flex-grow: 0,
-flex-shrink: 1,
-flex-basis: auto
-*/
 .outputpane-header {
   flex: 0 1 auto;
-  /*height: 100%;*/
   border: 1px solid #EDECEC;
   background-color: #FFFFFF;
   color: #A2A2A2;
@@ -100,18 +108,10 @@ flex-basis: auto
 
 .outputpane-data {
   flex: 1 1 auto;
-  /*height: 100%;*/
-  /*min-height: 100%;  */  
   border: 1px solid #EDECEC;
+  overflow: hidden; /* important as it prevents grid contents from interfering with window resizing */
 }
 
-/*--- This element may be culled ---*/
-.outputpane-footer {
-  flex: 0 1 40px;
-  /*height: 100%;*/
-  /*min-height: 100%;  */
-  border: 2px solid purple;  
-}
 
 /* ---- Navbar ----- */
 

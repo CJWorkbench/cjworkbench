@@ -14,13 +14,15 @@ export default class OutputPane extends React.Component {
 
   // Load table data from render API
   loadTable(id) {
-    var self = this;
-    var url = '/api/wfmodules/' + id + '/render';
-    fetch(url, { credentials: 'include'})
-      .then(response => response.json())
-      .then(json => {
-        self.setState(Object.assign({}, this.state, {tableData: json, loading: false}));
-      }); // triggers re-render
+    if (id) {
+      var self = this;
+      var url = '/api/wfmodules/' + id + '/render';
+      fetch(url, {credentials: 'include'})
+        .then(response => response.json())
+        .then(json => {
+          self.setState(Object.assign({}, this.state, {tableData: json, loading: false}));
+        }); // triggers re-render
+    }
   }
 
   // Load table when first rendered
@@ -43,7 +45,6 @@ export default class OutputPane extends React.Component {
 
   render() {
     // Don't show anything if we don't have a selected WfModule to show
-
     if (this.props.id) {
       return (
         <div className="outputpane-box">
@@ -58,9 +59,6 @@ export default class OutputPane extends React.Component {
           <div className="outputpane-data bg-danger">
             <TableView tableData={this.state.tableData} />
           </div>
-          {/*<div className="outputpane-footer">
-            Copyright blah blach blach
-          </div>*/}
         </div>
       );
     } else {
