@@ -19,7 +19,7 @@
     "lodash": "^4.17.4",
     "markdown-it": "^8.3.0",
     "rc-collapse": "^1.7.1",
-    "react": "^15.4.2",
+    "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.4.2",
     "react-addons-pure-render-mixin": "^15.4.2",
     "react-addons-shallow-compare": "^0.14.8",
