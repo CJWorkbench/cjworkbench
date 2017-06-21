@@ -26,15 +26,36 @@ body {
 
 /* ---- Workflow list ---- */
 
-.some-margin {
-    margin: 0.5rem;
+.new-workflow-button {
+  border: 1px solid #48C8D7;
+  color: #48C8D7;
+}
+
+.workflows-list {
+  border: 0;     
+  background-color: #f6f6f6;      
+}
+
+.workflow-in-list {
+	background-color: #ffffff;
+  margin-bottom: 1px;	
+  color: #686768;	
+  font-weight: 500;
+  color: #686768;
+  border: 0;  
 }
 
 /* ---- Workflow page ---- */
 
+/*This class is also used in Workflows List page*/
+.card {
+}
+
+
+
+/*This class is also used in Workflows List page*/
 .card-block {
-	/*background-color: #FFFFFF;*/
-  color: #686768
+
 }
 
 .workflow-container {
@@ -42,30 +63,22 @@ body {
   flex-flow: row;
 }
 
-/* --- ugly borders for development only ---*/
 .modulestack-left {
   flex-grow: 1;
   flex-basis: 0;
   min-width: 0;
-  /*border: 3px solid purple;*/
   background-color: #F6F6F6;
 }
 
-/* --- ugly borders for development only ---*/
 .modulestack-header {
-  /*border: 3px solid green;*/
   color: #686768;
   padding: 10px;
 }
 
-/* --- ugly borders/bg color for development only ---*/
 .modulestack-list {
   background-color: #F2F2F2; 
-  /*background-color: pink; */
-  
   padding: 10px;
   border: 1px solid #EDECEC;
-  /*border: 2px dashed blue;  */
 }
 
 .outputpane-right {

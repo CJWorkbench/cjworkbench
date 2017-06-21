@@ -74,7 +74,7 @@ export default class Workflows extends React.Component {
 
         <div className="container">
 
-          <div className="row justify-content-md-center some-margin">
+          <div className="row justify-content-md-center ">
             <div className="col col-lg-2"></div>
             <div className="col-12 col-md-auto">
               <div className="input-group">
@@ -86,23 +86,18 @@ export default class Workflows extends React.Component {
             <div className="col col-lg-2"></div>
           </div>
 
-          <div className="card w-75 mx-auto">
+          <div className="card w-75 mx-auto workflows-list">
             <div className="card-block">
 
-              <h3 className="card-title some-margin">Workflows</h3>
+              <h3 className="card-title ">Workflows</h3>
 
-              <div className="some-margin">
+              <div className="">
                 {this.state.workflows.map( listValue => {
                   return (
-                      <div className="card card-block some-margin item-test-class" key={listValue.id}>
+                      <div className="card card-block item-test-class workflow-in-list" key={listValue.id}>
                         <div className='d-flex justify-content-between'>
                           <a href={"/workflows/" + listValue.id}>{listValue.name}</a>
                           <button type='button' className='btn btn-secondary btn-sm button-test-class' onClick={() => this.deleteWorkflow(listValue.id)} >&times;</button>
-                        </div>
-                        <div className='d-flex align-items-start'>
-                          <div>Source: Placeholder - </div>
-                          <div>Updated: Placeholder - </div>
-                          <div>Public</div>                          
                         </div>
                       </div>
                   );

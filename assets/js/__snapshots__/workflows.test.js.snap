@@ -114,7 +114,7 @@ exports[`renders correctly 1`] = `
       className="container"
     >
       <div
-        className="row justify-content-md-center some-margin"
+        className="row justify-content-md-center "
       >
         <div
           className="col col-lg-2"
@@ -142,18 +142,18 @@ exports[`renders correctly 1`] = `
         />
       </div>
       <div
-        className="card w-75 mx-auto"
+        className="card w-75 mx-auto workflows-list"
       >
         <div
           className="card-block"
         >
           <h3
-            className="card-title some-margin"
+            className="card-title "
           >
             Workflows
           </h3>
           <div
-            className="some-margin"
+            className=""
           />
         </div>
       </div>
@@ -276,7 +276,7 @@ exports[`renders correctly 2`] = `
       className="container"
     >
       <div
-        className="row justify-content-md-center some-margin"
+        className="row justify-content-md-center "
       >
         <div
           className="col col-lg-2"
@@ -304,21 +304,21 @@ exports[`renders correctly 2`] = `
         />
       </div>
       <div
-        className="card w-75 mx-auto"
+        className="card w-75 mx-auto workflows-list"
       >
         <div
           className="card-block"
         >
           <h3
-            className="card-title some-margin"
+            className="card-title "
           >
             Workflows
           </h3>
           <div
-            className="some-margin"
+            className=""
           >
             <div
-              className="card card-block some-margin item-test-class"
+              className="card card-block item-test-class workflow-in-list"
             >
               <div
                 className="d-flex justify-content-between"
@@ -336,22 +336,9 @@ exports[`renders correctly 2`] = `
                   ×
                 </button>
               </div>
-              <div
-                className="d-flex align-items-start"
-              >
-                <div>
-                  Source: Placeholder - 
-                </div>
-                <div>
-                  Updated: Placeholder - 
-                </div>
-                <div>
-                  Public
-                </div>
-              </div>
             </div>
             <div
-              className="card card-block some-margin item-test-class"
+              className="card card-block item-test-class workflow-in-list"
             >
               <div
                 className="d-flex justify-content-between"
@@ -369,22 +356,9 @@ exports[`renders correctly 2`] = `
                   ×
                 </button>
               </div>
-              <div
-                className="d-flex align-items-start"
-              >
-                <div>
-                  Source: Placeholder - 
-                </div>
-                <div>
-                  Updated: Placeholder - 
-                </div>
-                <div>
-                  Public
-                </div>
-              </div>
             </div>
             <div
-              className="card card-block some-margin item-test-class"
+              className="card card-block item-test-class workflow-in-list"
             >
               <div
                 className="d-flex justify-content-between"
@@ -402,22 +376,9 @@ exports[`renders correctly 2`] = `
                   ×
                 </button>
               </div>
-              <div
-                className="d-flex align-items-start"
-              >
-                <div>
-                  Source: Placeholder - 
-                </div>
-                <div>
-                  Updated: Placeholder - 
-                </div>
-                <div>
-                  Public
-                </div>
-              </div>
             </div>
             <div
-              className="card card-block some-margin item-test-class"
+              className="card card-block item-test-class workflow-in-list"
             >
               <div
                 className="d-flex justify-content-between"
@@ -434,19 +395,6 @@ exports[`renders correctly 2`] = `
                 >
                   ×
                 </button>
-              </div>
-              <div
-                className="d-flex align-items-start"
-              >
-                <div>
-                  Source: Placeholder - 
-                </div>
-                <div>
-                  Updated: Placeholder - 
-                </div>
-                <div>
-                  Public
-                </div>
               </div>
             </div>
           </div>
