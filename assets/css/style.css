@@ -47,17 +47,6 @@ body {
 
 /* ---- Workflow page ---- */
 
-/*This class is also used in Workflows List page*/
-.card {
-}
-
-
-
-/*This class is also used in Workflows List page*/
-.card-block {
-
-}
-
 .workflow-container {
   display: flex;
   flex-flow: row;

@@ -33,6 +33,14 @@ export default class Workflows extends React.Component {
     })
   }
 
+  // Handle clicks on Delete button for each WF in list
+  // not working, to delete probably
+  deleteClick(e, id) {
+    e.preventDefault();
+    console.log("You clicked the delete button WOW!");
+    this.deleteWorkflow(id);
+  }
+
   // Ask the user if they really wanna do this. If sure, post DELETE to server
   deleteWorkflow(id) {
     if (!confirm("Permanently delete this workflow?"))
@@ -95,10 +103,13 @@ export default class Workflows extends React.Component {
                 {this.state.workflows.map( listValue => {
                   return (
                       <div className="card card-block item-test-class workflow-in-list" key={listValue.id}>
-                        <div className='d-flex justify-content-between'>
-                          <a href={"/workflows/" + listValue.id}>{listValue.name}</a>
-                          <button type='button' className='btn btn-secondary btn-sm button-test-class' onClick={() => this.deleteWorkflow(listValue.id)} >&times;</button>
-                        </div>
+                        <a href={"/workflows/" + listValue.id}>
+                          <div className='d-flex justify-content-between'>
+                            <span>{listValue.name}</span>
+                            <button type='button' className='btn btn-secondary btn-sm button-test-class' onClick={(e) => this.deleteClick(e, listValue.id)} >&times;</button>
+                            {/*<button><img src={require('../images/more.png')} alt="More options" onClick={(e) => this.deleteClick(e, listValue.id)} /></button>*/}
+                          </div>
+                        </a>
                       </div>
                   );
                 })}
