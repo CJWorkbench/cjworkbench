@@ -1,7 +1,7 @@
 // Elements of /workflows. Navbar plus a list
 
 import React from 'react';
-import { NavBar } from './navbar';
+import { WorkflowListNavBar } from './navbar';
 import { csrfToken, goToUrl } from './utils'
 
 export default class Workflows extends React.Component {
@@ -78,11 +78,11 @@ export default class Workflows extends React.Component {
   render() {
     return (
       <div>
-        <NavBar/>
+        <WorkflowListNavBar/>
 
-        <div className="container">
+        <div className="container workflows-container">
 
-          <div className="row justify-content-md-center ">
+          <div className="row justify-content-md-center">
             <div className="col col-lg-2"></div>
             <div className="col-12 col-md-auto">
               <div className="input-group">

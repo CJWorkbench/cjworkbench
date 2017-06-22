@@ -5,18 +5,13 @@ import React from 'react';
 import WorkflowHamburgerMenu from './WorkflowHamburgerMenu'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 
-export class NavBar extends React.Component {
+export class WorkflowListNavBar extends React.Component {
 
   render() {
 
-    // fixed navbar (not visible) to space content below floating navbar, then real navbar
     return (
       <div>
-        <nav className="navbar navbar-toggleable-md mb-3">
-          <h1 className="navbar-brand mb-0">CJ Workbench</h1>
-        </nav>
-
-        <nav className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1">
+        <nav className="navbar">
           <h1 className="navbar-brand mb-0 mr-auto">CJ Workbench</h1>
           <WorkflowHamburgerMenu workflowsPage />
         </nav>
@@ -25,18 +20,14 @@ export class NavBar extends React.Component {
   }
 }
 
+// Workflow page
 export class WorkflowNavBar extends React.Component {
 
   render() {
 
-    // fixed navbar (not visible) to space content below floating navbar, then real navbar
     return (
       <div>
-        <nav className="navbar navbar-toggleable-md mb-3">
-          <h3>spacing text</h3>
-        </nav>
-
-        <nav className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1">
+        <nav className="navbar">
           {this.props.addButton}
           <ImportModuleFromGitHub />
           <h3 className="mx-auto">{this.props.workflowTitle}</h3>

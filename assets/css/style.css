@@ -14,6 +14,24 @@ body {
   height: 100%;
 }
 
+
+/* ---- Navbar ----- */
+
+.navbar {
+  height: 3.5rem;
+  position: fixed;
+  display: flex;
+  flex-direction: row;
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1030;
+  background-color: #48C8D7;
+  color: #FFFFFF;
+  border-bottom: 1px solid;
+}
+
+
 /* ---- Login ---- */
 .login-fullscreen-container {
   height: 80vh;
@@ -30,6 +48,10 @@ body {
 }
 
 /* ---- Workflow list ---- */
+
+.workflows-container {
+  margin-top: 5rem;
+}
 
 .new-workflow-button {
   border: 1px solid #48C8D7;
@@ -52,18 +74,17 @@ body {
 
 /* ---- Workflow page ---- */
 
-/* Contains navbar + workflow. Flex to stack nicely. */
+/* Contains navbar + workflow. */
 .workflow-root {
   height: 100%;
-  display: flex;
-  flex-flow: column;
 }
 
-/* Contains modulestack + output pane. */
+/* Contains modulestack + output pane. Position below nav */
 .workflow-container {
   display: flex;
   flex-flow: row;
-  height: 100%;
+  height: calc(100% - 3.5rem);
+  margin-top: 3.5rem;
 }
 
 .modulestack-left {
@@ -88,41 +109,31 @@ body {
   flex-grow: 1;
   flex-basis: 0;
   min-width: 0;
+  position: relative;
 }
 
 .outputpane-box {
-  display: flex;
-  flex-flow: column;
-  height: 100%;
+  height: calc(100% - 3.5rem);
+  width: 50%;
   border: 1px solid #EDECEC;
   background-color: #F2F2F2;
   padding: 15px;
+  position: fixed;
 }
 
 .outputpane-header {
-  flex: 0 1 auto;
+  height: 3rem;
   border: 1px solid #EDECEC;
   background-color: #FFFFFF;
   color: #A2A2A2;
 }
 
 .outputpane-data {
-  flex: 1 1 auto;
+  height: calc(100% - 3rem);
   border: 1px solid #EDECEC;
   overflow: hidden; /* important as it prevents grid contents from interfering with window resizing */
 }
 
-
-/* ---- Navbar ----- */
-
-.navbar {
-  background-color: #48C8D7;
-  color: #FFFFFF;
-}
-
-.border-bottom-1 {
-  border-bottom: 1px solid;
-}
 
 /* ---- WfModule ---- */
 
@@ -165,10 +176,7 @@ body {
   width: 20%;
 }
 
-.wfModuleOutputTable {
-  resize: vertical;
-  height: 300px;
-}
+
 /* ---- Status lights ---- */
 .ready-light {
   width: 15px;
