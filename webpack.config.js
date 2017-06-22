@@ -35,8 +35,8 @@ module.exports = {
         test: /\.css$/,
         loader: 'style-loader!css-loader'
       },
-      // image handling - New and untested
       // {
+      //   // image handling - New and untested        
       //   test: /\.(png|jpg|gif)$/,
       //   loader: 'url-loader' 
       // }

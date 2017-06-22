@@ -2,17 +2,21 @@
 
 import React from 'react';
 import { WorkflowListNavBar } from './navbar';
-import { csrfToken, goToUrl } from './utils'
+import { csrfToken, goToUrl } from './utils';
+
+// const moreIcon = require('../images/more.png');
+// import { moreIcon } from '../images/more.png';
+
 
 export default class Workflows extends React.Component {
   constructor(props) {
     super(props);
     this.click = this.click.bind(this);
-    this.deleteWorkflow= this.deleteWorkflow.bind(this);
+    this.deleteWorkflow = this.deleteWorkflow.bind(this);
     this.state = { workflows: []}
   }
 
-  // Make a new workflow when button clicked
+  // Make a new workflow when button clicked, and navigate to its Module List page
   click(e) {
 
     fetch('/api/workflows',
@@ -107,7 +111,7 @@ export default class Workflows extends React.Component {
                           <div className='d-flex justify-content-between'>
                             <span>{listValue.name}</span>
                             <button type='button' className='btn btn-secondary btn-sm button-test-class' onClick={(e) => this.deleteClick(e, listValue.id)} >&times;</button>
-                            {/*<button><img src={require('../images/more.png')} alt="More options" onClick={(e) => this.deleteClick(e, listValue.id)} /></button>*/}
+                            {/*<button><img src={moreIcon} alt="More options" onClick={(e) => this.deleteClick(e, listValue.id)} /></button>*/}
                           </div>
                         </a>
                       </div>
