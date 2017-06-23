@@ -22,7 +22,6 @@
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.4.2",
     "react-addons-pure-render-mixin": "^15.4.2",
-    "react-addons-shallow-compare": "^0.14.8",
     "react-addons-transition-group": "^15.5.2",
     "react-addons-update": "^15.4.2",
     "react-data-grid": "^2.0.41",
