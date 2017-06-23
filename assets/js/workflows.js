@@ -10,7 +10,7 @@ export default class Workflows extends React.Component {
   constructor(props) {
     super(props);
     this.click = this.click.bind(this);
-    // this.deleteWorkflow = this.deleteWorkflow.bind(this);
+    this.deleteWorkflow = this.deleteWorkflow.bind(this);
     this.state = { workflows: []}
   }
 
@@ -34,6 +34,30 @@ export default class Workflows extends React.Component {
       goToUrl('/workflows/' + json.id);      
     })
   } 
+
+  // Ask the user if they really wanna do this. If sure, post DELETE to server
+  deleteWorkflow(id) {
+    if (!confirm("Permanently delete this workflow?"))
+      return;
+    var _this = this;
+
+    fetch(
+      '/api/workflows/' + id ,
+      {
+        method: 'delete',
+        credentials: 'include',
+        headers: {
+          'X-CSRFToken': csrfToken
+        }
+      }
+    )
+    .then(response => {
+      if (response.ok) {
+        var workflowsMinusID = this.state.workflows.filter(wf => wf.id != id);
+        _this.setState({workflows: workflowsMinusID, newWorkflowName: this.state.newWorkflowName})
+      }
+    })
+  }
 
   componentDidMount() {
     var _this = this;
@@ -76,13 +100,9 @@ export default class Workflows extends React.Component {
                         <a href={"/workflows/" + listValue.id}>
                           <div className='d-flex justify-content-between'>
                             <span>{listValue.name}</span>
-                            {/*Extra div wrapper to enable prevention of parent's navigation to WF page*/}
+                            {/* Extra div wrapper to prevent parent's navigation to WF page*/}
                             <div onClick={(e) => e.preventDefault()} >
-                              {/*<WorkflowContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>*/}
-                              <WorkflowContextMenu 
-                                id={listValue.id}
-                                workflows={this.state.workflows}
-                              />                              
+                              <WorkflowContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
                             </div>                                                                                
                           </div>
                         </a>

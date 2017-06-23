@@ -3,28 +3,16 @@
 exports[`renders correctly 1`] = `
 <Workflows>
   <div>
-    <NavBar>
+    <WorkflowListNavBar>
       <div>
         <nav
-          className="navbar navbar-toggleable-md mb-3"
-        >
-          <h1
-            className="navbar-brand mb-0"
-          >
-            CJ Workbench
-          </h1>
-        </nav>
-        <nav
-          className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1"
+          className="navbar"
         >
           <h1
             className="navbar-brand mb-0 mr-auto"
           >
             CJ Workbench
           </h1>
-          <span>
-            User Name Placeholder
-          </span>
           <WorkflowHamburgerMenu
             workflowsPage={true}
           >
@@ -109,12 +97,12 @@ exports[`renders correctly 1`] = `
           </WorkflowHamburgerMenu>
         </nav>
       </div>
-    </NavBar>
+    </WorkflowListNavBar>
     <div
-      className="container"
+      className="container workflows-container"
     >
       <div
-        className="row justify-content-md-center "
+        className="row justify-content-md-center"
       >
         <div
           className="col col-lg-2"
@@ -165,28 +153,16 @@ exports[`renders correctly 1`] = `
 exports[`renders correctly 2`] = `
 <Workflows>
   <div>
-    <NavBar>
+    <WorkflowListNavBar>
       <div>
         <nav
-          className="navbar navbar-toggleable-md mb-3"
-        >
-          <h1
-            className="navbar-brand mb-0"
-          >
-            CJ Workbench
-          </h1>
-        </nav>
-        <nav
-          className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1"
+          className="navbar"
         >
           <h1
             className="navbar-brand mb-0 mr-auto"
           >
             CJ Workbench
           </h1>
-          <span>
-            User Name Placeholder
-          </span>
           <WorkflowHamburgerMenu
             workflowsPage={true}
           >
@@ -271,12 +247,12 @@ exports[`renders correctly 2`] = `
           </WorkflowHamburgerMenu>
         </nav>
       </div>
-    </NavBar>
+    </WorkflowListNavBar>
     <div
-      className="container"
+      className="container workflows-container"
     >
       <div
-        className="row justify-content-md-center "
+        className="row justify-content-md-center"
       >
         <div
           className="col col-lg-2"
@@ -320,82 +296,350 @@ exports[`renders correctly 2`] = `
             <div
               className="card card-block item-test-class workflow-in-list"
             >
-              <div
-                className="d-flex justify-content-between"
+              <a
+                href="/workflows/1"
               >
-                <a
-                  href="/workflows/1"
+                <div
+                  className="d-flex justify-content-between"
                 >
-                  Charting
-                </a>
-                <button
-                  className="btn btn-secondary btn-sm button-test-class"
-                  onClick={[Function]}
-                  type="button"
-                >
-                  ×
-                </button>
-              </div>
+                  <span>
+                    Charting
+                  </span>
+                  <div
+                    onClick={[Function]}
+                  >
+                    <WorkflowContextMenu
+                      deleteWorkflow={[Function]}
+                    >
+                      <UncontrolledDropdown>
+                        <Dropdown
+                          isOpen={false}
+                          tag="div"
+                          toggle={[Function]}
+                        >
+                          <div
+                            className="dropdown"
+                          >
+                            <DropdownToggle
+                              aria-haspopup={true}
+                              color="secondary"
+                              data-toggle="dropdown"
+                            >
+                              <Button
+                                aria-expanded={false}
+                                aria-haspopup="true"
+                                className=""
+                                color="secondary"
+                                data-toggle="dropdown"
+                                onClick={[Function]}
+                                tag="button"
+                              >
+                                <button
+                                  aria-expanded={false}
+                                  aria-haspopup="true"
+                                  className="btn btn-secondary"
+                                  data-toggle="dropdown"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  ⋮
+                                </button>
+                              </Button>
+                            </DropdownToggle>
+                            <DropdownMenu
+                              right={true}
+                              tag="div"
+                            >
+                              <div
+                                aria-hidden={true}
+                                className="dropdown-menu dropdown-menu-right"
+                                role="menu"
+                                tabIndex="-1"
+                              >
+                                <DropdownItem
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    Delete
+                                  </button>
+                                </DropdownItem>
+                              </div>
+                            </DropdownMenu>
+                          </div>
+                        </Dropdown>
+                      </UncontrolledDropdown>
+                    </WorkflowContextMenu>
+                  </div>
+                </div>
+              </a>
             </div>
             <div
               className="card card-block item-test-class workflow-in-list"
             >
-              <div
-                className="d-flex justify-content-between"
+              <a
+                href="/workflows/7"
               >
-                <a
-                  href="/workflows/7"
+                <div
+                  className="d-flex justify-content-between"
                 >
-                  Messy data cleanup
-                </a>
-                <button
-                  className="btn btn-secondary btn-sm button-test-class"
-                  onClick={[Function]}
-                  type="button"
-                >
-                  ×
-                </button>
-              </div>
+                  <span>
+                    Messy data cleanup
+                  </span>
+                  <div
+                    onClick={[Function]}
+                  >
+                    <WorkflowContextMenu
+                      deleteWorkflow={[Function]}
+                    >
+                      <UncontrolledDropdown>
+                        <Dropdown
+                          isOpen={false}
+                          tag="div"
+                          toggle={[Function]}
+                        >
+                          <div
+                            className="dropdown"
+                          >
+                            <DropdownToggle
+                              aria-haspopup={true}
+                              color="secondary"
+                              data-toggle="dropdown"
+                            >
+                              <Button
+                                aria-expanded={false}
+                                aria-haspopup="true"
+                                className=""
+                                color="secondary"
+                                data-toggle="dropdown"
+                                onClick={[Function]}
+                                tag="button"
+                              >
+                                <button
+                                  aria-expanded={false}
+                                  aria-haspopup="true"
+                                  className="btn btn-secondary"
+                                  data-toggle="dropdown"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  ⋮
+                                </button>
+                              </Button>
+                            </DropdownToggle>
+                            <DropdownMenu
+                              right={true}
+                              tag="div"
+                            >
+                              <div
+                                aria-hidden={true}
+                                className="dropdown-menu dropdown-menu-right"
+                                role="menu"
+                                tabIndex="-1"
+                              >
+                                <DropdownItem
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    Delete
+                                  </button>
+                                </DropdownItem>
+                              </div>
+                            </DropdownMenu>
+                          </div>
+                        </Dropdown>
+                      </UncontrolledDropdown>
+                    </WorkflowContextMenu>
+                  </div>
+                </div>
+              </a>
             </div>
             <div
               className="card card-block item-test-class workflow-in-list"
             >
-              <div
-                className="d-flex justify-content-between"
+              <a
+                href="/workflows/8"
               >
-                <a
-                  href="/workflows/8"
+                <div
+                  className="d-flex justify-content-between"
                 >
-                  Document search
-                </a>
-                <button
-                  className="btn btn-secondary btn-sm button-test-class"
-                  onClick={[Function]}
-                  type="button"
-                >
-                  ×
-                </button>
-              </div>
+                  <span>
+                    Document search
+                  </span>
+                  <div
+                    onClick={[Function]}
+                  >
+                    <WorkflowContextMenu
+                      deleteWorkflow={[Function]}
+                    >
+                      <UncontrolledDropdown>
+                        <Dropdown
+                          isOpen={false}
+                          tag="div"
+                          toggle={[Function]}
+                        >
+                          <div
+                            className="dropdown"
+                          >
+                            <DropdownToggle
+                              aria-haspopup={true}
+                              color="secondary"
+                              data-toggle="dropdown"
+                            >
+                              <Button
+                                aria-expanded={false}
+                                aria-haspopup="true"
+                                className=""
+                                color="secondary"
+                                data-toggle="dropdown"
+                                onClick={[Function]}
+                                tag="button"
+                              >
+                                <button
+                                  aria-expanded={false}
+                                  aria-haspopup="true"
+                                  className="btn btn-secondary"
+                                  data-toggle="dropdown"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  ⋮
+                                </button>
+                              </Button>
+                            </DropdownToggle>
+                            <DropdownMenu
+                              right={true}
+                              tag="div"
+                            >
+                              <div
+                                aria-hidden={true}
+                                className="dropdown-menu dropdown-menu-right"
+                                role="menu"
+                                tabIndex="-1"
+                              >
+                                <DropdownItem
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    Delete
+                                  </button>
+                                </DropdownItem>
+                              </div>
+                            </DropdownMenu>
+                          </div>
+                        </Dropdown>
+                      </UncontrolledDropdown>
+                    </WorkflowContextMenu>
+                  </div>
+                </div>
+              </a>
             </div>
             <div
               className="card card-block item-test-class workflow-in-list"
             >
-              <div
-                className="d-flex justify-content-between"
+              <a
+                href="/workflows/9"
               >
-                <a
-                  href="/workflows/9"
+                <div
+                  className="d-flex justify-content-between"
                 >
-                  Visualization
-                </a>
-                <button
-                  className="btn btn-secondary btn-sm button-test-class"
-                  onClick={[Function]}
-                  type="button"
-                >
-                  ×
-                </button>
-              </div>
+                  <span>
+                    Visualization
+                  </span>
+                  <div
+                    onClick={[Function]}
+                  >
+                    <WorkflowContextMenu
+                      deleteWorkflow={[Function]}
+                    >
+                      <UncontrolledDropdown>
+                        <Dropdown
+                          isOpen={false}
+                          tag="div"
+                          toggle={[Function]}
+                        >
+                          <div
+                            className="dropdown"
+                          >
+                            <DropdownToggle
+                              aria-haspopup={true}
+                              color="secondary"
+                              data-toggle="dropdown"
+                            >
+                              <Button
+                                aria-expanded={false}
+                                aria-haspopup="true"
+                                className=""
+                                color="secondary"
+                                data-toggle="dropdown"
+                                onClick={[Function]}
+                                tag="button"
+                              >
+                                <button
+                                  aria-expanded={false}
+                                  aria-haspopup="true"
+                                  className="btn btn-secondary"
+                                  data-toggle="dropdown"
+                                  onClick={[Function]}
+                                  type="button"
+                                >
+                                  ⋮
+                                </button>
+                              </Button>
+                            </DropdownToggle>
+                            <DropdownMenu
+                              right={true}
+                              tag="div"
+                            >
+                              <div
+                                aria-hidden={true}
+                                className="dropdown-menu dropdown-menu-right"
+                                role="menu"
+                                tabIndex="-1"
+                              >
+                                <DropdownItem
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    Delete
+                                  </button>
+                                </DropdownItem>
+                              </div>
+                            </DropdownMenu>
+                          </div>
+                        </Dropdown>
+                      </UncontrolledDropdown>
+                    </WorkflowContextMenu>
+                  </div>
+                </div>
+              </a>
             </div>
           </div>
         </div>

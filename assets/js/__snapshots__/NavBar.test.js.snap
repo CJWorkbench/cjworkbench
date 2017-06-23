@@ -65,14 +65,7 @@ exports[`NavBar renders correctly 1`] = `
 exports[`WorkflowNavBar renders correctly 1`] = `
 <div>
   <nav
-    className="navbar navbar-toggleable-md mb-3"
-  >
-    <h3>
-      spacing text
-    </h3>
-  </nav>
-  <nav
-    className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1"
+    className="navbar"
   >
     <div />
     <form
