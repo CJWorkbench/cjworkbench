@@ -2,7 +2,8 @@
 
 import React from 'react';
 import TableView from './TableView'
-// import { csrfToken } from './utils'
+import PropTypes from 'prop-types';
+
 
 export default class OutputPane extends React.Component {
 
@@ -68,8 +69,8 @@ export default class OutputPane extends React.Component {
 }
 
 OutputPane.propTypes = {
-  id: React.PropTypes.number,
-  revision: React.PropTypes.number
+  id: PropTypes.number,
+  revision: PropTypes.number
 };
 
 

@@ -1,9 +1,10 @@
 // ---- TableView ----
 // Displays a module's rendered output, if any
 
-import React, { PropTypes } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid';
+import PropTypes from 'prop-types';
 
 export default class TableView extends React.Component {
  
@@ -56,5 +57,5 @@ export default class TableView extends React.Component {
 }
 
 TableView.propTypes = {
-  tableData: React.PropTypes.arrayOf(React.PropTypes.object),
+  tableData: PropTypes.arrayOf(PropTypes.object),
 };
