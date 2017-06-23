@@ -15,15 +15,17 @@ export default class TableView extends React.Component {
 
   // After the component mounts, and on any change, set the height to parent div height
   updateSize() {
-    var gridHeight = ReactDOM.findDOMNode(this).parentElement.offsetHeight;
-    this.setState({gridHeight: gridHeight});
-    //console.log("updated size to " + gridHeight);
+    var domNode = ReactDOM.findDOMNode(this);
+    if (domNode) {
+      var gridHeight = domNode.parentElement.offsetHeight;
+      this.setState({gridHeight: gridHeight});
+      //console.log("updated size to " + gridHeight);
+    }
   }
 
   componentDidMount() {
     window.addEventListener("resize", this.updateSize);
-    var gridHeight = ReactDOM.findDOMNode(this).parentElement.offsetHeight;
-    this.setState({gridHeight: gridHeight});
+    this.updateSize();
   }
 
   componentWillReceiveProps(nextProps) {

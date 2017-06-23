@@ -1,18 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`NavBar renders correctly 1`] = `
+exports[`WorkflowListNavBar renders correctly 1`] = `
 <div>
   <nav
-    className="navbar navbar-toggleable-md mb-3"
-  >
-    <h1
-      className="navbar-brand mb-0"
-    >
-      CJ Workbench
-    </h1>
-  </nav>
-  <nav
-    className="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1"
+    className="navbar"
   >
     <h1
       className="navbar-brand mb-0 mr-auto"

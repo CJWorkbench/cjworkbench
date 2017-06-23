@@ -1,10 +1,10 @@
 import React from 'react';
-import { NavBar, WorkflowNavBar } from './navbar';
+import { WorkflowListNavBar, WorkflowNavBar } from './navbar';
 import renderer from 'react-test-renderer';
 
-it('NavBar renders correctly', () => {
+it('WorkflowListNavBar renders correctly', () => {
   const tree = renderer.create(
-    <NavBar />
+    <WorkflowListNavBar />
   ).toJSON();
   expect(tree).toMatchSnapshot();
 });

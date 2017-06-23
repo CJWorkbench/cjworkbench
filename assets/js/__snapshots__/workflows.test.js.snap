@@ -306,6 +306,7 @@ exports[`renders correctly 2`] = `
                     Charting
                   </span>
                   <div
+                    className="menu-test-class"
                     onClick={[Function]}
                   >
                     <WorkflowContextMenu
@@ -393,6 +394,7 @@ exports[`renders correctly 2`] = `
                     Messy data cleanup
                   </span>
                   <div
+                    className="menu-test-class"
                     onClick={[Function]}
                   >
                     <WorkflowContextMenu
@@ -480,6 +482,7 @@ exports[`renders correctly 2`] = `
                     Document search
                   </span>
                   <div
+                    className="menu-test-class"
                     onClick={[Function]}
                   >
                     <WorkflowContextMenu
@@ -567,6 +570,7 @@ exports[`renders correctly 2`] = `
                     Visualization
                   </span>
                   <div
+                    className="menu-test-class"
                     onClick={[Function]}
                   >
                     <WorkflowContextMenu

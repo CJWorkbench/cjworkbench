@@ -47,15 +47,16 @@ it('renders correctly', (done) => {
   expect(wrapper).toMatchSnapshot();
   expect(wrapper.find('.item-test-class')).toHaveLength(4);
 
-  // Make sure there is a delete button for each workflow
-  var buttons = wrapper.find('.button-test-class');
-  expect(buttons).toHaveLength(4);
+  // Make sure there is a context menu for each workflow
+  var menus = wrapper.find('.menu-test-class');
+  expect(menus).toHaveLength(4);
 
 
   // Try deleting a workflow
+  var workflowsReactObject = wrapper.get(0)
   global.confirm = () => true;                       // pretend the user clicked OK
-  buttons.first().simulate('click');
-  wrapper.update();
+  workflowsReactObject.deleteWorkflow(9)
+
 
   // We've clicked and now we have to wait for everything to update.
   // We do this with node's setImmediate and Jest's done https://facebook.github.io/jest/docs/asynchronous.html

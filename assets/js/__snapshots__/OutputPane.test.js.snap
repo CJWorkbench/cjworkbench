@@ -64,7 +64,7 @@ exports[`Fetches and renders 1`] = `
           enableRowSelect={false}
           headerFiltersHeight={45}
           minColumnWidth={80}
-          minHeight={800}
+          minHeight={-2}
           overScan={
             Object {
               "colsEnd": 5,
@@ -188,7 +188,7 @@ exports[`Fetches and renders 1`] = `
                   ]
                 }
                 minColumnWidth={80}
-                minHeight={800}
+                minHeight={-2}
                 onColumnResize={[Function]}
                 onSort={[Function]}
                 onViewportDoubleClick={[Function]}
@@ -221,7 +221,7 @@ exports[`Fetches and renders 1`] = `
                   className="react-grid-Grid"
                   style={
                     Object {
-                      "minHeight": 800,
+                      "minHeight": -2,
                       "outline": 0,
                       "overflow": "hidden",
                       "position": "relative",
@@ -701,7 +701,7 @@ exports[`Fetches and renders 1`] = `
                         }
                       }
                       expandedRows={Array []}
-                      minHeight={800}
+                      minHeight={-2}
                       onScroll={[Function]}
                       overScan={
                         Object {
@@ -797,10 +797,10 @@ exports[`Fetches and renders 1`] = `
                               },
                             ]
                           }
-                          displayEnd={2}
+                          displayEnd={-4}
                           displayStart={0}
                           expandedRows={Array []}
-                          height={765}
+                          height={-37}
                           isScrolling={false}
                           onRows={[Function]}
                           onScroll={[Function]}
@@ -813,7 +813,7 @@ exports[`Fetches and renders 1`] = `
                           rowsCount={2}
                           selectedRows={Array []}
                           totalWidth="100%"
-                          visibleEnd={2}
+                          visibleEnd={-4}
                           visibleStart={0}
                           width={0}
                         >
@@ -822,7 +822,7 @@ exports[`Fetches and renders 1`] = `
                             onScroll={[Function]}
                             style={
                               Object {
-                                "height": 765,
+                                "height": -37,
                                 "left": 0,
                                 "overflowX": "auto",
                                 "overflowY": "scroll",
@@ -837,164 +837,35 @@ exports[`Fetches and renders 1`] = `
                               rowIdx={-1}
                               rows={
                                 Array [
-                                  <Row
-                                    cellMetaData={
+                                  <div
+                                    style={
                                         Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellSelect": false,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": -1,
-                                              "rowIdx": -1,
-                                            },
+                                            "height": 210,
                                           }
                                     }
-                                    cellRenderer={[Function]}
-                                    colDisplayEnd={3}
-                                    colDisplayStart={0}
-                                    colVisibleEnd={3}
-                                    colVisibleStart={0}
-                                    columns={
-                                        Array [
+                                >
+                                    <div
+                                        style={
                                             Object {
-                                              "key": "a",
-                                              "left": 0,
-                                              "name": "a",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
+                                                "width": 80,
+                                              }
+                                        }
+                                    />
+                                    <div
+                                        style={
                                             Object {
-                                              "key": "b",
-                                              "left": 80,
-                                              "name": "b",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
+                                                "width": 80,
+                                              }
+                                        }
+                                    />
+                                    <div
+                                        style={
                                             Object {
-                                              "key": "c",
-                                              "left": 160,
-                                              "name": "c",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
-                                          ]
-                                    }
-                                    expandedRows={Array []}
-                                    height={35}
-                                    idx={0}
-                                    isScrolling={false}
-                                    isSelected={false}
-                                    onMouseOver={undefined}
-                                    row={
-                                        Object {
-                                            "a": "1",
-                                            "b": "2",
-                                            "c": "3",
-                                          }
-                                    }
-                                    subRowDetails={Object {}}
-                                    visibleEnd={2}
-                                    visibleStart={0}
-                                />,
-                                  <Row
-                                    cellMetaData={
-                                        Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellSelect": false,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": -1,
-                                              "rowIdx": -1,
-                                            },
-                                          }
-                                    }
-                                    cellRenderer={[Function]}
-                                    colDisplayEnd={3}
-                                    colDisplayStart={0}
-                                    colVisibleEnd={3}
-                                    colVisibleStart={0}
-                                    columns={
-                                        Array [
-                                            Object {
-                                              "key": "a",
-                                              "left": 0,
-                                              "name": "a",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "key": "b",
-                                              "left": 80,
-                                              "name": "b",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "key": "c",
-                                              "left": 160,
-                                              "name": "c",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
-                                          ]
-                                    }
-                                    expandedRows={Array []}
-                                    height={35}
-                                    idx={1}
-                                    isScrolling={false}
-                                    isSelected={false}
-                                    onMouseOver={undefined}
-                                    row={
-                                        Object {
-                                            "a": "4",
-                                            "b": "5",
-                                            "c": "6",
-                                          }
-                                    }
-                                    subRowDetails={Object {}}
-                                    visibleEnd={2}
-                                    visibleStart={0}
-                                />,
+                                                "width": 80,
+                                              }
+                                        }
+                                    />
+                                </div>,
                                 ]
                               }
                               width={0}
@@ -1004,1037 +875,69 @@ exports[`Fetches and renders 1`] = `
                                 rowIdx={-1}
                                 rows={
                                   Array [
-                                    <Row
-                                      cellMetaData={
+                                    <div
+                                      style={
                                           Object {
-                                              "copied": null,
-                                              "dragged": null,
-                                              "enableCellSelect": false,
-                                              "getDataGridDOMNode": [Function],
-                                              "handleDragEnterRow": [Function],
-                                              "handleTerminateDrag": [Function],
-                                              "hoveredRowIdx": undefined,
-                                              "isScrollingHorizontallyWithKeyboard": false,
-                                              "isScrollingVerticallyWithKeyboard": false,
-                                              "onAddSubRow": undefined,
-                                              "onCellClick": [Function],
-                                              "onCellContextMenu": [Function],
-                                              "onCellDoubleClick": [Function],
-                                              "onCellExpand": [Function],
-                                              "onColumnEvent": [Function],
-                                              "onCommit": [Function],
-                                              "onCommitCancel": [Function],
-                                              "onDeleteSubRow": undefined,
-                                              "onDragHandleDoubleClick": [Function],
-                                              "onRowExpandToggle": [Function],
-                                              "onRowHover": undefined,
-                                              "openCellEditor": [Function],
-                                              "rowKey": "id",
-                                              "selected": Object {
-                                                "idx": -1,
-                                                "rowIdx": -1,
-                                              },
+                                              "height": 210,
                                             }
                                       }
-                                      cellRenderer={[Function]}
-                                      colDisplayEnd={3}
-                                      colDisplayStart={0}
-                                      colVisibleEnd={3}
-                                      colVisibleStart={0}
-                                      columns={
-                                          Array [
+                                  >
+                                      <div
+                                          style={
                                               Object {
-                                                "key": "a",
-                                                "left": 0,
-                                                "name": "a",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
+                                                  "width": 80,
+                                                }
+                                          }
+                                      />
+                                      <div
+                                          style={
                                               Object {
-                                                "key": "b",
-                                                "left": 80,
-                                                "name": "b",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
+                                                  "width": 80,
+                                                }
+                                          }
+                                      />
+                                      <div
+                                          style={
                                               Object {
-                                                "key": "c",
-                                                "left": 160,
-                                                "name": "c",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
-                                            ]
-                                      }
-                                      expandedRows={Array []}
-                                      height={35}
-                                      idx={0}
-                                      isScrolling={false}
-                                      isSelected={false}
-                                      onMouseOver={undefined}
-                                      row={
-                                          Object {
-                                              "a": "1",
-                                              "b": "2",
-                                              "c": "3",
-                                            }
-                                      }
-                                      subRowDetails={Object {}}
-                                      visibleEnd={2}
-                                      visibleStart={0}
-                                  />,
-                                    <Row
-                                      cellMetaData={
-                                          Object {
-                                              "copied": null,
-                                              "dragged": null,
-                                              "enableCellSelect": false,
-                                              "getDataGridDOMNode": [Function],
-                                              "handleDragEnterRow": [Function],
-                                              "handleTerminateDrag": [Function],
-                                              "hoveredRowIdx": undefined,
-                                              "isScrollingHorizontallyWithKeyboard": false,
-                                              "isScrollingVerticallyWithKeyboard": false,
-                                              "onAddSubRow": undefined,
-                                              "onCellClick": [Function],
-                                              "onCellContextMenu": [Function],
-                                              "onCellDoubleClick": [Function],
-                                              "onCellExpand": [Function],
-                                              "onColumnEvent": [Function],
-                                              "onCommit": [Function],
-                                              "onCommitCancel": [Function],
-                                              "onDeleteSubRow": undefined,
-                                              "onDragHandleDoubleClick": [Function],
-                                              "onRowExpandToggle": [Function],
-                                              "onRowHover": undefined,
-                                              "openCellEditor": [Function],
-                                              "rowKey": "id",
-                                              "selected": Object {
-                                                "idx": -1,
-                                                "rowIdx": -1,
-                                              },
-                                            }
-                                      }
-                                      cellRenderer={[Function]}
-                                      colDisplayEnd={3}
-                                      colDisplayStart={0}
-                                      colVisibleEnd={3}
-                                      colVisibleStart={0}
-                                      columns={
-                                          Array [
-                                              Object {
-                                                "key": "a",
-                                                "left": 0,
-                                                "name": "a",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "key": "b",
-                                                "left": 80,
-                                                "name": "b",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "key": "c",
-                                                "left": 160,
-                                                "name": "c",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
-                                            ]
-                                      }
-                                      expandedRows={Array []}
-                                      height={35}
-                                      idx={1}
-                                      isScrolling={false}
-                                      isSelected={false}
-                                      onMouseOver={undefined}
-                                      row={
-                                          Object {
-                                              "a": "4",
-                                              "b": "5",
-                                              "c": "6",
-                                            }
-                                      }
-                                      subRowDetails={Object {}}
-                                      visibleEnd={2}
-                                      visibleStart={0}
-                                  />,
+                                                  "width": 80,
+                                                }
+                                          }
+                                      />
+                                  </div>,
                                   ]
                                 }
                                 width={0}
                               >
                                 <div>
-                                  <Row
-                                    cellMetaData={
+                                  <div
+                                    style={
                                       Object {
-                                        "copied": null,
-                                        "dragged": null,
-                                        "enableCellSelect": false,
-                                        "getDataGridDOMNode": [Function],
-                                        "handleDragEnterRow": [Function],
-                                        "handleTerminateDrag": [Function],
-                                        "hoveredRowIdx": undefined,
-                                        "isScrollingHorizontallyWithKeyboard": false,
-                                        "isScrollingVerticallyWithKeyboard": false,
-                                        "onAddSubRow": undefined,
-                                        "onCellClick": [Function],
-                                        "onCellContextMenu": [Function],
-                                        "onCellDoubleClick": [Function],
-                                        "onCellExpand": [Function],
-                                        "onColumnEvent": [Function],
-                                        "onCommit": [Function],
-                                        "onCommitCancel": [Function],
-                                        "onDeleteSubRow": undefined,
-                                        "onDragHandleDoubleClick": [Function],
-                                        "onRowExpandToggle": [Function],
-                                        "onRowHover": undefined,
-                                        "openCellEditor": [Function],
-                                        "rowKey": "id",
-                                        "selected": Object {
-                                          "idx": -1,
-                                          "rowIdx": -1,
-                                        },
+                                        "height": 210,
                                       }
                                     }
-                                    cellRenderer={[Function]}
-                                    colDisplayEnd={3}
-                                    colDisplayStart={0}
-                                    colVisibleEnd={3}
-                                    colVisibleStart={0}
-                                    columns={
-                                      Array [
-                                        Object {
-                                          "key": "a",
-                                          "left": 0,
-                                          "name": "a",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "key": "b",
-                                          "left": 80,
-                                          "name": "b",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "key": "c",
-                                          "left": 160,
-                                          "name": "c",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                      ]
-                                    }
-                                    expandedRows={Array []}
-                                    height={35}
-                                    idx={0}
-                                    isScrolling={false}
-                                    isSelected={false}
-                                    row={
-                                      Object {
-                                        "a": "1",
-                                        "b": "2",
-                                        "c": "3",
-                                      }
-                                    }
-                                    subRowDetails={Object {}}
-                                    visibleEnd={2}
-                                    visibleStart={0}
                                   >
                                     <div
-                                      className="react-grid-Row react-grid-Row--even"
-                                      height={35}
-                                      onDragEnter={[Function]}
                                       style={
                                         Object {
-                                          "contain": "layout",
-                                          "height": 35,
-                                          "overflow": "hidden",
+                                          "width": 80,
                                         }
                                       }
-                                    >
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellSelect": false,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": -1,
-                                              "rowIdx": -1,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "key": "a",
-                                            "left": 0,
-                                            "name": "a",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={0}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={false}
-                                        rowData={
-                                          Object {
-                                            "a": "1",
-                                            "b": "2",
-                                            "c": "3",
-                                          }
-                                        }
-                                        rowIdx={0}
-                                        tabIndex={-1}
-                                        value="1"
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 0,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={-1}
-                                          value="1"
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value="1"
-                                                >
-                                                  <div
-                                                    title="1"
-                                                  >
-                                                    1
-                                                  </div>
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellSelect": false,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": -1,
-                                              "rowIdx": -1,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "key": "b",
-                                            "left": 80,
-                                            "name": "b",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={1}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={false}
-                                        rowData={
-                                          Object {
-                                            "a": "1",
-                                            "b": "2",
-                                            "c": "3",
-                                          }
-                                        }
-                                        rowIdx={0}
-                                        tabIndex={-1}
-                                        value="2"
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 80,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={-1}
-                                          value="2"
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value="2"
-                                                >
-                                                  <div
-                                                    title="2"
-                                                  >
-                                                    2
-                                                  </div>
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellSelect": false,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": -1,
-                                              "rowIdx": -1,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "key": "c",
-                                            "left": 160,
-                                            "name": "c",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={2}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={false}
-                                        rowData={
-                                          Object {
-                                            "a": "1",
-                                            "b": "2",
-                                            "c": "3",
-                                          }
-                                        }
-                                        rowIdx={0}
-                                        tabIndex={-1}
-                                        value="3"
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 160,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={-1}
-                                          value="3"
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value="3"
-                                                >
-                                                  <div
-                                                    title="3"
-                                                  >
-                                                    3
-                                                  </div>
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                    </div>
-                                  </Row>
-                                  <Row
-                                    cellMetaData={
-                                      Object {
-                                        "copied": null,
-                                        "dragged": null,
-                                        "enableCellSelect": false,
-                                        "getDataGridDOMNode": [Function],
-                                        "handleDragEnterRow": [Function],
-                                        "handleTerminateDrag": [Function],
-                                        "hoveredRowIdx": undefined,
-                                        "isScrollingHorizontallyWithKeyboard": false,
-                                        "isScrollingVerticallyWithKeyboard": false,
-                                        "onAddSubRow": undefined,
-                                        "onCellClick": [Function],
-                                        "onCellContextMenu": [Function],
-                                        "onCellDoubleClick": [Function],
-                                        "onCellExpand": [Function],
-                                        "onColumnEvent": [Function],
-                                        "onCommit": [Function],
-                                        "onCommitCancel": [Function],
-                                        "onDeleteSubRow": undefined,
-                                        "onDragHandleDoubleClick": [Function],
-                                        "onRowExpandToggle": [Function],
-                                        "onRowHover": undefined,
-                                        "openCellEditor": [Function],
-                                        "rowKey": "id",
-                                        "selected": Object {
-                                          "idx": -1,
-                                          "rowIdx": -1,
-                                        },
-                                      }
-                                    }
-                                    cellRenderer={[Function]}
-                                    colDisplayEnd={3}
-                                    colDisplayStart={0}
-                                    colVisibleEnd={3}
-                                    colVisibleStart={0}
-                                    columns={
-                                      Array [
-                                        Object {
-                                          "key": "a",
-                                          "left": 0,
-                                          "name": "a",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "key": "b",
-                                          "left": 80,
-                                          "name": "b",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "key": "c",
-                                          "left": 160,
-                                          "name": "c",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                      ]
-                                    }
-                                    expandedRows={Array []}
-                                    height={35}
-                                    idx={1}
-                                    isScrolling={false}
-                                    isSelected={false}
-                                    row={
-                                      Object {
-                                        "a": "4",
-                                        "b": "5",
-                                        "c": "6",
-                                      }
-                                    }
-                                    subRowDetails={Object {}}
-                                    visibleEnd={2}
-                                    visibleStart={0}
-                                  >
+                                    />
                                     <div
-                                      className="react-grid-Row react-grid-Row--odd"
-                                      height={35}
-                                      onDragEnter={[Function]}
                                       style={
                                         Object {
-                                          "contain": "layout",
-                                          "height": 35,
-                                          "overflow": "hidden",
+                                          "width": 80,
                                         }
                                       }
-                                    >
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellSelect": false,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": -1,
-                                              "rowIdx": -1,
-                                            },
-                                          }
+                                    />
+                                    <div
+                                      style={
+                                        Object {
+                                          "width": 80,
                                         }
-                                        column={
-                                          Object {
-                                            "key": "a",
-                                            "left": 0,
-                                            "name": "a",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={0}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={false}
-                                        rowData={
-                                          Object {
-                                            "a": "4",
-                                            "b": "5",
-                                            "c": "6",
-                                          }
-                                        }
-                                        rowIdx={1}
-                                        tabIndex={-1}
-                                        value="4"
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 0,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={-1}
-                                          value="4"
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value="4"
-                                                >
-                                                  <div
-                                                    title="4"
-                                                  >
-                                                    4
-                                                  </div>
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellSelect": false,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": -1,
-                                              "rowIdx": -1,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "key": "b",
-                                            "left": 80,
-                                            "name": "b",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={1}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={false}
-                                        rowData={
-                                          Object {
-                                            "a": "4",
-                                            "b": "5",
-                                            "c": "6",
-                                          }
-                                        }
-                                        rowIdx={1}
-                                        tabIndex={-1}
-                                        value="5"
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 80,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={-1}
-                                          value="5"
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value="5"
-                                                >
-                                                  <div
-                                                    title="5"
-                                                  >
-                                                    5
-                                                  </div>
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellSelect": false,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": -1,
-                                              "rowIdx": -1,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "key": "c",
-                                            "left": 160,
-                                            "name": "c",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={2}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={false}
-                                        rowData={
-                                          Object {
-                                            "a": "4",
-                                            "b": "5",
-                                            "c": "6",
-                                          }
-                                        }
-                                        rowIdx={1}
-                                        tabIndex={-1}
-                                        value="6"
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 160,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={-1}
-                                          value="6"
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value="6"
-                                                >
-                                                  <div
-                                                    title="6"
-                                                  >
-                                                    6
-                                                  </div>
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                    </div>
-                                  </Row>
+                                      }
+                                    />
+                                  </div>
                                 </div>
                               </SimpleRowsContainer>
                             </RowsContainer>
