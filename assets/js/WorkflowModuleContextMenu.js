@@ -26,9 +26,12 @@ export default class WorkflowModuleContextMenu extends React.Component {
           <DropdownItem key={1} onClick={this.deleteOption}>                       
             Delete This Module
           </DropdownItem>
-          {/* second menu item currently does nothing */}
+          {/* further menu items currently do nothing */}
           <DropdownItem key={2}>                       
             Export Table
+          </DropdownItem>
+          <DropdownItem key={3}>                       
+            Update Version
           </DropdownItem>
         </DropdownMenu>
        </UncontrolledDropdown>
