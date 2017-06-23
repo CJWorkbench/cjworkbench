@@ -3,6 +3,7 @@
 import React, { PropTypes } from 'react'
 import WfParameter from './WfParameter'
 import TableView from './TableView'
+import WorkflowModuleContextMenu from './WorkflowModuleContextMenu'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 import * as Actions from './workflow-reducer'
@@ -141,13 +142,6 @@ export default class WfModule extends React.Component {
           setParamText={this.setParamText} />
       });
 
-    // ---- Original, keep until new version works --- //
-    // var cardClass = this.props['data-selected'] ?
-    //   'card w-75 mx-auto mb-4 bg-selected-module':
-    //   'card w-75 mx-auto mb-4 bg-faded';
-
-    // --- removing margins, bg-* classes
-    // --- moving w-75, mx-auto to parent class 'modulestack-left'
     var cardClass = this.props['data-selected'] ?
       'card border-selected-module':
       'card ';
@@ -159,8 +153,10 @@ export default class WfModule extends React.Component {
           <div className='card-block p-1'>
 
             <div className='d-flex justify-content-between align-items-center mb-2'>
-                <button type='button' className='btn btn-secondary btn-sm' onClick={this.removeModule}>&times;</button>
                 <h4 className='text-center mb-0'>{this.module.name}</h4>
+                <div onClick={(e) => e.preventDefault()} className="menu-test-class">
+                  <WorkflowModuleContextMenu removeModule={ () => this.removeModule() }/>
+                </div>  
                 <StatusLight status={this.wf_module.status}/>
             </div>
             <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
