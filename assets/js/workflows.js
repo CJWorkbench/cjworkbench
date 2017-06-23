@@ -3,16 +3,14 @@
 import React from 'react';
 import { WorkflowListNavBar } from './navbar';
 import { csrfToken, goToUrl } from './utils';
-
-// const moreIcon = require('../images/more.png');
-// import { moreIcon } from '../images/more.png';
+import WorkflowContextMenu from './WorkflowContextMenu';
 
 
 export default class Workflows extends React.Component {
   constructor(props) {
     super(props);
     this.click = this.click.bind(this);
-    this.deleteWorkflow = this.deleteWorkflow.bind(this);
+    // this.deleteWorkflow = this.deleteWorkflow.bind(this);
     this.state = { workflows: []}
   }
 
@@ -35,39 +33,7 @@ export default class Workflows extends React.Component {
       // ID of new Workflow has been returned by this step, can navigate to new WF page
       goToUrl('/workflows/' + json.id);      
     })
-  }
-
-  // Handle clicks on Delete button for each WF in list
-  // not working, to delete probably
-  deleteClick(e, id) {
-    e.preventDefault();
-    console.log("You clicked the delete button WOW!");
-    this.deleteWorkflow(id);
-  }
-
-  // Ask the user if they really wanna do this. If sure, post DELETE to server
-  deleteWorkflow(id) {
-    if (!confirm("Permanently delete this workflow?"))
-      return;
-    var _this = this;
-
-    fetch(
-      '/api/workflows/' + id ,
-      {
-        method: 'delete',
-        credentials: 'include',
-        headers: {
-          'X-CSRFToken': csrfToken
-        }
-      }
-    )
-    .then(response => {
-      if (response.ok) {
-        var workflowsMinusID = this.state.workflows.filter(wf => wf.id != id);
-        _this.setState({workflows: workflowsMinusID, newWorkflowName: this.state.newWorkflowName})
-      }
-    })
-  }
+  } 
 
   componentDidMount() {
     var _this = this;
@@ -110,8 +76,14 @@ export default class Workflows extends React.Component {
                         <a href={"/workflows/" + listValue.id}>
                           <div className='d-flex justify-content-between'>
                             <span>{listValue.name}</span>
-                            <button type='button' className='btn btn-secondary btn-sm button-test-class' onClick={(e) => this.deleteClick(e, listValue.id)} >&times;</button>
-                            {/*<button><img src={moreIcon} alt="More options" onClick={(e) => this.deleteClick(e, listValue.id)} /></button>*/}
+                            {/*Extra div wrapper to enable prevention of parent's navigation to WF page*/}
+                            <div onClick={(e) => e.preventDefault()} >
+                              {/*<WorkflowContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>*/}
+                              <WorkflowContextMenu 
+                                id={listValue.id}
+                                workflows={this.state.workflows}
+                              />                              
+                            </div>                                                                                
                           </div>
                         </a>
                       </div>
