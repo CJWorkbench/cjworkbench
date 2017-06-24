@@ -18,5 +18,8 @@ class Module(models.Model):
     # how do we run this module?
     dispatch = models.CharField('dispatch', max_length=200)
 
+    # where has this module come from? The default is "internal", i.e. it's a core module.
+    source = models.CharField('source', max_length=200, default="internal")
+
     def __str__(self):
         return self.name

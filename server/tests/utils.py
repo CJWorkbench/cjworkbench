@@ -3,7 +3,7 @@
 from django.test import TestCase
 from django.conf import settings
 from django.contrib.auth.models import User
-from server.models import Module, Workflow, WfModule, ParameterSpec, ParameterVal
+from server.models import Module, ModuleVersion, Workflow, WfModule, ParameterSpec, ParameterVal
 from server.initmodules import load_module_from_dict
 import os
 import io
@@ -29,17 +29,20 @@ class LoggedInTestCase(TestCase):
 
 # ---- Setting up workflows ----
 
-def add_new_module(name, dispatch=''):
-    return Module.objects.create(name=name, dispatch=dispatch)
+def add_new_module_version(name, dispatch=''):
+    module = Module.objects.create(name=name, dispatch=dispatch)
+    module_version = ModuleVersion.objects.create(source_version_hash='1.0', module=module)
+    module_version = ModuleVersion.objects.filter(module=module, source_version_hash='1.0').order_by("last_update_time")[0]
+    return module_version
 
-def add_new_parameter_spec(module, id_name, type, order=0):
-    return ParameterSpec.objects.create(module=module, id_name=id_name, type=type, order=order)
+def add_new_parameter_spec(module_version, id_name, type, order=0):
+    return ParameterSpec.objects.create(module_version=module_version, id_name=id_name, type=type, order=order)
 
 def add_new_workflow(name):
     return Workflow.objects.create(name=name, owner=User.objects.first())
 
-def add_new_wf_module(workflow, module, order=1):
-    return WfModule.objects.create(workflow=workflow, module=module, order=order)
+def add_new_wf_module(workflow, module_version, order=1):
+    return WfModule.objects.create(workflow=workflow, module_version=module_version, order=order)
 
 # Encodes a DataFrame to the expected response format form render API
 def table_to_content(table):
@@ -50,7 +53,7 @@ def table_to_content(table):
 # returns workflow
 def create_testdata_workflow(csv_text=mock_csv_text):
     # Define paste CSV module from scratch
-    csv_module = add_new_module('Module 1', 'pastecsv')
+    csv_module = add_new_module_version('Module 1', 'pastecsv')
     pspec = add_new_parameter_spec(csv_module, 'csv', ParameterSpec.STRING)
     add_new_parameter_spec(csv_module, 'has_header_row', ParameterSpec.CHECKBOX)
 
@@ -98,8 +101,8 @@ def load_and_add_module(workflow, module_spec):
     if not workflow:
         workflow = add_new_workflow('Workflow 1')
 
-    module = load_module_from_dict(module_spec)
-    wf_module = add_new_wf_module(workflow, module, 1)  # 1 = order after PasteCSV from create_mock_workflow
+    module_version = load_module_from_dict(module_spec)
+    wf_module = add_new_wf_module(workflow, module_version, 1)  # 1 = order after PasteCSV from create_mock_workflow
     wf_module.create_default_parameters()
 
     return wf_module

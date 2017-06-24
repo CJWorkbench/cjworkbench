@@ -2,6 +2,7 @@
   "name": "Text Search",
   "id_name": "textsearch",
   "category" : "Analyze",
+  "description" : "Allows users to search for text.",
   "parameters": [
     {
       "name": "Search For",

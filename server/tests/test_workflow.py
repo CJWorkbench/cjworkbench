@@ -16,9 +16,9 @@ class WorkflowTests(LoggedInTestCase):
         self.factory = APIRequestFactory()
         add_new_workflow('Workflow 1')
         add_new_workflow('Workflow 2')
-        add_new_module('Module 1')
-        add_new_module('Module 2')
-        add_new_module('Module 3')
+        add_new_module_version('Module 1')
+        add_new_module_version('Module 2')
+        add_new_module_version('Module 3')
 
     def test_workflow_list_get(self):
         request = self.factory.get('/api/workflows/')
@@ -61,10 +61,14 @@ class WorkflowTests(LoggedInTestCase):
         response = workflow_addmodule(request, pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
-        self.assertEqual(list(WfModule.objects.values_list('module', flat=True)),
-                         [Module.objects.get(name='Module 2').id,
-                          Module.objects.get(name='Module 3').id,
-                          Module.objects.get(name='Module 1').id])
+        module1 = Module.objects.get(name='Module 1')
+        module2 = Module.objects.get(name='Module 2')
+        module3 = Module.objects.get(name='Module 3')
+
+        self.assertEqual(list(WfModule.objects.values_list('module_version', flat=True)),
+                         [ModuleVersion.objects.get(module = module2).id,
+                          ModuleVersion.objects.get(module=module3).id,
+                          ModuleVersion.objects.get(module=module1).id])
 
         request = self.factory.put('/api/workflows/%d/addmodule/' % 10000,
                                    {'moduleID': Module.objects.get(name='Module 1').id,

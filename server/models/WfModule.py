@@ -4,6 +4,7 @@
 from django.db import models
 import pandas as pd
 from server.models.Module import *
+from server.models.ModuleVersion import *
 from server.models.Workflow import *
 from server.dispatch import module_dispatch_render
 from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_status
@@ -13,14 +14,14 @@ class WfModule(models.Model):
         ordering = ['order']
 
     def __str__(self):
-        return self.workflow.__str__() + ' - order: ' + str(self.order) + ' - ' + self.module.__str__()
+        return self.workflow.__str__() + ' - order: ' + str(self.order) + ' - ' + self.module_version.__str__()
 
     # --- Fields ----
     workflow = models.ForeignKey(Workflow, related_name='wf_modules',
                                  on_delete=models.CASCADE)  # delete WfModule if Workflow deleted
-    module = models.ForeignKey(Module, related_name='wf_modules',
+    module_version = models.ForeignKey(ModuleVersion, related_name='wf_modules',
                                on_delete=models.SET_NULL,
-                               null=True)  # goes null if referenced Module deletedp
+                               null=True)  # goes null if referenced Module deleted
     order = models.IntegerField('order')
 
     # status light and current error message
@@ -72,7 +73,7 @@ class WfModule(models.Model):
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
     def create_default_parameters(self):
-        for pspec in ParameterSpec.objects.filter(module=self.module):
+        for pspec in ParameterSpec.objects.filter(module_version=self.module_version):
             pv = ParameterVal.objects.create(wf_module=self, parameter_spec=pspec)
             pv.init_from_spec()
             pv.save()
@@ -80,7 +81,7 @@ class WfModule(models.Model):
     # Retrieve current parameter values
     def get_param_typecheck(self, name, param_type):
         try:
-            pspec = ParameterSpec.objects.get(module=self.module, id_name=name)
+            pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)
         except ParameterSpec.DoesNotExist:
             raise ValueError('Request for non-existent ' + param_type + ' parameter ' + name)
 
@@ -105,7 +106,7 @@ class WfModule(models.Model):
 
     def get_param_menu_string(self, name):
         try:
-            pspec = ParameterSpec.objects.get(module=self.module, id_name=name)
+            pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)
         except ParameterSpec.DoesNotExist:
             raise ValueError('Request for non-existent ' + param_type + ' parameter ' + name)
         pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
@@ -176,8 +177,8 @@ class ParameterSpec(models.Model):
     name = models.CharField('name', max_length=64)
     id_name = models.CharField('id_name', max_length=32)
 
-    module = models.ForeignKey(Module, related_name='parameter_specs',
-                               on_delete=models.CASCADE)  # delete spec if Module deleted
+    module_version = models.ForeignKey(ModuleVersion, related_name='parameter_specs',
+                               on_delete=models.CASCADE, null=True)  # delete spec if Module deleted
 
     order = models.IntegerField('order', default=0)
 
@@ -193,8 +194,7 @@ class ParameterSpec(models.Model):
     def_multiline = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.module.name + ' - ' + self.name
-
+        return self.module_version.module.name + ' - ' + self.name
 
 # A parameter value, which might be string or float
 class ParameterVal(models.Model):

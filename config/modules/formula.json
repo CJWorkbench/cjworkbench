@@ -2,6 +2,7 @@
   "name": "Formula",
   "id_name": "formula",
   "category" : "Analyze",
+  "description": "Allows users to apply a formula to the output.",
   "parameters": [
     {
       "name": "Formula",

@@ -12,7 +12,7 @@ class ChannelTests(ChannelTestCase, LoggedInTestCase):
         super(ChannelTests, self).setUp() # log in
         self.workflow = add_new_workflow('Workflow 1')
         self.wf_id = self.workflow.id
-        self.module = add_new_module('Module')
+        self.module = add_new_module_version('Module')
         self.wf_module = add_new_wf_module(self.workflow, self.module)
 
     def test_websockets(self):

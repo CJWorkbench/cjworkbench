@@ -31,7 +31,7 @@ var SortableList = React.createClass({
     // If we've ended a drag, we need to post the new order to the server
     if (newState.draggingIndex === null) {
 
-      // Generate a JSON paylod that has only module ID and order, then PATCH
+      // Generate a JSON payload that has only module ID and order, then PATCH
       var newOrder = this.props.data.wf_modules.map( (item, i) => ({id: item.id, order: i}) )
 
       fetch('/api/workflows/' + getPageID(), {

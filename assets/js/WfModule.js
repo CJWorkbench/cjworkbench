@@ -52,7 +52,7 @@ export default class WfModule extends React.Component {
   // so save them into this
   initFields(props) {
     this.wf_module = props['data-wfmodule'];
-    this.module = this.wf_module.module;
+    this.module = this.wf_module.module_version.module;
     this.params = this.wf_module.parameter_vals;
     this.revision = props['data-revision'];
   }

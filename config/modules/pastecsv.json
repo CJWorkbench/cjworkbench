@@ -2,6 +2,7 @@
   "name": "Paste CSV",
   "id_name": "pastecsv",
   "category" : "Sources",
+  "description" : "Allows users to copy in a CSV from an external source.",
   "parameters": [
     {
       "name": "CSV",

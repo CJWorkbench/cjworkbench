@@ -2,6 +2,7 @@
   "name": "Count By Date",
   "id_name": "countbydate",
   "category" : "Analyze",
+  "description": "Allows users to group by date.",
   "parameters": [
     {
       "name": "Date Column",

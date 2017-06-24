@@ -4,7 +4,7 @@
 import os
 import json
 from cjworkbench.settings import BASE_DIR
-from server.models import Module, WfModule, ParameterSpec, ParameterVal
+from server.models import Module, ModuleVersion, WfModule, ParameterSpec, ParameterVal
 
 import logging
 logger = logging.getLogger(__name__)
@@ -57,27 +57,46 @@ def load_module_from_dict(d):
     module.category=d['category']
     module.id_name=id_name
     module.dispatch=id_name
+    module.source=d['source'] if 'source' in d else ""
+
     module.save()
+
+    #add module.last_updated here.
+    source_version = d['source_version'] if 'source_version' in d else '1.0'
+    version_matches = ModuleVersion.objects.filter(module=module, source_version_hash = source_version)
+
+    if len(version_matches) > 0:
+        assert (len(version_matches) == 1)  # no duplicates please
+        module_version = version_matches[0]
+    else:
+        module_version = ModuleVersion()
+
+    module_version.source_version_hash = source_version
+    #the last_update_time should automatically be added based on _now_.
+    #possible todo: should this be driven based on the last_commit time or the last system time?
+    module_version.module = module
+
+    module_version.save()
 
     # load params
     if 'parameters' in d:
-        pspecs = [ load_parameter_spec(p, module, order) for (order,p) in enumerate(d['parameters']) ]
+        pspecs = [ load_parameter_spec(p, module_version, order) for (order,p) in enumerate(d['parameters']) ]
     else:
         pspecs = []
 
     # delete all ParameterSpecs (and hence ParameterVals) for this module that were not in the new module description
-    for ps in ParameterSpec.objects.filter(module=module):
-        if ps not in pspecs: # relies on model == comaparing id field
+    for ps in ParameterSpec.objects.filter(module_version=module_version):
+        if ps not in pspecs: # relies on model == comparing id field
             ps.delete()
 
-    return module
+    return module_version
 
 
 # Load parameter spec from json def
 # If it's a brand new parameter spec, add it to all existing WfModules
 # Otherwise re-use existing spec object, and update all existing ParameterVal objects that point to it
 # returns ParameterSpec
-def load_parameter_spec(d, module, order):
+def load_parameter_spec(d, module_version, order):
     # require certain fields
     required = ['name', 'id_name', 'type']
     for x in required:
@@ -89,7 +108,7 @@ def load_parameter_spec(d, module, order):
     ptype = d['type']
 
     # Find any previous parameter specs with this id_name (including any we just loaded)
-    oldspecs =  ParameterSpec.objects.filter(id_name=id_name, module=module)
+    oldspecs =  ParameterSpec.objects.filter(id_name=id_name, module_version=module_version)
     if len(oldspecs)>0:
         assert(len(oldspecs))==1  # ids should be unique
         pspec = oldspecs[0]
@@ -105,7 +124,7 @@ def load_parameter_spec(d, module, order):
         pspec.type = ptype
         reloading = True
     else:
-        pspec = ParameterSpec(name=name, id_name=id_name, type=ptype, module=module)
+        pspec = ParameterSpec(name=name, id_name=id_name, type=ptype, module_version=module_version)
         reloading = False
 
     # load default value
@@ -149,7 +168,7 @@ def load_parameter_spec(d, module, order):
 
     # if parameter is newly added, add new ParameterVals to all existing modules
     if not reloading:
-        for wfm in WfModule.objects.filter(module=module):
+        for wfm in WfModule.objects.filter(module_version=module_version):
             pval = ParameterVal.objects.create(wf_module=wfm, parameter_spec=pspec)
             pval.init_from_spec()
             pval.save()

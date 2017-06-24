@@ -2,6 +2,7 @@
   "name": "Twitter",
   "id_name": "twitter",
   "category" : "Sources",
+  "description" : "Allows users to search Twitter based on various search conditions.",
   "parameters": [
     {
       "name" : "Query type",

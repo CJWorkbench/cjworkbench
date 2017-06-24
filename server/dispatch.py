@@ -67,7 +67,7 @@ def load_dynamically(dispatch):
     print("Loading {} manually".format(dispatch))
 
 def module_dispatch_render(wf_module, table):
-    dispatch = wf_module.module.dispatch
+    dispatch = wf_module.module_version.module.dispatch
     if dispatch not in module_dispatch_tbl.keys():
         if not load_dynamically(dispatch):
             if not settings.DEBUG:
@@ -79,7 +79,7 @@ def module_dispatch_render(wf_module, table):
 
 
 def module_dispatch_event(parameter, event):
-    dispatch = parameter.wf_module.module.dispatch
+    dispatch = parameter.wf_module.module_version.module.dispatch
     if dispatch not in module_dispatch_tbl.keys():
         raise ValueError("Unknown dispatch id '%s' while handling event for parameter '%s'" % (dispatch, parameter.parameter_spec.name))
 

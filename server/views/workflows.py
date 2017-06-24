@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server.models import Module, Workflow, WfModule, ParameterSpec, ParameterVal
+from server.models import Module, ModuleVersion, Workflow, WfModule, ParameterSpec, ParameterVal
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite
 from server.execute import execute_wfmodule
 
@@ -81,6 +81,11 @@ def workflow_addmodule(request, pk, format=None):
         moduleID = request.data['moduleID']
         insertBefore = int(request.data['insertBefore'])
         module = Module.objects.get(pk=moduleID)
+        #For now, we always get the first version of a module, as that's the only version that exists.
+        #In future versions, we'll need to be cleverer here (but only marginally so): we should always add the
+        #latest version of a workflow, and if the users want to use a previous version, they should be able to rollback
+        #using the module UI, and not from the "Add Module" UI.
+        module_version = ModuleVersion.objects.filter(module=module)[0]
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -95,7 +100,7 @@ def workflow_addmodule(request, pk, format=None):
             wfm.save()
         pos +=1
 
-    newwfm = WfModule.objects.create(workflow=workflow, module=module, order=insertBefore)
+    newwfm = WfModule.objects.create(workflow=workflow, module_version=module_version, order=insertBefore)
     newwfm.create_default_parameters()
 
     return Response(status=status.HTTP_204_NO_CONTENT)

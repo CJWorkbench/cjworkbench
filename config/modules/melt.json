@@ -2,6 +2,7 @@
   "name": "Melt",
   "id_name": "melt",
   "category" : "Wrangle",
+  "description" : "",
   "parameters": [
     {
       "name": "ID columns",

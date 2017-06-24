@@ -2,6 +2,7 @@
   "name": "Count Values",
   "id_name": "countvalues",
   "category" : "Analyze",
+  "description" : "Allows users to group by given attributes.",
   "parameters": [
     {
       "name": "Column",

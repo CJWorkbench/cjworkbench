@@ -2,6 +2,7 @@
   "name": "Chart",
   "id_name": "simplechart",
   "category" : "Visualize",
+  "description" : "Provides functionality to create a simple chart.",
   "parameters": [
     {
       "name": "Chart",

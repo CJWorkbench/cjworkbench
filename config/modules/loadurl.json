@@ -2,6 +2,7 @@
   "name": "Load From URL",
   "id_name": "loadurl" ,
   "category" : "Sources",
+  "description" : "Allows users to load in data from an accessible URL.",
   "parameters": [
     {
       "name": "URL",

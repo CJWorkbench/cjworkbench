@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Module
+from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Module, ModuleVersion
 
 
 # So far, no one actually wants to see the default values.
@@ -37,13 +37,19 @@ class ModuleSerializer(serializers.ModelSerializer):
         model = Module
         fields = ('id', 'name', 'category')
 
+class ModuleVersionSerializer(serializers.ModelSerializer):
+    module = ModuleSerializer(many=False, read_only=True)
+    class Meta:
+        model = ModuleVersion
+        fields = ('module', 'source_version_hash', 'last_update_time')
+
 
 class WfModuleSerializer(serializers.ModelSerializer):
     parameter_vals = ParameterValSerializer(many=True, read_only=True)
-    module = ModuleSerializer(many=False, read_only=True)
+    module_version = ModuleVersionSerializer(many=False, read_only=True)
     class Meta:
         model = WfModule
-        fields = ('id', 'module', 'workflow', 'status', 'error_msg', 'parameter_vals')
+        fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):

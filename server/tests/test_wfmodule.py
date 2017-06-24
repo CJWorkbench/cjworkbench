@@ -2,11 +2,8 @@ from django.test import TestCase
 from server.views.WfModule import wfmodule_detail, wfmodule_render
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
-from server.models import Module, WfModule, Workflow, ParameterSpec, ParameterVal
+from server.models import Module, ModuleVersion, WfModule, Workflow, ParameterSpec, ParameterVal
 from server.dispatch import test_data_table
-import pandas as pd
-import json
-import copy
 from server.tests.utils import *
 
 class WfModuleTests(LoggedInTestCase):
@@ -16,32 +13,39 @@ class WfModuleTests(LoggedInTestCase):
         super(WfModuleTests, self).setUp()  # log in
         self.factory = APIRequestFactory()
         self.workflow1 = add_new_workflow(name='Workflow 1')
-        workflow2 = add_new_workflow(name='Workflow 2')
+        self.workflow2 = add_new_workflow(name='Workflow 2')
 
-        self.module1 = self.add_new_module('Module 1', 'testdata')
-        self.pspec11 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.NUMBER, def_float=3.14, def_visible=False)
-        self.pspec12 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.STRING, def_string='foo')
-        self.pspec13 = ParameterSpec.objects.create(module=self.module1, type=ParameterSpec.CHECKBOX, def_boolean=True)
+        self.module1_version = self.add_new_module_version(name='Module 1', dispatch='testdata', version="1.0")
+        self.pspec11 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.NUMBER, def_float=3.14, def_visible=False)
+        self.pspec12 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.STRING, def_string='foo')
+        self.pspec13 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.CHECKBOX, def_boolean=True)
 
-        module2 = self.add_new_module('Module 2', 'NOP')
-        self.pspec21 = ParameterSpec.objects.create(module=module2, type=ParameterSpec.MENU, def_menu_items='Apple|Banana|Kittens', def_integer=1)
+        self.module2_version = self.add_new_module_version(name='Module 2', dispatch='NOP', version="1.0")
+        self.pspec21 = ParameterSpec.objects.create(module_version=self.module2_version, type=ParameterSpec.MENU, def_menu_items='Apple|Banana|Kittens', def_integer=1)
 
-        module3 = self.add_new_module('Module 3', 'double_M_col')
-        self.pspec31 = ParameterSpec.objects.create(module=module3, type=ParameterSpec.BUTTON, def_ui_only=True)
+        self.module3_version = self.add_new_module_version(name='Module 3', dispatch='double_M_col', version="1.0")
+        self.pspec31 = ParameterSpec.objects.create(module_version=self.module3_version, type=ParameterSpec.BUTTON, def_ui_only=True)
 
-        self.wfmodule1 = self.add_new_wfmodule(self.workflow1, self.module1, 1)
-        self.wfmodule2 = self.add_new_wfmodule(self.workflow1, module2, 2)
-        self.wfmodule3 = self.add_new_wfmodule(self.workflow1, module3, 3)
-        self.add_new_wfmodule(workflow2, self.module1, 1)
-        self.add_new_wfmodule(workflow2, module2, 2)
-        self.add_new_wfmodule(workflow2, module3, 3)
+        self.wfmodule1 = self.add_new_wfmodule(self.workflow1, self.module1_version, 1)
+        self.wfmodule2 = self.add_new_wfmodule(self.workflow1, self.module2_version, 2)
+        self.wfmodule3 = self.add_new_wfmodule(self.workflow1, self.module3_version, 3)
+        self.add_new_wfmodule(self.workflow2, self.module1_version, 1)
+        self.add_new_wfmodule(self.workflow2, self.module2_version, 2)
+        self.add_new_wfmodule(self.workflow2, self.module3_version, 3)
 
 
     def add_new_wfmodule(self, workflow_aux, module_aux, order_aux):
-        return WfModule.objects.create(workflow=workflow_aux, module=module_aux, order=order_aux)
+        return WfModule.objects.create(workflow=workflow_aux, module_version=module_aux, order=order_aux)
 
     def add_new_module(self, name, dispatch):
         return Module.objects.create(name=name, dispatch=dispatch)
+
+    def add_new_module_version(self, name, dispatch, version):
+        module = self.add_new_module(name=name, dispatch=dispatch)
+        module.save()
+        module_version = ModuleVersion.objects.create(module = module, source_version_hash = version)
+        module_version.save()
+        return module_version
 
     # check that creating a wf_module correctly sets up new ParameterVals w/ defaults from ParameterSpec
     def test_default_parameters(self):
@@ -78,14 +82,15 @@ class WfModuleTests(LoggedInTestCase):
         # Also tests [Workflow, Module, WfModule].get
         workflow_id = Workflow.objects.get(name='Workflow 1').id
         module_id = Module.objects.get(name='Module 1').id
+        module_version = ModuleVersion.objects.get(module = Module.objects.get(name='Module 1'))
         pk_wf_module = WfModule.objects.get(workflow_id=workflow_id,
-                                           module_id = module_id).id
+                                           module_version = module_version).id
 
         response = self.client.get('/api/wfmodules/%d/' % pk_wf_module)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], pk_wf_module)
         self.assertEqual(response.data['workflow'], workflow_id)
-        self.assertEqual(response.data['module']['id'], module_id)
+        self.assertEqual(response.data['module_version']['module']['id'], module_id)
         self.assertEqual(response.data['status'], WfModule.READY)
         self.assertEqual(response.data['error_msg'], '')
 
@@ -117,7 +122,7 @@ class WfModuleTests(LoggedInTestCase):
     # can we take one out?
     def test_wf_module_delete(self):
         # add a new one to delete; don't mess with other tests
-        wfmodule4 = self.add_new_wfmodule(self.workflow1, self.module1, 4)
+        wfmodule4 = self.add_new_wfmodule(self.workflow1, self.module1_version, 4)
 
         response = self.client.delete('/api/wfmodules/%d' % wfmodule4.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)

@@ -16,16 +16,21 @@ class ParameterValTests(LoggedInTestCase):
         # Create a WfModule with one parameter of each type
         module = Module(name="TestModule")
         module.save()
+
+        module_version = ModuleVersion()
+        module_version.module = module
+        module_version.save()
+
         self.moduleID = module.id
 
-        stringSpec = ParameterSpec.objects.create(name="StringParam", id_name="stringparam", module=module, type= ParameterSpec.STRING, def_string='foo')
-        numberSpec = ParameterSpec.objects.create(name="NumberParam", id_name="numberparam", module=module, type=ParameterSpec.NUMBER, def_float=10.11)
-        checkboxSpec = ParameterSpec.objects.create(name="CheckboxParam", id_name="checkboxparam", module=module, type=ParameterSpec.CHECKBOX, def_boolean=True)
+        stringSpec = ParameterSpec.objects.create(name="StringParam", id_name="stringparam", module_version=module_version, type= ParameterSpec.STRING, def_string='foo')
+        numberSpec = ParameterSpec.objects.create(name="NumberParam", id_name="numberparam", module_version=module_version, type=ParameterSpec.NUMBER, def_float=10.11)
+        checkboxSpec = ParameterSpec.objects.create(name="CheckboxParam", id_name="checkboxparam", module_version=module_version, type=ParameterSpec.CHECKBOX, def_boolean=True)
 
         self.workflow = add_new_workflow(name="Test Workflow")
         self.workflowID = self.workflow.id
 
-        self.wfmodule = WfModule.objects.create(module=module, workflow=self.workflow, order=0)
+        self.wfmodule = WfModule.objects.create(module_version=module_version, workflow=self.workflow, order=0)
         self.wfmoduleID = self.wfmodule.id
 
         # set non-default values for vals in order to reveal certain types of bugs
@@ -72,7 +77,7 @@ class ParameterValTests(LoggedInTestCase):
 
         # workflow has correct wfmodule
         self.assertEqual(len(response.data['wf_modules']), 1)
-        self.assertEqual(response.data['wf_modules'][0]['module']['id'], self.moduleID)
+        self.assertEqual(response.data['wf_modules'][0]['id'], self.moduleID)
 
         # wfmodule has correct parameters
         self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 3)

@@ -2,6 +2,7 @@
   "name": "Notify when data changes",
   "id_name": "notify",
   "category" : "Monitor",
+  "description" : "Sends through a notification.",
   "parameters": [
     {
       "name": "Email",

@@ -8,7 +8,7 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, Workflow, WfModule, ParameterSpec, ParameterVal
-from server.serializers import ModuleSerializer
+from server.serializers import ModuleSerializer, ModuleVersionSerializer
 from server.serializers import WorkflowSerializer
 from server.serializers import WfModuleSerializer
 from server.serializers import ParameterValSerializer

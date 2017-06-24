@@ -147,10 +147,10 @@ class InitmoduleTests(LoggedInTestCase):
 
         # create wf_modules in two different workflows that reference this module
         wf1 = add_new_workflow(name='Worky')
-        wfm1 = add_new_wf_module(workflow=wf1, module=m1, order=1)
+        wfm1 = add_new_wf_module(workflow=wf1, module_version=m1, order=1)
         wfm1.create_default_parameters()
         wf2 = add_new_workflow(name='Worky 2')
-        wfm2 = add_new_wf_module(workflow=wf2, module=m1, order=1)
+        wfm2 = add_new_wf_module(workflow=wf2, module_version=m1, order=1)
         wfm2.create_default_parameters()
 
         # precondition: corresponding parameter val exists for each wfm with correct default

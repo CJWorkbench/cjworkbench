@@ -2,6 +2,7 @@
   "name": "Python Process",
   "id_name": "pythoncode",
   "category" : "Analyze",
+  "description" : "Provides ability to run Python code on the fly.",
   "parameters": [
     {
       "name": "Code",

@@ -2,6 +2,7 @@
   "name": "Select Columns",
   "id_name": "selectcolumns",
   "category" : "Wrangle",
+  "description" : "Allows ability to select columns of interest from the output table.",
   "parameters": [
     {
       "name": "Select Columns",
