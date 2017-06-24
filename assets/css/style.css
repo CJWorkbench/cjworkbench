@@ -72,6 +72,29 @@ body {
   border: 0;
 }
 
+.workflow-in-list:hover {
+  background-color: #f8f8f8;
+}
+
+/* These context menu styles also apply to those on the Workflow page */
+.context-menu-icon {
+  /*height: 27px;	*/
+  /*width: 27px;	*/
+  /*border-radius: 3px;	*/
+  background-color: #FFFFFF;
+  border: 0;
+}
+
+.context-menu-icon:hover {
+  background-color: #F9F9F9;
+  border: 1px solid #CECECE;
+}
+
+.context-menu-icon:active {
+  border: 1px solid #CECECE;  
+  background-color: #EDECEC;
+}
+
 /* ---- Workflow page ---- */
 
 /* Contains navbar + workflow. */

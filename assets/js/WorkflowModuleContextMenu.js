@@ -18,7 +18,7 @@ export default class WorkflowModuleContextMenu extends React.Component {
   render() {
     return (
        <UncontrolledDropdown>
-        <DropdownToggle>
+        <DropdownToggle className='context-menu-icon'>
           {'\u22EE'}
         </DropdownToggle>
         <DropdownMenu right >

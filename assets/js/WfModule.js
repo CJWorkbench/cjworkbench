@@ -127,8 +127,6 @@ export default class WfModule extends React.Component {
               onClick={this.toggle}
             >
               <h4 className='text-center mb-0'>{this.module.name}</h4>
-              {/* Up or down arrow dependent on Expand/Collapse state */}
-              <div>{ (this.state.isOpen ? '\u25b2' : '\u25bc')}</div>
               {/* Extra div to prevent calling of parent's onClick */}
               <div onClick={(e) => e.stopPropagation()} className="menu-test-class">              
                 <WorkflowModuleContextMenu removeModule={ () => this.removeModule() }/>
