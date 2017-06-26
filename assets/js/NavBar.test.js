@@ -1,6 +1,6 @@
-import React from 'react';
-import { WorkflowListNavBar, WorkflowNavBar } from './navbar';
-import renderer from 'react-test-renderer';
+import React from 'react'
+import { WorkflowListNavBar, WorkflowNavBar } from './navbar'
+import renderer from 'react-test-renderer'
 
 it('WorkflowListNavBar renders correctly', () => {
   const tree = renderer.create(

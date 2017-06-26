@@ -1,6 +1,6 @@
-import React from 'react';
-import { mount } from 'enzyme';
-import Workflows from './workflows';
+import React from 'react'
+import { mount } from 'enzyme'
+import Workflows from './workflows'
 
 const Utils = require('./utils');
 

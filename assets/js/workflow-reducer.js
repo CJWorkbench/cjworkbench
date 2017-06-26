@@ -2,13 +2,13 @@
 // That is, provides all the state transition functions that are executed on user command
 import { getPageID, csrfToken } from './utils'
 import { createStore, applyMiddleware } from 'redux'
-import promiseMiddleware from 'redux-promise';
+import promiseMiddleware from 'redux-promise'
 
-const CHANGE_PARAM = 'CHANGE_PARAM';
-const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
-const REMOVE_MODULE_ACTION = 'REMOVE_MODULE';
-const MODULE_STATUS_CHANGE = 'MODULE_STATUS_CHANGE';
-const SELECTED_MODULE_CHANGE = 'SELECTED_MODULE_CHANGE';
+const CHANGE_PARAM = 'CHANGE_PARAM'
+const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW'
+const REMOVE_MODULE_ACTION = 'REMOVE_MODULE'
+const MODULE_STATUS_CHANGE = 'MODULE_STATUS_CHANGE'
+const SELECTED_MODULE_CHANGE = 'SELECTED_MODULE_CHANGE'
 
 // ---- Our Store ----
 // Master state for the workflow. Export so that components can store.dispatch()

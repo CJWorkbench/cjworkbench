@@ -1,7 +1,7 @@
 // Navbar at top of all logged-in pages.
 // May have various elements on different pages, including toolbar
 
-import React from 'react';
+import React from 'react'
 import WorkflowHamburgerMenu from './WorkflowHamburgerMenu'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import PropTypes from 'prop-types'

@@ -1,8 +1,8 @@
 // Button that pops up a modal with fetch parameters
 
-import React from 'react';
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
-import { Form, FormGroup, Label, Input } from 'reactstrap';
+import React from 'react'
+import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import { Form, FormGroup, Label, Input } from 'reactstrap'
 
 
 export default class FetchModal extends React.Component {

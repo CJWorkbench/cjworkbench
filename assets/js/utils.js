@@ -1,5 +1,5 @@
 // ---- Utilities ---
-import * as Cookies from "js-cookie";
+import * as Cookies from "js-cookie"
 
 
 // return ID in URL of form "/workflows/id/" or "/workflows/id"

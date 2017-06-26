@@ -1,8 +1,8 @@
 // Drop-down menu on Workflows List page, for each listed WF
 // triggered by click on three-dot icon next to listed workflow
 
-import React from 'react';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import React from 'react'
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 import PropTypes from 'prop-types'
 
 

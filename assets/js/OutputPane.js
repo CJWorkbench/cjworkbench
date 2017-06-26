@@ -1,6 +1,6 @@
 // Display of output from currently selected module
 
-import React from 'react';
+import React from 'react'
 import TableView from './TableView'
 import PropTypes from 'prop-types'
 
