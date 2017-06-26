@@ -2,8 +2,7 @@
 
 import React from 'react';
 import TableView from './TableView'
-import PropTypes from 'prop-types';
-
+import PropTypes from 'prop-types'
 
 export default class OutputPane extends React.Component {
 
@@ -69,7 +68,7 @@ export default class OutputPane extends React.Component {
 }
 
 OutputPane.propTypes = {
-  id: PropTypes.number,
+  id:       PropTypes.number,
   revision: PropTypes.number
 };
 

@@ -3,6 +3,8 @@
 
 import React from 'react';
 import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import PropTypes from 'prop-types'
+
 
 export default class WorkflowContextMenu extends React.Component {
   constructor(props) {
@@ -33,6 +35,6 @@ export default class WorkflowContextMenu extends React.Component {
 }
 
 WorkflowContextMenu.propTypes = {
-  deleteWorkflow: React.PropTypes.func  
+  deleteWorkflow: PropTypes.func  
 };
 

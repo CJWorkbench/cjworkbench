@@ -1,6 +1,7 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import Workflows from './workflows';
+
 const Utils = require('./utils');
 
 const mockResponse = (status, statusText, response) => {

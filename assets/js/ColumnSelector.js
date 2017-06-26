@@ -3,6 +3,7 @@
 import React from 'react';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
 import { Form, FormGroup, Label, Input } from 'reactstrap';
+import PropTypes from 'prop-types';
 
 
 export default class ColumnSelector extends React.Component {
@@ -80,10 +81,10 @@ export default class ColumnSelector extends React.Component {
 }
 
 ColumnSelector.propTypes = {
-  selectedCols: React.PropTypes.string,
-  saveState:    React.PropTypes.func,
-  getColNames:  React.PropTypes.func,
-  revision:     React.PropTypes.number
+  selectedCols: PropTypes.string,
+  saveState:    PropTypes.func,
+  getColNames:  PropTypes.func,
+  revision:     PropTypes.number
 };
 
 

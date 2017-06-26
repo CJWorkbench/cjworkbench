@@ -1,5 +1,6 @@
 // Simple wrapper over HTML <select>
 import React from 'react';
+import PropTypes from 'prop-types'
 
 export default class MenuParam extends React.Component {
   constructor(props) {
@@ -39,8 +40,8 @@ export default class MenuParam extends React.Component {
 }
 
 MenuParam.propTypes = {
-  name:         React.PropTypes.string,
-  items:        React.PropTypes.string,  // like 'Apple|Banana|Kitten'
-  selectedIdx:  React.PropTypes.number,
-  onChange:     React.PropTypes.func     // called with index of selected item
+  name:         PropTypes.string,
+  items:        PropTypes.string,  // like 'Apple|Banana|Kitten'
+  selectedIdx:  PropTypes.number,
+  onChange:     PropTypes.func     // called with index of selected item
 };

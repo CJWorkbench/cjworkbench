@@ -2,6 +2,8 @@
 
 import React, { PropTypes } from 'react'
 import { store, wfModuleStatusAction } from './workflow-reducer'
+import PropTypes from 'prop-types'
+
 
 var Chartbuilder = require("chartbuilder/src/js/components/Chartbuilder");
 var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
@@ -133,9 +135,9 @@ export default class ChartParameter extends React.Component {
 }
 
 ChartParameter.propTypes = {
-		wf_module_id: React.PropTypes.number,
-		revision:     React.PropTypes.number,
-		saveState:    React.PropTypes.func,
-		loadState:    React.PropTypes.func,
-		saveImageDataURI: React.PropTypes.func
+		wf_module_id:     PropTypes.number,
+		revision:         PropTypes.number,
+		saveState:        PropTypes.func,
+		loadState:        PropTypes.func,
+		saveImageDataURI: PropTypes.func
 }
