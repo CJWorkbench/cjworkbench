@@ -19,6 +19,7 @@ export default class FetchModal extends React.Component {
   render() {
     return (
       <span className="ml-2">
+        {/*'\u23F1' is Unicode for a stopwatch symbol*/}
         <Button color='secondary' onClick={this.toggleModal}> {'\u23F1'} </Button>
         <Modal isOpen={this.state.modal} toggle={this.toggleModal} className={this.props.className}>
           <ModalHeader toggle={this.toggleModal}>External Data Settings</ModalHeader>

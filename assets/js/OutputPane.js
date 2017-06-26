@@ -45,7 +45,10 @@ export default class OutputPane extends React.Component {
 
   render() {
     // Don't show anything if we don't have a selected WfModule to show
-    if (this.props.id) {
+    if (this.props.id && this.state.tableData && this.state.tableData.length) {
+
+      console.log(this.state.tableData);
+
       return (
         <div className="outputpane-box">
           <div className="bg-faded outputpane-header">
@@ -53,10 +56,10 @@ export default class OutputPane extends React.Component {
               Number of Rows: {this.state.tableData.length} 
             </div>
             <div>
-              Number of Columns: Placeholder         
+              Number of Columns: {Object.keys(this.state.tableData[0]).length}      
             </div>
           </div>
-          <div className="outputpane-data bg-danger">
+          <div className="outputpane-data">
             <TableView tableData={this.state.tableData} />
           </div>
         </div>
