@@ -1,6 +1,6 @@
 // Chart JSX component wraps a ChartBuilder
 
-import React, { PropTypes } from 'react'
+import React from 'react'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import PropTypes from 'prop-types'
 
