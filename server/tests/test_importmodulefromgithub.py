@@ -8,6 +8,20 @@ import os, shutil
 class ImportFromGitHubTest(LoggedInTestCase):
     def setUp(self):
         super(ImportFromGitHubTest, self).setUp()  # log in
+        self.cleanup()
+
+    def tearDown(self):
+        super(ImportFromGitHubTest, self).tearDown()
+        self.cleanup()
+
+    def cleanup(self):
+        pwd = os.path.dirname(os.path.abspath(__file__))
+        if os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')):
+            shutil.rmtree(os.path.join(pwd, 'prototype-dynamic-loading'))
+        if os.path.isdir(os.path.join(pwd, 'modules', 'prototype-dynamic-loading')):
+            shutil.rmtree(os.path.join(pwd, 'modules', 'prototype-dynamic-loading'))
+        if os.path.isdir(os.path.join(pwd, 'test_data', 'config')):
+            shutil.rmtree(os.path.join(pwd,'test_data', 'config'))
 
     def test_sanitise_url(self):
         #test valid url
@@ -158,12 +172,14 @@ class ImportFromGitHubTest(LoggedInTestCase):
     def test_extract_version_hash(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
         self.setup_module_structure(pwd)
+        os.rename(os.path.join(pwd, 'prototype-dynamic-loading','git'), os.path.join(pwd, 'prototype-dynamic-loading',
+                                                                                     '.git'))
         self.assertTrue(os.path.isdir(os.path.join(pwd, "prototype-dynamic-loading", ".git")))
         version = extract_version(pwd, "prototype-dynamic-loading")
         shutil.rmtree(os.path.join(pwd, "prototype-dynamic-loading"))
-        self.assertEquals(version, '427847c',
-                "The hash of the git repo should be {}, but the function returned {}.".format('427847c', version))
-
+        self.assertEquals(version, '7832830',
+                          "The hash of the git repo should be {}, but the function returned {}.".format('427847c',
+                                                                                                        version))
     def test_validate_json(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
         self.setup_module_structure(pwd)

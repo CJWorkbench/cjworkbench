@@ -190,8 +190,7 @@ def validate_python_functions(destination_python_directory, destination_json_dir
     # We need to reinsert the path so that the imported module can be read. :/
     # OK, the time.sleep is weird, but it seems to circumvent the issue where we get an error
     # "ImportError: No module named ..." probably because of a race condition/the time it takes for the system to
-    # recognise the insert of the new path. There's probably a better solution though? 
-    time.sleep(10)
+    # recognise the insert of the new path. There's probably a better solution though?
     sys.path.insert(0, destination_python_directory)
     time.sleep(10)
     imported_module = import_module(p)
