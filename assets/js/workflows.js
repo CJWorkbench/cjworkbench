@@ -1,9 +1,9 @@
 // Elements of /workflows. Navbar plus a list
 
-import React from 'react';
-import { WorkflowListNavBar } from './navbar';
-import { csrfToken, goToUrl } from './utils';
-import WorkflowContextMenu from './WorkflowContextMenu';
+import React from 'react'
+import { WorkflowListNavBar } from './navbar'
+import { csrfToken, goToUrl } from './utils'
+import WorkflowContextMenu from './WorkflowContextMenu'
 
 
 export default class Workflows extends React.Component {

@@ -1,6 +1,6 @@
-import React from 'react';
-import { shallow, render, mount } from 'enzyme';
-import FetchModal from './FetchModal';
+import React from 'react'
+import { shallow, render, mount } from 'enzyme'
+import FetchModal from './FetchModal'
 
 /*
 it('renders correctly', () => {

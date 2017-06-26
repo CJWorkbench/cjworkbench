@@ -1,7 +1,7 @@
-import React from 'react';
-import { mount } from 'enzyme';
+import React from 'react'
+import { mount } from 'enzyme'
 import fetchMock from 'jest-fetch-mock'
-import OutputPane from './OutputPane';
+import OutputPane from './OutputPane'
 
 it('Fetches and renders', (done) => {
 

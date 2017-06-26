@@ -1,8 +1,8 @@
-import React from 'react';
-import { mount } from 'enzyme';
-import Workflows from './workflows';
-import fetchMock from 'fetch-mock';
-const Utils = require('./utils');
+import React from 'react'
+import { mount } from 'enzyme'
+import Workflows from './workflows'
+import fetchMock from 'fetch-mock'
+const Utils = require('./utils')
 
 it('renders correctly', (done) => {
 

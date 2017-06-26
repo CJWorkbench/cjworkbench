@@ -1,0 +1,14 @@
+{
+  "name": "boom",
+  "id_name": "boom" ,
+  "category" : "tests",
+  "description": "This is a test module",
+  "parameters": [
+    {
+      "name": "URL",
+      "id_name" : "url",
+      "type": "string",
+      "default": ""
+    }
+  ]
+}

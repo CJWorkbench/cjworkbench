@@ -1,12 +1,13 @@
 // UI for a single module within a workflow
 
-import React, { PropTypes } from 'react'
+import React from 'react'
 import WfParameter from './WfParameter'
 import TableView from './TableView'
 import WorkflowModuleContextMenu from './WorkflowModuleContextMenu'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 import * as Actions from './workflow-reducer'
+import PropTypes from 'prop-types'
 
 // Libraries to provide a collapsable table view
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
@@ -153,9 +154,9 @@ export default class WfModule extends React.Component {
 
 
 WfModule.propTypes = {
-  'data-wfmodule':      React.PropTypes.object,
-  'data-revison':       React.PropTypes.number,
-  'data-selected':      React.PropTypes.bool,
-  'data-changeParam':   React.PropTypes.func,
-  'data-removeModule':  React.PropTypes.func
+  'data-wfmodule':      PropTypes.object,
+  'data-revison':       PropTypes.number,
+  'data-selected':      PropTypes.bool,
+  'data-changeParam':   PropTypes.func,
+  'data-removeModule':  PropTypes.func
 };

@@ -1,9 +1,11 @@
 // Navbar at top of all logged-in pages.
 // May have various elements on different pages, including toolbar
 
-import React from 'react';
+import React from 'react'
 import WorkflowHamburgerMenu from './WorkflowHamburgerMenu'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
+import PropTypes from 'prop-types'
+
 
 export class WorkflowListNavBar extends React.Component {
 
@@ -39,9 +41,9 @@ export class WorkflowNavBar extends React.Component {
 }
 
 WorkflowNavBar.propTypes = {
-  addButton:        React.PropTypes.object,
-  workflowTitle:    React.PropTypes.string,
-  importModule:      React.PropTypes.object,
+  addButton:        PropTypes.object,
+  workflowTitle:    PropTypes.string,
+  importModule:     PropTypes.object,
 };
 
 

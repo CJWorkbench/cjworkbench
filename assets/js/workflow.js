@@ -6,6 +6,7 @@ import ModuleMenu from './ModuleMenu'
 import { WorkflowNavBar } from './navbar'
 import WfModule from './WfModule'
 import OutputPane from './OutputPane'
+import PropTypes from 'prop-types'
 
 import { getPageID, csrfToken } from './utils'
 
@@ -119,10 +120,10 @@ export default class Workflow extends React.Component {
 }
 
 Workflow.propTypes = {
-  workflow:           React.PropTypes.object,
-  selected_wf_module: React.PropTypes.number,
-  addModule:          React.PropTypes.func,
-  removeModule:       React.PropTypes.func,
+  workflow:           PropTypes.object,
+  selected_wf_module: PropTypes.number,
+  addModule:          PropTypes.func,
+  removeModule:       PropTypes.func,
 };
 
 

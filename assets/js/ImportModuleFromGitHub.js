@@ -1,5 +1,6 @@
-import React from 'react';
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
+import React from 'react'
+import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import PropTypes from 'prop-types'
 
 import { csrfToken } from './utils'
 
@@ -47,6 +48,6 @@ export default class ImportModuleFromGitHub extends React.Component {
 
 
 ImportModuleFromGitHub.propTypes = {
-  url:  React.PropTypes.string,
+  url:  PropTypes.string,
 };
 

@@ -1,10 +1,11 @@
 // WfParameter - a single editable parameter
 
-import React, { PropTypes } from 'react'
+import React from 'react'
 import MenuParam from './MenuParam'
 import FetchModal from './FetchModal'
 import ChartParameter from './Chart'
 import ColumnSelector from './ColumnSelector'
+import PropTypes from 'prop-types'
 
 import { csrfToken } from './utils'
 
@@ -206,10 +207,10 @@ export default class WfParameter extends React.Component {
 }
 
 WfParameter.propTypes = {
-  p:                React.PropTypes.object,
-  wf_module_id:     React.PropTypes.number,
-	revision:         React.PropTypes.number,
-  changeParam:      React.PropTypes.func,
-	getParamText:     React.PropTypes.func,
-	setParamText:     React.PropTypes.func,
+  p:                PropTypes.object,
+  wf_module_id:     PropTypes.number,
+	revision:         PropTypes.number,
+  changeParam:      PropTypes.func,
+	getParamText:     PropTypes.func,
+	setParamText:     PropTypes.func,
 };
