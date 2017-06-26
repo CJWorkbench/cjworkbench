@@ -22,6 +22,6 @@ To run:
 Go to `127.0.0.1:8000` to list available workflows.
 
 To develop:
-- `./node_modules/.bin/webpack --config webpack.config.js --watch` to compile JS and CSS whenever changed
+- `./watchjs` to compile JS and CSS whenever changed
 - `python manage.py test` for back end tests
 - `npm test` for front end tests
