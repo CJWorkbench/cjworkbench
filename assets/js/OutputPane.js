@@ -47,7 +47,7 @@ export default class OutputPane extends React.Component {
     // Don't show anything if we don't have a selected WfModule to show
     if (this.props.id && this.state.tableData && this.state.tableData.length) {
 
-      console.log(this.state.tableData);
+      // console.log(JSON.stringify(this.state.tableData));
 
       return (
         <div className="outputpane-box">
@@ -61,6 +61,20 @@ export default class OutputPane extends React.Component {
           </div>
           <div className="outputpane-data">
             <TableView tableData={this.state.tableData} />
+          </div>
+        </div>
+      );
+    } else if (this.props.id) {
+      // When we want an output, but no TableData is present
+      return (
+        <div className="outputpane-box">
+          <div className="bg-faded outputpane-header">
+            <div>
+              Number of Rows: 0 
+            </div>
+            <div>
+              Number of Columns: 0     
+            </div>
           </div>
         </div>
       );
