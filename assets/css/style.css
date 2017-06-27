@@ -22,6 +22,7 @@ body {
   position: fixed;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   top: 0;
   right: 0;
   left: 0;
@@ -138,7 +139,7 @@ body {
 .outputpane-box {
   height: calc(100% - 3.5rem);
   width: 50%;
-  border: 1px solid #EDECEC;
+  border: 2px solid #48C8D7;
   background-color: #F2F2F2;
   padding: 15px;
   position: fixed;
@@ -160,13 +161,25 @@ body {
 
 /* ---- WfModule ---- */
 
+/*Contains the info and status bar for each workflow module*/
+.module-card-wrapper {
+  /*display: flex;*/
+  /*justify-content: row;*/
+  /*border: 3px dashed green;*/
+}
+
+.module-card-info {
+  /*width: calc(100% - 1rem);*/
+  /*border: 2px dotted blue;*/
+}
+
 /*To be changed with new styles*/
 .bg-selected-module {
   /*background-color: #abc;*/
 }
 
 .border-selected-module {
-  border: 2px solid #FBAA6D;
+  border: 2px solid #48C8D7;
 }
 
 .panel-wrapper {
@@ -200,31 +213,32 @@ body {
 }
 
 
-/* ---- Status lights ---- */
-.ready-light {
-  width: 15px;
-  height: 15px;
-  border: 1px solid black;
-  border-radius: 50%;
-  background-color: lightgreen;
-  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+/* ---- Status bars ---- */
+
+.module-status-bar {
+  /*justify-content: flex-end;*/
+  /*height: 100%;*/
+  width: 1rem;
+  /*width: 7px;*/
+  /*border: 2px dotted purple;*/
+  /*justify-content: flex-end;*/
 }
 
-.busy-light {
-  width: 15px;
-  height: 15px;
-  border: 1px solid black;
-  border-radius: 50%;
-  background-color: yellow;
-  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+.ready-bar {
+  width: 7px;
+  height: 55px;
+  background-color: #48C8D7;
 }
 
-.error-light {
-  width: 15px;
-  height: 15px;
-  border: 1px solid black;
-  border-radius: 50%;
-  background-color: red;
-  box-shadow: inset 0px 4px 4px rgba(0, 0, 0, 0.25);
+.busy-bar {
+  width: 7px;
+  height: 55px;
+  background-color: #FBAA6D;
+}
+
+.error-bar {
+  width: 7px;
+  height: 55px;
+  background-color: #E24F4A;
 }
 

@@ -53,10 +53,10 @@ export default class OutputPane extends React.Component {
         <div className="outputpane-box">
           <div className="bg-faded outputpane-header">
             <div>
-              Number of Rows: {this.state.tableData.length} 
+              Rows: {this.state.tableData.length} 
             </div>
             <div>
-              Number of Columns: {Object.keys(this.state.tableData[0]).length}      
+              Columns: {Object.keys(this.state.tableData[0]).length}      
             </div>
           </div>
           <div className="outputpane-data">
@@ -70,10 +70,10 @@ export default class OutputPane extends React.Component {
         <div className="outputpane-box">
           <div className="bg-faded outputpane-header">
             <div>
-              Number of Rows: 0 
+              Rows: 0 
             </div>
             <div>
-              Number of Columns: 0     
+              Columns: 0     
             </div>
           </div>
         </div>

@@ -14,9 +14,9 @@ import { Collapse, Button, CardBlock, Card } from 'reactstrap';
 
 // ---- StatusLight ----
 // Ready, Busy, or Error
-class StatusLight extends React.Component {
+class StatusBar extends React.Component {
   render() {
-    return <div className={this.props.status + '-light'}></div>
+    return <div className={this.props.status + '-bar'}></div>
   }
 }
 
@@ -91,7 +91,6 @@ export default class WfModule extends React.Component {
   }
 
   toggle() {
-    console.log("Clicked a toggle zone");
     this.setState({isOpen: !this.state.isOpen});
   }
 
@@ -121,29 +120,27 @@ export default class WfModule extends React.Component {
     return (
       <div className='container' {...this.props} onClick={this.click}>
         <div className={cardClass}>
-          <div className='card-block p-1'>
-
+          <div className='card-block p-1 module-card-wrapper'>
             <div 
-              className='d-flex justify-content-between align-items-center mb-2'
+              className='d-flex justify-content-between align-items-center mb-2 module-card-info'
               onClick={this.toggle}
             >
               <h4 className='text-center mb-0'>{this.module.name}</h4>
               {/* Extra div to prevent calling of parent's onClick */}
               <div onClick={(e) => e.stopPropagation()} className="menu-test-class">              
                 <WorkflowModuleContextMenu removeModule={ () => this.removeModule() }/>
-              </div>  
-              <StatusLight status={this.wf_module.status}/>
+              </div>
             </div>
             <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
             {/* --- section to collapse --- */}
             <Collapse className='mt-1 pl-2 pr-2' isOpen={this.state.isOpen} >
               {inside}
-            </Collapse>
-
-            {/*Is this still in use?*/}
-            {/*{paramdivs}*/}            
+            </Collapse>     
             {/* --- non-collapsing part; to be incorporated in Context Menu --- */}
             <a className='ml-2' href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>
+            <div className='module-status-bar'>  
+              <StatusBar status={this.wf_module.status}/>
+            </div>
           </div>
 
         </div>

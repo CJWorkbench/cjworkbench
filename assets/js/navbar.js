@@ -32,7 +32,7 @@ export class WorkflowNavBar extends React.Component {
         <nav className="navbar">
           {this.props.addButton}
           <ImportModuleFromGitHub />
-          <h3 className="mx-auto">{this.props.workflowTitle}</h3>
+          {/*<h3 className="mx-auto">{this.props.workflowTitle}</h3>*/}
           <WorkflowHamburgerMenu />
         </nav>
       </div>

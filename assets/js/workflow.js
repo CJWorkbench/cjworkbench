@@ -99,7 +99,7 @@ export default class Workflow extends React.Component {
         <div className="workflow-container">
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
-              <h4>Workflow Title Placeholder</h4>
+              <h4>{this.props.workflow.name}</h4>
             </div>
             <div className="modulestack-list w-75 mx-auto ">
               <SortableList
