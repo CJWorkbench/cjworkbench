@@ -161,28 +161,19 @@ body {
 
 /* ---- WfModule ---- */
 
-/*Contains the info and status bar for each workflow module*/
+/* Contains the info and status bar for each workflow module */
 .module-card-wrapper {
-  /*display: flex;*/
-  /*justify-content: row;*/
-  /*border: 3px dashed green;*/
+  height: 100%;
+  display: flex;
+  flex-direction: row;
 }
 
 .module-card-info {
-  /*width: calc(100% - 1rem);*/
-  /*border: 2px dotted blue;*/
-}
-
-/*To be changed with new styles*/
-.bg-selected-module {
-  /*background-color: #abc;*/
+  width: calc(100% - 1rem);
 }
 
 .border-selected-module {
   border: 2px solid #48C8D7;
-}
-
-.panel-wrapper {
 }
 
 .wfModuleErrorMsg {
@@ -216,29 +207,24 @@ body {
 /* ---- Status bars ---- */
 
 .module-status-bar {
-  /*justify-content: flex-end;*/
-  /*height: 100%;*/
   width: 1rem;
-  /*width: 7px;*/
-  /*border: 2px dotted purple;*/
-  /*justify-content: flex-end;*/
 }
 
 .ready-bar {
-  width: 7px;
-  height: 55px;
+  width: 100%;
+  height: 100%;
   background-color: #48C8D7;
 }
 
 .busy-bar {
-  width: 7px;
-  height: 55px;
+  width: 100%;
+  height: 100%;
   background-color: #FBAA6D;
 }
 
 .error-bar {
-  width: 7px;
-  height: 55px;
+  width: 100%;
+  height: 100%;
   background-color: #E24F4A;
 }
 
