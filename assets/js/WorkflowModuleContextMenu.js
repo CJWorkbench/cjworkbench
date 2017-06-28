@@ -20,6 +20,7 @@ import {
     Input
   } from 'reactstrap'
 import PropTypes from 'prop-types'
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 
 export default class WorkflowModuleContextMenu extends React.Component {
@@ -28,7 +29,13 @@ export default class WorkflowModuleContextMenu extends React.Component {
     this.deleteOption = this.deleteOption.bind(this);
     this.toggleExportModal = this.toggleExportModal.bind(this);
     this.renderExportModal = this.renderExportModal.bind(this);    
-    this.state = {exportModalOpen: false};           // Export pop-up starts closed
+    this.onCsvCopy = this.onCsvCopy.bind(this);  
+    this.onJsonCopy = this.onJsonCopy.bind(this);                  
+    this.state = {
+      exportModalOpen: false, 
+      csvCopied: false,
+      jsonCopied: false
+    };           
   }
   
   deleteOption() {
@@ -39,41 +46,81 @@ export default class WorkflowModuleContextMenu extends React.Component {
     this.setState({ exportModalOpen: !this.state.exportModalOpen });
   }
 
+  csvUrlString(id) {
+    return '/public/moduledata/live/' + id + '.csv';
+  }
+
+  jsonUrlString(id) {
+    return '/public/moduledata/live/' + id + '.json';
+  }
+
+  onCsvCopy() {
+    this.setState({csvCopied: true});
+  }
+
+  onJsonCopy() {
+    this.setState({jsonCopied: true});
+  }
+
+  // To Fix: Does not change text after clicking on copy link
+  renderCsvCopyLink() {
+    var csvString = this.csvUrlString(this.props.id);    
+
+    if (this.state.copied) {
+      return (
+        <div style={{color: 'red'}}>CSV link copied to clipboard</div>
+      );
+    } else {
+      return (
+        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy}>
+          <div>Copy live CSV link</div>
+        </CopyToClipboard>
+      );
+    }
+  }
+
+  // To Fix: Does not change text after clicking on copy link  
+  renderJsonCopyLink() {
+    var jsonString = this.jsonUrlString(this.props.id);    
+
+    if (this.state.copied) {
+      return (
+        <div style={{color: 'red'}}>JSON link copied to clipboard</div>
+      );
+    } else {
+      return (
+        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy}>
+          <div>Copy live JSON link</div>
+        </CopyToClipboard>
+      );
+    }
+  }
+
   renderExportModal() {
     if (!this.state.exportModalOpen) {
       return null;
     }
 
-    // Copied from Navbar Modal, needs revision 
+    var csvString = this.csvUrlString(this.props.id);    
+    var jsonString = this.jsonUrlString(this.props.id);    
+    var csvCopyLink = this.renderCsvCopyLink();
+    var jsonCopyLink = this.renderJsonCopyLink();
+
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
-        <ModalHeader toggle={this.toggleModal}>External Data Settings</ModalHeader>
+        <ModalHeader toggle={this.toggleModal}>Export Data</ModalHeader>
         <ModalBody>
           <FormGroup>
-            <Label for="exampleSelect">Which version?</Label>
-            <Input type="select" name="select" id="exampleSelect" className="mb-3">
-              <option>Most Recent</option>
-              <option value="" disabled="disabled">──────────</option>
-              <option>April 28 at 4:40PM </option>
-              <option>April 28 at 10:32AM </option>
-              <option>April 26 at 6:06PM</option>
-              <option>April 12 at 2:51PM</option>
-            </Input>
-            <Label for="exampleSelect2">Update when?</Label>
-            <Input type="select" name="select" id="exampleSelect2">
-              <option>Manual only</option>
-              <option value="" disabled="disabled">──────────</option>
-              <option>Every minute</option>
-              <option>Every five minutes</option>
-              <option>Hourly</option>
-              <option>Daily</option>
-              <option>Weekly</option>
-            </Input>
+            <Label for="exampleText">CSV</Label>
+            {csvCopyLink}
+            <Input type="url" name="url" id="csvUrl" placeholder={csvString}/>
+            <Label for="exampleText">JSON</Label>
+            {jsonCopyLink}
+            <Input type="url" name="url" id="jsonUrl" placeholder={jsonString}/>
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color='primary' onClick={this.toggleExportModal}>Ok</Button>{' '}
-          <Button color='secondary' onClick={this.toggleExportModal}>Cancel</Button>
+          <Button color='primary' onClick={this.toggleExportModal}>Done</Button>{' '}
         </ModalFooter>
       </Modal>
     );
@@ -109,6 +156,7 @@ export default class WorkflowModuleContextMenu extends React.Component {
 }
 
 WorkflowModuleContextMenu.propTypes = {
-  removeModule: PropTypes.func  
+  removeModule: PropTypes.func,
+  id:           PropTypes.number
 };
 
