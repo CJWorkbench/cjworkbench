@@ -128,15 +128,12 @@ export default class WfModule extends React.Component {
                 onClick={this.toggle}
               >
                 <h4 className='text-center mb-0'>{this.module.name}</h4>
-                {/* Menu icon (Extra div to prevent calling of parent's onClick) */}
-                {/* --- To refactor: put this div inside WfModuleContextMenu --- */}
-                {/* ???: Will we need to pass in e.stopPropagation() ??? does not work within WorkflowModuleContextMenu */}
-                <div onClick={(e) => e.stopPropagation()} className="menu-test-class">              
-                  <WfModuleContextMenu 
-                    removeModule={ () => this.removeModule() }
-                    id={this.wf_module.id}
-                  />
-                </div>
+                <WfModuleContextMenu 
+                  removeModule={ () => this.removeModule() }
+                  stopProp={(e) => e.stopPropagation()}
+                  id={this.wf_module.id}
+                  className="menu-test-class"
+                />
               </div>
               <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
               {/* --- Module details, will expand / collapse --- */}

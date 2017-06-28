@@ -148,7 +148,7 @@ export default class WfModuleContextMenu extends React.Component {
     var exportModal = this.renderExportModal();
 
     return (
-       <UncontrolledDropdown>
+       <UncontrolledDropdown onClick={this.props.stopProp}>
         <DropdownToggle className='context-menu-icon'>
           {'\u22EE'}
         </DropdownToggle>
@@ -174,6 +174,7 @@ export default class WfModuleContextMenu extends React.Component {
 
 WfModuleContextMenu.propTypes = {
   removeModule: PropTypes.func,
-  id:           PropTypes.number
+  id:           PropTypes.number,
+  stopProp:     PropTypes.func
 };
 
