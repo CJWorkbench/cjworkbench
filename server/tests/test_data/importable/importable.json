@@ -1,12 +1,12 @@
 {
-  "name": "boom",
-  "id_name": "boom" ,
+  "name": "Importable",
+  "id_name": "importable" ,
   "category" : "tests",
   "description": "This is a test module",
   "parameters": [
     {
-      "name": "URL",
-      "id_name" : "url",
+      "name": "Test",
+      "id_name" : "test",
       "type": "string",
       "default": ""
     }
