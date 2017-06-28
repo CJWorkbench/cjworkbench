@@ -49,20 +49,22 @@ export default class WorkflowModuleContextMenu extends React.Component {
   // Code Smell: Repitition between CSV and JSON methods, target for DRY refactoring
 
   csvUrlString(id) {
-    return '/public/moduledata/live/' + id + '.csv';
+    var path = "/public/moduledata/live/" + id + ".csv";
+    var url = new URL(path, window.location.href).href;
+    return url;
   }
 
   jsonUrlString(id) {
-    return '/public/moduledata/live/' + id + '.json';
+    var path = "/public/moduledata/live/" + id + ".json";
+    var url = new URL(path, window.location.href).href;
+    return url;
   }
 
   onCsvCopy() {
-    console.log("You have copied the CSV link to the clipboard.");
     this.setState({csvCopied: true});
   }
 
   onJsonCopy() {
-    console.log("You have copied the JSON link to the clipboard.");    
     this.setState({jsonCopied: true});
   }
 
@@ -115,11 +117,11 @@ export default class WorkflowModuleContextMenu extends React.Component {
           <FormGroup>
             <Label for="exampleText">CSV</Label>
             {csvCopyLink}
-            <a href={csvCopyLink} download>{'\u2193'}</a>
+            <a href={csvString} download>{'\u2193'}</a>
             <Input type="url" name="url" id="csvUrl" placeholder={csvString}/>
             <Label for="exampleText">JSON</Label>
             {jsonCopyLink}
-            <a href={jsonCopyLink} download>{'\u2193'}</a>            
+            <a href={jsonString} download>{'\u2193'}</a>            
             <Input type="url" name="url" id="jsonUrl" placeholder={jsonString}/>
           </FormGroup>
         </ModalBody>

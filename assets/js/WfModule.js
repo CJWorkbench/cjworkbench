@@ -144,7 +144,7 @@ export default class WfModule extends React.Component {
                 {inside}
               </Collapse>  
             </div>
-            {/* --- Color indicator showing module status, on the right of card --- */}
+            {/* --- Color indicator of module status, on the right of card --- */}
             <div className='module-status-bar'>  
               <StatusBar status={this.wf_module.status}/>
             </div>
