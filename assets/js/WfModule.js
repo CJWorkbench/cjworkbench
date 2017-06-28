@@ -121,7 +121,7 @@ export default class WfModule extends React.Component {
       <div className='container' {...this.props} onClick={this.click}>
         <div className={cardClass}>
           <div className='card-block p-1 module-card-wrapper'>
-            {/* --- Everything but the status, bar, on the left --- */}
+            {/* --- Everything but the status bar, on the left of card --- */}
             <div className='module-card-info'>
               <div 
                 className='d-flex justify-content-between align-items-center mb-2 '
@@ -130,7 +130,7 @@ export default class WfModule extends React.Component {
                 <h4 className='text-center mb-0'>{this.module.name}</h4>
                 {/* Menu icon (Extra div to prevent calling of parent's onClick) */}
                 {/* --- To refactor: put this div inside WorkflowModuleContextMenu --- */}
-                {/* ???: Will we need to pass in e.stopPropagation() ??? */}
+                {/* ???: Will we need to pass in e.stopPropagation() ??? does not work within WorkflowModuleContextMenu */}
                 <div onClick={(e) => e.stopPropagation()} className="menu-test-class">              
                   <WorkflowModuleContextMenu 
                     removeModule={ () => this.removeModule() }
@@ -143,10 +143,8 @@ export default class WfModule extends React.Component {
               <Collapse className='mt-1 pl-2 pr-2' isOpen={this.state.isOpen} >
                 {inside}
               </Collapse>  
-              {/* --- Export file links - to be moved to Context Menu --- */}
-              <a className='ml-2' href={'/public/moduledata/live/' + this.wf_module.id + '.csv'}>CSV</a>/<a href={'/public/moduledata/live/' + this.wf_module.id + '.json'}>JSON</a>              
             </div>
-            {/* --- Status Bar, on the right --- */}
+            {/* --- Color indicator showing module status, on the right of card --- */}
             <div className='module-status-bar'>  
               <StatusBar status={this.wf_module.status}/>
             </div>
