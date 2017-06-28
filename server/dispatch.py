@@ -1,5 +1,4 @@
 # Module dispatch table and implementations
-#from server.models import Module, WfModule
 import pandas as pd
 from django.conf import settings
 
@@ -15,7 +14,7 @@ from .modules.selectcolumns import SelectColumns
 from .modules.textsearch import TextSearch
 from .modules.twitter import Twitter
 
-
+from .dynamicdispatch import DynamicDispatch
 # ---- Test Support ----
 
 # NOP -- do nothing
@@ -62,18 +61,22 @@ module_dispatch_tbl = {
 
 # ---- Dispatch Entrypoints ----
 
-def load_dynamically(dispatch):
+dynamic_dispatch = DynamicDispatch()
+
+#the wf_module should have both attributes: the module and the version.
+def load_dynamically(wf_module, table, dispatch):
     #check if dispatch is loadable dynamically; if so, load it.
     print("Loading {} manually".format(dispatch))
+    return dynamic_dispatch.load_module(wf_module=wf_module, table=table, dispatch=dispatch)
 
 def module_dispatch_render(wf_module, table):
     dispatch = wf_module.module_version.module.dispatch
     if dispatch not in module_dispatch_tbl.keys():
-        if not load_dynamically(dispatch):
-            if not settings.DEBUG:
-                raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
-            else:
-                return table  # in debug it just becomes a NOP
+        loadable = load_dynamically(wf_module=wf_module, table=table, dispatch=dispatch)
+        if not loadable:
+            raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
+        else:
+            return loadable.render(wf_module, table)
 
     return module_dispatch_tbl[dispatch].render(wf_module,table)
 

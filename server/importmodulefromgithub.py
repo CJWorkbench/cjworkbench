@@ -131,8 +131,8 @@ def validate_python(extension_file_mapping, current_path, root_directory, direct
         raise ValidationError("No Python file found in remote repository.")
 
     # check if files with the same name already exist
-    destination_json_directory = os.path.join(root_directory, "config/modules/", directory, version)
-    destination_python_directory = os.path.join(current_path, "modules", directory, version)
+    destination_json_directory = os.path.join(root_directory, "config/modules/dynamic", directory, version)
+    destination_python_directory = os.path.join(current_path, "modules/dynamic", directory, version)
     if os.path.isdir(destination_json_directory) or os.path.isdir(destination_python_directory):
         shutil.rmtree(os.path.join(current_path, directory))
         raise ValidationError("Files for this repository and this version already exist.")

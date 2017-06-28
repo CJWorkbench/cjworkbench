@@ -81,10 +81,11 @@ def workflow_addmodule(request, pk, format=None):
         moduleID = request.data['moduleID']
         insertBefore = int(request.data['insertBefore'])
         module = Module.objects.get(pk=moduleID)
-        #For now, we always get the first version of a module, as that's the only version that exists.
+        #For now, we always get the last version of a module – the ModuleVersion object is ordered by the
+        # last_update_time, so retrieving the 0th element will return the latest version.
         #In future versions, we'll need to be cleverer here (but only marginally so): we should always add the
         #latest version of a workflow, and if the users want to use a previous version, they should be able to rollback
-        #using the module UI, and not from the "Add Module" UI.
+        #using the module UI, and not from the "Add Module" UI. This will require API changes.
         module_version = ModuleVersion.objects.filter(module=module)[0]
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)

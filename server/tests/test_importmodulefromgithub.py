@@ -101,10 +101,10 @@ class ImportFromGitHubTest(LoggedInTestCase):
                         "and one JSON.")
         self.assertTrue("json" in mapping, "A json file must exist in the module structure.")
         self.assertTrue("py" in mapping, "A python file must exist in the module structure.")
-        self.assertTrue(mapping["py"] == "validator.py", "The py mapping in the module must be against the only " +
-                                                        "Python file in the directory: validator.py.")
-        self.assertTrue(mapping["json"] == "test.json", "The json mapping in the module must be against the only JSON" +
-                        " file in the directory: test.json")
+        self.assertTrue(mapping["py"] == "importable.py", "The py mapping in the module must be against the only " +
+                                                        "Python file in the directory: importable.py.")
+        self.assertTrue(mapping["json"] == "importable.json", "The json mapping in the module must be against the only JSON" +
+                        " file in the directory: importable.json")
 
 
         #Test invalid modules: 1/ ensure only one Python and one JSON file exist.
@@ -144,7 +144,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         #Test invalid modules: 2/ ensure that at least one Python and one JSON file exist.
         self.setup_module_structure(pwd) # we need to re-copy the folder over as it was cleaned up in the last step.
-        os.remove(os.path.join(pwd, 'prototype-dynamic-loading', 'test.json'))
+        os.remove(os.path.join(pwd, 'prototype-dynamic-loading', 'importable.json'))
         with self.assertRaisesMessage(ValidationError, "prototype-dynamic-loading is not a valid workflow module."):
             mapping = validate_module_structure(pwd, pwd, 'prototype-dynamic-loading')
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
@@ -152,7 +152,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
                          " part of standard clean-up, to ensure we don't have orphan files and repos lying around.")
 
         self.setup_module_structure(pwd)  # we need to re-copy the folder over as it was cleaned up in the last step.
-        os.remove(os.path.join(pwd, 'prototype-dynamic-loading', 'validator.py'))
+        os.remove(os.path.join(pwd, 'prototype-dynamic-loading', 'importable.py'))
         with self.assertRaisesMessage(ValidationError, "prototype-dynamic-loading is not a valid workflow module."):
             mapping = validate_module_structure(pwd, pwd, 'prototype-dynamic-loading')
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
@@ -161,7 +161,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         self.setup_module_structure(pwd) # we need to re-copy the folder over as it was cleaned up in the last step.
         open(os.path.join(pwd, 'prototype-dynamic-loading', 'additional_file'), 'a').close()
-        os.remove(os.path.join(pwd, 'prototype-dynamic-loading', 'test.json'))
+        os.remove(os.path.join(pwd, 'prototype-dynamic-loading', 'importable.json'))
         with self.assertRaisesMessage(ValidationError, "prototype-dynamic-loading is not a valid workflow module. " +
                 "You must have at least one .py file and one .json file."):
             mapping = validate_module_structure(pwd, pwd, 'prototype-dynamic-loading')
@@ -193,9 +193,9 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         #check valid scenario, i.e. the system successfully parses the JSON configuration.
         self.setup_module_structure(pwd)
-        mapping = {'json': 'test.json', 'py': 'validator.py'}
+        mapping = {'json': 'importable.json', 'py': 'importable.py'}
         module_config, json_file = validate_json(mapping, pwd, "prototype-dynamic-loading")
-        self.assertTrue(json_file == 'test.json', "The json file should be test.json.")
+        self.assertTrue(json_file == 'importable.json', "The json file should be importable.json.")
         self.assertTrue(len(module_config) == 5, 'The configuration should have loaded 5 items, but it loaded ' +
                                                  ' {} items.'.format(len(module_config)))
         self.assertTrue(all (k in module_config for k in ("id_name", "description", "name", "category", "parameters")),
@@ -203,8 +203,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         #ensure error if module is already loaded.
         # whilst this is artificially loading an item in the system, it's a reasonable way to do a unit test for potential _real_ modules.
-        sys.modules['server.modules.boom'] = ""
-        with self.assertRaisesMessage(ValidationError, "A module named boom is already loaded."):
+        sys.modules['server.modules.importable'] = ""
+        with self.assertRaisesMessage(ValidationError, "A module named importable is already loaded."):
             validate_json(mapping, pwd, "prototype-dynamic-loading")
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
                          "Repository should be deleted on module already being loaded into the system.")
@@ -223,16 +223,16 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         #check valid scenario
         self.setup_module_structure(pwd)
-        mapping = {'json': 'test.json', 'py': 'validator.py'}
+        mapping = {'json': 'importable.json', 'py': 'importable.py'}
         root_directory = os.path.join(pwd, "test_data")
         python_file, destination_python_directory, destination_json_directory = \
             validate_python(mapping, pwd, root_directory, "prototype-dynamic-loading", "123456")
 
-        self.assertTrue(python_file == 'validator.py', "The python file should be validator.py")
-        self.assertTrue(destination_python_directory == pwd + "/modules/prototype-dynamic-loading/123456",
+        self.assertTrue(python_file == 'importable.py', "The python file should be importable.py")
+        self.assertTrue(destination_python_directory == pwd + "/modules/dynamic/prototype-dynamic-loading/123456",
                 "The destination python directory should be {}/modules/prototype-dynamic-loading/123456".format(pwd) +
                 " but it's {}".format(destination_python_directory))
-        self.assertTrue(destination_json_directory == pwd + "/test_data/config/modules/prototype-dynamic-loading/123456",
+        self.assertTrue(destination_json_directory == pwd + "/test_data/config/modules/dynamic/prototype-dynamic-loading/123456",
                 "The destination json directory should be {}/test_data/config/modules/prototype-dynamic-loading/123456".format(pwd) +
                         " but it's {}".format(destination_json_directory))
 
@@ -267,13 +267,13 @@ class ImportFromGitHubTest(LoggedInTestCase):
         os.makedirs(json_dir)
         os.makedirs(python_dir)
 
-        shutil.copy(os.path.join(test_dir, "validator.py"), python_dir)
+        shutil.copy(os.path.join(test_dir, "importable.py"), python_dir)
 
         #test valid scenario
-        compiled = compile_python(python_dir, json_dir, pwd, "prototype-dynamic-loading", "validator.py")
+        compiled = compile_python(python_dir, json_dir, pwd, "prototype-dynamic-loading", "importable.py")
         #I don't know if there's a better way of doing this, but for now, I'm just checking if the compile process
         #returns a *pyc file.
-        self.assertTrue(compiled.endswith("pyc"), "{} should've compiled to a pyc file.".format("validator.py"))
+        self.assertTrue(compiled.endswith("pyc"), "{} should've compiled to a pyc file.".format("importable.py"))
         shutil.rmtree(json_dir)
         shutil.rmtree(python_dir)
         shutil.rmtree(test_dir)
@@ -283,8 +283,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
         os.makedirs(json_dir)
         os.makedirs(python_dir)
 
-        with self.assertRaisesMessage(ValidationError, "Unable to open {}.".format("validator.py")):
-            compiled = compile_python(python_dir, json_dir, pwd, "prototype-dynamic-loading", "validator.py")
+        with self.assertRaisesMessage(ValidationError, "Unable to open {}.".format("importable.py")):
+            compiled = compile_python(python_dir, json_dir, pwd, "prototype-dynamic-loading", "importable.py")
         #ensure cleanup's happened
         self.assertFalse(os.path.isdir(test_dir), "{} should've been deleted as part of clean-up".format(test_dir))
         self.assertFalse(os.path.isdir(json_dir), "{} should've been deleted as part of clean-up".format(json_dir))
@@ -321,8 +321,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
         os.makedirs(python_dir)
 
         #test valid scenario
-        shutil.copy(os.path.join(test_dir, "validator.py"), python_dir)
-        imported_class = validate_python_functions(python_dir, json_dir, pwd, "prototype-dynamic-loading", "validator.py")
+        shutil.copy(os.path.join(test_dir, "importable.py"), python_dir)
+        imported_class = validate_python_functions(python_dir, json_dir, pwd, "prototype-dynamic-loading", "importable.py")
         self.assertTrue(type(imported_class[1]) == type, "The module must be importable, and be of type 'type'.")
 
         #test invalid scenario: > 1 class
