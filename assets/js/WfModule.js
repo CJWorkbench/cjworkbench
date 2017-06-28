@@ -3,7 +3,7 @@
 import React from 'react'
 import WfParameter from './WfParameter'
 import TableView from './TableView'
-import WorkflowModuleContextMenu from './WorkflowModuleContextMenu'
+import WfModuleContextMenu from './WfModuleContextMenu'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 import * as Actions from './workflow-reducer'
@@ -129,10 +129,10 @@ export default class WfModule extends React.Component {
               >
                 <h4 className='text-center mb-0'>{this.module.name}</h4>
                 {/* Menu icon (Extra div to prevent calling of parent's onClick) */}
-                {/* --- To refactor: put this div inside WorkflowModuleContextMenu --- */}
+                {/* --- To refactor: put this div inside WfModuleContextMenu --- */}
                 {/* ???: Will we need to pass in e.stopPropagation() ??? does not work within WorkflowModuleContextMenu */}
                 <div onClick={(e) => e.stopPropagation()} className="menu-test-class">              
-                  <WorkflowModuleContextMenu 
+                  <WfModuleContextMenu 
                     removeModule={ () => this.removeModule() }
                     id={this.wf_module.id}
                   />

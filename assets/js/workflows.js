@@ -3,7 +3,7 @@
 import React from 'react'
 import { WorkflowListNavBar } from './navbar'
 import { csrfToken, goToUrl } from './utils'
-import WorkflowContextMenu from './WorkflowContextMenu'
+import WfContextMenu from './WfContextMenu'
 
 
 export default class Workflows extends React.Component {
@@ -102,7 +102,7 @@ export default class Workflows extends React.Component {
                             <span>{listValue.name}</span>
                             {/* Extra div wrapper to prevent parent's navigation to WF page*/}
                             <div onClick={(e) => e.preventDefault()} className="menu-test-class">
-                              <WorkflowContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
+                              <WfContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
                             </div>                                                                                
                           </div>
                         </a>

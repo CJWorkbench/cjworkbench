@@ -2,7 +2,7 @@
 // May have various elements on different pages, including toolbar
 
 import React from 'react'
-import WorkflowHamburgerMenu from './WorkflowHamburgerMenu'
+import WfHamburgerMenu from './WfHamburgerMenu'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import PropTypes from 'prop-types'
 
@@ -15,7 +15,7 @@ export class WorkflowListNavBar extends React.Component {
       <div>
         <nav className="navbar">
           <h1 className="navbar-brand mb-0 mr-auto">CJ Workbench</h1>
-          <WorkflowHamburgerMenu workflowsPage />
+          <WfHamburgerMenu workflowsPage />
         </nav>
       </div>
     );
@@ -33,7 +33,7 @@ export class WorkflowNavBar extends React.Component {
           {this.props.addButton}
           <ImportModuleFromGitHub />
           {/*<h3 className="mx-auto">{this.props.workflowTitle}</h3>*/}
-          <WorkflowHamburgerMenu />
+          <WfHamburgerMenu />
         </nav>
       </div>
     );

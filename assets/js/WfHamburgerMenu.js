@@ -5,7 +5,7 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from
 import PropTypes from 'prop-types'
 
 
-export default class WorkflowHamburgerMenu extends React.Component {
+export default class WfHamburgerMenu extends React.Component {
   constructor(props) {
     super(props);
   }
@@ -31,6 +31,6 @@ export default class WorkflowHamburgerMenu extends React.Component {
   }
 }
 
-WorkflowHamburgerMenu.propTypes = {
+WfHamburgerMenu.propTypes = {
   workflowsPage:  PropTypes.bool,
 };

@@ -6,7 +6,7 @@ import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from
 import PropTypes from 'prop-types'
 
 
-export default class WorkflowContextMenu extends React.Component {
+export default class WfContextMenu extends React.Component {
   constructor(props) {
     super(props);
     this.deleteOption = this.deleteOption.bind(this);
@@ -34,7 +34,7 @@ export default class WorkflowContextMenu extends React.Component {
   }
 }
 
-WorkflowContextMenu.propTypes = {
+WfContextMenu.propTypes = {
   deleteWorkflow: PropTypes.func  
 };
 

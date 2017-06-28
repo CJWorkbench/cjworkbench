@@ -23,7 +23,7 @@ import PropTypes from 'prop-types'
 import CopyToClipboard from 'react-copy-to-clipboard';
 
 
-export default class WorkflowModuleContextMenu extends React.Component {
+export default class WfModuleContextMenu extends React.Component {
   constructor(props) {
     super(props);
     this.deleteOption = this.deleteOption.bind(this);
@@ -172,7 +172,7 @@ export default class WorkflowModuleContextMenu extends React.Component {
   }
 }
 
-WorkflowModuleContextMenu.propTypes = {
+WfModuleContextMenu.propTypes = {
   removeModule: PropTypes.func,
   id:           PropTypes.number
 };
