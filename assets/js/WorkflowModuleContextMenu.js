@@ -129,11 +129,11 @@ export default class WorkflowModuleContextMenu extends React.Component {
             <Label for="exampleText">CSV</Label>
             {csvCopyLink}
             <a href={csvString} download>{'\u2193'}</a>
-            <Input type="url" name="url" id="csvUrl" placeholder={csvString}/>
+            <Input type="url" placeholder={csvString} readOnly/>
             <Label for="exampleText">JSON</Label>
             {jsonCopyLink}
             <a href={jsonString} download>{'\u2193'}</a>            
-            <Input type="url" name="url" id="jsonUrl" placeholder={jsonString}/>
+            <Input type="url" placeholder={jsonString} readOnly/>
           </FormGroup>
         </ModalBody>
         <ModalFooter>
