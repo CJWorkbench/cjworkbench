@@ -30,7 +30,9 @@ export default class WorkflowModuleContextMenu extends React.Component {
     this.toggleExportModal = this.toggleExportModal.bind(this);
     this.renderExportModal = this.renderExportModal.bind(this);    
     this.onCsvCopy = this.onCsvCopy.bind(this);  
-    this.onJsonCopy = this.onJsonCopy.bind(this);                  
+    this.onCsvLeave = this.onCsvLeave.bind(this);      
+    this.onJsonCopy = this.onJsonCopy.bind(this); 
+    this.onJsonLeave = this.onJsonLeave.bind(this);                           
     this.state = {
       exportModalOpen: false, 
       csvCopied: false,
@@ -64,8 +66,16 @@ export default class WorkflowModuleContextMenu extends React.Component {
     this.setState({csvCopied: true});
   }
 
+  onCsvLeave() {
+    this.setState({csvCopied: false});
+  }
+
   onJsonCopy() {
     this.setState({jsonCopied: true});
+  }
+
+  onJsonLeave() {
+    this.setState({jsonCopied: false});
   }
 
   renderCsvCopyLink() {
@@ -73,7 +83,7 @@ export default class WorkflowModuleContextMenu extends React.Component {
 
     if (this.state.csvCopied) {
       return (
-        <div style={{color: 'red'}}>CSV link copied to clipboard</div>
+        <div style={{color: 'red'}} onMouseLeave={this.onCsvLeave}>CSV link copied to clipboard</div>
       );
     } else {
       return (
@@ -89,7 +99,7 @@ export default class WorkflowModuleContextMenu extends React.Component {
 
     if (this.state.jsonCopied) {
       return (
-        <div style={{color: 'red'}}>JSON link copied to clipboard</div>
+        <div style={{color: 'red'}} onMouseLeave={this.onCsvLeave}>JSON link copied to clipboard</div>
       );
     } else {
       return (
@@ -110,6 +120,7 @@ export default class WorkflowModuleContextMenu extends React.Component {
     var csvCopyLink = this.renderCsvCopyLink();
     var jsonCopyLink = this.renderJsonCopyLink();
 
+    // '\u2193' is a Unicode down-arrow
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
         <ModalHeader toggle={this.toggleModal}>Export Data</ModalHeader>
