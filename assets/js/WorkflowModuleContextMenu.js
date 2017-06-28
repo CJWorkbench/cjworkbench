@@ -46,6 +46,8 @@ export default class WorkflowModuleContextMenu extends React.Component {
     this.setState({ exportModalOpen: !this.state.exportModalOpen });
   }
 
+  // Code Smell: Repitition between CSV and JSON methods, target for DRY refactoring
+
   csvUrlString(id) {
     return '/public/moduledata/live/' + id + '.csv';
   }
@@ -55,18 +57,19 @@ export default class WorkflowModuleContextMenu extends React.Component {
   }
 
   onCsvCopy() {
+    console.log("You have copied the CSV link to the clipboard.");
     this.setState({csvCopied: true});
   }
 
   onJsonCopy() {
+    console.log("You have copied the JSON link to the clipboard.");    
     this.setState({jsonCopied: true});
   }
 
-  // To Fix: Does not change text after clicking on copy link
   renderCsvCopyLink() {
     var csvString = this.csvUrlString(this.props.id);    
 
-    if (this.state.copied) {
+    if (this.state.csvCopied) {
       return (
         <div style={{color: 'red'}}>CSV link copied to clipboard</div>
       );
@@ -79,11 +82,10 @@ export default class WorkflowModuleContextMenu extends React.Component {
     }
   }
 
-  // To Fix: Does not change text after clicking on copy link  
   renderJsonCopyLink() {
     var jsonString = this.jsonUrlString(this.props.id);    
 
-    if (this.state.copied) {
+    if (this.state.jsonCopied) {
       return (
         <div style={{color: 'red'}}>JSON link copied to clipboard</div>
       );
@@ -113,9 +115,11 @@ export default class WorkflowModuleContextMenu extends React.Component {
           <FormGroup>
             <Label for="exampleText">CSV</Label>
             {csvCopyLink}
+            <a href={csvCopyLink} download>{'\u2193'}</a>
             <Input type="url" name="url" id="csvUrl" placeholder={csvString}/>
             <Label for="exampleText">JSON</Label>
             {jsonCopyLink}
+            <a href={jsonCopyLink} download>{'\u2193'}</a>            
             <Input type="url" name="url" id="jsonUrl" placeholder={jsonString}/>
           </FormGroup>
         </ModalBody>
