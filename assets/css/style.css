@@ -1,3 +1,5 @@
+/* File is getting large; time to divide into modules? */
+
 html {
   height: 100%;
 }
@@ -13,6 +15,102 @@ body {
 #root {
   height: 100%;
 }
+
+/* ---- Text Type styles: cross-module ----- */
+/* To Refactor: DRY out */
+
+.setting-gray {
+	color: #686768;
+	font-family: Avenir;
+	font-size: 13px;
+	line-height: 13px;
+}
+
+.data-light-gray {	
+  color: #A2A2A2;	
+  font-family: Avenir;	
+  font-size: 14px;	
+  font-weight: 500;	
+  line-height: 14px;
+}
+
+.data-gray {
+	color: #686768;
+	font-family: Avenir;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 14px;
+}
+
+.data-paragraph-g {
+	color: #686768;
+	font-family: Avenir;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 24px;
+}
+
+.data-pragraph-li {
+	color: #A2A2A2;
+	font-family: Avenir;
+	font-size: 14px;
+	font-weight: 500;
+	line-height: 24px;
+}
+
+.info-small-blue {
+	color: #48C8D7;
+	font-family: Avenir;
+	font-size: 10px;
+	font-weight: 900;
+	line-height: 10px;
+	text-align: right;
+}
+
+.info-small-blue:hover {
+  color: #0B8897;
+}
+
+.info-small-orange {
+	color: #FBAA6D;
+	font-family: Avenir;
+	font-size: 10px;
+	font-weight: 900;
+	line-height: 10px;
+	text-align: right;
+}
+
+.field-search-lig {
+	opacity: 0.6;
+	color: #A2A2A2;
+	font-family: Avenir;
+	font-size: 14px;
+	font-weight: 900;
+	line-height: 14px;
+}
+
+.field-search-whi {
+	color: #FFFFFF;
+	font-family: Avenir;
+	font-size: 14px;
+	font-weight: 900;
+	line-height: 14px;
+}
+
+/* ---- Element styles: cross-module ----- */
+
+.button-blue {
+	height: 40px;
+	width: 89px;
+	border: 1px solid #48C8D7;
+	border-radius: 25px;
+  color: #48C8D7;
+}
+
+.button-blue:hover {
+  opacity: 0.5;
+}
+
 
 
 /* ---- Navbar ----- */
@@ -228,3 +326,47 @@ body {
   background-color: #E24F4A;
 }
 
+/* ---- WfModuleContextMenu ---- */
+/* These may be replaced by the element-type classes */
+
+.modal-content {
+  border: 1px solid #EDECEC;
+  box-shadow: -10px 10px 20px 0 rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  background-color: #FFFFFF;
+}
+
+.modal-body {
+  background-color: #FAFAFA;
+  border-bottom: 0;
+}
+
+.modal-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /*margin: 1rem;*/
+}
+
+.modal-footer {
+  background-color: #FAFAFA;  
+  border-top: 0;
+}
+
+/*. rectangle-12 in InVision mockup */
+.download-icon-box {  
+	height: 40px;
+	width: 58px;
+	border: 1px solid #EDECEC;
+	background-color: #FFFFFF;
+}
+
+/*. rectangle-1355 in InVision mockup */
+.url-field {
+	height: 40px;
+	width: 440px;
+	border: 1px solid #EDECEC;
+	background-color: #FFFFFF !important;
+}

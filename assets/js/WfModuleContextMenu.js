@@ -83,12 +83,12 @@ export default class WfModuleContextMenu extends React.Component {
 
     if (this.state.csvCopied) {
       return (
-        <div style={{color: 'red'}} onMouseLeave={this.onCsvLeave}>CSV link copied to clipboard</div>
+        <div className='info-small-orange' onMouseLeave={this.onCsvLeave}>CSV link copied to clipboard</div>
       );
     } else {
       return (
-        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy}>
-          <div>Copy live CSV link</div>
+        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='info-small-blue'>
+          <div>Copy live link</div>
         </CopyToClipboard>
       );
     }
@@ -99,12 +99,12 @@ export default class WfModuleContextMenu extends React.Component {
 
     if (this.state.jsonCopied) {
       return (
-        <div style={{color: 'red'}} onMouseLeave={this.onCsvLeave}>JSON link copied to clipboard</div>
+        <div className='info-small-orange' onMouseLeave={this.onCsvLeave}>JSON link copied to clipboard</div>
       );
     } else {
       return (
-        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy}>
-          <div>Copy live JSON link</div>
+        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='info-small-blue'> 
+          <div>Copy live link</div>
         </CopyToClipboard>
       );
     }
@@ -123,21 +123,29 @@ export default class WfModuleContextMenu extends React.Component {
     // '\u2193' is a Unicode down-arrow
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
-        <ModalHeader toggle={this.toggleModal}>Export Data</ModalHeader>
+        <ModalHeader toggle={this.toggleModal} className='data-light-gray'>Export Data</ModalHeader>
         <ModalBody>
           <FormGroup>
-            <Label for="exampleText">CSV</Label>
-            {csvCopyLink}
-            <a href={csvString} download>{'\u2193'}</a>
-            <Input type="url" placeholder={csvString} readOnly/>
-            <Label for="exampleText">JSON</Label>
-            {jsonCopyLink}
-            <a href={jsonString} download>{'\u2193'}</a>            
-            <Input type="url" placeholder={jsonString} readOnly/>
+            <div className="modal-row">
+              <Label className='setting-gray'>CSV</Label>
+              {csvCopyLink}
+            </div>     
+            <div className="modal-row">            
+              <Input type="url" className='url-field data-light-gray' placeholder={csvString} readOnly/>                   
+              <a href={csvString} className='download-icon-box text-center' download>{'\u2193'}</a>
+            </div>
+            <div className="modal-row">            
+              <Label className='setting-gray'>JSON</Label>
+              {jsonCopyLink}
+            </div>
+            <div className="modal-row">                        
+              <Input type="url" className='url-field data-light-gray' placeholder={jsonString} readOnly/>            
+              <a href={jsonString} className='download-icon-box text-center' download>{'\u2193'}</a>    
+            </div>        
           </FormGroup>
         </ModalBody>
         <ModalFooter>
-          <Button color='primary' onClick={this.toggleExportModal}>Done</Button>{' '}
+          <Button onClick={this.toggleExportModal} className='button-blue'>Done</Button>{' '}
         </ModalFooter>
       </Modal>
     );
