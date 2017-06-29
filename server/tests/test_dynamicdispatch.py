@@ -1,4 +1,3 @@
-from unittest.mock import Mock
 from unittest import mock
 
 from server.tests.utils import *
