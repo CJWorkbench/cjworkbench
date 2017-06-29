@@ -30,7 +30,7 @@ class DynamicDispatchTest(LoggedInTestCase):
         #set-up structure, i.e. a way for the file to exist in a location where it can be loaded dynamically
         #copy files to where they would be if this were a real module, i.e. a non-test module.
         if not os.path.isdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "modules/dynamic/")):
-            os.makedirs(os.path.dirname(os.path.abspath(__file__)), "..", "modules/dynamic/")
+            os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "modules/dynamic/"))
 
         shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "importable"),
                     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "modules/dynamic/importable", "1.0"))
