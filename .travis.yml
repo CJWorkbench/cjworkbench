@@ -1,28 +1,16 @@
 matrix:
   include:
-    - language: python
-      python: 
-        - "3.5" 
-      install:
-        - "npm install -g npm"
-        - "pip install -r requirements.txt"
-        - "pip install -r requirements-dev.txt"
-        - "git submodule update --init --recursive"
-        - "git submodule update --remote"
-      script:
-        - python manage.py test
-
-  include:
-    - language: node_js
-      node_js:
-        - "0.10"
-      python:
-        - "3.5"
-      install:
-        - "npm install"
-      script:
-        - "npm test"
-
+  - language: node_js
+    node_js:
+    - '0.10'
+    python:
+    - '3.5'
+    install:
+    - npm install
+    script:
+    - npm test
 git:
   submodules: true
-
+notifications:
+  slack:
+    secure: Ovp226cM2AYH2DM6twGzLUIjhEUZALq5qy0gxlBRxqe22+Xlkxj9plwuKgAAFNwtbMx8EydtNjz+yrKczhlqCdiyk6Dw5KTZUudqoLmtmJaDSRCaSROwBSJe+hrpm1MOKbXGLhd15wWZNl3/pNJPN8Ll4Hv45hXUS0+XRJwCpVWposwFKQ7ZPt1/cwcud0O9H0i9zGEQDkC6RVNE75ndQMi71WISyPv9WltoZc2Mj705iROxz6JKSQhMojIsCHyBbPm0+NBxyWMtxpRcuK3P0E/JSBFbIL6Ke9Agv5pa/mvnqsEO6EU1yQOo+6h8zdDAyCFqKargoX/TQeLL9ZDYWhU3FH98sRC/YYlQtYs7LCaiYz3qxYHWLU9yvYs3HM7v+ioE7utKfJc1Y6q6/ECq6xsVsTt15G6BbOUX1Mj6FSFTDARuoaLVwQ0bJALDms1FhdRMVOV/oN4XJbIyZMEXHcxEsotAzHAuSDxCuC9VmnabhdGK6/fZkwmD5fZVP+r5KFyylH+KPd60tHKU/jkV1jnZ4c0kUV9Vop5dN+ou9MBxa3J1ZekoZTRIoljC0qV5O8aO4PypCBYWM/OY4xIYCk4X2XONXHB1MocmrQv/DKvwMSEzmkJKBh5QUz5NFqwcZRq60e77DGN8HtqubYfqNNxALTXaGISu4jr68IXCJfU=
