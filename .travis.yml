@@ -1,28 +1,20 @@
-matrix:
-  include:
-    - language: python
-      python: 
-        - "3.5" 
-      install:
-        - "npm install -g npm"
-        - "pip install -r requirements.txt"
-        - "pip install -r requirements-dev.txt"
-        - "git submodule update --init --recursive"
-        - "git submodule update --remote"
-      script:
-        - python manage.py test
-
-  include:
-    - language: node_js
-      node_js:
-        - "0.10"
-      python:
-        - "3.5"
-      install:
-        - "npm install"
-      script:
-        - "npm test"
-
+language: python
+python: 
+  - "3.5"
+node_js:
+  - "7.7"
+install:
+  - . $HOME/.nvm/nvm.sh
+  - nvm install stable
+  - nvm use stable
+  - npm install
+  - "npm install -g"
+  - "pip install -r requirements.txt"
+  - "pip install -r requirements-dev.txt"
+  - "git submodule update --init --recursive"
+  - "git submodule update --remote"
+script:
+  - python manage.py test
+  - npm test
 git:
   submodules: true
-
