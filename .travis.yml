@@ -16,5 +16,6 @@ install:
 script:
   - python manage.py test
   - npm test
+  
 git:
   submodules: true
