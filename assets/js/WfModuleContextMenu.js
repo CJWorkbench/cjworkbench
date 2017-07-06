@@ -120,10 +120,14 @@ export default class WfModuleContextMenu extends React.Component {
     var csvCopyLink = this.renderCsvCopyLink();
     var jsonCopyLink = this.renderJsonCopyLink();
 
-    // '\u2193' is a Unicode down-arrow
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
-        <ModalHeader toggle={this.toggleModal} className='data-light-gray'>Export Data</ModalHeader>
+        <ModalHeader toggle={this.toggleModal} >
+          <div className='modal-row'>
+            <div className='data-light-gray'>Export Data</div>
+            <div className='icon-Close' onClick={this.toggleExportModal}></div> 
+          </div>         
+        </ModalHeader>
         <ModalBody>
           <FormGroup>
             <div className="modal-row">
@@ -132,7 +136,7 @@ export default class WfModuleContextMenu extends React.Component {
             </div>     
             <div className="modal-row">            
               <Input type="url" className='url-field data-light-gray' placeholder={csvString} readOnly/>                   
-              <a href={csvString} className='download-icon-box text-center' download>{'\u2193'}</a>
+              <a href={csvString} className='download-icon-box text-center icon-download' download></a>
             </div>
             <div className="modal-row">            
               <Label className='setting-gray'>JSON</Label>
@@ -140,7 +144,7 @@ export default class WfModuleContextMenu extends React.Component {
             </div>
             <div className="modal-row">                        
               <Input type="url" className='url-field data-light-gray' placeholder={jsonString} readOnly/>            
-              <a href={jsonString} className='download-icon-box text-center' download>{'\u2193'}</a>    
+              <a href={jsonString} className='download-icon-box text-center icon-download' download></a>    
             </div>        
           </FormGroup>
         </ModalBody>
@@ -151,14 +155,12 @@ export default class WfModuleContextMenu extends React.Component {
     );
   }
 
-  // \u22EE = three-dot menu icon in Unicode 
   render() {
     var exportModal = this.renderExportModal();
 
     return (
        <UncontrolledDropdown onClick={this.props.stopProp}>
-        <DropdownToggle className='context-menu-icon'>
-          {'\u22EE'}
+        <DropdownToggle className='context-menu-icon icon-more'>
         </DropdownToggle>
         <DropdownMenu right >
           {/* Will delete the parent WF Module from the list */}

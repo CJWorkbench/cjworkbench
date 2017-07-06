@@ -323,14 +323,14 @@ exports[`renders correctly 2`] = `
                           >
                             <DropdownToggle
                               aria-haspopup={true}
-                              className="context-menu-icon"
+                              className="context-menu-icon icon-more"
                               color="secondary"
                               data-toggle="dropdown"
                             >
                               <Button
                                 aria-expanded={false}
                                 aria-haspopup="true"
-                                className="context-menu-icon"
+                                className="context-menu-icon icon-more"
                                 color="secondary"
                                 data-toggle="dropdown"
                                 onClick={[Function]}
@@ -339,12 +339,16 @@ exports[`renders correctly 2`] = `
                                 <button
                                   aria-expanded={false}
                                   aria-haspopup="true"
-                                  className="context-menu-icon btn btn-secondary"
+                                  className="context-menu-icon icon-more btn btn-secondary"
                                   data-toggle="dropdown"
                                   onClick={[Function]}
                                   type="button"
                                 >
-                                  ⋮
+                                  <span
+                                    className="sr-only"
+                                  >
+                                    Toggle Dropdown
+                                  </span>
                                 </button>
                               </Button>
                             </DropdownToggle>
@@ -412,14 +416,14 @@ exports[`renders correctly 2`] = `
                           >
                             <DropdownToggle
                               aria-haspopup={true}
-                              className="context-menu-icon"
+                              className="context-menu-icon icon-more"
                               color="secondary"
                               data-toggle="dropdown"
                             >
                               <Button
                                 aria-expanded={false}
                                 aria-haspopup="true"
-                                className="context-menu-icon"
+                                className="context-menu-icon icon-more"
                                 color="secondary"
                                 data-toggle="dropdown"
                                 onClick={[Function]}
@@ -428,12 +432,16 @@ exports[`renders correctly 2`] = `
                                 <button
                                   aria-expanded={false}
                                   aria-haspopup="true"
-                                  className="context-menu-icon btn btn-secondary"
+                                  className="context-menu-icon icon-more btn btn-secondary"
                                   data-toggle="dropdown"
                                   onClick={[Function]}
                                   type="button"
                                 >
-                                  ⋮
+                                  <span
+                                    className="sr-only"
+                                  >
+                                    Toggle Dropdown
+                                  </span>
                                 </button>
                               </Button>
                             </DropdownToggle>
@@ -501,14 +509,14 @@ exports[`renders correctly 2`] = `
                           >
                             <DropdownToggle
                               aria-haspopup={true}
-                              className="context-menu-icon"
+                              className="context-menu-icon icon-more"
                               color="secondary"
                               data-toggle="dropdown"
                             >
                               <Button
                                 aria-expanded={false}
                                 aria-haspopup="true"
-                                className="context-menu-icon"
+                                className="context-menu-icon icon-more"
                                 color="secondary"
                                 data-toggle="dropdown"
                                 onClick={[Function]}
@@ -517,12 +525,16 @@ exports[`renders correctly 2`] = `
                                 <button
                                   aria-expanded={false}
                                   aria-haspopup="true"
-                                  className="context-menu-icon btn btn-secondary"
+                                  className="context-menu-icon icon-more btn btn-secondary"
                                   data-toggle="dropdown"
                                   onClick={[Function]}
                                   type="button"
                                 >
-                                  ⋮
+                                  <span
+                                    className="sr-only"
+                                  >
+                                    Toggle Dropdown
+                                  </span>
                                 </button>
                               </Button>
                             </DropdownToggle>
@@ -590,14 +602,14 @@ exports[`renders correctly 2`] = `
                           >
                             <DropdownToggle
                               aria-haspopup={true}
-                              className="context-menu-icon"
+                              className="context-menu-icon icon-more"
                               color="secondary"
                               data-toggle="dropdown"
                             >
                               <Button
                                 aria-expanded={false}
                                 aria-haspopup="true"
-                                className="context-menu-icon"
+                                className="context-menu-icon icon-more"
                                 color="secondary"
                                 data-toggle="dropdown"
                                 onClick={[Function]}
@@ -606,12 +618,16 @@ exports[`renders correctly 2`] = `
                                 <button
                                   aria-expanded={false}
                                   aria-haspopup="true"
-                                  className="context-menu-icon btn btn-secondary"
+                                  className="context-menu-icon icon-more btn btn-secondary"
                                   data-toggle="dropdown"
                                   onClick={[Function]}
                                   type="button"
                                 >
-                                  ⋮
+                                  <span
+                                    className="sr-only"
+                                  >
+                                    Toggle Dropdown
+                                  </span>
                                 </button>
                               </Button>
                             </DropdownToggle>

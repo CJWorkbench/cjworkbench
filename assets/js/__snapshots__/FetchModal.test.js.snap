@@ -5,14 +5,11 @@ exports[`renders correctly 1`] = `
   className="ml-2"
 >
   <Button
+    className="icon-Calendar"
     color="secondary"
     onClick={[Function]}
     tag="button"
-  >
-     
-    ⏱
-     
-  </Button>
+  />
   <Modal
     autoFocus={true}
     backdrop={true}

@@ -36,11 +36,21 @@ module.exports = {
         loader: 'style-loader!css-loader'
       },
       {
-        // image handling - New and untested        
+        // image handling      
         test: /\.(png|jpg|gif)$/,
         loader: 'url-loader',
         options: {
           limit: 25000,
+        },
+      },
+      {
+        // font handling      
+        test: /\.(woff)$/,
+        loader: 'url-loader',
+        options: {
+          limit: 25000,
+          mimetype: 'application/font-woff',
+          name: '../fonts/[name].[ext]'
         },
       }
     ]
