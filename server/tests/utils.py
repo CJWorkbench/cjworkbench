@@ -39,6 +39,9 @@ def add_new_parameter_spec(module_version, id_name, type, order=0):
     return ParameterSpec.objects.create(module_version=module_version, id_name=id_name, type=type, order=order)
 
 def add_new_workflow(name):
+    # Workflows have to have an owner, which means we need at least one user
+    if not User.objects.exists():
+        User.objects.create_user(username='username', password='password')
     return Workflow.objects.create(name=name, owner=User.objects.first())
 
 def add_new_wf_module(workflow, module_version, order=1):

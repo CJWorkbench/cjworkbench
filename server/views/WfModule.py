@@ -9,6 +9,7 @@ from server.models import Workflow, WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
 from server.versions import bump_workflow_version
+from server.models import DeleteModuleCommand
 import pandas as pd
 
 @api_view(['GET', 'DELETE'])
@@ -27,9 +28,8 @@ def wfmodule_detail(request, pk, format=None):
         return Response(serializer.data)
 
     elif request.method == 'DELETE':
-        workflow = wf_module.workflow
-        wf_module.delete()
-        bump_workflow_version(workflow, notify_client=False) # bump after delete in case delete fails
+        DeleteModuleCommand.create(wf_module)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

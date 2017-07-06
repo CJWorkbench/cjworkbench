@@ -17,8 +17,10 @@ class WfModule(models.Model):
         return self.workflow.__str__() + ' - order: ' + str(self.order) + ' - ' + self.module_version.__str__()
 
     # --- Fields ----
-    workflow = models.ForeignKey(Workflow, related_name='wf_modules',
-                                 on_delete=models.CASCADE)  # delete WfModule if Workflow deleted
+    workflow = models.ForeignKey(Workflow,
+                                 related_name='wf_modules',
+                                 null=True,                     # null means this is a deleted WfModule
+                                 on_delete=models.CASCADE)      # delete WfModule if Workflow deleted
     module_version = models.ForeignKey(ModuleVersion, related_name='wf_modules',
                                on_delete=models.SET_NULL,
                                null=True)  # goes null if referenced Module deleted
@@ -248,6 +250,32 @@ class ParameterVal(models.Model):
             else:
                 return ''  # be a little lenient, to allow for possible errors when menu items changed
 
+    def set_value(self, new_value):
+        type = self.parameter_spec.type
+        if type == ParameterSpec.STRING:
+            self.string = new_value
+        elif type == ParameterSpec.NUMBER:
+            self.float = new_value
+        elif type == ParameterSpec.CHECKBOX:
+            self.boolean = new_value
+        elif type == ParameterSpec.MENU:
+            self.integer = new_value
+        else:
+            raise ValueError("Unknown parameter type in ParameterVal.set_value")
+        self.save()
+
+    def get_value(self):
+        type = self.parameter_spec.type
+        if type == ParameterSpec.STRING:
+            return self.string
+        elif type == ParameterSpec.NUMBER:
+            return self.float
+        elif type == ParameterSpec.CHECKBOX:
+            return self.boolean
+        elif type == ParameterSpec.MENU:
+            return self.integer
+        else:
+            raise ValueError("Unknown parameter type in ParameterVal.set_value")
 
     def __str__(self):
         if self.parameter_spec.type == ParameterSpec.STRING:

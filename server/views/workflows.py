@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, ModuleVersion, Workflow, WfModule, ParameterSpec, ParameterVal
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite
-from server.execute import execute_wfmodule
+from server.models import AddModuleCommand
 
 
 # ---- Workflows list page ----
@@ -78,31 +78,17 @@ def workflow_addmodule(request, pk, format=None):
         return HttpResponseForbidden()
 
     try:
-        moduleID = request.data['moduleID']
-        insertBefore = int(request.data['insertBefore'])
-        module = Module.objects.get(pk=moduleID)
-        #For now, we always get the last version of a module – the ModuleVersion object is ordered by the
-        # last_update_time, so retrieving the 0th element will return the latest version.
-        #In future versions, we'll need to be cleverer here (but only marginally so): we should always add the
-        #latest version of a workflow, and if the users want to use a previous version, they should be able to rollback
-        #using the module UI, and not from the "Add Module" UI. This will require API changes.
+        module_id = request.data['moduleID']
+        insert_before = int(request.data['insertBefore'])
+        module = Module.objects.get(pk=module_id)
+
+        # always add the latest version of a module (hence [0])
         module_version = ModuleVersion.objects.filter(module=module)[0]
+
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    # create new WfModule in the right place
-    # this also makes wfm.order sequential, which is not strictly necessary but kinda nice
-    pos = 0
-    for wfm in WfModule.objects.filter(workflow=workflow):
-        if pos == insertBefore:
-            pos += 1
-        if wfm.order != pos:
-            wfm.order = pos
-            wfm.save()
-        pos +=1
-
-    newwfm = WfModule.objects.create(workflow=workflow, module_version=module_version, order=insertBefore)
-    newwfm.create_default_parameters()
+    AddModuleCommand.create(workflow, module_version, insert_before)
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 

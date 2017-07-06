@@ -11,7 +11,7 @@ from server.models import Module, Workflow, WfModule, ParameterSpec, ParameterVa
 from server.serializers import ParameterValSerializer
 from server.execute import execute_wfmodule
 from server.dispatch import module_dispatch_event
-from server.versions import bump_workflow_version
+from server.models import ChangeParameterCommand
 import base64
 
 # ---- Parameter ----
@@ -34,31 +34,7 @@ def parameterval_detail(request, pk, format=None):
 
     elif request.method == 'PATCH':
 
-        # change parameter value
-        value = request.data['value']
-        type = param.parameter_spec.type
-
-        if type == ParameterSpec.STRING:
-            param.string = value
-
-        elif type == ParameterSpec.NUMBER:
-            param.float = value
-
-        elif type == ParameterSpec.CHECKBOX:
-            param.boolean = value
-
-        elif type == ParameterSpec.MENU:
-            param.integer = value
-
-        param.save()
-
-        # TODO this isn't a real error handling framework, only clear the error if we caused it!
-        param.wf_module.set_ready(notify=False)
-
-        # increment workflow version number, triggers global re-render if this parameter can effect output
-        notify = not param.ui_only
-        bump_workflow_version(param.wf_module.workflow, notify_client=notify)
-
+        ChangeParameterCommand.create(param, request.data['value'])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

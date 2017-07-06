@@ -127,7 +127,7 @@ class WfModuleTests(LoggedInTestCase):
         response = self.client.delete('/api/wfmodules/%d' % wfmodule4.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(WfModule.DoesNotExist):
-            WfModule.objects.get(pk=wfmodule4.id)  # must really be gone
+            WfModule.objects.get(pk=wfmodule4.id, workflow=self.workflow1)  # must really be gone
 
 
     # /input is just a /render on the previous module
