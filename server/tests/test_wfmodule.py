@@ -1,10 +1,12 @@
 from django.test import TestCase
-from server.views.WfModule import wfmodule_detail, wfmodule_render
+import json
+from server.views.WfModule import wfmodule_detail, wfmodule_render, wfmodule_dataversion
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from server.models import Module, ModuleVersion, WfModule, Workflow, ParameterSpec, ParameterVal
 from server.dispatch import test_data_table
 from server.tests.utils import *
+from rest_framework.test import force_authenticate
 
 class WfModuleTests(LoggedInTestCase):
 
@@ -34,6 +36,8 @@ class WfModuleTests(LoggedInTestCase):
         self.add_new_wfmodule(self.workflow2, self.module3_version, 3)
 
 
+    # --- utils ---
+
     def add_new_wfmodule(self, workflow_aux, module_aux, order_aux):
         return WfModule.objects.create(workflow=workflow_aux, module_version=module_aux, order=order_aux)
 
@@ -46,6 +50,9 @@ class WfModuleTests(LoggedInTestCase):
         module_version = ModuleVersion.objects.create(module = module, source_version_hash = version)
         module_version.save()
         return module_version
+
+
+    # --- tests ---
 
     # check that creating a wf_module correctly sets up new ParameterVals w/ defaults from ParameterSpec
     def test_default_parameters(self):
@@ -99,7 +106,6 @@ class WfModuleTests(LoggedInTestCase):
 
 
     def test_wf_module_render_get(self):
-
         # First module: creates test data
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
@@ -150,34 +156,62 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(response.content, test_data_json)
 
 
-    # test that we can retrieve a stored fetch, going to the db and back
-    def test_wf_module_fetch(self):
+    # test stored versions of data: create, retrieve, set, list, and views
+    def test_wf_module_data_versions(self):
         text1 = 'just pretend this is json'
-        textkey = 'somekey'
+        text2 = 'and this is a later version'
 
-        nothing = self.wfmodule1.retrieve_text('somekey')
+        # nothing ever stored
+        nothing = self.wfmodule1.retrieve_data()
         self.assertIsNone(nothing)
 
-        self.wfmodule1.store_text(textkey, text1)
+        # save and recover data
+        self.wfmodule1.store_data(text1)
         self.wfmodule1.save()
         self.wfmodule1.refresh_from_db()
-        text2 = self.wfmodule1.retrieve_text(textkey)
-        self.assertEqual(text1, text2)
+        textout = self.wfmodule1.retrieve_data()
+        self.assertEqual(textout, text1)
+        firstver = self.wfmodule1.get_stored_data_version()
 
-        # exercise binary storage mode
-        bytes1 = b'Let us try this again'
-        byteskey = 'newkey'
-        self.wfmodule1.store_bytes(byteskey, bytes1)
-        self.wfmodule1.save()
+        # create another version
+        self.wfmodule1.store_data(text2)
+        secondver = self.wfmodule1.get_stored_data_version()
+        self.assertNotEqual(firstver, secondver)
+        textout = self.wfmodule1.retrieve_data()
+        self.assertEqual(textout, text2)
+
+        # change the version back
+        self.wfmodule1.set_stored_data_version(firstver)
+        textout = self.wfmodule1.retrieve_data()
+        self.assertEqual(textout, text1)
+
+        # invalid version string should error
+        with self.assertRaises(ValueError):
+            self.wfmodule1.set_stored_data_version('foo')
+
+        # list versions
+        verlist = self.wfmodule1.list_stored_data_versions()
+        self.assertListEqual(verlist, [firstver, secondver])  # sorted by creation date, ascending
+
+        # but like, none of this should have created versions on any other wfmodule
+        self.assertEqual(self.wfmodule2.list_stored_data_versions(), [])
+
+        # retrieve version list through the API
+        response = self.client.get('/api/wfmodules/%d/dataversion' % self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        versiondata = [
+            {'date': firstver, 'selected': True},
+            {'date': secondver, 'selected': False}
+        ]
+        responsedata = json.loads(response.content.decode('UTF-8'))
+        self.assertEqual(responsedata, versiondata)
+
+        # set the version back to latest through API.
+        # using factory.patch as trouble getting client.patch to work (400 -- authentication?), skips urls.py
+        request = self.factory.patch('/api/wfmodules/%d/dataversion' % self.wfmodule1.id,
+                                     {'version': secondver})
+        force_authenticate(request, user=self.user)
+        response = wfmodule_dataversion(request, pk=self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.wfmodule1.refresh_from_db()
-        bytes2 = self.wfmodule1.retrieve_bytes(byteskey)
-        self.assertEqual(bytes1, bytes2)
-
-        # ensure data under a different key did not change
-        text2 = self.wfmodule1.retrieve_text(textkey)
-        self.assertEqual(text1, text2)
-
-
-
-
-
+        self.assertEqual(self.wfmodule1.get_stored_data_version(), secondver)

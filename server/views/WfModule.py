@@ -9,7 +9,7 @@ from server.models import Workflow, WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
 from server.versions import bump_workflow_version
-from server.models import DeleteModuleCommand
+from server.models import DeleteModuleCommand, ChangeDataVersionCommand
 import pandas as pd
 
 @api_view(['GET', 'DELETE'])
@@ -96,5 +96,25 @@ def wfmodule_public_output(request, pk, type, format=None):
         return HttpResponseNotFound()
 
 
-# TODO public image output?
+@api_view(['GET', 'PATCH'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_dataversion(request, pk, format=None):
+    try:
+        wf_module = WfModule.objects.get(pk=pk)
+    except WfModule.DoesNotExist:
+        return HttpResponseNotFound()
+
+    if not wf_module.user_authorized(request.user):
+        return HttpResponseForbidden()
+
+    if request.method == 'GET':
+        versions = wf_module.list_stored_data_versions()
+        current_version = wf_module.get_stored_data_version()
+        response = [ {'date': x, 'selected': x==current_version} for x in versions ]
+        return Response(response)
+
+    elif request.method == 'PATCH':
+        ChangeDataVersionCommand.create(wf_module, request.data['version'])
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
 

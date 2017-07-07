@@ -6,8 +6,15 @@ import pandas as pd
 from server.models.Module import *
 from server.models.ModuleVersion import *
 from server.models.Workflow import *
+from server.models.ParameterVal import *
 from server.dispatch import module_dispatch_render
 from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_status
+import datetime
+
+# Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
+def current_iso_datetime_ms():
+    return datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+
 
 class WfModule(models.Model):
     class Meta:
@@ -17,14 +24,23 @@ class WfModule(models.Model):
         return self.workflow.__str__() + ' - order: ' + str(self.order) + ' - ' + self.module_version.__str__()
 
     # --- Fields ----
-    workflow = models.ForeignKey(Workflow,
-                                 related_name='wf_modules',
-                                 null=True,                     # null means this is a deleted WfModule
-                                 on_delete=models.CASCADE)      # delete WfModule if Workflow deleted
-    module_version = models.ForeignKey(ModuleVersion, related_name='wf_modules',
-                               on_delete=models.SET_NULL,
-                               null=True)  # goes null if referenced Module deleted
-    order = models.IntegerField('order')
+    workflow = models.ForeignKey(
+        Workflow,
+        related_name='wf_modules',
+        null=True,                     # null means this is a deleted WfModule
+        on_delete=models.CASCADE)      # delete WfModule if Workflow deleted
+
+    module_version = models.ForeignKey(
+        ModuleVersion,
+        related_name='wf_modules',
+        on_delete=models.SET_NULL,
+        null=True)                      # goes null if referenced Module deleted
+
+    order = models.IntegerField()
+
+    stored_data_version = models.CharField(
+        max_length=32,
+        null=True)                      # we may not have stored data
 
     # status light and current error message
     READY = "ready"
@@ -51,26 +67,41 @@ class WfModule(models.Model):
     def public_authorized(self):
         return True
 
-    # ---- Persistent storage ----
-    def store_bytes(self, key, data):
-        StoredObject.objects.create(wf_module=self, key=key, data=data)
 
-    def retrieve_bytes(self, key):
-        objs = StoredObject.objects.filter(wf_module=self, key=key)
-        if objs:
-            return objs.latest('stored_at').data
+    # ---- Data versions ----
+    # Modules that fetch data, like Load URL or Twitter or scrapers, store versions of all previously fetched data
+
+    def store_data(self, text):
+        # uses current datetime as key; assumes we don't store more than one version per millisecond
+        self.stored_data_version = current_iso_datetime_ms()
+        self.save()
+        StoredObject.objects.create(
+            wf_module=self,
+            key=self.stored_data_version,
+            data=bytes(text, 'UTF-8'))
+
+    def retrieve_data(self):
+        if self.stored_data_version:
+            data = StoredObject.objects.get(wf_module=self, key=self.stored_data_version).data
+            return bytearray(data).decode('UTF-8')
+                # copy to bytearray as data is a memoryview in prod, which has no decode method
         else:
             return None
 
-    def store_text(self, key, text):
-        self.store_bytes(key, bytes(text, 'UTF-8'))
+    # versions are ISO datetimes
+    def get_stored_data_version(self):
+        return self.stored_data_version
 
-    def retrieve_text(self, key):
-        data = self.retrieve_bytes(key)
-        if data:
-            return bytearray(data).decode('UTF-8')  # copy to bytearray as data is a memoryview in prod, no decode method
-        else:
-            return None
+    def set_stored_data_version(self, version):
+        versions = self.list_stored_data_versions()
+        if version not in versions:
+            raise ValueError('No such stored data version')
+        self.stored_data_version = version
+        self.save()
+
+    def list_stored_data_versions(self):
+        return list(StoredObject.objects.filter(wf_module=self).order_by('stored_at').values_list('key', flat=True))
+
 
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
@@ -148,153 +179,11 @@ class WfModule(models.Model):
         return module_dispatch_render(self, table)
 
 
-# ParameterSpec defines a parameter UI and defaults for a particular Module
-class ParameterSpec(models.Model):
-    class Meta:
-        ordering = ['order']
-
-    # constants
-    STRING = 'string'
-    NUMBER = 'number'
-    CHECKBOX = 'checkbox'
-    MENU = 'menu'               # menu like HTML <select>
-    BUTTON = 'button'
-    CUSTOM = 'custom'           # rendered in front end
-    TYPE_CHOICES = (
-        (STRING, 'String'),
-        (NUMBER, 'Number'),
-        (BUTTON, 'Button'),
-        (CHECKBOX, 'Checkbox'),
-        (MENU, 'Menu'),
-        (CUSTOM, 'Custom')
-    )
-
-    # fields
-    type = models.CharField(
-        max_length=8,
-        choices=TYPE_CHOICES,
-        default=NUMBER,
-    )
-
-    name = models.CharField('name', max_length=64)
-    id_name = models.CharField('id_name', max_length=32)
-
-    module_version = models.ForeignKey(ModuleVersion, related_name='parameter_specs',
-                               on_delete=models.CASCADE, null=True)  # delete spec if Module deleted
-
-    order = models.IntegerField('order', default=0)
-
-    def_string = models.TextField('string', null=True, blank=True, default='')
-    def_float = models.FloatField('float', null=True, blank=True, default=0.0)
-    def_boolean = models.NullBooleanField('boolean', null=True, blank=True, default=True)
-    def_integer = models.IntegerField('integer', null=True, blank=True, default=0) # which item selected
-
-    def_menu_items = models.TextField(MENU, null=True, blank=True)       # menu items here
-
-    def_visible = models.BooleanField(default=True)
-    def_ui_only = models.BooleanField(default=False)
-    def_multiline = models.BooleanField(default=False)
-
-    def __str__(self):
-        return self.module_version.module.name + ' - ' + self.name
-
-# A parameter value, which might be string or float
-class ParameterVal(models.Model):
-    class Meta:
-        ordering = ['order']
-
-    string = models.TextField("string", null=True, blank=True)
-    float = models.FloatField("float", null=True, blank=True)
-    integer = models.IntegerField("integer", blank=True, default='0')
-    boolean = models.BooleanField("boolean", default=True)
-
-    wf_module = models.ForeignKey(WfModule, related_name='parameter_vals',
-                               on_delete=models.CASCADE, null=True)  # delete value if Module deleted
-    parameter_spec = models.ForeignKey(ParameterSpec, related_name='parameter_vals',
-                               on_delete=models.CASCADE, null=True)  # delete value if Spec deleted
-
-    order = models.IntegerField('order', default=0)
-
-    menu_items = models.TextField(ParameterSpec.MENU, null=True, blank=True)
-
-    visible = models.BooleanField(default=True)
-    ui_only = models.BooleanField(default=False)
-    multiline = models.BooleanField(default=False)
-
-    def init_from_spec(self):
-        self.string = self.parameter_spec.def_string
-        self.float = self.parameter_spec.def_float
-        self.boolean= self.parameter_spec.def_boolean
-        self.integer = self.parameter_spec.def_integer
-        self.order = self.parameter_spec.order
-        self.menu_items = self.parameter_spec.def_menu_items
-        self.visible = self.parameter_spec.def_visible
-        self.ui_only = self.parameter_spec.def_ui_only
-        self.multiline = self.parameter_spec.def_multiline
-
-    # User can access param if they can access wf_module
-    def user_authorized(self, user):
-        return self.wf_module.user_authorized(user)
-
-    # Return text of currently selected menu item
-    def selected_menu_item_string(self):
-        if self.parameter_spec.type != ParameterSpec.MENU:
-            raise ValueError('Request for current item of non-menu parameter ' + self.parameter_spec.name)
-
-        items = self.menu_items
-        if (items is not None):
-            items = items.split('|')
-            idx = self.integer
-            if items != [''] and idx >=0 and idx < len(items):
-                return items[idx]
-            else:
-                return ''  # be a little lenient, to allow for possible errors when menu items changed
-
-    def set_value(self, new_value):
-        type = self.parameter_spec.type
-        if type == ParameterSpec.STRING:
-            self.string = new_value
-        elif type == ParameterSpec.NUMBER:
-            self.float = new_value
-        elif type == ParameterSpec.CHECKBOX:
-            self.boolean = new_value
-        elif type == ParameterSpec.MENU:
-            self.integer = new_value
-        else:
-            raise ValueError("Unknown parameter type in ParameterVal.set_value")
-        self.save()
-
-    def get_value(self):
-        type = self.parameter_spec.type
-        if type == ParameterSpec.STRING:
-            return self.string
-        elif type == ParameterSpec.NUMBER:
-            return self.float
-        elif type == ParameterSpec.CHECKBOX:
-            return self.boolean
-        elif type == ParameterSpec.MENU:
-            return self.integer
-        else:
-            raise ValueError("Unknown parameter type in ParameterVal.set_value")
-
-    def __str__(self):
-        if self.parameter_spec.type == ParameterSpec.STRING:
-            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + self.string
-        elif self.parameter_spec.type == ParameterSpec.NUMBER:
-            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + str(self.float)
-        elif self.parameter_spec.type == ParameterSpec.BUTTON:
-            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - button'
-        elif self.parameter_spec.type == ParameterSpec.CHECKBOX:
-            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - checkbox ' + str(self.boolean)
-        elif self.parameter_spec.type == ParameterSpec.MENU:
-            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - menu ' + self.selected_menu_item_string()
-        elif self.parameter_spec.type == ParameterSpec.CUSTOM:
-            return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - custom'
-        else:
-            raise ValueError("Invalid parameter type")
 
 
-# StoredObject is our persistance layer.
+
+
+# StoredObject is our persistence layer.
 # Allows WfModules to store keyed, versioned binary objects
 class StoredObject(models.Model):
     wf_module = models.ForeignKey(WfModule, related_name='wf_module', on_delete=models.CASCADE)  # delete stored data if WfModule deleted

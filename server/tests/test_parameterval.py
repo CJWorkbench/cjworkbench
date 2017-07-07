@@ -3,10 +3,8 @@ from server.views import parameterval_detail, workflow_detail
 from rest_framework.test import APIRequestFactory, force_authenticate
 from server.models import ParameterVal, ParameterSpec, Module, WfModule
 from rest_framework import status
-#from server.dispatch import test_data_table
 from server.tests.utils import *
-#import pandas as pd
-#import json
+
 
 class ParameterValTests(LoggedInTestCase):
     def setUp(self):

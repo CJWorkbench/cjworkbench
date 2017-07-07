@@ -11,7 +11,7 @@ class Delta(models.Model):
 
     # Which workflow, and what revision of that workflow?
     workflow = models.ForeignKey(Workflow, related_name='deltas', on_delete=models.CASCADE)  # delete if Workflow deleted
-    revision = models.IntegerField(default=1)  # after application of this delta
+    revision = models.IntegerField(null=False)  # after application of this delta
     datetime = models.DateTimeField('datetime', auto_now=True)
 
     # What happened? User-readable string

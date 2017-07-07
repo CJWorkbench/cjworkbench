@@ -1,4 +1,4 @@
-from server.models import AddModuleCommand,DeleteModuleCommand
+from server.models import AddModuleCommand,DeleteModuleCommand,ChangeDataVersionCommand
 from django.test import TestCase
 from server.tests.utils import *
 
@@ -99,3 +99,35 @@ class AddDeleteModuleCommandTests(TestCase):
         # nevermind, redo
         cmd.forward()
         self.assertEqual(all_modules.count(), 0)
+
+
+class ChangeDataVersionCommandTests(TestCase):
+    def setUp(self):
+        self.workflow = create_testdata_workflow()
+        self.wfm = WfModule.objects.first()
+
+    # Change version, then undo/redo
+    def test_change_data_version(self):
+        # Create two data versions
+        self.wfm.store_data('text1')
+        firstver = self.wfm.get_stored_data_version()
+        self.wfm.store_data('text2')
+        secondver = self.wfm.get_stored_data_version()
+
+        start_rev = self.workflow.revision
+
+        # Add a module, insert before the existing one, check to make sure it went there and old one is after
+        cmd = ChangeDataVersionCommand.create(self.wfm, firstver)
+        self.assertEqual(self.wfm.get_stored_data_version(), firstver)
+
+        # workflow revision should have been incremented
+        self.workflow.refresh_from_db()
+        self.assertGreater(self.workflow.revision, start_rev)
+
+        # undo
+        cmd.backward()
+        self.assertEqual(self.wfm.get_stored_data_version(), secondver)
+
+        # redo
+        cmd.forward()
+        self.assertEqual(self.wfm.get_stored_data_version(), firstver)

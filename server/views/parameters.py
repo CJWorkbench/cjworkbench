@@ -33,7 +33,6 @@ def parameterval_detail(request, pk, format=None):
         return Response(serializer.data)
 
     elif request.method == 'PATCH':
-
         ChangeParameterCommand.create(param, request.data['value'])
         return Response(status=status.HTTP_204_NO_CONTENT)
 

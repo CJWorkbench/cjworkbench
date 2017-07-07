@@ -35,7 +35,7 @@ class LoadURL(ModuleImpl):
     # Input table ignored.
     @staticmethod
     def render(wf_module, table):
-        tablestr = wf_module.retrieve_text('csv')
+        tablestr = wf_module.retrieve_data()
         if (tablestr != None) and (len(tablestr)>0):
             return pd.read_csv(io.StringIO(tablestr))
         else:
@@ -98,7 +98,7 @@ class LoadURL(ModuleImpl):
             return
 
         # we are done. save fetched data, notify of changes to the workflow, reset status
-        wfm.store_text('csv', table.to_csv(index=False))      # index=False to prevent pandas from adding an index col
+        wfm.store_data(table.to_csv(index=False))      # index=False to prevent pandas from adding an index col
 
         if wfm.status != wfm.ERROR:
             wfm.set_ready(notify=False)

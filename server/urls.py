@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views.WfModule import wfmodule_detail,wfmodule_render,wfmodule_input,wfmodule_public_output
+from .views.WfModule import wfmodule_detail,wfmodule_render,wfmodule_input,wfmodule_public_output,wfmodule_dataversion
 
 
 urlpatterns = [
@@ -33,6 +33,7 @@ urlpatterns = [
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', wfmodule_detail),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/render$', wfmodule_render),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/input$', wfmodule_input),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion', wfmodule_dataversion),
 
     url(r'^public/moduledata/live/(?P<pk>[0-9]+)\.(?P<type>(csv|json))?$', wfmodule_public_output),
 

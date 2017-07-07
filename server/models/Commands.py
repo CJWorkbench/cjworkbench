@@ -2,7 +2,7 @@
 
 from django.db import models
 from server.models import Workflow, WfModule, ParameterVal, Delta, ModuleVersion
-from server.versions import bump_workflow_version
+from server.versions import bump_workflow_version, next_workflow_version
 
 # Give the new WfModule an 'order' of insert_before, and add 1 to all following WfModules
 def insert_wf_module(wf_module, workflow, insert_before):
@@ -64,6 +64,7 @@ class AddModuleCommand(Delta):
             wf_module=newwfm,
             module_version=module_version,
             order=insert_before,
+            revision=next_workflow_version(workflow),
             command_description=description)
         delta.forward()
 
@@ -93,9 +94,42 @@ class DeleteModuleCommand(Delta):
         delta = DeleteModuleCommand.objects.create(
             workflow=workflow,
             wf_module=wf_module,
+            revision=next_workflow_version(wf_module.workflow),
             command_description=description)
         delta.forward()
         bump_workflow_version(workflow, notify_client=True)
+        return delta
+
+
+# TODO class ReorderModuleCommand(Delta):
+
+class ChangeDataVersionCommand(Delta):
+    wf_module = models.ForeignKey(WfModule)
+    old_version = models.TextField('old_version')
+    new_version = models.TextField('new_version')
+
+    def forward(self):
+        self.wf_module.set_stored_data_version(self.new_version)
+
+    def backward(self):
+        self.wf_module.set_stored_data_version(self.old_version)
+
+    @staticmethod
+    def create(wf_module, version):
+        description = \
+            'Changed \'' + wf_module.module_version.module.name + '\' module data version to ' + version
+
+        delta = ChangeDataVersionCommand.objects.create(
+            wf_module=wf_module,
+            new_version=version,
+            old_version=wf_module.get_stored_data_version(),
+            workflow=wf_module.workflow,
+            revision=next_workflow_version(wf_module.workflow),
+            command_description=description)
+
+        delta.forward()
+        bump_workflow_version(wf_module.workflow, notify_client=True)
+
         return delta
 
 
@@ -113,6 +147,7 @@ class ChangeParameterCommand(Delta):
 
     @staticmethod
     def create(parameter_val, value):
+        workflow = parameter_val.wf_module.workflow
         description = \
             'Changed parameter \'' + parameter_val.parameter_spec.name + '\' of \'' + parameter_val.wf_module.module_version.module.name + '\' module'
 
@@ -120,15 +155,15 @@ class ChangeParameterCommand(Delta):
             parameter_val=parameter_val,
             new_value=value,
             old_value=parameter_val.get_value(),
-            workflow=parameter_val.wf_module.workflow,
-            #revision=parameter_val.wf_module.workflow.revision+1) # does bump_workflow_revision guarantee +1 ?
+            workflow=workflow,
+            revision=next_workflow_version(workflow),
             command_description=description)
 
         delta.forward()
 
         # increment workflow version number, triggers global re-render if this parameter can effect output
         notify = not parameter_val.ui_only
-        bump_workflow_version(parameter_val.wf_module.workflow, notify_client=notify)
+        bump_workflow_version(workflow, notify_client=notify)
 
         return delta
 

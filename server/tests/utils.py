@@ -49,7 +49,7 @@ def add_new_wf_module(workflow, module_version, order=1):
 
 # Encodes a DataFrame to the expected response format form render API
 def table_to_content(table):
-    return table.to_json(orient='records').encode('UTF=8')
+    return table.to_json(orient='records').encode('UTF-8')
 
 # setup a workflow with some test data loaded into a PasteCSV module
 # If no data given, use standard mock data
