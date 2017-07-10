@@ -2,10 +2,11 @@
 
 import React from 'react'
 import MenuParam from './MenuParam'
-import FetchModal from './FetchModal'
 import ChartParameter from './Chart'
 import ColumnSelector from './ColumnSelector'
 import PropTypes from 'prop-types'
+import DataVersionSelect from './DataVersionSelect'
+import UpdateFrequencySelect from './UpdateFrequencySelect'
 
 import { csrfToken } from './utils'
 
@@ -136,10 +137,7 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          <div>
-            <button className='btn btn-primary' onClick={this.click}>{this.name}</button>
-            <FetchModal />
-          </div>
+          <button className='btn btn-primary' onClick={this.click}>{this.name}</button>
         );
 
       case 'checkbox':
@@ -198,7 +196,16 @@ export default class WfParameter extends React.Component {
                 getColNames={this.getInputColNames}
                 revision={this.props.revision} />
             </div> );
-        }
+
+        } else if (this.props.p.parameter_spec.id_name == 'version_select') {
+          return (
+            <div>
+              <button className='btn btn-primary' onClick={this.click}>{this.name}</button>
+              <DataVersionSelect wf_module_id={this.props.wf_module_id} />
+              <UpdateFrequencySelect />
+            </div>
+          );
+        } 
 
       default:
         return null;  // unrecognized parameter type
@@ -207,7 +214,7 @@ export default class WfParameter extends React.Component {
 }
 
 WfParameter.propTypes = {
-  p:                PropTypes.object,
+  p: PropTypes.object,
   wf_module_id:     PropTypes.number,
 	revision:         PropTypes.number,
   changeParam:      PropTypes.func,

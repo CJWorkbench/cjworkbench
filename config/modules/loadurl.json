@@ -18,8 +18,8 @@
     },
     {
       "name": "Fetch Now",
-      "id_name" : "fetch",
-      "type": "button"
+      "id_name" : "version_select",
+      "type": "custom"
     }
   ]
 }

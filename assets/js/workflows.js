@@ -101,6 +101,7 @@ export default class Workflows extends React.Component {
                           <div className='d-flex justify-content-between'>
                             <span>{listValue.name}</span>
                             {/* Extra div wrapper to prevent parent's navigation to WF page*/}
+                            {/* ??? Can the PreventDeault be passed in to WfContextMenu ???*/}
                             <div onClick={(e) => e.preventDefault()} className="menu-test-class">
                               <WfContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
                             </div>                                                                                
