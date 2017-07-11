@@ -564,3 +564,16 @@ body {
   height: 200px;
   overflow: scroll;
 }
+
+/* Data versions modal */
+/* Ugly colors for dev only */
+
+.version-selected {
+  background-color: blue;
+  color: white;
+}
+
+.version-disabled {
+  background-color: white;
+  color: blue;
+}

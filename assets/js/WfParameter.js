@@ -137,6 +137,7 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
+          
           <button className='btn btn-primary' onClick={this.click}>{this.name}</button>
         );
 

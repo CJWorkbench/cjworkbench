@@ -42,7 +42,7 @@ export default class UpdateFrequencySelect extends React.Component {
               </Input>
               <div>When an update is found:</div>
               <Button onClick={this.toggleManual} className={highlightManual} >Manual</Button>
-              <div>Do not automatically swtich to latest data (recommended)</div>              
+              <div>Do not automatically switch to latest data (recommended)</div>              
               <Button onClick={this.toggleManual} className={highlightAuto}>Auto</Button>
               <div>Saves currect data and automatically uses the latest data</div>              
             </FormGroup>

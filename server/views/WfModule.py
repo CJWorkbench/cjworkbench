@@ -110,11 +110,11 @@ def wfmodule_dataversion(request, pk, format=None):
     if request.method == 'GET':
         versions = wf_module.list_stored_data_versions()
         current_version = wf_module.get_stored_data_version()
-        response = [ {'date': x, 'selected': x==current_version} for x in versions ]
+        response = {'versions': versions, 'selected': current_version}
         return Response(response)
 
     elif request.method == 'PATCH':
-        ChangeDataVersionCommand.create(wf_module, request.data['version'])
+        ChangeDataVersionCommand.create(wf_module, request.data['selected'])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
