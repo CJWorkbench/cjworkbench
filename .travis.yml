@@ -15,7 +15,7 @@ install:
   - "git submodule update --remote"
 script:
   - python manage.py test
-  - npm test
+  - npm test -- -u
 git:
   submodules: true
 notifications:
