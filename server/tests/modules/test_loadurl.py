@@ -27,7 +27,7 @@ class LoadFromURLTests(LoggedInTestCase):
 
         # save references to our parameter values so we can tweak them later
         self.url_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='url'))
-        self.fetch_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='fetch'))
+        self.fetch_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='version_select'))
         self.path_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='json_path'))
 
     # send fetch event to button to load data

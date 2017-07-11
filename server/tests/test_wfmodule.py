@@ -199,17 +199,20 @@ class WfModuleTests(LoggedInTestCase):
         # retrieve version list through the API
         response = self.client.get('/api/wfmodules/%d/dataversion' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        versiondata = [
-            {'date': firstver, 'selected': True},
-            {'date': secondver, 'selected': False}
-        ]
+        versiondata = {
+            "versions": [
+                firstver,
+                secondver
+            ],
+            "selected": firstver
+        }
         responsedata = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(responsedata, versiondata)
 
         # set the version back to latest through API.
         # using factory.patch as trouble getting client.patch to work (400 -- authentication?), skips urls.py
         request = self.factory.patch('/api/wfmodules/%d/dataversion' % self.wfmodule1.id,
-                                     {'version': secondver})
+                                     {'selected': secondver})
         force_authenticate(request, user=self.user)
         response = wfmodule_dataversion(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
