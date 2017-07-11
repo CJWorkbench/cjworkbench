@@ -13,9 +13,9 @@ class WorkflowTests(LoggedInTestCase):
     def setUp(self):
         super(WorkflowTests, self).setUp()  # log in
         self.factory = APIRequestFactory()
-        add_new_workflow('Workflow 1')
-        add_new_workflow('Workflow 2')
-        add_new_module_version('Module 1')
+        self.workflow1 = add_new_workflow('Workflow 1')
+        self.workflow2 = add_new_workflow('Workflow 2')
+        self.module_version1 = add_new_module_version('Module 1')
         add_new_module_version('Module 2')
         add_new_module_version('Module 3')
 
@@ -110,37 +110,32 @@ class WorkflowTests(LoggedInTestCase):
         response = workflow_detail(request, pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_403_FORBIDDEN)
 
-    def test_workflow_detail_patch(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id
+    def test_workflow_reorder_modules(self):
+        wfm1 = add_new_wf_module(self.workflow1, self.module_version1, 0)
+        wfm2 = add_new_wf_module(self.workflow1, self.module_version1, 1)
+        wfm3 = add_new_wf_module(self.workflow1, self.module_version1, 2)
 
-        request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
-                                   {'moduleID': Module.objects.get(name='Module 1').id,
-                                    'insertBefore': 0})
+        # your basic reordering
+        request = self.factory.patch('/api/workflows/%d/' % self.workflow1.id,
+                                     data=[{'id': wfm1.id, 'order': 2},
+                                           {'id': wfm2.id, 'order': 0},
+                                           {'id': wfm3.id, 'order': 1}],
+                                     format='json')
         force_authenticate(request, user=self.user)
-        response = workflow_addmodule(request, pk=pk_workflow)
+        response = workflow_detail(request, pk = self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(list(WfModule.objects.order_by('order').values_list('id', flat=True)),
+                         [wfm2.id, wfm3.id, wfm1.id])
 
-        request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
-                                   {'moduleID': Module.objects.get(name='Module 2').id,
-                                    'insertBefore': 0})
+        # bad data should generate a 400 error
+        # (we don't test every possible failure case, ReorderModulesCommand tests does that)
+        request = self.factory.patch('/api/workflows/%d/' % self.workflow1.id,
+                                     data=[{'problem':'bad data'}],
+                                     format='json')
         force_authenticate(request, user=self.user)
-        response = workflow_addmodule(request, pk=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
+        response = workflow_detail(request, pk = self.workflow1.id)
+        self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
-                                   {'moduleID': Module.objects.get(name='Module 3').id,
-                                    'insertBefore': 1})
-        force_authenticate(request, user=self.user)
-        response = workflow_addmodule(request, pk=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        request = self.factory.patch('/api/workflows/%d/' % pk_workflow, data=[{'id': 1, 'order': 1},
-                                                                               {'id': 2, 'order': 2},
-                                                                               {'id': 3, 'order': 3}], format='json')
-        force_authenticate(request, user=self.user)
-        response = workflow_detail(request, pk = pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        self.assertEqual(list(WfModule.objects.values_list('id', flat=True)), [1, 2, 3])
 
     def test_workflow_detail_delete(self):
         pk_workflow = Workflow.objects.get(name='Workflow 1').id

@@ -7,9 +7,9 @@ from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server.models import Module, ModuleVersion, Workflow, WfModule, ParameterSpec, ParameterVal
+from server.models import Module, ModuleVersion, Workflow, WfModule
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite
-from server.models import AddModuleCommand
+from server.models import AddModuleCommand, ReorderModulesCommand
 
 
 # ---- Workflows list page ----
@@ -36,7 +36,9 @@ def workflow_list(request, format=None):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-# Retrieve, update or delete a workflow instance.
+
+# Retrieve or delete a workflow instance.
+# Or reorder modules
 @api_view(['GET', 'PATCH', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def workflow_detail(request, pk, format=None):
@@ -54,10 +56,11 @@ def workflow_detail(request, pk, format=None):
 
     # We use PATCH to set the order of the modules when the user drags.
     elif request.method == 'PATCH':
-        for record in request.data:
-            wfm = workflow.wf_modules.get(pk=record['id'])
-            wfm.order = record['order']
-            wfm.save()
+        try:
+            ReorderModulesCommand.create(workflow, request.data)
+        except ValueError as e:
+            # Caused by bad id or order keys not in range 0..n-1 (though they don't need to be sorted)
+            return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':

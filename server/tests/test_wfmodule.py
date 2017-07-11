@@ -210,7 +210,8 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(responsedata, versiondata)
 
         # set the version back to latest through API.
-        # using factory.patch as trouble getting client.patch to work (400 -- authentication?), skips urls.py
+        # using factory.patch as trouble getting client.patch to work (400 -- authentication?)
+        # More or less the same thing, but does skip urls.py
         request = self.factory.patch('/api/wfmodules/%d/dataversion' % self.wfmodule1.id,
                                      {'selected': secondver})
         force_authenticate(request, user=self.user)

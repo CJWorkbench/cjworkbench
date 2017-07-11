@@ -3,6 +3,7 @@
 from django.db import models
 from server.models import Workflow, WfModule, ParameterVal, Delta, ModuleVersion
 from server.versions import bump_workflow_version, next_workflow_version
+import json
 
 # Give the new WfModule an 'order' of insert_before, and add 1 to all following WfModules
 def insert_wf_module(wf_module, workflow, insert_before):
@@ -101,7 +102,58 @@ class DeleteModuleCommand(Delta):
         return delta
 
 
-# TODO class ReorderModuleCommand(Delta):
+class ReorderModulesCommand(Delta):
+    # For simplicity and compactness, we store the order of modules as json strings
+    # in the same format as the patch request: [ { id: x, order: y}, ... ]
+    old_order = models.TextField()
+    new_order = models.TextField()
+
+    def apply_order(self, order):
+        for record in order:
+            wfm = self.workflow.wf_modules.get(pk=record['id']) # may raise WfModule.DoesNotExist if bad ID's
+            if wfm.order != record['order']:
+                wfm.order = record['order']
+                wfm.save()
+
+    def forward(self):
+        self.apply_order(json.loads(self.new_order))
+
+
+    def backward(self):
+        self.apply_order(json.loads(self.old_order))
+
+    @staticmethod
+    def create(workflow, new_order):
+        # Validation: all id's and orders exist and orders are in range 0..n-1
+        wfms = WfModule.objects.filter(workflow=workflow)
+
+        ids = [ wfm.id for wfm in wfms]
+        for record in new_order:
+            if not isinstance(record, dict):
+                raise ValueError('JSON data must be an array of {id:x, order:y} objects')
+            if 'id' not in record:
+                raise ValueError('Missing WfModule id')
+            if record['id'] not in ids:
+                raise ValueError('Bad WfModule id')
+            if 'order' not in record:
+                raise ValueError('Missing WfModule order')
+
+        orders = [record['order'] for record in new_order]
+        orders.sort()
+        if orders != list(range(0, len(orders))):
+            raise ValueError('WfModule orders must be in range 0..n-1')
+
+        # Looks good, let's reorder
+        delta = ReorderModulesCommand.objects.create(
+            old_order=json.dumps([ {'id': wfm.id, 'order': wfm.order} for wfm in wfms]),
+            new_order=json.dumps(new_order),
+            workflow=workflow,
+            revision=next_workflow_version(workflow),
+            command_description='Reordered modules')
+        delta.forward()
+        bump_workflow_version(workflow, notify_client=False) # don't notify as client already updated. hacky.
+        return delta
+
 
 class ChangeDataVersionCommand(Delta):
     wf_module = models.ForeignKey(WfModule)
@@ -129,7 +181,6 @@ class ChangeDataVersionCommand(Delta):
 
         delta.forward()
         bump_workflow_version(wf_module.workflow, notify_client=True)
-
         return delta
 
 

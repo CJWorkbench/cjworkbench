@@ -12,6 +12,7 @@ from server.versions import bump_workflow_version
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand
 import pandas as pd
 
+# Get json representation of module, or delete it
 @api_view(['GET', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
@@ -29,10 +30,10 @@ def wfmodule_detail(request, pk, format=None):
 
     elif request.method == 'DELETE':
         DeleteModuleCommand.create(wf_module)
-
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# /render: return output table of this module
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_render(request, pk, format=None):
@@ -96,6 +97,7 @@ def wfmodule_public_output(request, pk, type, format=None):
         return HttpResponseNotFound()
 
 
+# Get list of data versions, or set current data version
 @api_view(['GET', 'PATCH'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_dataversion(request, pk, format=None):
