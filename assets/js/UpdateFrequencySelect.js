@@ -26,8 +26,9 @@ export default class UpdateFrequencySelect extends React.Component {
     var highlightAuto = !this.state.manual ? 'button-blue' : 'button-gray';    
 
     return (
-      <span className="ml-2">
-        <Button color='secondary' onClick={this.toggleModal}>Set Update Frequency</Button>
+      <div className='version-item'>
+        <div className='info-blue mb-2' onClick={this.toggleModal}>Set Update Frequency</div>
+        <div className=''>Checked for update: X ago</div>
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className={this.props.className}>
           <ModalHeader toggle={this.toggleModal}>Sync Settings</ModalHeader>
           <ModalBody>
@@ -52,7 +53,7 @@ export default class UpdateFrequencySelect extends React.Component {
             <Button color='secondary' onClick={this.toggleModal}>Apply</Button>
           </ModalFooter>
         </Modal>
-      </span>
+      </div>
     );
   }
 

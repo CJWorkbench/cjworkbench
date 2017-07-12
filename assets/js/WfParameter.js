@@ -7,6 +7,7 @@ import ColumnSelector from './ColumnSelector'
 import PropTypes from 'prop-types'
 import DataVersionSelect from './DataVersionSelect'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
+import { Button } from 'reactstrap'
 
 import { csrfToken } from './utils'
 
@@ -110,9 +111,10 @@ export default class WfParameter extends React.Component {
 
         return (
           <div>
-            <div>{this.name}:</div>
+            <div className='setting-gray'>{this.name}:</div>
             <textarea
               className={sclass}
+              className='data-paragraph-g text-field'
               rows={srows}
               defaultValue={this.props.p.value}
               onBlur={this.blur}
@@ -201,9 +203,12 @@ export default class WfParameter extends React.Component {
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
           return (
             <div>
-              <button className='btn btn-primary' onClick={this.click}>{this.name}</button>
-              <DataVersionSelect wf_module_id={this.props.wf_module_id} />
-              <UpdateFrequencySelect />
+              <div className='setting-gray'>Version</div>
+              <div className='version-box'>
+                <DataVersionSelect wf_module_id={this.props.wf_module_id} />
+                <UpdateFrequencySelect />
+                <Button className='button-blue mt-4' onClick={this.click}>{this.name}</Button>              
+              </div>
             </div>
           );
         } 

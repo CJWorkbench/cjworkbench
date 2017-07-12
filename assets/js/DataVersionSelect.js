@@ -82,35 +82,39 @@ export default class DataVersionSelect extends React.Component {
 
   render() {    
     // TODO: Assign conditional render if module is open/closed: see WfModule 115
+    // TODO: Refactor calculated classNames outside of Return statement
 
     return (
-      <span className="ml-2">
-        <div>Current data version: {dateFormat(this.state.originalSelected, "mmmm d yyyy - HH:MM TT Z")}</div>
-        <Button color='secondary' onClick={this.toggleModal}>Change Data Versions</Button>
+      <div className='version-item'>
+        <div className='info-blue mb-2' onClick={this.toggleModal}>Version X of Y (click to change)</div>
+        <div className=''>{dateFormat(this.state.originalSelected, "mmmm d yyyy - HH:MM TT Z")}</div>        
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className={this.props.className}>
-          <ModalHeader toggle={this.toggleModal}>Dataset Versions</ModalHeader>
+          <ModalHeader toggle={this.toggleModal} >
+            <div className='dialog-box-name'>Dataset Versions</div>
+          </ModalHeader>
           <ModalBody>
             <div className='scolling-list'>
               {this.state.versions.versions.map( date => {
                 return (
                   <div 
                     key={date} 
-                    className={(date == this.state.versions.selected) ? 'version-selected' : 'version-disabled'}
+                    className={(date == this.state.versions.selected) ? 'version-active' : 'version-disabled'}
                     onClick={() => this.setSelected(date)}
                   >
-                    <div>Date: {dateFormat(date, "mmmm d yyyy - HH:MM TT Z")}</div>
-                    <div>-------------------</div>
+                    <div className={(date == this.state.versions.selected) ? 'line-item-active' : 'line-item-disabled'}>
+                      Date: {dateFormat(date, "mmmm d yyyy - HH:MM TT Z")}
+                    </div>
                   </div>
                 );
               })}
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button color='secondary' onClick={this.toggleModal}>Cancel</Button>    
-            <Button color='secondary' onClick={this.changeVersions}>OK</Button>                    
+            <Button className='button-blue' onClick={this.toggleModal}>Cancel</Button>    
+            <Button className='button-blue' onClick={this.changeVersions}>OK</Button>                    
           </ModalFooter>
         </Modal>
-      </span>
+      </div>
     );
   }
 }

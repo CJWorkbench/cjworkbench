@@ -117,6 +117,7 @@ exports[`Fetches and renders 1`] = `
                     "onRowExpandToggle": [Function],
                     "onRowHover": undefined,
                     "openCellEditor": [Function],
+                    "rowKey": "id",
                     "selected": Object {
                       "idx": -1,
                       "rowIdx": -1,
@@ -253,6 +254,7 @@ exports[`Fetches and renders 1`] = `
                         "onRowExpandToggle": [Function],
                         "onRowHover": undefined,
                         "openCellEditor": [Function],
+                        "rowKey": "id",
                         "selected": Object {
                           "idx": -1,
                           "rowIdx": -1,
@@ -662,6 +664,7 @@ exports[`Fetches and renders 1`] = `
                           "onRowExpandToggle": [Function],
                           "onRowHover": undefined,
                           "openCellEditor": [Function],
+                          "rowKey": "id",
                           "selected": Object {
                             "idx": -1,
                             "rowIdx": -1,
@@ -759,6 +762,7 @@ exports[`Fetches and renders 1`] = `
                               "onRowExpandToggle": [Function],
                               "onRowHover": undefined,
                               "openCellEditor": [Function],
+                              "rowKey": "id",
                               "selected": Object {
                                 "idx": -1,
                                 "rowIdx": -1,

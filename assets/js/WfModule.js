@@ -105,7 +105,8 @@ export default class WfModule extends React.Component {
           wf_module_id={this.wf_module.id}
           revision={this.revision}
           getParamText={this.getParamText}
-          setParamText={this.setParamText} />
+          setParamText={this.setParamText} 
+        />
       });
 
     var cardClass = this.props['data-selected'] ?
@@ -114,7 +115,7 @@ export default class WfModule extends React.Component {
 
     var inside = undefined;
     if (this.state.isOpen)
-      inside = <div>{paramdivs}</div>;
+      inside = <div className='wf-parameters'>{paramdivs}</div>;
 
     // Putting it all together: name, status, parameters, output
     return (
@@ -122,18 +123,26 @@ export default class WfModule extends React.Component {
         <div className={cardClass}>
           <div className='card-block p-1 module-card-wrapper'>
             {/* --- Everything but the status bar, on the left of card --- */}
-            <div className='module-card-info'>
+            <div className='module-card-info pl-2 pr-2'>
               <div 
-                className='d-flex justify-content-between align-items-center mb-2 '
+                className='module-card-header mb-2 pt-2 '
                 onClick={this.toggle}
               >
-                <h4 className='text-center mb-0'>{this.module.name}</h4>
-                <WfModuleContextMenu 
-                  removeModule={ () => this.removeModule() }
-                  stopProp={(e) => e.stopPropagation()}
-                  id={this.wf_module.id}
-                  className="menu-test-class"
-                />
+                {/* TODO: attach icon names to modules, call via 'this.module.icon' */}
+                <div className='d-flex justify-content-start'>
+                  <div className='icon-URL'></div>
+                  <h4 className='text-center mb-0'>{this.module.name}</h4>
+                </div>
+                {/* TODO: not necessary to pass in stopProp*/}
+                <div className='d-flex justify-content-end'>
+                  <div className='icon-note menu-icon'></div>                
+                  <WfModuleContextMenu 
+                    removeModule={ () => this.removeModule() }
+                    stopProp={(e) => e.stopPropagation()}
+                    id={this.wf_module.id}
+                    className="menu-test-class"
+                  />
+                </div>
               </div>
               <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
               {/* --- Module details, will expand / collapse --- */}

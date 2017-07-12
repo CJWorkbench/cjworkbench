@@ -160,7 +160,7 @@ export default class WfModuleContextMenu extends React.Component {
 
     return (
        <UncontrolledDropdown onClick={this.props.stopProp}>
-        <DropdownToggle className='context-menu-icon icon-more'>
+        <DropdownToggle className='menu-icon icon-more'>
         </DropdownToggle>
         <DropdownMenu right >
           {/* Will delete the parent WF Module from the list */}

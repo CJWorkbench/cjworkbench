@@ -17,7 +17,7 @@
       "default": ""
     },
     {
-      "name": "Fetch Now",
+      "name": "Check Now",
       "id_name" : "version_select",
       "type": "custom"
     }

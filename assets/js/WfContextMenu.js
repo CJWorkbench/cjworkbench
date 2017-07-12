@@ -20,7 +20,7 @@ export default class WfContextMenu extends React.Component {
   render() {
     return (
        <UncontrolledDropdown>
-        <DropdownToggle className='context-menu-icon icon-more'>
+        <DropdownToggle className='menu-icon icon-more'>
         </DropdownToggle>
         <DropdownMenu right >
           {/* Will delete the parent Workflow from the Workflows List */}
