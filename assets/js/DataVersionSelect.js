@@ -71,16 +71,18 @@ export default class DataVersionSelect extends React.Component {
     // TODO: Assign conditional render if module is open/closed: see WfModule 115
     // TODO: Refactor calculated classNames outside of Return statement
 
+    process.env.TZ = 'UTC';
+
     return (
       <div className='version-item'>
         <div className='info-blue mb-2' onClick={this.toggleModal}>Current Version (click to change)</div>
 
         <div className='open-modal'>
-          {this.state.originalSelected != '' ? dateFormat(this.state.originalSelected, "mmmm d yyyy - HH:MM TT") : ''}
+          {this.state.originalSelected != '' ? dateFormat(this.state.originalSelected, "mmmm d yyyy - hh:MM TT Z") : ''}
         </div>        
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
           <ModalHeader toggle={this.toggleModal} >
-            <div className='dialog-box-name'>Dataset Versions</div>
+            <div className=''>Dataset Versions</div>
           </ModalHeader>
           <ModalBody>
             <div className='scolling-list'>
@@ -92,7 +94,7 @@ export default class DataVersionSelect extends React.Component {
                     onClick={() => this.setSelected(date)}
                   >
                     <div className={(date == this.state.versions.selected) ? 'line-item-active list-test-class' : 'line-item-disabled list-test-class'}>
-                      {dateFormat(date, "mmmm d yyyy - HH:MM TT")}
+                      {dateFormat(date, "mmmm d yyyy - hh:MM TT Z")}
                     </div>
                   </div>
                 );
