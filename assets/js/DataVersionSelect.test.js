@@ -7,9 +7,13 @@ it('DataVersionSelect renders correctly', () => {
 
   var mockVersions = {
     versions: [
-      '1', '2', '3', '4', '5'
+      '2017-07-10T17:57:58.324', 
+      '2017-06-10T17:57:58.324', 
+      '2017-05-10T17:57:58.324', 
+      '2017-04-10T17:57:58.324', 
+      '2017-03-10T17:57:58.324'
     ],
-    selected: '4'
+    selected: '2017-04-10T17:57:58.324'
   };
 
   const wrapper = shallow( <DataVersionSelect wf_module_id={1} api={emptyAPI}/>);

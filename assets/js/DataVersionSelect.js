@@ -43,6 +43,7 @@ export default class DataVersionSelect extends React.Component {
   }
 
   setSelected(date) {
+    console.log('Setting this date as selected: ' + date);
     this.setState(
       Object.assign(
         {}, 
@@ -72,7 +73,7 @@ export default class DataVersionSelect extends React.Component {
 
     return (
       <div className='version-item'>
-        <div className='info-blue mb-2' onClick={this.toggleModal}>Version X of Y (click to change)</div>
+        <div className='info-blue mb-2' onClick={this.toggleModal}>Current Version (click to change)</div>
 
         <div className='open-modal'>
           {this.state.originalSelected != '' ? dateFormat(this.state.originalSelected, "mmmm d yyyy - HH:MM TT Z") : ''}
