@@ -13,7 +13,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
   <div
     className="open-modal"
   >
-    April 1 2001 - 00:00 AM PST
+    April 1 2001 - 00:00 AM
   </div>
   <Modal
     autoFocus={true}
@@ -50,8 +50,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-            Date: 
-            July 10 2017 - 10:57 AM PDT
+            July 10 2017 - 10:57 AM
           </div>
         </div>
         <div
@@ -61,8 +60,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-            Date: 
-            June 10 2017 - 10:57 AM PDT
+            June 10 2017 - 10:57 AM
           </div>
         </div>
         <div
@@ -72,8 +70,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-            Date: 
-            May 10 2017 - 10:57 AM PDT
+            May 10 2017 - 10:57 AM
           </div>
         </div>
         <div
@@ -83,8 +80,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-active list-test-class"
           >
-            Date: 
-            April 10 2017 - 10:57 AM PDT
+            April 10 2017 - 10:57 AM
           </div>
         </div>
         <div
@@ -94,8 +90,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-            Date: 
-            March 10 2017 - 09:57 AM PST
+            March 10 2017 - 09:57 AM
           </div>
         </div>
       </div>
@@ -137,7 +132,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
   <div
     className="open-modal"
   >
-    April 1 2001 - 00:00 AM PST
+    April 1 2001 - 00:00 AM
   </div>
   <Modal
     autoFocus={true}
@@ -174,8 +169,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-            Date: 
-            July 10 2017 - 10:57 AM PDT
+            July 10 2017 - 10:57 AM
           </div>
         </div>
         <div
@@ -185,8 +179,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-            Date: 
-            June 10 2017 - 10:57 AM PDT
+            June 10 2017 - 10:57 AM
           </div>
         </div>
         <div
@@ -196,8 +189,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-            Date: 
-            May 10 2017 - 10:57 AM PDT
+            May 10 2017 - 10:57 AM
           </div>
         </div>
         <div
@@ -207,8 +199,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-active list-test-class"
           >
-            Date: 
-            April 10 2017 - 10:57 AM PDT
+            April 10 2017 - 10:57 AM
           </div>
         </div>
         <div
@@ -218,8 +209,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-            Date: 
-            March 10 2017 - 09:57 AM PST
+            March 10 2017 - 09:57 AM
           </div>
         </div>
       </div>

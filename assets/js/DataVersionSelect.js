@@ -76,7 +76,7 @@ export default class DataVersionSelect extends React.Component {
         <div className='info-blue mb-2' onClick={this.toggleModal}>Current Version (click to change)</div>
 
         <div className='open-modal'>
-          {this.state.originalSelected != '' ? dateFormat(this.state.originalSelected, "mmmm d yyyy - HH:MM TT Z") : ''}
+          {this.state.originalSelected != '' ? dateFormat(this.state.originalSelected, "mmmm d yyyy - HH:MM TT") : ''}
         </div>        
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
           <ModalHeader toggle={this.toggleModal} >
@@ -92,7 +92,7 @@ export default class DataVersionSelect extends React.Component {
                     onClick={() => this.setSelected(date)}
                   >
                     <div className={(date == this.state.versions.selected) ? 'line-item-active list-test-class' : 'line-item-disabled list-test-class'}>
-                      Date: {dateFormat(date, "mmmm d yyyy - HH:MM TT Z")}
+                      {dateFormat(date, "mmmm d yyyy - HH:MM TT")}
                     </div>
                   </div>
                 );
