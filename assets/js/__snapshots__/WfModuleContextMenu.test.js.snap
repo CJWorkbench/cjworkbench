@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WfModuleContextMenu renders correctly 1`] = `
+<UncontrolledDropdown
+  onClick={[Function]}
+>
+  <DropdownToggle
+    aria-haspopup={true}
+    className="menu-icon icon-more"
+    color="secondary"
+    data-toggle="dropdown"
+  />
+  <DropdownMenu
+    right={true}
+    tag="div"
+  >
+    <DropdownItem
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+      Delete This Module
+    </DropdownItem>
+    <DropdownItem
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+      Export Table
+    </DropdownItem>
+    <DropdownItem
+      tag="button"
+      toggle={true}
+    >
+      Update Version
+    </DropdownItem>
+  </DropdownMenu>
+</UncontrolledDropdown>
+`;

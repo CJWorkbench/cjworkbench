@@ -135,7 +135,7 @@ export default class WfModule extends React.Component {
                 </div>
                 {/* TODO: not necessary to pass in stopProp*/}
                 <div className='d-flex justify-content-end'>
-                  <div className='icon-note menu-icon'></div>                
+                  <div className='icon-note menu-icon p-2'></div>                
                   <WfModuleContextMenu 
                     removeModule={ () => this.removeModule() }
                     stopProp={(e) => e.stopPropagation()}

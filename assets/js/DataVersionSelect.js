@@ -33,10 +33,7 @@ export default class DataVersionSelect extends React.Component {
   componentDidMount() {
     var wf_module_id =  this.props.wf_module_id;
 
-    console.log('WF module ID: ' + wf_module_id);
-
-    fetch('/api/wfmodules/' + wf_module_id + '/dataversions', {credentials: 'include'})
-      .then(response => response.json())
+    this.props.api.getWfModuleVersions(wf_module_id)
       .then(json => {
         console.log('Versions state returned: ' + JSON.stringify(json));
         this.setState(
@@ -56,21 +53,10 @@ export default class DataVersionSelect extends React.Component {
   }
 
   changeVersions() {
-    var wf_module_id =  this.props.wf_module_id;
-
     if (this.state.versions.selected !== this.state.originalSelected) {
-      fetch('/api/wfmodules/' + wf_module_id + '/dataversions', {
-        method: 'patch',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify({
-          selected: this.state.versions.selected
-        })
-      }).then(() => {
+      this.props.api.setWfModuleVersion(this.props.wf_module_id, this.state.versions.selected)
+      .then(() => {
+        console.log('changing originalSelected to ' + this.state.versions.selected);
         this.setState(
           Object.assign({}, this.state, {originalSelected: this.state.versions.selected})
         )
@@ -87,8 +73,11 @@ export default class DataVersionSelect extends React.Component {
     return (
       <div className='version-item'>
         <div className='info-blue mb-2' onClick={this.toggleModal}>Version X of Y (click to change)</div>
-        <div className=''>{dateFormat(this.state.originalSelected, "mmmm d yyyy - HH:MM TT Z")}</div>        
-        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className={this.props.className}>
+
+        <div className='open-modal'>
+          {this.state.originalSelected != '' ? dateFormat(this.state.originalSelected, "mmmm d yyyy - HH:MM TT Z") : ''}
+        </div>        
+        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
           <ModalHeader toggle={this.toggleModal} >
             <div className='dialog-box-name'>Dataset Versions</div>
           </ModalHeader>
@@ -98,10 +87,10 @@ export default class DataVersionSelect extends React.Component {
                 return (
                   <div 
                     key={date} 
-                    className={(date == this.state.versions.selected) ? 'version-active' : 'version-disabled'}
+                    className={(date == this.state.versions.selected) ? 'version-active ' : 'version-disabled'}
                     onClick={() => this.setSelected(date)}
                   >
-                    <div className={(date == this.state.versions.selected) ? 'line-item-active' : 'line-item-disabled'}>
+                    <div className={(date == this.state.versions.selected) ? 'line-item-active list-test-class' : 'line-item-disabled list-test-class'}>
                       Date: {dateFormat(date, "mmmm d yyyy - HH:MM TT Z")}
                     </div>
                   </div>
@@ -120,5 +109,6 @@ export default class DataVersionSelect extends React.Component {
 }
 
 DataVersionSelect.propTypes = {
-  wf_module_id:     PropTypes.number
+  wf_module_id:   PropTypes.number.isRequired,
+  api:            PropTypes.object.isRequired
 };

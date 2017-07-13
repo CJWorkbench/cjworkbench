@@ -21,3 +21,7 @@ export function goToUrl(url) {
 
 // Current CSRF token
 export const csrfToken = Cookies.get('csrftoken');
+
+// Mocked server API object that does nothing, for tests where API never actually called 
+export class EmptyAPI {};
+export var emptyAPI = new EmptyAPI();

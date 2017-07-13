@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WfContextMenu renders correctly 1`] = `
+<div
+  className="dropdown"
+>
+  <button
+    aria-expanded={false}
+    aria-haspopup="true"
+    className="menu-icon icon-more btn btn-secondary"
+    data-toggle="dropdown"
+    onClick={[Function]}
+    type="button"
+  >
+    <span
+      className="sr-only"
+    >
+      Toggle Dropdown
+    </span>
+  </button>
+  <div
+    aria-hidden={true}
+    className="dropdown-menu dropdown-menu-right"
+    role="menu"
+    tabIndex="-1"
+  >
+    <button
+      className="dropdown-item"
+      onClick={[Function]}
+      tabIndex="0"
+      type="button"
+    >
+      Delete
+    </button>
+  </div>
+</div>
+`;
