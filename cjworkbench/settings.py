@@ -234,3 +234,8 @@ ACCOUNT_USER_DISPLAY = lambda user: user.email
 AUTHENTICATION_BACKENDS = [
     'account.auth_backends.EmailAuthenticationBackend',
 ]
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
