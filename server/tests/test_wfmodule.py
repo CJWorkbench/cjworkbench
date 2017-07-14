@@ -26,7 +26,7 @@ class WfModuleTests(LoggedInTestCase):
         self.pspec21 = ParameterSpec.objects.create(module_version=self.module2_version, type=ParameterSpec.MENU, def_menu_items='Apple|Banana|Kittens', def_integer=1)
 
         self.module3_version = self.add_new_module_version(name='Module 3', dispatch='double_M_col', version="1.0")
-        self.pspec31 = ParameterSpec.objects.create(module_version=self.module3_version, type=ParameterSpec.BUTTON, def_ui_only=True)
+        self.pspec31 = ParameterSpec.objects.create(module_version=self.module3_version, type=ParameterSpec.BUTTON)
 
         self.wfmodule1 = self.add_new_wfmodule(self.workflow1, self.module1_version, 1)
         self.wfmodule2 = self.add_new_wfmodule(self.workflow1, self.module2_version, 2)
@@ -60,18 +60,14 @@ class WfModuleTests(LoggedInTestCase):
         pval = ParameterVal.objects.get(parameter_spec=self.pspec11, wf_module=self.wfmodule1)
         self.assertEqual(pval.float, 3.14)
         self.assertEqual(pval.visible, False)
-        self.assertEqual(pval.ui_only, False)
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec12, wf_module=self.wfmodule1)
         self.assertEqual(pval.string, 'foo')
         self.assertEqual(pval.visible, True)
-        self.assertEqual(pval.ui_only, False)
-        self.assertEqual(pval.multiline, False) # test correct default
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec13, wf_module=self.wfmodule1)
         self.assertEqual(pval.boolean, True)
         self.assertEqual(pval.visible, True)
-        self.assertEqual(pval.ui_only, False)
 
         # Menu should have correct default item
         self.wfmodule2.create_default_parameters()
@@ -82,7 +78,6 @@ class WfModuleTests(LoggedInTestCase):
         self.wfmodule3.create_default_parameters()
         pval = ParameterVal.objects.get(parameter_spec=self.pspec31, wf_module=self.wfmodule3)
         self.assertEqual(pval.visible, True)
-        self.assertEqual(pval.ui_only, True)
 
     # TODO test parameter values returned from this call
     def test_wf_module_detail_get(self):

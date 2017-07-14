@@ -172,7 +172,7 @@ export default class WfParameter extends React.Component {
           var loadState = ( () => this.props.getParamText('chartstate') );
           var saveState = ( state => this.props.setParamText('chartstate', state) );
 
-          var saveImageDataURI = ( state => this.props.setParamText('chart', state) );
+          var saveImageDataURI = ( data => this.props.setParamText('chart', data) );
 
           return (
             <div>
@@ -221,10 +221,10 @@ export default class WfParameter extends React.Component {
 }
 
 WfParameter.propTypes = {
-  p: PropTypes.object,
-  wf_module_id:     PropTypes.number,
-	revision:         PropTypes.number,
-  changeParam:      PropTypes.func,
-	getParamText:     PropTypes.func,
-	setParamText:     PropTypes.func,
+  p:                PropTypes.object.isRequired,
+  wf_module_id:     PropTypes.number.isRequired,
+	revision:         PropTypes.number.isRequired,
+  changeParam:      PropTypes.func.isRequired,
+	getParamText:     PropTypes.func.isRequired,
+	setParamText:     PropTypes.func.isRequired
 };
