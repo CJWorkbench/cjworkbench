@@ -46,7 +46,8 @@ export default class WfParameter extends React.Component {
 
   // Send event to server for button click
   click(e) {
-    if (this.type == 'button') {
+    // type==custom a hack for version_select type
+    if (this.type == 'button' || this.type == 'custom') {
       var url = '/api/parameters/' + this.props.p.id + '/event';
       var eventData = {'type': 'click'};
       fetch(url, {
