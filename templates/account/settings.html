@@ -1,0 +1,15 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+
+{% block title %}{% trans "Account" %}{% endblock %}
+
+{% block body %}
+    <form method="POST" action="{% url "account_settings" %}">
+        <legend>{% trans "Account" %}</legend>
+        {% csrf_token %}
+        {{ form }}
+        <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+    </form>
+{% endblock %}
