@@ -139,7 +139,6 @@ body {
 
 .button-gray {
 	height: 40px;
-	width: 89px;
 	border: 1px solid #EDECEC;
 	border-radius: 25px;
   color: #EDECEC;
@@ -147,6 +146,26 @@ body {
 
 .button-blue:hover {
   opacity: 0.5;
+}
+
+.action-button-active {
+	height: 40px;
+	border-radius: 25px;
+	background-color: #48C8D7;
+  color: #FFFFFF;
+}
+
+.action-button-disabled {
+  background-color: #EDECEC;
+  height: 40px;
+	border-radius: 25px;
+  color: #A2A2A2;
+}
+
+.action-button-active:hover, 
+.action-button-disabled:hover {
+  background-color: #FFFFFF;
+  color: #A2A2A2;
 }
 
 .text-field {
@@ -668,6 +687,24 @@ body {
 .version-item {
   margin: 20px;
   display: inline-block;
+}
+
+/* --- UpdateFrequencySelect --- */
+
+.update-freq-settings {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+
+#updateFreqNum {
+  display: inline;
+  width: 20%;
+}
+
+#updateFreqPeriod {
+  display: inline;  
+  width: 30%;  
 }
 
 /* Ugly borders to mark out divs, dev-only */

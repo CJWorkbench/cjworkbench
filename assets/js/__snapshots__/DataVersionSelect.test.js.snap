@@ -8,7 +8,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
     className="info-blue mb-2"
     onClick={[Function]}
   >
-    Current Version (click to change)
+    Current Version
   </div>
   <div
     className="open-modal"
@@ -127,7 +127,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
     className="info-blue mb-2"
     onClick={[Function]}
   >
-    Current Version (click to change)
+    Current Version
   </div>
   <div
     className="open-modal"
