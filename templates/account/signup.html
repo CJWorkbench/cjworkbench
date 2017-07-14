@@ -1,0 +1,21 @@
+{% extends 'account/base.html' %}
+{% block content %}
+  <form method="post">
+   {% csrf_token %}
+   {# fields are broken out here so we can change the field order #}
+   {{ form.email.errors }}
+   {{ form.email.label_tag }}
+   {{ form.email }}
+
+   {{ form.password.errors }}
+   {{ form.password.label_tag }}
+   {{ form.password }}
+
+   {{ form.password_confirm.errors }}
+   {{ form.password_confirm.label_tag }}
+   {{ form.password_confirm }}
+   <button type="submit" class="btn btn-lg btn-primary btn-block">Register</button>
+  </form>
+  <hr />
+  <p>Already have an account? <a href="/login">Log in</a></p>
+{% endblock %}
