@@ -43,8 +43,10 @@ export default class ChartParameter extends React.Component {
   parseErrors(errors) {
     var first_err= errors.messages.find(m => m.type=='error');
     if (first_err) {
+      console.log("Chart errors");
       store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', first_err.text))
     } else {
+      console.log("Chart no errors");
       store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'ready'))
     }
   }
@@ -69,7 +71,7 @@ export default class ChartParameter extends React.Component {
 
   // called when any change is made to chart. Update error status, save to hidden 'chartstate' text field
   onStateChange(model) {
-    // console.log('onStateChange');
+    console.log('onStateChange');
     this.parseErrors(model.errors);
     this.saveState(model)
   }
