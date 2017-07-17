@@ -76,13 +76,13 @@ exports[`renders correctly 1`] = `
                         </a>
                       </DropdownItem>
                       <DropdownItem
-                        href="/logout"
+                        href="/account/logout"
                         tag="a"
                         toggle={true}
                       >
                         <a
                           className="dropdown-item"
-                          href="/logout"
+                          href="/account/logout"
                           onClick={[Function]}
                           tabIndex="0"
                         >
@@ -226,13 +226,13 @@ exports[`renders correctly 2`] = `
                         </a>
                       </DropdownItem>
                       <DropdownItem
-                        href="/logout"
+                        href="/account/logout"
                         tag="a"
                         toggle={true}
                       >
                         <a
                           className="dropdown-item"
-                          href="/logout"
+                          href="/account/logout"
                           onClick={[Function]}
                           tabIndex="0"
                         >

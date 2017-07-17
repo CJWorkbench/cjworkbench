@@ -5,6 +5,9 @@ import { emptyAPI } from './utils'
 
 it('DataVersionSelect renders correctly', () => {
 
+  // Force time zone to make sure tests always give same result
+  process.env.TZ = 'UTC';
+
   var mockVersions = {
     versions: [
       '2017-07-10T17:57:58.324', 

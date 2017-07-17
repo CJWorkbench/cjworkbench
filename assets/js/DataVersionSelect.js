@@ -71,7 +71,6 @@ export default class DataVersionSelect extends React.Component {
     // TODO: Assign conditional render if module is open/closed: see WfModule 115
     // TODO: Refactor calculated classNames outside of Return statement
 
-    process.env.TZ = 'UTC';
 
     return (
       <div className='version-item'>
