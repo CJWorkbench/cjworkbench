@@ -38,6 +38,10 @@ class WfModule(models.Model):
 
     order = models.IntegerField()
 
+    notes = models.TextField(
+        null=True, 
+        blank=True)
+
     stored_data_version = models.CharField(
         max_length=32,
         null=True)                      # we may not have stored data
