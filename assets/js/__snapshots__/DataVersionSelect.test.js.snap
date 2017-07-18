@@ -13,11 +13,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
   <div
     className="open-modal"
   >
-<<<<<<< HEAD
-    April 1 2001 - 12:00 AM UTC
-=======
     April 1 2001 - 12:00 AM
->>>>>>> master
   </div>
   <Modal
     autoFocus={true}
@@ -54,11 +50,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-<<<<<<< HEAD
-            July 10 2017 - 09:57 AM UTC
-=======
             July 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
         <div
@@ -68,11 +60,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-<<<<<<< HEAD
-            June 10 2017 - 09:57 AM UTC
-=======
             June 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
         <div
@@ -82,11 +70,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-<<<<<<< HEAD
-            May 10 2017 - 09:57 AM UTC
-=======
             May 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
         <div
@@ -96,11 +80,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-active list-test-class"
           >
-<<<<<<< HEAD
-            April 10 2017 - 09:57 AM UTC
-=======
             April 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
         <div
@@ -110,11 +90,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-<<<<<<< HEAD
-            March 10 2017 - 09:57 AM UTC
-=======
             March 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
       </div>
@@ -156,11 +132,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
   <div
     className="open-modal"
   >
-<<<<<<< HEAD
-    April 1 2001 - 12:00 AM UTC
-=======
     April 1 2001 - 12:00 AM
->>>>>>> master
   </div>
   <Modal
     autoFocus={true}
@@ -197,11 +169,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-<<<<<<< HEAD
-            July 10 2017 - 09:57 AM UTC
-=======
             July 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
         <div
@@ -211,11 +179,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-<<<<<<< HEAD
-            June 10 2017 - 09:57 AM UTC
-=======
             June 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
         <div
@@ -225,11 +189,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-<<<<<<< HEAD
-            May 10 2017 - 09:57 AM UTC
-=======
             May 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
         <div
@@ -239,11 +199,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-active list-test-class"
           >
-<<<<<<< HEAD
-            April 10 2017 - 09:57 AM UTC
-=======
             April 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
         <div
@@ -253,11 +209,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="line-item-disabled list-test-class"
           >
-<<<<<<< HEAD
-            March 10 2017 - 09:57 AM UTC
-=======
             March 10 2017 - 05:57 PM
->>>>>>> master
           </div>
         </div>
       </div>

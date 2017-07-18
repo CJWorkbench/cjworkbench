@@ -226,12 +226,8 @@ class ChangeParameterCommand(Delta):
 
         # increment workflow version number, triggers global re-render if this parameter can effect output
         notify = not pspec.ui_only
-<<<<<<< HEAD
-        bump_workflow_version(workflow, notify_client=notify)
-=======
         if notify:
             notify_client_workflow_version_changed(workflow)
->>>>>>> master
 
         return delta
 

@@ -100,7 +100,10 @@ export default class Workflow extends React.Component {
         <div className="workflow-container">
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
-              <EditableText value={this.props.workflow.name} editClass="workflow-title h4" model={this.props.workflow} />
+              <EditableText
+                value={this.props.workflow.name}
+                editClass="workflow-title h4"
+                save={this.props.workflow} />
             </div>
             <div className="modulestack-list w-75 mx-auto ">
               <SortableList

@@ -106,14 +106,6 @@ class Twitter(ModuleImpl):
             wfm.store_text('csv', '')
             return
 
-<<<<<<< HEAD
-        wfm.store_data(tweets.to_csv(index=False))  # index=False to prevent pandas from adding an index col
-
-        # all done, set to ready and re-render workflow
-        wfm.set_ready(notify=True)
-=======
         # we are done. save fetched data, and switch to it
         version = wfm.store_data(tweets.to_csv(index=False)) # index=False to prevent pandas from adding an index col
         ChangeDataVersionCommand.create(wfm, version)  # also notifies client
-
->>>>>>> master

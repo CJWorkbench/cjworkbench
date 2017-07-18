@@ -8,14 +8,9 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, ModuleVersion, Workflow, WfModule
-<<<<<<< HEAD
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite
 from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
 
-=======
-from server.models import AddModuleCommand, ReorderModulesCommand
-from server.serializers import WorkflowSerializer, WorkflowSerializerLite
->>>>>>> master
 
 # ---- Workflows list page ----
 @login_required
@@ -113,8 +108,6 @@ def workflow_addmodule(request, pk, format=None):
     AddModuleCommand.create(workflow, module_version, insert_before)
 
     return Response(status=status.HTTP_204_NO_CONTENT)
-<<<<<<< HEAD
-=======
 
 
 # Undo or redo
@@ -135,4 +128,3 @@ def workflow_undo_redo(request, pk, action, format=None):
         RedoWorkflow(workflow)
 
     return Response(status=status.HTTP_204_NO_CONTENT)
->>>>>>> master
