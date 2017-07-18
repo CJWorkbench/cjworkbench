@@ -8,7 +8,7 @@ import PropTypes from 'prop-types'
 import DataVersionSelect from './DataVersionSelect'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
 import { Button } from 'reactstrap'
-import WorkbenchAPI from './WorkbenchAPI'
+import workbenchAPI from './WorkbenchAPI'
 import { csrfToken } from './utils'
 
 
@@ -96,8 +96,6 @@ export default class WfParameter extends React.Component {
       return false; // nothing to see here
     }
 
-    var api = new WorkbenchAPI();
- 
     switch (this.type) {
       case 'string':
         // Different size and style if it's a multiline string
@@ -206,7 +204,7 @@ export default class WfParameter extends React.Component {
             <div>
               <div className='setting-gray'>Version</div>
               <div className='version-box'>
-                <DataVersionSelect wf_module_id={this.props.wf_module_id} api={api} />
+                <DataVersionSelect wf_module_id={this.props.wf_module_id} api={workbenchAPI()} />
                 <UpdateFrequencySelect />
                 <Button className='button-blue mt-4' onClick={this.click}>{this.name}</Button>              
               </div>

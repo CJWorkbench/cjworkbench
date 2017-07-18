@@ -12,7 +12,7 @@ class ReorderModulesCommandTests(TestCase):
 
     # Switch module orders, then undo, redo
     def test_reorder_modules(self):
-        start_rev = self.workflow.revision
+        start_rev = self.workflow.revision()
 
         # Switch module orders. Note that objects in this array are not in order; we're testing that
         new_order = [
@@ -28,7 +28,7 @@ class ReorderModulesCommandTests(TestCase):
 
         # workflow revision should have been incremented
         self.workflow.refresh_from_db()
-        self.assertGreater(self.workflow.revision, start_rev)
+        self.assertGreater(self.workflow.revision(), start_rev)
 
         # undo
         cmd.backward()

@@ -7,8 +7,7 @@ import os
 import csv
 import io
 from .moduleimpl import ModuleImpl
-from server.versions import bump_workflow_version
-
+from server.models import ChangeDataVersionCommand
 
 # ---- Twitter ----
 
@@ -107,7 +106,7 @@ class Twitter(ModuleImpl):
             wfm.store_text('csv', '')
             return
 
-        wfm.store_data(tweets.to_csv(index=False))  # index=False to prevent pandas from adding an index col
+        # we are done. save fetched data, and switch to it
+        version = wfm.store_data(tweets.to_csv(index=False)) # index=False to prevent pandas from adding an index col
+        ChangeDataVersionCommand.create(wfm, version)  # also notifies client
 
-        # all done, set to ready and re-render workflow
-        wfm.set_ready(notify=True)

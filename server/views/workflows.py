@@ -8,9 +8,8 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, ModuleVersion, Workflow, WfModule
-from server.serializers import WorkflowSerializer, WorkflowSerializerLite
 from server.models import AddModuleCommand, ReorderModulesCommand
-
+from server.serializers import WorkflowSerializer, WorkflowSerializerLite
 
 # ---- Workflows list page ----
 @login_required
@@ -95,3 +94,22 @@ def workflow_addmodule(request, pk, format=None):
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+# Undo or redo
+@api_view(['PUT'])
+@renderer_classes((JSONRenderer,))
+def workflow_undo_redo(request, pk, action, format=None):
+    try:
+        workflow = Workflow.objects.get(pk=pk)
+    except Workflow.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if not workflow.user_authorized(request.user):
+        return HttpResponseForbidden()
+
+    if action=='undo':
+        UndoWorkflow(workflow)
+    elif action=='redo':
+        RedoWorkflow(workflow)
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
