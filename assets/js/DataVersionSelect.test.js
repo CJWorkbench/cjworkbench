@@ -19,7 +19,10 @@ it('DataVersionSelect renders correctly', () => {
     selected: '2017-04-10 17:57:58.324'
   };
 
-  const wrapper = shallow( <DataVersionSelect wf_module_id={1} api={emptyAPI}/>);
+  
+  var localToUTC = (new Date()).getTimezoneOffset();  // how many hours off from UTC are we? print tests all in UTC
+
+  const wrapper = shallow( <DataVersionSelect wf_module_id={1} api={emptyAPI} timezone_offset={localToUTC} />);
   wrapper.setState( { modalOpen: false, versions: mockVersions, originalSelected:'4'} )
   expect(wrapper).toMatchSnapshot();
 

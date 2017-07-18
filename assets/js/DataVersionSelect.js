@@ -7,6 +7,7 @@ import dateFormat from 'dateformat'
 import PropTypes from 'prop-types'
 
 
+
 export default class DataVersionSelect extends React.Component {
   constructor(props) {
     super(props);
@@ -16,10 +17,30 @@ export default class DataVersionSelect extends React.Component {
       versions: {versions: [], selected: ''},
       originalSelected: ''
     };
+
+    // Allow props to specify a conversion from browser time to displayed time, so tests can run in UTC (not test machine tz) 
+    if (props.timezone_offset != undefined) {
+      this.state.timezoneOffset = props.timezone_offset;
+    } else {
+      this.state.timezoneOffset = 0; // display in browser local time 
+    }
+
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleDropdown = this.toggleDropdown.bind(this);    
     this.setSelected = this.setSelected.bind(this);
     this.changeVersions = this.changeVersions.bind(this);    
+  }
+
+  // Takes a date string, interpreted as UTC, and produce a string for user display in user tz
+  formatDate(datestr) {
+    // interpret date string as UTC always (comes from server this way)
+    var d = new Date(datestr + 'UTC');
+
+    // Convert to milliseconds, then add tz offset (which is in minutes)
+    var nd = new Date(d.getTime() + (60000*this.state.timezoneOffset));
+
+    // return time as a user-readable string
+    return dateFormat(nd, "mmmm d yyyy - hh:MM TT")
   }
 
   toggleModal() {
@@ -76,7 +97,7 @@ export default class DataVersionSelect extends React.Component {
         <div className='info-blue mb-2' onClick={this.toggleModal}>Current Version</div>
 
         <div className='open-modal'>
-            {this.state.originalSelected != '' ? dateFormat(new Date(this.state.originalSelected + 'UTC'), "mmmm d yyyy - hh:MM TT") : ''}  
+            {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}  
            {/* {this.state.originalSelected}  */}
            
         </div>        
@@ -94,7 +115,7 @@ export default class DataVersionSelect extends React.Component {
                     onClick={() => this.setSelected(date)}
                   >
                     <div className={(date == this.state.versions.selected) ? 'line-item-active list-test-class' : 'line-item-disabled list-test-class'}>
-                      {dateFormat(new Date(date + 'UTC'), "mmmm d yyyy - hh:MM TT")}
+                      { this.formatDate(date) }
                     </div>
                   </div>
                 );
@@ -112,6 +133,7 @@ export default class DataVersionSelect extends React.Component {
 }
 
 DataVersionSelect.propTypes = {
-  wf_module_id:   PropTypes.number.isRequired,
-  api:            PropTypes.object.isRequired
+  wf_module_id:    PropTypes.number.isRequired,
+  api:             PropTypes.object.isRequired,
+  timezone_offset: PropTypes.number
 };
