@@ -40,7 +40,7 @@ exports[`renders correctly 1`] = `
     </a>
     <a
       className="dropdown-item"
-      href="/logout"
+      href="/account/logout"
       onClick={[Function]}
       tabIndex="0"
       type={undefined}
@@ -82,7 +82,7 @@ exports[`renders correctly for workflows list page 1`] = `
     </a>
     <a
       className="dropdown-item"
-      href="/logout"
+      href="/account/logout"
       onClick={[Function]}
       tabIndex="0"
       type={undefined}

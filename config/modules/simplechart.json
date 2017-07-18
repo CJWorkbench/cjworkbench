@@ -9,13 +9,12 @@
       "id_name": "chart",
       "type": "custom",
       "ui-only": true,
-      "default": ""
+      "derived-data": true
     },
     {
       "name": "hidden chart state",
       "id_name": "chartstate",
       "type": "string",
-      "default": "",
       "visible": false,
       "ui-only": true
     }

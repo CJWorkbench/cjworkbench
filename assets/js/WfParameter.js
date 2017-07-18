@@ -8,7 +8,7 @@ import PropTypes from 'prop-types'
 import DataVersionSelect from './DataVersionSelect'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
 import { Button } from 'reactstrap'
-
+import WorkbenchAPI from './WorkbenchAPI'
 import { csrfToken } from './utils'
 
 
@@ -46,7 +46,8 @@ export default class WfParameter extends React.Component {
 
   // Send event to server for button click
   click(e) {
-    if (this.type == 'button') {
+    // type==custom a hack for version_select type
+    if (this.type == 'button' || this.type == 'custom') {
       var url = '/api/parameters/' + this.props.p.id + '/event';
       var eventData = {'type': 'click'};
       fetch(url, {
@@ -95,8 +96,8 @@ export default class WfParameter extends React.Component {
       return false; // nothing to see here
     }
 
-    //console.log("Creating parameter type " + this.type);
-
+    var api = new WorkbenchAPI();
+ 
     switch (this.type) {
       case 'string':
         // Different size and style if it's a multiline string
@@ -171,7 +172,7 @@ export default class WfParameter extends React.Component {
           var loadState = ( () => this.props.getParamText('chartstate') );
           var saveState = ( state => this.props.setParamText('chartstate', state) );
 
-          var saveImageDataURI = ( state => this.props.setParamText('chart', state) );
+          var saveImageDataURI = ( data => this.props.setParamText('chart', data) );
 
           return (
             <div>
@@ -205,7 +206,7 @@ export default class WfParameter extends React.Component {
             <div>
               <div className='setting-gray'>Version</div>
               <div className='version-box'>
-                <DataVersionSelect wf_module_id={this.props.wf_module_id} />
+                <DataVersionSelect wf_module_id={this.props.wf_module_id} api={api} />
                 <UpdateFrequencySelect />
                 <Button className='button-blue mt-4' onClick={this.click}>{this.name}</Button>              
               </div>
@@ -220,10 +221,10 @@ export default class WfParameter extends React.Component {
 }
 
 WfParameter.propTypes = {
-  p: PropTypes.object,
-  wf_module_id:     PropTypes.number,
-	revision:         PropTypes.number,
-  changeParam:      PropTypes.func,
-	getParamText:     PropTypes.func,
-	setParamText:     PropTypes.func,
+  p:                PropTypes.object.isRequired,
+  wf_module_id:     PropTypes.number.isRequired,
+	revision:         PropTypes.number.isRequired,
+  changeParam:      PropTypes.func.isRequired,
+	getParamText:     PropTypes.func.isRequired,
+	setParamText:     PropTypes.func.isRequired
 };

@@ -22,8 +22,6 @@ class ParameterVal(models.Model):
     menu_items = models.TextField(ParameterSpec.MENU, null=True, blank=True)
 
     visible = models.BooleanField(default=True)
-    ui_only = models.BooleanField(default=False)
-    multiline = models.BooleanField(default=False)
 
     def init_from_spec(self):
         self.string = self.parameter_spec.def_string
@@ -33,8 +31,6 @@ class ParameterVal(models.Model):
         self.order = self.parameter_spec.order
         self.menu_items = self.parameter_spec.def_menu_items
         self.visible = self.parameter_spec.def_visible
-        self.ui_only = self.parameter_spec.def_ui_only
-        self.multiline = self.parameter_spec.def_multiline
 
     # User can access param if they can access wf_module
     def user_authorized(self, user):
@@ -64,8 +60,10 @@ class ParameterVal(models.Model):
             self.boolean = new_value
         elif type == ParameterSpec.MENU:
             self.integer = new_value
+        elif type == ParameterSpec.CUSTOM:
+            self.string = new_value             # store custom parameter's data as string
         else:
-            raise ValueError("Unknown parameter type in ParameterVal.set_value")
+            raise ValueError('Unknown parameter type ' + type + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.set_value')
         self.save()
 
     def get_value(self):
@@ -78,8 +76,12 @@ class ParameterVal(models.Model):
             return self.boolean
         elif type == ParameterSpec.MENU:
             return self.integer
+        elif type == ParameterSpec.CUSTOM:
+            return self.string              # store custom parameter's data as string
+        elif type == ParameterSpec.BUTTON:
+            return None                     # buttons have no data (this line needed for Admin interface display)
         else:
-            raise ValueError("Unknown parameter type in ParameterVal.set_value")
+            raise ValueError('Unknown parameter type ' + type + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.get_value')
 
     def __str__(self):
-        return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + self.get_value()
+        return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + str(self.get_value())

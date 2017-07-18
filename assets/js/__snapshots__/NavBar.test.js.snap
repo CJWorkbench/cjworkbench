@@ -40,7 +40,7 @@ exports[`WorkflowListNavBar renders correctly 1`] = `
         </a>
         <a
           className="dropdown-item"
-          href="/logout"
+          href="/account/logout"
           onClick={[Function]}
           tabIndex="0"
           type={undefined}
@@ -114,7 +114,7 @@ exports[`WorkflowNavBar renders correctly 1`] = `
         </a>
         <a
           className="dropdown-item"
-          href="/logout"
+          href="/account/logout"
           onClick={[Function]}
           tabIndex="0"
           type={undefined}

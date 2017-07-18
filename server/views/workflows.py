@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, ModuleVersion, Workflow, WfModule
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite
-from server.models import AddModuleCommand, ReorderModulesCommand
+from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
 
 
 # ---- Workflows list page ----
@@ -67,6 +67,20 @@ def workflow_detail(request, pk, format=None):
         workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+@api_view(['POST'])
+@renderer_classes((JSONRenderer,))
+def workflow_edit(request, pk, format=None):
+    workflow = Workflow.objects.get(pk=pk)
+
+    if not workflow.user_authorized(request.user):
+        return HttpResponseForbidden()
+
+    try:
+        ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
+    except:
+        return Response({'message': 'Something went wrong.', 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
+
+    return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Invoked when user pressess add_module button
 @api_view(['PUT'])
@@ -94,4 +108,3 @@ def workflow_addmodule(request, pk, format=None):
     AddModuleCommand.create(workflow, module_version, insert_before)
 
     return Response(status=status.HTTP_204_NO_CONTENT)
-

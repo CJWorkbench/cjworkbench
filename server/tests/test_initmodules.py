@@ -32,6 +32,7 @@ class InitmoduleTests(LoggedInTestCase):
                   'id_name': 'nodefault',
                   'type': 'string',
                   'multiline': True,
+                  'derived-data' : True
                 }
               ]
             }            
@@ -99,8 +100,9 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(url_spec.type, ParameterSpec.STRING)
         self.assertEqual(url_spec.def_string, 'http://foo.com')
         self.assertEqual(url_spec.def_visible, True)
-        self.assertEqual(url_spec.def_ui_only, False)
-        self.assertEqual(url_spec.def_multiline, False)
+        self.assertEqual(url_spec.ui_only, False)
+        self.assertEqual(url_spec.multiline, False)
+        self.assertEqual(url_spec.derived_data, False)
         self.assertEqual(url_spec.order, 0)
 
         button_spec = ParameterSpec.objects.get(id_name='fetch')
@@ -108,14 +110,15 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(button_spec.id_name, 'fetch')
         self.assertEqual(button_spec.type, ParameterSpec.BUTTON)
         self.assertEqual(button_spec.def_visible, False)
-        self.assertEqual(button_spec.def_ui_only, True)
+        self.assertEqual(button_spec.ui_only, True)
         self.assertEqual(button_spec.order, 1)
 
         # check missing default has a default, and that multiline works
         nodef_spec = ParameterSpec.objects.get(id_name='nodefault')
         self.assertEqual(nodef_spec.type, ParameterSpec.STRING)
         self.assertEqual(nodef_spec.def_string, '')
-        self.assertEqual(nodef_spec.def_multiline, True)
+        self.assertEqual(nodef_spec.multiline, True)
+        self.assertEqual(nodef_spec.derived_data, True)
 
     # we should bail when keys are missing
     def test_missing_keys(self):

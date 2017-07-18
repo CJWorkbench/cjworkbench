@@ -199,8 +199,19 @@ class ChangeParameterCommand(Delta):
     @staticmethod
     def create(parameter_val, value):
         workflow = parameter_val.wf_module.workflow
+        pspec = parameter_val.parameter_spec
+
+        # We don't create a Delta for derived_data parameter. Such parameters are essentially caches,
+        # (e.g. chart output image) and are created either during module render() or in the front end
+        # Instead, we just set the value -- and trust that undo-ing the other parameters will also set
+        # the derived_data parameters.
+        if pspec.derived_data:
+            parameter_val.set_value(value)
+            return None
+
+        # Not derived data, we're doing this.
         description = \
-            'Changed parameter \'' + parameter_val.parameter_spec.name + '\' of \'' + parameter_val.wf_module.module_version.module.name + '\' module'
+            'Changed parameter \'' + pspec.name + '\' of \'' + parameter_val.wf_module.module_version.module.name + '\' module'
 
         delta =  ChangeParameterCommand.objects.create(
             parameter_val=parameter_val,
@@ -213,11 +224,37 @@ class ChangeParameterCommand(Delta):
         delta.forward()
 
         # increment workflow version number, triggers global re-render if this parameter can effect output
-        notify = not parameter_val.ui_only
+        notify = not pspec.ui_only
         bump_workflow_version(workflow, notify_client=notify)
 
         return delta
 
+class ChangeWorkflowTitleCommand(Delta):
+    new_value = models.TextField('new_value')
+    old_value = models.TextField('old_value')
 
+    def forward(self):
+        self.workflow.set_name(self.new_value)
 
+    def backward(self):
+        self.workflow.set_name(self.old_value)
 
+    @staticmethod
+    def create(the_workflow, name):
+        old_name = the_workflow.name
+
+        description = 'Changed workflow name from ' + old_name + ' to ' + name
+
+        delta = ChangeWorkflowTitleCommand.create(
+            workflow = the_workflow,
+            new_value = name,
+            old_value = the_workflow.get_name(),
+            revision = next_workflow_version(workflow),
+            command_desription = description
+        )
+
+        delta.forward()
+
+        bump_workflow_version(workflow, notify_client=notify)
+
+        return delta

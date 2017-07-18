@@ -6,8 +6,6 @@ import time
 import os
 import csv
 import io
-#import json
-#import math
 from .moduleimpl import ModuleImpl
 from server.versions import bump_workflow_version
 
@@ -19,7 +17,7 @@ class Twitter(ModuleImpl):
     # Get dataframe of last tweets fron our storage,
     @staticmethod
     def get_stored_tweets(wf_module):
-        tablestr = wf_module.retrieve_text('csv')
+        tablestr = wf_module.retrieve_data()
         if (tablestr != None) and (len(tablestr) > 0):
             return pd.read_csv(io.StringIO(tablestr))
         else:
@@ -109,9 +107,7 @@ class Twitter(ModuleImpl):
             wfm.store_text('csv', '')
             return
 
-
-        wfm.store_text('csv', tweets.to_csv(index=False))  # index=False to prevent pandas from adding an index col
+        wfm.store_data(tweets.to_csv(index=False))  # index=False to prevent pandas from adding an index col
 
         # all done, set to ready and re-render workflow
-        wfm.set_ready(notify=False)
-        bump_workflow_version(wfm.workflow)
+        wfm.set_ready(notify=True)
