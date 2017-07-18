@@ -8,11 +8,7 @@ import PropTypes from 'prop-types'
 import DataVersionSelect from './DataVersionSelect'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
 import { Button } from 'reactstrap'
-<<<<<<< HEAD
-import WorkbenchAPI from './WorkbenchAPI'
-=======
 import workbenchAPI from './WorkbenchAPI'
->>>>>>> master
 import { csrfToken } from './utils'
 
 
@@ -100,11 +96,6 @@ export default class WfParameter extends React.Component {
       return false; // nothing to see here
     }
 
-<<<<<<< HEAD
-    var api = new WorkbenchAPI();
- 
-=======
->>>>>>> master
     switch (this.type) {
       case 'string':
         // Different size and style if it's a multiline string
@@ -147,7 +138,7 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          
+
           <button className='btn btn-primary' onClick={this.click}>{this.name}</button>
         );
 
@@ -213,17 +204,13 @@ export default class WfParameter extends React.Component {
             <div>
               <div className='setting-gray'>Version</div>
               <div className='version-box'>
-<<<<<<< HEAD
-                <DataVersionSelect wf_module_id={this.props.wf_module_id} api={api} />
-=======
                 <DataVersionSelect wf_module_id={this.props.wf_module_id} api={workbenchAPI()} />
->>>>>>> master
                 <UpdateFrequencySelect />
-                <Button className='button-blue mt-4' onClick={this.click}>{this.name}</Button>              
+                <Button className='button-blue mt-4' onClick={this.click}>{this.name}</Button>
               </div>
             </div>
           );
-        } 
+        }
 
       default:
         return null;  // unrecognized parameter type
