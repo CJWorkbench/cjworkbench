@@ -49,11 +49,12 @@ class WfModuleSerializer(serializers.ModelSerializer):
     module_version = ModuleVersionSerializer(many=False, read_only=True)
     class Meta:
         model = WfModule
-        fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals')
+        fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals', 'notes')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):
     wf_modules = WfModuleSerializer(many=True, read_only=True)
+    revision = serializers.ReadOnlyField()
     class Meta:
         model = Workflow
         fields = ('id', 'name', 'revision', 'wf_modules')

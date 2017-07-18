@@ -8,7 +8,6 @@ from rest_framework.renderers import JSONRenderer
 from server.models import Workflow, WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
-from server.versions import bump_workflow_version
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand
 import pandas as pd
 

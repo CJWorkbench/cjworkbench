@@ -21,9 +21,9 @@ mock_csv_table = pd.read_csv(io.StringIO(mock_csv_text))
 # Derive from this to perform all tests logged in
 class LoggedInTestCase(TestCase):
     def setUp(self):
-        user = User.objects.create_user(username='username', password='password')
+        user = User.objects.create_user(username='username', email='user@users.com', password='password')
         user.save()
-        self.client.login(username='username', password='password')
+        self.client.login(username='user@users.com', password='password')
         self.user = User.objects.first()
 
 

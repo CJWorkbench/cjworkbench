@@ -162,7 +162,11 @@ body {
   color: #A2A2A2;
 }
 
+<<<<<<< HEAD
 .action-button-active:hover,
+=======
+.action-button-active:hover, 
+>>>>>>> master
 .action-button-disabled:hover {
   background-color: #FFFFFF;
   color: #A2A2A2;
@@ -703,6 +707,7 @@ body {
 }
 
 #updateFreqPeriod {
+<<<<<<< HEAD
   display: inline;
   width: 30%;
 }
@@ -712,6 +717,10 @@ body {
   border: none;
   outline: none;
   padding: 0;
+=======
+  display: inline;  
+  width: 30%;  
+>>>>>>> master
 }
 
 /* Ugly borders to mark out divs, dev-only */

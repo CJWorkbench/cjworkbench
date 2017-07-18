@@ -161,7 +161,8 @@ class WfModuleTests(LoggedInTestCase):
         self.assertIsNone(nothing)
 
         # save and recover data
-        self.wfmodule1.store_data(text1)
+        ver1 = self.wfmodule1.store_data(text1)
+        self.wfmodule1.set_stored_data_version(ver1)
         self.wfmodule1.save()
         self.wfmodule1.refresh_from_db()
         textout = self.wfmodule1.retrieve_data()
@@ -169,8 +170,8 @@ class WfModuleTests(LoggedInTestCase):
         firstver = self.wfmodule1.get_stored_data_version()
 
         # create another version
-        self.wfmodule1.store_data(text2)
-        secondver = self.wfmodule1.get_stored_data_version()
+        secondver = self.wfmodule1.store_data(text2)
+        self.wfmodule1.set_stored_data_version(secondver)
         self.assertNotEqual(firstver, secondver)
         textout = self.wfmodule1.retrieve_data()
         self.assertEqual(textout, text2)

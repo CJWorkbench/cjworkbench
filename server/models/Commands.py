@@ -2,8 +2,10 @@
 
 from django.db import models
 from server.models import Workflow, WfModule, ParameterVal, Delta, ModuleVersion
-from server.versions import bump_workflow_version, next_workflow_version
+from server.versions import notify_client_workflow_version_changed
 import json
+
+# --- Utilities ---
 
 # Give the new WfModule an 'order' of insert_before, and add 1 to all following WfModules
 def insert_wf_module(wf_module, workflow, insert_before):
@@ -39,6 +41,10 @@ def renumber_wf_modules(workflow):
         pos += 1
 
 
+# --- Commands ----
+
+# The only tricky part AddModule is what we do with the module in backward()
+# We detach the WfModule from the workflow, but keep it around for possible later forward()
 class AddModuleCommand(Delta):
     module_version = models.ForeignKey(ModuleVersion)
     wf_module = models.ForeignKey(WfModule)
@@ -65,11 +71,10 @@ class AddModuleCommand(Delta):
             wf_module=newwfm,
             module_version=module_version,
             order=insert_before,
-            revision=next_workflow_version(workflow),
             command_description=description)
         delta.forward()
 
-        bump_workflow_version(workflow, notify_client=True)
+        notify_client_workflow_version_changed(workflow)
         return delta
 
 
@@ -95,10 +100,9 @@ class DeleteModuleCommand(Delta):
         delta = DeleteModuleCommand.objects.create(
             workflow=workflow,
             wf_module=wf_module,
-            revision=next_workflow_version(wf_module.workflow),
             command_description=description)
         delta.forward()
-        bump_workflow_version(workflow, notify_client=True)
+        notify_client_workflow_version_changed(workflow)
         return delta
 
 
@@ -117,7 +121,6 @@ class ReorderModulesCommand(Delta):
 
     def forward(self):
         self.apply_order(json.loads(self.new_order))
-
 
     def backward(self):
         self.apply_order(json.loads(self.old_order))
@@ -148,16 +151,16 @@ class ReorderModulesCommand(Delta):
             old_order=json.dumps([ {'id': wfm.id, 'order': wfm.order} for wfm in wfms]),
             new_order=json.dumps(new_order),
             workflow=workflow,
-            revision=next_workflow_version(workflow),
             command_description='Reordered modules')
         delta.forward()
-        bump_workflow_version(workflow, notify_client=False) # don't notify as client already updated. hacky.
+
+        # don't notify client of update as the client already updated its model. hacky.
         return delta
 
 
 class ChangeDataVersionCommand(Delta):
     wf_module = models.ForeignKey(WfModule)
-    old_version = models.TextField('old_version')
+    old_version = models.TextField('old_version', null=True)    # may not have had a previous version
     new_version = models.TextField('new_version')
 
     def forward(self):
@@ -169,18 +172,17 @@ class ChangeDataVersionCommand(Delta):
     @staticmethod
     def create(wf_module, version):
         description = \
-            'Changed \'' + wf_module.module_version.module.name + '\' module data version to ' + version
+            'Changed \'' + wf_module.module_version.module.name + '\' module data version to ' + str(version)
 
         delta = ChangeDataVersionCommand.objects.create(
             wf_module=wf_module,
             new_version=version,
             old_version=wf_module.get_stored_data_version(),
             workflow=wf_module.workflow,
-            revision=next_workflow_version(wf_module.workflow),
             command_description=description)
 
         delta.forward()
-        bump_workflow_version(wf_module.workflow, notify_client=True)
+        notify_client_workflow_version_changed(wf_module.workflow)
         return delta
 
 
@@ -218,14 +220,18 @@ class ChangeParameterCommand(Delta):
             new_value=value,
             old_value=parameter_val.get_value(),
             workflow=workflow,
-            revision=next_workflow_version(workflow),
             command_description=description)
 
         delta.forward()
 
         # increment workflow version number, triggers global re-render if this parameter can effect output
         notify = not pspec.ui_only
+<<<<<<< HEAD
         bump_workflow_version(workflow, notify_client=notify)
+=======
+        if notify:
+            notify_client_workflow_version_changed(workflow)
+>>>>>>> master
 
         return delta
 

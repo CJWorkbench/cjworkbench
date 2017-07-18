@@ -1,3 +1,5 @@
+from .moduleimpl import ModuleImpl
+from server.models import ChangeDataVersionCommand
 import pandas as pd
 from pandas.parser import CParserError
 from xlrd import XLRDError
@@ -6,8 +8,6 @@ import io
 import json
 import requests
 import re
-from .moduleimpl import ModuleImpl
-from server.versions import bump_workflow_version
 
 # ---- LoadURL ----
 
@@ -97,10 +97,11 @@ class LoadURL(ModuleImpl):
             wfm.set_error('Error fetching %s: unknown content type %s' % (url,content_type))
             return
 
-        # we are done. save fetched data, notify of changes to the workflow, reset status
-        wfm.store_data(table.to_csv(index=False))      # index=False to prevent pandas from adding an index col
-
         if wfm.status != wfm.ERROR:
             wfm.set_ready(notify=False)
-            bump_workflow_version(wfm.workflow)
+
+        # we are done. save fetched data, and switch to it
+        version = wfm.store_data(table.to_csv(index=False)) # index=False to prevent pandas from adding an index col
+        ChangeDataVersionCommand.create(wfm, version)  # also notifies client
+
 
