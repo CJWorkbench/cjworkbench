@@ -13,7 +13,7 @@ import datetime
 
 # Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
 def current_iso_datetime_ms():
-    return datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
 
 class WfModule(models.Model):
