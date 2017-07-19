@@ -9,9 +9,7 @@ export default class EditableWorkflowName extends EditableText {
   }
 
   saveChanges(newName) {
-    this.api.setWfName(this.props.wfId, this.state.value).then((result) => {
-      console.log(result);
-    });
+    this.api.setWfName(this.props.wfId, this.state.value);
   }
 
   render() {
