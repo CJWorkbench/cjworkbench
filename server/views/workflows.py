@@ -8,7 +8,7 @@ from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, ModuleVersion, Workflow, WfModule
-from server.models import AddModuleCommand, ReorderModulesCommand
+from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite
 
 # ---- Workflows list page ----
@@ -38,7 +38,7 @@ def workflow_list(request, format=None):
 
 # Retrieve or delete a workflow instance.
 # Or reorder modules
-@api_view(['GET', 'PATCH', 'DELETE'])
+@api_view(['GET', 'PATCH', 'POST', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def workflow_detail(request, pk, format=None):
     try:
@@ -62,10 +62,17 @@ def workflow_detail(request, pk, format=None):
             return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    elif request.method == 'POST':
+        try:
+            ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
+        except Exception as e:
+            return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     elif request.method == 'DELETE':
         workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 # Invoked when user pressess add_module button
 @api_view(['PUT'])
