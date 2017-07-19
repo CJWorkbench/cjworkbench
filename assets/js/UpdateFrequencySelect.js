@@ -42,24 +42,55 @@ export default class UpdateFrequencySelect extends React.Component {
     );
   }
 
+  // --- Takes a date string, returns the interval of time between now and then ---
+  // --- Won't work until this component has date information ---
+  // timeDiff(datestr) {
+  //   // interpret date string as UTC always (comes from server this way)
+  //   var d = new Date(datestr);
+  //   var now = new Date();
+  //   var interval = now.getTime() - d.getTime();
+  //   var days = Math.floor(interval/864000000);
+  //   var hours = Math.floor((interval - days*864000000)/3600000);
+  //   var minutes = Math.floor((interval - days*864000000 - hours*3600000)/60000);
+  //   if (days > 1) {
+  //     return "" + days + " days ago";
+  //   } else if (days == 1) {
+  //     return "1 day ago";
+  //   } else if (hours > 1) {
+  //     return "" + hours + "hours ago";
+  //   } else if (hours == 1) {
+  //     return "1 hour ago";
+  //   } else if (minutes > 1) {
+  //     return "" + minutes + "minutes ago";
+  //   } else {
+  //     return "just now";
+  //   }
+  // }
+
   render() {
 
     var highlightManual = this.state.manual ? 'action-button-active' : 'action-button-disabled';
     var highlightAuto = !this.state.manual ? 'action-button-active' : 'action-button-disabled';
     var settingsInfo = this.state.manual ?
-      'Update Settings: Manual'
-      : 'Update Settings: Auto, every ' + this.state.period + ' ' + this.state.unit;
+      'Manual'
+      :'Auto, every ' + this.state.period + ' ' + this.state.unit;
+    if (this.state.period > 1) {
+      settingsInfo += 's';
+    }
 
     return (
       <div className='version-item'>
-        <div className='info-blue mb-2' onClick={this.toggleModal}>Update Frequency</div>
-        <div className=''>{settingsInfo}</div>
+        <div className='mb-2' >
+          <span>Update: </span>
+          <span className='info-blue' onClick={this.toggleModal}>{settingsInfo}</span>  
+        </div>
+         <div className=''>Click above to change</div>         
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className={this.props.className}>
-          <ModalHeader toggle={this.toggleModal}>Sync Settings</ModalHeader>
+          <ModalHeader toggle={this.toggleModal}>Update Settings</ModalHeader>
           <ModalBody>
             <FormGroup>
               <Label for="updateFreq">Check for update every</Label>
-              <div className='update-freq-settings'>
+              <div className='update-freq-settings update-freq-test-class'>
                 <Input 
                   type="number" 
                   value={this.state.period} 
@@ -89,9 +120,8 @@ export default class UpdateFrequencySelect extends React.Component {
               <Button onClick={this.toggleManual} className={highlightAuto}>Auto</Button>
               <div>Saves currect data and automatically uses the latest data</div>              
             </FormGroup>
-          </ModalBody>’
+          </ModalBody>
           <ModalFooter>
-            {/*Currently this button only closes the Modal window, does not change settings*/}
             <Button color='secondary' onClick={this.toggleModal}>Apply</Button>
           </ModalFooter>
         </Modal>

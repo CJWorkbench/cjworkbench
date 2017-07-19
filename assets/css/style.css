@@ -31,7 +31,8 @@ body {
 	color: #686768;
 	font-family: Avenir;
 	font-size: 13px;
-	line-height: 13px;
+  line-height: 13px;
+  margin-top: 20px;
 }
 
 .data-light-gray {	
@@ -162,12 +163,6 @@ body {
   color: #A2A2A2;
 }
 
-.action-button-active:hover, 
-.action-button-disabled:hover {
-  background-color: #FFFFFF;
-  color: #A2A2A2;
-}
-
 .text-field {
   height: 40px;
   width: 100%;
@@ -242,21 +237,7 @@ body {
   background-color: #f8f8f8;
 }
 
-/* These context menu styles also apply to those on the Workflow page */
-.menu-icon {
-  background-color: #FFFFFF;
-  border: 0;
-}
 
-.menu-icon:hover {
-  background-color: #F9F9F9;
-  border: 1px solid #CECECE;
-}
-
-.menu-icon:active {
-  border: 1px solid #CECECE;  
-  background-color: #EDECEC;
-}
 
 /* ---- Workflow page ---- */
 
@@ -301,7 +282,6 @@ body {
 .outputpane-box {
   height: calc(100% - 3.5rem);
   width: 50%;
-  border: 2px solid #48C8D7;
   background-color: #F2F2F2;
   padding: 15px;
   position: fixed;
@@ -337,10 +317,6 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
-
-.border-selected-module {
-  border: 2px solid #48C8D7;
 }
 
 .wfModuleErrorMsg {
@@ -616,6 +592,35 @@ body {
 .icon-check:before {
   content: "\e92a";
   color: #686768;
+}
+
+/* Icon wrapping classes (boxes around icons)  */
+
+.module-icon {
+  height: 15px;
+  width: 15px;
+}
+
+.button-icon {
+  height: 13px;
+  width: 13px;
+  margin: 0 auto;  
+}
+
+.button-icon-box {
+  height: 25px;
+  width: 25px;
+  border: 0;
+}
+
+.button-icon-box:hover {
+  background-color: #F9F9F9;
+  border: 1px solid #CECECE;
+}
+
+.button-icon-box:active {
+  border: 1px solid #CECECE;  
+  background-color: #EDECEC;
 }
 
 

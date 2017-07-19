@@ -6,10 +6,14 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
 >
   <DropdownToggle
     aria-haspopup={true}
-    className="menu-icon icon-more"
+    className="button-icon-box"
     color="secondary"
     data-toggle="dropdown"
-  />
+  >
+    <div
+      className="button-icon icon-more"
+    />
+  </DropdownToggle>
   <DropdownMenu
     right={true}
     tag="div"

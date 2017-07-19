@@ -46,6 +46,7 @@ export default class WfParameter extends React.Component {
 
   // Send event to server for button click
   click(e) {
+
     // type==custom a hack for version_select type
     if (this.type == 'button' || this.type == 'custom') {
       var url = '/api/parameters/' + this.props.p.id + '/event';
@@ -60,8 +61,9 @@ export default class WfParameter extends React.Component {
         },
         body: JSON.stringify(eventData)
       }).then(response => {
-        if (!response.ok)
+        if (!response.ok) {
           store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', response.statusText))
+        } 
       });
     }
 
@@ -113,7 +115,7 @@ export default class WfParameter extends React.Component {
             <div className='setting-gray'>{this.name}:</div>
             <textarea
               className={sclass}
-              className='data-paragraph-g text-field'
+              className='data-paragraph-g text-field mt-2'
               rows={srows}
               defaultValue={this.props.p.value}
               onBlur={this.blur}
@@ -202,9 +204,14 @@ export default class WfParameter extends React.Component {
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
           return (
             <div>
+<<<<<<< HEAD
+              <div className='version-box mt-2'>
+                <DataVersionSelect wf_module_id={this.props.wf_module_id} api={api} />
+=======
               <div className='setting-gray'>Version</div>
               <div className='version-box'>
                 <DataVersionSelect wf_module_id={this.props.wf_module_id} api={workbenchAPI()} />
+>>>>>>> 7d27d55876ee215c63cf370a07e5538123665fd7
                 <UpdateFrequencySelect />
                 <Button className='button-blue mt-4' onClick={this.click}>{this.name}</Button>              
               </div>
