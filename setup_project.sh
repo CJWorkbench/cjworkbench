@@ -1,17 +1,20 @@
+if [[ $1 == '-h' ]]; then
+  echo "Usage: $0 [-u username] [-p password] [-e email]"
+  exit 0;
+fi
+
 # check user input, set defaults
-while getopts ":u:p:e:h:" o; do
+while getopts ":u:p:e:" o; do
   case "${o}" in 
-    u) #username
+    u)  #username
       u=${OPTARG} 
       ;;
-    p) #password
+    p)  #password
       p=${OPTARG} 
       ;;
-    e) #email
+    e)  #email
       e=${OPTARG} #not validating e-mail address but I probably should.
       ;;
-    h) #help
-      echo "Usage: $0 [-u username] [-p password] [-e email]"
   esac
 done
 
