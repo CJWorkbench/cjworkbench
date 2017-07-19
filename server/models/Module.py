@@ -24,5 +24,11 @@ class Module(models.Model):
     # the description of the module
     description = models.CharField('description', max_length=200, default="")
 
+    # the author of the given module
+    author = models.CharField('author', max_length=200, default="Workbench")
+
+    # the link to the module
+    link = models.CharField('link', max_length=200, default="")
+
     def __str__(self):
         return self.name
