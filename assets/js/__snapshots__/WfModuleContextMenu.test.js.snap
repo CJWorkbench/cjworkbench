@@ -15,28 +15,41 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
     />
   </DropdownToggle>
   <DropdownMenu
+    className="dropdown-list-menu"
     right={true}
     tag="div"
   >
     <DropdownItem
+      className="dropdown-list-item"
       onClick={[Function]}
       tag="button"
       toggle={true}
     >
-      Delete This Module
+      <span
+        className="icon-download icon-w mr-2"
+      />
+      Export
     </DropdownItem>
     <DropdownItem
+      className="dropdown-list-item"
+      tag="button"
+      toggle={true}
+    >
+      <span
+        className="icon-info icon-w mr-2"
+      />
+      Update
+    </DropdownItem>
+    <DropdownItem
+      className="dropdown-list-item"
       onClick={[Function]}
       tag="button"
       toggle={true}
     >
-      Export Table
-    </DropdownItem>
-    <DropdownItem
-      tag="button"
-      toggle={true}
-    >
-      Update Version
+      <span
+        className="icon-bin icon-w mr-2"
+      />
+      Delete
     </DropdownItem>
   </DropdownMenu>
 </UncontrolledDropdown>

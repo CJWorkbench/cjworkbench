@@ -97,7 +97,7 @@ export default class WfModuleContextMenu extends React.Component {
 
     if (this.state.jsonCopied) {
       return (
-        <div className='info-small-orange' onMouseLeave={this.onCsvLeave}>JSON link copied to clipboard</div>
+        <div className='info-small-orange' onMouseLeave={this.onJsonLeave}>JSON link copied to clipboard</div>
       );
     } else {
       return (
@@ -120,33 +120,35 @@ export default class WfModuleContextMenu extends React.Component {
 
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
-        <ModalHeader toggle={this.toggleModal} >
-          <div className='modal-row'>
-            <div className='data-light-gray'>Export Data</div>
-            <div className='icon-Close' onClick={this.toggleExportModal}></div> 
-          </div>         
+        <ModalHeader toggle={this.toggleModal} className='dialog-header' >
+          <span className='dialog-header-title'>Export Data</span>
+          <span className='icon-close dialog-header-close' onClick={this.toggleExportModal}></span> 
         </ModalHeader>
-        <ModalBody>
+        <ModalBody className='dialog-body'>
           <FormGroup>
-            <div className="modal-row">
-              <Label className='setting-gray'>CSV</Label>
-              {csvCopyLink}
+            <div className='export-field-header'>
+              <Label className='export-field-header-title'>CSV</Label>
+              <div className='export-link'>{csvCopyLink}</div>
             </div>     
-            <div className="modal-row">            
-              <Input type="url" className='url-field data-light-gray' placeholder={csvString} readOnly/>                   
-              <a href={csvString} className='download-icon-box text-center icon-download' download></a>
+            <div className='export-field'>            
+              <Input type='url' className='export-field-text' placeholder={csvString} readOnly/>   
+              <div className='export-icon-box'>                              
+                <a href={csvString} className='icon-download' download></a>
+              </div>
             </div>
-            <div className="modal-row">            
-              <Label className='setting-gray'>JSON</Label>
-              {jsonCopyLink}
+            <div className='export-field-header'>            
+              <Label className='export-field-header-title'>JSON</Label>
+              <div className='export-link'>{jsonCopyLink}</div>
             </div>
-            <div className="modal-row">                        
-              <Input type="url" className='url-field data-light-gray' placeholder={jsonString} readOnly/>            
-              <a href={jsonString} className='download-icon-box text-center icon-download' download></a>    
+            <div className='export-field'>                        
+              <Input type='url' className='export-field-text' placeholder={jsonString} readOnly/>            
+              <div className='export-icon-box'>
+                <a href={jsonString} className='icon-download' download></a>    
+              </div>
             </div>        
           </FormGroup>
         </ModalBody>
-        <ModalFooter>
+        <ModalFooter className='dialog-footer'>
           <Button onClick={this.toggleExportModal} className='button-blue'>Done</Button>{' '}
         </ModalFooter>
       </Modal>
@@ -161,19 +163,22 @@ export default class WfModuleContextMenu extends React.Component {
         <DropdownToggle className='button-icon-box'>
           <div className='button-icon icon-more'></div>
         </DropdownToggle>
-        <DropdownMenu right >
-          {/* Will delete the parent WF Module from the list */}
-          <DropdownItem key={1} onClick={this.deleteOption}>                       
-            Delete This Module
-          </DropdownItem>
+        <DropdownMenu right className='dropdown-list-menu'>
           {/* Opens Modal window for downloading files */}
-          <DropdownItem key={2} onClick={this.toggleExportModal}>                       
-            Export Table
+          <DropdownItem key={1} onClick={this.toggleExportModal} className='dropdown-list-item'>                       
+            <span className='icon-download icon-w mr-2'></span>
+            Export
             {exportModal}
           </DropdownItem>
-          {/* further menu items currently do nothing */}          
-          <DropdownItem key={3}>                       
-            Update Version
+          {/* Currently does nothing */}          
+          <DropdownItem key={2} className='dropdown-list-item'>      
+            <span className='icon-info icon-w mr-2'></span>                             
+            Update
+          </DropdownItem>
+          {/* Will delete the parent WF Module from the list */}
+          <DropdownItem key={3} onClick={this.deleteOption} className='dropdown-list-item'>    
+            <span className='icon-bin icon-w mr-2'></span>                               
+            Delete
           </DropdownItem>
         </DropdownMenu>
        </UncontrolledDropdown>

@@ -4,7 +4,6 @@ import React from 'react'
 import WfParameter from './WfParameter'
 import TableView from './TableView'
 import WfModuleContextMenu from './WfModuleContextMenu'
-// import WfModuleNotes from './WfModuleNotes'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 import * as Actions from './workflow-reducer'
@@ -148,7 +147,7 @@ export default class WfModule extends React.Component {
               >
                 {/* TODO: attach icon names to modules, call via 'this.module.icon' */}
                 <div className='d-flex justify-content-start'>
-                  <div className='icon-URL module-icon m-1'></div>
+                  <div className='icon-url module-icon m-1'></div>
                   <h4 className='text-center mb-0 ml-2'>{this.module.name}</h4>
                 </div>
                 {/* TODO: not necessary to pass in stopProp*/}
