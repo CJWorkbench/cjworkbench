@@ -1,28 +1,28 @@
 import React from 'react';
-import EditableText from './EditableText';
+import _ from 'lodash';
+import { RIEInput } from 'riek';
 import workbenchapi from './WorkbenchAPI';
 
-export default class EditableWorkflowName extends EditableText {
+export default class EditableWorkflowName extends React.Component {
   constructor(props) {
     super(props);
     this.api = workbenchapi();
+    this.saveName = this.saveName.bind(this);
+    this.state = {
+      value: this.props.value
+    }
   }
 
-  saveChanges(newName) {
-    this.api.setWfName(this.props.wfId, this.state.value);
+  saveName(newName) {
+    this.api.setWfName(this.props.wfId, newName.value);
   }
 
   render() {
-    if (this.state.editing == true) {
-      return <input
-        className={this.props.editClass}
-        onBlur={this.onBlur}
-        type="text"
-        ref={(input) => { this.editInput = input }}
-        value={this.state.value}
-        onChange={this.onChange}
-      />
-    }
-    return <h4 onClick={this.toggleEditing}>{this.state.value}</h4>;
+    return <h4><RIEInput
+      value={this.props.value}
+      change={this.saveName}
+      propName="value"
+      className={this.props.editClass}
+    /></h4>
   }
 }
