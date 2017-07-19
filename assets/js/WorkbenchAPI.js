@@ -1,4 +1,4 @@
-// Wraps all API calls. Useful both to centralize and abstract these calls, 
+// Wraps all API calls. Useful both to centralize and abstract these calls,
 // also for dependency injection for testing
 
 import { csrfToken } from './utils'
@@ -28,6 +28,23 @@ class WorkbenchAPI {
           selected: version
         })
       }))
+  }
+
+  setWfName(wfId, newName) {
+    return (
+      fetch('/api/workflows/' + wfId, {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          newName: newName
+        })
+      })
+    )
   }
 }
 
