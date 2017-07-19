@@ -242,21 +242,20 @@ class ChangeWorkflowTitleCommand(Delta):
         self.workflow.set_name(self.old_value)
 
     @staticmethod
-    def create(the_workflow, name):
-        old_name = the_workflow.name
+    def create(workflow, name):
+        old_name = workflow.name
 
         description = 'Changed workflow name from ' + old_name + ' to ' + name
 
-        delta = ChangeWorkflowTitleCommand.create(
-            workflow = the_workflow,
+        delta = ChangeWorkflowTitleCommand.objects.create(
+            workflow = workflow,
             new_value = name,
-            old_value = the_workflow.get_name(),
-            revision = next_workflow_version(workflow),
-            command_desription = description
+            old_value = workflow.name,
+            command_description = description
         )
 
         delta.forward()
 
-        bump_workflow_version(workflow, notify_client=notify)
+        notify_client_workflow_version_changed(workflow)
 
         return delta

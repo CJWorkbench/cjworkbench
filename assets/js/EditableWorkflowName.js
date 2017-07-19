@@ -1,65 +1,17 @@
-import React from 'react'
-import WorkbenchAPI from './WorkbenchAPI'
+import React from 'react';
+import EditableText from './EditableText';
+import workbenchapi from './WorkbenchAPI';
 
-export default class EditableText extends React.Component {
+export default class EditableWorkflowName extends EditableText {
   constructor(props) {
     super(props);
-    this.toggleEditing = this.toggleEditing.bind(this);
-    this.saveChanges = this.saveChanges.bind(this);
-    this.onChange = this.onChange.bind(this);
-    this.onBlur = this.onBlur.bind(this);
-    this.onKeyDown = this.onKeyDown.bind(this);
-    this.state = {
-      editing: false,
-
-      value: this.props.value,
-      oldValue: this.props.value,
-    }
+    this.api = workbenchapi();
   }
 
-  toggleEditing() {
-    this.setState({editing: !this.state.editing});
-  }
-
-  saveChanges() {
-    return this.props.save(this.props.value);
-  }
-
-  cancelChanges() {
-    this.setState({value:this.state.oldValue});
-  }
-
-  onChange(event) {
-    this.setState({value:event.target.value});
-  }
-
-  onBlur(event) {
-    this.saveChanges();
-    this.toggleEditing();
-  }
-
-  onKeyDown(event) {
-    if (event.keyCode == 13) {
-      this.saveChanges();
-      this.toggleEditing();
-    }
-
-    if (event.keyCode == 27) {
-      this.cancelChanges();
-      this.toggleEditing();
-    }
-  }
-
-  componentDidUpdate() {
-    if (this.state.editing == true) {
-      document.addEventListener('keydown', this.onKeyDown);
-      this.editInput.focus();
-    }
-
-    if (this.state.editing == false) {
-      document.removeEventListener('keydown', this.onKeyDown);
-      this.state.oldValue = this.state.value;
-    }
+  saveChanges(newName) {
+    this.api.setWfName(this.props.wfId, this.state.value).then((result) => {
+      console.log(result);
+    });
   }
 
   render() {

@@ -39,7 +39,7 @@ def workflow_list(request, format=None):
 
 # Retrieve or delete a workflow instance.
 # Or reorder modules
-@api_view(['GET', 'PATCH', 'DELETE'])
+@api_view(['GET', 'PATCH', 'POST', 'DELETE'])
 @renderer_classes((JSONRenderer,))
 def workflow_detail(request, pk, format=None):
     try:
@@ -63,24 +63,17 @@ def workflow_detail(request, pk, format=None):
             return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    elif request.method == 'POST':
+        try:
+            ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
+        except Exception as e:
+            return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
     elif request.method == 'DELETE':
         workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-@api_view(['POST'])
-@renderer_classes((JSONRenderer,))
-def workflow_edit(request, pk, format=None):
-    workflow = Workflow.objects.get(pk=pk)
-
-    if not workflow.user_authorized(request.user):
-        return HttpResponseForbidden()
-
-    try:
-        ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
-    except:
-        return Response({'message': 'Something went wrong.', 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
-
-    return Response(status=status.HTTP_204_NO_CONTENT)
 
 # Invoked when user pressess add_module button
 @api_view(['PUT'])

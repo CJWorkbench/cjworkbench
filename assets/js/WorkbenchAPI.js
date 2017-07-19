@@ -29,6 +29,23 @@ class WorkbenchAPI {
         })
       }))
   }
+
+  setWfName(wfId, newName) {
+    return (
+      fetch('/api/workflows/' + wfId, {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          newName: newName
+        })
+      })
+    )
+  }
 }
 
 // Singleton API object for global use
