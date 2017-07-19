@@ -10,10 +10,12 @@ webpack-stats.json
 db.sqlite3
 dbdata/
 
-# Asset bundles and collected static files
+# Asset bundles, static files, downloaded modules
 /node_modules/
 /assets/bundles/
 /static/
+/server/modules/dynamic
+/config/modules/dynamic
 
 #pycharm
 .idea/

@@ -1,7 +1,5 @@
 // Drop-down menu on Workflows List page, for each listed WF
-// triggered by click on three-dot icon next to listed workflow
-
-// To refactor: shorten module name, change references
+// triggered by click on three-dot icon next to listed workflow module
 
 import React from 'react'
 import { 

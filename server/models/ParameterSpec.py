@@ -46,8 +46,12 @@ class ParameterSpec(models.Model):
     def_menu_items = models.TextField(MENU, null=True, blank=True)       # menu items here
 
     def_visible = models.BooleanField(default=True)
-    def_ui_only = models.BooleanField(default=False)
-    def_multiline = models.BooleanField(default=False)
+
+    # Flags which cannot be set on a per-instance basic
+    ui_only = models.BooleanField(default=False)            # Don't bother pushing value to server
+    multiline = models.BooleanField(default=False)          # for edit fields
+    derived_data = models.BooleanField(default=False)       # Don't save in the undo stack, it comes from other params
+
 
     def __str__(self):
         return self.module_version.module.name + ' - ' + self.name

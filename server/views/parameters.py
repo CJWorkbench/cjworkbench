@@ -68,7 +68,7 @@ def parameterval_png(request, pk):
     if not param.wf_module.public_authorized():
         return HttpResponseForbidden()
 
-    # is this actually in image? totes hardcoded for nao
+    # is this actually in image? totes hardcoded for now
     if param.parameter_spec.id_name != 'chart':
         return HttpResponseBadRequest()
 

@@ -7,13 +7,12 @@ from server.models.Module import *
 from server.models.ModuleVersion import *
 from server.models.Workflow import *
 from server.models.ParameterVal import *
-from server.dispatch import module_dispatch_render
 from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_status
 import datetime
 
 # Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
 def current_iso_datetime_ms():
-    return datetime.datetime.now().strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3]
+    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
 
 class WfModule(models.Model):
@@ -37,6 +36,10 @@ class WfModule(models.Model):
         null=True)                      # goes null if referenced Module deleted
 
     order = models.IntegerField()
+
+    notes = models.TextField(
+        null=True, 
+        blank=True)
 
     stored_data_version = models.CharField(
         max_length=32,
@@ -73,12 +76,12 @@ class WfModule(models.Model):
 
     def store_data(self, text):
         # uses current datetime as key; assumes we don't store more than one version per millisecond
-        self.stored_data_version = current_iso_datetime_ms()
-        self.save()
+        data_version = current_iso_datetime_ms()
         StoredObject.objects.create(
             wf_module=self,
-            key=self.stored_data_version,
+            key=data_version,
             data=bytes(text, 'UTF-8'))
+        return data_version
 
     def retrieve_data(self):
         if self.stored_data_version:
@@ -92,6 +95,8 @@ class WfModule(models.Model):
     def get_stored_data_version(self):
         return self.stored_data_version
 
+    # NOTE like all mutators, this should usually be wrapped in a command
+    # In this case, a ChangeDataVersionCommand
     def set_stored_data_version(self, version):
         versions = self.list_stored_data_versions()
         if version not in versions:
@@ -171,13 +176,6 @@ class WfModule(models.Model):
         if notify:
             ws_client_rerender_workflow(self.workflow)
         self.save()
-
-    # --- Rendering ----
-
-    # Modules ingest and emit a table (though may do only one, if source or sink)
-    def execute(self, table):
-        return module_dispatch_render(self, table)
-
 
 
 

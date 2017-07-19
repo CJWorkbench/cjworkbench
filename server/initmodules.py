@@ -160,8 +160,9 @@ def load_parameter_spec(d, module_version, order):
             return dval
 
     pspec.def_visible = flag_default('visible', True)
-    pspec.def_ui_only = flag_default('ui-only', False)
-    pspec.def_multiline = flag_default('multiline', False)
+    pspec.ui_only = flag_default('ui-only', False)
+    pspec.multiline = flag_default('multiline', False)
+    pspec.derived_data = flag_default('derived-data', False)
 
     pspec.order = order
     pspec.save()

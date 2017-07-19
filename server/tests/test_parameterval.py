@@ -106,7 +106,7 @@ class ParameterValTests(LoggedInTestCase):
 
     # test parameter change API
     def test_parameterval_detail_patch(self):
-        current_rev = self.workflow.revision
+        old_rev  = self.workflow.revision()
 
         request = self.factory.patch('/api/parameters/%d/' % self.numberID,
                                    {'value': '50.456' })
@@ -121,7 +121,7 @@ class ParameterValTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['value'], 50.456)
 
-        # changing a parameter should bump the version
+        # changing a parameter should change the version
         self.workflow.refresh_from_db()
-        self.assertEqual(self.workflow.revision, current_rev+1)
+        self.assertNotEqual(old_rev, self.workflow.revision())
 

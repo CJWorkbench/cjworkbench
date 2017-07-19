@@ -29,7 +29,7 @@ class ParameterValSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ParameterVal
-        fields = ('id', 'parameter_spec', 'value', 'visible', 'multiline', 'menu_items')
+        fields = ('id', 'parameter_spec', 'value', 'visible', 'menu_items')
 
 
 class ModuleSerializer(serializers.ModelSerializer):
@@ -49,11 +49,12 @@ class WfModuleSerializer(serializers.ModelSerializer):
     module_version = ModuleVersionSerializer(many=False, read_only=True)
     class Meta:
         model = WfModule
-        fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals')
+        fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals', 'notes')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):
     wf_modules = WfModuleSerializer(many=True, read_only=True)
+    revision = serializers.ReadOnlyField()
     class Meta:
         model = Workflow
         fields = ('id', 'name', 'revision', 'wf_modules')
