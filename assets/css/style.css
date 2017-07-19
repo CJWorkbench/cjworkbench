@@ -707,6 +707,14 @@ body {
   width: 30%;  
 }
 
+/* Editable text field */
+.workflow-title {
+  border: none;
+  outline: none;
+  padding: 0;
+}
+
+
 /* Ugly borders to mark out divs, dev-only */
 .dev-box {
   border: 2px dotted purple;
