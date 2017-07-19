@@ -63,7 +63,7 @@ export default class WfParameter extends React.Component {
       }).then(response => {
         if (!response.ok) {
           store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', response.statusText))
-        } 
+        }
       });
     }
 
@@ -140,7 +140,7 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          
+
           <button className='btn btn-primary' onClick={this.click}>{this.name}</button>
         );
 
@@ -208,11 +208,11 @@ export default class WfParameter extends React.Component {
               <div className='version-box'>
                 <DataVersionSelect wf_module_id={this.props.wf_module_id} api={workbenchAPI()} />
                 <UpdateFrequencySelect />
-                <Button className='button-blue mt-4' onClick={this.click}>{this.name}</Button>              
+                <Button className='button-blue mt-4' onClick={this.click}>{this.name}</Button>
               </div>
             </div>
           );
-        } 
+        }
 
       default:
         return null;  // unrecognized parameter type
