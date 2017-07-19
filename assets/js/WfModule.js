@@ -4,6 +4,7 @@ import React from 'react'
 import WfParameter from './WfParameter'
 import TableView from './TableView'
 import WfModuleContextMenu from './WfModuleContextMenu'
+// import WfModuleNotes from './WfModuleNotes'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 import * as Actions from './workflow-reducer'
@@ -41,12 +42,16 @@ export default class WfModule extends React.Component {
   constructor(props) {
     super(props);
     this.initFields(props);
+    this.state = {
+      detailsOpen: false,
+      showNotes: false
+    };           // componentDidMount will trigger first load    
     this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
     this.removeModule = this.removeModule.bind(this);
-    this.state = {isOpen: false};           // componentDidMount will trigger first load
-    this.toggle = this.toggle.bind(this);
+    this.toggleDetails = this.toggleDetails.bind(this);
+    this.toggleNotes = this.toggleNotes.bind(this);
   }
 
   // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
@@ -90,8 +95,13 @@ export default class WfModule extends React.Component {
     this.props['data-removeModule'](this.wf_module.id);
   }
 
-  toggle() {
-    this.setState({isOpen: !this.state.isOpen});
+  toggleDetails() {
+    this.setState(Object.assign({}, this.state, {detailsOpen: !this.state.detailsOpen}));
+  }
+
+  toggleNotes(e) {
+    e.stopPropagation();
+    this.setState(Object.assign({}, this.state, {showNotes: !this.state.showNotes}));
   }
 
   render() {
@@ -109,33 +119,41 @@ export default class WfModule extends React.Component {
         />
       });
 
-    var cardClass = this.props['data-selected'] ?
-      'card border-selected-module':
-      'card ';
-
     var inside = undefined;
-    if (this.state.isOpen)
+    if (this.state.detailsOpen)
       inside = <div className='wf-parameters'>{paramdivs}</div>;
+
+    var notes = undefined;
+    if (this.state.showNotes)
+      notes = <div className='' onClick={this.toggleNotes}>{this.wf_module.notes}</div>;
+
+    var notesIcon = undefined;
+    if (!this.state.showNotes)
+      notesIcon = 
+        <div className='button-icon-box' onClick={this.toggleNotes}>
+          <div className='icon-note button-icon' ></div>
+        </div>;
 
     // Putting it all together: name, status, parameters, output
     return (
       <div className='container' {...this.props} onClick={this.click}>
-        <div className={cardClass}>
+        <div className='card mb-2'>
           <div className='card-block p-1 module-card-wrapper'>
             {/* --- Everything but the status bar, on the left of card --- */}
             <div className='module-card-info pl-2 pr-2'>
+              {notes}
               <div 
                 className='module-card-header mb-2 pt-2 '
-                onClick={this.toggle}
+                onClick={this.toggleDetails}
               >
                 {/* TODO: attach icon names to modules, call via 'this.module.icon' */}
                 <div className='d-flex justify-content-start'>
-                  <div className='icon-URL'></div>
-                  <h4 className='text-center mb-0'>{this.module.name}</h4>
+                  <div className='icon-URL module-icon m-1'></div>
+                  <h4 className='text-center mb-0 ml-2'>{this.module.name}</h4>
                 </div>
                 {/* TODO: not necessary to pass in stopProp*/}
                 <div className='d-flex justify-content-end'>
-                  <div className='icon-note menu-icon p-2'></div>                
+                  {notesIcon}
                   <WfModuleContextMenu 
                     removeModule={ () => this.removeModule() }
                     stopProp={(e) => e.stopPropagation()}
@@ -146,7 +164,7 @@ export default class WfModule extends React.Component {
               </div>
               <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
               {/* --- Module details, will expand / collapse --- */}
-              <Collapse className='mt-1 pl-2 pr-2' isOpen={this.state.isOpen} >
+              <Collapse className='mt-1 pl-2 pr-2' isOpen={this.state.detailsOpen} >
                 {inside}
               </Collapse>  
             </div>
@@ -155,7 +173,6 @@ export default class WfModule extends React.Component {
               <StatusBar status={this.wf_module.status}/>
             </div>
           </div>
-
         </div>
       </div>
     ); 

@@ -33,8 +33,12 @@ export default class DataVersionSelect extends React.Component {
 
   // Takes a date string, interpreted as UTC, and produce a string for user display in user tz
   formatDate(datestr) {
+
     // interpret date string as UTC always (comes from server this way)
     var d = new Date(datestr + 'UTC');
+
+    // check if we have a valid date
+    if (isNaN(d.getTime())) return null;
 
     // Convert to milliseconds, then add tz offset (which is in minutes)
     var nd = new Date(d.getTime() + (60000*this.state.timezoneOffset));
@@ -98,8 +102,6 @@ export default class DataVersionSelect extends React.Component {
 
         <div className='open-modal'>
             {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}  
-           {/* {this.state.originalSelected}  */}
-           
         </div>        
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
           <ModalHeader toggle={this.toggleModal} >

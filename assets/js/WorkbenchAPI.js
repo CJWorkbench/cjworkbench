@@ -4,7 +4,7 @@
 import { csrfToken } from './utils'
 
 // All API calls which fetch data return a promise which returns JSON
-export default class WorkbenchAPI {
+class WorkbenchAPI {
 
   getWfModuleVersions(wf_module_id) {
     // NB need parens around the contents of the return, or this will fail miserably (return undefined)
@@ -30,3 +30,7 @@ export default class WorkbenchAPI {
       }))
   }
 }
+
+// Singleton API object for global use
+const api = new WorkbenchAPI();
+export default () => { return api; }

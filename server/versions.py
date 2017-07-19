@@ -1,18 +1,41 @@
-# Revision tracking and client notification methods
-
+# Undo, redo, and other version related things
+from server.models import Delta, Workflow
 from server.websockets import *
-from django.utils import timezone
 
-# --- Increment version, notify client of changes ---
+# Undo is pretty much just running workflow.last_delta backwards
+def WorkflowUndo(workflow):
+    delta = workflow.last_delta
 
-def next_workflow_version(workflow):
-    return workflow.revision + 1
+    # Undo, if not at the very beginning of undo chain
+    if delta:
+        delta.backward()
+        workflow.last_delta = delta.previous_delta
+        workflow.save()
 
-def bump_workflow_version(workflow, notify_client=True):
-    workflow.revision = next_workflow_version(workflow)
-    workflow.revision_date = timezone.now()
-    workflow.save()
-    if notify_client:
-        ws_client_rerender_workflow(workflow)
+        # oh, also update the version, and notify the client
+        notify_client_workflow_version_changed(workflow)
 
+
+# Redo is pretty much just running workflow.last_delta.next_delta forward
+def WorkflowRedo(workflow):
+
+    # if we are at very beginning of delta chain, find first delta from db
+    if workflow.last_delta:
+        next_delta = workflow.last_delta.next_delta
+    else:
+        next_delta = Delta.objects.filter(workflow=workflow).order_by('datetime').first()
+
+    # Redo, if not at very end of undo chain
+    if next_delta:
+        next_delta.forward()
+        workflow.last_delta = next_delta
+        workflow.save()
+
+        # oh, also update the version, and notify the client
+        notify_client_workflow_version_changed(workflow)
+
+
+# Trigger re-render on client side
+def notify_client_workflow_version_changed(workflow):
+    ws_client_rerender_workflow(workflow)
 
