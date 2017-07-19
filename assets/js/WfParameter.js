@@ -4,6 +4,7 @@ import React from 'react'
 import MenuParam from './MenuParam'
 import ChartParameter from './Chart'
 import ColumnSelector from './ColumnSelector'
+import ColumnRenamer from './ColumnRenamer'
 import PropTypes from 'prop-types'
 import DataVersionSelect from './DataVersionSelect'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
@@ -212,6 +213,21 @@ export default class WfParameter extends React.Component {
               </div>
             </div>
           );
+        } else if (this.props.p.parameter_spec.id_name == 'colrename') {
+          if (this.props.getParamText('newcolnames') == '')
+            var newNameCols = this.props.getParamText('colnames');
+          else
+            var newNameCols = this.props.getParamText('newcolnames');
+          var saveState = ( state => this.props.setParamText('newcolnames', state) );
+          return (
+            <div>
+              <div>{this.name}:</div>
+              <ColumnRenamer
+                newNameCols={newNameCols}
+                saveState={saveState}
+                getColNames={this.getInputColNames}
+                revision={this.props.revision} />
+            </div> );
         }
 
       default:
