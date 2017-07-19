@@ -231,6 +231,31 @@ class ChangeParameterCommand(Delta):
 
         return delta
 
+class ChangeWorkflowTitleCommand(Delta):
+    new_value = models.TextField('new_value')
+    old_value = models.TextField('old_value')
 
+    def forward(self):
+        self.workflow.set_name(self.new_value)
 
+    def backward(self):
+        self.workflow.set_name(self.old_value)
 
+    @staticmethod
+    def create(workflow, name):
+        old_name = workflow.name
+
+        description = 'Changed workflow name from ' + old_name + ' to ' + name
+
+        delta = ChangeWorkflowTitleCommand.objects.create(
+            workflow = workflow,
+            new_value = name,
+            old_value = workflow.name,
+            command_description = description
+        )
+
+        delta.forward()
+
+        notify_client_workflow_version_changed(workflow)
+
+        return delta

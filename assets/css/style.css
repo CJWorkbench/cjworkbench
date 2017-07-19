@@ -6,9 +6,9 @@ html {
 
 body {
   margin: 0px;
-  height: 100%;  
+  height: 100%;
   font-family: Avenir;
-  background-color: #f6f6f6;    
+  background-color: #f6f6f6;
   color: #686768;
 }
 
@@ -34,11 +34,11 @@ body {
 	line-height: 13px;
 }
 
-.data-light-gray {	
-  color: #A2A2A2;	
-  font-family: Avenir;	
-  font-size: 14px;	
-  font-weight: 500;	
+.data-light-gray {
+  color: #A2A2A2;
+  font-family: Avenir;
+  font-size: 14px;
+  font-weight: 500;
   line-height: 14px;
 }
 
@@ -162,7 +162,7 @@ body {
   color: #A2A2A2;
 }
 
-.action-button-active:hover, 
+.action-button-active:hover,
 .action-button-disabled:hover {
   background-color: #FFFFFF;
   color: #A2A2A2;
@@ -225,8 +225,8 @@ body {
 }
 
 .workflows-list {
-  border: 0;     
-  background-color: #f6f6f6;      
+  border: 0;
+  background-color: #f6f6f6;
 }
 
 .workflow-in-list {
@@ -254,7 +254,7 @@ body {
 }
 
 .menu-icon:active {
-  border: 1px solid #CECECE;  
+  border: 1px solid #CECECE;
   background-color: #EDECEC;
 }
 
@@ -286,7 +286,7 @@ body {
 }
 
 .modulestack-list {
-  background-color: #F2F2F2; 
+  background-color: #F2F2F2;
   padding: 10px;
   border: 1px solid #EDECEC;
 }
@@ -424,12 +424,12 @@ body {
 }
 
 .modal-footer {
-  background-color: #FAFAFA;  
+  background-color: #FAFAFA;
   border-top: 0;
 }
 
 /*. rectangle-12 in InVision mockup */
-.download-icon-box {  
+.download-icon-box {
 	height: 40px;
 	width: 58px;
 	border: 1px solid #EDECEC;
@@ -632,7 +632,7 @@ body {
   background-color: #FFFFFF;
   height: 40px;
   width: 100%;
-  margin: 20px 30px 20px 30px;  
+  margin: 20px 30px 20px 30px;
 }
 
 .version-active {
@@ -658,17 +658,17 @@ body {
 	font-size: 13px;
 	font-weight: 300;
 	line-height: 18px;
-  padding: 20px 30px 20px 30px;  
+  padding: 20px 30px 20px 30px;
 }
 
 .line-item-disabled {
 	height: 18px;
-	color: #3A3A3A;  
+	color: #3A3A3A;
 	font-family: Avenir;
 	font-size: 13px;
 	font-weight: 300;
 	line-height: 18px;
-  padding: 20px 30px 20px 30px;    
+  padding: 20px 30px 20px 30px;
 }
 
 .line-item-disabled:hover {
@@ -703,9 +703,17 @@ body {
 }
 
 #updateFreqPeriod {
-  display: inline;  
-  width: 30%;  
+  display: inline;
+  width: 30%;
 }
+
+/* Editable text field */
+.workflow-title {
+  border: none;
+  outline: none;
+  padding: 0;
+}
+
 
 /* Ugly borders to mark out divs, dev-only */
 .dev-box {

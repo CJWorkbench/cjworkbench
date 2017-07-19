@@ -7,6 +7,7 @@ import { WorkflowNavBar } from './navbar'
 import WfModule from './WfModule'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
+import EditableWorkflowName from './EditableWorkflowName'
 
 import { getPageID, csrfToken } from './utils'
 
@@ -91,7 +92,7 @@ export default class Workflow extends React.Component {
     if (this.props.workflow.wf_modules.length > 0) {
       outputPane = <OutputPane id={this.props.selected_wf_module} revision={this.props.workflow.revision}/>
     }
-    
+
     // We are a toolbar plus a sortable list of modules
     return (
       <div className="workflow-root">
@@ -99,7 +100,10 @@ export default class Workflow extends React.Component {
         <div className="workflow-container">
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
-              <h4>{this.props.workflow.name}</h4>
+              <EditableWorkflowName
+                value={this.props.workflow.name}
+                editClass="workflow-title h4"
+                wfId={this.props.workflow.id} />
             </div>
             <div className="modulestack-list w-75 mx-auto ">
               <SortableList
@@ -125,6 +129,3 @@ Workflow.propTypes = {
   addModule:          PropTypes.func,
   removeModule:       PropTypes.func,
 };
-
-
-

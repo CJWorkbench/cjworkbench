@@ -109,4 +109,3 @@ class Twitter(ModuleImpl):
         # we are done. save fetched data, and switch to it
         version = wfm.store_data(tweets.to_csv(index=False)) # index=False to prevent pandas from adding an index col
         ChangeDataVersionCommand.create(wfm, version)  # also notifies client
-
