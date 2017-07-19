@@ -4,14 +4,14 @@ import renderer from 'react-test-renderer'
 
 it('renders correctly', () => {
   const tree = renderer.create(
-    <WfHamburgerMenu/>
+    <WfHamburgerMenu workflowId={1}/>
   ).toJSON();
   expect(tree).toMatchSnapshot();
 });
 
 it('renders correctly for workflows list page', () => {
   const tree = renderer.create(
-    <WfHamburgerMenu workflowsPage/>
+    <WfHamburgerMenu />
   ).toJSON();
   expect(tree).toMatchSnapshot();
 });

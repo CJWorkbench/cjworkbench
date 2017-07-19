@@ -29,6 +29,36 @@ exports[`renders correctly 1`] = `
     >
        Your Workflows 
     </a>
+    <div>
+      <div
+        className="dropdown-divider"
+        onClick={[Function]}
+        tabIndex="-1"
+        type={undefined}
+      />
+      <button
+        className="dropdown-item"
+        onClick={[Function]}
+        tabIndex="0"
+        type="button"
+      >
+         Undo 
+      </button>
+      <button
+        className="dropdown-item"
+        onClick={[Function]}
+        tabIndex="0"
+        type="button"
+      >
+         Redo 
+      </button>
+      <div
+        className="dropdown-divider"
+        onClick={[Function]}
+        tabIndex="-1"
+        type={undefined}
+      />
+    </div>
     <a
       className="dropdown-item"
       href="http://blog.cjworkbench.org"

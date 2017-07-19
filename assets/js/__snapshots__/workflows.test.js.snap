@@ -13,9 +13,7 @@ exports[`renders correctly 1`] = `
           >
             CJ Workbench
           </h1>
-          <WfHamburgerMenu
-            workflowsPage={true}
-          >
+          <WfHamburgerMenu>
             <UncontrolledDropdown>
               <Dropdown
                 isOpen={false}
@@ -163,9 +161,7 @@ exports[`renders correctly 2`] = `
           >
             CJ Workbench
           </h1>
-          <WfHamburgerMenu
-            workflowsPage={true}
-          >
+          <WfHamburgerMenu>
             <UncontrolledDropdown>
               <Dropdown
                 isOpen={false}

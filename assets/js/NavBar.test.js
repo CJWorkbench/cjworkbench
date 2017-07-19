@@ -11,7 +11,7 @@ it('WorkflowListNavBar renders correctly', () => {
 
 it('WorkflowNavBar renders correctly', () => {
   const tree = renderer.create(
-    <WorkflowNavBar addButton={<div />} workflowTitle='Workflow Title'/>
+    <WorkflowNavBar addButton={<div />} workflowId={1} api={{}}/>
   ).toJSON();
   expect(tree).toMatchSnapshot();
 });
