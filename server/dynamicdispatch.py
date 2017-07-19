@@ -38,7 +38,7 @@ class DynamicDispatch:
             # has a requirements.txt file, the libraries within should be part of our python path.
 
             # insert expected path to python path
-            path_to_code = os.path.join(self.DYNAMIC_MODULES_BASE_DIRECTORY, wf_module.module_version.module.name,
+            path_to_code = os.path.join(self.DYNAMIC_MODULES_BASE_DIRECTORY, wf_module.module_version.module.id_name,
                                             wf_module.module_version.source_version_hash)
             sys.path.insert(0, path_to_code)
 

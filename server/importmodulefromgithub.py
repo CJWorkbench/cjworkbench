@@ -101,8 +101,8 @@ def validate_json(extension_file_mapping, current_path, directory):
 
     with open(os.path.join(current_path, directory, json_file)) as readable:
         module_config = json.load(readable)
-    if "name" not in module_config or "id_name" not in module_config or "category" not in module_config or \
-                    "parameters" not in module_config:
+    #note: parameters isn't a mandatory key. 
+    if "name" not in module_config or "id_name" not in module_config or "category" not in module_config:
         shutil.rmtree(os.path.join(current_path, directory))
         raise ValidationError("The module configuration isn't in the correct format. It should contain name, id_name, "
                       "category and parameters")
@@ -192,7 +192,7 @@ def validate_python_functions(destination_python_directory, destination_json_dir
     # "ImportError: No module named ..." probably because of a race condition/the time it takes for the system to
     # recognise the insert of the new path. There's probably a better solution though?
     sys.path.insert(0, destination_python_directory)
-    time.sleep(10)
+    time.sleep(2)
     imported_module = import_module(p)
     imported_class = inspect.getmembers(imported_module, inspect.isclass)
     if len(imported_class) > 1:
@@ -248,6 +248,7 @@ def import_module_from_github(url):
     extension_file_mapping = validate_module_structure(CURRENT_PATH, ROOT_DIRECTORY, directory)
 
     module_config, json_file = validate_json(extension_file_mapping, CURRENT_PATH, directory)
+    module_config["source_version"] = version
 
     python_file, destination_python_directory, destination_json_directory = \
         validate_python(extension_file_mapping, CURRENT_PATH, ROOT_DIRECTORY, directory, version)

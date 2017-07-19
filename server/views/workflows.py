@@ -93,7 +93,8 @@ def workflow_addmodule(request, pk, format=None):
         module = Module.objects.get(pk=module_id)
 
         # always add the latest version of a module (hence [0])
-        module_version = ModuleVersion.objects.filter(module=module)[0]
+        module_versions = ModuleVersion.objects.filter(module=module)
+        module_version=module_versions[len(module_versions)-1]
 
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
