@@ -80,6 +80,7 @@ var SortableList = React.createClass({
 
 
 export default class Workflow extends React.Component {
+
   render() {
     // Wait until we have a workflow to render
     if (this.props.workflow === undefined) {
@@ -96,7 +97,7 @@ export default class Workflow extends React.Component {
     // We are a toolbar plus a sortable list of modules
     return (
       <div className="workflow-root">
-        <WorkflowNavBar addButton={moduleMenu} workflowTitle={this.props.workflow.name}/>
+        <WorkflowNavBar addButton={moduleMenu} workflowId={this.props.workflow.id} api={this.props.api} />
         <div className="workflow-container">
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
@@ -124,8 +125,9 @@ export default class Workflow extends React.Component {
 }
 
 Workflow.propTypes = {
-  workflow:           PropTypes.object,
+  api:                PropTypes.object.isRequired,
+  workflow:           PropTypes.object,             // not required as fetched after page loads
   selected_wf_module: PropTypes.number,
-  addModule:          PropTypes.func,
-  removeModule:       PropTypes.func,
+  addModule:          PropTypes.func.isRequired,
+  removeModule:       PropTypes.func.isRequired
 };

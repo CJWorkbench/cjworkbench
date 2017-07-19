@@ -2,14 +2,18 @@
 # A single change to state of a workflow
 # You can also think of this as a "command." Contains a specification of what actually happened.
 
-from django.db import models
+from polymorphic.models import PolymorphicModel
 from server.models.Workflow import *
 from django.db import transaction
 
 # Base class of a single undoable/redoable action
-# Derived classes implement the actual mutations on the database
+# Derived classes implement the actual mutations on the database (via polymorphic forward()/backward())
 # To derive a command from Delta:
-class Delta(models.Model):
+#   - implement forward() and backward()
+#   - implement a static create() that takes whatever parameters define the action,
+#     creates an instance of the Delta subclass with tht info, and runs forward()
+#
+class Delta(PolymorphicModel):
 
     # These fields must be set by any child classes, when instantiating that class
     workflow = models.ForeignKey('Workflow', related_name='deltas', on_delete=models.CASCADE)  # delete if Workflow deleted

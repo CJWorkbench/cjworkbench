@@ -9,7 +9,8 @@ def WorkflowUndo(workflow):
     # Undo, if not at the very beginning of undo chain
     if delta:
         delta.backward()
-        workflow.last_delta = delta.previous_delta
+        workflow.refresh_from_db() # backward() may change it
+        workflow.last_delta = delta.prev_delta
         workflow.save()
 
         # oh, also update the version, and notify the client
@@ -28,6 +29,7 @@ def WorkflowRedo(workflow):
     # Redo, if not at very end of undo chain
     if next_delta:
         next_delta.forward()
+        workflow.refresh_from_db() # forward() may change it
         workflow.last_delta = next_delta
         workflow.save()
 

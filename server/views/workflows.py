@@ -10,6 +10,7 @@ from rest_framework.renderers import JSONRenderer
 from server.models import Module, ModuleVersion, Workflow, WfModule
 from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite
+from server.versions import WorkflowUndo, WorkflowRedo
 
 # ---- Workflows list page ----
 @login_required
@@ -115,8 +116,8 @@ def workflow_undo_redo(request, pk, action, format=None):
         return HttpResponseForbidden()
 
     if action=='undo':
-        UndoWorkflow(workflow)
+        WorkflowUndo(workflow)
     elif action=='redo':
-        RedoWorkflow(workflow)
+        WorkflowRedo(workflow)
 
     return Response(status=status.HTTP_204_NO_CONTENT)

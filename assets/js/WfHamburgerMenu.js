@@ -6,15 +6,23 @@ import PropTypes from 'prop-types'
 
 
 export default class WfHamburgerMenu extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
-  // \u2630 = hamburger menu in Unicode (actually, an I Ching trigram)
   render() {
-    var homeLink;
-    if (!this.props.workflowsPage)
+    var homeLink, undoRedo;
+
+    // If we are on the workflow page, we have undo and redo items
+    if (this.props.workflowId != undefined) {
       homeLink = <DropdownItem key={1} tag="a" href="/workflows"> Your Workflows </DropdownItem>;
+      undoRedo =
+        <div>
+          <DropdownItem divider key={100} />
+          <DropdownItem key={2} onClick={ () => { this.props.api.undo(this.props.workflowId)} } > Undo </DropdownItem>
+          <DropdownItem key={3} onClick={ () => { this.props.api.redo(this.props.workflowId)} } > Redo </DropdownItem>
+          <DropdownItem divider key={200} />
+        </div>;
+    }
+
+    // \u2630 = hamburger menu in Unicode (actually, an I Ching trigram)
 
     return (
        <UncontrolledDropdown>
@@ -24,8 +32,9 @@ export default class WfHamburgerMenu extends React.Component {
         </DropdownToggle>
         <DropdownMenu right>
           { homeLink }
-          <DropdownItem key={2} tag="a" href="http://blog.cjworkbench.org"> Help </DropdownItem>
-          <DropdownItem key={3} tag="a" href="/account/logout"> Logout </DropdownItem>
+          { undoRedo }
+          <DropdownItem key={4} tag="a" href="http://blog.cjworkbench.org"> Help </DropdownItem>
+          <DropdownItem key={5} tag="a" href="/account/logout"> Logout </DropdownItem>
         </DropdownMenu>
        </UncontrolledDropdown>
     );
@@ -33,5 +42,6 @@ export default class WfHamburgerMenu extends React.Component {
 }
 
 WfHamburgerMenu.propTypes = {
-  workflowsPage:  PropTypes.bool,
+  workflowId:   PropTypes.number,
+  api:          PropTypes.object
 };

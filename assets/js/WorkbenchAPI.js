@@ -6,6 +6,20 @@ import { csrfToken } from './utils'
 // All API calls which fetch data return a promise which returns JSON
 class WorkbenchAPI {
 
+  onParamChanged(paramID, newVal) {
+    return (
+      fetch('/api/parameters/' + paramID, {
+        method: 'patch',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(newVal)
+      }));
+  }
+
   getWfModuleVersions(wf_module_id) {
     // NB need parens around the contents of the return, or this will fail miserably (return undefined)
     return (
@@ -45,6 +59,29 @@ class WorkbenchAPI {
         })
       })
     )
+  }
+
+  undo(workflow_id) {
+    return (
+      fetch('/api/workflows/' + workflow_id + '/undo', {
+        method: 'put',
+        credentials: 'include',
+        headers: {
+          'X-CSRFToken': csrfToken
+        }
+      }))
+  }
+
+  redo(workflow_id) {
+    return (
+      fetch('/api/workflows/' + workflow_id + '/redo', {
+        method: 'put',
+        credentials: 'include',
+        headers: {
+          'X-CSRFToken': csrfToken
+        }
+      }))
+
   }
 }
 

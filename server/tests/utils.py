@@ -98,6 +98,10 @@ def load_module_def(filename):
         d = json.load(json_data)
     return d
 
+# Load module spec from filename, return module_version ready for use
+def load_module_version(filename):
+    return load_module_from_dict(load_module_def(filename))
+
 # Given a module spec, add it to a workflow. Create new workflow if null
 # Returns WfModule
 def load_and_add_module(workflow, module_spec):

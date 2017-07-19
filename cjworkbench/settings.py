@@ -89,6 +89,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'channels',
     'account',
+    'polymorphic'
 ]
 
 MIDDLEWARE = [

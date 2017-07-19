@@ -6,32 +6,24 @@ import { Provider, connect } from 'react-redux'
 import * as Actions from './workflow-reducer'
 import { getPageID, csrfToken } from './utils'
 import Workflow from './workflow'
+import workbenchAPI from './WorkbenchAPI'
 
 require('bootstrap/dist/css/bootstrap.css');
 require('../css/style.css');
 
+// Global API object, encapsulates all calls to the server
+const api = workbenchAPI();
 
 // ---- Workflow container ----
-
-function onParamChanged(paramID, newVal) {
-  console.log('Changing parameter ' + paramID);
-  fetch('/api/parameters/' + paramID, {
-    method: 'patch',
-    credentials: 'include',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken
-    },
-    body: JSON.stringify(newVal)
-  })
-}
 
 // Handles addModule (and any other actions that change top level workflow state)
 const mapStateToProps = (state) => {
   return {
     workflow: state.workflow,
     selected_wf_module: state.selected_wf_module,
+
+    // This is the top level dependency injection for all API calls on this page
+    api: api
   }
 }
 
@@ -44,7 +36,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(Actions.removeModuleAction(wf_module_id))
     },
     changeParam: (paramID, newVal) => {
-      onParamChanged(paramID, newVal)
+      api.onParamChanged(paramID, newVal)
     }
   }
 }
