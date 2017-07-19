@@ -59,8 +59,8 @@ def load_module_from_dict(d):
     module.dispatch=id_name
     module.source=d['source'] if 'source' in d else ""
     module.description = d['description'] if 'description' in d else ""
-    module.author = d['author']
-    module.link = d['link']
+    module.author = d['author'] if 'author' in d else "Workbench"
+    module.link = d['link'] if 'link' in d else ""
 
     module.save()
 
