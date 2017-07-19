@@ -623,7 +623,6 @@ body {
   background-color: #EDECEC;
 }
 
-
 /* Scrolling List Div */
 .scolling-list {
   width: 100%;
@@ -719,8 +718,104 @@ body {
   padding: 0;
 }
 
-
 /* Ugly borders to mark out divs, dev-only */
 .dev-box {
   border: 2px dotted purple;
+}
+
+.card .second-level {
+    margin-top: 0.3rem;
+    margin-bottom: 1rem;
+    margin-left: 0.5rem;
+    position: relative;
+    border: 3px;
+}
+
+.card .first-level {
+    margin-top: 0.3rem;
+    margin-bottom: 1rem;
+}
+
+.card .second-level .h2 {
+    height: 20px;
+    font-size: 17px;
+    line-height: 25px;
+    font-weight: bold;
+}
+
+.card .second-level .h3 {
+    height: 17px;
+    font-size: 17px;
+    line-height: 25px;
+    padding: 1px;
+}
+
+/* Start of CSS for the Module Library */
+.module-library {
+    height: calc(100% - 3.5rem);
+    width: 50%;
+    background-color: #F2F2F2;
+    position: fixed;
+    font-family: Avenir;
+    color: #686768;
+}
+
+.module-library .nav-bar {
+    background-color: #38768A;
+    height: 5rem;
+    flex-grow: 1;
+    flex-basis: 0;
+    min-width: 0;
+    position: relative;    
+    border-bottom: 1px solid;
+    text-align: left;
+    padding: 10px;
+}
+
+.module-library .h1 {
+    height: 20px;
+    font-size: 18px;
+    line-height: 15px;
+    padding: 5px;
+}
+
+.module-library .h2 .symbols {
+    font-weight: bold; 
+}
+
+.module-library .nav-bar .h1 { /* Title of Module Library navigation bar */
+    color: #FFFFFF;
+}
+
+.module-library .h2 { /* Category */ 
+    height: 25px;
+    font-size: 16px;
+    line-height: 25px;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
+    position: relative;
+}
+
+.module-library .h3 { /* Module name */
+    height: 14px;
+    font-size: 14px;
+    line-height: 15px;
+    font-weight: bold;
+    padding: 15px;
+}
+
+.module-library .h4 { /* by/version */
+    height: 12px;
+    font-size: 12px;
+    line-height: 13px;
+    font-weight: bold;
+    padding: 15px;
+}
+
+.module-library .p {  /* Description text */
+    height: 14px;
+    font-size: 13px;
+    line-height: 13px;
+    padding: 7px;
 }

@@ -30,7 +30,6 @@ export class WorkflowNavBar extends React.Component {
     return (
       <div>
         <nav className="navbar">
-          {this.props.addButton}
           <ImportModuleFromGitHub />
           <WfHamburgerMenu workflowId={this.props.workflowId} api={this.props.api} />
         </nav>
@@ -41,7 +40,6 @@ export class WorkflowNavBar extends React.Component {
 
 WorkflowNavBar.propTypes = {
   api:              PropTypes.object.isRequired,
-  addButton:        PropTypes.object.isRequired,
   workflowId:       PropTypes.number.isRequired
 };
 

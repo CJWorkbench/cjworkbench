@@ -35,7 +35,7 @@ class ParameterValSerializer(serializers.ModelSerializer):
 class ModuleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Module
-        fields = ('id', 'name', 'category')
+        fields = ('id', 'name', 'category', 'description')
 
 class ModuleVersionSerializer(serializers.ModelSerializer):
     module = ModuleSerializer(many=False, read_only=True)
