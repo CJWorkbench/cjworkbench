@@ -54,6 +54,13 @@ def retrieve_project_name(url):
         directory = directory[0:-4]
     return directory
 
+def retrieve_author(url):
+    if url[-1] == '/':
+        url = url[:-1]
+    # - extract the account name from the url
+    account = url.rsplit('/', 2)[1]
+    return account
+
 def validate_module_structure(current_path, root_directory, directory):
     # check that all the files we need exist, and if so, validate them.
     # - get a list of all the file name
@@ -249,6 +256,9 @@ def import_module_from_github(url):
 
     module_config, json_file = validate_json(extension_file_mapping, CURRENT_PATH, directory)
     module_config["source_version"] = version
+    module_config["link"] = url
+    module_config["author"] = module_config["author"] if "author" in module_config else retrieve_author(url)
+
 
     python_file, destination_python_directory, destination_json_directory = \
         validate_python(extension_file_mapping, CURRENT_PATH, ROOT_DIRECTORY, directory, version)

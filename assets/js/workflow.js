@@ -2,12 +2,13 @@
 
 import React from 'react'
 import { sortable } from 'react-sortable'
-import ModuleMenu from './ModuleMenu'
+import ModuleLibrary from './ModuleLibrary'
 import { WorkflowNavBar } from './navbar'
 import WfModule from './WfModule'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
 import EditableWorkflowName from './EditableWorkflowName'
+import { Button } from 'reactstrap'
 
 import { getPageID, csrfToken } from './utils'
 
@@ -15,8 +16,7 @@ require('bootstrap/dist/css/bootstrap.css');
 require('../css/style.css');
 
 
-// ---- Sortable Modules ----
-
+// ---- Sortable WfModules within the workflow ----
 var SortableWfModule= sortable(WfModule);
 
 var SortableList = React.createClass({
@@ -81,30 +81,60 @@ var SortableList = React.createClass({
 
 export default class Workflow extends React.Component {
 
+  constructor(props: iProps) {
+    super(props);
+    this.state = { moduleLibraryVisible: false };
+    this.toggleModuleLibrary = this.toggleModuleLibrary.bind(this)
+  }
+
+  // toggles the Module Library between visible or not
+  toggleModuleLibrary() {
+    this.setState(oldState => ({
+      moduleLibraryVisible: !oldState.moduleLibraryVisible
+    }));
+  }
+
   render() {
     // Wait until we have a workflow to render
     if (this.props.workflow === undefined) {
       return null;
     }
 
-    var moduleMenu = <ModuleMenu addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}/>
-
     var outputPane = null;
     if (this.props.workflow.wf_modules.length > 0) {
       outputPane = <OutputPane id={this.props.selected_wf_module} revision={this.props.workflow.revision}/>
     }
 
-    // We are a toolbar plus a sortable list of modules
+    var moduleLibrary = <ModuleLibrary 
+          addModule={module_id => this.props.addModule(module_id, 
+                        this.props.workflow.wf_modules.length)} 
+          workflow={this} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner. 
+          />
+
+    // Choose whether we want to display the Module Library or the Output Pane.
+    var displayPane = null; 
+    if (this.state.moduleLibraryVisible) {
+        displayPane = moduleLibrary;
+    } else {
+      displayPane = outputPane;
+    }
+
+    // Takes care of both, the left-hand side and the right-hand side of the
+    // UI. The modules in the workflow are displayed on the left (vertical flow)
+    // and the output of the modules on the right. 
+    // Instead of the output, we see the Module Library UI if the user
+    // invokes the Module Library. 
     return (
       <div className="workflow-root">
-        <WorkflowNavBar addButton={moduleMenu} workflowId={this.props.workflow.id} api={this.props.api} />
-        <div className="workflow-container">
+<WorkflowNavBar workflowId={this.props.workflow.id} api={this.props.api} /><div className="workflow-container">
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
               <EditableWorkflowName
                 value={this.props.workflow.name}
                 editClass="workflow-title h4"
                 wfId={this.props.workflow.id} />
+              <Button onClick={this.toggleModuleLibrary.bind(this)} 
+                  className='button-blue'>Add Module</Button>
             </div>
             <div className="modulestack-list w-75 mx-auto ">
               <SortableList
@@ -116,7 +146,7 @@ export default class Workflow extends React.Component {
             </div>
           </div>
           <div className="outputpane-right">
-            {outputPane}
+            {displayPane}
           </div>
         </div>
       </div>

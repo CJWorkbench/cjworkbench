@@ -58,7 +58,6 @@ exports[`WorkflowNavBar renders correctly 1`] = `
   <nav
     className="navbar"
   >
-    <div />
     <form
       onSubmit={[Function]}
     >
