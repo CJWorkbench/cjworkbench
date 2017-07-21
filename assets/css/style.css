@@ -19,6 +19,7 @@ body {
 
 /* ---- Text Type styles: cross-module ----- */
 /* To Refactor: DRY out the repitition */
+/* TODO: Match names to official style guide */
 
 .title {
 	height: 15px;

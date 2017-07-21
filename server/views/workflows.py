@@ -68,7 +68,6 @@ def workflow_detail(request, pk, format=None):
             ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
         except Exception as e:
             return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
-
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':

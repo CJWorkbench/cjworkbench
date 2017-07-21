@@ -257,3 +257,32 @@ class ChangeWorkflowTitleCommand(Delta):
         notify_client_workflow_version_changed(workflow)
 
         return delta
+
+class ChangeWfModuleNotesCommand(Delta):
+    wf_module = models.ForeignKey(WfModule)
+    new_value = models.TextField('new_value')
+    old_value = models.TextField('old_value')
+
+    def forward(self):
+        self.wf_module.set_notes(self.new_value)
+
+    def backward(self):
+        self.wf_module.set_notes(self.old_value)
+
+    @staticmethod
+    def create(wf_module, notes):
+        old_value = wf_module.notes
+        description = 'Changed workflow module note from ' + old_value + ' to ' + notes
+
+        delta = ChangeWfModuleNotesCommand.objects.create(
+            workflow = wf_module.workflow,
+            wf_module = wf_module,
+            new_value = notes,
+            old_value = old_value,
+            command_description = description
+        )
+
+        delta.forward()
+        notify_client_workflow_version_changed(wf_module.workflow)
+
+        return delta

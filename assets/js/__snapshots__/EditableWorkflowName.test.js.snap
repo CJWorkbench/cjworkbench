@@ -1,0 +1,27 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditableWorkflowName renders correctly 1`] = `
+<EditableWorkflowName
+  editClass=""
+  value="Test Title"
+  wfId={1}
+>
+  <h4>
+    <RIEInput
+      change={[Function]}
+      className=""
+      propName="value"
+      value="Test Title"
+    >
+      <span
+        className=""
+        onClick={[Function]}
+        onFocus={[Function]}
+        tabIndex="0"
+      >
+        Test Title
+      </span>
+    </RIEInput>
+  </h4>
+</EditableWorkflowName>
+`;

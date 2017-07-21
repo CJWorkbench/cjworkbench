@@ -1,4 +1,4 @@
-from server.models import AddModuleCommand,DeleteModuleCommand,ChangeDataVersionCommand
+from server.models import AddModuleCommand,DeleteModuleCommand,ChangeDataVersionCommand,ChangeWfModuleNotesCommand
 from django.test import TestCase
 from server.tests.utils import *
 
@@ -122,6 +122,30 @@ class ChangeDataVersionCommandTests(TestCase):
         # workflow revision should have been incremented
         self.workflow.refresh_from_db()
         self.assertGreater(self.workflow.revision(), start_rev)
+
+        # undo
+        cmd.backward()
+        self.assertEqual(self.wfm.get_stored_data_version(), secondver)
+
+        # redo
+        cmd.forward()
+        self.assertEqual(self.wfm.get_stored_data_version(), firstver)
+
+
+class ChangeWfModuleNotesCommandTests(TestCase):
+    def setUp(self):
+        self.workflow = create_testdata_workflow()
+        self.wfm = WfModule.objects.first()
+
+    # Change notes, then undo/redo
+    def test_change_notes(self):
+        # Create two data versions, use the second
+        firstver = self.wfm.set_notes('text1')
+        secondver = self.wfm.set_notes('text2')
+
+        # Change back to first version
+        cmd = ChangeWfModuleNotesCommand.create(self.wfm, 'text1')
+        self.assertEqual(self.wfm.get_stored_data_version(), firstver)
 
         # undo
         cmd.backward()

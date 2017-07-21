@@ -1,0 +1,29 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EditableNotes renders correctly 1`] = `
+<EditableNotes
+  editClass=""
+  value="testing"
+  wf_module_id={1}
+>
+  <div>
+    <RIETextArea
+      change={[Function]}
+      className=""
+      propName="value"
+      value="testing"
+    >
+      <span
+        className=""
+        onClick={[Function]}
+        onFocus={[Function]}
+        tabIndex="0"
+      >
+        <span>
+          testing
+        </span>
+      </span>
+    </RIETextArea>
+  </div>
+</EditableNotes>
+`;

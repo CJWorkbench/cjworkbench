@@ -146,6 +146,20 @@ class WorkflowTests(LoggedInTestCase):
         self.assertEqual(Workflow.objects.filter(name='Workflow 1').count(), 0)
 
 
-
+    # test Wf Module Notes change API
+    def test_workflow_title_post(self):
+        pk_workflow = Workflow.objects.get(name='Workflow 1').id        
+        request = self.factory.post('/api/workflows/%d' % pk_workflow,
+                                   {'newName': 'Billy Bob Thornton'})
+        force_authenticate(request, user=self.user)
+        response = workflow_detail(request, pk=pk_workflow)
+        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
+        
+        # see that we get the new value back
+        request = self.factory.get('/api/wfmodules/%d/' % pk_workflow,)
+        force_authenticate(request, user=self.user)
+        response = workflow_detail(request,  pk=pk_workflow)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], 'Billy Bob Thornton')
 
 

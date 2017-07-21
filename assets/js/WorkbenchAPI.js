@@ -44,6 +44,23 @@ class WorkbenchAPI {
       }))
   }
 
+  // experimental, not yet proven to work
+  setWfModuleNotes(wf_module_id, text) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id, {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          notes: text
+        })
+      }))
+  }
+
   setWfName(wfId, newName) {
     return (
       fetch('/api/workflows/' + wfId, {

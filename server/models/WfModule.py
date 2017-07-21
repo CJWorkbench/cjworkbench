@@ -37,8 +37,8 @@ class WfModule(models.Model):
 
     order = models.IntegerField()
 
+    # DO NOT use null=True, causes problems in test
     notes = models.TextField(
-        null=True, 
         blank=True)
 
     stored_data_version = models.CharField(
@@ -177,7 +177,10 @@ class WfModule(models.Model):
             ws_client_rerender_workflow(self.workflow)
         self.save()
 
-
+    def set_notes(self, notes):
+        self.notes = notes
+        self.save()
+        
 
 
 

@@ -87,17 +87,21 @@ class WfModuleTests(LoggedInTestCase):
         module_version = ModuleVersion.objects.get(module = Module.objects.get(name='Module 1'))
         pk_wf_module = WfModule.objects.get(workflow_id=workflow_id,
                                            module_version = module_version).id
+        notes = WfModule.objects.get(workflow_id=workflow_id,
+                                           module_version = module_version).notes
 
         response = self.client.get('/api/wfmodules/%d/' % pk_wf_module)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['id'], pk_wf_module)
         self.assertEqual(response.data['workflow'], workflow_id)
+        self.assertEqual(response.data['notes'], notes)        
         self.assertEqual(response.data['module_version']['module']['id'], module_id)
         self.assertEqual(response.data['status'], WfModule.READY)
         self.assertEqual(response.data['error_msg'], '')
 
         response = self.client.get('/api/wfmodules/%d/' % 10000)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
 
 
     def test_wf_module_render_get(self):
@@ -215,3 +219,21 @@ class WfModuleTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.wfmodule1.refresh_from_db()
         self.assertEqual(self.wfmodule1.get_stored_data_version(), secondver)
+
+
+    # test Wf Module Notes change API
+    def test_wf_module_notes_post(self):
+        request = self.factory.post('/api/wfmodules/%d' % self.wfmodule1.id,
+                                   {'notes': 'wow such doge'})
+        force_authenticate(request, user=self.user)
+        response = wfmodule_detail(request, pk=self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
+        
+        # see that we get the new value back
+        request = self.factory.get('/api/wfmodules/%d/' % self.wfmodule1.id)
+        force_authenticate(request, user=self.user)
+        response = wfmodule_detail(request, pk=self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['notes'], 'wow such doge')
+
+

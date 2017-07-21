@@ -1,4 +1,4 @@
-from server.models import WfModule,ModuleVersion,ReorderModulesCommand
+from server.models import WfModule,ModuleVersion,ReorderModulesCommand,ChangeWorkflowTitleCommand
 from django.test import TestCase
 from server.tests.utils import *
 
@@ -69,3 +69,26 @@ class ReorderModulesCommandTests(TestCase):
 
         with self.assertRaises(ValueError):
             ReorderModulesCommand.create(self.workflow, missing_order)
+
+
+class ChangeWorkflowTitleCommandTests(TestCase):
+    def setUp(self):
+        self.workflow = create_testdata_workflow()
+
+    # Change notes, then undo/redo
+    def test_change_title(self):
+        # Create two data versions, use the second
+        firstver = self.workflow.set_name('title1')
+        secondver = self.workflow.set_name('title2')
+
+        # Change back to first version
+        cmd = ChangeWorkflowTitleCommand.create(self.workflow, 'title1')
+        self.assertEqual(self.workflow.name, 'title1')
+
+        # undo
+        cmd.backward()
+        self.assertEqual(self.workflow.name, 'title2')
+
+        # redo
+        cmd.forward()
+        self.assertEqual(self.workflow.name, 'title1')
