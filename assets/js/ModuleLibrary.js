@@ -1,10 +1,11 @@
-import PropTypes from 'prop-types'
-import React from 'react'
-import { Button } from 'reactstrap'
-import { sortable } from 'react-sortable'
-import ModuleCategory from './ModuleCategory'
-import ImportModuleFromGitHub from './ImportModuleFromGitHub'
-import Module from './Module'
+import PropTypes from 'prop-types';
+import React from 'react';
+import { Button } from 'reactstrap';
+import { sortable } from 'react-sortable';
+import ModuleCategory from './ModuleCategory';
+import ImportModuleFromGitHub from './ImportModuleFromGitHub';
+import Module from './Module';
+import ModuleSearch from './ModuleSearch';
 
 var SortableCategories = sortable(ModuleCategory);
 
@@ -28,9 +29,9 @@ var CategoriesList = React.createClass({
     }, this);
     return (
       <div className="list">{listItems}</div>
-    )
+    );
   }
-})
+});
 
 /**
  * Contains the Module Library. The Module Library is effectively the place
@@ -55,7 +56,7 @@ export default class ModuleLibrary extends React.Component {
     this.addModule = this.props.addModule.bind(this);
     this.workflow = this.props.workflow; 
 
-    this.setImportFromGitHubComponentVisibility = this.setImportFromGitHubComponentVisibility.bind(this)
+    this.setImportFromGitHubComponentVisibility = this.setImportFromGitHubComponentVisibility.bind(this);
   }
 
   /**
@@ -81,22 +82,13 @@ export default class ModuleLibrary extends React.Component {
       .then(json => {
         // Sort modules – first by category, then by name
         json.sort((a, b) => {
-          if (a.category > b.category)
-            return 1;
-          else if (a.category < b.category)
-            return -1;
-          else if (a.name > b.name)
-            return 1;
-          else if (a.name < b.name)
-            return -1;
-          else
-            return 0;
+          if (a.category > b.category)            { return 1; }          else if (a.category < b.category)            { return -1; }          else if (a.name > b.name)            { return 1; }          else if (a.name < b.name)            { return -1; }          else            { return 0; }
         });
-        _this.setState({ items: json })
+        _this.setState({ items: json });
       })
       .catch((error) => {
         console.log('Unable to retrieve modules to construct the Module Library.', error);
-      })
+      });
   }
 
   itemClick(event) {
@@ -138,7 +130,7 @@ export default class ModuleLibrary extends React.Component {
         id={item.id}
         addModule={this.props.addModule}
         workflow={this.props.workflow}
-      />
+      />;
 
       if (previousCategory == null) {
         previousCategory = item.category;
@@ -148,7 +140,7 @@ export default class ModuleLibrary extends React.Component {
         let moduleCategory = <ModuleCategory
           key={previousCategory}
           modules={modulesByCategory}
-          />
+          />;
         categories.push(moduleCategory);
         modulesByCategory = [];
         previousCategory = item.category;
@@ -160,24 +152,24 @@ export default class ModuleLibrary extends React.Component {
     let moduleCategory = <ModuleCategory
       key={previousCategory}
       modules={modulesByCategory}
-      />
+      />;
     categories.push(moduleCategory);
 
     // Import from GitHub component 
-    let importFromGitHub = <ImportModuleFromGitHub url="" moduleLibrary={this}/>
+    let importFromGitHub = <ImportModuleFromGitHub url="" moduleLibrary={this}/>;
 
     var display = null; 
     var displayClassName = null;
 
     if (this.state.importFromGitHubVisible) {
-      displayClassName = "import-module";
+      displayClassName = 'import-module';
       display = importFromGitHub;
     } else {
-      displayClassName = "import-module-button";
+      displayClassName = 'import-module-button';
       display = <Button className='button-blue' onClick={() =>
         this.setImportFromGitHubComponentVisibility(true)}> 
         Import from GitHub
-        </Button>
+        </Button>;
     }
 
     return (
@@ -193,11 +185,11 @@ export default class ModuleLibrary extends React.Component {
         />
         </div>
 
-    )
+    );
   }
 }
 
 ModuleLibrary.propTypes = {
-  addModule:  PropTypes.func,
+  addModule: PropTypes.func,
   workflow: PropTypes.object,
 };
