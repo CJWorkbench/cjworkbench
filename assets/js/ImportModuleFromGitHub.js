@@ -1,5 +1,5 @@
 import React from 'react'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import { Button, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 import PropTypes from 'prop-types'
 
 import { csrfToken } from './utils'
@@ -12,6 +12,21 @@ export default class ImportModuleFromGitHub extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.cancel = this.cancel.bind(this);
+    this.onKeyPress = this.keyPress.bind(this);
+
+    this.moduleLibrary = this.props.moduleLibrary;
+  }
+
+  keyPress(event) {
+    event.preventDefault(); // stops the page from refreshing... someday I'll understand why. 
+    if (e.key == 'Enter') {
+      handleSubmit(event);
+    }
+  }
+
+  cancel(event) {
+    this.moduleLibrary.setImportFromGitHubComponentVisibility(false);
   }
 
   handleChange(event) {
@@ -19,6 +34,7 @@ export default class ImportModuleFromGitHub extends React.Component {
   }
 
   handleSubmit(event) {
+      event.preventDefault(); // stops the page from refreshing... someday I'll understand why. 
       var url = '/api/importfromgithub/';
       var eventData = {'url': this.state.url};
       fetch(url, {
@@ -36,11 +52,21 @@ export default class ImportModuleFromGitHub extends React.Component {
   render() {
     return (
       <form onSubmit={this.handleSubmit}>
-        <label>
-          &nbsp; Import module from GitHub: &nbsp;
-          <input type="text" value={this.state.value} onChange={this.handleChange} />
-        </label>
-        <input type="submit" value="Import" />
+        <div className="import-module-label">
+          Import module from GitHub:
+          <input type="text" 
+                 className="data-paragraph-g text-field mt-2"
+                 value={this.state.value} 
+                 onChange={this.handleChange} 
+                 onKeyPress={this.handleChange}
+                 />
+        </div>
+        <div className="import-module-buttons">
+          <Button onClick={this.cancel.bind(this)} 
+            className='button-blue'>Cancel</Button>
+          <Button onClick={this.handleSubmit.bind(this)} 
+            className='button-blue'>Submit</Button>
+        </div>
       </form>
     );
   }
@@ -50,4 +76,3 @@ export default class ImportModuleFromGitHub extends React.Component {
 ImportModuleFromGitHub.propTypes = {
   url:  PropTypes.string,
 };
-

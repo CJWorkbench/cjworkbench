@@ -210,7 +210,7 @@ body {
 
 .navbar {
   height: 3.5rem;
-  position: fixed;
+  position: absolute;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -830,98 +830,152 @@ body {
 }
 
 .card .second-level {
-    margin-top: 0.3rem;
-    margin-bottom: 1rem;
-    margin-left: 0.5rem;
-    position: relative;
-    border: 3px;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
+  margin-left: 0.5rem;
+  position: relative;
+  border: 3px;
 }
 
 .card .first-level {
-    margin-top: 0.3rem;
-    margin-bottom: 1rem;
+  margin-top: 0.3rem;
+  margin-bottom: 1rem;
 }
 
 .card .second-level .h2 {
-    height: 20px;
-    font-size: 17px;
-    line-height: 25px;
-    font-weight: bold;
+  height: 20px;
+  font-size: 17px;
+  line-height: 25px;
+  font-weight: bold;
 }
 
 .card .second-level .h3 {
-    height: 17px;
-    font-size: 17px;
-    line-height: 25px;
-    padding: 1px;
+  height: 17px;
+  font-size: 17px;
+  line-height: 25px;
+  padding: 1px;
 }
 
 /* Start of CSS for the Module Library */
 .module-library {
-    height: calc(100% - 3.5rem);
-    width: 50%;
-    background-color: #F2F2F2;
-    position: fixed;
-    font-family: Avenir;
-    color: #686768;
+  height: calc(100% - 3.5rem);
+  width: 50%;
+  background-color: #F2F2F2;
+  position: fixed;
+  font-family: Avenir;
+  color: #686768;
+  overflow-y: auto;
+  float:left;
+  padding: 20px;
 }
 
 .module-library .nav-bar {
-    background-color: #38768A;
-    height: 5rem;
-    flex-grow: 1;
-    flex-basis: 0;
-    min-width: 0;
-    position: relative;    
-    border-bottom: 1px solid;
-    text-align: left;
-    padding: 10px;
+  background-color: #577485;
+  height: 113px;
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
+  position: relative;    
+  border-bottom: 1px solid;
+  text-align: left;
+  padding: 10px;
 }
 
 .module-library .h1 {
-    height: 20px;
-    font-size: 18px;
-    line-height: 15px;
-    padding: 5px;
+  height: 18px;
+  font-size: 24px;
+  font-weight: 300;
+  line-height: 18px;
+  padding: 20px;
 }
 
 .module-library .h2 .symbols {
-    font-weight: bold; 
+  font-weight: bold; 
 }
 
 .module-library .nav-bar .h1 { /* Title of Module Library navigation bar */
-    color: #FFFFFF;
+  color: #FFFFFF;
 }
 
-.module-library .h2 { /* Category */ 
-    height: 25px;
-    font-size: 16px;
-    line-height: 25px;
-    margin-top: 1rem;
-    margin-bottom: 1rem;
-    margin-left: 1rem;
-    position: relative;
+.module-category {	
+  height: 20px;	
+  color: #686768;	
+  font-family: Avenir;
+  font-size: 16px;	
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  margin-left: 1rem;
+  line-height: 13px;
+  position: relative;
 }
 
-.module-library .h3 { /* Module name */
-    height: 14px;
-    font-size: 14px;
-    line-height: 15px;
-    font-weight: bold;
-    padding: 15px;
+.module-name {	
+  height: 15px;	
+  color: #686768;	
+  font-family: Avenir;	
+  font-size: 15px;	
+  font-weight: 500;	
+  line-height: 15px;
 }
 
-.module-library .h4 { /* by/version */
-    height: 12px;
-    font-size: 12px;
-    line-height: 13px;
-    font-weight: bold;
-    padding: 15px;
+.module-description {	
+  height: 10px;	
+  width: 460.93px;	
+  color: #686768;	
+  font-family: Avenir;	
+  font-size: 13px;	
+  font-weight: 300;	
+  line-height: 22px;
+  margin-top: 10px;
 }
 
-.module-library .p {  /* Description text */
-    height: 14px;
-    font-size: 13px;
-    line-height: 13px;
-    padding: 7px;
+.module-metadata {	
+  height: 15px;	
+  color: #A2A2A2;	
+  font-family: Avenir;	
+  font-size: 14px;	
+  font-weight: 900;	
+  line-height: 12px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  flex-direction: horizontal;
+}
+
+.import-module {
+  height: 200px; 
+  width: 450px;
+  color: #686768;
+  float: right;
+  margin-right: 20px;
+  font-size: 14px;
+  background-color: #FFFFFF;
+  padding: 20px;
+  box-shadow: 3px 3px 3px #888888;
+  position: fixed;
+  z-index: 1;
+  right: 40px;
+  margin-top: 10px;
+}
+
+.import-module-label {	
+  height: 40px;	
+  color: #686768;	
+  font-family: Avenir;
+  font-weight: 400;
+  font-size: 16px;	
+  padding: 20px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.import-module-button {
+  float: right;
+  height: 40px;
+}
+
+.import-module-buttons {
+  float: right;
+  margin-top: 55px;
+  justify-content: flex-end;
+  padding: 20px;
 }

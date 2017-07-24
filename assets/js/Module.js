@@ -17,6 +17,7 @@ export default class Module extends React.Component {
       name: props.key,
       description: props.description,
       category: props.category,
+      author: props.author,
     };
     this.itemClick = this.itemClick.bind(this);
     this.addModule = this.props.addModule.bind(this);
@@ -28,6 +29,7 @@ export default class Module extends React.Component {
     this.name = props['data-name'];
     this.description = props['data-description'];
     this.category = props['data-category'];
+    this.author = props['data-author'];
     this.id = props['data-id'];
   }
 
@@ -40,6 +42,8 @@ export default class Module extends React.Component {
   render() {
     var moduleName = this.props['data-name']; // name of module 
     var description = this.props['data-description'];
+    var author = this.props['data-author'];
+    var metadata = "By " + author
 
     return (
       <div className='container'>
@@ -51,8 +55,9 @@ export default class Module extends React.Component {
                 onClick={this.itemClick}
               > 
                 <div className='second-level'>
-                  <div className='h1'>{moduleName}</div>
-                  <div className='p'>{description}</div>
+                  <div className='module-name'>{moduleName}</div>
+                  <div className='module-metadata'>{metadata}</div>
+                  <div className='module-description'>{description}</div>
                 </div>
               </div>
             </div>

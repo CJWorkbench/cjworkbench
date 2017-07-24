@@ -23,7 +23,7 @@ var ModulesList = React.createClass({
   render() {
     // defensive coding because otherwise things blow up for some reason. 
     if (!this.props || !this.props.data) {
-      console.log("Something's gone terribly wrong.")
+      console.log("Something's gone terribly wrong, and we don't have any modules to render.")
       return (
         <div className="list"></div>
       )
@@ -34,6 +34,7 @@ var ModulesList = React.createClass({
           key={item.key}
           description={item.props.description}
           category={item.props.category}
+          author={item.props.author}
           items={this.props}
           sortId={item.key}
           outline="list"
@@ -42,6 +43,7 @@ var ModulesList = React.createClass({
             'data-description': item.props.description,
             'data-category': item.props.category,
             'data-id': item.props.id,
+            'data-author': item.props.author,
             'addModule': item.props.addModule,
             'workflow': item.props.workflow,
           }}
@@ -98,7 +100,7 @@ export default class ModuleCategory extends React.Component {
     return (
       <div className='card'>
           <div className='first-level'>    
-            <div className='h2' onClick={this.toggleCollapse}>
+            <div className='module-category' onClick={this.toggleCollapse}>
               <b>{symbol}</b> {categoryName}
             </div>
             <Collapse className='mt-1 pl-2 pr-2' isOpen={isOpen}>

@@ -1,7 +1,9 @@
 import PropTypes from 'prop-types'
 import React from 'react'
+import { Button } from 'reactstrap'
 import { sortable } from 'react-sortable'
 import ModuleCategory from './ModuleCategory'
+import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import Module from './Module'
 
 var SortableCategories = sortable(ModuleCategory);
@@ -47,10 +49,13 @@ export default class ModuleLibrary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      items: []
+      items: [], 
+      importFromGitHubVisible: false,
     };
     this.addModule = this.props.addModule.bind(this);
-    this.workflow = this.props.workflow;
+    this.workflow = this.props.workflow; 
+
+    this.setImportFromGitHubComponentVisibility = this.setImportFromGitHubComponentVisibility.bind(this)
   }
 
   /**
@@ -99,6 +104,16 @@ export default class ModuleLibrary extends React.Component {
   }
 
   /**
+   * Sets the visibility of the "Import from GitHub" component.
+   */
+  setImportFromGitHubComponentVisibility(isVisible) {
+    this.setState(oldState => ({
+      importFromGitHubVisible: isVisible
+    }));
+  }
+
+
+  /**
    * Renders the Module Library, i.e. a collection of <Module Category>, 
    * which in turn is a collection of <Module>. 
    * 
@@ -119,6 +134,7 @@ export default class ModuleLibrary extends React.Component {
         key={item.name}
         description={item.description}
         category={item.category}
+        author={item.author}
         id={item.id}
         addModule={this.props.addModule}
         workflow={this.props.workflow}
@@ -147,14 +163,34 @@ export default class ModuleLibrary extends React.Component {
       />
     categories.push(moduleCategory);
 
+    // Import from GitHub component 
+    let importFromGitHub = <ImportModuleFromGitHub url="" moduleLibrary={this}/>
+
+    var display = null; 
+    var displayClassName = null;
+
+    if (this.state.importFromGitHubVisible) {
+      displayClassName = "import-module";
+      display = importFromGitHub;
+    } else {
+      displayClassName = "import-module-button";
+      display = <Button className='button-blue' onClick={() =>
+        this.setImportFromGitHubComponentVisibility(true)}> 
+        Import From GitHub
+        </Button>
+    }
+
     return (
       <div className="module-library">
         <div className="nav-bar">
           <div className="h1">Module Library</div>
+          <div className={displayClassName}>
+            {display}
+          </div>
         </div>
-              <CategoriesList
-                data={categories}
-              />
+        <CategoriesList
+          data={categories}
+        />
         </div>
 
     )

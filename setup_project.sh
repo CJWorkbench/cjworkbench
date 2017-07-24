@@ -1,5 +1,7 @@
 if [[ $1 == '-h' ]]; then
-  tput setaf 6; echo "Usage: $0 [-u username] [-p password] [-e email]"
+  tput setaf 6; echo "Usage: $0 [-u username] [-p password] [-e email] 
+  Alternatively, don't pass in any parameters to use defaults `whoami`, boom@boom.com and password. 
+  You can also pass in arguments in the order username password and email address. e.g.: ./setup_project.sh `whoami` <password> <e-mail>."
   exit 0;
 fi
 

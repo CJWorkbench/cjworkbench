@@ -3,7 +3,6 @@
 
 import React from 'react'
 import WfHamburgerMenu from './WfHamburgerMenu'
-import ImportModuleFromGitHub from './ImportModuleFromGitHub'
 import PropTypes from 'prop-types'
 
 
@@ -30,7 +29,6 @@ export class WorkflowNavBar extends React.Component {
     return (
       <div>
         <nav className="navbar">
-          <ImportModuleFromGitHub />
           <WfHamburgerMenu workflowId={this.props.workflowId} api={this.props.api} />
         </nav>
       </div>
