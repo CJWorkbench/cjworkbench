@@ -8,11 +8,11 @@ from rest_framework.renderers import JSONRenderer
 from server.models import Workflow, WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
-from server.models import DeleteModuleCommand, ChangeDataVersionCommand
+from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand
 import pandas as pd
 
 # Get json representation of module, or delete it
-@api_view(['GET', 'DELETE'])
+@api_view(['GET', 'DELETE', 'POST'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
     try:
@@ -31,6 +31,12 @@ def wfmodule_detail(request, pk, format=None):
         DeleteModuleCommand.create(wf_module)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    elif request.method == 'POST':
+        try:
+            ChangeWfModuleNotesCommand.create(wf_module, request.data['notes'])
+        except Exception as e:
+            return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 # /render: return output table of this module
 @api_view(['GET'])

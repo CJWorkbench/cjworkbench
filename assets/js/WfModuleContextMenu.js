@@ -118,6 +118,7 @@ export default class WfModuleContextMenu extends React.Component {
     var csvCopyLink = this.renderCsvCopyLink();
     var jsonCopyLink = this.renderJsonCopyLink();
 
+    // TODO: Normalize class names
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
         <ModalHeader toggle={this.toggleModal} className='dialog-header' >

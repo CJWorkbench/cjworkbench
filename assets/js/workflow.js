@@ -12,6 +12,7 @@ import { Button } from 'reactstrap'
 
 import { getPageID, csrfToken } from './utils'
 
+// Are these Require statements redundant?
 require('bootstrap/dist/css/bootstrap.css');
 require('../css/style.css');
 

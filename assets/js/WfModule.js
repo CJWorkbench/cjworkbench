@@ -4,6 +4,7 @@ import React from 'react'
 import WfParameter from './WfParameter'
 import TableView from './TableView'
 import WfModuleContextMenu from './WfModuleContextMenu'
+import EditableNotes from './EditableNotes'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 import * as Actions from './workflow-reducer'
@@ -122,9 +123,13 @@ export default class WfModule extends React.Component {
     if (this.state.detailsOpen)
       inside = <div className='wf-parameters'>{paramdivs}</div>;
 
+    // Currently has no means of hiding notes - "close" icon?
     var notes = undefined;
     if (this.state.showNotes)
-      notes = <div className='' onClick={this.toggleNotes}>{this.wf_module.notes}</div>;
+      notes = <EditableNotes
+                value={this.wf_module.notes}
+                editClass=""
+                wf_module_id={this.wf_module.id} />
 
     var notesIcon = undefined;
     if (!this.state.showNotes)
