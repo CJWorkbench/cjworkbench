@@ -25,7 +25,7 @@ exports[`WorkflowListNavBar renders correctly 1`] = `
       </button>
       <div
         aria-hidden={true}
-        className="dropdown-menu dropdown-menu-right"
+        className="dropdown-menu"
         role="menu"
         tabIndex="-1"
       >
@@ -58,22 +58,6 @@ exports[`WorkflowNavBar renders correctly 1`] = `
   <nav
     className="navbar"
   >
-    <form
-      onSubmit={[Function]}
-    >
-      <label>
-          Import module from GitHub:  
-        <input
-          onChange={[Function]}
-          type="text"
-          value={undefined}
-        />
-      </label>
-      <input
-        type="submit"
-        value="Import"
-      />
-    </form>
     <div
       className="dropdown"
     >
@@ -89,7 +73,7 @@ exports[`WorkflowNavBar renders correctly 1`] = `
       </button>
       <div
         aria-hidden={true}
-        className="dropdown-menu dropdown-menu-right"
+        className="dropdown-menu"
         role="menu"
         tabIndex="-1"
       >

@@ -30,7 +30,7 @@ export default class WfHamburgerMenu extends React.Component {
         <DropdownToggle>
           {'\u2630'}
         </DropdownToggle>
-        <DropdownMenu left>
+        <DropdownMenu>
           { homeLink }
           { undoRedo }
           <DropdownItem key={4} tag="a" href="http://blog.cjworkbench.org"> Help </DropdownItem>

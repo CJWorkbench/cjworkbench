@@ -16,7 +16,7 @@ exports[`renders correctly 1`] = `
   </button>
   <div
     aria-hidden={true}
-    className="dropdown-menu dropdown-menu-right"
+    className="dropdown-menu"
     role="menu"
     tabIndex="-1"
   >
@@ -97,7 +97,7 @@ exports[`renders correctly for workflows list page 1`] = `
   </button>
   <div
     aria-hidden={true}
-    className="dropdown-menu dropdown-menu-right"
+    className="dropdown-menu"
     role="menu"
     tabIndex="-1"
   >

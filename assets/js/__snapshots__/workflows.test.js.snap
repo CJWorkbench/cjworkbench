@@ -50,12 +50,11 @@ exports[`renders correctly 1`] = `
                     </Button>
                   </DropdownToggle>
                   <DropdownMenu
-                    right={true}
                     tag="div"
                   >
                     <div
                       aria-hidden={true}
-                      className="dropdown-menu dropdown-menu-right"
+                      className="dropdown-menu"
                       role="menu"
                       tabIndex="-1"
                     >
@@ -198,12 +197,11 @@ exports[`renders correctly 2`] = `
                     </Button>
                   </DropdownToggle>
                   <DropdownMenu
-                    right={true}
                     tag="div"
                   >
                     <div
                       aria-hidden={true}
-                      className="dropdown-menu dropdown-menu-right"
+                      className="dropdown-menu"
                       role="menu"
                       tabIndex="-1"
                     >
