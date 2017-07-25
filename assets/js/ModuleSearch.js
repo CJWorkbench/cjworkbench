@@ -1,10 +1,6 @@
 import React, { Component } from 'react';
 import Autosuggest from 'react-autosuggest';
 
-function escapeRegexCharacters(str) {
-  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-}
-
 class ModuleSearch extends Component {
   constructor(props) {
     super(props);
@@ -14,6 +10,7 @@ class ModuleSearch extends Component {
       modules: []
     };
     this.onChange = this.onChange.bind(this);
+    this.escapeRegexCharacters = this.escapeRegexCharacters.bind(this);
     this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
     this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
     this.renderSectionTitle = this.renderSectionTitle.bind(this);
@@ -32,6 +29,9 @@ class ModuleSearch extends Component {
     }
   }
 
+  escapeRegexCharacters (str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  } 
   formatModules(items) {
     let modules = [];
     let temp = {};
@@ -80,7 +80,7 @@ class ModuleSearch extends Component {
   }
 
   getSuggestions (value) {
-    const escapedValue = escapeRegexCharacters(value.trim());
+    const escapedValue = this.escapeRegexCharacters(value.trim());
   
     if (escapedValue === '') {
       return [];
