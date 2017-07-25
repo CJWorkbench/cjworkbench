@@ -1,53 +1,117 @@
 import React, { Component } from 'react';
 import Autosuggest from 'react-autosuggest';
 
-const getSuggestions = value => {
-  const inputValue = value.trim().toLowerCase();
-  const inputLength = inputValue.length;
-
-  return inputLength === 0 ? [] : languages.filter(lang =>
-    lang.name.toLowerCase().slice(0, inputLength) === inputValue
-  );
-};
-
-// When suggestion is clicked, Autosuggest needs to populate the input
-// based on the clicked suggestion. Teach Autosuggest how to calculate the
-// input value for every given suggestion.
-const getSuggestionValue = suggestion => suggestion.name;
-
-// Use your imagination to render suggestions.
-const renderSuggestion = suggestion => (
-  <div>
-    {suggestion}
-  </div>
-);
+function escapeRegexCharacters(str) {
+  return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
 
 class ModuleSearch extends Component {
   constructor(props) {
     super(props);
     this.state = {
       value: '',
-      suggestions: []
+      suggestions: [],
+      modules: []
     };
+    this.onChange = this.onChange.bind(this);
+    this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
+    this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
+    this.renderSectionTitle = this.renderSectionTitle.bind(this);
+    this.formatModules = this.formatModules.bind(this);
+    this.getSuggestions = this.getSuggestions.bind(this);
+    this.renderSuggestion = this.renderSuggestion.bind(this);
+    this.getSuggestionValue = this.getSuggestionValue.bind(this);
+    this.getSectionSuggestions = this.getSectionSuggestions.bind(this);
+  }
+  
+
+  componentWillReceiveProps(nextProps) {
+    if (this.props.items !== nextProps.items) {
+      this.formatModules(nextProps.items);
+    }
   }
 
-  onChange (event, { newValue }) {
+  formatModules(items) {
+    let modules = [];
+    let temp = {};
+    
+    if (items.length) {
+      items.forEach(item => {
+        if (temp[item.category]) {
+          temp[item.category].push(item);
+        } else {
+          temp[item.category] = [item];
+        }
+      });
+
+      for (let item in temp) {
+        modules.push({title: item, modules: temp[item]});
+      }
+    }
+    this.setState({ modules });
+  }
+
+  onChange (event, { newValue, method }) {
     this.setState({
       value: newValue
     });
   }
 
-  onSuggestionsFetchRequested = ({ value }) => {
+  onSuggestionsFetchRequested ({ value }) {
     this.setState({
-      suggestions: getSuggestions(value)
+      suggestions: this.getSuggestions(value)
     });
   }
 
   // Autosuggest will call this function every time you need to clear suggestions.
-  onSuggestionsClearRequested = () => {
+  onSuggestionsClearRequested () {
     this.setState({
       suggestions: []
     });
+  }
+
+  renderSectionTitle (section) {
+    return (
+      <div>
+        <strong>{section.title}</strong>
+      </div>
+    );
+  }
+
+  getSuggestions (value) {
+    const escapedValue = escapeRegexCharacters(value.trim());
+  
+    if (escapedValue === '') {
+      return [];
+    }
+
+    const regex = new RegExp('^' + escapedValue, 'i');
+
+    return this.state.modules
+      .map(section => {
+        return {
+          title: section.title,
+          modules: section.modules.filter(module => regex.test(module.name))
+        };
+      })
+    .filter(section => section.modules.length > 0);
+  }
+
+  renderSuggestion (suggestion) {
+    return (
+      <div>
+        <div><strong>{suggestion.name}</strong></div>
+        <div>{suggestion.description}</div>
+      </div>
+    );
+  }
+
+  getSuggestionValue (suggestion) {
+    return suggestion.name;
+  }
+
+  getSectionSuggestions (section) {
+    return section.modules;
   }
 
 
@@ -60,12 +124,15 @@ class ModuleSearch extends Component {
     };
     return (
       <Autosuggest
+        multiSection={true}
         suggestions={suggestions}
         onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
         onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-        getSuggestionValue={getSuggestionValue}
-        renderSuggestion={renderSuggestion}
-        inputProps={inputProps}
+        getSuggestionValue={this.getSuggestionValue}
+        renderSuggestion={this.renderSuggestion}
+        renderSectionTitle={this.renderSectionTitle}
+        getSectionSuggestions={this.getSectionSuggestions}
+        inputProps={inputProps} 
       />
     );
   }

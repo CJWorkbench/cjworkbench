@@ -76,15 +76,24 @@ export default class ModuleLibrary extends React.Component {
    * - version 
    */
   componentWillMount() {
-    var _this = this;
     fetch('/api/modules/', { credentials: 'include' })
       .then(response => response.json())
       .then(json => {
         // Sort modules – first by category, then by name
         json.sort((a, b) => {
-          if (a.category > b.category)            { return 1; }          else if (a.category < b.category)            { return -1; }          else if (a.name > b.name)            { return 1; }          else if (a.name < b.name)            { return -1; }          else            { return 0; }
+          if (a.category > b.category) {
+            return 1;
+          } else if (a.category < b.category) {
+            return -1;
+          } else if (a.name > b.name) {
+            return 1;
+          } else if (a.name < b.name) {
+            return -1;
+          } else {
+            return 0;
+          }
         });
-        _this.setState({ items: json });
+        this.setState({ items: json });
       })
       .catch((error) => {
         console.log('Unable to retrieve modules to construct the Module Library.', error);
@@ -148,12 +157,14 @@ export default class ModuleLibrary extends React.Component {
       modulesByCategory.push(module);
     }
 
+
     // the last item / category 
     let moduleCategory = <ModuleCategory
       key={previousCategory}
       modules={modulesByCategory}
       />;
     categories.push(moduleCategory);
+<<<<<<< HEAD
 
     // Import from GitHub component 
     let importFromGitHub = <ImportModuleFromGitHub url="" moduleLibrary={this}/>;
@@ -172,13 +183,22 @@ export default class ModuleLibrary extends React.Component {
         </Button>;
     }
 
+=======
+>>>>>>> Module suggestions rendering on search
     return (
       <div className="module-library">
         <div className="nav-bar">
           <div className="h1">Module Library</div>
+<<<<<<< HEAD
           <div className={displayClassName}>
             {display}
           </div>
+=======
+          <ModuleSearch
+            items={this.state.items}
+            addModule={this.props.addModule}
+             />
+>>>>>>> Module suggestions rendering on search
         </div>
         <CategoriesList
           data={categories}
