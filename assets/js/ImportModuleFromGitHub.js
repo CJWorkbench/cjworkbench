@@ -64,7 +64,7 @@ export default class ImportModuleFromGitHub extends React.Component {
         <div className="import-module-buttons">
           <Button onClick={this.cancel.bind(this)} 
             className='button-blue'>Cancel</Button>
-          <Button onClick={this.handleSubmit.bind(this)} 
+          <Button onClick={this.handleSubmit.bind(this)} style={{'margin-left': '20px'}}
             className='button-blue'>Submit</Button>
         </div>
       </form>

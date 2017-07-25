@@ -839,8 +839,8 @@ body {
 }
 
 .card .first-level {
-  margin-top: 0.3rem;
-  margin-bottom: 1rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .card .second-level .h2 {
@@ -872,7 +872,7 @@ body {
 
 .module-library .nav-bar {
   background-color: #577485;
-  height: 113px;
+  height: 120px;
   flex-grow: 1;
   flex-basis: 0;
   min-width: 0;
@@ -899,7 +899,7 @@ body {
 }
 
 .module-category {	
-  height: 20px;	
+  height: 10px;	
   color: #686768;	
   font-family: Avenir;
   font-size: 16px;	
@@ -953,7 +953,7 @@ body {
   padding: 20px;
   box-shadow: 3px 3px 3px #888888;
   position: fixed;
-  z-index: 1;
+  z-index: 1000;
   right: 40px;
   margin-top: 10px;
 }
@@ -971,7 +971,10 @@ body {
 
 .import-module-button {
   float: right;
-  height: 40px;
+  right: 40px;
+  z-index: 1000;
+  position: fixed;
+  margin-top: 0px;
 }
 
 .import-module-buttons {

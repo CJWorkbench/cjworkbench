@@ -176,7 +176,7 @@ export default class ModuleLibrary extends React.Component {
       displayClassName = "import-module-button";
       display = <Button className='button-blue' onClick={() =>
         this.setImportFromGitHubComponentVisibility(true)}> 
-        Import From GitHub
+        Import from GitHub
         </Button>
     }
 
