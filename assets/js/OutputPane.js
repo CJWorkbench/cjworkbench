@@ -47,8 +47,6 @@ export default class OutputPane extends React.Component {
     // Don't show anything if we don't have a selected WfModule to show
     if (this.props.id && this.state.tableData && this.state.tableData.length) {
 
-      // console.log(JSON.stringify(this.state.tableData));
-
       return (
         <div className="outputpane-box">
           <div className="bg-faded outputpane-header">

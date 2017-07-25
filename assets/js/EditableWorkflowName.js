@@ -15,7 +15,6 @@ export default class EditableWorkflowName extends React.Component {
   }
 
   saveName(newName) {
-    console.log("Changing wf name to " + newName.value)
     this.api.setWfName(this.props.wfId, newName.value);
   }
 

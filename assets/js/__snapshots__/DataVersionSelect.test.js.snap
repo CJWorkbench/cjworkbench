@@ -5,13 +5,13 @@ exports[`DataVersionSelect renders correctly 1`] = `
   className="version-item"
 >
   <div
-    className="info-blue mb-2"
-    onClick={[Function]}
+    className="info-medium-gray mb-2"
   >
     Current Version
   </div>
   <div
-    className="open-modal"
+    className="info-medium-blue open-modal"
+    onClick={[Function]}
   >
     April 1 2001 - 12:00 AM
   </div>
@@ -48,7 +48,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-disabled list-test-class"
+            className="version-text-disabled list-test-class"
           >
             July 10 2017 - 05:57 PM
           </div>
@@ -58,7 +58,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-disabled list-test-class"
+            className="version-text-disabled list-test-class"
           >
             June 10 2017 - 05:57 PM
           </div>
@@ -68,7 +68,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-disabled list-test-class"
+            className="version-text-disabled list-test-class"
           >
             May 10 2017 - 05:57 PM
           </div>
@@ -78,7 +78,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-active list-test-class"
+            className="version-text-active list-test-class"
           >
             April 10 2017 - 05:57 PM
           </div>
@@ -88,7 +88,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-disabled list-test-class"
+            className="version-text-disabled list-test-class"
           >
             March 10 2017 - 05:57 PM
           </div>
@@ -99,7 +99,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
       tag="div"
     >
       <Button
-        className="button-blue"
+        className="button-blue action-button"
         color="secondary"
         onClick={[Function]}
         tag="button"
@@ -107,7 +107,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
         Cancel
       </Button>
       <Button
-        className="button-blue"
+        className="button-blue action-button"
         color="secondary"
         onClick={[Function]}
         tag="button"
@@ -124,13 +124,13 @@ exports[`DataVersionSelect renders correctly 2`] = `
   className="version-item"
 >
   <div
-    className="info-blue mb-2"
-    onClick={[Function]}
+    className="info-medium-gray mb-2"
   >
     Current Version
   </div>
   <div
-    className="open-modal"
+    className="info-medium-blue open-modal"
+    onClick={[Function]}
   >
     April 1 2001 - 12:00 AM
   </div>
@@ -139,7 +139,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
     backdrop={true}
     backdropTransitionTimeout={150}
     fade={true}
-    isOpen={false}
+    isOpen={true}
     keyboard={true}
     modalTransitionTimeout={300}
     toggle={[Function]}
@@ -167,7 +167,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-disabled list-test-class"
+            className="version-text-disabled list-test-class"
           >
             July 10 2017 - 05:57 PM
           </div>
@@ -177,7 +177,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-disabled list-test-class"
+            className="version-text-disabled list-test-class"
           >
             June 10 2017 - 05:57 PM
           </div>
@@ -187,7 +187,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-disabled list-test-class"
+            className="version-text-disabled list-test-class"
           >
             May 10 2017 - 05:57 PM
           </div>
@@ -197,7 +197,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-active list-test-class"
+            className="version-text-active list-test-class"
           >
             April 10 2017 - 05:57 PM
           </div>
@@ -207,7 +207,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           onClick={[Function]}
         >
           <div
-            className="line-item-disabled list-test-class"
+            className="version-text-disabled list-test-class"
           >
             March 10 2017 - 05:57 PM
           </div>
@@ -218,7 +218,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
       tag="div"
     >
       <Button
-        className="button-blue"
+        className="button-blue action-button"
         color="secondary"
         onClick={[Function]}
         tag="button"
@@ -226,7 +226,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
         Cancel
       </Button>
       <Button
-        className="button-blue"
+        className="button-blue action-button"
         color="secondary"
         onClick={[Function]}
         tag="button"

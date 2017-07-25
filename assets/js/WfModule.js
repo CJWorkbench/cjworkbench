@@ -140,19 +140,18 @@ export default class WfModule extends React.Component {
     if (this.state.detailsOpen)
       inside = <div className='wf-parameters'>{paramdivs}</div>;
 
-    // Currently has no means of hiding notes - "close" icon?
     var notes = undefined;
     if (this.state.showNotes)
-      notes = <div className='wf-module-notes-container'>
+      notes = <div className='editable-notes-container'>
                 <EditableNotes
                   value={this.wf_module.notes}
-                  editClass='info-medium-paragraph-gray editable-text-field'
+                  editClass='editable-text-field'
                   wfModuleId={this.wf_module.id} />
               </div>
 
     var arrow = (this.state.detailsOpen) 
-      ? <div className='icon-sort-up'></div>
-      : <div className='icon-sort-down'></div>
+      ? <div className='icon-sort-up button-icon'></div>
+      : <div className='icon-sort-down button-icon'></div>
       
 
     // Putting it all together: name, status, parameters, output
@@ -162,7 +161,7 @@ export default class WfModule extends React.Component {
           {/* --- The whole card --- */}          
           <div className='card-block p-0 module-card-wrapper d-flex justify-content-between'>            
             {/* --- Everything but the status bar, on the left of card --- */}
-            <div className='module-card-info pl-2 pr-2'>
+            <div className='module-card-info p-2'>
               {notes} 
               <div 
                 className='module-card-header mb-2 pt-2 '
@@ -171,8 +170,12 @@ export default class WfModule extends React.Component {
                 {/* TODO: attach icon names to modules, call via 'this.module.icon' */}
                 <div className='d-flex justify-content-start'>
                   <div className='icon-url module-icon m-1'></div>
-                  <h4 className='text-center mb-0 ml-2 mt-2 module-library-line-item-title'>{this.module.name}</h4>
-                  {arrow}
+                  <h4 className='text-center mb-0 ml-2 mt-2 module-library-line-item-title'>
+                    {this.module.name}
+                  </h4>
+                  <div className='context-button ml-1 mt-1'>
+                    {arrow}
+                  </div>
                 </div>
                 {/* TODO: not necessary to pass in stopProp*/}
                 <div className='d-flex justify-content-end'>

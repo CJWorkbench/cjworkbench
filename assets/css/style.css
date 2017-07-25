@@ -380,6 +380,8 @@ body {
   outline: none;
   padding: 0;
   resize: none;
+  height: 100%;
+  width: 100%;
 }
 
 .text-field {
@@ -1131,9 +1133,11 @@ body {
 
 /* --- Editable text fields --- */
 
-.wf-module-notes-container {
+.editable-notes-container {
   background-color: #FAFAFA;
-  border: 1px solid #686768;
+  border: 1px dotted #686768;
+  height: 3rem;
+  width: 40rem; 
 }
 
 .card .second-level {

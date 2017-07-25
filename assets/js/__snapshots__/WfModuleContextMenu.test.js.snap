@@ -6,7 +6,7 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
 >
   <DropdownToggle
     aria-haspopup={true}
-    className="button-icon-box"
+    className="context-button text-center p-0"
     color="secondary"
     data-toggle="dropdown"
   >
@@ -28,7 +28,11 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
       <span
         className="icon-download icon-w mr-2"
       />
-      Export
+      <span
+        className="setting-gray"
+      >
+        Export
+      </span>
     </DropdownItem>
     <DropdownItem
       className="dropdown-list-item"
@@ -38,7 +42,11 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
       <span
         className="icon-info icon-w mr-2"
       />
-      Update
+      <span
+        className="setting-gray"
+      >
+        Update
+      </span>
     </DropdownItem>
     <DropdownItem
       className="dropdown-list-item"
@@ -49,7 +57,11 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
       <span
         className="icon-bin icon-w mr-2"
       />
-      Delete
+      <span
+        className="setting-gray"
+      >
+        Delete
+      </span>
     </DropdownItem>
   </DropdownMenu>
 </UncontrolledDropdown>

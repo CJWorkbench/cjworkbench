@@ -28,7 +28,6 @@ export default class WfParameter extends React.Component {
   }
 
   paramChanged(newVal) {
-    // console.log("PARAM CHANGED");
     this.props.changeParam(this.props.p.id, {value : newVal});
   }
 

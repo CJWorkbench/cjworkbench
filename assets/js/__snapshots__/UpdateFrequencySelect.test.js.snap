@@ -8,18 +8,20 @@ exports[`UpdateFrequencySelect renders correctly 1`] = `
     <div
       className="mb-2"
     >
-      <span>
+      <span
+        className="info-medium-gray"
+      >
         Update: 
       </span>
       <span
-        className="info-blue"
+        className="info-medium-blue"
         onClick={[Function]}
       >
         Manual
       </span>
     </div>
     <div
-      className=""
+      className="info-medium-light-gray"
     >
       Click above to change
     </div>
@@ -46,18 +48,20 @@ exports[`UpdateFrequencySelect renders correctly 2`] = `
     <div
       className="mb-2"
     >
-      <span>
+      <span
+        className="info-medium-gray"
+      >
         Update: 
       </span>
       <span
-        className="info-blue"
+        className="info-medium-blue"
         onClick={[Function]}
       >
         Manual
       </span>
     </div>
     <div
-      className=""
+      className="info-medium-light-gray"
     >
       Click above to change
     </div>
