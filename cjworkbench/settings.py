@@ -65,7 +65,7 @@ if DEBUG==False:
     EMAIL_HOST = 'smtp.sendgrid.net'
     EMAIL_HOST_USER = 'apikey'
     EMAIL_HOST_PASSWORD = os.environ['CJW_SENDGRID_API_KEY']
-    EMAIL_PORT = 587
+    EMAIL_PORT = 2525
     EMAIL_USE_TLS = True
 
 else:
