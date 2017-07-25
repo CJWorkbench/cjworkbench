@@ -1,9 +1,17 @@
 import React from 'react'
-import { Button, UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import { Button } from 'reactstrap'
 import PropTypes from 'prop-types'
 
 import { csrfToken } from './utils'
 
+/**
+ * Component that handles the Import from GitHub functionality. This functionality allows users
+ * to insert a URL to a GitHub repository in a textfield, and, if there are no errors, 
+ * a new module is added to the Module Library. 
+ * 
+ * Currently, users can't set any entitlements on these modules. Also, there is no client-side 
+ * validation albeit maybe there should be? 
+ */
 
 export default class ImportModuleFromGitHub extends React.Component {
   constructor(props) {
@@ -12,8 +20,8 @@ export default class ImportModuleFromGitHub extends React.Component {
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.cancel = this.cancel.bind(this);
-    this.onKeyPress = this.keyPress.bind(this);
+    this.cancel = this.cancel.bind(this); 
+    this.onKeyPress = this.keyPress.bind(this); // to handle user hitting enter, which then submits
 
     this.moduleLibrary = this.props.moduleLibrary;
   }
@@ -29,10 +37,22 @@ export default class ImportModuleFromGitHub extends React.Component {
     this.moduleLibrary.setImportFromGitHubComponentVisibility(false);
   }
 
+  /**
+   * Keep the state updated with the latest value of the textfield. 
+   * 
+   * @param {*} event: any changes to the textfield. 
+   */
   handleChange(event) {
     this.setState({url: event.target.value});
   }
 
+  /**
+   * When the user hits Submit or the 'Enter' key, then this function is invoked, passing down
+   * the user-entered URL to the server, which validates the URL and, if valid, imports the 
+   * module. 
+   * 
+   * @param {*} event 
+   */
   handleSubmit(event) {
       event.preventDefault(); // stops the page from refreshing... someday I'll understand why. 
       var url = '/api/importfromgithub/';
@@ -64,7 +84,8 @@ export default class ImportModuleFromGitHub extends React.Component {
         <div className="import-module-buttons">
           <Button onClick={this.cancel.bind(this)} 
             className='button-blue'>Cancel</Button>
-          <Button onClick={this.handleSubmit.bind(this)} style={{'margin-left': '20px'}}
+          <Button onClick={this.handleSubmit.bind(this)} 
+            style={{'marginLeft': '20px'}} // spacing between buttons.
             className='button-blue'>Submit</Button>
         </div>
       </form>
