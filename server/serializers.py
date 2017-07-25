@@ -7,7 +7,7 @@ from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Modul
 class ParameterSpecSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParameterSpec
-        fields = ('id', 'name', 'id_name', 'type')
+        fields = ('id', 'name', 'id_name', 'type', 'multiline')
 
 
 class ParameterValSerializer(serializers.ModelSerializer):

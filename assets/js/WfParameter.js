@@ -31,10 +31,10 @@ export default class WfParameter extends React.Component {
     this.props.changeParam(this.props.p.id, {value : newVal});
   }
 
-  // Save value (and re-render) when user presses enter or we lose focus
-  // Applies only to non-multline fields
+  // Save value (and re-render) when user presses enter (but not on multiline fields)
+  // Applies only to non-multiline fields
   keyPress(e) {
-    if ((this.type != 'string' || !this.props.p.multiline) && e.key == 'Enter') {
+    if (e.key == 'Enter' && (this.type != 'string' || !this.props.p.parameter_spec.multiline)) {
         this.paramChanged(e.target.value);
         e.preventDefault();       // eat the Enter so it doesn't get in our input field
     }
