@@ -22,6 +22,7 @@ class ModuleSearch extends Component {
     this.renderSuggestion = this.renderSuggestion.bind(this);
     this.getSuggestionValue = this.getSuggestionValue.bind(this);
     this.getSectionSuggestions = this.getSectionSuggestions.bind(this);
+    this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
   }
   
 
@@ -85,7 +86,7 @@ class ModuleSearch extends Component {
       return [];
     }
 
-    const regex = new RegExp('^' + escapedValue, 'i');
+    const regex = new RegExp(escapedValue, 'i');
 
     return this.state.modules
       .map(section => {
@@ -114,6 +115,11 @@ class ModuleSearch extends Component {
     return section.modules;
   }
 
+  onSuggestionSelected (event, { suggestion }) {
+    this.props.addModule(suggestion.id);
+    this.setState({value: ''});
+  }
+
 
   render () {
     const { value, suggestions } = this.state;
@@ -132,7 +138,8 @@ class ModuleSearch extends Component {
         renderSuggestion={this.renderSuggestion}
         renderSectionTitle={this.renderSectionTitle}
         getSectionSuggestions={this.getSectionSuggestions}
-        inputProps={inputProps} 
+        inputProps={inputProps}
+        onSuggestionSelected={this.onSuggestionSelected}
       />
     );
   }
