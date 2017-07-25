@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import { RIETextArea } from 'riek';
 import workbenchapi from './WorkbenchAPI';
+import PropTypes from 'prop-types'
 
 export default class EditableNotes extends React.Component {
   constructor(props) {
@@ -14,8 +15,8 @@ export default class EditableNotes extends React.Component {
   }
 
   saveNotes(newNote) {
-    // console.log("New Note entered, attempting to save.")
-    this.api.setWfModuleNotes(this.props.wf_module_id, newNote.value);
+    console.log("Changing note on wf module " + this.props.wfModuleId + " to: " + newNote.value)
+    this.api.setWfModuleNotes(this.props.wfModuleId, newNote.value);
   }
 
   // can specify rows and cols in parameters
@@ -30,3 +31,8 @@ export default class EditableNotes extends React.Component {
     /></div>
   }
 }
+
+EditableNotes.propTypes = {
+  value:          PropTypes.string,
+  wfModuleId:     PropTypes.number
+};

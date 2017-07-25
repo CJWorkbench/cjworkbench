@@ -2,6 +2,7 @@ import React from 'react';
 import _ from 'lodash';
 import { RIEInput } from 'riek';
 import workbenchapi from './WorkbenchAPI';
+import PropTypes from 'prop-types'
 
 export default class EditableWorkflowName extends React.Component {
   constructor(props) {
@@ -14,6 +15,7 @@ export default class EditableWorkflowName extends React.Component {
   }
 
   saveName(newName) {
+    console.log("Changing wf name to " + newName.value)
     this.api.setWfName(this.props.wfId, newName.value);
   }
 
@@ -26,3 +28,10 @@ export default class EditableWorkflowName extends React.Component {
     /></h4>
   }
 }
+
+EditableWorkflowName.propTypes = {
+  value:    PropTypes.string,
+  wfId:     PropTypes.number
+};
+
+

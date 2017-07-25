@@ -147,7 +147,7 @@ export default class WfModule extends React.Component {
                 <EditableNotes
                   value={this.wf_module.notes}
                   editClass='info-medium-paragraph-gray editable-text-field'
-                  wf_module_id={this.wf_module.id} />
+                  wfModuleId={this.wf_module.id} />
               </div>
 
     var arrow = (this.state.detailsOpen) 
