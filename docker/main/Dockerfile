@@ -11,7 +11,9 @@ RUN npm install
 # build assets
 RUN ./node_modules/.bin/webpack -p --config webpack.config.js
 
-# setup db, apply migrations
+# setup db, apply migrations.
+# Need sites migration to create django_sites table, so later (normal) migration can set site URL
+RUN python manage.py migrate sites
 RUN python manage.py migrate
 
 # go! default command runs in debug
