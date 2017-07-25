@@ -14,7 +14,7 @@ export default class EditableNotes extends React.Component {
   }
 
   saveNotes(newNote) {
-    console.log("New Note entered, attempting to save.")
+    // console.log("New Note entered, attempting to save.")
     this.api.setWfModuleNotes(this.props.wf_module_id, newNote.value);
   }
 
@@ -25,6 +25,8 @@ export default class EditableNotes extends React.Component {
       change={this.saveNotes}
       propName="value"
       className={this.props.editClass}
+      cols={150}
+      rows={10}
     /></div>
   }
 }

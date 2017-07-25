@@ -69,8 +69,8 @@ export default class UpdateFrequencySelect extends React.Component {
 
   render() {
 
-    var highlightManual = this.state.manual ? 'action-button-active' : 'action-button-disabled';
-    var highlightAuto = !this.state.manual ? 'action-button-active' : 'action-button-disabled';
+    var highlightManual = this.state.manual ? 'action-button button-blue' : 'action-button button-gray';
+    var highlightAuto = !this.state.manual ? 'action-button button-blue' : 'action-button button-gray';
     var settingsInfo = this.state.manual ?
       'Manual'
       :'Auto, every ' + this.state.period + ' ' + this.state.unit;
@@ -81,15 +81,15 @@ export default class UpdateFrequencySelect extends React.Component {
     return (
       <div className='version-item'>
         <div className='mb-2' >
-          <span>Update: </span>
-          <span className='info-blue' onClick={this.toggleModal}>{settingsInfo}</span>  
+          <span className='info-medium-gray'>Update: </span>
+          <span className='info-medium-blue' onClick={this.toggleModal}>{settingsInfo}</span>  
         </div>
-         <div className=''>Click above to change</div>         
+         <div className='info-medium-light-gray'>Click above to change</div>         
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className={this.props.className}>
-          <ModalHeader toggle={this.toggleModal}>Update Settings</ModalHeader>
+          <ModalHeader toggle={this.toggleModal} className='dialog-box-title-gray'>Sync Settings</ModalHeader>
           <ModalBody>
             <FormGroup>
-              <Label for="updateFreq">Check for update every</Label>
+              <Label for="updateFreq" className=''>Check for update every</Label>
               <div className='update-freq-settings update-freq-test-class'>
                 <Input 
                   type="number" 
@@ -122,7 +122,7 @@ export default class UpdateFrequencySelect extends React.Component {
             </FormGroup>
           </ModalBody>
           <ModalFooter>
-            <Button color='secondary' onClick={this.toggleModal}>Apply</Button>
+            <Button className='action-button button-blue' onClick={this.toggleModal}>Apply</Button>
           </ModalFooter>
         </Modal>
       </div>

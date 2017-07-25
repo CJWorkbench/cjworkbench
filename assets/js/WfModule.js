@@ -13,11 +13,28 @@ import PropTypes from 'prop-types'
 // Libraries to provide a collapsable table view
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
 
-// ---- StatusLight ----
-// Ready, Busy, or Error
+// ---- StatusBar ----
+
 class StatusBar extends React.Component {
   render() {
-    return <div className={this.props.status + '-bar'}></div>
+
+    var barColor = undefined;
+
+    switch (this.props.status) {
+      case 'ready':
+        barColor = 'module-output-bar-blue';
+        break;
+      case 'busy':
+        barColor = 'module-output-bar-orange';
+        break;
+      case 'error':
+        barColor = 'module-output-bar-red';        
+        break;
+      default:
+        barColor = 'module-output-bar-white';        
+        break;
+    }
+    return <div className={barColor}></div>
   }
 }
 
@@ -126,26 +143,27 @@ export default class WfModule extends React.Component {
     // Currently has no means of hiding notes - "close" icon?
     var notes = undefined;
     if (this.state.showNotes)
-      notes = <EditableNotes
-                value={this.wf_module.notes}
-                editClass=""
-                wf_module_id={this.wf_module.id} />
+      notes = <div className='wf-module-notes-container'>
+                <EditableNotes
+                  value={this.wf_module.notes}
+                  editClass='info-medium-paragraph-gray editable-text-field'
+                  wf_module_id={this.wf_module.id} />
+              </div>
 
-    var notesIcon = undefined;
-    if (!this.state.showNotes)
-      notesIcon = 
-        <div className='button-icon-box' onClick={this.toggleNotes}>
-          <div className='icon-note button-icon' ></div>
-        </div>;
+    var arrow = (this.state.detailsOpen) 
+      ? <div className='icon-sort-up'></div>
+      : <div className='icon-sort-down'></div>
+      
 
     // Putting it all together: name, status, parameters, output
     return (
       <div className='container' {...this.props} onClick={this.click}>
         <div className='card mb-2'>
-          <div className='card-block p-1 module-card-wrapper'>
+          {/* --- The whole card --- */}          
+          <div className='card-block p-0 module-card-wrapper d-flex justify-content-between'>            
             {/* --- Everything but the status bar, on the left of card --- */}
             <div className='module-card-info pl-2 pr-2'>
-              {notes}
+              {notes} 
               <div 
                 className='module-card-header mb-2 pt-2 '
                 onClick={this.toggleDetails}
@@ -153,27 +171,31 @@ export default class WfModule extends React.Component {
                 {/* TODO: attach icon names to modules, call via 'this.module.icon' */}
                 <div className='d-flex justify-content-start'>
                   <div className='icon-url module-icon m-1'></div>
-                  <h4 className='text-center mb-0 ml-2'>{this.module.name}</h4>
+                  <h4 className='text-center mb-0 ml-2 mt-2 module-library-line-item-title'>{this.module.name}</h4>
+                  {arrow}
                 </div>
                 {/* TODO: not necessary to pass in stopProp*/}
                 <div className='d-flex justify-content-end'>
-                  {notesIcon}
+                  <div className='context-button p-0 mt-0.5 d-flex align-items-center' onClick={this.toggleNotes}>
+                    <div className='icon-note button-icon' ></div>
+                  </div>
                   <WfModuleContextMenu 
                     removeModule={ () => this.removeModule() }
                     stopProp={(e) => e.stopPropagation()}
                     id={this.wf_module.id}
-                    className="menu-test-class"
+                    className='menu-test-class'
                   />
                 </div>
               </div>
+              {/* --- Error messages appear here --- */}
               <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
-              {/* --- Module details, will expand / collapse --- */}
+              {/* --- Module details, will expand / collapse --- */}              
               <Collapse className='mt-1 pl-2 pr-2' isOpen={this.state.detailsOpen} >
                 {inside}
-              </Collapse>  
+              </Collapse>
             </div>
             {/* --- Color indicator of module status, on the right of card --- */}
-            <div className='module-status-bar'>  
+            <div className='output-bar-container'>  
               <StatusBar status={this.wf_module.status}/>
             </div>
           </div>

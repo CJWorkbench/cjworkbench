@@ -116,12 +116,13 @@ export default class WfParameter extends React.Component {
             <div className='setting-gray'>{this.name}:</div>
             <textarea
               className={sclass}
-              className='data-paragraph-g text-field mt-2'
+              className='data-paragraph-gray text-field mt-2'
               rows={srows}
               defaultValue={this.props.p.value}
               onBlur={this.blur}
               onKeyPress={this.keyPress}
               ref={ el => this.stringRef = el}/>
+
           </div>
         );
 
@@ -204,13 +205,10 @@ export default class WfParameter extends React.Component {
 
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
           return (
-            <div>
-              <div className='setting-gray'>Version</div>
-              <div className='version-box'>
+            <div className='version-box'>
                 <DataVersionSelect wf_module_id={this.props.wf_module_id} api={workbenchAPI()} />
                 <UpdateFrequencySelect />
-                <Button className='button-blue mt-4' onClick={this.click}>{this.name}</Button>
-              </div>
+                <Button className='button-blue action-button mt-4' onClick={this.click}>{this.name}</Button>
             </div>
           );
         } else if (this.props.p.parameter_spec.id_name == 'colrename') {

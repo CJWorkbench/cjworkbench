@@ -2,6 +2,8 @@
 
 html {
   height: 100%;
+  /* sets the basis for `rem` styling units */
+  font-size: 16px;
 }
 
 body {
@@ -18,102 +20,383 @@ body {
 }
 
 /* ---- Text Type styles: cross-module ----- */
-/* To Refactor: DRY out the repitition */
-/* TODO: Match names to official style guide */
 
+/* TODO: DRY out the repitition */
+/* ---> be wary of imported component styles  */
+
+/* not in style guide - remove/replace */
 .title {
-	height: 15px;
-	font-size: 15px;
+	height: 	0.9375rem;
+	font-size: 	0.9375rem;
 	font-weight: 500;
-	line-height: 15px;
+	line-height: 	0.9375rem;
+}
+
+.list-title {
+	height: 1.375rem;
+	color: #A2A2A2;
+	font-family: Avenir;
+	font-size: 1.375rem;
+	font-weight: 500;
+	line-height: 1.375rem;
+}
+
+.title-white {
+	height: 1.125rem;
+	color: #FFFFFF;
+	font-family: Avenir;
+	font-size: 1.125rem;
+	font-weight: 300;
+	line-height: 1.125rem;
+}
+
+.title-line-item-gray {
+	height: 0.8125rem;
+	color: #686768;
+	font-family: Avenir;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	line-height: 0.8125rem;
+}
+
+.module-library-line-item-title {
+	height: 0.9375rem;
+	color: #686768;
+	font-family: Avenir;
+	font-size: 0.9375rem;
+	font-weight: 500;
+	line-height: 0.9375rem;
 }
 
 .setting-gray {
+	height: 0.8125rem;  
 	color: #686768;
 	font-family: Avenir;
-	font-size: 13px;
-  line-height: 13px;
-  margin-top: 20px;
+	font-size: 0.8125rem;
+  line-height: 0.8125rem;
+}
+
+.setting-blue {
+	height: 0.8125rem;
+	color: #48C8D7;
+	font-family: Avenir;
+	font-size: 0.8125rem;
+	line-height: 0.8125rem;
+}
+
+.setting-orange {
+	height: 0.8125rem;
+	color: #FBAA6D;
+	font-family: Avenir;
+	font-size: 0.8125rem;
+	line-height: 0.8125rem;
+}
+
+.setting-big-light-gray {
+	height: 0.75rem;
+	color: #A2A2A2;
+	font-family: Avenir;
+	font-size: 0.875rem;
+	font-weight: 900;
+	line-height: 0.75rem;
 }
 
 .data-light-gray {	
   color: #A2A2A2;	
   font-family: Avenir;	
-  font-size: 14px;	
+  font-size: 0.875rem;	
   font-weight: 500;	
-  line-height: 14px;
+  line-height: 0.875rem;
+  height: 0.875rem;  
 }
 
 .data-gray {
 	color: #686768;
 	font-family: Avenir;
-	font-size: 14px;
+	font-size: 0.875rem;
 	font-weight: 500;
-	line-height: 14px;
+  line-height: 0.875rem;
+  height: 0.875rem;
 }
 
-.data-paragraph-g {
+.data-paragraph-gray {
 	color: #686768;
 	font-family: Avenir;
-	font-size: 14px;
+	font-size: 0.875rem;
 	font-weight: 500;
-	line-height: 24px;
+  line-height: 1.5rem;
+  height: 1.5rem;
 }
 
-.data-pragraph-li {
+.data-pragraph-light-gray {
 	color: #A2A2A2;
 	font-family: Avenir;
-	font-size: 14px;
+	font-size: 0.875rem;
 	font-weight: 500;
-	line-height: 24px;
+  line-height: 1.5rem;
+  height: 1.5rem;
+}
+
+.table-row-single-d {
+	height: 0.6875rem;
+	color: #A2A2A2;
+	font-family: Avenir;
+	font-size: 0.625rem;
+	font-weight: 500;
+	line-height: 0.6875rem;
+}
+
+.table-row-0.6875remdouble-d {
+	height: 0.6875rem;
+	color: #A2A2A2;
+	font-family: Avenir;
+	font-size: 0.5625rem;
+	font-weight: 500;
+	line-height: 0.6875rem;
+}
+
+.table-row-triple-d {
+	height: 0.6875rem;
+	color: #FFFFFF;
+	font-family: Avenir;
+	font-size: 0.53125rem;
+	font-weight: 500;
+	line-height: 0.6875rem;
+}
+
+.table-column-name {
+	height: 1.125rem;
+	color: #FFFFFF;
+	font-family: Avenir;
+	font-size: 0.8125rem;
+	font-weight: 900;
+	line-height: 1.125rem;
 }
 
 .info-small-blue {
 	color: #48C8D7;
 	font-family: Avenir;
-	font-size: 10px;
+	font-size: 0.625rem;
 	font-weight: 900;
-	line-height: 10px;
-	text-align: right;
+	line-height: 0.625rem;
+  height: 0.625rem;
 }
 
 .info-small-blue:hover {
   color: #0B8897;
 }
 
-.info-blue {
-	color: #48C8D7;
-}
-
-.info-blue:hover {
-  color: #0B8897;
-}
-
 .info-small-orange {
 	color: #FBAA6D;
 	font-family: Avenir;
-	font-size: 10px;
+	font-size: 0.625rem;
 	font-weight: 900;
-	line-height: 10px;
+  line-height: 0.625rem;
+  height: 0.625rem;
 }
 
-.field-search-lig {
+.info-small-paragraph-gray {
+	height: 2rem;
+	color: #686768;
+	font-family: Avenir;
+	font-size: 0.6875rem;
+	line-height: 1rem;
+}
+
+.info-medium-paragraph-gray {
+	height: 1.375rem;
+	color: #686768;
+	font-family: Avenir;
+	font-size: 0.8125rem;
+	font-weight: 300;
+	line-height: 1.375rem;
+}
+
+.info-medium-paragraph-blue {
+	height: 0.75rem;
+	color: #48C8D7;
+	font-family: Avenir;
+	font-size: 0.875rem;
+	font-weight: 500;
+	line-height: 0.75rem;
+}
+
+.info-medium-blue {
+	height: 0.8125rem;
+	color: #48C8D7;
+	font-family: Avenir;
+	font-size: 0.8125rem;
+	line-height: 0.8125rem;
+}
+
+.info-medium-blue:hover {
+  color: #0B8897;
+}
+
+.info-medium-gray {
+	height: 0.8125rem;
+  color: #686768;
+	font-family: Avenir;
+	font-size: 0.8125rem;
+	line-height: 0.8125rem;
+}
+
+.info-medium-light-gray {
+	height: 0.8125rem;
+  color: #A2A2A2;
+	font-family: Avenir;
+	font-size: 0.8125rem;
+	line-height: 0.8125rem;
+}
+
+.field-search-light-gray {
 	opacity: 0.6;
 	color: #A2A2A2;
 	font-family: Avenir;
-	font-size: 14px;
+	font-size: 0.875rem;
 	font-weight: 900;
-	line-height: 14px;
+  line-height: 0.875rem;
+  height: 0.875rem;
 }
 
-.field-search-whi {
+.field-search-white {
 	color: #FFFFFF;
 	font-family: Avenir;
-	font-size: 14px;
+	font-size: 0.875rem;
 	font-weight: 900;
-	line-height: 14px;
+  line-height: 0.875rem;
+  height: 0.875rem;
 }
 
+.code-light {
+	height: 1.5rem;
+	color: #A2A2A2;
+	font-family: "PT Mono";
+	font-size: 0.875rem;
+	line-height: 1.5rem;
+}
+
+.code-fill {
+	height: 1.5rem;
+	color: #CFCFCF;
+	font-family: "PT Mono";
+	font-size: 0.875rem;
+	line-height: 1.5rem;
+}
+
+.details-blue {
+	height: 0.75rem;
+	color: #48C8D7;
+	font-family: Avenir;
+	font-size: 0.75rem;
+	font-weight: 900;
+	line-height: 0.75rem;
+}
+
+.details-blue:hover {
+	color: #2D9DAA;
+}
+
+.details-gray {
+	height: 0.75rem;
+	color: #A2A2A2;
+	font-family: Avenir;
+	font-size: 0.75rem;
+	font-weight: 900;
+	line-height: 0.75rem;
+}
+
+.details-gray-copy {
+	height: 1rem;
+	color: #686768;
+	font-family: Avenir;
+	font-size: 0.75rem;
+	font-weight: 300;
+	line-height: 1rem;
+}
+
+.workflow-title-gray {
+	height: 2.125rem;
+	color: #686768;
+	font-family: Avenir;
+	font-size: 1.5625rem;
+	font-weight: 300;
+  line-height: 2.125rem;
+}
+
+.dialog-box-title-light-gray {
+	height: 0.9375rem;
+	color: #A2A2A2;
+	font-family: Avenir;
+	font-size: 0.9375rem;
+	font-weight: 500;
+	line-height: 0.9375rem;
+}
+
+.dialog-box-title-gray {
+	height: 0.9375rem;
+	color: #686768;
+	font-family: Avenir;
+	font-size: 0.9375rem;
+	font-weight: 500;
+	line-height: 0.9375rem;
+}
+
+.info-title-small {
+	height: 1.25rem;
+	color: #686768;
+	font-family: Avenir;
+	font-size: 0.6875rem;
+	font-weight: 900;
+	line-height: 1.25rem;
+}
+
+.version-text-active {
+	 color: #FFFFFF; 
+	 font-family: Avenir;
+	 font-size: 0.8125rem; 
+	 font-weight: 300; 
+	 line-height: 1.125rem;  
+}
+
+.version-text-disabled {
+	color: #3A3A3A;  
+	font-family: Avenir;
+	font-size: 0.8125rem;
+	font-weight: 300;
+	line-height: 1.125rem;
+}
+
+.version-text-disabled:hover {
+  color: #3A3A3A;
+}
+
+
+/* ---- Text Input Fields ---- */
+/* TODO: match with style guide  */
+
+.editable-text-field {
+  border: none;
+  outline: none;
+  padding: 0;
+  resize: none;
+}
+
+.text-field {
+  height: 2.5rem;
+  width: 100%;
+  background-color: #FFFFFF !important;
+  border: 1px solid #EDECEC;
+  resize: none;
+}
+
+.text-field:active {
+  box-shadow: 0 0 1px 1px #48C8D7;
+  border: 0;
+}
+
+
+/* to be replaced by new classes  */
 .dialog-box-name {
 	height: 30px;
 	color: #686768;
@@ -126,62 +409,114 @@ body {
 
 /* ---- Buttons ---- */
 
-.button-blue {
-  height: 40px;
-	border: 1px solid #48C8D7;
-	border-radius: 25px;
-  color: #48C8D7;
-  text-align: center;
-}
-
-.button-blue:hover {
-  opacity: 0.5;
-}
-
 .button-gray {
-	height: 40px;
-	border: 1px solid #EDECEC;
-	border-radius: 25px;
-  color: #EDECEC;
+  color: #A2A2A2;
+  border: 1px solid #48C8D7;
+	font-family: Avenir;
+	font-size: 0.875rem;
+	font-weight: 900;
+	line-height: 0.875rem;
+	text-align: center;
 }
 
-.button-blue:hover {
-  opacity: 0.5;
+.button-gray:hover {
+	color: #686768;
 }
 
-.action-button-active {
-	height: 40px;
-	border-radius: 25px;
-	background-color: #48C8D7;
+.button-red {
+  color: #E24F4A;
+  border: 1px solid #E24F4A;
+	font-family: Avenir;
+	font-size: 0.875rem;
+	font-weight: 900;
+	line-height: 0.875rem;
+	text-align: center;
+}
+
+.button-orange {
+  color: #FBAA6D;
+  border: 1px solid #FBAA6D;
+	font-family: Avenir;
+	font-size: 0.875rem;
+	font-weight: 900;
+	line-height: 0.875rem;
+	text-align: center;
+}
+
+.button-blue {
+  color: #48C8D7;
+  border: 1px solid #48C8D7;
+	font-family: Avenir;
+	font-size: 0.875rem;
+	font-weight: 900;
+	line-height: 0.875rem;
+	text-align: center;
+}
+
+.button-white {
   color: #FFFFFF;
+  border: 1px solid #FFFFFF;  
+	font-family: Avenir;
+	font-size: 0.875rem;
+	font-weight: 900;
+	line-height: 0.875rem;
+	text-align: center;
 }
 
+.button-context {
+  border: 0;
+}
+
+.button-context:hover {
+  border: 1px solid #EDECEC;
+}
+
+.button-context:active {
+  border: 1px solid #EDECEC;
+  background-color: #F9F9F9;
+}
+
+.button-square {
+  background-color: #FFFFFF;
+  border: 1px solid #EDECEC;  
+}
+
+.button-square:hover {
+  background-color: #F1F5F7;
+}
+
+.button-square:active {
+  background-color: #48C8D7;
+}
+
+.action-button {
+	height: 2.5rem;
+  border-radius: 25px;
+  min-width: 89px;
+}
+
+.action-button:hover {
+	opacity: 0.5;
+}
+
+/* is this used anywhere? To cull otherwise  */
 .action-button-disabled {
   background-color: #EDECEC;
-  height: 40px;
-	border-radius: 25px;
+  height: 2.5rem;
+	border-radius: 1.5625rem;
   color: #A2A2A2;
 }
 
-/* ---- Data Fields ---- */
-
-.text-field {
-  height: 40px;
-  width: 100%;
-  background-color: #FFFFFF;
-}
-
-.text-field:active {
-  box-shadow: 0 0 1px 1px #48C8D7;
-}
 
 /* ---- Dropdowns ---- */
 
 .dropdown-list-menu {
   background-color: #D8D8D8;
-  padding: 0;
+  padding: 1px;
 }
 
+/* TODO: remove styling for text, define box only  */
+/* move text styles to text classes  */
 .dropdown-list-item {
   height: 40px;
   width: 170px;
@@ -202,7 +537,7 @@ body {
 }
 
 .dropdown-list-item:active {
-  background-color: #F1F5F7;
+  background-color: #48C8D7;
 }
 
 
@@ -295,12 +630,12 @@ body {
 
 .modulestack-header {
   color: #686768;
-  padding: 10px;
+  padding: 0.625rem;
 }
 
 .modulestack-list {
   background-color: #F2F2F2; 
-  padding: 10px;
+  padding: 0.625rem;
   border: 1px solid #EDECEC;
 }
 
@@ -315,7 +650,7 @@ body {
   height: calc(100% - 3.5rem);
   width: 50%;
   background-color: #F2F2F2;
-  padding: 15px;
+  padding: 0.9375rem;
   position: fixed;
 }
 
@@ -334,6 +669,8 @@ body {
 
 
 /* ---- WfModule ---- */
+/* TODO: make classes consistent with style guide */
+/* TODO: rename classes-to-css-style  */
 
 .module-card-wrapper {
   height: 100%;
@@ -383,52 +720,61 @@ body {
 }
 
 
-/* ---- Status bars ---- */
+/* ---- Wf Module status bars ---- */
 
-.module-status-bar {
-  width: 7px;
+/* a dummy div around output status bar, for positioning purposes  */
+.output-bar-container {
+  border: 0;
 }
 
-.ready-bar {
-  width: 100%;
+/* base status  */
+.module-output-bar-white {
+  width: 0.4375rem;
   height: 100%;
-  background-color: #48C8D7;
+  background-color: #FFFFFF;
 }
 
-.busy-bar {
-  width: 100%;
-  height: 100%;
+/* currently selected and ready */
+.module-output-bar-blue {
+  width: 0.4375rem;
+  height: 100%;  
+  background-color: #BFDDE4;
+}
+
+/* TODO: change on module select, not hover  */
+.module-output-bar-blue:hover {
+  background-color: #DBECF1;
+}
+
+/* standby  */
+.module-output-bar-orange {
+  width: 0.4375rem;  
+  height: 100%;  
   background-color: #FBAA6D;
 }
 
-.error-bar {
-  width: 100%;
-  height: 100%;
+/* error  */
+.module-output-bar-red {
+  width: 0.4375rem;  
+  height: 100%;  
   background-color: #E24F4A;
 }
 
+
 /* ---- Dialog Boxes ---- */
+/* TODO: redefine according to style sheet  */
 
 .dialog-header {
   height: 55px;
   padding: 20px 30px 20px 30px ;
   background-color: #FFFFFF;
-
-}
-
-.dialog-header-title {
-  color: #686768;
-	font-size: 15px;
-	font-weight: 500;
-  line-height: 15px;
-  border-bottom: 0;  
 }
 
 .dialog-header-close {
   margin-left: 330px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 	font-weight: 500;
-  line-height: 15px;
+  line-height: 0.9375rem;
   color: #686768;
 }
 
@@ -446,19 +792,12 @@ body {
 
 
 /* ---- WfModuleContextMenu ---- */
+/* TODO: redefine to fit style guide classes  */
 
 .export-field-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-}
-
-.export-field-header-title {
-	height: 13px;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 13px;
-	line-height: 13px;
 }
 
 .export-link {
@@ -468,29 +807,29 @@ body {
 .export-field {
   display: flex;
   flex-direction: row;
-  height: 40px;
-  margin-bottom: 30px;  
+  height: 2.5rem;
+  margin-bottom: 1.875rem;  
 }
 
 .export-field-text {
-  height: 40px;
+  height: 2.5rem;
   border: 1px solid #EDECEC;
   background-color: #FFFFFF !important;  
   color: #686768;
 	font-family: Avenir;
-	font-size: 14px;
+	font-size: 0.875rem;
 	font-weight: 500;
-  line-height: 14px;
+  line-height: 0.875rem;
 }
 
 .export-icon-box {
-  width: 60px; 
-  height: 40px;
+  width: 3.75rem; 
+  height: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;  
   border: 1px solid #EDECEC;
-  font-size: 15px;  
+  font-size: 0.9375rem;  
   background-color: #FFFFFF;
 }
 
@@ -671,37 +1010,29 @@ body {
 
 /* Icon colors  */
 
-/* gray */
-.icon-g {
-  background-color: #686768;
-  color: #F2F2F2;
+.icon-gray {
+  color: #686768;
 }
 
-/* light gray */
-.icon-lg {
-  background-color: #B4B4B4;
-  color: #3A3A3A;
+.icon-light-gray {
+  color: #B4B4B4;
 }
 
-/* blue */
-.icon-b {
-  background-color: #48C8D7;
-  color: #3A3A3A;
+.icon-blue {
+  color: #48C8D7;
 }
 
-/* white */
-.icon-w {
-  background-color: #FFFFFF;
-  color: #3A3A3A;
+.icon-white {
+  color: #FFFFFF;
 }
 
-/* orange */
-.icon-o {
-  background-color: #FBAA6D;
-  color: #3A3A3A;
+.icon-orange {
+  color: #FBAA6D;
 }
 
 /* Icon wrapping (boxes around icons)  */
+/* TODO: trace down interference from prepackaged components  */
+/* TODO: transition to classes defined in style guide  */
 
 .module-icon {
   height: 15px;
@@ -714,77 +1045,57 @@ body {
   margin: 0 auto;  
 }
 
-.button-icon-box {
-  height: 25px;
-  width: 25px;
+.context-button {
+  height: 1.5625rem;
+  width: 1.5625rem;
   border: 0;
 }
 
-.button-icon-box:hover {
+.context-button:hover {
   background-color: #F9F9F9;
   border: 1px solid #CECECE;
 }
 
-.button-icon-box:active {
+.context-button:active {
   border: 1px solid #CECECE;  
   background-color: #EDECEC;
 }
 
-/* Scrolling List Div */
+/* --- Scrolling List Div ---  */
 .scolling-list {
   width: 100%;
   height: 400px;
   overflow: scroll;
 }
 
-/* Data versions modal */
+/* --- Data versions modal --- */
+/* TODO: use Dialog box classes from style guide  */
 
 .version-header {
   background-color: #FFFFFF;
-  height: 40px;
+  height: 2.5rem;
   width: 100%;
-  margin: 20px 30px 20px 30px;  
+  margin: 1.25rem 1.875rem 1.25rem 1.875rem;  
 }
 
 .version-active {
-	height: 40px;
+  height: 2.5rem;
 	width: 100%;
-	background-color: #48C8D7;
+  background-color: #48C8D7;
+  padding: 1.25rem 1.875rem 1.25rem 1.875rem;    
 }
 
 .version-disabled {
   background-color: #FFFFFF;
-  height: 40px;
+  height: 2.5rem;
   width: 100%;
+  padding: 1.25rem 1.875rem 1.25rem 1.875rem;      
 }
 
 .version-disabled:hover {
   background-color: #F1F5F7;
 }
 
-.line-item-active {
-	height: 36px;
-	color: #3A3A3A;
-	font-family: Avenir;
-	font-size: 13px;
-	font-weight: 300;
-	line-height: 18px;
-  padding: 20px 30px 20px 30px;  
-}
-
-.line-item-disabled {
-	height: 18px;
-	color: #3A3A3A;  
-	font-family: Avenir;
-	font-size: 13px;
-	font-weight: 300;
-	line-height: 18px;
-  padding: 20px 30px 20px 30px;    
-}
-
-.line-item-disabled:hover {
-  color: #3A3A3A;
-}
 
 /* WfParameter */
 
@@ -796,7 +1107,7 @@ body {
 }
 
 .version-item {
-  margin: 20px;
+  margin: 1.25rem;
   display: inline-block;
 }
 
@@ -818,16 +1129,11 @@ body {
   width: 30%;  
 }
 
-/* Editable text field */
-.workflow-title {
-  border: none;
-  outline: none;
-  padding: 0;
-}
+/* --- Editable text fields --- */
 
-/* Ugly borders to mark out divs, dev-only */
-.dev-box {
-  border: 2px dotted purple;
+.wf-module-notes-container {
+  background-color: #FAFAFA;
+  border: 1px solid #686768;
 }
 
 .card .second-level {

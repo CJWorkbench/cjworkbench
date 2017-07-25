@@ -127,12 +127,12 @@ export default class Workflow extends React.Component {
     // invokes the Module Library. 
     return (
       <div className="workflow-root">
-<WorkflowNavBar workflowId={this.props.workflow.id} api={this.props.api} /><div className="workflow-container">
+        <WorkflowNavBar workflowId={this.props.workflow.id} api={this.props.api} /><div className="workflow-container">
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
               <EditableWorkflowName
                 value={this.props.workflow.name}
-                editClass="workflow-title h4"
+                editClass='workflow-title-gray editable-text-field h4'
                 wfId={this.props.workflow.id} />
               <Button onClick={this.toggleModuleLibrary.bind(this)} 
                   className='button-blue'>Add Module</Button>

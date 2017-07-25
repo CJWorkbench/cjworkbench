@@ -122,27 +122,27 @@ export default class WfModuleContextMenu extends React.Component {
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
         <ModalHeader toggle={this.toggleModal} className='dialog-header' >
-          <span className='dialog-header-title'>Export Data</span>
+          <span className='dialog-box-title-gray'>Export Data</span>
           <span className='icon-close dialog-header-close' onClick={this.toggleExportModal}></span> 
         </ModalHeader>
         <ModalBody className='dialog-body'>
           <FormGroup>
             <div className='export-field-header'>
-              <Label className='export-field-header-title'>CSV</Label>
+              <Label className='title-line-item-gray'>CSV</Label>
               <div className='export-link'>{csvCopyLink}</div>
             </div>     
             <div className='export-field'>            
-              <Input type='url' className='export-field-text' placeholder={csvString} readOnly/>   
+              <Input type='url' className='data-gray text-field' placeholder={csvString} readOnly/>   
               <div className='export-icon-box'>                              
                 <a href={csvString} className='icon-download' download></a>
               </div>
             </div>
             <div className='export-field-header'>            
-              <Label className='export-field-header-title'>JSON</Label>
+              <Label className='title-line-item-gray'>JSON</Label>
               <div className='export-link'>{jsonCopyLink}</div>
             </div>
             <div className='export-field'>                        
-              <Input type='url' className='export-field-text' placeholder={jsonString} readOnly/>            
+              <Input type='url' className='data-gray text-field' placeholder={jsonString} readOnly/>            
               <div className='export-icon-box'>
                 <a href={jsonString} className='icon-download' download></a>    
               </div>
@@ -150,7 +150,7 @@ export default class WfModuleContextMenu extends React.Component {
           </FormGroup>
         </ModalBody>
         <ModalFooter className='dialog-footer'>
-          <Button onClick={this.toggleExportModal} className='button-blue'>Done</Button>{' '}
+          <Button onClick={this.toggleExportModal} className='button-blue action-button'>Done</Button>{' '}
         </ModalFooter>
       </Modal>
     );
@@ -161,25 +161,25 @@ export default class WfModuleContextMenu extends React.Component {
 
     return (
        <UncontrolledDropdown onClick={this.props.stopProp}>
-        <DropdownToggle className='button-icon-box'>
+        <DropdownToggle className='context-button text-center p-0'>
           <div className='button-icon icon-more'></div>
         </DropdownToggle>
         <DropdownMenu right className='dropdown-list-menu'>
           {/* Opens Modal window for downloading files */}
           <DropdownItem key={1} onClick={this.toggleExportModal} className='dropdown-list-item'>                       
             <span className='icon-download icon-w mr-2'></span>
-            Export
+            <span className='setting-gray'>Export</span>
             {exportModal}
           </DropdownItem>
           {/* Currently does nothing */}          
           <DropdownItem key={2} className='dropdown-list-item'>      
             <span className='icon-info icon-w mr-2'></span>                             
-            Update
+            <span className='setting-gray'>Update</span>
           </DropdownItem>
           {/* Will delete the parent WF Module from the list */}
           <DropdownItem key={3} onClick={this.deleteOption} className='dropdown-list-item'>    
             <span className='icon-bin icon-w mr-2'></span>                               
-            Delete
+            <span className='setting-gray'>Delete</span>
           </DropdownItem>
         </DropdownMenu>
        </UncontrolledDropdown>

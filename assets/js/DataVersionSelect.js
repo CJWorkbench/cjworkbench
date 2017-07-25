@@ -98,14 +98,15 @@ export default class DataVersionSelect extends React.Component {
 
     return (
       <div className='version-item'>
-        <div className='info-blue mb-2' onClick={this.toggleModal}>Current Version</div>
+        <div className='info-medium-gray mb-2'>Current Version</div>
 
-        <div className='open-modal'>
+        {/* removing 'open-modal' from ClassName  */}
+        <div className='info-medium-blue' onClick={this.toggleModal}>
             {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}  
         </div>        
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
           <ModalHeader toggle={this.toggleModal} >
-            <div className=''>Dataset Versions</div>
+            <div className='}'>Dataset Versions</div>
           </ModalHeader>
           <ModalBody>
             <div className='scolling-list'>
@@ -116,7 +117,7 @@ export default class DataVersionSelect extends React.Component {
                     className={(date == this.state.versions.selected) ? 'version-active ' : 'version-disabled'}
                     onClick={() => this.setSelected(date)}
                   >
-                    <div className={(date == this.state.versions.selected) ? 'line-item-active list-test-class' : 'line-item-disabled list-test-class'}>
+                    <div className={(date == this.state.versions.selected) ? 'version-text-active list-test-class' : 'version-text-disabled list-test-class'}>
                       { this.formatDate(date) }
                     </div>
                   </div>
@@ -125,8 +126,8 @@ export default class DataVersionSelect extends React.Component {
             </div>
           </ModalBody>
           <ModalFooter>
-            <Button className='button-blue' onClick={this.toggleModal}>Cancel</Button>    
-            <Button className='button-blue' onClick={this.changeVersions}>OK</Button>                    
+            <Button className='button-blue action-button' onClick={this.toggleModal}>Cancel</Button>    
+            <Button className='button-blue action-button' onClick={this.changeVersions}>OK</Button>                    
           </ModalFooter>
         </Modal>
       </div>
