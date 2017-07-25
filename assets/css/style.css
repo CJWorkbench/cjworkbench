@@ -977,14 +977,12 @@ body {
   margin-top: 0px;
 }
 
-<<<<<<< HEAD
 .import-module-buttons {
   float: right;
   margin-top: 55px;
   justify-content: flex-end;
   padding: 20px;
 }
-=======
 .module-library .p {  /* Description text */
     height: 14px;
     font-size: 13px;
@@ -1063,4 +1061,3 @@ body {
   font-size: 12px;
   color: #777;
 }
->>>>>>> Module suggestions rendering on search
