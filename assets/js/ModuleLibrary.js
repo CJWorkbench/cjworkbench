@@ -190,7 +190,7 @@ export default class ModuleLibrary extends React.Component {
             <div className={displayClassName}>
               {display}
             </div>
-             <ModuleSearch />
+             <ModuleSearch addModule={this.props.addModule} items={this.state.items}/>
           </div>
         </div>
         <CategoriesList

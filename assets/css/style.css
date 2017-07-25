@@ -942,54 +942,6 @@ body {
   flex-direction: horizontal;
 }
 
-.import-module {
-  height: 200px; 
-  width: 450px;
-  color: #686768;
-  float: right;
-  margin-right: 20px;
-  font-size: 14px;
-  background-color: #FFFFFF;
-  padding: 20px;
-  box-shadow: 3px 3px 3px #888888;
-  position: fixed;
-  z-index: 1000;
-  right: 40px;
-  margin-top: 10px;
-}
-
-.import-module-label {	
-  height: 40px;	
-  color: #686768;	
-  font-family: Avenir;
-  font-weight: 400;
-  font-size: 16px;	
-  padding: 20px;
-  position: relative;
-  padding-bottom: 10px;
-}
-
-.import-module-button {
-  float: right;
-  right: 40px;
-  z-index: 1000;
-  position: fixed;
-  margin-top: 0px;
-}
-
-.import-module-buttons {
-  float: right;
-  margin-top: 55px;
-  justify-content: flex-end;
-  padding: 20px;
-}
-.module-library .p {  /* Description text */
-    height: 14px;
-    font-size: 13px;
-    line-height: 13px;
-    padding: 7px;
-}
-
 .react-autosuggest__container {
   position: relative;
   padding-top: 10px;
@@ -1062,4 +1014,52 @@ body {
   padding: 10px 0 0 10px;
   font-size: 12px;
   color: #777;
+}
+
+.import-module {
+  height: 200px; 
+  width: 450px;
+  color: #686768;
+  float: right;
+  margin-right: 20px;
+  font-size: 14px;
+  background-color: #FFFFFF;
+  padding: 20px;
+  box-shadow: 3px 3px 3px #888888;
+  position: fixed;
+  z-index: 1000;
+  right: 40px;
+  margin-top: 10px;
+}
+
+.import-module-label {	
+  height: 40px;	
+  color: #686768;	
+  font-family: Avenir;
+  font-weight: 400;
+  font-size: 16px;	
+  padding: 20px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.import-module-button {
+  float: right;
+  right: 40px;
+  z-index: 1000;
+  position: fixed;
+  margin-top: 0px;
+}
+
+.import-module-buttons {
+  float: right;
+  margin-top: 55px;
+  justify-content: flex-end;
+  padding: 20px;
+}
+.module-library .p {  /* Description text */
+    height: 14px;
+    font-size: 13px;
+    line-height: 13px;
+    padding: 7px;
 }
