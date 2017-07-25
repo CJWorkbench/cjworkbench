@@ -992,6 +992,8 @@ body {
 
 .react-autosuggest__container {
   position: relative;
+  padding-top: 10px;
+  padding-left: 20px;
 }
 
 .react-autosuggest__input {

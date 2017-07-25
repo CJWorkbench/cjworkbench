@@ -164,7 +164,6 @@ export default class ModuleLibrary extends React.Component {
       modules={modulesByCategory}
       />;
     categories.push(moduleCategory);
-<<<<<<< HEAD
 
     // Import from GitHub component 
     let importFromGitHub = <ImportModuleFromGitHub url="" moduleLibrary={this}/>;
@@ -183,22 +182,16 @@ export default class ModuleLibrary extends React.Component {
         </Button>;
     }
 
-=======
->>>>>>> Module suggestions rendering on search
     return (
       <div className="module-library">
         <div className="nav-bar">
           <div className="h1">Module Library</div>
-<<<<<<< HEAD
-          <div className={displayClassName}>
-            {display}
+          <div>
+            <div className={displayClassName}>
+              {display}
+            </div>
+             <ModuleSearch />
           </div>
-=======
-          <ModuleSearch
-            items={this.state.items}
-            addModule={this.props.addModule}
-             />
->>>>>>> Module suggestions rendering on search
         </div>
         <CategoriesList
           data={categories}
