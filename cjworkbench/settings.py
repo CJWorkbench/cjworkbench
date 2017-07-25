@@ -59,6 +59,15 @@ if DEBUG==False:
         }
     }
 
+    if 'CJW_SENDGRID_API_KEY' not in os.environ:
+        sys.exit('Must set CJW_SENDGRID_API_KEY in production')
+
+    EMAIL_HOST = 'smtp.sendgrid.net'
+    EMAIL_HOST_USER = 'apikey'
+    EMAIL_HOST_PASSWORD = os.environ['CJW_SENDGRID_API_KEY']
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+
 else:
     # We are running in debug
     SECRET_KEY = 'my debug secret key is not a secret'
@@ -72,6 +81,7 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
+
 
 ALLOWED_HOSTS = ['*']
 
@@ -178,6 +188,7 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.10/howto/static-files/
+# I don't think we actually use this, we're webpack instead -- jms 2017-7-24
 
 STATIC_URL = '/static/'
 STATIC_ROOT = normpath(join(DJANGO_ROOT, 'static'))
@@ -192,6 +203,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
+# Webpack loads all our js/css into handy bundles
 WEBPACK_LOADER = {
     'DEFAULT': {
         'BUNDLE_DIR_NAME': 'bundles/',
