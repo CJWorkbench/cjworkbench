@@ -15,15 +15,18 @@ export default class EditableNotes extends React.Component {
   }
 
   saveNotes(newNote) {
+    // save something in text field in case of no value existing
+    var value = (this.props.value) ? this.props.value : "   "
+
     this.api.setWfModuleNotes(this.props.wfModuleId, newNote.value);
   }
 
-  // can specify rows and cols in parameters
   render() {
-    // var rowCount = (this.props.value && this.props.value.length > 50)
-    //   ? 5
-    //   : 1
+    var rowCount = (this.props.value && this.props.value.length > 70)
+      ? 5
+      : 1
 
+    // show something in text field in case of no value existing
     var value = (this.props.value) ? this.props.value : "   "
 
     return <div><RIETextArea
@@ -31,8 +34,8 @@ export default class EditableNotes extends React.Component {
       change={this.saveNotes}
       propName="value"
       className={this.props.editClass}
-      cols={50}
-      rows={5}
+      cols={70}
+      rows={rowCount}
     /></div>
   }
 }
