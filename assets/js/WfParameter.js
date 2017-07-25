@@ -205,7 +205,7 @@ export default class WfParameter extends React.Component {
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
           return (
             <div className='version-box'>
-                <DataVersionSelect wf_module_id={this.props.wf_module_id} api={workbenchAPI()} />
+                <DataVersionSelect wfModuleId={this.props.wf_module_id} revision={this.props.revision} api={workbenchAPI()} />
                 <UpdateFrequencySelect />
                 <Button className='button-blue action-button mt-4' onClick={this.click}>{this.name}</Button>
             </div>

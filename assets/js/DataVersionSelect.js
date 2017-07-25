@@ -19,8 +19,8 @@ export default class DataVersionSelect extends React.Component {
     };
 
     // Allow props to specify a conversion from browser time to displayed time, so tests can run in UTC (not test machine tz) 
-    if (props.timezone_offset != undefined) {
-      this.state.timezoneOffset = props.timezone_offset;
+    if (props.timezoneOffset != undefined) {
+      this.state.timezoneOffset = props.timezoneOffset;
     } else {
       this.state.timezoneOffset = 0; // display in browser local time 
     }
@@ -55,16 +55,26 @@ export default class DataVersionSelect extends React.Component {
     this.setState(Object.assign({}, this.state, { dropdownOpen: !this.state.dropdownOpen }));
   }
 
-  componentDidMount() {
-    var wf_module_id =  this.props.wf_module_id;
-
-    this.props.api.getWfModuleVersions(wf_module_id)
+  loadVersions() {
+    this.props.api.getWfModuleVersions(this.props.wfModuleId)
       .then(json => {
-        console.log('Versions state returned: ' + JSON.stringify(json));
+        // console.log('Versions state returned: ' + JSON.stringify(json));
         this.setState(
           Object.assign({}, this.state, {versions: json, originalSelected: json.selected})
         );
       })
+  }
+
+  // Load version list / current version when first created
+  componentDidMount() {
+    this.loadVersions();
+  }
+
+  // If the workflow revision changes, reload the versions in case they've changed too
+  componentWillReceiveProps(nextProps) {
+    if (this.props.revision != nextProps.revision) {
+      this.loadVersions();
+    }
   }
 
   setSelected(date) {
@@ -80,9 +90,9 @@ export default class DataVersionSelect extends React.Component {
 
   changeVersions() {
     if (this.state.versions.selected !== this.state.originalSelected) {
-      this.props.api.setWfModuleVersion(this.props.wf_module_id, this.state.versions.selected)
+      this.props.api.setWfModuleVersion(this.props.wfModuleId, this.state.versions.selected)
       .then(() => {
-        console.log('changing originalSelected to ' + this.state.versions.selected);
+        // console.log('changing originalSelected to ' + this.state.versions.selected);
         this.setState(
           Object.assign({}, this.state, {originalSelected: this.state.versions.selected})
         )
@@ -135,7 +145,8 @@ export default class DataVersionSelect extends React.Component {
 }
 
 DataVersionSelect.propTypes = {
-  wf_module_id:    PropTypes.number.isRequired,
-  api:             PropTypes.object.isRequired,
-  timezone_offset: PropTypes.number
+  wfModuleId:       PropTypes.number.isRequired,
+  revision:         PropTypes.number.isRequired,
+  api:              PropTypes.object.isRequired,
+  timezoneOffset:   PropTypes.number
 };
