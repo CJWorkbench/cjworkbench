@@ -139,18 +139,19 @@ class ChangeWfModuleNotesCommandTests(TestCase):
 
     # Change notes, then undo/redo
     def test_change_notes(self):
-        # Create two data versions, use the second
-        firstver = self.wfm.set_notes('text1')
-        secondver = self.wfm.set_notes('text2')
+        # This returns nothing!
+        firstNote = 'text1'
+        secondNote = 'text2'
 
-        # Change back to first version
-        cmd = ChangeWfModuleNotesCommand.create(self.wfm, 'text1')
-        self.assertEqual(self.wfm.get_stored_data_version(), firstver)
+        # Put both notes in
+        self.wfm.notes = firstNote
+        cmd = ChangeWfModuleNotesCommand.create(self.wfm, secondNote)        
+        self.assertEqual(self.wfm.notes, secondNote)
 
         # undo
         cmd.backward()
-        self.assertEqual(self.wfm.get_stored_data_version(), secondver)
+        self.assertEqual(self.wfm.notes, firstNote)
 
         # redo
         cmd.forward()
-        self.assertEqual(self.wfm.get_stored_data_version(), firstver)
+        self.assertEqual(self.wfm.notes, secondNote)

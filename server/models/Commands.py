@@ -271,9 +271,9 @@ class ChangeWfModuleNotesCommand(Delta):
 
     @staticmethod
     def create(wf_module, notes):
-        old_value = wf_module.notes
+        old_value = wf_module.notes if wf_module.notes else '  '
         description = 'Changed workflow module note from ' + old_value + ' to ' + notes
-
+        
         delta = ChangeWfModuleNotesCommand.objects.create(
             workflow = wf_module.workflow,
             wf_module = wf_module,

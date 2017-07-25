@@ -39,6 +39,7 @@ class WfModule(models.Model):
 
     # DO NOT use null=True, causes problems in test
     notes = models.TextField(
+        null=True,
         blank=True)
 
     stored_data_version = models.CharField(

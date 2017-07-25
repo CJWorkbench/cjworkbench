@@ -77,18 +77,19 @@ class ChangeWorkflowTitleCommandTests(TestCase):
 
     # Change notes, then undo/redo
     def test_change_title(self):
-        # Create two data versions, use the second
-        firstver = self.workflow.set_name('title1')
-        secondver = self.workflow.set_name('title2')
+        firstTitle = 'title1'
+        secondTitle = 'title2'
 
-        # Change back to first version
-        cmd = ChangeWorkflowTitleCommand.create(self.workflow, 'title1')
-        self.assertEqual(self.workflow.name, 'title1')
+        self.workflow.name = firstTitle
+
+        # Change back to second title, see if it saved
+        cmd = ChangeWorkflowTitleCommand.create(self.workflow, secondTitle)
+        self.assertEqual(self.workflow.name, secondTitle)
 
         # undo
         cmd.backward()
-        self.assertEqual(self.workflow.name, 'title2')
+        self.assertEqual(self.workflow.name, firstTitle)
 
         # redo
         cmd.forward()
-        self.assertEqual(self.workflow.name, 'title1')
+        self.assertEqual(self.workflow.name, secondTitle)
