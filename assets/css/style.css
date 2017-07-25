@@ -14,9 +14,12 @@ body {
   color: #686768;
 }
 
-/* height 100% needed on all parents so that output pane flexbox can fill available vertical screen space  */
+/* height 100% needed on all parents so that output pane flexbox can fill available vertical screen space.
+  Not sure why position absolute is needed, but it gets push down the screen (not flush with top) otherwise. */
 #root {
   height: 100%;
+	width: 100%;
+	position: absolute;
 }
 
 /* ---- Text Type styles: cross-module ----- */
@@ -610,9 +613,12 @@ body {
 
 /* ---- Workflow page ---- */
 
-/* Contains navbar + workflow. */
+/* Contains navbar + workflow. For some reason we need absolute positioning to get this to show up right,
+   and when we set that we also need width:100%*/
 .workflow-root {
   height: 100%;
+	width: 100%;
+	position: absolute;
 }
 
 /* Contains modulestack + output pane. Position below nav */
