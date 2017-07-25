@@ -10,9 +10,9 @@ exports[`EditableNotes renders correctly 1`] = `
     <RIETextArea
       change={[Function]}
       className=""
-      cols={50}
+      cols={70}
       propName="value"
-      rows={5}
+      rows={1}
       value="testing"
     >
       <span
