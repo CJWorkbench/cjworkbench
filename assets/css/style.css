@@ -378,14 +378,24 @@ body {
 /* ---- Text Input Fields ---- */
 /* TODO: match with style guide  */
 
-.editable-text-field {
+.editable-title-field {
+  border: none; 
+  /* border: 1px dotted #686768; */
+  outline: none;
+  padding: 0;
+  resize: none;
+   /* height: 100%; */
+  width: 40rem; 
+}
+
+.editable-notes-field {
   /* border: none; */
   border: 1px dotted #686768;
   outline: none;
   padding: 0;
   resize: none;
-  /* height: 100%;
-  width: 100%; */
+   /* height: 100%; */
+  width: 40rem; 
 }
 
 .text-field {

@@ -15,15 +15,18 @@ export default class DataVersionSelect extends React.Component {
       modalOpen: false,
       dropdownOpen: false,
       versions: {versions: [], selected: ''},
-      originalSelected: ''
+      originalSelected: '',
+      timezoneOffset: 0 // display in browser local time
     };
 
     // Allow props to specify a conversion from browser time to displayed time, so tests can run in UTC (not test machine tz) 
     if (props.timezoneOffset != undefined) {
-      this.state.timezoneOffset = props.timezoneOffset;
-    } else {
-      this.state.timezoneOffset = 0; // display in browser local time 
-    }
+      // this.state.timezoneOffset = props.timezoneOffset;
+      Object.assign({}, this.state, {timezoneOffset: props.timezoneOffset})
+    } 
+    // else {
+    //   this.state.timezoneOffset = 0; // display in browser local time 
+    // }
 
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleDropdown = this.toggleDropdown.bind(this);    

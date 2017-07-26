@@ -16,9 +16,9 @@ export default class EditableNotes extends React.Component {
 
   saveNotes(newNote) {
     // save something in text field in case of no value existing
-    var value = (this.props.value) ? this.props.value : "   "
+    var value = (newNote.value) ? newNote.value : "   "
 
-    this.api.setWfModuleNotes(this.props.wfModuleId, newNote.value);
+    this.api.setWfModuleNotes(this.props.wfModuleId, value);
   }
 
   render() {

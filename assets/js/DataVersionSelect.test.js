@@ -18,9 +18,9 @@ it('DataVersionSelect renders correctly', () => {
     ],
     selected: '2017-04-10 17:57:58.324'
   };
-
   
   var localToUTC = (new Date()).getTimezoneOffset();  // how many hours off from UTC are we? print tests all in UTC
+  console.log("Calculated local-to-UTC difference: " + localToUTC + " minutes");
 
   const wrapper = shallow( <DataVersionSelect wf_module_id={1} api={emptyAPI} timezone_offset={localToUTC} />);
   wrapper.setState( { modalOpen: false, versions: mockVersions, originalSelected:'4'} )
