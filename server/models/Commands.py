@@ -236,10 +236,12 @@ class ChangeWorkflowTitleCommand(Delta):
     old_value = models.TextField('old_value')
 
     def forward(self):
-        self.workflow.set_name(self.new_value)
+        self.workflow.name = self.new_value
+        self.workflow.save()
 
     def backward(self):
-        self.workflow.set_name(self.old_value)
+        self.workflow.name = self.old_value
+        self.workflow.save()
 
     @staticmethod
     def create(workflow, name):
@@ -264,16 +266,18 @@ class ChangeWfModuleNotesCommand(Delta):
     old_value = models.TextField('old_value')
 
     def forward(self):
-        self.wf_module.set_notes(self.new_value)
+        self.wf_module.notes = self.new_value
+        self.wf_module.save()
 
     def backward(self):
-        self.wf_module.set_notes(self.old_value)
+        self.wf_module.notes = self.old_value
+        self.wf_module.save()
 
     @staticmethod
     def create(wf_module, notes):
         old_value = wf_module.notes if wf_module.notes else ''
         description = 'Changed workflow module note from ' + old_value + ' to ' + notes
-        
+
         delta = ChangeWfModuleNotesCommand.objects.create(
             workflow = wf_module.workflow,
             wf_module = wf_module,
@@ -284,5 +288,51 @@ class ChangeWfModuleNotesCommand(Delta):
 
         delta.forward()
         notify_client_workflow_version_changed(wf_module.workflow)
+
+        return delta
+
+
+class ChangeWfModuleUpdateSettingsCommand(Delta):
+    wf_module = models.ForeignKey(WfModule)
+    new_auto = models.BooleanField()
+    old_auto = models.BooleanField()
+    new_next_update = models.DateField(null=True)
+    old_next_update = models.DateField(null=True)
+    new_update_interval = models.IntegerField()
+    old_update_interval = models.IntegerField()
+
+    def forward(self):
+        self.wf_module.auto_update_data = self.new_auto
+        self.wf_module.next_update = self.new_next_update
+        self.wf_module.update_interval = self.new_update_interval
+        self.wf_module.save()
+
+
+    def backward(self):
+        self.wf_module.auto_update_data = self.old_auto
+        self.wf_module.next_update = self.old_next_update
+        self.wf_module.update_interval = self.old_update_interval
+        self.wf_module.save()
+
+
+    @staticmethod
+    def create(wf_module, auto_update_data, next_update, update_interval):
+        description = 'Changed workflow update settings'
+
+        delta = ChangeWfModuleUpdateSettingsCommand.objects.create(
+            workflow = wf_module.workflow,
+            wf_module = wf_module,
+            old_auto = wf_module.auto_update_data,
+            new_auto = auto_update_data,
+            old_next_update = wf_module.next_update,
+            new_next_update = next_update,
+            old_update_interval = wf_module.update_interval,
+            new_update_interval = update_interval,
+            command_description = description
+        )
+
+        delta.forward()
+        # No notification needed as client will do update
+        # notify_client_workflow_version_changed(wf_module.workflow)
 
         return delta

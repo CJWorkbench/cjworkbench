@@ -22,7 +22,3 @@ class Workflow(models.Model):
 
     def __str__(self):
         return self.name
-
-    def set_name(self, name):
-        self.name = name
-        return self.save()

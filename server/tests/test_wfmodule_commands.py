@@ -1,6 +1,8 @@
-from server.models import AddModuleCommand,DeleteModuleCommand,ChangeDataVersionCommand,ChangeWfModuleNotesCommand
+from server.models import AddModuleCommand,DeleteModuleCommand,ChangeDataVersionCommand
+from server.models import ChangeWfModuleNotesCommand,ChangeWfModuleUpdateSettingsCommand
 from django.test import TestCase
 from server.tests.utils import *
+from datetime import datetime
 
 class AddDeleteModuleCommandTests(TestCase):
     def setUp(self):
@@ -139,13 +141,12 @@ class ChangeWfModuleNotesCommandTests(TestCase):
 
     # Change notes, then undo/redo
     def test_change_notes(self):
-        # This returns nothing!
         firstNote = 'text1'
         secondNote = 'text2'
-
-        # Put both notes in
         self.wfm.notes = firstNote
-        cmd = ChangeWfModuleNotesCommand.create(self.wfm, secondNote)        
+
+        # do
+        cmd = ChangeWfModuleNotesCommand.create(self.wfm, secondNote)
         self.assertEqual(self.wfm.notes, secondNote)
 
         # undo
@@ -155,3 +156,35 @@ class ChangeWfModuleNotesCommandTests(TestCase):
         # redo
         cmd.forward()
         self.assertEqual(self.wfm.notes, secondNote)
+
+
+class ChangeWfModuleUpdateSettingsCommandTests(TestCase):
+    def setUp(self):
+        self.workflow = create_testdata_workflow()
+        self.wfm = WfModule.objects.first()
+
+    # Change notes, then undo/redo
+    def test_change_update_settings(self):
+
+        self.wfm.auto_update_data = False
+        self.wfm.next_update = None
+        self.wfm.update_interval = 100
+
+        # do
+        mydate = datetime.now()
+        cmd = ChangeWfModuleUpdateSettingsCommand.create(self.wfm, True, mydate, 1000)
+        self.assertTrue(self.wfm.auto_update_data)
+        self.assertEqual(self.wfm.next_update, mydate)
+        self.assertEqual(self.wfm.update_interval, 1000)
+
+        # undo
+        cmd.backward()
+        self.assertFalse(self.wfm.auto_update_data)
+        self.assertEqual(self.wfm.next_update, None)
+        self.assertEqual(self.wfm.update_interval, 100)
+
+        # redo
+        cmd.forward()
+        self.assertTrue(self.wfm.auto_update_data)
+        self.assertEqual(self.wfm.next_update, mydate)
+        self.assertEqual(self.wfm.update_interval, 1000)

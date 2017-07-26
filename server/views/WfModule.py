@@ -8,11 +8,30 @@ from rest_framework.renderers import JSONRenderer
 from server.models import Workflow, WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
-from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand
+from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
+from datetime import datetime, timedelta
+from server.utils import units_to_seconds
 import pandas as pd
 
-# Get json representation of module, or delete it
-@api_view(['GET', 'DELETE', 'POST'])
+
+# The guts of patch commands for various WfModule fields
+def patch_notes(wf_module, data):
+    ChangeWfModuleNotesCommand.create(wf_module, data['notes'])
+
+def patch_update_settings(wf_module, data):
+    auto_update_data = data['auto_update_data']
+
+    if auto_update_data and (('update_interval' not in data) or ('update_units' not in data)):
+        raise ValueError('missing update_interval and update_units fields')
+
+    # Use current time as base update time. Not the best?
+    interval = units_to_seconds(int(data['update_interval']), data['update_units'])
+    next_update = datetime.now() + timedelta(seconds=interval)
+    ChangeWfModuleUpdateSettingsCommand.create(wf_module, auto_update_data, next_update, interval)
+
+
+# Main /api/wfmodule/xx call. Can do a lot of different things depending on request type
+@api_view(['GET', 'DELETE', 'PATCH'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_detail(request, pk, format=None):
     try:
@@ -31,12 +50,23 @@ def wfmodule_detail(request, pk, format=None):
         DeleteModuleCommand.create(wf_module)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    elif request.method == 'POST':
+    elif request.method == 'PATCH':
+        # For patch, we check which fields are set in data, and process all of them
         try:
-            ChangeWfModuleNotesCommand.create(wf_module, request.data['notes'])
+            if 'notes' in request.data:
+                patch_notes(wf_module, request.data)
+
+            if 'auto_update_data' in request.data:
+                patch_update_settings(wf_module, request.data)
+
+            if (not 'notes' in request.data) and (not 'auto_update_data' in request.data):
+                raise ValueError('Unknown fields')
+
         except Exception as e:
-            return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 # /render: return output table of this module
 @api_view(['GET'])
@@ -123,5 +153,6 @@ def wfmodule_dataversion(request, pk, format=None):
     elif request.method == 'PATCH':
         ChangeDataVersionCommand.create(wf_module, request.data['selected'])
         return Response(status=status.HTTP_204_NO_CONTENT)
+
 
 

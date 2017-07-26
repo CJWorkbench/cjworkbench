@@ -48,7 +48,7 @@ class WorkbenchAPI {
   setWfModuleNotes(wf_module_id, text) {
     return (
       fetch('/api/wfmodules/' + wf_module_id, {
-        method: 'post',
+        method: 'patch',
         credentials: 'include',
         headers: {
           'Accept': 'application/json',
