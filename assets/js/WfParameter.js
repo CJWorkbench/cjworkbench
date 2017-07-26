@@ -112,7 +112,7 @@ export default class WfParameter extends React.Component {
 
         return (
           <div>
-            <div className='setting-gray'>{this.name}:</div>
+            <div className='setting-gray mt-2'>{this.name}:</div>
             <textarea
               className={sclass}
               className='data-paragraph-gray text-field mt-2'

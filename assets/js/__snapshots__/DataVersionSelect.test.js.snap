@@ -13,7 +13,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
     className="info-medium-blue open-modal"
     onClick={[Function]}
   >
-    April 1 2001 - 12:00 AM
+    March 31 2001 - 11:00 PM
   </div>
   <Modal
     autoFocus={true}
@@ -50,7 +50,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="version-text-disabled list-test-class"
           >
-            July 10 2017 - 05:57 PM
+            July 10 2017 - 04:57 PM
           </div>
         </div>
         <div
@@ -60,7 +60,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="version-text-disabled list-test-class"
           >
-            June 10 2017 - 05:57 PM
+            June 10 2017 - 04:57 PM
           </div>
         </div>
         <div
@@ -70,7 +70,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="version-text-disabled list-test-class"
           >
-            May 10 2017 - 05:57 PM
+            May 10 2017 - 04:57 PM
           </div>
         </div>
         <div
@@ -80,7 +80,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="version-text-active list-test-class"
           >
-            April 10 2017 - 05:57 PM
+            April 10 2017 - 04:57 PM
           </div>
         </div>
         <div
@@ -90,7 +90,7 @@ exports[`DataVersionSelect renders correctly 1`] = `
           <div
             className="version-text-disabled list-test-class"
           >
-            March 10 2017 - 05:57 PM
+            March 10 2017 - 04:57 PM
           </div>
         </div>
       </div>
@@ -132,7 +132,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
     className="info-medium-blue open-modal"
     onClick={[Function]}
   >
-    April 1 2001 - 12:00 AM
+    March 31 2001 - 11:00 PM
   </div>
   <Modal
     autoFocus={true}
@@ -169,7 +169,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="version-text-disabled list-test-class"
           >
-            July 10 2017 - 05:57 PM
+            July 10 2017 - 04:57 PM
           </div>
         </div>
         <div
@@ -179,7 +179,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="version-text-disabled list-test-class"
           >
-            June 10 2017 - 05:57 PM
+            June 10 2017 - 04:57 PM
           </div>
         </div>
         <div
@@ -189,7 +189,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="version-text-disabled list-test-class"
           >
-            May 10 2017 - 05:57 PM
+            May 10 2017 - 04:57 PM
           </div>
         </div>
         <div
@@ -199,7 +199,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="version-text-active list-test-class"
           >
-            April 10 2017 - 05:57 PM
+            April 10 2017 - 04:57 PM
           </div>
         </div>
         <div
@@ -209,7 +209,7 @@ exports[`DataVersionSelect renders correctly 2`] = `
           <div
             className="version-text-disabled list-test-class"
           >
-            March 10 2017 - 05:57 PM
+            March 10 2017 - 04:57 PM
           </div>
         </div>
       </div>

@@ -378,32 +378,14 @@ body {
 /* ---- Text Input Fields ---- */
 /* TODO: match with style guide  */
 
-.editable-title-field {
-  border: none; 
-  /* border: 1px dotted #686768; */
-  outline: none;
-  padding: 0;
-  resize: none;
-   /* height: 100%; */
-  width: 40rem; 
-}
 
-.editable-notes-field {
-  /* border: none; */
-  border: 1px dotted #686768;
-  outline: none;
-  padding: 0;
-  resize: none;
-   /* height: 100%; */
-  width: 40rem; 
-}
 
 .text-field {
   height: 2.5rem;
   width: 100%;
   background-color: #FFFFFF !important;
   border: 1px solid #EDECEC;
-  resize: none;
+  /* resize: none; */
 }
 
 .text-field:active {
@@ -1150,11 +1132,25 @@ body {
 
 /* --- Editable text fields --- */
 
-.editable-notes-container {
-  background-color: #FAFAFA;
-  border: 1px dotted #686768;
-  height: 3rem;
-  width: 40rem; 
+.editable-title-field {
+  border: none; 
+  outline: none;
+  padding: 0;
+  resize: none;
+  width: 100%; 
+}
+
+.editable-notes-field {
+  border: none; 
+  outline: none;
+  padding: 0;
+  height: 100%; 
+  width: 100%;   
+}
+
+/* applied only when field is in edit mode  */
+.editable-notes-field-active {
+  background-color: #FAFAFA;  
 }
 
 .card .second-level {

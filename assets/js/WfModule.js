@@ -68,7 +68,8 @@ export default class WfModule extends React.Component {
     this.getParamText = this.getParamText.bind(this);
     this.removeModule = this.removeModule.bind(this);
     this.toggleDetails = this.toggleDetails.bind(this);
-    this.toggleNotes = this.toggleNotes.bind(this);
+    this.showNotes = this.showNotes.bind(this);
+    this.hideNotes = this.hideNotes.bind(this);
   }
 
   // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
@@ -116,9 +117,13 @@ export default class WfModule extends React.Component {
     this.setState(Object.assign({}, this.state, {detailsOpen: !this.state.detailsOpen}));
   }
 
-  toggleNotes(e) {
+  showNotes(e) {
     e.stopPropagation();
-    this.setState(Object.assign({}, this.state, {showNotes: !this.state.showNotes}));
+    this.setState(Object.assign({}, this.state, {showNotes: true}));
+  }
+
+  hideNotes() {
+    this.setState(Object.assign({}, this.state, {showNotes: false}));
   }
 
   render() {
@@ -141,13 +146,21 @@ export default class WfModule extends React.Component {
       inside = <div className='wf-parameters'>{paramdivs}</div>;
 
     var notes = undefined;
+    var value = ( this.wf_module.notes && (this.wf_module.notes != "") ) 
+      ? this.wf_module.notes
+      : "Write notes here"
     if (this.state.showNotes)
-      notes = <div className='editable-notes-container'>
-                <EditableNotes
-                  value={this.wf_module.notes}
-                  editClass='editable-text-field'
-                  wfModuleId={this.wf_module.id} />
-              </div>
+      notes = <EditableNotes
+                value={value}
+                hideNotes={ () => this.hideNotes() }
+                editClass='editable-notes-field'
+                wfModuleId={this.wf_module.id} />
+
+    var notesIcon = undefined;
+    if (!this.state.showNotes)
+      notesIcon = <div className='context-button p-0 mt-0.5 d-flex align-items-center' onClick={this.showNotes}>
+                    <div className='icon-note button-icon' ></div>
+                  </div>
 
     var arrow = (this.state.detailsOpen) 
       ? <div className='icon-sort-up button-icon'></div>
@@ -179,9 +192,7 @@ export default class WfModule extends React.Component {
                 </div>
                 {/* TODO: not necessary to pass in stopProp*/}
                 <div className='d-flex justify-content-end'>
-                  <div className='context-button p-0 mt-0.5 d-flex align-items-center' onClick={this.toggleNotes}>
-                    <div className='icon-note button-icon' ></div>
-                  </div>
+                  {notesIcon}
                   <WfModuleContextMenu 
                     removeModule={ () => this.removeModule() }
                     stopProp={(e) => e.stopPropagation()}
