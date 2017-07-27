@@ -30,6 +30,7 @@ export default class EditableWorkflowName extends React.Component {
       change={this.saveName}
       propName="value"
       className={this.props.editClass}
+      classEditing='title-1 t-d-gray'
     /></h4>
   }
 }

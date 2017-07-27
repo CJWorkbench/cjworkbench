@@ -154,7 +154,7 @@ export default class WfModule extends React.Component {
       notes = <EditableNotes
                 value={value}
                 hideNotes={ () => this.hideNotes() }
-                editClass='editable-notes-field'
+                editClass='editable-notes-field t-d-gray note'
                 wfModuleId={this.wf_module.id} />
 
     var notesIcon = undefined;

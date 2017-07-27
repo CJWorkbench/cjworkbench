@@ -16,6 +16,7 @@ export default class EditableNotes extends React.Component {
   }
 
   // simulate a click on the field to enter editing state
+  // have to target child through parent b/c  
   componentDidMount() {
     var target = this.textInput.childNodes[0];
     target.focus()
@@ -41,7 +42,13 @@ export default class EditableNotes extends React.Component {
 
 
   render() {
+
+    var rowcount = (this.props.value && this.props.value.length)
+      ? Math.ceil(this.props.value.length / 100)
+      : 1
+
     // classEditing param for classes applied during edit state only
+    // defaultProps param for classes applied in idle state only
     // 'ref' callback receives the mounted instance of the component as its argument
     return <div 
               onKeyPress={this.keyPress}
@@ -52,7 +59,9 @@ export default class EditableNotes extends React.Component {
                 change={this.saveNotes}
                 propName="value"
                 className={this.props.editClass}
-                classEditing='editable-notes-field-active'
+                classEditing='editable-notes-field-active t-d-gray note'
+                defaultProps='editable-notes-field-idle'
+                rows={rowcount}
               />
           </div>
   }

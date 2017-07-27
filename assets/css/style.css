@@ -3,7 +3,7 @@
 html {
   height: 100%;
   /* sets the basis for `rem` styling units */
-  font-size: 16px;
+  font-size: 10px;
 }
 
 body {
@@ -22,10 +22,162 @@ body {
 	position: absolute;
 }
 
-/* ---- Text Type styles: cross-module ----- */
+/* ---- NEW Type styles: use on all newly styled elements: phase out olds on edit ----- */
 
-/* TODO: DRY out the repitition */
-/* ---> be wary of imported component styles  */
+/* --- Text Sizing ---  */
+
+.title-1 {
+	font-size: 2.5rem;
+	font-weight: 300;
+	line-height: 2.5rem;
+}
+.title-2 {
+	font-size: 2.2rem;
+	font-weight: 500;
+	line-height: 2.2rem;
+}
+.title-3 {
+	font-size: 1.8rem;
+	font-weight: 300;
+	line-height: 1.8rem;
+}
+.title-4 {
+	font-size: 1.5rem;
+	font-weight: 500;
+	line-height: 1.5rem;
+}
+.title-5 {
+	font-size: 1.1rem;
+	font-weight: 900;
+	line-height: 2rem;
+}
+
+.content-1 {
+	font-size: 1.4rem;
+	font-weight: 900;
+  line-height: 1.4rem;
+  opacity: 0.6;
+}
+.content-2 {
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+}
+.content-3 {
+	font-size: 1.3rem;
+	line-height: 1.3rem;
+}
+.content-4 {
+	font-size: 1.2rem;
+	font-weight: 900;
+	line-height: 1.2rem;
+}
+
+.code-1 {
+  font-family: "PT Mono";
+	font-size: 1.4rem;
+	line-height: 2.4rem;
+}
+
+.info-1 {
+	font-size: 1.3rem;
+	font-weight: 300;
+	line-height: 2.1rem;
+}
+.info-2 {
+	font-size: 1rem;
+	font-weight: 900;
+	line-height: 1rem;
+}
+
+.table-1 {
+	font-size: 1.3rem;
+	font-weight: 900;
+	line-height: 1.8rem;
+}
+.table-2 {
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.1rem;
+}
+
+.note {
+  font-size: 1.5rem;
+	font-weight: 300;
+	line-height: 2.8rem;
+}
+
+/* --- Colors ---  */
+/* WARNING: watch out for over-rides on Bootstrap classes  */
+
+/* Text  */
+.t-vl-gray {
+  color: #FAFAFA;
+}
+.t-l-gray {
+  color: #F5F5F5;
+}
+.t-m-gray {
+  color: #B4B4B4;
+}
+.t-d-gray {
+  color: #686768;
+}
+.t-d-blue {
+  color: #577485;
+}
+.t-f-blue {
+  color: #48C8D7;
+}
+.t-orange {
+  color: #F8AA6D;
+}
+
+/* Backgrounds  */
+.b-vl-gray {
+  background-color: #FAFAFA;
+}
+.b-l-gray {
+  background-color: #F5F5F5;
+}
+.b-m-gray {
+  background-color: #B4B4B4;
+}
+.b-d-gray {
+  background-color: #686768;
+}
+.b-d-blue {
+  background-color: #577485;
+}
+.b-f-blue {
+  background-color: #48C8D7;
+}
+.b-orange {
+  background-color: #F8AA6D;
+}
+.b-table-row {
+  background-color: #EDF4F6;
+}
+.b-table-column {
+  background-color: #E1E9EB;
+}
+.b-output-blue-1 {
+  background-color: #DBECF1;
+}
+.b-output-blue-2 {
+  background-color: #BFDDE4;
+}
+.b-output-red-1 {
+  background-color: #F3B9B7;
+}
+.b-output-red-2 {
+  background-color: #E24F4A;
+}
+
+
+
+/* ---- OLD Text Type styles: phase out to new with any edit ----- */
+/* (Watch out for repeated class names!)  */
 
 /* not in style guide - remove/replace */
 .title {
@@ -376,8 +528,7 @@ body {
 
 
 /* ---- Text Input Fields ---- */
-/* TODO: match with style guide  */
-
+/* To be phased out for new styles */
 
 
 .text-field {
@@ -406,6 +557,7 @@ body {
 }
 
 /* ---- Buttons ---- */
+/* To be phased out for new styles */
 
 .button-gray {
   color: #A2A2A2;
@@ -507,6 +659,8 @@ body {
 
 
 /* ---- Dropdowns ---- */
+/* To be phased out for new styles */
+
 
 .dropdown-list-menu {
   background-color: #D8D8D8;
@@ -722,6 +876,7 @@ body {
 
 
 /* ---- Wf Module status bars ---- */
+/* To be phased out for new styles */
 
 /* a dummy div around output status bar, for positioning purposes  */
 .output-bar-container {
@@ -1143,14 +1298,21 @@ body {
 .editable-notes-field {
   border: none; 
   outline: none;
-  padding: 0;
   height: 100%; 
   width: 100%;   
+  padding: 2rem 3rem 2rem 3rem;  
 }
 
 /* applied only when field is in edit mode  */
 .editable-notes-field-active {
-  background-color: #FAFAFA;  
+  background-color: #FFFFFF;  
+  box-shadow: 0 0 1px 1px #48C8D7;
+  padding: 2rem 3rem 2rem 3rem;
+}
+
+/* applied only when field is in idle mode  */
+.editable-notes-field-idle {
+  padding: 2rem 3rem 2rem 3rem;
 }
 
 .card .second-level {

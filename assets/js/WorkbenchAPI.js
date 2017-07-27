@@ -88,7 +88,9 @@ class WorkbenchAPI {
   //         'X-CSRFToken': csrfToken
   //       },
   //       body: JSON.stringify({
-  //         ___: ___
+  //         'auto_update_data' : True,
+  //         'update_interval'  : 5,
+  //         'update_units'     : 'weeks' 
   //       })
   //     })
   //   )
