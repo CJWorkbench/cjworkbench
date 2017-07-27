@@ -58,7 +58,6 @@ export default class DataVersionSelect extends React.Component {
   loadVersions() {
     this.props.api.getWfModuleVersions(this.props.wfModuleId)
       .then(json => {
-        // console.log('Versions state returned: ' + JSON.stringify(json));
         this.setState(
           Object.assign({}, this.state, {versions: json, originalSelected: json.selected})
         );
@@ -78,7 +77,6 @@ export default class DataVersionSelect extends React.Component {
   }
 
   setSelected(date) {
-    console.log('Setting this date as selected: ' + date);
     this.setState(
       Object.assign(
         {}, 
@@ -92,7 +90,6 @@ export default class DataVersionSelect extends React.Component {
     if (this.state.versions.selected !== this.state.originalSelected) {
       this.props.api.setWfModuleVersion(this.props.wfModuleId, this.state.versions.selected)
       .then(() => {
-        // console.log('changing originalSelected to ' + this.state.versions.selected);
         this.setState(
           Object.assign({}, this.state, {originalSelected: this.state.versions.selected})
         )

@@ -18,8 +18,6 @@ export default class EditableNotes extends React.Component {
   // simulate a click on the field to enter editing state
   componentDidMount() {
     var target = this.textInput.childNodes[0];
-    console.log("Notes mounted");
-    console.log("Info about targeted DOM element: " + target);
     target.focus()
   }
 

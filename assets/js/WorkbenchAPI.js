@@ -44,7 +44,6 @@ class WorkbenchAPI {
       }))
   }
 
-  // experimental, not yet proven to work
   setWfModuleNotes(wf_module_id, text) {
     return (
       fetch('/api/wfmodules/' + wf_module_id, {
@@ -77,6 +76,23 @@ class WorkbenchAPI {
       })
     )
   }
+
+  // setWfModuleUpdateSettings(wf_module_id, ___) {
+  //   return (
+  //     fetch('/api/wfmodules/' + wf_module_id, {
+  //       method: 'patch',
+  //       credentials: 'include',
+  //       headers: {
+  //         'Accept': 'application/json',
+  //         'Content-Type': 'application/json',
+  //         'X-CSRFToken': csrfToken
+  //       },
+  //       body: JSON.stringify({
+  //         ___: ___
+  //       })
+  //     })
+  //   )
+  // }
 
   undo(workflow_id) {
     return (

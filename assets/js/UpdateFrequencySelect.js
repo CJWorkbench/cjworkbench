@@ -43,31 +43,6 @@ export default class UpdateFrequencySelect extends React.Component {
     );
   }
 
-  // --- Takes a date string, returns the interval of time between now and then ---
-  // --- Won't work until this component has date information ---
-  // timeDiff(datestr) {
-  //   // interpret date string as UTC always (comes from server this way)
-  //   var d = new Date(datestr);
-  //   var now = new Date();
-  //   var interval = now.getTime() - d.getTime();
-  //   var days = Math.floor(interval/864000000);
-  //   var hours = Math.floor((interval - days*864000000)/3600000);
-  //   var minutes = Math.floor((interval - days*864000000 - hours*3600000)/60000);
-  //   if (days > 1) {
-  //     return "" + days + " days ago";
-  //   } else if (days == 1) {
-  //     return "1 day ago";
-  //   } else if (hours > 1) {
-  //     return "" + hours + "hours ago";
-  //   } else if (hours == 1) {
-  //     return "1 hour ago";
-  //   } else if (minutes > 1) {
-  //     return "" + minutes + "minutes ago";
-  //   } else {
-  //     return "just now";
-  //   }
-  // }
-
   render() {
 
     var highlightManual = this.state.manual ? 'action-button button-blue' : 'action-button button-gray';
@@ -116,13 +91,17 @@ export default class UpdateFrequencySelect extends React.Component {
                 </Input>
               </div>
               <div>When an update is found:</div>
-              <Button onClick={this.toggleManual} className={highlightManual} >Manual</Button>
-              <div>Do not automatically switch to latest data (recommended)</div>              
-              <Button onClick={this.toggleManual} className={highlightAuto}>Auto</Button>
-              <div>Saves currect data and automatically uses the latest data</div>              
+              <div>
+                <Button onClick={this.toggleManual} className={highlightManual} >Manual</Button>
+                <div className=''>Do not automatically switch to latest data (recommended)</div>   
+              </div>    
+              <div>                     
+                <Button onClick={this.toggleManual} className={highlightAuto} >Auto</Button>
+                <div className=''>Saves current data and automatically uses the latest data</div>  
+              </div>            
             </FormGroup>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className='dialog-footer'>
             <Button className='action-button button-blue' onClick={this.toggleModal}>Apply</Button>
           </ModalFooter>
         </Modal>

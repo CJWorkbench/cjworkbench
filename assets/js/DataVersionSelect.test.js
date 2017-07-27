@@ -3,6 +3,11 @@ import DataVersionSelect  from './DataVersionSelect'
 import { mount, shallow } from 'enzyme'
 import { emptyAPI } from './utils'
 
+// ---- This test is currently failing in Travis. 
+// ---- Local test run sets time an hour back from input times,
+// ---- Travis test run sets time matching input times
+
+
 // it('DataVersionSelect renders correctly', () => {
 
 //   // Force time zone to make sure tests always give same result
