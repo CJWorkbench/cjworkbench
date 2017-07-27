@@ -256,7 +256,7 @@ class ChangeWorkflowTitleCommand(Delta):
         )
 
         delta.forward()
-        notify_client_workflow_version_changed(workflow)
+        # don't notify client b/c client has already updated UI
 
         return delta
 
