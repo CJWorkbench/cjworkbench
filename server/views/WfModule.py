@@ -9,7 +9,8 @@ from server.models import Workflow, WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
-from datetime import datetime, timedelta
+from django.utils import timezone
+from datetime import timedelta
 from server.utils import units_to_seconds
 import pandas as pd
 
@@ -26,7 +27,7 @@ def patch_update_settings(wf_module, data):
 
     # Use current time as base update time. Not the best?
     interval = units_to_seconds(int(data['update_interval']), data['update_units'])
-    next_update = datetime.now() + timedelta(seconds=interval)
+    next_update = timezone.now() + timedelta(seconds=interval)
     ChangeWfModuleUpdateSettingsCommand.create(wf_module, auto_update_data, next_update, interval)
 
 

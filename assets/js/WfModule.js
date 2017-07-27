@@ -136,6 +136,7 @@ export default class WfModule extends React.Component {
           changeParam={this.props['data-changeParam']}
           wf_module_id={this.wf_module.id}
           revision={this.revision}
+          lastUpdateCheck={this.wf_module.last_update_check}
           getParamText={this.getParamText}
           setParamText={this.setParamText} 
         />

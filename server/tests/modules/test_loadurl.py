@@ -44,12 +44,51 @@ class LoadFromURLTests(LoggedInTestCase):
         self.url_pval.string = url
         self.url_pval.save()
 
+        # should be no data saved yet, no Deltas on the workflow
+        self.assertIsNone(self.wfmodule.get_stored_data_version())
+        self.assertIsNone(self.wfmodule.retrieve_data())
+        self.assertIsNone(self.wfmodule.workflow.last_delta)
+
         # success case
         with requests_mock.Mocker() as m:
             m.get(url, text=mock_csv_text, headers={'content-type':'text/csv'})
             self.press_fetch_button()
             response = self.get_render()
             self.assertEqual(response.content, table_to_content(mock_csv_table))
+
+            # should create a new data version on the WfModule, and a new delta representing the change
+            self.wfmodule.refresh_from_db()
+            self.wfmodule.workflow.refresh_from_db()
+            first_version = self.wfmodule.get_stored_data_version()
+            first_delta = self.wfmodule.workflow.last_delta
+            first_check_time = self.wfmodule.last_update_check
+            self.assertIsNotNone(first_version)
+            self.assertIsNotNone(first_delta)
+
+        # retrieving exactly the same data should not create a new data version or delta, should update check time
+        with requests_mock.Mocker() as m:
+            m.get(url, text=mock_csv_text, headers={'content-type': 'text/csv'})
+            self.press_fetch_button()
+
+            self.wfmodule.refresh_from_db()
+            self.wfmodule.workflow.refresh_from_db()
+            self.assertEqual(self.wfmodule.get_stored_data_version(), first_version)
+            self.assertEqual(self.wfmodule.workflow.last_delta, first_delta)
+            second_check_time = self.wfmodule.last_update_check
+            self.assertNotEqual(second_check_time, first_check_time)
+
+        # Retrieving different data should create a new data version and delta
+        with requests_mock.Mocker() as m:
+            m.get(url, text=mock_csv_text2, headers={'content-type': 'text/csv'})
+            self.press_fetch_button()
+            response = self.get_render()
+            self.assertEqual(response.content, table_to_content(mock_csv_table2))
+
+            self.wfmodule.refresh_from_db()
+            self.wfmodule.workflow.refresh_from_db()
+            self.assertNotEqual(self.wfmodule.get_stored_data_version(), first_version)
+            self.assertNotEqual(self.wfmodule.workflow.last_delta, first_delta)
+            self.assertNotEqual(self.wfmodule.last_update_check, second_check_time)
 
         # malformed CSV should put module in error state
         with requests_mock.Mocker() as m:

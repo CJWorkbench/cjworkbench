@@ -1,5 +1,3 @@
-from datetime import datetime, timedelta
-
 # --- Time unit conversion to/from seconds ---
 
 time_units = {

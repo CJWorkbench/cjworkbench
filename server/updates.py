@@ -1,6 +1,7 @@
 # Check for updated data
 from server.models import WfModule
 from server.dispatch import module_dispatch_event
+from django.utils import timezone
 
 # --- Updates ---
 
@@ -18,7 +19,7 @@ def update_wfm_data_scan():
 
 # Call this periodically corresponding to smallest possible update cycle (currently every minute)
 def check_for_wfm_data_update(wfm):
-    now = datetime.now()
+    now = timezone.now()
     if now > wfm.next_update:
         module_dispatch_event(wfm, None)  # equivalent to pressing "check for update" button
 

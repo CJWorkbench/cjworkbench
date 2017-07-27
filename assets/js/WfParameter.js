@@ -205,8 +205,11 @@ export default class WfParameter extends React.Component {
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
           return (
             <div className='version-box'>
-                <DataVersionSelect wfModuleId={this.props.wf_module_id} revision={this.props.revision} api={workbenchAPI()} />
-                <UpdateFrequencySelect />
+                <DataVersionSelect
+                  wfModuleId={this.props.wf_module_id}
+                  revision={this.props.revision}
+                  api={workbenchAPI()} />
+                <UpdateFrequencySelect lastUpdateCheck={this.props.lastUpdateCheck} />
                 <Button className='button-blue action-button mt-4' onClick={this.click}>{this.name}</Button>
             </div>
           );
@@ -237,6 +240,7 @@ WfParameter.propTypes = {
   p:                PropTypes.object.isRequired,
   wf_module_id:     PropTypes.number.isRequired,
 	revision:         PropTypes.number.isRequired,
+  lastUpdateCheck:  PropTypes.string.isRequired,
   changeParam:      PropTypes.func.isRequired,
 	getParamText:     PropTypes.func.isRequired,
 	setParamText:     PropTypes.func.isRequired

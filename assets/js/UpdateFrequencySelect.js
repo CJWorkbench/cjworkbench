@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
 
@@ -84,8 +85,8 @@ export default class UpdateFrequencySelect extends React.Component {
           <span className='info-medium-gray'>Update: </span>
           <span className='info-medium-blue' onClick={this.toggleModal}>{settingsInfo}</span>  
         </div>
-         <div className='info-medium-light-gray'>Click above to change</div>         
-        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className={this.props.className}>
+         <div className='info-medium-light-gray'>Last checked: {this.props.lastUpdateCheck}</div>
+        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal}>
           <ModalHeader toggle={this.toggleModal} className='dialog-box-title-gray'>Sync Settings</ModalHeader>
           <ModalBody>
             <FormGroup>
@@ -130,3 +131,7 @@ export default class UpdateFrequencySelect extends React.Component {
   }
 
 }
+
+UpdateFrequencySelect.propTypes = {
+  lastUpdateCheck:  PropTypes.string.isRequired
+};

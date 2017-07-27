@@ -2,7 +2,8 @@ from server.models import AddModuleCommand,DeleteModuleCommand,ChangeDataVersion
 from server.models import ChangeWfModuleNotesCommand,ChangeWfModuleUpdateSettingsCommand
 from django.test import TestCase
 from server.tests.utils import *
-from datetime import datetime
+from django.utils import timezone
+
 
 class AddDeleteModuleCommandTests(TestCase):
     def setUp(self):
@@ -171,7 +172,7 @@ class ChangeWfModuleUpdateSettingsCommandTests(TestCase):
         self.wfm.update_interval = 100
 
         # do
-        mydate = datetime.now()
+        mydate = timezone.now()
         cmd = ChangeWfModuleUpdateSettingsCommand.create(self.wfm, True, mydate, 1000)
         self.assertTrue(self.wfm.auto_update_data)
         self.assertEqual(self.wfm.next_update, mydate)

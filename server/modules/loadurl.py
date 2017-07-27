@@ -1,9 +1,11 @@
 from .moduleimpl import ModuleImpl
 from server.models import ChangeDataVersionCommand
+from server.versions import notify_client_workflow_version_changed
+from django.utils import timezone
+import csv
 import pandas as pd
 from pandas.parser import CParserError
 from xlrd import XLRDError
-import csv
 import io
 import json
 import requests
@@ -100,8 +102,17 @@ class LoadURL(ModuleImpl):
         if wfm.status != wfm.ERROR:
             wfm.set_ready(notify=False)
 
-        # we are done. save fetched data, and switch to it
-        version = wfm.store_data(table.to_csv(index=False)) # index=False to prevent pandas from adding an index col
-        ChangeDataVersionCommand.create(wfm, version)  # also notifies client
+            wfm.last_update_check = timezone.now()
+            wfm.save()
 
+            # We are done loading data. See if the saved data is any different.
+            # If so create a new data version and switch to it
+            new_csv = table.to_csv(index=False) # index=False to prevent pandas from adding an index col
+            old_csv = wfm.retrieve_data()
+            if new_csv != old_csv:
+                version = wfm.store_data(new_csv)
+                ChangeDataVersionCommand.create(wfm, version)  # also notifies client
+            else:
+                # no new data version, but we still want client to update WfModule status and last update check time
+                notify_client_workflow_version_changed(wfm.workflow)
 

@@ -8,11 +8,11 @@ from server.models.ModuleVersion import *
 from server.models.Workflow import *
 from server.models.ParameterVal import *
 from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_status
-from datetime import datetime, timedelta
+from django.utils import timezone
 
 # Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
 def current_iso_datetime_ms():
-    return datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+    return timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
 
 class WfModule(models.Model):
@@ -48,9 +48,9 @@ class WfModule(models.Model):
 
     # For modules that fetch data: how often do we check for updates, and do we switch to latest version automatically
     auto_update_data = models.BooleanField(default='True')
-    next_update = models.DateField(null=True)             # when should next update run?
-    update_interval = models.IntegerField(default=0)      # time in seconds between updates
-    last_update_check = models.DateField(null=True)
+    next_update = models.DateTimeField(null=True)            # when should next update run?
+    update_interval = models.IntegerField(default=0)         # time in seconds between updates
+    last_update_check = models.DateTimeField(null=True)
 
     # status light and current error message
     READY = "ready"
