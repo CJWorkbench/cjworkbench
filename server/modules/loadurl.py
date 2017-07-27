@@ -45,8 +45,7 @@ class LoadURL(ModuleImpl):
 
     # Load a CSV from file when fetch pressed
     @staticmethod
-    def event(parameter, e):
-        wfm = parameter.wf_module
+    def event(wfm, parameter, e):
         table = None
 
         # fetching could take a while so notify clients/users that we're working on it

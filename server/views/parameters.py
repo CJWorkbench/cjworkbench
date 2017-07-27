@@ -52,7 +52,7 @@ def parameterval_event(request, pk, format=None):
 
     # change parameter value
     data = request.data
-    module_dispatch_event(param, data)
+    module_dispatch_event(param.wf_module, param, data)
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 
