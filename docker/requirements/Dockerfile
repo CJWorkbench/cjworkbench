@@ -13,3 +13,6 @@ RUN pip install -r requirements.txt && \
 # node and npm deps
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
 RUN apt-get install nodejs
+
+# Seriously, this ships without cron?
+RUN apt-get install cron
