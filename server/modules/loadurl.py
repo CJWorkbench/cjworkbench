@@ -111,7 +111,10 @@ class LoadURL(ModuleImpl):
             old_csv = wfm.retrieve_data()
             if new_csv != old_csv:
                 version = wfm.store_data(new_csv)
-                ChangeDataVersionCommand.create(wfm, version)  # also notifies client
+
+                # Change the data version only if this module is set to auto update, or user triggered
+                if wfm.auto_update_data or e.get('type') == "click":
+                    ChangeDataVersionCommand.create(wfm, version)  # also notifies client
             else:
                 # no new data version, but we still want client to update WfModule status and last update check time
                 notify_client_workflow_version_changed(wfm.workflow)
