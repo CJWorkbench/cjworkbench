@@ -1405,26 +1405,19 @@ body {
 }
 
 .module-description {	
-  height: 10px;	
-  width: 460.93px;	
-  color: #686768;	
+  color: #686768;
   font-family: Avenir;	
   font-size: 13px;	
   font-weight: 300;	
-  line-height: 22px;
-  margin-top: 10px;
 }
 
 .module-metadata {	
-  height: 15px;	
-  color: #A2A2A2;	
+  color: #A2A2A2;
   font-family: Avenir;	
   font-size: 14px;	
-  font-weight: 900;	
   line-height: 12px;
   margin-top: 10px;
   margin-bottom: 10px;
-  flex-direction: horizontal;
 }
 
 .react-autosuggest__container {
