@@ -16,10 +16,9 @@ RUN ./node_modules/.bin/webpack -p --config webpack.config.js
 RUN python manage.py migrate sites
 RUN python manage.py migrate
 
-RUN echo "* * * * * /usr/bin/curl http://localhost:8000/runcron" | crontab
 
 # setup cron job for every minute to do scheduled checks for new data
-RUN "echo \"* * * * * /usr/bin/curl http://localhost:8000/runcron\" | crontab"
+RUN echo "* * * * * /usr/bin/curl http://localhost:8000/runcron" | crontab
 
 # go! default command runs in debug. docker-compose.yml runs start-prod.sh for the real thing
 CMD python manage.py runserver $(hostname -i):8000
