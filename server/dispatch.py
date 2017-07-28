@@ -66,7 +66,7 @@ dynamic_dispatch = DynamicDispatch()
 #the wf_module should have both attributes: the module and the version.
 def load_dynamically(wf_module, table, dispatch):
     #check if dispatch is loadable dynamically; if so, load it.
-    print("Loading {} manually".format(dispatch))
+    # print("Loading {} manually".format(dispatch))
     return dynamic_dispatch.load_module(wf_module=wf_module, table=table, dispatch=dispatch)
 
 def module_dispatch_render(wf_module, table):
