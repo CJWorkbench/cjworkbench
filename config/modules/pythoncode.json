@@ -1,8 +1,8 @@
 {
-  "name": "Python Process",
+  "name": "Python",
   "id_name": "pythoncode",
-  "category" : "Analyze",
-  "description" : "Provides ability to run Python code on the fly.",
+  "category" : "Code",
+  "description" : "Python code editor to process data.",
   "parameters": [
     {
       "name": "Code",

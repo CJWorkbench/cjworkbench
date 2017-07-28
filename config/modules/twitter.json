@@ -1,8 +1,8 @@
 {
-  "name": "Twitter",
-  "id_name": "twitter",
-  "category" : "Sources",
-  "description" : "Allows users to search Twitter based on various search conditions.",
+  "name": "Twitter Stream",
+  "id_name": "twitter_stream",
+  "category" : "Add data",
+  "description" : "Connect to Twitter stream API and get low latency access to tweet data.",
   "parameters": [
     {
       "name" : "Query type",

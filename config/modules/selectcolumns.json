@@ -1,8 +1,8 @@
 {
-  "name": "Select Columns",
+  "name": "Column filter",
   "id_name": "selectcolumns",
-  "category" : "Wrangle",
-  "description" : "Allows ability to select columns of interest from the output table.",
+  "category" : "Filter",
+  "description" : "Filter column by their name.",
   "parameters": [
     {
       "name": "Select Columns",

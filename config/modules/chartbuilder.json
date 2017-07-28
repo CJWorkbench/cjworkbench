@@ -1,8 +1,8 @@
 {
-  "name": "Chart",
-  "id_name": "simplechart",
+  "name": "Chartbuilder",
+  "id_name": "chartbuilder",
   "category" : "Visualize",
-  "description" : "Provides functionality to create a simple chart.",
+  "description" : "Create and export line, column and scatter plot charts.",
   "parameters": [
     {
       "name": "Chart",

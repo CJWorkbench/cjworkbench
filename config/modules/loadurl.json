@@ -1,8 +1,8 @@
 {
   "name": "Load From URL",
   "id_name": "loadurl" ,
-  "category" : "Sources",
-  "description" : "Allows users to load in data from an accessible URL.",
+  "category" : "Add data",
+  "description" : "Connect any online datasets via URL and keep it updated with its source.",
   "parameters": [
     {
       "name": "URL",

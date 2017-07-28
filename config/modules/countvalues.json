@@ -1,8 +1,8 @@
 {
-  "name": "Count Values",
+  "name": "Count unique values",
   "id_name": "countvalues",
-  "category" : "Analyze",
-  "description" : "Allows users to group by given attributes.",
+  "category" : "Group",
+  "description" : "Group and count rows for each unique value.",
   "parameters": [
     {
       "name": "Column",

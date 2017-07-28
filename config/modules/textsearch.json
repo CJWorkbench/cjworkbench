@@ -1,8 +1,8 @@
 {
-  "name": "Text Search",
+  "name": "Text filter",
   "id_name": "textsearch",
-  "category" : "Analyze",
-  "description" : "Allows users to search for text.",
+  "category" : "Filter",
+  "description" : "Filter rows containing matching text in specific columns.",
   "parameters": [
     {
       "name": "Search For",

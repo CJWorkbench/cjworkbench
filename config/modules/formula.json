@@ -1,8 +1,8 @@
 {
   "name": "Formula",
   "id_name": "formula",
-  "category" : "Analyze",
-  "description": "Allows users to apply a formula to the output.",
+  "category" : "Transform",
+  "description": "Apply a formula between cells and generate a column to display the result.",
   "parameters": [
     {
       "name": "Formula",

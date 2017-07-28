@@ -1,8 +1,8 @@
 {
   "name": "Paste CSV",
   "id_name": "pastecsv",
-  "category" : "Sources",
-  "description" : "Allows users to copy in a CSV from an external source.",
+  "category" : "Add data",
+  "description" : "Enter coma separated value to generate a table.",
   "parameters": [
     {
       "name": "CSV",
