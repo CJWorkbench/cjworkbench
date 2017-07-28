@@ -112,10 +112,10 @@ export default class WfParameter extends React.Component {
 
         return (
           <div>
-            <div className='setting-gray mt-2'>{this.name}:</div>
+            <div className='t-d-gray content-3'>{this.name}:</div>
             <textarea
               className={sclass}
-              className='data-paragraph-gray text-field mt-2'
+              className='t-d-gray content-2 text-field'
               rows={srows}
               defaultValue={this.props.p.value}
               onBlur={this.blur}
@@ -209,8 +209,11 @@ export default class WfParameter extends React.Component {
                   wfModuleId={this.props.wf_module_id}
                   revision={this.props.revision}
                   api={workbenchAPI()} />
-                <UpdateFrequencySelect lastUpdateCheck={this.props.lastUpdateCheck} />
-                <Button className='button-blue action-button mt-4' onClick={this.click}>{this.name}</Button>
+                <UpdateFrequencySelect 
+                  updateSettings={this.props.updateSettings} 
+                  wfModuleId={this.props.wf_module_id}
+                />
+                <div className='button-blue action-button' onClick={this.click}>{this.name}</div>
             </div>
           );
         } else if (this.props.p.parameter_spec.id_name == 'colrename') {
@@ -239,8 +242,9 @@ export default class WfParameter extends React.Component {
 WfParameter.propTypes = {
   p:                PropTypes.object.isRequired,
   wf_module_id:     PropTypes.number.isRequired,
-	revision:         PropTypes.number.isRequired,
-  lastUpdateCheck:  PropTypes.string.isRequired,
+  revision:         PropTypes.number.isRequired,
+  // only for "Load From Url"
+  updateSettings:   PropTypes.object,
   changeParam:      PropTypes.func.isRequired,
 	getParamText:     PropTypes.func.isRequired,
 	setParamText:     PropTypes.func.isRequired

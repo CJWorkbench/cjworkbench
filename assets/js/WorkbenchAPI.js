@@ -77,24 +77,25 @@ class WorkbenchAPI {
     )
   }
 
-  // setWfModuleUpdateSettings(wf_module_id, ___) {
-  //   return (
-  //     fetch('/api/wfmodules/' + wf_module_id, {
-  //       method: 'patch',
-  //       credentials: 'include',
-  //       headers: {
-  //         'Accept': 'application/json',
-  //         'Content-Type': 'application/json',
-  //         'X-CSRFToken': csrfToken
-  //       },
-  //       body: JSON.stringify({
-  //         'auto_update_data' : True,
-  //         'update_interval'  : 5,
-  //         'update_units'     : 'weeks' 
-  //       })
-  //     })
-  //   )
-  // }
+  // Params should be an object matching format below
+  setWfModuleUpdateSettings(wf_module_id, params) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id, {
+        method: 'patch',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          'auto_update_data' : params.auto_update_data,  // bool
+          'update_interval'  : params.update_interval,   // int
+          'update_units'     : params.update_units       // str
+        })
+      })
+    )
+  }
 
   undo(workflow_id) {
     return (

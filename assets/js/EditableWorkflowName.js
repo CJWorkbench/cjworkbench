@@ -24,6 +24,7 @@ export default class EditableWorkflowName extends React.Component {
     this.api.setWfName(this.props.wfId, value);
   }
 
+  // classEditing param for classes applied during edit state only
   render() {
     return <h4><RIEInput
       value={this.state.value}

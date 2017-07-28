@@ -557,62 +557,36 @@ body {
 }
 
 /* ---- Buttons ---- */
-/* To be phased out for new styles */
+/* To be phased out to new styles */
 
+/* - Button Colors - */
 .button-gray {
-  color: #A2A2A2;
-  border: 1px solid #48C8D7;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
+  color: #686768;
+  border: 1px solid #686768;
 	text-align: center;
 }
-
-.button-gray:hover {
-	color: #686768;
-}
-
-.button-red {
-  color: #E24F4A;
-  border: 1px solid #E24F4A;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
-}
-
-.button-orange {
-  color: #FBAA6D;
-  border: 1px solid #FBAA6D;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
+.button-gray:active {
+  background-color: #686768;
+  color: #FFFFFF;
 }
 
 .button-blue {
   color: #48C8D7;
   border: 1px solid #48C8D7;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
 	text-align: center;
 }
-
-.button-white {
+.button-blue:active {
+  background-color: #48C8D7;
   color: #FFFFFF;
-  border: 1px solid #FFFFFF;  
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
 }
 
+.button-full-blue {
+  background-color: #48C8D7;
+  color: #FFFFFF;
+	text-align: center;  
+}
+
+/* - Button Shapes - */
 .button-context {
   border: 0;
 }
@@ -640,22 +614,19 @@ body {
 }
 
 .action-button {
-	height: 2.5rem;
-  border-radius: 25px;
-  min-width: 89px;
+	height: 4rem;
+  border-radius: 2.5rem;
+  min-width: 9rem; 
+  /* width: 9rem;   */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .action-button:hover {
 	opacity: 0.5;
 }
 
-/* is this used anywhere? To cull otherwise  */
-.action-button-disabled {
-  background-color: #EDECEC;
-  height: 2.5rem;
-	border-radius: 1.5625rem;
-  color: #A2A2A2;
-}
 
 
 /* ---- Dropdowns ---- */
@@ -920,29 +891,34 @@ body {
 /* ---- Dialog Boxes ---- */
 /* TODO: redefine according to style sheet  */
 
+.dialog-window {
+  border: 0;
+  width: 50rem;
+}
+
 .dialog-header {
-  height: 55px;
-  padding: 20px 30px 20px 30px ;
+  height: 5.5rem;
+  padding: 4rem 6rem 4rem 6rem;
   background-color: #FFFFFF;
 }
 
-.dialog-header-close {
+/* .dialog-header-close {
   margin-left: 330px;
   font-size: 0.9375rem;
 	font-weight: 500;
   line-height: 0.9375rem;
   color: #686768;
-}
+} */
 
 .dialog-body {
   background-color: #FAFAFA;
-  padding: 20px 30px 0px 30px;  
+  padding: 4rem 6rem 4rem 6rem;
   border: 0;
 }
 
 .dialog-footer {
   background-color: #FAFAFA;  
-  padding: 20px 30px 20px 30px;
+  padding: 4rem 6rem 4rem 6rem;
   border-top: 0;  
 }
 
@@ -1260,6 +1236,7 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  padding: 3rem;
 }
 
 .version-item {
@@ -1268,6 +1245,7 @@ body {
 }
 
 /* --- UpdateFrequencySelect --- */
+/* TODO: shift to using inline Bootstrap classes  */
 
 .update-freq-settings {
   display: flex;
