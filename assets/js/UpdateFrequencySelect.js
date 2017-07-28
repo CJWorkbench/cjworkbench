@@ -15,13 +15,9 @@ export default class UpdateFrequencySelect extends React.Component {
         manual: !this.props.updateSettings.autoUpdateData,
         period: this.props.updateSettings.updateInterval,
         unit: this.props.updateSettings.updateUnits
-      },
-      dialogSettings: {
-        manual: !this.props.updateSettings.autoUpdateData,
-        period: this.props.updateSettings.updateInterval,
-        unit: this.props.updateSettings.updateUnits
       }
     };
+    this.state.dialogSettings = this.state.liveSettings;
 
     // Allow props to specify a conversion from browser time to displayed time, so tests can run in UTC (not test machine tz) 
     if (props.timezoneOffset != undefined) {
@@ -104,7 +100,7 @@ export default class UpdateFrequencySelect extends React.Component {
       
     return (
       <div className='version-item'>
-        <div className='' >
+        <div className='mb-4' >
           <span className='content-3 t-d-gray'>Update: </span>
           <span className='content-3 t-f-blue' onClick={this.toggleModal}>{settingsInfo}</span>  
         </div>
@@ -124,7 +120,8 @@ export default class UpdateFrequencySelect extends React.Component {
                   min='1' 
                   max='500' 
                   name="updateFreq" 
-                  id="updateFreqNum">
+                  id="updateFreqNum"
+                  className='input-number mr-4'>              
                 </Input>
                 <Input 
                   type="select" 
@@ -132,6 +129,7 @@ export default class UpdateFrequencySelect extends React.Component {
                   onChange={this.updateUnit}
                   name="updateFreq" 
                   id="updateFreqPeriod" 
+                  className='input-dropdown'
                 >
                   <option>seconds</option>
                   <option>minutes</option>

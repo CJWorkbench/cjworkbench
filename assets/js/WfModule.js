@@ -39,7 +39,9 @@ class StatusBar extends React.Component {
 }
 
 // ---- StatusLine ----
+
 // Display error message, if any
+// BUG - Tying this to Props will ensure that error message stays displayed, even after resolution
 class StatusLine extends React.Component {
   render() {
     if (this.props.status == 'error') {
@@ -133,7 +135,6 @@ export default class WfModule extends React.Component {
       updateInterval:   this.wf_module.update_interval,
       updateUnits:      this.wf_module.update_units
     }
-    console.log("Update Settings of WF Module " + this.wf_module.id + ", from database: " + JSON.stringify(updateSettings));
 
     // Each parameter gets a WfParameter
     var paramdivs = this.params.map((ps, i) => {
@@ -151,7 +152,7 @@ export default class WfModule extends React.Component {
 
     var inside = undefined;
     if (this.state.detailsOpen)
-      inside = <div className='wf-parameters'>{paramdivs}</div>;
+      inside = <div className='module-card-params'>{paramdivs}</div>;
 
     var notes = undefined;
     var value = ( this.wf_module.notes && (this.wf_module.notes != "") ) 
@@ -166,26 +167,26 @@ export default class WfModule extends React.Component {
 
     var notesIcon = undefined;
     if (!this.state.showNotes)
-      notesIcon = <div className='context-button p-0 mt-0.5 d-flex align-items-center' onClick={this.showNotes}>
+      notesIcon = <div className='context-button' onClick={this.showNotes}>
                     <div className='icon-note button-icon' ></div>
                   </div>
 
     var arrow = (this.state.detailsOpen) 
-      ? <div className='icon-sort-up button-icon'></div>
-      : <div className='icon-sort-down button-icon'></div>
+      ? <div className='icon-sort-up button-icon ml-3'></div>
+      : <div className='icon-sort-down button-icon ml-3'></div>
       
 
     // Putting it all together: name, status, parameters, output
     return (
       <div className='container' {...this.props} onClick={this.click}>
-        <div className='card mb-2'>
+        <div className='card'>
           {/* --- The whole card --- */}          
-          <div className='card-block p-0 module-card-wrapper d-flex justify-content-between'>            
+          <div className='card-block module-card-wrapper d-flex justify-content-between'>            
             {/* --- Everything but the status bar, on the left of card --- */}
-            <div className='module-card-info p-3'>
+            <div className='module-card-info'>
               {notes} 
               <div 
-                className='module-card-header mb-2 pt-2 '
+                className='module-card-header'
                 onClick={this.toggleDetails}
               >
                 {/* TODO: attach icon names to modules, call via 'this.module.icon' */}
@@ -194,7 +195,7 @@ export default class WfModule extends React.Component {
                   <div className='t-d-gray title-4'>
                     {this.module.name}
                   </div>
-                  <div className='context-button ml-1 mt-1'>
+                  <div className=''>
                     {arrow}
                   </div>
                 </div>
