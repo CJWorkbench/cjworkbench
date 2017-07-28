@@ -115,8 +115,8 @@ export default class UpdateFrequencySelect extends React.Component {
           </ModalHeader>
           <ModalBody className='dialog-body'>
             <FormGroup>
-              <Label for="updateFreq" className='content-3 t-d-gray mb-2'>Check for update every</Label>
-              <div className='update-freq-settings update-freq-test-class mb-2'>
+              <Label for="updateFreq" className='content-3 t-d-gray mb-3'>Check for update every</Label>
+              <div className='update-freq-settings update-freq-test-class mb-5'>
                 <Input 
                   type="number" 
                   onChange={this.updatePeriod}
@@ -140,14 +140,14 @@ export default class UpdateFrequencySelect extends React.Component {
                   <option>weeks</option>
                 </Input>
               </div>
-              <div className='content-3 t-d-gray mb-2'>When an update is found:</div>
-              <div className="d-flex flex-row mb-2">
+              <div className='content-3 t-d-gray mb-3'>When an update is found:</div>
+              <div className="d-flex flex-row mb-4">
                 <div onClick={this.toggleManual} className={highlightManual} >Manual</div>
-                <div className='t-d-gray info-1'>Notify me, but do not update the workflow. (recommended)</div>   
+                <div className='t-d-gray info-1 ml-4'>Notify me, but do not update the workflow. (recommended)</div>   
               </div>    
-              <div className="d-flex flex-row mb-2">                     
+              <div className="d-flex flex-row mb-4">                     
                 <div onClick={this.toggleManual} className={highlightAuto} >Auto</div>
-                <div className='t-d-gray info-1'>Automatically save the current version of the workflow and update it with the newest data.</div>  
+                <div className='t-d-gray info-1 ml-4'>Automatically save the current version of the workflow and update it with the newest data.</div>  
               </div>            
             </FormGroup>
           </ModalBody>

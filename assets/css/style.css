@@ -898,27 +898,19 @@ body {
 
 .dialog-header {
   height: 5.5rem;
-  padding: 4rem 6rem 4rem 6rem;
+  padding: 2rem 3rem 2rem 3rem;
   background-color: #FFFFFF;
 }
 
-/* .dialog-header-close {
-  margin-left: 330px;
-  font-size: 0.9375rem;
-	font-weight: 500;
-  line-height: 0.9375rem;
-  color: #686768;
-} */
-
 .dialog-body {
   background-color: #FAFAFA;
-  padding: 4rem 6rem 4rem 6rem;
+  padding: 2rem 3rem 2rem 3rem;
   border: 0;
 }
 
 .dialog-footer {
   background-color: #FAFAFA;  
-  padding: 4rem 6rem 4rem 6rem;
+  padding: 2rem 3rem 2rem 3rem;
   border-top: 0;  
 }
 
