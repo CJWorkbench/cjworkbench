@@ -60,6 +60,12 @@ class AddModuleCommand(Delta):
         self.wf_module.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
 
+    # When we are deleted, delete the module if it's not in use (if we are not currently applied)
+    def delete(self, *args, **kwargs):
+        if self.wf_module.workflow == None:
+            self.wf_module.delete()
+        super(AddModuleCommand, self).delete(*args, **kwargs)
+
     @staticmethod
     def create(workflow, module_version, insert_before):
         newwfm = WfModule.objects.create(workflow=None, module_version=module_version, order=insert_before)
@@ -91,6 +97,12 @@ class DeleteModuleCommand(Delta):
         insert_wf_module(self.wf_module, self.workflow, self.wf_module.order)
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
+
+    # When we are deleted, delete the module if it's not in use (if we are currently applied)
+    def delete(self, *args, **kwargs):
+        if self.wf_module.workflow == None:
+            self.wf_module.delete()
+        super(DeleteModuleCommand, self).delete(*args, **kwargs)
 
     @staticmethod
     def create(wf_module):

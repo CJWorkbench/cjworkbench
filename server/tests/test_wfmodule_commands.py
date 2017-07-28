@@ -31,6 +31,12 @@ class AddDeleteModuleCommandTests(TestCase):
         self.workflow.refresh_from_db()
         self.assertGreater(self.workflow.revision(), start_rev)
 
+        # Check the delta chain (short, but should be sweet)
+        self.workflow.refresh_from_db()
+        self.assertEqual(self.workflow.last_delta, cmd)
+        self.assertIsNone(cmd.prev_delta)
+        self.assertIsNone(cmd.next_delta)
+
         # undo! undo! ahhhhh everything is on fire! undo!
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
@@ -43,6 +49,13 @@ class AddDeleteModuleCommandTests(TestCase):
         self.assertNotEqual(added_module, existing_module)
         bumped_module = WfModule.objects.get(workflow=self.workflow, order=1)
         self.assertEqual(bumped_module, existing_module)
+
+        # Undo and test deleting the un-applied command. Should delete dangling WfModule too
+        cmd.backward()
+        self.assertEqual(all_modules.count(), 1)
+        self.assertEqual(WfModule.objects.first(), existing_module)
+        cmd.delete()
+        self.assertFalse(WfModule.objects.filter(pk=added_module.id).exists()) # should be gone
 
 
     # Try inserting at various positions to make sure the renumbering works right
@@ -70,6 +83,19 @@ class AddDeleteModuleCommandTests(TestCase):
         self.assertEqual(all_modules.count(), 4)
         self.assertEqual(cmd3.wf_module.order, 2)
 
+        # Check the delta chain, should be 1 <-> 2 <-> 3
+        self.workflow.refresh_from_db()
+        cmd1.refresh_from_db()
+        cmd2.refresh_from_db()
+        cmd3.refresh_from_db()
+        self.assertEqual(self.workflow.last_delta, cmd3)
+        self.assertIsNone(cmd3.next_delta)
+        self.assertEqual(cmd3.prev_delta, cmd2)
+        self.assertEqual(cmd2.next_delta, cmd3)
+        self.assertEqual(cmd2.prev_delta, cmd1)
+        self.assertEqual(cmd1.next_delta, cmd2)
+        self.assertIsNone(cmd1.prev_delta)
+
         # We should be able to go all the way back
         cmd3.backward()
         cmd2.backward()
@@ -94,6 +120,12 @@ class AddDeleteModuleCommandTests(TestCase):
         self.workflow.refresh_from_db()
         self.assertGreater(self.workflow.revision(), start_rev)
 
+        # Check the delta chain (short, but should be sweet)
+        self.workflow.refresh_from_db()
+        self.assertEqual(self.workflow.last_delta, cmd)
+        self.assertIsNone(cmd.prev_delta)
+        self.assertIsNone(cmd.next_delta)
+
         # undo
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
@@ -102,6 +134,10 @@ class AddDeleteModuleCommandTests(TestCase):
         # nevermind, redo
         cmd.forward()
         self.assertEqual(all_modules.count(), 0)
+
+        # Deleting the appplied command should delete dangling WfModule too
+        cmd.delete()
+        self.assertFalse(WfModule.objects.filter(pk=existing_module.id).exists())  # should be gone
 
 
 class ChangeDataVersionCommandTests(TestCase):
