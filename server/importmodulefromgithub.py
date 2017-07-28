@@ -125,7 +125,7 @@ def validate_json(extension_file_mapping, current_path, directory):
 
     return module_config, json_file
 
-def validate_python(extension_file_mapping, current_path, root_directory, directory, version):
+def validate_python(extension_file_mapping, current_path, module_directory, directory, version):
     # validate python: first we ensure there's at least one python file, and then we check to see if there's _only_
     # one file, to cater for ambiguity.
     # Again, something that we might want to rethink – maybe dictate what the main python script should be called –
@@ -138,59 +138,54 @@ def validate_python(extension_file_mapping, current_path, root_directory, direct
         raise ValidationError("No Python file found in remote repository.")
 
     # check if files with the same name already exist
-    destination_json_directory = os.path.join(root_directory, "config/modules/dynamic", directory, version)
-    destination_python_directory = os.path.join(current_path, "modules/dynamic", directory, version)
-    if os.path.isdir(destination_json_directory) or os.path.isdir(destination_python_directory):
+    destination_directory = os.path.join(module_directory, directory, version)
+    if os.path.isdir(destination_directory):
         shutil.rmtree(os.path.join(current_path, directory))
         raise ValidationError("Files for this repository and this version already exist.")
 
-    return python_file, destination_python_directory, destination_json_directory
+    return python_file, destination_directory
 
-def reorganise_workspace(destination_json_directory, destination_python_directory, current_path, directory, json_file, python_file):
+def reorganise_workspace(destination_directory, current_path, directory, json_file, python_file):
     # if they don't, we can start organising our workspace.
     try:
-        os.makedirs(destination_json_directory)
-        os.rename(os.path.join(current_path, directory, json_file), os.path.join(destination_json_directory, json_file))
+        os.makedirs(destination_directory)
+        os.rename(os.path.join(current_path, directory, json_file), os.path.join(destination_directory, json_file))
     except (OSError, Exception) as error:
         shutil.rmtree(os.path.join(current_path, directory))
-        shutil.rmtree(destination_json_directory)
+        shutil.rmtree(destination_directory)
         print("Unable to move JSON file to correct directory: {}.".format(error))
         raise ValidationError("Unable to move JSON file to correct directory: {}.".format(error))
 
     try:
-        os.makedirs(destination_python_directory)
         os.rename(os.path.join(current_path, directory, python_file),
-                  os.path.join(destination_python_directory, python_file))
+                  os.path.join(destination_directory, python_file))
     except (OSError, Exception) as error:
         shutil.rmtree(os.path.join(current_path, directory))
-        shutil.rmtree(destination_json_directory)
-        shutil.rmtree(destination_python_directory)
+        shutil.rmtree(destination_directory)
         print("Unable to move Python file to correct directory: {}".format(error))
         raise ValidationError("Unable to move Python file to correct directory.")
 
-def compile_python(destination_python_directory, destination_json_directory, current_path, directory, python_file):
+def compile_python(destination_directory, current_path, directory, python_file):
     # Now compile the file to ensure that it's a valid script.
     try:
-        script = open(os.path.join(destination_python_directory, python_file), 'r').read() + '\n'
+        script = open(os.path.join(destination_directory, python_file), 'r').read() + '\n'
     except:
-        shutil.rmtree(destination_python_directory)
-        shutil.rmtree(destination_json_directory)
+        shutil.rmtree(destination_directory)
         shutil.rmtree(os.path.join(current_path, directory))
         raise ValidationError("Unable to open {}.".format(python_file))
 
     try:
-        compiled = py_compile.compile(os.path.join(destination_python_directory, python_file))
+        compiled = py_compile.compile(os.path.join(destination_directory, python_file))
         if compiled == None:
             raise ValidationError
     except:
-        shutil.rmtree(destination_python_directory)
-        shutil.rmtree(destination_json_directory)
+        shutil.rmtree(destination_directory)
         shutil.rmtree(os.path.join(current_path, directory))
         raise ValidationError("Unable to compile {}.".format(python_file))
 
     return compiled
 
-def validate_python_functions(destination_python_directory, destination_json_directory, current_path, directory, python_file):
+def validate_python_functions(destination_directory, current_path, directory, python_file):
     # Now check if the functions we need exist, i.e. event and render
     p, m = python_file.rsplit(".", 1)
 
@@ -198,14 +193,13 @@ def validate_python_functions(destination_python_directory, destination_json_dir
     # OK, the time.sleep is weird, but it seems to circumvent the issue where we get an error
     # "ImportError: No module named ..." probably because of a race condition/the time it takes for the system to
     # recognise the insert of the new path. There's probably a better solution though?
-    sys.path.insert(0, destination_python_directory)
+    sys.path.insert(0, destination_directory)
     time.sleep(2)
     imported_module = import_module(p)
     imported_class = inspect.getmembers(imported_module, inspect.isclass)
     if len(imported_class) > 1:
-        shutil.rmtree(os.path.join(destination_python_directory))
+        shutil.rmtree(os.path.join(destination_directory))
         shutil.rmtree(os.path.join(current_path, directory))
-        shutil.rmtree(os.path.join(destination_json_directory))
         raise ValidationError("Multiple classes exist in python file.")
 
     try:
@@ -215,8 +209,7 @@ def validate_python_functions(destination_python_directory, destination_json_dir
             print("Functions event() and render() don't exist in the module.")
             raise ValidationError("Functions event() or render() doesn't exist aren't callable.")
     except:
-        shutil.rmtree(os.path.join(destination_python_directory))
-        shutil.rmtree(os.path.join(destination_json_directory))
+        shutil.rmtree(os.path.join(destination_directory))
         shutil.rmtree(os.path.join(current_path, directory))
 
         print("Functions event() and render() don't exist in the module.")
@@ -229,8 +222,11 @@ def extract_version(current_path, directory):
     version = repo.head.object.hexsha[:7]
     return version
 
+#path of this file
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
+#path of
 ROOT_DIRECTORY = os.path.dirname(CURRENT_PATH)
+MODULE_DIRECTORY = os.path.join(os.path.dirname(ROOT_DIRECTORY), "importedmodules")
 
 def import_module_from_github(url):
     url = url.lower().strip()
@@ -260,16 +256,14 @@ def import_module_from_github(url):
     module_config["author"] = module_config["author"] if "author" in module_config else retrieve_author(url)
 
 
-    python_file, destination_python_directory, destination_json_directory = \
-        validate_python(extension_file_mapping, CURRENT_PATH, ROOT_DIRECTORY, directory, version)
+    python_file, destination_directory = \
+        validate_python(extension_file_mapping, CURRENT_PATH, MODULE_DIRECTORY, directory, version)
 
-    reorganise_workspace(destination_json_directory, destination_python_directory, CURRENT_PATH, directory,
-                         json_file, python_file)
+    reorganise_workspace(destination_directory, CURRENT_PATH, directory, json_file, python_file)
 
-    compile_python(destination_python_directory, destination_json_directory, CURRENT_PATH, directory, python_file)
+    compile_python(destination_directory, CURRENT_PATH, directory, python_file)
 
-    validate_python_functions(destination_python_directory, destination_json_directory, CURRENT_PATH, directory,
-                              python_file)
+    validate_python_functions(destination_directory, CURRENT_PATH, directory, python_file)
 
     #Initialise module
     load_module_from_dict(module_config)
@@ -277,8 +271,8 @@ def import_module_from_github(url):
     # Possible TODO: do we want to/need to change the entitlements/ownership on the file for infosec?
 
     # load dynamically
-    temp = importlib.machinery.SourceFileLoader(os.path.join(destination_python_directory, python_file),
-                                                os.path.join(destination_python_directory, python_file)).load_module()
+    temp = importlib.machinery.SourceFileLoader(os.path.join(destination_directory, python_file),
+                                                os.path.join(destination_directory, python_file)).load_module()
     globals().update(temp.__dict__)
 
     #clean-up

@@ -8,7 +8,7 @@ class DynamicDispatch:
     #modules that aren't pre-loaded when the workbench starts up.
     DYNAMIC_MODULES_BASE_DIRECTORY = os.path.join(
         os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))),
-        'modules', 'dynamic'
+        '..', '..', 'importedmodules'
     )
 
     def __init__(self):
