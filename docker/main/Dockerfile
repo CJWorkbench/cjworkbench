@@ -16,9 +16,7 @@ RUN ./node_modules/.bin/webpack -p --config webpack.config.js
 RUN python manage.py migrate sites
 RUN python manage.py migrate
 
-# What can't be found? debug tests
-RUN crontab -l
-RUN /usr/bin/crontab -l
+RUN echo "* * * * * /usr/bin/curl http://localhost:8000/runcron" | crontab
 
 # setup cron job for every minute to do scheduled checks for new data
 RUN "echo \"* * * * * /usr/bin/curl http://localhost:8000/runcron\" | crontab"
