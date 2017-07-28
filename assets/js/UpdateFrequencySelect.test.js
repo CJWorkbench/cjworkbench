@@ -4,7 +4,15 @@ import { mount } from 'enzyme'
 
 it('UpdateFrequencySelect renders correctly', () => {
 
-  const wrapper = mount(<UpdateFrequencySelect />);
+  const wrapper = mount(<UpdateFrequencySelect
+    updateSettings= {{
+      lastUpdateCheck: 2,
+      autoUpdateData: true,
+      updateInterval: 5,
+      updateUnits: 'minutes'
+    }}
+    wfModuleId={1}
+   />);
   expect(wrapper).toMatchSnapshot();
 
   wrapper.setState( { modalOpen: true } )

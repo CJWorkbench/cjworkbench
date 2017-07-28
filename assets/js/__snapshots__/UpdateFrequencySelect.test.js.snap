@@ -1,34 +1,46 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`UpdateFrequencySelect renders correctly 1`] = `
-<UpdateFrequencySelect>
+<UpdateFrequencySelect
+  updateSettings={
+    Object {
+      "autoUpdateData": true,
+      "lastUpdateCheck": 2,
+      "updateInterval": 5,
+      "updateUnits": "minutes",
+    }
+  }
+  wfModuleId={1}
+>
   <div
     className="version-item"
   >
     <div
-      className="mb-2"
+      className=""
     >
       <span
-        className="info-medium-gray"
+        className="content-3 t-d-gray"
       >
         Update: 
       </span>
       <span
-        className="info-medium-blue"
+        className="content-3 t-f-blue"
         onClick={[Function]}
       >
-        Manual
+        Auto, every 5 minutes
       </span>
     </div>
     <div
-      className="info-medium-light-gray"
+      className="content-3 t-m-gray"
     >
       Last checked: 
+      December 31 1969 - 04:00 PM
     </div>
     <Modal
       autoFocus={true}
       backdrop={true}
       backdropTransitionTimeout={150}
+      className="dialog-window"
       fade={true}
       isOpen={false}
       keyboard={true}
@@ -41,34 +53,46 @@ exports[`UpdateFrequencySelect renders correctly 1`] = `
 `;
 
 exports[`UpdateFrequencySelect renders correctly 2`] = `
-<UpdateFrequencySelect>
+<UpdateFrequencySelect
+  updateSettings={
+    Object {
+      "autoUpdateData": true,
+      "lastUpdateCheck": 2,
+      "updateInterval": 5,
+      "updateUnits": "minutes",
+    }
+  }
+  wfModuleId={1}
+>
   <div
     className="version-item"
   >
     <div
-      className="mb-2"
+      className=""
     >
       <span
-        className="info-medium-gray"
+        className="content-3 t-d-gray"
       >
         Update: 
       </span>
       <span
-        className="info-medium-blue"
+        className="content-3 t-f-blue"
         onClick={[Function]}
       >
-        Manual
+        Auto, every 5 minutes
       </span>
     </div>
     <div
-      className="info-medium-light-gray"
+      className="content-3 t-m-gray"
     >
       Last checked: 
+      December 31 1969 - 04:00 PM
     </div>
     <Modal
       autoFocus={true}
       backdrop={true}
       backdropTransitionTimeout={150}
+      className="dialog-window"
       fade={true}
       isOpen={true}
       keyboard={true}
