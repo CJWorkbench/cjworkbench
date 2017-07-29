@@ -93,6 +93,13 @@ class LoadURL(ModuleImpl):
                 table = pd.DataFrame([{'result': res.text}])
                 return
 
+        elif content_type == "application/octet-stream" and '.xls' in url:
+            try:
+                table = pd.read_excel(io.BytesIO(res.content))
+            except XLRDError as e:
+                wfm.set_error(str(e))
+                return
+
         else:
             wfm.set_error('Error fetching %s: unknown content type %s' % (url,content_type))
             return
