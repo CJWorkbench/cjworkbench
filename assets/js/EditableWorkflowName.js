@@ -15,15 +15,23 @@ export default class EditableWorkflowName extends React.Component {
   }
 
   saveName(newName) {
-    this.api.setWfName(this.props.wfId, newName.value);
+    // If blank entry, use default title
+    var value = newName.value;
+    if (!value || (value == "")) {
+      value = "Untitled Workflow";
+    }
+    this.setState({value: value});
+    this.api.setWfName(this.props.wfId, value);
   }
 
+  // classEditing param for classes applied during edit state only
   render() {
     return <h4><RIEInput
-      value={this.props.value}
+      value={this.state.value}
       change={this.saveName}
       propName="value"
       className={this.props.editClass}
+      classEditing='title-1 t-d-gray'
     /></h4>
   }
 }

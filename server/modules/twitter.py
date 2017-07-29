@@ -1,6 +1,7 @@
 import tweepy
 import pandas as pd
-from datetime import date, timedelta
+from datetime import timedelta
+from django.utils import timezone
 import requests
 import time
 import os
@@ -36,7 +37,7 @@ class Twitter(ModuleImpl):
             tweetsgen = api.user_timeline(query, count=200)
         else:
             # Only get last 24 hours of tweets, because we have to bound this somehow
-            today = date.today()
+            today = timezone.today()
             yesterday = today - timedelta(1)
             date_clause = " since:{0}-{1}-{2} until:{3}-{4}-{5}".format(
                 yesterday.year, yesterday.month, yesterday.day,
@@ -69,8 +70,7 @@ class Twitter(ModuleImpl):
 
     # Load specified user's timeline
     @staticmethod
-    def event(parameter, e):
-        wfm = parameter.wf_module
+    def event(wfm, parameter, e):
         table = None
 
         # fetching could take a while so notify clients/users that we're working on it

@@ -2,8 +2,6 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views.WfModule import wfmodule_detail,wfmodule_render,wfmodule_input,wfmodule_public_output,wfmodule_dataversion
-
 
 urlpatterns = [
     # ex: /
@@ -32,18 +30,20 @@ urlpatterns = [
     url(r'^api/refreshfromgithub/?$', views.refresh_from_github),
 
     # WfModules (Modules applied in a workflow)
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', wfmodule_detail),
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/render$', wfmodule_render),
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/input$', wfmodule_input),
-    url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion', wfmodule_dataversion),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/render$', views.wfmodule_render),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/input$', views.wfmodule_input),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion', views.wfmodule_dataversion),
 
-    url(r'^public/moduledata/live/(?P<pk>[0-9]+)\.(?P<type>(csv|json))?$', wfmodule_public_output),
+    url(r'^public/moduledata/live/(?P<pk>[0-9]+)\.(?P<type>(csv|json))?$', views.wfmodule_public_output),
 
     # Parameters
     url(r'^api/parameters/(?P<pk>[0-9]+)/?$', views.parameterval_detail),
     url(r'^api/parameters/(?P<pk>[0-9]+)/event/?$', views.parameterval_event),
 
-    url(r'^public/paramdata/live/(?P<pk>[0-9]+).png$', views.parameterval_png)
+    url(r'^public/paramdata/live/(?P<pk>[0-9]+).png$', views.parameterval_png),
 
+    # URL endpoint to trigger internal cron jobs
+    url(r'^runcron$', views.runcron)
 ]
 

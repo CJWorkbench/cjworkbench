@@ -44,11 +44,10 @@ class WorkbenchAPI {
       }))
   }
 
-  // experimental, not yet proven to work
   setWfModuleNotes(wf_module_id, text) {
     return (
       fetch('/api/wfmodules/' + wf_module_id, {
-        method: 'post',
+        method: 'patch',
         credentials: 'include',
         headers: {
           'Accept': 'application/json',
@@ -73,6 +72,26 @@ class WorkbenchAPI {
         },
         body: JSON.stringify({
           newName: newName
+        })
+      })
+    )
+  }
+
+  // Params should be an object matching format below
+  setWfModuleUpdateSettings(wf_module_id, params) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id, {
+        method: 'patch',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          'auto_update_data' : params.auto_update_data,  // bool
+          'update_interval'  : params.update_interval,   // int
+          'update_units'     : params.update_units       // str
         })
       })
     )

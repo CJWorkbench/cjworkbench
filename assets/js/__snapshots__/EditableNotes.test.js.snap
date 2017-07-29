@@ -6,13 +6,15 @@ exports[`EditableNotes renders correctly 1`] = `
   value="testing"
   wf_module_id={1}
 >
-  <div>
+  <div
+    onKeyPress={[Function]}
+  >
     <RIETextArea
       change={[Function]}
+      classEditing="editable-notes-field-active t-d-gray note"
       className=""
-      cols={50}
       propName="value"
-      rows={5}
+      rows={1}
       value="testing"
     >
       <span

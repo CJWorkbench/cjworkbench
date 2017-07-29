@@ -18,10 +18,9 @@ class ImportFromGitHubTest(LoggedInTestCase):
         pwd = os.path.dirname(os.path.abspath(__file__))
         if os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')):
             shutil.rmtree(os.path.join(pwd, 'prototype-dynamic-loading'))
-        if os.path.isdir(os.path.join(pwd, 'modules', 'prototype-dynamic-loading')):
-            shutil.rmtree(os.path.join(pwd, 'modules', 'prototype-dynamic-loading'))
-        if os.path.isdir(os.path.join(pwd, 'test_data', 'config')):
-            shutil.rmtree(os.path.join(pwd,'test_data', 'config'))
+        if os.path.isdir(os.path.join(pwd, '..', '..', '..', 'importedmodules', 'prototype-dynamic-loading')):
+            shutil.rmtree(os.path.join(pwd, '..', '..', '..', 'importedmodules', 'prototype-dynamic-loading'))
+
 
     def test_sanitise_url(self):
         #test valid url
@@ -91,8 +90,6 @@ class ImportFromGitHubTest(LoggedInTestCase):
         #OK, this seems gross, but it's necessary. We don't want to rely on a remote repo existing, so we're going
         #to have to drive this test off a local repo that fits the structure that we expect whilst importing a module
         #from GitHub.
-        #In test_data/, we have two directories intuitively named: valid_import and invalid_import.
-        #We test against both here, starting with when everything's structured as we'd like it to be.
 
         pwd = os.path.dirname(os.path.abspath(__file__))
         self.setup_module_structure(pwd)
@@ -213,120 +210,107 @@ class ImportFromGitHubTest(LoggedInTestCase):
     def test_validate_python(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
         self.setup_module_structure(pwd)
-        test_dir = os.path.join(pwd, "prototype-dynamic-loading")
         mapping = {}
         # ensure we get a ValidationError if the mapping doesn't have a json key.
         with self.assertRaisesMessage(ValidationError, "No Python file found in remote repository."):
-            validate_python(mapping, pwd, "test_data", "prototype-dynamic-loading", "123456")
+            validate_python(mapping, pwd, "../../../importedmodules/", "prototype-dynamic-loading", "123456")
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
                          "Repository should be deleted on ValidationError (missing json key).")
 
         #check valid scenario
         self.setup_module_structure(pwd)
         mapping = {'json': 'importable.json', 'py': 'importable.py'}
-        root_directory = os.path.join(pwd, "test_data")
-        python_file, destination_python_directory, destination_json_directory = \
-            validate_python(mapping, pwd, root_directory, "prototype-dynamic-loading", "123456")
+        module_directory = os.path.join(pwd, "..", "..", "..", "importedmodules")
+        python_file, destination_directory = \
+            validate_python(mapping, pwd, module_directory, "prototype-dynamic-loading", "123456")
 
         self.assertTrue(python_file == 'importable.py', "The python file should be importable.py")
-        self.assertTrue(destination_python_directory == pwd + "/modules/dynamic/prototype-dynamic-loading/123456",
-                "The destination python directory should be {}/modules/prototype-dynamic-loading/123456".format(pwd) +
-                " but it's {}".format(destination_python_directory))
-        self.assertTrue(destination_json_directory == pwd + "/test_data/config/modules/dynamic/prototype-dynamic-loading/123456",
-                "The destination json directory should be {}/test_data/config/modules/prototype-dynamic-loading/123456".format(pwd) +
-                        " but it's {}".format(destination_json_directory))
+        self.assertTrue(destination_directory == pwd + "/../../../importedmodules/prototype-dynamic-loading/123456",
+                "The destination directory should be {}/prototype-dynamic-loading/123456".format(pwd + "/../../../importedmodules") +
+                " but it's {}".format(destination_directory))
 
         #check if json already exists for the given module-version combination.
-        os.makedirs(destination_json_directory)
+        os.makedirs(destination_directory)
         with self.assertRaisesMessage(ValidationError, "Files for this repository and this version already exist."):
-            validate_python(mapping, pwd, root_directory, "prototype-dynamic-loading", "123456")
+            validate_python(mapping, pwd, module_directory, "prototype-dynamic-loading", "123456")
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
                          "Repository should be deleted on ValidationError (json file already exists).")
-        shutil.rmtree(destination_json_directory)
+        shutil.rmtree(destination_directory)
 
         #check if python already exists for the given module-version combination.
-        os.makedirs(destination_python_directory)
+        os.makedirs(destination_directory)
         self.setup_module_structure(pwd) # need to recopy the GitHub repo as it was deleted in the previous step.
         with self.assertRaisesMessage(ValidationError, "Files for this repository and this version already exist."):
-            validate_python(mapping, pwd, root_directory, "prototype-dynamic-loading", "123456")
+            validate_python(mapping, pwd, module_directory, "prototype-dynamic-loading", "123456")
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
                              "Repository should be deleted on ValidationError (python file already exists).")
-        shutil.rmtree(destination_python_directory)
+        shutil.rmtree(destination_directory)
 
 
     def test_compile_python(self):
         #setup things like the json directory and the python directory and everything else –
         #this is kinda tedious...
         pwd = os.path.dirname(os.path.abspath(__file__))
-        json_dir = os.path.join(pwd, "test_data/config/modules/prototype-dynamic-loading/123456")
-        python_dir = os.path.join(pwd, "modules/prototype-dynamic-loading/123456")
+        destination_directory = os.path.join(pwd, "../../../importedmodules/prototype-dynamic-loading/123456")
 
         test_dir = os.path.join(pwd, "prototype-dynamic-loading")
 
         self.setup_module_structure(pwd)
-        os.makedirs(json_dir)
-        os.makedirs(python_dir)
+        os.makedirs(destination_directory)
 
-        shutil.copy(os.path.join(test_dir, "importable.py"), python_dir)
+        shutil.copy(os.path.join(test_dir, "importable.py"), destination_directory)
 
         #test valid scenario
-        compiled = compile_python(python_dir, json_dir, pwd, "prototype-dynamic-loading", "importable.py")
+        compiled = compile_python(destination_directory, pwd, "prototype-dynamic-loading", "importable.py")
         #I don't know if there's a better way of doing this, but for now, I'm just checking if the compile process
         #returns a *pyc file.
         self.assertTrue(compiled.endswith("pyc"), "{} should've compiled to a pyc file.".format("importable.py"))
-        shutil.rmtree(json_dir)
-        shutil.rmtree(python_dir)
+        shutil.rmtree(destination_directory)
         shutil.rmtree(test_dir)
 
         #test invalid scenario: what if Python file doesn't exist.
         self.setup_module_structure(pwd)
-        os.makedirs(json_dir)
-        os.makedirs(python_dir)
+        os.makedirs(destination_directory)
 
         with self.assertRaisesMessage(ValidationError, "Unable to open {}.".format("importable.py")):
-            compiled = compile_python(python_dir, json_dir, pwd, "prototype-dynamic-loading", "importable.py")
+            compiled = compile_python(destination_directory, pwd, "prototype-dynamic-loading", "importable.py")
         #ensure cleanup's happened
         self.assertFalse(os.path.isdir(test_dir), "{} should've been deleted as part of clean-up".format(test_dir))
-        self.assertFalse(os.path.isdir(json_dir), "{} should've been deleted as part of clean-up".format(json_dir))
-        self.assertFalse(os.path.isdir(python_dir), "{} should've been deleted as part of clean-up".format(python_dir))
+        self.assertFalse(os.path.isdir(destination_directory), "{} should've been deleted as part of clean-up".format(destination_directory))
 
         #test invalid scenario: what if Python file exists but can't be compiled.
         self.setup_module_structure(pwd)
-        os.makedirs(json_dir)
-        os.makedirs(python_dir)
+        os.makedirs(destination_directory)
 
         # create file and add some random content to file
         f = open(os.path.join(pwd, 'prototype-dynamic-loading', 'additional_file.py'), 'a')
         f.write("random content here")
         f.close()
 
-        shutil.copy(os.path.join(test_dir, "additional_file.py"), python_dir)
+        shutil.copy(os.path.join(test_dir, "additional_file.py"), destination_directory)
 
         with self.assertRaisesMessage(ValidationError, "Unable to compile {}.".format("additional_file.py")):
-            compiled = compile_python(python_dir, json_dir, pwd, "prototype-dynamic-loading", "additional_file.py")
+            compiled = compile_python(destination_directory, pwd, "prototype-dynamic-loading", "additional_file.py")
             # ensure cleanup's happened
         self.assertFalse(os.path.isdir(test_dir), "{} should've been deleted as part of clean-up".format(test_dir))
-        self.assertFalse(os.path.isdir(json_dir), "{} should've been deleted as part of clean-up".format(json_dir))
-        self.assertFalse(os.path.isdir(python_dir), "{} should've been deleted as part of clean-up".format(python_dir))
+        self.assertFalse(os.path.isdir(destination_directory), "{} should've been deleted as part of clean-up".format(destination_directory))
 
     def test_validate_python_functions(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
-        json_dir = os.path.join(pwd, "test_data/config/modules/prototype-dynamic-loading/123456")
-        python_dir = os.path.join(pwd, "modules/prototype-dynamic-loading/123456")
+        destination_directory = os.path.join(pwd, "../../../importedmodules/prototype-dynamic-loading/123456")
 
         test_dir = os.path.join(pwd, "prototype-dynamic-loading")
 
         self.setup_module_structure(pwd)
-        os.makedirs(json_dir)
-        os.makedirs(python_dir)
+        os.makedirs(destination_directory)
 
         #test valid scenario
-        shutil.copy(os.path.join(test_dir, "importable.py"), python_dir)
-        imported_class = validate_python_functions(python_dir, json_dir, pwd, "prototype-dynamic-loading", "importable.py")
+        shutil.copy(os.path.join(test_dir, "importable.py"), destination_directory)
+        imported_class = validate_python_functions(destination_directory, pwd, "prototype-dynamic-loading", "importable.py")
         self.assertTrue(type(imported_class[1]) == type, "The module must be importable, and be of type 'type'.")
 
         #test invalid scenario: > 1 class
-        shutil.copy(os.path.join(pwd, "test_data", "unimportable_multiclass.py"),  python_dir)
+        shutil.copy(os.path.join(pwd, "test_data", "unimportable_multiclass.py"),  destination_directory)
         with self.assertRaisesMessage(ValidationError, "Multiple classes exist in python file."):
-            imported_class = validate_python_functions(python_dir, json_dir, pwd, "prototype-dynamic-loading",
+            validate_python_functions(destination_directory, pwd, "prototype-dynamic-loading",
                                                    "unimportable_multiclass.py")

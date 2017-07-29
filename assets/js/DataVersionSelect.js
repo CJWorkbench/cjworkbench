@@ -58,7 +58,6 @@ export default class DataVersionSelect extends React.Component {
   loadVersions() {
     this.props.api.getWfModuleVersions(this.props.wfModuleId)
       .then(json => {
-        // console.log('Versions state returned: ' + JSON.stringify(json));
         this.setState(
           Object.assign({}, this.state, {versions: json, originalSelected: json.selected})
         );
@@ -78,7 +77,6 @@ export default class DataVersionSelect extends React.Component {
   }
 
   setSelected(date) {
-    console.log('Setting this date as selected: ' + date);
     this.setState(
       Object.assign(
         {}, 
@@ -92,7 +90,6 @@ export default class DataVersionSelect extends React.Component {
     if (this.state.versions.selected !== this.state.originalSelected) {
       this.props.api.setWfModuleVersion(this.props.wfModuleId, this.state.versions.selected)
       .then(() => {
-        // console.log('changing originalSelected to ' + this.state.versions.selected);
         this.setState(
           Object.assign({}, this.state, {originalSelected: this.state.versions.selected})
         )
@@ -108,33 +105,35 @@ export default class DataVersionSelect extends React.Component {
 
     return (
       <div className='version-item'>
-        <div className='info-medium-gray mb-2'>Current Version</div>
+        <div className='t-d-gray content-3 mb-4'>Current Version</div>
 
-        <div className='info-medium-blue open-modal' onClick={this.toggleModal}>
+        <div className='t-f-blue content-3 open-modal' onClick={this.toggleModal}>
             {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}  
         </div>        
-        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
-          <ModalHeader toggle={this.toggleModal} >
-            <div className=''>Dataset Versions</div>
+        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window' >
+          <ModalHeader toggle={this.toggleModal} className='dialog-header'>
+            <div className='title-4 t-d-gray'>Dataset Versions</div>
           </ModalHeader>
-          <ModalBody>
+          <ModalBody className='dialog-body'>
             <div className='scolling-list'>
               {this.state.versions.versions.map( date => {
                 return (
                   <div 
                     key={date} 
-                    className={(date == this.state.versions.selected) ? 'version-active ' : 'version-disabled'}
+                    className={
+                      (date == this.state.versions.selected) 
+                        ? 'line-item-data-selected list-test-class' 
+                        : 'line-item-data  list-test-class'
+                    }
                     onClick={() => this.setSelected(date)}
                   >
-                    <div className={(date == this.state.versions.selected) ? 'version-text-active list-test-class' : 'version-text-disabled list-test-class'}>
-                      { this.formatDate(date) }
-                    </div>
+                    <span className='content-3'>{ this.formatDate(date) }</span>
                   </div>
                 );
               })}
             </div>
           </ModalBody>
-          <ModalFooter>
+          <ModalFooter className='dialog-footer'>
             <Button className='button-blue action-button' onClick={this.toggleModal}>Cancel</Button>    
             <Button className='button-blue action-button' onClick={this.changeVersions}>OK</Button>                    
           </ModalFooter>

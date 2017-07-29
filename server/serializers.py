@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Module, ModuleVersion
-
+from server.utils import seconds_to_count_and_units
 
 # So far, no one actually wants to see the default values.
 # They'd be a bit trick to serialize anyway, as we'd want to hide the underlying storage (float/string/int/boolean)
@@ -47,14 +47,26 @@ class ModuleVersionSerializer(serializers.ModelSerializer):
 class WfModuleSerializer(serializers.ModelSerializer):
     parameter_vals = ParameterValSerializer(many=True, read_only=True)
     module_version = ModuleVersionSerializer(many=False, read_only=True)
+
+    # update interval handling is a little tricky as we need to convert seconds to count+units
+    update_interval = serializers.SerializerMethodField()
+    def get_update_interval(self, wfm):
+        return seconds_to_count_and_units(wfm.update_interval)['count']
+
+    update_units = serializers.SerializerMethodField()
+    def get_update_units(self, wfm):
+        return seconds_to_count_and_units(wfm.update_interval)['units']
+
     class Meta:
         model = WfModule
-        fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals', 'notes')
+        fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals',
+                  'notes', 'auto_update_data', 'update_interval', 'update_units', 'last_update_check')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):
     wf_modules = WfModuleSerializer(many=True, read_only=True)
     revision = serializers.ReadOnlyField()
+
     class Meta:
         model = Workflow
         fields = ('id', 'name', 'revision', 'wf_modules')

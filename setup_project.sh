@@ -74,6 +74,7 @@ tput setaf 35; echo "Updated submodules..."; tput setaf 7;
 # database malarky
 echo "Setting up the database..."
 python manage.py migrate
+python manage.py migrate sites
 tput setaf 35; echo "Finished setting up database..."; tput setaf 7;
 
 #You can thank Django for this... if I try to simply pipe input in, it says:

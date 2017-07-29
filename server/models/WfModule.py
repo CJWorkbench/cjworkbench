@@ -8,11 +8,11 @@ from server.models.ModuleVersion import *
 from server.models.Workflow import *
 from server.models.ParameterVal import *
 from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_status
-import datetime
+from django.utils import timezone
 
 # Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
 def current_iso_datetime_ms():
-    return datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+    return timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
 
 
 class WfModule(models.Model):
@@ -39,11 +39,18 @@ class WfModule(models.Model):
 
     # DO NOT use null=True, causes problems in test
     notes = models.TextField(
+        null=True,
         blank=True)
 
     stored_data_version = models.CharField(
         max_length=32,
         null=True)                      # we may not have stored data
+
+    # For modules that fetch data: how often do we check for updates, and do we switch to latest version automatically
+    auto_update_data = models.BooleanField(default='True')
+    next_update = models.DateTimeField(null=True)            # when should next update run?
+    update_interval = models.IntegerField(default=0)         # time in seconds between updates
+    last_update_check = models.DateTimeField(null=True)
 
     # status light and current error message
     READY = "ready"
@@ -106,7 +113,6 @@ class WfModule(models.Model):
 
     def list_stored_data_versions(self):
         return list(StoredObject.objects.filter(wf_module=self).order_by('stored_at').values_list('key', flat=True))
-
 
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
@@ -177,10 +183,7 @@ class WfModule(models.Model):
             ws_client_rerender_workflow(self.workflow)
         self.save()
 
-    def set_notes(self, notes):
-        self.notes = notes
-        self.save()
-        
+
 
 
 

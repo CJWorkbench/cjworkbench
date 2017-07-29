@@ -9,6 +9,7 @@ exports[`EditableWorkflowName renders correctly 1`] = `
   <h4>
     <RIEInput
       change={[Function]}
+      classEditing="title-1 t-d-gray"
       className=""
       propName="value"
       value="Test Title"

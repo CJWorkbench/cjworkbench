@@ -32,6 +32,9 @@ class Delta(PolymorphicModel):
             # Do this in a transaction, since we need to update three pointers to maintain list integrity
             with transaction.atomic():
 
+                # Blow away all deltas starting after last applied (wipe redo stack)
+                delete_unapplied_deltas(self.workflow)
+
                 # Point us backward to last delta in chain
                 last_delta = self.workflow.last_delta
                 if last_delta:
@@ -54,3 +57,21 @@ class Delta(PolymorphicModel):
     def __str__(self):
         return str(self.datetime) + " " + self.command_description
 
+
+# Deletes every delta on the workflow that is not currently applied
+# This is what implements undo + make a change -> can't redo
+def delete_unapplied_deltas(workflow):
+
+    # ensure last_delta is up to date after whatever else has been done to this poor workflow
+    workflow.refresh_from_db()
+
+    # Starting pos is one after last_delta. Have to look in db if at start of delta stack
+    if workflow.last_delta:
+        delta = workflow.last_delta.next_delta
+    else:
+        delta = Delta.objects.filter(workflow=workflow).order_by('datetime').first()
+
+    while delta != None:
+        next = delta.next_delta
+        delta.delete()
+        delta = next

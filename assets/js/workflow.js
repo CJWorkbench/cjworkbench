@@ -132,10 +132,10 @@ export default class Workflow extends React.Component {
             <div className="modulestack-header w-75 mx-auto ">
               <EditableWorkflowName
                 value={this.props.workflow.name}
-                editClass='editable-text-field h4 editable-notes-container'
+                editClass='editable-title-field title-1 t-d-gray'
                 wfId={this.props.workflow.id} />
               <Button onClick={this.toggleModuleLibrary.bind(this)} 
-                  className='button-blue'>Add Module</Button>
+                  className='button-blue action-button'>Add Module</Button>
             </div>
             <div className="modulestack-list w-75 mx-auto ">
               <SortableList

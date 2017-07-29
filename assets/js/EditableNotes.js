@@ -9,35 +9,63 @@ export default class EditableNotes extends React.Component {
     super(props);
     this.api = workbenchapi();
     this.saveNotes = this.saveNotes.bind(this);
+    this.keyPress = this.keyPress.bind(this);
     this.state = {
       value: this.props.value
     }
   }
 
-  saveNotes(newNote) {
-    this.api.setWfModuleNotes(this.props.wfModuleId, newNote.value);
+  // Simulate a click on the field to enter editing state upon mount
+  //    Have to target child through parent b/c RIETextArea cannot be directly referenced
+  componentDidMount() {
+    this.textInput.childNodes[0].focus();
   }
 
-  // can specify rows and cols in parameters
+  // Make Enter key save the text in edit field, overriding default newline
+  keyPress(e) {
+    if (e.key == 'Enter' ) {
+      e.preventDefault();      
+      this.saveNotes({value: e.target.value});       
+    }
+  }
+
+  // If nothing entered, saves a default note and closes
+  saveNotes(newNote) {
+    if (!newNote.value || (newNote.value == "")) {
+      this.api.setWfModuleNotes(this.props.wfModuleId, "Write notes here");       
+      this.props.hideNotes();
+    } else {
+      this.api.setWfModuleNotes(this.props.wfModuleId, newNote.value); 
+    }
+  }
+
+
   render() {
-    // var rowCount = (this.props.value && this.props.value.length > 50)
-    //   ? 5
-    //   : 1
 
-    var value = (this.props.value) ? this.props.value : "   "
+    var rowcount = (this.props.value && this.props.value.length)
+      ? Math.ceil(this.props.value.length / 100)
+      : 1
 
-    return <div><RIETextArea
-      value={value}
-      change={this.saveNotes}
-      propName="value"
-      className={this.props.editClass}
-      cols={50}
-      rows={5}
-    /></div>
+    // 'ref' callback receives the mounted instance of the component as its argument - still needed?
+    // classEditing param for classes applied during edit state only    
+    return <div 
+              onKeyPress={this.keyPress}
+              ref={ (input) => { this.textInput = input; } }
+            >
+              <RIETextArea
+                value={this.props.value}
+                change={this.saveNotes}
+                propName="value"
+                className={this.props.editClass}
+                classEditing='editable-notes-field-active t-d-gray note'
+                rows={rowcount}
+              />
+          </div>
   }
 }
 
 EditableNotes.propTypes = {
   value:          PropTypes.string,
-  wfModuleId:     PropTypes.number
+  wfModuleId:     PropTypes.number,
+  hideNotes:      PropTypes.func
 };

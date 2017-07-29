@@ -14,7 +14,8 @@ import pandas as pd
 
 mock_csv_text = 'Month,Amount\nJan,10\nFeb,20'
 mock_csv_table = pd.read_csv(io.StringIO(mock_csv_text))
-
+mock_csv_text2 = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
+mock_csv_table2 = pd.read_csv(io.StringIO(mock_csv_text2))
 
 # ---- Logging in ----
 

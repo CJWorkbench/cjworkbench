@@ -3,7 +3,7 @@
 html {
   height: 100%;
   /* sets the basis for `rem` styling units */
-  font-size: 16px;
+  font-size: 10px;
 }
 
 body {
@@ -22,383 +22,195 @@ body {
 	position: absolute;
 }
 
-/* ---- Text Type styles: cross-module ----- */
+/* ---- NEW Type styles: use on all newly styled elements: phase out olds on edit ----- */
 
-/* TODO: DRY out the repitition */
-/* ---> be wary of imported component styles  */
+/* --- Text Sizing ---  */
 
-/* not in style guide - remove/replace */
-.title {
-	height: 	0.9375rem;
-	font-size: 	0.9375rem;
-	font-weight: 500;
-	line-height: 	0.9375rem;
-}
-
-.list-title {
-	height: 1.375rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 1.375rem;
-	font-weight: 500;
-	line-height: 1.375rem;
-}
-
-.title-white {
-	height: 1.125rem;
-	color: #FFFFFF;
-	font-family: Avenir;
-	font-size: 1.125rem;
+.title-1 {
+	font-size: 2.5rem;
 	font-weight: 300;
-	line-height: 1.125rem;
+	line-height: 2.5rem;
 }
-
-.title-line-item-gray {
-	height: 0.8125rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.8125rem;
+.title-2 {
+	font-size: 2.2rem;
 	font-weight: 500;
-	line-height: 0.8125rem;
+	line-height: 2.2rem;
 }
-
-.module-library-line-item-title {
-	height: 0.9375rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.9375rem;
+.title-3 {
+	font-size: 1.8rem;
+	font-weight: 300;
+	line-height: 1.8rem;
+}
+.title-4 {
+	font-size: 1.5rem;
 	font-weight: 500;
-	line-height: 0.9375rem;
+	line-height: 1.5rem;
 }
-
-.setting-gray {
-	height: 0.8125rem;  
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-  line-height: 0.8125rem;
-}
-
-.setting-blue {
-	height: 0.8125rem;
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
-}
-
-.setting-orange {
-	height: 0.8125rem;
-	color: #FBAA6D;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
-}
-
-.setting-big-light-gray {
-	height: 0.75rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.875rem;
+.title-5 {
+	font-size: 1.1rem;
 	font-weight: 900;
-	line-height: 0.75rem;
+	line-height: 2rem;
 }
 
-.data-light-gray {	
-  color: #A2A2A2;	
-  font-family: Avenir;	
-  font-size: 0.875rem;	
-  font-weight: 500;	
-  line-height: 0.875rem;
-  height: 0.875rem;  
-}
-
-.data-gray {
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 500;
-  line-height: 0.875rem;
-  height: 0.875rem;
-}
-
-.data-paragraph-gray {
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 500;
-  line-height: 1.5rem;
-  height: 1.5rem;
-}
-
-.data-pragraph-light-gray {
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 500;
-  line-height: 1.5rem;
-  height: 1.5rem;
-}
-
-.table-row-single-d {
-	height: 0.6875rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.625rem;
-	font-weight: 500;
-	line-height: 0.6875rem;
-}
-
-.table-row-0.6875remdouble-d {
-	height: 0.6875rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.5625rem;
-	font-weight: 500;
-	line-height: 0.6875rem;
-}
-
-.table-row-triple-d {
-	height: 0.6875rem;
-	color: #FFFFFF;
-	font-family: Avenir;
-	font-size: 0.53125rem;
-	font-weight: 500;
-	line-height: 0.6875rem;
-}
-
-.table-column-name {
-	height: 1.125rem;
-	color: #FFFFFF;
-	font-family: Avenir;
-	font-size: 0.8125rem;
+.content-1 {
+	font-size: 1.4rem;
 	font-weight: 900;
-	line-height: 1.125rem;
+  line-height: 1.4rem;
+  opacity: 0.6;
 }
-
-.info-small-blue {
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.625rem;
+.content-2 {
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+}
+.content-3 {
+	font-size: 1.3rem;
+	line-height: 1.3rem;
+}
+.content-4 {
+	font-size: 1.2rem;
 	font-weight: 900;
-	line-height: 0.625rem;
-  height: 0.625rem;
+	line-height: 1.2rem;
 }
 
-.info-small-blue:hover {
-  color: #0B8897;
+.code-1 {
+  font-family: "PT Mono";
+	font-size: 1.4rem;
+	line-height: 2.4rem;
 }
 
-.info-small-orange {
-	color: #FBAA6D;
-	font-family: Avenir;
-	font-size: 0.625rem;
+.info-1 {
+	font-size: 1.3rem;
+	font-weight: 300;
+	line-height: 2.1rem;
+}
+.info-2 {
+	font-size: 1rem;
 	font-weight: 900;
-  line-height: 0.625rem;
-  height: 0.625rem;
-}
-
-.info-small-paragraph-gray {
-	height: 2rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.6875rem;
 	line-height: 1rem;
 }
 
-.info-medium-paragraph-gray {
-	height: 1.375rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	font-weight: 300;
-	line-height: 1.375rem;
+.table-1 {
+	font-size: 1.3rem;
+	font-weight: 900;
+	line-height: 1.8rem;
 }
-
-.info-medium-paragraph-blue {
-	height: 0.75rem;
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.875rem;
+.table-2 {
+	font-size: 1rem;
 	font-weight: 500;
-	line-height: 0.75rem;
+	line-height: 1.1rem;
 }
 
-.info-medium-blue {
-	height: 0.8125rem;
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
+.note {
+  font-size: 1.5rem;
+	font-weight: 300;
+  line-height: 2.8rem;
+  margin-top: 2rem;
 }
 
-.info-medium-blue:hover {
-  color: #0B8897;
-}
+/* --- Colors ---  */
 
-.info-medium-gray {
-	height: 0.8125rem;
+/* Text  */
+.t-vl-gray {
+  color: #FAFAFA;
+}
+.t-l-gray {
+  color: #F5F5F5;
+}
+.t-m-gray {
+  color: #B4B4B4;
+}
+.t-d-gray {
   color: #686768;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
+}
+.t-d-blue {
+  color: #577485;
+}
+.t-f-blue {
+  color: #48C8D7;
+}
+.t-orange {
+  color: #F8AA6D;
 }
 
-.info-medium-light-gray {
-	height: 0.8125rem;
-  color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
+/* Backgrounds  */
+.b-vl-gray {
+  background-color: #FAFAFA;
 }
-
-.field-search-light-gray {
-	opacity: 0.6;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-  line-height: 0.875rem;
-  height: 0.875rem;
+.b-l-gray {
+  background-color: #F5F5F5;
 }
-
-.field-search-white {
-	color: #FFFFFF;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-  line-height: 0.875rem;
-  height: 0.875rem;
+.b-m-gray {
+  background-color: #B4B4B4;
 }
-
-.code-light {
-	height: 1.5rem;
-	color: #A2A2A2;
-	font-family: "PT Mono";
-	font-size: 0.875rem;
-	line-height: 1.5rem;
+.b-d-gray {
+  background-color: #686768;
 }
-
-.code-fill {
-	height: 1.5rem;
-	color: #CFCFCF;
-	font-family: "PT Mono";
-	font-size: 0.875rem;
-	line-height: 1.5rem;
+.b-d-blue {
+  background-color: #577485;
 }
-
-.details-blue {
-	height: 0.75rem;
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.75rem;
-	font-weight: 900;
-	line-height: 0.75rem;
+.b-f-blue {
+  background-color: #48C8D7;
 }
-
-.details-blue:hover {
-	color: #2D9DAA;
+.b-orange {
+  background-color: #F8AA6D;
 }
-
-.details-gray {
-	height: 0.75rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.75rem;
-	font-weight: 900;
-	line-height: 0.75rem;
+.b-table-row {
+  background-color: #EDF4F6;
 }
-
-.details-gray-copy {
-	height: 1rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.75rem;
-	font-weight: 300;
-	line-height: 1rem;
+.b-table-column {
+  background-color: #E1E9EB;
 }
-
-.workflow-title-gray {
-	height: 2.125rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 1.5625rem;
-	font-weight: 300;
-  line-height: 2.125rem;
+.b-output-blue-1 {
+  background-color: #DBECF1;
 }
-
-.dialog-box-title-light-gray {
-	height: 0.9375rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.9375rem;
-	font-weight: 500;
-	line-height: 0.9375rem;
+.b-output-blue-2 {
+  background-color: #BFDDE4;
 }
-
-.dialog-box-title-gray {
-	height: 0.9375rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.9375rem;
-	font-weight: 500;
-	line-height: 0.9375rem;
+.b-output-red-1 {
+  background-color: #F3B9B7;
 }
-
-.info-title-small {
-	height: 1.25rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.6875rem;
-	font-weight: 900;
-	line-height: 1.25rem;
-}
-
-.version-text-active {
-	 color: #FFFFFF; 
-	 font-family: Avenir;
-	 font-size: 0.8125rem; 
-	 font-weight: 300; 
-	 line-height: 1.125rem;  
-}
-
-.version-text-disabled {
-	color: #3A3A3A;  
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	font-weight: 300;
-	line-height: 1.125rem;
-}
-
-.version-text-disabled:hover {
-  color: #3A3A3A;
+.b-output-red-2 {
+  background-color: #E24F4A;
 }
 
 
-/* ---- Text Input Fields ---- */
-/* TODO: match with style guide  */
 
-.editable-text-field {
-  border: none;
-  outline: none;
-  padding: 0;
-  resize: none;
-  height: 100%;
-  width: 100%;
-}
+/* ---- Data Input Fields: NEW ---- */
 
 .text-field {
-  height: 2.5rem;
+  height: 4rem;
   width: 100%;
   background-color: #FFFFFF !important;
-  border: 1px solid #EDECEC;
-  resize: none;
+  border: 1px solid #E7E7E7;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
 }
 
 .text-field:active {
   box-shadow: 0 0 1px 1px #48C8D7;
   border: 0;
 }
+
+.input-number {
+  height: 4rem;
+  color: #686768;
+  background-color: #FFFFFF;
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+}
+
+.input-dropdown {
+  height: 4rem !important;
+  color: #686768;
+  background-color: #FFFFFF;
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+}
+
+
+
 
 
 /* to be replaced by new classes  */
@@ -413,138 +225,100 @@ body {
 }
 
 /* ---- Buttons ---- */
+/* To be phased out to new styles */
 
+/* - Button Colors - */
 .button-gray {
-  color: #A2A2A2;
-  border: 1px solid #48C8D7;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
+  color: #686768;
+  border: 1px solid #686768;
+  text-align: center;
+  background-color: none;  
 }
-
-.button-gray:hover {
-	color: #686768;
-}
-
-.button-red {
-  color: #E24F4A;
-  border: 1px solid #E24F4A;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
-}
-
-.button-orange {
-  color: #FBAA6D;
-  border: 1px solid #FBAA6D;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
+.button-gray:active {
+  background-color: #686768;
+  color: #FFFFFF;
 }
 
 .button-blue {
   color: #48C8D7;
   border: 1px solid #48C8D7;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
+  text-align: center;
+  background-color: none;
 }
-
-.button-white {
+.button-blue:active {
+  background-color: #48C8D7;
   color: #FFFFFF;
-  border: 1px solid #FFFFFF;  
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
 }
 
-.button-context {
+.button-full-blue {
+  background-color: #48C8D7;
+  color: #FFFFFF;
+	text-align: center;  
+}
+
+/* - Button Shapes - */
+
+.context-button {
   border: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-.button-context:hover {
+.context-button:hover {
   border: 1px solid #EDECEC;
+  border-radius: 0.3rem;  
 }
-
-.button-context:active {
+.context-button:active {
   border: 1px solid #EDECEC;
   background-color: #F9F9F9;
-}
-
-.button-square {
-  background-color: #FFFFFF;
-  border: 1px solid #EDECEC;  
-}
-
-.button-square:hover {
-  background-color: #F1F5F7;
-}
-
-.button-square:active {
-  background-color: #48C8D7;
+  border-radius: 0.3rem;
+  color: #686768;
 }
 
 .action-button {
-	height: 2.5rem;
-  border-radius: 25px;
-  min-width: 89px;
+	height: 4rem;
+  border-radius: 2.5rem;
+  min-width: 9rem; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+	font-size: 1.4rem;
+	font-weight: 900;
+  line-height: 1.4rem;
 }
-
 .action-button:hover {
 	opacity: 0.5;
 }
 
-/* is this used anywhere? To cull otherwise  */
-.action-button-disabled {
-  background-color: #EDECEC;
-  height: 2.5rem;
-	border-radius: 1.5625rem;
-  color: #A2A2A2;
-}
 
 
 /* ---- Dropdowns ---- */
 
-.dropdown-list-menu {
-  background-color: #D8D8D8;
-  padding: 1px;
-}
-
-/* TODO: remove styling for text, define box only  */
-/* move text styles to text classes  */
-.dropdown-list-item {
-  height: 40px;
-  width: 170px;
-  display: flex;
-  align-items: left;
-  padding: 15px 25px 25px 10px;
-  margin-bottom: 1px;
+.line-item-data {
+  height: 4rem;
   background-color: #FFFFFF;
-  color: #3A3A3A;
-  font-size: 13px;
-  font-weight: 300;	
-  line-height: 18px;
-  font-family: Avenir;
+  color: #686768;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 2.5rem;
 }
 
-.dropdown-list-item:hover {
-  background-color: #F1F5F7;
+.line-item-data:hover {
+  background-color: #F5F5F5;
 }
 
-.dropdown-list-item:active {
+.line-item-data-selected {
+  height: 4rem;  
   background-color: #48C8D7;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 2.5rem;
 }
-
 
 
 /* ---- Navbar ----- */
@@ -677,23 +451,25 @@ body {
 
 
 /* ---- WfModule ---- */
-/* TODO: make classes consistent with style guide */
-/* TODO: rename classes-to-css-style  */
 
 .module-card-wrapper {
   height: 100%;
   display: flex;
   flex-direction: row;
+  padding: 0;
 }
-
 .module-card-info {
   width: calc(100% - 1rem);
 }
-
 .module-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 2rem;
+}
+.module-card-params {
+  padding: 2rem;
+  background-color: #FAFAFA;  
 }
 
 .wfModuleErrorMsg {
@@ -723,12 +499,10 @@ body {
   width: 20%;
 }
 
-.wf-parameters {
-  background-color: #FAFAFA;
-}
 
 
 /* ---- Wf Module status bars ---- */
+/* To be phased out for new styles */
 
 /* a dummy div around output status bar, for positioning purposes  */
 .output-bar-container {
@@ -737,64 +511,58 @@ body {
 
 /* base status  */
 .module-output-bar-white {
-  width: 0.4375rem;
+  width: 1rem;
   height: 100%;
   background-color: #FFFFFF;
 }
-
 /* currently selected and ready */
 .module-output-bar-blue {
-  width: 0.4375rem;
+  width: 1rem;
   height: 100%;  
   background-color: #BFDDE4;
 }
-
-/* TODO: change on module select, not hover  */
+/* TODO: change on module state (selected), not hover  */
 .module-output-bar-blue:hover {
   background-color: #DBECF1;
 }
 
 /* standby  */
 .module-output-bar-orange {
-  width: 0.4375rem;  
+  width: 1rem;  
   height: 100%;  
   background-color: #FBAA6D;
 }
 
 /* error  */
 .module-output-bar-red {
-  width: 0.4375rem;  
+  width: 1rem;  
   height: 100%;  
   background-color: #E24F4A;
 }
 
 
 /* ---- Dialog Boxes ---- */
-/* TODO: redefine according to style sheet  */
 
-.dialog-header {
-  height: 55px;
-  padding: 20px 30px 20px 30px ;
-  background-color: #FFFFFF;
+.dialog-window {
+  border: 0;
+  width: 50rem;
 }
 
-.dialog-header-close {
-  margin-left: 330px;
-  font-size: 0.9375rem;
-	font-weight: 500;
-  line-height: 0.9375rem;
-  color: #686768;
+.dialog-header {
+  height: 5.5rem;
+  padding: 2rem 3rem 2rem 3rem;
+  background-color: #FFFFFF;
 }
 
 .dialog-body {
   background-color: #FAFAFA;
-  padding: 20px 30px 0px 30px;  
+  padding: 2rem 3rem 2rem 3rem;
   border: 0;
 }
 
 .dialog-footer {
   background-color: #FAFAFA;  
-  padding: 20px 30px 20px 30px;
+  padding: 2rem 3rem 2rem 3rem;
   border-top: 0;  
 }
 
@@ -1017,101 +785,44 @@ body {
 }
 
 /* Icon colors  */
-
 .icon-gray {
   color: #686768;
 }
-
 .icon-light-gray {
   color: #B4B4B4;
 }
-
 .icon-blue {
   color: #48C8D7;
 }
-
 .icon-white {
   color: #FFFFFF;
 }
-
 .icon-orange {
   color: #FBAA6D;
 }
 
-/* Icon wrapping (boxes around icons)  */
-/* TODO: trace down interference from prepackaged components  */
-/* TODO: transition to classes defined in style guide  */
-
+/* icon next to Wf Module title */
 .module-icon {
-  height: 15px;
-  width: 15px;
+  height: 2rem;
+  width: 2rem;
 }
 
+/* icons embedded within buttons  */
 .button-icon {
-  height: 13px;
-  width: 13px;
-  margin: 0 auto;  
-}
-
-.context-button {
-  height: 1.5625rem;
-  width: 1.5625rem;
-  border: 0;
-}
-
-.context-button:hover {
-  background-color: #F9F9F9;
-  border: 1px solid #CECECE;
-}
-
-.context-button:active {
-  border: 1px solid #CECECE;  
-  background-color: #EDECEC;
-}
-
-/* --- Scrolling List Div ---  */
-.scolling-list {
-  width: 100%;
-  height: 400px;
-  overflow: scroll;
-}
-
-/* --- Data versions modal --- */
-/* TODO: use Dialog box classes from style guide  */
-
-.version-header {
-  background-color: #FFFFFF;
-  height: 2.5rem;
-  width: 100%;
-  margin: 1.25rem 1.875rem 1.25rem 1.875rem;  
-}
-
-.version-active {
-  height: 2.5rem;
-	width: 100%;
-  background-color: #48C8D7;
-  padding: 1.25rem 1.875rem 1.25rem 1.875rem;    
-}
-
-.version-disabled {
-  background-color: #FFFFFF;
-  height: 2.5rem;
-  width: 100%;
-  padding: 1.25rem 1.875rem 1.25rem 1.875rem;      
-}
-
-.version-disabled:hover {
-  background-color: #F1F5F7;
+  height: 1.5rem;
+  width: 1.5rem;
 }
 
 
-/* WfParameter */
+
+/* ---- Load URL Module: data versions box */
 
 .version-box {
-  border: 1px solid #F2F2F2;
+  border: 1px solid #E7E7E7;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  padding: 3rem;
 }
 
 .version-item {
@@ -1139,11 +850,32 @@ body {
 
 /* --- Editable text fields --- */
 
-.editable-notes-container {
-  background-color: #FAFAFA;
-  border: 1px dotted #686768;
-  height: 3rem;
-  width: 40rem; 
+.editable-title-field {
+  border: none; 
+  outline: none;
+  padding: 0;
+  resize: none;
+  width: 100%; 
+}
+
+.editable-notes-field {
+  border: none; 
+  outline: none;
+  height: 100%; 
+  width: 100%;   
+  padding: 2rem 3rem 2rem 3rem;  
+}
+
+/* applied only when field is in edit mode  */
+.editable-notes-field-active {
+  background-color: #FFFFFF;  
+  box-shadow: 0 0 1px 1px #48C8D7;
+  padding: 2rem 3rem 2rem 3rem;
+}
+
+/* applied only when field is in idle mode  */
+.editable-notes-field-idle {
+  padding: 2rem 3rem 2rem 3rem;
 }
 
 .card .second-level {
@@ -1236,26 +968,19 @@ body {
 }
 
 .module-description {	
-  height: 10px;	
-  width: 460.93px;	
-  color: #686768;	
+  color: #686768;
   font-family: Avenir;	
   font-size: 13px;	
   font-weight: 300;	
-  line-height: 22px;
-  margin-top: 10px;
 }
 
 .module-metadata {	
-  height: 15px;	
-  color: #A2A2A2;	
+  color: #A2A2A2;
   font-family: Avenir;	
   font-size: 14px;	
-  font-weight: 900;	
   line-height: 12px;
   margin-top: 10px;
   margin-bottom: 10px;
-  flex-direction: horizontal;
 }
 
 .react-autosuggest__container {
