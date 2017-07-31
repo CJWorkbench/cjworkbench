@@ -114,6 +114,9 @@ body {
 /* --- Colors ---  */
 
 /* Text  */
+.t-white {
+  color: #FFFFFF;
+}
 .t-vl-gray {
   color: #FAFAFA;
 }
@@ -906,7 +909,7 @@ body {
 }
 
 .module-library .nav-bar {
-  background-color: #577485;
+  background-color: #577485;;
   height: 120px;
   flex-grow: 1;
   flex-basis: 0;

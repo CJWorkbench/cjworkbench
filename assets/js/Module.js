@@ -55,9 +55,9 @@ export default class Module extends React.Component {
                 onClick={this.itemClick}
               > 
                 <div className='second-level'>
-                  <div className='module-name'>{moduleName}</div>
-                  <div className='module-metadata'>{metadata}</div>
-                  <div className='module-description'>{description}</div>
+                  <div className='title-4 t-d-gray mb-2'>{moduleName}</div>
+                  <div className='module-metadata content-4 t-m-gray mb-2'>{metadata}</div>
+                  <div className='content-3 t-m-gray'>{description}</div>
                 </div>
               </div>
             </div>

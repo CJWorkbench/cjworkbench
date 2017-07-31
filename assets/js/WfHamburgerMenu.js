@@ -44,11 +44,10 @@ export default class WfHamburgerMenu extends React.Component {
 
     return (
        <UncontrolledDropdown>
-        {/*<DropdownToggle className='icon-more'>*/}
-        <DropdownToggle>
-          {'\u2630'}
+        <DropdownToggle> 
+          {'\u2630'} 
         </DropdownToggle>
-        <DropdownMenu>
+        <DropdownMenu >
           { homeLink }
           { undoRedo }
           <DropdownItem 

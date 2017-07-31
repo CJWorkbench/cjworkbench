@@ -28,7 +28,7 @@ var CategoriesList = React.createClass({
       );
     }, this);
     return (
-      <div className="list">{listItems}</div>
+      <div className="list content-3 t-d-gray">{listItems}</div>
     );
   }
 });
@@ -188,7 +188,7 @@ export default class ModuleLibrary extends React.Component {
     return (
       <div className="module-library">
         <div className="nav-bar">
-          <div className="h1">Module Library</div>
+          <div className='title-3 t-white'>Module Library</div>
           <div>
             <div className={displayClassName}>
               {display}
