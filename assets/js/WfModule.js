@@ -29,10 +29,10 @@ class StatusBar extends React.Component {
         barColor = 'module-output-bar-orange';
         break;
       case 'error':
-        barColor = 'module-output-bar-red';        
+        barColor = 'module-output-bar-red';
         break;
       default:
-        barColor = 'module-output-bar-white';        
+        barColor = 'module-output-bar-white';
         break;
     }
     return <div className={barColor}></div>
@@ -65,7 +65,7 @@ export default class WfModule extends React.Component {
     this.state = {
       isCollapsed: this.wf_module.is_collapsed,
       showNotes: false
-    };           // componentDidMount will trigger first load    
+    };           // componentDidMount will trigger first load
     this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
@@ -119,7 +119,7 @@ export default class WfModule extends React.Component {
   }
 
   // Sets state on the server, which should result in a callback that will
-  // update the state. This state update will then drive the display render. 
+  // update the state. This state update will then drive the display render.
   toggleCollapsed() {
     this.api.toggleWfModuleCollapsed(this.wf_module.id, !this.state.isCollapsed);
   }
@@ -143,8 +143,10 @@ export default class WfModule extends React.Component {
     }
 
     // Each parameter gets a WfParameter
+    console.log(this.props);
     var paramdivs = this.params.map((ps, i) => {
         return <WfParameter
+          isReadOnly={this.props.isReadOnly}
           key={i}
           p={ps}
           changeParam={this.props['data-changeParam']}
@@ -152,7 +154,7 @@ export default class WfModule extends React.Component {
           revision={this.revision}
           updateSettings={updateSettings}
           getParamText={this.getParamText}
-          setParamText={this.setParamText} 
+          setParamText={this.setParamText}
         />
       });
 
@@ -162,7 +164,7 @@ export default class WfModule extends React.Component {
       inside = <div className='module-card-params'>{paramdivs}</div>;
 
     var notes = undefined;
-    var value = ( this.wf_module.notes && (this.wf_module.notes != "") ) 
+    var value = ( this.wf_module.notes && (this.wf_module.notes != "") )
       ? this.wf_module.notes
       : "Write notes here"
     if (this.state.showNotes)
@@ -178,7 +180,7 @@ export default class WfModule extends React.Component {
                     <div className='icon-note button-icon' ></div>
                   </div>
 
-    var arrow = (this.state.isCollapsed) 
+    var arrow = (this.state.isCollapsed)
       ? <div className='icon-sort-down button-icon ml-3'></div>
       : <div className='icon-sort-up button-icon ml-3'></div>
 
@@ -186,12 +188,12 @@ export default class WfModule extends React.Component {
     return (
       <div className='container' {...this.props} onClick={this.click}>
         <div className='card'>
-          {/* --- The whole card --- */}          
-          <div className='card-block module-card-wrapper d-flex justify-content-between'>            
+          {/* --- The whole card --- */}
+          <div className='card-block module-card-wrapper d-flex justify-content-between'>
             {/* --- Everything but the status bar, on the left of card --- */}
             <div className='module-card-info'>
-              {notes} 
-              <div 
+              {notes}
+              <div
                 className='module-card-header'
                 onClick={this.toggleCollapsed}
               >
@@ -208,7 +210,7 @@ export default class WfModule extends React.Component {
                 {/* TODO: not necessary to pass in stopProp*/}
                 <div className='d-flex justify-content-end'>
                   {notesIcon}
-                  <WfModuleContextMenu 
+                  <WfModuleContextMenu
                     removeModule={ () => this.removeModule() }
                     stopProp={(e) => e.stopPropagation()}
                     id={this.wf_module.id}
@@ -225,7 +227,7 @@ export default class WfModule extends React.Component {
               </Collapse>
             </div>
             {/* --- Color indicator of module status, on the right of card --- */}
-            <div className='output-bar-container'>  
+            <div className='output-bar-container'>
               <StatusBar status={this.wf_module.status}/>
             </div>
           </div>

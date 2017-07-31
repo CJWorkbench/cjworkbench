@@ -11,12 +11,16 @@ export default class WfContextMenu extends React.Component {
     super(props);
     this.deleteOption = this.deleteOption.bind(this);
   }
-  
+
   deleteOption() {
     this.props.deleteWorkflow();
   }
 
-  // \u22EE = three-dot menu icon in Unicode 
+  shareOption() {
+    this.props.shareWorkflow();
+  }
+
+  // \u22EE = three-dot menu icon in Unicode
   render() {
     return (
        <UncontrolledDropdown>
@@ -25,8 +29,11 @@ export default class WfContextMenu extends React.Component {
         </DropdownToggle>
         <DropdownMenu >
           {/* Will delete the parent Workflow from the Workflows List */}
-          <DropdownItem key={1} onClick={this.deleteOption} className='dropdown-menu-item'>                       
+          <DropdownItem key={1} onClick={this.deleteOption} className='dropdown-menu-item'>
             <span className='t-d-gray content-3 ml-3'>Delete</span>
+          </DropdownItem>
+          <DropdownItem key={2} onClick={this.shareOption}>
+            <span className='t-d-gray content-3 ml-3'>Share</span>
           </DropdownItem>
         </DropdownMenu>
        </UncontrolledDropdown>
@@ -35,6 +42,5 @@ export default class WfContextMenu extends React.Component {
 }
 
 WfContextMenu.propTypes = {
-  deleteWorkflow: PropTypes.func  
+  deleteWorkflow: PropTypes.func
 };
-

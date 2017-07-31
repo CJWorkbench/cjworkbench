@@ -114,6 +114,7 @@ export default class WfParameter extends React.Component {
           <div className='mb-4'>
             <div className='t-d-gray content-3 mb-2'>{this.name}:</div>
             <textarea
+              readOnly={this.props.isReadOnly}
               className={sclass}
               className='t-d-gray content-2 text-field'
               rows={srows}
@@ -130,6 +131,7 @@ export default class WfParameter extends React.Component {
           <div>
             <div>{this.name}:</div>
             <textarea
+              readOnly={this.props.isReadOnly}
               className='wfmoduleNumberInput'
               rows='1'
               defaultValue={this.props.p.value}
@@ -141,15 +143,16 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          <div className='action-button button-blue mb-3' onClick={this.click}>{this.name}</div>
+          <div className='action-button button-blue mb-3' disabled={this.props.isReadOnly} onClick={this.click}>{this.name}</div>
         );
 
       case 'checkbox':
         return (
             <div>
-                <label className='mr-3 t-d-gray content-3'>{this.name}:</label>                  
+                <label className='mr-3 t-d-gray content-3'>{this.name}:</label>
                 <input
-                  type='checkbox'
+                  disabled={this.props.isReadOnly}
+                  type="checkbox"
                   checked={this.props.p.value}
                   onChange={this.click}
                   ref={ el => this.checkboxRef = el}/>
@@ -158,6 +161,7 @@ export default class WfParameter extends React.Component {
 
       case 'menu':
         return (<MenuParam
+                  isReadOnly={this.props.isReadOnly}
                   name={this.name}
                   items={this.props.p.menu_items}
                   selectedIdx={this.props.p.value}
@@ -178,6 +182,7 @@ export default class WfParameter extends React.Component {
             <div>
               <a href={'/public/paramdata/live/' + this.props.p.id + '.png'}>PNG</a>
               <ChartParameter
+                isReadOnly={this.props.isReadOnly}
                 wf_module_id={this.props.wf_module_id}
                 revision={this.props.revision}
                 saveState={saveState}
@@ -195,6 +200,7 @@ export default class WfParameter extends React.Component {
             <div>
               <div className='t-d-gray content-3 mb-3'>{this.name}:</div>
               <ColumnSelector
+                isReadOnly={this.props.isReadOnly}
                 selectedCols={selectedCols}
                 saveState={saveState}
                 getColNames={this.getInputColNames}
@@ -205,11 +211,12 @@ export default class WfParameter extends React.Component {
           return (
             <div className='version-box'>
                 <DataVersionSelect
+                  isReadOnly={this.props.isReadOnly}
                   wfModuleId={this.props.wf_module_id}
                   revision={this.props.revision}
                   api={workbenchAPI()} />
-                <UpdateFrequencySelect 
-                  updateSettings={this.props.updateSettings} 
+                <UpdateFrequencySelect
+                  updateSettings={this.props.updateSettings}
                   wfModuleId={this.props.wf_module_id}
                 />
                 <div className='button-blue action-button mt-4' onClick={this.click}>{this.name}</div>
@@ -225,6 +232,7 @@ export default class WfParameter extends React.Component {
             <div>
               <div>{this.name}:</div>
               <ColumnRenamer
+                isReadOnly={this.props.isReadOnly}
                 newNameCols={newNameCols}
                 saveState={saveState}
                 getColNames={this.getInputColNames}

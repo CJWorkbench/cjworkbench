@@ -31,10 +31,11 @@ export default class MenuParam extends React.Component {
     return (
       <div className='d-flex flex-column mb-3'>
         <label className='mr-1 t-d-gray content-3'>{this.props.name}:</label>
-        <select 
-          className='custom-select dropdown-selector' 
-          value={this.state.selectedIdx} 
+        <select
+          className='custom-select dropdown-selector'
+          value={this.state.selectedIdx}
           onChange={this.onChange}
+          disabled={this.props.isReadOnly}
         >
           {itemDivs}
         </select>

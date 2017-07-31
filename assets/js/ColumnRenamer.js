@@ -65,15 +65,17 @@ export default class ColumnRenamer extends React.Component {
   }
 
   handleGridRowsUpdated({ fromRow, toRow, updated }) {
-    let newColNames = this.state.newColNames.slice();
+    if (this.props.isReadOnly) {
+      let newColNames = this.state.newColNames.slice();
 
-    for (let i = fromRow; i <= toRow; i++) {
-      newColNames[i] = updated['newName'];
+      for (let i = fromRow; i <= toRow; i++) {
+        newColNames[i] = updated['newName'];
+      }
+
+      this.setState({ newColNames: newColNames });
+      this.props.saveState(newColNames.join());
+      console.log(newColNames);
     }
-
-    this.setState({ newColNames: newColNames });
-    this.props.saveState(newColNames.join());
-    console.log(newColNames);
   }
 
   rowGetter(i) {
@@ -84,7 +86,7 @@ export default class ColumnRenamer extends React.Component {
   render() {
     return  (
       <ReactDataGrid
-        enableCellSelect={true}
+        enableCellSelect={!this.props.isReadOnly}
         columns={this.state.columns}
         rowGetter={this.rowGetter}
         rowsCount={this.state.oldColNames.length}

@@ -66,7 +66,7 @@ export default class ColumnSelector extends React.Component {
       return (
         <div className='col-sm' style={{'whiteSpace': 'nowrap'}} key={n}>
           <label className='mr-1 t-d-gray content-3'>{n}</label>
-          <input type='checkbox' checked={this.state.selected.includes(n)} onChange={this.clicked} data-name={n}></input>
+          <input type='checkbox' disabled={this.props.isReadOnly} checked={this.state.selected.includes(n)} onChange={this.clicked} data-name={n}></input>
         </div>);
       });
 
@@ -86,7 +86,3 @@ ColumnSelector.propTypes = {
   getColNames:  PropTypes.func,
   revision:     PropTypes.number
 };
-
-
-
-
