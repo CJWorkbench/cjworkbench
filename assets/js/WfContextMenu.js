@@ -20,12 +20,13 @@ export default class WfContextMenu extends React.Component {
   render() {
     return (
        <UncontrolledDropdown>
-        <DropdownToggle className='menu-icon icon-more'>
+        <DropdownToggle className='context-button'>
+          <div className='button-icon icon-more'></div>
         </DropdownToggle>
-        <DropdownMenu right >
+        <DropdownMenu >
           {/* Will delete the parent Workflow from the Workflows List */}
-          <DropdownItem key={1} onClick={this.deleteOption}>                       
-            Delete 
+          <DropdownItem key={1} onClick={this.deleteOption} className='dropdown-menu-item'>                       
+            <span className='t-d-gray content-3 ml-3'>Delete</span>
           </DropdownItem>
         </DropdownMenu>
        </UncontrolledDropdown>

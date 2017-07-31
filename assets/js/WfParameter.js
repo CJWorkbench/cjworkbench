@@ -141,16 +141,15 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-
-          <button className='btn btn-primary' onClick={this.click}>{this.name}</button>
+          <div className='action-button button-blue mb-3' onClick={this.click}>{this.name}</div>
         );
 
       case 'checkbox':
         return (
             <div>
-                <label className='mr-1'>{this.name}:</label>
+                <label className='mr-3 t-d-gray content-3'>{this.name}:</label>                  
                 <input
-                  type="checkbox"
+                  type='checkbox'
                   checked={this.props.p.value}
                   onChange={this.click}
                   ref={ el => this.checkboxRef = el}/>
@@ -194,7 +193,7 @@ export default class WfParameter extends React.Component {
           var saveState = ( state => this.props.setParamText('colnames', state) );
           return (
             <div>
-              <div>{this.name}:</div>
+              <div className='t-d-gray content-3 mb-3'>{this.name}:</div>
               <ColumnSelector
                 selectedCols={selectedCols}
                 saveState={saveState}

@@ -178,6 +178,7 @@ body {
 
 /* ---- Data Input Fields: NEW ---- */
 
+/* Rename to "input-text-field?"  */
 .text-field {
   height: 4rem;
   width: 100%;
@@ -185,7 +186,6 @@ body {
   border: 1px solid #E7E7E7;
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
 }
-
 .text-field:active {
   box-shadow: 0 0 1px 1px #48C8D7;
   border: 0;
@@ -280,7 +280,8 @@ body {
 .action-button {
 	height: 4rem;
   border-radius: 2.5rem;
-  min-width: 9rem; 
+  /* min-width: 9rem;  */
+  width: 9rem;   
   display: flex;
   align-items: center;
   justify-content: center;
@@ -294,7 +295,8 @@ body {
 
 
 
-/* ---- Dropdowns ---- */
+/* ---- Dropdowns and Lists---- */
+
 
 .line-item-data {
   height: 4rem;
@@ -305,11 +307,9 @@ body {
   justify-content: flex-start;
   padding-left: 2.5rem;
 }
-
 .line-item-data:hover {
   background-color: #F5F5F5;
 }
-
 .line-item-data-selected {
   height: 4rem;  
   background-color: #48C8D7;
@@ -318,6 +318,25 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding-left: 2.5rem;
+}
+
+.dropdown-selector {
+  height: 4rem;
+  width: 17rem;
+}
+
+.dropdown-menu-item {
+  height: 4rem;
+  width: 17rem;
+  background-color: #FFFFFF;
+  color: #686768;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 1rem;
+}
+.dropdown-menu-item:hover {
+  background-color: #F5F5F5;
 }
 
 
@@ -360,23 +379,17 @@ body {
   margin-top: 5rem;
 }
 
-.new-workflow-button {
-  border: 1px solid #48C8D7;
-  color: #48C8D7;
-}
-
 .workflows-list {
   border: 0;     
   background-color: #f6f6f6;      
 }
 
 .workflow-in-list {
+  height: 7rem;
   background-color: #ffffff;
   margin-bottom: 1px;
-  color: #686768;
-  font-weight: 500;
-  color: #686768;
   border: 0;
+  padding: 1.5rem 2.5rem 1.5rem 2.5rem;
 }
 
 .workflow-in-list:hover {
@@ -472,7 +485,7 @@ body {
   background-color: #FAFAFA;  
 }
 
-.wfModuleErrorMsg {
+.wf-module-error-msg {
   border: 1px solid black;
   margin: 3px;
   border-radius: 3px;
@@ -502,13 +515,11 @@ body {
 
 
 /* ---- Wf Module status bars ---- */
-/* To be phased out for new styles */
 
 /* a dummy div around output status bar, for positioning purposes  */
 .output-bar-container {
   border: 0;
 }
-
 /* base status  */
 .module-output-bar-white {
   width: 1rem;
@@ -521,18 +532,16 @@ body {
   height: 100%;  
   background-color: #BFDDE4;
 }
-/* TODO: change on module state (selected), not hover  */
+/* TODO: change on module state: selected, not hover  */
 .module-output-bar-blue:hover {
   background-color: #DBECF1;
 }
-
 /* standby  */
 .module-output-bar-orange {
   width: 1rem;  
   height: 100%;  
   background-color: #FBAA6D;
 }
-
 /* error  */
 .module-output-bar-red {
   width: 1rem;  
@@ -566,48 +575,6 @@ body {
   border-top: 0;  
 }
 
-
-/* ---- WfModuleContextMenu ---- */
-/* TODO: redefine to fit style guide classes  */
-
-.export-field-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.export-link {
-  margin: 10px 60px 5px 0px;
-}
-
-.export-field {
-  display: flex;
-  flex-direction: row;
-  height: 2.5rem;
-  margin-bottom: 1.875rem;  
-}
-
-.export-field-text {
-  height: 2.5rem;
-  border: 1px solid #EDECEC;
-  background-color: #FFFFFF !important;  
-  color: #686768;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 500;
-  line-height: 0.875rem;
-}
-
-.export-icon-box {
-  width: 3.75rem; 
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;  
-  border: 1px solid #EDECEC;
-  font-size: 0.9375rem;  
-  background-color: #FFFFFF;
-}
 
 
 /*----- Icon Fonts ----*/
@@ -813,6 +780,19 @@ body {
   width: 1.5rem;
 }
 
+/* from Export Data modal, in WfModuleContextMenu  */
+.download-icon-box {
+	height: 4rem;
+	width: 6rem;
+	border: 1px solid #EDECEC;
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.download-icon-box:hover {
+  background-color: #F8F8F8;
+}
 
 
 /* ---- Load URL Module: data versions box */
@@ -862,7 +842,7 @@ body {
   border: none; 
   outline: none;
   height: 100%; 
-  width: 100%;   
+  width: calc(100% - 6rem);
   padding: 2rem 3rem 2rem 3rem;  
 }
 

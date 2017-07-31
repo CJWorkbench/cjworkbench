@@ -51,13 +51,14 @@ export default class EditableNotes extends React.Component {
     return <div 
               onKeyPress={this.keyPress}
               ref={ (input) => { this.textInput = input; } }
+              className='m-6'
             >
               <RIETextArea
                 value={this.props.value}
                 change={this.saveNotes}
                 propName="value"
                 className={this.props.editClass}
-                classEditing='editable-notes-field-active t-d-gray note'
+                classEditing='editable-notes-field-active t-d-gray note m-4'
                 rows={rowcount}
               />
           </div>
