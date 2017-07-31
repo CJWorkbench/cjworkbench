@@ -580,10 +580,9 @@ body {
 
 
 
-/*----- Icon Fonts ----*/
 @font-face {
   font-family: 'Workbench-icon-font-v1';
-  src: url('../fonts/Workbench-icon-font-v1.woff?7mkhko') format('woff');
+  src:  url('../fonts/Workbench-icon-font-v1.woff?6vt5w9') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -603,6 +602,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-Share:before {
+  content: "\e91c";
+  color: #686768;
+}
 .icon-folder-blue:before {
   content: "\e917";
   color: #48c8d7;
@@ -615,31 +618,31 @@ body {
   content: "\e916";
   color: #fff;
 }
-.icon-checkbox-fill:before {
+.icon-Checkbox-fill:before {
   content: "\e915";
   color: #48c8d7;
 }
-.icon-chart:before {
+.icon-Chart:before {
   content: "\e909";
   color: #686768;
 }
-.icon-settings:before {
+.icon-Settings:before {
   content: "\e900";
   color: #686768;
 }
-.icon-close:before {
+.icon-Close:before {
   content: "\e905";
   color: #686768;
 }
-.icon-edit:before {
+.icon-Edit:before {
   content: "\e906";
   color: #686768;
 }
-.icon-info:before {
+.icon-Info:before {
   content: "\e907";
   color: #686768;
 }
-.icon-join:before {
+.icon-Join:before {
   content: "\e908";
   color: #686768;
 }
@@ -647,7 +650,7 @@ body {
   content: "\e90b";
   color: #686768;
 }
-.icon-sigma:before {
+.icon-Sigma:before {
   content: "\e90e";
   color: #686768;
 }
@@ -696,7 +699,7 @@ body {
   content: "\e911";
   color: #686768;
 }
-.icon-url:before {
+.icon-URL:before {
   content: "\e912";
   color: #686768;
 }
@@ -741,11 +744,11 @@ body {
   content: "\e926";
   color: #686768;
 }
-.icon-api:before {
+.icon-API:before {
   content: "\e927";
   color: #686768;
 }
-.icon-calendar:before {
+.icon-Calendar:before {
   content: "\e928";
   color: #686768;
 }
@@ -753,6 +756,7 @@ body {
   content: "\e92a";
   color: #686768;
 }
+
 
 /* Icon colors  */
 .icon-gray {
