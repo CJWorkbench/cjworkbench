@@ -47,6 +47,13 @@ class WfModule(models.Model):
         null=True,
         blank=True)                      # we may not have stored data
 
+    # drives whether the module is expanded or collapsed on the front-end.
+    is_collapsed = models.BooleanField(
+        default=False,
+        blank=False,
+        null=False
+        )
+
     # For modules that fetch data: how often do we check for updates, and do we switch to latest version automatically
     auto_update_data = models.BooleanField(default='True')
     next_update = models.DateTimeField(null=True, blank=True)    # when should next update run?
@@ -183,10 +190,6 @@ class WfModule(models.Model):
         if notify:
             ws_client_rerender_workflow(self.workflow)
         self.save()
-
-
-
-
 
 # StoredObject is our persistence layer.
 # Allows WfModules to store keyed, versioned binary objects

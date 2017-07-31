@@ -9,6 +9,7 @@ import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 import * as Actions from './workflow-reducer'
 import PropTypes from 'prop-types'
+import workbenchapi from './WorkbenchAPI';
 
 // Libraries to provide a collapsable table view
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
@@ -62,16 +63,18 @@ export default class WfModule extends React.Component {
     super(props);
     this.initFields(props);
     this.state = {
-      detailsOpen: false,
+      isCollapsed: this.wf_module.is_collapsed,
       showNotes: false
     };           // componentDidMount will trigger first load    
     this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
     this.removeModule = this.removeModule.bind(this);
-    this.toggleDetails = this.toggleDetails.bind(this);
     this.showNotes = this.showNotes.bind(this);
     this.hideNotes = this.hideNotes.bind(this);
+    this.toggleCollapsed = this.toggleCollapsed.bind(this);
+
+    this.api = workbenchapi();
   }
 
   // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
@@ -86,6 +89,7 @@ export default class WfModule extends React.Component {
   // alas, the drawback of the convienence of initFields is we need to call it whenever props change
   componentWillReceiveProps(newProps) {
     this.initFields(newProps)
+    this.setState({isCollapsed: this.wf_module.is_collapsed});
   }
 
   // We become the selected module on any click
@@ -114,8 +118,10 @@ export default class WfModule extends React.Component {
     this.props['data-removeModule'](this.wf_module.id);
   }
 
-  toggleDetails() {
-    this.setState(Object.assign({}, this.state, {detailsOpen: !this.state.detailsOpen}));
+  // Sets state on the server, which should result in a callback that will
+  // update the state. This state update will then drive the display render. 
+  toggleCollapsed() {
+    this.api.toggleWfModuleCollapsed(this.wf_module.id, !this.state.isCollapsed);
   }
 
   showNotes(e) {
@@ -151,7 +157,8 @@ export default class WfModule extends React.Component {
       });
 
     var inside = undefined;
-    if (this.state.detailsOpen)
+
+    if (!this.state.isCollapsed)
       inside = <div className='module-card-params'>{paramdivs}</div>;
 
     var notes = undefined;
@@ -171,10 +178,9 @@ export default class WfModule extends React.Component {
                     <div className='icon-note button-icon' ></div>
                   </div>
 
-    var arrow = (this.state.detailsOpen) 
-      ? <div className='icon-sort-up button-icon ml-3'></div>
-      : <div className='icon-sort-down button-icon ml-3'></div>
-      
+    var arrow = (this.state.isCollapsed) 
+      ? <div className='icon-sort-down button-icon ml-3'></div>
+      : <div className='icon-sort-up button-icon ml-3'></div>
 
     // Putting it all together: name, status, parameters, output
     return (
@@ -187,7 +193,7 @@ export default class WfModule extends React.Component {
               {notes} 
               <div 
                 className='module-card-header'
-                onClick={this.toggleDetails}
+                onClick={this.toggleCollapsed}
               >
                 {/* TODO: attach icon names to modules, call via 'this.module.icon' */}
                 <div className='d-flex justify-content-start'>
@@ -213,7 +219,8 @@ export default class WfModule extends React.Component {
               {/* --- Error messages appear here --- */}
               <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
               {/* --- Module details, will expand / collapse --- */}              
-              <Collapse className='' isOpen={this.state.detailsOpen} >
+
+              <Collapse className='' isOpen={!this.state.isCollapsed} >
                 {inside}
               </Collapse>
             </div>

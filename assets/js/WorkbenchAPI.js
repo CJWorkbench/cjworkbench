@@ -60,6 +60,27 @@ class WorkbenchAPI {
       }))
   }
 
+  /** 
+   * Toggles whether the module is collapsed or expanded on the front-end. 
+   * This gets saved on the back-end, and so the state (collapsed or 
+   * expanded) persists across multiple sessions. 
+   */
+  toggleWfModuleCollapsed(wf_module_id, isCollapsed) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id, {
+        method: 'patch',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          collapsed: isCollapsed
+        })
+      }))
+  }
+
   setWfName(wfId, newName) {
     return (
       fetch('/api/workflows/' + wfId, {

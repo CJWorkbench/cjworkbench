@@ -1,10 +1,12 @@
 from .initmodules import load_module_from_dict
+from server.models import Module
 
 from django.forms import URLField
 from django.core.exceptions import ValidationError
 
 import importlib.machinery
 from importlib import import_module
+
 import inspect
 import json
 import os
@@ -14,6 +16,7 @@ import sys
 import time
 
 import git
+from git.exc import GitCommandError
 
 #OK, this feels wrong (and probably is wrong), but there's nowhere else that I can see we have all the module names and
 #their corresponding classes. We need this to ensure that there are no clashes, and consequently, to ensure that we
@@ -22,6 +25,18 @@ import git
 cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_directory = os.path.dirname(cwd)
 sys.path.insert(0, parent_directory)
+
+categories = set()
+
+
+def get_categories():
+    #cache categories
+    if not categories:
+        modules = Module.objects.all()
+        for module in modules:
+            categories.add(module.category)
+    return categories
+
 
 def refresh_module_from_github(url):
     #we should check if this is a refreshable module: does the module exist, and if it does,
@@ -235,17 +250,20 @@ def import_module_from_github(url):
 
     directory = retrieve_project_name(url)
 
+    message = {}
+
     # pull contents from GitHub
     try:
         git.Git().clone(url)
         # move this to correct directory, i.e. where this file is.
         os.rename(os.path.join(ROOT_DIRECTORY, directory), os.path.join(CURRENT_PATH, directory))
-    except:
+    except (ValidationError, GitCommandError) as ve:
         print('Unable to pull down content from GitHub: %s' % (url))
         shutil.rmtree(os.path.join(ROOT_DIRECTORY, directory))
-        raise ValidationError('Unable to pull down content from GitHub: %s' % (url))
+        raise ValidationError('Unable to pull down content from GitHub: %s' % (url) +
+                              ' due to %s' % (ve.message))
 
-    #retrieve Git hash to use as the version number.
+    # retrieve Git hash to use as the version number.
     version = extract_version(CURRENT_PATH, directory)
 
     extension_file_mapping = validate_module_structure(CURRENT_PATH, ROOT_DIRECTORY, directory)
@@ -255,6 +273,10 @@ def import_module_from_github(url):
     module_config["link"] = url
     module_config["author"] = module_config["author"] if "author" in module_config else retrieve_author(url)
 
+    # Ensure that modules are categorised properly – if a module category isn't one of our
+    # pre-defined categories, then we just set it to other.
+    if module_config["category"] not in get_categories():
+        module_config["category"] = "Other"
 
     python_file, destination_directory = \
         validate_python(extension_file_mapping, CURRENT_PATH, MODULE_DIRECTORY, directory, version)
@@ -265,7 +287,7 @@ def import_module_from_github(url):
 
     validate_python_functions(destination_directory, CURRENT_PATH, directory, python_file)
 
-    #Initialise module
+    # Initialise module
     load_module_from_dict(module_config)
 
     # Possible TODO: do we want to/need to change the entitlements/ownership on the file for infosec?
@@ -275,6 +297,14 @@ def import_module_from_github(url):
                                                 os.path.join(destination_directory, python_file)).load_module()
     globals().update(temp.__dict__)
 
-    #clean-up
+    # clean-up
     shutil.rmtree(os.path.join(CURRENT_PATH, directory))
+
+    # data that we probably want displayed in the UI.
+    message["category"] = module_config["category"]
+    message["project"] = directory
+    message["author"] = module_config["author"]
+    message["name"] = module_config["name"]
+
+    return message
 

@@ -1,15 +1,13 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, HttpResponseNotFound, HttpResponseForbidden
-from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server.models import Workflow, WfModule
+from server.models import WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
-from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
 from django.utils import timezone
+from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand, ChangeWfModuleCollapsedSettingCommand
 from datetime import timedelta
 from server.utils import units_to_seconds
 import pandas as pd
@@ -18,6 +16,9 @@ import pandas as pd
 # The guts of patch commands for various WfModule fields
 def patch_notes(wf_module, data):
     ChangeWfModuleNotesCommand.create(wf_module, data['notes'])
+
+def patch_collapsed_setting(wf_module, data):
+    ChangeWfModuleCollapsedSettingCommand.create(wf_module, data['collapsed'])
 
 def patch_update_settings(wf_module, data):
     auto_update_data = data['auto_update_data']
@@ -54,20 +55,23 @@ def wfmodule_detail(request, pk, format=None):
     elif request.method == 'PATCH':
         # For patch, we check which fields are set in data, and process all of them
         try:
+
+            if not set(request.data.keys()).intersection({"notes", "auto_update_data", "collapsed"}):
+                raise ValueError('Unknown fields: {}'.format(request.data))
+
             if 'notes' in request.data:
                 patch_notes(wf_module, request.data)
 
             if 'auto_update_data' in request.data:
                 patch_update_settings(wf_module, request.data)
 
-            if (not 'notes' in request.data) and (not 'auto_update_data' in request.data):
-                raise ValueError('Unknown fields')
+            if 'collapsed' in request.data:
+                patch_collapsed_setting(wf_module, request.data)
 
         except Exception as e:
             return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 # /render: return output table of this module
 @api_view(['GET'])
@@ -154,6 +158,3 @@ def wfmodule_dataversion(request, pk, format=None):
     elif request.method == 'PATCH':
         ChangeDataVersionCommand.create(wf_module, request.data['selected'])
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-

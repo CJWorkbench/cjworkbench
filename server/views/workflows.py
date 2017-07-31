@@ -91,10 +91,9 @@ def workflow_addmodule(request, pk, format=None):
         insert_before = int(request.data['insertBefore'])
         module = Module.objects.get(pk=module_id)
 
-        # always add the latest version of a module (hence [0])
+        # always add the latest version of a module
         module_versions = ModuleVersion.objects.filter(module=module)
         module_version=module_versions[len(module_versions)-1]
-
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 

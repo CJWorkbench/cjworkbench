@@ -1058,7 +1058,7 @@ body {
 }
 
 .import-module {
-  height: 200px; 
+  height: 210px; 
   width: 450px;
   color: #686768;
   float: right;
@@ -1086,10 +1086,10 @@ body {
 
 .import-module-button {
   float: right;
-  right: 40px;
+  right: 10px;
   z-index: 1000;
-  position: fixed;
-  margin-top: 0px;
+  position: relative;
+  margin-top: 10px;
 }
 
 .import-module-buttons {
@@ -1103,4 +1103,42 @@ body {
     font-size: 13px;
     line-height: 13px;
     padding: 7px;
+}
+
+.import-github-error {	
+  height: 38px;	
+  color: #E24F4A;	
+  font-family: Avenir;	
+  font-size: 13px;	
+  font-weight: 300;	
+  line-height: 19px;
+  margin-top: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.import-github-response-button {	
+  float: right;
+  margin-right: 20px;
+  width: 15%;
+}
+
+.import-github-success {	
+  height: 38px;	
+  color: #1CA8B9;	
+  font-family: Avenir;	
+  font-size: 13px;	
+  font-weight: 300;	
+  line-height: 19px;
+  margin-top: 60px;
+  padding-left: 20px;
+}
+
+.module-list {
+  position: absolute;
+  overflow-y:scroll;        
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  top: 140px;
 }

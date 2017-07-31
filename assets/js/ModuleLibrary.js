@@ -104,6 +104,10 @@ export default class ModuleLibrary extends React.Component {
     this.props.addModule(event.target.id);
   }
 
+  updated(updated) {
+    this.componentWillMount() // dummy update to force a re-render. 
+  }
+
   /**
    * Sets the visibility of the "Import from GitHub" component.
    */
@@ -112,7 +116,6 @@ export default class ModuleLibrary extends React.Component {
       importFromGitHubVisible: isVisible
     }));
   }
-
 
   /**
    * Renders the Module Library, i.e. a collection of <Module Category>, 
@@ -193,9 +196,11 @@ export default class ModuleLibrary extends React.Component {
              <ModuleSearch addModule={this.props.addModule} items={this.state.items}/>
           </div>
         </div>
-        <CategoriesList
-          data={categories}
-        />
+        <div className="module-list">
+          <CategoriesList
+            data={categories}
+          />
+        </div>
         </div>
 
     );

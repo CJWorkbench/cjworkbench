@@ -59,7 +59,7 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = WfModule
-        fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals',
+        fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals', 'is_collapsed',
                   'notes', 'auto_update_data', 'update_interval', 'update_units', 'last_update_check')
 
 
