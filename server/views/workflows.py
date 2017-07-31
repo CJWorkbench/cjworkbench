@@ -49,7 +49,7 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if not workflow.user_authorized(request.user) and not workflow.public:
-        return HttpResponseForbidden()
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
         serializer = WorkflowSerializer(workflow, context={'user' : request.user})
@@ -57,6 +57,9 @@ def workflow_detail(request, pk, format=None):
 
     # We use PATCH to set the order of the modules when the user drags.
     elif request.method == 'PATCH':
+        if not workflow.user_authorized(request.user):
+            return HttpResponseForbidden()
+
         try:
             ReorderModulesCommand.create(workflow, request.data)
         except ValueError as e:
@@ -65,13 +68,28 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'POST':
+        if not workflow.user_authorized(request.user):
+            return HttpResponseForbidden()
+
         try:
-            ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
+            if not set(request.data.keys()).intersection({"newName", "public"}):
+                raise ValueError('Unknown fields: {}'.format(request.data))
+
+            if 'newName' in request.data:
+                ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
+
+            if 'public' in request.data:
+                workflow.public = request.data['public']
+                workflow.save()
+
         except Exception as e:
             return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':
+        if not workflow.user_authorized(request.user):
+            return HttpResponseForbidden()
+
         workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 

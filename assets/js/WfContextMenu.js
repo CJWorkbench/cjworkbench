@@ -10,6 +10,7 @@ export default class WfContextMenu extends React.Component {
   constructor(props) {
     super(props);
     this.deleteOption = this.deleteOption.bind(this);
+    this.shareOption = this.shareOption.bind(this);
   }
 
   deleteOption() {

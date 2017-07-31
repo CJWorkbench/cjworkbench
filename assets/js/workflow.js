@@ -52,7 +52,6 @@ var SortableList = React.createClass({
   },
 
   render: function() {
-    console.log(this.props.data);
     var listItems = this.props.data.wf_modules.map(function(item, i) {
       return (
         <SortableWfModule
@@ -88,7 +87,8 @@ export default class Workflow extends React.Component {
   constructor(props: iProps) {
     super(props);
     this.state = { moduleLibraryVisible: false };
-    this.toggleModuleLibrary = this.toggleModuleLibrary.bind(this)
+    this.toggleModuleLibrary = this.toggleModuleLibrary.bind(this);
+    this.togglePublic = this.togglePublic.bind(this);
   }
 
   // toggles the Module Library between visible or not
@@ -98,8 +98,17 @@ export default class Workflow extends React.Component {
     }));
   }
 
-  togglePublicPrivate() {
-    console.log('haz click');
+  togglePublic(isPublic) {
+    fetch('/api/workflows/' + getPageID(), {
+      method: 'post',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify({'public': !isPublic}) })
+    .catch( (error) => { console.log('Request failed', error); });
   }
 
   render() {
@@ -144,7 +153,10 @@ export default class Workflow extends React.Component {
               <Button onClick={this.toggleModuleLibrary.bind(this)}
                   className='button-blue action-button'>Add Module</Button>
               <div onClick={(e) => e.preventDefault()} className="menu-test-class" style={{float: 'right'}}>
-                <WfContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
+                <WfContextMenu
+                  deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }
+                  shareWorkflow={ () => this.togglePublic(this.props.workflow.public) }
+                />
               </div>
             </div>
             <div className="modulestack-list w-75 mx-auto ">
