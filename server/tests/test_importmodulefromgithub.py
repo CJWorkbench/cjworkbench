@@ -18,8 +18,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
         pwd = os.path.dirname(os.path.abspath(__file__))
         if os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')):
             shutil.rmtree(os.path.join(pwd, 'prototype-dynamic-loading'))
-        if os.path.isdir(os.path.join(pwd, '..', '..', '..', 'importedmodules', 'prototype-dynamic-loading')):
-            shutil.rmtree(os.path.join(pwd, '..', '..', '..', 'importedmodules', 'prototype-dynamic-loading'))
+        if os.path.isdir(os.path.join(pwd, '..', '..', 'importedmodules', 'prototype-dynamic-loading')):
+            shutil.rmtree(os.path.join(pwd, '..', '..', 'importedmodules', 'prototype-dynamic-loading'))
 
 
     def test_sanitise_url(self):
@@ -213,20 +213,20 @@ class ImportFromGitHubTest(LoggedInTestCase):
         mapping = {}
         # ensure we get a ValidationError if the mapping doesn't have a json key.
         with self.assertRaisesMessage(ValidationError, "No Python file found in remote repository."):
-            validate_python(mapping, pwd, "../../../importedmodules/", "prototype-dynamic-loading", "123456")
+            validate_python(mapping, pwd, "../../importedmodules/", "prototype-dynamic-loading", "123456")
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
                          "Repository should be deleted on ValidationError (missing json key).")
 
         #check valid scenario
         self.setup_module_structure(pwd)
         mapping = {'json': 'importable.json', 'py': 'importable.py'}
-        module_directory = os.path.join(pwd, "..", "..", "..", "importedmodules")
+        module_directory = os.path.join(pwd, "..", "..", "importedmodules")
         python_file, destination_directory = \
             validate_python(mapping, pwd, module_directory, "prototype-dynamic-loading", "123456")
 
         self.assertTrue(python_file == 'importable.py', "The python file should be importable.py")
-        self.assertTrue(destination_directory == pwd + "/../../../importedmodules/prototype-dynamic-loading/123456",
-                "The destination directory should be {}/prototype-dynamic-loading/123456".format(pwd + "/../../../importedmodules") +
+        self.assertTrue(destination_directory == pwd + "/../../importedmodules/prototype-dynamic-loading/123456",
+                "The destination directory should be {}/prototype-dynamic-loading/123456".format(pwd + "/../../importedmodules") +
                 " but it's {}".format(destination_directory))
 
         #check if json already exists for the given module-version combination.
@@ -251,7 +251,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         #setup things like the json directory and the python directory and everything else –
         #this is kinda tedious...
         pwd = os.path.dirname(os.path.abspath(__file__))
-        destination_directory = os.path.join(pwd, "../../../importedmodules/prototype-dynamic-loading/123456")
+        destination_directory = os.path.join(pwd, "../../importedmodules/prototype-dynamic-loading/123456")
 
         test_dir = os.path.join(pwd, "prototype-dynamic-loading")
 
@@ -297,7 +297,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
     def test_validate_python_functions(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
-        destination_directory = os.path.join(pwd, "../../../importedmodules/prototype-dynamic-loading/123456")
+        destination_directory = os.path.join(pwd, "../../importedmodules/prototype-dynamic-loading/123456")
 
         test_dir = os.path.join(pwd, "prototype-dynamic-loading")
 

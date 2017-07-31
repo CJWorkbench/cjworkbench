@@ -28,7 +28,6 @@ sys.path.insert(0, parent_directory)
 
 categories = set()
 
-
 def get_categories():
     #cache categories
     if not categories:
@@ -241,7 +240,7 @@ def extract_version(current_path, directory):
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 #path of
 ROOT_DIRECTORY = os.path.dirname(CURRENT_PATH)
-MODULE_DIRECTORY = os.path.join(os.path.dirname(ROOT_DIRECTORY), "importedmodules")
+MODULE_DIRECTORY = os.path.join(ROOT_DIRECTORY, "importedmodules")
 
 def import_module_from_github(url):
     url = url.lower().strip()
@@ -277,6 +276,8 @@ def import_module_from_github(url):
     # pre-defined categories, then we just set it to other.
     if module_config["category"] not in get_categories():
         module_config["category"] = "Other"
+
+
 
     python_file, destination_directory = \
         validate_python(extension_file_mapping, CURRENT_PATH, MODULE_DIRECTORY, directory, version)
