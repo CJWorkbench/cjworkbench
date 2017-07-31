@@ -27,6 +27,7 @@ parent_directory = os.path.dirname(cwd)
 sys.path.insert(0, parent_directory)
 
 categories = set()
+already_imported = dict()
 
 def get_categories():
     #cache categories
@@ -36,6 +37,13 @@ def get_categories():
             categories.add(module.category)
     return categories
 
+def get_already_imported():
+    # cache modules already imported to ensure that we don't override existing modules
+    if not already_imported:
+        modules = Module.objects.all()
+        for module in modules:
+            already_imported[module.id_name] = module.source
+    return already_imported
 
 def refresh_module_from_github(url):
     #we should check if this is a refreshable module: does the module exist, and if it does,
@@ -109,7 +117,7 @@ def validate_module_structure(current_path, root_directory, directory):
 
     return extension_file_mapping
 
-def validate_json(extension_file_mapping, current_path, directory):
+def validate_json(url, extension_file_mapping, current_path, directory):
     # - there should only be one json file, and it should be in the format mandated by
     #  config/modules. Therefore, when the file is loaded into a dict, it should contain the
     #  following keys: name, id_name, category, parameters. Parameters should have a length
@@ -128,14 +136,12 @@ def validate_json(extension_file_mapping, current_path, directory):
         raise ValidationError("The module configuration isn't in the correct format. It should contain name, id_name, "
                       "category and parameters")
 
-    module_name = module_config["name"]
     # Check if we've already loaded a module with the same name.
-    # Possible TODO: We might want to make this more intelligent, so that users can refresh the modules from here.
-    # However, blindly overriding modules might be dangerous, because well, it could lead to unexpected
-    # behaviour.
-    if "server.modules." + module_name in sys.modules:
+    modules = get_already_imported()
+    if module_config["id_name"] in modules and url != modules[module_config["id_name"]]:
+        source = modules[module_config["id_name"]] if modules[module_config["id_name"]] != '' else "Internal"
         shutil.rmtree(os.path.join(current_path, directory))
-        raise ValidationError("A module named {} is already loaded.".format(module_name))
+        raise ValidationError("Module {} has already been loaded, and its source is {}.".format(module_config["id_name"], source))
 
     return module_config, json_file
 
@@ -267,7 +273,7 @@ def import_module_from_github(url):
 
     extension_file_mapping = validate_module_structure(CURRENT_PATH, ROOT_DIRECTORY, directory)
 
-    module_config, json_file = validate_json(extension_file_mapping, CURRENT_PATH, directory)
+    module_config, json_file = validate_json(url, extension_file_mapping, CURRENT_PATH, directory)
     module_config["source_version"] = version
     module_config["link"] = url
     module_config["author"] = module_config["author"] if "author" in module_config else retrieve_author(url)

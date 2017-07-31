@@ -102,17 +102,17 @@ export default class ImportModuleFromGitHub extends React.Component {
             className='button-blue'>Cancel</Button>
 
     if (this.state.message) {
-      var json = JSON.parse(this.state.message)
       if (this.state.message_type == 'error') {
         visible = <div><div className="import-github-error">
             Error importing module from GitHub: 
-            {json}
+            {this.state.message}
           </div>
           <div className="import-github-response-button">
             <Button onClick={this.cancel.bind(this)} 
                 className='button-blue'>OK</Button>
           </div></div>
       } else if (this.state.message_type == 'success') {
+        var json = JSON.parse(this.state.message)
         visible = <div><div className="import-github-success">
           Successfully imported {json.author}'s module "{json.name}" under category "{json.category}".
         </div>
