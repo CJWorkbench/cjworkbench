@@ -81,7 +81,7 @@ export default class Workflows extends React.Component {
             <div className="col-12 col-md-auto">
               <div className="input-group">
                 <span className="input-group-btn">
-                  <div className='button-blue action-button' onClick={this.click}>New</div>
+                  <div className='button-blue action-button new-workflow-button' onClick={this.click}>New</div>
                 </span>
               </div>
             </div>

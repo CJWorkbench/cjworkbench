@@ -7,30 +7,32 @@ exports[`WfContextMenu renders correctly 1`] = `
   <button
     aria-expanded={false}
     aria-haspopup="true"
-    className="menu-icon icon-more btn btn-secondary"
+    className="context-button btn btn-secondary"
     data-toggle="dropdown"
     onClick={[Function]}
     type="button"
   >
-    <span
-      className="sr-only"
-    >
-      Toggle Dropdown
-    </span>
+    <div
+      className="button-icon icon-more"
+    />
   </button>
   <div
     aria-hidden={true}
-    className="dropdown-menu dropdown-menu-right"
+    className="dropdown-menu"
     role="menu"
     tabIndex="-1"
   >
     <button
-      className="dropdown-item"
+      className="dropdown-menu-item dropdown-item"
       onClick={[Function]}
       tabIndex="0"
       type="button"
     >
-      Delete
+      <span
+        className="t-d-gray content-3 ml-3"
+      >
+        Delete
+      </span>
     </button>
   </div>
 </div>

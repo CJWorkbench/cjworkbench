@@ -21,13 +21,17 @@ exports[`renders correctly 1`] = `
     tabIndex="-1"
   >
     <a
-      className="dropdown-item"
+      className="dropdown-menu-item dropdown-item"
       href="/workflows"
       onClick={[Function]}
       tabIndex="0"
       type={undefined}
     >
-       Your Workflows 
+      <span
+        className="t-d-gray content-3 ml-3"
+      >
+        Your Workflows
+      </span>
     </a>
     <div>
       <div
@@ -37,20 +41,28 @@ exports[`renders correctly 1`] = `
         type={undefined}
       />
       <button
-        className="dropdown-item"
+        className="dropdown-menu-item dropdown-item"
         onClick={[Function]}
         tabIndex="0"
         type="button"
       >
-         Undo 
+        <span
+          className="t-d-gray content-3 ml-3"
+        >
+          Undo
+        </span>
       </button>
       <button
-        className="dropdown-item"
+        className="dropdown-menu-item dropdown-item"
         onClick={[Function]}
         tabIndex="0"
         type="button"
       >
-         Redo 
+        <span
+          className="t-d-gray content-3 ml-3"
+        >
+          Redo
+        </span>
       </button>
       <div
         className="dropdown-divider"
@@ -60,22 +72,30 @@ exports[`renders correctly 1`] = `
       />
     </div>
     <a
-      className="dropdown-item"
+      className="dropdown-menu-item dropdown-item"
       href="http://blog.cjworkbench.org"
       onClick={[Function]}
       tabIndex="0"
       type={undefined}
     >
-       Help 
+      <span
+        className="t-d-gray content-3 ml-3"
+      >
+        Help
+      </span>
     </a>
     <a
-      className="dropdown-item"
+      className="dropdown-menu-item dropdown-item"
       href="/account/logout"
       onClick={[Function]}
       tabIndex="0"
       type={undefined}
     >
-       Logout 
+      <span
+        className="t-d-gray content-3 ml-3"
+      >
+        Logout
+      </span>
     </a>
   </div>
 </div>
@@ -102,22 +122,30 @@ exports[`renders correctly for workflows list page 1`] = `
     tabIndex="-1"
   >
     <a
-      className="dropdown-item"
+      className="dropdown-menu-item dropdown-item"
       href="http://blog.cjworkbench.org"
       onClick={[Function]}
       tabIndex="0"
       type={undefined}
     >
-       Help 
+      <span
+        className="t-d-gray content-3 ml-3"
+      >
+        Help
+      </span>
     </a>
     <a
-      className="dropdown-item"
+      className="dropdown-menu-item dropdown-item"
       href="/account/logout"
       onClick={[Function]}
       tabIndex="0"
       type={undefined}
     >
-       Logout 
+      <span
+        className="t-d-gray content-3 ml-3"
+      >
+        Logout
+      </span>
     </a>
   </div>
 </div>
