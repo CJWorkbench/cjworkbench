@@ -394,6 +394,24 @@ exports[`renders correctly 2`] = `
                                     </span>
                                   </button>
                                 </DropdownItem>
+                                <DropdownItem
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Share
+                                    </span>
+                                  </button>
+                                </DropdownItem>
                               </div>
                             </DropdownMenu>
                           </div>
@@ -488,6 +506,24 @@ exports[`renders correctly 2`] = `
                                       className="t-d-gray content-3 ml-3"
                                     >
                                       Delete
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Share
                                     </span>
                                   </button>
                                 </DropdownItem>
@@ -588,6 +624,24 @@ exports[`renders correctly 2`] = `
                                     </span>
                                   </button>
                                 </DropdownItem>
+                                <DropdownItem
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Share
+                                    </span>
+                                  </button>
+                                </DropdownItem>
                               </div>
                             </DropdownMenu>
                           </div>
@@ -682,6 +736,24 @@ exports[`renders correctly 2`] = `
                                       className="t-d-gray content-3 ml-3"
                                     >
                                       Delete
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Share
                                     </span>
                                   </button>
                                 </DropdownItem>
