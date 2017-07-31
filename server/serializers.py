@@ -66,10 +66,14 @@ class WfModuleSerializer(serializers.ModelSerializer):
 class WorkflowSerializer(serializers.ModelSerializer):
     wf_modules = WfModuleSerializer(many=True, read_only=True)
     revision = serializers.ReadOnlyField()
+    read_only = serializers.SerializerMethodField()
+
+    def get_read_only(self, obj):
+        return obj.read_only(self.context['user'])
 
     class Meta:
         model = Workflow
-        fields = ('id', 'name', 'revision', 'wf_modules')
+        fields = ('id', 'name', 'revision', 'wf_modules', 'public', 'read_only')
 
 
 # Lite Workflow: Don't include any of the modules, just name and ID. For /workflows page

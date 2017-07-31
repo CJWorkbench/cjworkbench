@@ -11,6 +11,7 @@ from server.models import Module, ModuleVersion, Workflow, WfModule
 from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite
 from server.versions import WorkflowUndo, WorkflowRedo
+from django.db.models import Q
 
 # ---- Workflows list page ----
 @login_required
@@ -25,12 +26,12 @@ def workflows2(request):
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     if request.method == 'GET':
-        workflows = Workflow.objects.filter(owner=request.user)
+        workflows = Workflow.objects.filter(Q(owner=request.user) | Q(public=True))
         serializer = WorkflowSerializerLite(workflows, many=True)
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        serializer = WorkflowSerializer(data=request.data)
+        serializer = WorkflowSerializer(data=request.data, context={'user': request.user})
         if serializer.is_valid():
             serializer.save(owner=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -47,11 +48,11 @@ def workflow_detail(request, pk, format=None):
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not workflow.user_authorized(request.user):
+    if not workflow.user_authorized(request.user) and not workflow.public:
         return HttpResponseForbidden()
 
     if request.method == 'GET':
-        serializer = WorkflowSerializer(workflow)
+        serializer = WorkflowSerializer(workflow, context={'user' : request.user})
         return Response(serializer.data)
 
     # We use PATCH to set the order of the modules when the user drags.
