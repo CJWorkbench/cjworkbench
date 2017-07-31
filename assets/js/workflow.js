@@ -86,9 +86,22 @@ export default class Workflow extends React.Component {
 
   constructor(props: iProps) {
     super(props);
-    this.state = { moduleLibraryVisible: false };
+    this.state = {
+      moduleLibraryVisible: false,
+      isPublic: false,
+    };
     this.toggleModuleLibrary = this.toggleModuleLibrary.bind(this);
     this.togglePublic = this.togglePublic.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.workflow === undefined) {
+      return false;
+    }
+
+    this.setState({
+      isPublic: nextProps.workflow.public
+    });
   }
 
   // toggles the Module Library between visible or not
@@ -108,7 +121,12 @@ export default class Workflow extends React.Component {
         'X-CSRFToken': csrfToken
       },
       body: JSON.stringify({'public': !isPublic}) })
-    .catch( (error) => { console.log('Request failed', error); });
+    .then( () => {
+      this.setState(oldState => ({
+        isPublic: !oldState.isPublic
+      }));
+    })
+    .catch( (error) => { console.log('Request failed', error); })
   }
 
   render() {
@@ -153,10 +171,12 @@ export default class Workflow extends React.Component {
               <Button onClick={this.toggleModuleLibrary.bind(this)}
                   className='button-blue action-button'>Add Module</Button>
               <div onClick={(e) => e.preventDefault()} className="menu-test-class" style={{float: 'right'}}>
+              {!this.props.workflow.read_only > 0 &&
                 <WfContextMenu
                   deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }
                   shareWorkflow={ () => this.togglePublic(this.props.workflow.public) }
                 />
+              }
               </div>
             </div>
             <div className="modulestack-list w-75 mx-auto ">
