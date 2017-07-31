@@ -193,7 +193,10 @@ export default class ModuleLibrary extends React.Component {
             <div className={displayClassName}>
               {display}
             </div>
-             <ModuleSearch addModule={this.props.addModule} items={this.state.items}/>
+             <ModuleSearch addModule={this.props.addModule} 
+                            items={this.state.items} 
+                            workflow={this.workflow}
+                            />
           </div>
         </div>
         <div className="module-list">

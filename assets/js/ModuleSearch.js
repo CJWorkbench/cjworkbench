@@ -117,6 +117,7 @@ class ModuleSearch extends Component {
 
   onSuggestionSelected (event, { suggestion }) {
     this.props.addModule(suggestion.id);
+    this.props.workflow.toggleModuleLibrary();
     this.setState({value: ''});
   }
 
