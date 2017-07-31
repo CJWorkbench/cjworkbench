@@ -6,11 +6,11 @@
 
 {% block content %}
     <form method="POST" action="{% url "account_logout" %}">
-        <legend>{% trans "Log out" %}</legend>
+        <legend class='t-d-gray title-1 text-center mb-3'>{% trans "Log out" %}</legend>
         <fieldset>
             {% csrf_token %}
-            <p>{% trans "Are you sure you want to log out?" %}</p>
-            <button type="submit" class="btn btn-primary">{% trans "Log out" %}</button>
+            <p class='t-d-gray content-3 text-center mb-3'>{% trans "Are you sure you want to log out?" %}</p>
+            <button type="submit" class="button-blue action-button mx-auto">{% trans "Log out" %}</button>
         </fieldset>
     </form>
 {% endblock %}

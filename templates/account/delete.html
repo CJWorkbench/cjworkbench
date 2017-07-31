@@ -2,12 +2,12 @@
 {% load i18n %}
 
 {% block content %}
-    <h1>{% trans "Delete Account" %}</h1>
+    <h1 class='t-d-gray title-1 text-center mb-3'>{% trans "Delete Account" %}</h1>
 
-    <p>{% blocktrans %}If you go ahead and delete your account, your information will be <b>expunged within {{ ACCOUNT_DELETION_EXPUNGE_HOURS }} hours</b>.{% endblocktrans %}</p>
+    <p class='t-d-gray content-3 text-center mb-3'>{% blocktrans %}If you go ahead and delete your account, your information will be <b>expunged within {{ ACCOUNT_DELETION_EXPUNGE_HOURS }} hours</b>.{% endblocktrans %}</p>
 
     <form method="post" action="{% url "account_delete" %}" autocapitalize="off">
         {% csrf_token %}
-        <button type="submit" class="btn btn-danger">{% trans "Delete My Account" %}</button>
+        <button type="submit" class="button-blue action-button mx-auto mt-3">{% trans "Delete My Account" %}</button>
     </form>
 {% endblock %}

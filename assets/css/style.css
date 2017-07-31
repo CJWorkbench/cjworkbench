@@ -247,19 +247,29 @@ body {
 
 .button-blue {
   color: #48C8D7;
-  border: 1px solid #48C8D7;
+  border: 1px solid #48C8D7 ;
   text-align: center;
   background-color: none;
 }
 .button-blue:active {
-  background-color: #48C8D7;
-  color: #FFFFFF;
+  background-color: #48C8D7 !important;
+  color: #FFFFFF !important;
 }
 
 .button-full-blue {
   background-color: #48C8D7;
   color: #FFFFFF;
 	text-align: center;
+}
+
+.button-full-orange {
+  background-color: #FBAA6D;
+  color: #FFFFFF;
+	text-align: center;  
+}
+.button-full-orange:hover {
+  background-color: #FFFFFF;
+  color: #FBAA6D;
 }
 
 /* - Button Shapes - */
@@ -286,8 +296,8 @@ body {
 .action-button {
 	height: 4rem;
   border-radius: 2.5rem;
-  /* min-width: 9rem;  */
-  width: 9rem;
+  min-width: 9rem;  
+  /* width: 9rem;    */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -365,10 +375,19 @@ body {
 
 
 /* ---- Login ---- */
+
 .login-fullscreen-container {
   height: 80vh;
   display: flex;
   align-items: center;
+  background-color: #48C8D7;
+  background: linear-gradient(to bottom right, #48C8D7 , #0D9ECF); 
+}
+
+.login-card {
+  height: 44rem;
+  width: 44rem; 
+  padding: 3rem 4rem 3rem 4rem;
 }
 
 .login-card input {
@@ -377,6 +396,11 @@ body {
 
 .login-card ::-webkit-input-placeholder {
   color: #ccc
+}
+
+.login-footer {
+  border-top: 1px solid #BBB8B8;
+  padding-top: 3rem;
 }
 
 /* ---- Workflow list ---- */
