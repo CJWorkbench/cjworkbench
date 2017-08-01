@@ -1,17 +1,13 @@
-#from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-#from django.contrib.auth.decorators import login_required
+from django.http import HttpResponse
 from django.contrib.admin.views.decorators import staff_member_required
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server.models import Module, Workflow
+from server.models import Module
 from server.serializers import ModuleSerializer
 from server.initmodules import init_modules
-#from pandas import *
-
 
 # Scaffolding: URL endpoint to trigger module reload from config file
 @staff_member_required

@@ -11,24 +11,24 @@ import PropTypes from 'prop-types'
 export default class DataVersionSelect extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { 
+    this.state = {
       modalOpen: false,
       dropdownOpen: false,
       versions: {versions: [], selected: ''},
       originalSelected: ''
     };
 
-    // Allow props to specify a conversion from browser time to displayed time, so tests can run in UTC (not test machine tz) 
+    // Allow props to specify a conversion from browser time to displayed time, so tests can run in UTC (not test machine tz)
     if (props.timezoneOffset != undefined) {
       this.state.timezoneOffset = props.timezoneOffset;
     } else {
-      this.state.timezoneOffset = 0; // display in browser local time 
+      this.state.timezoneOffset = 0; // display in browser local time
     }
 
     this.toggleModal = this.toggleModal.bind(this);
-    this.toggleDropdown = this.toggleDropdown.bind(this);    
+    this.toggleDropdown = this.toggleDropdown.bind(this);
     this.setSelected = this.setSelected.bind(this);
-    this.changeVersions = this.changeVersions.bind(this);    
+    this.changeVersions = this.changeVersions.bind(this);
   }
 
   // Takes a date string, interpreted as UTC, and produce a string for user display in user tz
@@ -48,11 +48,15 @@ export default class DataVersionSelect extends React.Component {
   }
 
   toggleModal() {
-    this.setState(Object.assign({}, this.state, { modalOpen: !this.state.modalOpen }));
+    if (!this.props.isReadOnly) {
+      this.setState(Object.assign({}, this.state, { modalOpen: !this.state.modalOpen }));
+    }
   }
 
   toggleDropdown() {
-    this.setState(Object.assign({}, this.state, { dropdownOpen: !this.state.dropdownOpen }));
+    if (this.props.isReadOnly) {
+      this.setState(Object.assign({}, this.state, { dropdownOpen: !this.state.dropdownOpen }));
+    }
   }
 
   loadVersions() {
@@ -77,13 +81,15 @@ export default class DataVersionSelect extends React.Component {
   }
 
   setSelected(date) {
-    this.setState(
-      Object.assign(
-        {}, 
-        this.state, 
-        {versions: {'versions': this.state.versions.versions, 'selected': date}}
-      )
-    );
+    if (!this.props.isReadOnly) {
+      this.setState(
+        Object.assign(
+          {},
+          this.state,
+          {versions: {'versions': this.state.versions.versions, 'selected': date}}
+        )
+      );
+    }
   }
 
   changeVersions() {
@@ -99,41 +105,43 @@ export default class DataVersionSelect extends React.Component {
     this.toggleModal();
   }
 
-  render() {    
+  render() {
     // TODO: Assign conditional render if module is open/closed: see WfModule 115
     // TODO: Refactor calculated classNames outside of Return statement
 
     return (
       <div className='version-item'>
-        <div className='info-medium-gray mb-2'>Current Version</div>
+        <div className='t-d-gray content-3 mb-4'>Current Version</div>
 
         <div className='info-medium-blue open-modal' onClick={this.toggleModal}>
-            {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}  
-        </div>        
+            {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}
+        </div>
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
           <ModalHeader toggle={this.toggleModal} >
             <div className=''>Dataset Versions</div>
           </ModalHeader>
-          <ModalBody>
+          <ModalBody className='dialog-body'>
             <div className='scolling-list'>
               {this.state.versions.versions.map( date => {
                 return (
-                  <div 
-                    key={date} 
-                    className={(date == this.state.versions.selected) ? 'version-active ' : 'version-disabled'}
+                  <div
+                    key={date}
+                    className={
+                      (date == this.state.versions.selected)
+                        ? 'line-item-data-selected list-test-class'
+                        : 'line-item-data  list-test-class'
+                    }
                     onClick={() => this.setSelected(date)}
                   >
-                    <div className={(date == this.state.versions.selected) ? 'version-text-active list-test-class' : 'version-text-disabled list-test-class'}>
-                      { this.formatDate(date) }
-                    </div>
+                    <span className='content-3'>{ this.formatDate(date) }</span>
                   </div>
                 );
               })}
             </div>
           </ModalBody>
-          <ModalFooter>
-            <Button className='button-blue action-button' onClick={this.toggleModal}>Cancel</Button>    
-            <Button className='button-blue action-button' onClick={this.changeVersions}>OK</Button>                    
+          <ModalFooter className='dialog-footer'>
+            <Button className='button-blue action-button' onClick={this.toggleModal}>Cancel</Button>
+            <Button className='button-blue action-button' onClick={this.changeVersions}>OK</Button>
           </ModalFooter>
         </Modal>
       </div>

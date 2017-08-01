@@ -1,10 +1,12 @@
 from .initmodules import load_module_from_dict
+from server.models import Module
 
 from django.forms import URLField
 from django.core.exceptions import ValidationError
 
 import importlib.machinery
 from importlib import import_module
+
 import inspect
 import json
 import os
@@ -14,6 +16,7 @@ import sys
 import time
 
 import git
+from git.exc import GitCommandError
 
 #OK, this feels wrong (and probably is wrong), but there's nowhere else that I can see we have all the module names and
 #their corresponding classes. We need this to ensure that there are no clashes, and consequently, to ensure that we
@@ -22,6 +25,25 @@ import git
 cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_directory = os.path.dirname(cwd)
 sys.path.insert(0, parent_directory)
+
+categories = set()
+already_imported = dict()
+
+def get_categories():
+    #cache categories
+    if not categories:
+        modules = Module.objects.all()
+        for module in modules:
+            categories.add(module.category)
+    return categories
+
+def get_already_imported():
+    # cache modules already imported to ensure that we don't override existing modules
+    if not already_imported:
+        modules = Module.objects.all()
+        for module in modules:
+            already_imported[module.id_name] = module.link
+    return already_imported
 
 def refresh_module_from_github(url):
     #we should check if this is a refreshable module: does the module exist, and if it does,
@@ -95,7 +117,7 @@ def validate_module_structure(current_path, root_directory, directory):
 
     return extension_file_mapping
 
-def validate_json(extension_file_mapping, current_path, directory):
+def validate_json(url, extension_file_mapping, current_path, directory):
     # - there should only be one json file, and it should be in the format mandated by
     #  config/modules. Therefore, when the file is loaded into a dict, it should contain the
     #  following keys: name, id_name, category, parameters. Parameters should have a length
@@ -114,14 +136,12 @@ def validate_json(extension_file_mapping, current_path, directory):
         raise ValidationError("The module configuration isn't in the correct format. It should contain name, id_name, "
                       "category and parameters")
 
-    module_name = module_config["name"]
     # Check if we've already loaded a module with the same name.
-    # Possible TODO: We might want to make this more intelligent, so that users can refresh the modules from here.
-    # However, blindly overriding modules might be dangerous, because well, it could lead to unexpected
-    # behaviour.
-    if "server.modules." + module_name in sys.modules:
+    modules = get_already_imported()
+    if module_config["id_name"] in modules and url != modules[module_config["id_name"]]:
+        source = modules[module_config["id_name"]] if modules[module_config["id_name"]] != '' else "Internal"
         shutil.rmtree(os.path.join(current_path, directory))
-        raise ValidationError("A module named {} is already loaded.".format(module_name))
+        raise ValidationError("Module {} has already been loaded, and its source is {}.".format(module_config["id_name"], source))
 
     return module_config, json_file
 
@@ -149,7 +169,7 @@ def reorganise_workspace(destination_directory, current_path, directory, json_fi
     # if they don't, we can start organising our workspace.
     try:
         os.makedirs(destination_directory)
-        os.rename(os.path.join(current_path, directory, json_file), os.path.join(destination_directory, json_file))
+        shutil.move(os.path.join(current_path, directory, json_file), os.path.join(destination_directory, json_file))
     except (OSError, Exception) as error:
         shutil.rmtree(os.path.join(current_path, directory))
         shutil.rmtree(destination_directory)
@@ -157,7 +177,7 @@ def reorganise_workspace(destination_directory, current_path, directory, json_fi
         raise ValidationError("Unable to move JSON file to correct directory: {}.".format(error))
 
     try:
-        os.rename(os.path.join(current_path, directory, python_file),
+        shutil.move(os.path.join(current_path, directory, python_file),
                   os.path.join(destination_directory, python_file))
     except (OSError, Exception) as error:
         shutil.rmtree(os.path.join(current_path, directory))
@@ -226,7 +246,7 @@ def extract_version(current_path, directory):
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 #path of
 ROOT_DIRECTORY = os.path.dirname(CURRENT_PATH)
-MODULE_DIRECTORY = os.path.join(os.path.dirname(ROOT_DIRECTORY), "importedmodules")
+MODULE_DIRECTORY = os.path.join(ROOT_DIRECTORY, "importedmodules")
 
 def import_module_from_github(url):
     url = url.lower().strip()
@@ -235,25 +255,34 @@ def import_module_from_github(url):
 
     directory = retrieve_project_name(url)
 
+    message = {}
+
     # pull contents from GitHub
     try:
         git.Git().clone(url)
         # move this to correct directory, i.e. where this file is.
-        os.rename(os.path.join(ROOT_DIRECTORY, directory), os.path.join(CURRENT_PATH, directory))
-    except:
+        shutil.move(os.path.join(ROOT_DIRECTORY, directory), os.path.join(CURRENT_PATH, directory))
+    except (ValidationError, GitCommandError) as ve:
         print('Unable to pull down content from GitHub: %s' % (url))
         shutil.rmtree(os.path.join(ROOT_DIRECTORY, directory))
-        raise ValidationError('Unable to pull down content from GitHub: %s' % (url))
+        raise ValidationError('Unable to pull down content from GitHub: %s' % (url) +
+                              ' due to %s' % (ve.message))
 
-    #retrieve Git hash to use as the version number.
+    # retrieve Git hash to use as the version number.
     version = extract_version(CURRENT_PATH, directory)
 
     extension_file_mapping = validate_module_structure(CURRENT_PATH, ROOT_DIRECTORY, directory)
 
-    module_config, json_file = validate_json(extension_file_mapping, CURRENT_PATH, directory)
+    module_config, json_file = validate_json(url, extension_file_mapping, CURRENT_PATH, directory)
     module_config["source_version"] = version
     module_config["link"] = url
     module_config["author"] = module_config["author"] if "author" in module_config else retrieve_author(url)
+
+    # Ensure that modules are categorised properly – if a module category isn't one of our
+    # pre-defined categories, then we just set it to other.
+    if module_config["category"] not in get_categories():
+        module_config["category"] = "Other"
+
 
 
     python_file, destination_directory = \
@@ -265,7 +294,7 @@ def import_module_from_github(url):
 
     validate_python_functions(destination_directory, CURRENT_PATH, directory, python_file)
 
-    #Initialise module
+    # Initialise module
     load_module_from_dict(module_config)
 
     # Possible TODO: do we want to/need to change the entitlements/ownership on the file for infosec?
@@ -275,6 +304,14 @@ def import_module_from_github(url):
                                                 os.path.join(destination_directory, python_file)).load_module()
     globals().update(temp.__dict__)
 
-    #clean-up
+    # clean-up
     shutil.rmtree(os.path.join(CURRENT_PATH, directory))
+
+    # data that we probably want displayed in the UI.
+    message["category"] = module_config["category"]
+    message["project"] = directory
+    message["author"] = module_config["author"]
+    message["name"] = module_config["name"]
+
+    return message
 

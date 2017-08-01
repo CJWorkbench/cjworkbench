@@ -8,7 +8,14 @@ import WfModule from './WfModule'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
 import EditableWorkflowName from './EditableWorkflowName'
-import { Button } from 'reactstrap'
+import {
+  Button,
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter
+} from 'reactstrap'
+import WfContextMenu from './WfContextMenu'
 
 import { getPageID, csrfToken } from './utils'
 
@@ -61,6 +68,7 @@ var SortableList = React.createClass({
           sortId={i}
           outline="list"
           childProps={{
+            'isReadOnly': this.props.data.read_only,
             'data-wfmodule': item,
             'data-changeParam': this.props.changeParam,
             'data-removeModule': this.props.removeModule,
@@ -84,8 +92,24 @@ export default class Workflow extends React.Component {
 
   constructor(props: iProps) {
     super(props);
-    this.state = { moduleLibraryVisible: false };
-    this.toggleModuleLibrary = this.toggleModuleLibrary.bind(this)
+    this.state = {
+      moduleLibraryVisible: false,
+      isPublic: false,
+      privacyModalOpen: false
+    };
+    this.toggleModuleLibrary = this.toggleModuleLibrary.bind(this);
+    this.setPublic = this.setPublic.bind(this);
+    this.togglePrivacyModal = this.togglePrivacyModal.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.workflow === undefined) {
+      return false;
+    }
+
+    this.setState({
+      isPublic: nextProps.workflow.public
+    });
   }
 
   // toggles the Module Library between visible or not
@@ -93,6 +117,60 @@ export default class Workflow extends React.Component {
     this.setState(oldState => ({
       moduleLibraryVisible: !oldState.moduleLibraryVisible
     }));
+  }
+
+  setPublic(isPublic) {
+    fetch('/api/workflows/' + getPageID(), {
+      method: 'post',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify({'public': isPublic}) })
+    .then( () => {
+      this.setState({isPublic: isPublic});
+    })
+    .catch( (error) => { console.log('Request failed', error); })
+  }
+
+  togglePrivacyModal() {
+    this.setState({ privacyModalOpen: !this.state.privacyModalOpen });
+  }
+
+  renderPrivacyModal() {
+    if (!this.state.privacyModalOpen) {
+      return null;
+    }
+
+    return (
+      <Modal isOpen={this.state.privacyModalOpen} toggle={this.togglePrivacyModal}>
+        <ModalHeader toggle={this.togglePrivacyModal} className='dialog-header' >
+          <span className='t-d-gray title-4'>Privacy Setting</span>
+          <span className='icon-close' onClick={this.togglePrivacyModal}></span>
+        </ModalHeader>
+        <ModalBody className='dialog-body'>
+          <div className="row">
+            <div className="col-sm-4">
+              <div className={"action-button " + (this.state.isPublic ? "button-full-blue" : "button-gray") } onClick={() => {this.setPublic(true); this.togglePrivacyModal()}}>Public</div>
+            </div>
+            <div className="col-sm-8">
+              <p>Anyone can access and duplicate the workflow or any of its modules</p>
+            </div>
+          </div>
+          <br></br>
+          <div className="row">
+            <div className="col-sm-4">
+              <div className={"action-button " + (!this.state.isPublic ? "button-full-blue" : "button-gray")} onClick={() => {this.setPublic(false); this.togglePrivacyModal()}}>Private</div>
+            </div>
+            <div className="col-sm-8">
+              <p>Only you can access and edit he workflow</p>
+            </div>
+          </div>
+        </ModalBody>
+      </Modal>
+    );
   }
 
   render() {
@@ -106,36 +184,59 @@ export default class Workflow extends React.Component {
       outputPane = <OutputPane id={this.props.selected_wf_module} revision={this.props.workflow.revision}/>
     }
 
-    var moduleLibrary = <ModuleLibrary 
-          addModule={module_id => this.props.addModule(module_id, 
-                        this.props.workflow.wf_modules.length)} 
-          workflow={this} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner. 
+    var moduleLibrary = <ModuleLibrary
+          addModule={module_id => this.props.addModule(module_id,
+                        this.props.workflow.wf_modules.length)}
+          workflow={this} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
           />
 
     // Choose whether we want to display the Module Library or the Output Pane.
-    var displayPane = null; 
+    var displayPane = null;
     if (this.state.moduleLibraryVisible) {
         displayPane = moduleLibrary;
     } else {
       displayPane = outputPane;
     }
 
+    let privacyModal = this.renderPrivacyModal();
+
     // Takes care of both, the left-hand side and the right-hand side of the
     // UI. The modules in the workflow are displayed on the left (vertical flow)
-    // and the output of the modules on the right. 
+    // and the output of the modules on the right.
     // Instead of the output, we see the Module Library UI if the user
-    // invokes the Module Library. 
+    // invokes the Module Library.
     return (
       <div className="workflow-root">
         <WorkflowNavBar workflowId={this.props.workflow.id} api={this.props.api} /><div className="workflow-container">
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
-              <EditableWorkflowName
-                value={this.props.workflow.name}
-                editClass='editable-title-field title-1 t-d-gray'
-                wfId={this.props.workflow.id} />
-              <Button onClick={this.toggleModuleLibrary.bind(this)} 
-                  className='button-blue action-button'>Add Module</Button>
+              <div className="d-flex justify-content-between">
+                <div>Back to Workflows</div>
+                {!this.props.workflow.read_only > 0 &&
+                  <WfContextMenu
+                    deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }
+                    shareWorkflow={ () => this.togglePublic(this.props.workflow.public) }
+                  />
+                }
+              </div>
+              <br></br>
+              <div className="d-flex justify-content-between">
+                <div>
+                <EditableWorkflowName
+                  value={this.props.workflow.name}
+                  editClass='editable-title-field title-1 t-d-gray'
+                  wfId={this.props.workflow.id}
+                  isReadOnly={this.props.workflow.read_only} />
+                <ul className="list-inline list-workflow-meta">
+                  <li className="list-inline-item">by <strong className="t-f-blue">{this.props.workflow.owner_name}</strong></li>
+                  <li className="list-inline-item">updated <strong className="t-f-blue">{this.props.workflow.last_update}</strong></li>
+                  <li className="list-inline-item" onClick={this.togglePrivacyModal}><strong className={this.state.isPublic ? 't-f-blue' : 't-o-red'}>{this.state.isPublic ? 'public' : 'private'}</strong></li>
+                </ul>
+                {privacyModal}
+                </div>
+                <Button onClick={this.toggleModuleLibrary.bind(this)}
+                    className='button-blue action-button'>Add Module</Button>
+              </div>
             </div>
             <div className="modulestack-list w-75 mx-auto ">
               <SortableList

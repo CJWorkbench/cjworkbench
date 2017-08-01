@@ -1,5 +1,8 @@
 /* File is getting large; time to divide into modules? */
 
+/* Font */
+@import url('https://fonts.googleapis.com/css?family=Nunito+Sans');
+
 html {
   height: 100%;
   /* sets the basis for `rem` styling units */
@@ -8,9 +11,9 @@ html {
 
 body {
   margin: 0px;
-  height: 100%;  
-  font-family: Avenir;
-  background-color: #f6f6f6;    
+  height: 100%;
+  font-family: 'Nunito Sans', sans-serif;
+  background-color: #f6f6f6;
   color: #686768;
 }
 
@@ -104,13 +107,16 @@ body {
 .note {
   font-size: 1.5rem;
 	font-weight: 300;
-	line-height: 2.8rem;
+  line-height: 2.8rem;
+  margin-top: 2rem;
 }
 
 /* --- Colors ---  */
-/* WARNING: watch out for over-rides on Bootstrap classes  */
 
 /* Text  */
+.t-white {
+  color: #FFFFFF;
+}
 .t-vl-gray {
   color: #FAFAFA;
 }
@@ -132,7 +138,9 @@ body {
 .t-orange {
   color: #F8AA6D;
 }
-
+.t-o-red {
+  color: #e24f4a;
+}
 /* Backgrounds  */
 .b-vl-gray {
   background-color: #FAFAFA;
@@ -176,373 +184,41 @@ body {
 
 
 
-/* ---- OLD Text Type styles: phase out to new with any edit ----- */
-/* (Watch out for repeated class names!)  */
+/* ---- Data Input Fields: NEW ---- */
 
-/* not in style guide - remove/replace */
-.title {
-	height: 	0.9375rem;
-	font-size: 	0.9375rem;
-	font-weight: 500;
-	line-height: 	0.9375rem;
-}
-
-.list-title {
-	height: 1.375rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 1.375rem;
-	font-weight: 500;
-	line-height: 1.375rem;
-}
-
-.title-white {
-	height: 1.125rem;
-	color: #FFFFFF;
-	font-family: Avenir;
-	font-size: 1.125rem;
-	font-weight: 300;
-	line-height: 1.125rem;
-}
-
-.title-line-item-gray {
-	height: 0.8125rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	font-weight: 500;
-	line-height: 0.8125rem;
-}
-
-.module-library-line-item-title {
-	height: 0.9375rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.9375rem;
-	font-weight: 500;
-	line-height: 0.9375rem;
-}
-
-.setting-gray {
-	height: 0.8125rem;  
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-  line-height: 0.8125rem;
-}
-
-.setting-blue {
-	height: 0.8125rem;
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
-}
-
-.setting-orange {
-	height: 0.8125rem;
-	color: #FBAA6D;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
-}
-
-.setting-big-light-gray {
-	height: 0.75rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.75rem;
-}
-
-.data-light-gray {	
-  color: #A2A2A2;	
-  font-family: Avenir;	
-  font-size: 0.875rem;	
-  font-weight: 500;	
-  line-height: 0.875rem;
-  height: 0.875rem;  
-}
-
-.data-gray {
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 500;
-  line-height: 0.875rem;
-  height: 0.875rem;
-}
-
-.data-paragraph-gray {
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 500;
-  line-height: 1.5rem;
-  height: 1.5rem;
-}
-
-.data-pragraph-light-gray {
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 500;
-  line-height: 1.5rem;
-  height: 1.5rem;
-}
-
-.table-row-single-d {
-	height: 0.6875rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.625rem;
-	font-weight: 500;
-	line-height: 0.6875rem;
-}
-
-.table-row-0.6875remdouble-d {
-	height: 0.6875rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.5625rem;
-	font-weight: 500;
-	line-height: 0.6875rem;
-}
-
-.table-row-triple-d {
-	height: 0.6875rem;
-	color: #FFFFFF;
-	font-family: Avenir;
-	font-size: 0.53125rem;
-	font-weight: 500;
-	line-height: 0.6875rem;
-}
-
-.table-column-name {
-	height: 1.125rem;
-	color: #FFFFFF;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	font-weight: 900;
-	line-height: 1.125rem;
-}
-
-.info-small-blue {
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.625rem;
-	font-weight: 900;
-	line-height: 0.625rem;
-  height: 0.625rem;
-}
-
-.info-small-blue:hover {
-  color: #0B8897;
-}
-
-.info-small-orange {
-	color: #FBAA6D;
-	font-family: Avenir;
-	font-size: 0.625rem;
-	font-weight: 900;
-  line-height: 0.625rem;
-  height: 0.625rem;
-}
-
-.info-small-paragraph-gray {
-	height: 2rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.6875rem;
-	line-height: 1rem;
-}
-
-.info-medium-paragraph-gray {
-	height: 1.375rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	font-weight: 300;
-	line-height: 1.375rem;
-}
-
-.info-medium-paragraph-blue {
-	height: 0.75rem;
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 500;
-	line-height: 0.75rem;
-}
-
-.info-medium-blue {
-	height: 0.8125rem;
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
-}
-
-.info-medium-blue:hover {
-  color: #0B8897;
-}
-
-.info-medium-gray {
-	height: 0.8125rem;
-  color: #686768;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
-}
-
-.info-medium-light-gray {
-	height: 0.8125rem;
-  color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	line-height: 0.8125rem;
-}
-
-.field-search-light-gray {
-	opacity: 0.6;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-  line-height: 0.875rem;
-  height: 0.875rem;
-}
-
-.field-search-white {
-	color: #FFFFFF;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-  line-height: 0.875rem;
-  height: 0.875rem;
-}
-
-.code-light {
-	height: 1.5rem;
-	color: #A2A2A2;
-	font-family: "PT Mono";
-	font-size: 0.875rem;
-	line-height: 1.5rem;
-}
-
-.code-fill {
-	height: 1.5rem;
-	color: #CFCFCF;
-	font-family: "PT Mono";
-	font-size: 0.875rem;
-	line-height: 1.5rem;
-}
-
-.details-blue {
-	height: 0.75rem;
-	color: #48C8D7;
-	font-family: Avenir;
-	font-size: 0.75rem;
-	font-weight: 900;
-	line-height: 0.75rem;
-}
-
-.details-blue:hover {
-	color: #2D9DAA;
-}
-
-.details-gray {
-	height: 0.75rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.75rem;
-	font-weight: 900;
-	line-height: 0.75rem;
-}
-
-.details-gray-copy {
-	height: 1rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.75rem;
-	font-weight: 300;
-	line-height: 1rem;
-}
-
-.workflow-title-gray {
-	height: 2.125rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 1.5625rem;
-	font-weight: 300;
-  line-height: 2.125rem;
-}
-
-.dialog-box-title-light-gray {
-	height: 0.9375rem;
-	color: #A2A2A2;
-	font-family: Avenir;
-	font-size: 0.9375rem;
-	font-weight: 500;
-	line-height: 0.9375rem;
-}
-
-.dialog-box-title-gray {
-	height: 0.9375rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.9375rem;
-	font-weight: 500;
-	line-height: 0.9375rem;
-}
-
-.info-title-small {
-	height: 1.25rem;
-	color: #686768;
-	font-family: Avenir;
-	font-size: 0.6875rem;
-	font-weight: 900;
-	line-height: 1.25rem;
-}
-
-.version-text-active {
-	 color: #FFFFFF; 
-	 font-family: Avenir;
-	 font-size: 0.8125rem; 
-	 font-weight: 300; 
-	 line-height: 1.125rem;  
-}
-
-.version-text-disabled {
-	color: #3A3A3A;  
-	font-family: Avenir;
-	font-size: 0.8125rem;
-	font-weight: 300;
-	line-height: 1.125rem;
-}
-
-.version-text-disabled:hover {
-  color: #3A3A3A;
-}
-
-
-/* ---- Text Input Fields ---- */
-/* To be phased out for new styles */
-
-
+/* Rename to "input-text-field?"  */
 .text-field {
-  height: 2.5rem;
+  height: 4rem;
   width: 100%;
   background-color: #FFFFFF !important;
-  border: 1px solid #EDECEC;
-  /* resize: none; */
+  border: 1px solid #E7E7E7;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
 }
-
 .text-field:active {
   box-shadow: 0 0 1px 1px #48C8D7;
   border: 0;
 }
+
+.input-number {
+  height: 4rem;
+  color: #686768;
+  background-color: #FFFFFF;
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+}
+
+.input-dropdown {
+  height: 4rem !important;
+  color: #686768;
+  background-color: #FFFFFF;
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+}
+
+
+
 
 
 /* to be replaced by new classes  */
@@ -557,141 +233,134 @@ body {
 }
 
 /* ---- Buttons ---- */
-/* To be phased out for new styles */
+/* To be phased out to new styles */
 
+/* - Button Colors - */
 .button-gray {
-  color: #A2A2A2;
-  border: 1px solid #48C8D7;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
+  color: #686768;
+  border: 1px solid #686768;
+  text-align: center;
+  background-color: none;
 }
-
-.button-gray:hover {
-	color: #686768;
-}
-
-.button-red {
-  color: #E24F4A;
-  border: 1px solid #E24F4A;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
-}
-
-.button-orange {
-  color: #FBAA6D;
-  border: 1px solid #FBAA6D;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
+.button-gray:active {
+  background-color: #686768;
+  color: #FFFFFF;
 }
 
 .button-blue {
   color: #48C8D7;
-  border: 1px solid #48C8D7;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
-	text-align: center;
+  border: 1px solid #48C8D7 ;
+  text-align: center;
+  background-color: none;
+}
+.button-blue:active {
+  background-color: #48C8D7 !important;
+  color: #FFFFFF !important;
 }
 
-.button-white {
+.button-full-blue {
+  background-color: #48C8D7;
   color: #FFFFFF;
-  border: 1px solid #FFFFFF;  
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 900;
-	line-height: 0.875rem;
 	text-align: center;
 }
 
-.button-context {
+.button-full-orange {
+  background-color: #FBAA6D;
+  color: #FFFFFF;
+	text-align: center;  
+}
+.button-full-orange:hover {
+  background-color: #FFFFFF;
+  color: #FBAA6D;
+}
+
+/* - Button Shapes - */
+
+.context-button {
   border: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-.button-context:hover {
+.context-button:hover {
   border: 1px solid #EDECEC;
+  border-radius: 0.3rem;
 }
-
-.button-context:active {
+.context-button:active {
   border: 1px solid #EDECEC;
   background-color: #F9F9F9;
-}
-
-.button-square {
-  background-color: #FFFFFF;
-  border: 1px solid #EDECEC;  
-}
-
-.button-square:hover {
-  background-color: #F1F5F7;
-}
-
-.button-square:active {
-  background-color: #48C8D7;
+  border-radius: 0.3rem;
+  color: #686768;
 }
 
 .action-button {
-	height: 2.5rem;
-  border-radius: 25px;
-  min-width: 89px;
+	height: 4rem;
+  border-radius: 2.5rem;
+  min-width: 9rem;  
+  /* width: 9rem;    */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+	font-size: 1.4rem;
+	font-weight: 900;
+  line-height: 1.4rem;
 }
-
 .action-button:hover {
 	opacity: 0.5;
 }
 
-/* is this used anywhere? To cull otherwise  */
-.action-button-disabled {
-  background-color: #EDECEC;
-  height: 2.5rem;
-	border-radius: 1.5625rem;
-  color: #A2A2A2;
-}
 
 
-/* ---- Dropdowns ---- */
-/* To be phased out for new styles */
+/* ---- Dropdowns and Lists---- */
 
 
-.dropdown-list-menu {
-  background-color: #D8D8D8;
-  padding: 1px;
-}
-
-/* TODO: remove styling for text, define box only  */
-/* move text styles to text classes  */
-.dropdown-list-item {
-  height: 40px;
-  width: 170px;
-  display: flex;
-  align-items: left;
-  padding: 15px 25px 25px 10px;
-  margin-bottom: 1px;
+.line-item-data {
+  height: 4rem;
   background-color: #FFFFFF;
-  color: #3A3A3A;
-  font-size: 13px;
-  font-weight: 300;	
-  line-height: 18px;
-  font-family: Avenir;
+  color: #686768;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 2.5rem;
 }
-
-.dropdown-list-item:hover {
-  background-color: #F1F5F7;
+.line-item-data:hover {
+  background-color: #F5F5F5;
 }
-
-.dropdown-list-item:active {
+.line-item-data-selected {
+  height: 4rem;
   background-color: #48C8D7;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 2.5rem;
 }
 
+.dropdown-selector {
+  height: 4rem;
+  width: 17rem;
+}
+
+.dropdown-menu-item {
+  height: 4rem;
+  width: 17rem;
+  background-color: #FFFFFF;
+  color: #686768;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 1rem;
+}
+.dropdown-menu-item:hover {
+  background-color: #F5F5F5;
+}
+.list-workflow-meta li:not(:last-child):after {
+  content: '-';
+  display:inline-block;
+  margin-left: 5px;
+}
 
 
 /* ---- Navbar ----- */
@@ -713,10 +382,19 @@ body {
 
 
 /* ---- Login ---- */
+
 .login-fullscreen-container {
   height: 80vh;
   display: flex;
   align-items: center;
+  background-color: #48C8D7;
+  background: linear-gradient(to bottom right, #48C8D7 , #0D9ECF); 
+}
+
+.login-card {
+  height: 44rem;
+  width: 44rem; 
+  padding: 3rem 4rem 3rem 4rem;
 }
 
 .login-card input {
@@ -727,29 +405,28 @@ body {
   color: #ccc
 }
 
+.login-footer {
+  border-top: 1px solid #BBB8B8;
+  padding-top: 3rem;
+}
+
 /* ---- Workflow list ---- */
 
 .workflows-container {
   margin-top: 5rem;
 }
 
-.new-workflow-button {
-  border: 1px solid #48C8D7;
-  color: #48C8D7;
-}
-
 .workflows-list {
-  border: 0;     
-  background-color: #f6f6f6;      
+  border: 0;
+  background-color: #f6f6f6;
 }
 
 .workflow-in-list {
+  height: 7rem;
   background-color: #ffffff;
   margin-bottom: 1px;
-  color: #686768;
-  font-weight: 500;
-  color: #686768;
   border: 0;
+  padding: 1.5rem 2.5rem 1.5rem 2.5rem;
 }
 
 .workflow-in-list:hover {
@@ -789,7 +466,7 @@ body {
 }
 
 .modulestack-list {
-  background-color: #F2F2F2; 
+  background-color: #F2F2F2;
   padding: 0.625rem;
   border: 1px solid #EDECEC;
 }
@@ -824,26 +501,28 @@ body {
 
 
 /* ---- WfModule ---- */
-/* TODO: make classes consistent with style guide */
-/* TODO: rename classes-to-css-style  */
 
 .module-card-wrapper {
   height: 100%;
   display: flex;
   flex-direction: row;
+  padding: 0;
 }
-
 .module-card-info {
   width: calc(100% - 1rem);
 }
-
 .module-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 2rem;
+}
+.module-card-params {
+  padding: 2rem;
+  background-color: #FAFAFA;
 }
 
-.wfModuleErrorMsg {
+.wf-module-error-msg {
   border: 1px solid black;
   margin: 3px;
   border-radius: 3px;
@@ -870,130 +549,76 @@ body {
   width: 20%;
 }
 
-.wf-parameters {
-  background-color: #FAFAFA;
-}
 
 
 /* ---- Wf Module status bars ---- */
-/* To be phased out for new styles */
 
 /* a dummy div around output status bar, for positioning purposes  */
 .output-bar-container {
   border: 0;
 }
-
-/* base status  */
+/* all good */
 .module-output-bar-white {
-  width: 0.4375rem;
+  width: 1rem;
   height: 100%;
   background-color: #FFFFFF;
 }
-
-/* currently selected and ready */
+/* all good & selected */
 .module-output-bar-blue {
-  width: 0.4375rem;
-  height: 100%;  
+  width: 1rem;
+  height: 100%;
   background-color: #BFDDE4;
 }
-
-/* TODO: change on module select, not hover  */
-.module-output-bar-blue:hover {
-  background-color: #DBECF1;
-}
-
 /* standby  */
 .module-output-bar-orange {
-  width: 0.4375rem;  
-  height: 100%;  
+  width: 1rem;
+  height: 100%;
   background-color: #FBAA6D;
 }
-
 /* error  */
+.module-output-bar-pink {
+  width: 1rem;
+  height: 100%;
+  background-color: #F3B9B7;;
+}
+/* error & selected */
 .module-output-bar-red {
-  width: 0.4375rem;  
-  height: 100%;  
-  background-color: #E24F4A;
+  width: 1rem;
+  height: 100%;
+  background-color: #E8726E;
 }
 
 
 /* ---- Dialog Boxes ---- */
-/* TODO: redefine according to style sheet  */
 
-.dialog-header {
-  height: 55px;
-  padding: 20px 30px 20px 30px ;
-  background-color: #FFFFFF;
+.dialog-window {
+  border: 0;
+  width: 50rem;
 }
 
-.dialog-header-close {
-  margin-left: 330px;
-  font-size: 0.9375rem;
-	font-weight: 500;
-  line-height: 0.9375rem;
-  color: #686768;
+.dialog-header {
+  height: 5.5rem;
+  padding: 2rem 3rem 2rem 3rem;
+  background-color: #FFFFFF;
 }
 
 .dialog-body {
   background-color: #FAFAFA;
-  padding: 20px 30px 0px 30px;  
+  padding: 2rem 3rem 2rem 3rem;
   border: 0;
 }
 
 .dialog-footer {
-  background-color: #FAFAFA;  
-  padding: 20px 30px 20px 30px;
-  border-top: 0;  
+  background-color: #FAFAFA;
+  padding: 2rem 3rem 2rem 3rem;
+  border-top: 0;
 }
 
 
-/* ---- WfModuleContextMenu ---- */
-/* TODO: redefine to fit style guide classes  */
 
-.export-field-header {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.export-link {
-  margin: 10px 60px 5px 0px;
-}
-
-.export-field {
-  display: flex;
-  flex-direction: row;
-  height: 2.5rem;
-  margin-bottom: 1.875rem;  
-}
-
-.export-field-text {
-  height: 2.5rem;
-  border: 1px solid #EDECEC;
-  background-color: #FFFFFF !important;  
-  color: #686768;
-	font-family: Avenir;
-	font-size: 0.875rem;
-	font-weight: 500;
-  line-height: 0.875rem;
-}
-
-.export-icon-box {
-  width: 3.75rem; 
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;  
-  border: 1px solid #EDECEC;
-  font-size: 0.9375rem;  
-  background-color: #FFFFFF;
-}
-
-
-/*----- Icon Fonts ----*/
 @font-face {
   font-family: 'Workbench-icon-font-v1';
-  src: url('../fonts/Workbench-icon-font-v1.woff?7mkhko') format('woff');
+  src:  url('../fonts/Workbench-icon-font-v1.woff?6vt5w9') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -1013,6 +638,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-Share:before {
+  content: "\e91c";
+  color: #686768;
+}
 .icon-folder-blue:before {
   content: "\e917";
   color: #48c8d7;
@@ -1025,31 +654,31 @@ body {
   content: "\e916";
   color: #fff;
 }
-.icon-checkbox-fill:before {
+.icon-Checkbox-fill:before {
   content: "\e915";
   color: #48c8d7;
 }
-.icon-chart:before {
+.icon-Chart:before {
   content: "\e909";
   color: #686768;
 }
-.icon-settings:before {
+.icon-Settings:before {
   content: "\e900";
   color: #686768;
 }
-.icon-close:before {
+.icon-Close:before {
   content: "\e905";
   color: #686768;
 }
-.icon-edit:before {
+.icon-Edit:before {
   content: "\e906";
   color: #686768;
 }
-.icon-info:before {
+.icon-Info:before {
   content: "\e907";
   color: #686768;
 }
-.icon-join:before {
+.icon-Join:before {
   content: "\e908";
   color: #686768;
 }
@@ -1057,7 +686,7 @@ body {
   content: "\e90b";
   color: #686768;
 }
-.icon-sigma:before {
+.icon-Sigma:before {
   content: "\e90e";
   color: #686768;
 }
@@ -1106,7 +735,7 @@ body {
   content: "\e911";
   color: #686768;
 }
-.icon-url:before {
+.icon-URL:before {
   content: "\e912";
   color: #686768;
 }
@@ -1151,11 +780,11 @@ body {
   content: "\e926";
   color: #686768;
 }
-.icon-api:before {
+.icon-API:before {
   content: "\e927";
   color: #686768;
 }
-.icon-calendar:before {
+.icon-Calendar:before {
   content: "\e928";
   color: #686768;
 }
@@ -1164,102 +793,59 @@ body {
   color: #686768;
 }
 
-/* Icon colors  */
 
+/* Icon colors  */
 .icon-gray {
   color: #686768;
 }
-
 .icon-light-gray {
   color: #B4B4B4;
 }
-
 .icon-blue {
   color: #48C8D7;
 }
-
 .icon-white {
   color: #FFFFFF;
 }
-
 .icon-orange {
   color: #FBAA6D;
 }
 
-/* Icon wrapping (boxes around icons)  */
-/* TODO: trace down interference from prepackaged components  */
-/* TODO: transition to classes defined in style guide  */
-
+/* icon next to Wf Module title */
 .module-icon {
-  height: 15px;
-  width: 15px;
+  height: 2rem;
+  width: 2rem;
 }
 
+/* icons embedded within buttons  */
 .button-icon {
-  height: 13px;
-  width: 13px;
-  margin: 0 auto;  
+  height: 1.5rem;
+  width: 1.5rem;
 }
 
-.context-button {
-  height: 1.5625rem;
-  width: 1.5625rem;
-  border: 0;
-}
-
-.context-button:hover {
-  background-color: #F9F9F9;
-  border: 1px solid #CECECE;
-}
-
-.context-button:active {
-  border: 1px solid #CECECE;  
-  background-color: #EDECEC;
-}
-
-/* --- Scrolling List Div ---  */
-.scolling-list {
-  width: 100%;
-  height: 400px;
-  overflow: scroll;
-}
-
-/* --- Data versions modal --- */
-/* TODO: use Dialog box classes from style guide  */
-
-.version-header {
+/* from Export Data modal, in WfModuleContextMenu  */
+.download-icon-box {
+	height: 4rem;
+	width: 6rem;
+	border: 1px solid #EDECEC;
   background-color: #FFFFFF;
-  height: 2.5rem;
-  width: 100%;
-  margin: 1.25rem 1.875rem 1.25rem 1.875rem;  
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-
-.version-active {
-  height: 2.5rem;
-	width: 100%;
-  background-color: #48C8D7;
-  padding: 1.25rem 1.875rem 1.25rem 1.875rem;    
-}
-
-.version-disabled {
-  background-color: #FFFFFF;
-  height: 2.5rem;
-  width: 100%;
-  padding: 1.25rem 1.875rem 1.25rem 1.875rem;      
-}
-
-.version-disabled:hover {
-  background-color: #F1F5F7;
+.download-icon-box:hover {
+  background-color: #F8F8F8;
 }
 
 
-/* WfParameter */
+/* ---- Load URL Module: data versions box */
 
 .version-box {
-  border: 1px solid #F2F2F2;
+  border: 1px solid #E7E7E7;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
+  padding: 3rem;
 }
 
 .version-item {
@@ -1281,31 +867,31 @@ body {
 }
 
 #updateFreqPeriod {
-  display: inline;  
-  width: 30%;  
+  display: inline;
+  width: 30%;
 }
 
 /* --- Editable text fields --- */
 
 .editable-title-field {
-  border: none; 
+  border: none;
   outline: none;
   padding: 0;
   resize: none;
-  width: 100%; 
+  width: 100%;
 }
 
 .editable-notes-field {
-  border: none; 
+  border: none;
   outline: none;
-  height: 100%; 
-  width: 100%;   
-  padding: 2rem 3rem 2rem 3rem;  
+  height: 100%;
+  width: calc(100% - 6rem);
+  padding: 2rem 3rem 2rem 3rem;
 }
 
 /* applied only when field is in edit mode  */
 .editable-notes-field-active {
-  background-color: #FFFFFF;  
+  background-color: #FFFFFF;
   box-shadow: 0 0 1px 1px #48C8D7;
   padding: 2rem 3rem 2rem 3rem;
 }
@@ -1342,7 +928,7 @@ body {
   padding: 1px;
 }
 
-/* Start of CSS for the Module Library */
+/* --- Module Library --- */
 .module-library {
   height: calc(100% - 3.5rem);
   width: 50%;
@@ -1356,12 +942,12 @@ body {
 }
 
 .module-library .nav-bar {
-  background-color: #577485;
+  background-color: #577485;;
   height: 120px;
   flex-grow: 1;
   flex-basis: 0;
   min-width: 0;
-  position: relative;    
+  position: relative;
   border-bottom: 1px solid;
   text-align: left;
   padding: 10px;
@@ -1376,18 +962,18 @@ body {
 }
 
 .module-library .h2 .symbols {
-  font-weight: bold; 
+  font-weight: bold;
 }
 
 .module-library .nav-bar .h1 { /* Title of Module Library navigation bar */
   color: #FFFFFF;
 }
 
-.module-category {	
-  height: 10px;	
-  color: #686768;	
+.module-category {
+  height: 10px;
+  color: #686768;
   font-family: Avenir;
-  font-size: 16px;	
+  font-size: 16px;
   margin-top: 1rem;
   margin-bottom: 1rem;
   margin-left: 1rem;
@@ -1395,26 +981,26 @@ body {
   position: relative;
 }
 
-.module-name {	
-  height: 15px;	
-  color: #686768;	
-  font-family: Avenir;	
-  font-size: 15px;	
-  font-weight: 500;	
+.module-name {
+  height: 15px;
+  color: #686768;
+  font-family: Avenir;
+  font-size: 15px;
+  font-weight: 500;
   line-height: 15px;
 }
 
-.module-description {	
+.module-description {
   color: #686768;
-  font-family: Avenir;	
-  font-size: 13px;	
-  font-weight: 300;	
+  font-family: Avenir;
+  font-size: 13px;
+  font-weight: 300;
 }
 
-.module-metadata {	
+.module-metadata {
   color: #A2A2A2;
-  font-family: Avenir;	
-  font-size: 14px;	
+  font-family: Avenir;
+  font-size: 14px;
   line-height: 12px;
   margin-top: 10px;
   margin-bottom: 10px;
@@ -1495,7 +1081,7 @@ body {
 }
 
 .import-module {
-  height: 200px; 
+  height: 210px;
   width: 450px;
   color: #686768;
   float: right;
@@ -1510,12 +1096,12 @@ body {
   margin-top: 10px;
 }
 
-.import-module-label {	
-  height: 40px;	
-  color: #686768;	
+.import-module-label {
+  height: 40px;
+  color: #686768;
   font-family: Avenir;
   font-weight: 400;
-  font-size: 16px;	
+  font-size: 16px;
   padding: 20px;
   position: relative;
   padding-bottom: 10px;
@@ -1523,10 +1109,10 @@ body {
 
 .import-module-button {
   float: right;
-  right: 40px;
+  right: 10px;
   z-index: 1000;
-  position: fixed;
-  margin-top: 0px;
+  position: relative;
+  margin-top: 10px;
 }
 
 .import-module-buttons {
@@ -1540,4 +1126,100 @@ body {
     font-size: 13px;
     line-height: 13px;
     padding: 7px;
+}
+
+.import-github-error {
+  height: 38px;
+  color: #E24F4A;
+  font-family: Avenir;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 19px;
+  margin-top: 60px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.import-github-response-button {
+  float: right;
+  margin-right: 20px;
+  width: 15%;
+}
+
+.import-github-success {
+  height: 38px;
+  color: #1CA8B9;
+  font-family: Avenir;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 19px;
+  margin-top: 60px;
+  padding-left: 20px;
+}
+
+.module-list {
+  position: absolute;
+  overflow-y:scroll;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  top: 140px;
+}
+
+/* --- Chartbuilder - override all sorts of styles to integrate --- */
+
+/* TODO this should inherit from content-3 t-d-gray, just cut and paste right now */
+.chartbuilder-main h2 {
+  font-size: 1.3rem;
+	line-height: 1.3rem;
+  color: #686768;
+}
+
+
+/* TODO this should inherit from content-3 t-d-gray, just cut and paste right now */
+.chartbuilder-main .editor-label {
+  font-size: 1.3rem;
+	line-height: 1.3rem;
+  color: #686768;
+}
+
+.chartbuilder-main .step-number {
+  display: none;
+}
+
+/* TODO this should inherit from action-button and button-gray */
+.chartbuilder-main .cb-button {
+  height: 4rem;
+  border-radius: 2.5rem;
+  align-items: center;
+  justify-content: center;
+	font-size: 1.4rem;
+	font-weight: 900;
+  line-height: 1.4rem;
+  color: #686768;
+  border: 1px solid #686768;
+  text-align: center;
+  background-color: transparent !important;
+  margin: 0 1rem 0 1rem !important;
+  padding: 0 1rem 0 1rem !important;
+}
+
+.chartbuilder-main .active {
+  background-color: #48C8D7 !important;
+  color: #FFFFFF !important;
+	text-align: center;
+  border: 0px !important;
+}
+
+/* TODO copied from text-field t-d-gray content-2... but stripped down  */
+.chartbuilder-main .cb-text-input input {
+  height: 4rem;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  color: #686768;
+}
+
+
+/* TODO height (but not width) copied from dropdown-selector */
+.chartbuilder-main .cb-dropdown-select {
+  height: 4rem;
 }

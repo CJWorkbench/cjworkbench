@@ -60,6 +60,27 @@ class WorkbenchAPI {
       }))
   }
 
+  /** 
+   * Toggles whether the module is collapsed or expanded on the front-end. 
+   * This gets saved on the back-end, and so the state (collapsed or 
+   * expanded) persists across multiple sessions. 
+   */
+  toggleWfModuleCollapsed(wf_module_id, isCollapsed) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id, {
+        method: 'patch',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          collapsed: isCollapsed
+        })
+      }))
+  }
+
   setWfName(wfId, newName) {
     return (
       fetch('/api/workflows/' + wfId, {
@@ -77,24 +98,25 @@ class WorkbenchAPI {
     )
   }
 
-  // setWfModuleUpdateSettings(wf_module_id, ___) {
-  //   return (
-  //     fetch('/api/wfmodules/' + wf_module_id, {
-  //       method: 'patch',
-  //       credentials: 'include',
-  //       headers: {
-  //         'Accept': 'application/json',
-  //         'Content-Type': 'application/json',
-  //         'X-CSRFToken': csrfToken
-  //       },
-  //       body: JSON.stringify({
-  //         'auto_update_data' : True,
-  //         'update_interval'  : 5,
-  //         'update_units'     : 'weeks' 
-  //       })
-  //     })
-  //   )
-  // }
+  // Params should be an object matching format below
+  setWfModuleUpdateSettings(wf_module_id, params) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id, {
+        method: 'patch',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          'auto_update_data' : params.auto_update_data,  // bool
+          'update_interval'  : params.update_interval,   // int
+          'update_units'     : params.update_units       // str
+        })
+      })
+    )
+  }
 
   undo(workflow_id) {
     return (

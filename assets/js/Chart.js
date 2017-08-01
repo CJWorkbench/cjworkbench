@@ -37,41 +37,62 @@ export default class ChartParameter extends React.Component {
     this.loadingState = { loading: true, loaded_ever: true };
     this.state = { loading: false, loaded_ever: false }; // componentDidMount will trigger first load
     this.onStateChange = this.onStateChange.bind(this);
+    this.saveImage = this.saveImage.bind(this);
+
+    // I kinda hate this... we store the last chart state we were given here, to suppress unnecessary API calls.
+    // We can't put it in React state because we don't want to trigger a render... and this state doesn't change
+    // the render, as this value is passed to us by the ChartBuilder component, so it's already rendered.
+    // Only tricky bit is to remember to reset this when our props change.
+    this.lastChartStateString = null;
   }
 
   // Turn ChartBuilder errors into module errors (so user gets the red light etc.)
   parseErrors(errors) {
     var first_err= errors.messages.find(m => m.type=='error');
     if (first_err) {
-      console.log("Chart errors");
+//      console.log("Chart errors");
       store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', first_err.text))
     } else {
-      console.log("Chart no errors");
+//      console.log("Chart no errors");
       store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'ready'))
     }
   }
 
   // Store ChartBuilder state and PNG image into our hidden parameters
-  // into an infinite loop.
   saveState(model) {
     // Store chart parameters. Don't store chart data, that comes from input
     var model2 = Object.assign({}, model, {errors: undefined}); // don't alter real model!
     model2.chartProps = Object.assign({}, model2.chartProps, {data: undefined, input:undefined});
-    this.props.saveState(JSON.stringify(model2));
+    var stateString = JSON.stringify(model2);
 
-    // Store most recently rendered chart image
-    var chartNode = document
-			.getElementsByClassName('renderer-svg-desktop')[0]
-			.getElementsByClassName('chartbuilder-svg')[0];
+    // Save to server only if there is something to save
+    if (stateString != this.lastChartStateString) {
+      // console.log("saving chart state");
+      this.props.saveState(stateString);
+      this.lastChartStateString = stateString;
+    }
+  }
 
-    saveSvgAsPng.svgAsPngUri(chartNode, {}, dataURI => {
-      this.props.saveImageDataURI(dataURI)
-    })
+  // Store most recently rendered chart image
+  saveImage() {
+    // console.log("saveImage");
+    var el = document.getElementsByClassName('renderer-svg-desktop')[0];
+    // console.log(el);
+    if (el) {
+      var chartNode = el.getElementsByClassName('chartbuilder-svg')[0]
+      // console.log(chartNode);
+
+      if (chartNode) {
+        saveSvgAsPng.svgAsPngUri(chartNode, {}, dataURI => {
+          this.props.saveImageDataURI(dataURI)
+        })
+      }
+    }
   }
 
   // called when any change is made to chart. Update error status, save to hidden 'chartstate' text field
   onStateChange(model) {
-    console.log('onStateChange');
+    // console.log('onStateChange');
     this.parseErrors(model.errors);
     this.saveState(model)
   }
@@ -119,6 +140,7 @@ export default class ChartParameter extends React.Component {
     if (this.props.revision != nextProps.revision) {
       this.loadChart();
     }
+    this.lastChartStateString= null;  //  in theory, we could be a different parameter now!
   }
 
   // Update only when we are not loading
@@ -129,7 +151,12 @@ export default class ChartParameter extends React.Component {
   render() {
     // Don't render until we've set chart data at least once
     if (this.state.loaded_ever) {
-      return (<Chartbuilder autosave={true} onStateChange={this.onStateChange} showDataInput={false} showLoadPrevious={false}/>);
+      return (<Chartbuilder
+        autosave={true}
+        onStateChange={this.onStateChange}
+        postRender={this.saveImage}
+        showDataInput={false}
+        showLoadPrevious={false}/>);
     } else {
       return false;
     }

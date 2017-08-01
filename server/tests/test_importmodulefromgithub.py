@@ -1,9 +1,16 @@
-from django.core.exceptions import ValidationError
-
 from server.importmodulefromgithub import *
 from server.tests.utils import *
 
-import os, shutil
+import mock
+
+import json, os, shutil
+
+# Patch get_already_imported from importmodulefromgithub
+def overriden_get_already_imported():
+    return {
+        "accio": "www.github.com/something",
+        "lumos": ""
+    }
 
 class ImportFromGitHubTest(LoggedInTestCase):
     def setUp(self):
@@ -18,8 +25,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
         pwd = os.path.dirname(os.path.abspath(__file__))
         if os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')):
             shutil.rmtree(os.path.join(pwd, 'prototype-dynamic-loading'))
-        if os.path.isdir(os.path.join(pwd, '..', '..', '..', 'importedmodules', 'prototype-dynamic-loading')):
-            shutil.rmtree(os.path.join(pwd, '..', '..', '..', 'importedmodules', 'prototype-dynamic-loading'))
+        if os.path.isdir(os.path.join(pwd, '..', '..', 'importedmodules', 'prototype-dynamic-loading')):
+            shutil.rmtree(os.path.join(pwd, '..', '..', 'importedmodules', 'prototype-dynamic-loading'))
 
 
     def test_sanitise_url(self):
@@ -177,32 +184,44 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.assertEquals(version, '7832830',
                           "The hash of the git repo should be {}, but the function returned {}.".format('427847c',
                                                                                                         version))
-    def test_validate_json(self):
+
+    @mock.patch('server.importmodulefromgithub.get_already_imported', side_effect=overriden_get_already_imported)
+    def test_validate_json(self, get_already_imported_function):
         pwd = os.path.dirname(os.path.abspath(__file__))
         self.setup_module_structure(pwd)
         test_dir = os.path.join(pwd, "prototype-dynamic-loading")
         mapping = {}
         #ensure we get a ValidationError if the mapping doesn't have a json key.
         with self.assertRaisesMessage(ValidationError, "No JSON file found in remote repository."):
-            validate_json(mapping, pwd, "prototype-dynamic-loading")
+            validate_json("", mapping, pwd, "prototype-dynamic-loading")
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
                          "Repository should be deleted on ValidationError (missing json key).")
 
         #check valid scenario, i.e. the system successfully parses the JSON configuration.
         self.setup_module_structure(pwd)
         mapping = {'json': 'importable.json', 'py': 'importable.py'}
-        module_config, json_file = validate_json(mapping, pwd, "prototype-dynamic-loading")
+        module_config, json_file = validate_json("", mapping, pwd, "prototype-dynamic-loading")
         self.assertTrue(json_file == 'importable.json', "The json file should be importable.json.")
         self.assertTrue(len(module_config) == 5, 'The configuration should have loaded 5 items, but it loaded ' +
                                                  ' {} items.'.format(len(module_config)))
         self.assertTrue(all (k in module_config for k in ("id_name", "description", "name", "category", "parameters")),
                         "Not all mandatory keys exist in the module_config/json file.")
 
-        #ensure error if module is already loaded.
+        # ensure error if module is already loaded.
         # whilst this is artificially loading an item in the system, it's a reasonable way to do a unit test for potential _real_ modules.
         sys.modules['server.modules.importable'] = ""
-        with self.assertRaisesMessage(ValidationError, "A module named importable is already loaded."):
-            validate_json(mapping, pwd, "prototype-dynamic-loading")
+        # amend underlying JSON file
+        open_file = open(os.path.join(pwd, 'prototype-dynamic-loading', 'importable.json'))
+        try:
+            module_config = json.load(open_file)
+            module_config['id_name'] = "lumos"
+        finally:
+            open_file.close()
+
+        with open(os.path.join(pwd, 'prototype-dynamic-loading', 'importable.json'), "w") as writable:
+            json.dump(module_config, writable)
+        with self.assertRaisesMessage(ValidationError, "Module lumos has already been loaded, and its source is Internal."):
+            validate_json("someurl", mapping, pwd, "prototype-dynamic-loading")
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
                          "Repository should be deleted on module already being loaded into the system.")
 
@@ -213,20 +232,20 @@ class ImportFromGitHubTest(LoggedInTestCase):
         mapping = {}
         # ensure we get a ValidationError if the mapping doesn't have a json key.
         with self.assertRaisesMessage(ValidationError, "No Python file found in remote repository."):
-            validate_python(mapping, pwd, "../../../importedmodules/", "prototype-dynamic-loading", "123456")
+            validate_python(mapping, pwd, "../../importedmodules/", "prototype-dynamic-loading", "123456")
         self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
                          "Repository should be deleted on ValidationError (missing json key).")
 
         #check valid scenario
         self.setup_module_structure(pwd)
         mapping = {'json': 'importable.json', 'py': 'importable.py'}
-        module_directory = os.path.join(pwd, "..", "..", "..", "importedmodules")
+        module_directory = os.path.join(pwd, "..", "..", "importedmodules")
         python_file, destination_directory = \
             validate_python(mapping, pwd, module_directory, "prototype-dynamic-loading", "123456")
 
         self.assertTrue(python_file == 'importable.py', "The python file should be importable.py")
-        self.assertTrue(destination_directory == pwd + "/../../../importedmodules/prototype-dynamic-loading/123456",
-                "The destination directory should be {}/prototype-dynamic-loading/123456".format(pwd + "/../../../importedmodules") +
+        self.assertTrue(destination_directory == pwd + "/../../importedmodules/prototype-dynamic-loading/123456",
+                "The destination directory should be {}/prototype-dynamic-loading/123456".format(pwd + "/../../importedmodules") +
                 " but it's {}".format(destination_directory))
 
         #check if json already exists for the given module-version combination.
@@ -251,7 +270,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         #setup things like the json directory and the python directory and everything else –
         #this is kinda tedious...
         pwd = os.path.dirname(os.path.abspath(__file__))
-        destination_directory = os.path.join(pwd, "../../../importedmodules/prototype-dynamic-loading/123456")
+        destination_directory = os.path.join(pwd, "../../importedmodules/prototype-dynamic-loading/123456")
 
         test_dir = os.path.join(pwd, "prototype-dynamic-loading")
 
@@ -297,7 +316,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
     def test_validate_python_functions(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
-        destination_directory = os.path.join(pwd, "../../../importedmodules/prototype-dynamic-loading/123456")
+        destination_directory = os.path.join(pwd, "../../importedmodules/prototype-dynamic-loading/123456")
 
         test_dir = os.path.join(pwd, "prototype-dynamic-loading")
 

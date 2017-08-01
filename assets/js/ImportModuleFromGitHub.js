@@ -24,6 +24,8 @@ export default class ImportModuleFromGitHub extends React.Component {
     this.onKeyPress = this.keyPress.bind(this); // to handle user hitting enter, which then submits
 
     this.moduleLibrary = this.props.moduleLibrary;
+
+    this.handleResponse = this.handleResponse.bind(this);
   }
 
   keyPress(event) {
@@ -66,28 +68,81 @@ export default class ImportModuleFromGitHub extends React.Component {
           'X-CSRFToken': csrfToken
         },
         body: JSON.stringify(eventData)
+      })
+      .then((result) => result.json())
+      .then((result) => {
+        this.handleResponse(result);
+      })
+      .then(() => {
+        this.moduleLibrary.updated(true);
+      })
+  }
+
+  handleResponse(response) {
+    // handle error callback
+    if (response.error) {
+      this.setState({
+        message_type: "error", 
+        message: response.error
       });
+    } else { // handle success callback
+      this.setState({
+        message_type: "success", 
+        message: response // contains the JSON with all the fields we might want to display. 
+      })
+    }
   }
 
   render() {
-    return (
-      <form onSubmit={this.handleSubmit}>
-        <div className="import-module-label">
-          Import module from GitHub:
-          <input type="text" 
-                 className="data-paragraph-g text-field mt-2"
-                 value={this.state.value} 
-                 onChange={this.handleChange} 
-                 onKeyPress={this.handleChange}
-                 />
+
+    // what is visible? 
+    var visible = null; 
+
+    var cancelButton = <Button onClick={this.cancel.bind(this)} 
+            className='button-blue'>Cancel</Button>
+
+    if (this.state.message) {
+      if (this.state.message_type == 'error') {
+        visible = <div><div className="import-github-error">
+            Error importing module from GitHub: 
+            {this.state.message}
+          </div>
+          <div className="import-github-response-button">
+            <Button onClick={this.cancel.bind(this)} 
+                className='button-blue'>OK</Button>
+          </div></div>
+      } else if (this.state.message_type == 'success') {
+        var json = JSON.parse(this.state.message)
+        visible = <div><div className="import-github-success">
+          Successfully imported {json.author}'s module "{json.name}" under category "{json.category}".
         </div>
-        <div className="import-module-buttons">
+        <div className="import-github-response-button">
+            <Button onClick={this.cancel.bind(this)} 
+                className='button-blue'>OK</Button>
+          </div></div> 
+      }
+    } else {
+      visible = <div className="import-module-buttons">
           <Button onClick={this.cancel.bind(this)} 
             className='button-blue'>Cancel</Button>
           <Button onClick={this.handleSubmit.bind(this)} 
             style={{'marginLeft': '20px'}} // spacing between buttons.
             className='button-blue'>Submit</Button>
         </div>
+    }
+
+    return (
+      <form onSubmit={this.handleSubmit}>
+        <div className="import-module-label">
+          Import module from GitHub:
+          <input type="text" 
+                className="data-paragraph-g text-field mt-2"
+                value={this.state.value} 
+                onChange={this.handleChange} 
+                onKeyPress={this.handleChange}
+                />
+        </div>
+        {visible}
       </form>
     );
   }

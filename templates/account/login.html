@@ -7,20 +7,20 @@
 
 {% block content %}
     <form method="POST" action="{% url "account_login" %}" autocapitalize="off" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
-        <legend>{% trans "Log in to an existing account" %}</legend>
+        <legend class='title-1 t-d-gray text-center mb-3'>{% trans "Sign In" %}</legend>
         {% csrf_token %}
         {{ form }}
         {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
         {% endif %}
-        <button type="submit" class="btn btn-primary">{% trans "Log in" %}</button>
-        <a href="{% url "account_password_reset" %}" class="btn btn-link">{% trans "Forgot your password?" %}</a>
+        <button type="submit" class="action-button button-full-orange mx-auto mb-3">{% trans "Log in" %}</button>
+        <div class='text-center'>
+            <a href="{% url "account_password_reset" %}" class="btn btn-link content-4 t-f-blue mb-3 ">{% trans "Forgot password?" %}</a>
+        </div>
     </form>
     {% if ACCOUNT_OPEN_SIGNUP %}
-        <p class="login-signup">
-            <small>
-                {% trans "Don't have an account?" %}  <strong><a href="{% urlnext 'account_signup' %}">{% trans "Sign up" %}</a></strong>
-            </small>
+        <p class="login-footer content-3 t-d-gray text-center">
+            {% trans "Don't have an account?" %}  <strong><a href="{% urlnext 'account_signup' %}" class='t-f-blue'>{% trans "Sign up" %}</a></strong>
         </p>
     {% endif %}
 {% endblock %}

@@ -9,7 +9,7 @@ exports[`renders correctly 1`] = `
           className="navbar"
         >
           <h1
-            className="navbar-brand mb-0 mr-auto"
+            className="navbar-brand mb-0 mr-auto title-3"
           >
             CJ Workbench
           </h1>
@@ -59,31 +59,41 @@ exports[`renders correctly 1`] = `
                       tabIndex="-1"
                     >
                       <DropdownItem
+                        className="dropdown-menu-item"
                         href="http://blog.cjworkbench.org"
                         tag="a"
                         toggle={true}
                       >
                         <a
-                          className="dropdown-item"
+                          className="dropdown-menu-item dropdown-item"
                           href="http://blog.cjworkbench.org"
                           onClick={[Function]}
                           tabIndex="0"
                         >
-                           Help 
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Help
+                          </span>
                         </a>
                       </DropdownItem>
                       <DropdownItem
+                        className="dropdown-menu-item"
                         href="/account/logout"
                         tag="a"
                         toggle={true}
                       >
                         <a
-                          className="dropdown-item"
+                          className="dropdown-menu-item dropdown-item"
                           href="/account/logout"
                           onClick={[Function]}
                           tabIndex="0"
                         >
-                           Logout 
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Logout
+                          </span>
                         </a>
                       </DropdownItem>
                     </div>
@@ -113,12 +123,12 @@ exports[`renders correctly 1`] = `
             <span
               className="input-group-btn"
             >
-              <button
-                className="new-workflow-button btn btn-secondary"
+              <div
+                className="button-blue action-button new-workflow-button"
                 onClick={[Function]}
               >
                 New
-              </button>
+              </div>
             </span>
           </div>
         </div>
@@ -133,7 +143,7 @@ exports[`renders correctly 1`] = `
           className="card-block"
         >
           <h3
-            className="card-title "
+            className="card-title title-2 t-d-gray ml-4 mb-3"
           >
             Workflows
           </h3>
@@ -156,7 +166,7 @@ exports[`renders correctly 2`] = `
           className="navbar"
         >
           <h1
-            className="navbar-brand mb-0 mr-auto"
+            className="navbar-brand mb-0 mr-auto title-3"
           >
             CJ Workbench
           </h1>
@@ -206,31 +216,41 @@ exports[`renders correctly 2`] = `
                       tabIndex="-1"
                     >
                       <DropdownItem
+                        className="dropdown-menu-item"
                         href="http://blog.cjworkbench.org"
                         tag="a"
                         toggle={true}
                       >
                         <a
-                          className="dropdown-item"
+                          className="dropdown-menu-item dropdown-item"
                           href="http://blog.cjworkbench.org"
                           onClick={[Function]}
                           tabIndex="0"
                         >
-                           Help 
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Help
+                          </span>
                         </a>
                       </DropdownItem>
                       <DropdownItem
+                        className="dropdown-menu-item"
                         href="/account/logout"
                         tag="a"
                         toggle={true}
                       >
                         <a
-                          className="dropdown-item"
+                          className="dropdown-menu-item dropdown-item"
                           href="/account/logout"
                           onClick={[Function]}
                           tabIndex="0"
                         >
-                           Logout 
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Logout
+                          </span>
                         </a>
                       </DropdownItem>
                     </div>
@@ -260,12 +280,12 @@ exports[`renders correctly 2`] = `
             <span
               className="input-group-btn"
             >
-              <button
-                className="new-workflow-button btn btn-secondary"
+              <div
+                className="button-blue action-button new-workflow-button"
                 onClick={[Function]}
               >
                 New
-              </button>
+              </div>
             </span>
           </div>
         </div>
@@ -280,7 +300,7 @@ exports[`renders correctly 2`] = `
           className="card-block"
         >
           <h3
-            className="card-title "
+            className="card-title title-2 t-d-gray ml-4 mb-3"
           >
             Workflows
           </h3>
@@ -296,7 +316,9 @@ exports[`renders correctly 2`] = `
                 <div
                   className="d-flex justify-content-between"
                 >
-                  <span>
+                  <span
+                    className="t-d-gray title-4"
+                  >
                     Charting
                   </span>
                   <div
@@ -317,14 +339,14 @@ exports[`renders correctly 2`] = `
                           >
                             <DropdownToggle
                               aria-haspopup={true}
-                              className="menu-icon icon-more"
+                              className="context-button"
                               color="secondary"
                               data-toggle="dropdown"
                             >
                               <Button
                                 aria-expanded={false}
                                 aria-haspopup="true"
-                                className="menu-icon icon-more"
+                                className="context-button"
                                 color="secondary"
                                 data-toggle="dropdown"
                                 onClick={[Function]}
@@ -333,41 +355,68 @@ exports[`renders correctly 2`] = `
                                 <button
                                   aria-expanded={false}
                                   aria-haspopup="true"
-                                  className="menu-icon icon-more btn btn-secondary"
+                                  className="context-button btn btn-secondary"
                                   data-toggle="dropdown"
                                   onClick={[Function]}
                                   type="button"
                                 >
-                                  <span
-                                    className="sr-only"
-                                  >
-                                    Toggle Dropdown
-                                  </span>
+                                  <div
+                                    className="button-icon icon-more"
+                                  />
                                 </button>
                               </Button>
                             </DropdownToggle>
                             <DropdownMenu
-                              right={true}
                               tag="div"
                             >
                               <div
                                 aria-hidden={true}
-                                className="dropdown-menu dropdown-menu-right"
+                                className="dropdown-menu"
                                 role="menu"
                                 tabIndex="-1"
                               >
                                 <DropdownItem
+                                  className="dropdown-menu-item"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-item"
+                                    className="dropdown-menu-item dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
                                   >
-                                    Delete
+                                    <i
+                                      className="icon-bin"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Delete
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
+                                  className="dropdown-menu-item"
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-menu-item dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <i
+                                      className="icon-Share"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Share
+                                    </span>
                                   </button>
                                 </DropdownItem>
                               </div>
@@ -389,7 +438,9 @@ exports[`renders correctly 2`] = `
                 <div
                   className="d-flex justify-content-between"
                 >
-                  <span>
+                  <span
+                    className="t-d-gray title-4"
+                  >
                     Messy data cleanup
                   </span>
                   <div
@@ -410,14 +461,14 @@ exports[`renders correctly 2`] = `
                           >
                             <DropdownToggle
                               aria-haspopup={true}
-                              className="menu-icon icon-more"
+                              className="context-button"
                               color="secondary"
                               data-toggle="dropdown"
                             >
                               <Button
                                 aria-expanded={false}
                                 aria-haspopup="true"
-                                className="menu-icon icon-more"
+                                className="context-button"
                                 color="secondary"
                                 data-toggle="dropdown"
                                 onClick={[Function]}
@@ -426,41 +477,68 @@ exports[`renders correctly 2`] = `
                                 <button
                                   aria-expanded={false}
                                   aria-haspopup="true"
-                                  className="menu-icon icon-more btn btn-secondary"
+                                  className="context-button btn btn-secondary"
                                   data-toggle="dropdown"
                                   onClick={[Function]}
                                   type="button"
                                 >
-                                  <span
-                                    className="sr-only"
-                                  >
-                                    Toggle Dropdown
-                                  </span>
+                                  <div
+                                    className="button-icon icon-more"
+                                  />
                                 </button>
                               </Button>
                             </DropdownToggle>
                             <DropdownMenu
-                              right={true}
                               tag="div"
                             >
                               <div
                                 aria-hidden={true}
-                                className="dropdown-menu dropdown-menu-right"
+                                className="dropdown-menu"
                                 role="menu"
                                 tabIndex="-1"
                               >
                                 <DropdownItem
+                                  className="dropdown-menu-item"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-item"
+                                    className="dropdown-menu-item dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
                                   >
-                                    Delete
+                                    <i
+                                      className="icon-bin"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Delete
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
+                                  className="dropdown-menu-item"
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-menu-item dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <i
+                                      className="icon-Share"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Share
+                                    </span>
                                   </button>
                                 </DropdownItem>
                               </div>
@@ -482,7 +560,9 @@ exports[`renders correctly 2`] = `
                 <div
                   className="d-flex justify-content-between"
                 >
-                  <span>
+                  <span
+                    className="t-d-gray title-4"
+                  >
                     Document search
                   </span>
                   <div
@@ -503,14 +583,14 @@ exports[`renders correctly 2`] = `
                           >
                             <DropdownToggle
                               aria-haspopup={true}
-                              className="menu-icon icon-more"
+                              className="context-button"
                               color="secondary"
                               data-toggle="dropdown"
                             >
                               <Button
                                 aria-expanded={false}
                                 aria-haspopup="true"
-                                className="menu-icon icon-more"
+                                className="context-button"
                                 color="secondary"
                                 data-toggle="dropdown"
                                 onClick={[Function]}
@@ -519,41 +599,68 @@ exports[`renders correctly 2`] = `
                                 <button
                                   aria-expanded={false}
                                   aria-haspopup="true"
-                                  className="menu-icon icon-more btn btn-secondary"
+                                  className="context-button btn btn-secondary"
                                   data-toggle="dropdown"
                                   onClick={[Function]}
                                   type="button"
                                 >
-                                  <span
-                                    className="sr-only"
-                                  >
-                                    Toggle Dropdown
-                                  </span>
+                                  <div
+                                    className="button-icon icon-more"
+                                  />
                                 </button>
                               </Button>
                             </DropdownToggle>
                             <DropdownMenu
-                              right={true}
                               tag="div"
                             >
                               <div
                                 aria-hidden={true}
-                                className="dropdown-menu dropdown-menu-right"
+                                className="dropdown-menu"
                                 role="menu"
                                 tabIndex="-1"
                               >
                                 <DropdownItem
+                                  className="dropdown-menu-item"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-item"
+                                    className="dropdown-menu-item dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
                                   >
-                                    Delete
+                                    <i
+                                      className="icon-bin"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Delete
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
+                                  className="dropdown-menu-item"
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-menu-item dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <i
+                                      className="icon-Share"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Share
+                                    </span>
                                   </button>
                                 </DropdownItem>
                               </div>
@@ -575,7 +682,9 @@ exports[`renders correctly 2`] = `
                 <div
                   className="d-flex justify-content-between"
                 >
-                  <span>
+                  <span
+                    className="t-d-gray title-4"
+                  >
                     Visualization
                   </span>
                   <div
@@ -596,14 +705,14 @@ exports[`renders correctly 2`] = `
                           >
                             <DropdownToggle
                               aria-haspopup={true}
-                              className="menu-icon icon-more"
+                              className="context-button"
                               color="secondary"
                               data-toggle="dropdown"
                             >
                               <Button
                                 aria-expanded={false}
                                 aria-haspopup="true"
-                                className="menu-icon icon-more"
+                                className="context-button"
                                 color="secondary"
                                 data-toggle="dropdown"
                                 onClick={[Function]}
@@ -612,41 +721,68 @@ exports[`renders correctly 2`] = `
                                 <button
                                   aria-expanded={false}
                                   aria-haspopup="true"
-                                  className="menu-icon icon-more btn btn-secondary"
+                                  className="context-button btn btn-secondary"
                                   data-toggle="dropdown"
                                   onClick={[Function]}
                                   type="button"
                                 >
-                                  <span
-                                    className="sr-only"
-                                  >
-                                    Toggle Dropdown
-                                  </span>
+                                  <div
+                                    className="button-icon icon-more"
+                                  />
                                 </button>
                               </Button>
                             </DropdownToggle>
                             <DropdownMenu
-                              right={true}
                               tag="div"
                             >
                               <div
                                 aria-hidden={true}
-                                className="dropdown-menu dropdown-menu-right"
+                                className="dropdown-menu"
                                 role="menu"
                                 tabIndex="-1"
                               >
                                 <DropdownItem
+                                  className="dropdown-menu-item"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-item"
+                                    className="dropdown-menu-item dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
                                   >
-                                    Delete
+                                    <i
+                                      className="icon-bin"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Delete
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
+                                  className="dropdown-menu-item"
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-menu-item dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <i
+                                      className="icon-Share"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Share
+                                    </span>
                                   </button>
                                 </DropdownItem>
                               </div>

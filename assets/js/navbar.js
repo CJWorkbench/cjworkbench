@@ -13,7 +13,7 @@ export class WorkflowListNavBar extends React.Component {
     return (
       <div>
         <nav className="navbar">
-          <h1 className="navbar-brand mb-0 mr-auto">CJ Workbench</h1>
+          <h1 className="navbar-brand mb-0 mr-auto title-3">CJ Workbench</h1>
           <WfHamburgerMenu />
         </nav>
       </div>

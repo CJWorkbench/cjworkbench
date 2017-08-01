@@ -7,9 +7,9 @@
 
 {% block body %}
     <form method="POST" action="{% url "account_settings" %}">
-        <legend>{% trans "Account" %}</legend>
+        <legend class='title-1 t-d-gray text-center mb-3'>{% trans "Account" %}</legend>
         {% csrf_token %}
         {{ form }}
-        <button class="btn btn-primary" type="submit">{% trans "Save" %}</button>
+        <button class="button-blue action-button mx-auto mt-3" type="submit">{% trans "Save" %}</button>
     </form>
 {% endblock %}

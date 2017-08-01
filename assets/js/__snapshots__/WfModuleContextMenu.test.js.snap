@@ -6,7 +6,7 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
 >
   <DropdownToggle
     aria-haspopup={true}
-    className="context-button text-center p-0"
+    className="context-button"
     color="secondary"
     data-toggle="dropdown"
   >
@@ -15,50 +15,50 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
     />
   </DropdownToggle>
   <DropdownMenu
-    className="dropdown-list-menu"
+    className=""
     right={true}
     tag="div"
   >
     <DropdownItem
-      className="dropdown-list-item"
+      className="dropdown-menu-item mb-1"
       onClick={[Function]}
       tag="button"
       toggle={true}
     >
       <span
-        className="icon-download icon-w mr-2"
+        className="icon-download "
       />
       <span
-        className="setting-gray"
+        className="t-d-gray content-3 ml-3"
       >
         Export
       </span>
     </DropdownItem>
     <DropdownItem
-      className="dropdown-list-item"
+      className="dropdown-menu-item"
       tag="button"
       toggle={true}
     >
       <span
-        className="icon-info icon-w mr-2"
+        className="icon-info"
       />
       <span
-        className="setting-gray"
+        className="t-d-gray content-3 ml-3"
       >
         Update
       </span>
     </DropdownItem>
     <DropdownItem
-      className="dropdown-list-item"
+      className="dropdown-menu-item"
       onClick={[Function]}
       tag="button"
       toggle={true}
     >
       <span
-        className="icon-bin icon-w mr-2"
+        className="icon-bin"
       />
       <span
-        className="setting-gray"
+        className="t-d-gray content-3 ml-3"
       >
         Delete
       </span>

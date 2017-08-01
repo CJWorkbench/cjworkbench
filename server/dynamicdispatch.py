@@ -7,8 +7,7 @@ class DynamicDispatch:
     #the base directory where all modules imported should be stored, i.e. the place where we go to lookup
     #modules that aren't pre-loaded when the workbench starts up.
     DYNAMIC_MODULES_BASE_DIRECTORY = os.path.join(
-        os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))),
-        '..', '..', 'importedmodules'
+        os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))), '..', 'importedmodules'
     )
 
     def __init__(self):

@@ -28,7 +28,7 @@ var CategoriesList = React.createClass({
       );
     }, this);
     return (
-      <div className="list">{listItems}</div>
+      <div className="list content-3 t-d-gray">{listItems}</div>
     );
   }
 });
@@ -104,6 +104,10 @@ export default class ModuleLibrary extends React.Component {
     this.props.addModule(event.target.id);
   }
 
+  updated(updated) {
+    this.componentWillMount() // dummy update to force a re-render. 
+  }
+
   /**
    * Sets the visibility of the "Import from GitHub" component.
    */
@@ -112,7 +116,6 @@ export default class ModuleLibrary extends React.Component {
       importFromGitHubVisible: isVisible
     }));
   }
-
 
   /**
    * Renders the Module Library, i.e. a collection of <Module Category>, 
@@ -185,17 +188,22 @@ export default class ModuleLibrary extends React.Component {
     return (
       <div className="module-library">
         <div className="nav-bar">
-          <div className="h1">Module Library</div>
+          <div className='title-3 t-white'>Module Library</div>
           <div>
             <div className={displayClassName}>
               {display}
             </div>
-             <ModuleSearch addModule={this.props.addModule} items={this.state.items}/>
+             <ModuleSearch addModule={this.props.addModule} 
+                            items={this.state.items} 
+                            workflow={this.workflow}
+                            />
           </div>
         </div>
-        <CategoriesList
-          data={categories}
-        />
+        <div className="module-list">
+          <CategoriesList
+            data={categories}
+          />
+        </div>
         </div>
 
     );

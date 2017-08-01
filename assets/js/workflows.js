@@ -81,7 +81,7 @@ export default class Workflows extends React.Component {
             <div className="col-12 col-md-auto">
               <div className="input-group">
                 <span className="input-group-btn">
-                  <button className='new-workflow-button btn btn-secondary' onClick={this.click}>New</button>
+                  <div className='button-blue action-button new-workflow-button' onClick={this.click}>New</div>
                 </span>
               </div>
             </div>
@@ -91,7 +91,7 @@ export default class Workflows extends React.Component {
           <div className="card w-75 mx-auto workflows-list">
             <div className="card-block">
 
-              <h3 className="card-title ">Workflows</h3>
+              <h3 className="card-title title-2 t-d-gray ml-4 mb-3">Workflows</h3>
 
               <div className="">
                 {this.state.workflows.map( listValue => {
@@ -99,9 +99,8 @@ export default class Workflows extends React.Component {
                       <div className="card card-block item-test-class workflow-in-list" key={listValue.id}>
                         <a href={"/workflows/" + listValue.id}>
                           <div className='d-flex justify-content-between'>
-                            <span>{listValue.name}</span>
+                            <span className='t-d-gray title-4'>{listValue.name}</span>
                             {/* Extra div wrapper to prevent parent's navigation to WF page*/}
-                            {/* ??? Can the PreventDeault be passed in to WfContextMenu ???*/}
                             <div onClick={(e) => e.preventDefault()} className="menu-test-class">
                               <WfContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
                             </div>                                                                                

@@ -25,13 +25,18 @@ export default class MenuParam extends React.Component {
   render() {
     var items = this.props.items.split('|');
     var itemDivs = items.map( (name, idx) => {
-        return <option key={idx} value={idx}>{name}</option>;
+        return <option key={idx} value={idx} className='dropdown-menu-item t-d-gray content-3'>{name}</option>;
     });
 
     return (
-      <div>
-        <label className='mr-1'>{this.props.name}:</label>
-        <select className="custom-select" value={this.state.selectedIdx} onChange={this.onChange}>
+      <div className='d-flex flex-column mb-3'>
+        <label className='mr-1 t-d-gray content-3'>{this.props.name}:</label>
+        <select
+          className='custom-select dropdown-selector'
+          value={this.state.selectedIdx}
+          onChange={this.onChange}
+          disabled={this.props.isReadOnly}
+        >
           {itemDivs}
         </select>
       </div>
