@@ -178,39 +178,40 @@ export default class ModuleLibrary extends React.Component {
       displayClassName = 'import-module';
       display = importFromGitHub;
     } else {
-      displayClassName = 'import-module-button';
-      display = <Button className='button-blue' onClick={() =>
+      displayClassName = 'import-module-button content-3 ml-3 mt-2';
+      display = <div className='' onClick={() =>
         this.setImportFromGitHubComponentVisibility(true)}> 
         Import from GitHub
-        </Button>;
+        </div>;
     }
 
     return (
       <div className="module-library">
-        <div className="nav-bar">
-          <div className='title-3 t-white'>Module Library</div>
-          <div>
-            <div className={displayClassName}>
-              {display}
+        <div className="module-library-container">
+          <div className="nav-bar">
+            <div className='d-flex justify-content-start flex-row'>
+              <div className='title-3 t-white mr-3'>Module Library</div>
+              <div className={displayClassName}>{display}</div>
+              <div className='icon-close-white ml-auto' onClick={this.props.toggleModuleLibrary}></div>
             </div>
-             <ModuleSearch addModule={this.props.addModule} 
-                            items={this.state.items} 
-                            workflow={this.workflow}
-                            />
+            <ModuleSearch addModule={this.props.addModule} 
+                              items={this.state.items} 
+                              workflow={this.workflow}
+            />
+          </div>
+          <div className="module-list">
+            <CategoriesList
+              data={categories}
+            />
           </div>
         </div>
-        <div className="module-list">
-          <CategoriesList
-            data={categories}
-          />
-        </div>
-        </div>
-
+      </div>
     );
   }
 }
 
 ModuleLibrary.propTypes = {
-  addModule: PropTypes.func,
-  workflow: PropTypes.object,
+  addModule:            PropTypes.func,
+  toggleModuleLibrary:  PropTypes.func,
+  workflow:             PropTypes.object,
 };

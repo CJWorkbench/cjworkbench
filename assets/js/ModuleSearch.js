@@ -125,7 +125,7 @@ class ModuleSearch extends Component {
   render () {
     const { value, suggestions } = this.state;
     const inputProps = {
-      placeholder: 'Search for a module',
+      placeholder: 'Search',
       value,
       onChange: this.onChange
     };

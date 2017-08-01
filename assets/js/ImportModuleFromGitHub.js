@@ -98,8 +98,8 @@ export default class ImportModuleFromGitHub extends React.Component {
     // what is visible? 
     var visible = null; 
 
-    var cancelButton = <Button onClick={this.cancel.bind(this)} 
-            className='button-blue'>Cancel</Button>
+    var cancelButton = <div onClick={this.cancel.bind(this)} 
+            className='button-blue action-button'>Cancel</div>
 
     if (this.state.message) {
       if (this.state.message_type == 'error') {
@@ -108,8 +108,8 @@ export default class ImportModuleFromGitHub extends React.Component {
             {this.state.message}
           </div>
           <div className="import-github-response-button">
-            <Button onClick={this.cancel.bind(this)} 
-                className='button-blue'>OK</Button>
+            <div onClick={this.cancel.bind(this)} 
+                className='button-blue action-button'>OK</div>
           </div></div>
       } else if (this.state.message_type == 'success') {
         var json = JSON.parse(this.state.message)
@@ -117,26 +117,27 @@ export default class ImportModuleFromGitHub extends React.Component {
           Successfully imported {json.author}'s module "{json.name}" under category "{json.category}".
         </div>
         <div className="import-github-response-button">
-            <Button onClick={this.cancel.bind(this)} 
-                className='button-blue'>OK</Button>
+            <div onClick={this.cancel.bind(this)} 
+                className='button-blue action-button'>OK</div>
           </div></div> 
       }
     } else {
       visible = <div className="import-module-buttons">
-          <Button onClick={this.cancel.bind(this)} 
-            className='button-blue'>Cancel</Button>
-          <Button onClick={this.handleSubmit.bind(this)} 
+          <div onClick={this.cancel.bind(this)} 
+            className='button-blue action-button'>Cancel</div>
+          <div onClick={this.handleSubmit.bind(this)} 
             style={{'marginLeft': '20px'}} // spacing between buttons.
-            className='button-blue'>Submit</Button>
+            className='button-blue action-button'>Submit</div>
         </div>
     }
+
 
     return (
       <form onSubmit={this.handleSubmit}>
         <div className="import-module-label">
           Import module from GitHub:
           <input type="text" 
-                className="data-paragraph-g text-field mt-2"
+                className="text-field mt-2"
                 value={this.state.value} 
                 onChange={this.handleChange} 
                 onKeyPress={this.handleChange}

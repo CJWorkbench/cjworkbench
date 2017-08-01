@@ -187,6 +187,7 @@ export default class Workflow extends React.Component {
     var moduleLibrary = <ModuleLibrary
           addModule={module_id => this.props.addModule(module_id,
                         this.props.workflow.wf_modules.length)}
+          toggleModuleLibrary={this.toggleModuleLibrary}
           workflow={this} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
           />
 
