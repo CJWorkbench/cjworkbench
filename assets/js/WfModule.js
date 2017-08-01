@@ -23,18 +23,19 @@ class StatusBar extends React.Component {
 
     switch (this.props.status) {
       case 'ready':
-        barColor = 'module-output-bar-blue';
+        barColor = (this.props.isSelected) ? 'module-output-bar-blue' : 'module-output-bar-white'
         break;
       case 'busy':
         barColor = 'module-output-bar-orange';
         break;
       case 'error':
-        barColor = 'module-output-bar-red';
+        barColor = (this.props.isSelected) ? 'module-output-bar-red' : 'module-output-bar-pink'
         break;
       default:
         barColor = 'module-output-bar-white';
         break;
     }
+
     return <div className={barColor}></div>
   }
 }
@@ -228,7 +229,10 @@ export default class WfModule extends React.Component {
             </div>
             {/* --- Color indicator of module status, on the right of card --- */}
             <div className='output-bar-container'>
-              <StatusBar status={this.wf_module.status}/>
+              <StatusBar 
+                status={this.wf_module.status}
+                isSelected={this.props['data-selected']}
+              />
             </div>
           </div>
         </div>

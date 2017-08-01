@@ -557,21 +557,17 @@ body {
 .output-bar-container {
   border: 0;
 }
-/* base status  */
+/* all good */
 .module-output-bar-white {
   width: 1rem;
   height: 100%;
   background-color: #FFFFFF;
 }
-/* currently selected and ready */
+/* all good & selected */
 .module-output-bar-blue {
   width: 1rem;
   height: 100%;
   background-color: #BFDDE4;
-}
-/* TODO: change on module state: selected, not hover  */
-.module-output-bar-blue:hover {
-  background-color: #DBECF1;
 }
 /* standby  */
 .module-output-bar-orange {
@@ -580,10 +576,16 @@ body {
   background-color: #FBAA6D;
 }
 /* error  */
+.module-output-bar-pink {
+  width: 1rem;
+  height: 100%;
+  background-color: #F3B9B7;;
+}
+/* error & selected */
 .module-output-bar-red {
   width: 1rem;
   height: 100%;
-  background-color: #E24F4A;
+  background-color: #E8726E;
 }
 
 
