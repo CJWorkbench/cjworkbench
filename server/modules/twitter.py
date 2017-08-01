@@ -9,6 +9,7 @@ import csv
 import io
 from .moduleimpl import ModuleImpl
 from server.models import ChangeDataVersionCommand
+from .utils import *
 
 # ---- Twitter ----
 
@@ -58,7 +59,7 @@ class Twitter(ModuleImpl):
     # Combine this set of tweets with previous set of tweets
     def merge_tweets(wf_module, new_table):
         old_table = Twitter.get_stored_tweets(wf_module)
-        if old_table != None:
+        if old_table is not None:
             new_table = pd.concat([new_table,old_table]).drop_duplicates().sort_values('id',ascending=False).reset_index(drop=True)
         return new_table
 
@@ -90,23 +91,26 @@ class Twitter(ModuleImpl):
         except requests.exceptions.HTTPError as e:
             if querytype=='User' and e.response.status_code==401:
                 wfm.set_error('User %s\'s tweets are protected' % query)
-                wfm.store_text('csv', '')
                 return
             elif querytype=='User'and response.status_code==404:
                 wfm.set_error('User %s does not exist' % query)
-                wfm.store_text('csv', '')
                 return
             else:
                 wfm.set_error('HTTP rrror %s fetching tweets' % str(res.status_code))
-                wfm.store_text('csv', '')
                 return
 
-        except Exception as e:
-            wfm.set_error('Error fetching tweets: ' + str(e))
-            wfm.store_text('csv', '')
-            return
 
-        # we are done. save fetched data, and switch to it
-        version = wfm.store_data(tweets.to_csv(index=False)) # index=False to prevent pandas from adding an index col
-        ChangeDataVersionCommand.create(wfm, version)  # also notifies client
+
+        if wfm.status != wfm.ERROR:
+
+            wfm.set_ready(notify=False)
+            new_csv = tweets.to_csv(index=False)  # index=False to prevent pandas from adding an index col
+
+            # Change the data version (when new data found) only if this module set to auto update, or user triggered
+            auto = wfm.auto_update_data or e.get('type') == "click"
+
+            # Also notifies client
+            save_data_if_changed(wfm, new_csv, auto_change_version=auto)
+
+
 
