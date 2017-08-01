@@ -9,15 +9,35 @@ exports[`Fetches and renders 1`] = `
     className="outputpane-box"
   >
     <div
-      className="bg-faded outputpane-header"
+      className="outputpane-header d-flex flex-row justify-content-start"
     >
-      <div>
-        Rows: 
-        2
+      <div
+        className="d-flex flex-column align-items-center justify-content-center mr-5"
+      >
+        <div
+          className="content-4 t-m-gray mb-2"
+        >
+          Rows
+        </div>
+        <div
+          className="content-2 t-d-gray"
+        >
+          2
+        </div>
       </div>
-      <div>
-        Columns: 
-        3
+      <div
+        className="d-flex flex-column align-items-center justify-content-center"
+      >
+        <div
+          className="content-4 t-m-gray mb-2"
+        >
+          Columns
+        </div>
+        <div
+          className="content-2 t-d-gray"
+        >
+          3
+        </div>
       </div>
     </div>
     <div
