@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Module, ModuleVersion
 from server.utils import seconds_to_count_and_units
+from account.utils import user_display
 
 # So far, no one actually wants to see the default values.
 # They'd be a bit trick to serialize anyway, as we'd want to hide the underlying storage (float/string/int/boolean)
@@ -67,13 +68,21 @@ class WorkflowSerializer(serializers.ModelSerializer):
     wf_modules = WfModuleSerializer(many=True, read_only=True)
     revision = serializers.ReadOnlyField()
     read_only = serializers.SerializerMethodField()
+    last_update = serializers.SerializerMethodField()
+    owner_name = serializers.SerializerMethodField()
 
     def get_read_only(self, obj):
         return obj.read_only(self.context['user'])
 
+    def get_last_update(self, obj):
+        return obj.last_delta.datetime
+
+    def get_owner_name(self, obj):
+        return user_display(obj.owner)
+
     class Meta:
         model = Workflow
-        fields = ('id', 'name', 'revision', 'wf_modules', 'public', 'read_only')
+        fields = ('id', 'name', 'revision', 'wf_modules', 'public', 'read_only', 'last_update', 'owner_name')
 
 
 # Lite Workflow: Don't include any of the modules, just name and ID. For /workflows page

@@ -164,19 +164,30 @@ export default class Workflow extends React.Component {
         <WorkflowNavBar workflowId={this.props.workflow.id} api={this.props.api} /><div className="workflow-container">
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
-              <EditableWorkflowName
-                value={this.props.workflow.name}
-                editClass='editable-title-field title-1 t-d-gray'
-                wfId={this.props.workflow.id} />
-              <Button onClick={this.toggleModuleLibrary.bind(this)}
-                  className='button-blue action-button'>Add Module</Button>
-              <div onClick={(e) => e.preventDefault()} className="menu-test-class" style={{float: 'right'}}>
-              {!this.props.workflow.read_only > 0 &&
-                <WfContextMenu
-                  deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }
-                  shareWorkflow={ () => this.togglePublic(this.props.workflow.public) }
-                />
-              }
+              <div className="d-flex justify-content-between">
+                <div>Back to Workflows</div>
+                {!this.props.workflow.read_only > 0 &&
+                  <WfContextMenu
+                    deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }
+                    shareWorkflow={ () => this.togglePublic(this.props.workflow.public) }
+                  />
+                }
+              </div>
+              <br></br>
+              <div className="d-flex justify-content-between">
+                <div>
+                <EditableWorkflowName
+                  value={this.props.workflow.name}
+                  editClass='editable-title-field title-1 t-d-gray'
+                  wfId={this.props.workflow.id} />
+                <ul className="list-inline list-workflow-meta">
+                  <li className="list-inline-item">by <strong className="t-f-blue">{this.props.workflow.owner_name}</strong></li>
+                  <li className="list-inline-item">updated <strong className="t-f-blue">{this.props.workflow.last_update}</strong></li>
+                  <li className="list-inline-item"><strong className={this.state.isPublic ? 't-f-blue' : 't-o-red'}>{this.state.isPublic ? 'public' : 'private'}</strong></li>
+                </ul>
+                </div>
+                <Button onClick={this.toggleModuleLibrary.bind(this)}
+                    className='button-blue action-button'>Add Module</Button>
               </div>
             </div>
             <div className="modulestack-list w-75 mx-auto ">

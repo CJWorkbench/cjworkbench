@@ -138,7 +138,9 @@ body {
 .t-orange {
   color: #F8AA6D;
 }
-
+.t-o-red {
+  color: #e24f4a;
+}
 /* Backgrounds  */
 .b-vl-gray {
   background-color: #FAFAFA;
@@ -353,6 +355,11 @@ body {
 }
 .dropdown-menu-item:hover {
   background-color: #F5F5F5;
+}
+.list-workflow-meta li:not(:last-child):after {
+  content: '-';
+  display:inline-block;
+  margin-left: 5px;
 }
 
 
