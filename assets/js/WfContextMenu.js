@@ -2,7 +2,12 @@
 // triggered by click on three-dot icon next to listed workflow
 
 import React from 'react'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import {
+  UncontrolledDropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem
+} from 'reactstrap'
 import PropTypes from 'prop-types'
 
 
