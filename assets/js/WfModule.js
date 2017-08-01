@@ -170,6 +170,7 @@ export default class WfModule extends React.Component {
       : "Write notes here"
     if (this.state.showNotes)
       notes = <EditableNotes
+                isReadOnly={this.props.isReadOnly}
                 value={value}
                 hideNotes={ () => this.hideNotes() }
                 editClass='editable-notes-field t-d-gray note'
@@ -221,7 +222,7 @@ export default class WfModule extends React.Component {
               </div>
               {/* --- Error messages appear here --- */}
               <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
-              {/* --- Module details, will expand / collapse --- */}              
+              {/* --- Module details, will expand / collapse --- */}
 
               <Collapse className='' isOpen={!this.state.isCollapsed} >
                 {inside}

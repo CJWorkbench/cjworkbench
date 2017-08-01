@@ -128,7 +128,7 @@ export default class Workflow extends React.Component {
         'Content-Type': 'application/json',
         'X-CSRFToken': csrfToken
       },
-      body: JSON.stringify({'public': !isPublic}) })
+      body: JSON.stringify({'public': isPublic}) })
     .then( () => {
       this.setState({isPublic: isPublic});
     })
@@ -225,7 +225,8 @@ export default class Workflow extends React.Component {
                 <EditableWorkflowName
                   value={this.props.workflow.name}
                   editClass='editable-title-field title-1 t-d-gray'
-                  wfId={this.props.workflow.id} />
+                  wfId={this.props.workflow.id}
+                  isReadOnly={this.props.workflow.read_only} />
                 <ul className="list-inline list-workflow-meta">
                   <li className="list-inline-item">by <strong className="t-f-blue">{this.props.workflow.owner_name}</strong></li>
                   <li className="list-inline-item">updated <strong className="t-f-blue">{this.props.workflow.last_update}</strong></li>
