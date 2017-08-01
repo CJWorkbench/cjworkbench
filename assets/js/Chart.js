@@ -156,6 +156,7 @@ export default class ChartParameter extends React.Component {
         onStateChange={this.onStateChange}
         postRender={this.saveImage}
         showDataInput={false}
+        showExport={false}
         showLoadPrevious={false}/>);
     } else {
       return false;

@@ -1229,6 +1229,7 @@ body {
 /* TODO copied from text-field t-d-gray content-2... but stripped down  */
 .chartbuilder-main .cb-text-input input {
   height: 4rem;
+  width: 100%;
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
   color: #686768;
 }
@@ -1237,4 +1238,10 @@ body {
 /* TODO height (but not width) copied from dropdown-selector */
 .chartbuilder-main .cb-dropdown-select {
   height: 4rem;
+}
+
+/* Not sure why Chartbuilder.jsx even has this element, it merely takes up space
+   but https://quartz.github.io/Chartbuilder/ has display: none so we do too  */
+.chartbuilder-canvas {
+  display: none;
 }
