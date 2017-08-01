@@ -471,10 +471,10 @@ body {
 }
 
 .outputpane-header {
-  height: 3rem;
+  height: 7rem;
   border: 1px solid #EDECEC;
   background-color: #FFFFFF;
-  color: #A2A2A2;
+  padding: 2rem 3rem 2rem 3rem;
 }
 
 .outputpane-data {
