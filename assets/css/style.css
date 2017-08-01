@@ -1098,16 +1098,6 @@ body {
   padding-left: 2rem;
 }
 
-
-.module-list {
-  /* position: absolute;
-  overflow-y:scroll;
-  left: 20px;
-  right: 20px;
-  bottom: 20px;
-  top: 140px; */
-}
-
 /* --- Chartbuilder - override all sorts of styles to integrate --- */
 
 /* TODO this should inherit from content-3 t-d-gray, just cut and paste right now */
