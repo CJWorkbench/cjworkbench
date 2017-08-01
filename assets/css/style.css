@@ -225,7 +225,6 @@ body {
 .dialog-box-name {
 	height: 30px;
 	color: #686768;
-	font-family: Avenir;
 	font-size: 15px;
 	font-weight: 500;
 	line-height: 15px;
@@ -638,7 +637,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-Share:before {
+.icon-share:before {
   content: "\e91c";
   color: #686768;
 }
@@ -654,31 +653,36 @@ body {
   content: "\e916";
   color: #fff;
 }
-.icon-Checkbox-fill:before {
+.icon-checkbox-fill:before {
   content: "\e915";
   color: #48c8d7;
 }
-.icon-Chart:before {
+.icon-chart:before {
   content: "\e909";
   color: #686768;
 }
-.icon-Settings:before {
+.icon-settings:before {
   content: "\e900";
   color: #686768;
 }
-.icon-Close:before {
+.icon-close:before {
   content: "\e905";
   color: #686768;
 }
-.icon-Edit:before {
+.icon-close-white:before {
+  content: "\e905";
+  color: #FFFFFF;
+  font-size: 1.5rem; 
+}
+.icon-edit:before {
   content: "\e906";
   color: #686768;
 }
-.icon-Info:before {
+.icon-info:before {
   content: "\e907";
   color: #686768;
 }
-.icon-Join:before {
+.icon-join:before {
   content: "\e908";
   color: #686768;
 }
@@ -686,7 +690,7 @@ body {
   content: "\e90b";
   color: #686768;
 }
-.icon-Sigma:before {
+.icon-sigma:before {
   content: "\e90e";
   color: #686768;
 }
@@ -735,7 +739,7 @@ body {
   content: "\e911";
   color: #686768;
 }
-.icon-URL:before {
+.icon-url:before {
   content: "\e912";
   color: #686768;
 }
@@ -780,11 +784,11 @@ body {
   content: "\e926";
   color: #686768;
 }
-.icon-API:before {
+.icon-api:before {
   content: "\e927";
   color: #686768;
 }
-.icon-Calendar:before {
+.icon-calendar:before {
   content: "\e928";
   color: #686768;
 }
@@ -813,14 +817,12 @@ body {
 
 /* icon next to Wf Module title */
 .module-icon {
-  height: 2rem;
-  width: 2rem;
+  font-size: 2rem;
 }
 
 /* icons embedded within buttons  */
 .button-icon {
-  height: 1.5rem;
-  width: 1.5rem;
+  font-size: 1.5rem;
 }
 
 /* from Export Data modal, in WfModuleContextMenu  */
@@ -932,13 +934,16 @@ body {
 .module-library {
   height: calc(100% - 3.5rem);
   width: 50%;
-  background-color: #F2F2F2;
+  background-color: #F6F6F6;
   position: fixed;
-  font-family: Avenir;
-  color: #686768;
   overflow-y: auto;
   float:left;
   padding: 20px;
+}
+
+.module-library-container {
+  background-color: #F2F2F2;
+  padding: 2rem;
 }
 
 .module-library .nav-bar {
@@ -950,7 +955,7 @@ body {
   position: relative;
   border-bottom: 1px solid;
   text-align: left;
-  padding: 10px;
+  padding: 2rem;
 }
 
 .module-library .h1 {
@@ -972,7 +977,6 @@ body {
 .module-category {
   height: 10px;
   color: #686768;
-  font-family: Avenir;
   font-size: 16px;
   margin-top: 1rem;
   margin-bottom: 1rem;
@@ -984,7 +988,6 @@ body {
 .module-name {
   height: 15px;
   color: #686768;
-  font-family: Avenir;
   font-size: 15px;
   font-weight: 500;
   line-height: 15px;
@@ -992,35 +995,37 @@ body {
 
 .module-description {
   color: #686768;
-  font-family: Avenir;
   font-size: 13px;
   font-weight: 300;
 }
 
 .module-metadata {
   color: #A2A2A2;
-  font-family: Avenir;
   font-size: 14px;
   line-height: 12px;
   margin-top: 10px;
   margin-bottom: 10px;
 }
 
+/* --- the Search Modules component within the Module Library header - ModuleSearch.js --- */
+
 .react-autosuggest__container {
-  position: relative;
-  padding-top: 10px;
-  padding-left: 20px;
+  margin-top: 2rem;
+  width: 100%;
+  height: 4rem;
 }
 
+/* does not accept a 'color' parameter  */
+/* desired UI is gray backgroud, white text  */
 .react-autosuggest__input {
-  width: 240px;
-  height: 30px;
-  padding: 10px 20px;
-  font-family: Helvetica, sans-serif;
-  font-weight: 300;
-  font-size: 16px;
-  border: 1px solid #aaa;
-  border-radius: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  font-weight: 900;
+  font-size: 1.4rem;
+  line-height: 1.4rem;;
+  border: 0;
+  /* background-color: #B4B4B4; */
 }
 
 .react-autosuggest__input--focused {
@@ -1080,6 +1085,9 @@ body {
   color: #777;
 }
 
+/* All of these need resizing to the new Rem scale  */
+/* also: Absolute positioning does not play well with Flexbox - to phase out */
+
 .import-module {
   height: 210px;
   width: 450px;
@@ -1099,7 +1107,6 @@ body {
 .import-module-label {
   height: 40px;
   color: #686768;
-  font-family: Avenir;
   font-weight: 400;
   font-size: 16px;
   padding: 20px;
@@ -1108,11 +1115,10 @@ body {
 }
 
 .import-module-button {
-  float: right;
-  right: 10px;
-  z-index: 1000;
-  position: relative;
-  margin-top: 10px;
+  color: #48C8D7;
+} 
+.import-module-button:hover {
+  color: #FFFFFF;
 }
 
 .import-module-buttons {
@@ -1131,7 +1137,6 @@ body {
 .import-github-error {
   height: 38px;
   color: #E24F4A;
-  font-family: Avenir;
   font-size: 13px;
   font-weight: 300;
   line-height: 19px;
@@ -1149,7 +1154,6 @@ body {
 .import-github-success {
   height: 38px;
   color: #1CA8B9;
-  font-family: Avenir;
   font-size: 13px;
   font-weight: 300;
   line-height: 19px;
@@ -1157,13 +1161,14 @@ body {
   padding-left: 20px;
 }
 
+
 .module-list {
-  position: absolute;
+  /* position: absolute;
   overflow-y:scroll;
   left: 20px;
   right: 20px;
   bottom: 20px;
-  top: 140px;
+  top: 140px; */
 }
 
 /* --- Chartbuilder - override all sorts of styles to integrate --- */
@@ -1214,6 +1219,7 @@ body {
 /* TODO copied from text-field t-d-gray content-2... but stripped down  */
 .chartbuilder-main .cb-text-input input {
   height: 4rem;
+  width: 100%;
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
   color: #686768;
 }
@@ -1222,4 +1228,10 @@ body {
 /* TODO height (but not width) copied from dropdown-selector */
 .chartbuilder-main .cb-dropdown-select {
   height: 4rem;
+}
+
+/* Not sure why Chartbuilder.jsx even has this element, it merely takes up space
+   but https://quartz.github.io/Chartbuilder/ has display: none so we do too  */
+.chartbuilder-canvas {
+  display: none;
 }

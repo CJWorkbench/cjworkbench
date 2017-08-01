@@ -201,7 +201,7 @@ export default class WfModule extends React.Component {
               >
                 {/* TODO: attach icon names to modules, call via 'this.module.icon' */}
                 <div className='d-flex justify-content-start'>
-                  <div className='icon-url module-icon'></div>
+                  <div className='icon-url module-icon mr-2'></div>
                   <div className='t-d-gray title-4'>
                     {this.module.name}
                   </div>

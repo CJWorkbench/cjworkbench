@@ -187,6 +187,7 @@ export default class Workflow extends React.Component {
     var moduleLibrary = <ModuleLibrary
           addModule={module_id => this.props.addModule(module_id,
                         this.props.workflow.wf_modules.length)}
+          toggleModuleLibrary={this.toggleModuleLibrary}
           workflow={this} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
           />
 
@@ -228,9 +229,9 @@ export default class Workflow extends React.Component {
                   wfId={this.props.workflow.id}
                   isReadOnly={this.props.workflow.read_only} />
                 <ul className="list-inline list-workflow-meta">
-                  <li className="list-inline-item">by <strong className="t-f-blue">{this.props.workflow.owner_name}</strong></li>
-                  <li className="list-inline-item">updated <strong className="t-f-blue">{this.props.workflow.last_update}</strong></li>
-                  <li className="list-inline-item" onClick={this.togglePrivacyModal}><strong className={this.state.isPublic ? 't-f-blue' : 't-o-red'}>{this.state.isPublic ? 'public' : 'private'}</strong></li>
+                  <li className="list-inline-item">by <strong>{this.props.workflow.owner_name}</strong></li>
+                  <li className="list-inline-item">updated <strong>{this.props.workflow.last_update}</strong></li>
+                  <li className="list-inline-item" onClick={this.togglePrivacyModal}><strong className='t-f-blue'>{this.state.isPublic ? 'public' : 'private'}</strong></li>
                 </ul>
                 {privacyModal}
                 </div>
