@@ -1,6 +1,6 @@
 {
   "name": "Twitter Stream",
-  "id_name": "twitter_stream",
+  "id_name": "twitter",
   "category" : "Add data",
   "description" : "Connect to Twitter stream API and get low latency access to tweet data.",
   "parameters": [
@@ -18,15 +18,15 @@
       "default": ""
     },
     {
-      "name": "Fetch Now",
-      "id_name" : "fetch",
-      "type": "button"
-    },
-    {
       "name": "Save previous tweets when fetching",
       "id_name": "accumulate",
       "type": "checkbox",
       "default": "True"
+    },
+    {
+      "name": "Check Now",
+      "id_name" : "version_select",
+      "type": "custom"
     }
   ]
 }

@@ -55,7 +55,7 @@ class WfModule(models.Model):
         )
 
     # For modules that fetch data: how often do we check for updates, and do we switch to latest version automatically
-    auto_update_data = models.BooleanField(default='True')
+    auto_update_data = models.BooleanField(default='False')
     next_update = models.DateTimeField(null=True, blank=True)    # when should next update run?
     update_interval = models.IntegerField(default=0)             # time in seconds between updates
     last_update_check = models.DateTimeField(null=True, blank=True)
