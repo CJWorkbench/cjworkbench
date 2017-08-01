@@ -122,11 +122,11 @@ export default class ImportModuleFromGitHub extends React.Component {
           </div></div> 
       }
     } else {
-      visible = <div className="import-module-buttons">
+      visible = <div className="import-module-buttons d-flex flex-row">
           <div onClick={this.cancel.bind(this)} 
-            className='button-blue action-button'>Cancel</div>
+            className='button-gray action-button'>Cancel</div>
           <div onClick={this.handleSubmit.bind(this)} 
-            style={{'marginLeft': '20px'}} // spacing between buttons.
+            style={{'marginLeft': '2rem'}} // spacing between buttons.
             className='button-blue action-button'>Submit</div>
         </div>
     }
@@ -134,11 +134,12 @@ export default class ImportModuleFromGitHub extends React.Component {
 
     return (
       <form onSubmit={this.handleSubmit}>
-        <div className="import-module-label">
-          Import module from GitHub:
+        <div className="import-module-label t-d-gray">
+          Git URL:
           <input type="text" 
-                className="text-field mt-2"
+                className="text-field mt-2 t-m-gray content-3"
                 value={this.state.value} 
+                placeholder='https://github.com..'
                 onChange={this.handleChange} 
                 onKeyPress={this.handleChange}
                 />

@@ -28,7 +28,7 @@ var CategoriesList = React.createClass({
       );
     }, this);
     return (
-      <div className="list content-3 t-d-gray">{listItems}</div>
+      <div className="list">{listItems}</div>
     );
   }
 });
@@ -199,7 +199,7 @@ export default class ModuleLibrary extends React.Component {
                               workflow={this.workflow}
             />
           </div>
-          <div className="module-list">
+          <div className=''>
             <CategoriesList
               data={categories}
             />
