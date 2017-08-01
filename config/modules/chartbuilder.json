@@ -2,7 +2,7 @@
   "name": "Chartbuilder",
   "id_name": "chartbuilder",
   "category" : "Visualize",
-  "description" : "Create and export line, column and scatter plot charts.",
+  "description" : "Create line, column and scatter plot charts, and export JPGs.",
   "parameters": [
     {
       "name": "Chart",

@@ -2,7 +2,7 @@
   "name": "Text filter",
   "id_name": "textsearch",
   "category" : "Filter",
-  "description" : "Filter rows containing matching text in specific columns.",
+  "description" : "Filter rows containing text in specific columns.",
   "parameters": [
     {
       "name": "Search For",

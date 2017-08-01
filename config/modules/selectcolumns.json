@@ -2,7 +2,7 @@
   "name": "Column filter",
   "id_name": "selectcolumns",
   "category" : "Filter",
-  "description" : "Filter column by their name.",
+  "description" : "Filter column by name.",
   "parameters": [
     {
       "name": "Select Columns",
