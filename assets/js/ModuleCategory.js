@@ -102,8 +102,8 @@ export default class ModuleCategory extends React.Component {
     // Provides margins around opened library category
     var cardMargin = isOpen
       ? {
-          'margin-bottom': '0.5rem',
-          'margin-top': '0.5rem',
+          'marginBottom': '0.5rem',
+          'marginTop': '0.5rem',
         }
       : {}
 
