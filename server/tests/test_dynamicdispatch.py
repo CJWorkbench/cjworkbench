@@ -35,7 +35,6 @@ class DynamicDispatchTest(LoggedInTestCase):
                     os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..", "importedmodules", "importable", "1.0"))
 
 
-
     def test_load_module(self):
         dynamicdispatch = DynamicDispatch()
 

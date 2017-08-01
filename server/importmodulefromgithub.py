@@ -42,7 +42,7 @@ def get_already_imported():
     if not already_imported:
         modules = Module.objects.all()
         for module in modules:
-            already_imported[module.id_name] = module.source
+            already_imported[module.id_name] = module.link
     return already_imported
 
 def refresh_module_from_github(url):
@@ -169,7 +169,7 @@ def reorganise_workspace(destination_directory, current_path, directory, json_fi
     # if they don't, we can start organising our workspace.
     try:
         os.makedirs(destination_directory)
-        os.rename(os.path.join(current_path, directory, json_file), os.path.join(destination_directory, json_file))
+        shutil.move(os.path.join(current_path, directory, json_file), os.path.join(destination_directory, json_file))
     except (OSError, Exception) as error:
         shutil.rmtree(os.path.join(current_path, directory))
         shutil.rmtree(destination_directory)
@@ -177,7 +177,7 @@ def reorganise_workspace(destination_directory, current_path, directory, json_fi
         raise ValidationError("Unable to move JSON file to correct directory: {}.".format(error))
 
     try:
-        os.rename(os.path.join(current_path, directory, python_file),
+        shutil.move(os.path.join(current_path, directory, python_file),
                   os.path.join(destination_directory, python_file))
     except (OSError, Exception) as error:
         shutil.rmtree(os.path.join(current_path, directory))
@@ -261,7 +261,7 @@ def import_module_from_github(url):
     try:
         git.Git().clone(url)
         # move this to correct directory, i.e. where this file is.
-        os.rename(os.path.join(ROOT_DIRECTORY, directory), os.path.join(CURRENT_PATH, directory))
+        shutil.move(os.path.join(ROOT_DIRECTORY, directory), os.path.join(CURRENT_PATH, directory))
     except (ValidationError, GitCommandError) as ve:
         print('Unable to pull down content from GitHub: %s' % (url))
         shutil.rmtree(os.path.join(ROOT_DIRECTORY, directory))
