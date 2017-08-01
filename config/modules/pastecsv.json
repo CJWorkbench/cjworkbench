@@ -5,13 +5,13 @@
   "description" : "Enter coma separated value to generate a table.",
   "parameters": [
     {
-      "name": "CSV",
+      "name": "Paste Comma separated values",
       "id_name": "csv",
       "type": "string",
       "multiline": "True"
     },
     {
-      "name": "Has Header Row",
+      "name": "Has header row",
       "id_name": "has_header_row",
       "type": "checkbox",
       "default": "True"

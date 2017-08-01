@@ -8,13 +8,13 @@
       "name": "URL",
       "id_name" : "url",
       "type": "string",
-      "default": ""
+      "default": "http://"
     },
     {
       "name": "Path (for json data)",
       "id_name" : "json_path",
       "type": "string",
-      "default": ""
+      "default": "Enter json path"
     },
     {
       "name": "Check Now",

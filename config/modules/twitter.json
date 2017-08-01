@@ -2,23 +2,23 @@
   "name": "Twitter Stream",
   "id_name": "twitter",
   "category" : "Add data",
-  "description" : "Connect to Twitter stream API and get low latency access to tweet data.",
+  "description" : "Connect to Twitter stream API and get access to tweet data.",
   "parameters": [
     {
-      "name" : "Query type",
+      "name" : "Search for",
       "id_name" : "querytype",
       "type" : "menu",
-      "menu_items" : "User|Search",
+      "menu_items" : "User's tweets|All tweets",
       "default": "0"
     },
     {
-      "name": "Query",
+      "name": "Username or search terms",
       "id_name" : "query",
       "type": "string",
       "default": ""
-    },
+    },   
     {
-      "name": "Save previous tweets when fetching",
+      "name": "Add to previously fetched tweets",
       "id_name": "accumulate",
       "type": "checkbox",
       "default": "True"
