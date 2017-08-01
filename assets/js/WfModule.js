@@ -144,7 +144,6 @@ export default class WfModule extends React.Component {
     }
 
     // Each parameter gets a WfParameter
-    console.log(this.props);
     var paramdivs = this.params.map((ps, i) => {
         return <WfParameter
           isReadOnly={this.props.isReadOnly}
