@@ -99,6 +99,9 @@ class Twitter(ModuleImpl):
                 wfm.set_error('HTTP rrror %s fetching tweets' % str(res.status_code))
                 return
 
+        except Exception as e:
+            wfm.set_error('Error fetching tweets: ' + str(e))
+            return
 
 
         if wfm.status != wfm.ERROR:
