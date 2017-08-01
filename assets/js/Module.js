@@ -43,21 +43,21 @@ export default class Module extends React.Component {
     var moduleName = this.props['data-name']; // name of module 
     var description = this.props['data-description'];
     var author = this.props['data-author'];
-    var metadata = "By " + author
+    var metadata = "by " + author
 
     return (
-      <div className='container'>
-        <div className='card'>
-          <div className='card-block p-1 module-card-wrapper'>
-            <div className='module-card-info pl-2 pr-2'>
+      <div className='container m-0 p-0'>
+        <div className='card' style={{'border-radius': 0}}>
+          <div className='card-block module-card-wrapper'>
+            <div className='module-card-info'>
               <div 
-                className='module-card-header mb-2 pt-2 '
+                className='module-card-header'
                 onClick={this.itemClick}
               > 
-                <div className='second-level'>
-                  <div className='title-4 t-d-gray mb-2'>{moduleName}</div>
-                  <div className='module-metadata content-4 t-m-gray mb-2'>{metadata}</div>
-                  <div className='content-3 t-m-gray'>{description}</div>
+                <div className='second-level ml-3'>
+                  <div className='title-4 t-d-gray mb-3'>{moduleName}</div>
+                  <div className='content-4 t-m-gray mb-4'>{metadata}</div>
+                  <div className='info-1 t-m-gray'>{description}</div>
                 </div>
               </div>
             </div>

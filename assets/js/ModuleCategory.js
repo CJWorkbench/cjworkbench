@@ -96,19 +96,29 @@ export default class ModuleCategory extends React.Component {
             />
 
     var symbol = isOpen 
-      ? 'icon-sort-down module-icon'
-      : 'icon-sort-right module-icon'
+      ? 'icon-sort-down button-icon'
+      : 'icon-sort-right button-icon'
+
+    // Provides margins around opened library category
+    var cardMargin = isOpen
+      ? {
+          'margin-bottom': '0.5rem',
+          'margin-top': '0.5rem',
+        }
+      : {}
 
     return (
-      <div className='card'>
-          <div className='first-level'>    
-            <div className='module-category' onClick={this.toggleCollapse}>
-              <span className={symbol}></span> 
-              <span className='content-3 t-d-gray ml-2'>{categoryName}</span>
-            </div>
-            <Collapse className='mt-1 pl-2 pr-2' isOpen={isOpen}>
-                {contents}
-            </Collapse> 
+      <div className='card' style={cardMargin}>
+        <div className='first-level d-flex align-items-center'>    
+          <div className='ml-4' onClick={this.toggleCollapse}>
+            <span className={symbol}></span> 
+            <span className='title-4 t-d-gray ml-2'>{categoryName}</span>
+          </div>
+        </div>
+        <div>
+          <Collapse className='' isOpen={isOpen}>
+            {contents}
+          </Collapse> 
         </div>
       </div>
     );

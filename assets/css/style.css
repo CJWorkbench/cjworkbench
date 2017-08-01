@@ -218,21 +218,7 @@ body {
 }
 
 
-
-
-
-/* to be replaced by new classes  */
-.dialog-box-name {
-	height: 30px;
-	color: #686768;
-	font-size: 15px;
-	font-weight: 500;
-	line-height: 15px;
-  padding: 20px 30px 20px 30px;
-}
-
 /* ---- Buttons ---- */
-/* To be phased out to new styles */
 
 /* - Button Colors - */
 .button-gray {
@@ -275,6 +261,7 @@ body {
 
 /* - Button Shapes - */
 
+/* Box around an icon, for context menus  */
 .context-button {
   border: 0;
   width: 2.5rem;
@@ -298,7 +285,6 @@ body {
 	height: 4rem;
   border-radius: 2.5rem;
   min-width: 9rem;  
-  /* width: 9rem;    */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -313,7 +299,6 @@ body {
 
 
 /* ---- Dropdowns and Lists---- */
-
 
 .line-item-data {
   height: 4rem;
@@ -500,6 +485,7 @@ body {
 
 
 /* ---- WfModule ---- */
+/* (Also being used in Module Library)  */
 
 .module-card-wrapper {
   height: 100%;
@@ -508,13 +494,13 @@ body {
   padding: 0;
 }
 .module-card-info {
-  width: calc(100% - 1rem);
+  width: calc(100% - 1rem); 
 }
 .module-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem;
+  padding: 2rem; 
 }
 .module-card-params {
   padding: 2rem;
@@ -903,41 +889,17 @@ body {
   padding: 2rem 3rem 2rem 3rem;
 }
 
-.card .second-level {
-  margin-top: 0.3rem;
-  margin-bottom: 1rem;
-  margin-left: 0.5rem;
-  position: relative;
-  border: 3px;
-}
-
-.card .first-level {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.card .second-level .h2 {
-  height: 20px;
-  font-size: 17px;
-  line-height: 25px;
-  font-weight: bold;
-}
-
-.card .second-level .h3 {
-  height: 17px;
-  font-size: 17px;
-  line-height: 25px;
-  padding: 1px;
-}
-
 /* --- Module Library --- */
+/* TODO: replace with style guide classes where relevant  */
+
 .module-library {
   height: calc(100% - 3.5rem);
   width: 50%;
   background-color: #F6F6F6;
   position: fixed;
+  font-family: 'Nunito Sans', sans-serif; 
   overflow-y: auto;
-  float:left;
+  float: left;
   padding: 20px;
 }
 
@@ -959,11 +921,11 @@ body {
 }
 
 .module-library .h1 {
-  height: 18px;
-  font-size: 24px;
+  height: 1.8rem;
+  font-size: 2.4rem;
   font-weight: 300;
-  line-height: 18px;
-  padding: 20px;
+  line-height: 1.8rem;
+  padding: 2rem;
 }
 
 .module-library .h2 .symbols {
@@ -974,38 +936,20 @@ body {
   color: #FFFFFF;
 }
 
-.module-category {
-  height: 10px;
-  color: #686768;
-  font-size: 16px;
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-  margin-left: 1rem;
-  line-height: 13px;
+.card .first-level {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+  height: 4rem; 
+  width: 100%;
+  /* padding: 2rem 1.3rem 2rem 1.3rem; */
+}
+
+.card .second-level {
   position: relative;
+  height: 7rem;
+  border-radius: 0;
 }
 
-.module-name {
-  height: 15px;
-  color: #686768;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 15px;
-}
-
-.module-description {
-  color: #686768;
-  font-size: 13px;
-  font-weight: 300;
-}
-
-.module-metadata {
-  color: #A2A2A2;
-  font-size: 14px;
-  line-height: 12px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
 
 /* --- the Search Modules component within the Module Library header - ModuleSearch.js --- */
 
@@ -1021,6 +965,7 @@ body {
   width: 100%;
   height: 100%;
   padding: 1rem;
+  font-family: 'Nunito Sans', sans-serif;
   font-weight: 900;
   font-size: 1.4rem;
   line-height: 1.4rem;;
@@ -1044,15 +989,10 @@ body {
 .react-autosuggest__suggestions-container--open {
   display: block;
   position: absolute;
-  top: 51px;
-  width: 280px;
   border: 1px solid #aaa;
   background-color: #fff;
-  font-family: Helvetica, sans-serif;
   font-weight: 300;
-  font-size: 16px;
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
+  font-size: 1.6rem;
   z-index: 2;
 }
 
@@ -1064,7 +1004,7 @@ body {
 
 .react-autosuggest__suggestion {
   cursor: pointer;
-  padding: 10px 20px;
+  padding: 1rem 2rem;
 }
 
 .react-autosuggest__suggestion--highlighted {
@@ -1080,8 +1020,8 @@ body {
 }
 
 .react-autosuggest__section-title {
-  padding: 10px 0 0 10px;
-  font-size: 12px;
+  padding: 1rem 0 0 1rem;
+  font-size: 1.2rem;
   color: #777;
 }
 
@@ -1089,29 +1029,30 @@ body {
 /* also: Absolute positioning does not play well with Flexbox - to phase out */
 
 .import-module {
-  height: 210px;
-  width: 450px;
+  height: 21rem;
+  width: 45rem;
   color: #686768;
   float: right;
-  margin-right: 20px;
-  font-size: 14px;
+  margin-right: 2rem;
+  font-size: 1.4rem;
   background-color: #FFFFFF;
-  padding: 20px;
+  padding: 2rem;
   box-shadow: 3px 3px 3px #888888;
   position: fixed;
   z-index: 1000;
-  right: 40px;
-  margin-top: 10px;
+  right: 4rem;
+  margin-top: 1rem;
 }
 
 .import-module-label {
-  height: 40px;
+  height: 4rem;
   color: #686768;
+  /* font-family: 'Nunito Sans', sans-serif; */
   font-weight: 400;
-  font-size: 16px;
-  padding: 20px;
+  font-size: 1.6rem;
+  padding: 2rem;
   position: relative;
-  padding-bottom: 10px;
+  padding-bottom: 1rem;
 }
 
 .import-module-button {
@@ -1123,42 +1064,38 @@ body {
 
 .import-module-buttons {
   float: right;
-  margin-top: 55px;
+  margin-top: 5.5rem;
   justify-content: flex-end;
-  padding: 20px;
-}
-.module-library .p {  /* Description text */
-    height: 14px;
-    font-size: 13px;
-    line-height: 13px;
-    padding: 7px;
+  padding: 2rem;
 }
 
 .import-github-error {
-  height: 38px;
+  height: 4rem;
   color: #E24F4A;
-  font-size: 13px;
+  /* font-family: 'Nunito Sans', sans-serif; */
+  font-size: 1.3rem;
   font-weight: 300;
-  line-height: 19px;
-  margin-top: 60px;
-  padding-left: 20px;
-  padding-right: 20px;
+  line-height: 1.9rem;
+  margin-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 }
 
 .import-github-response-button {
   float: right;
-  margin-right: 20px;
+  margin-right: 2rem;
   width: 15%;
 }
 
 .import-github-success {
-  height: 38px;
+  height: 4rem;
   color: #1CA8B9;
-  font-size: 13px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.3rem;
   font-weight: 300;
-  line-height: 19px;
-  margin-top: 60px;
-  padding-left: 20px;
+  line-height: 1.9rem;
+  margin-top: 6rem;
+  padding-left: 2rem;
 }
 
 

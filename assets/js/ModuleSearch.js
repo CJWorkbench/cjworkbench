@@ -101,8 +101,8 @@ class ModuleSearch extends Component {
   renderSuggestion (suggestion) {
     return (
       <div>
-        <div><strong>{suggestion.name}</strong></div>
-        <div>{suggestion.description}</div>
+        <div className='title-3 t-d-gray mb-2'><strong>{suggestion.name}</strong></div>
+        <div className='content-3 t-m-gray'>{suggestion.description}</div>
       </div>
     );
   }
