@@ -161,7 +161,10 @@ export default class WfModule extends React.Component {
     var inside = undefined;
 
     if (!this.state.isCollapsed)
-      inside = <div className='module-card-params'>{paramdivs}</div>;
+      inside = <div className='module-card-params'>
+        {this.wf_module.module_version.module.description}
+        {paramdivs}
+      </div>;
 
     var notes = undefined;
     var value = ( this.wf_module.notes && (this.wf_module.notes != "") )
