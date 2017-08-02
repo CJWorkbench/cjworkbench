@@ -20,3 +20,6 @@ dbdata/
 #pycharm
 .idea/
 tmp/
+
+# imported modules
+importedmodules/
