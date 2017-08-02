@@ -1,14 +1,14 @@
 {
-  "name": "Twitter Stream",
+  "name": "Twitter",
   "id_name": "twitter",
   "category" : "Add data",
-  "description" : "Connect to Twitter stream API and get access to tweet data.",
+  "description" : "Load Tweets by username or search terms",
   "parameters": [
     {
       "name" : "Search for",
       "id_name" : "querytype",
       "type" : "menu",
-      "menu_items" : "User's tweets|All tweets",
+      "menu_items" : "User's tweets|Matching tweets",
       "default": "0"
     },
     {
@@ -18,10 +18,10 @@
       "default": ""
     },   
     {
-      "name": "Add to previously fetched tweets",
+      "name": "Add to previously loaded tweets",
       "id_name": "accumulate",
       "type": "checkbox",
-      "default": "True"
+      "default": "True",
     },
     {
       "name": "Check Now",

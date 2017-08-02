@@ -1,8 +1,5 @@
 import tweepy
 import pandas as pd
-from datetime import timedelta
-from django.utils import timezone
-import requests
 import time
 import os
 import csv
@@ -37,14 +34,8 @@ class Twitter(ModuleImpl):
         if querytype == 'User':
             tweetsgen = api.user_timeline(query, count=200)
         else:
-            # Only get last 24 hours of tweets, because we have to bound this somehow
-            today = timezone.today()
-            yesterday = today - timedelta(1)
-            date_clause = " since:{0}-{1}-{2} until:{3}-{4}-{5}".format(
-                yesterday.year, yesterday.month, yesterday.day,
-                today.year, today.month, today.day)
-
-            tweetsgen = api.search(query + date_clause)
+            # Only get last 100 tweets, because that is twitter API max for single call
+            tweetsgen = api.search(q=query, count=100)
 
         # Columns to retrieve and store from Twitter
         # Also, we use this to figure ou the index the id field when merging old and new tweets
@@ -60,7 +51,7 @@ class Twitter(ModuleImpl):
     def merge_tweets(wf_module, new_table):
         old_table = Twitter.get_stored_tweets(wf_module)
         if old_table is not None:
-            new_table = pd.concat([new_table,old_table]).drop_duplicates().sort_values('id',ascending=False).reset_index(drop=True)
+            new_table = pd.concat([new_table,old_table]).drop_duplicates(['id']).sort_values('id',ascending=False).reset_index(drop=True)
         return new_table
 
     # Render just returns previously retrieved tweets
