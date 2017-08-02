@@ -105,10 +105,10 @@ class WorkflowTests(LoggedInTestCase):
         response = workflow_detail(request, pk = 10000)
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        # not authenticated should give 403
+        # not authenticated should also give 404 so we don't expose an attack surface
         request = self.factory.get('/api/workflows/%d/' % pk_workflow)
         response = workflow_detail(request, pk=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_workflow_reorder_modules(self):
         wfm1 = add_new_wf_module(self.workflow1, self.module_version1, 0)
@@ -148,18 +148,16 @@ class WorkflowTests(LoggedInTestCase):
 
     # test Wf Module Notes change API
     def test_workflow_title_post(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id        
+        pk_workflow = Workflow.objects.get(name='Workflow 1').id
         request = self.factory.post('/api/workflows/%d' % pk_workflow,
                                    {'newName': 'Billy Bob Thornton'})
         force_authenticate(request, user=self.user)
         response = workflow_detail(request, pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        
+
         # see that we get the new value back
         request = self.factory.get('/api/wfmodules/%d/' % pk_workflow,)
         force_authenticate(request, user=self.user)
         response = workflow_detail(request,  pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Billy Bob Thornton')
-
-
