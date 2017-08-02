@@ -36,7 +36,13 @@ class ParameterVal(models.Model):
     def user_authorized(self, user):
         return self.wf_module.user_authorized(user)
 
-    # Return text of currently selected menu item
+    # Return selected menu item index. Insensitive to UI changes, either in config json or on the fly.
+    def selected_menu_item_idx(self):
+        if self.parameter_spec.type != ParameterSpec.MENU:
+            raise ValueError('Request for current item of non-menu parameter ' + self.parameter_spec.name)
+        return self.integer
+
+    # Return text of currently selected menu item. Warning: will vary between locales etc.
     def selected_menu_item_string(self):
         if self.parameter_spec.type != ParameterSpec.MENU:
             raise ValueError('Request for current item of non-menu parameter ' + self.parameter_spec.name)
@@ -49,6 +55,7 @@ class ParameterVal(models.Model):
                 return items[idx]
             else:
                 return ''  # be a little lenient, to allow for possible errors when menu items changed
+
 
     def set_value(self, new_value):
         type = self.parameter_spec.type

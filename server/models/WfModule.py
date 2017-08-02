@@ -156,6 +156,14 @@ class WfModule(models.Model):
     def get_param_checkbox(self, name):
         return self.get_param_typecheck(name, ParameterSpec.CHECKBOX)
 
+    def get_param_menu_idx(self, name):
+        try:
+            pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)
+        except ParameterSpec.DoesNotExist:
+            raise ValueError('Request for non-existent ' + param_type + ' parameter ' + name)
+        pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
+        return pval.selected_menu_item_idx()
+
     def get_param_menu_string(self, name):
         try:
             pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)

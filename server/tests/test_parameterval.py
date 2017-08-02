@@ -21,9 +21,31 @@ class ParameterValTests(LoggedInTestCase):
 
         self.moduleID = module.id
 
-        stringSpec = ParameterSpec.objects.create(name="StringParam", id_name="stringparam", module_version=module_version, type= ParameterSpec.STRING, def_string='foo')
-        numberSpec = ParameterSpec.objects.create(name="NumberParam", id_name="numberparam", module_version=module_version, type=ParameterSpec.NUMBER, def_float=10.11)
-        checkboxSpec = ParameterSpec.objects.create(name="CheckboxParam", id_name="checkboxparam", module_version=module_version, type=ParameterSpec.CHECKBOX, def_boolean=True)
+        stringSpec = ParameterSpec.objects.create(
+            name="StringParam",
+            id_name="stringparam",
+            module_version=module_version,
+            type= ParameterSpec.STRING,
+            def_string='foo')
+        numberSpec = ParameterSpec.objects.create(
+            name="NumberParam",
+            id_name="numberparam",
+            module_version=module_version,
+            type=ParameterSpec.NUMBER,
+            def_float=10.11)
+        checkboxSpec = ParameterSpec.objects.create(
+            name="CheckboxParam",
+            id_name="checkboxparam",
+            module_version=module_version,
+            type=ParameterSpec.CHECKBOX,
+            def_boolean=True)
+        menuSpec = ParameterSpec.objects.create(
+            name="MenuParam",
+            id_name="menuparam",
+            module_version=module_version,
+            type=ParameterSpec.MENU,
+            def_menu_items="Item A|Item B|Item C",
+            def_integer=1)  # should refer to Item B
 
         self.workflow = add_new_workflow(name="Test Workflow")
         self.workflowID = self.workflow.id
@@ -41,8 +63,14 @@ class ParameterValTests(LoggedInTestCase):
         checkboxVal = ParameterVal.objects.create(parameter_spec=checkboxSpec, wf_module=self.wfmodule, boolean='True')
         self.checkboxID = checkboxVal.id
 
+        menuVal = ParameterVal.objects.create(parameter_spec=menuSpec, wf_module=self.wfmodule, integer=2)
+        self.menuID = menuVal.id
+
+
     # Value retrieval methods must return correct values and enforce type
     def test_parameter_get_values(self):
+
+        # current values are as set when created
         s = self.wfmodule.get_param_string('stringparam')
         self.assertEqual(s, 'fooval')
 
@@ -52,6 +80,10 @@ class ParameterValTests(LoggedInTestCase):
         t = self.wfmodule.get_param_checkbox('checkboxparam')
         self.assertEqual(t, True)
 
+        m = self.wfmodule.get_param_menu_idx('menuparam')
+        self.assertEqual(m, 2)
+
+        # Retrieving value of wrong type should raise exception
         with self.assertRaises(ValueError):
             self.wfmodule.get_param_string('numberparam')
         with self.assertRaises(ValueError):
@@ -60,6 +92,8 @@ class ParameterValTests(LoggedInTestCase):
             self.wfmodule.get_param_number('stringparam')
         with self.assertRaises(ValueError):
             self.wfmodule.get_param_checkbox('stringparam')
+        with self.assertRaises(ValueError):
+            self.wfmodule.get_param_checkbox('menuparam')
 
         # error if no param by that name
         with self.assertRaises(ValueError):
@@ -78,8 +112,8 @@ class ParameterValTests(LoggedInTestCase):
         self.assertEqual(response.data['wf_modules'][0]['id'], self.moduleID)
 
         # wfmodule has correct parameters
-        self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 3)
-        valIDs = [self.stringID, self.numberID, self.checkboxID]
+        self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 4)
+        valIDs = [self.stringID, self.numberID, self.checkboxID, self.menuID]
         param_vals = response.data['wf_modules'][0]['parameter_vals']
         responseIDs = [x['id'] for x in param_vals]
         self.assertCountEqual(responseIDs, valIDs)
@@ -103,6 +137,11 @@ class ParameterValTests(LoggedInTestCase):
         self.assertEqual(checkbox_val['parameter_spec']['type'], ParameterSpec.CHECKBOX)
         self.assertEqual(checkbox_val['value'], True)
 
+        menu_val = [p for p in param_vals if p['id'] == self.menuID][0]
+        self.assertEqual(menu_val['parameter_spec']['name'], 'MenuParam')
+        self.assertEqual(menu_val['parameter_spec']['id_name'], 'menuparam')
+        self.assertEqual(menu_val['parameter_spec']['type'], ParameterSpec.MENU)
+        self.assertEqual(menu_val['value'], 2)
 
     # test parameter change API
     def test_parameterval_detail_patch(self):
