@@ -65,8 +65,9 @@ export default class WfModule extends React.Component {
     this.initFields(props);
     this.state = {
       isCollapsed: this.wf_module.is_collapsed,
-      showNotes: false
-    };           // componentDidMount will trigger first load
+      showNotes: ( this.wf_module.notes && (this.wf_module.notes != "") ),  // only show on load if a note exists
+      showEditableNotes: false                                              // do not display in edit state on initial load
+    };           
     this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
@@ -125,9 +126,13 @@ export default class WfModule extends React.Component {
     this.api.toggleWfModuleCollapsed(this.wf_module.id, !this.state.isCollapsed);
   }
 
+  // when Notes icon is clicked, show notes and start in editable state
   showNotes(e) {
     e.stopPropagation();
-    this.setState(Object.assign({}, this.state, {showNotes: true}));
+    this.setState(Object.assign({}, this.state, {
+                                                  showNotes: true,
+                                                  showEditableNotes: true
+                                                }));
   }
 
   hideNotes() {
@@ -161,22 +166,27 @@ export default class WfModule extends React.Component {
     var inside = undefined;
 
     if (!this.state.isCollapsed)
-      inside = <div className='module-card-params'>
-        <div className='t-d-gray content-3 mb-4'>{this.wf_module.module_version.module.description}</div>
-        {paramdivs}
-      </div>;
+      inside =  <div className='module-card-params'>
+                  <div className='t-d-gray content-3 mb-4'>{this.wf_module.module_version.module.description}</div>
+                  {paramdivs}
+                </div>;
 
     var notes = undefined;
     var value = ( this.wf_module.notes && (this.wf_module.notes != "") )
       ? this.wf_module.notes
       : "Write notes here"
+      
     if (this.state.showNotes)
-      notes = <EditableNotes
-                isReadOnly={this.props.isReadOnly}
-                value={value}
-                hideNotes={ () => this.hideNotes() }
-                editClass='editable-notes-field t-d-gray note'
-                wfModuleId={this.wf_module.id} />
+      notes = <div className='editable-notes-field '>
+                <EditableNotes
+                  isReadOnly={this.props.isReadOnly}
+                  value={value}
+                  hideNotes={ () => this.hideNotes() }
+                  editClass='t-d-gray note'
+                  wfModuleId={this.wf_module.id} 
+                  startFocused={this.state.showEditableNotes}
+                />
+              </div>
 
     var notesIcon = undefined;
     if (!this.state.showNotes)

@@ -12,7 +12,7 @@ exports[`EditableNotes renders correctly 1`] = `
   >
     <RIETextArea
       change={[Function]}
-      classEditing="editable-notes-field-active t-d-gray note m-4"
+      classEditing="editable-notes-field-active"
       className=""
       propName="value"
       rows={1}

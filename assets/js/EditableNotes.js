@@ -18,7 +18,8 @@ export default class EditableNotes extends React.Component {
   // Simulate a click on the field to enter editing state upon mount
   //    Have to target child through parent b/c RIETextArea cannot be directly referenced
   componentDidMount() {
-    this.textInput.childNodes[0].focus();
+    if (this.props.startFocused) 
+      this.textInput.childNodes[0].focus();
   }
 
   // Make Enter key save the text in edit field, overriding default newline
@@ -42,11 +43,11 @@ export default class EditableNotes extends React.Component {
 
   render() {
 
-    var rowcount = (this.props.value && this.props.value.length)
-      ? Math.ceil(this.props.value.length / 100)
+    var rowCount = (this.props.value && this.props.value.length)
+      ? Math.ceil(this.props.value.length / 80)
       : 1
 
-    // 'ref' callback receives the mounted instance of the component as its argument - still needed?
+    // 'ref' callback receives the mounted instance of the component as its argument
     // classEditing param for classes applied during edit state only
     return <div
               onKeyPress={this.keyPress}
@@ -61,8 +62,8 @@ export default class EditableNotes extends React.Component {
                 change={this.saveNotes}
                 propName="value"
                 className={this.props.editClass}
-                classEditing='editable-notes-field-active t-d-gray note m-4'
-                rows={rowcount}
+                classEditing='editable-notes-field-active'
+                rows={rowCount}
               />
             )}
           </div>

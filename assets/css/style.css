@@ -108,7 +108,6 @@ body {
   font-size: 1.5rem;
 	font-weight: 300;
   line-height: 2.8rem;
-  margin-top: 2rem;
 }
 
 /* --- Colors ---  */
@@ -880,21 +879,20 @@ body {
 .editable-notes-field {
   border: none;
   outline: none;
-  height: 100%;
   width: calc(100% - 6rem);
-  padding: 2rem 3rem 2rem 3rem;
+  margin: 2rem 3rem 0rem 3rem;
+  font-family: 'Nunito Sans', sans-serif;   
 }
+
 
 /* applied only when field is in edit mode  */
 .editable-notes-field-active {
   background-color: #FFFFFF;
   box-shadow: 0 0 1px 1px #48C8D7;
-  padding: 2rem 3rem 2rem 3rem;
-}
-
-/* applied only when field is in idle mode  */
-.editable-notes-field-idle {
-  padding: 2rem 3rem 2rem 3rem;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  font-family: 'Nunito Sans', sans-serif;    
 }
 
 /* --- Module Library --- */

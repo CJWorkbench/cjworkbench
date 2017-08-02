@@ -113,7 +113,7 @@ export default class DataVersionSelect extends React.Component {
       <div className='version-item d-flex justify-content-center flex-column align-items-center'>
         <div className='t-d-gray content-3 mb-4'>Current Version</div>
 
-        <div className='open-modal t-f-blue content-3' onClick={this.toggleModal}>
+        <div className='open-modal t-f-blue content-3 text-center' onClick={this.toggleModal}>
             {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}
         </div>
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
