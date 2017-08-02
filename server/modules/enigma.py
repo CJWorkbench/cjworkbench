@@ -25,7 +25,7 @@ def handle_dotcom_url(wf_module, url, split_url, num_rows):
     api_key = os.environ["ENIGMA_COM_API_KEY"]
 
     try:
-        dataset_id = split_url.path.split('/')[2]
+        dataset_id = split_url.path.split('/')[3]
     except Exception as e:
         wf_module.set_error("Unable to retrieve the dataset id from request.")
         return

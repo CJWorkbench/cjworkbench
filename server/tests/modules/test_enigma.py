@@ -67,7 +67,7 @@ class EnigmaTests(LoggedInTestCase):
 
     @mock.patch('requests.get', side_effect=mock_response)
     def test_enigma_com_request_response_failure(self, mock_get):
-        url = "http://test.com/failure/dataset_failure/id/limit/500"
+        url = "http://test.com/failure/datasets/dataset_failure/limit/500"
         split_url = urlsplit(url)
         handle_dotcom_url(self.wfmodule, url, split_url, 500)
         self.assertTrue("Requested resource not found" in self.wfmodule.error_msg)
@@ -75,7 +75,7 @@ class EnigmaTests(LoggedInTestCase):
         
     @mock.patch('requests.get', side_effect=mock_response)
     def test_enigma_com_request_response_success(self, mock_get):
-        url = "http://test.com/failure/dataset_success/id/limit/500"
+        url = "http://test.com/success/datasets/dataset_success/limit/500"
         split_url = urlsplit(url)
         returned = handle_dotcom_url(self.wfmodule, url, split_url, 500)
         self.assertTrue(len(returned) == 2) # make sure we have all the data

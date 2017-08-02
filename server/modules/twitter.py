@@ -1,7 +1,9 @@
 import tweepy
+from tweepy import TweepError
 import pandas as pd
 import time
 import os
+import requests
 import csv
 import io
 from .moduleimpl import ModuleImpl
@@ -83,15 +85,15 @@ class Twitter(ModuleImpl):
             else:
                 tweets = Twitter.get_new_tweets(wfm, querytype, query, None)
 
-        except requests.exceptions.HTTPError as e:
+        except TweepError as e:
             if querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==401:
                 wfm.set_error('User %s\'s tweets are protected' % query)
                 return
-            elif querytype==Twitter.QUERY_TYPE_USER and response.status_code==404:
+            elif querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==404:
                 wfm.set_error('User %s does not exist' % query)
                 return
             else:
-                wfm.set_error('HTTP rrror %s fetching tweets' % str(res.status_code))
+                wfm.set_error('HTTP error %s fetching tweets' % str(e.response.status_code))
                 return
 
         except Exception as e:
