@@ -388,12 +388,12 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-bin"
+                                      className="icon-share "
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
                                     >
-                                      Delete
+                                      Share
                                     </span>
                                   </button>
                                 </DropdownItem>
@@ -410,12 +410,12 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-Share"
+                                      className="icon-bin"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
                                     >
-                                      Share
+                                      Delete
                                     </span>
                                   </button>
                                 </DropdownItem>
@@ -510,12 +510,12 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-bin"
+                                      className="icon-share "
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
                                     >
-                                      Delete
+                                      Share
                                     </span>
                                   </button>
                                 </DropdownItem>
@@ -532,12 +532,12 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-Share"
+                                      className="icon-bin"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
                                     >
-                                      Share
+                                      Delete
                                     </span>
                                   </button>
                                 </DropdownItem>
@@ -632,12 +632,12 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-bin"
+                                      className="icon-share "
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
                                     >
-                                      Delete
+                                      Share
                                     </span>
                                   </button>
                                 </DropdownItem>
@@ -654,12 +654,12 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-Share"
+                                      className="icon-bin"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
                                     >
-                                      Share
+                                      Delete
                                     </span>
                                   </button>
                                 </DropdownItem>
@@ -754,12 +754,12 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-bin"
+                                      className="icon-share "
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
                                     >
-                                      Delete
+                                      Share
                                     </span>
                                   </button>
                                 </DropdownItem>
@@ -776,12 +776,12 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-Share"
+                                      className="icon-bin"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
                                     >
-                                      Share
+                                      Delete
                                     </span>
                                   </button>
                                 </DropdownItem>

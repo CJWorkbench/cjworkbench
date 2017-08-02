@@ -64,12 +64,12 @@ exports[`WfContextMenu renders correctly 1`] = `
                 type="button"
               >
                 <i
-                  className="icon-bin"
+                  className="icon-share "
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
                 >
-                  Delete
+                  Share
                 </span>
               </button>
             </DropdownItem>
@@ -86,12 +86,12 @@ exports[`WfContextMenu renders correctly 1`] = `
                 type="button"
               >
                 <i
-                  className="icon-Share"
+                  className="icon-bin"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
                 >
-                  Share
+                  Delete
                 </span>
               </button>
             </DropdownItem>
