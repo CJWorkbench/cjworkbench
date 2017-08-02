@@ -5,7 +5,7 @@
   "description" : "Enter coma separated value to generate a table.",
   "parameters": [
     {
-      "name": "Paste Comma separated values",
+      "name": "Paste comma separated values",
       "id_name": "csv",
       "type": "string",
       "multiline": "True"
