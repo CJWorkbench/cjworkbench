@@ -1,5 +1,5 @@
 {
-  "name": "Filter by text",
+  "name": "Filter By Text",
   "id_name": "textsearch",
   "category" : "Filter",
   "description" : "Filter rows containing text in specific columns.",
