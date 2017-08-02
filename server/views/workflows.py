@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
+from rest_framework.decorators import permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, ModuleVersion, Workflow, WfModule
@@ -42,6 +44,7 @@ def workflow_list(request, format=None):
 # Or reorder modules
 @api_view(['GET', 'PATCH', 'POST', 'DELETE'])
 @renderer_classes((JSONRenderer,))
+@permission_classes((AllowAny, ))
 def workflow_detail(request, pk, format=None):
     try:
         workflow = Workflow.objects.get(pk=pk)
