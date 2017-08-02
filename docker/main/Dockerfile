@@ -18,7 +18,7 @@ RUN python manage.py migrate
 
 # setup cron job for every minute to do scheduled checks for new data
 RUN echo "* * * * * /usr/bin/curl http://localhost:8000/runcron" | crontab
-RUN service cron start
+RUN cron
 
 # go! default command runs in debug. docker-compose.yml runs start-prod.sh for the real thing
 CMD python manage.py runserver $(hostname -i):8000
