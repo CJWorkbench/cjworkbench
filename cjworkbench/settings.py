@@ -242,7 +242,7 @@ LOGGING = {
 
 ACCOUNT_EMAIL_UNIQUE = True
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
-ACCOUNT_USER_DISPLAY = lambda user: user.email
+ACCOUNT_USER_DISPLAY = lambda user: '%s %s' % (user.first_name, user.last_name) if user.first_name or user.last_name else user.email
 
 AUTHENTICATION_BACKENDS = [
     'account.auth_backends.EmailAuthenticationBackend',

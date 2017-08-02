@@ -5,6 +5,14 @@
 
     {% csrf_token %}
     {# fields are broken out here so we can change the field order #}
+    {{ form.first_name.errors }}
+    {{ form.first_name.label_tag }}
+    {{ form.first_name }}
+
+    {{ form.last_name.errors }}
+    {{ form.last_name.label_tag }}
+    {{ form.last_name }}
+
     {{ form.email.errors }}
     {{ form.email.label_tag }}
     {{ form.email }}
