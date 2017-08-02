@@ -573,6 +573,14 @@ body {
   background-color: #E8726E;
 }
 
+/* wraps a checkbox selection for display in a list  */
+.checkbox-container {
+  background-color: #FFFFFF;
+  height: 4rem;
+  width: 17rem;
+  margin: 1px 3px 1px 3px;
+  padding: 1.3rem 2rem 1.3rem 2rem;
+}
 
 /* ---- Dialog Boxes ---- */
 
