@@ -1,0 +1,25 @@
+{
+  "name": "Load data from Enigma", 
+  "id_name": "enigma",
+  "category": "Add data",
+  "description": "Retrieves a dataset from Enigma based on the user input.",
+  "parameters": [
+    {
+      "name": "Enigma URL",
+      "id_name": "enigma_url",
+      "type": "string",
+      "default": ""
+    },
+    {
+      "name": "Number of rows",
+      "id_name": "num_rows",
+      "type": "string",
+      "default": 200
+    },
+    {
+      "name": "Check Now",
+      "id_name" : "version_select",
+      "type": "custom"
+    }
+  ]
+}

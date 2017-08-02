@@ -13,6 +13,7 @@ from .modules.pythoncode import PythonCode
 from .modules.selectcolumns import SelectColumns
 from .modules.textsearch import TextSearch
 from .modules.twitter import Twitter
+from .modules.enigma import EnigmaDataLoader
 
 from .dynamicdispatch import DynamicDispatch
 # ---- Test Support ----
@@ -52,6 +53,7 @@ module_dispatch_tbl = {
     'textsearch':   TextSearch,
     'countvalues':  CountValues,
     'countbydate':  CountByDate,
+    'enigma': EnigmaDataLoader,
 
     # For testing
     'NOP':          NOP,
@@ -78,7 +80,7 @@ def module_dispatch_render(wf_module, table):
         else:
             return loadable.render(wf_module, table)
 
-    return module_dispatch_tbl[dispatch].render(wf_module,table)
+    return module_dispatch_tbl[dispatch].render(wf_module, table)
 
 
 def module_dispatch_event(wf_module, parameter, event):

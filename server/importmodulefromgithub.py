@@ -35,6 +35,7 @@ def get_categories():
         modules = Module.objects.all()
         for module in modules:
             categories.add(module.category)
+        categories.add("Edit") #Ick, double ick, but hard-coding as a temporary measure.
     return categories
 
 def get_already_imported():

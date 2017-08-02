@@ -21,7 +21,7 @@
       "name": "Add to previously loaded tweets",
       "id_name": "accumulate",
       "type": "checkbox",
-      "default": "True",
+      "default": "True"
     },
     {
       "name": "Check Now",
