@@ -20,6 +20,7 @@ import { mount } from 'enzyme'
 
 // });
 
+// dummy test, experiening time zone differences between local tests & Travis
 it('UpdateFrequencySelect renders correctly - dummy test', () => {
     expect(true).toBe(true);
 });

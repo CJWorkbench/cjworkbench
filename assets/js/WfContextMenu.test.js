@@ -1,12 +1,13 @@
 import React from 'react'
 import WfContextMenu  from './WfContextMenu'
-import renderer from 'react-test-renderer'
+import { mount } from 'enzyme'
+
 
 it('WfContextMenu renders correctly', () => {
-  const tree = renderer.create(
+  const wrapper = mount(
     <WfContextMenu removeModule={ () => {} } />
-  ).toJSON();
-  expect(tree).toMatchSnapshot();
+  );
+  expect(wrapper).toMatchSnapshot();
 });
 
 

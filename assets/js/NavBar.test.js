@@ -1,20 +1,19 @@
 import React from 'react'
 import { WorkflowListNavBar, WorkflowNavBar } from './navbar'
-import renderer from 'react-test-renderer'
+import { mount } from 'enzyme'
+
 
 it('WorkflowListNavBar renders correctly', () => {
-  const tree = renderer.create(
+  const wrapper = mount(
     <WorkflowListNavBar />
-  ).toJSON();
-  expect(tree).toMatchSnapshot();
+  );
+  expect(wrapper).toMatchSnapshot();
 });
 
 it('WorkflowNavBar renders correctly', () => {
-  const tree = renderer.create(
+  const wrapper = mount(
     <WorkflowNavBar addButton={<div />} workflowId={1} api={{}}/>
-  ).toJSON();
-  expect(tree).toMatchSnapshot();
+  );
+  expect(wrapper).toMatchSnapshot();
 });
-
-
 
