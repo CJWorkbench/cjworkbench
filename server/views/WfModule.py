@@ -1,8 +1,9 @@
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from rest_framework import status
-from rest_framework.decorators import api_view, renderer_classes
+from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from server.models import WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
@@ -35,14 +36,19 @@ def patch_update_settings(wf_module, data):
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on request type
 @api_view(['GET', 'DELETE', 'PATCH'])
 @renderer_classes((JSONRenderer,))
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_detail(request, pk, format=None):
     try:
         wf_module = WfModule.objects.get(pk=pk)
     except WfModule.DoesNotExist:
         return HttpResponseNotFound()
 
-    if not wf_module.user_authorized(request.user):
-        return HttpResponseForbidden()
+    if request.method in ['POST', 'DELETE', 'PATCH']:
+        if not wf_module.user_authorized(request.user):
+            return HttpResponseForbidden()
+
+    if not wf_module.workflow.public:
+        return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
         serializer = WfModuleSerializer(wf_module)
@@ -76,6 +82,7 @@ def wfmodule_detail(request, pk, format=None):
 # /render: return output table of this module
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_render(request, pk, format=None):
     if request.method == 'GET':
         try:
@@ -83,7 +90,7 @@ def wfmodule_render(request, pk, format=None):
         except WfModule.DoesNotExist:
             return HttpResponseNotFound()
 
-        if not wf_module.user_authorized(request.user):
+        if not wf_module.user_authorized(request.user) and not wf_module.workflow.public:
             return HttpResponseForbidden()
 
         table = execute_wfmodule(wf_module)
@@ -101,7 +108,7 @@ def wfmodule_input(request, pk, format=None):
         except WfModule.DoesNotExist:
             return HttpResponseNotFound()
 
-        if not wf_module.user_authorized(request.user):
+        if not wf_module.workflow.public:
             return HttpResponseForbidden()
 
         prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
@@ -117,6 +124,7 @@ def wfmodule_input(request, pk, format=None):
 # Public access to wfmodule output. Basically just /render with different auth
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_public_output(request, pk, type, format=None):
     try:
         wf_module = WfModule.objects.get(pk=pk)
@@ -140,21 +148,24 @@ def wfmodule_public_output(request, pk, type, format=None):
 # Get list of data versions, or set current data version
 @api_view(['GET', 'PATCH'])
 @renderer_classes((JSONRenderer,))
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_dataversion(request, pk, format=None):
     try:
         wf_module = WfModule.objects.get(pk=pk)
     except WfModule.DoesNotExist:
         return HttpResponseNotFound()
 
-    if not wf_module.user_authorized(request.user):
-        return HttpResponseForbidden()
-
     if request.method == 'GET':
+        if not wf_module.workflow.public:
+            return HttpResponseForbidden()
         versions = wf_module.list_stored_data_versions()
         current_version = wf_module.get_stored_data_version()
         response = {'versions': versions, 'selected': current_version}
         return Response(response)
 
     elif request.method == 'PATCH':
+        if not wf_module.user_authorized(request.user):
+            return HttpResponseForbidden()
+
         ChangeDataVersionCommand.create(wf_module, request.data['selected'])
         return Response(status=status.HTTP_204_NO_CONTENT)
