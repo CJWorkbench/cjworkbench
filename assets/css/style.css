@@ -948,13 +948,25 @@ body {
   background-color: #FFFFFF;
   height: 4rem; 
   width: 100%;
-  /* padding: 2rem 1.3rem 2rem 1.3rem; */
 }
 
 .card .second-level {
   position: relative;
   height: 7rem;
   border-radius: 0;
+}
+
+.library-card-category-open {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0;
+  border: 0;
+}
+.library-card-category-closed {
+  margin-top: 1px;
+  margin-bottom: 1px;
+  border-radius: 0;
+  border: 0;
 }
 
 

@@ -90,18 +90,16 @@ export default class UpdateFrequencySelect extends React.Component {
     var manual = this.state.liveSettings.manual;
     var period = this.state.liveSettings.period;
     var unit = this.state.liveSettings.unit;
-    var settingsInfo = manual 
-      ? 'Manual'
-      :'Auto, every ' + period + ' ' + unit;
+    var settingsInfo = manual ? 'manual' :'auto'
 
     var lastChecked = null;
     if (this.props.updateSettings.lastUpdateCheck) 
-      lastChecked = <div className='content-3 t-m-gray'>Last checked: {dateFormat(this.props.updateSettings.lastUpdateCheck, "mmmm d yyyy - hh:MM TT")}</div>
+      lastChecked = <div className='content-3 t-m-gray'>Checked {dateFormat(this.props.updateSettings.lastUpdateCheck, "mmmm d yyyy - hh:MM TT")}</div>
       
     return (
       <div className='version-item'>
         <div className='mb-4' >
-          <span className='content-3 t-d-gray'>Update: </span>
+          <span className='content-3 t-d-gray'>Update </span>
           <span className='content-3 t-f-blue' onClick={this.toggleModal}>{settingsInfo}</span>  
         </div>
         {lastChecked}

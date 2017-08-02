@@ -92,30 +92,21 @@ export default class ModuleCategory extends React.Component {
     var isOpen = !this.state.collapsed;
 
     var contents = <ModulesList
-              data={this.props["data-modules"]}
-            />
+                      data={this.props["data-modules"]}
+                  />
 
     var symbol = isOpen 
       ? 'icon-sort-down button-icon'
       : 'icon-sort-right button-icon'
 
     // Provides margins around opened library category
-    var cardMargin = isOpen
-      ? {
-          'marginBottom': '1rem',
-          'marginTop': '1rem',
-          'borderRadius': 0, 
-          'border': 0
-        }
-      : {
-          'marginBottom': '1px',
-          'marginTop': '1px',
-          'borderRadius': 0, 
-          'border': 0
-        }
+    var cardClass = isOpen
+      ? 'card b-l-gray library-card-category-open'
+      : 'card b-l-gray library-card-category-closed'
+      
 
     return (
-      <div className='card b-l-gray' style={cardMargin}>
+      <div className={cardClass}>
         <div className='first-level d-flex align-items-center'>    
           <div className='ml-4' onClick={this.toggleCollapse}>
             <span className={symbol}></span> 

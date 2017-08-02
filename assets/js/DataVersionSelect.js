@@ -110,10 +110,10 @@ export default class DataVersionSelect extends React.Component {
     // TODO: Refactor calculated classNames outside of Return statement
 
     return (
-      <div className='version-item'>
+      <div className='version-item d-flex justify-content-center flex-column align-items-center'>
         <div className='t-d-gray content-3 mb-4'>Current Version</div>
 
-        <div className='info-medium-blue open-modal' onClick={this.toggleModal}>
+        <div className='open-modal t-f-blue content-3' onClick={this.toggleModal}>
             {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}
         </div>
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
@@ -140,8 +140,8 @@ export default class DataVersionSelect extends React.Component {
             </div>
           </ModalBody>
           <ModalFooter className='dialog-footer'>
-            <Button className='button-blue action-button' onClick={this.toggleModal}>Cancel</Button>
-            <Button className='button-blue action-button' onClick={this.changeVersions}>OK</Button>
+            <div className='button-blue action-button' onClick={this.toggleModal}>Cancel</div>
+            <div className='button-blue action-button' onClick={this.changeVersions}>OK</div>
           </ModalFooter>
         </Modal>
       </div>

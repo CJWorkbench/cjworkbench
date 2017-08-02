@@ -162,7 +162,7 @@ export default class WfModule extends React.Component {
 
     if (!this.state.isCollapsed)
       inside = <div className='module-card-params'>
-        {this.wf_module.module_version.module.description}
+        <div className='t-d-gray content-3 mb-4'>{this.wf_module.module_version.module.description}</div>
         {paramdivs}
       </div>;
 
@@ -225,7 +225,6 @@ export default class WfModule extends React.Component {
               {/* --- Error messages appear here --- */}
               <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
               {/* --- Module details, will expand / collapse --- */}
-
               <Collapse className='' isOpen={!this.state.isCollapsed} >
                 {inside}
               </Collapse>
