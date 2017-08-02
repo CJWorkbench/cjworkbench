@@ -167,7 +167,10 @@ export default class WfModule extends React.Component {
 
     if (!this.state.isCollapsed)
       inside =  <div className='module-card-params'>
-                  <div className='t-d-gray content-3 mb-4'>{this.wf_module.module_version.module.description}</div>
+        {/* TODO: get margin bottom slightly larger, reduce font weight on text */}
+                  <div className='t-d-gray content-3' style={{'marginBottom':'2rem','fontWeight':'lighter'}}>
+                    {this.wf_module.module_version.module.description}
+                  </div>
                   {paramdivs}
                 </div>;
 
