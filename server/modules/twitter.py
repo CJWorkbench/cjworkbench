@@ -12,6 +12,10 @@ from .utils import *
 
 class Twitter(ModuleImpl):
 
+    # Must match order of items in twitter.json module def
+    QUERY_TYPE_USER = 0
+    QUERY_TYPE_SEARCH = 1
+
     # Get dataframe of last tweets fron our storage,
     @staticmethod
     def get_stored_tweets(wf_module):
@@ -31,10 +35,10 @@ class Twitter(ModuleImpl):
         auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
         api = tweepy.API(auth)
 
-        if querytype == 'User':
+        # Only get last 100 tweets, because that is twitter API max for single call
+        if querytype == Twitter.QUERY_TYPE_USER:
             tweetsgen = api.user_timeline(query, count=200)
         else:
-            # Only get last 100 tweets, because that is twitter API max for single call
             tweetsgen = api.search(q=query, count=100)
 
         # Columns to retrieve and store from Twitter
@@ -67,10 +71,10 @@ class Twitter(ModuleImpl):
 
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy(notify=True)
-        querytype = wfm.get_param_menu_string('querytype')
-        query = wfm.get_param_string('query')
 
         try:
+            querytype = wfm.get_param_menu_idx("querytype")
+            query = wfm.get_param_string('query')
 
             if wfm.get_param_checkbox('accumulate'):
                 old_tweets = Twitter.get_stored_tweets(wfm)
@@ -80,10 +84,10 @@ class Twitter(ModuleImpl):
                 tweets = Twitter.get_new_tweets(wfm, querytype, query, None)
 
         except requests.exceptions.HTTPError as e:
-            if querytype=='User' and e.response.status_code==401:
+            if querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==401:
                 wfm.set_error('User %s\'s tweets are protected' % query)
                 return
-            elif querytype=='User'and response.status_code==404:
+            elif querytype==Twitter.QUERY_TYPE_USER and response.status_code==404:
                 wfm.set_error('User %s does not exist' % query)
                 return
             else:
