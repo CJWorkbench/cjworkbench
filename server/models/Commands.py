@@ -237,6 +237,11 @@ class ChangeParameterCommand(Delta):
 
         delta.forward()
 
+        # Clear wf_module errors, on the theory that user might have fixed them. The next render()
+        # or event() will re-create the errors if there is still a problem. The only other place
+        # errors are cleared is when an event is dispatched.
+        parameter_val.wf_module.set_ready(notify=False)
+
         # increment workflow version number, triggers global re-render if this parameter can effect output
         notify = not pspec.ui_only
         if notify:

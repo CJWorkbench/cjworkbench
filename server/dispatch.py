@@ -88,4 +88,6 @@ def module_dispatch_event(wf_module, parameter, event):
     if dispatch not in module_dispatch_tbl.keys():
         raise ValueError("Unknown dispatch id '%s' while handling event for parameter '%s'" % (dispatch, parameter.parameter_spec.name))
 
+    # Clear errors on every new event. (The other place they are cleared is on parameter change)
+    wf_module.set_ready(notify=False)
     return module_dispatch_tbl[dispatch].event(wf_module, parameter, event)
