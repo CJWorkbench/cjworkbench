@@ -1,0 +1,172 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WorkflowMetadata renders correctly 1`] = `
+<div>
+  <ul
+    className="list-inline list-workflow-meta"
+  >
+    <li
+      className="list-inline-item"
+    >
+      by 
+      <strong>
+        Harry Harrison
+      </strong>
+    </li>
+    <li
+      className="list-inline-item"
+    >
+      updated 
+      <strong>
+        2017-08-01T20:12:55.334901Z
+      </strong>
+    </li>
+    <li
+      className="list-inline-item t-f-blue"
+      onClick={[Function]}
+    >
+      <strong>
+        public
+      </strong>
+    </li>
+  </ul>
+</div>
+`;
+
+exports[`WorkflowMetadata renders correctly 2`] = `
+<div>
+  <ul
+    className="list-inline list-workflow-meta"
+  >
+    <li
+      className="list-inline-item"
+    >
+      by 
+      <strong>
+        Harry Harrison
+      </strong>
+    </li>
+    <li
+      className="list-inline-item"
+    >
+      updated 
+      <strong>
+        2017-08-01T20:12:55.334901Z
+      </strong>
+    </li>
+    <li
+      className="list-inline-item t-f-blue"
+      onClick={[Function]}
+    >
+      <strong>
+        public
+      </strong>
+    </li>
+  </ul>
+  <Modal
+    autoFocus={true}
+    backdrop={true}
+    backdropTransitionTimeout={150}
+    fade={true}
+    isOpen={true}
+    keyboard={true}
+    modalTransitionTimeout={300}
+    toggle={[Function]}
+    zIndex={1050}
+  >
+    <ModalHeader
+      className="dialog-header"
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <span
+        className="t-d-gray title-4"
+      >
+        Privacy Setting
+      </span>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <div
+        className="row"
+      >
+        <div
+          className="col-sm-4"
+        >
+          <div
+            className="action-button button-full-blue"
+            onClick={[Function]}
+          >
+            Public
+          </div>
+        </div>
+        <div
+          className="col-sm-8"
+        >
+          <p>
+            Anyone can access and duplicate the workflow or any of its modules
+          </p>
+        </div>
+      </div>
+      <br />
+      <div
+        className="row"
+      >
+        <div
+          className="col-sm-4"
+        >
+          <div
+            className="action-button button-gray"
+            onClick={[Function]}
+          >
+            Private
+          </div>
+        </div>
+        <div
+          className="col-sm-8"
+        >
+          <p>
+            Only you can access and edit he workflow
+          </p>
+        </div>
+      </div>
+    </ModalBody>
+  </Modal>
+</div>
+`;
+
+exports[`WorkflowMetadata renders correctly 3`] = `
+<div>
+  <ul
+    className="list-inline list-workflow-meta"
+  >
+    <li
+      className="list-inline-item"
+    >
+      by 
+      <strong>
+        Harry Harrison
+      </strong>
+    </li>
+    <li
+      className="list-inline-item"
+    >
+      updated 
+      <strong>
+        2017-08-01T20:12:55.334901Z
+      </strong>
+    </li>
+    <li
+      className="list-inline-item t-f-blue"
+      onClick={[Function]}
+    >
+      <strong>
+        public
+      </strong>
+    </li>
+  </ul>
+</div>
+`;

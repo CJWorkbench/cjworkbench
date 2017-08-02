@@ -1,18 +1,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import Workflows from './workflows'
-
 const Utils = require('./utils');
-
-const mockResponse = (status, statusText, response) => {
-  return new window.Response(response, {
-    status: status,
-    statusText: statusText,
-    headers: {
-      'Content-type': 'application/json'
-    }
-  });
-};
 
 it('renders correctly', (done) => {
 
@@ -36,7 +25,7 @@ it('renders correctly', (done) => {
     ];
 
   window.fetch = jest.fn().mockImplementation(()=>
-    Promise.resolve(mockResponse(200, null, null))
+    Promise.resolve(Utils.mockResponse(200, null, null))
   );
 
   // Start with no workflows on the initial fetch (won't get loaded before expects anyway, due to asynchrony)
@@ -82,7 +71,7 @@ it('new workflow button', (done) => {
 
   Utils.goToUrl = jest.fn();
   window.fetch = jest.fn().mockImplementation(()=>
-    Promise.resolve(mockResponse(200, null, JSON.stringify(testData)))
+    Promise.resolve(Utils.mockResponse(200, null, JSON.stringify(testData)))
   );
   newButton.first().simulate('click');
 

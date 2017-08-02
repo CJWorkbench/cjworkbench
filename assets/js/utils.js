@@ -25,3 +25,14 @@ export const csrfToken = Cookies.get('csrftoken');
 // Mocked server API object that does nothing, for tests where API never actually called 
 export class EmptyAPI {};
 export var emptyAPI = new EmptyAPI();
+
+// More testing fun
+export const mockResponse = (status, statusText, response) => {
+  return new window.Response(response, {
+    status: status,
+    statusText: statusText,
+    headers: {
+      'Content-type': 'application/json'
+    }
+  });
+};

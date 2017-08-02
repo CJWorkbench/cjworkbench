@@ -8,6 +8,7 @@ import WfModule from './WfModule'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
 import EditableWorkflowName from './EditableWorkflowName'
+import WorkflowMetadata from './WorkflowMetadata'
 import {
   Button,
   Modal,
@@ -18,10 +19,6 @@ import {
 import WfContextMenu from './WfContextMenu'
 
 import { getPageID, csrfToken } from './utils'
-
-// Are these Require statements redundant?
-require('bootstrap/dist/css/bootstrap.css');
-require('../css/style.css');
 
 
 // ---- Sortable WfModules within the workflow ----
@@ -98,8 +95,6 @@ export default class Workflow extends React.Component {
       privacyModalOpen: false
     };
     this.toggleModuleLibrary = this.toggleModuleLibrary.bind(this);
-    this.setPublic = this.setPublic.bind(this);
-    this.togglePrivacyModal = this.togglePrivacyModal.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -117,60 +112,6 @@ export default class Workflow extends React.Component {
     this.setState(oldState => ({
       moduleLibraryVisible: !oldState.moduleLibraryVisible
     }));
-  }
-
-  setPublic(isPublic) {
-    fetch('/api/workflows/' + getPageID(), {
-      method: 'post',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken
-      },
-      body: JSON.stringify({'public': isPublic}) })
-    .then( () => {
-      this.setState({isPublic: isPublic});
-    })
-    .catch( (error) => { console.log('Request failed', error); })
-  }
-
-  togglePrivacyModal() {
-    this.setState({ privacyModalOpen: !this.state.privacyModalOpen });
-  }
-
-  renderPrivacyModal() {
-    if (!this.state.privacyModalOpen) {
-      return null;
-    }
-
-    return (
-      <Modal isOpen={this.state.privacyModalOpen} toggle={this.togglePrivacyModal}>
-        <ModalHeader toggle={this.togglePrivacyModal} className='dialog-header' >
-          <span className='t-d-gray title-4'>Privacy Setting</span>
-          <span className='icon-close' onClick={this.togglePrivacyModal}></span>
-        </ModalHeader>
-        <ModalBody className='dialog-body'>
-          <div className="row">
-            <div className="col-sm-4">
-              <div className={"action-button " + (this.state.isPublic ? "button-full-blue" : "button-gray") } onClick={() => {this.setPublic(true); this.togglePrivacyModal()}}>Public</div>
-            </div>
-            <div className="col-sm-8">
-              <p>Anyone can access and duplicate the workflow or any of its modules</p>
-            </div>
-          </div>
-          <br></br>
-          <div className="row">
-            <div className="col-sm-4">
-              <div className={"action-button " + (!this.state.isPublic ? "button-full-blue" : "button-gray")} onClick={() => {this.setPublic(false); this.togglePrivacyModal()}}>Private</div>
-            </div>
-            <div className="col-sm-8">
-              <p>Only you can access and edit he workflow</p>
-            </div>
-          </div>
-        </ModalBody>
-      </Modal>
-    );
   }
 
   render() {
@@ -199,8 +140,6 @@ export default class Workflow extends React.Component {
       displayPane = outputPane;
     }
 
-    let privacyModal = this.renderPrivacyModal();
-
     // Takes care of both, the left-hand side and the right-hand side of the
     // UI. The modules in the workflow are displayed on the left (vertical flow)
     // and the output of the modules on the right.
@@ -208,7 +147,9 @@ export default class Workflow extends React.Component {
     // invokes the Module Library.
     return (
       <div className="workflow-root">
+
         <WorkflowNavBar workflowId={this.props.workflow.id} api={this.props.api} /><div className="workflow-container">
+
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
               <div className="d-flex justify-content-between">
@@ -223,17 +164,13 @@ export default class Workflow extends React.Component {
               <br></br>
               <div className="d-flex justify-content-between">
                 <div>
-                <EditableWorkflowName
-                  value={this.props.workflow.name}
-                  editClass='editable-title-field title-1 t-d-gray'
-                  wfId={this.props.workflow.id}
-                  isReadOnly={this.props.workflow.read_only} />
-                <ul className="list-inline list-workflow-meta">
-                  <li className="list-inline-item">by <strong>{this.props.workflow.owner_name}</strong></li>
-                  <li className="list-inline-item">updated <strong>{this.props.workflow.last_update}</strong></li>
-                  <li className="list-inline-item" onClick={this.togglePrivacyModal}><strong className='t-f-blue'>{this.state.isPublic ? 'public' : 'private'}</strong></li>
-                </ul>
-                {privacyModal}
+                  <EditableWorkflowName
+                    value={this.props.workflow.name}
+                    editClass='editable-title-field title-1 t-d-gray'
+                    wfId={this.props.workflow.id}
+                    isReadOnly={this.props.workflow.read_only}
+                  />
+                  <WorkflowMetadata workflow={this.props.workflow} api={this.props.api}/>
                 </div>
                 <Button onClick={this.toggleModuleLibrary.bind(this)}
                     className='button-blue action-button'>Add Module</Button>
@@ -248,6 +185,7 @@ export default class Workflow extends React.Component {
               />
             </div>
           </div>
+
           <div className="outputpane-right">
             {displayPane}
           </div>

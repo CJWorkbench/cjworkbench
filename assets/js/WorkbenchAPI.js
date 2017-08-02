@@ -6,6 +6,20 @@ import { csrfToken } from './utils'
 // All API calls which fetch data return a promise which returns JSON
 class WorkbenchAPI {
 
+  setWorkflowPublic(workflowID, isPublic) {
+    return (
+      fetch('/api/workflows/' + workflowID, {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({'public': isPublic})
+      }));
+  }
+
   onParamChanged(paramID, newVal) {
     return (
       fetch('/api/parameters/' + paramID, {
