@@ -8,7 +8,7 @@ class SelectColumns(ModuleImpl):
         cols = [c.strip() for c in cols]
 
         if cols == [] or cols == ['']:
-            return None # no columns, no data. harrumph
+            return table
 
         for c in cols:
             if not c in table.columns:
