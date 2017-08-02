@@ -172,8 +172,10 @@ export default class Workflow extends React.Component {
                   />
                   <WorkflowMetadata workflow={this.props.workflow} api={this.props.api}/>
                 </div>
+                {!this.props.workflow.read_only &&
                 <Button onClick={this.toggleModuleLibrary.bind(this)}
                     className='button-blue action-button'>Add Module</Button>
+                }
               </div>
             </div>
             <div className="modulestack-list w-75 mx-auto ">

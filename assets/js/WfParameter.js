@@ -143,7 +143,7 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          <div className='action-button button-blue mb-3' disabled={this.props.isReadOnly} onClick={this.click}>{this.name}</div>
+          <div className='action-button button-blue mb-3' onClick={!this.props.readOnly && this.click}>{this.name}</div>
         );
 
       case 'checkbox':
