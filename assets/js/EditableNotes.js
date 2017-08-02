@@ -18,7 +18,7 @@ export default class EditableNotes extends React.Component {
   // Simulate a click on the field to enter editing state upon mount
   //    Have to target child through parent b/c RIETextArea cannot be directly referenced
   componentDidMount() {
-    if (this.props.startFocused) 
+    if (this.props.startFocused)
       this.textInput.childNodes[0].focus();
   }
 
@@ -55,7 +55,7 @@ export default class EditableNotes extends React.Component {
               className='m-6'
             >
             {this.props.isReadOnly ? (
-              <textarea readOnly="true" value={this.props.value}></textarea>
+              <span className={this.props.editClass}>{this.props.value}</span>
             ):(
               <RIETextArea
                 value={this.props.value}
