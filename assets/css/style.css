@@ -146,7 +146,7 @@ body {
   background-color: #FAFAFA;
 }
 .b-l-gray {
-  background-color: #F5F5F5;
+  background-color: #F2F2F2;
 }
 .b-m-gray {
   background-color: #B4B4B4;
@@ -945,8 +945,7 @@ body {
 }
 
 .card .first-level {
-  margin-top: 0.5rem;
-  margin-bottom: 0.5rem;
+  background-color: #FFFFFF;
   height: 4rem; 
   width: 100%;
   /* padding: 2rem 1.3rem 2rem 1.3rem; */

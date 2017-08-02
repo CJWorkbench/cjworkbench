@@ -46,8 +46,8 @@ export default class Module extends React.Component {
     var metadata = "by " + author
 
     return (
-      <div className='container m-0 p-0'>
-        <div className='card' style={{'borderRadius': 0}}>
+      <div className='container mt-1 p-0'>
+        <div className='card' style={{'borderRadius': 0, 'border': 0}}>
           <div className='card-block module-card-wrapper'>
             <div className='module-card-info'>
               <div 

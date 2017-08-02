@@ -102,13 +102,20 @@ export default class ModuleCategory extends React.Component {
     // Provides margins around opened library category
     var cardMargin = isOpen
       ? {
-          'marginBottom': '0.5rem',
-          'marginTop': '0.5rem',
+          'marginBottom': '1rem',
+          'marginTop': '1rem',
+          'borderRadius': 0, 
+          'border': 0
         }
-      : {}
+      : {
+          'marginBottom': '1px',
+          'marginTop': '1px',
+          'borderRadius': 0, 
+          'border': 0
+        }
 
     return (
-      <div className='card' style={cardMargin}>
+      <div className='card b-l-gray' style={cardMargin}>
         <div className='first-level d-flex align-items-center'>    
           <div className='ml-4' onClick={this.toggleCollapse}>
             <span className={symbol}></span> 
@@ -116,7 +123,7 @@ export default class ModuleCategory extends React.Component {
           </div>
         </div>
         <div>
-          <Collapse className='' isOpen={isOpen}>
+          <Collapse className='b-l-gray' isOpen={isOpen}>
             {contents}
           </Collapse> 
         </div>

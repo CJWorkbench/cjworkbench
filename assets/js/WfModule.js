@@ -188,8 +188,8 @@ export default class WfModule extends React.Component {
     // Putting it all together: name, status, parameters, output
     return (
       <div className='container' {...this.props} onClick={this.click}>
-        <div className='card' style={{'borderRadius': 0}}>
-          {/* --- The whole card --- */}
+        {/* --- The whole card --- */}
+        <div className='card mb-1' style={{'borderRadius': 0, 'border': 0}}>
           <div className='card-block module-card-wrapper d-flex justify-content-between'>
             {/* --- Everything but the status bar, on the left of card --- */}
             <div className='module-card-info'>
