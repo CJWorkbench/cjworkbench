@@ -1,6 +1,6 @@
 {
   "name": "Chartbuilder",
-  "id_name": "chartbuilder",
+  "id_name": "simplechart",
   "category" : "Visualize",
   "description" : "Create line, column and scatter plot charts, and export JPGs.",
   "parameters": [

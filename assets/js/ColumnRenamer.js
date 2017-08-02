@@ -65,7 +65,7 @@ export default class ColumnRenamer extends React.Component {
   }
 
   handleGridRowsUpdated({ fromRow, toRow, updated }) {
-    if (this.props.isReadOnly) {
+    if (!this.props.isReadOnly) {
       let newColNames = this.state.newColNames.slice();
 
       for (let i = fromRow; i <= toRow; i++) {
