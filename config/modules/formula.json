@@ -2,16 +2,16 @@
   "name": "Formula",
   "id_name": "formula",
   "category" : "Transform",
-  "description": "Apply a formula between cells and generate a column to display the result.",
+  "description": "Apply a formula between columns and generate its result in a new column.",
   "parameters": [
     {
-      "name": "Formula",
+      "name": "Type in formula, using column names",
       "id_name" : "formula",
       "type": "string",
       "default": ""
     },
     {
-      "name": "Output Column",
+      "name": "Name the output column",
       "id_name" : "out_column",
       "type": "string",
       "default": "output"

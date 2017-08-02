@@ -1,5 +1,5 @@
 {
-  "name": "Count unique values",
+  "name": "Count Unique Values",
   "id_name": "countvalues",
   "category" : "Group",
   "description" : "Group and count rows for each unique value.",

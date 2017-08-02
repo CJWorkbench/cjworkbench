@@ -1,23 +1,23 @@
 {
-  "name": "Text filter",
+  "name": "Filter by text",
   "id_name": "textsearch",
   "category" : "Filter",
   "description" : "Filter rows containing text in specific columns.",
   "parameters": [
     {
-      "name": "Search For",
+      "name": "Search for",
       "id_name" : "query",
       "type": "string",
       "default": ""
     },
     {
-      "name": "In which columns?",
+      "name": "In columns",
       "id_name": "colselect",
       "type": "custom",
       "ui-only": true
     },
     {
-      "name": "Column Names",
+      "name": "Column names",
       "id_name": "colnames",
       "type": "string"
     },
@@ -28,7 +28,7 @@
       "default": "False"
     },
     {
-      "name": "Regular Expression",
+      "name": "Regular expression",
       "id_name": "regex",
       "type": "checkbox",
       "default": "False"

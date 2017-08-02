@@ -1,11 +1,11 @@
 {
-  "name": "Count by date",
+  "name": "Count by Date",
   "id_name": "countbydate",
   "category" : "Group",
   "description": "Group and count rows by dates.",
   "parameters": [
     {
-      "name": "Date Column",
+      "name": "Date column",
       "id_name" : "column",
       "type": "string"
     },
