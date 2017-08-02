@@ -1,169 +1,294 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WorkflowListNavBar renders correctly 1`] = `
-<div>
-  <nav
-    className="navbar"
-  >
-    <h1
-      className="navbar-brand mb-0 mr-auto title-3"
+<WorkflowListNavBar>
+  <div>
+    <nav
+      className="navbar"
     >
-      CJ Workbench
-    </h1>
-    <div
-      className="dropdown"
-    >
-      <button
-        aria-expanded={false}
-        aria-haspopup="true"
-        className="btn btn-secondary"
-        data-toggle="dropdown"
-        onClick={[Function]}
-        type="button"
+      <h1
+        className="navbar-brand mb-0 mr-auto title-3"
       >
-        ☰
-      </button>
-      <div
-        aria-hidden={true}
-        className="dropdown-menu"
-        role="menu"
-        tabIndex="-1"
-      >
-        <a
-          className="dropdown-menu-item dropdown-item"
-          href="http://blog.cjworkbench.org"
-          onClick={[Function]}
-          tabIndex="0"
-          type={undefined}
-        >
-          <span
-            className="t-d-gray content-3 ml-3"
+        CJ Workbench
+      </h1>
+      <WfHamburgerMenu>
+        <UncontrolledDropdown>
+          <Dropdown
+            isOpen={false}
+            tag="div"
+            toggle={[Function]}
           >
-            Help
-          </span>
-        </a>
-        <a
-          className="dropdown-menu-item dropdown-item"
-          href="/account/logout"
-          onClick={[Function]}
-          tabIndex="0"
-          type={undefined}
-        >
-          <span
-            className="t-d-gray content-3 ml-3"
-          >
-            Logout
-          </span>
-        </a>
-      </div>
-    </div>
-  </nav>
-</div>
+            <div
+              className="dropdown"
+            >
+              <DropdownToggle
+                aria-haspopup={true}
+                color="secondary"
+                data-toggle="dropdown"
+              >
+                <Button
+                  aria-expanded={false}
+                  aria-haspopup="true"
+                  className=""
+                  color="secondary"
+                  data-toggle="dropdown"
+                  onClick={[Function]}
+                  tag="button"
+                >
+                  <button
+                    aria-expanded={false}
+                    aria-haspopup="true"
+                    className="btn btn-secondary"
+                    data-toggle="dropdown"
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    ☰
+                  </button>
+                </Button>
+              </DropdownToggle>
+              <DropdownMenu
+                tag="div"
+              >
+                <div
+                  aria-hidden={true}
+                  className="dropdown-menu"
+                  role="menu"
+                  tabIndex="-1"
+                >
+                  <DropdownItem
+                    className="dropdown-menu-item"
+                    href="http://blog.cjworkbench.org"
+                    tag="a"
+                    toggle={true}
+                  >
+                    <a
+                      className="dropdown-menu-item dropdown-item"
+                      href="http://blog.cjworkbench.org"
+                      onClick={[Function]}
+                      tabIndex="0"
+                    >
+                      <span
+                        className="t-d-gray content-3 ml-3"
+                      >
+                        Help
+                      </span>
+                    </a>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="dropdown-menu-item"
+                    href="/account/logout"
+                    tag="a"
+                    toggle={true}
+                  >
+                    <a
+                      className="dropdown-menu-item dropdown-item"
+                      href="/account/logout"
+                      onClick={[Function]}
+                      tabIndex="0"
+                    >
+                      <span
+                        className="t-d-gray content-3 ml-3"
+                      >
+                        Logout
+                      </span>
+                    </a>
+                  </DropdownItem>
+                </div>
+              </DropdownMenu>
+            </div>
+          </Dropdown>
+        </UncontrolledDropdown>
+      </WfHamburgerMenu>
+    </nav>
+  </div>
+</WorkflowListNavBar>
 `;
 
 exports[`WorkflowNavBar renders correctly 1`] = `
-<div>
-  <nav
-    className="navbar"
-  >
-    <div
-      className="dropdown"
+<WorkflowNavBar
+  addButton={<div />}
+  api={Object {}}
+  workflowId={1}
+>
+  <div>
+    <nav
+      className="navbar"
     >
-      <button
-        aria-expanded={false}
-        aria-haspopup="true"
-        className="btn btn-secondary"
-        data-toggle="dropdown"
-        onClick={[Function]}
-        type="button"
+      <WfHamburgerMenu
+        api={Object {}}
+        workflowId={1}
       >
-        ☰
-      </button>
-      <div
-        aria-hidden={true}
-        className="dropdown-menu"
-        role="menu"
-        tabIndex="-1"
-      >
-        <a
-          className="dropdown-menu-item dropdown-item"
-          href="/workflows"
-          onClick={[Function]}
-          tabIndex="0"
-          type={undefined}
-        >
-          <span
-            className="t-d-gray content-3 ml-3"
+        <UncontrolledDropdown>
+          <Dropdown
+            isOpen={false}
+            tag="div"
+            toggle={[Function]}
           >
-            Your Workflows
-          </span>
-        </a>
-        <div>
-          <div
-            className="dropdown-divider"
-            onClick={[Function]}
-            tabIndex="-1"
-            type={undefined}
-          />
-          <button
-            className="dropdown-menu-item dropdown-item"
-            onClick={[Function]}
-            tabIndex="0"
-            type="button"
-          >
-            <span
-              className="t-d-gray content-3 ml-3"
+            <div
+              className="dropdown"
             >
-              Undo
-            </span>
-          </button>
-          <button
-            className="dropdown-menu-item dropdown-item"
-            onClick={[Function]}
-            tabIndex="0"
-            type="button"
-          >
-            <span
-              className="t-d-gray content-3 ml-3"
-            >
-              Redo
-            </span>
-          </button>
-          <div
-            className="dropdown-divider"
-            onClick={[Function]}
-            tabIndex="-1"
-            type={undefined}
-          />
-        </div>
-        <a
-          className="dropdown-menu-item dropdown-item"
-          href="http://blog.cjworkbench.org"
-          onClick={[Function]}
-          tabIndex="0"
-          type={undefined}
-        >
-          <span
-            className="t-d-gray content-3 ml-3"
-          >
-            Help
-          </span>
-        </a>
-        <a
-          className="dropdown-menu-item dropdown-item"
-          href="/account/logout"
-          onClick={[Function]}
-          tabIndex="0"
-          type={undefined}
-        >
-          <span
-            className="t-d-gray content-3 ml-3"
-          >
-            Logout
-          </span>
-        </a>
-      </div>
-    </div>
-  </nav>
-</div>
+              <DropdownToggle
+                aria-haspopup={true}
+                color="secondary"
+                data-toggle="dropdown"
+              >
+                <Button
+                  aria-expanded={false}
+                  aria-haspopup="true"
+                  className=""
+                  color="secondary"
+                  data-toggle="dropdown"
+                  onClick={[Function]}
+                  tag="button"
+                >
+                  <button
+                    aria-expanded={false}
+                    aria-haspopup="true"
+                    className="btn btn-secondary"
+                    data-toggle="dropdown"
+                    onClick={[Function]}
+                    type="button"
+                  >
+                    ☰
+                  </button>
+                </Button>
+              </DropdownToggle>
+              <DropdownMenu
+                tag="div"
+              >
+                <div
+                  aria-hidden={true}
+                  className="dropdown-menu"
+                  role="menu"
+                  tabIndex="-1"
+                >
+                  <DropdownItem
+                    className="dropdown-menu-item"
+                    href="/workflows"
+                    tag="a"
+                    toggle={true}
+                  >
+                    <a
+                      className="dropdown-menu-item dropdown-item"
+                      href="/workflows"
+                      onClick={[Function]}
+                      tabIndex="0"
+                    >
+                      <span
+                        className="t-d-gray content-3 ml-3"
+                      >
+                        Your Workflows
+                      </span>
+                    </a>
+                  </DropdownItem>
+                  <div>
+                    <DropdownItem
+                      divider={true}
+                      tag="button"
+                      toggle={true}
+                    >
+                      <div
+                        className="dropdown-divider"
+                        onClick={[Function]}
+                        tabIndex="-1"
+                      />
+                    </DropdownItem>
+                    <DropdownItem
+                      className="dropdown-menu-item"
+                      onClick={[Function]}
+                      tag="button"
+                      toggle={true}
+                    >
+                      <button
+                        className="dropdown-menu-item dropdown-item"
+                        onClick={[Function]}
+                        tabIndex="0"
+                        type="button"
+                      >
+                        <span
+                          className="t-d-gray content-3 ml-3"
+                        >
+                          Undo
+                        </span>
+                      </button>
+                    </DropdownItem>
+                    <DropdownItem
+                      className="dropdown-menu-item"
+                      onClick={[Function]}
+                      tag="button"
+                      toggle={true}
+                    >
+                      <button
+                        className="dropdown-menu-item dropdown-item"
+                        onClick={[Function]}
+                        tabIndex="0"
+                        type="button"
+                      >
+                        <span
+                          className="t-d-gray content-3 ml-3"
+                        >
+                          Redo
+                        </span>
+                      </button>
+                    </DropdownItem>
+                    <DropdownItem
+                      divider={true}
+                      tag="button"
+                      toggle={true}
+                    >
+                      <div
+                        className="dropdown-divider"
+                        onClick={[Function]}
+                        tabIndex="-1"
+                      />
+                    </DropdownItem>
+                  </div>
+                  <DropdownItem
+                    className="dropdown-menu-item"
+                    href="http://blog.cjworkbench.org"
+                    tag="a"
+                    toggle={true}
+                  >
+                    <a
+                      className="dropdown-menu-item dropdown-item"
+                      href="http://blog.cjworkbench.org"
+                      onClick={[Function]}
+                      tabIndex="0"
+                    >
+                      <span
+                        className="t-d-gray content-3 ml-3"
+                      >
+                        Help
+                      </span>
+                    </a>
+                  </DropdownItem>
+                  <DropdownItem
+                    className="dropdown-menu-item"
+                    href="/account/logout"
+                    tag="a"
+                    toggle={true}
+                  >
+                    <a
+                      className="dropdown-menu-item dropdown-item"
+                      href="/account/logout"
+                      onClick={[Function]}
+                      tabIndex="0"
+                    >
+                      <span
+                        className="t-d-gray content-3 ml-3"
+                      >
+                        Logout
+                      </span>
+                    </a>
+                  </DropdownItem>
+                </div>
+              </DropdownMenu>
+            </div>
+          </Dropdown>
+        </UncontrolledDropdown>
+      </WfHamburgerMenu>
+    </nav>
+  </div>
+</WorkflowNavBar>
 `;

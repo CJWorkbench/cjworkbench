@@ -1,57 +1,104 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WfContextMenu renders correctly 1`] = `
-<div
-  className="dropdown"
+<WfContextMenu
+  removeModule={[Function]}
 >
-  <button
-    aria-expanded={false}
-    aria-haspopup="true"
-    className="context-button btn btn-secondary"
-    data-toggle="dropdown"
-    onClick={[Function]}
-    type="button"
-  >
-    <div
-      className="button-icon icon-more"
-    />
-  </button>
-  <div
-    aria-hidden={true}
-    className="dropdown-menu"
-    role="menu"
-    tabIndex="-1"
-  >
-    <button
-      className="dropdown-menu-item dropdown-item"
-      onClick={[Function]}
-      tabIndex="0"
-      type="button"
+  <UncontrolledDropdown>
+    <Dropdown
+      isOpen={false}
+      tag="div"
+      toggle={[Function]}
     >
-      <i
-        className="icon-bin"
-      />
-      <span
-        className="t-d-gray content-3 ml-3"
+      <div
+        className="dropdown"
       >
-        Delete
-      </span>
-    </button>
-    <button
-      className="dropdown-menu-item dropdown-item"
-      onClick={[Function]}
-      tabIndex="0"
-      type="button"
-    >
-      <i
-        className="icon-Share"
-      />
-      <span
-        className="t-d-gray content-3 ml-3"
-      >
-        Share
-      </span>
-    </button>
-  </div>
-</div>
+        <DropdownToggle
+          aria-haspopup={true}
+          className="context-button"
+          color="secondary"
+          data-toggle="dropdown"
+        >
+          <Button
+            aria-expanded={false}
+            aria-haspopup="true"
+            className="context-button"
+            color="secondary"
+            data-toggle="dropdown"
+            onClick={[Function]}
+            tag="button"
+          >
+            <button
+              aria-expanded={false}
+              aria-haspopup="true"
+              className="context-button btn btn-secondary"
+              data-toggle="dropdown"
+              onClick={[Function]}
+              type="button"
+            >
+              <div
+                className="button-icon icon-more"
+              />
+            </button>
+          </Button>
+        </DropdownToggle>
+        <DropdownMenu
+          tag="div"
+        >
+          <div
+            aria-hidden={true}
+            className="dropdown-menu"
+            role="menu"
+            tabIndex="-1"
+          >
+            <DropdownItem
+              className="dropdown-menu-item"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <i
+                  className="icon-bin"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Delete
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <i
+                  className="icon-Share"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Share
+                </span>
+              </button>
+            </DropdownItem>
+          </div>
+        </DropdownMenu>
+      </div>
+    </Dropdown>
+  </UncontrolledDropdown>
+</WfContextMenu>
 `;

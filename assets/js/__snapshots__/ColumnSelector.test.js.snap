@@ -1,11 +1,18 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<div
-  className="container mb-3"
+<ColumnSelector
+  getColNames={[Function]}
+  revision={101}
+  saveState={[Function]}
+  selectedCols="foo,bar,baz"
 >
   <div
-    className="row"
-  />
-</div>
+    className="container mb-3"
+  >
+    <div
+      className="row"
+    />
+  </div>
+</ColumnSelector>
 `;
