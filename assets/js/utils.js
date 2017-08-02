@@ -1,5 +1,6 @@
 // ---- Utilities ---
 import * as Cookies from "js-cookie"
+import timediff from 'timediff'
 
 
 // return ID in URL of form "/workflows/id/" or "/workflows/id"
@@ -36,3 +37,40 @@ export const mockResponse = (status, statusText, response) => {
     }
   });
 };
+
+export function timeDifference (start, end) {
+  var diff = timediff(start,end);
+
+  if (diff.years > 0) {
+    if (diff.years == 1) {
+      return "1 year ago";
+    } else {
+      return "" + diff.years + " years ago";
+    }
+  }
+  else if (diff.days > 0) {
+    if (diff.days == 1) {
+      return "1 day ago";
+    } else {
+      return "" + diff.days + " days ago";
+    }
+  }
+  else if (diff.hours > 0) {
+    if (diff.hours == 1) {
+      return "1 hour ago";
+    } else {
+      return "" + diff.hours + " hours ago";
+    }
+  }
+  else if (diff.minutes > 0) {
+    if (diff.minutes == 1) {
+      return "1 minute ago";
+    } else {
+      return "" + diff.minutes + " minutes ago";
+    }
+  }
+  else {
+    return "just now";
+  }
+}
+

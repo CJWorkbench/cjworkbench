@@ -10,9 +10,7 @@ import {
   ModalBody,
   ModalFooter
 } from 'reactstrap'
-
-import timediff from 'timediff'
-
+import { timeDifference } from './utils'
 
 
 export default class WorkflowMetadata extends React.Component {
@@ -92,35 +90,16 @@ export default class WorkflowMetadata extends React.Component {
     );
   }
 
-  // takes 2 date objects, returns a string with time difference (rounded up to largest time unit)
-  // should live in ./Utils, but causing errors - needs investigation
-  timeDifference(start, end) {
-    var diff = timediff(start,end);
-
-    if (diff.years > 0) {
-      return "" + diff.years + " years ago";
-    }
-    else if (diff.days > 0) {
-      return "" + diff.days + " days ago";
-    }
-    else if (diff.hours > 0) {
-      return "" + diff.hours + " hours ago";
-    }
-    else if (diff.minutes > 0) {
-      return "" + diff.minutes + " minutes ago";
-    }
-    else {
-      return "just now";
-    }
-  }
-
   render() {
+
+    var now = new Date();
+
     return (
       <div>
         <ul className="list-inline list-workflow-meta">
           <li className="list-inline-item">by <strong>{this.props.workflow.owner_name}</strong></li>
           <li className="list-inline-item">
-            updated <strong>{this.timeDifference(this.props.workflow.last_update, new Date())}</strong>
+            updated <strong>{timeDifference(this.props.workflow.last_update, now)}</strong>
           </li>
           <li className="list-inline-item t-f-blue" onClick={this.togglePrivacyModal}>
             <strong>{this.state.isPublic ? 'public' : 'private'}</strong></li>

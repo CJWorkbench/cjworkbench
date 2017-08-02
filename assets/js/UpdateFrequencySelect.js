@@ -4,7 +4,8 @@ import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
 import workbenchapi from './WorkbenchAPI'
 import dateFormat from 'dateformat'
-import timediff from 'timediff'
+import { timeDifference } from './utils'
+
 
 export default class UpdateFrequencySelect extends React.Component {
   constructor(props) {
@@ -76,27 +77,6 @@ export default class UpdateFrequencySelect extends React.Component {
     this.toggleModal();
   }
 
-  // takes 2 date objects, returns a string with time difference (rounded up to largest time unit)
-  // should live in ./Utils, but causing errors - needs investigation
-  timeDifference(start, end) {
-    var diff = timediff(start,end);
-
-    if (diff.years > 0) {
-      return "" + diff.years + " years ago";
-    }
-    else if (diff.days > 0) {
-      return "" + diff.days + " days ago";
-    }
-    else if (diff.hours > 0) {
-      return "" + diff.hours + " hours ago";
-    }
-    else if (diff.minutes > 0) {
-      return "" + diff.minutes + " minutes ago";
-    }
-    else {
-      return "just now";
-    }
-  }
 
   render() {
 
@@ -115,9 +95,10 @@ export default class UpdateFrequencySelect extends React.Component {
     var settingsInfo = manual ? 'manual' :'auto'
 
     var lastChecked = null;
+    var now = new Date();
     if (this.props.updateSettings.lastUpdateCheck) 
       lastChecked = <div className='content-3 t-m-gray'>
-                      Checked {this.timeDifference(this.props.updateSettings.lastUpdateCheck, new Date())}
+                      Checked {timeDifference(this.props.updateSettings.lastUpdateCheck, now)}
                     </div>
       
     return (
