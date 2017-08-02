@@ -67,7 +67,7 @@ export default class WfModule extends React.Component {
       isCollapsed: this.wf_module.is_collapsed,
       showNotes: ( this.wf_module.notes && (this.wf_module.notes != "") ),  // only show on load if a note exists
       showEditableNotes: false                                              // do not display in edit state on initial load
-    };           
+    };
     this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
@@ -177,7 +177,7 @@ export default class WfModule extends React.Component {
     var value = ( this.wf_module.notes && (this.wf_module.notes != "") )
       ? this.wf_module.notes
       : "Write notes here"
-      
+
     if (this.state.showNotes)
       notes = <div className='editable-notes-field '>
                 <EditableNotes
@@ -185,7 +185,7 @@ export default class WfModule extends React.Component {
                   value={value}
                   hideNotes={ () => this.hideNotes() }
                   editClass='t-d-gray note'
-                  wfModuleId={this.wf_module.id} 
+                  wfModuleId={this.wf_module.id}
                   startFocused={this.state.showEditableNotes}
                 />
               </div>
@@ -199,6 +199,15 @@ export default class WfModule extends React.Component {
     var arrow = (this.state.isCollapsed)
       ? <div className='icon-sort-down button-icon ml-3'></div>
       : <div className='icon-sort-up button-icon ml-3'></div>
+
+    var contextMenu = undefined;
+    if(this.props.isReadOnly === false)
+      contextMenu = <WfModuleContextMenu
+          removeModule={ () => this.removeModule() }
+          stopProp={(e) => e.stopPropagation()}
+          id={this.wf_module.id}
+          className='menu-test-class'
+        />
 
     // Putting it all together: name, status, parameters, output
     return (
@@ -226,12 +235,7 @@ export default class WfModule extends React.Component {
                 {/* TODO: not necessary to pass in stopProp*/}
                 <div className='d-flex justify-content-end'>
                   {notesIcon}
-                  <WfModuleContextMenu
-                    removeModule={ () => this.removeModule() }
-                    stopProp={(e) => e.stopPropagation()}
-                    id={this.wf_module.id}
-                    className='menu-test-class'
-                  />
+                  {contextMenu}
                 </div>
               </div>
               {/* --- Error messages appear here --- */}
@@ -243,7 +247,7 @@ export default class WfModule extends React.Component {
             </div>
             {/* --- Color indicator of module status, on the right of card --- */}
             <div className='output-bar-container'>
-              <StatusBar 
+              <StatusBar
                 status={this.wf_module.status}
                 isSelected={this.props['data-selected']}
               />
