@@ -2,6 +2,7 @@
   "name": "Load data from Enigma", 
   "id_name": "enigma",
   "category": "Add data",
+  "icon" : "url",
   "description": "Retrieves a dataset from Enigma based on the user input.",
   "parameters": [
     {

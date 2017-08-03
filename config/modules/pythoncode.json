@@ -2,6 +2,7 @@
   "name": "Python editor",
   "id_name": "pythoncode",
   "category" : "Code",
+  "icon" : "code",
   "description" : "Python code editor to process data.",
   "parameters": [
     {

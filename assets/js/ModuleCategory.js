@@ -46,6 +46,7 @@ var ModulesList = React.createClass({
             'data-author': item.props.author,
             'addModule': item.props.addModule,
             'workflow': item.props.workflow,
+            'icon': item.props.icon,
           }}
         />
       );
@@ -86,30 +87,36 @@ export default class ModuleCategory extends React.Component {
   }
 
   render() {
-    var categoryName = this.props["data-name"]; //self-explanatory 
-    var modules = this.props["data-modules"]; // list of modules within category 
+    // Provides margins around opened library category
+    var cardClass = isOpen
+      ? 'card b-l-gray library-card-category-open'
+      : 'card b-l-gray library-card-category-closed'
 
-    var isOpen = !this.state.collapsed;
-
-    var contents = <ModulesList
-                      data={this.props["data-modules"]}
-                  />
 
     var symbol = isOpen 
       ? 'icon-sort-down button-icon'
       : 'icon-sort-right button-icon'
 
-    // Provides margins around opened library category
-    var cardClass = isOpen
-      ? 'card b-l-gray library-card-category-open'
-      : 'card b-l-gray library-card-category-closed'
-      
+    // var icon = 'icon-' + ??? + ' button-icon mr-2';
+
+    // console.log("Availavle props: " + JSON.stringify(this.props["data-modules"][0]));
+
+    var categoryName = this.props["data-name"]; //self-explanatory 
+
+    var isOpen = !this.state.collapsed;
+    
+    var modules = this.props["data-modules"]; // list of modules within category 
+
+    var contents =  <ModulesList
+                      data={modules}
+                    />
 
     return (
       <div className={cardClass}>
         <div className='first-level d-flex align-items-center'>    
           <div className='ml-4' onClick={this.toggleCollapse}>
             <span className={symbol}></span> 
+            {/* <span className={icon}></span> */}
             <span className='title-4 t-d-gray ml-2'>{categoryName}</span>
           </div>
         </div>

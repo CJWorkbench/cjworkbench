@@ -2,6 +2,7 @@
   "name": "Formula",
   "id_name": "formula",
   "category" : "Transform",
+  "icon" : "api",
   "description": "Apply a formula between columns and generate its result in a new column.",
   "parameters": [
     {

@@ -2,6 +2,7 @@
   "name": "Twitter",
   "id_name": "twitter",
   "category" : "Add data",
+  "icon" : "twitter",
   "description" : "Load Tweets by username or search terms",
   "parameters": [
     {

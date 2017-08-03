@@ -2,6 +2,7 @@
   "name": "Count by Date",
   "id_name": "countbydate",
   "category" : "Group",
+  "icon" : "group",
   "description": "Group and count rows by dates.",
   "parameters": [
     {

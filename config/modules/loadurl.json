@@ -2,6 +2,7 @@
   "name": "Load From URL",
   "id_name": "loadurl" ,
   "category" : "Add data",
+  "icon" : "url",
   "description" : "Connect any online datasets via URL and keep it updated with its source.",
   "parameters": [
     {

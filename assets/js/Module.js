@@ -43,7 +43,8 @@ export default class Module extends React.Component {
     var moduleName = this.props['data-name']; // name of module 
     var description = this.props['data-description'];
     var author = this.props['data-author'];
-    var metadata = "by " + author
+    var metadata = "by " + author;
+    var icon = 'icon-' + this.props['icon'] + ' large-icon mr-5';
 
     return (
       <div className='container mt-1 p-0'>
@@ -54,10 +55,13 @@ export default class Module extends React.Component {
                 className='module-card-header'
                 onClick={this.itemClick}
               > 
-                <div className='second-level ml-3'>
-                  <div className='title-4 t-d-gray mb-3'>{moduleName}</div>
-                  <div className='content-4 t-m-gray mb-4'>{metadata}</div>
-                  <div className='info-1 t-m-gray'>{description}</div>
+                <div className='second-level ml-3 d-flex flex-row'>
+                  <div className={icon}></div> 
+                  <div>                 
+                    <div className='title-4 t-d-gray mb-3'>{moduleName}</div>
+                    <div className='content-4 t-m-gray mb-4'>{metadata}</div>
+                    <div className='info-1 t-m-gray'>{description}</div>
+                  </div>
                 </div>
               </div>
             </div>

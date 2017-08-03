@@ -2,6 +2,7 @@
   "name": "Paste CSV",
   "id_name": "pastecsv",
   "category" : "Add data",
+  "icon" : "doc",
   "description" : "Enter coma separated value to generate a table.",
   "parameters": [
     {

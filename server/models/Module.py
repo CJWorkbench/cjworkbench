@@ -30,5 +30,8 @@ class Module(models.Model):
     # the link to the module
     link = models.CharField('link', max_length=200, default="")
 
+    # icon name associated with module
+    icon = models.CharField('icon', max_length=20, default='url')
+
     def __str__(self):
         return self.name

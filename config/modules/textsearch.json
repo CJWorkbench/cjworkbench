@@ -2,6 +2,7 @@
   "name": "Filter By Text",
   "id_name": "textsearch",
   "category" : "Filter",
+  "icon" : "edit",
   "description" : "Filter rows containing text in specific columns.",
   "parameters": [
     {

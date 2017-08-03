@@ -606,11 +606,11 @@ body {
   border-top: 0;
 }
 
-
+/* --- Icon font set --- */
 
 @font-face {
   font-family: 'Workbench-icon-font-v1';
-  src:  url('../fonts/Workbench-icon-font-v1.woff?6vt5w9') format('woff');
+  src: url('../fonts/Workbench-icon-font-v1.woff?l5gind') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -630,6 +630,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-group:before {
+  content: "\e924";
+  color: #686768;
+}
+.icon-code:before {
+  content: "\e91d";
+  color: #686768;
+}
+.icon-wrangle:before {
+  content: "\e91e";
+  color: #4a4a4a;
+}
 .icon-share:before {
   content: "\e91c";
   color: #686768;
@@ -661,11 +673,6 @@ body {
 .icon-close:before {
   content: "\e905";
   color: #686768;
-}
-.icon-close-white:before {
-  content: "\e905";
-  color: #FFFFFF;
-  font-size: 1.5rem; 
 }
 .icon-edit:before {
   content: "\e906";
@@ -791,31 +798,28 @@ body {
 }
 
 
-/* Icon colors  */
-.icon-gray {
-  color: #686768;
-}
-.icon-light-gray {
-  color: #B4B4B4;
-}
-.icon-blue {
-  color: #48C8D7;
-}
-.icon-white {
+
+/* --- End of official icon set --- */
+
+
+/* Customized icons, not in font sent  */
+.icon-close-white:before {
+  content: "\e905";
   color: #FFFFFF;
-}
-.icon-orange {
-  color: #FBAA6D;
+  font-size: 1.5rem; 
 }
 
 /* icon next to Wf Module title */
 .module-icon {
   font-size: 2rem;
 }
-
 /* icons embedded within buttons  */
 .button-icon {
   font-size: 1.5rem;
+}
+/* icons next to modules in library  */
+.large-icon {
+  font-size: 4rem;
 }
 
 /* from Export Data modal, in WfModuleContextMenu  */
@@ -951,20 +955,15 @@ body {
 .card .second-level {
   position: relative;
   height: 7rem;
-  border-radius: 0;
 }
 
 .library-card-category-open {
   margin-top: 1rem;
   margin-bottom: 1rem;
-  border-radius: 0;
-  border: 0;
 }
 .library-card-category-closed {
   margin-top: 1px;
   margin-bottom: 1px;
-  border-radius: 0;
-  border: 0;
 }
 
 

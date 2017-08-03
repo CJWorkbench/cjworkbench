@@ -135,6 +135,7 @@ export default class ModuleLibrary extends React.Component {
     var categories = [];
     for (let item of modules) { // Yes, for...of is ES6 syntax, and yes, it's gross.
       let module = <Module
+        icon={item.icon}
         key={item.name}
         description={item.description}
         category={item.category}

@@ -65,9 +65,18 @@ export default class WfModule extends React.Component {
     this.initFields(props);
     this.state = {
       isCollapsed: this.wf_module.is_collapsed,
+<<<<<<< 7e8054ac40747f03c859d8e0fba0142a9d4dbd98
       showNotes: ( this.wf_module.notes && (this.wf_module.notes != "") ),  // only show on load if a note exists
       showEditableNotes: false                                              // do not display in edit state on initial load
     };
+=======
+      showNotes:  ( this.wf_module.notes 
+                    && (this.wf_module.notes != "") 
+                    && (this.wf_module.notes != "Write notes here")
+                  ),  // only show on load if a note exists & not default text
+      showEditableNotes: false             // do not display in edit state on initial load
+    };           
+>>>>>>> New Icon set, Incorporate icon mapping to modules
     this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
@@ -208,6 +217,7 @@ export default class WfModule extends React.Component {
           id={this.wf_module.id}
           className='menu-test-class'
         />
+    var moduleIcon = 'icon-' + this.module.icon + ' module-icon mr-3';
 
     // Putting it all together: name, status, parameters, output
     return (
@@ -222,9 +232,8 @@ export default class WfModule extends React.Component {
                 className='module-card-header'
                 onClick={this.toggleCollapsed}
               >
-                {/* TODO: attach icon names to modules, call via 'this.module.icon' */}
                 <div className='d-flex justify-content-start'>
-                  <div className='icon-url module-icon mr-2'></div>
+                  <div className={moduleIcon}></div>                  
                   <div className='t-d-gray title-4 mt-1'>
                     {this.module.name}
                   </div>
