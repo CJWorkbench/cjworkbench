@@ -1100,7 +1100,7 @@ img.logo {
   font-size: 1.4rem;
   background-color: #FFFFFF;
   padding: 2rem;
-  box-shadow: 3px 3px 3px #888888;
+  box-shadow: 0 0 1px 1px #48C8D7;
   position: fixed;
   z-index: 1000;
   right: 4rem;
