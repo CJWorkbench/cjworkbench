@@ -152,7 +152,8 @@ export default class ChartParameter extends React.Component {
     // Don't render until we've set chart data at least once
     if (this.state.loaded_ever) {
       return (<Chartbuilder
-        autosave={true}
+        autosave={!this.props.isReadOnly}
+        editable={!this.props.isReadOnly}
         onStateChange={this.onStateChange}
         postRender={this.saveImage}
         showDataInput={false}
@@ -169,5 +170,6 @@ ChartParameter.propTypes = {
 		revision:         PropTypes.number,
 		saveState:        PropTypes.func,
 		loadState:        PropTypes.func,
-		saveImageDataURI: PropTypes.func
+		saveImageDataURI: PropTypes.func,
+    isReadOnly:       PropTypes.bool
 }
