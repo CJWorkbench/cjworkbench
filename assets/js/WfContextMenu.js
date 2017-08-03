@@ -33,14 +33,14 @@ export default class WfContextMenu extends React.Component {
         <DropdownToggle className='context-button'>
           <div className='button-icon icon-more'></div>
         </DropdownToggle>
-        <DropdownMenu right>
+        <DropdownMenu right className='dropdown-menu'>
           <DropdownItem key={1} onClick={this.shareOption} className='dropdown-menu-item'>
-            <i className="icon-share "></i>
+            <i className="icon-share button-icon"></i>
             <span className='t-d-gray content-3 ml-3'>Share</span>
           </DropdownItem>
           {/* Will delete the parent Workflow from the Workflows List */}
           <DropdownItem key={2} onClick={this.deleteOption} className='dropdown-menu-item'>
-            <i className="icon-bin"></i>
+            <i className="icon-bin button-icon"></i>
             <span className='t-d-gray content-3 ml-3'>Delete</span>
           </DropdownItem>
         </DropdownMenu>

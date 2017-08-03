@@ -354,6 +354,10 @@ body {
   width: 17rem;
 }
 
+.dropdown-menu {
+  box-shadow: -1rem 1rem 2rem 0 rgba(0,0,0,0.15);
+}
+
 .dropdown-menu-item {
   height: 4rem;
   width: 17rem;
