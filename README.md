@@ -1,7 +1,6 @@
-# cjworkbench
-A new kind of Data Swiss Army Knife, designed specifically journalists. 
+#  A new kind of Data Swiss Army Knife, designed specifically for journalists. 
 
-Welcome to the Workbench! You may be interested in:
+Welcome to the Workbench! (CJ for Computational Journalism.) You may be interested in:
 
 - Our [public server](http://cjworkbench.org), now in beta.
 - How to [set up a development environment](https://github.com/jstray/cjworkbench/wiki/Setting-up-a-development-environment).
