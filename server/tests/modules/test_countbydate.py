@@ -35,7 +35,7 @@ class CountValuesTests(LoggedInTestCase):
         # No output if no column given
         set_string(self.col_pval, '')
         out = execute_wfmodule(self.wf_module)
-        self.assertTrue(out.empty)
+        self.assertFalse(out.empty)
 
         # bad column name should produce error
         set_string(self.col_pval,'hilarious')
