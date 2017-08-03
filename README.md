@@ -1,27 +1,11 @@
 # cjworkbench
-A visual dataflow programming system for journalists. More at on the [public server](blog.cjworkbench.org)!
+A new kind of Data Swiss Army Knife, designed specifically journalists. 
 
+Welcome to the Workbench! You may be interested in:
 
-To set up a development environment:
+- Our [public server](cjworkbench.org), now in beta.
+- How to [set up a development environment](https://github.com/jstray/cjworkbench/wiki/Setting-up-a-development-environment)
+- Running your [own server](https://github.com/jstray/cjworkbench/wiki/Deployment)
 
-- Requires Python 3.5 or greater. I reccomend [Anaconda](https://www.continuum.io/downloads).
-- Install [npm](https://www.npmjs.com/)
-- git clone this repo with submodules: `git clone --recursive https://github.com/jstray/cjworkbench.git`
-- `pip install -r requirements.txt` to install Python packages
-- `pip install -r requirements-dev.txt` to install packages required for development
-- `npm install` to install JavaScript packages
-- `python manage.py migrate` to initialize the database
-- `python manage.py createsuperuser` or you won't be able to login
+It is early days for the Workbench! Many important features are missing. Would you like to write one? Contact us ([Twitter](twitter.com/cjworkbench), [email](hello@cjworkbench.org). We also accept Pull Requests.
 
-If you get a message about missing Chartbuilder (probably when running webpack), check that there are files in /chartbuilder/chartbuilder and /chartbuilder/chartbuilder-ui. You may have missed the `--recursive` above when cloning. Fix that with `git submodule update --init --recursive`
-
-To run:
-- `python manage.py runserver` to start the Django server. It will automatically recompile any .py file you edit.
-- The first time you run, or when modules have changed, browse to `127.0.0.1:8000/api/initmodules` to load module definitions (needed on first run, or when modules changed)
-
-Go to `127.0.0.1:8000` to list available workflows.
-
-To develop:
-- `./watchjs` to compile JS and CSS whenever changed
-- `python manage.py test` for back end tests
-- `npm test` for front end tests
