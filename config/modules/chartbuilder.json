@@ -3,7 +3,7 @@
   "id_name": "simplechart",
   "category" : "Visualize",
   "icon" : "chart",
-  "description" : "Create line, column and scatter plot charts, and export JPGs.",
+  "description" : "Create line, column and scatter plot charts.",
   "parameters": [
     {
       "name": "Chart",
