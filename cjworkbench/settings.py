@@ -81,6 +81,8 @@ else:
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         }
     }
+    EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'local_mail')
 
 
 ALLOWED_HOSTS = ['*']
@@ -94,6 +96,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
+    'cjworkbench',
     'server.apps.ServerConfig',
     'webpack_loader',
     'rest_framework',

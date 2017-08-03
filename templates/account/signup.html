@@ -1,7 +1,7 @@
 {% extends 'account/base.html' %}
 {% block content %}
   <form method="post">
-    <div class='title-1 t-d-gray text-center mb-3'>Sign In</div>
+    <div class='title-1 t-d-gray text-center mb-3'>Sign Up</div>
 
     {% csrf_token %}
     {# fields are broken out here so we can change the field order #}
@@ -24,6 +24,10 @@
     {{ form.password_confirm.errors }}
     {{ form.password_confirm.label_tag }}
     {{ form.password_confirm }}
+
+    {{ form.get_newsletter.errors }}
+    {{ form.get_newsletter.label_tag }}
+    {{ form.get_newsletter }}}}
     <button type="submit" class="button-blue action-button mx-auto mt-3">Register</button>
   </form>
   <hr />

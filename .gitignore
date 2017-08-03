@@ -9,6 +9,7 @@ local_settings.py
 webpack-stats.json
 db.sqlite3
 dbdata/
+local_mail/
 
 # Asset bundles, static files, downloaded modules
 /node_modules/
