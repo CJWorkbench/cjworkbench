@@ -9,3 +9,5 @@ class SignupForm(account.forms.SignupForm):
     def __init__(self, *args, **kwargs):
         super(SignupForm, self).__init__(*args, **kwargs)
         del self.fields['username']
+        for field in self.fields:
+            self.fields[field].label_suffix = ""

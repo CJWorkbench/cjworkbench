@@ -1,6 +1,6 @@
 {% extends 'account/base.html' %}
 {% block content %}
-  <form method="post">
+  <form method="post" class="account_form" action="action="{% url "account_signup" %}"">
     <div class='title-1 t-d-gray text-center mb-3'>Sign Up</div>
 
     {% csrf_token %}
@@ -26,11 +26,11 @@
     {{ form.password_confirm }}
 
     {{ form.get_newsletter.errors }}
+    {{ form.get_newsletter }}
     {{ form.get_newsletter.label_tag }}
-    {{ form.get_newsletter }}}}
     <button type="submit" class="button-blue action-button mx-auto mt-3">Register</button>
   </form>
-  <hr />
+  <br />
   <p class="login-footer content-3 t-d-gray text-center">
     Already have an account? <strong><a href="/account/login">Log in</a></strong>
   </p>

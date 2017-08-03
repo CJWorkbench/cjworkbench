@@ -216,6 +216,26 @@ body {
 	line-height: 1.4rem;
 }
 
+/* Hacks for registration/login/etc before we dig in to the form widgets */
+.account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"] {
+  height: 4rem;
+  width: 100%;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E7E7E7;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  margin-bottom:1rem;
+}
+
+.account_form input:active {
+  box-shadow: 0 0 1px 1px #48C8D7;
+  border: 0;
+}
+
+.account_form input[type="checkbox"] {
+  display:inline-block;
+  width: auto;
+}
+
 
 /* ---- Buttons ---- */
 
@@ -376,7 +396,7 @@ body {
 }
 
 .login-card {
-  height: 44rem;
+  height: auto;
   width: 44rem;
   padding: 3rem 4rem 3rem 4rem;
 }

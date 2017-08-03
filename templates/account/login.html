@@ -6,10 +6,20 @@
 {% block title %}{% trans "Log in" %}{% endblock %}
 
 {% block content %}
-    <form method="POST" action="{% url "account_login" %}" autocapitalize="off" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
+    <form class="account_form" method="POST" action="{% url "account_login" %}" autocapitalize="off" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
         <legend class='title-1 t-d-gray text-center mb-3'>{% trans "Sign In" %}</legend>
         {% csrf_token %}
-        {{ form }}
+        {{ form.email.errors }}
+        {{ form.email.label_tag }}
+        {{ form.email }}
+
+        {{ form.password.errors }}
+        {{ form.password.label_tag }}
+        {{ form.password }}
+
+        {{ form.get_newsletter.errors }}
+        {{ form.remember }}
+        {{ form.remember.label_tag }}
         {% if redirect_field_value %}
             <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
         {% endif %}
