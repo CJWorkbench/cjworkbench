@@ -7,5 +7,5 @@ Welcome to the Workbench! You may be interested in:
 - How to [set up a development environment](https://github.com/jstray/cjworkbench/wiki/Setting-up-a-development-environment).
 - Running your [own server](https://github.com/jstray/cjworkbench/wiki/Deployment).
 
-It is early days for the Workbench! Many important features are missing. Would you like to write one? Contact us ([Twitter](https://twitter.com/cjworkbench), [email](mailto:hello@cjworkbench.org). We also accept Pull Requests :)
+It is early days for the Workbench! Many important features are missing. Would you like to write one? Contact us ([Twitter](https://twitter.com/cjworkbench), [email](mailto:hello@cjworkbench.org)). We also accept Pull Requests :)
 
