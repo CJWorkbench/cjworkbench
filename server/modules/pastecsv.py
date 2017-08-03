@@ -22,8 +22,8 @@ class PasteCSV(ModuleImpl):
             wf_module.set_error('Please enter a CSV')
             return None
         try:
-            table = pd.read_csv(io.StringIO(tablestr), header=header_row, 
-                    delimiter=' *, *', engine='python')
+            table = pd.read_csv(io.StringIO(tablestr), header=header_row,
+                                skipinitialspace=True)
         except CParserError as e:
             wf_module.set_error(str(e))
             return None
