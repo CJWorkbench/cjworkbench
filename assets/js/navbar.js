@@ -36,7 +36,7 @@ export class WorkflowNavBar extends React.Component {
             <img src="/static/images/logo.png" className="logo"/>
             <h1 className="mb-0 mr-auto title-2">Workbench</h1>
           </div>
-          <WfHamburgerMenu workflowId={this.props.workflowId} api={this.props.api} />
+          <WfHamburgerMenu workflowId={this.props.workflowId} api={this.props.api} isReadOnly={this.props.isReadOnly} />
         </nav>
       </div>
     );
