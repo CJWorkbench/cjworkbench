@@ -4,6 +4,7 @@
     <div class='title-1 t-d-gray text-center mb-3'>Sign Up</div>
 
     {% csrf_token %}
+    {{ form.non_field_errors }}
     {# fields are broken out here so we can change the field order #}
     {{ form.first_name.errors }}
     {{ form.first_name.label_tag }}
