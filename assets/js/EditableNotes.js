@@ -43,6 +43,7 @@ export default class EditableNotes extends React.Component {
 
   render() {
 
+    // This does not play well with smaller screens
     var rowCount = (this.props.value && this.props.value.length)
       ? Math.ceil(this.props.value.length / 80)
       : 1

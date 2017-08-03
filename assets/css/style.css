@@ -54,6 +54,12 @@ body {
 	font-weight: 900;
 	line-height: 2rem;
 }
+/* for editable workflow title  */
+.title-workflow {
+	font-size: 2.5rem;
+	font-weight: 300;
+	line-height: 3rem;
+}
 
 .content-1 {
 	font-size: 1.4rem;
@@ -921,11 +927,22 @@ img.logo {
 /* --- Editable text fields --- */
 
 .editable-title-field {
+  height: 100%;
+  width: 100%;
   border: none;
   outline: none;
   padding: 0;
   resize: none;
   width: 100%;
+}
+/* applied only when field is in edit mode  */
+.editable-title-field-active {
+  box-shadow: 0 0 1px 1px #48C8D7;
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  font-family: 'Nunito Sans', sans-serif;
+
 }
 
 .editable-notes-field {
@@ -935,8 +952,6 @@ img.logo {
   margin: 2rem 3rem 0rem 3rem;
   font-family: 'Nunito Sans', sans-serif;
 }
-
-
 /* applied only when field is in edit mode  */
 .editable-notes-field-active {
   background-color: #FFFFFF;
