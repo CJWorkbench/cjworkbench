@@ -251,7 +251,7 @@ body {
 .button-full-orange {
   background-color: #FBAA6D;
   color: #FFFFFF;
-	text-align: center;  
+	text-align: center;
 }
 .button-full-orange:hover {
   background-color: #FFFFFF;
@@ -283,7 +283,7 @@ body {
 .action-button {
 	height: 4rem;
   border-radius: 2.5rem;
-  min-width: 9rem;  
+  min-width: 9rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -367,16 +367,16 @@ body {
 /* ---- Login ---- */
 
 .login-fullscreen-container {
-  height: 80vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   background-color: #48C8D7;
-  background: linear-gradient(to bottom right, #48C8D7 , #0D9ECF); 
+  background: linear-gradient(to bottom right, #48C8D7 , #0D9ECF);
 }
 
 .login-card {
   height: 44rem;
-  width: 44rem; 
+  width: 44rem;
   padding: 3rem 4rem 3rem 4rem;
 }
 
@@ -493,13 +493,13 @@ body {
   padding: 0;
 }
 .module-card-info {
-  width: calc(100% - 1rem); 
+  width: calc(100% - 1rem);
 }
 .module-card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 2rem; 
+  padding: 2rem;
 }
 .module-card-params {
   padding: 2rem;
@@ -674,6 +674,11 @@ body {
   content: "\e905";
   color: #686768;
 }
+.icon-close-white:before {
+  content: "\e905";
+  color: #FFFFFF;
+  font-size: 1.5rem;
+}
 .icon-edit:before {
   content: "\e906";
   color: #686768;
@@ -806,7 +811,7 @@ body {
 .icon-close-white:before {
   content: "\e905";
   color: #FFFFFF;
-  font-size: 1.5rem; 
+  font-size: 1.5rem;
 }
 
 /* icon next to Wf Module title */
@@ -885,7 +890,7 @@ body {
   outline: none;
   width: calc(100% - 6rem);
   margin: 2rem 3rem 0rem 3rem;
-  font-family: 'Nunito Sans', sans-serif;   
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 
@@ -896,7 +901,7 @@ body {
   height: 100%;
   width: 100%;
   padding: 0;
-  font-family: 'Nunito Sans', sans-serif;    
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 /* --- Module Library --- */
@@ -907,7 +912,7 @@ body {
   width: 50%;
   background-color: #F6F6F6;
   position: fixed;
-  font-family: 'Nunito Sans', sans-serif; 
+  font-family: 'Nunito Sans', sans-serif;
   overflow-y: auto;
   float: left;
   padding: 20px;
@@ -948,7 +953,7 @@ body {
 
 .card .first-level {
   background-color: #FFFFFF;
-  height: 4rem; 
+  height: 4rem;
   width: 100%;
 }
 
@@ -1073,7 +1078,7 @@ body {
 
 .import-module-button {
   color: #48C8D7;
-} 
+}
 .import-module-button:hover {
   color: #FFFFFF;
 }
