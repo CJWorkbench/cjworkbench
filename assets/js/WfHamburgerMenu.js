@@ -49,7 +49,7 @@ export default class WfHamburgerMenu extends React.Component {
           <DropdownItem
             key={1}
             tag="a"
-            href="://cjworkbench.org"
+            href="http://cjworkbench.org"
             className='dropdown-menu-item'
           >
             <span className='t-d-gray content-3 ml-3'>Home</span>
