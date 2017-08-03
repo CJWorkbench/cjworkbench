@@ -32,7 +32,6 @@ export class WorkflowNavBar extends React.Component {
     return (
       <div>
         <nav className="navbar">
-          <img src="/static/images/logo.png" />
           <div className="navbar-brand">
             <img src="/static/images/logo.png" className="logo"/>
             <h1 className="mb-0 mr-auto title-2">Workbench</h1>
