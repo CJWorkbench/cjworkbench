@@ -80,8 +80,5 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-// Load the page!
-Actions.store.dispatch(Actions.reloadWorkflowAction())
-
-// Select the first module in the workflow (if one exists); else shows Module Library
+// Load the page, Select the first module in the workflow (if one exists, else shows Module Library)
 Actions.store.dispatch(Actions.initialLoadWorkflowAction())

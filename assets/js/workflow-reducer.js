@@ -111,10 +111,14 @@ export function workflowReducer(state, action) {
       console.log("INITIAL_LOAD_WORKFLOW");
       if (action.workflow.wf_modules && action.workflow.wf_modules.length) {
         return Object.assign({}, state, {
-          selected_wf_module: action.workflow.wf_modules[0].id
+          selected_wf_module: action.workflow.wf_modules[0].id,
+          workflow: action.workflow          
         });
       } else {
         console.log("No modules to show, displaying library");
+        return Object.assign({}, state, {
+          workflow: action.workflow          
+        });
       }
 
     // Change id of module currently selected
