@@ -460,9 +460,12 @@ img.logo {
   border: 0;
   padding: 1.5rem 2.5rem 1.5rem 2.5rem;
 }
-
 .workflow-in-list:hover {
   background-color: #f8f8f8;
+}
+
+.workflow-link:hover {
+  text-decoration: none;
 }
 
 

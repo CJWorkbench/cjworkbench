@@ -97,9 +97,9 @@ export default class Workflows extends React.Component {
                 {this.state.workflows.map( listValue => {
                   return (
                       <div className="card card-block item-test-class workflow-in-list" key={listValue.id}>
-                        <a href={"/workflows/" + listValue.id}>
+                        <a href={"/workflows/" + listValue.id} className='my-auto workflow-link'>
                           <div className='d-flex justify-content-between'>
-                            <span className='t-d-gray title-4'>{listValue.name}</span>
+                            <span className='t-d-gray title-4 mt-2'>{listValue.name}</span>
                             {/* Extra div wrapper to prevent parent's navigation to WF page*/}
                             <div onClick={(e) => e.preventDefault()} className="menu-test-class">
                               <WfContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
