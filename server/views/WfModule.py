@@ -47,7 +47,7 @@ def wfmodule_detail(request, pk, format=None):
         if not wf_module.user_authorized(request.user):
             return HttpResponseForbidden()
 
-    if not wf_module.workflow.public:
+    if not wf_module.workflow.public and not wf_module.user_authorized(request.user):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
@@ -108,7 +108,7 @@ def wfmodule_input(request, pk, format=None):
         except WfModule.DoesNotExist:
             return HttpResponseNotFound()
 
-        if not wf_module.workflow.public:
+        if not wf_module.workflow.public and not wf_module.user_authorized(request.user):
             return HttpResponseForbidden()
 
         prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
@@ -156,7 +156,7 @@ def wfmodule_dataversion(request, pk, format=None):
         return HttpResponseNotFound()
 
     if request.method == 'GET':
-        if not wf_module.workflow.public:
+        if not wf_module.workflow.public and not wf_module.user_authorized(request.user):
             return HttpResponseForbidden()
         versions = wf_module.list_stored_data_versions()
         current_version = wf_module.get_stored_data_version()
