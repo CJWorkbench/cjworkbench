@@ -90,7 +90,7 @@ export default class Workflow extends React.Component {
   constructor(props: iProps) {
     super(props);
     this.state = {
-      moduleLibraryVisible: !(this.props.workflow && this.props.workflow.wf_modules && this.props.workflow.wf_modules.length),  // Start open if no modules loaded
+      moduleLibraryVisible: false,
       isPublic: false,
       privacyModalOpen: false
     };
@@ -103,7 +103,16 @@ export default class Workflow extends React.Component {
     }
 
     this.setState({
-      isPublic: nextProps.workflow.public
+      isPublic: nextProps.workflow.public,
+      moduleLibraryVisible: (
+        !nextProps.workflow.public
+        && 
+        !(
+          nextProps.workflow 
+          && nextProps.workflow.wf_modules 
+          && nextProps.workflow.wf_modules.length
+        )
+      ), // Start with library open if no modules loaded AND WF is not public
     });
   }
 
@@ -115,6 +124,7 @@ export default class Workflow extends React.Component {
   }
 
   render() {
+
     // Wait until we have a workflow to render
     if (this.props.workflow === undefined) {
       return null;
@@ -154,12 +164,13 @@ export default class Workflow extends React.Component {
             <div className="modulestack-header w-75 mx-auto ">
               <br></br>
               <div className="d-flex justify-content-between">
-                <div>
+                <div className='editable-title-field mr-2'>
                   <EditableWorkflowName
                     value={this.props.workflow.name}
-                    editClass='editable-title-field title-1 t-d-gray'
+                    editClass='title-workflow t-d-gray'
                     wfId={this.props.workflow.id}
                     isReadOnly={this.props.workflow.read_only}
+                    style={{'width':'100%'}}
                   />
                   <WorkflowMetadata workflow={this.props.workflow} api={this.props.api}/>
                 </div>

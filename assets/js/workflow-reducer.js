@@ -115,7 +115,6 @@ export function workflowReducer(state, action) {
           workflow: action.workflow          
         });
       } else {
-        console.log("No modules to show, displaying library");
         return Object.assign({}, state, {
           workflow: action.workflow          
         });
