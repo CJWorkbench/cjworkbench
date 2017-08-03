@@ -87,6 +87,8 @@ export default class ModuleCategory extends React.Component {
   }
 
   render() {
+    var isOpen = !this.state.collapsed;
+    
     // Provides margins around opened library category
     var cardClass = isOpen
       ? 'card b-l-gray library-card-category-open'
@@ -97,13 +99,12 @@ export default class ModuleCategory extends React.Component {
       ? 'icon-sort-down button-icon'
       : 'icon-sort-right button-icon'
 
+    // --- Need a mapping of catergory-to-icon before implementing
     // var icon = 'icon-' + ??? + ' button-icon mr-2';
 
     // console.log("Availavle props: " + JSON.stringify(this.props["data-modules"][0]));
 
     var categoryName = this.props["data-name"]; //self-explanatory 
-
-    var isOpen = !this.state.collapsed;
     
     var modules = this.props["data-modules"]; // list of modules within category 
 
