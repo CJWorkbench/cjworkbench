@@ -11,12 +11,12 @@ export default class ColumnRenamer extends React.Component {
         columns: [
             {
                 key: 'oldName',
-                name: 'Old Name',
+                name: 'Current',
                 width: 200
             },
             {
                 key: 'newName',
-                name: 'New Name',
+                name: 'New',
                 editable: true
             }
         ],
