@@ -1,7 +1,7 @@
 /* File is getting large; time to divide into modules? */
 
 /* Font */
-@import url('https://fonts.googleapis.com/css?family=Nunito+Sans');
+@import url('https://fonts.googleapis.com/css?family=Lato:700|Nunito+Sans');
 
 html {
   height: 100%;
@@ -382,6 +382,27 @@ body {
   background-color: #48C8D7;
   color: #FFFFFF;
   border-bottom: 1px solid;
+}
+
+.navbar-brand {
+  height: 100%;
+  font-family: 'Lato', sans-serif;
+}
+
+img.logo {
+  height: 100%;
+  vertical-align: middle;
+  margin-right: .5rem;
+}
+.navbar-brand h1, img.logo {
+  display: inline-block;
+  vertical-align: baseline;
+}
+.navbar-brand h1 a {
+  color: white;
+}
+.navbar-brand h1 a:hover {
+  text-decoration: none;
 }
 
 
