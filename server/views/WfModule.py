@@ -98,6 +98,7 @@ def wfmodule_render(request, pk, format=None):
 # /input is just /render on the previous wfmodule
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_input(request, pk, format=None):
     if request.method == 'GET':
         try:
