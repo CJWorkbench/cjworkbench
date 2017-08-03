@@ -13,7 +13,10 @@ export class WorkflowListNavBar extends React.Component {
     return (
       <div>
         <nav className="navbar">
-          <h1 className="navbar-brand mb-0 mr-auto title-3">CJ Workbench</h1>
+          <div className="navbar-brand">
+            <img src="/static/images/logo.png" className="logo"/>
+            <h1 className="mb-0 mr-auto title-2">Workbench</h1>
+          </div>
           <WfHamburgerMenu />
         </nav>
       </div>
@@ -29,6 +32,11 @@ export class WorkflowNavBar extends React.Component {
     return (
       <div>
         <nav className="navbar">
+          <img src="/static/images/logo.png" />
+          <div className="navbar-brand">
+            <img src="/static/images/logo.png" className="logo"/>
+            <h1 className="mb-0 mr-auto title-2">Workbench</h1>
+          </div>
           <WfHamburgerMenu workflowId={this.props.workflowId} api={this.props.api} />
         </nav>
       </div>
@@ -40,5 +48,3 @@ WorkflowNavBar.propTypes = {
   api:              PropTypes.object.isRequired,
   workflowId:       PropTypes.number.isRequired
 };
-
-
