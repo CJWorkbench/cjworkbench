@@ -199,6 +199,12 @@ class WfModule(models.Model):
             ws_client_rerender_workflow(self.workflow)
         self.save()
 
+    def set_is_collapsed(self, collapsed, notify=True):
+        self.is_collapsed = collapsed
+        if notify:
+            ws_client_rerender_workflow(self.workflow)
+        self.save()
+
 # StoredObject is our persistence layer.
 # Allows WfModules to store keyed, versioned binary objects
 class StoredObject(models.Model):

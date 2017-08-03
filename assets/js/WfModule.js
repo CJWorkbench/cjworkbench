@@ -94,7 +94,6 @@ export default class WfModule extends React.Component {
   // alas, the drawback of the convienence of initFields is we need to call it whenever props change
   componentWillReceiveProps(newProps) {
     this.initFields(newProps)
-    this.setState({isCollapsed: this.wf_module.is_collapsed});
   }
 
   // We become the selected module on any click
@@ -123,10 +122,15 @@ export default class WfModule extends React.Component {
     this.props['data-removeModule'](this.wf_module.id);
   }
 
-  // Sets state on the server, which should result in a callback that will
-  // update the state. This state update will then drive the display render.
+  // Optimistically updates the state, and then sends the new state to the server,
+  // where it's persisted across sessions and through time.  
   toggleCollapsed() {
-    this.api.toggleWfModuleCollapsed(this.wf_module.id, !this.state.isCollapsed);
+    var newIsCollapsed = !this.state.isCollapsed;
+    this.setState({
+      isCollapsed: newIsCollapsed, 
+    });
+
+    this.api.toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
   }
 
   // when Notes icon is clicked, show notes and start in editable state

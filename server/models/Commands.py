@@ -309,39 +309,6 @@ class ChangeWfModuleNotesCommand(Delta):
 
         return delta
 
-class ChangeWfModuleCollapsedSettingCommand(Delta):
-    # Toggles module state in the front-end, i.e. collapsed or not.
-    wf_module = models.ForeignKey(WfModule)
-    new_value = models.BooleanField('new_value')
-    old_value = models.BooleanField('old_value')
-
-    def forward(self):
-        self.wf_module.is_collapsed = self.new_value
-        self.wf_module.save()
-
-    def backward(self):
-        self.wf_module.is_collapsed = self.old_value
-        self.wf_module.save()
-
-    @staticmethod
-    def create(wf_module, is_collapsed):
-        old_value = wf_module.is_collapsed
-        description = 'Changed workflow module\'s is_collapsed setting from {} to {}'.format(old_value, is_collapsed)
-
-        delta = ChangeWfModuleCollapsedSettingCommand.objects.create(
-            workflow = wf_module.workflow,
-            wf_module = wf_module,
-            new_value = is_collapsed,
-            old_value = old_value,
-            command_description = description
-        )
-
-        delta.forward()
-        notify_client_workflow_version_changed(wf_module.workflow)
-
-        return delta
-
-
 class ChangeWfModuleUpdateSettingsCommand(Delta):
     wf_module = models.ForeignKey(WfModule)
     new_auto = models.BooleanField()

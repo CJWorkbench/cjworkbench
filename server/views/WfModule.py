@@ -8,7 +8,7 @@ from server.models import WfModule
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
 from django.utils import timezone
-from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand, ChangeWfModuleCollapsedSettingCommand
+from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
 from datetime import timedelta
 from server.utils import units_to_seconds
 import pandas as pd
@@ -17,9 +17,6 @@ import pandas as pd
 # The guts of patch commands for various WfModule fields
 def patch_notes(wf_module, data):
     ChangeWfModuleNotesCommand.create(wf_module, data['notes'])
-
-def patch_collapsed_setting(wf_module, data):
-    ChangeWfModuleCollapsedSettingCommand.create(wf_module, data['collapsed'])
 
 def patch_update_settings(wf_module, data):
     auto_update_data = data['auto_update_data']
@@ -72,7 +69,7 @@ def wfmodule_detail(request, pk, format=None):
                 patch_update_settings(wf_module, request.data)
 
             if 'collapsed' in request.data:
-                patch_collapsed_setting(wf_module, request.data)
+                wf_module.set_is_collapsed(request.data['collapsed'], notify=False)
 
         except Exception as e:
             return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
