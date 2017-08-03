@@ -650,6 +650,14 @@ img.logo {
   background-color: #FFFFFF;
 }
 
+.dialog-header .modal-title {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+
 .dialog-body {
   background-color: #FAFAFA;
   padding: 2rem 3rem 2rem 3rem;

@@ -119,8 +119,8 @@ export default class WfModuleContextMenu extends React.Component {
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
         <ModalHeader toggle={this.toggleModal} className='dialog-header' >
-          <span className='t-d-gray title-4'>Export Data</span>
-          <span className='icon-close' onClick={this.toggleExportModal}></span> 
+          <div className='t-d-gray title-4'>Export Data</div>
+          <div className='icon-close' onClick={this.toggleExportModal}></div> 
         </ModalHeader>
         <ModalBody className='dialog-body'>
           <FormGroup>
