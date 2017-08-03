@@ -202,8 +202,8 @@ export default class WfModule extends React.Component {
 
     var notesIcon = undefined;
     if (!this.state.showNotes)
-      notesIcon = <div className='context-button' onClick={this.showNotes}>
-                    <div className='icon-note button-icon' ></div>
+      notesIcon = <div className='context-button mr-4' onClick={this.showNotes}>
+                    <div className='icon-note' style={{'fontSize':'1.7rem'}} ></div>
                   </div>
 
     var arrow = (this.state.isCollapsed)

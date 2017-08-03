@@ -293,6 +293,7 @@ body {
   border: 1px solid #EDECEC;
   border-radius: 0.3rem;
   text-decoration: 0;
+  background: 0;
 }
 .context-button:active {
   border: 1px solid #EDECEC;
