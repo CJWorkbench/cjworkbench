@@ -33,7 +33,7 @@ class Delta(PolymorphicModel):
             with transaction.atomic():
 
                 # Blow away all deltas starting after last applied (wipe redo stack)
-                delete_unapplied_deltas(self.workflow)
+                # delete_unapplied_deltas(self.workflow) ## Temporarily commenting out until we figure out what's going on with integrity errors
 
                 # Point us backward to last delta in chain
                 last_delta = self.workflow.last_delta
