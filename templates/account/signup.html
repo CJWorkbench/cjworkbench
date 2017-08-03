@@ -1,6 +1,6 @@
 {% extends 'account/base.html' %}
 {% block content %}
-  <form method="post" class="account_form" action="action="{% url "account_signup" %}"">
+  <form method="post" class="account_form">
     <div class='title-1 t-d-gray text-center mb-3'>Sign Up</div>
 
     {% csrf_token %}
