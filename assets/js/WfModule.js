@@ -65,18 +65,12 @@ export default class WfModule extends React.Component {
     this.initFields(props);
     this.state = {
       isCollapsed: this.wf_module.is_collapsed,
-<<<<<<< 7e8054ac40747f03c859d8e0fba0142a9d4dbd98
-      showNotes: ( this.wf_module.notes && (this.wf_module.notes != "") ),  // only show on load if a note exists
-      showEditableNotes: false                                              // do not display in edit state on initial load
-    };
-=======
       showNotes:  ( this.wf_module.notes 
                     && (this.wf_module.notes != "") 
                     && (this.wf_module.notes != "Write notes here")
                   ),  // only show on load if a note exists & not default text
       showEditableNotes: false             // do not display in edit state on initial load
     };           
->>>>>>> New Icon set, Incorporate icon mapping to modules
     this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);

@@ -272,6 +272,7 @@ body {
 .context-button:hover {
   border: 1px solid #EDECEC;
   border-radius: 0.3rem;
+  text-decoration: 0;
 }
 .context-button:active {
   border: 1px solid #EDECEC;
