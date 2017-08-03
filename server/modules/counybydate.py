@@ -1,20 +1,25 @@
 from .moduleimpl import ModuleImpl
 import pandas as pd
+import datetime
 
 # ---- CountByDate ----
 # group column by unique value, discard all other columns
 
 class CountByDate(ModuleImpl):
+    # Menu items, must match order in json
+    SORT_BY_VALUE = 0
+    SORT_BY_FREQ = 1
+
     def render(wf_module, table):
         if table is None:
             return None
 
         col  = wf_module.get_param_string('column')
-        sortby = wf_module.get_param_menu_string('sortby')
+        sortby = wf_module.get_param_menu_idx('sortby')
 
         if col == '':
-            wf_module.set_error('Please select a column')
-            return None     # no columns, no matches
+            wf_module.set_error('Please select a column containing dates')
+            return table
 
         if col not in table.columns:
             wf_module.set_error('There is no column named %s' % col)
@@ -32,11 +37,21 @@ class CountByDate(ModuleImpl):
             wf_module.set_error('Column %s does not seem to be dates' % col)
             return None
 
-        dates = dates.dt.date.apply(lambda x: x.strftime('%Y-%m-%d'))  # reformat dates to strings
-        newtab = pd.DataFrame(dates.value_counts(sort=(sortby == 'Frequency')))
+        def safedatestr(date):
+            if type(date) == datetime.date:
+                return date.strftime('%Y-%m-%d')
+            else:
+                return ""
+
+        if table[col].dtype == 'int64':
+            wf_module.set_error('Column %s does not seem to be dates' % col)
+            return None
+
+        dates = dates.dt.date.apply(lambda x: safedatestr(x))  # reformat dates to strings
+        newtab = pd.DataFrame(dates.value_counts(sort=(sortby == CountByDate.SORT_BY_FREQ)))
         newtab.reset_index(level=0, inplace=True) # turn index into a column, or we can't see the column names
         newtab.columns = ['date', 'count']
-        if sortby != 'Frequency':
+        if sortby != CountByDate.SORT_BY_FREQ:
             newtab = newtab.sort_values('date')
 
         return newtab
