@@ -90,7 +90,7 @@ export default class Workflow extends React.Component {
   constructor(props: iProps) {
     super(props);
     this.state = {
-      moduleLibraryVisible: false,
+      moduleLibraryVisible: !(this.props.workflow && this.props.workflow.wf_modules && this.props.workflow.wf_modules.length),  // Start open if no modules loaded
       isPublic: false,
       privacyModalOpen: false
     };

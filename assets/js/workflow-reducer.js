@@ -6,6 +6,7 @@ import promiseMiddleware from 'redux-promise'
 
 const CHANGE_PARAM = 'CHANGE_PARAM'
 const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW'
+const INITIAL_LOAD_WORKFLOW = 'INITIAL_LOAD_WORKFLOW'
 const REMOVE_MODULE_ACTION = 'REMOVE_MODULE'
 const MODULE_STATUS_CHANGE = 'MODULE_STATUS_CHANGE'
 const SELECTED_MODULE_CHANGE = 'SELECTED_MODULE_CHANGE'
@@ -22,6 +23,12 @@ export function reloadWorkflowAction() {
   return fetch('/api/workflows/' + getPageID(), { credentials: 'include'})
     .then(response => response.json())
     .then(json => ({  type: RELOAD_WORKFLOW, workflow: json }));
+}
+
+export function initialLoadWorkflowAction() {
+  return fetch('/api/workflows/' + getPageID(), { credentials: 'include'})
+    .then(response => response.json())
+    .then(json => ({  type: INITIAL_LOAD_WORKFLOW, workflow: json }));
 }
 
 // Make an addModule call, then reload the workflow
@@ -97,6 +104,18 @@ export function workflowReducer(state, action) {
       return Object.assign({}, state, {
         workflow: action.workflow
       });
+
+    // Sets the selected module to the first in list
+    // If no modules loaded, shows library instead
+    case INITIAL_LOAD_WORKFLOW:
+      console.log("INITIAL_LOAD_WORKFLOW");
+      if (action.workflow.wf_modules && action.workflow.wf_modules.length) {
+        return Object.assign({}, state, {
+          selected_wf_module: action.workflow.wf_modules[0].id
+        });
+      } else {
+        console.log("No modules to show, displaying library");
+      }
 
     // Change id of module currently selected
     case SELECTED_MODULE_CHANGE:
