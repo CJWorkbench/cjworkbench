@@ -396,7 +396,7 @@ img.logo {
 }
 .navbar-brand h1, img.logo {
   display: inline-block;
-  vertical-align: baseline;
+  vertical-align: middle;
 }
 .navbar-brand h1 a {
   color: white;
