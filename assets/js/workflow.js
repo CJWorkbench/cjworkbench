@@ -152,15 +152,6 @@ export default class Workflow extends React.Component {
 
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
-              <div className="d-flex justify-content-between">
-                <div>Back to Workflows</div>
-                {!this.props.workflow.read_only > 0 &&
-                  <WfContextMenu
-                    deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }
-                    shareWorkflow={ () => this.togglePublic(this.props.workflow.public) }
-                  />
-                }
-              </div>
               <br></br>
               <div className="d-flex justify-content-between">
                 <div>
