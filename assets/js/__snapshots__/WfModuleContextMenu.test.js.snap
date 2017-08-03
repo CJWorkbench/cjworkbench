@@ -15,7 +15,7 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
     />
   </DropdownToggle>
   <DropdownMenu
-    className=""
+    className="dropdown-menu"
     right={true}
     tag="div"
   >
@@ -26,7 +26,7 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
       toggle={true}
     >
       <span
-        className="icon-download "
+        className="icon-download button-icon"
       />
       <span
         className="t-d-gray content-3 ml-3"
@@ -40,7 +40,7 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
       toggle={true}
     >
       <span
-        className="icon-info"
+        className="icon-info button-icon"
       />
       <span
         className="t-d-gray content-3 ml-3"
@@ -55,7 +55,7 @@ exports[`WfModuleContextMenu renders correctly 1`] = `
       toggle={true}
     >
       <span
-        className="icon-bin"
+        className="icon-bin button-icon"
       />
       <span
         className="t-d-gray content-3 ml-3"

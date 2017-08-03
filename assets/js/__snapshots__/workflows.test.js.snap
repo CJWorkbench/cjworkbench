@@ -347,13 +347,14 @@ exports[`renders correctly 2`] = `
               className="card card-block item-test-class workflow-in-list"
             >
               <a
+                className="my-auto workflow-link"
                 href="/workflows/1"
               >
                 <div
                   className="d-flex justify-content-between"
                 >
                   <span
-                    className="t-d-gray title-4"
+                    className="t-d-gray title-4 mt-2"
                   >
                     Charting
                   </span>
@@ -403,12 +404,13 @@ exports[`renders correctly 2`] = `
                               </Button>
                             </DropdownToggle>
                             <DropdownMenu
+                              className="dropdown-menu"
                               right={true}
                               tag="div"
                             >
                               <div
                                 aria-hidden={true}
-                                className="dropdown-menu dropdown-menu-right"
+                                className="dropdown-menu dropdown-menu dropdown-menu-right"
                                 role="menu"
                                 tabIndex="-1"
                               >
@@ -425,7 +427,7 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-share "
+                                      className="icon-share button-icon"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
@@ -447,7 +449,7 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-bin"
+                                      className="icon-bin button-icon"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
@@ -470,13 +472,14 @@ exports[`renders correctly 2`] = `
               className="card card-block item-test-class workflow-in-list"
             >
               <a
+                className="my-auto workflow-link"
                 href="/workflows/7"
               >
                 <div
                   className="d-flex justify-content-between"
                 >
                   <span
-                    className="t-d-gray title-4"
+                    className="t-d-gray title-4 mt-2"
                   >
                     Messy data cleanup
                   </span>
@@ -526,12 +529,13 @@ exports[`renders correctly 2`] = `
                               </Button>
                             </DropdownToggle>
                             <DropdownMenu
+                              className="dropdown-menu"
                               right={true}
                               tag="div"
                             >
                               <div
                                 aria-hidden={true}
-                                className="dropdown-menu dropdown-menu-right"
+                                className="dropdown-menu dropdown-menu dropdown-menu-right"
                                 role="menu"
                                 tabIndex="-1"
                               >
@@ -548,7 +552,7 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-share "
+                                      className="icon-share button-icon"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
@@ -570,7 +574,7 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-bin"
+                                      className="icon-bin button-icon"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
@@ -593,13 +597,14 @@ exports[`renders correctly 2`] = `
               className="card card-block item-test-class workflow-in-list"
             >
               <a
+                className="my-auto workflow-link"
                 href="/workflows/8"
               >
                 <div
                   className="d-flex justify-content-between"
                 >
                   <span
-                    className="t-d-gray title-4"
+                    className="t-d-gray title-4 mt-2"
                   >
                     Document search
                   </span>
@@ -649,12 +654,13 @@ exports[`renders correctly 2`] = `
                               </Button>
                             </DropdownToggle>
                             <DropdownMenu
+                              className="dropdown-menu"
                               right={true}
                               tag="div"
                             >
                               <div
                                 aria-hidden={true}
-                                className="dropdown-menu dropdown-menu-right"
+                                className="dropdown-menu dropdown-menu dropdown-menu-right"
                                 role="menu"
                                 tabIndex="-1"
                               >
@@ -671,7 +677,7 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-share "
+                                      className="icon-share button-icon"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
@@ -693,7 +699,7 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-bin"
+                                      className="icon-bin button-icon"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
@@ -716,13 +722,14 @@ exports[`renders correctly 2`] = `
               className="card card-block item-test-class workflow-in-list"
             >
               <a
+                className="my-auto workflow-link"
                 href="/workflows/9"
               >
                 <div
                   className="d-flex justify-content-between"
                 >
                   <span
-                    className="t-d-gray title-4"
+                    className="t-d-gray title-4 mt-2"
                   >
                     Visualization
                   </span>
@@ -772,12 +779,13 @@ exports[`renders correctly 2`] = `
                               </Button>
                             </DropdownToggle>
                             <DropdownMenu
+                              className="dropdown-menu"
                               right={true}
                               tag="div"
                             >
                               <div
                                 aria-hidden={true}
-                                className="dropdown-menu dropdown-menu-right"
+                                className="dropdown-menu dropdown-menu dropdown-menu-right"
                                 role="menu"
                                 tabIndex="-1"
                               >
@@ -794,7 +802,7 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-share "
+                                      className="icon-share button-icon"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
@@ -816,7 +824,7 @@ exports[`renders correctly 2`] = `
                                     type="button"
                                   >
                                     <i
-                                      className="icon-bin"
+                                      className="icon-bin button-icon"
                                     />
                                     <span
                                       className="t-d-gray content-3 ml-3"
