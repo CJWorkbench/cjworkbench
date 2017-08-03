@@ -133,44 +133,46 @@ exports[`renders correctly 1`] = `
                 />
               </DropdownItem>
             </div>
-            <DropdownItem
-              className="dropdown-menu-item"
-              href="http://blog.cjworkbench.org"
-              tag="a"
-              toggle={true}
-            >
-              <a
-                className="dropdown-menu-item dropdown-item"
+            <div>
+              <DropdownItem
+                className="dropdown-menu-item"
                 href="http://blog.cjworkbench.org"
-                onClick={[Function]}
-                tabIndex="0"
+                tag="a"
+                toggle={true}
               >
-                <span
-                  className="t-d-gray content-3 ml-3"
+                <a
+                  className="dropdown-menu-item dropdown-item"
+                  href="http://blog.cjworkbench.org"
+                  onClick={[Function]}
+                  tabIndex="0"
                 >
-                  Help
-                </span>
-              </a>
-            </DropdownItem>
-            <DropdownItem
-              className="dropdown-menu-item"
-              href="/account/logout"
-              tag="a"
-              toggle={true}
-            >
-              <a
-                className="dropdown-menu-item dropdown-item"
+                  <span
+                    className="t-d-gray content-3 ml-3"
+                  >
+                    Help
+                  </span>
+                </a>
+              </DropdownItem>
+              <DropdownItem
+                className="dropdown-menu-item"
                 href="/account/logout"
-                onClick={[Function]}
-                tabIndex="0"
+                tag="a"
+                toggle={true}
               >
-                <span
-                  className="t-d-gray content-3 ml-3"
+                <a
+                  className="dropdown-menu-item dropdown-item"
+                  href="/account/logout"
+                  onClick={[Function]}
+                  tabIndex="0"
                 >
-                  Logout
-                </span>
-              </a>
-            </DropdownItem>
+                  <span
+                    className="t-d-gray content-3 ml-3"
+                  >
+                    Logout
+                  </span>
+                </a>
+              </DropdownItem>
+            </div>
           </div>
         </DropdownMenu>
       </div>
@@ -229,44 +231,46 @@ exports[`renders correctly for workflows list page 1`] = `
             role="menu"
             tabIndex="-1"
           >
-            <DropdownItem
-              className="dropdown-menu-item"
-              href="http://blog.cjworkbench.org"
-              tag="a"
-              toggle={true}
-            >
-              <a
-                className="dropdown-menu-item dropdown-item"
+            <div>
+              <DropdownItem
+                className="dropdown-menu-item"
                 href="http://blog.cjworkbench.org"
-                onClick={[Function]}
-                tabIndex="0"
+                tag="a"
+                toggle={true}
               >
-                <span
-                  className="t-d-gray content-3 ml-3"
+                <a
+                  className="dropdown-menu-item dropdown-item"
+                  href="http://blog.cjworkbench.org"
+                  onClick={[Function]}
+                  tabIndex="0"
                 >
-                  Help
-                </span>
-              </a>
-            </DropdownItem>
-            <DropdownItem
-              className="dropdown-menu-item"
-              href="/account/logout"
-              tag="a"
-              toggle={true}
-            >
-              <a
-                className="dropdown-menu-item dropdown-item"
+                  <span
+                    className="t-d-gray content-3 ml-3"
+                  >
+                    Help
+                  </span>
+                </a>
+              </DropdownItem>
+              <DropdownItem
+                className="dropdown-menu-item"
                 href="/account/logout"
-                onClick={[Function]}
-                tabIndex="0"
+                tag="a"
+                toggle={true}
               >
-                <span
-                  className="t-d-gray content-3 ml-3"
+                <a
+                  className="dropdown-menu-item dropdown-item"
+                  href="/account/logout"
+                  onClick={[Function]}
+                  tabIndex="0"
                 >
-                  Logout
-                </span>
-              </a>
-            </DropdownItem>
+                  <span
+                    className="t-d-gray content-3 ml-3"
+                  >
+                    Logout
+                  </span>
+                </a>
+              </DropdownItem>
+            </div>
           </div>
         </DropdownMenu>
       </div>
