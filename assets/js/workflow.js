@@ -148,7 +148,7 @@ export default class Workflow extends React.Component {
     return (
       <div className="workflow-root">
 
-        <WorkflowNavBar workflowId={this.props.workflow.id} api={this.props.api} /><div className="workflow-container">
+        <WorkflowNavBar workflowId={this.props.workflow.id} api={this.props.api} isReadOnly={this.props.workflow.read_only}/><div className="workflow-container">
 
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">

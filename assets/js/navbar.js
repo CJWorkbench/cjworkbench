@@ -15,7 +15,7 @@ export class WorkflowListNavBar extends React.Component {
         <nav className="navbar">
           <div className="navbar-brand">
             <img src="/static/images/logo.png" className="logo"/>
-            <h1 className="mb-0 mr-auto title-2">Workbench</h1>
+            <h1 className="mb-0 mr-auto title-2"><a href="http://cjworkbench.org">Workbench</a></h1>
           </div>
           <WfHamburgerMenu />
         </nav>
@@ -34,9 +34,9 @@ export class WorkflowNavBar extends React.Component {
         <nav className="navbar">
           <div className="navbar-brand">
             <img src="/static/images/logo.png" className="logo"/>
-            <h1 className="mb-0 mr-auto title-2">Workbench</h1>
+            <h1 className="mb-0 mr-auto title-2"><a href="http://cjworkbench.org">Workbench</a></h1>
           </div>
-          <WfHamburgerMenu workflowId={this.props.workflowId} api={this.props.api} />
+          <WfHamburgerMenu workflowId={this.props.workflowId} api={this.props.api} isReadOnly={this.props.isReadOnly} />
         </nav>
       </div>
     );
