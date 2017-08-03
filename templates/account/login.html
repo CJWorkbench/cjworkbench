@@ -6,7 +6,7 @@
 {% block title %}{% trans "Log in" %}{% endblock %}
 
 {% block content %}
-    <form class="account_form" method="POST" action="{% url "account_login" %}" autocapitalize="off" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
+    <form class="account_form" method="POST" autocapitalize="off" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
         <legend class='title-1 t-d-gray text-center mb-3'>{% trans "Sign In" %}</legend>
         {% csrf_token %}
         {{ form.non_field_errors }}
