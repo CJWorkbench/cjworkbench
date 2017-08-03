@@ -6,12 +6,15 @@ exports[`EditableWorkflowName renders correctly 1`] = `
   value="Test Title"
   wfId={1}
 >
-  <h4>
-    <RIEInput
+  <div
+    onKeyPress={[Function]}
+  >
+    <RIETextArea
       change={[Function]}
-      classEditing="title-1 t-d-gray"
+      classEditing="editable-title-field-active"
       className=""
       propName="value"
+      rows={1}
       value="Test Title"
     >
       <span
@@ -20,9 +23,11 @@ exports[`EditableWorkflowName renders correctly 1`] = `
         onFocus={[Function]}
         tabIndex="0"
       >
-        Test Title
+        <span>
+          Test Title
+        </span>
       </span>
-    </RIEInput>
-  </h4>
+    </RIETextArea>
+  </div>
 </EditableWorkflowName>
 `;
