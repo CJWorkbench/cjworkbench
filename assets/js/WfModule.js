@@ -130,7 +130,10 @@ export default class WfModule extends React.Component {
       isCollapsed: newIsCollapsed, 
     });
 
-    this.api.toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
+    // only want to update the server if we're not in read-only mode. 
+    if (!this.props.isReadOnly) { 
+        this.api.toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
+    }
   }
 
   // when Notes icon is clicked, show notes and start in editable state
