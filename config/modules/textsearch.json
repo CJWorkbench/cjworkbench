@@ -1,9 +1,9 @@
 {
-  "name": "Filter By Text",
+  "name": "Filter by Text",
   "id_name": "textsearch",
   "category" : "Filter",
   "icon" : "edit",
-  "description" : "Filter rows containing text in specific columns.",
+  "description" : "Filter rows by matching text in specific columns.",
   "parameters": [
     {
       "name": "Search for",

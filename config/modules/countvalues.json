@@ -3,7 +3,7 @@
   "id_name": "countvalues",
   "category" : "Group",
   "icon" : "group",
-  "description" : "Group and count rows for each unique value.",
+  "description" : "Group and count rows for every unique value in a specific column.",
   "parameters": [
     {
       "name": "Column",

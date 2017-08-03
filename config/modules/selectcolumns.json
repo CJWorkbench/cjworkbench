@@ -3,10 +3,10 @@
   "id_name": "selectcolumns",
   "category" : "Wrangle",
   "icon" : "wrangle",
-  "description" : "Filter column by name.",
+  "description" : "",
   "parameters": [
     {
-      "name": "Select columns to keep",
+      "name": "Choose columns to keep",
       "id_name": "colselect",
       "type": "custom",
       "ui-only": true

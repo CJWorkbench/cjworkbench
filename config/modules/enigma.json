@@ -3,7 +3,7 @@
   "id_name": "enigma",
   "category": "Add data",
   "icon" : "url",
-  "description": "Retrieves a dataset from Enigma based on the user input.",
+  "description": "Connect a dataset from Enigma's collection via URL.",
   "parameters": [
     {
       "name": "Enigma URL",
