@@ -43,11 +43,12 @@ exports[`WfContextMenu renders correctly 1`] = `
           </Button>
         </DropdownToggle>
         <DropdownMenu
+          right={true}
           tag="div"
         >
           <div
             aria-hidden={true}
-            className="dropdown-menu"
+            className="dropdown-menu dropdown-menu-right"
             role="menu"
             tabIndex="-1"
           >

@@ -6,11 +6,19 @@ exports[`WorkflowListNavBar renders correctly 1`] = `
     <nav
       className="navbar"
     >
-      <h1
-        className="navbar-brand mb-0 mr-auto title-3"
+      <div
+        className="navbar-brand"
       >
-        CJ Workbench
-      </h1>
+        <img
+          className="logo"
+          src="/static/images/logo.png"
+        />
+        <h1
+          className="mb-0 mr-auto title-2"
+        >
+          Workbench
+        </h1>
+      </div>
       <WfHamburgerMenu>
         <UncontrolledDropdown>
           <Dropdown
@@ -23,13 +31,14 @@ exports[`WorkflowListNavBar renders correctly 1`] = `
             >
               <DropdownToggle
                 aria-haspopup={true}
+                className="context-button"
                 color="secondary"
                 data-toggle="dropdown"
               >
                 <Button
                   aria-expanded={false}
                   aria-haspopup="true"
-                  className=""
+                  className="context-button"
                   color="secondary"
                   data-toggle="dropdown"
                   onClick={[Function]}
@@ -38,21 +47,24 @@ exports[`WorkflowListNavBar renders correctly 1`] = `
                   <button
                     aria-expanded={false}
                     aria-haspopup="true"
-                    className="btn btn-secondary"
+                    className="context-button btn btn-secondary"
                     data-toggle="dropdown"
                     onClick={[Function]}
                     type="button"
                   >
-                    ☰
+                    <div
+                      className="button-icon icon-more"
+                    />
                   </button>
                 </Button>
               </DropdownToggle>
               <DropdownMenu
+                right={true}
                 tag="div"
               >
                 <div
                   aria-hidden={true}
-                  className="dropdown-menu"
+                  className="dropdown-menu dropdown-menu-right"
                   role="menu"
                   tabIndex="-1"
                 >
@@ -115,6 +127,19 @@ exports[`WorkflowNavBar renders correctly 1`] = `
     <nav
       className="navbar"
     >
+      <div
+        className="navbar-brand"
+      >
+        <img
+          className="logo"
+          src="/static/images/logo.png"
+        />
+        <h1
+          className="mb-0 mr-auto title-2"
+        >
+          Workbench
+        </h1>
+      </div>
       <WfHamburgerMenu
         api={Object {}}
         workflowId={1}
@@ -130,13 +155,14 @@ exports[`WorkflowNavBar renders correctly 1`] = `
             >
               <DropdownToggle
                 aria-haspopup={true}
+                className="context-button"
                 color="secondary"
                 data-toggle="dropdown"
               >
                 <Button
                   aria-expanded={false}
                   aria-haspopup="true"
-                  className=""
+                  className="context-button"
                   color="secondary"
                   data-toggle="dropdown"
                   onClick={[Function]}
@@ -145,21 +171,24 @@ exports[`WorkflowNavBar renders correctly 1`] = `
                   <button
                     aria-expanded={false}
                     aria-haspopup="true"
-                    className="btn btn-secondary"
+                    className="context-button btn btn-secondary"
                     data-toggle="dropdown"
                     onClick={[Function]}
                     type="button"
                   >
-                    ☰
+                    <div
+                      className="button-icon icon-more"
+                    />
                   </button>
                 </Button>
               </DropdownToggle>
               <DropdownMenu
+                right={true}
                 tag="div"
               >
                 <div
                   aria-hidden={true}
-                  className="dropdown-menu"
+                  className="dropdown-menu dropdown-menu-right"
                   role="menu"
                   tabIndex="-1"
                 >
