@@ -103,10 +103,10 @@ export default class WfParameter extends React.Component {
         // Different size and style if it's a multiline string
         var sclass, srows;
         if (!this.props.p.multiline) {
-          sclass='wfmoduleStringInput t-d-gray content-2 text-field';
+          sclass='wfmoduleStringInput t-d-gray content-2 text-field mt-1';
           srows = 1;
         } else {
-          sclass='wfmoduleTextInput t-d-gray info-1 text-field';
+          sclass='wfmoduleTextInput t-d-gray info-1 text-field mt-1';
           srows = 4;
         }
 
@@ -196,7 +196,7 @@ export default class WfParameter extends React.Component {
           var selectedCols = this.props.getParamText('colnames');
           var saveState = ( state => this.props.setParamText('colnames', state) );
           return (
-            <div>
+            <div className='mb-4'>
               <div className='t-d-gray content-3 mb-3'>{this.name}:</div>
               <ColumnSelector
                 isReadOnly={this.props.isReadOnly}
