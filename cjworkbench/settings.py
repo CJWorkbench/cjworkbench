@@ -35,6 +35,8 @@ if 'CJW_PRODUCTION' in os.environ:
 else:
     DEBUG=True
 
+DEFAULT_FROM_EMAIL = 'Workbench <hello@cjworkbench.org>'
+
 # Various environment variables must be set in production
 if DEBUG==False:
     try:
