@@ -562,6 +562,15 @@ img.logo {
   background-color: #FAFAFA;
 }
 
+.module-description {
+  margin-bottom: 2rem;
+  font-family: 'Nunito Light', sans-serif;
+  font-size: 1.3rem;
+	font-weight: 300;
+  line-height: 2.1rem;
+  color: #A2A2A2;
+}
+
 .wf-module-error-msg {
   border: 1px solid black;
   margin: 3px;

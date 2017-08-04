@@ -177,7 +177,7 @@ export default class WfModule extends React.Component {
 
     if (!this.state.isCollapsed)
       inside =  <div className='module-card-params'>
-                  <div className='t-d-gray content-3' style={{'marginBottom':'2rem','opacity':'0.5'}}>
+                  <div className='module-description'>
                     {this.wf_module.module_version.module.description}
                   </div>
                   {paramdivs}
