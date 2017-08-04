@@ -318,6 +318,7 @@ body {
 	font-size: 1.4rem;
 	font-weight: 900;
   line-height: 1.4rem;
+  padding: 0 2rem 0 2rem; 
 }
 .action-button:hover {
 	opacity: 0.5;
@@ -952,12 +953,11 @@ img.logo {
 
 .editable-title-field {
   height: 100%;
-  width: 100%;
   border: none;
   outline: none;
   padding: 0;
   resize: none;
-  width: 100%;
+  width: calc(100% - 13rem); 
 }
 /* applied only when field is in edit mode  */
 .editable-title-field-active {
@@ -997,7 +997,7 @@ img.logo {
   font-family: 'Nunito Sans', sans-serif;
   overflow-y: auto;
   float: left;
-  padding: 20px;
+  padding: 2rem;
 }
 
 .module-library-container {
@@ -1007,7 +1007,7 @@ img.logo {
 
 .module-library .nav-bar {
   background-color: #577485;;
-  height: 120px;
+  height: 12rem;
   flex-grow: 1;
   flex-basis: 0;
   min-width: 0;

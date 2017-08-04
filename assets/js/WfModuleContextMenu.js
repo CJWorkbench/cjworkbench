@@ -147,7 +147,7 @@ export default class WfModuleContextMenu extends React.Component {
           </FormGroup>
         </ModalBody>
         <ModalFooter className='dialog-footer'>
-          <Button onClick={this.toggleExportModal} className='button-blue action-button'>Done</Button>{' '}
+          <div onClick={this.toggleExportModal} className='button-blue action-button'>Done</div>{' '}
         </ModalFooter>
       </Modal>
     );
