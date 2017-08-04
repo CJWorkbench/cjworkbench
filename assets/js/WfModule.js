@@ -241,8 +241,6 @@ export default class WfModule extends React.Component {
         <div 
           className='card mb-1' 
           style={{'borderRadius': 0, 'border': 0}}
-          onMouseEnter={this.showArrow}
-          onMouseLeave={this.hideArrow}
         >
           <div className='card-block module-card-wrapper d-flex justify-content-between'>
             {/* --- Everything but the status bar, on the left of card --- */}
@@ -251,6 +249,8 @@ export default class WfModule extends React.Component {
               <div
                 className='module-card-header'
                 onClick={this.toggleCollapsed}
+                onMouseEnter={this.showArrow}
+                onMouseLeave={this.hideArrow}
               >
                 <div className='d-flex justify-content-start'>
                   <div className={moduleIcon}></div>                  
