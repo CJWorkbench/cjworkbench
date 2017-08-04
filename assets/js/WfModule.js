@@ -65,6 +65,7 @@ export default class WfModule extends React.Component {
     this.initFields(props);
     this.state = {
       isCollapsed: this.wf_module.is_collapsed,
+      showArrow: false,
       showNotes:  ( this.wf_module.notes 
                     && (this.wf_module.notes != "") 
                     && (this.wf_module.notes != "Write notes here")
@@ -77,6 +78,8 @@ export default class WfModule extends React.Component {
     this.removeModule = this.removeModule.bind(this);
     this.showNotes = this.showNotes.bind(this);
     this.hideNotes = this.hideNotes.bind(this);
+    this.showArrow = this.showArrow.bind(this);
+    this.hideArrow = this.hideArrow.bind(this);
     this.toggleCollapsed = this.toggleCollapsed.bind(this);
 
     this.api = workbenchapi();
@@ -149,6 +152,14 @@ export default class WfModule extends React.Component {
     this.setState(Object.assign({}, this.state, {showNotes: false}));
   }
 
+  showArrow() {
+    this.setState(Object.assign({}, this.state, {showArrow: true}));
+  }
+
+  hideArrow() {
+    this.setState(Object.assign({}, this.state, {showArrow: false}));
+  }
+
   render() {
 
     var updateSettings = {
@@ -206,9 +217,12 @@ export default class WfModule extends React.Component {
                     <div className='icon-note' style={{'fontSize':'1.7rem'}} ></div>
                   </div>
 
-    var arrow = (this.state.isCollapsed)
-      ? <div className='icon-sort-down button-icon ml-3'></div>
-      : <div className='icon-sort-up button-icon ml-3'></div>
+    var arrow = undefined;
+    if (this.state.showArrow) {
+      arrow = (this.state.isCollapsed)
+        ? <div className='icon-sort-down button-icon ml-3'></div>
+        : <div className='icon-sort-up button-icon ml-3'></div>
+    }
 
     var contextMenu = undefined;
     if(this.props.isReadOnly === false)
@@ -224,7 +238,12 @@ export default class WfModule extends React.Component {
     return (
       <div className='container' {...this.props} onClick={this.click}>
         {/* --- The whole card --- */}
-        <div className='card mb-1' style={{'borderRadius': 0, 'border': 0}}>
+        <div 
+          className='card mb-1' 
+          style={{'borderRadius': 0, 'border': 0}}
+          onMouseEnter={this.showArrow}
+          onMouseLeave={this.hideArrow}
+        >
           <div className='card-block module-card-wrapper d-flex justify-content-between'>
             {/* --- Everything but the status bar, on the left of card --- */}
             <div className='module-card-info'>
