@@ -103,10 +103,10 @@ export default class WfParameter extends React.Component {
         // Different size and style if it's a multiline string
         var sclass, srows;
         if (!this.props.p.multiline) {
-          sclass='wfmoduleStringInput';
+          sclass='wfmoduleStringInput t-d-gray content-2 text-field';
           srows = 1;
         } else {
-          sclass='wfmoduleTextInput';
+          sclass='wfmoduleTextInput t-d-gray content-2 text-field';
           srows = 4;
         }
 
@@ -116,7 +116,6 @@ export default class WfParameter extends React.Component {
             <textarea
               readOnly={this.props.isReadOnly}
               className={sclass}
-              className='t-d-gray content-2 text-field'
               rows={srows}
               defaultValue={this.props.p.value}
               onBlur={this.blur}
