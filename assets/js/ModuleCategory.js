@@ -94,7 +94,6 @@ export default class ModuleCategory extends React.Component {
       ? 'card b-l-gray library-card-category-open'
       : 'card b-l-gray library-card-category-closed'
 
-
     var symbol = isOpen 
       ? 'icon-sort-down button-icon'
       : 'icon-sort-right button-icon'
