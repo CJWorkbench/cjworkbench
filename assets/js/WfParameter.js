@@ -106,7 +106,7 @@ export default class WfParameter extends React.Component {
           sclass='wfmoduleStringInput t-d-gray content-2 text-field';
           srows = 1;
         } else {
-          sclass='wfmoduleTextInput t-d-gray content-2 text-field';
+          sclass='wfmoduleTextInput t-d-gray info-1 text-field';
           srows = 4;
         }
 
