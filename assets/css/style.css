@@ -1033,6 +1033,11 @@ img.logo {
   color: #FFFFFF;
 }
 
+.module-library .card {
+  border: 0;  
+}
+
+
 .card .first-level {
   background-color: #FFFFFF;
   height: 4rem;
