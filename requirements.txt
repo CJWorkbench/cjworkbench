@@ -29,3 +29,4 @@ tweepy==3.5.0
 GitPython==2.1.3
 django-user-accounts==2.0.3
 django-polymorphic==1.2
+django-analytical=2.2.2

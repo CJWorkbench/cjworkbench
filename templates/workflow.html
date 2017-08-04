@@ -1,20 +1,14 @@
+{% extends 'base.html' %}
 {% load render_bundle from webpack_loader %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>Workflow</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- styles -->
-    {% render_bundle 'workflow' 'css' %}
+{% block title %}Workbench{% endblock %}
 
-  </head>
-  <body>
-    <div id="root">
-    </div>
+{% block head %}
+  {% render_bundle 'workflow' 'css' %}
+{% endblock %}
 
-    <!-- JavaScript scripts -->
-    {% render_bundle 'workflow' 'js' %}
-  </body>
-</html>
+{% block body %}
+  <div id="root">
+  </div>
+  {% render_bundle 'workflow' 'js' %}
+{% endblock %}

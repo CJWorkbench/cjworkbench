@@ -1,20 +1,25 @@
-{% load render_bundle from webpack_loader %}
+{% load analytical %}
 
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
+    {% analytical_head_top %}
+
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- styles -->
-    {% render_bundle 'app' 'css' %}
+    {% block head %}{% endblock %}
 
+    {% analytical_head_bottom %}
   </head>
-  <body>
-    {% block content %}{% endblock %}
 
-    <!-- JavaScript scripts -->
-    {% render_bundle 'app' 'js' %}
+  <body>
+    {% analytical_body_top %}
+
+    {% block body %}{% endblock %}
+
+    {% analytical_body_bottom %}
   </body>
 </html>

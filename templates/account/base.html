@@ -1,36 +1,42 @@
+{% load analytical %}
 {% load render_bundle from webpack_loader %}
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    {% analytical_head_top %}
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- styles -->
     {% render_bundle 'login' 'css' %}
+    {% analytical_head_bottom %}
   </head>
 
   <body>
+    {% analytical_body_top %}
 
-  <nav class="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1">
-    <div class="navbar-brand">
-      <img src="/static/images/logo.png" class="logo" />
-      <h1 class="mb-0 mr-auto title-2"><a href="http://cjworkbench.org">Workbench</a></h1>
-    </div>
-    <a class="nav-link" href="http://blog.cjworkbench.org">Blog</a>
-  </nav>
+    <nav class="navbar fixed-top navbar-toggleable-md navbar-light bg-faded border-bottom-1">
+      <div class="navbar-brand">
+        <img src="/static/images/logo.png" class="logo" />
+        <h1 class="mb-0 mr-auto title-2"><a href="http://cjworkbench.org">Workbench</a></h1>
+      </div>
+      <a class="nav-link" href="http://cjworkbench.org">Blog</a>
+    </nav>
 
-  <div class="login-fullscreen-container">
-    <div class="container">
-      <div class="card card-block login-card mx-auto drop-shadow">
-         <!-- <h1 class="text-center title-1 t-d-gray">CJ Workbench</h1> -->
-         {% block content %}{% endblock %}
+    <div class="login-fullscreen-container">
+      <div class="container">
+        <div class="card card-block login-card mx-auto drop-shadow">
+           <!-- <h1 class="text-center title-1 t-d-gray">CJ Workbench</h1> -->
+           {% block content %}{% endblock %}
+        </div>
       </div>
     </div>
-  </div>
 
     <!-- JavaScript scripts -->
     {% render_bundle 'login' 'js' %}
 
+    {% analytical_body_bottom %}
   </body>
 </html>
