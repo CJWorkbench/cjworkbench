@@ -382,7 +382,7 @@ body {
 /* ---- Navbar ----- */
 
 .navbar {
-  height: 3.5rem;
+  height: 6rem;
   position: absolute;
   display: flex;
   flex-direction: row;
@@ -394,6 +394,7 @@ body {
   background-color: #48C8D7;
   color: #FFFFFF;
   border-bottom: 1px solid;
+  padding: 2rem 4rem 2rem 4rem;
 }
 
 .navbar-brand {
@@ -450,7 +451,7 @@ img.logo {
 /* ---- Workflow list ---- */
 
 .workflows-container {
-  margin-top: 5rem;
+  margin-top: 7.5rem;
 }
 
 .workflows-list {
@@ -489,8 +490,8 @@ img.logo {
 .workflow-container {
   display: flex;
   flex-flow: row;
-  height: calc(100% - 3.5rem);
-  margin-top: 3.5rem;
+  height: calc(100% - 6rem);
+  margin-top: 6rem;
 }
 
 .modulestack-left {
@@ -519,7 +520,7 @@ img.logo {
 }
 
 .outputpane-box {
-  height: calc(100% - 3.5rem);
+  height: calc(100% - 6rem);
   width: 50%;
   background-color: #F2F2F2;
   padding: 0.9375rem;
@@ -990,7 +991,7 @@ img.logo {
 /* TODO: replace with style guide classes where relevant  */
 
 .module-library {
-  height: calc(100% - 3.5rem);
+  height: calc(100% - 6rem);
   width: 50%;
   background-color: #F6F6F6;
   position: fixed;
