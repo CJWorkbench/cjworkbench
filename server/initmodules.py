@@ -61,7 +61,7 @@ def load_module_from_dict(d):
     module.description = d['description'] if 'description' in d else ""
     module.author = d['author'] if 'author' in d else "Workbench"
     module.link = d['link'] if 'link' in d else ""
-    module.icon = d['icon'] if 'icon' in d else "url"
+    module.icon = d['icon'] if 'icon' in d else "settings"
 
     module.save()
 
