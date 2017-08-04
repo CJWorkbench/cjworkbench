@@ -43,7 +43,9 @@ export default class Module extends React.Component {
     var moduleName = this.props['data-name']; // name of module 
     var description = this.props['data-description'];
     var author = this.props['data-author'];
-    var metadata = "by " + author;
+    // No Authors available yet, putting in a placeholder instead
+    // var metadata = "by " + author;
+    var metadata = "v1.0";    
     var icon = 'icon-' + this.props['icon'] + ' large-icon mr-5';
 
     return (
