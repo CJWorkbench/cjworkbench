@@ -90,8 +90,8 @@ export default class WfHamburgerMenu extends React.Component {
 
     return (
        <UncontrolledDropdown>
-        <DropdownToggle className="context-button">
-          <div className='button-icon icon-more'></div>
+        <DropdownToggle className='navbar-context-button'>
+          <div className='button-icon icon-more-white'></div>
         </DropdownToggle>
         <DropdownMenu right>
           {homeLink}

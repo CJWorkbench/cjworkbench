@@ -294,6 +294,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: 0;
 }
 .context-button:hover {
   border: 1px solid #EDECEC;
@@ -307,6 +308,23 @@ body {
   border-radius: 0.3rem;
   color: #686768;
 }
+
+.navbar-context-button {
+  border: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: 0;
+}
+.navbar-context-button:hover {
+  border: 1px solid #FFFFFF;
+  border-radius: 0.3rem;
+  text-decoration: 0;
+  background: 0;
+}
+
 
 .action-button {
 	height: 4rem;
@@ -887,6 +905,10 @@ img.logo {
   content: "\e905";
   color: #FFFFFF;
   font-size: 1.5rem;
+}
+.icon-more-white:before {
+  content: "\e918";
+  color: #FFFFFF;
 }
 
 /* icon next to Wf Module title */
