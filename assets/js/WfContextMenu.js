@@ -26,7 +26,6 @@ export default class WfContextMenu extends React.Component {
     this.props.shareWorkflow();
   }
 
-  // \u22EE = three-dot menu icon in Unicode
   render() {
     return (
        <UncontrolledDropdown>
