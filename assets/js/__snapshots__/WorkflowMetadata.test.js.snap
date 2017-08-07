@@ -18,7 +18,7 @@ exports[`WorkflowMetadata renders correctly 1`] = `
     >
       updated 
       <strong>
-        5 days ago
+        2 days ago
       </strong>
     </li>
     <li
@@ -51,7 +51,7 @@ exports[`WorkflowMetadata renders correctly 2`] = `
     >
       updated 
       <strong>
-        5 days ago
+        2 days ago
       </strong>
     </li>
     <li
@@ -156,7 +156,7 @@ exports[`WorkflowMetadata renders correctly 3`] = `
     >
       updated 
       <strong>
-        5 days ago
+        2 days ago
       </strong>
     </li>
     <li
