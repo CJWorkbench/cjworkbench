@@ -15,14 +15,14 @@ exports[`renders correctly 1`] = `
       >
         <DropdownToggle
           aria-haspopup={true}
-          className="context-button"
+          className="navbar-context-button"
           color="secondary"
           data-toggle="dropdown"
         >
           <Button
             aria-expanded={false}
             aria-haspopup="true"
-            className="context-button"
+            className="navbar-context-button"
             color="secondary"
             data-toggle="dropdown"
             onClick={[Function]}
@@ -31,13 +31,13 @@ exports[`renders correctly 1`] = `
             <button
               aria-expanded={false}
               aria-haspopup="true"
-              className="context-button btn btn-secondary"
+              className="navbar-context-button btn btn-secondary"
               data-toggle="dropdown"
               onClick={[Function]}
               type="button"
             >
               <div
-                className="button-icon icon-more"
+                className="button-icon icon-more-white"
               />
             </button>
           </Button>
@@ -194,14 +194,14 @@ exports[`renders correctly for workflows list page 1`] = `
       >
         <DropdownToggle
           aria-haspopup={true}
-          className="context-button"
+          className="navbar-context-button"
           color="secondary"
           data-toggle="dropdown"
         >
           <Button
             aria-expanded={false}
             aria-haspopup="true"
-            className="context-button"
+            className="navbar-context-button"
             color="secondary"
             data-toggle="dropdown"
             onClick={[Function]}
@@ -210,13 +210,13 @@ exports[`renders correctly for workflows list page 1`] = `
             <button
               aria-expanded={false}
               aria-haspopup="true"
-              className="context-button btn btn-secondary"
+              className="navbar-context-button btn btn-secondary"
               data-toggle="dropdown"
               onClick={[Function]}
               type="button"
             >
               <div
-                className="button-icon icon-more"
+                className="button-icon icon-more-white"
               />
             </button>
           </Button>
