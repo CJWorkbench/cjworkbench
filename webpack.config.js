@@ -17,7 +17,7 @@ module.exports = {
     path: path.resolve('./assets/bundles/'),
     filename: "[name]-[hash].js",
   },
-
+  devtool: 'source-map',
   plugins: [
     new BundleTracker({filename: './webpack-stats.json'}),
   ],
