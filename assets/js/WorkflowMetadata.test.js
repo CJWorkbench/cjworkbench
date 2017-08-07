@@ -1,7 +1,11 @@
 import React from 'react'
 import WorkflowMetadata  from './WorkflowMetadata'
 import { shallow } from 'enzyme'
+
 const Utils = require('./utils');
+
+var today = new Date();
+var yesterday = today.setDate(today.getDate() - 2);
 
 it('WorkflowMetadata renders correctly', (done) => {
 
@@ -9,7 +13,7 @@ it('WorkflowMetadata renders correctly', (done) => {
     id: 100,
     public: true,
     owner_name: "Harry Harrison",
-    last_update: "2017-08-01T20:12:55.334901Z"
+    last_update: yesterday
   };
 
   var apiCall = jest.fn().mockImplementation(()=>
