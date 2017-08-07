@@ -5,6 +5,7 @@
 from polymorphic.models import PolymorphicModel
 from server.models.Workflow import *
 from django.db import transaction
+import django.utils
 
 # Base class of a single undoable/redoable action
 # Derived classes implement the actual mutations on the database (via polymorphic forward()/backward())
@@ -21,9 +22,9 @@ class Delta(PolymorphicModel):
 
     # Next and previous Deltas on this workflow, a doubly linked list
     # Use related_name = '+' to indicate we don't want back links (we already have them!)
-    next_delta = models.ForeignKey('self', related_name='+', null=True)
-    prev_delta = models.ForeignKey('self', related_name='+', null=True)
-    datetime = models.DateTimeField('datetime', auto_now=True)
+    next_delta = models.ForeignKey('self', related_name='+', null=True, default=None, on_delete=models.SET_DEFAULT)
+    prev_delta = models.ForeignKey('self', related_name='+', null=True, default=None, on_delete=models.SET_DEFAULT)
+    datetime = models.DateTimeField('datetime', default=django.utils.timezone.now)
 
     # On very first save, add this Delta to the linked list
     def save(self, *args, **kwargs):
@@ -33,7 +34,7 @@ class Delta(PolymorphicModel):
             with transaction.atomic():
 
                 # Blow away all deltas starting after last applied (wipe redo stack)
-                # delete_unapplied_deltas(self.workflow) ## Temporarily commenting out until we figure out what's going on with integrity errors
+                delete_unapplied_deltas(self.workflow)
 
                 # Point us backward to last delta in chain
                 last_delta = self.workflow.last_delta

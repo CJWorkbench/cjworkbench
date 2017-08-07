@@ -5,7 +5,7 @@ import { shallow } from 'enzyme'
 const Utils = require('./utils');
 
 var today = new Date();
-var yesterday = today.setDate(today.getDate() - 2);
+var day_before = today.setDate(today.getDate() - 2);
 
 it('WorkflowMetadata renders correctly', (done) => {
 
@@ -13,7 +13,7 @@ it('WorkflowMetadata renders correctly', (done) => {
     id: 100,
     public: true,
     owner_name: "Harry Harrison",
-    last_update: yesterday
+    last_update: day_before
   };
 
   var apiCall = jest.fn().mockImplementation(()=>
