@@ -63,7 +63,7 @@ export default class WorkflowMetadata extends React.Component {
           <div className="row">
             <div className="col-sm-4">
               <div
-                className={"action-button " + (this.state.isPublic ? "button-full-blue" : "button-gray") }
+                className={"action-button " + (this.state.isPublic ? "button-full-blue" : "button-gray test-button-gray") }
                 onClick={() => {this.setPublic(true); this.togglePrivacyModal()}}>
                   Public
               </div>
@@ -76,7 +76,7 @@ export default class WorkflowMetadata extends React.Component {
           <div className="row">
             <div className="col-sm-4">
               <div
-                className={"action-button " + (!this.state.isPublic ? "button-full-blue" : "button-gray")}
+                className={"action-button " + (!this.state.isPublic ? "button-full-blue" : "button-gray test-button-gray")}
                 onClick={() => {this.setPublic(false); this.togglePrivacyModal()}}>
                   Private
               </div>
@@ -101,7 +101,7 @@ export default class WorkflowMetadata extends React.Component {
           <li className="list-inline-item">
             updated <strong>{timeDifference(this.props.workflow.last_update, now)}</strong>
           </li>
-          <li className="list-inline-item t-f-blue" onClick={this.togglePrivacyModal}>
+          <li className="list-inline-item t-f-blue test-button" onClick={this.togglePrivacyModal}>
             <strong>{this.state.isPublic ? 'public' : 'private'}</strong></li>
         </ul>
         { this.renderPrivacyModal() }

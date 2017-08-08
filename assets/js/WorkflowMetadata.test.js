@@ -31,7 +31,7 @@ it('WorkflowMetadata renders correctly', (done) => {
   expect(wrapper).toMatchSnapshot();
 
   // Perfect, great. Now test that the dialog opens and setting to private calls the API
-  var publicLink = wrapper.find('.t-f-blue');
+  var publicLink = wrapper.find('.test-button');
   expect(publicLink).toHaveLength(1);
   publicLink.first().simulate('click');
 
@@ -39,13 +39,16 @@ it('WorkflowMetadata renders correctly', (done) => {
     // Dialog should be open
     expect(wrapper).toMatchSnapshot();
 
-    // Click the private link
-    var privateButton = wrapper.find('.button-gray');
+    // Click the Private setting
+    var privateButton = wrapper.find('.test-button-gray');
     expect(privateButton).toHaveLength(1);
     privateButton.first().simulate('click');
     setImmediate( () => {
       // Dialog should be closed, link should now say private
       expect(wrapper).toMatchSnapshot();
+      // Check that the API was called
+      expect(apiCall.mock.calls.length).toBe(1);
+      expect(apiCall.mock.calls[0][0]).toBe(100);
       done();
     });
   });

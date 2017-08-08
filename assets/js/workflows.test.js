@@ -69,6 +69,7 @@ it('new workflow button', (done) => {
       name: "New Workflow"
     };
 
+  // Over-write default behavior (changing page)
   Utils.goToUrl = jest.fn();
   window.fetch = jest.fn().mockImplementation(()=>
     Promise.resolve(Utils.mockResponse(200, null, JSON.stringify(testData)))

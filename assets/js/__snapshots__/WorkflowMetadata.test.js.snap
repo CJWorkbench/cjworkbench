@@ -22,7 +22,7 @@ exports[`WorkflowMetadata renders correctly 1`] = `
       </strong>
     </li>
     <li
-      className="list-inline-item t-f-blue"
+      className="list-inline-item t-f-blue test-button"
       onClick={[Function]}
     >
       <strong>
@@ -55,7 +55,7 @@ exports[`WorkflowMetadata renders correctly 2`] = `
       </strong>
     </li>
     <li
-      className="list-inline-item t-f-blue"
+      className="list-inline-item t-f-blue test-button"
       onClick={[Function]}
     >
       <strong>
@@ -119,7 +119,7 @@ exports[`WorkflowMetadata renders correctly 2`] = `
           className="col-sm-4"
         >
           <div
-            className="action-button button-gray"
+            className="action-button button-gray test-button-gray"
             onClick={[Function]}
           >
             Private
@@ -160,7 +160,7 @@ exports[`WorkflowMetadata renders correctly 3`] = `
       </strong>
     </li>
     <li
-      className="list-inline-item t-f-blue"
+      className="list-inline-item t-f-blue test-button"
       onClick={[Function]}
     >
       <strong>
