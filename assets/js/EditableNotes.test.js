@@ -9,6 +9,7 @@ it('EditableNotes renders correctly', () => {
     value={'testing'}
     editClass=""
     wf_module_id={1}
+    api={{}}
   />);
   expect(wrapper).toMatchSnapshot();
 

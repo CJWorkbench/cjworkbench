@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
-import workbenchapi from './WorkbenchAPI'
 import dateFormat from 'dateformat'
 import { timeDifference } from './utils'
 
@@ -27,7 +26,6 @@ export default class UpdateFrequencySelect extends React.Component {
       this.state.timezoneOffset = 0; // display in browser local time 
     }
 
-    this.api = workbenchapi();
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleManual = this.toggleManual.bind(this);  
     this.updatePeriod = this.updatePeriod.bind(this);    
@@ -72,7 +70,7 @@ export default class UpdateFrequencySelect extends React.Component {
       update_interval: this.state.dialogSettings.period,
       update_units: this.state.dialogSettings.unit
     };
-    this.api.setWfModuleUpdateSettings(this.props.wfModuleId, params); 
+    this.props.api.setWfModuleUpdateSettings(this.props.wfModuleId, params); 
     this.setState({liveSettings: this.state.dialogSettings});
     this.toggleModal();
   }
@@ -164,6 +162,7 @@ export default class UpdateFrequencySelect extends React.Component {
 }
 
 UpdateFrequencySelect.propTypes = {
+  api:              PropTypes.object.isRequired,
   updateSettings:   PropTypes.object.isRequired,
   wfModuleId:       PropTypes.number.isRequired
 };

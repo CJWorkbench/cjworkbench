@@ -8,8 +8,6 @@ import ColumnRenamer from './ColumnRenamer'
 import PropTypes from 'prop-types'
 import DataVersionSelect from './DataVersionSelect'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
-import { Button } from 'reactstrap'
-import workbenchAPI from './WorkbenchAPI'
 import { csrfToken } from './utils'
 
 
@@ -213,10 +211,12 @@ export default class WfParameter extends React.Component {
                   isReadOnly={this.props.isReadOnly}
                   wfModuleId={this.props.wf_module_id}
                   revision={this.props.revision}
-                  api={workbenchAPI()} />
+                  api={this.props.api} 
+                />
                 <UpdateFrequencySelect
                   updateSettings={this.props.updateSettings}
                   wfModuleId={this.props.wf_module_id}
+                  api={this.props.api} 
                 />
                 <div className='button-blue action-button mt-4' onClick={this.click}>{this.name}</div>
             </div>
@@ -246,6 +246,7 @@ export default class WfParameter extends React.Component {
 }
 
 WfParameter.propTypes = {
+  api:              PropTypes.object.isRequired,
   p:                PropTypes.object.isRequired,
   wf_module_id:     PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,

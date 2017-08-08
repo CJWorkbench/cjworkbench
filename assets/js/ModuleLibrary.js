@@ -215,4 +215,5 @@ ModuleLibrary.propTypes = {
   addModule:            PropTypes.func,
   toggleModuleLibrary:  PropTypes.func,
   workflow:             PropTypes.object,
+  api:      PropTypes.object.isRequired,
 };

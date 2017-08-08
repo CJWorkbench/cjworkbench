@@ -9,6 +9,7 @@ it('EditableWorkflowName renders correctly', () => {
     value={'Test Title'}
     editClass=""
     wfId={1}
+    api={{}}
   />);
   expect(wrapper).toMatchSnapshot();
 

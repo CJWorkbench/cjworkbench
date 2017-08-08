@@ -49,6 +49,7 @@ it('WorkflowMetadata renders correctly', (done) => {
       // Check that the API was called
       expect(apiCall.mock.calls.length).toBe(1);
       expect(apiCall.mock.calls[0][0]).toBe(100);
+      expect(wrapper.state('isPublic')).toBe(false);  
       done();
     });
   });

@@ -12,9 +12,7 @@
 import React from 'react'
 import { sortable } from 'react-sortable'
 import PropTypes from 'prop-types'
-
 import Module from './Module'
-
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
 
 var SortableModule = sortable(Module);

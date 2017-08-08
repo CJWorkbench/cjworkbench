@@ -16,8 +16,6 @@ import {
   ModalBody,
   ModalFooter
 } from 'reactstrap'
-import WfContextMenu from './WfContextMenu'
-
 import { getPageID, csrfToken } from './utils'
 
 
@@ -63,6 +61,7 @@ var SortableList = React.createClass({
           items={this.props.data.wf_modules}
           draggingIndex={this.state.draggingIndex}
           sortId={i}
+          api={this.props.api}
           outline="list"
           childProps={{
             'isReadOnly': this.props.data.read_only,
@@ -132,13 +131,18 @@ export default class Workflow extends React.Component {
 
     var outputPane = null;
     if (this.props.workflow.wf_modules.length > 0) {
-      outputPane = <OutputPane id={this.props.selected_wf_module} revision={this.props.workflow.revision}/>
+      outputPane = <OutputPane 
+                    id={this.props.selected_wf_module} 
+                    revision={this.props.workflow.revision}
+                    api={this.props.api}
+                  />
     }
 
     var moduleLibrary = <ModuleLibrary
           addModule={module_id => this.props.addModule(module_id,
                         this.props.workflow.wf_modules.length)}
           toggleModuleLibrary={this.toggleModuleLibrary}
+          api={this.props.api}
           workflow={this} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
           />
 
@@ -158,7 +162,12 @@ export default class Workflow extends React.Component {
     return (
       <div className="workflow-root">
 
-        <WorkflowNavBar workflowId={this.props.workflow.id} api={this.props.api} isReadOnly={this.props.workflow.read_only}/><div className="workflow-container">
+        <WorkflowNavBar 
+          workflowId={this.props.workflow.id} 
+          api={this.props.api} 
+          isReadOnly={this.props.workflow.read_only}
+        />
+        <div className="workflow-container">
 
           <div className="modulestack-left ">
             <div className="modulestack-header w-75 mx-auto ">
@@ -171,6 +180,7 @@ export default class Workflow extends React.Component {
                     wfId={this.props.workflow.id}
                     isReadOnly={this.props.workflow.read_only}
                     style={{'width':'100%'}}
+                    api={this.props.api}
                   />
                   <WorkflowMetadata workflow={this.props.workflow} api={this.props.api}/>
                 </div>

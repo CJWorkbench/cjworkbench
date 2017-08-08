@@ -2,6 +2,7 @@
 
 exports[`EditableWorkflowName renders correctly 1`] = `
 <EditableWorkflowName
+  api={Object {}}
   editClass=""
   value="Test Title"
   wfId={1}

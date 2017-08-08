@@ -2,6 +2,7 @@
 
 exports[`EditableNotes renders correctly 1`] = `
 <EditableNotes
+  api={Object {}}
   editClass=""
   value="testing"
   wf_module_id={1}

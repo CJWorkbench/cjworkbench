@@ -9,7 +9,6 @@ import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
 import * as Actions from './workflow-reducer'
 import PropTypes from 'prop-types'
-import workbenchapi from './WorkbenchAPI';
 
 // Libraries to provide a collapsable table view
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
@@ -81,8 +80,6 @@ export default class WfModule extends React.Component {
     this.showArrow = this.showArrow.bind(this);
     this.hideArrow = this.hideArrow.bind(this);
     this.toggleCollapsed = this.toggleCollapsed.bind(this);
-
-    this.api = workbenchapi();
   }
 
   // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
@@ -135,7 +132,7 @@ export default class WfModule extends React.Component {
 
     // only want to update the server if we're not in read-only mode. 
     if (!this.props.isReadOnly) { 
-        this.api.toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
+        this.props.api.toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
     }
   }
 
@@ -172,6 +169,7 @@ export default class WfModule extends React.Component {
     // Each parameter gets a WfParameter
     var paramdivs = this.params.map((ps, i) => {
         return <WfParameter
+          api={this.props.api}
           isReadOnly={this.props.isReadOnly}
           key={i}
           p={ps}
@@ -202,6 +200,7 @@ export default class WfModule extends React.Component {
     if (this.state.showNotes)
       notes = <div className='editable-notes-field '>
                 <EditableNotes
+                  api={this.props.api}
                   isReadOnly={this.props.isReadOnly}
                   value={value}
                   hideNotes={ () => this.hideNotes() }
@@ -294,5 +293,6 @@ WfModule.propTypes = {
   'data-revison':       PropTypes.number,
   'data-selected':      PropTypes.bool,
   'data-changeParam':   PropTypes.func,
-  'data-removeModule':  PropTypes.func
+  'data-removeModule':  PropTypes.func,
+  api:      PropTypes.object.isRequired,
 };

@@ -1,13 +1,11 @@
 import React from 'react';
 import _ from 'lodash';
 import { RIETextArea } from 'riek';
-import workbenchapi from './WorkbenchAPI';
 import PropTypes from 'prop-types'
 
 export default class EditableWorkflowName extends React.Component {
   constructor(props) {
     super(props);
-    this.api = workbenchapi();
     this.saveName = this.saveName.bind(this);
     this.keyPress = this.keyPress.bind(this);    
     this.state = {
@@ -22,7 +20,7 @@ export default class EditableWorkflowName extends React.Component {
       value = "Untitled Workflow";
     }
     this.setState({value: value});
-    this.api.setWfName(this.props.wfId, value);
+    this.props.api.setWfName(this.props.wfId, value);
   }
 
   // Make Enter key save the text in edit field, overriding default newline
@@ -60,5 +58,6 @@ export default class EditableWorkflowName extends React.Component {
 
 EditableWorkflowName.propTypes = {
   value:    PropTypes.string,
-  wfId:     PropTypes.number
+  wfId:     PropTypes.number,
+  api:      PropTypes.object.isRequired,
 };
