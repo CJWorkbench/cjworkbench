@@ -1,10 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
-import dateFormat from 'dateformat'
+// import dateFormat from 'dateformat'
 import { timeDifference } from './utils'
-
 
 export default class UpdateFrequencySelect extends React.Component {
   constructor(props) {
@@ -78,13 +77,9 @@ export default class UpdateFrequencySelect extends React.Component {
 
   render() {
 
-    //button highlights
-    var highlightManual = this.state.dialogSettings.manual ? 'action-button button-full-blue' : 'action-button button-gray';
-    var highlightAuto = !this.state.dialogSettings.manual ? 'action-button button-full-blue' : 'action-button button-gray';
-
-    var manualText = this.state.dialogSettings.manual ? 'action-button button-full-blue' : 'action-button button-gray';
-    var autoText = !this.state.dialogSettings.manual ? 'action-button button-full-blue' : 'action-button button-gray';
-    
+    // button highlights
+    var highlightManual = 'action-button ' + (this.state.dialogSettings.manual ? 'button-full-blue' : 'button-gray test-button-gray');
+    var highlightAuto = 'action-button ' + (!this.state.dialogSettings.manual ? 'button-full-blue' : 'button-gray test-button-gray');
 
     // info shown on Wf Module card
     var manual = this.state.liveSettings.manual;
@@ -103,7 +98,7 @@ export default class UpdateFrequencySelect extends React.Component {
       <div className='version-item'>
         <div className='mb-4' >
           <span className='content-3 t-d-gray'>Update </span>
-          <span className='content-3 t-f-blue' onClick={this.toggleModal}>{settingsInfo}</span>  
+          <span className='content-3 t-f-blue test-button' onClick={this.toggleModal}>{settingsInfo}</span>  
         </div>
         {lastChecked}
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window'>
@@ -151,7 +146,7 @@ export default class UpdateFrequencySelect extends React.Component {
             </FormGroup>
           </ModalBody>
           <ModalFooter className='dialog-footer'>
-            <div className='action-button button-blue' onClick={this.saveSettings}>OK</div>
+            <div className='action-button button-blue test-ok-button' onClick={this.saveSettings}>OK</div>
             <div className='action-button button-blue' onClick={this.toggleModal}>Cancel</div>            
           </ModalFooter>
         </Modal>

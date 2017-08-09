@@ -132,7 +132,7 @@ export default class WfModule extends React.Component {
 
     // only want to update the server if we're not in read-only mode. 
     if (!this.props.isReadOnly) { 
-        this.props.api.toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
+        this.props['api'].toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
     }
   }
 
@@ -169,7 +169,7 @@ export default class WfModule extends React.Component {
     // Each parameter gets a WfParameter
     var paramdivs = this.params.map((ps, i) => {
         return <WfParameter
-          api={this.props.api}
+          api={this.props['api']}
           isReadOnly={this.props.isReadOnly}
           key={i}
           p={ps}
@@ -200,7 +200,7 @@ export default class WfModule extends React.Component {
     if (this.state.showNotes)
       notes = <div className='editable-notes-field '>
                 <EditableNotes
-                  api={this.props.api}
+                  api={this.props['api']}
                   isReadOnly={this.props.isReadOnly}
                   value={value}
                   hideNotes={ () => this.hideNotes() }
@@ -294,5 +294,5 @@ WfModule.propTypes = {
   'data-selected':      PropTypes.bool,
   'data-changeParam':   PropTypes.func,
   'data-removeModule':  PropTypes.func,
-  api:      PropTypes.object.isRequired,
+  'api':                PropTypes.object.isRequired,
 };

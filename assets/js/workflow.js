@@ -54,6 +54,7 @@ var SortableList = React.createClass({
 
   render: function() {
     var listItems = this.props.data.wf_modules.map(function(item, i) {
+
       return (
         <SortableWfModule
           key={item.id}
@@ -69,7 +70,8 @@ var SortableList = React.createClass({
             'data-changeParam': this.props.changeParam,
             'data-removeModule': this.props.removeModule,
             'data-revision': this.props.data.revision,
-            'data-selected': (item.id == this.props.selected_wf_module)
+            'data-selected': (item.id == this.props.selected_wf_module),
+            'api': this.props.api
           }}
         />
       );
@@ -197,6 +199,7 @@ export default class Workflow extends React.Component {
                 selected_wf_module={this.props.selected_wf_module}
                 changeParam={this.props.changeParam}
                 removeModule={this.props.removeModule}
+                api={this.props.api}
               />
             </div>
           </div>
