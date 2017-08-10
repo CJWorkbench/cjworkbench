@@ -1246,6 +1246,7 @@ img.logo {
   color: #686768;
 }
 
+/* Suppress ChartBuilder step numbers */
 .chartbuilder-main .step-number {
   display: none;
 }
@@ -1288,8 +1289,8 @@ img.logo {
   height: 4rem;
 }
 
-/* Not sure why Chartbuilder.jsx even has this element, it merely takes up space
-   but https://quartz.github.io/Chartbuilder/ has display: none so we do too  */
+/* Hiden canvas element used for image export;
+   https://quartz.github.io/Chartbuilder/ has display: none so we do too  */
 .chartbuilder-canvas {
   display: none;
 }
