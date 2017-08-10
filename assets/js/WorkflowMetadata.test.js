@@ -1,6 +1,7 @@
 import React from 'react'
 import WorkflowMetadata  from './WorkflowMetadata'
 import { shallow } from 'enzyme'
+import { okResponseMock } from './utils'
 
 const Utils = require('./utils');
 
@@ -16,11 +17,8 @@ it('WorkflowMetadata renders correctly', (done) => {
     last_update: day_before
   };
 
-  var apiCall = jest.fn().mockImplementation(()=>
-    Promise.resolve(Utils.mockResponse(200, null, null))
-  );
   var api = {
-    setWorkflowPublic: apiCall
+    setWorkflowPublic: okResponseMock()
   };
 
   const wrapper = shallow(
@@ -47,8 +45,10 @@ it('WorkflowMetadata renders correctly', (done) => {
       // Dialog should be closed, link should now say private
       expect(wrapper).toMatchSnapshot();
       // Check that the API was called
-      expect(apiCall.mock.calls.length).toBe(1);
-      expect(apiCall.mock.calls[0][0]).toBe(100);
+      expect(api.setWorkflowPublic.mock.calls.length).toBe(1);
+      expect(api.setWorkflowPublic.mock.calls[0][0]).toBe(100);
+      expect(api.setWorkflowPublic.mock.calls[0][1]).toBe(false);     // checking if False was passed in for isPublic argument
+      
       expect(wrapper.state('isPublic')).toBe(false);  
       done();
     });

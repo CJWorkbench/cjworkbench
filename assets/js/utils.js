@@ -28,7 +28,7 @@ export class EmptyAPI {};
 export var emptyAPI = new EmptyAPI();
 
 // More testing fun
-export const mockResponse = (status, statusText, response) => {
+export function mockResponse (status, statusText, response) {
   return new window.Response(response, {
     status: status,
     statusText: statusText,
@@ -37,6 +37,21 @@ export const mockResponse = (status, statusText, response) => {
     }
   });
 };
+
+// Returns new mock function that gives an OK HTTP response. Use for mocking "set" API calls
+export function okResponseMock () {
+  return jest.fn().mockImplementation(()=>
+    Promise.resolve(mockResponse(200, null, null))
+  )
+}
+
+// Returns new mock function that returns given json. Used for mocking "get" API calls
+export function jsonResponseMock (json) {
+  return jest.fn().mockImplementation(()=>
+    Promise.resolve(mockResponse(200, null, json))
+  )
+}
+
 
 export function timeDifference (start, end) {
   var diff = timediff(start,end);

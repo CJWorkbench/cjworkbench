@@ -205,6 +205,11 @@ export default class WfParameter extends React.Component {
             </div> );
 
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
+
+          var button = (!this.props.isReadOnly) 
+            ? <div className='button-blue action-button mt-4' onClick={this.click}>{this.name}</div>
+            : null
+          
           return (
             <div className='version-box'>
                 <DataVersionSelect
@@ -214,11 +219,12 @@ export default class WfParameter extends React.Component {
                   api={this.props.api} 
                 />
                 <UpdateFrequencySelect
+                  isReadOnly={this.props.isReadOnly}
                   updateSettings={this.props.updateSettings}
                   wfModuleId={this.props.wf_module_id}
                   api={this.props.api} 
                 />
-                <div className='button-blue action-button mt-4' onClick={this.click}>{this.name}</div>
+                {button}
             </div>
           );
         } else if (this.props.p.parameter_spec.id_name == 'colrename') {
@@ -246,10 +252,10 @@ export default class WfParameter extends React.Component {
 }
 
 WfParameter.propTypes = {
-  api:              PropTypes.object.isRequired,
-  p:                PropTypes.object.isRequired,
+  p:                PropTypes.object.isRequired,  // the actual parameter json
   wf_module_id:     PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,
+  api:              PropTypes.object.isRequired,
   // only for "Load From Url"
   updateSettings:   PropTypes.object,
   changeParam:      PropTypes.func.isRequired,

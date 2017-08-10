@@ -1,6 +1,169 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`UpdateFrequencySelect renders correctly 1`] = `
+exports[`UpdateFrequencySelect Does not save changed settings when user hits Cancel 1`] = `
+<div
+  className="version-item"
+>
+  <div
+    className="mb-4"
+  >
+    <span
+      className="content-3 t-d-gray"
+    >
+      Update 
+    </span>
+    <span
+      className="content-3 t-f-blue test-button"
+      onClick={[Function]}
+    >
+      manual
+    </span>
+  </div>
+  <div
+    className="content-3 t-m-gray"
+  >
+    Checked 
+    2 days ago
+  </div>
+  <Modal
+    autoFocus={true}
+    backdrop={true}
+    backdropTransitionTimeout={150}
+    className="dialog-window"
+    fade={true}
+    isOpen={false}
+    keyboard={true}
+    modalTransitionTimeout={300}
+    toggle={[Function]}
+    zIndex={1050}
+  >
+    <ModalHeader
+      className="dialog-header"
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <span
+        className="title-4 t-d-gray"
+      >
+        Sync Settings
+      </span>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <FormGroup
+        tag="div"
+      >
+        <Label
+          className="content-3 t-d-gray mb-3"
+          for="updateFreq"
+          tag="label"
+        >
+          Check for update every
+        </Label>
+        <div
+          className="update-freq-settings update-freq-test-class mb-5"
+        >
+          <Input
+            className="input-number mr-4"
+            id="updateFreqNum"
+            max="500"
+            min="1"
+            name="updateFreq"
+            onChange={[Function]}
+            tag="p"
+            type="number"
+            value={888}
+          />
+          <Input
+            className="input-dropdown"
+            id="updateFreqUnit"
+            name="updateFreq"
+            onChange={[Function]}
+            tag="p"
+            type="select"
+            value="days"
+          >
+            <option>
+              seconds
+            </option>
+            <option>
+              minutes
+            </option>
+            <option>
+              hours
+            </option>
+            <option
+              id="days-option"
+            >
+              days
+            </option>
+            <option>
+              weeks
+            </option>
+          </Input>
+        </div>
+        <div
+          className="content-3 t-d-gray mb-3"
+        >
+          When an update is found:
+        </div>
+        <div
+          className="d-flex flex-row mb-4"
+        >
+          <div
+            className="action-button manual-button button-gray "
+            onClick={[Function]}
+          >
+            Manual
+          </div>
+          <div
+            className="t-d-gray info-1 ml-4"
+          >
+            Notify me, but do not update the workflow. (recommended)
+          </div>
+        </div>
+        <div
+          className="d-flex flex-row mb-4"
+        >
+          <div
+            className="action-button auto-button button-full-blue"
+            onClick={[Function]}
+          >
+            Auto
+          </div>
+          <div
+            className="t-d-gray info-1 ml-4"
+          >
+            Automatically save the current version of the workflow and update it with the newest data.
+          </div>
+        </div>
+      </FormGroup>
+    </ModalBody>
+    <ModalFooter
+      className="dialog-footer"
+      tag="div"
+    >
+      <div
+        className="action-button button-blue test-ok-button"
+        onClick={[Function]}
+      >
+        OK
+      </div>
+      <div
+        className="action-button button-blue test-cancel-button"
+        onClick={[Function]}
+      >
+        Cancel
+      </div>
+    </ModalFooter>
+  </Modal>
+</div>
+`;
+
+exports[`UpdateFrequencySelect Renders correctly when in Private mode and changes are confirmed with OK 1`] = `
 <div
   className="version-item"
 >
@@ -79,7 +242,7 @@ exports[`UpdateFrequencySelect renders correctly 1`] = `
           />
           <Input
             className="input-dropdown"
-            id="updateFreqPeriod"
+            id="updateFreqUnit"
             name="updateFreq"
             onChange={[Function]}
             tag="p"
@@ -95,7 +258,9 @@ exports[`UpdateFrequencySelect renders correctly 1`] = `
             <option>
               hours
             </option>
-            <option>
+            <option
+              id="days-option"
+            >
               days
             </option>
             <option>
@@ -112,7 +277,7 @@ exports[`UpdateFrequencySelect renders correctly 1`] = `
           className="d-flex flex-row mb-4"
         >
           <div
-            className="action-button button-full-blue"
+            className="action-button manual-button button-full-blue"
             onClick={[Function]}
           >
             Manual
@@ -127,7 +292,7 @@ exports[`UpdateFrequencySelect renders correctly 1`] = `
           className="d-flex flex-row mb-4"
         >
           <div
-            className="action-button button-gray test-button-gray"
+            className="action-button auto-button button-gray"
             onClick={[Function]}
           >
             Auto
@@ -151,7 +316,333 @@ exports[`UpdateFrequencySelect renders correctly 1`] = `
         OK
       </div>
       <div
-        className="action-button button-blue"
+        className="action-button button-blue test-cancel-button"
+        onClick={[Function]}
+      >
+        Cancel
+      </div>
+    </ModalFooter>
+  </Modal>
+</div>
+`;
+
+exports[`UpdateFrequencySelect Renders correctly when in Private mode and changes are confirmed with OK 2`] = `
+<div
+  className="version-item"
+>
+  <div
+    className="mb-4"
+  >
+    <span
+      className="content-3 t-d-gray"
+    >
+      Update 
+    </span>
+    <span
+      className="content-3 t-f-blue test-button"
+      onClick={[Function]}
+    >
+      manual
+    </span>
+  </div>
+  <div
+    className="content-3 t-m-gray"
+  >
+    Checked 
+    2 days ago
+  </div>
+  <Modal
+    autoFocus={true}
+    backdrop={true}
+    backdropTransitionTimeout={150}
+    className="dialog-window"
+    fade={true}
+    isOpen={true}
+    keyboard={true}
+    modalTransitionTimeout={300}
+    toggle={[Function]}
+    zIndex={1050}
+  >
+    <ModalHeader
+      className="dialog-header"
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <span
+        className="title-4 t-d-gray"
+      >
+        Sync Settings
+      </span>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <FormGroup
+        tag="div"
+      >
+        <Label
+          className="content-3 t-d-gray mb-3"
+          for="updateFreq"
+          tag="label"
+        >
+          Check for update every
+        </Label>
+        <div
+          className="update-freq-settings update-freq-test-class mb-5"
+        >
+          <Input
+            className="input-number mr-4"
+            id="updateFreqNum"
+            max="500"
+            min="1"
+            name="updateFreq"
+            onChange={[Function]}
+            tag="p"
+            type="number"
+            value={5}
+          />
+          <Input
+            className="input-dropdown"
+            id="updateFreqUnit"
+            name="updateFreq"
+            onChange={[Function]}
+            tag="p"
+            type="select"
+            value="minutes"
+          >
+            <option>
+              seconds
+            </option>
+            <option>
+              minutes
+            </option>
+            <option>
+              hours
+            </option>
+            <option
+              id="days-option"
+            >
+              days
+            </option>
+            <option>
+              weeks
+            </option>
+          </Input>
+        </div>
+        <div
+          className="content-3 t-d-gray mb-3"
+        >
+          When an update is found:
+        </div>
+        <div
+          className="d-flex flex-row mb-4"
+        >
+          <div
+            className="action-button manual-button button-full-blue"
+            onClick={[Function]}
+          >
+            Manual
+          </div>
+          <div
+            className="t-d-gray info-1 ml-4"
+          >
+            Notify me, but do not update the workflow. (recommended)
+          </div>
+        </div>
+        <div
+          className="d-flex flex-row mb-4"
+        >
+          <div
+            className="action-button auto-button button-gray"
+            onClick={[Function]}
+          >
+            Auto
+          </div>
+          <div
+            className="t-d-gray info-1 ml-4"
+          >
+            Automatically save the current version of the workflow and update it with the newest data.
+          </div>
+        </div>
+      </FormGroup>
+    </ModalBody>
+    <ModalFooter
+      className="dialog-footer"
+      tag="div"
+    >
+      <div
+        className="action-button button-blue test-ok-button"
+        onClick={[Function]}
+      >
+        OK
+      </div>
+      <div
+        className="action-button button-blue test-cancel-button"
+        onClick={[Function]}
+      >
+        Cancel
+      </div>
+    </ModalFooter>
+  </Modal>
+</div>
+`;
+
+exports[`UpdateFrequencySelect Renders correctly when in Private mode and changes are confirmed with OK 3`] = `
+<div
+  className="version-item"
+>
+  <div
+    className="mb-4"
+  >
+    <span
+      className="content-3 t-d-gray"
+    >
+      Update 
+    </span>
+    <span
+      className="content-3 t-f-blue test-button"
+      onClick={[Function]}
+    >
+      auto
+    </span>
+  </div>
+  <div
+    className="content-3 t-m-gray"
+  >
+    Checked 
+    2 days ago
+  </div>
+  <Modal
+    autoFocus={true}
+    backdrop={true}
+    backdropTransitionTimeout={150}
+    className="dialog-window"
+    fade={true}
+    isOpen={false}
+    keyboard={true}
+    modalTransitionTimeout={300}
+    toggle={[Function]}
+    zIndex={1050}
+  >
+    <ModalHeader
+      className="dialog-header"
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <span
+        className="title-4 t-d-gray"
+      >
+        Sync Settings
+      </span>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <FormGroup
+        tag="div"
+      >
+        <Label
+          className="content-3 t-d-gray mb-3"
+          for="updateFreq"
+          tag="label"
+        >
+          Check for update every
+        </Label>
+        <div
+          className="update-freq-settings update-freq-test-class mb-5"
+        >
+          <Input
+            className="input-number mr-4"
+            id="updateFreqNum"
+            max="500"
+            min="1"
+            name="updateFreq"
+            onChange={[Function]}
+            tag="p"
+            type="number"
+            value={888}
+          />
+          <Input
+            className="input-dropdown"
+            id="updateFreqUnit"
+            name="updateFreq"
+            onChange={[Function]}
+            tag="p"
+            type="select"
+            value="days"
+          >
+            <option>
+              seconds
+            </option>
+            <option>
+              minutes
+            </option>
+            <option>
+              hours
+            </option>
+            <option
+              id="days-option"
+            >
+              days
+            </option>
+            <option>
+              weeks
+            </option>
+          </Input>
+        </div>
+        <div
+          className="content-3 t-d-gray mb-3"
+        >
+          When an update is found:
+        </div>
+        <div
+          className="d-flex flex-row mb-4"
+        >
+          <div
+            className="action-button manual-button button-gray "
+            onClick={[Function]}
+          >
+            Manual
+          </div>
+          <div
+            className="t-d-gray info-1 ml-4"
+          >
+            Notify me, but do not update the workflow. (recommended)
+          </div>
+        </div>
+        <div
+          className="d-flex flex-row mb-4"
+        >
+          <div
+            className="action-button auto-button button-full-blue"
+            onClick={[Function]}
+          >
+            Auto
+          </div>
+          <div
+            className="t-d-gray info-1 ml-4"
+          >
+            Automatically save the current version of the workflow and update it with the newest data.
+          </div>
+        </div>
+      </FormGroup>
+    </ModalBody>
+    <ModalFooter
+      className="dialog-footer"
+      tag="div"
+    >
+      <div
+        className="action-button button-blue test-ok-button"
+        onClick={[Function]}
+      >
+        OK
+      </div>
+      <div
+        className="action-button button-blue test-cancel-button"
         onClick={[Function]}
       >
         Cancel

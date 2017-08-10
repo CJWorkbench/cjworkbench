@@ -131,8 +131,8 @@ export default class WfModule extends React.Component {
     });
 
     // only want to update the server if we're not in read-only mode. 
-    if (!this.props.isReadOnly) { 
-        this.props['api'].toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
+    if (!this.props['data-isReadOnly']) { 
+        this.props['data-api'].toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
     }
   }
 
@@ -169,8 +169,8 @@ export default class WfModule extends React.Component {
     // Each parameter gets a WfParameter
     var paramdivs = this.params.map((ps, i) => {
         return <WfParameter
-          api={this.props['api']}
-          isReadOnly={this.props.isReadOnly}
+          api={this.props['data-api']}
+          isReadOnly={this.props['data-isReadOnly']}
           key={i}
           p={ps}
           changeParam={this.props['data-changeParam']}
@@ -200,8 +200,8 @@ export default class WfModule extends React.Component {
     if (this.state.showNotes)
       notes = <div className='editable-notes-field '>
                 <EditableNotes
-                  api={this.props['api']}
-                  isReadOnly={this.props.isReadOnly}
+                  api={this.props['data-api']}
+                  isReadOnly={this.props['data-isReadOnly']}
                   value={value}
                   hideNotes={ () => this.hideNotes() }
                   editClass='t-d-gray note'
@@ -224,7 +224,7 @@ export default class WfModule extends React.Component {
     }
 
     var contextMenu = undefined;
-    if(this.props.isReadOnly === false)
+    if(this.props['data-isReadOnly'] === false)
       contextMenu = <WfModuleContextMenu
           removeModule={ () => this.removeModule() }
           stopProp={(e) => e.stopPropagation()}
@@ -289,10 +289,11 @@ export default class WfModule extends React.Component {
 
 
 WfModule.propTypes = {
+  'data-isReadOnly':    PropTypes.bool,
   'data-wfmodule':      PropTypes.object,
   'data-revison':       PropTypes.number,
   'data-selected':      PropTypes.bool,
   'data-changeParam':   PropTypes.func,
   'data-removeModule':  PropTypes.func,
-  'api':                PropTypes.object.isRequired,
+  'data-api':           PropTypes.object.isRequired,
 };

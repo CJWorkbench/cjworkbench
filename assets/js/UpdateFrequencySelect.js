@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
-// import dateFormat from 'dateformat'
 import { timeDifference } from './utils'
 
 export default class UpdateFrequencySelect extends React.Component {
@@ -33,7 +32,9 @@ export default class UpdateFrequencySelect extends React.Component {
   }
 
   toggleModal() {
-    this.setState({modalOpen: !this.state.modalOpen })
+    if (!this.props.isReadOnly) {
+      this.setState({modalOpen: !this.state.modalOpen })
+    }
   }
 
   toggleManual() {
@@ -78,8 +79,8 @@ export default class UpdateFrequencySelect extends React.Component {
   render() {
 
     // button highlights
-    var highlightManual = 'action-button ' + (this.state.dialogSettings.manual ? 'button-full-blue' : 'button-gray test-button-gray');
-    var highlightAuto = 'action-button ' + (!this.state.dialogSettings.manual ? 'button-full-blue' : 'button-gray test-button-gray');
+    var highlightManual = 'action-button manual-button ' + (this.state.dialogSettings.manual ? 'button-full-blue' : 'button-gray ');
+    var highlightAuto = 'action-button auto-button ' + (!this.state.dialogSettings.manual ? 'button-full-blue' : 'button-gray');
 
     // info shown on Wf Module card
     var manual = this.state.liveSettings.manual;
@@ -124,13 +125,13 @@ export default class UpdateFrequencySelect extends React.Component {
                   value={this.state.dialogSettings.unit}
                   onChange={this.updateUnit}
                   name="updateFreq" 
-                  id="updateFreqPeriod" 
+                  id="updateFreqUnit" 
                   className='input-dropdown'
                 >
                   <option>seconds</option>
                   <option>minutes</option>
                   <option>hours</option>                
-                  <option>days</option>
+                  <option id='days-option'>days</option>
                   <option>weeks</option>
                 </Input>
               </div>
@@ -147,7 +148,7 @@ export default class UpdateFrequencySelect extends React.Component {
           </ModalBody>
           <ModalFooter className='dialog-footer'>
             <div className='action-button button-blue test-ok-button' onClick={this.saveSettings}>OK</div>
-            <div className='action-button button-blue' onClick={this.toggleModal}>Cancel</div>            
+            <div className='action-button button-blue test-cancel-button' onClick={this.toggleModal}>Cancel</div>            
           </ModalFooter>
         </Modal>
       </div>

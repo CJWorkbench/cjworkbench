@@ -106,9 +106,6 @@ export default class DataVersionSelect extends React.Component {
   }
 
   render() {
-    // TODO: Assign conditional render if module is open/closed: see WfModule 115
-    // TODO: Refactor calculated classNames outside of Return statement
-
     return (
       <div className='version-item d-flex justify-content-center flex-column align-items-center'>
         <div className='t-d-gray content-3 mb-4'>Current Version</div>
@@ -153,5 +150,5 @@ DataVersionSelect.propTypes = {
   wfModuleId:       PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,
   api:              PropTypes.object.isRequired,
-  timezoneOffset:   PropTypes.number
+  timezoneOffset:   PropTypes.number            // for testing only
 };

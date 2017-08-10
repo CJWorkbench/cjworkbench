@@ -65,13 +65,13 @@ var SortableList = React.createClass({
           api={this.props.api}
           outline="list"
           childProps={{
-            'isReadOnly': this.props.data.read_only,
+            'data-isReadOnly': this.props.data.read_only, 
             'data-wfmodule': item,
             'data-changeParam': this.props.changeParam,
             'data-removeModule': this.props.removeModule,
             'data-revision': this.props.data.revision,
             'data-selected': (item.id == this.props.selected_wf_module),
-            'api': this.props.api
+            'data-api': this.props.api 
           }}
         />
       );
