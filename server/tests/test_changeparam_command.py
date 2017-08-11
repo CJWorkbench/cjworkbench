@@ -18,7 +18,7 @@ class ParameterValTests(TestCase):
                 {
                   'name': 'Happy Number',
                   'id_name' : 'hnumber',
-                  'type': 'number',
+                  'type': 'integer',
                   'default': '1'
                 },
                 {
@@ -34,13 +34,13 @@ class ParameterValTests(TestCase):
     # Change a value, then undo, redo
     def test_change(self):
         pval = get_param_by_id_name('hstring')
-        self.assertEqual(pval.string, 'value 1')
+        self.assertEqual(pval.value, 'value 1')
         cmd = ChangeParameterCommand.create(pval, 'value 2')
-        self.assertEqual(pval.string, 'value 2')
+        self.assertEqual(pval.value, 'value 2')
         cmd.backward()
-        self.assertEqual(pval.string, 'value 1')
+        self.assertEqual(pval.value, 'value 1')
         cmd.forward()
-        self.assertEqual(pval.string, 'value 2')
+        self.assertEqual(pval.value, 'value 2')
 
 
 

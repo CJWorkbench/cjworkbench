@@ -11,15 +11,17 @@ class CountByDate(ModuleImpl):
     SORT_BY_FREQ = 1
 
     def render(wf_module, table):
-        if table is None:
-            return None
-
         col  = wf_module.get_param_string('column')
         sortby = wf_module.get_param_menu_idx('sortby')
 
         if col == '':
             wf_module.set_error('Please select a column containing dates')
             return table
+
+        if table is None:
+            return None
+
+        tc = table.columns
 
         if col not in table.columns:
             wf_module.set_error('There is no column named %s' % col)

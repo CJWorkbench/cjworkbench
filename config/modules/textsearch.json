@@ -14,7 +14,7 @@
     {
       "name": "In columns",
       "id_name": "colselect",
-      "type": "custom",
+      "type": "multicolumn",
       "ui-only": true
     },
     {

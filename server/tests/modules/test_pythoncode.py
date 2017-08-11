@@ -16,7 +16,7 @@ class PythonCodeTest(LoggedInTestCase):
         # Replace the output with our own data
 
         code = "columns = ['A','B', 'C']\ndata = np.array([np.arange(5)]*3).T\nreturn pd.DataFrame(columns=columns, data=data)";
-        self.code_pval.string = code
+        self.code_pval.value = code
         self.code_pval.save()
 
         out = execute_wfmodule(self.wf_module)

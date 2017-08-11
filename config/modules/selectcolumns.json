@@ -8,7 +8,7 @@
     {
       "name": "Choose columns to keep",
       "id_name": "colselect",
-      "type": "custom",
+      "type": "multicolumn",
       "ui-only": true
     },
     {

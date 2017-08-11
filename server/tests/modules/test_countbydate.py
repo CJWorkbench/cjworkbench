@@ -32,9 +32,11 @@ class CountValuesTests(LoggedInTestCase):
         self.assertEqual(out.to_csv(index=False), 'date,count\n2016-01-10,2\n2011-07-25,1\n')
 
     def test_bad_colname(self):
-        # No output if no column given
+        # NOP if no column given
         set_string(self.col_pval, '')
         out = execute_wfmodule(self.wf_module)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(self.wf_module.status, WfModule.ERROR)
         self.assertFalse(out.empty)
 
         # bad column name should produce error

@@ -15,9 +15,9 @@ class FormulaTests(LoggedInTestCase):
 
     def test_formula(self):
         # set up a formula to double the Amount column
-        self.fpval.string = 'Amount*2'
+        self.fpval.value= 'Amount*2'
         self.fpval.save()
-        self.rpval.string = 'output'
+        self.rpval.value= 'output'
         self.rpval.save()
         table = mock_csv_table.copy()
         table['output'] = table['Amount']*2.0  # need the .0 as output is going to be floating point
@@ -28,7 +28,7 @@ class FormulaTests(LoggedInTestCase):
         self.assertEqual(response.content, table_to_content(table))
 
         # empty result parameter should produce 'result'
-        self.rpval.string = ''
+        self.rpval.value = ''
         self.rpval.save()
         table = mock_csv_table.copy()
         table['result'] = table['Amount']*2.0  # need the .0 as output is going to be floating point
@@ -38,7 +38,7 @@ class FormulaTests(LoggedInTestCase):
         self.assertEqual(response.content, table_to_content(table))
 
         # formula with missing column name should error
-        self.fpval.string = 'xxx*2'
+        self.fpval.value = 'xxx*2'
         self.fpval.save()
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule.id)
         self.wfmodule.refresh_from_db()
