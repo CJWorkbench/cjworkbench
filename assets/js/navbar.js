@@ -13,7 +13,7 @@ export class WorkflowListNavBar extends React.Component {
     return (
       <div>
         <nav className="navbar">
-          <div className="navbar-brand">
+          <div className="navbar-brand d-flex flex-row align-items-center ">
             <img src="/static/images/logo.png" className="logo"/>
             <h1 className="mb-0 mr-auto title-2"><a href="http://cjworkbench.org">Workbench</a></h1>
           </div>

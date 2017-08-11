@@ -412,7 +412,7 @@ body {
   background-color: #48C8D7;
   color: #FFFFFF;
   border-bottom: 1px solid;
-  padding: 2rem 4rem 2rem 4rem;
+  padding: 1rem 4rem 1rem 4rem;
 }
 
 .navbar-brand {
@@ -421,9 +421,9 @@ body {
 }
 
 img.logo {
-  height: 100%;
+  height: 70%;
   vertical-align: middle;
-  margin-right: .5rem;
+  margin-right: 1rem;
 }
 .navbar-brand h1, img.logo {
   display: inline-block;
