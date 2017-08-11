@@ -9,7 +9,7 @@ exports[`renders correctly 1`] = `
           className="navbar"
         >
           <div
-            className="navbar-brand"
+            className="navbar-brand d-flex flex-row align-items-center "
           >
             <img
               className="logo"
@@ -194,7 +194,7 @@ exports[`renders correctly 2`] = `
           className="navbar"
         >
           <div
-            className="navbar-brand"
+            className="navbar-brand d-flex flex-row align-items-center "
           >
             <img
               className="logo"
