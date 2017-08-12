@@ -41,7 +41,7 @@ class LoadFromURLTests(LoggedInTestCase):
 
     def test_load_csv(self):
         url = 'http://test.com/the.csv'
-        self.url_pval.string = url
+        self.url_pval.set_value(url)
         self.url_pval.save()
 
         # should be no data saved yet, no Deltas on the workflow
@@ -100,7 +100,7 @@ class LoadFromURLTests(LoggedInTestCase):
 
     def test_load_json(self):
         url = 'http://test.com/the.json'
-        self.url_pval.string = url
+        self.url_pval.set_value(url)
         self.url_pval.save()
 
         # success case
@@ -119,7 +119,7 @@ class LoadFromURLTests(LoggedInTestCase):
 
         # success using json path
         with requests_mock.Mocker() as m:
-            self.path_pval.string = mock_json_path
+            self.path_pval.set_value(mock_json_path)
             self.path_pval.save()
             m.get(url, text=mock_json_path_text, headers={'content-type': 'application/json'})
             self.press_fetch_button()
@@ -128,7 +128,7 @@ class LoadFromURLTests(LoggedInTestCase):
 
         # bad json path should put module in error state
         with requests_mock.Mocker() as m:
-            self.path_pval.string = 'hilarious'
+            self.path_pval.set_value('hilarious')
             self.path_pval.save()
             m.get(url, text=mock_json_path_text, headers={'content-type': 'application/json'})
             self.press_fetch_button()
@@ -138,7 +138,7 @@ class LoadFromURLTests(LoggedInTestCase):
 
     def test_load_xlsx(self):
         url = 'http://test.com/the.xlsx'
-        self.url_pval.string = url
+        self.url_pval.set_value(url)
         self.url_pval.save()
 
         xlsx_bytes = open(mock_xslx_path, "rb").read()
@@ -161,7 +161,7 @@ class LoadFromURLTests(LoggedInTestCase):
 
     def test_load_404(self):
         url = 'http://test.com/the.csv'
-        self.url_pval.string = url
+        self.url_pval.set_value(url)
         self.url_pval.save()
 
         # 404 error should put module in error state

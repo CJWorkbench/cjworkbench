@@ -50,7 +50,7 @@ class UndoRedoTests(TestCase):
         # Change a parameter
         pval = get_param_by_id_name('csv')
         cmd2 = ChangeParameterCommand.create(pval, 'some value')
-        self.assertEqual(pval.string, 'some value')
+        self.assertEqual(pval.value, 'some value')
         self.workflow.refresh_from_db()
         rev2 = self.workflow.revision()
         self.assertGreater(rev2, rev1)
@@ -59,18 +59,18 @@ class UndoRedoTests(TestCase):
         WorkflowUndo(self.workflow)
         self.assertEqual(self.workflow.revision(), rev1)
         pval.refresh_from_db()
-        self.assertEqual(pval.string, '')
+        self.assertEqual(pval.value, '')
 
         # Redo
         WorkflowRedo(self.workflow)
         self.assertEqual(self.workflow.revision(), rev2)
         pval.refresh_from_db()
-        self.assertEqual(pval.string, 'some value')
+        self.assertEqual(pval.value, 'some value')
 
         # Redo again should do nothing
         WorkflowRedo(self.workflow)
         self.assertEqual(self.workflow.revision(), rev2)
-        self.assertEqual(pval.string, 'some value')
+        self.assertEqual(pval.value, 'some value')
 
         # Add one more command so the stack is 3 deep
         cmd3 = ChangeWorkflowTitleCommand.create(self.workflow, "Hot New Title")

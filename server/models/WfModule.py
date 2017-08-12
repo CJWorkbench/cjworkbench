@@ -130,37 +130,38 @@ class WfModule(models.Model):
             pv.init_from_spec()
             pv.save()
 
-    # Retrieve current parameter values
-    def get_param_typecheck(self, name, param_type):
+    # Retrieve current parameter values.
+    # Should never throw ValueError on type conversions because ParameterVal.set_value coerces
+
+    def get_param_raw(self, name, expected_type):
         try:
             pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)
         except ParameterSpec.DoesNotExist:
-            raise ValueError('Request for non-existent ' + param_type + ' parameter ' + name)
+            raise ValueError('Request for non-existent ' + expected_type + ' parameter ' + name)
 
-        if pspec.type != param_type:
-            raise ValueError('Request for ' + param_type + ' parameter ' + name + ' but actual type is ' + pspec.type)
+        if pspec.type != expected_type:
+            raise ValueError('Request for ' + expected_type + ' parameter ' + name + ' but actual type is ' + pspec.type)
+
         pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
-        if param_type == ParameterSpec.STRING:
-            return pval.string
-        elif param_type == ParameterSpec.NUMBER:
-            return pval.float
-        elif param_type == ParameterSpec.CHECKBOX:
-            return pval.boolean
+        return pval.value
 
     def get_param_string(self, name):
-        return self.get_param_typecheck(name, ParameterSpec.STRING)
+        return self.get_param_raw(name, ParameterSpec.STRING)
 
-    def get_param_number(self, name):
-        return self.get_param_typecheck(name, ParameterSpec.NUMBER)
+    def get_param_integer(self, name):
+        return int(self.get_param_raw(name, ParameterSpec.INTEGER))
+
+    def get_param_float(self, name):
+        return float(self.get_param_raw(name, ParameterSpec.FLOAT))
 
     def get_param_checkbox(self, name):
-        return self.get_param_typecheck(name, ParameterSpec.CHECKBOX)
+        return int(self.get_param_raw(name, ParameterSpec.CHECKBOX)) == 1
 
     def get_param_menu_idx(self, name):
         try:
             pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)
         except ParameterSpec.DoesNotExist:
-            raise ValueError('Request for non-existent ' + param_type + ' parameter ' + name)
+            raise ValueError('Request for non-existent menu parameter ' + name)
         pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
         return pval.selected_menu_item_idx()
 
@@ -168,11 +169,15 @@ class WfModule(models.Model):
         try:
             pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=name)
         except ParameterSpec.DoesNotExist:
-            raise ValueError('Request for non-existent ' + param_type + ' parameter ' + name)
+            raise ValueError('Request for non-existent menu parameter ' + name)
         pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
         return pval.selected_menu_item_string()
 
+    def get_param_column(self, name):
+        return self.get_param_raw(name, ParameterSpec.COLUMN)
 
+    def get_param_multicolumn(self, name):
+        return self.get_param_raw(name, ParameterSpec.MULTICOLUMN)
 
     # --- Status ----
     # set error codes and status lights, notify client of changes

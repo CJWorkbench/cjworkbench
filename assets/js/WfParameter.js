@@ -123,7 +123,8 @@ export default class WfParameter extends React.Component {
           </div>
         );
 
-      case 'number':
+      case 'integer':
+      case 'float':
         return (
           <div>
             <div>{this.name}:</div>
@@ -165,6 +166,18 @@ export default class WfParameter extends React.Component {
                   onChange={ idx => { this.paramChanged(idx) }}
                 /> );
 
+      case 'multicolumn':
+        return (
+          <div className='mb-4'>
+            <div className='t-d-gray content-3 mb-3'>{this.name}:</div>
+            <ColumnSelector
+              isReadOnly={this.props.isReadOnly}
+              selectedCols={this.props.getParamText('colnames')}
+              saveState={state => this.props.setParamText('colnames', state) }
+              getColNames={this.getInputColNames}
+              revision={this.props.revision} />
+          </div> );
+
       case 'custom':
 
         if (this.props.p.parameter_spec.id_name == 'chart') {
@@ -188,21 +201,6 @@ export default class WfParameter extends React.Component {
               />
             </div>
           );
-
-        } else if (this.props.p.parameter_spec.id_name == 'colselect') {
-
-          var selectedCols = this.props.getParamText('colnames');
-          var saveState = ( state => this.props.setParamText('colnames', state) );
-          return (
-            <div className='mb-4'>
-              <div className='t-d-gray content-3 mb-3'>{this.name}:</div>
-              <ColumnSelector
-                isReadOnly={this.props.isReadOnly}
-                selectedCols={selectedCols}
-                saveState={saveState}
-                getColNames={this.getInputColNames}
-                revision={this.props.revision} />
-            </div> );
 
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
 

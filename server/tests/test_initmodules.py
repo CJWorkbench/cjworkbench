@@ -54,7 +54,7 @@ class InitmoduleTests(LoggedInTestCase):
                 {
                   'name': 'URL',
                   'id_name': 'url',
-                  'type': 'number',
+                  'type': 'integer',
                   'default': '42'
                 }
               ]
@@ -98,7 +98,7 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(url_spec.name, 'URL')
         self.assertEqual(url_spec.id_name, 'url')
         self.assertEqual(url_spec.type, ParameterSpec.STRING)
-        self.assertEqual(url_spec.def_string, 'http://foo.com')
+        self.assertEqual(url_spec.def_value, 'http://foo.com')
         self.assertEqual(url_spec.def_visible, True)
         self.assertEqual(url_spec.ui_only, False)
         self.assertEqual(url_spec.multiline, False)
@@ -116,7 +116,7 @@ class InitmoduleTests(LoggedInTestCase):
         # check missing default has a default, and that multiline works
         nodef_spec = ParameterSpec.objects.get(id_name='nodefault')
         self.assertEqual(nodef_spec.type, ParameterSpec.STRING)
-        self.assertEqual(nodef_spec.def_string, '')
+        self.assertEqual(nodef_spec.def_value, '')
         self.assertEqual(nodef_spec.multiline, True)
         self.assertEqual(nodef_spec.derived_data, True)
 
@@ -159,9 +159,9 @@ class InitmoduleTests(LoggedInTestCase):
         # precondition: corresponding parameter val exists for each wfm with correct default
         # also tested in test_wfmodule.py but whatevs, won't hurt
         url_pval1 = ParameterVal.objects.get(parameter_spec=url_spec1, wf_module=wfm1)
-        self.assertEqual(url_pval1.string, 'http://foo.com')
+        self.assertEqual(url_pval1.value, 'http://foo.com')
         url_pval2 = ParameterVal.objects.get(parameter_spec=url_spec1, wf_module=wfm2)
-        self.assertEqual(url_pval2.string, 'http://foo.com')
+        self.assertEqual(url_pval2.value, 'http://foo.com')
 
         # load the revised module, check that it ends up with the same primary key
         m2 = load_module_from_dict(self.loadcsv2)
@@ -172,31 +172,27 @@ class InitmoduleTests(LoggedInTestCase):
             ParameterSpec.objects.get(id_name='fetch')
 
         # url spec should still exist with same id, new type, new order
-        # existing parameterval should have new default, order
+        # existing parameterval should have new default values
         url_spec2 = ParameterSpec.objects.get(id_name='url')
         self.assertEqual(url_spec1.id, url_spec2.id)
-        self.assertEqual(url_spec2.type, ParameterSpec.NUMBER)
+        self.assertEqual(url_spec2.type, ParameterSpec.INTEGER)
         self.assertEqual(url_spec2.order, 1)
         url_pval1.refresh_from_db()
-        self.assertEqual(url_pval1.string, '')
-        self.assertEqual(url_pval1.float, 42)
-        self.assertEqual(url_pval1.order, 1)
+        self.assertEqual(url_pval1.value, '42')
         url_pval2.refresh_from_db()
-        self.assertEqual(url_pval2.string, '')
-        self.assertEqual(url_pval2.float, 42)
-        self.assertEqual(url_pval2.order, 1)
+        self.assertEqual(url_pval2.value, '42')
 
         # new Menu parameter should exist, with corresponding new values in WfModules
         menu_spec = ParameterSpec.objects.get(id_name='caketype')
         self.assertEqual(menu_spec.type, ParameterSpec.MENU)
-        self.assertEqual(menu_spec.def_integer, 1)
+        self.assertEqual(menu_spec.def_value, '1')
         self.assertEqual(menu_spec.def_menu_items, 'Cheese|Chocolate')
         self.assertEqual(menu_spec.order, 0)
         menu_pval1 = ParameterVal.objects.get(parameter_spec=menu_spec, wf_module=wfm1)
-        self.assertEqual(menu_pval1.integer, 1)
+        self.assertEqual(menu_pval1.value, '1')
         self.assertEqual(menu_pval1.order, 0)
         menu_pval2 = ParameterVal.objects.get(parameter_spec=menu_spec, wf_module=wfm2)
-        self.assertEqual(menu_pval2.integer, 1)
+        self.assertEqual(menu_pval2.value, '1')
         self.assertEqual(menu_pval1.order, 0)
 
 

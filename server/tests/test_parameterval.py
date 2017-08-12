@@ -22,30 +22,36 @@ class ParameterValTests(LoggedInTestCase):
         self.moduleID = module.id
 
         stringSpec = ParameterSpec.objects.create(
-            name="StringParam",
-            id_name="stringparam",
+            name='StringParam',
+            id_name='stringparam',
             module_version=module_version,
             type= ParameterSpec.STRING,
-            def_string='foo')
-        numberSpec = ParameterSpec.objects.create(
-            name="NumberParam",
-            id_name="numberparam",
+            def_value='foo')
+        integerSpec = ParameterSpec.objects.create(
+            name='IntegerParam',
+            id_name='integerparam',
             module_version=module_version,
-            type=ParameterSpec.NUMBER,
-            def_float=10.11)
+            type=ParameterSpec.INTEGER,
+            def_value='42')
+        floatSpec = ParameterSpec.objects.create(
+            name='FloatParam',
+            id_name='floatparam',
+            module_version=module_version,
+            type=ParameterSpec.FLOAT,
+            def_value='10.11')
         checkboxSpec = ParameterSpec.objects.create(
-            name="CheckboxParam",
-            id_name="checkboxparam",
+            name='CheckboxParam',
+            id_name='checkboxparam',
             module_version=module_version,
             type=ParameterSpec.CHECKBOX,
-            def_boolean=True)
+            def_value='1')
         menuSpec = ParameterSpec.objects.create(
-            name="MenuParam",
-            id_name="menuparam",
+            name='MenuParam',
+            id_name='menuparam',
             module_version=module_version,
             type=ParameterSpec.MENU,
-            def_menu_items="Item A|Item B|Item C",
-            def_integer=1)  # should refer to Item B
+            def_menu_items='Item A|Item B|Item C',
+            def_value='1')  # should refer to Item B
 
         self.workflow = add_new_workflow(name="Test Workflow")
         self.workflowID = self.workflow.id
@@ -54,16 +60,19 @@ class ParameterValTests(LoggedInTestCase):
         self.wfmoduleID = self.wfmodule.id
 
         # set non-default values for vals in order to reveal certain types of bugs
-        stringVal = ParameterVal.objects.create(parameter_spec=stringSpec, wf_module=self.wfmodule, string='fooval')
+        stringVal = ParameterVal.objects.create(parameter_spec=stringSpec, wf_module=self.wfmodule, value='fooval')
         self.stringID = stringVal.id
 
-        numberVal = ParameterVal.objects.create(parameter_spec=numberSpec, wf_module=self.wfmodule, float=10.11)
-        self.numberID = numberVal.id
+        integerVal = ParameterVal.objects.create(parameter_spec=integerSpec, wf_module=self.wfmodule, value='10')
+        self.integerID = integerVal.id
 
-        checkboxVal = ParameterVal.objects.create(parameter_spec=checkboxSpec, wf_module=self.wfmodule, boolean='True')
+        floatVal = ParameterVal.objects.create(parameter_spec=floatSpec, wf_module=self.wfmodule, value='3.14159')
+        self.floatID = floatVal.id
+
+        checkboxVal = ParameterVal.objects.create(parameter_spec=checkboxSpec, wf_module=self.wfmodule, value='1')
         self.checkboxID = checkboxVal.id
 
-        menuVal = ParameterVal.objects.create(parameter_spec=menuSpec, wf_module=self.wfmodule, integer=2)
+        menuVal = ParameterVal.objects.create(parameter_spec=menuSpec, wf_module=self.wfmodule, value='2')
         self.menuID = menuVal.id
 
 
@@ -74,8 +83,11 @@ class ParameterValTests(LoggedInTestCase):
         s = self.wfmodule.get_param_string('stringparam')
         self.assertEqual(s, 'fooval')
 
-        n = self.wfmodule.get_param_number('numberparam')
-        self.assertEqual(n, 10.11)
+        i = self.wfmodule.get_param_integer('integerparam')
+        self.assertEqual(i, 10)
+
+        f = self.wfmodule.get_param_float('floatparam')
+        self.assertEqual(f, 3.14159)
 
         t = self.wfmodule.get_param_checkbox('checkboxparam')
         self.assertEqual(t, True)
@@ -85,11 +97,13 @@ class ParameterValTests(LoggedInTestCase):
 
         # Retrieving value of wrong type should raise exception
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_string('numberparam')
+            self.wfmodule.get_param_string('integerparam')
+        with self.assertRaises(ValueError):
+            self.wfmodule.get_param_string('floatparam')
         with self.assertRaises(ValueError):
             self.wfmodule.get_param_string('checkboxparam')
         with self.assertRaises(ValueError):
-            self.wfmodule.get_param_number('stringparam')
+            self.wfmodule.get_param_integer('stringparam')
         with self.assertRaises(ValueError):
             self.wfmodule.get_param_checkbox('stringparam')
         with self.assertRaises(ValueError):
@@ -112,8 +126,8 @@ class ParameterValTests(LoggedInTestCase):
         self.assertEqual(response.data['wf_modules'][0]['id'], self.moduleID)
 
         # wfmodule has correct parameters
-        self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 4)
-        valIDs = [self.stringID, self.numberID, self.checkboxID, self.menuID]
+        self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 5)
+        valIDs = [self.stringID, self.integerID, self.floatID, self.checkboxID, self.menuID]
         param_vals = response.data['wf_modules'][0]['parameter_vals']
         responseIDs = [x['id'] for x in param_vals]
         self.assertCountEqual(responseIDs, valIDs)
@@ -125,40 +139,46 @@ class ParameterValTests(LoggedInTestCase):
         self.assertEqual(str_val['parameter_spec']['type'], ParameterSpec.STRING)
         self.assertEqual(str_val['value'], 'fooval')
 
-        num_val = [p for p in param_vals if p['id']==self.numberID][0]
-        self.assertEqual(num_val['parameter_spec']['name'], 'NumberParam')
-        self.assertEqual(num_val['parameter_spec']['id_name'], 'numberparam')
-        self.assertEqual(num_val['parameter_spec']['type'], ParameterSpec.NUMBER)
-        self.assertEqual(num_val['value'], 10.11)
+        int_val = [p for p in param_vals if p['id']==self.integerID][0]
+        self.assertEqual(int_val['parameter_spec']['name'], 'IntegerParam')
+        self.assertEqual(int_val['parameter_spec']['id_name'], 'integerparam')
+        self.assertEqual(int_val['parameter_spec']['type'], ParameterSpec.INTEGER)
+        self.assertEqual(int_val['value'], '10')
+
+        float_val = [p for p in param_vals if p['id']==self.floatID][0]
+        self.assertEqual(float_val['parameter_spec']['name'], 'FloatParam')
+        self.assertEqual(float_val['parameter_spec']['id_name'], 'floatparam')
+        self.assertEqual(float_val['parameter_spec']['type'], ParameterSpec.FLOAT)
+        self.assertEqual(float_val['value'], '3.14159')
 
         checkbox_val = [p for p in param_vals if p['id']==self.checkboxID][0]
         self.assertEqual(checkbox_val['parameter_spec']['name'], 'CheckboxParam')
         self.assertEqual(checkbox_val['parameter_spec']['id_name'], 'checkboxparam')
         self.assertEqual(checkbox_val['parameter_spec']['type'], ParameterSpec.CHECKBOX)
-        self.assertEqual(checkbox_val['value'], True)
+        self.assertEqual(checkbox_val['value'], '1')
 
         menu_val = [p for p in param_vals if p['id'] == self.menuID][0]
         self.assertEqual(menu_val['parameter_spec']['name'], 'MenuParam')
         self.assertEqual(menu_val['parameter_spec']['id_name'], 'menuparam')
         self.assertEqual(menu_val['parameter_spec']['type'], ParameterSpec.MENU)
-        self.assertEqual(menu_val['value'], 2)
+        self.assertEqual(menu_val['value'], '2')
 
     # test parameter change API
     def test_parameterval_detail_patch(self):
         old_rev  = self.workflow.revision()
 
-        request = self.factory.patch('/api/parameters/%d/' % self.numberID,
+        request = self.factory.patch('/api/parameters/%d/' % self.floatID,
                                    {'value': '50.456' })
         force_authenticate(request, user=self.user)
-        response = parameterval_detail(request, pk=self.numberID)
+        response = parameterval_detail(request, pk=self.floatID)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # see that we get the new value back
-        request = self.factory.get('/api/parameters/%d/' % self.numberID)
+        request = self.factory.get('/api/parameters/%d/' % self.floatID)
         force_authenticate(request, user=self.user)
-        response = parameterval_detail(request, pk=self.numberID)
+        response = parameterval_detail(request, pk=self.floatID)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['value'], 50.456)
+        self.assertEqual(response.data['value'], '50.456')
 
         # changing a parameter should change the version
         self.workflow.refresh_from_db()

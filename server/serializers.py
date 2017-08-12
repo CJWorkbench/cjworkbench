@@ -3,30 +3,14 @@ from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Modul
 from server.utils import seconds_to_count_and_units
 from account.utils import user_display
 
-# So far, no one actually wants to see the default values.
-# They'd be a bit trick to serialize anyway, as we'd want to hide the underlying storage (float/string/int/boolean)
+# So far, no one actually wants to see the default value.
 class ParameterSpecSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParameterSpec
         fields = ('id', 'name', 'id_name', 'type', 'multiline')
 
-
 class ParameterValSerializer(serializers.ModelSerializer):
     parameter_spec = ParameterSpecSerializer(many=False, read_only=True)
-
-    # Custom serialization for ParameterVal: maps internal primitive types to fields named for the parameter type
-    value = serializers.SerializerMethodField()
-    def get_value(self, obj):
-        if obj.parameter_spec.type == ParameterSpec.NUMBER:
-            return obj.float
-        elif obj.parameter_spec.type == ParameterSpec.STRING:
-            return obj.string
-        elif obj.parameter_spec.type == ParameterSpec.CHECKBOX:
-            return obj.boolean
-        elif obj.parameter_spec.type == ParameterSpec.MENU:
-            return obj.integer
-        else:
-            return None
 
     class Meta:
         model = ParameterVal

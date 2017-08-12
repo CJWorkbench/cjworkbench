@@ -36,8 +36,13 @@ def add_new_module_version(name, dispatch=''):
     module_version = ModuleVersion.objects.filter(module=module, source_version_hash='1.0').order_by("last_update_time")[0]
     return module_version
 
-def add_new_parameter_spec(module_version, id_name, type, order=0):
-    return ParameterSpec.objects.create(module_version=module_version, id_name=id_name, type=type, order=order)
+def add_new_parameter_spec(module_version, id_name, type, order=0, def_value=''):
+    return ParameterSpec.objects.create(
+        module_version=module_version,
+        id_name=id_name,
+        type=type,
+        order=order,
+        def_value=def_value)
 
 def add_new_workflow(name):
     # Workflows have to have an owner, which means we need at least one user
@@ -59,7 +64,7 @@ def create_testdata_workflow(csv_text=mock_csv_text):
     # Define paste CSV module from scratch
     csv_module = add_new_module_version('Module 1', 'pastecsv')
     pspec = add_new_parameter_spec(csv_module, 'csv', ParameterSpec.STRING)
-    add_new_parameter_spec(csv_module, 'has_header_row', ParameterSpec.CHECKBOX)
+    add_new_parameter_spec(csv_module, 'has_header_row', ParameterSpec.CHECKBOX, def_value='True')
 
     # New workflow
     workflow = add_new_workflow('Workflow 1')
@@ -68,7 +73,7 @@ def create_testdata_workflow(csv_text=mock_csv_text):
     wfmodule = add_new_wf_module(workflow, csv_module, 0)
     wfmodule.create_default_parameters()
     pval = ParameterVal.objects.get(parameter_spec=pspec)
-    pval.string = csv_text
+    pval.set_value(csv_text)
     pval.save()
 
     return workflow
@@ -81,11 +86,11 @@ def get_param_by_id_name(id_name):
 
 # --- set parameters ---
 def set_string(pval, str):
-    pval.string = str
+    pval.set_value(str)
     pval.save()
 
 def set_integer(pval, integer):
-    pval.integer = integer
+    pval.set_value(integer)
     pval.save()
 
 

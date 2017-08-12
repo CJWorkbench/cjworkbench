@@ -101,7 +101,8 @@ def load_module_from_dict(d):
 # Otherwise re-use existing spec object, and update all existing ParameterVal objects that point to it
 # returns ParameterSpec
 def load_parameter_spec(d, module_version, order):
-    # require certain fields
+
+    # minimally required fields
     required = ['name', 'id_name', 'type']
     for x in required:
         if not x in d:
@@ -111,19 +112,16 @@ def load_parameter_spec(d, module_version, order):
     id_name = d['id_name']
     ptype = d['type']
 
+    # Is this type recognized?
+    if ptype not in ParameterSpec.TYPES:
+        raise ValueError("Unknown parameter type " + ptype)
+
     # Find any previous parameter specs with this id_name (including any we just loaded)
     oldspecs =  ParameterSpec.objects.filter(id_name=id_name, module_version=module_version)
     if len(oldspecs)>0:
         assert(len(oldspecs))==1  # ids should be unique
         pspec = oldspecs[0]
         pspec.name = name
-
-        # reset to default defaults
-        pspec.def_float = 0.0
-        pspec.def_string = ''
-        pspec.def_boolean = True
-        pspec.def_integer = 0
-
         type_changed = pspec.type != ptype
         pspec.type = ptype
         reloading = True
@@ -131,30 +129,15 @@ def load_parameter_spec(d, module_version, order):
         pspec = ParameterSpec(name=name, id_name=id_name, type=ptype, module_version=module_version)
         reloading = False
 
-    # load default value
-    def default_or(x):
-        if 'default' in d:
-            return d['default']
-        else:
-            return x
+    if 'default' in d:
+        pspec.def_value = d['default']
+    else:
+        pspec.def_value = ''        # ParameterVal.set_value will translate to 0, false, etc. according to type
 
-    if ptype == 'string':
-        pspec.def_string=default_or('')
-    elif d['type'] == 'number':
-        pspec.def_float=default_or(0)
-    elif d['type'] == 'checkbox':
-        pspec.def_boolean = default_or(False)
-    elif d['type'] == 'menu':
-        pspec.def_integer = default_or(0)
+    if d['type'] == 'menu':
         if (not 'menu_items' in d) or (d['menu_items']==''):
             raise ValueError("Menu parameter specification missing menu_items")
         pspec.def_menu_items = d['menu_items']
-    elif d['type'] == 'button':
-        pass  # no value
-    elif d['type'] == 'custom':
-        pspec.def_string = default_or('')
-    elif d['type'] != None:
-        raise ValueError("Unknown parameter type " + d['type'])
 
     # Default flags. We don't change these on existing ParameterVals, prolly should
     def flag_default(fname, dval):

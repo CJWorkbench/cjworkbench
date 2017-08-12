@@ -21,27 +21,27 @@ class TextSearchTest(LoggedInTestCase):
         self.assertTrue(out.empty)
 
         # Basic search
-        self.query_pval.string = 'Feb'
+        self.query_pval.value = 'Feb'
         self.query_pval.save()
-        self.colnames_pval.string = 'Month'
+        self.colnames_pval.value = 'Month'
         self.colnames_pval.save()
 
         out = execute_wfmodule(self.wf_module)
         self.assertEqual(str(out), '  Month  Amount\n1   Feb      20')
 
         # Case sensitive - should return nothing because no match
-        self.query_pval.string = 'feb'
+        self.query_pval.value = 'feb'
         self.query_pval.save()
-        self.case_pval.boolean = True
+        self.case_pval.value = '1'
         self.case_pval.save()
 
         out = execute_wfmodule(self.wf_module)
         self.assertTrue(out.empty)
 
         # Regex
-        self.query_pval.string = 'Jan|Feb'
+        self.query_pval.value = 'Jan|Feb'
         self.query_pval.save()
-        self.regex_pval.boolean = True
+        self.regex_pval.value = '1'
         self.regex_pval.save()
 
         out = execute_wfmodule(self.wf_module)
