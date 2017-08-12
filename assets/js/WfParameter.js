@@ -3,6 +3,7 @@
 import React from 'react'
 import MenuParam from './MenuParam'
 import ChartParameter from './Chart'
+import ColumnParam from './ColumnParam'
 import ColumnSelector from './ColumnSelector'
 import ColumnRenamer from './ColumnRenamer'
 import PropTypes from 'prop-types'
@@ -159,24 +160,38 @@ export default class WfParameter extends React.Component {
 
       case 'menu':
         return (<MenuParam
-                  isReadOnly={this.props.isReadOnly}
                   name={this.name}
                   items={this.props.p.menu_items}
-                  selectedIdx={this.props.p.value}
+                  selectedIdx={parseInt(this.props.p.value)}
+                  isReadOnly={this.props.isReadOnly}
                   onChange={ idx => { this.paramChanged(idx) }}
                 /> );
+
+      case 'column':
+        return (
+          <div className='mb-4'>
+            <div className='t-d-gray content-3 mb-2'>{this.name}:</div>
+            <ColumnParam
+              selectedCol={this.props.p.value}
+              getColNames={this.getInputColNames}
+              isReadOnly={this.props.isReadOnly}
+              revision={this.props.revision}
+              onChange={ col => { this.paramChanged(col) }}
+            />
+          </div> );
 
       case 'multicolumn':
         return (
           <div className='mb-4'>
             <div className='t-d-gray content-3 mb-3'>{this.name}:</div>
             <ColumnSelector
-              isReadOnly={this.props.isReadOnly}
               selectedCols={this.props.getParamText('colnames')}
               saveState={state => this.props.setParamText('colnames', state) }
               getColNames={this.getInputColNames}
+              isReadOnly={this.props.isReadOnly}
               revision={this.props.revision} />
           </div> );
+
 
       case 'custom':
 

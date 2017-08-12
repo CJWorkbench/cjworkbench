@@ -72,7 +72,8 @@ class ParameterVal(models.Model):
         elif type == ParameterSpec.CHECKBOX:
             try:
                 # Be permissive, allow both '1' and 'True' ('True' used in json spec)
-                self.value = '1' if (new_value.strip().lower() == 'true' or (new_value) == 1) else '0'
+                # cast to str because json value from PATCH may be a Boolean
+                self.value = '1' if (str(new_value).strip().lower() == 'true' or str(new_value) == '1') else '0'
             except ValueError:
                 self.value = '0'
 

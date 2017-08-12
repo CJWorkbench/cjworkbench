@@ -11,7 +11,7 @@ class CountByDate(ModuleImpl):
     SORT_BY_FREQ = 1
 
     def render(wf_module, table):
-        col  = wf_module.get_param_string('column')
+        col  = wf_module.get_param_column('column')
         sortby = wf_module.get_param_menu_idx('sortby')
 
         if col == '':
@@ -35,7 +35,7 @@ class CountByDate(ModuleImpl):
         # parse string as date, pull out day, convert back to string
         try:
             dates = pd.to_datetime(table[col])
-        except ValueError:
+        except (ValueError, TypeError):
             wf_module.set_error('Column %s does not seem to be dates' % col)
             return None
 

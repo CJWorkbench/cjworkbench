@@ -1,8 +1,5 @@
 // Choose some columns
-
 import React from 'react'
-import { Button, Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
-import { Form, FormGroup, Label, Input } from 'reactstrap'
 import PropTypes from 'prop-types'
 
 
@@ -87,8 +84,9 @@ export default class ColumnSelector extends React.Component {
 }
 
 ColumnSelector.propTypes = {
-  selectedCols: PropTypes.string,
-  saveState:    PropTypes.func,
-  getColNames:  PropTypes.func,
-  revision:     PropTypes.number
+  selectedCols: PropTypes.string.isRequired,
+  saveState:    PropTypes.func.isRequired,
+  getColNames:  PropTypes.func.isRequired,
+  isReadOnly:   PropTypes.bool.isRequired,
+  revision:     PropTypes.number.isRequired
 };

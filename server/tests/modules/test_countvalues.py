@@ -20,10 +20,10 @@ class CountValuesTests(LoggedInTestCase):
         self.data_pval = get_param_by_id_name('csv')
 
     def test_render(self):
-        # No output if no column given
+        # NOP if no column given
         set_string(self.col_pval, '')
         out = execute_wfmodule(self.wf_module)
-        self.assertTrue(out.empty)
+        self.assertFalse(out.empty)
 
         # sort by value
         set_string(self.col_pval, 'Amount')

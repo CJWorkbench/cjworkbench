@@ -9,11 +9,12 @@ class CountValues(ModuleImpl):
         if table is None:
             return None
 
-        col  = wf_module.get_param_string('column')
+        col  = wf_module.get_param_column('column')
         sortby = wf_module.get_param_menu_string('sortby')
 
         if col == '':
-            return None     # no columns, no matches
+            wf_module.set_error('Please select a column')
+            return table
 
         if col not in table.columns:
             wf_module.set_error('There is no column named %s' % col)
