@@ -469,19 +469,37 @@ img.logo {
 /* ---- Workflow list ---- */
 
 .workflows-container {
-  margin-top: 7.5rem;
+  margin-top:9rem;
 }
+/*.worfklows-container > .card {
+  background-color: none;
+}*/
 
 .workflows-list {
   border: 0;
-  background-color: #f6f6f6;
+  margin-top: 1.5rem;
 }
 
+.workflows-card-title {
+  margin-left: 2.4rem;
+  margin-bottom: 1.5rem;
+}
+.worflows-list > .card-block {
+  padding:0;
+}
+.workflows-list .workflows-sub-list {
+  padding:1px 1px 1px 1px;
+  background-color: #EDECEC;
+  }
+.workflows-sub-list .workflow-in-list:last-child {
+  margin-bottom: 0px;
+}
 .workflow-in-list {
   height: 7rem;
   background-color: #ffffff;
   margin-bottom: 1px;
   border: 0;
+  border-radius:0;
   padding: 1.5rem 2.5rem 1.5rem 2.5rem;
 }
 .workflow-in-list:hover {

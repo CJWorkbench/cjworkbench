@@ -9,7 +9,7 @@ exports[`renders correctly 1`] = `
           className="navbar"
         >
           <div
-            className="navbar-brand d-flex flex-row align-items-center "
+            className="navbar-brand d-flex flex-row align-items-center"
           >
             <img
               className="logo"
@@ -166,17 +166,22 @@ exports[`renders correctly 1`] = `
       </div>
       <div
         className="card w-75 mx-auto workflows-list"
+        style={
+          Object {
+            "backgroundColor": "#f6f6f6",
+          }
+        }
       >
         <div
           className="card-block"
         >
           <h3
-            className="card-title title-2 t-d-gray ml-4 mb-3"
+            className="card-title title-2 t-d-gray workflows-card-title"
           >
             Workflows
           </h3>
           <div
-            className=""
+            className="workflows-sub-list"
           />
         </div>
       </div>
@@ -194,7 +199,7 @@ exports[`renders correctly 2`] = `
           className="navbar"
         >
           <div
-            className="navbar-brand d-flex flex-row align-items-center "
+            className="navbar-brand d-flex flex-row align-items-center"
           >
             <img
               className="logo"
@@ -351,17 +356,22 @@ exports[`renders correctly 2`] = `
       </div>
       <div
         className="card w-75 mx-auto workflows-list"
+        style={
+          Object {
+            "backgroundColor": "#f6f6f6",
+          }
+        }
       >
         <div
           className="card-block"
         >
           <h3
-            className="card-title title-2 t-d-gray ml-4 mb-3"
+            className="card-title title-2 t-d-gray workflows-card-title"
           >
             Workflows
           </h3>
           <div
-            className=""
+            className="workflows-sub-list"
           >
             <div
               className="card card-block item-test-class workflow-in-list"

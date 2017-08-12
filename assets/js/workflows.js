@@ -88,12 +88,12 @@ export default class Workflows extends React.Component {
             <div className="col col-lg-2"></div>
           </div>
 
-          <div className="card w-75 mx-auto workflows-list">
+          <div className="card w-75 mx-auto workflows-list" style={{backgroundColor:"#f6f6f6"}}>
             <div className="card-block">
 
-              <h3 className="card-title title-2 t-d-gray ml-4 mb-3">Workflows</h3>
+              <h3 className="card-title title-2 t-d-gray workflows-card-title">Workflows</h3>
 
-              <div className="">
+              <div className="workflows-sub-list">
                 {this.state.workflows.map( listValue => {
                   return (
                       <div className="card card-block item-test-class workflow-in-list" key={listValue.id}>
