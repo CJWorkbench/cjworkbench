@@ -5,7 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "babelify": "^7.3.0",
-    "bootstrap": "^4.0.0-alpha.6",
+    "bootstrap": "4.0.0-alpha.6",
     "classnames": "^2.2.5",
     "d3": "^3.5.5",
     "d3-array": "^1.0.2",
