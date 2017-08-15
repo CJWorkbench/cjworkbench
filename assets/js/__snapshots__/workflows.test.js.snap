@@ -445,13 +445,13 @@ exports[`renders correctly 2`] = `
                                 tabIndex="-1"
                               >
                                 <DropdownItem
-                                  className="dropdown-menu-item"
+                                  className="dropdown-menu-item test-share-button"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-menu-item dropdown-item"
+                                    className="dropdown-menu-item test-share-button dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
@@ -467,13 +467,13 @@ exports[`renders correctly 2`] = `
                                   </button>
                                 </DropdownItem>
                                 <DropdownItem
-                                  className="dropdown-menu-item"
+                                  className="dropdown-menu-item test-delete-button"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-menu-item dropdown-item"
+                                    className="dropdown-menu-item test-delete-button dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
@@ -570,13 +570,13 @@ exports[`renders correctly 2`] = `
                                 tabIndex="-1"
                               >
                                 <DropdownItem
-                                  className="dropdown-menu-item"
+                                  className="dropdown-menu-item test-share-button"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-menu-item dropdown-item"
+                                    className="dropdown-menu-item test-share-button dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
@@ -592,13 +592,13 @@ exports[`renders correctly 2`] = `
                                   </button>
                                 </DropdownItem>
                                 <DropdownItem
-                                  className="dropdown-menu-item"
+                                  className="dropdown-menu-item test-delete-button"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-menu-item dropdown-item"
+                                    className="dropdown-menu-item test-delete-button dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
@@ -695,13 +695,13 @@ exports[`renders correctly 2`] = `
                                 tabIndex="-1"
                               >
                                 <DropdownItem
-                                  className="dropdown-menu-item"
+                                  className="dropdown-menu-item test-share-button"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-menu-item dropdown-item"
+                                    className="dropdown-menu-item test-share-button dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
@@ -717,13 +717,13 @@ exports[`renders correctly 2`] = `
                                   </button>
                                 </DropdownItem>
                                 <DropdownItem
-                                  className="dropdown-menu-item"
+                                  className="dropdown-menu-item test-delete-button"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-menu-item dropdown-item"
+                                    className="dropdown-menu-item test-delete-button dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
@@ -820,13 +820,13 @@ exports[`renders correctly 2`] = `
                                 tabIndex="-1"
                               >
                                 <DropdownItem
-                                  className="dropdown-menu-item"
+                                  className="dropdown-menu-item test-share-button"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-menu-item dropdown-item"
+                                    className="dropdown-menu-item test-share-button dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
@@ -842,13 +842,13 @@ exports[`renders correctly 2`] = `
                                   </button>
                                 </DropdownItem>
                                 <DropdownItem
-                                  className="dropdown-menu-item"
+                                  className="dropdown-menu-item test-delete-button"
                                   onClick={[Function]}
                                   tag="button"
                                   toggle={true}
                                 >
                                   <button
-                                    className="dropdown-menu-item dropdown-item"
+                                    className="dropdown-menu-item test-delete-button dropdown-item"
                                     onClick={[Function]}
                                     tabIndex="0"
                                     type="button"
