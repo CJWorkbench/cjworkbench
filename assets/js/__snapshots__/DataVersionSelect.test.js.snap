@@ -24,6 +24,47 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
     <div
       className="open-modal t-f-blue content-3 text-center"
       onClick={[Function]}
+    />
+    <Modal
+      autoFocus={true}
+      backdrop={true}
+      backdropTransitionTimeout={150}
+      className="dialog-window"
+      fade={true}
+      isOpen={false}
+      keyboard={true}
+      modalTransitionTimeout={300}
+      toggle={[Function]}
+      zIndex={1050}
+    />
+  </div>
+</DataVersionSelect>
+`;
+
+exports[`DataVersionSelect Does not save selection when user hits Cancel 2`] = `
+<DataVersionSelect
+  api={
+    Object {
+      "getWfModuleVersions": [Function],
+      "setWfModuleVersion": [Function],
+    }
+  }
+  isReadOnly={false}
+  revision={202}
+  timezoneOffset={480}
+  wfModuleId={808}
+>
+  <div
+    className="version-item d-flex justify-content-center flex-column align-items-center"
+  >
+    <div
+      className="t-d-gray content-3 mb-4"
+    >
+      Current Version
+    </div>
+    <div
+      className="open-modal t-f-blue content-3 text-center"
+      onClick={[Function]}
     >
       April 10 2017 - 05:57 PM
     </div>
@@ -44,6 +85,47 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
 `;
 
 exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 1`] = `
+<DataVersionSelect
+  api={
+    Object {
+      "getWfModuleVersions": [Function],
+      "setWfModuleVersion": [Function],
+    }
+  }
+  isReadOnly={false}
+  revision={202}
+  timezoneOffset={480}
+  wfModuleId={808}
+>
+  <div
+    className="version-item d-flex justify-content-center flex-column align-items-center"
+  >
+    <div
+      className="t-d-gray content-3 mb-4"
+    >
+      Current Version
+    </div>
+    <div
+      className="open-modal t-f-blue content-3 text-center"
+      onClick={[Function]}
+    />
+    <Modal
+      autoFocus={true}
+      backdrop={true}
+      backdropTransitionTimeout={150}
+      className="dialog-window"
+      fade={true}
+      isOpen={false}
+      keyboard={true}
+      modalTransitionTimeout={300}
+      toggle={[Function]}
+      zIndex={1050}
+    />
+  </div>
+</DataVersionSelect>
+`;
+
+exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 2`] = `
 <div
   className="modal-dialog dialog-window"
   role="document"
@@ -170,7 +252,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
 </div>
 `;
 
-exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 2`] = `
+exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 3`] = `
 <DataVersionSelect
   api={
     Object {

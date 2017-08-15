@@ -46,7 +46,7 @@ describe('DataVersionSelect', () => {
     // should call API for its data on componentDidMount
     expect(api.getWfModuleVersions.mock.calls.length).toBe(1);
 
-    // expect(wrapper).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
     // Start with dialog closed
     expect(wrapper.state().modalOpen).toBe(false)
@@ -102,13 +102,16 @@ describe('DataVersionSelect', () => {
 
     expect(api.getWfModuleVersions.mock.calls.length).toBe(2);
     
+    expect(wrapper).toMatchSnapshot();
+    
     modalLink.simulate('click');
     expect(wrapper.state().modalOpen).toBe(true);    
 
     setImmediate( () => {
       let modal_element = document.getElementsByClassName('dialog-window');
+      // when document.get is invoked a second time, it has 2 elements
       expect(modal_element.length).toBe(2);
-      // need to target the nely-created modal, [0] is the modal from previous test
+      // need to target the newly-created modal, [0] is the modal from previous test
       let modal = new ReactWrapper(modal_element[1], true);
 
       // check that the versions have loaded and are displayed in list
