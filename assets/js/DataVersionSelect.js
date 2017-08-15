@@ -113,7 +113,7 @@ export default class DataVersionSelect extends React.Component {
         <div className='open-modal t-f-blue content-3 text-center' onClick={this.toggleModal}>
             {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}
         </div>
-        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} >
+        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window'>
           <ModalHeader toggle={this.toggleModal} >
             <div className=''>Dataset Versions</div>
           </ModalHeader>
@@ -126,7 +126,7 @@ export default class DataVersionSelect extends React.Component {
                     className={
                       (date == this.state.versions.selected)
                         ? 'line-item-data-selected list-test-class'
-                        : 'line-item-data  list-test-class'
+                        : 'line-item-data list-test-class'
                     }
                     onClick={() => this.setSelected(date)}
                   >
@@ -137,8 +137,8 @@ export default class DataVersionSelect extends React.Component {
             </div>
           </ModalBody>
           <ModalFooter className='dialog-footer'>
-            <div className='button-blue action-button' onClick={this.toggleModal}>Cancel</div>
-            <div className='button-blue action-button' onClick={this.changeVersions}>OK</div>
+            <div className='button-blue action-button test-cancel-button' onClick={this.toggleModal}>Cancel</div>
+            <div className='button-blue action-button test-ok-button' onClick={this.changeVersions}>OK</div>
           </ModalFooter>
         </Modal>
       </div>

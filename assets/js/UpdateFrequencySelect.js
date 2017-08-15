@@ -99,7 +99,7 @@ export default class UpdateFrequencySelect extends React.Component {
       <div className='version-item'>
         <div className='mb-4' >
           <span className='content-3 t-d-gray'>Update </span>
-          <span className='content-3 t-f-blue test-button' onClick={this.toggleModal}>{settingsInfo}</span>  
+          <span className='content-3 t-f-blue test-modal-button' onClick={this.toggleModal}>{settingsInfo}</span>  
         </div>
         {lastChecked}
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window'>

@@ -1,143 +1,160 @@
-// Please ignore this test for the moment ....
-
-// import React from 'react'
-// import DataVersionSelect  from './DataVersionSelect'
-// import { shallow } from 'enzyme'
-
-// const Utils = require('./utils');
-
-// // var today = new Date();
-// // var day_before = today.setDate(today.getDate() - 2);
-
-// //   var localToUTC = (new Date()).getTimezoneOffset();  // how many hours off from UTC are we? print tests all in UTC
-
-
-// it('DataVersionSelect renders correctly', () => {
-
-//   var mockVersions = {
-//     versions: [
-//       '2017-07-10 17:57:58.324', 
-//       '2017-06-10 17:57:58.324', 
-//       '2017-05-10 17:57:58.324'
-//     ],
-//     selected: '2017-07-10 17:57:58.324'
-//   };
-
-//   var api = {
-//     getWfModuleVersions: Utils.jsonResponseMock(mockVersions),
-//     setWfModuleVersion: Utils.okResponseMock(),
-//   };
-
-//   const wrapper = shallow(
-//     <DataVersionSelect
-//       isReadOnly={false}
-//       wfModuleId={808}
-//       revision={22}
-//       api={api} 
-//     />);
-//   expect(wrapper).toMatchSnapshot();
-
-
-//   // ***************
-//   // not edited below here
-//   // ***************
-
-//   // check Interval input when first opened:
-//   var freqPeriod = wrapper.find('#updateFreqPeriod');
-//   // basic test
-//   expect(freqPeriod).toHaveLength(1);
-//   // TODO: access the value from freqPeriod, compare against updateSettings 
-  
-//   // simulate click to open modal
-//   var modalLink = wrapper.find('.test-button');
-//   expect(modalLink).toHaveLength(1);
-//   modalLink.first().simulate('click');
-
-//   setImmediate( () => {
-//     // Dialog should be open
-//     expect(wrapper).toMatchSnapshot();
-
-//     // Click the Auto setting
-//     var autoButton = wrapper.find('.test-button-gray');
-//     expect(autoButton).toHaveLength(1);
-//     autoButton.first().simulate('click');
-
-//     // TODO: simulate selections of Interval and Units before hitting "OK" button (tricky)
-    
-//     // Click on OK button to confirm
-//     var okButton = wrapper.find('.test-ok-button');
-//     expect(okButton).toHaveLength(1);
-//     okButton.first().simulate('click');
-
-//     // Do we need more layers of SetImmediate after every click? (Going with "No" for now)
-//     setImmediate( () => {
-//       // Dialog should be closed, link should now say "auto"
-//       expect(wrapper).toMatchSnapshot();
-
-//       // check on state values after changes
-//       expect(wrapper.state().liveSettings.manual).toBe(false);  
-
-//       // check that API was called
-//       expect(apiCall.mock.calls.length).toBe(1);
-
-//       done();
-//     });
-//   });
-// });
-
-
-
-
-// OLD TEST BELOW
-
-
-
 import React from 'react'
 import DataVersionSelect  from './DataVersionSelect'
-import { shallow } from 'enzyme'
+import { mount, shallow, ReactWrapper } from 'enzyme'
+import { okResponseMock, jsonResponseMock } from './utils'
 
-// ---- This test is currently failing in Travis. 
-// ---- Local test run sets time an hour back from input times,
-// ---- Travis test run sets time matching input times
+jest.useFakeTimers();
 
 
-// it('DataVersionSelect renders correctly', () => {
+describe('DataVersionSelect', () => {
 
-//   // Force time zone to make sure tests always give same result
-//   process.env.TZ = 'UTC';
+  // Force time zone to make sure tests always give same result
+  process.env.TZ = 'UTC';
+  // how many hours off from UTC are we? print tests all in UTC
+  var localToUTC = (new Date()).getTimezoneOffset();  
+  var mockVersions = {
+    versions: [
+      '2017-07-10 17:57:58.324', 
+      '2017-06-10 17:57:58.324', 
+      '2017-05-10 17:57:58.324', 
+      '2017-04-10 17:57:58.324', 
+      '2017-03-10 17:57:58.324'
+    ],
+    selected: '2017-04-10 17:57:58.324'
+  };
+  var api = {
+    getWfModuleVersions: jsonResponseMock(mockVersions),
+    setWfModuleVersion: okResponseMock(),
+  };
+  var wrapper;  
+  var modalLink;
 
-//   var mockVersions = {
-//     versions: [
-//       '2017-07-10 17:57:58.324', 
-//       '2017-06-10 17:57:58.324', 
-//       '2017-05-10 17:57:58.324', 
-//       '2017-04-10 17:57:58.324', 
-//       '2017-03-10 17:57:58.324'
-//     ],
-//     selected: '2017-04-10 17:57:58.324'
-//   };
-  
-//   var localToUTC = (new Date()).getTimezoneOffset();  // how many hours off from UTC are we? print tests all in UTC
+  // Mount is necessary to invoke componentDidMount()
+  beforeEach(() => wrapper = mount(
+    <DataVersionSelect
+      isReadOnly={false}
+      wfModuleId={808}
+      revision={202}
+      api={api}
+      timezoneOffset={localToUTC}          
+    />
+  ));
+  beforeEach(() => modalLink = wrapper.find('div.open-modal'));    
 
-//   const wrapper = shallow(
-//     <DataVersionSelect wf_module_id={1} api={emptyAPI} timezoneOffset={localToUTC} />
-//   );
-//   wrapper.setState( { modalOpen: false, versions: mockVersions, originalSelected:'4'} )
-//   expect(wrapper).toMatchSnapshot();
+  it('Renders correctly when in Private mode, and selection is confirmed when user hits OK', (done) => { 
 
-//   // Test that dialog opens when clicked
-//   wrapper.find('.open-modal').simulate('click')
-//   expect(wrapper).toMatchSnapshot();
-//   expect(wrapper.find('.list-test-class')).toHaveLength(5);
-// });
+    // should call API for its data on componentDidMount
+    expect(api.getWfModuleVersions.mock.calls.length).toBe(1);
 
-it('DataVersionSelect renders correctly, dummy version', () => {
-    expect(true).toBe(true);
+    expect(wrapper).toMatchSnapshot();
+
+    // Start with dialog closed
+    expect(wrapper.state().modalOpen).toBe(false)
+
+    expect(modalLink).toHaveLength(1);
+    modalLink.simulate('click');
+    expect(wrapper.state().modalOpen).toBe(true);
+
+    // Need setImmediate to give modal a chance to fill with data, API returns a promise that must resolve  
+    setImmediate( () => {
+      expect(wrapper.state().modalOpen).toBe(true)
+
+      // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
+      // So find them, and make a new Wrapper
+      // Reference: "https://github.com/airbnb/enzyme/issues/252"
+      let modal_element = document.getElementsByClassName('dialog-window');
+      expect(modal_element.length).toBe(1);
+      let modal = new ReactWrapper(modal_element[0], true)
+      expect(modal).toMatchSnapshot();
+      expect(modal.find('.dialog-body')).toHaveLength(1);
+
+      // check that the versions have loaded and are displayed in list
+      expect(wrapper.state().versions).toEqual(mockVersions);  
+      let versionsList = modal.find('.list-test-class');
+      expect(versionsList).toHaveLength(5);
+      
+      // filter list to grab first item
+      let firstVersion = versionsList.filterWhere(n => n.key() == '2017-07-10 17:57:58.324');
+      expect(firstVersion).toHaveLength(1);
+      firstVersion.simulate('click');
+
+      expect(wrapper.state().versions.selected).toEqual('2017-07-10 17:57:58.324');  
+      expect(wrapper.state().originalSelected).toEqual('2017-04-10 17:57:58.324'); 
+
+      let okButton = modal.find('.test-ok-button');
+      expect(okButton).toHaveLength(1);
+      okButton.first().simulate('click');
+
+      // state needs to update and modal needs to close
+      setImmediate( () => {
+        expect(wrapper).toMatchSnapshot();
+        expect(wrapper.state().modalOpen).toBe(false);
+        expect(wrapper.state().originalSelected).toEqual('2017-07-10 17:57:58.324');  
+        expect(api.getWfModuleVersions.mock.calls.length).toBe(1);
+        expect(api.setWfModuleVersion.mock.calls.length).toBe(1);
+        done();
+      });
+    });
+  });
+
+     // Pared-down version of first test
+  it('Does not save selection when user hits Cancel', (done) => {
+
+    expect(api.getWfModuleVersions.mock.calls.length).toBe(2);
+    
+    modalLink.simulate('click');
+    expect(wrapper.state().modalOpen).toBe(true);    
+
+    setImmediate( () => {
+      let modal_element = document.getElementsByClassName('dialog-window');
+      expect(modal_element.length).toBe(2);
+      // need to target the nely-created modal, [0] is the modal from previous test
+      let modal = new ReactWrapper(modal_element[1], true);
+
+      // check that the versions have loaded and are displayed in list
+      expect(wrapper.state().versions).toEqual(mockVersions);  
+      let versionsList = modal.find('.list-test-class');
+      expect(versionsList).toHaveLength(5);
+      let lastVersion = versionsList.filterWhere(n => n.key() == '2017-03-10 17:57:58.324');
+      lastVersion.simulate('click');
+
+      expect(wrapper.state().versions.selected).toEqual('2017-03-10 17:57:58.324');  
+      expect(wrapper.state().originalSelected).toEqual('2017-04-10 17:57:58.324'); 
+
+      let cancelButton = modal.find('.test-cancel-button');
+      cancelButton.first().simulate('click');
+
+      setImmediate( () => {
+        expect(wrapper).toMatchSnapshot();        
+        expect(wrapper.state().modalOpen).toBe(false);        
+        expect(wrapper.state().originalSelected).toEqual('2017-04-10 17:57:58.324');  
+        // includes calls from previous test
+        expect(api.getWfModuleVersions.mock.calls.length).toBe(2);
+        expect(api.setWfModuleVersion.mock.calls.length).toBe(1);
+        done();
+      });
+    });
+  });
+
+  it('Does not open modal when in read-only mode', (done) => {
+    let readOnlywrapper = mount(<DataVersionSelect
+      isReadOnly={true}
+      wfModuleId={808}
+      revision={202}
+      api={api}
+      timezoneOffset={localToUTC}          
+    />);
+
+    // This is "4" b/c of an extra API call from beforeEach()
+    expect(api.getWfModuleVersions.mock.calls.length).toBe(4);
+
+    let readOnlyModalLink = readOnlywrapper.find('div.open-modal')
+    
+    readOnlyModalLink.simulate('click');
+    expect(readOnlywrapper.state().modalOpen).toBe(false);    
+
+    done();
+  });
+    
 });
-
-
-
-
-
-
 
