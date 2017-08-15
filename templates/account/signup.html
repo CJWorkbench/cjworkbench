@@ -1,7 +1,7 @@
 {% extends 'account/base.html' %}
 {% block content %}
   <form method="post" class="account_form" action=''>
-    <div class='title-1 t-d-gray text-center mb-3'>Sign Up</div>
+    <div class='title-1 t-d-gray text-center mb-5'>Create account</div>
 
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -29,7 +29,7 @@
     {{ form.get_newsletter.errors }}
     {{ form.get_newsletter }}
     {{ form.get_newsletter.label_tag }}
-    <button type="submit" class="button-blue action-button mx-auto mt-3">Register</button>
+    <button type="submit" class="action-button button-full-blue mx-auto mb-3">Register</button>
   </form>
   <br />
   <p class="login-footer content-3 t-d-gray text-center">

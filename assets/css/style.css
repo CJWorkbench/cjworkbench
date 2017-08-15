@@ -221,17 +221,24 @@ body {
 }
 
 /* Hacks for registration/login/etc before we dig in to the form widgets */
+
+
 .account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"] {
   height: 4rem;
   width: 100%;
   background-color: #FFFFFF !important;
   border: 1px solid #E7E7E7;
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
-  margin-bottom:1rem;
+  margin-bottom:1.5rem;
+  font-size: 1.5rem;
+}
+
+.account_form label{
+  font-size: 1.2rem;
 }
 
 .account_form input:active {
-  box-shadow: 0 0 1px 1px #48C8D7;
+  box-shadow: 0 0 0px 1px #48C8D7;
   border: 0;
 }
 
@@ -239,6 +246,11 @@ body {
   display:inline-block;
   width: auto;
 }
+
+.account_form .action-button {
+  margin-top: 3rem;
+}
+
 
 
 /* ---- Buttons ---- */
@@ -270,12 +282,15 @@ body {
   background-color: #48C8D7;
   color: #FFFFFF;
 	text-align: center;
+  border:none;
 }
 
 .button-full-orange {
-  background-color: #FBAA6D;
+  background-color:#FBAA6D;
   color: #FFFFFF;
 	text-align: center;
+  border:1px solid #FBAA6D;
+
 }
 .button-full-orange:hover {
   background-color: #FFFFFF;
@@ -436,22 +451,27 @@ img.logo {
 
 /* ---- Login ---- */
 
+
 .login-fullscreen-container {
   height: 100vh;
   display: flex;
   align-items: center;
-  background-color: #48C8D7;
-  background: linear-gradient(to bottom right, #48C8D7 , #0D9ECF);
+  background-image: radial-gradient(#31D9ED 25%, #0C93C0); /*fallback*/
+  background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #0C93C0);
+  background-size: cover; 
+}
+
+.navbar {
+  display: hidden;
 }
 
 .login-card {
   height: auto;
   width: 44rem;
   padding: 3rem 4rem 3rem 4rem;
-}
-
-.login-card input {
-  width: 100%
+  border: none;
+  border-radius: 0px;
+  box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
 }
 
 .login-card ::-webkit-input-placeholder {
@@ -459,8 +479,21 @@ img.logo {
 }
 
 .login-footer {
-  border-top: 1px solid #BBB8B8;
+  border-top: 1px solid #EDECEC;
   padding-top: 3rem;
+}
+
+.login-card .login-footer a {
+  margin-left: 1rem;
+  color: #48C8D7;
+}
+
+.account_form .title-1 {
+  margin-top:1rem; 
+}
+
+.account_form .text-center a {
+  padding-bottom: 2rem;
 }
 
 /* ---- Workflow list ---- */
