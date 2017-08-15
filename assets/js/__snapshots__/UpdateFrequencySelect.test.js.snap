@@ -13,7 +13,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
       Update 
     </span>
     <span
-      className="content-3 t-f-blue test-button"
+      className="content-3 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       manual
@@ -176,7 +176,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       Update 
     </span>
     <span
-      className="content-3 t-f-blue test-button"
+      className="content-3 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       manual
@@ -339,7 +339,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       Update 
     </span>
     <span
-      className="content-3 t-f-blue test-button"
+      className="content-3 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       manual
@@ -502,7 +502,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       Update 
     </span>
     <span
-      className="content-3 t-f-blue test-button"
+      className="content-3 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       auto

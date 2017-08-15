@@ -2,8 +2,6 @@
 import * as Cookies from "js-cookie"
 import timediff from 'timediff'
 
-// global.fetch = require('jest-fetch-mock');
-
 // return ID in URL of form "/workflows/id/" or "/workflows/id"
 export function getPageID () {
   var url = window.location.pathname;
@@ -28,6 +26,16 @@ export const csrfToken = Cookies.get('csrftoken');
 export class EmptyAPI {};
 export var emptyAPI = new EmptyAPI();
 
+// More testing fun
+export function mockResponse (status, statusText, response) {
+  return new window.Response(response, {
+    status: status,
+    statusText: statusText,
+    headers: {
+      'Content-type': 'application/json'
+    }
+  });
+};
 
 // Returns new mock function that returns given json. Used for mocking "get" API calls
 export function jsonResponseMock (json) {

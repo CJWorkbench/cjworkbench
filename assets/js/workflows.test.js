@@ -2,6 +2,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 import Workflows from './workflows'
 const Utils = require('./utils');
+import { mockResponse, okResponseMock, jsonResponseMock } from './utils'
 
 it('renders correctly', (done) => {
 
@@ -25,7 +26,7 @@ it('renders correctly', (done) => {
     ];
 
   window.fetch = jest.fn().mockImplementation(()=>
-    Promise.resolve(Utils.mockResponse(200, null, null))
+    Promise.resolve(mockResponse(200, null, null))
   );
 
   // Start with no workflows on the initial fetch (won't get loaded before expects anyway, due to asynchrony)
@@ -72,7 +73,7 @@ it('new workflow button', (done) => {
   // Over-write default behavior (changing page)
   Utils.goToUrl = jest.fn();
   window.fetch = jest.fn().mockImplementation(()=>
-    Promise.resolve(Utils.mockResponse(200, null, JSON.stringify(testData)))
+    Promise.resolve(mockResponse(200, null, JSON.stringify(testData)))
   );
   newButton.first().simulate('click');
 
