@@ -25,6 +25,8 @@ body {
 	position: absolute;
 }
 
+/* ---- NEW Type styles: use on all newly styled elements: phase out olds on edit ----- */
+
 /* --- Text Sizing ---  */
 
 .title-1 {
@@ -50,7 +52,7 @@ body {
 .title-5 {
 	font-size: 1.1rem;
 	font-weight: 900;
-  line-height: 2rem;
+	line-height: 2rem;
 }
 /* for editable workflow title  */
 .title-workflow {
@@ -244,7 +246,7 @@ body {
 
 .account_form input[type="checkbox"] {
   display:inline-block;
-  width: auto;
+  width: 1.5rem;
 }
 
 .account_form .action-button {
@@ -356,6 +358,7 @@ body {
 }
 
 
+
 /* ---- Dropdowns and Lists---- */
 
 .line-item-data {
@@ -459,10 +462,6 @@ img.logo {
   background-image: radial-gradient(#31D9ED 25%, #0C93C0); /*fallback*/
   background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #0C93C0);
   background-size: cover; 
-}
-
-.navbar {
-  display: hidden;
 }
 
 .login-card {
