@@ -1,68 +1,840 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WfModuleContextMenu renders correctly 1`] = `
-<UncontrolledDropdown
-  onClick={[Function]}
+exports[`WfModuleContextMenu, Export modal Renders links correctly, and Done button closes modal 1`] = `
+<WfModuleContextMenu
+  className="menu-test-class"
+  id={415}
+  removeModule={[Function]}
+  stopProp={[Function]}
 >
-  <DropdownToggle
-    aria-haspopup={true}
-    className="context-button"
-    color="secondary"
-    data-toggle="dropdown"
+  <UncontrolledDropdown
+    onClick={[Function]}
   >
-    <div
-      className="button-icon icon-more"
-    />
-  </DropdownToggle>
-  <DropdownMenu
-    className="dropdown-menu"
-    right={true}
-    tag="div"
+    <Dropdown
+      isOpen={false}
+      onClick={[Function]}
+      tag="div"
+      toggle={[Function]}
+    >
+      <div
+        className="dropdown"
+        onClick={[Function]}
+      >
+        <DropdownToggle
+          aria-haspopup={true}
+          className="context-button"
+          color="secondary"
+          data-toggle="dropdown"
+        >
+          <Button
+            aria-expanded={false}
+            aria-haspopup="true"
+            className="context-button"
+            color="secondary"
+            data-toggle="dropdown"
+            onClick={[Function]}
+            tag="button"
+          >
+            <button
+              aria-expanded={false}
+              aria-haspopup="true"
+              className="context-button btn btn-secondary"
+              data-toggle="dropdown"
+              onClick={[Function]}
+              type="button"
+            >
+              <div
+                className="button-icon icon-more"
+              />
+            </button>
+          </Button>
+        </DropdownToggle>
+        <DropdownMenu
+          className="dropdown-menu"
+          right={true}
+          tag="div"
+        >
+          <div
+            aria-hidden={true}
+            className="dropdown-menu dropdown-menu dropdown-menu-right"
+            role="menu"
+            tabIndex="-1"
+          >
+            <DropdownItem
+              className="dropdown-menu-item mb-1 test-export-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-download button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Export
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-update-button"
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-update-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-info button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Update
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-delete-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-delete-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-bin button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Delete
+                </span>
+              </button>
+            </DropdownItem>
+          </div>
+        </DropdownMenu>
+      </div>
+    </Dropdown>
+  </UncontrolledDropdown>
+</WfModuleContextMenu>
+`;
+
+exports[`WfModuleContextMenu, Export modal Renders links correctly, and Done button closes modal 2`] = `
+<div
+  className="modal-dialog menu-test-class"
+  role="document"
+>
+  <div
+    className="modal-content"
   >
-    <DropdownItem
-      className="dropdown-menu-item mb-1"
+    <ModalHeader
+      className="dialog-header"
+      tag="h4"
+      wrapTag="div"
+    >
+      <div
+        className="dialog-header modal-header"
+      >
+        <h4
+          className="modal-title"
+        >
+          <div
+            className="t-d-gray title-4"
+          >
+            Export Data
+          </div>
+          <div
+            className="icon-close"
+            onClick={[Function]}
+          />
+        </h4>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <div
+        className="dialog-body modal-body"
+      >
+        <FormGroup
+          tag="div"
+        >
+          <div
+            className="form-group"
+          >
+            <div
+              className="d-flex justify-content-between flex-row"
+            >
+              <Label
+                className="t-d-gray info-1"
+                tag="label"
+              >
+                <label
+                  className="t-d-gray info-1  form-control-label"
+                >
+                  CSV
+                </label>
+              </Label>
+              <CopyToClipboard
+                className="info-2 t-f-blue mt-3 test-csv-copy"
+                onCopy={[Function]}
+                text="/public/moduledata/live/415.csv"
+              >
+                <div
+                  className="info-2 t-f-blue mt-3 test-csv-copy"
+                  onClick={[Function]}
+                >
+                  Copy live link
+                </div>
+              </CopyToClipboard>
+            </div>
+            <div
+              className="d-flex justify-content-between flex-row mb-3"
+            >
+              <Input
+                className="text-field t-d-gray content-2 test-csv-field"
+                placeholder="/public/moduledata/live/415.csv"
+                readOnly={true}
+                tag="p"
+                type="url"
+              >
+                <input
+                  className="text-field t-d-gray content-2 test-csv-field form-control"
+                  placeholder="/public/moduledata/live/415.csv"
+                  readOnly={true}
+                  type="url"
+                />
+              </Input>
+              <div
+                className="download-icon-box"
+              >
+                <a
+                  className="icon-download button-icon test-csv-download"
+                  download={true}
+                  href="/public/moduledata/live/415.csv"
+                />
+              </div>
+            </div>
+            <div
+              className="d-flex justify-content-between flex-row"
+            >
+              <Label
+                className="t-d-gray info-1"
+                tag="label"
+              >
+                <label
+                  className="t-d-gray info-1  form-control-label"
+                >
+                  JSON
+                </label>
+              </Label>
+              <CopyToClipboard
+                className="info-2 t-f-blue mt-3 test-json-copy"
+                onCopy={[Function]}
+                text="/public/moduledata/live/415.json"
+              >
+                <div
+                  className="info-2 t-f-blue mt-3 test-json-copy"
+                  onClick={[Function]}
+                >
+                  Copy live link
+                </div>
+              </CopyToClipboard>
+            </div>
+            <div
+              className="d-flex justify-content-between flex-row"
+            >
+              <Input
+                className="text-field t-d-gray content-2 test-json-field"
+                placeholder="/public/moduledata/live/415.json"
+                readOnly={true}
+                tag="p"
+                type="url"
+              >
+                <input
+                  className="text-field t-d-gray content-2 test-json-field form-control"
+                  placeholder="/public/moduledata/live/415.json"
+                  readOnly={true}
+                  type="url"
+                />
+              </Input>
+              <div
+                className="download-icon-box"
+              >
+                <a
+                  className="icon-download button-icon test-json-download"
+                  download={true}
+                  href="/public/moduledata/live/415.json"
+                />
+              </div>
+            </div>
+          </div>
+        </FormGroup>
+      </div>
+    </ModalBody>
+    <ModalFooter
+      className="dialog-footer"
+      tag="div"
+    >
+      <div
+        className="dialog-footer modal-footer"
+      >
+        <div
+          className="button-blue action-button test-done-button"
+          onClick={[Function]}
+        >
+          Done
+        </div>
+         
+      </div>
+    </ModalFooter>
+  </div>
+</div>
+`;
+
+exports[`WfModuleContextMenu, Export modal Renders links correctly, and Done button closes modal 3`] = `
+<WfModuleContextMenu
+  className="menu-test-class"
+  id={415}
+  removeModule={[Function]}
+  stopProp={[Function]}
+>
+  <UncontrolledDropdown
+    onClick={[Function]}
+  >
+    <Dropdown
+      isOpen={true}
       onClick={[Function]}
-      tag="button"
-      toggle={true}
+      tag="div"
+      toggle={[Function]}
     >
-      <span
-        className="icon-download button-icon"
-      />
-      <span
-        className="t-d-gray content-3 ml-3"
+      <div
+        className="dropdown show"
+        onClick={[Function]}
       >
-        Export
-      </span>
-    </DropdownItem>
-    <DropdownItem
-      className="dropdown-menu-item"
-      tag="button"
-      toggle={true}
-    >
-      <span
-        className="icon-info button-icon"
-      />
-      <span
-        className="t-d-gray content-3 ml-3"
-      >
-        Update
-      </span>
-    </DropdownItem>
-    <DropdownItem
-      className="dropdown-menu-item"
+        <DropdownToggle
+          aria-haspopup={true}
+          className="context-button"
+          color="secondary"
+          data-toggle="dropdown"
+        >
+          <Button
+            aria-expanded={true}
+            aria-haspopup="true"
+            className="context-button active"
+            color="secondary"
+            data-toggle="dropdown"
+            onClick={[Function]}
+            tag="button"
+          >
+            <button
+              aria-expanded={true}
+              aria-haspopup="true"
+              className="context-button active btn btn-secondary"
+              data-toggle="dropdown"
+              onClick={[Function]}
+              type="button"
+            >
+              <div
+                className="button-icon icon-more"
+              />
+            </button>
+          </Button>
+        </DropdownToggle>
+        <DropdownMenu
+          className="dropdown-menu"
+          right={true}
+          tag="div"
+        >
+          <div
+            aria-hidden={false}
+            className="dropdown-menu dropdown-menu dropdown-menu-right"
+            role="menu"
+            tabIndex="-1"
+          >
+            <DropdownItem
+              className="dropdown-menu-item mb-1 test-export-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-download button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Export
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-update-button"
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-update-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-info button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Update
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-delete-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-delete-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-bin button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Delete
+                </span>
+              </button>
+            </DropdownItem>
+          </div>
+        </DropdownMenu>
+      </div>
+    </Dropdown>
+  </UncontrolledDropdown>
+</WfModuleContextMenu>
+`;
+
+exports[`WfModuleContextMenu, initial menu Renders option to Delete with onClick method 1`] = `
+<WfModuleContextMenu
+  className="menu-test-class"
+  id={415}
+  removeModule={[Function]}
+  stopProp={[Function]}
+>
+  <UncontrolledDropdown
+    onClick={[Function]}
+  >
+    <Dropdown
+      isOpen={false}
       onClick={[Function]}
-      tag="button"
-      toggle={true}
+      tag="div"
+      toggle={[Function]}
     >
-      <span
-        className="icon-bin button-icon"
-      />
-      <span
-        className="t-d-gray content-3 ml-3"
+      <div
+        className="dropdown"
+        onClick={[Function]}
       >
-        Delete
-      </span>
-    </DropdownItem>
-  </DropdownMenu>
-</UncontrolledDropdown>
+        <DropdownToggle
+          aria-haspopup={true}
+          className="context-button"
+          color="secondary"
+          data-toggle="dropdown"
+        >
+          <Button
+            aria-expanded={false}
+            aria-haspopup="true"
+            className="context-button"
+            color="secondary"
+            data-toggle="dropdown"
+            onClick={[Function]}
+            tag="button"
+          >
+            <button
+              aria-expanded={false}
+              aria-haspopup="true"
+              className="context-button btn btn-secondary"
+              data-toggle="dropdown"
+              onClick={[Function]}
+              type="button"
+            >
+              <div
+                className="button-icon icon-more"
+              />
+            </button>
+          </Button>
+        </DropdownToggle>
+        <DropdownMenu
+          className="dropdown-menu"
+          right={true}
+          tag="div"
+        >
+          <div
+            aria-hidden={true}
+            className="dropdown-menu dropdown-menu dropdown-menu-right"
+            role="menu"
+            tabIndex="-1"
+          >
+            <DropdownItem
+              className="dropdown-menu-item mb-1 test-export-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-download button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Export
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-update-button"
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-update-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-info button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Update
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-delete-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-delete-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-bin button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Delete
+                </span>
+              </button>
+            </DropdownItem>
+          </div>
+        </DropdownMenu>
+      </div>
+    </Dropdown>
+  </UncontrolledDropdown>
+</WfModuleContextMenu>
+`;
+
+exports[`WfModuleContextMenu, initial menu Renders option to Delete with onClick method 2`] = `
+<WfModuleContextMenu
+  className="menu-test-class"
+  id={415}
+  removeModule={[Function]}
+  stopProp={[Function]}
+>
+  <UncontrolledDropdown
+    onClick={[Function]}
+  >
+    <Dropdown
+      isOpen={true}
+      onClick={[Function]}
+      tag="div"
+      toggle={[Function]}
+    >
+      <div
+        className="dropdown show"
+        onClick={[Function]}
+      >
+        <DropdownToggle
+          aria-haspopup={true}
+          className="context-button"
+          color="secondary"
+          data-toggle="dropdown"
+        >
+          <Button
+            aria-expanded={true}
+            aria-haspopup="true"
+            className="context-button active"
+            color="secondary"
+            data-toggle="dropdown"
+            onClick={[Function]}
+            tag="button"
+          >
+            <button
+              aria-expanded={true}
+              aria-haspopup="true"
+              className="context-button active btn btn-secondary"
+              data-toggle="dropdown"
+              onClick={[Function]}
+              type="button"
+            >
+              <div
+                className="button-icon icon-more"
+              />
+            </button>
+          </Button>
+        </DropdownToggle>
+        <DropdownMenu
+          className="dropdown-menu"
+          right={true}
+          tag="div"
+        >
+          <div
+            aria-hidden={false}
+            className="dropdown-menu dropdown-menu dropdown-menu-right"
+            role="menu"
+            tabIndex="-1"
+          >
+            <DropdownItem
+              className="dropdown-menu-item mb-1 test-export-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-download button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Export
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-update-button"
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-update-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-info button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Update
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-delete-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-delete-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-bin button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Delete
+                </span>
+              </button>
+            </DropdownItem>
+          </div>
+        </DropdownMenu>
+      </div>
+    </Dropdown>
+  </UncontrolledDropdown>
+</WfModuleContextMenu>
+`;
+
+exports[`WfModuleContextMenu, initial menu Renders option to Update 1`] = `
+<WfModuleContextMenu
+  className="menu-test-class"
+  id={415}
+  removeModule={[Function]}
+  stopProp={[Function]}
+>
+  <UncontrolledDropdown
+    onClick={[Function]}
+  >
+    <Dropdown
+      isOpen={false}
+      onClick={[Function]}
+      tag="div"
+      toggle={[Function]}
+    >
+      <div
+        className="dropdown"
+        onClick={[Function]}
+      >
+        <DropdownToggle
+          aria-haspopup={true}
+          className="context-button"
+          color="secondary"
+          data-toggle="dropdown"
+        >
+          <Button
+            aria-expanded={false}
+            aria-haspopup="true"
+            className="context-button"
+            color="secondary"
+            data-toggle="dropdown"
+            onClick={[Function]}
+            tag="button"
+          >
+            <button
+              aria-expanded={false}
+              aria-haspopup="true"
+              className="context-button btn btn-secondary"
+              data-toggle="dropdown"
+              onClick={[Function]}
+              type="button"
+            >
+              <div
+                className="button-icon icon-more"
+              />
+            </button>
+          </Button>
+        </DropdownToggle>
+        <DropdownMenu
+          className="dropdown-menu"
+          right={true}
+          tag="div"
+        >
+          <div
+            aria-hidden={true}
+            className="dropdown-menu dropdown-menu dropdown-menu-right"
+            role="menu"
+            tabIndex="-1"
+          >
+            <DropdownItem
+              className="dropdown-menu-item mb-1 test-export-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-download button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Export
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-update-button"
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-update-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-info button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Update
+                </span>
+              </button>
+            </DropdownItem>
+            <DropdownItem
+              className="dropdown-menu-item test-delete-button"
+              onClick={[Function]}
+              tag="button"
+              toggle={true}
+            >
+              <button
+                className="dropdown-menu-item test-delete-button dropdown-item"
+                onClick={[Function]}
+                tabIndex="0"
+                type="button"
+              >
+                <span
+                  className="icon-bin button-icon"
+                />
+                <span
+                  className="t-d-gray content-3 ml-3"
+                >
+                  Delete
+                </span>
+              </button>
+            </DropdownItem>
+          </div>
+        </DropdownMenu>
+      </div>
+    </Dropdown>
+  </UncontrolledDropdown>
+</WfModuleContextMenu>
 `;

@@ -5,7 +5,6 @@ import { okResponseMock, jsonResponseMock } from './utils'
 
 jest.useFakeTimers();
 
-
 describe('DataVersionSelect', () => {
 
   // Force time zone to make sure tests always give same result

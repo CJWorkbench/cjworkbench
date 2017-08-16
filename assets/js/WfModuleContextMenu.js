@@ -47,14 +47,24 @@ export default class WfModuleContextMenu extends React.Component {
 
   csvUrlString(id) {
     var path = "/public/moduledata/live/" + id + ".csv";
-    var url = new URL(path, window.location.href).href;
-    return url;
+    // allowing an out for testing (there is no window.location.href during test)
+    if (window.location.href == 'about:blank') {
+      return path;
+    } else {
+      var url = new URL(path, window.location.href).href;
+      return url;
+    }
   }
 
   jsonUrlString(id) {
     var path = "/public/moduledata/live/" + id + ".json";
-    var url = new URL(path, window.location.href).href;
-    return url;
+    // allowing an out for testing (there is no window.location.href during test)    
+    if (window.location.href == 'about:blank') {
+      return path;
+    } else {    
+      var url = new URL(path, window.location.href).href;
+      return url;
+    }
   }
 
   onCsvCopy() {
@@ -82,7 +92,7 @@ export default class WfModuleContextMenu extends React.Component {
       );
     } else {
       return (
-        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='info-2 t-f-blue mt-3'>
+        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='info-2 t-f-blue mt-3 test-csv-copy'>
           <div>Copy live link</div>
         </CopyToClipboard>
       );
@@ -98,7 +108,7 @@ export default class WfModuleContextMenu extends React.Component {
       );
     } else {
       return (
-        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='info-2 t-f-blue mt-3'> 
+        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='info-2 t-f-blue mt-3 test-json-copy'> 
           <div>Copy live link</div>
         </CopyToClipboard>
       );
@@ -128,9 +138,9 @@ export default class WfModuleContextMenu extends React.Component {
               {csvCopyLink}
             </div>     
             <div className='d-flex justify-content-between flex-row mb-3'>            
-              <Input type='url' className='text-field t-d-gray content-2' placeholder={csvString} readOnly/>   
+              <Input type='url' className='text-field t-d-gray content-2 test-csv-field' placeholder={csvString} readOnly/>   
               <div className='download-icon-box'>                              
-                <a href={csvString} className='icon-download button-icon' download></a>
+                <a href={csvString} className='icon-download button-icon test-csv-download' download></a>
               </div>
             </div>
             <div className='d-flex justify-content-between flex-row'>            
@@ -138,15 +148,15 @@ export default class WfModuleContextMenu extends React.Component {
               {jsonCopyLink}
             </div>
             <div className='d-flex justify-content-between flex-row'>                        
-              <Input type='url' className='text-field t-d-gray content-2' placeholder={jsonString} readOnly/>            
+              <Input type='url' className='text-field t-d-gray content-2 test-json-field' placeholder={jsonString} readOnly/>            
               <div className='download-icon-box'>
-                <a href={jsonString} className='icon-download button-icon' download></a>    
+                <a href={jsonString} className='icon-download button-icon test-json-download' download></a>    
               </div>
             </div>        
           </FormGroup>
         </ModalBody>
         <ModalFooter className='dialog-footer'>
-          <div onClick={this.toggleExportModal} className='button-blue action-button'>Done</div>{' '}
+          <div onClick={this.toggleExportModal} className='button-blue action-button test-done-button'>Done</div>{' '}
         </ModalFooter>
       </Modal>
     );
@@ -162,18 +172,18 @@ export default class WfModuleContextMenu extends React.Component {
         </DropdownToggle>
         <DropdownMenu right className='dropdown-menu'>
           {/* Opens Modal window for downloading files */}
-          <DropdownItem key={1} onClick={this.toggleExportModal} className='dropdown-menu-item mb-1'>                       
+          <DropdownItem key={1} onClick={this.toggleExportModal} className='dropdown-menu-item mb-1 test-export-button'>                       
             <span className='icon-download button-icon'></span>
             <span className='t-d-gray content-3 ml-3'>Export</span>
             {exportModal}
           </DropdownItem>
           {/* Currently does nothing */}          
-          <DropdownItem key={2} className='dropdown-menu-item'>      
+          <DropdownItem key={2} className='dropdown-menu-item test-update-button'>      
             <span className='icon-info button-icon'></span>                             
             <span className='t-d-gray content-3 ml-3'>Update</span>
           </DropdownItem>
           {/* Will delete the parent WF Module from the list */}
-          <DropdownItem key={3} onClick={this.deleteOption} className='dropdown-menu-item'>    
+          <DropdownItem key={3} onClick={this.deleteOption} className='dropdown-menu-item test-delete-button'>    
             <span className='icon-bin button-icon'></span>                               
             <span className='t-d-gray content-3 ml-3'>Delete</span>
           </DropdownItem>
