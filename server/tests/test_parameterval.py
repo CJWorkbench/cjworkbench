@@ -69,7 +69,7 @@ class ParameterValTests(LoggedInTestCase):
         floatVal = ParameterVal.objects.create(parameter_spec=floatSpec, wf_module=self.wfmodule, value='3.14159')
         self.floatID = floatVal.id
 
-        checkboxVal = ParameterVal.objects.create(parameter_spec=checkboxSpec, wf_module=self.wfmodule, value='1')
+        checkboxVal = ParameterVal.objects.create(parameter_spec=checkboxSpec, wf_module=self.wfmodule, value='True')
         self.checkboxID = checkboxVal.id
 
         menuVal = ParameterVal.objects.create(parameter_spec=menuSpec, wf_module=self.wfmodule, value='2')
@@ -143,25 +143,25 @@ class ParameterValTests(LoggedInTestCase):
         self.assertEqual(int_val['parameter_spec']['name'], 'IntegerParam')
         self.assertEqual(int_val['parameter_spec']['id_name'], 'integerparam')
         self.assertEqual(int_val['parameter_spec']['type'], ParameterSpec.INTEGER)
-        self.assertEqual(int_val['value'], '10')
+        self.assertEqual(int_val['value'], 10)
 
         float_val = [p for p in param_vals if p['id']==self.floatID][0]
         self.assertEqual(float_val['parameter_spec']['name'], 'FloatParam')
         self.assertEqual(float_val['parameter_spec']['id_name'], 'floatparam')
         self.assertEqual(float_val['parameter_spec']['type'], ParameterSpec.FLOAT)
-        self.assertEqual(float_val['value'], '3.14159')
+        self.assertEqual(float_val['value'], 3.14159)
 
         checkbox_val = [p for p in param_vals if p['id']==self.checkboxID][0]
         self.assertEqual(checkbox_val['parameter_spec']['name'], 'CheckboxParam')
         self.assertEqual(checkbox_val['parameter_spec']['id_name'], 'checkboxparam')
         self.assertEqual(checkbox_val['parameter_spec']['type'], ParameterSpec.CHECKBOX)
-        self.assertEqual(checkbox_val['value'], '1')
+        self.assertEqual(checkbox_val['value'], True)
 
         menu_val = [p for p in param_vals if p['id'] == self.menuID][0]
         self.assertEqual(menu_val['parameter_spec']['name'], 'MenuParam')
         self.assertEqual(menu_val['parameter_spec']['id_name'], 'menuparam')
         self.assertEqual(menu_val['parameter_spec']['type'], ParameterSpec.MENU)
-        self.assertEqual(menu_val['value'], '2')
+        self.assertEqual(menu_val['value'], 2)
 
     # test parameter change API
     def test_parameterval_detail_patch(self):
@@ -178,7 +178,7 @@ class ParameterValTests(LoggedInTestCase):
         force_authenticate(request, user=self.user)
         response = parameterval_detail(request, pk=self.floatID)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['value'], '50.456')
+        self.assertEqual(response.data['value'], 50.456)
 
         # changing a parameter should change the version
         self.workflow.refresh_from_db()

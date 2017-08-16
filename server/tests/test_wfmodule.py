@@ -20,7 +20,7 @@ class WfModuleTests(LoggedInTestCase):
         self.module1_version = self.add_new_module_version(name='Module 1', dispatch='testdata', version="1.0")
         self.pspec11 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.FLOAT, def_value=3.14, def_visible=False)
         self.pspec12 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.STRING, def_value='foo')
-        self.pspec13 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.CHECKBOX, def_value='True')
+        self.pspec13 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.CHECKBOX, def_value=True)
 
         self.module2_version = self.add_new_module_version(name='Module 2', dispatch='NOP', version="1.0")
         self.pspec21 = ParameterSpec.objects.create(module_version=self.module2_version, type=ParameterSpec.MENU, def_menu_items='Apple|Banana|Kittens', def_value='1')
@@ -58,15 +58,15 @@ class WfModuleTests(LoggedInTestCase):
     def test_default_parameters(self):
         self.wfmodule1.create_default_parameters()
         pval = ParameterVal.objects.get(parameter_spec=self.pspec11, wf_module=self.wfmodule1)
-        self.assertEqual(pval.value, '3.14')
+        self.assertEqual(pval.get_value(), 3.14)
         self.assertEqual(pval.visible, False)
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec12, wf_module=self.wfmodule1)
-        self.assertEqual(pval.value, 'foo')
+        self.assertEqual(pval.get_value(), 'foo')
         self.assertEqual(pval.visible, True)
 
         pval = ParameterVal.objects.get(parameter_spec=self.pspec13, wf_module=self.wfmodule1)
-        self.assertEqual(pval.value, '1')
+        self.assertEqual(pval.get_value(), True)
         self.assertEqual(pval.visible, True)
 
         # Menu should have correct default item

@@ -155,7 +155,7 @@ class WfModule(models.Model):
         return float(self.get_param_raw(name, ParameterSpec.FLOAT))
 
     def get_param_checkbox(self, name):
-        return int(self.get_param_raw(name, ParameterSpec.CHECKBOX)) == 1
+        return self.get_param_raw(name, ParameterSpec.CHECKBOX) == 'True'
 
     def get_param_menu_idx(self, name):
         try:

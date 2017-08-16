@@ -33,8 +33,14 @@ class InitmoduleTests(LoggedInTestCase):
                   'type': 'string',
                   'multiline': True,
                   'derived-data' : True
+                },
+                {
+                    'name': 'Do it checkbox',
+                    'id_name': 'doitcheckbox',
+                    'type': 'checkbox',
+                    'default': True
                 }
-              ]
+            ]
             }            
 
         # a new version of LoadCSV that deletes one parameter, changes the type and order of another, and adds a new one
@@ -92,7 +98,7 @@ class InitmoduleTests(LoggedInTestCase):
 
         # parameters
         pspecs = ParameterSpec.objects.all()
-        self.assertEqual(len(pspecs), 3)
+        self.assertEqual(len(pspecs), 4)
 
         url_spec = ParameterSpec.objects.get(id_name='url')
         self.assertEqual(url_spec.name, 'URL')
@@ -119,6 +125,12 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(nodef_spec.def_value, '')
         self.assertEqual(nodef_spec.multiline, True)
         self.assertEqual(nodef_spec.derived_data, True)
+
+        # Make sure checkbox loads with correct default value
+        # This tests boolean -> string conversion (JSON is boolean, def_value is string)
+        cb_spec = ParameterSpec.objects.get(id_name='doitcheckbox')
+        self.assertEqual(cb_spec.type, ParameterSpec.CHECKBOX)
+        self.assertEqual(cb_spec.def_value, 'True')
 
     # we should bail when keys are missing
     def test_missing_keys(self):

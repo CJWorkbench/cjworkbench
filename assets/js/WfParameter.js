@@ -88,12 +88,7 @@ export default class WfParameter extends React.Component {
     // update form controls to current values
     if (this.stringRef) this.stringRef.value = newProps.p.value;
     if (this.numberRef) this.numberRef.value = newProps.p.value;
-    if (this.checkboxRef) { 
-        // make sure we update the props to have a boolean value for checkboxes, or else
-        // the state never updates/propagates through the React stack, and then Bad Things happen. 
-        newProps.p.value = (newProps.p.value == '1');
-        this.checkboxRef.value = newProps.p.value;
-    }
+    if (this.checkboxRef) this.checkboxRef.value = newProps.p.value;
   }
 
 

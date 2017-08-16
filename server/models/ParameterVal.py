@@ -52,51 +52,72 @@ class ParameterVal(models.Model):
 
     # This is where type checking / coercion happens.
     def set_value(self, new_value):
-        type = self.parameter_spec.type
+        ptype = self.parameter_spec.type
 
-        if type == ParameterSpec.STRING:
+        if ptype == ParameterSpec.STRING:
             self.value = new_value
 
-        elif type == ParameterSpec.INTEGER:
+        elif ptype == ParameterSpec.INTEGER:
             try:
                 self.value = int(float(new_value))
             except ValueError:
                 self.value = '0'
 
-        elif type == ParameterSpec.FLOAT:
+        elif ptype == ParameterSpec.FLOAT:
             try:
                 self.value = str(float(new_value))
             except ValueError:
                 self.value = '0.0'
 
-        elif type == ParameterSpec.CHECKBOX:
+        elif ptype == ParameterSpec.CHECKBOX:
             try:
-                # Be permissive, allow both '1' and 'True' ('True' used in json spec)
-                # cast to str because json value from PATCH may be a Boolean
-                self.value = '1' if (str(new_value).strip().lower() == 'true' or str(new_value) == '1') else '0'
+                # Be permissive, allow both actual booleans and "true"/"false" strings
+                if type(new_value) is bool:
+                    self.value = str(new_value)
+                elif type(new_value) is str:
+                    self.value = new_value.lower().strip() == 'true'
+                else:
+                    self.value = str(bool(new_value))  # we catch number types here
             except ValueError:
-                self.value = '0'
+                self.value = 'False'
 
-        elif type == ParameterSpec.MENU:
+        elif ptype == ParameterSpec.MENU:
             try:
                 self.value = str(int(new_value))
             except ValueError:
                 self.value = '0'
 
-        elif type == ParameterSpec.COLUMN or \
-             type == ParameterSpec.MULTICOLUMN or \
-             type == ParameterSpec.CUSTOM or \
-             type == ParameterSpec.BUTTON:
+        elif ptype == ParameterSpec.COLUMN or \
+             ptype == ParameterSpec.MULTICOLUMN or \
+             ptype == ParameterSpec.CUSTOM or \
+             ptype == ParameterSpec.BUTTON:
             self.value = new_value
 
         else:
-            raise ValueError('Unknown parameter type ' + type + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.set_value')
+            raise ValueError('Unknown parameter type ' + ptype + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.set_value')
 
         self.save()
 
-
+    # Coerce back to appropriate ptype
     def get_value(self):
-        return self.value
+        ptype = self.parameter_spec.type
+        if ptype == ParameterSpec.STRING:
+            return self.value
+        elif ptype == ParameterSpec.INTEGER:
+            return int(self.value)
+        elif ptype == ParameterSpec.FLOAT:
+            return float(self.value)
+        elif ptype == ParameterSpec.CHECKBOX:
+            return self.value == 'True'
+        elif ptype == ParameterSpec.MENU:
+            return int(self.value)
+        elif ptype == ParameterSpec.COLUMN or \
+             ptype == ParameterSpec.MULTICOLUMN or \
+             ptype == ParameterSpec.CUSTOM or \
+             ptype == ParameterSpec.BUTTON:
+            return self.value
+        else:
+            raise ValueError('Unknown parameter ptype ' + ptype + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.get_value')
 
     def __str__(self):
         return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + str(self.get_value())

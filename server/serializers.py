@@ -12,6 +12,11 @@ class ParameterSpecSerializer(serializers.ModelSerializer):
 class ParameterValSerializer(serializers.ModelSerializer):
     parameter_spec = ParameterSpecSerializer(many=False, read_only=True)
 
+    # Custom serialization for value, to return correct types (e.g. boolean for checkboxes)
+    value = serializers.SerializerMethodField()
+    def get_value(self, obj):
+        return obj.get_value()
+
     class Meta:
         model = ParameterVal
         fields = ('id', 'parameter_spec', 'value', 'visible', 'menu_items')
