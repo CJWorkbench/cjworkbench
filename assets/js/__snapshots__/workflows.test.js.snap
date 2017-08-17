@@ -19,7 +19,7 @@ exports[`renders correctly 1`] = `
               className="mb-0 mr-auto title-2"
             >
               <a
-                href="http://cjworkbench.org"
+                href="/workflows"
               >
                 Workbench
               </a>
@@ -209,7 +209,7 @@ exports[`renders correctly 2`] = `
               className="mb-0 mr-auto title-2"
             >
               <a
-                href="http://cjworkbench.org"
+                href="/workflows"
               >
                 Workbench
               </a>

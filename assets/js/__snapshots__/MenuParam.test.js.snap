@@ -2,7 +2,7 @@
 
 exports[`renders correctly 1`] = `
 <div
-  className="d-flex flex-column mb-3"
+  className="parameter-margin d-flex flex-column"
 >
   <label
     className="mr-1 t-d-gray content-3"
