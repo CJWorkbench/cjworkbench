@@ -40,24 +40,24 @@ export default class EditableWorkflowName extends React.Component {
       : 1
 
     return <div onKeyPress={this.keyPress}>
-      {this.props.isReadOnly ? (
-        <span className={this.props.editClass}>{this.state.value}</span>
-      ):(
-        <RIETextArea
-          value={this.state.value}
-          change={this.saveName}
-          propName="value"
-          className={this.props.editClass}
-          classEditing='editable-title-field-active'
-          rows={rowCount}
-        />
-      )}
+      {this.props.isReadOnly 
+        ? ( <span className={this.props.editClass}>{this.state.value}</span> )
+        : (<RIETextArea
+            value={this.state.value}
+            change={this.saveName}
+            propName="value"
+            className={this.props.editClass}
+            classEditing='editable-title-field-active'
+            rows={rowCount}
+          />)
+      }
     </div>
   }
 }
 
 EditableWorkflowName.propTypes = {
-  value:    PropTypes.string,
-  wfId:     PropTypes.number,
-  api:      PropTypes.object.isRequired,
+  value:      PropTypes.string,
+  wfId:       PropTypes.number,
+  api:        PropTypes.object.isRequired,
+  isReadOnly: PropTypes.bool.isRequired
 };

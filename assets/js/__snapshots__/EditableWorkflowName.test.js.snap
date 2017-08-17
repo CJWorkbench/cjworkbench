@@ -1,11 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EditableWorkflowName renders correctly 1`] = `
+exports[`DataVersionSelect NOT Read-only Renders a title that can be edited and saved 1`] = `
 <EditableWorkflowName
-  api={Object {}}
+  api={
+    Object {
+      "getWfModuleVersions": [Function],
+      "setWfModuleVersion": [Function],
+    }
+  }
   editClass=""
+  isReadOnly={false}
   value="Test Title"
-  wfId={1}
+  wfId={808}
 >
   <div
     onKeyPress={[Function]}
@@ -31,4 +37,54 @@ exports[`EditableWorkflowName renders correctly 1`] = `
     </RIETextArea>
   </div>
 </EditableWorkflowName>
+`;
+
+exports[`DataVersionSelect NOT Read-only Renders a title that can be edited and saved 2`] = `
+<EditableWorkflowName
+  api={
+    Object {
+      "getWfModuleVersions": [Function],
+      "setWfModuleVersion": [Function],
+    }
+  }
+  editClass=""
+  isReadOnly={false}
+  value="Test Title"
+  wfId={808}
+>
+  <div
+    onKeyPress={[Function]}
+  >
+    <RIETextArea
+      change={[Function]}
+      classEditing="editable-title-field-active"
+      className=""
+      propName="value"
+      rows={1}
+      value="Test Title"
+    >
+      <textarea
+        className="editable-title-field-active"
+        defaultValue="Test Title"
+        disabled={false}
+        onBlur={[Function]}
+        onInput={[Function]}
+        onKeyDown={[Function]}
+        rows={1}
+      />
+    </RIETextArea>
+  </div>
+</EditableWorkflowName>
+`;
+
+exports[`DataVersionSelect Read-only Renders plain title 1`] = `
+<div
+  onKeyPress={[Function]}
+>
+  <span
+    className=""
+  >
+    Test Title
+  </span>
+</div>
 `;
