@@ -636,12 +636,8 @@ img.logo {
 /* ---- WfModule ---- */
 /* (Also being used in Module Library)  */
 
-.module-card-wrapper {
-  height: 100%;
-  display: flex;
-  flex-direction: row;
-  padding: 0;
-}
+
+/* make wfmodule narrower by 1 rem to make space for status bar */
 .module-card-info {
   width: calc(100% - 1rem);
 }

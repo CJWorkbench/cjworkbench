@@ -49,23 +49,14 @@ export default class Module extends React.Component {
     var icon = 'icon-' + this.props['icon'] + ' large-icon mr-5';
 
     return (
-      <div className='container mt-1 p-0'>
-        <div className='card' style={{'borderRadius': 0, 'border': 0}}>
-          <div className='card-block module-card-wrapper'>
-            <div className='module-card-info'>
-              <div 
-                className='module-card-header'
-                onClick={this.itemClick}
-              > 
-                <div className='second-level ml-3 d-flex flex-row'>
-                  <div className={icon}></div> 
-                  <div>                 
-                    <div className='title-4 t-d-gray mb-3'>{moduleName}</div>
-                    <div className='content-4 t-m-gray mb-4'>{metadata}</div>
-                    <div className='info-1 t-m-gray'>{description}</div>
-                  </div>
-                </div>
-              </div>
+      <div className='card mt-1 p-0' style={{'borderRadius': 0, 'border': 0}}>
+        <div className='module-card-header' onClick={this.itemClick} >
+          <div className='second-level ml-3 d-flex flex-row'>
+            <div className={icon}></div>
+            <div>
+              <div className='title-4 t-d-gray mb-3'>{moduleName}</div>
+              <div className='content-4 t-m-gray mb-4'>{metadata}</div>
+              <div className='info-1 t-m-gray'>{description}</div>
             </div>
           </div>
         </div>

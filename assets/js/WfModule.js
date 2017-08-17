@@ -241,7 +241,7 @@ export default class WfModule extends React.Component {
           className='card mb-1' 
           style={{'borderRadius': 0, 'border': 0}}
         >
-          <div className='card-block module-card-wrapper d-flex justify-content-between'>
+          <div className='card-block p-0 d-flex justify-content-between'>
             {/* --- Everything but the status bar, on the left of card --- */}
             <div className='module-card-info'>
               {notes}
