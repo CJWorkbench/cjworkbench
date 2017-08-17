@@ -1,139 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WfModuleContextMenu, Export modal Renders links correctly, and Done button closes modal 1`] = `
-<WfModuleContextMenu
-  className="menu-test-class"
-  id={415}
-  removeModule={[Function]}
-  stopProp={[Function]}
->
-  <UncontrolledDropdown
-    onClick={[Function]}
-  >
-    <Dropdown
-      isOpen={false}
-      onClick={[Function]}
-      tag="div"
-      toggle={[Function]}
-    >
-      <div
-        className="dropdown"
-        onClick={[Function]}
-      >
-        <DropdownToggle
-          aria-haspopup={true}
-          className="context-button"
-          color="secondary"
-          data-toggle="dropdown"
-        >
-          <Button
-            aria-expanded={false}
-            aria-haspopup="true"
-            className="context-button"
-            color="secondary"
-            data-toggle="dropdown"
-            onClick={[Function]}
-            tag="button"
-          >
-            <button
-              aria-expanded={false}
-              aria-haspopup="true"
-              className="context-button btn btn-secondary"
-              data-toggle="dropdown"
-              onClick={[Function]}
-              type="button"
-            >
-              <div
-                className="button-icon icon-more"
-              />
-            </button>
-          </Button>
-        </DropdownToggle>
-        <DropdownMenu
-          className="dropdown-menu"
-          right={true}
-          tag="div"
-        >
-          <div
-            aria-hidden={true}
-            className="dropdown-menu dropdown-menu dropdown-menu-right"
-            role="menu"
-            tabIndex="-1"
-          >
-            <DropdownItem
-              className="dropdown-menu-item mb-1 test-export-button"
-              onClick={[Function]}
-              tag="button"
-              toggle={true}
-            >
-              <button
-                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
-                onClick={[Function]}
-                tabIndex="0"
-                type="button"
-              >
-                <span
-                  className="icon-download button-icon"
-                />
-                <span
-                  className="t-d-gray content-3 ml-3"
-                >
-                  Export
-                </span>
-              </button>
-            </DropdownItem>
-            <DropdownItem
-              className="dropdown-menu-item test-update-button"
-              tag="button"
-              toggle={true}
-            >
-              <button
-                className="dropdown-menu-item test-update-button dropdown-item"
-                onClick={[Function]}
-                tabIndex="0"
-                type="button"
-              >
-                <span
-                  className="icon-info button-icon"
-                />
-                <span
-                  className="t-d-gray content-3 ml-3"
-                >
-                  Update
-                </span>
-              </button>
-            </DropdownItem>
-            <DropdownItem
-              className="dropdown-menu-item test-delete-button"
-              onClick={[Function]}
-              tag="button"
-              toggle={true}
-            >
-              <button
-                className="dropdown-menu-item test-delete-button dropdown-item"
-                onClick={[Function]}
-                tabIndex="0"
-                type="button"
-              >
-                <span
-                  className="icon-bin button-icon"
-                />
-                <span
-                  className="t-d-gray content-3 ml-3"
-                >
-                  Delete
-                </span>
-              </button>
-            </DropdownItem>
-          </div>
-        </DropdownMenu>
-      </div>
-    </Dropdown>
-  </UncontrolledDropdown>
-</WfModuleContextMenu>
-`;
-
-exports[`WfModuleContextMenu, Export modal Renders links correctly, and Done button closes modal 2`] = `
+exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done button closes modal 1`] = `
 <div
   className="modal-dialog menu-test-class"
   role="document"
@@ -307,7 +174,7 @@ exports[`WfModuleContextMenu, Export modal Renders links correctly, and Done but
 </div>
 `;
 
-exports[`WfModuleContextMenu, Export modal Renders links correctly, and Done button closes modal 3`] = `
+exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done button closes modal 2`] = `
 <WfModuleContextMenu
   className="menu-test-class"
   id={415}
@@ -440,7 +307,7 @@ exports[`WfModuleContextMenu, Export modal Renders links correctly, and Done but
 </WfModuleContextMenu>
 `;
 
-exports[`WfModuleContextMenu, initial menu Renders option to Delete with onClick method 1`] = `
+exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1`] = `
 <WfModuleContextMenu
   className="menu-test-class"
   id={415}
@@ -573,7 +440,7 @@ exports[`WfModuleContextMenu, initial menu Renders option to Delete with onClick
 </WfModuleContextMenu>
 `;
 
-exports[`WfModuleContextMenu, initial menu Renders option to Delete with onClick method 2`] = `
+exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2`] = `
 <WfModuleContextMenu
   className="menu-test-class"
   id={415}
@@ -629,139 +496,6 @@ exports[`WfModuleContextMenu, initial menu Renders option to Delete with onClick
         >
           <div
             aria-hidden={false}
-            className="dropdown-menu dropdown-menu dropdown-menu-right"
-            role="menu"
-            tabIndex="-1"
-          >
-            <DropdownItem
-              className="dropdown-menu-item mb-1 test-export-button"
-              onClick={[Function]}
-              tag="button"
-              toggle={true}
-            >
-              <button
-                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
-                onClick={[Function]}
-                tabIndex="0"
-                type="button"
-              >
-                <span
-                  className="icon-download button-icon"
-                />
-                <span
-                  className="t-d-gray content-3 ml-3"
-                >
-                  Export
-                </span>
-              </button>
-            </DropdownItem>
-            <DropdownItem
-              className="dropdown-menu-item test-update-button"
-              tag="button"
-              toggle={true}
-            >
-              <button
-                className="dropdown-menu-item test-update-button dropdown-item"
-                onClick={[Function]}
-                tabIndex="0"
-                type="button"
-              >
-                <span
-                  className="icon-info button-icon"
-                />
-                <span
-                  className="t-d-gray content-3 ml-3"
-                >
-                  Update
-                </span>
-              </button>
-            </DropdownItem>
-            <DropdownItem
-              className="dropdown-menu-item test-delete-button"
-              onClick={[Function]}
-              tag="button"
-              toggle={true}
-            >
-              <button
-                className="dropdown-menu-item test-delete-button dropdown-item"
-                onClick={[Function]}
-                tabIndex="0"
-                type="button"
-              >
-                <span
-                  className="icon-bin button-icon"
-                />
-                <span
-                  className="t-d-gray content-3 ml-3"
-                >
-                  Delete
-                </span>
-              </button>
-            </DropdownItem>
-          </div>
-        </DropdownMenu>
-      </div>
-    </Dropdown>
-  </UncontrolledDropdown>
-</WfModuleContextMenu>
-`;
-
-exports[`WfModuleContextMenu, initial menu Renders option to Update 1`] = `
-<WfModuleContextMenu
-  className="menu-test-class"
-  id={415}
-  removeModule={[Function]}
-  stopProp={[Function]}
->
-  <UncontrolledDropdown
-    onClick={[Function]}
-  >
-    <Dropdown
-      isOpen={false}
-      onClick={[Function]}
-      tag="div"
-      toggle={[Function]}
-    >
-      <div
-        className="dropdown"
-        onClick={[Function]}
-      >
-        <DropdownToggle
-          aria-haspopup={true}
-          className="context-button"
-          color="secondary"
-          data-toggle="dropdown"
-        >
-          <Button
-            aria-expanded={false}
-            aria-haspopup="true"
-            className="context-button"
-            color="secondary"
-            data-toggle="dropdown"
-            onClick={[Function]}
-            tag="button"
-          >
-            <button
-              aria-expanded={false}
-              aria-haspopup="true"
-              className="context-button btn btn-secondary"
-              data-toggle="dropdown"
-              onClick={[Function]}
-              type="button"
-            >
-              <div
-                className="button-icon icon-more"
-              />
-            </button>
-          </Button>
-        </DropdownToggle>
-        <DropdownMenu
-          className="dropdown-menu"
-          right={true}
-          tag="div"
-        >
-          <div
-            aria-hidden={true}
             className="dropdown-menu dropdown-menu dropdown-menu-right"
             role="menu"
             tabIndex="-1"

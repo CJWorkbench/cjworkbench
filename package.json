@@ -57,6 +57,8 @@
     "enzyme-to-json": "^1.5.1",
     "jest": "^19.0.2",
     "jest-fetch-mock": "^1.1.1",
+    "jest-localstorage-mock": "^1.2.0",
+    "jest-webpack": "^0.3.0",
     "react-test-renderer": "^15.5.4",
     "react-transition-group": "^1.1.3",
     "style-loader": "^0.13.1",
@@ -72,14 +74,24 @@
   "jest": {
     "automock": false,
     "setupFiles": [
-      "./setupJest.js"
+      "./setupJest.js",
+      "jest-localstorage-mock"
     ],
     "snapshotSerializers": [
       "./node_modules/enzyme-to-json/serializer"
     ],
     "moduleNameMapper": {
       "\\.(css|less)$": "<rootDir>/assets/css/__mocks__/styleMock.js"
-    }
+    },
+    "moduleDirectories": [
+      "node_modules",
+      "chartbuilder"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "jsx"
+    ]
   },
   "repository": {
     "type": "git",
@@ -90,5 +102,11 @@
   "bugs": {
     "url": "https://github.com/jstray/cjworkbench/issues"
   },
-  "homepage": "https://github.com/jstray/cjworkbench#readme"
+  "homepage": "https://github.com/jstray/cjworkbench#readme",
+  "babel": {
+    "presets": [
+      "react",
+      "es2015"
+    ]
+  }
 }

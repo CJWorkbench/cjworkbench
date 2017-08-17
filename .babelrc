@@ -1,6 +1,7 @@
 {
   "presets": ["react"],
 
+  // see https://facebook.github.io/jest/docs/en/webpack.html#using-with-webpack-2
    "env": {
     "test": {
       "plugins": ["transform-es2015-modules-commonjs"]
