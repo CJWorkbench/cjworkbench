@@ -1,7 +1,13 @@
 {% extends 'account/base.html' %}
 {% block content %}
   <form method="post" class="account_form" action=''>
-    <div class='title-1 t-d-gray text-center mb-5'>Create account</div>
+    <div class="row d-flex align-items-center mb-5">
+            <div class='col'></div>
+            <div class='title-1 t-d-gray text-center mb-5'>Create account</div>
+            <div class='col switch'>
+                <a href="/account/login" class='t-f-blue'>Log in</a>
+            </div>
+    </div>
 
     {% csrf_token %}
     {{ form.non_field_errors }}
@@ -32,7 +38,6 @@
     <button type="submit" class="action-button button-full-blue mx-auto mb-3">Register</button>
   </form>
   <br />
-  <p class="login-footer content-3 t-d-gray text-center">
-    Already have an account? <strong><a href="/account/login">Log in</a></strong>
-  </p>
+<!--   <p class="login-footer content-3 t-d-gray text-center">
+    Already have an account? </p> -->
 {% endblock %}

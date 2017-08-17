@@ -36,8 +36,9 @@ body {
 }
 .title-2 {
 	font-size: 2.2rem;
-	font-weight: 500;
+	font-weight: 400;
 	line-height: 2.2rem;
+  font-family: lato;
 }
 .title-3 {
 	font-size: 1.8rem;
@@ -454,6 +455,21 @@ img.logo {
 
 /* ---- Login ---- */
 
+.navbar-login {
+  display:none;
+}
+
+.login-bigbrand .logo{
+  max-height: 4.5rem;
+}
+
+
+.login-bigbrand h1 {
+  font-size: 5rem;
+  color:#fff;
+  margin: 1rem;
+  padding: 1.3rem 0 1rem 0;
+}
 
 .login-fullscreen-container {
   height: 100vh;
@@ -464,16 +480,21 @@ img.logo {
   background-size: cover; 
 }
 
+.login-brand h1{
+  margin-left: 0px;
+  color: #fff;
+}
+
 .login-card {
   height: auto;
   width: 44rem;
-  padding: 3rem 4rem 3rem 4rem;
+  padding: 3rem 3rem 3rem 3rem;
   border: none;
   border-radius: 0px;
   box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
 }
 
-.login-card ::-webkit-input-placeholder {
+.login-card :-webkit-input-placeholder {
   color: #ccc
 }
 
@@ -493,6 +514,12 @@ img.logo {
 
 .account_form .text-center a {
   padding-bottom: 2rem;
+}
+
+.account_form .switch a {
+  font-size: 1.6rem;
+  padding-left:4rem;
+  padding-top: 2rem;
 }
 
 /* ---- Workflow list ---- */
