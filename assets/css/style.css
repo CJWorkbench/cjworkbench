@@ -659,6 +659,7 @@ img.logo {
 	font-weight: 300;
   line-height: 2.1rem;
   color: #A2A2A2;
+  display:none;
 }
 
 .wf-module-error-msg {
@@ -1017,6 +1018,7 @@ img.logo {
   flex-direction: row;
   justify-content: space-around;
   padding: 3rem;
+  align-items:center;
 }
 
 .version-item {
@@ -1078,7 +1080,13 @@ img.logo {
   padding: 0;
   font-family: 'Nunito Sans', sans-serif;
 }
-
+/*Module Parameters spacing within modules*/
+.parameter-margin {
+  margin-bottom: 2rem;
+}
+.label-margin {
+  margin-bottom: 0.5rem;
+}
 /* --- Module Library --- */
 /* TODO: replace with style guide classes where relevant  */
 

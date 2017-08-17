@@ -15,7 +15,7 @@ export class WorkflowListNavBar extends React.Component {
         <nav className="navbar">
           <div className="navbar-brand d-flex flex-row align-items-center">
             <img src="/static/images/logo.png" className="logo"/>
-            <h1 className="mb-0 mr-auto title-2"><a href="http://cjworkbench.org">Workbench</a></h1>
+            <h1 className="mb-0 mr-auto title-2"><a href="/workflows">Workbench</a></h1>
           </div>
           <div className='d-flex flex-row align-items-center'>
             <a href="http://cjworkbench.org/index.php/blog/" className='t-white content-2 mr-5'>Learn</a>            
@@ -37,7 +37,7 @@ export class WorkflowNavBar extends React.Component {
         <nav className="navbar">
           <div className="navbar-brand d-flex flex-row align-items-center">
             <img src="/static/images/logo.png" className="logo"/>
-            <h1 className="mb-0 mr-auto title-2"><a href="http://cjworkbench.org">Workbench</a></h1>
+            <h1 className="mb-0 mr-auto title-2"><a href="/workflows">Workbench</a></h1>
           </div>
           <div className='d-flex flex-row align-items-center'>
             <a href="http://cjworkbench.org/index.php/blog/" className='t-white content-2 mr-5'>Learn</a>

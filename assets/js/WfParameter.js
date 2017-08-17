@@ -102,16 +102,16 @@ export default class WfParameter extends React.Component {
         // Different size and style if it's a multiline string
         var sclass, srows;
         if (!this.props.p.multiline) {
-          sclass='wfmoduleStringInput t-d-gray content-2 text-field mt-1';
+          sclass='wfmoduleStringInput t-d-gray content-2 text-field';
           srows = 1;
         } else {
-          sclass='wfmoduleTextInput t-d-gray info-1 text-field mt-1';
+          sclass='wfmoduleTextInput t-d-gray info-1 text-field';
           srows = 4;
         }
 
         return (
-          <div className='mb-4'>
-            <div className='t-d-gray content-3 mb-2'>{this.name}:</div>
+          <div className='parameter-margin'>
+            <div className='label-margin t-d-gray content-3'>{this.name}:</div>
             <textarea
               readOnly={this.props.isReadOnly}
               className={sclass}
@@ -148,7 +148,7 @@ export default class WfParameter extends React.Component {
       case 'checkbox':
         return (
             <div>
-                <label className='mr-3 t-d-gray content-3'>{this.name}:</label>
+                <label className='label-margin t-d-gray content-3'>{this.name}:</label>
                 <input
                   disabled={this.props.isReadOnly}
                   type="checkbox"
@@ -169,7 +169,7 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className='mb-4'>
+          <div className='label-margin'>
             <div className='t-d-gray content-3 mb-2'>{this.name}:</div>
             <ColumnParam
               selectedCol={this.props.p.value}
@@ -182,7 +182,7 @@ export default class WfParameter extends React.Component {
 
       case 'multicolumn':
         return (
-          <div className='mb-4'>
+          <div className='parameter-margin'>
             <div className='t-d-gray content-3 mb-3'>{this.name}:</div>
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}
@@ -220,7 +220,7 @@ export default class WfParameter extends React.Component {
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
 
           var button = (!this.props.isReadOnly) 
-            ? <div className='button-blue action-button mt-4' onClick={this.click}>{this.name}</div>
+            ? <div className='button-blue action-button mt-0' onClick={this.click}>{this.name}</div>
             : null
           
           return (

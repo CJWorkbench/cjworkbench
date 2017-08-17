@@ -29,7 +29,7 @@ export default class MenuParam extends React.Component {
     });
 
     return (
-      <div className='d-flex flex-column mb-3'>
+      <div className='parameter-margin d-flex flex-column'>
         <label className='mr-1 t-d-gray content-3'>{this.props.name}:</label>
         <select
           className='custom-select dropdown-selector'
