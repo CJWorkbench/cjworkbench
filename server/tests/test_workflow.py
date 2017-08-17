@@ -40,21 +40,21 @@ class WorkflowTests(LoggedInTestCase):
         pk_workflow = Workflow.objects.get(name='Workflow 1').id
 
         request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
-                                   {'moduleID': Module.objects.get(name='Module 1').id,
+                                   {'moduleId': Module.objects.get(name='Module 1').id,
                                     'insertBefore': 0})
         force_authenticate(request, user=self.user)
         response = workflow_addmodule(request, pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
         request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
-                                   {'moduleID': Module.objects.get(name='Module 2').id,
+                                   {'moduleId': Module.objects.get(name='Module 2').id,
                                     'insertBefore': 0})
         force_authenticate(request, user=self.user)
         response = workflow_addmodule(request, pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
         request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
-                                   {'moduleID': Module.objects.get(name='Module 3').id,
+                                   {'moduleId': Module.objects.get(name='Module 3').id,
                                     'insertBefore': 1})
         force_authenticate(request, user=self.user)
         response = workflow_addmodule(request, pk=pk_workflow)
@@ -70,14 +70,14 @@ class WorkflowTests(LoggedInTestCase):
                           ModuleVersion.objects.get(module=module1).id])
 
         request = self.factory.put('/api/workflows/%d/addmodule/' % 10000,
-                                   {'moduleID': Module.objects.get(name='Module 1').id,
+                                   {'moduleId': Module.objects.get(name='Module 1').id,
                                     'insertBefore': 0})
         force_authenticate(request, user=self.user)
         response = workflow_addmodule(request, pk=10000)
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
         request = self.factory.put('/api/workflows/%d/addmodule/' % Workflow.objects.get(name='Workflow 1').id,
-                                   {'moduleID': 10000,
+                                   {'moduleId': 10000,
                                     'insertBefore': 0})
         force_authenticate(request, user=self.user)
         response = workflow_addmodule(request, pk=Workflow.objects.get(name='Workflow 1').id)

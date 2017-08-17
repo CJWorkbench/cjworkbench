@@ -1,6 +1,7 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
 import { getPageID, csrfToken } from './utils'
+import WorkbenchAPI from './WorkbenchAPI'
 import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise'
 
@@ -11,6 +12,8 @@ const REMOVE_MODULE_ACTION = 'REMOVE_MODULE'
 const MODULE_STATUS_CHANGE = 'MODULE_STATUS_CHANGE'
 const SELECTED_MODULE_CHANGE = 'SELECTED_MODULE_CHANGE'
 
+const api = WorkbenchAPI();
+
 // ---- Our Store ----
 // Master state for the workflow. Export so that components can store.dispatch()
 
@@ -20,50 +23,39 @@ export let store = createStore(workflowReducer, applyMiddleware(promiseMiddlewar
 
 // Load the whole workflow. Returns a promise which returns an action to dispatch when it completes
 export function reloadWorkflowAction() {
-  return fetch('/api/workflows/' + getPageID(), { credentials: 'include'})
-    .then(response => response.json())
-    .then(json => ({  type: RELOAD_WORKFLOW, workflow: json }));
+  return (
+    api.loadWorkflow(getPageID())
+    .then(json => ({  type: RELOAD_WORKFLOW, workflow: json }))
+  )
 }
 
 export function initialLoadWorkflowAction() {
-  return fetch('/api/workflows/' + getPageID(), { credentials: 'include'})
-    .then(response => response.json())
-    .then(json => ({  type: INITIAL_LOAD_WORKFLOW, workflow: json }));
+  return (
+    api.loadWorkflow(getPageID())
+    .then(json => ({ type: INITIAL_LOAD_WORKFLOW, workflow: json }))
+  )
 }
 
 // Make an addModule call, then reload the workflow
-export function addModuleAction(module_id, insertBefore) {
-  return fetch('/api/workflows/' + getPageID() + "/addmodule", {
-    method: 'put',
-    credentials: 'include',
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      'X-CSRFToken': csrfToken
-    },
-    body: JSON.stringify({insertBefore: insertBefore, moduleID: module_id})
-  }) .then( reloadWorkflowAction );
+export function addModuleAction(moduleId, insertBefore) {
+  return (
+    api.addModule(getPageID(), moduleId, insertBefore)
+    .then( reloadWorkflowAction )
+  )
 }
 
 // Call delete API, then dispatch a reload
 export function removeModuleAction(wf_module_id) {
 
-  //console.log("Deleting module " + wf_module_id);
-  //console.log("Selected module " + store.getState().selected_module);
-
   // If we are deleting the selected module, then no selected module
   if (wf_module_id == store.getState().selected_wf_module) {
-    console.log("Deleting selected module");
     store.dispatch(changeSelectedWfModuleAction(null))
   }
 
-  return fetch('/api/wfmodules/' + wf_module_id, {
-    method: 'delete',
-    credentials: 'include',
-    headers: {
-      'X-CSRFToken': csrfToken
-    },
-  }).then( reloadWorkflowAction );
+  return (
+    api.deleteModule(wf_module_id)
+    .then( reloadWorkflowAction )
+  )
 }
 
 export function wfModuleStatusAction(wfModuleID, status, error_msg='') {

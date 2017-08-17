@@ -109,7 +109,7 @@ def workflow_addmodule(request, pk, format=None):
         return HttpResponseForbidden()
 
     try:
-        module_id = request.data['moduleID']
+        module_id = request.data['moduleId']
         insert_before = int(request.data['insertBefore'])
         module = Module.objects.get(pk=module_id)
 

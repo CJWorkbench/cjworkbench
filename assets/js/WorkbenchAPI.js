@@ -6,6 +6,35 @@ import { csrfToken } from './utils'
 // All API calls which fetch data return a promise which returns JSON
 class WorkbenchAPI {
 
+  loadWorkflow(workflowId) {
+    return (
+      fetch('/api/workflows/' + workflowId, { credentials: 'include'})
+      .then(response => response.json()))
+  }
+
+  addModule(workflowId, moduleId, insertBefore) {
+    return (
+      fetch('/api/workflows/' + workflowId + "/addmodule", {
+      method: 'put',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify({insertBefore: insertBefore, moduleId: moduleId})
+    }));
+  }
+
+  deleteModule(wfModuleId) {
+    return (
+      fetch('/api/wfmodules/' + wfModuleId, {
+        method: 'delete',
+        credentials: 'include',
+        headers: {'X-CSRFToken': csrfToken}
+      }));
+  }
+
   setWorkflowPublic(workflowID, isPublic) {
     return (
       fetch('/api/workflows/' + workflowID, {
