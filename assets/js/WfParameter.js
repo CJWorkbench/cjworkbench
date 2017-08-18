@@ -101,8 +101,13 @@ export default class WfParameter extends React.Component {
       case 'string':
         // Different size and style if it's a multiline string
         var sclass, srows;
+<<<<<<< 7fb80fc0d0aaf49277613503383b1524093a368b
         if (!this.props.p.multiline) {
           sclass='wfmoduleStringInput t-d-gray content-2 text-field';
+=======
+        if (!this.props.p.parameter_spec.multiline) {
+          sclass='wfmoduleStringInput t-d-gray content-2 text-field mt-1';
+>>>>>>> Fix bug: allow resizing of multiline text parameters
           srows = 1;
         } else {
           sclass='wfmoduleTextInput t-d-gray info-1 text-field';
