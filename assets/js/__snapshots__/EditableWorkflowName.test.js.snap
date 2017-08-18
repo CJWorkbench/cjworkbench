@@ -4,8 +4,7 @@ exports[`DataVersionSelect NOT Read-only Renders a title that can be edited and 
 <EditableWorkflowName
   api={
     Object {
-      "getWfModuleVersions": [Function],
-      "setWfModuleVersion": [Function],
+      "setWfName": [Function],
     }
   }
   editClass=""
@@ -43,8 +42,7 @@ exports[`DataVersionSelect NOT Read-only Renders a title that can be edited and 
 <EditableWorkflowName
   api={
     Object {
-      "getWfModuleVersions": [Function],
-      "setWfModuleVersion": [Function],
+      "setWfName": [Function],
     }
   }
   editClass=""

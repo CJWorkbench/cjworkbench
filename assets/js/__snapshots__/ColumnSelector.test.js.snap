@@ -1,8 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly 1`] = `
+exports[`ColumnSelector NOT Read-only Renders and loads column names 1`] = `
 <ColumnSelector
   getColNames={[Function]}
+  isReadOnly={false}
   revision={101}
   saveState={[Function]}
   selectedCols="foo,bar,baz"
@@ -12,7 +13,69 @@ exports[`renders correctly 1`] = `
   >
     <div
       className="row"
-    />
+    >
+      <div
+        className="checkbox-container"
+        style={
+          Object {
+            "whiteSpace": "nowrap",
+          }
+        }
+      >
+        <input
+          checked={false}
+          data-name="foo,bar,baz,wow,word wrap,ok then"
+          disabled={false}
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          className="ml-2 mt-1 t-d-gray content-3"
+        >
+          foo,bar,baz,wow,word wrap,ok then
+        </label>
+      </div>
+    </div>
+  </div>
+</ColumnSelector>
+`;
+
+exports[`ColumnSelector Read-only Renders and loads column names 1`] = `
+<ColumnSelector
+  getColNames={[Function]}
+  isReadOnly={true}
+  revision={101}
+  saveState={[Function]}
+  selectedCols="foo,bar,baz"
+>
+  <div
+    className="container mb-3"
+  >
+    <div
+      className="row"
+    >
+      <div
+        className="checkbox-container"
+        style={
+          Object {
+            "whiteSpace": "nowrap",
+          }
+        }
+      >
+        <input
+          checked={false}
+          data-name="foo,bar,baz,wow,word wrap,ok then"
+          disabled={true}
+          onChange={[Function]}
+          type="checkbox"
+        />
+        <label
+          className="ml-2 mt-1 t-d-gray content-3"
+        >
+          foo,bar,baz,wow,word wrap,ok then
+        </label>
+      </div>
+    </div>
   </div>
 </ColumnSelector>
 `;

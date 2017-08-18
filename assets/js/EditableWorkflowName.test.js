@@ -27,10 +27,8 @@ describe('DataVersionSelect', () => {
 
   describe('NOT Read-only', () => {
 
-    // is API really needed here, or just mock functions?
     var api = {
-      getWfModuleVersions: jsonResponseMock(),
-      setWfModuleVersion: okResponseMock(),
+      setWfName: okResponseMock()
     };
     var titleField;
 
@@ -61,12 +59,26 @@ describe('DataVersionSelect', () => {
       expect(textArea.length).toBe(1);
       
       // enter some text
+      expect(wrapper.state().value).toBe("Test Title");   
 
-      // hit return
+      // // *** BREAKS HERE: how do we simulate input and hitting Return? ****
+      // // textArea.simulate('input', {value: {value: "Sweet New Title"}});
+      // textArea.simulate('input', {value: "Sweet New Title"});
+      // // 82 = 'r'
+      // textArea.simulate('keydown', {keyCode: 82});
 
-      // check state for title change
+      // // hit return
+      // // 13 = enter
+      // textArea.simulate('keydown', {keyCode: 13});
+      // textArea.simulate('blur');
+
+      // // check state for title change
+      // expect(wrapper.state().value).toBe("r");   
 
       // snapshot
+
+      // count the API calls
+
     });
 
     it('Editing a title, then clicking Escape, will not save edits', () => {
