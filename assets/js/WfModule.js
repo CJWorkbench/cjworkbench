@@ -139,22 +139,19 @@ export default class WfModule extends React.Component {
   // when Notes icon is clicked, show notes and start in editable state
   showNotes(e) {
     e.stopPropagation();
-    this.setState(Object.assign({}, this.state, {
-                                                  showNotes: true,
-                                                  showEditableNotes: true
-                                                }));
+    this.setState({ showNotes: true,  showEditableNotes: true });
   }
 
   hideNotes() {
-    this.setState(Object.assign({}, this.state, {showNotes: false}));
+    this.setState({showNotes: false});
   }
 
   showArrow() {
-    this.setState(Object.assign({}, this.state, {showArrow: true}));
+    this.setState({showArrow: true});
   }
 
   hideArrow() {
-    this.setState(Object.assign({}, this.state, {showArrow: false}));
+    this.setState({showArrow: false});
   }
 
   render() {
@@ -164,7 +161,7 @@ export default class WfModule extends React.Component {
       autoUpdateData:   this.wf_module.auto_update_data,
       updateInterval:   this.wf_module.update_interval,
       updateUnits:      this.wf_module.update_units
-    }
+    };
 
     // Each parameter gets a WfParameter
     var paramdivs = this.params.map((ps, i) => {
