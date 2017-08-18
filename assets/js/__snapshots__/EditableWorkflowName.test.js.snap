@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`DataVersionSelect NOT Read-only Renders a title that can be edited and saved 1`] = `
+exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited and saved 1`] = `
 <EditableWorkflowName
   api={
     Object {
@@ -38,7 +38,7 @@ exports[`DataVersionSelect NOT Read-only Renders a title that can be edited and 
 </EditableWorkflowName>
 `;
 
-exports[`DataVersionSelect NOT Read-only Renders a title that can be edited and saved 2`] = `
+exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited and saved 2`] = `
 <EditableWorkflowName
   api={
     Object {
@@ -75,7 +75,7 @@ exports[`DataVersionSelect NOT Read-only Renders a title that can be edited and 
 </EditableWorkflowName>
 `;
 
-exports[`DataVersionSelect Read-only Renders plain title 1`] = `
+exports[`EditableWorkflowName Read-only Renders plain title 1`] = `
 <div
   onKeyPress={[Function]}
 >
