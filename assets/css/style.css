@@ -312,18 +312,18 @@ body {
   justify-content: center;
   background: 0;
 }
-.context-button:hover {
+/*.context-button:hover {
   border: 1px solid #EDECEC;
   border-radius: 0.3rem;
   text-decoration: 0;
   background: 0;
-}
-.context-button:active {
+}*/
+/*.context-button:active {
   border: 1px solid #EDECEC;
   background-color: #F9F9F9;
   border-radius: 0.3rem;
   color: #686768;
-}
+}*/
 
 .navbar-context-button {
   border: 0;
@@ -334,12 +334,12 @@ body {
   justify-content: center;
   background: 0;
 }
-.navbar-context-button:hover {
+/*.navbar-context-button:hover {
   border: 1px solid #FFFFFF;
   border-radius: 0.3rem;
   text-decoration: 0;
   background: 0;
-}
+}*/
 
 
 .action-button {
@@ -390,7 +390,10 @@ body {
 }
 
 .dropdown-menu {
-  box-shadow: -1rem 1rem 2rem 0 rgba(0,0,0,0.15);
+  margin-top: 1rem;
+  border:0px;
+  border-radius: 0px;
+  box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.15);
 }
 
 .dropdown-menu-item {
