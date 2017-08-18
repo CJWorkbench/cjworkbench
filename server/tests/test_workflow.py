@@ -19,21 +19,27 @@ class WorkflowTests(LoggedInTestCase):
         add_new_module_version('Module 2')
         add_new_module_version('Module 3')
 
+        # Add another user, with one public and one private workflow
+        self.otheruser = User.objects.create(username='user2', email='user2@users.com', password='password')
+        self.other_workflow_private = Workflow.objects.create(name="Other workflow private", owner=self.otheruser)
+        self.other_workflow_public = Workflow.objects.create(name="Other workflow public", owner=self.otheruser, public=True)
+
     def test_workflow_list_get(self):
         request = self.factory.get('/api/workflows/')
         force_authenticate(request, user=self.user)
         response = workflow_list(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data), 2) # should not pick up other user's workflows, even public ones
         self.assertEqual(response.data[0]['name'], 'Workflow 1')
         self.assertEqual(response.data[1]['name'], 'Workflow 2')
 
     def test_workflow_list_post(self):
+        start_count = Workflow.objects.count()
         request = self.factory.post('/api/workflows/', {'name': 'Workflow 3'})
         force_authenticate(request, user=self.user)
         response = workflow_list(request)
         self.assertIs(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Workflow.objects.count(), 3)
+        self.assertEqual(Workflow.objects.count(), start_count+1)
         self.assertEqual(Workflow.objects.filter(name='Workflow 3').count(), 1)
 
     def test_workflow_addmodule_put(self):
@@ -85,14 +91,7 @@ class WorkflowTests(LoggedInTestCase):
 
 
     def test_workflow_detail_get(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id
-        request = self.factory.get('/api/workflows/%d/' % pk_workflow)
-        response = workflow_detail(request, pk = pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'Workflow 1')
-
-    def test_workflow_detail_get(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id
+        pk_workflow = self.workflow1.id
         request = self.factory.get('/api/workflows/%d/' % pk_workflow)
         force_authenticate(request, user=self.user)
         response = workflow_detail(request, pk = pk_workflow)
@@ -109,6 +108,20 @@ class WorkflowTests(LoggedInTestCase):
         request = self.factory.get('/api/workflows/%d/' % pk_workflow)
         response = workflow_detail(request, pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # someone else's public workflow should be gettable
+        request = self.factory.get('/api/workflows/%d/' % self.other_workflow_public.id)
+        force_authenticate(request, user=self.user)
+        response = workflow_detail(request, pk = self.other_workflow_public.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['name'], 'Other workflow public')
+
+        # someone else's private workflow should 404
+        request = self.factory.get('/api/workflows/%d/' % self.other_workflow_private.id)
+        force_authenticate(request, user=self.user)
+        response = workflow_detail(request, pk=self.other_workflow_private.id)
+        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
+
 
     def test_workflow_reorder_modules(self):
         wfm1 = add_new_wf_module(self.workflow1, self.module_version1, 0)

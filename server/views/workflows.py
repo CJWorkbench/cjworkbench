@@ -28,7 +28,7 @@ def workflows2(request):
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     if request.method == 'GET':
-        workflows = Workflow.objects.filter(Q(owner=request.user) | Q(public=True))
+        workflows = Workflow.objects.filter(Q(owner=request.user))
         serializer = WorkflowSerializerLite(workflows, many=True)
         return Response(serializer.data)
 
