@@ -136,10 +136,10 @@ export default class WfModule extends React.Component {
     }
   }
 
-  // when Notes icon is clicked, show notes and start in editable state
+  // when Notes icon is clicked, show notes and start in editable state if not read-only
   showNotes(e) {
     e.stopPropagation();
-    this.setState({ showNotes: true,  showEditableNotes: true });
+    this.setState({ showNotes: true,  showEditableNotes: !this.props['data-isReadOnly'] });
   }
 
   hideNotes() {
@@ -208,7 +208,7 @@ export default class WfModule extends React.Component {
               </div>
 
     var notesIcon = undefined;
-    if (!this.state.showNotes)
+    if (!this.state.showNotes && !this.props['data-isReadOnly'])
       notesIcon = <div className='context-button mr-4' onClick={this.showNotes}>
                     <div className='icon-note' style={{'fontSize':'1.7rem'}} ></div>
                   </div>
@@ -221,7 +221,7 @@ export default class WfModule extends React.Component {
     }
 
     var contextMenu = undefined;
-    if(this.props['data-isReadOnly'] === false)
+    if(!this.props['data-isReadOnly'])
       contextMenu = <WfModuleContextMenu
           removeModule={ () => this.removeModule() }
           stopProp={(e) => e.stopPropagation()}
@@ -286,7 +286,7 @@ export default class WfModule extends React.Component {
 
 
 WfModule.propTypes = {
-  'data-isReadOnly':    PropTypes.bool,
+  'data-isReadOnly':    PropTypes.bool.isRequired,
   'data-wfmodule':      PropTypes.object,
   'data-revison':       PropTypes.number,
   'data-selected':      PropTypes.bool,

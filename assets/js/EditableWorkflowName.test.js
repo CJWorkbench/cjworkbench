@@ -1,10 +1,10 @@
 import React from 'react'
 import { shallow, mount } from 'enzyme'
 import EditableWorkflowName from './EditableWorkflowName'
-import { okResponseMock, jsonResponseMock } from './utils'
+import { okResponseMock } from './utils'
 
 
-describe('DataVersionSelect', () => {
+describe('EditableWorkflowName', () => {
 
   var wrapper; 
 
@@ -23,6 +23,12 @@ describe('DataVersionSelect', () => {
     it('Renders plain title', () => {
       expect(wrapper).toMatchSnapshot();
     });
+
+    it('Clicking on text does not change to edit state - dummy test', () => {
+      // TODO: how to simulate click when there is no onCLick method on component?
+      expect(true).toBe(true);
+    });
+
   });
 
   describe('NOT Read-only', () => {

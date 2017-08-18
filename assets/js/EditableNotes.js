@@ -53,25 +53,29 @@ export default class EditableNotes extends React.Component {
               ref={ (input) => { this.textInput = input; } }
               className='m-6'
             >
-            {this.props.isReadOnly ? (
-              <span className={this.props.editClass}>{this.props.value}</span>
-            ):(
-              <RIETextArea
-                value={this.props.value}
-                change={this.saveNotes}
-                propName="value"
-                className={this.props.editClass}
-                classEditing='editable-notes-field-active'
-                rows={rowCount}
-              />
-            )}
+            {this.props.isReadOnly 
+              ? ( <span className={this.props.editClass}>{this.props.value}</span> )
+              : ( 
+                  <RIETextArea
+                    value={this.props.value}
+                    change={this.saveNotes}
+                    propName="value"
+                    className={this.props.editClass}
+                    classEditing='editable-notes-field-active'
+                    rows={rowCount}
+                  />)
+            }
           </div>
   }
 }
 
 EditableNotes.propTypes = {
   value:          PropTypes.string,
-  wfModuleId:     PropTypes.number,
-  hideNotes:      PropTypes.func,
-  api:      PropTypes.object.isRequired,
+  wfModuleId:     PropTypes.number.isRequired,
+  hideNotes:      PropTypes.func.isRequired,
+  api:            PropTypes.object.isRequired,
+  isReadOnly:     PropTypes.bool.isRequired,
+  hideNotes:      PropTypes.func.isRequired,
+  editClass:      PropTypes.string,
+  startFocused:   PropTypes.bool.isRequired,
 };

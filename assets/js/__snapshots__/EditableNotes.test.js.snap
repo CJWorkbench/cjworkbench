@@ -1,11 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EditableNotes renders correctly 1`] = `
+exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state at start 1`] = `
 <EditableNotes
   api={Object {}}
   editClass=""
-  value="testing"
-  wf_module_id={1}
+  hideNotes={[Function]}
+  isReadOnly={false}
+  startFocused={true}
+  value="This is the best module"
+  wfModuleId={808}
 >
   <div
     className="m-6"
@@ -17,7 +20,7 @@ exports[`EditableNotes renders correctly 1`] = `
       className=""
       propName="value"
       rows={1}
-      value="testing"
+      value="This is the best module"
     >
       <span
         className=""
@@ -26,10 +29,60 @@ exports[`EditableNotes renders correctly 1`] = `
         tabIndex="0"
       >
         <span>
-          testing
+          This is the best module
         </span>
       </span>
     </RIETextArea>
   </div>
 </EditableNotes>
+`;
+
+exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edit state at start 1`] = `
+<EditableNotes
+  api={Object {}}
+  editClass=""
+  hideNotes={[Function]}
+  isReadOnly={false}
+  startFocused={false}
+  value="This is the best module"
+  wfModuleId={808}
+>
+  <div
+    className="m-6"
+    onKeyPress={[Function]}
+  >
+    <RIETextArea
+      change={[Function]}
+      classEditing="editable-notes-field-active"
+      className=""
+      propName="value"
+      rows={1}
+      value="This is the best module"
+    >
+      <span
+        className=""
+        onClick={[Function]}
+        onFocus={[Function]}
+        tabIndex="0"
+      >
+        <span>
+          This is the best module
+        </span>
+      </span>
+    </RIETextArea>
+  </div>
+</EditableNotes>
+`;
+
+exports[`EditableNotes Read-only, starts NOT focused Renders plain note 1`] = `
+<div
+  className="m-6"
+  onKeyPress={[Function]}
+>
+  <span
+    className=""
+  >
+    This is the best module
+  </span>
+</div>
 `;
