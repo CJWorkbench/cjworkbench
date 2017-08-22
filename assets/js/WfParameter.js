@@ -102,7 +102,7 @@ export default class WfParameter extends React.Component {
         // Different size and style if it's a multiline string
         var sclass, srows;
         if (!this.props.p.parameter_spec.multiline) {
-          sclass='wfmoduleStringInput t-d-gray content-2 text-field mt-1';
+          sclass='wfmoduleStringInput t-d-gray content-2 text-field';
           srows = 1;
         } else {
           sclass='wfmoduleTextInput t-d-gray info-1 text-field';
@@ -148,7 +148,7 @@ export default class WfParameter extends React.Component {
       case 'checkbox':
         return (
             <div>
-                <label className='label-margin t-d-gray content-3'>{this.name}:</label>
+                <label className='parameter-margin t-d-gray content-3 mr-2'>{this.name}:</label>
                 <input
                   disabled={this.props.isReadOnly}
                   type="checkbox"
@@ -169,8 +169,8 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className='label-margin'>
-            <div className='t-d-gray content-3 mb-2'>{this.name}:</div>
+          <div className='parameter-margin'>
+            <div className='t-d-gray content-3 label-margin'>{this.name}:</div>
             <ColumnParam
               selectedCol={this.props.p.value}
               getColNames={this.getInputColNames}
