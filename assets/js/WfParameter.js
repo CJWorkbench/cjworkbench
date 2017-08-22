@@ -183,7 +183,7 @@ export default class WfParameter extends React.Component {
       case 'multicolumn':
         return (
           <div className='parameter-margin'>
-            <div className='t-d-gray content-3 mb-3'>{this.name}:</div>
+            <div className='t-d-gray content-3 label-margin'>{this.name}:</div>
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}
               saveState={state => this.props.setParamText('colnames', state) }

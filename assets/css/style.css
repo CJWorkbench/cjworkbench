@@ -1020,7 +1020,7 @@ img.logo {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  padding: 3rem;
+  padding: 2rem;
   align-items:center;
 }
 
@@ -1084,12 +1084,16 @@ img.logo {
   font-family: 'Nunito Sans', sans-serif;
 }
 /*Module Parameters spacing within modules*/
+
+/*Bottom margin for a set of grouped paramters*/
 .parameter-margin {
   margin-bottom: 2rem;
 }
+/*Bottom margin for label above paramter*/
 .label-margin {
   margin-bottom: 0.5rem;
 }
+
 /* --- Module Library --- */
 /* TODO: replace with style guide classes where relevant  */
 
