@@ -410,6 +410,10 @@ body {
 .dropdown-menu-item:hover {
   background-color: #F5F5F5;
 }
+
+
+
+
 .list-workflow-meta li:not(:last-child):after {
   content: '-';
   display:inline-block;
@@ -582,7 +586,7 @@ img.logo {
 	position: absolute;
 }
 
-/* Contains modulestack + output pane. Position below nav */
+/*Contains modulestack + output pane. Position below nav */
 .workflow-container {
   display: flex;
   flex-flow: row;
@@ -594,7 +598,7 @@ img.logo {
   flex-grow: 1;
   flex-basis: 0;
   min-width: 0;
-  background-color: #F6F6F6;
+  background-color: #E9EBEE;
 }
 
 .modulestack-header {
@@ -602,11 +606,12 @@ img.logo {
   padding: 0.625rem;
 }
 
-.modulestack-list {
+/*No background to container*/
+/*.modulestack-list {
   background-color: #F2F2F2;
   padding: 0.625rem;
   border: 1px solid #EDECEC;
-}
+}*/
 
 .outputpane-right {
   flex-grow: 1;
