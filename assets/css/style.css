@@ -602,11 +602,12 @@ img.logo {
   padding: 0.625rem;
 }
 
-.modulestack-list {
+/*background container of stack of module */
+/*.modulestack-list {
   background-color: #F2F2F2;
   padding: 0.625rem;
   border: 1px solid #EDECEC;
-}
+}*/
 
 .outputpane-right {
   flex-grow: 1;

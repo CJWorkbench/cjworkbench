@@ -3,10 +3,10 @@
 exports[`WorkflowMetadata renders correctly 1`] = `
 <div>
   <ul
-    className="list-inline list-workflow-meta"
+    className="list-inline list-workflow-meta mt-2"
   >
     <li
-      className="list-inline-item"
+      className="list-inline-item content-3"
     >
       by 
       <strong>
@@ -14,7 +14,7 @@ exports[`WorkflowMetadata renders correctly 1`] = `
       </strong>
     </li>
     <li
-      className="list-inline-item"
+      className="list-inline-item content-3"
     >
       updated 
       <strong>
@@ -22,7 +22,7 @@ exports[`WorkflowMetadata renders correctly 1`] = `
       </strong>
     </li>
     <li
-      className="list-inline-item t-f-blue test-button"
+      className="list-inline-item content-3 t-f-blue test-button"
       onClick={[Function]}
     >
       <strong>
@@ -36,10 +36,10 @@ exports[`WorkflowMetadata renders correctly 1`] = `
 exports[`WorkflowMetadata renders correctly 2`] = `
 <div>
   <ul
-    className="list-inline list-workflow-meta"
+    className="list-inline list-workflow-meta mt-2"
   >
     <li
-      className="list-inline-item"
+      className="list-inline-item content-3"
     >
       by 
       <strong>
@@ -47,7 +47,7 @@ exports[`WorkflowMetadata renders correctly 2`] = `
       </strong>
     </li>
     <li
-      className="list-inline-item"
+      className="list-inline-item content-3"
     >
       updated 
       <strong>
@@ -55,7 +55,7 @@ exports[`WorkflowMetadata renders correctly 2`] = `
       </strong>
     </li>
     <li
-      className="list-inline-item t-f-blue test-button"
+      className="list-inline-item content-3 t-f-blue test-button"
       onClick={[Function]}
     >
       <strong>
@@ -141,10 +141,10 @@ exports[`WorkflowMetadata renders correctly 2`] = `
 exports[`WorkflowMetadata renders correctly 3`] = `
 <div>
   <ul
-    className="list-inline list-workflow-meta"
+    className="list-inline list-workflow-meta mt-2"
   >
     <li
-      className="list-inline-item"
+      className="list-inline-item content-3"
     >
       by 
       <strong>
@@ -152,7 +152,7 @@ exports[`WorkflowMetadata renders correctly 3`] = `
       </strong>
     </li>
     <li
-      className="list-inline-item"
+      className="list-inline-item content-3"
     >
       updated 
       <strong>
@@ -160,7 +160,7 @@ exports[`WorkflowMetadata renders correctly 3`] = `
       </strong>
     </li>
     <li
-      className="list-inline-item t-f-blue test-button"
+      className="list-inline-item content-3 t-f-blue test-button"
       onClick={[Function]}
     >
       <strong>

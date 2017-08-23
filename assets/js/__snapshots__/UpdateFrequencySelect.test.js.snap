@@ -23,7 +23,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
     className="content-3 t-m-gray"
   >
     Checked 
-    2 days ago
+    1 day ago
   </div>
   <Modal
     autoFocus={true}
@@ -186,7 +186,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
     className="content-3 t-m-gray"
   >
     Checked 
-    2 days ago
+    1 day ago
   </div>
   <Modal
     autoFocus={true}
@@ -349,7 +349,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
     className="content-3 t-m-gray"
   >
     Checked 
-    2 days ago
+    1 day ago
   </div>
   <Modal
     autoFocus={true}
@@ -512,7 +512,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
     className="content-3 t-m-gray"
   >
     Checked 
-    2 days ago
+    1 day ago
   </div>
   <Modal
     autoFocus={true}
