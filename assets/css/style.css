@@ -394,6 +394,7 @@ body {
   border:0px;
   border-radius: 0px;
   box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.15);
+  padding:0px;
 }
 
 .dropdown-menu-item {
@@ -736,7 +737,7 @@ img.logo {
 .checkbox-container {
   background-color: #FFFFFF;
   height: 4rem;
-  width: 17rem;
+  width: 48.74%;
   margin: 1px 3px 1px 3px;
   padding: 1.3rem 2rem 1.3rem 2rem;
 }
@@ -870,14 +871,17 @@ img.logo {
 .icon-sort-right:before {
   content: "\e910";
   color: #686768;
+  font-size: 1rem;
 }
 .icon-sort-down:before {
   content: "\e913";
   color: #686768;
+  font-size: 1rem;
 }
 .icon-sort-up:before {
   content: "\e914";
   color: #686768;
+  font-size: 1rem;
 }
 .icon-checkbox-checked .path1:before {
   content: "\e901";
@@ -918,11 +922,11 @@ img.logo {
 }
 .icon-more:before {
   content: "\e918";
-  color: #686768;
+  color: #B4B4B4;
 }
 .icon-note:before {
   content: "\e919";
-  color: #686768;
+  color: #b4b4b4;
 }
 .icon-process:before {
   content: "\e91a";
