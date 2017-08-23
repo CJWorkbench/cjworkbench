@@ -96,12 +96,12 @@ export default class WorkflowMetadata extends React.Component {
 
     return (
       <div>
-        <ul className="list-inline list-workflow-meta mt-2">
-          <li className="list-inline-item content-3">by <strong>{this.props.workflow.owner_name}</strong></li>
-          <li className="list-inline-item content-3">
+        <ul className="list-inline list-workflow-meta">
+          <li className="list-inline-item">by <strong>{this.props.workflow.owner_name}</strong></li>
+          <li className="list-inline-item">
             updated <strong>{timeDifference(this.props.workflow.last_update, now)}</strong>
           </li>
-          <li className="list-inline-item content-3 t-f-blue test-button" onClick={this.togglePrivacyModal}>
+          <li className="list-inline-item t-f-blue test-button" onClick={this.togglePrivacyModal}>
             <strong>{this.state.isPublic ? 'public' : 'private'}</strong></li>
         </ul>
         { this.renderPrivacyModal() }

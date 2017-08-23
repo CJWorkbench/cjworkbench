@@ -235,7 +235,7 @@ export default class WfModule extends React.Component {
       <div className='container' {...this.props} onClick={this.click}>
         {/* --- The whole card --- */}
         <div 
-          className='card mb-2' 
+          className='card mb-1' 
           style={{'borderRadius': 0, 'border': 0}}
         >
           <div className='card-block p-0 d-flex justify-content-between'>
