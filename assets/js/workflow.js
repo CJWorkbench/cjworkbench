@@ -189,5 +189,7 @@ Workflow.propTypes = {
   workflow:           PropTypes.object,             // not required as fetched after page loads
   selected_wf_module: PropTypes.number,
   addModule:          PropTypes.func.isRequired,
-  removeModule:       PropTypes.func.isRequired
+  removeModule:       PropTypes.func.isRequired,
+  user:               PropTypes.object,
+  isReadOnly:         PropTypes.boolean
 };
