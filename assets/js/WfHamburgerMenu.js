@@ -18,7 +18,7 @@ export default class WfHamburgerMenu extends React.Component {
           href="/workflows"
           className='dropdown-menu-item'
         >
-          <span className='t-d-gray content-3 ml-3'>Your Workflows</span>
+          <span className='t-d-gray content-3 ml-3'>My Workflows</span>
         </DropdownItem>;
       undoRedo =
         <div>
@@ -73,8 +73,9 @@ export default class WfHamburgerMenu extends React.Component {
           href="http://blog.cjworkbench.org"
           className='dropdown-menu-item'
         >
-           <span className='t-d-gray content-3 ml-3'>Help</span>
+           <span className='t-d-gray content-3 ml-3'>Learn</span>
         </DropdownItem>
+        <DropdownItem divider key={300} />
         <DropdownItem
           key={5}
           tag="a"

@@ -99,9 +99,20 @@ exports[`renders correctly 1`] = `
                               <span
                                 className="t-d-gray content-3 ml-3"
                               >
-                                Help
+                                Learn
                               </span>
                             </a>
+                          </DropdownItem>
+                          <DropdownItem
+                            divider={true}
+                            tag="button"
+                            toggle={true}
+                          >
+                            <div
+                              className="dropdown-divider"
+                              onClick={[Function]}
+                              tabIndex="-1"
+                            />
                           </DropdownItem>
                           <DropdownItem
                             className="dropdown-menu-item"
@@ -289,9 +300,20 @@ exports[`renders correctly 2`] = `
                               <span
                                 className="t-d-gray content-3 ml-3"
                               >
-                                Help
+                                Learn
                               </span>
                             </a>
+                          </DropdownItem>
+                          <DropdownItem
+                            divider={true}
+                            tag="button"
+                            toggle={true}
+                          >
+                            <div
+                              className="dropdown-divider"
+                              onClick={[Function]}
+                              tabIndex="-1"
+                            />
                           </DropdownItem>
                           <DropdownItem
                             className="dropdown-menu-item"

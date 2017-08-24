@@ -388,6 +388,9 @@ body {
   justify-content: flex-start;
   padding-left: 1rem;
 }
+.dropdown-divider{
+  margin:0px;
+}
 .dropdown-menu-item:hover {
   background-color: #F5F5F5;
 }
@@ -412,7 +415,6 @@ body {
   z-index: 1030;
   background-color: #48C8D7;
   color: #FFFFFF;
-  border-bottom: 1px solid;
   padding: 1rem 4rem 1rem 4rem;
 }
 
@@ -582,13 +584,6 @@ img.logo {
   padding: 0.625rem;
 }
 
-.modulestack-list {
-  background-color: #F2F2F2;
-  padding: 0.625rem;
-  border: 1px solid #EDECEC;
-  width: 510px;
-}
-
 .outputpane-right {
   flex-grow: 1;
   flex-basis: 0;
@@ -600,22 +595,35 @@ img.logo {
   height: calc(100% - 6rem);
   width: 50%;
   background-color: #F2F2F2;
-  padding: 0.9375rem;
   position: fixed;
 }
 
 .outputpane-header {
   height: 7rem;
-  border: 1px solid #EDECEC;
   background-color: #FFFFFF;
   padding: 2rem 3rem 2rem 3rem;
 }
 
 .outputpane-data {
   height: calc(100% - 3rem);
-  border: 1px solid #EDECEC;
   overflow: hidden; /* important as it prevents grid contents from interfering with window resizing */
 }
+
+/*Table*/
+.react-grid-HeaderCell{
+  background-color: #7A9BB0;
+  color:white;
+  border-right:0px;
+  border-bottom:0px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.05rem;
+}
+
+.react-grid-Grid{
+  border:0px;
+}
+
 
 
 /* ---- WfModule ---- */

@@ -96,7 +96,7 @@ export default class WorkflowMetadata extends React.Component {
 
     return (
       <div>
-        <ul className="list-inline list-workflow-meta">
+        <ul className="list-inline list-workflow-meta content-3 mt-2">
           <li className="list-inline-item">by <strong>{this.props.workflow.owner_name}</strong></li>
           <li className="list-inline-item">
             updated <strong>{timeDifference(this.props.workflow.last_update, now)}</strong>
