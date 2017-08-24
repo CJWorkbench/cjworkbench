@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ModuleLibrary Renders 1`] = `
+exports[`ModuleLibrary Renders - no modules 1`] = `
 <div>
   <div
     className="module-library-open"
