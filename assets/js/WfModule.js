@@ -210,7 +210,7 @@ export default class WfModule extends React.Component {
     var notesIcon = undefined;
     if (!this.state.showNotes && !this.props['data-isReadOnly'])
       notesIcon = <div className='context-button mr-4' onClick={this.showNotes}>
-                    <div className='icon-note' style={{'fontSize':'2rem'}} ></div>
+                    <div className='icon-note'></div>
                   </div>
 
     var arrow = undefined;

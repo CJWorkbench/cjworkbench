@@ -94,12 +94,18 @@ export default class WorkflowMetadata extends React.Component {
 
     var now = new Date();
 
+    // only list Owner attribution if one exists & is not just whitespace
+    var owner = this.props.workflow.owner_name
+    var attribution = (owner && owner.replace(/\s/g, '').length)
+      ? <li className="list-inline-item">By <strong>{owner}</strong></li>
+      : null
+
     return (
       <div>
-        <ul className="list-inline list-workflow-meta content-3 mt-2">
-          <li className="list-inline-item">by <strong>{this.props.workflow.owner_name}</strong></li>
+        <ul className="list-inline list-workflow-meta">
+          {attribution}
           <li className="list-inline-item">
-            updated <strong>{timeDifference(this.props.workflow.last_update, now)}</strong>
+            Updated <strong>{timeDifference(this.props.workflow.last_update, now)}</strong>
           </li>
           <li className="list-inline-item t-f-blue test-button" onClick={this.togglePrivacyModal}>
             <strong>{this.state.isPublic ? 'public' : 'private'}</strong></li>
