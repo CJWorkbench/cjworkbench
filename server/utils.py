@@ -23,3 +23,13 @@ def seconds_to_count_and_units(seconds):
         unit_len = time_units[unit]
         if seconds % unit_len == 0:
             return {'units': unit, 'count': int(seconds/unit_len)}
+
+# Displays the user name depending on what user data
+# we have available
+def user_display(user):
+    if hasattr(user, 'first_name') or hasattr(user, 'last_name'):
+        return '%s %s' % (user.first_name, user.last_name)
+    elif hasattr(user, 'email'):
+        return user.email
+    else:
+        return 'Anonymous'

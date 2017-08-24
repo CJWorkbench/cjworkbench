@@ -13,9 +13,6 @@ urlpatterns = [
     url(r'^workflows/$', views.render_workflows),
     url(r'^api/workflows/?$', views.workflow_list),
 
-    # users
-    url(r'^api/user/$', views.user_info),
-
     # workflows
     url(r'^workflows/(?P<pk>[0-9]+)/$', views.render_workflow),
     url(r'^api/workflows/(?P<pk>[0-9]+)/?$', views.workflow_detail),
