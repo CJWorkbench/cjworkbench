@@ -757,15 +757,15 @@ img.logo {
 /* --- Icon font set --- */
 
 @font-face {
-  font-family: 'Workbench-icon-font-v1';
-  src: url('../fonts/Workbench-icon-font-v1.woff?l5gind') format('woff');
+  font-family: 'Workbench';
+  src: url('../fonts/Workbench.woff?p3np25') format('woff');
   font-weight: normal;
   font-style: normal;
 }
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'Workbench-icon-font-v1' !important;
+  font-family: 'Workbench' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
@@ -778,179 +778,170 @@ img.logo {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-group:before {
-  content: "\e924";
-  color: #686768;
-}
-.icon-code:before {
-  content: "\e91d";
-  color: #686768;
-}
-.icon-wrangle:before {
-  content: "\e91e";
-  color: #4a4a4a;
-}
-.icon-share:before {
-  content: "\e91c";
-  color: #686768;
-}
-.icon-folder-blue:before {
-  content: "\e917";
-  color: #48c8d7;
-}
-.icon-notification-filled:before {
-  content: "\e90d";
-  color: #fff;
-}
-.icon-notification:before {
-  content: "\e916";
-  color: #fff;
-}
-.icon-checkbox-fill:before {
-  content: "\e915";
-  color: #48c8d7;
-}
-.icon-chart:before {
-  content: "\e909";
-  color: #686768;
-}
-.icon-settings:before {
+
+.icon-add:before {
   content: "\e900";
   color: #686768;
 }
-.icon-close:before {
-  content: "\e905";
-  color: #686768;
-}
-.icon-close-white:before {
-  content: "\e905";
-  color: #FFFFFF;
-  font-size: 1.5rem;
-}
-.icon-edit:before {
-  content: "\e906";
-  color: #686768;
-}
-.icon-info:before {
-  content: "\e907";
-  color: #686768;
-}
-.icon-join:before {
-  content: "\e908";
-  color: #686768;
-}
-.icon-checkbox-unchecked:before {
-  content: "\e90b";
-  color: #686768;
-}
-.icon-sigma:before {
-  content: "\e90e";
-  color: #686768;
-}
-.icon-sort-right:before {
-  content: "\e910";
-  color: #686768;
-  font-size: 1rem;
-}
-.icon-sort-down:before {
-  content: "\e913";
-  color: #686768;
-  font-size: 1rem;
-}
-.icon-sort-up:before {
-  content: "\e914";
-  color: #686768;
-  font-size: 1rem;
-}
-.icon-checkbox-checked .path1:before {
+.icon-bin:before {
   content: "\e901";
-  color: rgb(72, 200, 215);
+  color: #686768;
 }
-.icon-checkbox-checked .path2:before {
+.icon-calendar:before {
   content: "\e902";
-  margin-left: -1em;
-  color: rgb(255, 255, 255);
+  color: #686768;
 }
-.icon-download:before {
+.icon-chart:before {
   content: "\e903";
   color: #686768;
 }
-.icon-upload:before {
+.icon-check:before {
   content: "\e904";
+  color: #686768;
+}
+.icon-checkbox-fill:before {
+  content: "\e905";
+  color: #686768;
+}
+.icon-checkbox-unchecked:before {
+  content: "\e906";
+  color: #686768;
+}
+.icon-close:before {
+  content: "\e907";
+  color: #686768;
+}
+.icon-code:before {
+  content: "\e908";
+  color: #686768;
+}
+.icon-database:before {
+  content: "\e909";
   color: #686768;
 }
 .icon-doc:before {
   content: "\e90a";
   color: #686768;
 }
+.icon-download:before {
+  content: "\e90b";
+  color: #686768;
+}
 .icon-duplicate:before {
   content: "\e90c";
   color: #686768;
 }
+.icon-edit:before {
+  content: "\e90d";
+  color: #686768;
+}
 .icon-filter:before {
+  content: "\e90e";
+  color: #686768;
+}
+.icon-folder:before {
   content: "\e90f";
   color: #686768;
 }
 .icon-full-screen:before {
+  content: "\e910";
+  color: #686768;
+}
+.icon-group:before {
   content: "\e911";
   color: #686768;
 }
-.icon-url:before {
+.icon-info:before {
   content: "\e912";
   color: #686768;
 }
+.icon-join:before {
+  content: "\e913";
+  color: #686768;
+}
 .icon-more:before {
-  content: "\e918";
-  color: #B4B4B4;
+  content: "\e914";
+  color: #686768;
 }
 .icon-note:before {
-  content: "\e919";
-  color: #b4b4b4;
+  content: "\e915";
+  color: #686768;
+}
+.icon-notification-filled:before {
+  content: "\e916";
+  color: #fff;
+}
+.icon-notification:before {
+  content: "\e917";
+  color: #fff;
 }
 .icon-process:before {
-  content: "\e91a";
+  content: "\e918";
+  color: #686768;
+}
+.icon-redo:before {
+  content: "\e919";
   color: #686768;
 }
 .icon-search:before {
+  content: "\e91a";
+  color: #686768;
+}
+.icon-settings:before {
   content: "\e91b";
   color: #686768;
 }
-.icon-table:before {
+.icon-share:before {
+  content: "\e91c";
+  color: #686768;
+}
+.icon-sigma:before {
+  content: "\e91d";
+  color: #686768;
+}
+.icon-sort-down:before {
+  content: "\e91e";
+  color: #686768;
+}
+.icon-sort-left:before {
   content: "\e91f";
   color: #686768;
 }
-.icon-bin:before {
+.icon-sort-right:before {
   content: "\e920";
   color: #686768;
 }
-.icon-twitter:before {
+.icon-sort-up:before {
   content: "\e921";
   color: #686768;
 }
-.icon-checkbox-gray .path1:before {
+.icon-table:before {
   content: "\e922";
-  color: rgb(104, 103, 104);
+  color: #686768;
 }
-.icon-checkbox-gray .path2:before {
+.icon-transform:before {
   content: "\e923";
-  margin-left: -1em;
-  color: rgb(255, 255, 255);
+  color: #686768;
 }
-.icon-alert:before {
+.icon-twitter:before {
+  content: "\e924";
+  color: #686768;
+}
+.icon-undo:before {
+  content: "\e925";
+  color: #686768;
+}
+.icon-upload:before {
   content: "\e926";
   color: #686768;
 }
-.icon-api:before {
+.icon-url:before {
   content: "\e927";
   color: #686768;
 }
-.icon-calendar:before {
+.icon-wrangle:before {
   content: "\e928";
-  color: #686768;
-}
-.icon-check:before {
-  content: "\e92a";
-  color: #686768;
+  color: #4a4a4a;
 }
 
 
@@ -1079,7 +1070,7 @@ img.logo {
 
 .module-library-open {
   height: calc(100% - 6rem);
-  width: 210px;  
+  width: 200px;  
   background-color: #F2F2F2;  
   border-right: 1px solid #DDDDDD;
 }
