@@ -2,6 +2,9 @@ from rest_framework import serializers
 from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Module, ModuleVersion
 from server.utils import seconds_to_count_and_units
 from account.utils import user_display
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 # So far, no one actually wants to see the default value.
 class ParameterSpecSerializer(serializers.ModelSerializer):
@@ -32,6 +35,16 @@ class ModuleVersionSerializer(serializers.ModelSerializer):
     class Meta:
         model = ModuleVersion
         fields = ('module', 'source_version_hash', 'last_update_time')
+
+class UserSerializer(serializers.ModelSerializer):
+    display_name = serializers.SerializerMethodField()
+
+    def get_display_name(self, obj):
+        return user_display(obj)
+
+    class Meta:
+        model = User
+        fields = ('email', 'display_name', 'id')
 
 
 class WfModuleSerializer(serializers.ModelSerializer):

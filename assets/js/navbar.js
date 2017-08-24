@@ -18,8 +18,8 @@ export class WorkflowListNavBar extends React.Component {
             <h1 className="mb-0 mr-auto title-2"><a href="/workflows">Workbench</a></h1>
           </div>
           <div className='d-flex flex-row align-items-center'>
-            <a href="http://cjworkbench.org/index.php/blog/" className='t-white content-2 mr-5'>Learn</a>            
-            <WfHamburgerMenu />            
+            <a href="http://cjworkbench.org/index.php/blog/" className='t-white content-2 mr-5'>Learn</a>
+            <WfHamburgerMenu />
           </div>
         </nav>
       </div>
@@ -31,7 +31,6 @@ export class WorkflowListNavBar extends React.Component {
 export class WorkflowNavBar extends React.Component {
 
   render() {
-
     return (
       <div>
         <nav className="navbar">
@@ -41,7 +40,7 @@ export class WorkflowNavBar extends React.Component {
           </div>
           <div className='d-flex flex-row align-items-center'>
             <a href="http://cjworkbench.org/index.php/blog/" className='t-white content-2 mr-5'>Learn</a>
-            <WfHamburgerMenu workflowId={this.props.workflowId} api={this.props.api} isReadOnly={this.props.isReadOnly} />
+            <WfHamburgerMenu workflowId={this.props.workflowId} api={this.props.api} isReadOnly={this.props.isReadOnly} user={this.props.user} />
           </div>
         </nav>
       </div>

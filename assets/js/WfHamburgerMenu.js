@@ -43,7 +43,7 @@ export default class WfHamburgerMenu extends React.Component {
 
     var menuItems;
 
-    if (this.props.isReadOnly) {
+    if (typeof this.props.user !== 'undefined' && !this.props.user.id) {
       menuItems = (
         <div>
           <DropdownItem

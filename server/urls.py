@@ -10,11 +10,14 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url='/workflows')),
 
     # list all workflows
-    url(r'^workflows/$', views.workflows2),
+    url(r'^workflows/$', views.render_workflows),
     url(r'^api/workflows/?$', views.workflow_list),
 
+    # users
+    url(r'^api/user/$', views.user_info),
+
     # workflows
-    url(r'^workflows/(?P<pk>[0-9]+)/$', TemplateView.as_view(template_name='workflow.html')),
+    url(r'^workflows/(?P<pk>[0-9]+)/$', views.render_workflow),
     url(r'^api/workflows/(?P<pk>[0-9]+)/?$', views.workflow_detail),
 
     url(r'^api/workflows/(?P<pk>[0-9]+)/addmodule/?$', views.workflow_addmodule),
@@ -46,4 +49,3 @@ urlpatterns = [
     # URL endpoint to trigger internal cron jobs
     url(r'^runcron$', views.runcron)
 ]
-

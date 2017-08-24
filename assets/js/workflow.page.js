@@ -21,7 +21,7 @@ const mapStateToProps = (state) => {
   return {
     workflow: state.workflow,
     selected_wf_module: state.selected_wf_module,
-
+    user: state.user,
     // This is the top level dependency injection for all API calls on this page
     api: api
   }

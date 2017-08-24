@@ -17,7 +17,7 @@ const api = WorkbenchAPI();
 // ---- Our Store ----
 // Master state for the workflow. Export so that components can store.dispatch()
 
-export let store = createStore(workflowReducer, applyMiddleware(promiseMiddleware));
+export let store = createStore(workflowReducer, window.initState, applyMiddleware(promiseMiddleware));
 
 // ---- Actions ----
 
@@ -82,6 +82,7 @@ export function changeSelectedWfModuleAction(wfModuleID) {
 //  selected_wf_module  - id of selected (usually last-clicked) module, drives output pane
 
 // Main dispatch for actions. Each action mutates the state to a new state, in typical Redux fashion
+
 export function workflowReducer(state, action) {
   if (!state) {
     state = {}; // initial state. we'll load a workflow soon.
@@ -104,11 +105,11 @@ export function workflowReducer(state, action) {
       if (action.workflow.wf_modules && action.workflow.wf_modules.length) {
         return Object.assign({}, state, {
           selected_wf_module: action.workflow.wf_modules[0].id,
-          workflow: action.workflow          
+          workflow: action.workflow
         });
       } else {
         return Object.assign({}, state, {
-          workflow: action.workflow          
+          workflow: action.workflow
         });
       }
 
@@ -156,5 +157,3 @@ export function workflowReducer(state, action) {
       return state
   }
 }
-
-

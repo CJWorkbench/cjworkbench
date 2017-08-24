@@ -58,13 +58,13 @@ var SortableList = React.createClass({
           api={this.props.api}
           outline="list"
           childProps={{
-            'data-isReadOnly': this.props.data.read_only, 
+            'data-isReadOnly': this.props.data.read_only,
             'data-wfmodule': item,
             'data-changeParam': this.props.changeParam,
             'data-removeModule': this.props.removeModule,
             'data-revision': this.props.data.revision,
             'data-selected': (item.id == this.props.selected_wf_module),
-            'data-api': this.props.api 
+            'data-api': this.props.api
           }}
         />
       );
@@ -108,8 +108,8 @@ export default class Workflow extends React.Component {
 
     var outputPane = null;
     if (this.props.workflow.wf_modules.length > 0) {
-      outputPane =  <OutputPane 
-                      id={this.props.selected_wf_module} 
+      outputPane =  <OutputPane
+                      id={this.props.selected_wf_module}
                       revision={this.props.workflow.revision}
                       api={this.props.api}
                     />
@@ -135,10 +135,11 @@ export default class Workflow extends React.Component {
     return (
       <div className="workflow-root">
 
-        <WorkflowNavBar 
-          workflowId={this.props.workflow.id} 
-          api={this.props.api} 
+        <WorkflowNavBar
+          workflowId={this.props.workflow.id}
+          api={this.props.api}
           isReadOnly={this.props.workflow.read_only}
+          user={this.props.user}
         />
 
         <div className="workflow-container">

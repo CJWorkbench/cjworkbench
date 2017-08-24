@@ -250,7 +250,16 @@ LOGGING = {
 
 ACCOUNT_EMAIL_UNIQUE = True
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
-ACCOUNT_USER_DISPLAY = lambda user: '%s %s' % (user.first_name, user.last_name) if user.first_name or user.last_name else user.email
+
+def user_display(user):
+    if hasattr(user, 'first_name') or hasattr(user, 'last_name'):
+        return '%s %s' % (user.first_name, user.last_name)
+    elif hasattr(user, 'email'):
+        return user.email
+    else:
+        return 'Anonymous'
+
+ACCOUNT_USER_DISPLAY = user_display
 
 AUTHENTICATION_BACKENDS = [
     'account.auth_backends.EmailAuthenticationBackend',
