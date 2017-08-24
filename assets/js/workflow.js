@@ -163,7 +163,7 @@ export default class Workflow extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="modulestack-list w-75 mx-auto ">
+            <div className="modulestack-list mx-auto ">
               <SortableList
                 data={this.props.workflow}
                 selected_wf_module={this.props.selected_wf_module}
