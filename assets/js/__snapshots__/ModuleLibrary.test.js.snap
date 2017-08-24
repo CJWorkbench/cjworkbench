@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ModuleLibrary Renders - no modules 1`] = `
-<div>
+<div
+  className="module-library"
+>
   <div
     className="module-library-open"
   >
@@ -58,7 +60,9 @@ exports[`ModuleLibrary Renders - no modules 1`] = `
             "_pendingReplaceState": false,
             "_pendingStateQueue": null,
             "_renderedComponent": NoopInternalComponent {
-              "_currentElement": <div>
+              "_currentElement": <div
+                className="module-library"
+        >
                 <div
                         className="module-library-open"
                 >
@@ -98,7 +102,9 @@ exports[`ModuleLibrary Renders - no modules 1`] = `
                 </div>
         </div>,
               "_debugID": 2,
-              "_renderedOutput": <div>
+              "_renderedOutput": <div
+                className="module-library"
+        >
                 <div
                         className="module-library-open"
                 >
