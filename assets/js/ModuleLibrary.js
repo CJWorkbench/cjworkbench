@@ -183,13 +183,14 @@ export default class ModuleLibrary extends React.Component {
                   </div>
 
     let collapsed = <div className='module-library-collapsed' onClick={this.toggleLibrary}>
-                      <span className='title-3 ml-3'>Add Module</span>
+                      <div className='icon-search'></div>
+                      <div className='title-3 ml-3'>Add Module</div>
                     </div>
 
     let library = (this.state.libraryOpen) ? visible : collapsed
 
     return (
-      <div>
+      <div className='module-library'>
         {library}
       </div>
     );

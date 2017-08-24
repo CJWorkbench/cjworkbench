@@ -572,7 +572,8 @@ img.logo {
 }
 
 .modulestack-center {
-  background-color: #F6F6F6;
+  height: 100%;
+  background-color: #E9EBEE;
   width: 600px;
 }
 
@@ -1068,15 +1069,17 @@ img.logo {
 
 /* --- Module Library --- */
 
+.module-library {
+  height: 100%;
+}
 .module-library-open {
-  height: calc(100% - 6rem);
+  height: 100%;
   width: 210px;  
   background-color: #F2F2F2;  
   border-right: 1px solid #DDDDDD;
 }
-
 .module-library-collapsed {
-  height: calc(100% - 6rem);
+  height: 100%;
   width: 70px;  
   background-color: #F6F6F6;
 }
