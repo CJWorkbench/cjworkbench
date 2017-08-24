@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { Button } from 'reactstrap';
 import { sortable } from 'react-sortable';
 import ModuleCategory from './ModuleCategory';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
@@ -50,13 +49,13 @@ export default class ModuleLibrary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      libraryOpen: true, 
       items: [], 
-      importFromGitHubVisible: false,
     };
     this.addModule = this.props.addModule.bind(this);
     this.workflow = this.props.workflow; 
+    this.toggleLibrary = this.toggleLibrary.bind(this);
 
-    this.setImportFromGitHubComponentVisibility = this.setImportFromGitHubComponentVisibility.bind(this);
   }
 
   /**
@@ -108,14 +107,10 @@ export default class ModuleLibrary extends React.Component {
     this.componentWillMount() // dummy update to force a re-render. 
   }
 
-  /**
-   * Sets the visibility of the "Import from GitHub" component.
-   */
-  setImportFromGitHubComponentVisibility(isVisible) {
-    this.setState(oldState => ({
-      importFromGitHubVisible: isVisible
-    }));
+  toggleLibrary() {
+    this.setState({ libraryOpen: !this.state.libraryOpen });
   }
+
 
   /**
    * Renders the Module Library, i.e. a collection of <Module Category>, 
@@ -149,7 +144,7 @@ export default class ModuleLibrary extends React.Component {
         previousCategory = item.category;
       } else if (previousCategory !== item.category) {
         // We should only create the ModuleCategory once we have all modules 
-        //for given category. 
+        // for given category. 
         let moduleCategory = <ModuleCategory
           key={previousCategory}
           modules={modulesByCategory}
@@ -163,57 +158,46 @@ export default class ModuleLibrary extends React.Component {
 
 
     // the last item / category 
-    let moduleCategory = <ModuleCategory
-      key={previousCategory}
-      modules={modulesByCategory}
-      />;
+    let moduleCategory =  <ModuleCategory
+                            key={previousCategory}
+                            modules={modulesByCategory}
+                          />;
     categories.push(moduleCategory);
 
-    // Import from GitHub component 
-    let importFromGitHub = <ImportModuleFromGitHub url="" moduleLibrary={this}/>;
+    let visible = <div className='module-library-open'>
+                    <div className='library-nav-bar'>
+                      <div className='d-flex justify-content-start flex-row'>
+                        <div className='icon-close ml-auto' onClick={this.toggleLibrary}></div>
+                      </div>
+                      <ModuleSearch addModule={this.props.addModule} 
+                                        items={this.state.items} 
+                                        workflow={this.workflow}
+                      />
+                    </div>
+                    <div className='mb-5'>
+                      <CategoriesList
+                        data={categories}
+                      />
+                    </div>
+                    <ImportModuleFromGitHub moduleLibrary={this}/>
+                  </div>
 
-    var display = null; 
-    var displayClassName = null;
+    let collapsed = <div className='module-library-collapsed' onClick={this.toggleLibrary}>
+                      <span className='title-3 ml-3'>Add Module</span>
+                    </div>
 
-    if (this.state.importFromGitHubVisible) {
-      displayClassName = 'import-module';
-      display = importFromGitHub;
-    } else {
-      displayClassName = 'import-module-button content-3 ml-3 mt-2';
-      display = <div className='' onClick={() =>
-        this.setImportFromGitHubComponentVisibility(true)}> 
-        Import from GitHub
-        </div>;
-    }
+    let library = (this.state.libraryOpen) ? visible : collapsed
 
     return (
-      <div className="module-library">
-        <div className="module-library-container">
-          <div className="nav-bar">
-            <div className='d-flex justify-content-start flex-row'>
-              <div className='title-3 t-white mr-3'>Module Library</div>
-              <div className={displayClassName}>{display}</div>
-              <div className='icon-close-white ml-auto' onClick={this.props.toggleModuleLibrary}></div>
-            </div>
-            <ModuleSearch addModule={this.props.addModule} 
-                              items={this.state.items} 
-                              workflow={this.workflow}
-            />
-          </div>
-          <div className=''>
-            <CategoriesList
-              data={categories}
-            />
-          </div>
-        </div>
+      <div>
+        {library}
       </div>
     );
   }
 }
 
 ModuleLibrary.propTypes = {
-  addModule:            PropTypes.func,
-  toggleModuleLibrary:  PropTypes.func,
-  workflow:             PropTypes.object,
-  api:      PropTypes.object.isRequired,
+  addModule: PropTypes.func.isRequired,
+  workflow:  PropTypes.object.isRequired,
+  api:       PropTypes.object.isRequired,
 };

@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModuleSearch Renders 1`] = `
+<Autosuggest
+  alwaysRenderSuggestions={false}
+  focusInputOnSuggestionClick={true}
+  getSectionSuggestions={[Function]}
+  getSuggestionValue={[Function]}
+  highlightFirstSuggestion={false}
+  id="1"
+  inputProps={
+    Object {
+      "onChange": [Function],
+      "placeholder": "Search Modules",
+      "value": "",
+    }
+  }
+  multiSection={true}
+  onSuggestionSelected={[Function]}
+  onSuggestionsClearRequested={[Function]}
+  onSuggestionsFetchRequested={[Function]}
+  renderSectionTitle={[Function]}
+  renderSuggestion={[Function]}
+  renderSuggestionsContainer={[Function]}
+  shouldRenderSuggestions={[Function]}
+  suggestions={Array []}
+  theme={
+    Object {
+      "container": "react-autosuggest__container",
+      "containerOpen": "react-autosuggest__container--open",
+      "input": "react-autosuggest__input",
+      "inputFocused": "react-autosuggest__input--focused",
+      "inputOpen": "react-autosuggest__input--open",
+      "sectionContainer": "react-autosuggest__section-container",
+      "sectionContainerFirst": "react-autosuggest__section-container--first",
+      "sectionTitle": "react-autosuggest__section-title",
+      "suggestion": "react-autosuggest__suggestion",
+      "suggestionFirst": "react-autosuggest__suggestion--first",
+      "suggestionHighlighted": "react-autosuggest__suggestion--highlighted",
+      "suggestionsContainer": "react-autosuggest__suggestions-container",
+      "suggestionsContainerOpen": "react-autosuggest__suggestions-container--open",
+      "suggestionsList": "react-autosuggest__suggestions-list",
+    }
+  }
+/>
+`;

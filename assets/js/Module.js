@@ -40,23 +40,17 @@ export default class Module extends React.Component {
   }
 
   render() {
-    var moduleName = this.props['data-name']; // name of module 
-    var description = this.props['data-description'];
-    var author = this.props['data-author'];
-    // No Authors available yet, putting in a placeholder instead
-    // var metadata = "by " + author;
-    var metadata = "v1.0";    
-    var icon = 'icon-' + this.props['icon'] + ' large-icon mr-5';
+    var moduleName = this.props['data-name']; 
+    var icon = 'icon-' + this.props['icon'] + ' module-icon ml-3';
 
     return (
-      <div className='card mt-1 p-0' style={{'borderRadius': 0, 'border': 0}}>
-        <div className='module-card-header' onClick={this.itemClick} >
-          <div className='second-level ml-3 d-flex flex-row'>
+      // TODO: remove inline styles
+      <div className='card' style={{'borderRadius': 0, 'border': 0}}>
+        <div className='' onClick={this.itemClick} >
+          <div className='second-level d-flex flex-row align-items-center'>
             <div className={icon}></div>
             <div>
-              <div className='title-4 t-d-gray mb-3'>{moduleName}</div>
-              <div className='content-4 t-m-gray mb-4'>{metadata}</div>
-              <div className='info-1 t-m-gray'>{description}</div>
+              <div className='content-3 t-d-gray ml-3'>{moduleName}</div>
             </div>
           </div>
         </div>

@@ -9,13 +9,6 @@ import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
 import EditableWorkflowName from './EditableWorkflowName'
 import WorkflowMetadata from './WorkflowMetadata'
-import {
-  Button,
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter
-} from 'reactstrap'
 import { getPageID, csrfToken } from './utils'
 
 
@@ -91,11 +84,9 @@ export default class Workflow extends React.Component {
   constructor(props: iProps) {
     super(props);
     this.state = {
-      moduleLibraryVisible: false,
       isPublic: false,
       privacyModalOpen: false
     };
-    this.toggleModuleLibrary = this.toggleModuleLibrary.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -104,24 +95,8 @@ export default class Workflow extends React.Component {
     }
 
     this.setState({
-      isPublic: nextProps.workflow.public,
-      moduleLibraryVisible: (
-        !nextProps.workflow.public
-        && 
-        !(
-          nextProps.workflow 
-          && nextProps.workflow.wf_modules 
-          && nextProps.workflow.wf_modules.length
-        )
-      ), // Start with library open if no modules loaded AND WF is not public
+      isPublic: nextProps.workflow.public
     });
-  }
-
-  // toggles the Module Library between visible or not
-  toggleModuleLibrary() {
-    this.setState(oldState => ({
-      moduleLibraryVisible: !oldState.moduleLibraryVisible
-    }));
   }
 
   render() {
@@ -133,28 +108,24 @@ export default class Workflow extends React.Component {
 
     var outputPane = null;
     if (this.props.workflow.wf_modules.length > 0) {
-      outputPane = <OutputPane 
-                    id={this.props.selected_wf_module} 
-                    revision={this.props.workflow.revision}
-                    api={this.props.api}
-                  />
+      outputPane =  <OutputPane 
+                      id={this.props.selected_wf_module} 
+                      revision={this.props.workflow.revision}
+                      api={this.props.api}
+                    />
     }
 
-    var moduleLibrary = <ModuleLibrary
-          addModule={module_id => this.props.addModule(module_id,
-                        this.props.workflow.wf_modules.length)}
-          toggleModuleLibrary={this.toggleModuleLibrary}
-          api={this.props.api}
-          workflow={this} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
-          />
+    var moduleLibrary = null;
+    if (!this.props.workflow.read_only) {
+      moduleLibrary = <ModuleLibrary
+                        addModule={module_id => this.props.addModule(module_id,
+                                      this.props.workflow.wf_modules.length)}
+                        api={this.props.api}
+                        workflow={this} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
+                      />
+    };
 
-    // Choose whether we want to display the Module Library or the Output Pane.
-    var displayPane = null;
-    if (this.state.moduleLibraryVisible) {
-        displayPane = moduleLibrary;
-    } else {
-      displayPane = outputPane;
-    }
+
 
     // Takes care of both, the left-hand side and the right-hand side of the
     // UI. The modules in the workflow are displayed on the left (vertical flow)
@@ -169,9 +140,12 @@ export default class Workflow extends React.Component {
           api={this.props.api} 
           isReadOnly={this.props.workflow.read_only}
         />
+
         <div className="workflow-container">
 
-          <div className="modulestack-left ">
+          {moduleLibrary}
+
+          <div className="modulestack-center">
             <div className="modulestack-header w-75 mx-auto ">
               <br></br>
               <div className="d-flex justify-content-between">
@@ -186,12 +160,6 @@ export default class Workflow extends React.Component {
                   />
                   <WorkflowMetadata workflow={this.props.workflow} api={this.props.api}/>
                 </div>
-                {!this.props.workflow.read_only &&
-                  <div onClick={this.toggleModuleLibrary.bind(this)}
-                      className='button-blue action-button mt-2'>
-                    Add Module
-                  </div>
-                }
               </div>
             </div>
             <div className="modulestack-list w-75 mx-auto ">
@@ -206,8 +174,9 @@ export default class Workflow extends React.Component {
           </div>
 
           <div className="outputpane-right">
-            {displayPane}
+            {outputPane}
           </div>
+
         </div>
       </div>
     );

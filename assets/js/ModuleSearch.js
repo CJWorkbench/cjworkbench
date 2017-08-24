@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Autosuggest from 'react-autosuggest';
+import PropTypes from 'prop-types'
 
-class ModuleSearch extends Component {
+export default class ModuleSearch extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -125,7 +126,7 @@ class ModuleSearch extends Component {
   render () {
     const { value, suggestions } = this.state;
     const inputProps = {
-      placeholder: 'Search',
+      placeholder: 'Search Modules',
       value,
       onChange: this.onChange
     };
@@ -146,4 +147,9 @@ class ModuleSearch extends Component {
   }
 }
 
-export default ModuleSearch;
+
+ModuleSearch.propTypes = {
+  addModule: PropTypes.func.isRequired, 
+  items: PropTypes.array.isRequired,
+  workflow: PropTypes.object.isRequired 
+};

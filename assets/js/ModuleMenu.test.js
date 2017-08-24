@@ -1,3 +1,5 @@
+// This may be a test to a dead class, to remove ...
+
 import React from 'react'
 import { shallow, render, mount } from 'enzyme'
 import ModuleMenu from './ModuleMenu'

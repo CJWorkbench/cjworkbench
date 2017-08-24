@@ -312,18 +312,6 @@ body {
   justify-content: center;
   background: 0;
 }
-/*.context-button:hover {
-  border: 1px solid #EDECEC;
-  border-radius: 0.3rem;
-  text-decoration: 0;
-  background: 0;
-}*/
-/*.context-button:active {
-  border: 1px solid #EDECEC;
-  background-color: #F9F9F9;
-  border-radius: 0.3rem;
-  color: #686768;
-}*/
 
 .navbar-context-button {
   border: 0;
@@ -334,13 +322,6 @@ body {
   justify-content: center;
   background: 0;
 }
-/*.navbar-context-button:hover {
-  border: 1px solid #FFFFFF;
-  border-radius: 0.3rem;
-  text-decoration: 0;
-  background: 0;
-}*/
-
 
 .action-button {
 	height: 4rem;
@@ -590,11 +571,9 @@ img.logo {
   margin-top: 6rem;
 }
 
-.modulestack-left {
-  flex-grow: 1;
-  flex-basis: 0;
-  min-width: 0;
+.modulestack-center {
   background-color: #F6F6F6;
+  width: 610px;
 }
 
 .modulestack-header {
@@ -639,6 +618,7 @@ img.logo {
 
 /* ---- WfModule ---- */
 /* (Also being used in Module Library)  */
+/* TODO: check that class-sharing makes sense */
 
 
 /* make wfmodule narrower by 1 rem to make space for status bar */
@@ -997,10 +977,7 @@ img.logo {
 .button-icon {
   font-size: 1.5rem;
 }
-/* icons next to modules in library  */
-.large-icon {
-  font-size: 4rem;
-}
+
 
 /* from Export Data modal, in WfModuleContextMenu  */
 .download-icon-box {
@@ -1099,37 +1076,31 @@ img.logo {
 }
 
 /* --- Module Library --- */
-/* TODO: replace with style guide classes where relevant  */
 
-.module-library {
+.module-library-open {
   height: calc(100% - 6rem);
-  width: 50%;
+  width: 210px;  
+  background-color: #F2F2F2;  
+  border-right: 1px solid #DDDDDD;
+}
+
+.module-library-collapsed {
+  height: calc(100% - 6rem);
+  width: 70px;  
   background-color: #F6F6F6;
-  position: fixed;
-  font-family: 'Nunito Sans', sans-serif;
-  overflow-y: auto;
-  float: left;
-  padding: 2rem;
 }
 
-.module-library-container {
-  background-color: #F2F2F2;
-  padding: 2rem;
-}
-
-.module-library .nav-bar {
-  background-color: #577485;;
+.module-library-open .library-nav-bar {
   height: 12rem;
   flex-grow: 1;
   flex-basis: 0;
   min-width: 0;
   position: relative;
-  border-bottom: 1px solid;
   text-align: left;
   padding: 2rem;
 }
 
-.module-library .h1 {
+.module-library-open .h1 {
   height: 1.8rem;
   font-size: 2.4rem;
   font-weight: 300;
@@ -1137,28 +1108,28 @@ img.logo {
   padding: 2rem;
 }
 
-.module-library .h2 .symbols {
+.module-library-open .h2 .symbols {
   font-weight: bold;
 }
 
-.module-library .nav-bar .h1 { /* Title of Module Library navigation bar */
+.module-library-open .library-nav-bar .h1 { /* Title of Module Library navigation bar */
   color: #FFFFFF;
 }
 
-.module-library .card {
+.module-library-open .card {
   border: 0;  
 }
 
-
 .card .first-level {
-  background-color: #FFFFFF;
-  height: 4rem;
+  /* background-color: #FFFFFF; */
+  height: 3.5rem;
   width: 100%;
 }
 
 .card .second-level {
   position: relative;
-  height: 7rem;
+  height: 4.5rem;
+  margin-top: 1px;  
 }
 
 .library-card-category-open {
@@ -1188,8 +1159,9 @@ img.logo {
   font-family: 'Nunito Sans', sans-serif;
   font-weight: 900;
   font-size: 1.4rem;
-  line-height: 1.4rem;;
+  line-height: 1.4rem;
   border: 0;
+  border-radius: 10rem;
   /* background-color: #B4B4B4; */
 }
 
@@ -1245,41 +1217,18 @@ img.logo {
   color: #777;
 }
 
-/* All of these need resizing to the new Rem scale  */
-/* also: Absolute positioning does not play well with Flexbox - to phase out */
 
-.import-module {
-  height: 21rem;
-  width: 45rem;
-  color: #686768;
-  float: right;
-  margin-right: 2rem;
-  font-size: 1.4rem;
-  background-color: #FFFFFF;
-  padding: 2rem;
-  box-shadow: 0 0 1px 1px #48C8D7;
-  position: fixed;
-  z-index: 1000;
-  right: 4rem;
-  margin-top: 1rem;
-}
-
-.import-module-label {
-  height: 4rem;
-  color: #686768;
-  /* font-family: 'Nunito Sans', sans-serif; */
-  font-weight: 400;
-  font-size: 1.6rem;
-  padding: 2rem;
-  position: relative;
-  padding-bottom: 1rem;
-}
+/* ImportModuleFromGitHub */
 
 .import-module-button {
-  color: #48C8D7;
+  color: #686768;
+  margin: auto;
+  border-top: 1px solid #DDDDDD;
+  padding-top: 2rem;
 }
 .import-module-button:hover {
-  color: #FFFFFF;
+  color: #48C8D7;
+  
 }
 
 .import-module-buttons {

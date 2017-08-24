@@ -1,7 +1,6 @@
 import React from 'react'
-import { Button } from 'reactstrap'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import PropTypes from 'prop-types'
-
 import { csrfToken } from './utils'
 
 /**
@@ -16,27 +15,25 @@ import { csrfToken } from './utils'
 export default class ImportModuleFromGitHub extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {url: ''};
-
+    this.state = {
+      modalOpen: false,
+      url: '',
+      message_type: '', 
+      message: null
+    };
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.cancel = this.cancel.bind(this); 
     this.onKeyPress = this.keyPress.bind(this); // to handle user hitting enter, which then submits
-
     this.moduleLibrary = this.props.moduleLibrary;
-
     this.handleResponse = this.handleResponse.bind(this);
+    this.toggleModal = this.toggleModal.bind(this);
   }
 
   keyPress(event) {
-    event.preventDefault(); // stops the page from refreshing... someday I'll understand why. 
+    event.preventDefault(); // stops the page from refreshing 
     if (e.key == 'Enter') {
       handleSubmit(event);
     }
-  }
-
-  cancel(event) {
-    this.moduleLibrary.setImportFromGitHubComponentVisibility(false);
   }
 
   /**
@@ -56,7 +53,7 @@ export default class ImportModuleFromGitHub extends React.Component {
    * @param {*} event 
    */
   handleSubmit(event) {
-      event.preventDefault(); // stops the page from refreshing... someday I'll understand why. 
+      event.preventDefault(); // stops the page from refreshing
       var url = '/api/importfromgithub/';
       var eventData = {'url': this.state.url};
       fetch(url, {
@@ -93,64 +90,94 @@ export default class ImportModuleFromGitHub extends React.Component {
     }
   }
 
+  // opens/closes modal, and resets message state
+  toggleModal() {
+    this.setState({ 
+      modalOpen: !this.state.modalOpen ,
+      message_type: '', 
+      message: null
+    });
+  }
+
   render() {
 
-    // what is visible? 
     var visible = null; 
-
-    var cancelButton = <div onClick={this.cancel.bind(this)} 
-            className='button-blue action-button'>Cancel</div>
 
     if (this.state.message) {
       if (this.state.message_type == 'error') {
-        visible = <div><div className="import-github-error">
-            Error importing module from GitHub: 
-            {this.state.message}
+        visible = 
+          <div>
+            <div className="import-github-error">
+              Error importing module from GitHub: {this.state.message}
+            </div>
+            <div className="import-github-response-button">
+              <div onClick={this.toggleModal} className='button-blue action-button'>
+                OK
+              </div>
+            </div>
           </div>
-          <div className="import-github-response-button">
-            <div onClick={this.cancel.bind(this)} 
-                className='button-blue action-button'>OK</div>
-          </div></div>
       } else if (this.state.message_type == 'success') {
-        var json = JSON.parse(this.state.message)
-        visible = <div><div className="import-github-success">
-          Successfully imported {json.author}'s module "{json.name}" under category "{json.category}".
-        </div>
-        <div className="import-github-response-button">
-            <div onClick={this.cancel.bind(this)} 
-                className='button-blue action-button'>OK</div>
-          </div></div> 
+        var json = JSON.parse(this.state.message);
+        visible = 
+          <div>
+            <div className="import-github-success">
+              Successfully imported {json.author}'s module "{json.name}" under category "{json.category}".
+            </div>
+            <div className="import-github-response-button">
+              <div onClick={this.toggleModal} className='button-blue action-button'>
+                OK
+              </div>
+            </div>
+          </div> 
       }
     } else {
-      visible = <div className="import-module-buttons d-flex flex-row">
-          <div onClick={this.cancel.bind(this)} 
-            className='button-gray action-button'>Cancel</div>
-          <div onClick={this.handleSubmit.bind(this)} 
-            style={{'marginLeft': '2rem'}} // spacing between buttons.
-            className='button-blue action-button'>Submit</div>
+      visible = 
+        <div className="import-module-buttons d-flex flex-row">
+          <div onClick={this.toggleModal} className='button-gray action-button'>
+            Cancel
+          </div>
+          <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button ml-3'>
+            Submit
+          </div>
         </div>
-    }
+    };
 
 
     return (
-      <form onSubmit={this.handleSubmit}>
-        <div className="import-module-label t-d-gray">
-          Git URL:
-          <input type="text" 
-                className="text-field mt-2 t-m-gray content-3"
-                value={this.state.value} 
-                placeholder='https://github.com..'
-                onChange={this.handleChange} 
-                onKeyPress={this.handleChange}
-                />
-        </div>
-        {visible}
-      </form>
+      <div>
+
+        <div className='mx-5 import-module-button content-3' onClick={ this.toggleModal }> 
+          IMPORT FROM GITHUB
+        </div>;
+
+        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window'>
+          <ModalHeader toggle={this.toggleModal} >
+            <div className='title-2 t-d-gray'>
+              Git URL:
+            </div>
+          </ModalHeader>
+          <ModalBody className='dialog-body'>
+            <form onSubmit={this.handleSubmit}>
+              <div className="">
+                <input type="text" 
+                      className="text-field mt-2 t-m-gray content-3"
+                      value={this.state.value} 
+                      placeholder='https://github.com..'
+                      onChange={this.handleChange} 
+                      onKeyPress={this.handleChange}
+                      />
+              </div>
+              {visible}
+            </form>
+          </ModalBody>
+        </Modal>
+
+      </div>
     );
   }
 }
 
 
 ImportModuleFromGitHub.propTypes = {
-  url:  PropTypes.string,
+  moduleLibrary: PropTypes.object.isRequired
 };
