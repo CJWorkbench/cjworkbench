@@ -101,6 +101,8 @@ export default class Workflow extends React.Component {
 
   render() {
 
+      // console.log("Cops, always tryna snatch my props: " + JSON.stringify(this.props.workflow));
+
     // Wait until we have a workflow to render
     if (this.props.workflow === undefined) {
       return null;
@@ -121,7 +123,7 @@ export default class Workflow extends React.Component {
                         addModule={module_id => this.props.addModule(module_id,
                                       this.props.workflow.wf_modules.length)}
                         api={this.props.api}
-                        workflow={this} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
+                        workflow={this.props.workflow} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
                       />
     };
 
@@ -191,5 +193,5 @@ Workflow.propTypes = {
   addModule:          PropTypes.func.isRequired,
   removeModule:       PropTypes.func.isRequired,
   user:               PropTypes.object,
-  isReadOnly:         PropTypes.boolean
+  isReadOnly:         PropTypes.bool
 };
