@@ -578,10 +578,12 @@ img.logo {
   background-color: #E9EBEE;
   width: 600px;
 }
-
 .modulestack-header {
   color: #686768;
   padding: 0.625rem;
+}
+.modulestack-list {
+  width: 510px;
 }
 
 .outputpane-right {
@@ -965,7 +967,7 @@ img.logo {
   font-size: 1.5rem;
 }
 .icon-more-white:before {
-  content: "\e918";
+  content: "\e914";
   color: #FFFFFF;
 }
 
