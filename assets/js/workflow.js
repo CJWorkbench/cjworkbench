@@ -7,8 +7,6 @@ import { WorkflowNavBar } from './navbar'
 import WfModule from './WfModule'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
-import EditableWorkflowName from './EditableWorkflowName'
-import WorkflowMetadata from './WorkflowMetadata'
 import { getPageID, csrfToken } from './utils'
 
 
@@ -66,7 +64,7 @@ var SortableList = React.createClass({
             'data-selected': (item.id == this.props.selected_wf_module),
             'data-api': this.props.api
           }}
-        />
+        /> 
       );
     }, this);
 
@@ -100,8 +98,6 @@ export default class Workflow extends React.Component {
   }
 
   render() {
-
-      // console.log("Cops, always tryna snatch my props: " + JSON.stringify(this.props.workflow));
 
     // Wait until we have a workflow to render
     if (this.props.workflow === undefined) {
@@ -138,7 +134,7 @@ export default class Workflow extends React.Component {
       <div className="workflow-root">
 
         <WorkflowNavBar
-          workflowId={this.props.workflow.id}
+          workflow={this.props.workflow}
           api={this.props.api}
           isReadOnly={this.props.workflow.read_only}
           user={this.props.user}
@@ -149,23 +145,7 @@ export default class Workflow extends React.Component {
           {moduleLibrary}
 
           <div className="modulestack-center">
-            <div className="modulestack-header w-75 mx-auto ">
-              <br></br>
-              <div className="d-flex justify-content-between">
-                <div className='editable-title-field mr-2'>
-                  <EditableWorkflowName
-                    value={this.props.workflow.name}
-                    editClass='title-workflow t-d-gray'
-                    wfId={this.props.workflow.id}
-                    isReadOnly={this.props.workflow.read_only}
-                    style={{'width':'100%'}}
-                    api={this.props.api}
-                  />
-                  <WorkflowMetadata workflow={this.props.workflow} api={this.props.api}/>
-                </div>
-              </div>
-            </div>
-            <div className="modulestack-list mx-auto ">
+            <div className="modulestack-list mx-auto mt-3">
               <SortableList
                 data={this.props.workflow}
                 selected_wf_module={this.props.selected_wf_module}

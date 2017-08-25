@@ -10,7 +10,7 @@ export default class WfHamburgerMenu extends React.Component {
     var homeLink, undoRedo;
 
     // If we are on the workflow page, we have undo and redo items
-    if (this.props.workflowId != undefined && !this.props.isReadOnly) {
+    if (this.props.wfId != undefined && !this.props.isReadOnly) {
       homeLink =
         <DropdownItem
           key={1}
@@ -25,7 +25,7 @@ export default class WfHamburgerMenu extends React.Component {
           <DropdownItem divider key={100} />
           <DropdownItem
             key={2}
-            onClick={ () => { this.props.api.undo(this.props.workflowId)} }
+            onClick={ () => { this.props.api.undo(this.props.wfId)} }
             className='dropdown-menu-item'
           >
             <span className='t-d-gray content-3 ml-3'>Undo</span>
@@ -105,6 +105,8 @@ export default class WfHamburgerMenu extends React.Component {
 }
 
 WfHamburgerMenu.propTypes = {
-  workflowId:   PropTypes.number,
-  api:          PropTypes.object
+  api:        PropTypes.object.isRequired,
+  wfId:       PropTypes.number.isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
+  user:       PropTypes.object.isRequired
 };

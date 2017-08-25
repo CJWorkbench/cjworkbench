@@ -32,11 +32,12 @@ export default class EditableWorkflowName extends React.Component {
   }
 
   // classEditing param for classes applied during edit state only
+  // className param for classes applied during display state
   render() {
 
     // This does not play well with smaller screens
     var rowCount = (this.state.value && this.state.value.length)
-      ? Math.ceil(this.state.value.length / 30)
+      ? Math.ceil(this.state.value.length / 100)
       : 1
 
     return <div onKeyPress={this.keyPress}>

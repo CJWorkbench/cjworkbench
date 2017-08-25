@@ -94,21 +94,22 @@ export default class WorkflowMetadata extends React.Component {
 
     var now = new Date();
 
-    // only list Owner attribution if one exists & is not just whitespace
-    var owner = this.props.workflow.owner_name
-    var attribution = (owner && owner.replace(/\s/g, '').length)
-      ? <li className="list-inline-item">By <strong>{owner}</strong></li>
+    // only list User attribution if one exists & is not just whitespace
+    var user = this.props.user.display_name;
+    var attribution = (user && user.replace(/\s/g, '').length)
+      ? <li className="list-inline-item content-3 ">By <strong>{user}</strong></li>
       : null
 
     return (
-      <div>
-        <ul className="list-inline list-workflow-meta">
+      <div className='mt-2'>
+        <ul className="list-inline list-workflow-meta content-3 t-white">
           {attribution}
-          <li className="list-inline-item">
-            Updated <strong>{timeDifference(this.props.workflow.last_update, now)}</strong>
+          <li className="list-inline-item content-3 ">
+            Updated {timeDifference(this.props.workflow.last_update, now)}
           </li>
-          <li className="list-inline-item t-f-blue test-button" onClick={this.togglePrivacyModal}>
-            <strong>{this.state.isPublic ? 'public' : 'private'}</strong></li>
+          <li className="list-inline-item test-button content-3 " onClick={this.togglePrivacyModal}>
+            <strong>{this.state.isPublic ? 'public' : 'private'}</strong>
+          </li>
         </ul>
         { this.renderPrivacyModal() }
       </div>
@@ -119,4 +120,5 @@ export default class WorkflowMetadata extends React.Component {
 WorkflowMetadata.propTypes = {
   workflow: PropTypes.object.isRequired,
   api:      PropTypes.object.isRequired,
+  user:     PropTypes.object.isRequired,
 };
