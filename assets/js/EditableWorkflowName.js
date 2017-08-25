@@ -60,5 +60,5 @@ EditableWorkflowName.propTypes = {
   value:      PropTypes.string,
   wfId:       PropTypes.number,
   api:        PropTypes.object.isRequired,
-  isReadOnly: PropTypes.bool.isRequired
+  isReadOnly: PropTypes.bool
 };

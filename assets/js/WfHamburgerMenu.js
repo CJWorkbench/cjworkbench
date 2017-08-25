@@ -105,8 +105,8 @@ export default class WfHamburgerMenu extends React.Component {
 }
 
 WfHamburgerMenu.propTypes = {
-  api:        PropTypes.object.isRequired,
-  wfId:       PropTypes.number.isRequired,
-  isReadOnly: PropTypes.bool.isRequired,
-  user:       PropTypes.object.isRequired
+  api:        PropTypes.object,
+  wfId:       PropTypes.number,
+  isReadOnly: PropTypes.bool,
+  user:       PropTypes.object
 };

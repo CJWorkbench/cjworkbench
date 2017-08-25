@@ -1,28 +1,20 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`WorkflowMetadata renders correctly 1`] = `
-<div>
+<div
+  className="mt-2"
+>
   <ul
-    className="list-inline list-workflow-meta"
+    className="list-inline list-workflow-meta content-3 t-white"
   >
     <li
-      className="list-inline-item"
-    >
-      By 
-      <strong>
-        Harry Harrison
-      </strong>
-    </li>
-    <li
-      className="list-inline-item"
+      className="list-inline-item content-3 "
     >
       Updated 
-      <strong>
-        2 days ago
-      </strong>
+      2 days ago
     </li>
     <li
-      className="list-inline-item t-f-blue test-button"
+      className="list-inline-item test-button content-3 "
       onClick={[Function]}
     >
       <strong>
@@ -34,28 +26,20 @@ exports[`WorkflowMetadata renders correctly 1`] = `
 `;
 
 exports[`WorkflowMetadata renders correctly 2`] = `
-<div>
+<div
+  className="mt-2"
+>
   <ul
-    className="list-inline list-workflow-meta"
+    className="list-inline list-workflow-meta content-3 t-white"
   >
     <li
-      className="list-inline-item"
-    >
-      By 
-      <strong>
-        Harry Harrison
-      </strong>
-    </li>
-    <li
-      className="list-inline-item"
+      className="list-inline-item content-3 "
     >
       Updated 
-      <strong>
-        2 days ago
-      </strong>
+      2 days ago
     </li>
     <li
-      className="list-inline-item t-f-blue test-button"
+      className="list-inline-item test-button content-3 "
       onClick={[Function]}
     >
       <strong>
@@ -139,28 +123,20 @@ exports[`WorkflowMetadata renders correctly 2`] = `
 `;
 
 exports[`WorkflowMetadata renders correctly 3`] = `
-<div>
+<div
+  className="mt-2"
+>
   <ul
-    className="list-inline list-workflow-meta"
+    className="list-inline list-workflow-meta content-3 t-white"
   >
     <li
-      className="list-inline-item"
-    >
-      By 
-      <strong>
-        Harry Harrison
-      </strong>
-    </li>
-    <li
-      className="list-inline-item"
+      className="list-inline-item content-3 "
     >
       Updated 
-      <strong>
-        2 days ago
-      </strong>
+      2 days ago
     </li>
     <li
-      className="list-inline-item t-f-blue test-button"
+      className="list-inline-item test-button content-3 "
       onClick={[Function]}
     >
       <strong>

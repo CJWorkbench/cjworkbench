@@ -49,15 +49,19 @@ exports[`NavBar WorkflowNavBar renders correctly 1`] = `
         className="logo"
         src="/static/images/logo.png"
       />
-      <h1
-        className="mb-0 mr-auto title-2"
+      <div
+        className="editable-title-field ml-3"
       >
-        <a
-          href="/workflows"
-        >
-          Workbench
-        </a>
-      </h1>
+        <EditableWorkflowName
+          api={Object {}}
+          editClass="title-workflow t-white"
+        />
+        <WorkflowMetadata
+          api={Object {}}
+          user={Object {}}
+          workflow={Object {}}
+        />
+      </div>
     </div>
     <div
       className="d-flex flex-row align-items-center"
@@ -71,7 +75,7 @@ exports[`NavBar WorkflowNavBar renders correctly 1`] = `
       <WfHamburgerMenu
         api={Object {}}
         isReadOnly={false}
-        workflowId={1}
+        user={Object {}}
       />
     </div>
   </nav>

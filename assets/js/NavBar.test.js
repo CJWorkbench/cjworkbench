@@ -16,8 +16,9 @@ describe('NavBar', () => {
     var wrapper = shallow(
       <WorkflowNavBar 
         isReadOnly={false}
-        workflowId={1} 
+        workflow={{}} 
         api={{}}
+        user={{}}
       />
     );
     expect(wrapper).toMatchSnapshot();

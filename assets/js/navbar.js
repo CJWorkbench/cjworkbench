@@ -70,7 +70,7 @@ export class WorkflowNavBar extends React.Component {
 
 WorkflowNavBar.propTypes = {
   api:        PropTypes.object.isRequired,
-  workflow:   PropTypes.object.isRequired,
+  workflow:   PropTypes.object,
   isReadOnly: PropTypes.bool.isRequired,
-  user:       PropTypes.object.isRequired
+  user:       PropTypes.object
 };

@@ -95,7 +95,9 @@ export default class WorkflowMetadata extends React.Component {
     var now = new Date();
 
     // only list User attribution if one exists & is not just whitespace
-    var user = this.props.user.display_name;
+    var user = (this.props.user && this.props.user.display_name)
+      ? this.props.user.display_name
+      : null
     var attribution = (user && user.replace(/\s/g, '').length)
       ? <li className="list-inline-item content-3 ">By <strong>{user}</strong></li>
       : null
@@ -120,5 +122,5 @@ export default class WorkflowMetadata extends React.Component {
 WorkflowMetadata.propTypes = {
   workflow: PropTypes.object.isRequired,
   api:      PropTypes.object.isRequired,
-  user:     PropTypes.object.isRequired,
+  user:     PropTypes.object
 };
