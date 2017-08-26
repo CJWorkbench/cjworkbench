@@ -54,8 +54,7 @@ export default class ModuleLibrary extends React.Component {
     };
     this.addModule = this.props.addModule.bind(this);
     this.workflow = this.props.workflow; 
-    this.toggleLibrary = this.toggleLibrary.bind(this);
-
+    // this.toggleLibrary = this.toggleLibrary.bind(this);
   }
 
   /**
@@ -107,9 +106,9 @@ export default class ModuleLibrary extends React.Component {
     this.componentWillMount() // dummy update to force a re-render. 
   }
 
-  toggleLibrary() {
-    this.setState({ libraryOpen: !this.state.libraryOpen });
-  }
+  // toggleLibrary() {
+  //   this.setState({ libraryOpen: !this.state.libraryOpen });
+  // }
 
 
   /**
@@ -166,9 +165,9 @@ export default class ModuleLibrary extends React.Component {
 
     let visible = <div className='module-library-open'>
                     <div className='library-nav-bar'>
-                      <div className='d-flex justify-content-start flex-row'>
+                      {/* <div className='d-flex justify-content-start flex-row'>
                         <div className='icon-close ml-auto' onClick={this.toggleLibrary}></div>
-                      </div>
+                      </div> */}
                       <ModuleSearch addModule={this.props.addModule} 
                                         items={this.state.items} 
                                         workflow={this.workflow}
