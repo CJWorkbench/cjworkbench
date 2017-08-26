@@ -20,7 +20,6 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
       classEditing="editable-title-field-active"
       className=""
       propName="value"
-      rows={1}
       value="Test Title"
     >
       <span
@@ -58,7 +57,6 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
       classEditing="editable-title-field-active"
       className=""
       propName="value"
-      rows={1}
       value="Test Title"
     >
       <textarea
@@ -68,7 +66,6 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
         onBlur={[Function]}
         onInput={[Function]}
         onKeyDown={[Function]}
-        rows={1}
       />
     </RIETextArea>
   </div>
