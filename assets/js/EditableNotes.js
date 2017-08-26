@@ -41,11 +41,6 @@ export default class EditableNotes extends React.Component {
 
   render() {
 
-    // This does not play well with smaller screens
-    var rowCount = (this.props.value && this.props.value.length)
-      ? Math.ceil(this.props.value.length / 80)
-      : 1
-
     // 'ref' callback receives the mounted instance of the component as its argument
     // classEditing param for classes applied during edit state only
     return <div
@@ -62,7 +57,7 @@ export default class EditableNotes extends React.Component {
                     propName="value"
                     className={this.props.editClass}
                     classEditing='editable-notes-field-active'
-                    rows={rowCount}
+                    rows={1}
                   />)
             }
           </div>

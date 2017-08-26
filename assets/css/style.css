@@ -406,7 +406,7 @@ body {
 
 .navbar {
   height: 6rem;
-  position: absolute;
+  position: fixed;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -572,12 +572,15 @@ img.logo {
   flex-flow: row;
   height: calc(100% - 6rem);
   margin-top: 6rem;
+  position: absolute;
 }
 
 .modulestack-center {
   height: 100%;
   background-color: #E9EBEE;
   width: 600px;
+  position: relative;
+  left: 210px;
 }
 .modulestack-header {
   color: #686768;
@@ -585,6 +588,7 @@ img.logo {
 }
 .modulestack-list {
   width: 510px;
+  margin-bottom: 10rem;
 }
 
 .outputpane-right {
@@ -592,6 +596,7 @@ img.logo {
   flex-basis: 0;
   min-width: 0;
   position: relative;
+  left: 210px;
 }
 
 .outputpane-box {
@@ -978,7 +983,7 @@ img.logo {
 }
 /* icons embedded within buttons  */
 .button-icon {
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 
 
@@ -1082,6 +1087,7 @@ img.logo {
 
 .module-library {
   height: 100%;
+  position: fixed;
 }
 .module-library-open {
   height: 100%;

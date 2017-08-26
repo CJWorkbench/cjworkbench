@@ -35,11 +35,6 @@ export default class EditableWorkflowName extends React.Component {
   // className param for classes applied during display state
   render() {
 
-    // This does not play well with smaller screens
-    var rowCount = (this.state.value && this.state.value.length)
-      ? Math.ceil(this.state.value.length / 100)
-      : 1
-
     return <div onKeyPress={this.keyPress}>
       {this.props.isReadOnly 
         ? ( <span className={this.props.editClass}>{this.state.value}</span> )
@@ -49,7 +44,6 @@ export default class EditableWorkflowName extends React.Component {
             propName="value"
             className={this.props.editClass}
             classEditing='editable-title-field-active'
-            rows={rowCount}
           />)
       }
     </div>
