@@ -46,7 +46,8 @@ def ws_client_rerender_workflow(workflow):
 # Tell clients to reload specific wfmodule
 def ws_client_wf_module_status(wf_module, status):
     workflow = wf_module.workflow
-    message = { 'type' : 'wfmodule-status', 'id' : wf_module.id, 'status' : status}
-    ws_send_workflow_update(workflow, message)
+    if workflow is not None:
+        message = { 'type' : 'wfmodule-status', 'id' : wf_module.id, 'status' : status}
+        ws_send_workflow_update(workflow, message)
 
 

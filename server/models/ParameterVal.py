@@ -104,13 +104,13 @@ class ParameterVal(models.Model):
         if ptype == ParameterSpec.STRING:
             return self.value
         elif ptype == ParameterSpec.INTEGER:
-            return int(self.value)
+            return int(self.value) if self.value != '' else 0
         elif ptype == ParameterSpec.FLOAT:
             return float(self.value)
         elif ptype == ParameterSpec.CHECKBOX:
             return self.value == 'True'
         elif ptype == ParameterSpec.MENU:
-            return int(self.value)
+            return int(self.value) if self.value != '' else 0
         elif ptype == ParameterSpec.COLUMN or \
              ptype == ParameterSpec.MULTICOLUMN or \
              ptype == ParameterSpec.CUSTOM or \
