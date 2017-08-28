@@ -9,8 +9,10 @@ class Workflow(models.Model):
     public = models.BooleanField(default=False)
     last_delta = models.ForeignKey('server.Delta',                # specify as string to avoid circular import
                                    related_name='+',              # + means no backward link
-				   blank=True,
-                                   null=True)   # if null, no Commands applied yet
+				                   blank=True,
+                                   null=True,   # if null, no Commands applied yet
+                                   default=None,
+                                   on_delete=models.SET_DEFAULT)
 
     def user_authorized(self, user):
         return user == self.owner

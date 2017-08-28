@@ -48,8 +48,8 @@ def renumber_wf_modules(workflow):
 # The only tricky part AddModule is what we do with the module in backward()
 # We detach the WfModule from the workflow, but keep it around for possible later forward()
 class AddModuleCommand(Delta):
-    module_version = models.ForeignKey(ModuleVersion)
-    wf_module = models.ForeignKey(WfModule)
+    # must not have cascade on WfModule because we may delete it first when we are deleted
+    wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
     order = models.IntegerField('order')
 
     def forward(self):
@@ -72,7 +72,6 @@ class AddModuleCommand(Delta):
         delta = AddModuleCommand.objects.create(
             workflow=workflow,
             wf_module=newwfm,
-            module_version=module_version,
             order=insert_before,
             command_description=description)
         delta.forward()
@@ -82,16 +81,16 @@ class AddModuleCommand(Delta):
 
 
 # When we are deleted, delete the module if it's not in use (if we are not currently applied)
-@receiver(pre_delete, sender=AddModuleCommand)
-def addmodulecommand_delete_callback(sender, **kwargs):
-    instance = kwargs['instance']
+@receiver(pre_delete, sender=AddModuleCommand, dispatch_uid='addmodulecommand')
+def addmodulecommand_delete_callback(sender, instance, **kwargs):
     if instance.wf_module.workflow == None:
         instance.wf_module.delete()
 
 
 # Deletion works by simply "orphaning" the wf_module, setting its workflow reference to null
 class DeleteModuleCommand(Delta):
-    wf_module = models.ForeignKey(WfModule)
+    # must not have cascade on WfModule because we may delete it first when we are deleted
+    wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
 
     def forward(self):
         self.wf_module.workflow = None                                  # detach from workflow
@@ -117,9 +116,8 @@ class DeleteModuleCommand(Delta):
         return delta
 
 # When we are deleted, delete the module if it's not in use (if we are not currently applied)
-@receiver(pre_delete, sender=DeleteModuleCommand)
-def deletemodulecommand_delete_callback(sender, **kwargs):
-    instance = kwargs['instance']
+@receiver(pre_delete, sender=DeleteModuleCommand, dispatch_uid='deletemodulecommand')
+def deletemodulecommand_delete_callback(sender, instance, **kwargs):
     if instance.wf_module.workflow == None:
         instance.wf_module.delete()
 
@@ -177,7 +175,7 @@ class ReorderModulesCommand(Delta):
 
 
 class ChangeDataVersionCommand(Delta):
-    wf_module = models.ForeignKey(WfModule)
+    wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
     old_version = models.TextField('old_version', null=True)    # may not have had a previous version
     new_version = models.TextField('new_version')
 
@@ -206,7 +204,7 @@ class ChangeDataVersionCommand(Delta):
 
 # Rather than saving off the complete ParameterVal object, we just twiddle the value
 class ChangeParameterCommand(Delta):
-    parameter_val = models.ForeignKey(ParameterVal)
+    parameter_val = models.ForeignKey(ParameterVal, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
     new_value = models.TextField('new_value')
     old_value = models.TextField('old_value')
 
@@ -284,7 +282,7 @@ class ChangeWorkflowTitleCommand(Delta):
         return delta
 
 class ChangeWfModuleNotesCommand(Delta):
-    wf_module = models.ForeignKey(WfModule)
+    wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
     new_value = models.TextField('new_value')
     old_value = models.TextField('old_value')
 
@@ -315,7 +313,7 @@ class ChangeWfModuleNotesCommand(Delta):
         return delta
 
 class ChangeWfModuleUpdateSettingsCommand(Delta):
-    wf_module = models.ForeignKey(WfModule)
+    wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
     new_auto = models.BooleanField()
     old_auto = models.BooleanField()
     new_next_update = models.DateField(null=True)
