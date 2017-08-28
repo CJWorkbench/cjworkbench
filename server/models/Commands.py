@@ -1,6 +1,8 @@
 # A Command changes the state of a Workflow, by producing and executing a Delta
 
 from django.db import models
+from django.db.models.signals import pre_delete
+from django.dispatch import receiver
 from server.models import Workflow, WfModule, ParameterVal, Delta, ModuleVersion
 from server.versions import notify_client_workflow_version_changed
 import json
@@ -60,12 +62,6 @@ class AddModuleCommand(Delta):
         self.wf_module.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
 
-    # When we are deleted, delete the module if it's not in use (if we are not currently applied)
-    def delete(self, *args, **kwargs):
-        if self.wf_module.workflow == None:
-            self.wf_module.delete()
-        super(AddModuleCommand, self).delete(*args, **kwargs)
-
     @staticmethod
     def create(workflow, module_version, insert_before):
         newwfm = WfModule.objects.create(workflow=None, module_version=module_version,
@@ -85,6 +81,14 @@ class AddModuleCommand(Delta):
         return delta
 
 
+# When we are deleted, delete the module if it's not in use (if we are not currently applied)
+@receiver(pre_delete, sender=AddModuleCommand)
+def addmodulecommand_delete_callback(sender, **kwargs):
+    instance = kwargs['instance']
+    if instance.wf_module.workflow == None:
+        instance.wf_module.delete()
+
+
 # Deletion works by simply "orphaning" the wf_module, setting its workflow reference to null
 class DeleteModuleCommand(Delta):
     wf_module = models.ForeignKey(WfModule)
@@ -99,12 +103,6 @@ class DeleteModuleCommand(Delta):
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
 
-    # When we are deleted, delete the module if it's not in use (if we are currently applied)
-    def delete(self, *args, **kwargs):
-        if self.wf_module.workflow == None:
-            self.wf_module.delete()
-        super(DeleteModuleCommand, self).delete(*args, **kwargs)
-
     @staticmethod
     def create(wf_module):
         description = 'Deleted \'' + wf_module.module_version.module.name + '\' module'
@@ -117,6 +115,13 @@ class DeleteModuleCommand(Delta):
         delta.forward()
         notify_client_workflow_version_changed(workflow)
         return delta
+
+# When we are deleted, delete the module if it's not in use (if we are not currently applied)
+@receiver(pre_delete, sender=DeleteModuleCommand)
+def deletemodulecommand_delete_callback(sender, **kwargs):
+    instance = kwargs['instance']
+    if instance.wf_module.workflow == None:
+        instance.wf_module.delete()
 
 
 class ReorderModulesCommand(Delta):
