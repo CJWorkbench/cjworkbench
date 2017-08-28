@@ -11,10 +11,15 @@ import django.utils
 # Derived classes implement the actual mutations on the database (via polymorphic forward()/backward())
 # To derive a command from Delta:
 #   - implement forward() and backward()
-#   - implement a static create() that takes whatever parameters define the action,
-#     creates an instance of the Delta subclass with tht info, and runs forward()
+#   - implement a static create() that takes whatever parameters define the action,creates 
+#     an instance of the Delta subclass with that info, sets the workflow and description,
+#     and runs forward()
 #
 class Delta(PolymorphicModel):
+    class Meta:
+	# OMG this bug ate so many hours... 
+	# see https://github.com/django-polymorphic/django-polymorphic/issues/229
+        base_manager_name = 'base_objects'
 
     # These fields must be set by any child classes, when instantiating that class
     workflow = models.ForeignKey('Workflow', related_name='deltas', on_delete=models.CASCADE)  # delete if Workflow deleted
