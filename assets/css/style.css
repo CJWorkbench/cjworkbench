@@ -1089,8 +1089,9 @@ img.logo {
 /* --- Module Library --- */
 
 .module-library {
-  height: 100%;
+  height: calc(100% - 6rem);
   position: fixed;
+  overflow: auto;
 }
 .module-library-open {
   height: 100%;
@@ -1169,6 +1170,7 @@ img.logo {
   width: 100%;
   height: 4rem;
 }
+
 
 /* does not accept a 'color' parameter  */
 /* desired UI is gray backgroud, white text  */
