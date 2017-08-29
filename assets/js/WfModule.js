@@ -216,8 +216,8 @@ export default class WfModule extends React.Component {
     var arrow = undefined;
     if (this.state.showArrow) {
       arrow = (this.state.isCollapsed)
-        ? <div className='icon-sort-down ml-4 mt-1'></div>
-        : <div className='icon-sort-up ml-4 mt-1'></div>
+        ? <div className='icon-sort-down ml-4'></div>
+        : <div className='icon-sort-up ml-4'></div>
     }
 
     var contextMenu = undefined;

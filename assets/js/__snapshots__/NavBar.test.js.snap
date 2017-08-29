@@ -45,12 +45,17 @@ exports[`NavBar WorkflowNavBar renders correctly 1`] = `
     <div
       className="navbar-brand d-flex flex-row align-items-center"
     >
-      <img
+      <a
         className="logo"
-        src="/static/images/logo.png"
-      />
+        href="/workflows"
+      >
+        <img
+          src="/static/images/logo.png"
+          width="30"
+        />
+      </a>
       <div
-        className="editable-title-field ml-3"
+        className="editable-title-field ml-4"
       >
         <EditableWorkflowName
           api={Object {}}

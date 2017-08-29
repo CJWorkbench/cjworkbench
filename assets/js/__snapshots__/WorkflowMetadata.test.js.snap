@@ -17,9 +17,9 @@ exports[`WorkflowMetadata renders correctly 1`] = `
       className="list-inline-item test-button content-3 "
       onClick={[Function]}
     >
-      <strong>
+      <u>
         public
-      </strong>
+      </u>
     </li>
   </ul>
 </div>
@@ -42,9 +42,9 @@ exports[`WorkflowMetadata renders correctly 2`] = `
       className="list-inline-item test-button content-3 "
       onClick={[Function]}
     >
-      <strong>
+      <u>
         public
-      </strong>
+      </u>
     </li>
   </ul>
   <Modal
@@ -139,9 +139,9 @@ exports[`WorkflowMetadata renders correctly 3`] = `
       className="list-inline-item test-button content-3 "
       onClick={[Function]}
     >
-      <strong>
+      <u>
         public
-      </strong>
+      </u>
     </li>
   </ul>
 </div>

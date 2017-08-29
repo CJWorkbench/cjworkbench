@@ -37,8 +37,8 @@ export class WorkflowNavBar extends React.Component {
       <div>
         <nav className="navbar">
           <div className="navbar-brand d-flex flex-row align-items-center">
-            <img src="/static/images/logo.png" className="logo"/>
-            <div className='editable-title-field ml-3'>
+            <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="30"/></a>
+            <div className='editable-title-field ml-4'>
               <EditableWorkflowName
                 value={this.props.workflow.name}
                 wfId={this.props.workflow.id}

@@ -99,7 +99,7 @@ export default class WorkflowMetadata extends React.Component {
       ? this.props.user.display_name
       : null
     var attribution = (user && user.replace(/\s/g, '').length)
-      ? <li className="list-inline-item content-3 ">By <strong>{user}</strong></li>
+      ? <li className="list-inline-item content-3 ">by {user}</li>
       : null
 
     return (
@@ -110,7 +110,7 @@ export default class WorkflowMetadata extends React.Component {
             Updated {timeDifference(this.props.workflow.last_update, now)}
           </li>
           <li className="list-inline-item test-button content-3 " onClick={this.togglePrivacyModal}>
-            <strong>{this.state.isPublic ? 'public' : 'private'}</strong>
+            <u>{this.state.isPublic ? 'public' : 'private'}</u>
           </li>
         </ul>
         { this.renderPrivacyModal() }

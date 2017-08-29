@@ -146,7 +146,7 @@ export default class ImportModuleFromGitHub extends React.Component {
     return (
       <div>
 
-        <div className='mx-5 import-module-button content-3' onClick={ this.toggleModal }> 
+        <div className='import-module-button content-3' onClick={ this.toggleModal }> 
           IMPORT FROM GITHUB
         </div>;
 

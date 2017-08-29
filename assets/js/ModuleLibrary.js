@@ -173,7 +173,7 @@ export default class ModuleLibrary extends React.Component {
                                         workflow={this.workflow}
                       />
                     </div>
-                    <div className='mb-5'>
+                    <div className='mb-3'>
                       <CategoriesList
                         data={categories}
                       />
