@@ -6,7 +6,7 @@ exports[`ImportModuleFromGitHub Link will open modal window 1`] = `
 >
   <div>
     <div
-      className="import-module-button content-3"
+      className="import-module-button content-3 mb-5"
       onClick={[Function]}
     >
       IMPORT FROM GITHUB
