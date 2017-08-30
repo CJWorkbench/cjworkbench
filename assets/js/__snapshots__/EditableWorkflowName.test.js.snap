@@ -7,77 +7,42 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
       "setWfName": [Function],
     }
   }
-  editClass=""
   isReadOnly={false}
   value="Test Title"
   wfId={808}
 >
-  <div
-    onKeyPress={[Function]}
-  >
-    <RIETextArea
-      change={[Function]}
-      classEditing="editable-title-field-active"
-      className=""
-      propName="value"
-      value="Test Title"
-    >
-      <span
-        className=""
-        onClick={[Function]}
-        onFocus={[Function]}
-        tabIndex="0"
-      >
-        <span>
-          Test Title
-        </span>
-      </span>
-    </RIETextArea>
-  </div>
-</EditableWorkflowName>
-`;
-
-exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited and saved 2`] = `
-<EditableWorkflowName
-  api={
-    Object {
-      "setWfName": [Function],
-    }
-  }
-  editClass=""
-  isReadOnly={false}
-  value="Test Title"
-  wfId={808}
->
-  <div
-    onKeyPress={[Function]}
-  >
-    <RIETextArea
-      change={[Function]}
-      classEditing="editable-title-field-active"
-      className=""
-      propName="value"
+  <div>
+    <TextareaAutosize
+      className="editable-title-field"
+      maxRows={1}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onHeightChange={[Function]}
+      onKeyPress={[Function]}
+      useCacheForDOMMeasurements={false}
       value="Test Title"
     >
       <textarea
-        className="editable-title-field-active"
-        defaultValue="Test Title"
-        disabled={false}
+        className="editable-title-field"
         onBlur={[Function]}
-        onInput={[Function]}
-        onKeyDown={[Function]}
+        onChange={[Function]}
+        onKeyPress={[Function]}
+        style={
+          Object {
+            "height": -4,
+          }
+        }
+        value="Test Title"
       />
-    </RIETextArea>
+    </TextareaAutosize>
   </div>
 </EditableWorkflowName>
 `;
 
 exports[`EditableWorkflowName Read-only Renders plain title 1`] = `
-<div
-  onKeyPress={[Function]}
->
+<div>
   <span
-    className=""
+    className="content-3 t-d-gray"
   >
     Test Title
   </span>

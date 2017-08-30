@@ -82,7 +82,7 @@ export default class WorkflowMetadata extends React.Component {
               </div>
             </div>
             <div className="col-sm-8">
-              <p>Only you can access and edit he workflow</p>
+              <p>Only you can access and edit the workflow</p>
             </div>
           </div>
         </ModalBody>

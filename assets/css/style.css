@@ -423,7 +423,13 @@ body {
 
 .navbar-brand {
   height: 100%;
+  width: 100%;
   font-family: 'Lato', sans-serif;
+}
+
+.title-metadata-stack {
+  height: 100%;
+  width: 100%;
 }
 
 img.logo {
@@ -1053,22 +1059,26 @@ img.logo {
 
 /* --- Editable text fields --- */
 
+.module-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.8rem;
+	line-height: 1.8rem;
+  color: #FFFFFF;
+  width: 100%;
+  background: none;
+}
 .editable-title-field {
-  height: 100%;
+  width: 100%;
+  margin: auto;
   border: none;
   outline: none;
   padding: 0;
   resize: none;
-}
-/* applied only when field is in edit mode  */
-.editable-title-field-active {
-  box-shadow: 0 0 1px 1px #686768;
-  height: 2.5rem;
-  width: 60rem;
-  padding: 0;
+  background: none;
   font-family: 'Nunito Sans', sans-serif;
-  resize: none;
-  color: #686768;
+  font-size: 1.8rem;
+	line-height: 1.8rem;
+  color: #FFFFFF;
 }
 
 .module-notes {

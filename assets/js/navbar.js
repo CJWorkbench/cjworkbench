@@ -38,13 +38,12 @@ export class WorkflowNavBar extends React.Component {
         <nav className="navbar">
           <div className="navbar-brand d-flex flex-row align-items-center">
             <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="30"/></a>
-            <div className='editable-title-field ml-4'>
+            <div className='ml-4 title-metadata-stack'>
               <EditableWorkflowName
                 value={this.props.workflow.name}
                 wfId={this.props.workflow.id}
                 isReadOnly={this.props.workflow.read_only}
                 api={this.props.api}
-                editClass='title-workflow t-white'
               />
               <WorkflowMetadata 
                 workflow={this.props.workflow} 
