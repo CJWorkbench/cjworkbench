@@ -1,12 +1,12 @@
 import React from 'react';
-import _ from 'lodash';
-import { RIETextArea } from 'riek';
+import Textarea from 'react-textarea-autosize';
 import PropTypes from 'prop-types'
 
 export default class EditableNotes extends React.Component {
   constructor(props) {
     super(props);
     this.saveNotes = this.saveNotes.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.keyPress = this.keyPress.bind(this);
     this.state = {
       value: this.props.value
@@ -14,7 +14,7 @@ export default class EditableNotes extends React.Component {
   }
 
   // Simulate a click on the field to enter editing state upon mount
-  //    Have to target child through parent b/c RIETextArea cannot be directly referenced
+  //    Have to target child through parent b/c TextArea cannot be directly referenced
   componentDidMount() {
     if (this.props.startFocused)
       this.textInput.childNodes[0].focus();
@@ -24,41 +24,48 @@ export default class EditableNotes extends React.Component {
   keyPress(e) {
     if (e.key == 'Enter' ) {
       e.preventDefault();
-      this.saveNotes({value: e.target.value});
+      this.saveNotes();
     }
   }
 
   // If nothing entered, saves a default note and closes
-  saveNotes(newNote) {
-    if (!newNote.value || (newNote.value == "")) {
+  saveNotes() {
+    let value = this.state.value;
+
+    if (!value || (value == "") || (value == "Write notes here")) {
       this.props.api.setWfModuleNotes(this.props.wfModuleId, "Write notes here");
       this.props.hideNotes();
     } else {
-      this.props.api.setWfModuleNotes(this.props.wfModuleId, newNote.value);
+      this.props.api.setWfModuleNotes(this.props.wfModuleId, value);
     }
+
+    // call blur on self to stop blinky cursor
+    // Have to target child through parent b/c TextArea cannot be directly referenced
+    this.textInput.childNodes[0].blur();
   }
 
+  handleChange(event) {
+    this.setState({value: event.target.value});
+  }
 
   render() {
 
-    // 'ref' callback receives the mounted instance of the component as its argument
-    // classEditing param for classes applied during edit state only
     return <div
-              onKeyPress={this.keyPress}
               ref={ (input) => { this.textInput = input; } }
-              className='m-6'
+              className=''
             >
             {this.props.isReadOnly 
-              ? ( <span className={this.props.editClass}>{this.props.value}</span> )
+              ? ( <span className='content-3 t-d-gray'>{this.props.value}</span> )
               : ( 
-                  <RIETextArea
-                    value={this.props.value}
-                    change={this.saveNotes}
-                    propName="value"
-                    className={this.props.editClass}
-                    classEditing='editable-notes-field-active'
-                    rows={1}
-                  />)
+                  <Textarea
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                    onBlur={this.saveNotes}
+                    onKeyPress={this.keyPress}
+                    className='editable-notes-field'
+                  >
+                  </Textarea>
+                )
             }
           </div>
   }
@@ -71,6 +78,6 @@ EditableNotes.propTypes = {
   api:            PropTypes.object.isRequired,
   isReadOnly:     PropTypes.bool.isRequired,
   hideNotes:      PropTypes.func.isRequired,
-  editClass:      PropTypes.string,
   startFocused:   PropTypes.bool.isRequired,
 };
+

@@ -1071,22 +1071,21 @@ img.logo {
   color: #686768;
 }
 
+.module-notes {
+  margin: 2rem 3rem 0rem 3rem;  
+}
 .editable-notes-field {
   border: none;
   outline: none;
-  width: calc(100% - 6rem);
-  margin: 2rem 3rem 0rem 3rem;
-  font-family: 'Nunito Sans', sans-serif;
-}
-/* applied only when field is in edit mode  */
-.editable-notes-field-active {
-  background-color: #FFFFFF;
-  box-shadow: 0 0 1px 1px #48C8D7;
-  height: 100%;
   width: 100%;
-  padding: 0;
+  resize: none;
   font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.3rem;
+	line-height: 2rem;
+  color: #686768;
 }
+
+
 /*Module Parameters spacing within modules*/
 
 /*Bottom margin for a set of grouped parameters*/

@@ -195,13 +195,12 @@ export default class WfModule extends React.Component {
       : "Write notes here"
 
     if (this.state.showNotes)
-      notes = <div className='editable-notes-field '>
+      notes = <div className='module-notes'>
                 <EditableNotes
                   api={this.props['data-api']}
                   isReadOnly={this.props['data-isReadOnly']}
                   value={value}
                   hideNotes={ () => this.hideNotes() }
-                  editClass='t-d-gray note'
                   wfModuleId={this.wf_module.id}
                   startFocused={this.state.showEditableNotes}
                 />

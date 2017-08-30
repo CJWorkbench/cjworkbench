@@ -3,7 +3,6 @@
 exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state at start 1`] = `
 <EditableNotes
   api={Object {}}
-  editClass=""
   hideNotes={[Function]}
   isReadOnly={false}
   startFocused={true}
@@ -11,28 +10,30 @@ exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state 
   wfModuleId={808}
 >
   <div
-    className="m-6"
-    onKeyPress={[Function]}
+    className=""
   >
-    <RIETextArea
-      change={[Function]}
-      classEditing="editable-notes-field-active"
-      className=""
-      propName="value"
-      rows={1}
+    <TextareaAutosize
+      className="editable-notes-field"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onHeightChange={[Function]}
+      onKeyPress={[Function]}
+      useCacheForDOMMeasurements={false}
       value="This is the best module"
     >
-      <span
-        className=""
-        onClick={[Function]}
-        onFocus={[Function]}
-        tabIndex="0"
-      >
-        <span>
-          This is the best module
-        </span>
-      </span>
-    </RIETextArea>
+      <textarea
+        className="editable-notes-field"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyPress={[Function]}
+        style={
+          Object {
+            "height": 0,
+          }
+        }
+        value="This is the best module"
+      />
+    </TextareaAutosize>
   </div>
 </EditableNotes>
 `;
@@ -40,7 +41,6 @@ exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state 
 exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edit state at start 1`] = `
 <EditableNotes
   api={Object {}}
-  editClass=""
   hideNotes={[Function]}
   isReadOnly={false}
   startFocused={false}
@@ -48,39 +48,40 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
   wfModuleId={808}
 >
   <div
-    className="m-6"
-    onKeyPress={[Function]}
+    className=""
   >
-    <RIETextArea
-      change={[Function]}
-      classEditing="editable-notes-field-active"
-      className=""
-      propName="value"
-      rows={1}
+    <TextareaAutosize
+      className="editable-notes-field"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onHeightChange={[Function]}
+      onKeyPress={[Function]}
+      useCacheForDOMMeasurements={false}
       value="This is the best module"
     >
-      <span
-        className=""
-        onClick={[Function]}
-        onFocus={[Function]}
-        tabIndex="0"
-      >
-        <span>
-          This is the best module
-        </span>
-      </span>
-    </RIETextArea>
+      <textarea
+        className="editable-notes-field"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onKeyPress={[Function]}
+        style={
+          Object {
+            "height": 0,
+          }
+        }
+        value="This is the best module"
+      />
+    </TextareaAutosize>
   </div>
 </EditableNotes>
 `;
 
 exports[`EditableNotes Read-only, starts NOT focused Renders plain note 1`] = `
 <div
-  className="m-6"
-  onKeyPress={[Function]}
+  className=""
 >
   <span
-    className=""
+    className="content-3 t-d-gray"
   >
     This is the best module
   </span>

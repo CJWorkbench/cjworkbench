@@ -18,7 +18,6 @@ describe('EditableNotes', () => {
     beforeEach(() => wrapper = shallow(
       <EditableNotes
         value={'This is the best module'}
-        editClass=''
         wfModuleId={808}
         api={{}}
         isReadOnly={true}
@@ -42,7 +41,6 @@ describe('EditableNotes', () => {
     beforeEach(() => wrapper = mount(
       <EditableNotes
         value={'This is the best module'}
-        editClass=''
         wfModuleId={808}
         api={{}}
         isReadOnly={false}
@@ -74,7 +72,6 @@ describe('EditableNotes', () => {
     beforeEach(() => wrapper = mount(
       <EditableNotes
         value={'This is the best module'}
-        editClass=''
         wfModuleId={808}
         api={{}}
         isReadOnly={false}
