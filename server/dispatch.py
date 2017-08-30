@@ -1,7 +1,6 @@
 # Module dispatch table and implementations
 import pandas as pd
 from django.conf import settings
-
 from .modules.chart import Chart
 from .modules.countvalues import CountValues
 from .modules.counybydate import CountByDate
@@ -18,21 +17,10 @@ from .modules.enigma import EnigmaDataLoader
 from .dynamicdispatch import DynamicDispatch
 # ---- Test Support ----
 
-# NOP -- do nothing
 
 class NOP(ModuleImpl):
     pass
 
-
-# Generate test data
-
-test_data_table = pd.DataFrame( {   'Class' : ['math', 'english', 'history'],
-                                    'M'     : [ '10', '5', '11' ],
-                                    'F'     : [ '12', '7', '13'] } )
-class TestData(ModuleImpl):
-    @staticmethod
-    def render(wfmodule, table):
-        return test_data_table
 
 class DoubleMColumn(ModuleImpl):
     @staticmethod
@@ -57,7 +45,6 @@ module_dispatch_tbl = {
 
     # For testing
     'NOP':          NOP,
-    'testdata':     TestData,
     'double_M_col': DoubleMColumn
 }
 

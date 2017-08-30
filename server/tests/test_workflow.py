@@ -4,7 +4,6 @@ from server.views.WfModule import wfmodule_detail,wfmodule_render
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
 from server.models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
-from server.dispatch import test_data_table
 from server.tests.utils import *
 import pandas as pd
 import json

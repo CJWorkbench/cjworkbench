@@ -1,12 +1,14 @@
 from django.test import TestCase
 import json
+import pandas as pd
+import io
 from server.views.WfModule import wfmodule_detail, wfmodule_render, wfmodule_dataversion
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from server.models import Module, ModuleVersion, WfModule, Workflow, ParameterSpec, ParameterVal
-from server.dispatch import test_data_table
 from server.tests.utils import *
 from rest_framework.test import force_authenticate
+from server.tests.utils import *
 
 class WfModuleTests(LoggedInTestCase):
 
@@ -14,64 +16,54 @@ class WfModuleTests(LoggedInTestCase):
     def setUp(self):
         super(WfModuleTests, self).setUp()  # log in
         self.factory = APIRequestFactory()
-        self.workflow1 = add_new_workflow(name='Workflow 1')
-        self.workflow2 = add_new_workflow(name='Workflow 2')
 
-        self.module1_version = self.add_new_module_version(name='Module 1', dispatch='testdata', version="1.0")
-        self.pspec11 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.FLOAT, def_value=3.14, def_visible=False)
-        self.pspec12 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.STRING, def_value='foo')
-        self.pspec13 = ParameterSpec.objects.create(module_version=self.module1_version, type=ParameterSpec.CHECKBOX, def_value=True)
+        # Create a standard test workflow, but it has only one module so add two more to test render pipeline
+        test_csv = 'Class,M,F\n' \
+                   'math,10,12\n' \
+                   'english,5,7\n' \
+                   'history,11,13'
+        self.test_table = pd.read_csv(io.StringIO(test_csv), header=0, skipinitialspace=True)
 
-        self.module2_version = self.add_new_module_version(name='Module 2', dispatch='NOP', version="1.0")
-        self.pspec21 = ParameterSpec.objects.create(module_version=self.module2_version, type=ParameterSpec.MENU, def_menu_items='Apple|Banana|Kittens', def_value='1')
+        self.workflow1 = create_testdata_workflow(csv_text=test_csv)
+        self.pspec11 = ParameterSpec.objects.get(id_name='csv')
 
-        self.module3_version = self.add_new_module_version(name='Module 3', dispatch='double_M_col', version="1.0")
-        self.pspec31 = ParameterSpec.objects.create(module_version=self.module3_version, type=ParameterSpec.BUTTON)
+        self.module2_version = add_new_module_version('Module 2', dispatch='NOP')
+        self.pspec21 = add_new_parameter_spec(self.module2_version, ParameterSpec.STRING, def_value='foo')
+        self.pspec22 = add_new_parameter_spec(self.module2_version, ParameterSpec.FLOAT, def_value=3.14)
+        self.pspec23 = add_new_parameter_spec(self.module2_version, ParameterSpec.INTEGER, def_value=42)
+        self.pspec24 = add_new_parameter_spec(self.module2_version, ParameterSpec.CHECKBOX, def_value=True)
+        self.pspec25 = ParameterSpec.objects.create(module_version=self.module2_version,
+                                                    type=ParameterSpec.MENU,
+                                                    def_menu_items='Apple|Banana|Kittens',
+                                                    def_value='1')
 
-        self.wfmodule1 = self.add_new_wfmodule(self.workflow1, self.module1_version, 1)
-        self.wfmodule2 = self.add_new_wfmodule(self.workflow1, self.module2_version, 2)
-        self.wfmodule3 = self.add_new_wfmodule(self.workflow1, self.module3_version, 3)
-        self.add_new_wfmodule(self.workflow2, self.module1_version, 1)
-        self.add_new_wfmodule(self.workflow2, self.module2_version, 2)
-        self.add_new_wfmodule(self.workflow2, self.module3_version, 3)
+        self.module3_version = add_new_module_version('Module 3', dispatch='double_M_col')
+        self.pspec31 = add_new_parameter_spec(self.module3_version, ParameterSpec.BUTTON)
 
+        self.wfmodule1 = WfModule.objects.get(order=0)
+        self.wfmodule2 = add_new_wf_module(self.workflow1, self.module2_version, 1)
+        self.wfmodule3 = add_new_wf_module(self.workflow1, self.module3_version, 2)
 
-    # --- utils ---
-
-    def add_new_wfmodule(self, workflow_aux, module_aux, order_aux):
-        return WfModule.objects.create(workflow=workflow_aux, module_version=module_aux, order=order_aux)
-
-    def add_new_module(self, name, dispatch):
-        return Module.objects.create(name=name, dispatch=dispatch)
-
-    def add_new_module_version(self, name, dispatch, version):
-        module = self.add_new_module(name=name, dispatch=dispatch)
-        module.save()
-        module_version = ModuleVersion.objects.create(module = module, source_version_hash = version)
-        module_version.save()
-        return module_version
-
-
-    # --- tests ---
 
     # check that creating a wf_module correctly sets up new ParameterVals w/ defaults from ParameterSpec
     def test_default_parameters(self):
-        self.wfmodule1.create_default_parameters()
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec11, wf_module=self.wfmodule1)
-        self.assertEqual(pval.get_value(), 3.14)
-        self.assertEqual(pval.visible, False)
 
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec12, wf_module=self.wfmodule1)
-        self.assertEqual(pval.get_value(), 'foo')
-        self.assertEqual(pval.visible, True)
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec13, wf_module=self.wfmodule1)
-        self.assertEqual(pval.get_value(), True)
-        self.assertEqual(pval.visible, True)
-
-        # Menu should have correct default item
+        # Module 2 parameters should have correct default values
         self.wfmodule2.create_default_parameters()
+
         pval = ParameterVal.objects.get(parameter_spec=self.pspec21, wf_module=self.wfmodule2)
+        self.assertEqual(pval.get_value(), 'foo')
+
+        pval = ParameterVal.objects.get(parameter_spec=self.pspec22, wf_module=self.wfmodule2)
+        self.assertEqual(pval.get_value(), 3.14)
+
+        pval = ParameterVal.objects.get(parameter_spec=self.pspec23, wf_module=self.wfmodule2)
+        self.assertEqual(pval.get_value(), 42)
+
+        pval = ParameterVal.objects.get(parameter_spec=self.pspec24, wf_module=self.wfmodule2)
+        self.assertEqual(pval.get_value(), True)
+
+        pval = ParameterVal.objects.get(parameter_spec=self.pspec25, wf_module=self.wfmodule2)
         self.assertEqual(pval.selected_menu_item_string(), 'Banana')
 
         # button has no value, so just checking existence here
@@ -103,12 +95,11 @@ class WfModuleTests(LoggedInTestCase):
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
-
     def test_wf_module_render_get(self):
         # First module: creates test data
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = table_to_content(test_data_table)
+        test_data_json = table_to_content(self.test_table)
         self.assertEqual(response.content, test_data_json)
 
         # second module: NOP
@@ -119,7 +110,7 @@ class WfModuleTests(LoggedInTestCase):
         # Third module: doubles M column
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule3.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        double_test_data = pd.DataFrame(test_data_table['Class'], test_data_table['M']*2, test_data_table['F'])
+        double_test_data = pd.DataFrame(self.test_table['Class'], self.test_table['M']*2, self.test_table['F'])
         double_test_data = table_to_content(double_test_data)
         self.assertEqual(response.content, double_test_data)
 
@@ -127,7 +118,7 @@ class WfModuleTests(LoggedInTestCase):
     # can we take one out?
     def test_wf_module_delete(self):
         # add a new one to delete; don't mess with other tests
-        wfmodule4 = self.add_new_wfmodule(self.workflow1, self.module1_version, 4)
+        wfmodule4 = add_new_wf_module(self.workflow1, self.module2_version, 3)
 
         response = self.client.delete('/api/wfmodules/%d' % wfmodule4.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
@@ -146,7 +137,7 @@ class WfModuleTests(LoggedInTestCase):
         # Second module: input should be test data produced by first module
         response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = table_to_content(test_data_table)
+        test_data_json = table_to_content(self.test_table)
         self.assertEqual(response.content, test_data_json)
 
         # Third module: should be same as second, as second module is NOP
