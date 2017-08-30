@@ -113,7 +113,7 @@ exports[`WorkflowMetadata renders correctly 2`] = `
           className="col-sm-8"
         >
           <p>
-            Only you can access and edit he workflow
+            Only you can access and edit the workflow
           </p>
         </div>
       </div>

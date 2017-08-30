@@ -55,11 +55,10 @@ exports[`NavBar WorkflowNavBar renders correctly 1`] = `
         />
       </a>
       <div
-        className="editable-title-field ml-4"
+        className="ml-4 title-metadata-stack"
       >
         <EditableWorkflowName
           api={Object {}}
-          editClass="title-workflow t-white"
         />
         <WorkflowMetadata
           api={Object {}}
