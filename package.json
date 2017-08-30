@@ -38,7 +38,6 @@
     "reactstrap": "^4.6.2",
     "redux": "^3.6.0",
     "redux-promise": "^0.5.3",
-    "riek": "^1.1.0",
     "save-svg-as-png": "^1.1.0",
     "sizeof": "^1.0.0",
     "sugar-date": "^1.5.1",

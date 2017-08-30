@@ -68,12 +68,14 @@ export default class OutputPane extends React.Component {
       // When we want an output, but no TableData is present
       return (
         <div className="outputpane-box">
-          <div className="bg-faded outputpane-header">
-            <div>
-              Rows: 0 
+          <div className="outputpane-header d-flex flex-row justify-content-start">
+            <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
+              <div className='content-4 t-m-gray mb-2'>Rows</div>
+              <div className='content-2 t-d-gray'>0</div>
             </div>
-            <div>
-              Columns: 0     
+            <div className='d-flex flex-column align-items-center justify-content-center'>
+              <div className='content-4 t-m-gray mb-2'>Columns</div>
+              <div className='content-2 t-d-gray'>0</div>
             </div>
           </div>
         </div>

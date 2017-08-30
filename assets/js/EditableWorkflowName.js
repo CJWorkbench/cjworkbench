@@ -62,9 +62,9 @@ export default class EditableWorkflowName extends React.Component {
 
 
 EditableWorkflowName.propTypes = {
-  value:      PropTypes.string.isRequired,
-  wfId:       PropTypes.number.isRequired,
+  value:      PropTypes.string,
+  wfId:       PropTypes.number,
   api:        PropTypes.object.isRequired,
-  isReadOnly: PropTypes.bool.isRequired
+  isReadOnly: PropTypes.bool
 };
 
