@@ -218,7 +218,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
               type="button"
             >
               <div
-                className="button-icon icon-more"
+                className="module-menu-icon icon-more"
               />
             </button>
           </Button>
@@ -351,7 +351,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
               type="button"
             >
               <div
-                className="button-icon icon-more"
+                className="module-menu-icon icon-more"
               />
             </button>
           </Button>
@@ -484,7 +484,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
               type="button"
             >
               <div
-                className="button-icon icon-more"
+                className="module-menu-icon icon-more"
               />
             </button>
           </Button>

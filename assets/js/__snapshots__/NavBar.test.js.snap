@@ -29,7 +29,7 @@ exports[`NavBar WorkflowListNavBar renders correctly 1`] = `
         className="t-white content-2 mr-5"
         href="http://cjworkbench.org/index.php/blog/"
       >
-        Help
+        Learn
       </a>
       <WfHamburgerMenu />
     </div>
