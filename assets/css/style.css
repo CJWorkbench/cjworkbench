@@ -671,6 +671,10 @@ img.logo {
   padding: 1rem;
   border-radius: 0px;
   background-color: #f4f4f4;
+  color: #b4b4b4;
+  font-size: 1.2rem;
+  font-family: 'Nunito Light', sans-serif;
+  letter-spacing:0.07rem;
   text-align: center;
 }
 
@@ -1083,7 +1087,7 @@ img.logo {
 }
 /*Module Parameters spacing within modules*/
 
-/*Bottom margin for a set of grouped paramters*/
+/*Bottom margin for a set of grouped parameters*/
 .parameter-margin {
   margin-bottom: 2rem;
 }
