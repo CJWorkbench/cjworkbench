@@ -1095,8 +1095,9 @@ img.logo {
 /* --- Module Library --- */
 
 .module-library {
-  height: 100%;
+  height: calc(100% - 6rem);
   position: fixed;
+  overflow: auto;
 }
 .module-library-open {
   height: 100%;
@@ -1176,10 +1177,15 @@ img.logo {
   height: 4rem;
 }
 
+<<<<<<< HEAD
 .react-autosuggest__container input {
   border: 1px solid #DDDDDD;
 }
 
+||||||| merged common ancestors
+=======
+
+>>>>>>> 352c759d282c306544f9d7bfdc171a9669e7c87e
 /* does not accept a 'color' parameter  */
 /* desired UI is gray backgroud, white text  */
 .react-autosuggest__input {
