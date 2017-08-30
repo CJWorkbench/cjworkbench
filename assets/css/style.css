@@ -334,7 +334,7 @@ body {
 	font-size: 1.4rem;
 	font-weight: 900;
   line-height: 1.4rem;
-  padding: 0 2rem 0 2rem; 
+  padding: 0 2rem 0 2rem;
 }
 .action-button:hover {
 	opacity: 0.5;
@@ -465,7 +465,7 @@ img.logo {
   align-items: center;
   background-image: radial-gradient(#31D9ED 25%, #0C93C0); /*fallback*/
   background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #0C93C0);
-  background-size: cover; 
+  background-size: cover;
 }
 
 .login-brand h1{
@@ -497,7 +497,7 @@ img.logo {
 }
 
 .account_form .title-1 {
-  margin-top:1rem; 
+  margin-top:1rem;
 }
 
 .account_form .text-center a {
@@ -1060,7 +1060,7 @@ img.logo {
   height: 2.5rem;
   width: 60rem;
   padding: 0;
-  font-family: 'Nunito Sans', sans-serif; 
+  font-family: 'Nunito Sans', sans-serif;
   resize: none;
   color: #686768;
 }
@@ -1101,13 +1101,13 @@ img.logo {
 }
 .module-library-open {
   height: 100%;
-  width: 200px;  
-  background-color: #F2F2F2;  
+  width: 200px;
+  background-color: #F2F2F2;
   border-right: 1px solid #DDDDDD;
 }
 .module-library-collapsed {
   height: 100%;
-  width: 70px;  
+  width: 70px;
   background-color: #F6F6F6;
 }
 
@@ -1139,7 +1139,7 @@ img.logo {
 
 .module-library-open .card {
   border: 0;
-  background-color: rgba(0,0,0,0);  
+  background-color: rgba(0,0,0,0);
 }
 
 .card .first-level {
@@ -1155,7 +1155,7 @@ img.logo {
   position: relative;
   height: 4.5rem;
   padding-left: 1.5rem;
-  background-color: rgba(0,0,0,0)  
+  background-color: rgba(0,0,0,0)
 }
 
 .library-card-category-open {
@@ -1177,15 +1177,10 @@ img.logo {
   height: 4rem;
 }
 
-<<<<<<< HEAD
 .react-autosuggest__container input {
   border: 1px solid #DDDDDD;
 }
 
-||||||| merged common ancestors
-=======
-
->>>>>>> 352c759d282c306544f9d7bfdc171a9669e7c87e
 /* does not accept a 'color' parameter  */
 /* desired UI is gray backgroud, white text  */
 .react-autosuggest__input {
@@ -1204,12 +1199,9 @@ img.logo {
 
 .react-autosuggest__input--focused {
   outline: none;
+  box-shadow: 0 0 2px #48C8D7;
 }
 
-.react-autosuggest__input--open {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
 
 .react-autosuggest__suggestions-container {
   display: none;
@@ -1266,7 +1258,7 @@ img.logo {
 }
 .import-module-button:hover {
   color: #48C8D7;
-  
+
 }
 
 .import-module-buttons {
