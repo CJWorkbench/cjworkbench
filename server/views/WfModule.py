@@ -91,6 +91,20 @@ def wfmodule_render(request, pk, format=None):
             return HttpResponseForbidden()
 
         table = execute_wfmodule(wf_module)
+
+        # Get first and last row from query parameters, or default to all if not specified
+        nrows = len(table)
+        try:
+            f = int(request.GET.get('firstrow', 0))
+            l = int(request.GET.get('lastrow', nrows-1))
+        except ValueError:
+            return Response({'message': 'bad row number', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+
+        f = max(0, f)
+        l += 1  # so that lastrow is inclusive
+        l = min(nrows, l)
+        table = table[f:l]
+
         d = table.to_json(orient='records')
         return HttpResponse(d, content_type="application/json")
 

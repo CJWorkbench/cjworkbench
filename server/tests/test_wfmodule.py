@@ -21,7 +21,9 @@ class WfModuleTests(LoggedInTestCase):
         test_csv = 'Class,M,F\n' \
                    'math,10,12\n' \
                    'english,5,7\n' \
-                   'history,11,13'
+                   'history,11,13\n' \
+                   'economics,20,20'
+
         self.test_table = pd.read_csv(io.StringIO(test_csv), header=0, skipinitialspace=True)
 
         self.workflow1 = create_testdata_workflow(csv_text=test_csv)
@@ -113,6 +115,32 @@ class WfModuleTests(LoggedInTestCase):
         double_test_data = pd.DataFrame(self.test_table['Class'], self.test_table['M']*2, self.test_table['F'])
         double_test_data = table_to_content(double_test_data)
         self.assertEqual(response.content, double_test_data)
+
+        # Now test retrieving specified rows only
+        response = self.client.get('/api/wfmodules/%d/render?firstrow=1' % self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        test_data_json = table_to_content(self.test_table[1:])
+        self.assertEqual(response.content, test_data_json)
+
+        response = self.client.get('/api/wfmodules/%d/render?firstrow=1&lastrow=2' % self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        test_data_json = table_to_content(self.test_table[1:3])
+        self.assertEqual(response.content, test_data_json)
+
+        response = self.client.get('/api/wfmodules/%d/render?lastrow=2' % self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        test_data_json = table_to_content(self.test_table[:3])
+        self.assertEqual(response.content, test_data_json)
+
+        # index out of bounds should clip
+        response = self.client.get('/api/wfmodules/%d/render?firstrow=-1&lastrow=500' % self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        test_data_json = table_to_content(self.test_table)
+        self.assertEqual(response.content, test_data_json)
+
+        # index not a number -> bad request
+        response = self.client.get('/api/wfmodules/%d/render?firstrow=0&lastrow=frog' % self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
     # can we take one out?
