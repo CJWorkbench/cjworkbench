@@ -316,6 +316,17 @@ body {
   background: 0;
 }
 
+.context-button:hover {
+  border: 0;
+  border-radius: 0.3rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f9f9f9;
+}
+
 .navbar-context-button {
   border: 0;
   width: 2.5rem;
@@ -324,6 +335,16 @@ body {
   align-items: center;
   justify-content: center;
   background: 0;
+}
+
+.navbar-context-button:hover {
+  border: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255,255,255,0.2);
 }
 
 .action-button {
@@ -892,7 +913,7 @@ img.logo {
 }
 .icon-more:before {
   content: "\e914";
-  color: #686768;
+  color: #b4b4b4;
 }
 .icon-note:before {
   content: "\e915";
@@ -995,6 +1016,10 @@ img.logo {
 }
 
 /* icon next to Wf Module title */
+.WFmodule-name{
+  margin-top: 0.3rem;
+}
+
 .module-icon {
   font-size: 2rem;
 }
@@ -1101,9 +1126,6 @@ img.logo {
   background-color: #f9f9f9;
 }
 
-.editable-notes-field::after {
-  background-color: #red;
-}
 
 /*Module Parameters spacing within modules*/
 

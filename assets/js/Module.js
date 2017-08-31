@@ -1,8 +1,8 @@
 /**
- * A component that holds a single module that is then contained within the 
- * Module Library. 
+ * A component that holds a single module that is then contained within the
+ * Module Library.
  * The render function here will drive the "card" of each module within
- * the library. 
+ * the library.
  */
 
 import React from 'react'
@@ -40,7 +40,7 @@ export default class Module extends React.Component {
   }
 
   render() {
-    var moduleName = this.props['data-name']; 
+    var moduleName = this.props['data-name'];
     var icon = 'icon-' + this.props['icon'] + ' module-icon ml-3';
 
     return (
@@ -50,7 +50,7 @@ export default class Module extends React.Component {
           <div className='second-level d-flex flex-row align-items-center'>
             <div className={icon}></div>
             <div>
-              <div className='content-3 t-d-gray ml-3'>{moduleName}</div>
+              <div className='content-3 t-d-gray ml-5'>{moduleName}</div>
             </div>
           </div>
         </div>

@@ -65,12 +65,12 @@ export default class WfModule extends React.Component {
     this.state = {
       isCollapsed: this.wf_module.is_collapsed,
       showArrow: false,
-      showNotes:  ( this.wf_module.notes 
-                    && (this.wf_module.notes != "") 
+      showNotes:  ( this.wf_module.notes
+                    && (this.wf_module.notes != "")
                     && (this.wf_module.notes != "Write notes here")
                   ),  // only show on load if a note exists & not default text
       showEditableNotes: false             // do not display in edit state on initial load
-    };           
+    };
     this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
@@ -123,15 +123,15 @@ export default class WfModule extends React.Component {
   }
 
   // Optimistically updates the state, and then sends the new state to the server,
-  // where it's persisted across sessions and through time.  
+  // where it's persisted across sessions and through time.
   toggleCollapsed() {
     var newIsCollapsed = !this.state.isCollapsed;
     this.setState({
-      isCollapsed: newIsCollapsed, 
+      isCollapsed: newIsCollapsed,
     });
 
-    // only want to update the server if we're not in read-only mode. 
-    if (!this.props['data-isReadOnly']) { 
+    // only want to update the server if we're not in read-only mode.
+    if (!this.props['data-isReadOnly']) {
         this.props['data-api'].toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
     }
   }
@@ -215,8 +215,8 @@ export default class WfModule extends React.Component {
     var arrow = undefined;
     if (this.state.showArrow) {
       arrow = (this.state.isCollapsed)
-        ? <div className='icon-sort-down ml-4'></div>
-        : <div className='icon-sort-up ml-4'></div>
+        ? <div className='icon-sort-down mt-1 ml-4'></div>
+        : <div className='icon-sort-up mt-1 ml-4'></div>
     }
 
     var contextMenu = undefined;
@@ -233,8 +233,8 @@ export default class WfModule extends React.Component {
     return (
       <div className='container' {...this.props} onClick={this.click}>
         {/* --- The whole card --- */}
-        <div 
-          className='card mb-2' 
+        <div
+          className='card mb-2'
           style={{'borderRadius': 0, 'border': 0}}
         >
           <div className='card-block p-0 d-flex justify-content-between'>
@@ -248,8 +248,8 @@ export default class WfModule extends React.Component {
                 onMouseLeave={this.hideArrow}
               >
                 <div className='d-flex justify-content-start'>
-                  <div className={moduleIcon}></div>                  
-                  <div className='t-d-gray title-4 mt-1'>
+                  <div className={moduleIcon}></div>
+                  <div className='t-d-gray title-4 WFmodule-name'>
                     {this.module.name}
                   </div>
                   <div className='mt-1'>
