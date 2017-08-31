@@ -13,15 +13,14 @@ import { getPageID, csrfToken } from './utils'
 // ---- Sortable WfModules within the workflow ----
 var SortableWfModule= sortable(WfModule);
 
-var SortableList = React.createClass({
+class SortableList extends React.Component {
 
-  getInitialState: function() {
-    return {
-      draggingIndex: null,
-    };
-  },
+  constructor(props) {
+    super(props);
+    this.state = { draggingIndex: null }
+  }
 
-  updateState: function(newState) {
+  updateState(newState) {
     this.setState(newState);
 
     // If we've ended a drag, we need to post the new order to the server
@@ -41,9 +40,9 @@ var SortableList = React.createClass({
         body: JSON.stringify(newOrder) })
       .catch( (error) => { console.log('Request failed', error); });
     }
-  },
+  }
 
-  render: function() {
+  render() {
     var listItems = this.props.data.wf_modules.map(function(item, i) {
 
       return (
@@ -72,7 +71,7 @@ var SortableList = React.createClass({
           <div className="list">{listItems}</div>
     )
   }
-});
+}
 
 // ---- WorkflowMain ----
 

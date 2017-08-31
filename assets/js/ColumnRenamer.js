@@ -2,7 +2,7 @@
 
 import React from 'react';
 import ReactDataGrid from 'react-data-grid';
-
+import PropTypes from 'prop-types'
 
 export default class ColumnRenamer extends React.Component {
   constructor(props) {
@@ -96,7 +96,7 @@ export default class ColumnRenamer extends React.Component {
 }
 
 ColumnRenamer.propTypes = {
-  saveState:    React.PropTypes.func,
-  getColNames:  React.PropTypes.func,
-  revision:     React.PropTypes.number
+  saveState:    PropTypes.func,
+  getColNames:  PropTypes.func,
+  revision:     PropTypes.number
 };

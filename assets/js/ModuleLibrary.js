@@ -8,7 +8,7 @@ import ModuleSearch from './ModuleSearch';
 
 var SortableCategories = sortable(ModuleCategory);
 
-var CategoriesList = React.createClass({
+class CategoriesList extends React.Component {
   render() {
     var listItems = this.props.data.map(function (item, i) {
       return (
@@ -30,7 +30,7 @@ var CategoriesList = React.createClass({
       <div className="list">{listItems}</div>
     );
   }
-});
+}
 
 /**
  * Contains the Module Library. The Module Library is effectively the place

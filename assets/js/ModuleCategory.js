@@ -17,7 +17,7 @@ import { Collapse, Button, CardBlock, Card } from 'reactstrap';
 
 var SortableModule = sortable(Module);
 
-var ModulesList = React.createClass({
+class ModulesList extends React.Component {
   render() {
     // defensive coding because otherwise things blow up for some reason.
     if (!this.props || !this.props.data) {
@@ -53,7 +53,7 @@ var ModulesList = React.createClass({
       <div className="list">{listItems}</div>
     )
   }
-})
+}
 
 export default class ModuleCategory extends React.Component {
   constructor(props) {
