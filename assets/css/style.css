@@ -1214,6 +1214,12 @@ img.logo {
   margin-bottom: 1px;
 }
 
+.library-card-category-closed:hover {
+  margin-top: 1px;
+  margin-bottom: 1px;
+  background-color: #EDECEC;
+}
+
 
 /* --- the Search Modules component within the Module Library header - ModuleSearch.js --- */
 
@@ -1227,6 +1233,10 @@ img.logo {
   border: 1px solid #DDDDDD;
 }
 
+.react-autosuggest__container input:hover {
+  box-shadow: 0 0 0 1px  #48C8D7;
+}
+
 /* does not accept a 'color' parameter  */
 /* desired UI is gray backgroud, white text  */
 .react-autosuggest__input {
@@ -1238,14 +1248,13 @@ img.logo {
   opacity: 0.5;
   font-size: 1.4rem;
   line-height: 1.4rem;
-  border: 0;
   border-radius: 10rem;
   /* background-color: #B4B4B4; */
 }
 
 .react-autosuggest__input--focused {
   outline: none;
-  box-shadow: 0 0 2px #48C8D7;
+  box-shadow: 0 0 0 1px  #48C8D7;
 }
 
 

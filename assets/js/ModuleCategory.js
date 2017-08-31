@@ -1,11 +1,11 @@
 /**
- * A component that holds a collection of modules for a given category. For example, 
+ * A component that holds a collection of modules for a given category. For example,
  * Category: Source
  * Modules: Load URL, Paste CSV, Twitter
- * 
+ *
  * Category: Wrangle
- * Modules: Melt, Select Columns 
- * 
+ * Modules: Melt, Select Columns
+ *
  * Categories should be expandable and collapsible, just like each individual module.
  */
 
@@ -19,7 +19,7 @@ var SortableModule = sortable(Module);
 
 var ModulesList = React.createClass({
   render() {
-    // defensive coding because otherwise things blow up for some reason. 
+    // defensive coding because otherwise things blow up for some reason.
     if (!this.props || !this.props.data) {
       console.log("Something's gone terribly wrong, and we don't have any modules to render.")
       return (
@@ -59,12 +59,12 @@ export default class ModuleCategory extends React.Component {
   constructor(props) {
     super(props);
     this.initFields(props);
-    // by default, nothing's collapsed. 
-    // I don't know how error-handling should work here, 
-    // i.e. what should happen if props doesn't have 'name' 
+    // by default, nothing's collapsed.
+    // I don't know how error-handling should work here,
+    // i.e. what should happen if props doesn't have 'name'
     this.state = {
-      key: props.id, // the name of the category 
-      modules: props["modules"],  // collection of underlying Module objects. 
+      key: props.id, // the name of the category
+      modules: props["modules"],  // collection of underlying Module objects.
       collapsed: props["collapsed"],
     };
 
@@ -86,22 +86,22 @@ export default class ModuleCategory extends React.Component {
 
   render() {
     var isOpen = !this.state.collapsed;
-    
+
     // Provides margins around opened library category
     var cardClass = isOpen
       ? 'card b-l-gray library-card-category-open'
       : 'card b-l-gray library-card-category-closed'
 
-    var symbol = isOpen 
-      ? 'icon-sort-down button-icon-library ml-3'
-      : 'icon-sort-right button-icon-library ml-3'
+    var symbol = isOpen
+      ? 'icon-sort-down button-icon-library ml-3 mt-1'
+      : 'icon-sort-right button-icon-library ml-3 mt-1'
 
     // --- Need a mapping of catergory-to-icon before implementing
     // var icon = 'icon-' + ??? + ' button-icon mr-2';
 
-    var categoryName = this.props["data-name"]; //self-explanatory 
-    
-    var modules = this.props["data-modules"]; // list of modules within category 
+    var categoryName = this.props["data-name"]; //self-explanatory
+
+    var modules = this.props["data-modules"]; // list of modules within category
 
     var contents =  <ModulesList
                       data={modules}
@@ -109,9 +109,9 @@ export default class ModuleCategory extends React.Component {
 
     return (
       <div className={cardClass}>
-        <div className='first-level d-flex align-items-center'>    
-          <div className='' onClick={this.toggleCollapse}>
-            <span className={symbol}></span> 
+        <div className='first-level d-flex align-items-center'>
+          <div className='mt-2' onClick={this.toggleCollapse}>
+            <span className={symbol}></span>
             {/* <span className={icon}></span> */}
             <span className='content-3 t-d-gray ml-3'>{categoryName}</span>
           </div>
@@ -119,7 +119,7 @@ export default class ModuleCategory extends React.Component {
         <div>
           <Collapse className='b-l-gray' isOpen={isOpen}>
             {contents}
-          </Collapse> 
+          </Collapse>
         </div>
       </div>
     );
