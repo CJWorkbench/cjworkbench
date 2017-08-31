@@ -41,13 +41,13 @@ export default class TableView extends React.Component {
     var tableData = this.props.tableData;
 
     // Generate the table if there's any data, and we've figured out our available height
-    if (tableData.length > 0) {
+    if (tableData.totalrows > 0) {
 
-      var columns = Object.keys(tableData[0]).map( key => { return { 'key': key, 'name': key, 'resizable':true } });
+      var columns = tableData.columns.map( key => { return { 'key': key, 'name': key, 'resizable':true } });
       return <ReactDataGrid
         columns={columns}
-        rowGetter={ i => tableData[i] }
-        rowsCount={tableData.length}
+        rowGetter={ i => tableData.rows[i] }
+        rowsCount={tableData.totalrows}
         minHeight={this.state.gridHeight-2} />;   // -1 because grid has borders, don't want to expand flex grid
 
     }  else {
@@ -57,5 +57,5 @@ export default class TableView extends React.Component {
 }
 
 TableView.propTypes = {
-  tableData: PropTypes.arrayOf(PropTypes.object),
+  tableData: PropTypes.object.isRequired
 };

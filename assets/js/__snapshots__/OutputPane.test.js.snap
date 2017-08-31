@@ -2,7 +2,12 @@
 
 exports[`Fetches and renders 1`] = `
 <OutputPane
-  id={1}
+  api={
+    Object {
+      "render": [Function],
+    }
+  }
+  id={100}
   revision={1}
 >
   <div
@@ -45,18 +50,28 @@ exports[`Fetches and renders 1`] = `
     >
       <TableView
         tableData={
-          Array [
-            Object {
-              "a": "1",
-              "b": "2",
-              "c": "3",
-            },
-            Object {
-              "a": "4",
-              "b": "5",
-              "c": "6",
-            },
-          ]
+          Object {
+            "columns": Array [
+              "a",
+              "b",
+              "c",
+            ],
+            "data": Array [
+              Object {
+                "a": "1",
+                "b": "2",
+                "c": "3",
+              },
+              Object {
+                "a": "4",
+                "b": "5",
+                "c": "6",
+              },
+            ],
+            "endrow": 1,
+            "startrow": 0,
+            "totalrows": 2,
+          }
         }
       >
         <ReactDataGrid
@@ -980,6 +995,7 @@ exports[`Fetches and renders 1`] = `
 
 exports[`No output when no module id 1`] = `
 <OutputPane
+  api={Object {}}
   revision={1}
 />
 `;

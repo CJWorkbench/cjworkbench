@@ -53,10 +53,6 @@ def add_new_workflow(name):
 def add_new_wf_module(workflow, module_version, order=1):
     return WfModule.objects.create(workflow=workflow, module_version=module_version, order=order)
 
-# Encodes a DataFrame to the expected response format form render API
-def table_to_content(table):
-    return table.to_json(orient='records').encode('UTF-8')
-
 # setup a workflow with some test data loaded into a PasteCSV module
 # If no data given, use standard mock data
 # returns workflow

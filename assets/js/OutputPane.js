@@ -8,7 +8,7 @@ export default class OutputPane extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { tableData: [], loading: false };           // componentDidMount will trigger first load
+    this.state = { tableData: {}, loading: false };           // componentDidMount will trigger first load
     this.loadingState = { tableData: [], loading: true };
   }
 
@@ -16,11 +16,9 @@ export default class OutputPane extends React.Component {
   loadTable(id) {
     if (id) {
       var self = this;
-      var url = '/api/wfmodules/' + id + '/render';
-      fetch(url, {credentials: 'include'})
-        .then(response => response.json())
+      this.props.api.render(id)
         .then(json => {
-          self.setState(Object.assign({}, this.state, {tableData: json, loading: false}));
+          self.setState({tableData: json, loading: false});
         }); // triggers re-render
     }
   }
@@ -45,18 +43,18 @@ export default class OutputPane extends React.Component {
 
   render() {
     // Don't show anything if we don't have a selected WfModule to show
-    if (this.props.id && this.state.tableData && this.state.tableData.length) {
+    if (this.props.id && this.state.tableData && this.state.tableData.totalrows>0) {
 
       return (
         <div className="outputpane-box">
           <div className="outputpane-header d-flex flex-row justify-content-start">
             <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
               <div className='content-4 t-m-gray mb-2'>Rows</div>
-              <div className='content-2 t-d-gray'>{this.state.tableData.length}</div>
+              <div className='content-2 t-d-gray'>{this.state.tableData.totalrows}</div>
             </div>
             <div className='d-flex flex-column align-items-center justify-content-center'>
               <div className='content-4 t-m-gray mb-2'>Columns</div>
-              <div className='content-2 t-d-gray'>{Object.keys(this.state.tableData[0]).length}</div>
+              <div className='content-2 t-d-gray'>{this.state.tableData.columns.length}</div>
             </div>
           </div>
           <div className="outputpane-data">
@@ -88,7 +86,8 @@ export default class OutputPane extends React.Component {
 
 OutputPane.propTypes = {
   id:       PropTypes.number,
-  revision: PropTypes.number
+  revision: PropTypes.number,
+  api:      PropTypes.object.isRequired
 };
 
 

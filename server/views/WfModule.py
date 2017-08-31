@@ -12,6 +12,7 @@ from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeW
 from datetime import timedelta
 from server.utils import units_to_seconds
 import pandas as pd
+import simplejson
 
 
 # The guts of patch commands for various WfModule fields
@@ -76,6 +77,52 @@ def wfmodule_detail(request, pk, format=None):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+# ---- render / input / livedata ----
+# These endpoints return actual table data
+
+# Helper method that produces json output for a table + start/end row
+# Also silently clips row indices
+def make_render_json(table, startrow=None, endrow=None):
+    nrows = len(table)
+    if startrow is None:
+        startrow = 0
+    if endrow is None:
+        endrow = nrows
+
+    startrow = max(0, startrow)
+    endrow = min(nrows-1, endrow)
+    table = table[startrow:endrow+1] # +1 so that endrow is inclusive
+
+    rows = table.to_dict(orient='records')
+    d = {
+        'totalrows' : nrows,
+        'startrow'  : startrow,
+        'endrow'    : endrow,
+        'columns'   : list(table),
+        'rows'      : rows
+    }
+
+    # must use simplejson not json, as we need NaN -> null
+    return simplejson.dumps(d, ensure_ascii=False, ignore_nan=True).encode('utf8')
+
+def int_or_none(x):
+    return int(x) if x is not None else None
+
+# Shared code between /render and /input
+def table_result(request, wf_module):
+    # Get first and last row from query parameters, or default to all if not specified
+    try:
+        startrow = int_or_none(request.GET.get('startrow'))
+        endrow = int_or_none(request.GET.get('endrow'))
+    except ValueError:
+        return Response({'message': 'bad row number', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+
+    table = execute_wfmodule(wf_module)
+    j = make_render_json(table, startrow, endrow)
+    return HttpResponse(j, content_type="application/json")
+
+
 # /render: return output table of this module
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
@@ -90,23 +137,7 @@ def wfmodule_render(request, pk, format=None):
         if not wf_module.user_authorized(request.user) and not wf_module.workflow.public:
             return HttpResponseForbidden()
 
-        table = execute_wfmodule(wf_module)
-
-        # Get first and last row from query parameters, or default to all if not specified
-        nrows = len(table)
-        try:
-            f = int(request.GET.get('firstrow', 0))
-            l = int(request.GET.get('lastrow', nrows-1))
-        except ValueError:
-            return Response({'message': 'bad row number', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
-
-        f = max(0, f)
-        l += 1  # so that lastrow is inclusive
-        l = min(nrows, l)
-        table = table[f:l]
-
-        d = table.to_json(orient='records')
-        return HttpResponse(d, content_type="application/json")
+        return table_result(request, wf_module)
 
 
 # /input is just /render on the previous wfmodule
@@ -123,17 +154,15 @@ def wfmodule_input(request, pk, format=None):
         if not wf_module.workflow.public and not wf_module.user_authorized(request.user):
             return HttpResponseForbidden()
 
+        # return empty table if this is the first module in the stack
         prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
         if not prev_modules:
-            table = pd.DataFrame()
+            return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
         else:
-            table = execute_wfmodule(prev_modules.last())
+            return table_result(request, prev_modules.last())
 
-        d = table.to_json(orient='records')
-        return HttpResponse(d, content_type="application/json")
-
-
-# Public access to wfmodule output. Basically just /render with different auth
+# Public access to wfmodule output. Basically just /render with different auth and output format
+# NOTE: does not support startrow/endrow at the moment
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes((IsAuthenticatedOrReadOnly, ))

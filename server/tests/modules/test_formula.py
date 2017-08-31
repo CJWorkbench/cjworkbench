@@ -1,4 +1,5 @@
 from django.test import TestCase
+from server.views.WfModule import make_render_json
 from server.tests.utils import *
 
 # ---- Formula ----
@@ -25,7 +26,7 @@ class FormulaTests(LoggedInTestCase):
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule.id)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.READY)
-        self.assertEqual(response.content, table_to_content(table))
+        self.assertEqual(response.content, make_render_json(table))
 
         # empty result parameter should produce 'result'
         self.rpval.value = ''
@@ -35,7 +36,7 @@ class FormulaTests(LoggedInTestCase):
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule.id)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.READY)
-        self.assertEqual(response.content, table_to_content(table))
+        self.assertEqual(response.content, make_render_json(table))
 
         # formula with missing column name should error
         self.fpval.value = 'xxx*2'
@@ -43,4 +44,4 @@ class FormulaTests(LoggedInTestCase):
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule.id)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
-        self.assertEqual(response.content, table_to_content(pd.DataFrame()))
+        self.assertEqual(response.content, make_render_json(pd.DataFrame()))

@@ -73,11 +73,10 @@ export default class WfParameter extends React.Component {
 
   // Return array of column names available to us, as a promise
   getInputColNames() {
-    var url = '/api/wfmodules/' + this.props.wf_module_id + '/input';
-    return fetch(url, { credentials: 'include'})
-            .then(response => response.json())
-            .then( json => {
-                    return json && json.length>0 ? Object.keys(json[0]) : [] });       // get column names from first row of data
+    return (
+      this.props.api.input(this.props.wf_module_id)
+        .then( json => json.columns )
+    )
   }
 
   // We need to update input contents when we get new props. Hmm, is there a managed form components library?

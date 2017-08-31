@@ -25,7 +25,8 @@ class NOP(ModuleImpl):
 class DoubleMColumn(ModuleImpl):
     @staticmethod
     def render(wfmodule, table):
-        return pd.DataFrame(table['Class'], table['M']*2, table['F'])
+        table['M'] *= 2
+        return table
 
 
 # ---- Main Dispatch Table ----

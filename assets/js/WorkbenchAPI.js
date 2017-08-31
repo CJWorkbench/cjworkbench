@@ -63,6 +63,20 @@ class WorkbenchAPI {
       }));
   }
 
+  render(wf_module_id) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id + '/render', {credentials: 'include'})
+      .then(response => response.json())
+    )
+  }
+
+  input(wf_module_id) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id + '/input', {credentials: 'include'})
+      .then(response => response.json())
+    )
+  }
+
   getWfModuleVersions(wf_module_id) {
     // NB need parens around the contents of the return, or this will fail miserably (return undefined)
     return (
