@@ -1082,7 +1082,7 @@ img.logo {
 }
 
 .module-notes {
-  margin: 2rem 3rem 0rem 3rem;  
+  margin: 2rem 2rem 0rem 2rem;
 }
 .editable-notes-field {
   border: none;
@@ -1091,10 +1091,19 @@ img.logo {
   resize: none;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 1.3rem;
+  font-weight: 100;
 	line-height: 2rem;
   color: #686768;
+  display: table;
 }
 
+.editable-notes-field:hover {
+  background-color: #f9f9f9;
+}
+
+.editable-notes-field::after {
+  background-color: #red;
+}
 
 /*Module Parameters spacing within modules*/
 
