@@ -9,23 +9,21 @@ exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state 
   value="This is the best module"
   wfModuleId={808}
 >
-  <div
-    className=""
-  >
+  <div>
     <TextareaAutosize
       className="editable-notes-field"
-      onBlur={[Function]}
       onChange={[Function]}
       onHeightChange={[Function]}
       onKeyPress={[Function]}
+      onMouseLeave={[Function]}
       useCacheForDOMMeasurements={false}
       value="This is the best module"
     >
       <textarea
         className="editable-notes-field"
-        onBlur={[Function]}
         onChange={[Function]}
         onKeyPress={[Function]}
+        onMouseLeave={[Function]}
         style={
           Object {
             "height": 0,
@@ -47,23 +45,21 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
   value="This is the best module"
   wfModuleId={808}
 >
-  <div
-    className=""
-  >
+  <div>
     <TextareaAutosize
       className="editable-notes-field"
-      onBlur={[Function]}
       onChange={[Function]}
       onHeightChange={[Function]}
       onKeyPress={[Function]}
+      onMouseLeave={[Function]}
       useCacheForDOMMeasurements={false}
       value="This is the best module"
     >
       <textarea
         className="editable-notes-field"
-        onBlur={[Function]}
         onChange={[Function]}
         onKeyPress={[Function]}
+        onMouseLeave={[Function]}
         style={
           Object {
             "height": 0,
@@ -77,9 +73,7 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
 `;
 
 exports[`EditableNotes Read-only, starts NOT focused Renders plain note 1`] = `
-<div
-  className=""
->
+<div>
   <span
     className="content-3 t-d-gray"
   >
