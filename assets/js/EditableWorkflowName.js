@@ -30,14 +30,14 @@ export default class EditableWorkflowName extends React.Component {
   saveName() {
     this.props.api.setWfName(this.props.wfId, this.state.value);
   }
-
+  
   render() {
 
     // Saves a ref to parent to allow targeting of imported component
     return <div ref={(input) => {this.textInput = input;}}>
-            {this.props.isReadOnly
-              ? ( <span className='editable-title-field'>{this.props.value}</span> )
-              : (
+            {this.props.isReadOnly 
+              ? ( <span className='content-3 t-d-gray'>{this.props.value}</span> )
+              : ( 
                   <Textarea
                     value={this.state.value}
                     onChange={this.handleChange}
@@ -59,3 +59,4 @@ EditableWorkflowName.propTypes = {
   api:        PropTypes.object.isRequired,
   isReadOnly: PropTypes.bool
 };
+

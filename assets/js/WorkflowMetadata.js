@@ -99,11 +99,11 @@ export default class WorkflowMetadata extends React.Component {
       ? this.props.user.display_name
       : null
     var attribution = (user && user.replace(/\s/g, '').length)
-      ? <li className="list-inline-item content-3">by {user}</li>
+      ? <li className="list-inline-item content-3 ">by {user}</li>
       : null
 
     return (
-      <div className=''>
+      <div className='mt-2'>
         <ul className="list-inline list-workflow-meta content-3 t-white">
           {attribution}
           <li className="list-inline-item content-3 ">
