@@ -17,6 +17,7 @@ class SortableList extends React.Component {
 
   constructor(props) {
     super(props);
+    this.updateState = this.updateState.bind(this);
     this.state = { draggingIndex: null }
   }
 
