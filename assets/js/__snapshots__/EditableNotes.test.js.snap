@@ -12,18 +12,18 @@ exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state 
   <div>
     <TextareaAutosize
       className="editable-notes-field"
+      onBlur={[Function]}
       onChange={[Function]}
       onHeightChange={[Function]}
       onKeyPress={[Function]}
-      onMouseLeave={[Function]}
       useCacheForDOMMeasurements={false}
       value="This is the best module"
     >
       <textarea
         className="editable-notes-field"
+        onBlur={[Function]}
         onChange={[Function]}
         onKeyPress={[Function]}
-        onMouseLeave={[Function]}
         style={
           Object {
             "height": 0,
@@ -48,18 +48,18 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
   <div>
     <TextareaAutosize
       className="editable-notes-field"
+      onBlur={[Function]}
       onChange={[Function]}
       onHeightChange={[Function]}
       onKeyPress={[Function]}
-      onMouseLeave={[Function]}
       useCacheForDOMMeasurements={false}
       value="This is the best module"
     >
       <textarea
         className="editable-notes-field"
+        onBlur={[Function]}
         onChange={[Function]}
         onKeyPress={[Function]}
-        onMouseLeave={[Function]}
         style={
           Object {
             "height": 0,
