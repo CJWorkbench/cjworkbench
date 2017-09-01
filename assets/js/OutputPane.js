@@ -10,10 +10,11 @@ export default class OutputPane extends React.Component {
     super(props);
 
     // componentDidMount will trigger first load
-    this.state = {
+    this.startState = {
       tableData: null,
       lastLoadedRow : 0,
     };
+    this.state = this.startState;
 
     this.getRow = this.getRow.bind(this);
 
@@ -29,13 +30,13 @@ export default class OutputPane extends React.Component {
   // Load table data from render API
   loadTable(id, toRow) {
     if (id) {
-      //console.log("Asked to load to " + toRow );
+      // console.log("Asked to load to " + toRow );
 
       this.loading = true;
       this.props.api.render(id, this.state.lastLoadedRow, toRow)
         .then(json => {
 
-          //console.log("Got data to " + json.end_row);
+          // console.log("Got data to " + json.end_row);
           // Add just retrieved rows to current data, if any
           if (this.state.tableData) {
             json.rows = this.state.tableData.rows.concat(json.rows);
@@ -61,7 +62,8 @@ export default class OutputPane extends React.Component {
   // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
     if (this.props.revision != nextProps.revision || this.props.id != nextProps.id) {
-      this.loadTable(nextProps.id, this.initialRows);
+      // Reset our state to "empty", then use callback to start loading some rows
+      this.setState(this.startState, () => this.loadTable(nextProps.id, this.initialRows));
     }
   }
 
