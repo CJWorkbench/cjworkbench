@@ -1,5 +1,5 @@
 {
-  "name": "Load data from Enigma", 
+  "name": "Load from Enigma", 
   "id_name": "enigma",
   "category": "Add data",
   "icon" : "url",

@@ -13,7 +13,7 @@ body {
   margin: 0px;
   height: 100%;
   font-family: 'Nunito Sans', sans-serif;
-  background-color: #E9EBEE;
+  background-color:#f6f6f6;
   color: #686768;
 }
 
@@ -607,6 +607,8 @@ img.logo {
 .modulestack-center {
   height: 100%;
   background-color: #E9EBEE;
+  border-left: 1px solid #DDDDDD;
+  border-right: 1px solid #DDDDDD;
   width: 600px;
   position: relative;
   left: 200px;
@@ -1149,7 +1151,6 @@ img.logo {
   height: 100%;
   width: 200px;
   background-color: #F2F2F2;
-  border-right: 1px solid #DDDDDD;
 }
 .module-library-collapsed {
   height: 100%;
