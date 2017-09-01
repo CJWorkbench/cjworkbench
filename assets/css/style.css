@@ -126,6 +126,7 @@ body {
 .t-white {
   cursor:pointer;
   color: #FFFFFF;
+  white-space: nowrap;
 }
 .t-white:hover {
   cursor:pointer;
@@ -349,6 +350,8 @@ body {
   align-items: center;
   justify-content: center;
   background: 0;
+  margin-right: 5rem;
+  margin-left:1.8rem;
 }
 
 .navbar-context-button:hover {
@@ -435,11 +438,6 @@ body {
 .dropdown-menu-item:hover {
   background-color: #F5F5F5;
 }
-.list-workflow-meta li:not(:last-child):after {
-  content: '-';
-  display:inline-block;
-  margin-left: 5px;
-}
 
 
 /* ---- Navbar ----- */
@@ -486,6 +484,46 @@ img.logo {
 }
 .navbar-brand h1 a:hover {
   text-decoration: none;
+}
+
+/*navbar:Workflow page*/
+
+.navLink{
+  margin-right: 5rem;
+}
+
+.title-metadata-stack {
+  height: 100%;
+  width: 100%;
+}
+
+.title-metadata-stack div {
+  height:0rem;
+}
+
+.editable-title-field {
+  width: 100%;
+  margin-top: 0.4rem;
+  border: none;
+  outline: none;
+  padding: 0;
+  resize: none;
+  background: none;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.8rem;
+	line-height: 1.8rem;
+  color: #FFFFFF;
+
+}
+
+.list-workflow-meta{
+  margin-top: 2.5rem;
+}
+
+.list-workflow-meta li:not(:last-child):after {
+  content: '-';
+  display:inline-block;
+  margin-left: 5px;
 }
 
 /* ---- Login ---- */
@@ -1112,22 +1150,10 @@ img.logo {
   width: 100%;
   background: none;
 }
-.editable-title-field {
-  width: 100%;
-  margin: auto;
-  border: none;
-  outline: none;
-  padding: 0;
-  resize: none;
-  background: none;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1.8rem;
-	line-height: 1.8rem;
-  color: #FFFFFF;
-}
+
 
 .module-notes {
-  margin: 2rem 2rem 0rem 2rem;  
+  margin: 2rem 2rem 0rem 2rem;
 }
 .editable-notes-field {
   border: none;
@@ -1146,6 +1172,9 @@ img.logo {
   background-color: #f9f9f9;
 }
 
+.editable-text {
+  background-color: red;
+}
 
 /*Module Parameters spacing within modules*/
 
