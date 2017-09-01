@@ -29,13 +29,13 @@ export default class OutputPane extends React.Component {
   // Load table data from render API
   loadTable(id, toRow) {
     if (id) {
-      console.log("Asked to load to " + toRow );
+      //console.log("Asked to load to " + toRow );
 
       this.loading = true;
       this.props.api.render(id, this.state.lastLoadedRow, toRow)
         .then(json => {
 
-          console.log("Got data to " + json.end_row);
+          //console.log("Got data to " + json.end_row);
           // Add just retrieved rows to current data, if any
           if (this.state.tableData) {
             json.rows = this.state.tableData.rows.concat(json.rows);
@@ -81,7 +81,7 @@ export default class OutputPane extends React.Component {
       if (!this.loading) {
         var target = Math.min(i + this.preloadRows, this.state.tableData.total_rows);  // don't try to load past end of data
         if (target > this.state.lastLoadedRow) {
-          console.log("Triggered reload at getRow " + i);
+          //console.log("Triggered reload at getRow " + i);
           this.loadTable(this.props.id, this.state.lastLoadedRow + this.deltaRows);
         }
       }
