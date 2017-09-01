@@ -8,37 +8,95 @@ export default class OutputPane extends React.Component {
 
   constructor(props) {
     super(props);
-    this.state = { tableData: {}, loading: false };           // componentDidMount will trigger first load
-    this.loadingState = { tableData: [], loading: true };
+
+    // componentDidMount will trigger first load
+    this.state = {
+      tableData: null,
+      lastLoadedRow : 0,
+    };
+
+    this.getRow = this.getRow.bind(this);
+
+    // loading flag cannot be in state because we need to suppress fetches in getRow, which is called many times in a tick
+    this.loading = false;
+
+    // constants to control loading behaviour
+    this.initialRows = 120;   // because react-data-grid seems to preload to 100
+    this.preloadRows = 20;    // get new rows when we are this close to the end
+    this.deltaRows = 100;     // get this many new rows at a time
   }
 
   // Load table data from render API
-  loadTable(id) {
+  loadTable(id, toRow) {
     if (id) {
-      var self = this;
-      this.props.api.render(id)
+      console.log("Asked to load to " + toRow );
+
+      this.loading = true;
+      this.props.api.render(id, this.state.lastLoadedRow, toRow)
         .then(json => {
-          self.setState({tableData: json, loading: false});
-        }); // triggers re-render
+
+          console.log("Got data to " + json.end_row);
+          // Add just retrieved rows to current data, if any
+          if (this.state.tableData) {
+            json.rows = this.state.tableData.rows.concat(json.rows);
+            json.start_row = 0;  // no one looks at this currently, but they might
+          }
+
+          // triggers re-render
+          this.loading = false;
+          this.setState({
+            tableData: json,
+            lastLoadedRow : json.end_row
+          });
+
+        });
     }
   }
 
-  // Load table when first rendered
+  // Load first 100 rows of table when first rendered
   componentDidMount() {
-    this.loadTable(this.props.id)
+    this.loadTable(this.props.id, this.initialRows)
   }
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
     if (this.props.revision != nextProps.revision || this.props.id != nextProps.id) {
-      this.setState(Object.assign({}, this.state, this.loadingState));               // "unload" the table
-      this.loadTable(nextProps.id);
+      this.loadTable(nextProps.id, this.initialRows);
     }
   }
 
   // Update only when we are not loading
-  shouldComponentUpdate(nextProps, nextState) {
-    return !nextState.loading;
+//  shouldComponentUpdate(nextProps, nextState) {
+//    return !nextState.loading;
+//  }
+
+  emptyRow() {
+    return this.state.tableData.columns.reduce( (obj,col) => { obj[col]=null; return obj; }, {} );
+  }
+
+  getRow(i) {
+    if (this.state.tableData) {
+
+      // Time to load more rows?
+      if (!this.loading) {
+        var target = Math.min(i + this.preloadRows, this.state.tableData.total_rows);  // don't try to load past end of data
+        if (target > this.state.lastLoadedRow) {
+          console.log("Triggered reload at getRow " + i);
+          this.loadTable(this.props.id, this.state.lastLoadedRow + this.deltaRows);
+        }
+      }
+
+      // Return the row if we have it
+      if (i < this.state.lastLoadedRow ) {
+        return this.state.tableData.rows[i];
+      } else {
+        return this.emptyRow();
+      }
+
+    } else {
+        // nothing loaded yet
+        return null;
+    }
   }
 
   render() {
@@ -51,12 +109,16 @@ export default class OutputPane extends React.Component {
     var tableView = null;
     var nrows = 0;
     var ncols = 0;
-    if (this.state.tableData && this.state.tableData.totalrows>0) {
+    if (this.state.tableData && this.state.tableData.total_rows>0) {
       tableView =
         <div className="outputpane-data">
-          <TableView tableData={this.state.tableData} />
+          <TableView
+            totalRows={this.state.tableData.total_rows}
+            columns={this.state.tableData.columns}
+            getRow={this.getRow}
+          />
         </div>
-      nrows = this.state.tableData.totalrows;
+      nrows = this.state.tableData.total_rows;
       ncols = this.state.tableData.columns.length;
     }
 

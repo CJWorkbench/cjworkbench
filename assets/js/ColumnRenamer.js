@@ -34,16 +34,16 @@ export default class ColumnRenamer extends React.Component {
   }
 
   loadColNames() {
-     console.log(this.state.newColNames)
+     // console.log(this.state.newColNames)
      if (this.state.newColNames.length == 0){
-         console.log('empty');
+       // console.log('empty');
         this.props.getColNames()
           .then(cols => {
             this.setState({oldColNames: cols, newColNames: cols});
           })
       }
      else {
-         console.log('full');
+         // console.log('full');
          this.props.getColNames()
              .then(cols => {
                  this.setState({oldColNames: cols, newColNames: this.parseNewColNames(this.props.newNameCols)});
@@ -57,7 +57,7 @@ export default class ColumnRenamer extends React.Component {
 
   // Update column names when workflow revision bumps
   componentWillReceiveProps(nextProps) {
-      console.log('componentWillReceiveProps '+ nextProps.newNameCols);
+      // console.log('componentWillReceiveProps '+ nextProps.newNameCols);
     if (this.props.revision != nextProps.revision) {
         this.setState({oldColNames: this.state.oldColNames, newColNames: this.parseNewColNames(nextProps.newNameCols)});
       this.loadColNames();
@@ -74,7 +74,7 @@ export default class ColumnRenamer extends React.Component {
 
       this.setState({ newColNames: newColNames });
       this.props.saveState(newColNames.join());
-      console.log(newColNames);
+      // console.log(newColNames);
     }
   }
 

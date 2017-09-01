@@ -91,14 +91,14 @@ def make_render_json(table, startrow=None, endrow=None):
         endrow = nrows
 
     startrow = max(0, startrow)
-    endrow = min(nrows-1, endrow)
-    table = table[startrow:endrow+1] # +1 so that endrow is inclusive
+    endrow = min(nrows, endrow)
+    table = table[startrow:endrow]
 
     rows = table.to_dict(orient='records')
     d = {
-        'totalrows' : nrows,
-        'startrow'  : startrow,
-        'endrow'    : endrow,
+        'total_rows' : nrows,
+        'start_row'  : startrow,
+        'end_row'    : endrow,
         'columns'   : list(table),
         'rows'      : rows
     }

@@ -6,9 +6,9 @@ import { jsonResponseMock } from './utils'
 it('Fetches and renders', (done) => {
 
   var testData = {
-    totalrows : 2,
-    startrow : 0,
-    endrow : 1,
+    total_rows : 2,
+    start_row : 0,
+    end_row : 2,
     columns : ["a", "b", "c"],
     data : [
       {

@@ -63,9 +63,23 @@ class WorkbenchAPI {
       }));
   }
 
-  render(wf_module_id) {
+  render(wf_module_id, startrow, endrow) {
+    var url = '/api/wfmodules/' + wf_module_id + '/render';
+
+    if (startrow || endrow) {
+      url += "?";
+      if (startrow) {
+        url += "startrow=" + startrow;
+      }
+      if (endrow) {
+        if (startrow)
+          url += "&";
+        url += "endrow=" + endrow;
+      }
+    }
+
     return (
-      fetch('/api/wfmodules/' + wf_module_id + '/render', {credentials: 'include'})
+      fetch(url, {credentials: 'include'})
       .then(response => response.json())
     )
   }

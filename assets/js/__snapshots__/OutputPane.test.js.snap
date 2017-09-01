@@ -49,30 +49,15 @@ exports[`Fetches and renders 1`] = `
       className="outputpane-data"
     >
       <TableView
-        tableData={
-          Object {
-            "columns": Array [
-              "a",
-              "b",
-              "c",
-            ],
-            "data": Array [
-              Object {
-                "a": "1",
-                "b": "2",
-                "c": "3",
-              },
-              Object {
-                "a": "4",
-                "b": "5",
-                "c": "6",
-              },
-            ],
-            "endrow": 1,
-            "startrow": 0,
-            "totalrows": 2,
-          }
+        columns={
+          Array [
+            "a",
+            "b",
+            "c",
+          ]
         }
+        getRow={[Function]}
+        totalRows={2}
       >
         <ReactDataGrid
           cellNavigationMode="none"

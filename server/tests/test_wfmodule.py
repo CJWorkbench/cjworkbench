@@ -101,9 +101,9 @@ class WfModuleTests(LoggedInTestCase):
     def test_make_render_json(self):
         output = make_render_json(self.test_table)
         d = {
-            'totalrows': 4,
-            'startrow': 0,
-            'endrow': 3,
+            'total_rows': 4,
+            'start_row': 0,
+            'end_row': 4,
             'columns': [ 'Class','M','F' ],
             'rows': self.test_table.to_dict(orient='recrords')
         }
@@ -137,14 +137,14 @@ class WfModuleTests(LoggedInTestCase):
         test_data_json = make_render_json(self.test_table, startrow=1)
         self.assertEqual(response.content, test_data_json)
 
-        response = self.client.get('/api/wfmodules/%d/render?startrow=1&endrow=2' % self.wfmodule1.id)
+        response = self.client.get('/api/wfmodules/%d/render?startrow=1&endrow=3' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(self.test_table, startrow=1, endrow=2)
+        test_data_json = make_render_json(self.test_table, startrow=1, endrow=3)
         self.assertEqual(response.content, test_data_json)
 
-        response = self.client.get('/api/wfmodules/%d/render?endrow=2' % self.wfmodule1.id)
+        response = self.client.get('/api/wfmodules/%d/render?endrow=3' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(self.test_table, endrow=2)
+        test_data_json = make_render_json(self.test_table, endrow=3)
         self.assertEqual(response.content, test_data_json)
 
         # index out of bounds should clip
