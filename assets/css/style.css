@@ -1179,7 +1179,7 @@ img.logo {
   font-weight: bold;
 }
 
-.module-library-open .library-nav-bar .h1 { /* Title of Module Library navigation bar */
+.module-library-open .library-nav-bar .h1 {
   color: #FFFFFF;
 }
 
@@ -1189,25 +1189,36 @@ img.logo {
 }
 
 .card .first-level {
-  /* background-color: #FFFFFF; */
   height: 3.5rem;
   width: 100%;
   padding-left: 1rem;
 
 }
 
-
 .card .second-level {
   position: relative;
   height: 4.5rem;
   padding-left: 1.5rem;
-  background-color: rgba(0,0,0,0)
+  background-color: #EDECEC;
+}
+
+.card .second-level:hover {
+  position: relative;
+  height: 4.5rem;
+  padding-left: 1.5rem;
+  background-color: #E8E6E6;
 }
 
 .library-card-category-open {
   margin-top: 1px;
   margin-bottom: 1rem;
+  background-color: #EDECEC;
 }
+
+.library-card-category-open .first-level {
+  background-color: #EDECEC;
+}
+
 
 .library-card-category-closed {
   margin-top: 1px;

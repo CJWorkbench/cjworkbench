@@ -50,7 +50,7 @@ export default class Module extends React.Component {
           <div className='second-level d-flex flex-row align-items-center'>
             <div className={icon}></div>
             <div>
-              <div className='content-3 t-d-gray ml-5'>{moduleName}</div>
+              <div className='content-3 t-d-gray ml-3'>{moduleName}</div>
             </div>
           </div>
         </div>
