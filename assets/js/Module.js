@@ -36,7 +36,8 @@ export default class Module extends React.Component {
   itemClick(evt) {
     var itemID = evt.target.getAttribute('data-id');
     this.props.addModule(this.props['data-id']);
-    this.workflow.toggleModuleLibrary();
+    // Toggle temporarily disabled
+    // this.workflow.toggleModuleLibrary();
   }
 
   render() {

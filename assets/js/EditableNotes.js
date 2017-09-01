@@ -13,11 +13,11 @@ export default class EditableNotes extends React.Component {
     }
   }
 
-  // Simulate a click on the field to enter editing state upon mount
+  // Enter editing state upon mount
   //    Have to target child through parent b/c TextArea cannot be directly referenced
   componentDidMount() {
-    if (this.props.startFocused)
-      this.textInput.childNodes[0].focus();
+    if (this.props.startFocused) 
+      this.textInput.childNodes[0].select();
   }
 
   // Make Enter key save the text in edit field, overriding default newline
@@ -42,12 +42,8 @@ export default class EditableNotes extends React.Component {
     }
   }
 
-  // Updates state as user types
-  // If starting with default text, it will be deleted when user starts typing
   handleChange(event) {
-    (this.state.value.slice(0, 16) == 'Write notes here') 
-      ? this.setState({value: event.target.value.slice(16)})
-      : this.setState({value: event.target.value})
+    this.setState({value: event.target.value})
   }
 
   render() {
