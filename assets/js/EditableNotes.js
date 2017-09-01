@@ -44,29 +44,31 @@ export default class EditableNotes extends React.Component {
     this.textInput.childNodes[0].blur();
   }
 
+  // Updates state as user types
+  // If starting with default text, it will be deleted when user starts typing
   handleChange(event) {
-    this.setState({value: event.target.value});
+    (this.state.value.slice(0, 16) == 'Write notes here') 
+      ? this.setState({value: event.target.value.slice(16)})
+      : this.setState({value: event.target.value})
   }
 
   render() {
 
-    return <div
-              ref={ (input) => { this.textInput = input; } }
-              className=''
-            >
-            {this.props.isReadOnly 
-              ? ( <span className='content-3 t-d-gray'>{this.props.value}</span> )
-              : ( 
-                  <Textarea
-                    value={this.state.value}
-                    onChange={this.handleChange}
-                    onBlur={this.saveNotes}
-                    onKeyPress={this.keyPress}
-                    className='editable-notes-field'
-                  >
-                  </Textarea>
-                )
-            }
+    // Saves a ref to parent to allow targeting of imported component
+    return <div ref={ (input) => {this.textInput = input;} }>
+              {this.props.isReadOnly 
+                ? ( <span className='content-3 t-d-gray'>{this.props.value}</span> )
+                : ( 
+                    <Textarea
+                      value={this.state.value}
+                      onChange={this.handleChange}
+                      onMouseLeave={this.saveNotes}
+                      onKeyPress={this.keyPress}
+                      className='editable-notes-field'
+                    >
+                    </Textarea>
+                  )
+              }
           </div>
   }
 }
