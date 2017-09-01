@@ -42,7 +42,7 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
 exports[`EditableWorkflowName Read-only Renders plain title 1`] = `
 <div>
   <span
-    className="content-3 t-d-gray"
+    className="editable-title-field"
   >
     Test Title
   </span>

@@ -2,7 +2,7 @@
 
 exports[`WorkflowMetadata renders correctly 1`] = `
 <div
-  className="mt-2"
+  className=""
 >
   <ul
     className="list-inline list-workflow-meta content-3 t-white"
@@ -27,7 +27,7 @@ exports[`WorkflowMetadata renders correctly 1`] = `
 
 exports[`WorkflowMetadata renders correctly 2`] = `
 <div
-  className="mt-2"
+  className=""
 >
   <ul
     className="list-inline list-workflow-meta content-3 t-white"
@@ -124,7 +124,7 @@ exports[`WorkflowMetadata renders correctly 2`] = `
 
 exports[`WorkflowMetadata renders correctly 3`] = `
 <div
-  className="mt-2"
+  className=""
 >
   <ul
     className="list-inline list-workflow-meta content-3 t-white"

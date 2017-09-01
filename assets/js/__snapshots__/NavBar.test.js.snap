@@ -71,7 +71,7 @@ exports[`NavBar WorkflowNavBar renders correctly 1`] = `
       className="d-flex flex-row align-items-center"
     >
       <a
-        className="t-white content-2 mr-5"
+        className="navLink t-white content-2"
         href="http://cjworkbench.org/index.php/blog/"
       >
         Learn
