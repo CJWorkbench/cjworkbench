@@ -12,7 +12,7 @@ from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeW
 from datetime import timedelta
 from server.utils import units_to_seconds
 import pandas as pd
-import simplejson
+import json
 
 
 # The guts of patch commands for various WfModule fields
@@ -94,17 +94,21 @@ def make_render_json(table, startrow=None, endrow=None):
     endrow = min(nrows, endrow)
     table = table[startrow:endrow]
 
-    rows = table.to_dict(orient='records')
-    d = {
-        'total_rows' : nrows,
-        'start_row'  : startrow,
-        'end_row'    : endrow,
-        'columns'   : list(table),
-        'rows'      : rows
-    }
+    # in a sane and just world, we could now just do something like
+    #  rows = table.to_dict(orient='records')
+    # and then insert these rows into a dict with the rest of the fields we need,
+    # and convert the whole thing to json. Alas, this is not the world we live in.
+    # https://github.com/pandas-dev/pandas/issues/13258#issuecomment-326671257
 
-    # must use simplejson not json, as we need NaN -> null
-    return simplejson.dumps(d, ensure_ascii=False, ignore_nan=True).encode('utf8')
+    # The workaround is to usr table.to_json to get a string, and then glue the other
+    # fields we want around that string. Like savages.
+    rowstr = table.to_json(orient="records").encode('utf-8')
+    colnames = list(table.columns.astype(str)) # Don't want int64 column names. Can get that from CSV with no header row
+    colstr = json.dumps(colnames, ensure_ascii=False).encode('utf-8')
+    outfmt =  b'{"total_rows": %d, "start_row" :%d, "end_row": %d, "columns": %s, "rows": %s}'
+    outstr = outfmt % (nrows, startrow, endrow, colstr, rowstr)
+
+    return outstr
 
 def int_or_none(x):
     return int(x) if x is not None else None

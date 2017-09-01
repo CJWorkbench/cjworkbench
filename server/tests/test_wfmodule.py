@@ -1,5 +1,5 @@
 from django.test import TestCase
-import simplejson
+import json
 import pandas as pd
 import io
 from server.views.WfModule import wfmodule_detail, wfmodule_render, wfmodule_dataversion, make_render_json
@@ -99,16 +99,34 @@ class WfModuleTests(LoggedInTestCase):
 
     # this constrains the output API format, detects changes that would break client code
     def test_make_render_json(self):
+        # test our basic test data
         output = make_render_json(self.test_table)
-        d = {
+        d1 = json.loads(str(output, 'utf-8'))
+        d2 = {
             'total_rows': 4,
             'start_row': 0,
             'end_row': 4,
             'columns': [ 'Class','M','F' ],
-            'rows': self.test_table.to_dict(orient='recrords')
+            'rows': [
+                {'Class': 'math', 'F': 12, 'M': 10.0},
+                {'Class': 'english', 'F': 7, 'M': None},
+                {'Class': 'history', 'F': 13, 'M': 11.0},
+                {'Class': 'economics', 'F': 20, 'M': 20.0}
+            ]
         }
-        expected = simplejson.dumps(d, ensure_ascii=False, ignore_nan=True).encode('utf8')
-        self.assertEqual(output, expected)
+        self.assertEqual(d1, d2)
+
+        # Test some json conversion gotchas we encountered during development
+
+        # simple test case where Pandas produces int64 column type, and json conversion throws ValueError
+        # see https://github.com/pandas-dev/pandas/issues/13258#issuecomment-326671257
+        int64csv = 'A,B,C,D\n1,2,3,4'
+        int64table = pd.read_csv(io.StringIO(int64csv), header=0)
+        output = make_render_json(int64table)
+
+        # When no header row, Pandas uses int64s as column names, and json.dumps(list(table)) throws ValueError
+        int64table = pd.read_csv(io.StringIO(int64csv), header=None)
+        output = make_render_json(int64table)
 
 
     def test_wf_module_render_get(self):
