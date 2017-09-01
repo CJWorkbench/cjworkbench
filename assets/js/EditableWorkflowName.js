@@ -21,22 +21,14 @@ export default class EditableWorkflowName extends React.Component {
   keyPress(e) {
     if (e.key == 'Enter' ) {
       e.preventDefault();
-      this.saveName();
+      // blur event will trigger save 
+      // Have to target child through parent b/c TextArea cannot be directly referenced
+      this.textInput.childNodes[0].blur();
     }
   }
 
-  // If nothing entered, saves a default title and closes
   saveName() {
-    let value = this.state.value;
-
-    if (!value || (value == "")) {
-      value = "Untitled Workflow";
-    };
-    this.props.api.setWfName(this.props.wfId, value);
-
-    // call blur on self to stop blinky cursor
-    // Have to target child through parent b/c TextArea cannot be directly referenced
-    this.textInput.childNodes[0].blur();
+    this.props.api.setWfName(this.props.wfId, this.state.value);
   }
   
   render() {

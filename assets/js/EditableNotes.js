@@ -24,7 +24,9 @@ export default class EditableNotes extends React.Component {
   keyPress(e) {
     if (e.key == 'Enter' ) {
       e.preventDefault();
-      this.saveNotes();
+      // blur event will trigger a save
+      // Have to target child through parent b/c TextArea cannot be directly referenced
+      this.textInput.childNodes[0].blur();
     }
   }
 
@@ -38,10 +40,6 @@ export default class EditableNotes extends React.Component {
     } else {
       this.props.api.setWfModuleNotes(this.props.wfModuleId, value);
     }
-
-    // call blur on self to stop blinky cursor
-    // Have to target child through parent b/c TextArea cannot be directly referenced
-    this.textInput.childNodes[0].blur();
   }
 
   // Updates state as user types
@@ -62,7 +60,7 @@ export default class EditableNotes extends React.Component {
                     <Textarea
                       value={this.state.value}
                       onChange={this.handleChange}
-                      onMouseLeave={this.saveNotes}
+                      onBlur={this.saveNotes}
                       onKeyPress={this.keyPress}
                       className='editable-notes-field'
                     >
