@@ -104,7 +104,7 @@ export default class WfParameter extends React.Component {
           sclass='wfmoduleStringInput t-d-gray content-2 text-field';
           srows = 1;
         } else {
-          sclass='wfmoduleTextInput t-d-gray info-1 text-field';
+          sclass='wfmoduleTextInput t-d-gray info-1 text-field-large';
           srows = 4;
         }
 
@@ -218,23 +218,23 @@ export default class WfParameter extends React.Component {
 
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
 
-          var button = (!this.props.isReadOnly) 
+          var button = (!this.props.isReadOnly)
             ? <div className='button-blue action-button mt-0' onClick={this.click}>{this.name}</div>
             : null
-          
+
           return (
             <div className='version-box'>
                 <DataVersionSelect
                   isReadOnly={this.props.isReadOnly}
                   wfModuleId={this.props.wf_module_id}
                   revision={this.props.revision}
-                  api={this.props.api} 
+                  api={this.props.api}
                 />
                 <UpdateFrequencySelect
                   isReadOnly={this.props.isReadOnly}
                   updateSettings={this.props.updateSettings}
                   wfModuleId={this.props.wf_module_id}
-                  api={this.props.api} 
+                  api={this.props.api}
                 />
                 {button}
             </div>

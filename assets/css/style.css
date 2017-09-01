@@ -220,8 +220,16 @@ body {
   border: 0;
 }
 
+.text-field-large {
+  height: 16rem;
+  width: 100%;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E7E7E7;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+}
+
 .input-number {
-  height: 4rem;
+  height: 3rem;
   color: #686768;
   background-color: #FFFFFF;
 	font-size: 1.4rem;
