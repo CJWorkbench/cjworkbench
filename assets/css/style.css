@@ -842,14 +842,18 @@ img.logo {
 
 /* ---- Dialog Boxes ---- */
 
+.modal-dialog{
+  margin-top: 10%;
+}
+
 .dialog-window {
   border: 0;
   width: 50rem;
 }
 
 .dialog-header {
-  height: 5.5rem;
-  padding: 2rem 3rem 2rem 3rem;
+  height: 7.5rem;
+  padding: 3rem;
   background-color: #FFFFFF;
 }
 
@@ -862,8 +866,12 @@ img.logo {
 
 .dialog-body {
   background-color: #FAFAFA;
-  padding: 2rem 3rem 2rem 3rem;
+  padding: 3rem 3rem 3rem 3rem;
   border: 0;
+}
+
+.dialog-body p {
+  font-size: 1.5rem;
 }
 
 .dialog-footer {
@@ -928,6 +936,7 @@ img.logo {
 .icon-close:before {
   content: "\e907";
   color: #686768;
+  font-size: 5rem;
 }
 .icon-code:before {
   content: "\e908";
