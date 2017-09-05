@@ -8,6 +8,7 @@ import ColumnSelector from './ColumnSelector'
 import ColumnRenamer from './ColumnRenamer'
 import PropTypes from 'prop-types'
 import DataVersionSelect from './DataVersionSelect'
+import DropZone from './DropZone'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
 import { csrfToken } from './utils'
 
@@ -255,7 +256,13 @@ export default class WfParameter extends React.Component {
                 getColNames={this.getInputColNames}
                 revision={this.props.revision} />
             </div> );
+        } else if (this.props.p.parameter_spec.id_name == 'file') {
+          return (
+                <DropZone
+                wfModuleId={this.props.wf_module_id} />
+            );
         }
+
 
       default:
         return null;  // unrecognized parameter type

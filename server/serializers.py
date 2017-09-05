@@ -1,10 +1,15 @@
 from rest_framework import serializers
-from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Module, ModuleVersion
+from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Module, ModuleVersion, StoredObject
 from server.utils import seconds_to_count_and_units
 from account.utils import user_display
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
+
+class StoredObjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StoredObject
+        fields = '__all__'
 
 # So far, no one actually wants to see the default value.
 class ParameterSpecSerializer(serializers.ModelSerializer):

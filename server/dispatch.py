@@ -13,6 +13,7 @@ from .modules.selectcolumns import SelectColumns
 from .modules.textsearch import TextSearch
 from .modules.twitter import Twitter
 from .modules.enigma import EnigmaDataLoader
+from .modules.uploadfile import UploadFile
 
 from .dynamicdispatch import DynamicDispatch
 # ---- Test Support ----
@@ -43,6 +44,7 @@ module_dispatch_tbl = {
     'countvalues':  CountValues,
     'countbydate':  CountByDate,
     'enigma': EnigmaDataLoader,
+    'uploadfile':   UploadFile,
 
     # For testing
     'NOP':          NOP,

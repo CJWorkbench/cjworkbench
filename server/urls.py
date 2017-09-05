@@ -2,6 +2,12 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
+from .views.StoredObject import *
+from rest_framework import routers
+from django.conf.urls import include
+
+external_router = routers.DefaultRouter()
+external_router.register(r'uploadfile', StoredObjectView)
 
 urlpatterns = [
     # ex: /
@@ -24,6 +30,8 @@ urlpatterns = [
     # modules
     url(r'^api/modules/?$', views.module_list),
     url(r'^api/modules/(?P<pk>[0-9]+)/?$', views.module_detail),
+
+    url(r'^api/', include(external_router.urls)),
 
     url(r'^api/initmodules/$', views.init_modules2),
     url(r'^api/importfromgithub/?$', views.import_from_github),

@@ -30,6 +30,7 @@
     "react-data-grid": "^2.0.41",
     "react-dom": "^15.3.2",
     "react-dropdown": "^1.2.0",
+    "react-dropzone": "^4.0.0",
     "react-faux-dom": "^3.0.0",
     "react-redux": "^5.0.2",
     "react-sortable": "^1.2.0",
@@ -41,6 +42,7 @@
     "save-svg-as-png": "^1.1.0",
     "sizeof": "^1.0.0",
     "sugar-date": "^1.5.1",
+    "superagent": "^3.5.2",
     "svg-react": "^1.0.9",
     "timediff": "^1.1.1",
     "url-loader": "^0.5.9"

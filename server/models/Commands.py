@@ -176,8 +176,8 @@ class ReorderModulesCommand(Delta):
 
 class ChangeDataVersionCommand(Delta):
     wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
-    old_version = models.TextField('old_version', null=True)    # may not have had a previous version
-    new_version = models.TextField('new_version')
+    old_version = models.DateTimeField('old_version', null=True)    # may not have had a previous version
+    new_version = models.DateTimeField('new_version')
 
     def forward(self):
         self.wf_module.set_stored_data_version(self.new_version)

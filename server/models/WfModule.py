@@ -9,6 +9,11 @@ from server.models.Workflow import *
 from server.models.ParameterVal import *
 from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_status
 from django.utils import timezone
+from server.models.StoredObject import StoredObject
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 # Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
 def current_iso_datetime_ms():
@@ -42,8 +47,7 @@ class WfModule(models.Model):
         null=True,
         blank=True)
 
-    stored_data_version = models.CharField(
-        max_length=32,
+    stored_data_version = models.DateTimeField(
         null=True,
         blank=True)                      # we may not have stored data
 
@@ -90,19 +94,28 @@ class WfModule(models.Model):
     # Modules that fetch data, like Load URL or Twitter or scrapers, store versions of all previously fetched data
 
     def store_data(self, text):
+        file = default_storage.save('media/' + str(self.id)+'.dat', ContentFile(bytes(text, 'UTF-8')))
         # uses current datetime as key; assumes we don't store more than one version per millisecond
-        data_version = current_iso_datetime_ms()
-        StoredObject.objects.create(
+        stored_object = StoredObject.objects.create(
             wf_module=self,
-            key=data_version,
-            data=bytes(text, 'UTF-8'))
-        return data_version
+            file=file)
+        return stored_object.stored_at
 
     def retrieve_data(self):
         if self.stored_data_version:
-            data = StoredObject.objects.get(wf_module=self, key=self.stored_data_version).data
+            file = StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).file
+            file.open(mode='rb')
+            data = file.read()
+            file.close()
             return bytearray(data).decode('UTF-8')
                 # copy to bytearray as data is a memoryview in prod, which has no decode method
+        else:
+            return None
+
+    def retrieve_file(self):
+        if self.stored_data_version:
+            file = StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).file
+            return file
         else:
             return None
 
@@ -120,7 +133,7 @@ class WfModule(models.Model):
         self.save()
 
     def list_stored_data_versions(self):
-        return list(StoredObject.objects.filter(wf_module=self).order_by('stored_at').values_list('key', flat=True))
+        return list(StoredObject.objects.filter(wf_module=self).order_by('stored_at').values_list('stored_at', flat=True))
 
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
@@ -210,20 +223,7 @@ class WfModule(models.Model):
             ws_client_rerender_workflow(self.workflow)
         self.save()
 
-# StoredObject is our persistence layer.
-# Allows WfModules to store keyed, versioned binary objects
-class StoredObject(models.Model):
-    wf_module = models.ForeignKey(WfModule, related_name='wf_module', on_delete=models.CASCADE)  # delete stored data if WfModule deleted
-
-    key = models.CharField('key', max_length = 64, blank=True, default='')
-
-    data = models.BinaryField(blank=True)
-
-    stored_at = models.DateTimeField('stored_at', auto_now=True)
-
-    # String accessors for ease of use
-    def set_string(self, s):
-        data = bytes(s, 'UTF-8')
-
-    def get_string(self):
-        return data.decode('UTF-8')
+@receiver(post_save, sender=StoredObject)
+def update_stored_data_version(sender, **kwargs):
+    kwargs['instance'].wf_module.stored_data_version = kwargs['instance'].stored_at
+    kwargs['instance'].wf_module.save()

@@ -1,0 +1,16 @@
+{
+  "name": "Upload File",
+  "id_name": "uploadfile",
+  "category" : "Add data",
+  "icon": "edit",
+  "description": "Upload CSV or Excel file.",
+  "parameters": [
+    {
+      "name": "Upload File",
+      "id_name": "file",
+      "type": "custom",
+      "visible": true,
+      "ui-only": true
+    }
+  ]
+}
