@@ -253,10 +253,10 @@ class WfModuleTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
         versiondata = {
             "versions": [
-                firstver,
-                secondver
+                firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+                secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
             ],
-            "selected": firstver
+            "selected": firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         }
         responsedata = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(responsedata, versiondata)
@@ -265,7 +265,7 @@ class WfModuleTests(LoggedInTestCase):
         # using factory.patch as trouble getting client.patch to work (400 -- authentication?)
         # More or less the same thing, but does skip urls.py
         request = self.factory.patch('/api/wfmodules/%d/dataversion' % self.wfmodule1.id,
-                                     {'selected': secondver})
+                                     {'selected': secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")})
         force_authenticate(request, user=self.user)
         response = wfmodule_dataversion(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)

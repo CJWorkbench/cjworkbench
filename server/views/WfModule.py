@@ -13,6 +13,8 @@ from datetime import timedelta
 from server.utils import units_to_seconds
 import pandas as pd
 import json
+import datetime
+import pytz
 
 
 # The guts of patch commands for various WfModule fields
@@ -212,5 +214,5 @@ def wfmodule_dataversion(request, pk, format=None):
         if not wf_module.user_authorized(request.user):
             return HttpResponseForbidden()
 
-        ChangeDataVersionCommand.create(wf_module, request.data['selected'])
+        ChangeDataVersionCommand.create(wf_module, datetime.datetime.strptime(request.data['selected'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=pytz.UTC))
         return Response(status=status.HTTP_204_NO_CONTENT)
