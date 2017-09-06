@@ -158,7 +158,7 @@ export default class ImportModuleFromGitHub extends React.Component {
           </ModalHeader>
           <ModalBody className='dialog-body'>
             <form onSubmit={this.handleSubmit}>
-              <div className="">
+              <div className="import-url-field">
                 <input type="text" 
                       className="text-field mt-2 t-m-gray content-3"
                       value={this.state.value} 

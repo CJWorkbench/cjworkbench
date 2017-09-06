@@ -220,6 +220,10 @@ body {
   border: 0;
 }
 
+.import-url-field input::placeholder {
+  color: #B4B4B4;
+}
+
 .text-field-large {
   height: 16rem;
   width: 100%;
