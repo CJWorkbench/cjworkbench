@@ -1268,8 +1268,10 @@ img.logo {
 }
 
 .cat-container {
+  margin-top: 0.2rem;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .button-icon-library{
@@ -1293,7 +1295,6 @@ img.logo {
 .library-card-category-open .first-level {
   background-color: #EDECEC;
 }
-
 
 .library-card-category-closed {
   margin-top: 1px;
