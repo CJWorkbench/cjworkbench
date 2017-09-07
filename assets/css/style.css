@@ -1036,6 +1036,7 @@ img.logo {
 .icon-sort-right:before {
   content: "\e920";
   color: #686768;
+  margin-left: 0.2rem;
 }
 .icon-sort-up:before {
   content: "\e921";
@@ -1264,6 +1265,15 @@ img.logo {
   height: 4.5rem;
   padding-left: 1.5rem;
   background-color: #EDECEC;
+}
+
+.cat-container {
+  display: flex;
+  justify-content: center;
+}
+
+.button-icon-library{
+  width: 0.9rem;
 }
 
 .card .second-level:hover {

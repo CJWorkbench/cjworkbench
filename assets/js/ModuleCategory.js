@@ -93,7 +93,7 @@ export default class ModuleCategory extends React.Component {
       : 'card b-l-gray library-card-category-closed'
 
     var symbol = isOpen
-      ? 'icon-sort-down button-icon-library ml-3 mt-1'
+      ? 'icon-sort-down button-icon-library ml-3'
       : 'icon-sort-right button-icon-library ml-3 mt-1'
 
     // --- Need a mapping of catergory-to-icon before implementing
@@ -110,8 +110,8 @@ export default class ModuleCategory extends React.Component {
     return (
       <div className={cardClass}>
         <div className='first-level d-flex align-items-center'>
-          <div className='mt-2' onClick={this.toggleCollapse}>
-            <span className={symbol}></span>
+          <div className='cat-container mt-2' onClick={this.toggleCollapse}>
+            <div className={symbol}></div>
             {/* <span className={icon}></span> */}
             <span className='content-3 t-d-gray ml-3'>{categoryName}</span>
           </div>
