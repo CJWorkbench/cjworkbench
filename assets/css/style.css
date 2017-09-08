@@ -946,6 +946,7 @@ img.logo {
 .icon-doc:before {
   content: "\e90a";
   color: #686768;
+  margin:auto;
 }
 .icon-download:before {
   content: "\e90b";
@@ -1262,9 +1263,13 @@ img.logo {
 .card .second-level {
   cursor: pointer;
   position: relative;
-  height: 4.5rem;
-  padding-left: 1.5rem;
+  height: 4rem;
+  padding-left: 2.5rem;
   background-color: #EDECEC;
+}
+
+.card .second-level:hover {
+  background-color: #E8E6E6;
 }
 
 .cat-container {
@@ -1278,12 +1283,18 @@ img.logo {
   width: 0.9rem;
 }
 
-.card .second-level:hover {
-  cursor: pointer;
-  position: relative;
-  height: 4.5rem;
-  padding-left: 1.5rem;
-  background-color: #E8E6E6;
+.ml-cat{
+  margin-top: 0.1rem;
+}
+
+.ml-icon{
+  font-size: 1.6rem;
+}
+
+.ml-icon-container{
+  width: 2rem;
+  display: flex;
+  justify-content: center;
 }
 
 .library-card-category-open {

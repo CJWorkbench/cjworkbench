@@ -42,16 +42,18 @@ export default class Module extends React.Component {
 
   render() {
     var moduleName = this.props['data-name'];
-    var icon = 'icon-' + this.props['icon'] + ' module-icon ml-3';
+    var icon = 'icon-' + this.props['icon'] + ' ml-icon';
 
     return (
       // TODO: remove inline styles
       <div className='card' style={{'borderRadius': 0, 'border': 0}}>
         <div className='' onClick={this.itemClick} >
           <div className='second-level d-flex flex-row align-items-center'>
-            <div className={icon}></div>
+            <div className='ml-icon-container'>
+              <div className={icon}></div>
+            </div>
             <div>
-              <div className='content-3 t-d-gray ml-3'>{moduleName}</div>
+              <div className='content-3 t-d-gray mt-1 ml-2'>{moduleName}</div>
             </div>
           </div>
         </div>

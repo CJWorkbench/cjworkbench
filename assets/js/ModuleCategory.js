@@ -113,7 +113,7 @@ export default class ModuleCategory extends React.Component {
           <div className='cat-container' onClick={this.toggleCollapse}>
             <div className={symbol}></div>
             {/* <span className={icon}></span> */}
-            <span className='content-3 t-d-gray ml-3'>{categoryName}</span>
+            <span className='content-3 t-d-gray ml-3 ml-cat'>{categoryName}</span>
           </div>
         </div>
         <div>
