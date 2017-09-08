@@ -1288,13 +1288,18 @@ img.logo {
 }
 
 .ml-icon{
-  font-size: 1.6rem;
+  font-size: 1.5rem;
 }
 
 .ml-icon-container{
   width: 2rem;
   display: flex;
   justify-content: center;
+}
+
+.ml-module-name{
+  margin-left:0.8rem;
+  margin-top: 0.2rem;
 }
 
 .library-card-category-open {

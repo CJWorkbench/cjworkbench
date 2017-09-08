@@ -53,7 +53,7 @@ export default class Module extends React.Component {
               <div className={icon}></div>
             </div>
             <div>
-              <div className='content-3 t-d-gray mt-1 ml-2'>{moduleName}</div>
+              <div className='content-3 ml-module-name t-d-gray'>{moduleName}</div>
             </div>
           </div>
         </div>
