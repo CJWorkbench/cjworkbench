@@ -36,9 +36,9 @@ body {
 }
 .title-2 {
 	font-size: 2.2rem;
-	font-weight: 400;
+	font-weight: 900;
 	line-height: 2.2rem;
-  font-family: lato;
+
 }
 .title-3 {
 	font-size: 1.8rem;
@@ -569,7 +569,9 @@ img.logo {
   font-size: 5rem;
   color:#fff;
   margin: 1rem;
-  padding: 1.3rem 0 1rem 0;
+  padding: 1.3rem 0 1 0;
+  font-family: 'Lato', sans-serif;
+  font-weight: 400;
 }
 
 .login-fullscreen-container {
@@ -581,10 +583,7 @@ img.logo {
   background-size: cover;
 }
 
-.login-brand h1{
-  margin-left: 0px;
-  color: #fff;
-}
+
 
 .login-card {
   height: auto;
@@ -610,7 +609,7 @@ img.logo {
 }
 
 .account_form .title-1 {
-  margin-top:1rem;
+  margin-bottom:0;
 }
 
 .account_form .text-center a {
@@ -618,9 +617,9 @@ img.logo {
 }
 
 .account_form .switch a {
-  font-size: 1.6rem;
-  padding-left:4rem;
-  padding-top: 2rem;
+  font-size: 1.5rem;
+  margin-left:3rem;
+  margin-top:1rem
 }
 
 /* ---- Workflow list ---- */

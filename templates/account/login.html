@@ -3,16 +3,16 @@
 {% load i18n %}
 
 {% block title %}{% trans "Log in" %}{% endblock %}
-    
+
 {% block content %}
-    
+
     <form class="account_form" method="POST" autocapitalize="off" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
-        <div class="row d-flex align-items-center mb-5">
+        <div class="row d-flex align-items-center mt-3 mb-5">
             <div class='col'></div>
             <div class='col'>
                 <legend class='title-1 t-d-gray text-center'>{% trans "Sign in" %}</legend>
             </div>
-            <div class='col switch'>
+            <div class='col switch mt-1'>
                 <a href="{% urlnext 'account_signup' %}" class='t-f-blue'>{% trans "Sign up" %}</a>
             </div>
         </div>
@@ -39,7 +39,7 @@
     </form>
     {% if ACCOUNT_OPEN_SIGNUP %}
        <!--  <p class="login-footer content-3 t-d-gray text-center">
-            {% trans "Don't have an account?" %}  
+            {% trans "Don't have an account?" %}
         </p> -->
     {% endif %}
 {% endblock %}
