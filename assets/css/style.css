@@ -346,6 +346,10 @@ body {
   background: #f9f9f9;
 }
 
+.context-button.btn-secondary.active{
+  background: #f4f4f4;
+}
+
 .navbar-context-button {
   cursor: pointer;
   border: 0;
@@ -354,7 +358,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: 0;
+  background: none;
   margin-right: 5rem;
   margin-left:1.8rem;
 }
@@ -369,6 +373,25 @@ body {
   justify-content: center;
   background: rgba(255,255,255,0.2);
 }
+
+/*overriding React styles for contextual button*/
+
+.btn-secondary:focus, .btn-secondary.focus {
+  box-shadow: 0 0 0 transparent;
+}
+
+.btn-secondary.active{
+  background-color: rgba(255,255,255,0.4);
+  color:transparent;
+}
+
+.show > .btn-secondary.dropdown-toggle {
+  color:#fff;
+  background-color: rgba(255,255,255,0.2);
+  border-color: transparent;
+}
+
+
 
 .action-button {
   cursor: pointer;

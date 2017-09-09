@@ -215,8 +215,8 @@ export default class WfModule extends React.Component {
     var arrow = undefined;
     if (this.state.showArrow) {
       arrow = (this.state.isCollapsed)
-        ? <div className='icon-sort-down mt-1 ml-4'></div>
-        : <div className='icon-sort-up mt-1 ml-4'></div>
+        ? <div className='icon-sort-down ml-4'></div>
+        : <div className='icon-sort-up ml-4'></div>
     }
 
     var contextMenu = undefined;
@@ -247,12 +247,12 @@ export default class WfModule extends React.Component {
                 onMouseEnter={this.showArrow}
                 onMouseLeave={this.hideArrow}
               >
-                <div className='d-flex justify-content-start'>
+                <div className='d-flex justify-content-start align-items-center'>
                   <div className={moduleIcon}></div>
                   <div className='t-d-gray title-4 WFmodule-name'>
                     {this.module.name}
                   </div>
-                  <div className='mt-1'>
+                  <div className=''>
                     {arrow}
                   </div>
                 </div>
