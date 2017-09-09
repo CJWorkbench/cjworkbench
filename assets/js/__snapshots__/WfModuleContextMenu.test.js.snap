@@ -9,12 +9,12 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
     className="modal-content"
   >
     <ModalHeader
-      className="dialog-header"
+      className="dialog-header modal-header"
       tag="h4"
       wrapTag="div"
     >
       <div
-        className="dialog-header modal-header"
+        className="dialog-header modal-header modal-header"
       >
         <h4
           className="modal-title"

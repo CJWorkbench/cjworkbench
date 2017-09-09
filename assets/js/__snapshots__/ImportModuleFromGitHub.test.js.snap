@@ -48,9 +48,9 @@ exports[`ImportModuleFromGitHub Link will open modal window 2`] = `
           className="modal-title"
         >
           <div
-            className="title-2 t-d-gray"
+            className="title-4 t-d-gray"
           >
-            Git URL:
+            Import from GitHub
           </div>
         </h4>
         <button
@@ -77,6 +77,11 @@ exports[`ImportModuleFromGitHub Link will open modal window 2`] = `
         <form
           onSubmit={[Function]}
         >
+          <div
+            className="label-margin t-d-gray content-3"
+          >
+            Git Url:
+          </div>
           <div
             className="import-url-field"
           >
