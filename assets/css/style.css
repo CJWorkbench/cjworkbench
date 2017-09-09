@@ -36,8 +36,9 @@ body {
 }
 .title-2 {
 	font-size: 2.2rem;
-	font-weight: 900;
+	font-weight: 400;
 	line-height: 2.2rem;
+  font-family: 'lato', sans-serif;
 
 }
 .title-3 {
@@ -498,9 +499,10 @@ body {
 }
 
 img.logo {
-  height: 70%;
+  height: 55%;
   vertical-align: middle;
   margin-right: 1rem;
+
 }
 
 .navbar-brand h1, img.logo {
@@ -870,13 +872,19 @@ img.logo {
   width: 50rem;
 }
 
-.dialog-header {
-  height: 7.5rem;
-  padding: 3rem;
-  background-color: #FFFFFF;
+.modal-content{
+  border:0;
+  border-radius:5px;
 }
 
-.dialog-header .modal-title {
+.modal-header {
+  height: 6rem;
+  padding: 3rem;
+  background-color: #FFF;
+  border-bottom:none;
+}
+
+.modal-header .modal-title {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -889,7 +897,12 @@ img.logo {
   border: 0;
 }
 
-.dialog-body p {
+.dialog-body p{
+  font-size: 1.5rem;
+  font-weight: 100;
+}
+
+.dialog-body.content-3{
   font-size: 1.5rem;
 }
 
@@ -954,8 +967,8 @@ img.logo {
 }
 .icon-close:before {
   content: "\e907";
-  color: #686768;
-  font-size: 5rem;
+  color: #b4b4b4;
+  font-size: 1.2rem;
 }
 .icon-code:before {
   content: "\e908";
@@ -1445,9 +1458,8 @@ img.logo {
 
 .import-module-buttons {
   float: right;
-  margin-top: 5.5rem;
+  margin-top: 3rem;
   justify-content: flex-end;
-  padding: 2rem;
 }
 
 .import-github-error {
