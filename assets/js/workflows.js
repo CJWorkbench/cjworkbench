@@ -31,9 +31,9 @@ export default class Workflows extends React.Component {
     .then(response => response.json())
     .then(json => {
       // ID of new Workflow has been returned by this step, can navigate to new WF page
-      goToUrl('/workflows/' + json.id);      
+      goToUrl('/workflows/' + json.id);
     })
-  } 
+  }
 
   // Ask the user if they really wanna do this. If sure, post DELETE to server
   deleteWorkflow(id) {
@@ -91,22 +91,22 @@ export default class Workflows extends React.Component {
           <div className="card w-75 mx-auto workflows-list" style={{backgroundColor:"#f6f6f6"}}>
             <div className="card-block">
 
-              <h3 className="card-title title-2 t-d-gray workflows-card-title">Workflows</h3>
+              <h3 className="card-title title-2 t-m-gray workflows-card-title">Workflows</h3>
 
               <div className="workflows-sub-list">
                 {this.state.workflows.map( listValue => {
                   return (
-                      <div className="card card-block item-test-class workflow-in-list" key={listValue.id}>
-                        <a href={"/workflows/" + listValue.id} className='my-auto workflow-link'>
+                      <a href={"/workflows/" + listValue.id} className="workflow-link card card-block item-test-class workflow-in-list"key={listValue.id}>
+                        <div className='my-auto'>
                           <div className='d-flex justify-content-between'>
                             <span className='t-d-gray title-4 mt-2'>{listValue.name}</span>
                             {/* Extra div wrapper to prevent parent's navigation to WF page*/}
                             <div onClick={(e) => e.preventDefault()} className="menu-test-class">
                               <WfContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
-                            </div>                                                                                
+                            </div>
                           </div>
-                        </a>
-                      </div>
+                        </div>
+                      </a>
                   );
                 })}
               </div>
@@ -118,4 +118,3 @@ export default class Workflows extends React.Component {
     );
   }
 }
-

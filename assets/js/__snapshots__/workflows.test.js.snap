@@ -157,7 +157,7 @@ exports[`renders correctly 1`] = `
           className="card-block"
         >
           <h3
-            className="card-title title-2 t-d-gray workflows-card-title"
+            className="card-title title-2 t-m-gray workflows-card-title"
           >
             Workflows
           </h3>
@@ -328,19 +328,19 @@ exports[`renders correctly 2`] = `
           className="card-block"
         >
           <h3
-            className="card-title title-2 t-d-gray workflows-card-title"
+            className="card-title title-2 t-m-gray workflows-card-title"
           >
             Workflows
           </h3>
           <div
             className="workflows-sub-list"
           >
-            <div
-              className="card card-block item-test-class workflow-in-list"
+            <a
+              className="workflow-link card card-block item-test-class workflow-in-list"
+              href="/workflows/1"
             >
-              <a
-                className="my-auto workflow-link"
-                href="/workflows/1"
+              <div
+                className="my-auto"
               >
                 <div
                   className="d-flex justify-content-between"
@@ -458,14 +458,14 @@ exports[`renders correctly 2`] = `
                     </WfContextMenu>
                   </div>
                 </div>
-              </a>
-            </div>
-            <div
-              className="card card-block item-test-class workflow-in-list"
+              </div>
+            </a>
+            <a
+              className="workflow-link card card-block item-test-class workflow-in-list"
+              href="/workflows/7"
             >
-              <a
-                className="my-auto workflow-link"
-                href="/workflows/7"
+              <div
+                className="my-auto"
               >
                 <div
                   className="d-flex justify-content-between"
@@ -583,14 +583,14 @@ exports[`renders correctly 2`] = `
                     </WfContextMenu>
                   </div>
                 </div>
-              </a>
-            </div>
-            <div
-              className="card card-block item-test-class workflow-in-list"
+              </div>
+            </a>
+            <a
+              className="workflow-link card card-block item-test-class workflow-in-list"
+              href="/workflows/8"
             >
-              <a
-                className="my-auto workflow-link"
-                href="/workflows/8"
+              <div
+                className="my-auto"
               >
                 <div
                   className="d-flex justify-content-between"
@@ -708,14 +708,14 @@ exports[`renders correctly 2`] = `
                     </WfContextMenu>
                   </div>
                 </div>
-              </a>
-            </div>
-            <div
-              className="card card-block item-test-class workflow-in-list"
+              </div>
+            </a>
+            <a
+              className="workflow-link card card-block item-test-class workflow-in-list"
+              href="/workflows/9"
             >
-              <a
-                className="my-auto workflow-link"
-                href="/workflows/9"
+              <div
+                className="my-auto"
               >
                 <div
                   className="d-flex justify-content-between"
@@ -833,8 +833,8 @@ exports[`renders correctly 2`] = `
                     </WfContextMenu>
                   </div>
                 </div>
-              </a>
-            </div>
+              </div>
+            </a>
           </div>
         </div>
       </div>

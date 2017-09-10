@@ -641,7 +641,7 @@ img.logo {
 
 .workflows-card-title {
   margin-left: 2.4rem;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 .worflows-list > .card-block {
   padding:0;
@@ -650,9 +650,6 @@ img.logo {
   padding:1px 1px 1px 1px;
   background-color: #EDECEC;
   }
-.workflows-sub-list .workflow-in-list:last-child {
-  margin-bottom: 0px;
-}
 .workflow-in-list {
   height: 7rem;
   margin-bottom: 1px;
@@ -660,14 +657,23 @@ img.logo {
   border-radius:0;
   padding: 1.5rem 2.5rem 1.5rem 2.5rem;
 }
-.workflow-in-list:hover {
-  background-color: #f9f9f9;
+
+.workflows-sub-list:last-child .workflow-in-list:last-child {
+  margin-bottom: 0px;
 }
 
+.workflow-in-list:hover {
+  background-color: #f9f9f9;
+  margin:none;
+}
 .workflow-link:hover {
   text-decoration: none;
 }
 
+.wf-list-elmt{
+  margin-top:auto;
+  margin-bottom: auto;
+}
 
 
 /* ---- Workflow page ---- */
