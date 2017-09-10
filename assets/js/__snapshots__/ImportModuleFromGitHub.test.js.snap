@@ -86,12 +86,23 @@ exports[`ImportModuleFromGitHub Link will open modal window 2`] = `
             className="import-url-field"
           >
             <input
-              className="text-field mt-2 t-m-gray content-3"
+              className="text-field mb-3 mt-2 t-m-gray content-3"
               onChange={[Function]}
               onKeyPress={[Function]}
               placeholder="https://github.com.."
               type="text"
             />
+            <div
+              className="label-margin t-m-gray info-1"
+            >
+              Learn more about how to build your own module 
+              <a
+                className=" t-f-blue"
+                href="http://cjworkbench.org/index.php/build-a-module/"
+              >
+                here.
+              </a>
+            </div>
           </div>
           <div
             className="import-module-buttons d-flex flex-row"
