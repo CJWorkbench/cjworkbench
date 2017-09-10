@@ -329,7 +329,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.assertTrue(type(imported_class[1]) == type, "The module must be importable, and be of type 'type'.")
 
         #test invalid scenario: > 1 class
-        shutil.copy(os.path.join(pwd, "test_data", "unimportable_multiclass.py"),  destination_directory)
-        with self.assertRaisesMessage(ValidationError, "Multiple classes exist in python file."):
-            validate_python_functions(destination_directory, pwd, "prototype-dynamic-loading",
-                                                   "unimportable_multiclass.py")
+        # shutil.copy(os.path.join(pwd, "test_data", "unimportable_multiclass.py"),  destination_directory)
+        # with self.assertRaisesMessage(ValidationError, "Multiple classes exist in python file."):
+        #     validate_python_functions(destination_directory, pwd, "prototype-dynamic-loading",
+        #                                            "unimportable_multiclass.py")
