@@ -93,8 +93,9 @@ body {
 
 .info-1 {
 	font-size: 1.3rem;
-	font-weight: 300;
+	font-weight: 100;
 	line-height: 2.1rem;
+  font-family: 'Nunito Sans', sans-serif;
 }
 .info-2 {
 	font-size: 1rem;
@@ -104,7 +105,7 @@ body {
 
 .table-1 {
 	font-size: 1.3rem;
-	font-weight: 900;
+	font-weight: 200;
 	line-height: 1.8rem;
 }
 .table-2 {
