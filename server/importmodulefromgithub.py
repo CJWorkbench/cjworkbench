@@ -218,10 +218,10 @@ def validate_python_functions(destination_directory, current_path, directory, py
     time.sleep(2)
     imported_module = import_module(p)
     imported_class = inspect.getmembers(imported_module, inspect.isclass)
-    if len(imported_class) > 1:
-        shutil.rmtree(os.path.join(destination_directory))
-        shutil.rmtree(os.path.join(current_path, directory))
-        raise ValidationError("Multiple classes exist in python file.")
+    # if len(imported_class) > 1:
+    #     shutil.rmtree(os.path.join(destination_directory))
+    #     shutil.rmtree(os.path.join(current_path, directory))
+    #     raise ValidationError("Multiple classes exist in python file.")
 
     try:
         imported_class = imported_class[0]
