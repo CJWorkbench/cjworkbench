@@ -109,8 +109,8 @@ export default class ModuleCategory extends React.Component {
 
     return (
       <div className={cardClass}>
-        <div className='first-level d-flex align-items-center'>
-          <div className='cat-container' onClick={this.toggleCollapse}>
+        <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
+          <div className='cat-container'>
             <div className={symbol}></div>
             {/* <span className={icon}></span> */}
             <span className='content-3 t-d-gray ml-3 ml-cat'>{categoryName}</span>
