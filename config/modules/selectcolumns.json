@@ -1,8 +1,8 @@
 {
-  "name": "Column Filter",
+  "name": "Column Selector",
   "id_name": "selectcolumns",
   "category" : "Filter",
-  "icon" : "filter",
+  "icon" : "wrangle",
   "description" : "",
   "parameters": [
     {
