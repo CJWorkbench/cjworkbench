@@ -923,7 +923,7 @@ img.logo {
 
 @font-face {
   font-family: 'Workbench';
-  src: url('../fonts/Workbench.woff?p3np25') format('woff');
+  src: url('../fonts/Workbench.woff?4bznb4') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -943,7 +943,10 @@ img.logo {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
+.icon-sentiment:before {
+  content: "\e929";
+  color: #686768;
+}
 .icon-add:before {
   content: "\e900";
   color: #686768;
@@ -974,8 +977,7 @@ img.logo {
 }
 .icon-close:before {
   content: "\e907";
-  color: #b4b4b4;
-  font-size: 1.2rem;
+  color: #686768;
 }
 .icon-code:before {
   content: "\e908";
@@ -988,7 +990,6 @@ img.logo {
 .icon-doc:before {
   content: "\e90a";
   color: #686768;
-  margin:auto;
 }
 .icon-download:before {
   content: "\e90b";
@@ -1028,12 +1029,11 @@ img.logo {
 }
 .icon-more:before {
   content: "\e914";
-  color: #b4b4b4;
+  color: #686768;
 }
 .icon-note:before {
   content: "\e915";
-  color: #b4b4b4;
-
+  color: #686768;
 }
 .icon-notification-filled:before {
   content: "\e916";
@@ -1070,7 +1070,6 @@ img.logo {
 .icon-sort-down:before {
   content: "\e91e";
   color: #686768;
-  font-size: 0.6rem;
 }
 .icon-sort-left:before {
   content: "\e91f";
@@ -1079,12 +1078,10 @@ img.logo {
 .icon-sort-right:before {
   content: "\e920";
   color: #686768;
-  margin-left: 0.2rem;
 }
 .icon-sort-up:before {
   content: "\e921";
   color: #686768;
-  font-size: 0.6rem;
 }
 .icon-table:before {
   content: "\e922";
@@ -1115,14 +1112,11 @@ img.logo {
   color: #4a4a4a;
 }
 
-
-
 /* --- End of official icon set --- */
-
 
 /* Customized icons, not in font sent  */
 .icon-close-white:before {
-  content: "\e905";
+  content: "\e907";
   color: #FFFFFF;
   font-size: 1.5rem;
 }
