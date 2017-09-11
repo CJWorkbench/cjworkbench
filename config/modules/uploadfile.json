@@ -2,7 +2,7 @@
   "name": "Upload File",
   "id_name": "uploadfile",
   "category" : "Add data",
-  "icon": "edit",
+  "icon": "upload",
   "description": "Upload CSV or Excel file.",
   "parameters": [
     {
