@@ -65,12 +65,12 @@ if DEBUG==False:
     if 'CJW_SENDGRID_API_KEY' not in os.environ:
         sys.exit('Must set CJW_SENDGRID_API_KEY in production')
 
-    if not all(x in [
+    if not all(x in os.environ for x in [
         'CJW_SENDGRID_INVITATION_ID',
         'CJW_SENDGRID_CONFIRMATION_ID',
         'CJW_SENDGRID_PASSWORD_CHANGE_ID',
         'CJW_SENDGRID_PASSWORD_RESET_ID'
-        ] for x in os.environ):
+        ]):
         sys.exit('Must set Sendgrid template IDs for all system emails')
 
     EMAIL_BACKEND = 'sgbackend.SendGridBackend'
