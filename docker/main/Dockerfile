@@ -19,6 +19,9 @@ RUN python manage.py migrate
 # setup cron job for every minute to do scheduled checks for new data
 RUN echo "* * * * * /usr/bin/curl http://localhost:8000/runcron" | crontab
 
+# download nltk models & corpuses
+RUN python -m nltk.downloader -d /usr/local/share/nltk_data all
+
 # You'd think this would work, but no. For some reason never. Had to put it in start-prod.sh
 # RUN cron
 
