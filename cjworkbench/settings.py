@@ -65,11 +65,23 @@ if DEBUG==False:
     if 'CJW_SENDGRID_API_KEY' not in os.environ:
         sys.exit('Must set CJW_SENDGRID_API_KEY in production')
 
-    EMAIL_HOST = 'smtp.sendgrid.net'
-    EMAIL_HOST_USER = 'apikey'
-    EMAIL_HOST_PASSWORD = os.environ['CJW_SENDGRID_API_KEY']
-    EMAIL_PORT = 2525
-    EMAIL_USE_TLS = True
+    if not all(x in [
+        'CJW_SENDGRID_INVITATION_ID',
+        'CJW_SENDGRID_CONFIRMATION_ID',
+        'CJW_SENDGRID_PASSWORD_CHANGE_ID',
+        'CJW_SENDGRID_PASSWORD_RESET_ID'
+        ] for x in os.environ):
+        sys.exit('Must set Sendgrid template IDs for all system emails')
+
+    EMAIL_BACKEND = 'sgbackend.SendGridBackend'
+    SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
+    ACCOUNT_HOOKSET = "cjworkbench.sendgrid_email.SendgridEmails"
+    SENDGRID_TEMPLATE_IDS = {
+        'invitation': os.environ['CJW_SENDGRID_INVITATION_ID'],
+        'confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+        'password_change': os.environ['CJW_SENDGRID_PASSWORD_CHANGE_ID'],
+        'password_reset': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
+    }
 
 else:
     # We are running in debug
