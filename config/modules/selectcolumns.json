@@ -1,7 +1,7 @@
 {
   "name": "Column Filter",
   "id_name": "selectcolumns",
-  "category" : "Transform",
+  "category" : "Filter",
   "icon" : "filter",
   "description" : "",
   "parameters": [
