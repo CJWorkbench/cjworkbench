@@ -11,12 +11,13 @@ db.sqlite3
 dbdata/
 local_mail/
 
-# Asset bundles, static files, downloaded modules
+# Asset bundles, static files, downloaded modules, saved data
 /node_modules/
 /assets/bundles/
 /static/
 /server/modules/dynamic
 /config/modules/dynamic
+/media/
 
 #pycharm
 .idea/
