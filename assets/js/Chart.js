@@ -22,7 +22,7 @@ function JSONtoCSV(d) {
       text += colnames.map(name => row[name]).join(',') + '\n';
     }
     return text;
-
+    
   } else {
 
     return '';
@@ -119,7 +119,7 @@ export default class ChartParameter extends React.Component {
         }
 
         // Add this module's input data to the chart properties we just loaded
-        model.chartProps.input = { raw: JSONtoCSV(json) };
+        model.chartProps.input = { raw: JSONtoCSV(json.rows) };
 
         //console.log("Updating chart");
         //console.log(model);
