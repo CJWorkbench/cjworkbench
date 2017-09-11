@@ -2,7 +2,7 @@
   "name": "Column Selector",
   "id_name": "selectcolumns",
   "category" : "Wrangle",
-  "icon" : "wrangle",
+  "icon" : "transform",
   "description" : "",
   "parameters": [
     {
