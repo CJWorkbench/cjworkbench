@@ -159,13 +159,13 @@ export default class ImportModuleFromGitHub extends React.Component {
               <div className="label-margin t-d-gray content-3">Git Url:</div>
               <div className="import-url-field">
                 <input type="text"
-                      className="text-field mb-3 mt-2 t-m-gray content-3"
+                      className="text-field mb-3 mt-2 content-3"
                       value={this.state.value}
                       placeholder='https://github.com..'
                       onChange={this.handleChange}
                       onKeyPress={this.handleChange}
                       />
-              <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a href="http://cjworkbench.org/index.php/build-a-module/" className=' t-f-blue'>here.</a></div>
+              <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a href="http://cjworkbench.org/index.php/build-a-module/" className=' t-f-blue'>here</a></div>
               </div>
               {visible}
             </form>
