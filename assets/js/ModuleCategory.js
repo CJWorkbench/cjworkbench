@@ -93,7 +93,7 @@ export default class ModuleCategory extends React.Component {
       : 'card b-l-gray library-card-category-closed'
 
     var symbol = isOpen
-      ? 'icon-sort-down button-icon-library ml-3 mb-1'
+      ? 'icon-sort-down small-sort button-icon-library ml-3 mb-1'
       : 'icon-sort-right button-icon-library ml-3'
 
     // --- Need a mapping of catergory-to-icon before implementing

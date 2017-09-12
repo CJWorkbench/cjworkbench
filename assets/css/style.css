@@ -144,6 +144,7 @@ body {
 .t-m-gray {
   color: #B4B4B4;
 }
+
 .t-d-gray {
   color: #686768;
 }
@@ -1029,11 +1030,11 @@ img.logo {
 }
 .icon-more:before {
   content: "\e914";
-  color: #686768;
+  color: #b4b4b4;
 }
 .icon-note:before {
   content: "\e915";
-  color: #686768;
+  color: #b4b4b4;
 }
 .icon-notification-filled:before {
   content: "\e916";
@@ -1133,6 +1134,7 @@ img.logo {
 .module-icon {
   font-size: 2rem;
 }
+
 /* icons embedded within buttons  */
 .button-icon {
   font-size: 1.5rem;
@@ -1140,8 +1142,8 @@ img.logo {
 
 .module-menu-icon {
   font-size: 1.2rem ;
-  color: #b4b4b4 ;
 }
+
 
 /* from Export Data modal, in WfModuleContextMenu  */
 .download-icon-box {
@@ -1296,6 +1298,10 @@ img.logo {
 
 }
 
+.small-sort{
+  font-size: 0.6rem;
+}
+
 .card .second-level {
   cursor: pointer;
   position: relative;
@@ -1334,7 +1340,7 @@ img.logo {
 }
 
 .ml-module-name{
-  margin-left:0.8rem;
+  margin-left:0.7rem;
   margin-top: 0.2rem;
 }
 

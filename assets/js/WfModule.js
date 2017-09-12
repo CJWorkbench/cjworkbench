@@ -209,14 +209,14 @@ export default class WfModule extends React.Component {
     var notesIcon = undefined;
     if (!this.state.showNotes && !this.props['data-isReadOnly'])
       notesIcon = <div className='context-button mr-4' onClick={this.showNotes}>
-                    <div className='icon-note'></div>
+                    <div className='icon-note '></div>
                   </div>
 
     var arrow = undefined;
     if (this.state.showArrow) {
       arrow = (this.state.isCollapsed)
-        ? <div className='icon-sort-down ml-4'></div>
-        : <div className='icon-sort-up ml-4'></div>
+        ? <div className='icon-sort-down small-sort ml-4'></div>
+        : <div className='icon-sort-up small-sort ml-4'></div>
     }
 
     var contextMenu = undefined;
