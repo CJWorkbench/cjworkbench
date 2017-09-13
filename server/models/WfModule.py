@@ -11,7 +11,6 @@ from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_s
 from django.utils import timezone
 from server.models.StoredObject import StoredObject
 from django.core.files.storage import default_storage
-from django.core.files.base import ContentFile
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -94,21 +93,12 @@ class WfModule(models.Model):
     # Modules that fetch data, like Load URL or Twitter or scrapers, store versions of all previously fetched data
 
     def store_data(self, text):
-        file = default_storage.save('media/' + str(self.id)+'.dat', ContentFile(bytes(text, 'UTF-8')))
-        # uses current datetime as key; assumes we don't store more than one version per millisecond
-        stored_object = StoredObject.objects.create(
-            wf_module=self,
-            file=file)
+        stored_object = StoredObject.create(self, text)
         return stored_object.stored_at
 
     def retrieve_data(self):
         if self.stored_data_version:
-            file = StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).file
-            file.open(mode='rb')
-            data = file.read()
-            file.close()
-            return bytearray(data).decode('UTF-8')
-                # copy to bytearray as data is a memoryview in prod, which has no decode method
+            return StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).get_data()
         else:
             return None
 
@@ -222,6 +212,24 @@ class WfModule(models.Model):
         if notify:
             ws_client_rerender_workflow(self.workflow)
         self.save()
+
+    # --- Duplicate ---
+    # used when duplicating a whole workflow
+    def duplicate(self, to_workflow):
+        new_wfm = WfModule.objects.create(workflow=to_workflow,
+                                          module_version=self.module_version,
+                                          order=self.order,
+                                          notes=self.notes,
+                                          is_collapsed=self.is_collapsed,
+                                          auto_update_data = self.auto_update_data,
+                                          next_update=self.next_update,
+                                          update_interval=self.update_interval,
+                                          last_update_check=self.last_update_check)
+
+        # don't set status/error as first render on this wfm will set that
+        if self.stored_data_version is not None:
+            new_wfm.stored_data_version = self.stored_data_version.duplicate()
+
 
 @receiver(post_save, sender=StoredObject)
 def update_stored_data_version(sender, **kwargs):
