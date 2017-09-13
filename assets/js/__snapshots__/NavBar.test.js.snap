@@ -45,15 +45,6 @@ exports[`NavBar WorkflowNavBar renders correctly 1`] = `
     <div
       className="navbar-brand d-flex flex-row align-items-center"
     >
-      <a
-        className="logo"
-        href="/workflows"
-      >
-        <img
-          src="/static/images/logo.png"
-          width="30"
-        />
-      </a>
       <div
         className="title-metadata-stack"
       >
