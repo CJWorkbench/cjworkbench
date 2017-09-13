@@ -121,7 +121,25 @@ export default class Workflow extends React.Component {
                       />
     };
 
-
+    var moduleStack = null;
+    if (!!this.props.workflow.wf_modules && !!this.props.workflow.wf_modules.length) {
+      moduleStack = <div className="modulestack-list mx-auto mt-3">
+                      <SortableList
+                        data={this.props.workflow}
+                        selected_wf_module={this.props.selected_wf_module}
+                        changeParam={this.props.changeParam}
+                        removeModule={this.props.removeModule}
+                        api={this.props.api}
+                      />
+                    </div>
+    } else {
+      moduleStack = <div className='modulestack-empty mx-auto'>
+                      <span className='icon-add-orange module-icon'/>
+                      <span className='t-orange title-3 ml-3'>
+                        Select a module from the library to begin
+                      </span>
+                    </div>
+    }
 
     // Takes care of both, the left-hand side and the right-hand side of the
     // UI. The modules in the workflow are displayed on the left (vertical flow)
@@ -143,15 +161,7 @@ export default class Workflow extends React.Component {
           {moduleLibrary}
 
           <div className="modulestack-center">
-            <div className="modulestack-list mx-auto mt-3">
-              <SortableList
-                data={this.props.workflow}
-                selected_wf_module={this.props.selected_wf_module}
-                changeParam={this.props.changeParam}
-                removeModule={this.props.removeModule}
-                api={this.props.api}
-              />
-            </div>
+            {moduleStack}
           </div>
 
           <div className="outputpane-right">

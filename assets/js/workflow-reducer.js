@@ -99,7 +99,6 @@ export function workflowReducer(state, action) {
       });
 
     // Sets the selected module to the first in list
-    // If no modules loaded, shows library instead
     case INITIAL_LOAD_WORKFLOW:
       console.log("INITIAL_LOAD_WORKFLOW");
       if (action.workflow.wf_modules && action.workflow.wf_modules.length) {

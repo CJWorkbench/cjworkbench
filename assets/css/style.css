@@ -715,6 +715,13 @@ img.logo {
   margin-bottom: 10rem;
   padding-top: 2rem;
 }
+.modulestack-empty {
+  width: 530px;
+  margin-top: 2rem;
+  margin-bottom: 10rem;
+  padding: 2rem;
+  border: 2px solid #FBAA6D;
+}
 
 .outputpane-right {
   flex-grow: 1;
@@ -953,6 +960,10 @@ img.logo {
   content: "\e900";
   color: #686768;
 }
+.icon-add-orange:before {
+  content: "\e900";
+  color: #F8AA6D;
+}
 .icon-bin:before {
   content: "\e901";
   color: #686768;
@@ -1111,7 +1122,7 @@ img.logo {
 }
 .icon-wrangle:before {
   content: "\e928";
-  color: #4a4a4a;
+  color: #686768;
 }
 
 /* --- End of official icon set --- */
@@ -1246,6 +1257,7 @@ img.logo {
 /* --- Module Library --- */
 
 .module-library {
+
   height: calc(100% - 6rem);
   position: fixed;
   overflow: auto;
