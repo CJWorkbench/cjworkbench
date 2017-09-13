@@ -1165,6 +1165,7 @@ img.logo {
 
 .version-box {
   border: 1px solid #E7E7E7;
+  height: 8rem;
   display: flex;
   flex-direction: row;
   justify-content: space-around;
