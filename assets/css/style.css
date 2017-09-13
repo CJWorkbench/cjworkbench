@@ -236,12 +236,13 @@ body {
 }
 
 .input-number {
-  height: 3rem;
+  height: 4rem;
   color: #686768;
   background-color: #FFFFFF;
 	font-size: 1.4rem;
 	font-weight: 500;
 	line-height: 1.4rem;
+  border-radius: 0px;
 }
 
 .input-dropdown {
@@ -1340,7 +1341,7 @@ img.logo {
 }
 
 .ml-module-name{
-  margin-left:0.7rem;
+  margin-left:0.8rem;
   margin-top: 0.2rem;
 }
 
