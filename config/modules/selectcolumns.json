@@ -2,7 +2,7 @@
   "name": "Column Selector",
   "id_name": "selectcolumns",
   "category" : "Filter",
-  "icon" : "wrangle",
+  "icon" : "filter",
   "description" : "",
   "parameters": [
     {
