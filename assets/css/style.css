@@ -395,8 +395,6 @@ body {
   border-color: transparent;
 }
 
-
-
 .action-button {
   cursor: pointer;
 	height: 4rem;
@@ -414,7 +412,6 @@ body {
   cursor: pointer;
 	opacity: 0.5;
 }
-
 
 
 /* ---- Dropdowns and Lists---- */
@@ -472,93 +469,6 @@ body {
 }
 
 
-/* ---- Navbar ----- */
-
-.navbar {
-  height: 6rem;
-  position: fixed;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  top: 0;
-  right: 0;
-  left: 0;
-  z-index: 1030;
-  background-color: #48C8D7;
-  color: #FFFFFF;
-  padding: 0.5rem 4rem 0.5rem 4rem;
-}
-
-.navbar-brand {
-  height: 100%;
-  width: 100%;
-  font-family: 'Lato', sans-serif;
-}
-
-.title-metadata-stack {
-  height: 100%;
-  width: 100%;
-  margin-left: 2rem;
-}
-
-img.logo {
-  height: 55%;
-  vertical-align: middle;
-  margin-right: 1rem;
-
-}
-
-.navbar-brand h1, img.logo {
-  display: inline-block;
-  vertical-align: middle;
-}
-.navbar-brand h1 a {
-  color: white;
-}
-.navbar-brand h1 a:hover {
-  text-decoration: none;
-}
-
-/*navbar:Workflow page*/
-
-.navLink{
-  margin-right: 5rem;
-}
-
-.title-metadata-stack {
-  height: 100%;
-  width: 100%;
-}
-
-.title-metadata-stack div {
-  height:0rem;
-}
-
-.editable-title-field {
-  width: 100%;
-  margin-top: 0.4rem;
-  border: none;
-  outline: none;
-  padding: 0;
-  resize: none;
-  background: none;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1.8rem;
-	line-height: 1.8rem;
-  color: #FFFFFF;
-
-}
-
-.list-workflow-meta{
-  margin-top: 2.5rem;
-}
-
-.list-workflow-meta li:not(:last-child):after {
-  content: '-';
-  display:inline-block;
-  margin-left: 5px;
-}
-
 /* ---- Login ---- */
 
 .navbar-login {
@@ -587,7 +497,6 @@ img.logo {
   background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #0C93C0);
   background-size: cover;
 }
-
 
 
 .login-card {
@@ -680,31 +589,115 @@ img.logo {
 
 /* ---- Workflow page ---- */
 
-/* Contains navbar + workflow. For some reason we need absolute positioning to get this to show up right,
-   and when we set that we also need width:100%*/
+/* Contains all of Workflow page */
+/* TODO: check other instances of 'display: flex' in this file, may be superfluous */
 .workflow-root {
-  height: 100%;
-	width: 100%;
-	position: absolute;
-}
-
-/* Contains modulestack + output pane. Position below nav */
-.workflow-container {
   display: flex;
-  flex-flow: row;
-  height: calc(100% - 6rem);
-  margin-top: 6rem;
-  position: absolute;
+  flex-direction: row;
 }
 
-.modulestack-center {
+/* Contains Navbar, Modulestack, and Outputpane */
+.workflow-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Contains Modulestack and Outputpane */
+.workflow-columns {
+  flex: 1 1 auto;  
+  display: flex;
+  flex-direction: row;  
+}
+
+
+/* ---- Navbar ----- */
+
+.navbar {
+  flex: 0 0 6rem;
+  height: 6rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #48C8D7;
+  color: #FFFFFF;
+  padding: 0.5rem 4rem 0.5rem 4rem;
+}
+
+.navbar-brand {
   height: 100%;
+  width: 100%;
+  font-family: 'Lato', sans-serif;
+}
+
+.title-metadata-stack {
+  height: 100%;
+  width: 100%;
+}
+
+img.logo {
+  height: 55%;
+  vertical-align: middle;
+  margin-right: 1rem;
+}
+
+.navbar-brand h1, img.logo {
+  display: inline-block;
+  vertical-align: middle;
+}
+.navbar-brand h1 a {
+  color: white;
+}
+.navbar-brand h1 a:hover {
+  text-decoration: none;
+}
+
+/*navbar:Workflow page*/
+
+.navLink{
+  margin-right: 5rem;
+}
+
+.title-metadata-stack {
+  height: 100%;
+  width: 100%;
+}
+
+.title-metadata-stack div {
+  height:0rem;
+}
+
+.editable-title-field {
+  width: 100%;
+  margin-top: 0.4rem;
+  border: none;
+  outline: none;
+  padding: 0;
+  resize: none;
+  background: none;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.8rem;
+	line-height: 1.8rem;
+  color: #FFFFFF;
+}
+
+.list-workflow-meta{
+  margin-top: 2.5rem;
+}
+
+.list-workflow-meta li:not(:last-child):after {
+  content: '-';
+  display:inline-block;
+  margin-left: 5px;
+}
+
+/* Module Stack */
+.modulestack {
+  flex: 0 0 600px;
   background-color: #E9EBEE;
   border-left: 1px solid #DDDDDD;
   border-right: 1px solid #DDDDDD;
   width: 600px;
-  position: relative;
-  left: 200px;
 }
 .modulestack-header {
   color: #686768;
@@ -723,19 +716,15 @@ img.logo {
   border: 2px solid #FBAA6D;
 }
 
-.outputpane-right {
-  flex-grow: 1;
-  flex-basis: 0;
-  min-width: 0;
-  position: relative;
-  left: 200px;
+/* Output Pane */
+.outputpane {
+  flex: 1 1 auto;
 }
 
+/* This div may be superfluous wrt .outputpane */
 .outputpane-box {
-  height: calc(100% - 6rem);
-  width: 50%;
+  height: 100%;
   background-color: #F2F2F2;
-  position: fixed;
 }
 
 .outputpane-header {
@@ -748,6 +737,264 @@ img.logo {
   height: calc(100% - 3rem);
   overflow: hidden; /* important as it prevents grid contents from interfering with window resizing */
 }
+
+/* --- Module Library --- */
+
+.module-library {
+  min-height: 100%;
+}
+.module-library-open {
+  width: 200px;
+  flex: 0 0 200px;
+  background-color: #577485;
+}
+.module-library-collapsed {
+  flex: 0 0 70px;
+  background-color: #F6F6F6;
+}
+
+.module-library-open .library-nav-bar {
+  height: 10rem;
+  flex-grow: 1;
+  flex-basis: 0;
+  min-width: 0;
+  position: relative;
+  text-align: left;
+  padding: 1.5rem;
+}
+
+.module-library-open .h1 {
+  height: 1.8rem;
+  font-size: 2.4rem;
+  font-weight: 300;
+  line-height: 1.8rem;
+  padding: 2rem;
+}
+
+.module-library-open .h2 .symbols {
+  font-weight: bold;
+}
+
+.module-library-open .library-nav-bar .h1 {
+  color: #FFFFFF;
+}
+
+.module-library-open .card {
+  border: 0;
+  background-color: rgba(0,0,0,0);
+}
+
+.card .first-level {
+  cursor: pointer;
+  height: 3.5rem;
+  width: 100%;
+  padding-left: 1rem;
+}
+
+.small-sort{
+  font-size: 0.6rem;
+}
+
+.card .second-level {
+  cursor: pointer;
+  position: relative;
+  height: 4rem;
+  padding-left: 2.5rem;
+  background-color: #48C8D7;
+}
+
+.card .second-level:hover {
+  background-color: #E8E6E6;
+}
+
+.cat-container {
+  margin-top: 0.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.button-icon-library{
+  width: 0.9rem;
+}
+
+.ml-cat{
+  margin-top: 0.1rem;
+}
+
+.ml-icon{
+  font-size: 1.5rem;
+}
+
+.ml-icon-container{
+  width: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.ml-module-name{
+  margin-left:0.8rem;
+  margin-top: 0.2rem;
+}
+
+.library-card-category-open {
+  margin-top: 1px;
+  margin-bottom: 1rem;
+}
+
+.library-card-category-open .first-level {
+  background-color: #48C8D7;
+}
+
+.library-card-category-closed {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+.library-card-category-closed:hover {
+  margin-top: 1px;
+  margin-bottom: 1px;
+  background-color: #48C8D7;
+}
+
+
+/* --- the Search Modules component within the Module Library header - ModuleSearch.js --- */
+
+.react-autosuggest__container {
+  margin-top: 1rem;
+  width: 100%;
+  height: 4rem;
+}
+
+.react-autosuggest__container input {
+  border: 1px solid #DDDDDD;
+}
+/* If we want to style the placeholder differently than the typed text */
+/* .react-autosuggest__input::placeholder {
+  color: red;
+} */
+
+.react-autosuggest__container input:hover {
+  box-shadow: 0 0 0 1px  #48C8D7;
+}
+
+/* does not accept a 'color' parameter  */
+.react-autosuggest__input {
+  width: 100%;
+  height: 100%;
+  padding-left: 2rem;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 900;
+  opacity: 0.5;
+  font-size: 1.4rem;
+  line-height: 1.4rem;
+  border-radius: 10rem;
+}
+
+.react-autosuggest__input--focused {
+  outline: none;
+  box-shadow: 0 0 0 1px  #48C8D7;
+}
+
+.react-autosuggest__suggestions-container {
+  display: none;
+}
+
+.react-autosuggest__suggestions-container--open {
+  display: block;
+  position: absolute;
+  border: 1px solid #aaa;
+  background-color: #fff;
+  font-weight: 300;
+  font-size: 1.6rem;
+  z-index: 2;
+}
+
+.react-autosuggest__suggestions-list {
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.react-autosuggest__suggestion {
+  cursor: pointer;
+  padding: 1rem 2rem;
+}
+
+.react-autosuggest__suggestion--highlighted {
+  background-color: #ddd;
+}
+
+.react-autosuggest__section-container {
+  border-top: 1px dashed #ccc;
+}
+
+.react-autosuggest__section-container--first {
+  border-top: 0;
+}
+
+.react-autosuggest__section-title {
+  padding: 1rem 0 0 1rem;
+  font-size: 1.2rem;
+  color: #777;
+}
+
+
+/* ImportModuleFromGitHub */
+
+.import-module-button {
+  cursor: pointer;
+  color: #FAFAFA;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  border-top: 1px solid #FAFAFA;
+  padding-top: 2rem;
+}
+.import-module-button:hover {
+  cursor: pointer;
+  color: #48C8D7;
+
+}
+
+.import-module-buttons {
+  float: right;
+  margin-top: 3rem;
+  justify-content: flex-end;
+}
+
+.import-github-error {
+  height: 4rem;
+  color: #E24F4A;
+  /* font-family: 'Nunito Sans', sans-serif; */
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.9rem;
+  margin-top: 6rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.import-github-response-button {
+  float: right;
+  margin-right: 2rem;
+  width: 15%;
+}
+
+.import-github-success {
+  height: 4rem;
+  color: #1CA8B9;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.9rem;
+  margin-top: 6rem;
+  padding-left: 2rem;
+}
+
+.test-button{
+  cursor: pointer;
+}
+
 
 /*Table*/
 .react-grid-HeaderCell{
@@ -1084,6 +1331,10 @@ img.logo {
   content: "\e91e";
   color: #686768;
 }
+.icon-sort-down-vl-gray:before {
+  content: "\e91e";
+  color: #FAFAFA;
+}
 .icon-sort-left:before {
   content: "\e91f";
   color: #686768;
@@ -1091,6 +1342,10 @@ img.logo {
 .icon-sort-right:before {
   content: "\e920";
   color: #686768;
+}
+.icon-sort-right-vl-gray:before {
+  content: "\e920";
+  color: #FAFAFA;
 }
 .icon-sort-up:before {
   content: "\e921";
@@ -1254,267 +1509,7 @@ img.logo {
   margin-bottom: 0.5rem;
 }
 
-/* --- Module Library --- */
 
-.module-library {
-
-  height: calc(100% - 6rem);
-  position: fixed;
-  overflow: auto;
-}
-.module-library-open {
-  height: 100%;
-  width: 200px;
-  background-color: #F2F2F2;
-}
-.module-library-collapsed {
-  height: 100%;
-  width: 70px;
-  background-color: #F6F6F6;
-}
-
-.module-library-open .library-nav-bar {
-  height: 8rem;
-  flex-grow: 1;
-  flex-basis: 0;
-  min-width: 0;
-  position: relative;
-  text-align: left;
-  padding: 1.5rem;
-}
-
-.module-library-open .h1 {
-  height: 1.8rem;
-  font-size: 2.4rem;
-  font-weight: 300;
-  line-height: 1.8rem;
-  padding: 2rem;
-}
-
-.module-library-open .h2 .symbols {
-  font-weight: bold;
-}
-
-.module-library-open .library-nav-bar .h1 {
-  color: #FFFFFF;
-}
-
-.module-library-open .card {
-  border: 0;
-  background-color: rgba(0,0,0,0);
-}
-
-.card .first-level {
-  cursor: pointer;
-  height: 3.5rem;
-  width: 100%;
-  padding-left: 1rem;
-
-}
-
-.small-sort{
-  font-size: 0.6rem;
-}
-
-.card .second-level {
-  cursor: pointer;
-  position: relative;
-  height: 4rem;
-  padding-left: 2.5rem;
-  background-color: #EDECEC;
-}
-
-.card .second-level:hover {
-  background-color: #E8E6E6;
-}
-
-.cat-container {
-  margin-top: 0.2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.button-icon-library{
-  width: 0.9rem;
-}
-
-.ml-cat{
-  margin-top: 0.1rem;
-}
-
-.ml-icon{
-  font-size: 1.5rem;
-}
-
-.ml-icon-container{
-  width: 2rem;
-  display: flex;
-  justify-content: center;
-}
-
-.ml-module-name{
-  margin-left:0.8rem;
-  margin-top: 0.2rem;
-}
-
-.library-card-category-open {
-  margin-top: 1px;
-  margin-bottom: 1rem;
-  background-color: #EDECEC;
-}
-
-.library-card-category-open .first-level {
-  background-color: #EDECEC;
-}
-
-.library-card-category-closed {
-  margin-top: 1px;
-  margin-bottom: 1px;
-}
-
-.library-card-category-closed:hover {
-  margin-top: 1px;
-  margin-bottom: 1px;
-  background-color: #EDECEC;
-}
-
-
-/* --- the Search Modules component within the Module Library header - ModuleSearch.js --- */
-
-.react-autosuggest__container {
-  margin-top: 1rem;
-  width: 100%;
-  height: 4rem;
-}
-
-.react-autosuggest__container input {
-  border: 1px solid #DDDDDD;
-}
-
-.react-autosuggest__container input:hover {
-  box-shadow: 0 0 0 1px  #48C8D7;
-}
-
-/* does not accept a 'color' parameter  */
-/* desired UI is gray backgroud, white text  */
-.react-autosuggest__input {
-  width: 100%;
-  height: 100%;
-  padding-left: 2rem;
-  font-family: 'Nunito Sans', sans-serif;
-  font-weight: 900;
-  opacity: 0.5;
-  font-size: 1.4rem;
-  line-height: 1.4rem;
-  border-radius: 10rem;
-  /* background-color: #B4B4B4; */
-}
-
-.react-autosuggest__input--focused {
-  outline: none;
-  box-shadow: 0 0 0 1px  #48C8D7;
-}
-
-
-.react-autosuggest__suggestions-container {
-  display: none;
-}
-
-.react-autosuggest__suggestions-container--open {
-  display: block;
-  position: absolute;
-  border: 1px solid #aaa;
-  background-color: #fff;
-  font-weight: 300;
-  font-size: 1.6rem;
-  z-index: 2;
-}
-
-.react-autosuggest__suggestions-list {
-  margin: 0;
-  padding: 0;
-  list-style-type: none;
-}
-
-.react-autosuggest__suggestion {
-  cursor: pointer;
-  padding: 1rem 2rem;
-}
-
-.react-autosuggest__suggestion--highlighted {
-  background-color: #ddd;
-}
-
-.react-autosuggest__section-container {
-  border-top: 1px dashed #ccc;
-}
-
-.react-autosuggest__section-container--first {
-  border-top: 0;
-}
-
-.react-autosuggest__section-title {
-  padding: 1rem 0 0 1rem;
-  font-size: 1.2rem;
-  color: #777;
-}
-
-
-/* ImportModuleFromGitHub */
-
-.import-module-button {
-  cursor: pointer;
-  color: #686768;
-  margin-left:2rem;
-  margin-right:2rem;
-  border-top: 1px solid #DDDDDD;
-  padding-top: 2rem;
-}
-.import-module-button:hover {
-  cursor: pointer;
-  color: #48C8D7;
-
-}
-
-.import-module-buttons {
-  float: right;
-  margin-top: 3rem;
-  justify-content: flex-end;
-}
-
-.import-github-error {
-  height: 4rem;
-  color: #E24F4A;
-  /* font-family: 'Nunito Sans', sans-serif; */
-  font-size: 1.3rem;
-  font-weight: 300;
-  line-height: 1.9rem;
-  margin-top: 6rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-.import-github-response-button {
-  float: right;
-  margin-right: 2rem;
-  width: 15%;
-}
-
-.import-github-success {
-  height: 4rem;
-  color: #1CA8B9;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1.3rem;
-  font-weight: 300;
-  line-height: 1.9rem;
-  margin-top: 6rem;
-  padding-left: 2rem;
-}
-
-.test-button{
-  cursor: pointer;
-}
 
 /* --- Chartbuilder - override all sorts of styles to integrate --- */
 

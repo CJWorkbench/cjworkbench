@@ -103,25 +103,28 @@ export default class Workflow extends React.Component {
       return null;
     }
 
-    var outputPane = null;
-    if (this.props.workflow.wf_modules.length > 0) {
-      outputPane =  <OutputPane
-                      id={this.props.selected_wf_module}
-                      revision={this.props.workflow.revision}
-                      api={this.props.api}
-                    />
-    }
+    var moduleLibrary = <ModuleLibrary
+                          addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}
+                          api={this.props.api}
+                          workflow={this.props.workflow} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
+                        />
 
-    var moduleLibrary = null;
-    if (!this.props.workflow.read_only) {
-      moduleLibrary = <ModuleLibrary
-                        addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}
-                        api={this.props.api}
-                        workflow={this.props.workflow} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
-                      />
-    };
+    var navBar =  <WorkflowNavBar
+                    workflow={this.props.workflow}
+                    api={this.props.api}
+                    isReadOnly={this.props.workflow.read_only}
+                    user={this.props.user}
+                  />
 
-    var moduleStack = null;
+
+
+    var moduleStack = <div className='modulestack-empty mx-auto'>
+                        <span className='icon-add-orange module-icon'/>
+                        <span className='t-orange title-3 ml-3'>
+                          Select a module from the library to begin
+                        </span>
+                      </div>
+
     if (!!this.props.workflow.wf_modules && !!this.props.workflow.wf_modules.length) {
       moduleStack = <div className="modulestack-list mx-auto mt-3">
                       <SortableList
@@ -132,43 +135,45 @@ export default class Workflow extends React.Component {
                         api={this.props.api}
                       />
                     </div>
-    } else {
-      moduleStack = <div className='modulestack-empty mx-auto'>
-                      <span className='icon-add-orange module-icon'/>
-                      <span className='t-orange title-3 ml-3'>
-                        Select a module from the library to begin
-                      </span>
-                    </div>
     }
 
-    // Takes care of both, the left-hand side and the right-hand side of the
-    // UI. The modules in the workflow are displayed on the left (vertical flow)
-    // and the output of the modules on the right.
-    // Instead of the output, we see the Module Library UI if the user
-    // invokes the Module Library.
+    var outputPane = null;
+    if (this.props.workflow.wf_modules.length > 0) {
+      outputPane =  <OutputPane
+                      id={this.props.selected_wf_module}
+                      revision={this.props.workflow.revision}
+                      api={this.props.api}
+                    />
+    }
+
+    // Main Layout of Workflow Page:
+    // Module Library occupies left-hand bar of page from top to bottom
+    // Navbar occupies remaining top bar from edge of ML to right side
+    // Module Stack occupies fixed-width colum, right from edge of ML, from bottom of NavBar to end of page
+    // Output Pane occupies remaining space in lower-right of page
     return (
       <div className="workflow-root">
 
-        <WorkflowNavBar
-          workflow={this.props.workflow}
-          api={this.props.api}
-          isReadOnly={this.props.workflow.read_only}
-          user={this.props.user}
-        />
+        {moduleLibrary}
 
         <div className="workflow-container">
+        
+          {navBar}
 
-          {moduleLibrary}
+          <div className="workflow-columns">
 
-          <div className="modulestack-center">
-            {moduleStack}
-          </div>
+            <div className="modulestack">
+              {moduleStack}
+            </div>
 
-          <div className="outputpane-right">
-            {outputPane}
+            <div className="outputpane">
+              {outputPane}
+            </div>
+
           </div>
 
         </div>
+
       </div>
     );
   }

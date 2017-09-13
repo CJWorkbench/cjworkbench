@@ -171,6 +171,12 @@ export default class ModuleLibrary extends React.Component {
                       {/* <div className='d-flex justify-content-start flex-row'>
                         <div className='icon-close ml-auto' onClick={this.toggleLibrary}></div>
                       </div> */}
+                      <div className='d-flex align-items-center'>
+                        <a href="/workflows" className="logo">
+                          <img src="/static/images/logo.png" width="30"/>
+                        </a>
+                        <span className='title-3 ml-3 t-vl-gray '>Workbench</span>
+                      </div>
                       <ModuleSearch addModule={this.props.addModule} 
                                         items={this.state.items} 
                                         workflow={this.workflow}

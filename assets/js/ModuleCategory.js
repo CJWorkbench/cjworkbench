@@ -93,13 +93,13 @@ export default class ModuleCategory extends React.Component {
       : 'card b-l-gray library-card-category-closed'
 
     var symbol = isOpen
-      ? 'icon-sort-down small-sort button-icon-library ml-3 mb-1'
-      : 'icon-sort-right button-icon-library ml-3'
+      ? 'icon-sort-down-vl-gray small-sort button-icon-library ml-3 mb-1'
+      : 'icon-sort-right-vl-gray button-icon-library ml-3'
 
-    // --- Need a mapping of catergory-to-icon before implementing
+    // --- Need a mapping of category-to-icon before implementing
     // var icon = 'icon-' + ??? + ' button-icon mr-2';
 
-    var categoryName = this.props["data-name"]; //self-explanatory
+    var categoryName = this.props["data-name"]; // self-explanatory
 
     var modules = this.props["data-modules"]; // list of modules within category
 
@@ -113,7 +113,7 @@ export default class ModuleCategory extends React.Component {
           <div className='cat-container'>
             <div className={symbol}></div>
             {/* <span className={icon}></span> */}
-            <span className='content-3 t-d-gray ml-3 ml-cat'>{categoryName}</span>
+            <span className='content-3 t-vl-gray ml-3 ml-cat'>{categoryName}</span>
           </div>
         </div>
         <div>
