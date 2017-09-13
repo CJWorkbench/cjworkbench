@@ -741,14 +741,16 @@ img.logo {
 /* --- Module Library --- */
 
 .module-library {
-  min-height: 100%;
+  
 }
 .module-library-open {
+  height: 100%;
   width: 200px;
   flex: 0 0 200px;
   background-color: #577485;
 }
 .module-library-collapsed {
+  height: 100%;
   flex: 0 0 70px;
   background-color: #F6F6F6;
 }
