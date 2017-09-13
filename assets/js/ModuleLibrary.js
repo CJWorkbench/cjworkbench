@@ -6,10 +6,13 @@ import ImportModuleFromGitHub from './ImportModuleFromGitHub';
 import Module from './Module';
 import ModuleSearch from './ModuleSearch';
 
+
 var SortableCategories = sortable(ModuleCategory);
 
 class CategoriesList extends React.Component {
   render() {
+    var hasModules = (!!this.props.workflow.wf_modules && !!this.props.workflow.wf_modules.length);
+
     var listItems = this.props.data.map(function (item, i) {
       return (
         <SortableCategories
@@ -21,7 +24,7 @@ class CategoriesList extends React.Component {
           childProps={{
             'data-name': item.key, // category
             'data-modules': item.props.modules, // modules in this category 
-            'collapsed': true,
+            'collapsed': !(item.key == "Add data" && !hasModules), // Have "Add data" category open when no modules in workflow
           }}
         />
       );
@@ -176,6 +179,7 @@ export default class ModuleLibrary extends React.Component {
                     <div className='mb-3'>
                       <CategoriesList
                         data={categories}
+                        workflow={this.props.workflow}
                       />
                     </div>
                     <ImportModuleFromGitHub moduleLibrary={this}/>
