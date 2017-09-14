@@ -740,9 +740,6 @@ img.logo {
 
 /* --- Module Library --- */
 
-.module-library {
-  
-}
 .module-library-open {
   height: 100%;
   width: 200px;
@@ -751,12 +748,14 @@ img.logo {
 }
 .module-library-collapsed {
   height: 100%;
-  flex: 0 0 70px;
-  background-color: #F6F6F6;
+  width: 60px;
+  flex: 0 0 60px;
+  background-color: #577485;
+  padding: 1rem;
 }
 
 .module-library-open .library-nav-bar {
-  height: 10rem;
+  height: 12rem;
   flex-grow: 1;
   flex-basis: 0;
   min-width: 0;

@@ -57,7 +57,7 @@ export default class ModuleLibrary extends React.Component {
     };
     this.addModule = this.props.addModule.bind(this);
     this.workflow = this.props.workflow; 
-    // this.toggleLibrary = this.toggleLibrary.bind(this);
+    this.toggleLibrary = this.toggleLibrary.bind(this);
   }
 
   /**
@@ -109,9 +109,9 @@ export default class ModuleLibrary extends React.Component {
     this.componentWillMount() // dummy update to force a re-render. 
   }
 
-  // toggleLibrary() {
-  //   this.setState({ libraryOpen: !this.state.libraryOpen });
-  // }
+  toggleLibrary() {
+    this.setState({ libraryOpen: !this.state.libraryOpen });
+  }
 
 
   /**
@@ -168,9 +168,9 @@ export default class ModuleLibrary extends React.Component {
 
     let visible = <div className='module-library-open'>
                     <div className='library-nav-bar'>
-                      {/* <div className='d-flex justify-content-start flex-row'>
-                        <div className='icon-close ml-auto' onClick={this.toggleLibrary}></div>
-                      </div> */}
+                      <div className='d-flex justify-content-start flex-row'>
+                        <div className='icon-close-white ml-auto' onClick={this.toggleLibrary}></div>
+                      </div>
                       <div className='d-flex align-items-center'>
                         <a href="/workflows" className="logo">
                           <img src="/static/images/logo.png" width="30"/>
@@ -192,14 +192,13 @@ export default class ModuleLibrary extends React.Component {
                   </div>
 
     let collapsed = <div className='module-library-collapsed' onClick={this.toggleLibrary}>
-                      <div className='icon-search'></div>
-                      <div className='title-3 ml-3'>Add Module</div>
+                      <img src="/static/images/logo.png" width="30"/>
                     </div>
 
     let library = (this.state.libraryOpen) ? visible : collapsed
 
     return (
-      <div className='module-library'>
+      <div className=''>
         {library}
       </div>
     );
