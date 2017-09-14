@@ -59,9 +59,6 @@ class SendgridEmails(AccountDefaultHookSet):
         subject = render_to_string("account/email/password_reset_subject.txt", ctx)
         subject = "".join(subject.splitlines())
         message = render_to_string("account/email/password_reset.txt", ctx)
-        subject = render_to_string("account/email/password_change_subject.txt", ctx)
-        subject = "".join(subject.splitlines())
-        message = render_to_string("account/email/password_change.txt", ctx)
         mail = EmailMultiAlternatives(
           subject=subject,
           body=message,
