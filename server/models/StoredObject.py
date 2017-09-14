@@ -6,12 +6,12 @@ from django.core.files.base import ContentFile
 # Allows WfModules to store keyed, versioned binary objects
 class StoredObject(models.Model):
     wf_module = models.ForeignKey('WfModule', related_name='wf_module', on_delete=models.CASCADE)  # delete stored data if WfModule deleted
-    file = models.FileField(upload_to='media')
+    file = models.FileField()
     stored_at = models.DateTimeField('stored_at', auto_now=True)
 
     @staticmethod
     def __filename_for_id(id):
-        return 'media/' + str(id) + '.dat'
+        return str(id) + '.dat'
 
     @staticmethod
     def create(wf_module, text):

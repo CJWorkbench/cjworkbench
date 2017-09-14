@@ -9,6 +9,8 @@ import pandas as pd
 import io
 import os
 import json
+import tempfile
+from django.test import override_settings
 
 mock_json_text = '[ {"Month" : "Jan", "Amount": 10},\n {"Month" : "Feb", "Amount": 20} ]'
 mock_json_table = pd.DataFrame(json.loads(mock_json_text))
@@ -19,7 +21,7 @@ mock_json_path_text = '{"data": {"junk":"aaa", "series": [ {"key":"value"}, [ {"
 mock_xslx_path = os.path.join(settings.BASE_DIR, 'server/tests/modules/test.xlsx')
 
 # ---- LoadURL ----
-
+@override_settings(MEDIA_ROOT=tempfile.gettempdir())
 class LoadFromURLTests(LoggedInTestCase):
     def setUp(self):
         super(LoadFromURLTests, self).setUp()  # log in
