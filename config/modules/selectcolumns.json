@@ -6,7 +6,14 @@
   "description" : "",
   "parameters": [
     {
-      "name": "Choose columns to keep",
+      "name" : "Choose columns to",
+      "id_name" : "drop_or_keep",
+      "type" : "menu",
+      "menu_items" : "Drop|Keep",
+      "default": "1"
+    },
+    {
+      "name": "Columns",
       "id_name": "colselect",
       "type": "multicolumn",
       "ui-only": true
@@ -14,7 +21,8 @@
     {
       "name": "Column names",
       "id_name": "colnames",
-      "type": "string"
+      "type": "string",
+      "visible": false
     }
   ]
 }
