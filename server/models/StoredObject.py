@@ -1,11 +1,14 @@
 from django.db import models
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
+from django.dispatch import receiver
+import os
 
 # StoredObject is our persistence layer.
 # Allows WfModules to store keyed, versioned binary objects
 class StoredObject(models.Model):
-    wf_module = models.ForeignKey('WfModule', related_name='wf_module', on_delete=models.CASCADE)  # delete stored data if WfModule deleted
+    # delete stored data if WfModule deleted
+    wf_module = models.ForeignKey('WfModule', related_name='wf_module', on_delete=models.CASCADE)
     file = models.FileField()
     stored_at = models.DateTimeField('stored_at', auto_now=True)
 
@@ -31,3 +34,11 @@ class StoredObject(models.Model):
         new_so = StoredObject.objects.create(wf_module=to_wf_module,
                                              stored_at=self.stored_at,
                                              file = new_file)
+
+
+@receiver(models.signals.post_delete, sender=StoredObject)
+def auto_delete_file_on_delete(sender, instance, **kwargs):
+    # Deletes file from filesystem when corresponding `StoredObject` object is deleted.
+    if instance.file:
+        if os.path.isfile(instance.file.path):
+            os.remove(instance.file.path)
