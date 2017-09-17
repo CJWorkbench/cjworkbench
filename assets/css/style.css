@@ -1,7 +1,7 @@
 /* File is getting large; time to divide into modules? */
 
 /* Font */
-@import url('https://fonts.googleapis.com/css?family=Lato:400,700|Nunito+Sans');
+@import url('https://fonts.googleapis.com/css?family=Lato:700|Nunito+Sans');
 
 html {
   height: 100%;
@@ -28,19 +28,7 @@ body {
 /* ---- NEW Type styles: use on all newly styled elements: phase out olds on edit ----- */
 
 /* --- Text Sizing ---  */
-.logo-1 {
-	font-size: 2.4rem;
-	line-height: 2.4rem;
-  font-family: 'lato', sans-serif;
-  letter-spacing: -0.4px;
-}
 
-.logo-2 {
-	font-size: 2rem;
-	line-height: 2rem;
-  font-family: 'lato', sans-serif;
-  letter-spacing: -0.4px;
-}
 .title-1 {
 	font-size: 2.5rem;
 	font-weight: 300;
@@ -48,17 +36,15 @@ body {
 }
 .title-2 {
 	font-size: 2.2rem;
-	font-weight: normal;
+	font-weight: 400;
 	line-height: 2.2rem;
-  letter-spacing:0.8px;
-  font-family: 'nunito', sans-serif;
+  font-family: 'lato', sans-serif;
 
 }
 .title-3 {
 	font-size: 1.8rem;
 	font-weight: 300;
 	line-height: 1.8rem;
-  letter-spacing: 0.5px;
 }
 .title-4 {
 	font-size: 1.5rem;
@@ -619,9 +605,9 @@ body {
 
 /* Contains Modulestack and Outputpane */
 .workflow-columns {
-  flex: 1 1 auto;
+  flex: 1 1 auto;  
   display: flex;
-  flex-direction: row;
+  flex-direction: row;  
 }
 
 
@@ -765,27 +751,17 @@ img.logo {
   width: 60px;
   flex: 0 0 60px;
   background-color: #577485;
-}
-.module-library-collapsed:hover{
-  cursor:pointer;
-}
-.expand-lib{
-  height:6rem;
-  border-bottom: 1px solid rgba(255,255,255, .1);
-}
-.expand-lib-button{
-  padding:2rem 1.2rem 1.5rem 1.5rem;
+  padding: 1rem;
 }
 
 .module-library-open .library-nav-bar {
-  height: 10rem;
+  height: 12rem;
   flex-grow: 1;
   flex-basis: 0;
   min-width: 0;
   position: relative;
   text-align: left;
-  padding: 2rem 1.5rem 1.5rem 1.5rem;
-  margin-bottom: 1rem;
+  padding: 1.5rem;
 }
 
 .module-library-open .h1 {
@@ -888,11 +864,11 @@ img.logo {
 .react-autosuggest__container {
   margin-top: 1rem;
   width: 100%;
-  height: 3.5rem;
+  height: 4rem;
 }
 
 .react-autosuggest__container input {
-  border: 0px solid #DDDDDD;
+  border: 1px solid #DDDDDD;
 }
 /* If we want to style the placeholder differently than the typed text */
 /* .react-autosuggest__input::placeholder {
@@ -970,11 +946,10 @@ img.logo {
 .import-module-button {
   cursor: pointer;
   color: #FAFAFA;
-  margin-top: 2rem;
   margin-left: 2rem;
   margin-right: 2rem;
-  border-top: 1px solid rgba(255,255,255, .2);
-  padding-top: 3rem;
+  border-top: 1px solid #FAFAFA;
+  padding-top: 2rem;
 }
 .import-module-button:hover {
   cursor: pointer;
@@ -1369,7 +1344,10 @@ img.logo {
   content: "\e920";
   color: #686768;
 }
-
+.icon-sort-right-vl-gray:before {
+  content: "\e920";
+  color: #FAFAFA;
+}
 .icon-sort-up:before {
   content: "\e921";
   color: #686768;
@@ -1406,28 +1384,11 @@ img.logo {
 /* --- End of official icon set --- */
 
 /* Customized icons, not in font sent  */
-.icon-sort-right-vl-gray:before {
-  content: "\e920";
-  color: #FAFAFA;
-}
-.icon-sort-left-vl-gray:before {
-  content: "\e91f";
-  color: #FAFAFA;
-}
-.close-open-toggle{
-  opacity: 0.6;
-}
-.close-open-toggle:hover{
-  opacity: 1;
-  cursor: pointer;
-}
 .icon-close-white:before {
   content: "\e907";
   color: #FFFFFF;
-  opacity: 0.6;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
 }
-
 .icon-more-white:before {
   content: "\e914";
   color: #FFFFFF;
