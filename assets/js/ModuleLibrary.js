@@ -23,7 +23,7 @@ class CategoriesList extends React.Component {
           outline="list"
           childProps={{
             'data-name': item.key, // category
-            'data-modules': item.props.modules, // modules in this category 
+            'data-modules': item.props.modules, // modules in this category
             'collapsed': !(item.key == "Add data" && !hasModules), // Have "Add data" category open when no modules in workflow
           }}
         />
@@ -37,44 +37,44 @@ class CategoriesList extends React.Component {
 
 /**
  * Contains the Module Library. The Module Library is effectively the place
- * that allows users to browse all the modules in the system that are 
- * available to them. Therefore, the server should only send through the 
+ * that allows users to browse all the modules in the system that are
+ * available to them. Therefore, the server should only send through the
  * modules the users are entitled to, and this class will render those modules
- * accordingly, and allow users to add them to workflows. 
- * 
- * Note: the current implementation mandates that this library appears vis-à-vis 
+ * accordingly, and allow users to add them to workflows.
+ *
+ * Note: the current implementation mandates that this library appears vis-à-vis
  * the workflow, and is not an independent component. Perhaps, at some point, it
  * should be, so that newcomers to the system can get an idea as to the modules
- * that are supported – both, those created by us and those created by third 
+ * that are supported – both, those created by us and those created by third
  * parties.
  */
 export default class ModuleLibrary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      libraryOpen: true, 
-      items: [], 
+      libraryOpen: true,
+      items: [],
     };
     this.addModule = this.props.addModule.bind(this);
-    this.workflow = this.props.workflow; 
+    this.workflow = this.props.workflow;
     this.toggleLibrary = this.toggleLibrary.bind(this);
   }
 
   /**
-   * Queries server for all the available modules for the given credentials. 
-   * The response that's returned should be a list, where each item has the 
-   * following properties: 
+   * Queries server for all the available modules for the given credentials.
+   * The response that's returned should be a list, where each item has the
+   * following properties:
    * - name (e.g. "Paste CSV")
    * - id (e.g. 8)
    * - category (e.g. "Sources")
    * - description (e.g. "Allows users to copy in a CSV from an external source.")
-   * 
-   * Additionally, these properties are optional (and mostly used by modules 
+   *
+   * Additionally, these properties are optional (and mostly used by modules
    * imported from GitHub, i.e. not the core modules):
    * - icon
-   * - source 
+   * - source
    * - author
-   * - version 
+   * - version
    */
   componentWillMount() {
     fetch('/api/modules/', { credentials: 'include' })
@@ -106,7 +106,7 @@ export default class ModuleLibrary extends React.Component {
   }
 
   updated(updated) {
-    this.componentWillMount() // dummy update to force a re-render. 
+    this.componentWillMount() // dummy update to force a re-render.
   }
 
   toggleLibrary() {
@@ -115,17 +115,17 @@ export default class ModuleLibrary extends React.Component {
 
 
   /**
-   * Renders the Module Library, i.e. a collection of <Module Category>, 
-   * which in turn is a collection of <Module>. 
-   * 
-   * This is sorted by the Category name, but we might want to define a 
-   * better sorting order. 
+   * Renders the Module Library, i.e. a collection of <Module Category>,
+   * which in turn is a collection of <Module>.
+   *
+   * This is sorted by the Category name, but we might want to define a
+   * better sorting order.
    */
   render() {
-    // This assumes that the items are already sorted by category, 
-    // which does happen in {code: componentDidMount}. So, if someone 
-    // changes that, there is a good chance that this will result in 
-    // unexpected behaviour. 
+    // This assumes that the items are already sorted by category,
+    // which does happen in {code: componentDidMount}. So, if someone
+    // changes that, there is a good chance that this will result in
+    // unexpected behaviour.
     let modules = this.state.items;
     var previousCategory = null;
     var modulesByCategory = [];
@@ -145,8 +145,8 @@ export default class ModuleLibrary extends React.Component {
       if (previousCategory == null) {
         previousCategory = item.category;
       } else if (previousCategory !== item.category) {
-        // We should only create the ModuleCategory once we have all modules 
-        // for given category. 
+        // We should only create the ModuleCategory once we have all modules
+        // for given category.
         let moduleCategory = <ModuleCategory
           key={previousCategory}
           modules={modulesByCategory}
@@ -159,7 +159,7 @@ export default class ModuleLibrary extends React.Component {
     }
 
 
-    // the last item / category 
+    // the last item / category
     let moduleCategory =  <ModuleCategory
                             key={previousCategory}
                             modules={modulesByCategory}
@@ -168,33 +168,32 @@ export default class ModuleLibrary extends React.Component {
 
     let visible = <div className='module-library-open'>
                     <div className='library-nav-bar'>
-                      <div className='d-flex justify-content-start flex-row'>
-                        <div className='icon-close-white ml-auto' onClick={this.toggleLibrary}></div>
+                      <div className='d-flex align-items-center flex-row mb-4'>
+                        <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="20"/></a>
+                        <span className='logo-2 ml-3 t-vl-gray '>Workbench</span>
+                        <div className='icon-sort-left-vl-gray ml-auto mt-1 close-open-toggle'onClick={this.toggleLibrary}></div>
                       </div>
-                      <div className='d-flex align-items-center'>
-                        <a href="/workflows" className="logo">
-                          <img src="/static/images/logo.png" width="30"/>
-                        </a>
-                        <span className='title-3 ml-3 t-vl-gray '>Workbench</span>
-                      </div>
-                      <ModuleSearch addModule={this.props.addModule} 
-                                        items={this.state.items} 
-                                        workflow={this.workflow}
-                      />
+                      <ModuleSearch addModule={this.props.addModule}
+                                      items={this.state.items}
+                                      workflow={this.workflow}/>
                     </div>
-                    <div className='mb-3'>
-                      <CategoriesList
-                        data={categories}
-                        workflow={this.props.workflow}
-                      />
+                      <div className=''>
+                        <CategoriesList
+                          data={categories}
+                          workflow={this.props.workflow}
+                        />
                     </div>
                     <ImportModuleFromGitHub moduleLibrary={this}/>
                   </div>
 
-    let collapsed = <div className='module-library-collapsed' onClick={this.toggleLibrary}>
-                      <img src="/static/images/logo.png" width="30"/>
+    let collapsed = <div className='module-library-collapsed'>
+                      <div className="expand-lib">
+                        <div className="expand-lib-button d-flex">
+                          <div className="logo" onClick={this.toggleLibrary}><img src="/static/images/logo.png" width="20"/></div>
+                          <div className='icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle' onClick={this.toggleLibrary}></div>
+                        </div>
+                      </div>
                     </div>
-
     let library = (this.state.libraryOpen) ? visible : collapsed
 
     return (
