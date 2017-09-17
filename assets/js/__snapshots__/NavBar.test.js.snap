@@ -13,7 +13,7 @@ exports[`NavBar WorkflowListNavBar renders correctly 1`] = `
         src="/static/images/logo.png"
       />
       <h1
-        className="mb-0 mr-auto logo-1"
+        className="mb-0 mr-auto title-2"
       >
         <a
           href="/workflows"
