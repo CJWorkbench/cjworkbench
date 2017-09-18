@@ -16,7 +16,7 @@ exports[`renders correctly 1`] = `
               src="/static/images/logo.png"
             />
             <h1
-              className="mb-0 mr-auto title-2"
+              className="mb-0 mr-auto logo-1"
             >
               <a
                 href="/workflows"
@@ -157,9 +157,9 @@ exports[`renders correctly 1`] = `
           className="card-block"
         >
           <h3
-            className="card-title title-2 t-m-gray workflows-card-title"
+            className="card-title title-3 t-m-gray workflows-card-title"
           >
-            Workflows
+            WORKFLOWS
           </h3>
           <div
             className="workflows-sub-list"
@@ -187,7 +187,7 @@ exports[`renders correctly 2`] = `
               src="/static/images/logo.png"
             />
             <h1
-              className="mb-0 mr-auto title-2"
+              className="mb-0 mr-auto logo-1"
             >
               <a
                 href="/workflows"
@@ -328,9 +328,9 @@ exports[`renders correctly 2`] = `
           className="card-block"
         >
           <h3
-            className="card-title title-2 t-m-gray workflows-card-title"
+            className="card-title title-3 t-m-gray workflows-card-title"
           >
-            Workflows
+            WORKFLOWS
           </h3>
           <div
             className="workflows-sub-list"
