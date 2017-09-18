@@ -98,6 +98,11 @@ body {
 	font-weight: 900;
 	line-height: 1.2rem;
 }
+.content-5 {
+	font-size: 1.3rem;
+	line-height: 1.3rem;
+  font-weight: 500;
+}
 
 .code-1 {
   font-family: "PT Mono";
@@ -218,6 +223,220 @@ body {
 }
 .b-output-red-2 {
   background-color: #E24F4A;
+}
+
+/* --- Icon font set --- */
+
+@font-face {
+  font-family: 'Workbench';
+  src: url('../fonts/Workbench.woff?4bznb4') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'Workbench' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-sentiment:before {
+  content: "\e929";
+}
+.icon-add:before {
+  content: "\e900";
+}
+.icon-add-orange:before {
+  content: "\e900";
+}
+.icon-bin:before {
+  content: "\e901";
+}
+.icon-calendar:before {
+  content: "\e902";;
+}
+.icon-chart:before {
+  content: "\e903";
+}
+.icon-check:before {
+  content: "\e904";
+}
+.icon-checkbox-fill:before {
+  content: "\e905";
+}
+.icon-checkbox-unchecked:before {
+  content: "\e906";
+}
+.icon-close:before {
+  content: "\e907";
+}
+.icon-code:before {
+  content: "\e908";
+}
+.icon-database:before {
+  content: "\e909";
+}
+.icon-doc:before {
+  content: "\e90a";
+}
+.icon-download:before {
+  content: "\e90b";
+}
+.icon-duplicate:before {
+  content: "\e90c";
+}
+.icon-edit:before {
+  content: "\e90d";
+}
+.icon-filter:before {
+  content: "\e90e";
+}
+.icon-folder:before {
+  content: "\e90f";
+}
+.icon-full-screen:before {
+  content: "\e910";
+}
+.icon-group:before {
+  content: "\e911";
+}
+.icon-info:before {
+  content: "\e912";
+}
+.icon-join:before {
+  content: "\e913";
+}
+.icon-more:before {
+  content: "\e914";
+}
+.icon-note:before {
+  content: "\e915";
+}
+.icon-notification-filled:before {
+  content: "\e916";
+}
+.icon-notification:before {
+  content: "\e917";
+}
+.icon-process:before {
+  content: "\e918";
+}
+.icon-redo:before {
+  content: "\e919";
+}
+.icon-search:before {
+  content: "\e91a";
+}
+.icon-settings:before {
+  content: "\e91b";
+}
+.icon-share:before {
+  content: "\e91c";
+}
+.icon-sigma:before {
+  content: "\e91d";
+}
+.icon-sort-down:before {
+  content: "\e91e";
+}
+
+.icon-sort-left:before {
+  content: "\e91f";
+}
+.icon-sort-right:before {
+  content: "\e920";
+}
+
+.icon-sort-up:before {
+  content: "\e921";
+}
+.icon-table:before {
+  content: "\e922";
+}
+.icon-transform:before {
+  content: "\e923";
+}
+.icon-twitter:before {
+  content: "\e924";
+}
+.icon-undo:before {
+  content: "\e925";
+}
+.icon-upload:before {
+  content: "\e926";
+}
+.icon-url:before {
+  content: "\e927";
+}
+.icon-wrangle:before {
+  content: "\e928";
+}
+
+/* Customized icons, not in font sent  */
+.icon-l-gray {
+  color:#b4b4b4;
+}
+
+.icon-sort-down-vl-gray:before {
+  content: "\e91e";
+  color: #FAFAFA;
+}
+.icon-sort-up-vl-gray:before {
+  content: "\e91e";
+  color: #FAFAFA;
+}
+.icon-sort-right-vl-gray:before {
+  content: "\e920";
+  color: #FAFAFA;
+}
+.icon-sort-left-vl-gray:before {
+  content: "\e91f";
+  color: #FAFAFA;
+}
+.close-open-toggle{
+  opacity: 0.6;
+}
+.close-open-toggle:hover{
+  opacity: 1;
+  cursor: pointer;
+}
+.icon-close-white:before {
+  content: "\e907";
+  color: #FFFFFF;
+  opacity: 0.6;
+  font-size: 1.2rem;
+}
+.icon-more-white:before {
+  content: "\e914";
+  color: #FFFFFF;
+}
+
+/* icon next to Wf Module title */
+.WFmodule-name{
+  margin-top: 0.3rem;
+}
+
+.module-icon {
+  font-size: 2rem;
+}
+
+/* icons embedded within buttons  */
+.button-icon {
+  font-size: 1.5rem;
+}
+
+.module-menu-icon {
+  font-size: 1.2rem ;
+  color:#b4b4b4;
 }
 
 
@@ -754,6 +973,7 @@ img.logo {
 
 /* --- Module Library --- */
 
+/*Expand and Search*/
 .module-library-open {
   height: 100%;
   width: 200px;
@@ -788,21 +1008,7 @@ img.logo {
   margin-bottom: 1rem;
 }
 
-.module-library-open .h1 {
-  height: 1.8rem;
-  font-size: 2.4rem;
-  font-weight: 300;
-  line-height: 1.8rem;
-  padding: 2rem;
-}
-
-.module-library-open .h2 .symbols {
-  font-weight: bold;
-}
-
-.module-library-open .library-nav-bar .h1 {
-  color: #FFFFFF;
-}
+/*Categories and module list*/
 
 .module-library-open .card {
   border: 0;
@@ -814,6 +1020,12 @@ img.logo {
   height: 3.5rem;
   width: 100%;
   padding-left: 1rem;
+  opacity: 0.7;
+}
+
+.card .first-level:hover {
+  background-color: #4E6878;
+  opacity:1;
 }
 
 .small-sort{
@@ -821,15 +1033,16 @@ img.logo {
 }
 
 .card .second-level {
-  cursor: pointer;
+  opacity: 0.8;
   position: relative;
   height: 4rem;
   padding-left: 2.5rem;
-  background-color: #48C8D7;
+  color:#fff;
 }
 
 .card .second-level:hover {
-  background-color: #E8E6E6;
+  background-color: #4E6878;
+  opacity: 1;
 }
 
 .cat-container {
@@ -848,7 +1061,8 @@ img.logo {
 }
 
 .ml-icon{
-  font-size: 1.5rem;
+  font-size: 1.4rem;
+  color: #ffffff;
 }
 
 .ml-icon-container{
@@ -862,14 +1076,17 @@ img.logo {
   margin-top: 0.2rem;
 }
 
-.library-card-category-open {
-  margin-top: 1px;
-  margin-bottom: 1rem;
+.library-card-category-open .first-level{
+  background-color:#5C798B;
+  opacity: 1;
 }
 
-.library-card-category-open .first-level {
-  background-color: #48C8D7;
+.library-card-category-open .list{
+  background-color:#5C798B;
+  opacity: 1;
+  cursor:pointer;
 }
+
 
 .library-card-category-closed {
   margin-top: 1px;
@@ -879,7 +1096,7 @@ img.logo {
 .library-card-category-closed:hover {
   margin-top: 1px;
   margin-bottom: 1px;
-  background-color: #48C8D7;
+  background-color: #4E6878;
 }
 
 
@@ -1199,256 +1416,6 @@ img.logo {
   background-color: #FAFAFA;
   padding: 2rem 3rem 2rem 3rem;
   border-top: 0;
-}
-
-/* --- Icon font set --- */
-
-@font-face {
-  font-family: 'Workbench';
-  src: url('../fonts/Workbench.woff?4bznb4') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-
-[class^="icon-"], [class*=" icon-"] {
-  /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'Workbench' !important;
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-
-  /* Better Font Rendering =========== */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.icon-sentiment:before {
-  content: "\e929";
-  color: #686768;
-}
-.icon-add:before {
-  content: "\e900";
-  color: #686768;
-}
-.icon-add-orange:before {
-  content: "\e900";
-  color: #F8AA6D;
-}
-.icon-bin:before {
-  content: "\e901";
-  color: #686768;
-}
-.icon-calendar:before {
-  content: "\e902";
-  color: #686768;
-}
-.icon-chart:before {
-  content: "\e903";
-  color: #686768;
-}
-.icon-check:before {
-  content: "\e904";
-  color: #686768;
-}
-.icon-checkbox-fill:before {
-  content: "\e905";
-  color: #686768;
-}
-.icon-checkbox-unchecked:before {
-  content: "\e906";
-  color: #686768;
-}
-.icon-close:before {
-  content: "\e907";
-  color: #686768;
-}
-.icon-code:before {
-  content: "\e908";
-  color: #686768;
-}
-.icon-database:before {
-  content: "\e909";
-  color: #686768;
-}
-.icon-doc:before {
-  content: "\e90a";
-  color: #686768;
-}
-.icon-download:before {
-  content: "\e90b";
-  color: #686768;
-}
-.icon-duplicate:before {
-  content: "\e90c";
-  color: #686768;
-}
-.icon-edit:before {
-  content: "\e90d";
-  color: #686768;
-}
-.icon-filter:before {
-  content: "\e90e";
-  color: #686768;
-}
-.icon-folder:before {
-  content: "\e90f";
-  color: #686768;
-}
-.icon-full-screen:before {
-  content: "\e910";
-  color: #686768;
-}
-.icon-group:before {
-  content: "\e911";
-  color: #686768;
-}
-.icon-info:before {
-  content: "\e912";
-  color: #686768;
-}
-.icon-join:before {
-  content: "\e913";
-  color: #686768;
-}
-.icon-more:before {
-  content: "\e914";
-  color: #b4b4b4;
-}
-.icon-note:before {
-  content: "\e915";
-  color: #b4b4b4;
-}
-.icon-notification-filled:before {
-  content: "\e916";
-  color: #fff;
-}
-.icon-notification:before {
-  content: "\e917";
-  color: #fff;
-}
-.icon-process:before {
-  content: "\e918";
-  color: #686768;
-}
-.icon-redo:before {
-  content: "\e919";
-  color: #686768;
-}
-.icon-search:before {
-  content: "\e91a";
-  color: #686768;
-}
-.icon-settings:before {
-  content: "\e91b";
-  color: #686768;
-}
-.icon-share:before {
-  content: "\e91c";
-  color: #686768;
-}
-.icon-sigma:before {
-  content: "\e91d";
-  color: #686768;
-}
-.icon-sort-down:before {
-  content: "\e91e";
-  color: #686768;
-}
-.icon-sort-down-vl-gray:before {
-  content: "\e91e";
-  color: #FAFAFA;
-}
-.icon-sort-left:before {
-  content: "\e91f";
-  color: #686768;
-}
-.icon-sort-right:before {
-  content: "\e920";
-  color: #686768;
-}
-
-.icon-sort-up:before {
-  content: "\e921";
-  color: #686768;
-}
-.icon-table:before {
-  content: "\e922";
-  color: #686768;
-}
-.icon-transform:before {
-  content: "\e923";
-  color: #686768;
-}
-.icon-twitter:before {
-  content: "\e924";
-  color: #686768;
-}
-.icon-undo:before {
-  content: "\e925";
-  color: #686768;
-}
-.icon-upload:before {
-  content: "\e926";
-  color: #686768;
-}
-.icon-url:before {
-  content: "\e927";
-  color: #686768;
-}
-.icon-wrangle:before {
-  content: "\e928";
-  color: #686768;
-}
-
-/* --- End of official icon set --- */
-
-/* Customized icons, not in font sent  */
-.icon-sort-right-vl-gray:before {
-  content: "\e920";
-  color: #FAFAFA;
-}
-.icon-sort-left-vl-gray:before {
-  content: "\e91f";
-  color: #FAFAFA;
-}
-.close-open-toggle{
-  opacity: 0.6;
-}
-.close-open-toggle:hover{
-  opacity: 1;
-  cursor: pointer;
-}
-.icon-close-white:before {
-  content: "\e907";
-  color: #FFFFFF;
-  opacity: 0.6;
-  font-size: 1.2rem;
-}
-
-.icon-more-white:before {
-  content: "\e914";
-  color: #FFFFFF;
-}
-
-/* icon next to Wf Module title */
-.WFmodule-name{
-  margin-top: 0.3rem;
-}
-
-.module-icon {
-  font-size: 2rem;
-}
-
-/* icons embedded within buttons  */
-.button-icon {
-  font-size: 1.5rem;
-}
-
-.module-menu-icon {
-  font-size: 1.2rem ;
 }
 
 

@@ -209,7 +209,7 @@ export default class WfModule extends React.Component {
     var notesIcon = undefined;
     if (!this.state.showNotes && !this.props['data-isReadOnly'])
       notesIcon = <div className='context-button mr-4' onClick={this.showNotes}>
-                    <div className='icon-note '></div>
+                    <div className='icon-note icon-l-gray '></div>
                   </div>
 
     var arrow = undefined;
@@ -225,7 +225,7 @@ export default class WfModule extends React.Component {
           removeModule={ () => this.removeModule() }
           stopProp={(e) => e.stopPropagation()}
           id={this.wf_module.id}
-          className='menu-test-class'
+          className=''
         />
     var moduleIcon = 'icon-' + this.module.icon + ' module-icon mr-3';
 

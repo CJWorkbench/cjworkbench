@@ -117,7 +117,7 @@ export default class ModuleCategory extends React.Component {
           </div>
         </div>
         <div>
-          <Collapse className='b-l-gray' isOpen={isOpen}>
+          <Collapse className='' isOpen={isOpen}>
             {contents}
           </Collapse>
         </div>
