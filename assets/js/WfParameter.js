@@ -10,6 +10,7 @@ import PropTypes from 'prop-types'
 import DataVersionSelect from './DataVersionSelect'
 import DropZone from './DropZone'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
+import BarChart from './BarChart'
 import { csrfToken } from './utils'
 
 
@@ -280,6 +281,14 @@ export default class WfParameter extends React.Component {
                 wfModuleId={this.props.wf_module_id}
                 revision={this.props.revision} />
             );
+        } else if (this.props.p.parameter_spec.id_name == 'barchart') {
+          return (
+            <div>
+              <BarChart
+                wf_module_id={this.props.wf_module_id}
+              />
+            </div>
+          )
         }
 
 
