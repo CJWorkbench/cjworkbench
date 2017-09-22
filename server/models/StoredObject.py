@@ -8,7 +8,7 @@ import os
 # Allows WfModules to store keyed, versioned binary objects
 class StoredObject(models.Model):
     # delete stored data if WfModule deleted
-    wf_module = models.ForeignKey('WfModule', related_name='wf_module', on_delete=models.CASCADE)
+    wf_module = models.ForeignKey('WfModule', related_name='stored_objects', on_delete=models.CASCADE)
     file = models.FileField()
     stored_at = models.DateTimeField('stored_at', auto_now=True)
 

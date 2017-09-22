@@ -104,8 +104,7 @@ class WfModule(models.Model):
 
     def retrieve_file(self):
         if self.stored_data_version:
-            file = StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).file
-            return file
+            return StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).file
         else:
             return None
 
@@ -231,7 +230,8 @@ class WfModule(models.Model):
             new_wfm.stored_data_version = self.stored_data_version.duplicate()
 
 
-@receiver(post_save, sender=StoredObject)
-def update_stored_data_version(sender, **kwargs):
-    kwargs['instance'].wf_module.stored_data_version = kwargs['instance'].stored_at
-    kwargs['instance'].wf_module.save()
+# I don't think we want this -- API is use set_stored_data_version
+#@receiver(post_save, sender=StoredObject)
+#def update_stored_data_version(sender, **kwargs):
+#    kwargs['instance'].wf_module.stored_data_version = kwargs['instance'].stored_at
+#    kwargs['instance'].wf_module.save()
