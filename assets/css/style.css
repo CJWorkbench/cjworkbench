@@ -2062,3 +2062,23 @@ label {
 .chartbuilder-canvas {
   display: none;
 }
+
+/* color picker */
+.color-picker.color {
+  width: 36px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.color-picker.popover {
+  position: absolute;
+  z-index: 2;
+}
+
+.color-picker.cover {
+  position: fixed;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+}
