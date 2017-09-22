@@ -92,7 +92,7 @@ export default class WorkflowMetadata extends React.Component {
 
   render() {
 
-    var now = new Date();
+    var now = this.props.test_now || new Date();
 
     // only list User attribution if one exists & is not just whitespace
     var user = (this.props.user && this.props.user.display_name)
@@ -122,5 +122,6 @@ export default class WorkflowMetadata extends React.Component {
 WorkflowMetadata.propTypes = {
   workflow: PropTypes.object.isRequired,
   api:      PropTypes.object.isRequired,
-  user:     PropTypes.object
+  user:     PropTypes.object,
+  test_now: PropTypes.object  // optional injection for testing
 };
