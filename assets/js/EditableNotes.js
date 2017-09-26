@@ -7,6 +7,7 @@ export default class EditableNotes extends React.Component {
     super(props);
     this.saveNotes = this.saveNotes.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleClick = this.handleClick.bind(this);
     this.keyPress = this.keyPress.bind(this);
     this.state = {
       value: this.props.value
@@ -46,10 +47,19 @@ export default class EditableNotes extends React.Component {
     this.setState({value: event.target.value})
   }
 
+  // selects the text for editing on a click
+  handleClick(event) {
+    if (!this.props.isReadOnly) this.textInput.childNodes[0].select();
+  }
+
   render() {
 
     // Saves a ref to parent to allow targeting of imported component
-    return <div ref={ (input) => {this.textInput = input;} }>
+    return <div 
+              // Saves a reference to parent to allow targeting of imported component
+              ref={(input) => {this.textInput = input;}}
+              onClick={this.handleClick}
+            >
               {this.props.isReadOnly 
                 ? ( <span className='content-3 t-d-gray'>{this.props.value}</span> )
                 : ( 
