@@ -10,6 +10,7 @@ describe('EditableNotes', () => {
   var api = {
     setWfModuleNotes: okResponseMock()
   };
+  var notesField;
 
   // 'Read-only, starts focused' is not necessary, as Focus and ReadOnly do not happen together
 
@@ -30,10 +31,6 @@ describe('EditableNotes', () => {
       expect(wrapper).toMatchSnapshot();
     });
 
-    it('Clicking on text does not change to edit state - dummy test', () => {
-      expect(true).toBe(true);
-    });
-
   });
 
   describe('NOT Read-only, starts focused', () => {
@@ -42,27 +39,43 @@ describe('EditableNotes', () => {
       <EditableNotes
         value={'This is the best module'}
         wfModuleId={808}
-        api={{}}
+        api={api}
         isReadOnly={false}
         hideNotes={ () => {} }
         startFocused={true}
       />
     ));
+    beforeEach(() => notesField = wrapper.find('.editable-notes-field'));        
   
     it('Renders note in edit state at start', () => {
       expect(wrapper).toMatchSnapshot();
     });
 
-    it('A new note may be entered and saved - dummy test', () => {
-      expect(true).toBe(true);
+    it('A new note may be entered and saved', () => {
+      expect(notesField).toHaveLength(1);
+      expect(wrapper.state().value).toEqual('This is the best module');
+      notesField.simulate('change', {target: {value: 'This is a mediocre module'}});
+      // Blur to trigger save
+      notesField.simulate('blur');
+      // Check that the API was called
+      expect(api.setWfModuleNotes.mock.calls.length).toBe(1);
+      // Check that default note is saved instead    
+      expect(api.setWfModuleNotes.mock.calls[0][1]).toBe('This is a mediocre module'); 
+     
+      expect(wrapper.state().value).toEqual('This is a mediocre module');
+
     });
 
-    it('If a new note is blank, will save default text and close - dummy test', () => {
-      expect(true).toBe(true);
-    });
+    it('If a new note is blank, will save default text and close', () => {
 
-    it('A new note may be entered, but Escape key will cancel input - dummy test', () => {
-      expect(true).toBe(true);
+      expect(wrapper.state().value).toEqual('This is the best module');
+      notesField.simulate('change', {target: {value: ''}});
+      // Blur to trigger save
+      notesField.simulate('blur');
+      // Check that the API was called again
+      expect(api.setWfModuleNotes.mock.calls.length).toBe(2);
+      // Check that default note is saved instead     
+      expect(api.setWfModuleNotes.mock.calls[1][1]).toBe("Write notes here"); 
     });
 
   });
@@ -82,10 +95,6 @@ describe('EditableNotes', () => {
   
     it('Renders note in non-edit state at start', () => {
       expect(wrapper).toMatchSnapshot();
-    });
-
-    it('Note may be clicked on to bring up edit state - dummy test', () => {
-      expect(true).toBe(true);
     });
 
   });

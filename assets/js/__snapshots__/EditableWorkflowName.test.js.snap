@@ -11,7 +11,10 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
   value="Test Title"
   wfId={808}
 >
-  <div>
+  <div
+    className="editable-name-container"
+    onClick={[Function]}
+  >
     <TextareaAutosize
       className="editable-title-field"
       maxRows={1}
@@ -40,7 +43,10 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
 `;
 
 exports[`EditableWorkflowName Read-only Renders plain title 1`] = `
-<div>
+<div
+  className="editable-name-container"
+  onClick={[Function]}
+>
   <span
     className="editable-title-field"
   >

@@ -2,14 +2,20 @@
 
 exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state at start 1`] = `
 <EditableNotes
-  api={Object {}}
+  api={
+    Object {
+      "setWfModuleNotes": [Function],
+    }
+  }
   hideNotes={[Function]}
   isReadOnly={false}
   startFocused={true}
   value="This is the best module"
   wfModuleId={808}
 >
-  <div>
+  <div
+    onClick={[Function]}
+  >
     <TextareaAutosize
       className="editable-notes-field"
       onBlur={[Function]}
@@ -45,7 +51,9 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
   value="This is the best module"
   wfModuleId={808}
 >
-  <div>
+  <div
+    onClick={[Function]}
+  >
     <TextareaAutosize
       className="editable-notes-field"
       onBlur={[Function]}
@@ -73,7 +81,9 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
 `;
 
 exports[`EditableNotes Read-only, starts NOT focused Renders plain note 1`] = `
-<div>
+<div
+  onClick={[Function]}
+>
   <span
     className="content-3 t-d-gray"
   >

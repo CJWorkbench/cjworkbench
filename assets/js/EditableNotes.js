@@ -83,7 +83,6 @@ EditableNotes.propTypes = {
   hideNotes:      PropTypes.func.isRequired,
   api:            PropTypes.object.isRequired,
   isReadOnly:     PropTypes.bool.isRequired,
-  hideNotes:      PropTypes.func.isRequired,
   startFocused:   PropTypes.bool.isRequired,
 };
 

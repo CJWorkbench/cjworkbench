@@ -18,14 +18,9 @@ describe('EditableWorkflowName', () => {
         api={{}}
       />
     ));
-  
+
     it('Renders plain title', () => {
       expect(wrapper).toMatchSnapshot();
-    });
-
-    it('Clicking on text does not change to edit state - dummy test', () => {
-      // TODO: how to simulate click when there is no onCLick method on component?
-      expect(true).toBe(true);
     });
 
   });
@@ -35,6 +30,7 @@ describe('EditableWorkflowName', () => {
     var api = {
       setWfName: okResponseMock()
     };
+    var container; 
     var titleField;
 
     beforeEach(() => wrapper = mount(
@@ -45,48 +41,29 @@ describe('EditableWorkflowName', () => {
         api={api}
       />
     ));
+    beforeEach(() => container = wrapper.find('.editable-name-container'));    
     beforeEach(() => titleField = wrapper.find('.editable-title-field'));    
 
   
     it('Renders a title that can be edited and saved', () => {
       expect(wrapper).toMatchSnapshot();
 
-      // TODO: finish test
+      // confirm existence of targets
+      expect(container).toHaveLength(1);
+      expect(titleField).toHaveLength(1);
+      
+      // check value of field
+      expect(wrapper.state().value).toEqual('Test Title');
 
+      // click on container to select text
+      container.first().simulate('click');
+      
+      // change the field value
+      titleField.simulate('change', {target: {value: 'New Title'}});
+
+      // Value of field should have changed 
+      expect(wrapper.state().value).toEqual('New Title');
     });
-
-    it('Editing a title, then clicking Escape, will not save edits', () => {
-      expect(true).toBe(true);
-
-      // find element and click on it
-      // 'Simulate' may not work, see what else can do
-
-      // enter some text
-
-      // hit Escape
-
-      // check state for title no-change
-
-      // snapshot
-
-    });
-
-    it('A deleted title is replaced with default text', () => {
-      expect(true).toBe(true);
-
-            // find element and click on it
-      // 'Simulate' may not work, see what else can do
-
-      // enter some text
-
-      // hit Return
-
-      // check state for default title
-
-      // snapshot
-
-    });
-
 
   });
 
