@@ -2070,7 +2070,7 @@ label {
   border-radius: 2px;
 }
 
-.color-picker.popover {
+.color-picker.pop-over {
   position: absolute;
   z-index: 2;
 }
