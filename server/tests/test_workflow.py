@@ -24,7 +24,6 @@ class WorkflowTests(LoggedInTestCase):
         self.other_workflow_public = Workflow.objects.create(name="Other workflow public", owner=self.otheruser, public=True)
 
     def test_workflow_duplicate(self):
-
         # Create workflow with two WfModules
         wf1 = create_testdata_workflow()
         self.assertNotEqual(wf1.owner, self.otheruser) # should be user created by LoggedInTestCase
@@ -35,10 +34,34 @@ class WorkflowTests(LoggedInTestCase):
 
         self.assertNotEqual(wf1.id, wf2.id)
         self.assertEqual(wf2.owner, self.otheruser)
-        self.assertEqual(wf1.name, wf2.name)
+        self.assertEqual(wf2.name, "Copy of " + wf1.name)
         self.assertIsNone(wf2.last_delta)  # no undo history
         self.assertFalse(wf2.public)
         self.assertEqual(WfModule.objects.filter(workflow=wf1).count(), WfModule.objects.filter(workflow=wf2).count())
+
+    def test_workflow_duplicate_view(self):
+        old_ids = [w.id for w in Workflow.objects.all()] # list of all current workflow ids
+        response = self.client.get('/api/workflows/%d/duplicate' % self.workflow1.id)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        new_id = response.data['id']
+        self.assertFalse(new_id in old_ids)         # created at entirely new id
+        new_wf = Workflow.objects.get(pk=new_id)    # will fail if no Workflow created
+
+        # Ensure 404 with bad id
+        response = self.client.get('/api/workflows/%d/duplicate' % 999999)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # Ensure 403 when another user tries to clone private workflow
+        self.assertFalse(self.workflow1.public)
+        self.client.force_login(self.otheruser)
+        response = self.client.get('/api/workflows/%d/duplicate' % self.workflow1.id)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # But another user can duplicate public workflow
+        self.workflow1.public = True
+        self.workflow1.save()
+        response = self.client.get('/api/workflows/%d/duplicate' % self.workflow1.id)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
     def test_workflow_list_get(self):

@@ -38,8 +38,11 @@ class ParameterVal(models.Model):
 
 
     # User can access param if they can access wf_module
-    def user_authorized(self, user):
-        return self.wf_module.user_authorized(user)
+    def user_authorized_read(self, user):
+        return self.wf_module.user_authorized_read(user)
+
+    def user_authorized_write(self, user):
+        return self.wf_module.user_authorized_write(user)
 
     # Return selected menu item index. Insensitive to menu item text, either in config json or at runtime.
     def selected_menu_item_idx(self):

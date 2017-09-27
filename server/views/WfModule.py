@@ -44,11 +44,11 @@ def wfmodule_detail(request, pk, format=None):
         return HttpResponseNotFound()
 
     if request.method in ['POST', 'DELETE', 'PATCH']:
-        if not wf_module.user_authorized(request.user):
+        if not wf_module.user_authorized_write(request.user):
             return HttpResponseForbidden()
 
-    if not wf_module.workflow.public and not wf_module.user_authorized(request.user):
-        return Response(status=status.HTTP_404_NOT_FOUND)
+    if not wf_module.user_authorized_read(request.user):
+        return HttpResponseNotFound()
 
     if request.method == 'GET':
         serializer = WfModuleSerializer(wf_module)
@@ -140,7 +140,7 @@ def wfmodule_render(request, pk, format=None):
         except WfModule.DoesNotExist:
             return HttpResponseNotFound()
 
-        if not wf_module.user_authorized(request.user) and not wf_module.workflow.public:
+        if not wf_module.workflow.user_authorized_read(request.user):
             return HttpResponseForbidden()
 
         return table_result(request, wf_module)
@@ -157,7 +157,7 @@ def wfmodule_input(request, pk, format=None):
         except WfModule.DoesNotExist:
             return HttpResponseNotFound()
 
-        if not wf_module.workflow.public and not wf_module.user_authorized(request.user):
+        if not wf_module.user_authorized_read(request.user):
             return HttpResponseForbidden()
 
         # return empty table if this is the first module in the stack
@@ -178,8 +178,8 @@ def wfmodule_public_output(request, pk, type, format=None):
     except WfModule.DoesNotExist:
         return HttpResponseNotFound()
 
-    if not wf_module.public_authorized():
-        return HttpResponseForbidden()
+    if not wf_module.user_authorized_read(request.user):
+        return HttpResponseNotFound()
 
     table = execute_wfmodule(wf_module)
     if type=='json':
@@ -203,15 +203,16 @@ def wfmodule_dataversion(request, pk, format=None):
         return HttpResponseNotFound()
 
     if request.method == 'GET':
-        if not wf_module.workflow.public and not wf_module.user_authorized(request.user):
-            return HttpResponseForbidden()
+        if not wf_module.user_authorized_read(request.user):
+            return HttpResponseNotFound()
+
         versions = wf_module.list_stored_data_versions()
         current_version = wf_module.get_stored_data_version()
         response = {'versions': versions, 'selected': current_version}
         return Response(response)
 
     elif request.method == 'PATCH':
-        if not wf_module.user_authorized(request.user):
+        if not wf_module.user_authorized_write(request.user):
             return HttpResponseForbidden()
 
         ChangeDataVersionCommand.create(wf_module, datetime.datetime.strptime(request.data['selected'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=pytz.UTC))

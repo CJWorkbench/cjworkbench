@@ -25,6 +25,7 @@ def render_workflows(request):
     }
     return TemplateResponse(request, 'workflows.html', {'initState': json.dumps(initState)})
 
+# not login_required as logged out users can view public workflows
 def render_workflow(request, pk=None):
     user = UserSerializer(request.user)
     initState = {
@@ -62,7 +63,7 @@ def workflow_detail(request, pk, format=None):
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not workflow.user_authorized(request.user) and not workflow.public:
+    if not workflow.user_authorized_read(request.user):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
@@ -71,7 +72,7 @@ def workflow_detail(request, pk, format=None):
 
     # We use PATCH to set the order of the modules when the user drags.
     elif request.method == 'PATCH':
-        if not workflow.user_authorized(request.user):
+        if not workflow.user_authorized_write(request.user):
             return HttpResponseForbidden()
 
         try:
@@ -82,7 +83,7 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'POST':
-        if not workflow.user_authorized(request.user):
+        if not workflow.user_authorized_write(request.user):
             return HttpResponseForbidden()
 
         try:
@@ -101,7 +102,7 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':
-        if not workflow.user_authorized(request.user):
+        if not workflow.user_authorized_write(request.user):
             return HttpResponseForbidden()
 
         workflow.delete()
@@ -116,7 +117,7 @@ def workflow_addmodule(request, pk, format=None):
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not workflow.user_authorized(request.user):
+    if not workflow.user_authorized_write(request.user):
         return HttpResponseForbidden()
 
     try:
@@ -135,6 +136,23 @@ def workflow_addmodule(request, pk, format=None):
     return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# Duplicate a workflow. Returns new id
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+def workflow_duplicate(request, pk):
+    try:
+        workflow = Workflow.objects.get(pk=pk)
+    except Workflow.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if not workflow.user_authorized_read(request.user):
+        return HttpResponseForbidden()
+
+    workflow2 = workflow.duplicate(request.user)
+
+    return Response({"id": workflow2.id}, status.HTTP_201_CREATED)
+
+
 # Undo or redo
 @api_view(['PUT'])
 @renderer_classes((JSONRenderer,))
@@ -144,7 +162,7 @@ def workflow_undo_redo(request, pk, action, format=None):
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not workflow.user_authorized(request.user):
+    if not workflow.user_authorized_write(request.user):
         return HttpResponseForbidden()
 
     if action=='undo':

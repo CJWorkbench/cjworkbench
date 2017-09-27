@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^api/workflows/(?P<pk>[0-9]+)/?$', views.workflow_detail),
 
     url(r'^api/workflows/(?P<pk>[0-9]+)/addmodule/?$', views.workflow_addmodule),
-
+    url(r'^api/workflows/(?P<pk>[0-9]+)/duplicate/?$', views.workflow_duplicate),
     url(r'^api/workflows/(?P<pk>[0-9]+)/(?P<action>(undo|redo))/?$', views.workflow_undo_redo),
 
     # modules

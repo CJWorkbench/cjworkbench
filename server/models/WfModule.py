@@ -87,12 +87,13 @@ class WfModule(models.Model):
 
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
-    def user_authorized(self, user):
-        return self.workflow.user_authorized(user)
+    def user_authorized_read(self, user):
+        return self.workflow.user_authorized_read(user)
 
-    # For now, all render output is publicly acessible
-    def public_authorized(self):
-        return True
+    def user_authorized_write(self, user):
+        return self.workflow.user_authorized_write(user)
+
+
 
 
     # ---- Data versions ----

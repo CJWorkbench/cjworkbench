@@ -15,11 +15,14 @@ class Workflow(models.Model):
                                    default=None,
                                    on_delete=models.SET_DEFAULT)
 
-    def user_authorized(self, user):
+    def user_authorized_read(self, user):
+        return user == self.owner or self.public == True
+
+    def user_authorized_write(self, user):
         return user == self.owner
 
     def read_only(self, user):
-        return self.public == True and self.user_authorized(user) == False
+        return self.user_authorized_read(user) and not self.user_authorized_write(user)
 
     # use last delta ID as (non sequential) revision number, as later deltas will always have later ids
     def revision(self):
@@ -32,7 +35,7 @@ class Workflow(models.Model):
     # No authorization checking here, that needs to be handled in the view
     # Loses undo historty (do we want that?)
     def duplicate(self, target_user):
-        new_wf = Workflow.objects.create(name=self.name, owner=target_user, public=False, last_delta=None)
+        new_wf = Workflow.objects.create(name="Copy of " + self.name, owner=target_user, public=False, last_delta=None)
         for wfm in WfModule.objects.filter(workflow=self):
             wfm.duplicate(new_wf)
 

@@ -23,16 +23,17 @@ def parameterval_detail(request, pk, format=None):
     try:
         param = ParameterVal.objects.get(pk=pk)
     except ParameterVal.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if not param.user_authorized(request.user):
-        return HttpResponseForbidden()
+        return HttpResponseNotFound()
 
     if request.method == 'GET':
+        if not param.user_authorized_read(request.user):
+            return HttpResponseNotFound()
         serializer = ParameterValSerializer(param)
         return Response(serializer.data)
 
     elif request.method == 'PATCH':
+        if not param.user_authorized_write(request.user):
+            return HttpResponseForbidden
         ChangeParameterCommand.create(param, request.data['value'])
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -47,7 +48,7 @@ def parameterval_event(request, pk, format=None):
     except ParameterVal.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not param.user_authorized(request.user):
+    if not param.user_authorized_write(request.user):
         return HttpResponseForbidden()
 
     # change parameter value
