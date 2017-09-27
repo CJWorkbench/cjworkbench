@@ -23,6 +23,24 @@ class WorkflowTests(LoggedInTestCase):
         self.other_workflow_private = Workflow.objects.create(name="Other workflow private", owner=self.otheruser)
         self.other_workflow_public = Workflow.objects.create(name="Other workflow public", owner=self.otheruser, public=True)
 
+    def test_workflow_duplicate(self):
+
+        # Create workflow with two WfModules
+        wf1 = create_testdata_workflow()
+        self.assertNotEqual(wf1.owner, self.otheruser) # should be user created by LoggedInTestCase
+        add_new_wf_module(wf1, self.module_version1, 1) # order=1
+        self.assertEqual(WfModule.objects.filter(workflow=wf1).count(), 2)
+
+        wf2 = wf1.duplicate(self.otheruser)
+
+        self.assertNotEqual(wf1.id, wf2.id)
+        self.assertEqual(wf2.owner, self.otheruser)
+        self.assertEqual(wf1.name, wf2.name)
+        self.assertIsNone(wf2.last_delta)  # no undo history
+        self.assertFalse(wf2.public)
+        self.assertEqual(WfModule.objects.filter(workflow=wf1).count(), WfModule.objects.filter(workflow=wf2).count())
+
+
     def test_workflow_list_get(self):
         request = self.factory.get('/api/workflows/')
         force_authenticate(request, user=self.user)

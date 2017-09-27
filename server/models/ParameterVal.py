@@ -1,5 +1,4 @@
 from django.db import models
-from server.models.Workflow import *
 from server.models.ParameterSpec import *
 
 # A parameter value, which might be string or float
@@ -25,6 +24,18 @@ class ParameterVal(models.Model):
         self.order = self.parameter_spec.order
         self.menu_items = self.parameter_spec.def_menu_items
         self.visible = self.parameter_spec.def_visible
+
+    def duplicate(self, to_wf_module):
+        newval = ParameterVal.objects.create(
+            wf_module = to_wf_module,
+            parameter_spec = self.parameter_spec,
+            order = self.order,
+            value = self.value,
+            menu_items = self.menu_items,
+            visible = self.visible
+        )
+        return newval
+
 
     # User can access param if they can access wf_module
     def user_authorized(self, user):

@@ -115,3 +115,35 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(self.wfmodule2.list_stored_data_versions(), [])
 
 
+    def test_wf_module_duplicate(self):
+        wfm1 = self.wfmodule1
+
+        # store data to test that it is duplicated
+        s1 = wfm1.store_data("some data")
+        s2 = wfm1.store_data("some more data")
+        wfm1.set_stored_data_version(s2)
+        self.assertEqual(len(wfm1.list_stored_data_versions()), 2)
+
+        # duplicate into another workflow, as we would do when duplicating a workflow
+        workflow2 = add_new_workflow("Test Workflow 2")
+        wfm1d = wfm1.duplicate(workflow2)
+
+        self.assertEqual(wfm1d.workflow, workflow2)
+        self.assertEqual(wfm1d.module_version, wfm1.module_version)
+        self.assertEqual(wfm1d.order, wfm1.order)
+        self.assertEqual(wfm1d.notes, wfm1.notes)
+        self.assertEqual(wfm1d.auto_update_data, wfm1.auto_update_data)
+        self.assertEqual(wfm1d.last_update_check, wfm1.last_update_check)
+        self.assertEqual(wfm1d.update_interval, wfm1.update_interval)
+        self.assertEqual(wfm1d.is_collapsed, wfm1.is_collapsed)
+
+        # parameters should be duplicated
+        self.assertEqual(ParameterVal.objects.filter(wf_module=wfm1d).count(), ParameterVal.objects.filter(wf_module=wfm1).count())
+
+        # Stored data should contain a clone of content only, not complete version history
+        self.assertIsNotNone(wfm1d.stored_data_version)
+        self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
+        self.assertEqual(wfm1d.retrieve_data(), wfm1.retrieve_data())
+        self.assertEqual(len(wfm1d.list_stored_data_versions()), 1)
+
+

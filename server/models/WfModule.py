@@ -5,7 +5,6 @@ from django.db import models
 import pandas as pd
 from server.models.Module import *
 from server.models.ModuleVersion import *
-from server.models.Workflow import *
 from server.models.ParameterVal import *
 from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_status
 from django.utils import timezone
@@ -28,7 +27,7 @@ class WfModule(models.Model):
 
     # --- Fields ----
     workflow = models.ForeignKey(
-        Workflow,
+        'Workflow',
         related_name='wf_modules',
         null=True,                     # null means this is a deleted WfModule
         on_delete=models.CASCADE)      # delete WfModule if Workflow deleted
@@ -225,10 +224,18 @@ class WfModule(models.Model):
                                           update_interval=self.update_interval,
                                           last_update_check=self.last_update_check)
 
-        # don't set status/error as first render on this wfm will set that
-        if self.stored_data_version is not None:
-            new_wfm.stored_data_version = self.stored_data_version.duplicate()
+        # copy all parameter values
+        for pv in ParameterVal.objects.filter(wf_module=self):
+            pv.duplicate(new_wfm)
 
+        # Duplicate the current stored data only, not the history
+        if self.stored_data_version is not None:
+            StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).duplicate(new_wfm)
+            new_wfm.stored_data_version = self.stored_data_version
+
+        # don't set status/error as first render on this wfm will set that
+
+        return new_wfm
 
 # I don't think we want this -- API is use set_stored_data_version
 #@receiver(post_save, sender=StoredObject)

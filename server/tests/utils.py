@@ -33,7 +33,6 @@ class LoggedInTestCase(TestCase):
 def add_new_module_version(name, dispatch=''):
     module = Module.objects.create(name=name, dispatch=dispatch)
     module_version = ModuleVersion.objects.create(source_version_hash='1.0', module=module)
-    module_version = ModuleVersion.objects.filter(module=module, source_version_hash='1.0').order_by("last_update_time")[0]
     return module_version
 
 def add_new_parameter_spec(module_version, type, id_name='', order=0, def_value=''):

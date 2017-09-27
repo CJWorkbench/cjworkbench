@@ -2,7 +2,9 @@ from django.db import models
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.dispatch import receiver
+from django.utils import timezone
 import os
+
 
 # StoredObject is our persistence layer.
 # Allows WfModules to store keyed, versioned binary objects
@@ -10,7 +12,7 @@ class StoredObject(models.Model):
     # delete stored data if WfModule deleted
     wf_module = models.ForeignKey('WfModule', related_name='stored_objects', on_delete=models.CASCADE)
     file = models.FileField()
-    stored_at = models.DateTimeField('stored_at', auto_now=True)
+    stored_at = models.DateTimeField('stored_at', auto_now=False)
 
     @staticmethod
     def __filename_for_id(id):
@@ -19,7 +21,7 @@ class StoredObject(models.Model):
     @staticmethod
     def create(wf_module, text):
         file = default_storage.save(StoredObject.__filename_for_id(wf_module.id), ContentFile(bytes(text, 'UTF-8')))
-        return StoredObject.objects.create(wf_module=wf_module, file=file)
+        return StoredObject.objects.create(wf_module=wf_module, file=file, stored_at=timezone.now())
 
     def get_data(self):
         self.file.open(mode='rb')
@@ -34,6 +36,7 @@ class StoredObject(models.Model):
         new_so = StoredObject.objects.create(wf_module=to_wf_module,
                                              stored_at=self.stored_at,
                                              file = new_file)
+        return new_so
 
 @receiver(models.signals.post_delete, sender=StoredObject)
 def auto_delete_file_on_delete(sender, instance, **kwargs):
