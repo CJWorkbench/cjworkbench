@@ -288,6 +288,14 @@ export default class WfParameter extends React.Component {
                 wf_module_id={this.props.wf_module_id}
               />
             </div>
+            <BarChart
+              wf_module_id={this.props.wf_module_id}
+              index={this.props.getParamText('column')}
+              dataKeys={this.props.getParamText('multicolumn_colorpicker')}
+              getParamText={this.props.getParamText}
+              setParamText={this.props.setParamText}
+            />
+          )
           )
         }
 

@@ -1,6 +1,7 @@
 # Module dispatch table and implementations
 import pandas as pd
 from django.conf import settings
+from .modules.barchart import BarChart
 from .modules.chart import Chart
 from .modules.countvalues import CountValues
 from .modules.counybydate import CountByDate
@@ -43,8 +44,9 @@ module_dispatch_tbl = {
     'textsearch':   TextSearch,
     'countvalues':  CountValues,
     'countbydate':  CountByDate,
-    'enigma': EnigmaDataLoader,
+    'enigma':       EnigmaDataLoader,
     'uploadfile':   UploadFile,
+    'barchart':     BarChart,
 
     # For testing
     'NOP':          NOP,
