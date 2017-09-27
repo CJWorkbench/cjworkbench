@@ -283,11 +283,6 @@ export default class WfParameter extends React.Component {
             );
         } else if (this.props.p.parameter_spec.id_name == 'barchart') {
           return (
-            <div>
-              <BarChart
-                wf_module_id={this.props.wf_module_id}
-              />
-            </div>
             <BarChart
               wf_module_id={this.props.wf_module_id}
               index={this.props.getParamText('column')}
