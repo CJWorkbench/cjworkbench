@@ -3,6 +3,7 @@
 import json
 from channels import Group
 from server.models import Workflow
+from server.models.WfModule import ws_callbacks
 
 # Clients connect to channels at ws://server/workflows/[id]
 # This extracts the id. Throws ValueError if id is not an int
@@ -50,4 +51,7 @@ def ws_client_wf_module_status(wf_module, status):
         message = { 'type' : 'wfmodule-status', 'id' : wf_module.id, 'status' : status}
         ws_send_workflow_update(workflow, message)
 
-
+# Completely ridiculous work to resolve circular imports: websockets -> Workflow -> WfModule which needs websockets
+# So we create an object with callbacks in WfModule, which we then fill out here
+ws_callbacks.ws_client_rerender_workflow = ws_client_rerender_workflow
+ws_callbacks.ws_client_wf_module_status = ws_client_wf_module_status

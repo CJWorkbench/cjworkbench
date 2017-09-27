@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from server.models.WfModule import WfModule
 
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
@@ -26,6 +27,16 @@ class Workflow(models.Model):
             return 0
         else:
             return self.last_delta.id
+
+    # duplicate workflow, make it belong to specified user
+    # No authorization checking here, that needs to be handled in the view
+    # Loses undo historty (do we want that?)
+    def duplicate(self, target_user):
+        new_wf = Workflow.objects.create(name=self.name, owner=target_user, public=False, last_delta=None)
+        for wfm in WfModule.objects.filter(workflow=self):
+            wfm.duplicate(new_wf)
+
+        return new_wf
 
     def __str__(self):
         return self.name

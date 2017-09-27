@@ -6,12 +6,19 @@ import pandas as pd
 from server.models.Module import *
 from server.models.ModuleVersion import *
 from server.models.ParameterVal import *
-from server.websockets import ws_client_rerender_workflow, ws_client_wf_module_status
 from django.utils import timezone
 from server.models.StoredObject import StoredObject
 from django.core.files.storage import default_storage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+
+# Completely ridiculous work to resolve circular imports: websockets -> Workflow -> WfModule which needs websockets
+# So we create an object with callbacks, which we then set in websockets.py
+class WsCallbacks:
+    ws_client_wf_module_status = None
+    ws_client_rerender_workflow = None
+
+ws_callbacks = WsCallbacks()
 
 # Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
 def current_iso_datetime_ms():
@@ -188,27 +195,27 @@ class WfModule(models.Model):
         self.status = self.BUSY
         error_msg = ''
         if notify:
-            ws_client_wf_module_status(self, self.status)
+            ws_callbacks.ws_client_wf_module_status(self, self.status)
         self.save()
 
     # re-render entire workflow when a module goes ready or error, on the assumption that new output data is available
     def set_ready(self, notify=True):
         self.status = self.READY
         if notify:
-            ws_client_rerender_workflow(self.workflow)
+            ws_callbacks.ws_client_rerender_workflow(self.workflow)
         self.save()
 
     def set_error(self, message, notify=True):
         self.error_msg = message
         self.status = self.ERROR
         if notify:
-            ws_client_rerender_workflow(self.workflow)
+            ws_callbacks.ws_client_rerender_workflow(self.workflow)
         self.save()
 
     def set_is_collapsed(self, collapsed, notify=True):
         self.is_collapsed = collapsed
         if notify:
-            ws_client_rerender_workflow(self.workflow)
+            ws_callbacks.ws_client_rerender_workflow(self.workflow)
         self.save()
 
     # --- Duplicate ---
@@ -236,9 +243,3 @@ class WfModule(models.Model):
         # don't set status/error as first render on this wfm will set that
 
         return new_wfm
-
-# I don't think we want this -- API is use set_stored_data_version
-#@receiver(post_save, sender=StoredObject)
-#def update_stored_data_version(sender, **kwargs):
-#    kwargs['instance'].wf_module.stored_data_version = kwargs['instance'].stored_at
-#    kwargs['instance'].wf_module.save()
