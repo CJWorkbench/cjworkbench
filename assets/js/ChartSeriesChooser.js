@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { InputGroup, InputGroupButton, Input, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
 import { SketchPicker } from 'react-color';
@@ -54,7 +53,6 @@ export default class ChartSeriesChooser extends React.Component {
     var backgroundColor =  {
       background: `rgba(${ this.state.color.r }, ${ this.state.color.g }, ${ this.state.color.b }, ${ this.state.color.a })`
     }
-    console.log(backgroundColor);
     return (
       <div>
         <InputGroup size="lg">
@@ -62,28 +60,12 @@ export default class ChartSeriesChooser extends React.Component {
             <Button onClick={this.handleClick}>
               <div className="color-picker color" style={backgroundColor} />
             </Button>
-            { this.state.displayColorPicker ? <div className="color-picker cover">
-              <div className="color-picker popover">
-                <SketchPicker color={ this.state.color } onChange={ this.handleChange } />
-                <button onClick={ this.handleClose }>OK</button>
-                <button onClick={ this.handleCancel } >Cancel</button>
-              </div>
+            { this.state.displayColorPicker ? <div className="color-picker pop-over">
+              <div className="color-picker cover" />
+              <SketchPicker color={ this.state.color } onChange={ this.handleChange } />
             </div> : null }
           </InputGroupButton>
-          <InputGroupButton>
-            <ButtonDropdown isOpen={this.state.dropdownOpen} toggle={this.toggle} color="primary">
-              <DropdownToggle caret>
-                Button Dropdown
-              </DropdownToggle>
-              <DropdownMenu>
-                <DropdownItem header>Header</DropdownItem>
-                <DropdownItem disabled>Action</DropdownItem>
-                <DropdownItem>Another Action</DropdownItem>
-                <DropdownItem divider />
-                <DropdownItem>Another Action</DropdownItem>
-              </DropdownMenu>
-            </ButtonDropdown>
-          </InputGroupButton>
+          <Input type="text" value={this.props.value} />
         </InputGroup>
       </div>
     );
