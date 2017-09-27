@@ -31,7 +31,7 @@ export default class WfContextMenu extends React.Component {
     return (
        <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
-          <div className='button-icon icon-more'></div>
+          <div className='button-icon icon-more module-menu-icon'></div>
         </DropdownToggle>
         <DropdownMenu right className='dropdown-menu'>
           <DropdownItem key={1} onClick={this.shareOption} className='dropdown-menu-item test-share-button'>

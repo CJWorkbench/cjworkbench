@@ -390,7 +390,7 @@ exports[`renders correctly 2`] = `
                                   type="button"
                                 >
                                   <div
-                                    className="button-icon icon-more"
+                                    className="button-icon icon-more module-menu-icon"
                                   />
                                 </button>
                               </Button>
@@ -515,7 +515,7 @@ exports[`renders correctly 2`] = `
                                   type="button"
                                 >
                                   <div
-                                    className="button-icon icon-more"
+                                    className="button-icon icon-more module-menu-icon"
                                   />
                                 </button>
                               </Button>
@@ -640,7 +640,7 @@ exports[`renders correctly 2`] = `
                                   type="button"
                                 >
                                   <div
-                                    className="button-icon icon-more"
+                                    className="button-icon icon-more module-menu-icon"
                                   />
                                 </button>
                               </Button>
@@ -765,7 +765,7 @@ exports[`renders correctly 2`] = `
                                   type="button"
                                 >
                                   <div
-                                    className="button-icon icon-more"
+                                    className="button-icon icon-more module-menu-icon"
                                   />
                                 </button>
                               </Button>

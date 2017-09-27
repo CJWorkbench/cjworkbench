@@ -9,7 +9,7 @@ exports[`WfContextMenu renders correctly 1`] = `
     data-toggle="dropdown"
   >
     <div
-      className="button-icon icon-more"
+      className="button-icon icon-more module-menu-icon"
     />
   </DropdownToggle>
   <DropdownMenu
@@ -60,7 +60,7 @@ exports[`WfContextMenu renders correctly 2`] = `
     data-toggle="dropdown"
   >
     <div
-      className="button-icon icon-more"
+      className="button-icon icon-more module-menu-icon"
     />
   </DropdownToggle>
   <DropdownMenu
@@ -111,7 +111,7 @@ exports[`WfContextMenu renders correctly 3`] = `
     data-toggle="dropdown"
   >
     <div
-      className="button-icon icon-more"
+      className="button-icon icon-more module-menu-icon"
     />
   </DropdownToggle>
   <DropdownMenu

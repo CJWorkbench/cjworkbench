@@ -422,11 +422,11 @@ body {
 
 /* icon next to Wf Module title */
 .WFmodule-name{
-  margin-top: 0.3rem;
+  margin-top: 0.1rem;
 }
 
 .module-icon {
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 
 /* icons embedded within buttons  */
@@ -438,8 +438,6 @@ body {
   font-size: 1.2rem ;
   color:#b4b4b4;
 }
-
-
 
 /* ---- Data Input Fields: NEW ---- */
 
@@ -772,7 +770,7 @@ body {
 /* ---- Workflow list ---- */
 
 .workflows-container {
-  margin-top:9rem;
+  margin-top:6rem;
 }
 /*.worfklows-container > .card {
   background-color: none;
