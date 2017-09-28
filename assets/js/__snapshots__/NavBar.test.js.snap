@@ -40,7 +40,7 @@ exports[`NavBar WorkflowListNavBar renders correctly 1`] = `
 exports[`NavBar WorkflowNavBar renders correctly 1`] = `
 <div>
   <nav
-    className="navbar"
+    className="navbar-WF"
   >
     <div
       className="navbar-brand d-flex flex-row align-items-center"
