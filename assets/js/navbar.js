@@ -40,7 +40,7 @@ export class WorkflowNavBar extends React.Component {
         isReadOnly={this.props.isReadOnly}
         user={this.props.user}
         />
-      : <a href="http://cjworkbench.org/account/signup/" className=' navLink t-white content-2'>Sign in</a>
+      : <a href="http://app.cjworkbench.org/account/login" className=' navLink t-white content-2'>Sign in</a>
 
     return (
       <div>
