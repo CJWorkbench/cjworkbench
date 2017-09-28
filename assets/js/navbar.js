@@ -44,7 +44,7 @@ export class WorkflowNavBar extends React.Component {
 
     return (
       <div>
-        <nav className="navbar">
+        <nav className="navbar-WF">
           <div className="navbar-brand d-flex flex-row align-items-center">
             <div className='title-metadata-stack'>
               <EditableWorkflowName

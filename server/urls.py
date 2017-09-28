@@ -52,5 +52,9 @@ urlpatterns = [
     url(r'^public/paramdata/live/(?P<pk>[0-9]+).png$', views.parameterval_png),
 
     # URL endpoint to trigger internal cron jobs
-    url(r'^runcron$', views.runcron)
+    url(r'^runcron$', views.runcron),
+
+    # Preloader testing
+    url(r'^preloader/$', TemplateView.as_view(template_name='preloader.html')),
+
 ]
