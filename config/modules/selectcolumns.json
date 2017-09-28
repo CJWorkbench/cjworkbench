@@ -1,7 +1,7 @@
 {
   "name": "Column Selector",
   "id_name": "selectcolumns",
-  "category" : "Filter",
+  "category" : "Analyse",
   "icon" : "filter",
   "description" : "",
   "parameters": [

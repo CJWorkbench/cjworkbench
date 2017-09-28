@@ -1,7 +1,7 @@
 {
   "name": "Formula",
   "id_name": "formula",
-  "category" : "Transform",
+  "category" : "Analyse",
   "icon" : "sigma",
   "description": "Apply a formula between columns and store its result in a new column.",
   "parameters": [
