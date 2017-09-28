@@ -64,7 +64,7 @@ class SortableList extends React.Component {
             'data-selected': (item.id == this.props.selected_wf_module),
             'data-api': this.props.api
           }}
-        /> 
+        />
       );
     }, this);
 
@@ -118,10 +118,10 @@ export default class Workflow extends React.Component {
 
 
 
-    var moduleStack = <div className='modulestack-empty mx-auto'>
+    var moduleStack = <div className='modulestack-empty mx-auto d-flex align-items-center justify-content-center'>
                         <span className='icon-add-orange module-icon'/>
-                        <span className='t-orange title-3 ml-3'>
-                          Select a module from the library to begin
+                        <span className='t-orange title-3 ml-4'>
+                          SELECT A MODULE IN THE LEFT PANEL
                         </span>
                       </div>
 
@@ -157,7 +157,7 @@ export default class Workflow extends React.Component {
         {moduleLibrary}
 
         <div className="workflow-container">
-        
+
           {navBar}
 
           <div className="workflow-columns">

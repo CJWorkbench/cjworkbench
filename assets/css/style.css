@@ -259,9 +259,6 @@ body {
 .icon-add:before {
   content: "\e900";
 }
-.icon-add-orange:before {
-  content: "\e900";
-}
 .icon-bin:before {
   content: "\e901";
 }
@@ -388,6 +385,12 @@ body {
 /* Customized icons, not in font sent  */
 .icon-l-gray {
   color:#b4b4b4;
+}
+
+.icon-add-orange:before {
+  content: "\e900";
+  color:#FBAA6D;
+  font-size: 3rem;
 }
 
 .icon-sort-down-vl-gray:before {
@@ -945,10 +948,11 @@ img.logo {
 }
 .modulestack-empty {
   width: 530px;
-  margin-top: 2rem;
+  margin-top: 3rem;
   margin-bottom: 10rem;
-  padding: 2rem;
-  border: 2px solid #FBAA6D;
+  padding: 5rem;
+  border: 3px dashed #FBAA6D;
+  opacity: 0.5;
 }
 
 /* Output Pane */
