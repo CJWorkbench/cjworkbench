@@ -41,6 +41,10 @@ body {
   font-family: 'lato', sans-serif;
   letter-spacing: -0.4px;
 }
+.logo-2:hover {
+  text-decoration: none;
+  color:#fff;
+}
 .title-1 {
 	font-size: 2.5rem;
 	font-weight: 300;
@@ -155,7 +159,7 @@ body {
 }
 
 .t-vl-gray {
-  color: #FAFAFA;
+  color: #FFF;
 }
 .t-l-gray {
   color: #F5F5F5;
@@ -1075,12 +1079,12 @@ img.logo {
 }
 
 .library-card-category-open .first-level{
-  background-color:#5C798B;
+  background-color:#547081;
   opacity: 1;
 }
 
 .library-card-category-open .list{
-  background-color:#5C798B;
+  background-color:#547081;
   opacity: 1;
   cursor:pointer;
 }

@@ -170,7 +170,7 @@ export default class ModuleLibrary extends React.Component {
                     <div className='library-nav-bar'>
                       <div className='d-flex align-items-center flex-row mb-4'>
                         <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="20"/></a>
-                        <span className='logo-2 ml-3 t-vl-gray '>Workbench</span>
+                        <a href="/workflows" className='logo-2 ml-3 t-vl-gray '>Workbench</a>
                         <div className='icon-sort-left-vl-gray ml-auto mt-1 close-open-toggle'onClick={this.toggleLibrary}></div>
                       </div>
                       <ModuleSearch addModule={this.props.addModule}
