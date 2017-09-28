@@ -1270,9 +1270,13 @@ img.logo {
   align-items: center;
   padding: 2rem;
 }
+.module-card-header:hover {
+  background-color: #f9f9f9;
+}
+
 .module-card-params {
   padding: 2rem;
-  background-color: #FAFAFA;
+  background-color: #fff;
 }
 
 .module-description {
