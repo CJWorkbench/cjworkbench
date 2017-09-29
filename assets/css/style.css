@@ -527,7 +527,19 @@ body {
 
 /* ---- Buttons ---- */
 
+
 /* - Button Colors - */
+.button-white {
+  color: #48C8D7;
+  border: none;
+  text-align: center;
+  background-color: #FFFFFF;
+}
+.button-white:active {
+  background-color: #686768;
+  color: #FFFFFF;
+}
+
 .button-gray {
   color: #686768;
   border: 1px solid #686768;
@@ -958,6 +970,10 @@ img.logo {
   text-decoration: none;
 }
 
+.navbar .action-button {
+  width: 16rem;
+}
+
 /*navbar:Workflow page*/
 
 .navbar-WF {
@@ -973,6 +989,8 @@ img.logo {
 
 .navLink{
   margin-right: 5rem;
+.nav-link {
+  margin-right: 0;
 }
 
 .title-metadata-stack {

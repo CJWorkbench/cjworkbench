@@ -43,6 +43,7 @@ export default class WfHamburgerMenu extends React.Component {
 
     var menuItems;
 
+    // checks if a user is logged in
     if (typeof this.props.user !== 'undefined' && !this.props.user.id) {
       menuItems = (
         <div>
