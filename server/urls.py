@@ -57,4 +57,6 @@ urlpatterns = [
     # Preloader testing
     url(r'^preloader/$', TemplateView.as_view(template_name='preloader.html')),
 
+    # Preloader testing
+    url(r'^signup_closed_test/$', TemplateView.as_view(template_name='signup_closed_test.html')),
 ]

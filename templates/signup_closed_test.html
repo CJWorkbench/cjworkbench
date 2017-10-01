@@ -1,0 +1,25 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+
+{% block title %}{% trans "Sign up" %}{% endblock %}
+
+{% block content %}
+    <h1 class='title-1 t-d-gray text-center mt-3 mb-4'>{% trans "We're in private beta" %}</h1>
+    <p class='t-d-gray content-2 text-center mb-3'>You need a code to signup. Get one <a href="http://cjworkbench.org/index.php/signup-for-beta/" class='t-f-blue'>here</a>.</p>
+    <form method="get" action="">
+    <div class="content-3 t-d-gray mb-3 mt-5 account-form label">Code:</div>
+    <div><input type="text" class="text-field mb-5" name="code"/></div>
+    <div><input type="submit" class="action-button button-full-blue mx-auto mb-3"></div>
+    <p class='t-d-gray content-2 text-center mt-5 mb-3'>Already have an account? <a href="/account/login" class='t-f-blue'>Log in</a>.</p>
+    </form>
+
+    <!-- ORIGINAL CODE FOR SIGNUP_CLOSED, replaced by placeholder above-->
+    <!-- <h1 class='title-1 t-d-gray text-center mb-3'>{% trans "This site is in private beta" %}</h1>
+    <p class='t-d-gray content-3 text-center mb-3'>{% blocktrans %}If you have signup code you can enter it below.{% endblocktrans %}</p>
+    <form method="get" action="">
+        <div><input type="text" name="code" placeholder="{% trans 'Your signup code...' %}" /></div>
+        <div><input type="submit" class="button-blue action-button mx-auto mt-3">Submit</div>
+    </form> -->
+
+{% endblock %}

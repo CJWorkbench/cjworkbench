@@ -714,17 +714,21 @@ body {
 }
 
 .login-bigbrand .logo{
-  max-height: 4.5rem;
+  width: 4.2rem;
+  margin-bottom: 0.5rem;
 }
 
-
-.login-bigbrand h1 {
+.login-bigbrand h1 a {
   font-size: 5rem;
   color:#fff;
   margin: 1rem;
   padding: 1.3rem 0 1 0;
   font-family: 'Lato', sans-serif;
   font-weight: 400;
+}
+
+.login-bigbrand h1 a:hover {
+  text-decoration: none;
 }
 
 .login-fullscreen-container {
@@ -735,8 +739,6 @@ body {
   background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #0C93C0);
   background-size: cover;
 }
-
-
 .login-card {
   height: auto;
   width: 44rem;
@@ -748,16 +750,6 @@ body {
 
 .login-card :-webkit-input-placeholder {
   color: #ccc
-}
-
-.login-footer {
-  border-top: 1px solid #EDECEC;
-  padding-top: 3rem;
-}
-
-.login-card .login-footer a {
-  margin-left: 1rem;
-  color: #48C8D7;
 }
 
 .account_form .title-1 {
@@ -950,12 +942,12 @@ body {
 }
 
 img.logo {
-  height: 55%;
   vertical-align: middle;
   margin-right: 1rem;
 }
 
 .navbar-brand h1, img.logo {
+  width:2.5rem;
   display: inline-block;
   vertical-align: middle;
 }

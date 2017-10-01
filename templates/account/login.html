@@ -9,13 +9,16 @@
     <form class="account_form" method="POST" autocapitalize="off" {% if form.is_multipart %} enctype="multipart/form-data"{% endif %}>
         <div class="row d-flex align-items-center mt-3 mb-5">
             <div class='col'></div>
-            <div class='col'>
-                <legend class='title-1 t-d-gray text-center'>{% trans "Sign in" %}</legend>
-            </div>
+            <div class=' col title-1 t-d-gray text-center'>Sign in</div>
             <div class='col switch mt-1'>
-                <a href="{% urlnext 'account_signup' %}" class='t-f-blue'>{% trans "Sign up" %}</a>
+                <a href="/signup_closed_test" class='t-f-blue mb-1'>{% trans "Sign up" %}</a>
+
+                <!-- Original link to signup form  -->
+                <!-- <a href="{% urlnext 'account_signup' %}" class='t-f-blue'>{% trans "Sign up" %}</a> -->
+
             </div>
         </div>
+
         {% csrf_token %}
         {{ form.non_field_errors }}
         {{ form.email.errors }}
