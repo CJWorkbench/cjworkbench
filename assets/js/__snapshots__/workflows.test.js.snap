@@ -13,7 +13,7 @@ exports[`renders correctly 1`] = `
           >
             <img
               className="logo"
-              src="/static/images/logo.png"
+              src="/static/images/logo.svg"
             />
             <h1
               className="mb-0 mr-auto logo-1"
@@ -184,7 +184,7 @@ exports[`renders correctly 2`] = `
           >
             <img
               className="logo"
-              src="/static/images/logo.png"
+              src="/static/images/logo.svg"
             />
             <h1
               className="mb-0 mr-auto logo-1"
