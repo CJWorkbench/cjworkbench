@@ -157,7 +157,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
           className="button-white action-button test-duplicate-button"
           onClick={[Function]}
         >
-          Duplicate and Edit
+          Duplicate
         </div>
         <a
           className="nav-link t-white content-2"
@@ -297,7 +297,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
           className="button-white action-button test-duplicate-button"
           onClick={[Function]}
         >
-          Duplicate and Edit
+          Duplicate
         </div>
         <a
           className="nav-link t-white content-2"
