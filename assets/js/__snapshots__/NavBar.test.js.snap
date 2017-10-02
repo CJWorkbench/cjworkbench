@@ -58,6 +58,9 @@ exports[`NavBar WorkflowNavBar Renders Duplicate button in Public mode with user
   }
 >
   <div>
+    <div
+      className="d-flex justify-content-center"
+    />
     <nav
       className="navbar-workflows"
     >
@@ -195,6 +198,9 @@ exports[`NavBar WorkflowNavBar Renders Duplicate button in Public mode with user
   }
 >
   <div>
+    <div
+      className="d-flex justify-content-center"
+    />
     <nav
       className="navbar-workflows"
     >
@@ -414,6 +420,9 @@ exports[`NavBar WorkflowNavBar Renders without Duplicate button in Private mode 
   }
 >
   <div>
+    <div
+      className="d-flex justify-content-center"
+    />
     <nav
       className="navbar-workflows"
     >
