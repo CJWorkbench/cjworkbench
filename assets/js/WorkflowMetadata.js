@@ -47,11 +47,6 @@ export default class WorkflowMetadata extends React.Component {
 
   togglePrivacyModal() {
     this.setState({ privacyModalOpen: !this.state.privacyModalOpen });
-    // If closing, force a page reload to update parent Nav bar
-    // (this is ugly - can this be done as a re-render within React instead?)
-    if (this.state.privacyModalOpen) {
-      location.reload();
-    }
   }
 
   renderPrivacyModal() {
