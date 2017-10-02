@@ -125,6 +125,20 @@ export default class WfParameter extends React.Component {
         );
 
       case 'integer':
+        return (
+          <div className='parameter-margin'>
+            <div className='label-margin t-d-gray content-3'>{this.name}:</div>
+            <textarea
+              readOnly={this.props.isReadOnly}
+              className='wfmoduleIntegerInput t-d-gray content-2 input-number'
+              rows={srows}
+              defaultValue={this.props.p.value}
+              onBlur={this.blur}
+              onKeyPress={this.keyPress}
+              ref={ el => this.stringRef = el}/>
+
+          </div>
+        );
       case 'float':
         return (
           <div>

@@ -475,12 +475,10 @@ body {
 
 .input-number {
   height: 4rem;
-  color: #686768;
-  background-color: #FFFFFF;
-	font-size: 1.4rem;
-	font-weight: 500;
-	line-height: 1.4rem;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E7E7E7;
   border-radius: 0px;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
 }
 
 .input-dropdown {
@@ -1406,6 +1404,11 @@ img.logo {
 
 .wfmoduleStringInput{
   width: 100%;
+  resize: none;
+}
+
+.wfmoduleIntegerInput{
+  width: 25%;
   resize: none;
 }
 
