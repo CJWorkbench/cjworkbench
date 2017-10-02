@@ -36,32 +36,8 @@ describe('NavBar', () => {
   });
 
   describe('WorkflowNavBar', () => {
-    
-    it('Renders without Duplicate button in Private mode', () => {
-      user = {
-        id: 8
-      };
-      workflow = {
-        name: "Original Version",
-        public: false
-      }
-      wrapper = mount(
-        <WorkflowNavBar
-          workflow={workflow}
-          api={api}
-          isReadOnly={false}
-          user={user}
-        />
-      )
-      expect(wrapper).toMatchSnapshot();
 
-      // confirm that button is not there
-      let button = wrapper.find('.test-duplicate-button');
-      expect(button.exists()).toBe(false);
-
-    });
-
-    it('Renders Duplicate button in Public mode with user logged in, sends user to new copy', (done) => {
+    it('With user logged in, Duplicate button sends user to new copy', (done) => {
       user = {
         id: 8
       };
@@ -99,7 +75,7 @@ describe('NavBar', () => {
       });
     });
     
-    it('Renders Duplicate button in Public mode with user NOT logged in, sends user to sign-in page', (done) => {
+    it('With user NOT logged in, Duplicate button sends user to sign-in page', (done) => {
       user = {
         id: null
       };
