@@ -50,17 +50,22 @@ def renumber_wf_modules(workflow):
 class AddModuleCommand(Delta):
     # must not have cascade on WfModule because we may delete it first when we are deleted
     wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
-    order = models.IntegerField('order')
+    order = models.IntegerField()
+    applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
 
     def forward(self):
         insert_wf_module(self.wf_module, self.workflow, self.order)     # may alter wf_module.order without saving
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
+        self.applied = True
+        self.save()
 
     def backward(self):
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
+        self.applied = False
+        self.save()
 
     @staticmethod
     def create(workflow, module_version, insert_before):
@@ -80,10 +85,10 @@ class AddModuleCommand(Delta):
         return delta
 
 
-# When we are deleted, delete the module if it's not in use (if we are not currently applied)
+# When we are deleted, delete the module if it's not in use by the Workflow (if we are *not* currently applied)
 @receiver(pre_delete, sender=AddModuleCommand, dispatch_uid='addmodulecommand')
 def addmodulecommand_delete_callback(sender, instance, **kwargs):
-    if instance.wf_module.workflow == None:
+    if instance.applied == False:
         instance.wf_module.delete()
 
 
@@ -91,16 +96,21 @@ def addmodulecommand_delete_callback(sender, instance, **kwargs):
 class DeleteModuleCommand(Delta):
     # must not have cascade on WfModule because we may delete it first when we are deleted
     wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
+    applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
 
     def forward(self):
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
+        self.applied = True
+        self.save()
 
     def backward(self):
         insert_wf_module(self.wf_module, self.workflow, self.wf_module.order)
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
+        self.applied = False
+        self.save()
 
     @staticmethod
     def create(wf_module):
@@ -115,10 +125,10 @@ class DeleteModuleCommand(Delta):
         notify_client_workflow_version_changed(workflow)
         return delta
 
-# When we are deleted, delete the module if it's not in use (if we are not currently applied)
+# When we are deleted, delete the module if it's not in use by the Workflow (if we are currently applied)
 @receiver(pre_delete, sender=DeleteModuleCommand, dispatch_uid='deletemodulecommand')
 def deletemodulecommand_delete_callback(sender, instance, **kwargs):
-    if instance.wf_module.workflow == None:
+    if instance.applied == True:
         instance.wf_module.delete()
 
 
