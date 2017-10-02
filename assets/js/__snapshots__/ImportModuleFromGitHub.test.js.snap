@@ -105,7 +105,7 @@ exports[`ImportModuleFromGitHub Link will open modal window 2`] = `
             </div>
           </div>
           <div
-            className="import-module-buttons d-flex flex-row"
+            className="modal-dual-button d-flex flex-row"
           >
             <div
               className="button-gray action-button"
@@ -117,7 +117,7 @@ exports[`ImportModuleFromGitHub Link will open modal window 2`] = `
               className="button-blue action-button ml-3"
               onClick={[Function]}
             >
-              Submit
+              Import
             </div>
           </div>
         </form>

@@ -541,13 +541,13 @@ body {
 
 /* - Button Colors - */
 .button-gray {
-  color: #686768;
-  border: 1px solid #686768;
+  color: #A2a2a2;
+  border: 1px solid #a2a2a2;
   text-align: center;
   background-color: none;
 }
 .button-gray:active {
-  background-color: #686768;
+  background-color: #a2a2a2;
   color: #FFFFFF;
 }
 
