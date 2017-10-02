@@ -6,6 +6,7 @@ import WfHamburgerMenu from './WfHamburgerMenu'
 import EditableWorkflowName from './EditableWorkflowName'
 import WorkflowMetadata from './WorkflowMetadata'
 import PropTypes from 'prop-types'
+import { goToUrl } from './utils'
 
 
 export class WorkflowListNavBar extends React.Component {
@@ -31,20 +32,62 @@ export class WorkflowListNavBar extends React.Component {
 
 // Workflow page
 export class WorkflowNavBar extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      spinnerVisible: false
+    };
+    this.handleDuplicate = this.handleDuplicate.bind(this);
+  }
+
+  // TODO: follow this pattern for Share button
+  handleDuplicate() {
+    if ((typeof this.props.user !== 'undefined' && !this.props.user.id)) {
+      // user is NOT logged in, so navigate to sign in
+      goToUrl('/account/login');
+    } else {
+      // user IS logged in: start spinner, make duplicate & navigate there
+      this.setState({spinnerVisible: true});
+
+      this.props.api.duplicate(this.props.workflow.id)
+        .then(json => {
+          goToUrl('/workflows/' + json.id);
+        })
+    }
+  }
 
   render() {
-    var signOff = (!this.props.isReadOnly)
-      ? <WfHamburgerMenu
-        wfId={this.props.workflow.id}
-        api={this.props.api}
-        isReadOnly={this.props.isReadOnly}
-        user={this.props.user}
+
+    // checks if there is a logged-in user, true = logged out
+    var signOff = ((typeof this.props.user !== 'undefined' && !this.props.user.id))
+      ? <a href="http://app.cjworkbench.org/account/login" className='nav-link t-white content-2'>Sign in</a>
+      : <WfHamburgerMenu
+          wfId={this.props.workflow.id}
+          api={this.props.api}
+          isReadOnly={this.props.isReadOnly}
+          user={this.props.user}
         />
-      : <a href="http://app.cjworkbench.org/account/login" className=' navLink t-white content-2'>Sign in</a>
+
+    var duplicate = (this.props.workflow.public)
+      ? <div onClick={this.handleDuplicate} className='button-white action-button test-duplicate-button'>
+          Duplicate and Edit
+        </div>
+      : null
+
+    var spinner = (this.state.spinnerVisible)
+      ? <div id="spinner-container">
+          <div id="spinner-l1">
+            <div id="spinner-l2">
+              <div id="spinner-l3"></div>
+            </div>
+          </div>
+        </div>
+      : null
 
     return (
       <div>
-        <nav className="navbar-WF">
+        {spinner}
+        <nav className="navbar-workflows">
           <div className="navbar-brand d-flex flex-row align-items-center">
             <div className='title-metadata-stack'>
               <EditableWorkflowName
@@ -61,7 +104,10 @@ export class WorkflowNavBar extends React.Component {
             </div>
           </div>
           <div className='d-flex flex-row align-items-center'>
-            <a href="http://cjworkbench.org/index.php/blog/" className='navLink t-white content-2'>Learn</a>
+            {duplicate}
+            <a href="http://cjworkbench.org/index.php/blog/" className='nav-link t-white content-2'>
+              Learn
+            </a>
             {signOff}
           </div>
         </nav>

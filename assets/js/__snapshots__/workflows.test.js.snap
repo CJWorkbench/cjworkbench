@@ -429,6 +429,28 @@ exports[`renders correctly 2`] = `
                                   </button>
                                 </DropdownItem>
                                 <DropdownItem
+                                  className="dropdown-menu-item test-duplicate-button"
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-menu-item test-duplicate-button dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <i
+                                      className="icon-duplicate button-icon"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Duplicate
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
                                   className="dropdown-menu-item test-delete-button"
                                   onClick={[Function]}
                                   tag="button"
@@ -550,6 +572,28 @@ exports[`renders correctly 2`] = `
                                       className="t-d-gray content-3 ml-3"
                                     >
                                       Share
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
+                                  className="dropdown-menu-item test-duplicate-button"
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-menu-item test-duplicate-button dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <i
+                                      className="icon-duplicate button-icon"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Duplicate
                                     </span>
                                   </button>
                                 </DropdownItem>
@@ -679,6 +723,28 @@ exports[`renders correctly 2`] = `
                                   </button>
                                 </DropdownItem>
                                 <DropdownItem
+                                  className="dropdown-menu-item test-duplicate-button"
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-menu-item test-duplicate-button dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <i
+                                      className="icon-duplicate button-icon"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Duplicate
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
                                   className="dropdown-menu-item test-delete-button"
                                   onClick={[Function]}
                                   tag="button"
@@ -800,6 +866,28 @@ exports[`renders correctly 2`] = `
                                       className="t-d-gray content-3 ml-3"
                                     >
                                       Share
+                                    </span>
+                                  </button>
+                                </DropdownItem>
+                                <DropdownItem
+                                  className="dropdown-menu-item test-duplicate-button"
+                                  onClick={[Function]}
+                                  tag="button"
+                                  toggle={true}
+                                >
+                                  <button
+                                    className="dropdown-menu-item test-duplicate-button dropdown-item"
+                                    onClick={[Function]}
+                                    tabIndex="0"
+                                    type="button"
+                                  >
+                                    <i
+                                      className="icon-duplicate button-icon"
+                                    />
+                                    <span
+                                      className="t-d-gray content-3 ml-3"
+                                    >
+                                      Duplicate
                                     </span>
                                   </button>
                                 </DropdownItem>

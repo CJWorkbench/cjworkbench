@@ -527,6 +527,7 @@ body {
 
 /* ---- Buttons ---- */
 
+<<<<<<< HEAD
 .modal-solo-button {
   float: right;
   margin-right: 2rem;
@@ -539,7 +540,22 @@ body {
   justify-content: flex-end;
 }
 
+||||||| merged common ancestors
+=======
+
+>>>>>>> 1e92d375f12ae879d0fa9129f31314359b3cdabb
 /* - Button Colors - */
+.button-white {
+  color: #48C8D7;
+  border: none;
+  text-align: center;
+  background-color: #FFFFFF;
+}
+.button-white:active {
+  background-color: #686768;
+  color: #FFFFFF;
+}
+
 .button-gray {
   color: #A2a2a2;
   border: 1px solid #a2a2a2;
@@ -781,6 +797,7 @@ body {
 /* --------Preloader/spinner------*/
 
 #spinner-container {
+  position: absolute;
   width: 100%;
   height: 100%;
   display: flex;
@@ -970,9 +987,13 @@ img.logo {
   text-decoration: none;
 }
 
+.navbar-workflows .action-button {
+  width: 16rem;
+}
+
 /*navbar:Workflow page*/
 
-.navbar-WF {
+.navbar-workflows {
   flex: 0 0 6rem;
   height: 6rem;
   display: flex;
@@ -983,8 +1004,8 @@ img.logo {
   padding: 0.5rem 4rem 0.5rem 4rem;
 }
 
-.navLink{
-  margin-right: 5rem;
+.nav-link {
+  margin-right: 0;
 }
 
 .title-metadata-stack {

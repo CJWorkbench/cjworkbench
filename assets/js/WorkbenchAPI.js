@@ -209,8 +209,15 @@ class WorkbenchAPI {
           'X-CSRFToken': csrfToken
         }
       }))
-
   }
+
+  duplicate(workflow_id) {
+    return (
+      fetch('/api/workflows/' + workflow_id + '/duplicate', {credentials: 'include'})
+        .then(response => response.json())
+    )
+  }
+
 }
 
 // Singleton API object for global use

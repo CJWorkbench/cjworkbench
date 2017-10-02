@@ -18,13 +18,20 @@ export default class WfContextMenu extends React.Component {
     this.shareOption = this.shareOption.bind(this);
   }
 
-  deleteOption() {
-    this.props.deleteWorkflow();
-  }
-
   // This prop currently does not exist in the parent class
   shareOption() {
-    this.props.shareWorkflow();
+    console.log("clicked the Share option");    
+    // this.props.shareWorkflow();
+  }
+
+  // How does Duplicate work?
+  duplicateOption() {
+    console.log("clicked the Duplicate option");
+    // this.props.duplicateWorkflow();
+  }
+
+  deleteOption() {
+    this.props.deleteWorkflow();
   }
 
   render() {
@@ -38,8 +45,13 @@ export default class WfContextMenu extends React.Component {
             <i className="icon-share button-icon"></i>
             <span className='t-d-gray content-3 ml-3'>Share</span>
           </DropdownItem>
+          <DropdownItem key={2} onClick={this.duplicateOption} className='dropdown-menu-item test-duplicate-button'>
+            {/* This icon appears wider than the others */}
+            <i className="icon-duplicate button-icon"></i>
+            <span className='t-d-gray content-3 ml-3'>Duplicate</span>
+          </DropdownItem>
           {/* Will delete the parent Workflow from the Workflows List */}
-          <DropdownItem key={2} onClick={this.deleteOption} className='dropdown-menu-item test-delete-button'>
+          <DropdownItem key={3} onClick={this.deleteOption} className='dropdown-menu-item test-delete-button'>
             <i className="icon-bin button-icon"></i>
             <span className='t-d-gray content-3 ml-3'>Delete</span>
           </DropdownItem>
