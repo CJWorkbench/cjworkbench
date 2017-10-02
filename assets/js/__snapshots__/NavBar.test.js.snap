@@ -154,7 +154,7 @@ exports[`NavBar WorkflowNavBar Renders Duplicate button in Public mode with user
           className="button-white action-button test-duplicate-button"
           onClick={[Function]}
         >
-          Duplicate and Edit
+          Duplicate
         </div>
         <a
           className="nav-link t-white content-2"
@@ -291,7 +291,7 @@ exports[`NavBar WorkflowNavBar Renders Duplicate button in Public mode with user
           className="button-white action-button test-duplicate-button"
           onClick={[Function]}
         >
-          Duplicate and Edit
+          Duplicate
         </div>
         <a
           className="nav-link t-white content-2"
