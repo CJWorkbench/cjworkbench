@@ -126,7 +126,7 @@ export default class UpdateFrequencySelect extends React.Component {
                   onChange={this.updateUnit}
                   name="updateFreq"
                   id="updateFreqUnit"
-                  className='input-dropdown'
+                  className='ml-4 input-dropdown'
                 >
                   <option>seconds</option>
                   <option>minutes</option>
@@ -135,20 +135,21 @@ export default class UpdateFrequencySelect extends React.Component {
                   <option>weeks</option>
                 </Input>
               </div>
-              <div className='content-3 t-d-gray mb-4'>When an update is found:</div>
+              <div className='content-3 t-d-gray mt-5 mb-4'>When an update is found:</div>
               <div className="d-flex flex-row mb-4">
                 <div onClick={this.toggleManual} className={highlightManual} >Manual</div>
                 <div className='t-d-gray info-1 ml-4'>Notify me, but do not update the workflow. (recommended)</div>
               </div>
-              <div className="d-flex flex-row mb-4">
+              <div className="d-flex flex-row">
                 <div onClick={this.toggleManual} className={highlightAuto} >Auto</div>
                 <div className='t-d-gray info-1 ml-4'>Automatically save the current version of the workflow and update it with the newest data.</div>
               </div>
             </FormGroup>
           </ModalBody>
           <ModalFooter className='dialog-footer'>
-            <div className='action-button button-blue test-ok-button' onClick={this.saveSettings}>OK</div>
-            <div className='action-button button-blue test-cancel-button' onClick={this.toggleModal}>Cancel</div>
+            <div className='action-button button-gray test-cancel-button mr-4' onClick={this.toggleModal}>Cancel</div>
+            <div className='action-button button-blue test-ok-button' onClick={this.saveSettings}>Apply</div>
+
           </ModalFooter>
         </Modal>
       </div>

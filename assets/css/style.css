@@ -466,7 +466,6 @@ body {
   background-color: #FFFFFF !important;
   border: 1px solid #E7E7E7;
   border-radius: 0px;
-  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
 }
 
 .import-url-field input::placeholder {
@@ -479,15 +478,6 @@ body {
   background-color: #FFFFFF !important;
   border: 1px solid #E7E7E7;
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
-}
-
-.input-dropdown {
-  height: 4rem !important;
-  color: #686768;
-  background-color: #FFFFFF;
-	font-size: 1.4rem;
-	font-weight: 500;
-	line-height: 1.4rem;
 }
 
 .wfmoduleStringInput{
@@ -710,6 +700,17 @@ body {
 .dropdown-selector {
   height: 4rem;
   width: 17rem;
+  border-radius:0px;
+  border: 1px solid #E7E7E7
+}
+
+.input-dropdown {
+  height: 4rem !important;
+  color: #686768;
+  background-color: #FFFFFF;
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
   border-radius:0px;
   border: 1px solid #E7E7E7
 }
@@ -1514,7 +1515,7 @@ img.logo {
 
 .dialog-footer {
   background-color: #FAFAFA;
-  padding: 2rem 3rem 2rem 3rem;
+  padding: 0rem 3rem 3rem 3rem;
   border-top: 0;
 }
 
