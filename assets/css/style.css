@@ -1360,9 +1360,9 @@ img.logo {
 /* (Also being used in Module Library)  */
 /* TODO: check that class-sharing makes sense */
 
-/
+
 .module-card-info {
-  width: calc(100% - 1rem);
+  width: calc(100% - 0.5rem);
 }
 .module-card-header {
   cursor: pointer;
