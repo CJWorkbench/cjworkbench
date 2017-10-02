@@ -700,6 +700,8 @@ body {
 .dropdown-selector {
   height: 4rem;
   width: 17rem;
+  border-radius:0px;
+  border: 1px solid #E7E7E7
 }
 
 .dropdown-menu {
@@ -1358,8 +1360,7 @@ img.logo {
 /* (Also being used in Module Library)  */
 /* TODO: check that class-sharing makes sense */
 
-
-/* make wfmodule narrower by 1 rem to make space for status bar */
+/
 .module-card-info {
   width: calc(100% - 1rem);
 }
@@ -1407,14 +1408,14 @@ img.logo {
   resize: none;
 }
 
-.wfmoduleIntegerInput{
+.wfmoduleNumberInput{
   width: 25%;
   resize: none;
-}
-
-.wfmoduleNumberInput{
-  width: 100%;
-  resize: none;
+  height: 4rem;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E7E7E7;
+  border-radius: 0px;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
 }
 
 .wfmoduleTextInput{
