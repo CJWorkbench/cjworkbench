@@ -29,15 +29,15 @@ it('WfContextMenu renders correctly', () => {
   
   // find and click Share option
   // (not a currently functional button)
-  let shareLink = wrapper.find('.test-share-button');
-  expect(shareLink).toHaveLength(1);
-  shareLink.simulate('click');
+  // let shareLink = wrapper.find('.test-share-button');
+  // expect(shareLink).toHaveLength(1);
+  // shareLink.simulate('click');
 
   expect(wrapper).toMatchSnapshot();
   
   // check on API calls
   expect(api.deleteWorkflow.mock.calls.length).toBe(1);
-  expect(api.shareWorkflow.mock.calls.length).toBe(1);
+  // expect(api.shareWorkflow.mock.calls.length).toBe(1);
 
 });
 

@@ -33,6 +33,21 @@ exports[`WfContextMenu renders correctly 1`] = `
       </span>
     </DropdownItem>
     <DropdownItem
+      className="dropdown-menu-item test-duplicate-button"
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+      <i
+        className="icon-duplicate button-icon"
+      />
+      <span
+        className="t-d-gray content-3 ml-3"
+      >
+        Duplicate
+      </span>
+    </DropdownItem>
+    <DropdownItem
       className="dropdown-menu-item test-delete-button"
       onClick={[Function]}
       tag="button"
@@ -84,6 +99,21 @@ exports[`WfContextMenu renders correctly 2`] = `
       </span>
     </DropdownItem>
     <DropdownItem
+      className="dropdown-menu-item test-duplicate-button"
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+      <i
+        className="icon-duplicate button-icon"
+      />
+      <span
+        className="t-d-gray content-3 ml-3"
+      >
+        Duplicate
+      </span>
+    </DropdownItem>
+    <DropdownItem
       className="dropdown-menu-item test-delete-button"
       onClick={[Function]}
       tag="button"
@@ -132,6 +162,21 @@ exports[`WfContextMenu renders correctly 3`] = `
         className="t-d-gray content-3 ml-3"
       >
         Share
+      </span>
+    </DropdownItem>
+    <DropdownItem
+      className="dropdown-menu-item test-duplicate-button"
+      onClick={[Function]}
+      tag="button"
+      toggle={true}
+    >
+      <i
+        className="icon-duplicate button-icon"
+      />
+      <span
+        className="t-d-gray content-3 ml-3"
+      >
+        Duplicate
       </span>
     </DropdownItem>
     <DropdownItem
