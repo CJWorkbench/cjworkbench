@@ -110,10 +110,13 @@ export default class ImportModuleFromGitHub extends React.Component {
             <div className="import-github-error">
               Error importing module from GitHub: {this.state.message}
             </div>
-            <div className="import-github-response-button">
-              <div onClick={this.toggleModal} className='button-blue action-button'>
-                OK
-              </div>
+            <div className="d-flex flex-row modal-dual-button">
+                <div onClick={this.toggleModal} className='button-gray action-button'>
+                  Cancel
+                </div>
+                <div onClick={this.toggleModal} className='button-blue action-button ml-3'>
+                  Retry
+                </div>
             </div>
           </div>
       } else if (this.state.message_type == 'success') {
@@ -121,10 +124,10 @@ export default class ImportModuleFromGitHub extends React.Component {
         visible =
           <div>
             <div className="import-github-success">
-              Successfully imported {json.author}'s module "{json.name}" under category "{json.category}".
+              Successfully imported {json.author} module "{json.name}" under category "{json.category}".
             </div>
-            <div className="import-github-response-button">
-              <div onClick={this.toggleModal} className='button-blue action-button'>
+            <div className="modal-solo-button">
+              <div onClick={this.toggleModal} className='button-blue action-button mt-5'>
                 OK
               </div>
             </div>
@@ -132,12 +135,12 @@ export default class ImportModuleFromGitHub extends React.Component {
       }
     } else {
       visible =
-        <div className="import-module-buttons d-flex flex-row">
+        <div className="modal-dual-button d-flex flex-row">
           <div onClick={this.toggleModal} className='button-gray action-button'>
             Cancel
           </div>
           <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button ml-3'>
-            Submit
+            Import
           </div>
         </div>
     };

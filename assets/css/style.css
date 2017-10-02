@@ -527,6 +527,18 @@ body {
 
 /* ---- Buttons ---- */
 
+.modal-solo-button {
+  float: right;
+  margin-right: 2rem;
+  width: 15%;
+}
+
+.modal-dual-button {
+  float: right;
+  margin-top: 3rem;
+  justify-content: flex-end;
+}
+
 /* - Button Colors - */
 .button-gray {
   color: #686768;
@@ -1284,28 +1296,14 @@ img.logo {
 
 }
 
-.import-module-buttons {
-  float: right;
-  margin-top: 3rem;
-  justify-content: flex-end;
-}
-
 .import-github-error {
   height: 4rem;
   color: #E24F4A;
-  /* font-family: 'Nunito Sans', sans-serif; */
+  margin-top:2rem;
+  padding-left:0rem;
   font-size: 1.3rem;
   font-weight: 300;
   line-height: 1.9rem;
-  margin-top: 6rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
-}
-
-.import-github-response-button {
-  float: right;
-  margin-right: 2rem;
-  width: 15%;
 }
 
 .import-github-success {
@@ -1315,8 +1313,8 @@ img.logo {
   font-size: 1.3rem;
   font-weight: 300;
   line-height: 1.9rem;
-  margin-top: 6rem;
-  padding-left: 2rem;
+  margin-top: 2rem;
+  padding-left: 0rem;
 }
 
 .test-button{
