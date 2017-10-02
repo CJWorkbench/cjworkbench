@@ -139,6 +139,13 @@ class AddDeleteModuleCommandTests(TestCase):
         cmd.delete()
         self.assertFalse(WfModule.objects.filter(pk=existing_module.id).exists())  # should be gone
 
+    # We had a bug where add then delete caused an error when deleting workflow,
+    # since both commands tried to delete the WfModule
+    def test_add_delete(self):
+        cmda = AddModuleCommand.create(self.workflow, module_version=self.module_version, insert_before=0)
+        cmdd = DeleteModuleCommand.create(cmda.wf_module)
+        self.workflow.delete()
+
 
 class ChangeDataVersionCommandTests(TestCase):
     def setUp(self):
