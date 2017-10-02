@@ -446,11 +446,10 @@ body {
   color:#b4b4b4;
 }
 
-/* ---- Data Input Fields: NEW ---- */
+/* ---- Data Input ---- */
 
-/* Rename to "input-text-field?"  */
 .text-field {
-  height: 4rem;
+  /*height: 4rem;*/
   width: 100%;
   background-color: #FFFFFF !important;
   border: 1px solid #E7E7E7;
@@ -459,6 +458,15 @@ body {
 .text-field:active {
   box-shadow: 0 0 1px 1px #48C8D7;
   border: 0;
+}
+
+.number-field{
+  width: 25%;
+  resize: none;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E7E7E7;
+  border-radius: 0px;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
 }
 
 .import-url-field input::placeholder {
@@ -473,14 +481,6 @@ body {
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
 }
 
-.input-number {
-  height: 4rem;
-  background-color: #FFFFFF !important;
-  border: 1px solid #E7E7E7;
-  border-radius: 0px;
-  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
-}
-
 .input-dropdown {
   height: 4rem !important;
   color: #686768;
@@ -488,6 +488,16 @@ body {
 	font-size: 1.4rem;
 	font-weight: 500;
 	line-height: 1.4rem;
+}
+
+.wfmoduleStringInput{
+  width: 100%;
+  resize: none;
+}
+
+.wfmoduleTextInput{
+  width: 100%;
+  resize: vertical;
 }
 
 /* Hacks for registration/login/etc before we dig in to the form widgets */
@@ -1403,25 +1413,7 @@ img.logo {
   text-align: center;
 }
 
-.wfmoduleStringInput{
-  width: 100%;
-  resize: none;
-}
 
-.wfmoduleNumberInput{
-  width: 25%;
-  resize: none;
-  height: 4rem;
-  background-color: #FFFFFF !important;
-  border: 1px solid #E7E7E7;
-  border-radius: 0px;
-  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
-}
-
-.wfmoduleTextInput{
-  width: 100%;
-  resize: vertical;
-}
 
 .wfmoduleButton{
   width: 20%;
