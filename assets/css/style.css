@@ -793,14 +793,15 @@ body {
 
 #spinner-container {
   position: absolute;
-  width: 100%;
-  height: 100%;
+  width: 100%!important;
+  height: 100%!important;
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
+  /*Background does't work because it it not full width-->child of navbar?
   background-color:white;
-  opacity:0.5;
+  opacity:0.5;*/
 }
 #spinner-l1 {
     width: 150px;

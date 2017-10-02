@@ -86,7 +86,7 @@ export class WorkflowNavBar extends React.Component {
 
     return (
       <div>
-        {spinner}
+        <div className="d-flex justify-content-center">{spinner}</div>        
         <nav className="navbar-workflows">
           <div className="navbar-brand d-flex flex-row align-items-center">
             <div className='title-metadata-stack'>
