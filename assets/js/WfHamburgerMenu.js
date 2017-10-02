@@ -32,7 +32,7 @@ export default class WfHamburgerMenu extends React.Component {
           </DropdownItem>
           <DropdownItem
             key={3}
-            onClick={ () => { this.props.api.redo(this.props.workflowId)} }
+            onClick={ () => { this.props.api.redo(this.props.wfId)} }
             className='dropdown-menu-item'
           >
             <span className='t-d-gray content-3 ml-3'>Redo</span>

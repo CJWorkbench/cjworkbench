@@ -781,6 +781,7 @@ body {
 /* --------Preloader/spinner------*/
 
 #spinner-container {
+  position: absolute;
   width: 100%;
   height: 100%;
   display: flex;
@@ -970,13 +971,13 @@ img.logo {
   text-decoration: none;
 }
 
-.navbar .action-button {
+.navbar-workflows .action-button {
   width: 16rem;
 }
 
 /*navbar:Workflow page*/
 
-.navbar-WF {
+.navbar-workflows {
   flex: 0 0 6rem;
   height: 6rem;
   display: flex;
@@ -987,8 +988,6 @@ img.logo {
   padding: 0.5rem 4rem 0.5rem 4rem;
 }
 
-.navLink{
-  margin-right: 5rem;
 .nav-link {
   margin-right: 0;
 }

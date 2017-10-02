@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`NavBar WorkflowListNavBar renders correctly 1`] = `
+exports[`NavBar WorkflowListNavBar Renders correctly 1`] = `
 <div>
   <nav
     className="navbar"
@@ -37,42 +37,571 @@ exports[`NavBar WorkflowListNavBar renders correctly 1`] = `
 </div>
 `;
 
-exports[`NavBar WorkflowNavBar renders correctly 1`] = `
-<div>
-  <nav
-    className="navbar-WF"
-  >
-    <div
-      className="navbar-brand d-flex flex-row align-items-center"
+exports[`NavBar WorkflowNavBar Renders Duplicate button in Public mode with user NOT logged in, sends user to sign-in page 1`] = `
+<WorkflowNavBar
+  api={
+    Object {
+      "duplicate": [Function],
+    }
+  }
+  isReadOnly={false}
+  user={
+    Object {
+      "id": null,
+    }
+  }
+  workflow={
+    Object {
+      "name": "Original Version",
+      "public": true,
+    }
+  }
+>
+  <div>
+    <nav
+      className="navbar-workflows"
     >
       <div
-        className="title-metadata-stack"
+        className="navbar-brand d-flex flex-row align-items-center"
       >
-        <EditableWorkflowName
-          api={Object {}}
-        />
-        <WorkflowMetadata
-          api={Object {}}
-          user={Object {}}
-          workflow={Object {}}
-        />
+        <div
+          className="title-metadata-stack"
+        >
+          <EditableWorkflowName
+            api={
+              Object {
+                "duplicate": [Function],
+              }
+            }
+            value="Original Version"
+          >
+            <div
+              className="editable-name-container"
+              onClick={[Function]}
+            >
+              <TextareaAutosize
+                className="editable-title-field"
+                maxRows={1}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onHeightChange={[Function]}
+                onKeyPress={[Function]}
+                useCacheForDOMMeasurements={false}
+                value="Original Version"
+              >
+                <textarea
+                  className="editable-title-field"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onKeyPress={[Function]}
+                  style={
+                    Object {
+                      "height": -4,
+                    }
+                  }
+                  value="Original Version"
+                />
+              </TextareaAutosize>
+            </div>
+          </EditableWorkflowName>
+          <WorkflowMetadata
+            api={
+              Object {
+                "duplicate": [Function],
+              }
+            }
+            user={
+              Object {
+                "id": null,
+              }
+            }
+            workflow={
+              Object {
+                "name": "Original Version",
+                "public": true,
+              }
+            }
+          >
+            <div
+              className=""
+            >
+              <ul
+                className="list-inline list-workflow-meta content-3 t-white"
+              >
+                <li
+                  className="list-inline-item content-3 "
+                >
+                  Updated 
+                  just now
+                </li>
+                <li
+                  className="list-inline-item test-button content-3 "
+                  onClick={[Function]}
+                >
+                  <u>
+                    public
+                  </u>
+                </li>
+              </ul>
+            </div>
+          </WorkflowMetadata>
+        </div>
       </div>
-    </div>
-    <div
-      className="d-flex flex-row align-items-center"
-    >
-      <a
-        className="navLink t-white content-2"
-        href="http://cjworkbench.org/index.php/blog/"
+      <div
+        className="d-flex flex-row align-items-center"
       >
-        Learn
-      </a>
-      <WfHamburgerMenu
-        api={Object {}}
-        isReadOnly={false}
-        user={Object {}}
-      />
-    </div>
-  </nav>
-</div>
+        <div
+          className="button-white action-button test-duplicate-button"
+          onClick={[Function]}
+        >
+          Duplicate and Edit
+        </div>
+        <a
+          className="nav-link t-white content-2"
+          href="http://cjworkbench.org/index.php/blog/"
+        >
+          Learn
+        </a>
+        <a
+          className="nav-link t-white content-2"
+          href="http://app.cjworkbench.org/account/login"
+        >
+          Sign in
+        </a>
+      </div>
+    </nav>
+  </div>
+</WorkflowNavBar>
+`;
+
+exports[`NavBar WorkflowNavBar Renders Duplicate button in Public mode with user logged in, sends user to new copy 1`] = `
+<WorkflowNavBar
+  api={
+    Object {
+      "duplicate": [Function],
+    }
+  }
+  isReadOnly={false}
+  user={
+    Object {
+      "id": 8,
+    }
+  }
+  workflow={
+    Object {
+      "name": "Original Version",
+      "public": true,
+    }
+  }
+>
+  <div>
+    <nav
+      className="navbar-workflows"
+    >
+      <div
+        className="navbar-brand d-flex flex-row align-items-center"
+      >
+        <div
+          className="title-metadata-stack"
+        >
+          <EditableWorkflowName
+            api={
+              Object {
+                "duplicate": [Function],
+              }
+            }
+            value="Original Version"
+          >
+            <div
+              className="editable-name-container"
+              onClick={[Function]}
+            >
+              <TextareaAutosize
+                className="editable-title-field"
+                maxRows={1}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onHeightChange={[Function]}
+                onKeyPress={[Function]}
+                useCacheForDOMMeasurements={false}
+                value="Original Version"
+              >
+                <textarea
+                  className="editable-title-field"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onKeyPress={[Function]}
+                  style={
+                    Object {
+                      "height": -4,
+                    }
+                  }
+                  value="Original Version"
+                />
+              </TextareaAutosize>
+            </div>
+          </EditableWorkflowName>
+          <WorkflowMetadata
+            api={
+              Object {
+                "duplicate": [Function],
+              }
+            }
+            user={
+              Object {
+                "id": 8,
+              }
+            }
+            workflow={
+              Object {
+                "name": "Original Version",
+                "public": true,
+              }
+            }
+          >
+            <div
+              className=""
+            >
+              <ul
+                className="list-inline list-workflow-meta content-3 t-white"
+              >
+                <li
+                  className="list-inline-item content-3 "
+                >
+                  Updated 
+                  just now
+                </li>
+                <li
+                  className="list-inline-item test-button content-3 "
+                  onClick={[Function]}
+                >
+                  <u>
+                    public
+                  </u>
+                </li>
+              </ul>
+            </div>
+          </WorkflowMetadata>
+        </div>
+      </div>
+      <div
+        className="d-flex flex-row align-items-center"
+      >
+        <div
+          className="button-white action-button test-duplicate-button"
+          onClick={[Function]}
+        >
+          Duplicate and Edit
+        </div>
+        <a
+          className="nav-link t-white content-2"
+          href="http://cjworkbench.org/index.php/blog/"
+        >
+          Learn
+        </a>
+        <WfHamburgerMenu
+          api={
+            Object {
+              "duplicate": [Function],
+            }
+          }
+          isReadOnly={false}
+          user={
+            Object {
+              "id": 8,
+            }
+          }
+        >
+          <UncontrolledDropdown>
+            <Dropdown
+              isOpen={false}
+              tag="div"
+              toggle={[Function]}
+            >
+              <div
+                className="dropdown"
+              >
+                <DropdownToggle
+                  aria-haspopup={true}
+                  className="navbar-context-button"
+                  color="secondary"
+                  data-toggle="dropdown"
+                >
+                  <Button
+                    aria-expanded={false}
+                    aria-haspopup="true"
+                    className="navbar-context-button"
+                    color="secondary"
+                    data-toggle="dropdown"
+                    onClick={[Function]}
+                    tag="button"
+                  >
+                    <button
+                      aria-expanded={false}
+                      aria-haspopup="true"
+                      className="navbar-context-button btn btn-secondary"
+                      data-toggle="dropdown"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      <div
+                        className="button-icon icon-more-white"
+                      />
+                    </button>
+                  </Button>
+                </DropdownToggle>
+                <DropdownMenu
+                  right={true}
+                  tag="div"
+                >
+                  <div
+                    aria-hidden={true}
+                    className="dropdown-menu dropdown-menu-right"
+                    role="menu"
+                    tabIndex="-1"
+                  >
+                    <div>
+                      <DropdownItem
+                        className="dropdown-menu-item"
+                        href="/account/logout"
+                        tag="a"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-menu-item dropdown-item"
+                          href="/account/logout"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Logout
+                          </span>
+                        </a>
+                      </DropdownItem>
+                    </div>
+                  </div>
+                </DropdownMenu>
+              </div>
+            </Dropdown>
+          </UncontrolledDropdown>
+        </WfHamburgerMenu>
+      </div>
+    </nav>
+  </div>
+</WorkflowNavBar>
+`;
+
+exports[`NavBar WorkflowNavBar Renders without Duplicate button in Private mode 1`] = `
+<WorkflowNavBar
+  api={
+    Object {
+      "duplicate": [Function],
+    }
+  }
+  isReadOnly={false}
+  user={
+    Object {
+      "id": 8,
+    }
+  }
+  workflow={
+    Object {
+      "name": "Original Version",
+      "public": false,
+    }
+  }
+>
+  <div>
+    <nav
+      className="navbar-workflows"
+    >
+      <div
+        className="navbar-brand d-flex flex-row align-items-center"
+      >
+        <div
+          className="title-metadata-stack"
+        >
+          <EditableWorkflowName
+            api={
+              Object {
+                "duplicate": [Function],
+              }
+            }
+            value="Original Version"
+          >
+            <div
+              className="editable-name-container"
+              onClick={[Function]}
+            >
+              <TextareaAutosize
+                className="editable-title-field"
+                maxRows={1}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onHeightChange={[Function]}
+                onKeyPress={[Function]}
+                useCacheForDOMMeasurements={false}
+                value="Original Version"
+              >
+                <textarea
+                  className="editable-title-field"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onKeyPress={[Function]}
+                  style={
+                    Object {
+                      "height": -4,
+                    }
+                  }
+                  value="Original Version"
+                />
+              </TextareaAutosize>
+            </div>
+          </EditableWorkflowName>
+          <WorkflowMetadata
+            api={
+              Object {
+                "duplicate": [Function],
+              }
+            }
+            user={
+              Object {
+                "id": 8,
+              }
+            }
+            workflow={
+              Object {
+                "name": "Original Version",
+                "public": false,
+              }
+            }
+          >
+            <div
+              className=""
+            >
+              <ul
+                className="list-inline list-workflow-meta content-3 t-white"
+              >
+                <li
+                  className="list-inline-item content-3 "
+                >
+                  Updated 
+                  just now
+                </li>
+                <li
+                  className="list-inline-item test-button content-3 "
+                  onClick={[Function]}
+                >
+                  <u>
+                    private
+                  </u>
+                </li>
+              </ul>
+            </div>
+          </WorkflowMetadata>
+        </div>
+      </div>
+      <div
+        className="d-flex flex-row align-items-center"
+      >
+        <a
+          className="nav-link t-white content-2"
+          href="http://cjworkbench.org/index.php/blog/"
+        >
+          Learn
+        </a>
+        <WfHamburgerMenu
+          api={
+            Object {
+              "duplicate": [Function],
+            }
+          }
+          isReadOnly={false}
+          user={
+            Object {
+              "id": 8,
+            }
+          }
+        >
+          <UncontrolledDropdown>
+            <Dropdown
+              isOpen={false}
+              tag="div"
+              toggle={[Function]}
+            >
+              <div
+                className="dropdown"
+              >
+                <DropdownToggle
+                  aria-haspopup={true}
+                  className="navbar-context-button"
+                  color="secondary"
+                  data-toggle="dropdown"
+                >
+                  <Button
+                    aria-expanded={false}
+                    aria-haspopup="true"
+                    className="navbar-context-button"
+                    color="secondary"
+                    data-toggle="dropdown"
+                    onClick={[Function]}
+                    tag="button"
+                  >
+                    <button
+                      aria-expanded={false}
+                      aria-haspopup="true"
+                      className="navbar-context-button btn btn-secondary"
+                      data-toggle="dropdown"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      <div
+                        className="button-icon icon-more-white"
+                      />
+                    </button>
+                  </Button>
+                </DropdownToggle>
+                <DropdownMenu
+                  right={true}
+                  tag="div"
+                >
+                  <div
+                    aria-hidden={true}
+                    className="dropdown-menu dropdown-menu-right"
+                    role="menu"
+                    tabIndex="-1"
+                  >
+                    <div>
+                      <DropdownItem
+                        className="dropdown-menu-item"
+                        href="/account/logout"
+                        tag="a"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-menu-item dropdown-item"
+                          href="/account/logout"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Logout
+                          </span>
+                        </a>
+                      </DropdownItem>
+                    </div>
+                  </div>
+                </DropdownMenu>
+              </div>
+            </Dropdown>
+          </UncontrolledDropdown>
+        </WfHamburgerMenu>
+      </div>
+    </nav>
+  </div>
+</WorkflowNavBar>
 `;
