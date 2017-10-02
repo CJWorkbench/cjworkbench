@@ -78,7 +78,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
             value={888}
           />
           <Input
-            className="input-dropdown"
+            className="ml-4 input-dropdown"
             id="updateFreqUnit"
             name="updateFreq"
             onChange={[Function]}
@@ -106,7 +106,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
           </Input>
         </div>
         <div
-          className="content-3 t-d-gray mb-4"
+          className="content-3 t-d-gray mt-5 mb-4"
         >
           When an update is found:
         </div>
@@ -126,7 +126,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
           </div>
         </div>
         <div
-          className="d-flex flex-row mb-4"
+          className="d-flex flex-row"
         >
           <div
             className="action-button auto-button button-full-blue"
@@ -147,16 +147,16 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
       tag="div"
     >
       <div
-        className="action-button button-blue test-ok-button"
-        onClick={[Function]}
-      >
-        OK
-      </div>
-      <div
-        className="action-button button-blue test-cancel-button"
+        className="action-button button-gray test-cancel-button mr-4"
         onClick={[Function]}
       >
         Cancel
+      </div>
+      <div
+        className="action-button button-blue test-ok-button"
+        onClick={[Function]}
+      >
+        Apply
       </div>
     </ModalFooter>
   </Modal>
@@ -241,7 +241,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             value={5}
           />
           <Input
-            className="input-dropdown"
+            className="ml-4 input-dropdown"
             id="updateFreqUnit"
             name="updateFreq"
             onChange={[Function]}
@@ -269,7 +269,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </Input>
         </div>
         <div
-          className="content-3 t-d-gray mb-4"
+          className="content-3 t-d-gray mt-5 mb-4"
         >
           When an update is found:
         </div>
@@ -289,7 +289,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </div>
         </div>
         <div
-          className="d-flex flex-row mb-4"
+          className="d-flex flex-row"
         >
           <div
             className="action-button auto-button button-gray"
@@ -310,16 +310,16 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       tag="div"
     >
       <div
-        className="action-button button-blue test-ok-button"
-        onClick={[Function]}
-      >
-        OK
-      </div>
-      <div
-        className="action-button button-blue test-cancel-button"
+        className="action-button button-gray test-cancel-button mr-4"
         onClick={[Function]}
       >
         Cancel
+      </div>
+      <div
+        className="action-button button-blue test-ok-button"
+        onClick={[Function]}
+      >
+        Apply
       </div>
     </ModalFooter>
   </Modal>
@@ -404,7 +404,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             value={5}
           />
           <Input
-            className="input-dropdown"
+            className="ml-4 input-dropdown"
             id="updateFreqUnit"
             name="updateFreq"
             onChange={[Function]}
@@ -432,7 +432,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </Input>
         </div>
         <div
-          className="content-3 t-d-gray mb-4"
+          className="content-3 t-d-gray mt-5 mb-4"
         >
           When an update is found:
         </div>
@@ -452,7 +452,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </div>
         </div>
         <div
-          className="d-flex flex-row mb-4"
+          className="d-flex flex-row"
         >
           <div
             className="action-button auto-button button-gray"
@@ -473,16 +473,16 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       tag="div"
     >
       <div
-        className="action-button button-blue test-ok-button"
-        onClick={[Function]}
-      >
-        OK
-      </div>
-      <div
-        className="action-button button-blue test-cancel-button"
+        className="action-button button-gray test-cancel-button mr-4"
         onClick={[Function]}
       >
         Cancel
+      </div>
+      <div
+        className="action-button button-blue test-ok-button"
+        onClick={[Function]}
+      >
+        Apply
       </div>
     </ModalFooter>
   </Modal>
@@ -567,7 +567,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             value={888}
           />
           <Input
-            className="input-dropdown"
+            className="ml-4 input-dropdown"
             id="updateFreqUnit"
             name="updateFreq"
             onChange={[Function]}
@@ -595,7 +595,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </Input>
         </div>
         <div
-          className="content-3 t-d-gray mb-4"
+          className="content-3 t-d-gray mt-5 mb-4"
         >
           When an update is found:
         </div>
@@ -615,7 +615,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </div>
         </div>
         <div
-          className="d-flex flex-row mb-4"
+          className="d-flex flex-row"
         >
           <div
             className="action-button auto-button button-full-blue"
@@ -636,16 +636,16 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       tag="div"
     >
       <div
-        className="action-button button-blue test-ok-button"
-        onClick={[Function]}
-      >
-        OK
-      </div>
-      <div
-        className="action-button button-blue test-cancel-button"
+        className="action-button button-gray test-cancel-button mr-4"
         onClick={[Function]}
       >
         Cancel
+      </div>
+      <div
+        className="action-button button-blue test-ok-button"
+        onClick={[Function]}
+      >
+        Apply
       </div>
     </ModalFooter>
   </Modal>

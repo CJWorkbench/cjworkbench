@@ -1519,6 +1519,11 @@ img.logo {
   border-top: 0;
 }
 
+.close {
+  font-size:2rem;
+  color:#b4b4b4;
+
+}
 
 /* from Export Data modal, in WfModuleContextMenu  */
 .download-icon-box {
