@@ -67,7 +67,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
           className="update-freq-settings update-freq-test-class mb-5"
         >
           <Input
-            className="input-number mr-4"
+            className="number-field t-d-gray content-2"
             id="updateFreqNum"
             max="500"
             min="1"
@@ -106,7 +106,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
           </Input>
         </div>
         <div
-          className="content-3 t-d-gray mb-3"
+          className="content-3 t-d-gray mb-4"
         >
           When an update is found:
         </div>
@@ -230,7 +230,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           className="update-freq-settings update-freq-test-class mb-5"
         >
           <Input
-            className="input-number mr-4"
+            className="number-field t-d-gray content-2"
             id="updateFreqNum"
             max="500"
             min="1"
@@ -269,7 +269,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </Input>
         </div>
         <div
-          className="content-3 t-d-gray mb-3"
+          className="content-3 t-d-gray mb-4"
         >
           When an update is found:
         </div>
@@ -393,7 +393,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           className="update-freq-settings update-freq-test-class mb-5"
         >
           <Input
-            className="input-number mr-4"
+            className="number-field t-d-gray content-2"
             id="updateFreqNum"
             max="500"
             min="1"
@@ -432,7 +432,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </Input>
         </div>
         <div
-          className="content-3 t-d-gray mb-3"
+          className="content-3 t-d-gray mb-4"
         >
           When an update is found:
         </div>
@@ -556,7 +556,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           className="update-freq-settings update-freq-test-class mb-5"
         >
           <Input
-            className="input-number mr-4"
+            className="number-field t-d-gray content-2"
             id="updateFreqNum"
             max="500"
             min="1"
@@ -595,7 +595,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </Input>
         </div>
         <div
-          className="content-3 t-d-gray mb-3"
+          className="content-3 t-d-gray mb-4"
         >
           When an update is found:
         </div>
