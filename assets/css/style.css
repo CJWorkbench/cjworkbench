@@ -527,7 +527,6 @@ body {
 
 /* ---- Buttons ---- */
 
-<<<<<<< HEAD
 .modal-solo-button {
   float: right;
   margin-right: 2rem;
@@ -540,16 +539,12 @@ body {
   justify-content: flex-end;
 }
 
-||||||| merged common ancestors
-=======
-
->>>>>>> 1e92d375f12ae879d0fa9129f31314359b3cdabb
 /* - Button Colors - */
 .button-white {
-  color: #48C8D7;
-  border: none;
+  color: #FFFFFF;
+  border: 1px solid #FFFFFF;
   text-align: center;
-  background-color: #FFFFFF;
+  background-color: transparent;
 }
 .button-white:active {
   background-color: #686768;
@@ -988,7 +983,7 @@ img.logo {
 }
 
 .navbar-workflows .action-button {
-  width: 16rem;
+  margin-right: 2.5rem;
 }
 
 /*navbar:Workflow page*/

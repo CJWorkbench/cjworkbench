@@ -70,7 +70,7 @@ export class WorkflowNavBar extends React.Component {
 
     var duplicate = (this.props.workflow.public)
       ? <div onClick={this.handleDuplicate} className='button-white action-button test-duplicate-button'>
-          Duplicate and Edit
+          Duplicate
         </div>
       : null
 
