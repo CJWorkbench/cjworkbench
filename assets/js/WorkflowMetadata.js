@@ -61,27 +61,27 @@ export default class WorkflowMetadata extends React.Component {
         </ModalHeader>
         <ModalBody className='dialog-body'>
           <div className="row">
-            <div className="col-sm-4">
+            <div className="col-sm-3">
               <div
                 className={"action-button " + (this.state.isPublic ? "button-full-blue" : "button-gray test-button-gray") }
                 onClick={() => {this.setPublic(true); this.togglePrivacyModal()}}>
                   Public
               </div>
             </div>
-            <div className="col-sm-8">
+            <div className="col-sm-9">
               <p>Anyone can access and duplicate the workflow or any of its modules</p>
             </div>
           </div>
           <br></br>
-          <div className="row">
-            <div className="col-sm-4">
+          <div className="row d-flex align-items-center">
+            <div className="col-sm-3">
               <div
                 className={"action-button " + (!this.state.isPublic ? "button-full-blue" : "button-gray test-button-gray")}
                 onClick={() => {this.setPublic(false); this.togglePrivacyModal()}}>
                   Private
               </div>
             </div>
-            <div className="col-sm-8">
+            <div className="col-sm-9 mt-2">
               <p>Only you can access and edit the workflow</p>
             </div>
           </div>

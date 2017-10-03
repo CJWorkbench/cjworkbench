@@ -466,7 +466,7 @@ body {
   background-color: #FFFFFF !important;
   border: 1px solid #E7E7E7;
   border-radius: 0px;
-  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  padding: 1rem 1.5rem 1rem 1.5rem;
 }
 
 .import-url-field input::placeholder {
@@ -659,13 +659,12 @@ body {
 .action-button {
   cursor: pointer;
 	height: 4rem;
-  border-radius: 2.5rem;
   min-width: 9rem;
+  border-radius: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
 	font-size: 1.4rem;
-	font-weight: 900;
   line-height: 1.4rem;
   padding: 0 2rem 0 2rem;
 }
@@ -1074,6 +1073,7 @@ img.logo {
   padding: 5rem;
   border: 3px dashed #FBAA6D;
   opacity: 0.5;
+
 }
 
 /* Output Pane */
