@@ -702,7 +702,9 @@ body {
   height: 4rem;
   width: 17rem;
   border-radius:0px;
-  border: 1px solid #E7E7E7
+  border: 1px solid #E7E7E7;
+  font-size: 1.3rem;
+  color:#686768;
 }
 
 .input-dropdown {
@@ -937,6 +939,7 @@ body {
 .workflow-root {
   display: flex;
   flex-direction: row;
+  height:100%;
 }
 
 /* Contains Navbar, Modulestack, and Outputpane */
@@ -1418,7 +1421,7 @@ img.logo {
   padding: 2rem;
 }
 .module-card-header:hover {
-  background-color: #f9f9f9;
+  background-color: #fafafa;
 }
 
 .module-card-params {

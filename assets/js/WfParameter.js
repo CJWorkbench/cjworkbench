@@ -131,7 +131,7 @@ export default class WfParameter extends React.Component {
             <div className='label-margin t-d-gray content-3'>{this.name}:</div>
             <textarea
               readOnly={this.props.isReadOnly}
-              className='number-field t-d-gray content-2'
+              className='number-field t-d-gray content-3'
               rows='1'
               defaultValue={this.props.p.value}
               onBlur={this.blur}
@@ -179,7 +179,7 @@ export default class WfParameter extends React.Component {
               onChange={ col => { this.paramChanged(col) }}
             />
           </div> );
-          
+
       case 'multicolumn':
         return (
           <div className='parameter-margin'>
