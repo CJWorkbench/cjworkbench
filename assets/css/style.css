@@ -1283,7 +1283,7 @@ img.logo {
   font-size: 1.6rem;
   width: 100%;
   z-index: 2;
-  height:40rem;
+  height:68rem;
 }
 
 .react-autosuggest__suggestions-list {
@@ -1294,7 +1294,7 @@ img.logo {
 
 .react-autosuggest__suggestion {
   cursor: pointer;
-  padding: 1rem 0  1rem 4.5rem;
+  padding: 1rem 0  1rem 4rem;
   color:#fff;
   opacity:0.7;
 }
