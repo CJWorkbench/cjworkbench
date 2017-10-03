@@ -179,7 +179,7 @@ export default class WfParameter extends React.Component {
               onChange={ col => { this.paramChanged(col) }}
             />
           </div> );
-
+          
       case 'multicolumn':
         return (
           <div className='parameter-margin'>
