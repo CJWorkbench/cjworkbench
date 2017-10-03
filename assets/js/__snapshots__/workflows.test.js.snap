@@ -29,7 +29,7 @@ exports[`renders correctly 1`] = `
             className="d-flex flex-row align-items-center"
           >
             <a
-              className="t-white content-2 mr-5"
+              className="t-white nav-link content-2"
               href="http://cjworkbench.org/index.php/blog/"
             >
               Learn
@@ -200,7 +200,7 @@ exports[`renders correctly 2`] = `
             className="d-flex flex-row align-items-center"
           >
             <a
-              className="t-white content-2 mr-5"
+              className="t-white nav-link content-2"
               href="http://cjworkbench.org/index.php/blog/"
             >
               Learn
