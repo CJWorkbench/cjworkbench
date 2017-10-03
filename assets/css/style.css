@@ -1236,14 +1236,15 @@ img.logo {
 
 .react-autosuggest__container input {
   border: 0px solid #DDDDDD;
+  color:white;
 }
 /* If we want to style the placeholder differently than the typed text */
-/* .react-autosuggest__input::placeholder {
-  color: red;
-} */
+ .react-autosuggest__input::placeholder {
+  color: rgba(250,250,250,0.7);
+}
 
 .react-autosuggest__container input:hover {
-  box-shadow: 0 0 0 1px #48C8D7;
+  box-shadow: 0 0 0 1px rgba(250,250,250,0.2);
 }
 
 /* does not accept a 'color' parameter  */
@@ -1253,10 +1254,10 @@ img.logo {
   padding-left: 2rem;
   font-family: 'Nunito Sans', sans-serif;
   font-weight: 900;
-  opacity: 0.5;
   font-size: 1.4rem;
   line-height: 1.4rem;
   border-radius: 10rem;
+  background-color: rgba(250,250,250,0.2);
 }
 
 .react-autosuggest__input--focused {
@@ -1307,7 +1308,7 @@ img.logo {
 .react-autosuggest__section-title {
   padding: 1.5rem 0 1rem 1rem;
   font-size: 1.3rem;
-  color: #ABB9C2;
+  color: #b4b4b4;
   margin-left: 0.5rem;
 }
 
