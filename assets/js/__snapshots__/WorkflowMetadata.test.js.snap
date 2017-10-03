@@ -100,7 +100,7 @@ exports[`WorkflowMetadata modal operates 2`] = `
         className="row"
       >
         <div
-          className="col-sm-4"
+          className="col-sm-3"
         >
           <div
             className="action-button button-full-blue"
@@ -110,7 +110,7 @@ exports[`WorkflowMetadata modal operates 2`] = `
           </div>
         </div>
         <div
-          className="col-sm-8"
+          className="col-sm-9"
         >
           <p>
             Anyone can access and duplicate the workflow or any of its modules
@@ -119,10 +119,10 @@ exports[`WorkflowMetadata modal operates 2`] = `
       </div>
       <br />
       <div
-        className="row"
+        className="row d-flex align-items-center"
       >
         <div
-          className="col-sm-4"
+          className="col-sm-3"
         >
           <div
             className="action-button button-gray test-button-gray"
@@ -132,7 +132,7 @@ exports[`WorkflowMetadata modal operates 2`] = `
           </div>
         </div>
         <div
-          className="col-sm-8"
+          className="col-sm-9 mt-2"
         >
           <p>
             Only you can access and edit the workflow
