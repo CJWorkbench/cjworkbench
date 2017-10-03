@@ -22,7 +22,7 @@ export default class ModuleSearch extends React.Component {
     this.getSectionSuggestions = this.getSectionSuggestions.bind(this);
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
   }
-  
+
 
   componentWillReceiveProps(nextProps) {
     if (this.props.items !== nextProps.items) {
@@ -32,11 +32,11 @@ export default class ModuleSearch extends React.Component {
 
   escapeRegexCharacters (str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  } 
+  }
   formatModules(items) {
     let modules = [];
     let temp = {};
-    
+
     if (items.length) {
       items.forEach(item => {
         if (temp[item.category]) {
@@ -82,7 +82,7 @@ export default class ModuleSearch extends React.Component {
 
   getSuggestions (value) {
     const escapedValue = this.escapeRegexCharacters(value.trim());
-  
+
     if (escapedValue === '') {
       return [];
     }
@@ -102,8 +102,8 @@ export default class ModuleSearch extends React.Component {
   renderSuggestion (suggestion) {
     return (
       <div>
-        <div className='title-3 t-d-gray mb-2'><strong>{suggestion.name}</strong></div>
-        <div className='content-3 t-m-gray'>{suggestion.description}</div>
+        <div className='content-3 t-d-gray'><strong>{suggestion.name}</strong></div>
+        <div className='content-3 t-d-blue ml-description'>{suggestion.description}</div>
       </div>
     );
   }
@@ -149,7 +149,7 @@ export default class ModuleSearch extends React.Component {
 
 
 ModuleSearch.propTypes = {
-  addModule: PropTypes.func.isRequired, 
+  addModule: PropTypes.func.isRequired,
   items: PropTypes.array.isRequired,
-  workflow: PropTypes.object.isRequired 
+  workflow: PropTypes.object.isRequired
 };
