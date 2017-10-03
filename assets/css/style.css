@@ -545,6 +545,7 @@ body {
   text-align: center;
   background-color: transparent;
 }
+
 .button-white:active {
   background-color: #686768;
   color: #FFFFFF;
@@ -996,7 +997,7 @@ img.logo {
 }
 
 .navbar-workflows .action-button {
-  margin-right: 2.5rem;
+  margin-right: 6rem;
 }
 
 /*navbar:Workflow page*/
@@ -1013,7 +1014,7 @@ img.logo {
 }
 
 .nav-link {
-  margin-right: 0;
+  margin-right: 5rem;
 }
 
 .title-metadata-stack {
