@@ -1160,7 +1160,9 @@ img.logo {
 }
 
 .card .second-level {
-  opacity: 0.8;
+  margin-left: 0.5rem;
+  margin-right:0.5rem;
+  opacity: 0.7;
   position: relative;
   height: 4rem;
   padding-left: 2.5rem;
@@ -1216,13 +1218,13 @@ img.logo {
 
 
 .library-card-category-closed {
-  margin-top: 1px;
-  margin-bottom: 1px;
+  margin-left: 0rem;
+  margin-right:0rem;
 }
 
 .library-card-category-closed:hover {
-  margin-top: 1px;
-  margin-bottom: 1px;
+  margin-left: 0rem;
+  margin-right:0rem;
   background-color: #4E6878;
 }
 
@@ -1270,7 +1272,8 @@ img.logo {
 }
 
 .react-autosuggest__suggestions-container--open {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
+  margin-left: -1.5rem;
   display: block;
   position: absolute;
   border: 0px;
@@ -1278,31 +1281,32 @@ img.logo {
   color:#fff;
   font-weight: 300;
   font-size: 1.6rem;
-  width: 85%;
+  width: 100%;
   z-index: 2;
   height:40rem;
-  /*box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.15);*/
 }
 
 .react-autosuggest__suggestions-list {
-  margin: 0;
-  padding: 0;
+  border-bottom: 1px solid rgba(250,250,250,0.1);
+  padding: 0 0 1rem 0;
   list-style-type: none;
 }
 
 .react-autosuggest__suggestion {
   cursor: pointer;
-  padding: 1rem 0  1rem 2.5rem;
+  padding: 1rem 0  1rem 4.5rem;
   color:#fff;
   opacity:0.7;
 }
 
 .react-autosuggest__suggestion--highlighted {
-  background-color: #F5F5F5;
+  background-color: #4E6878;
+  width:100%;
+  opacity:1;
 }
 
 .react-autosuggest__section-container {
-  border-top: 1px solid rgba(250,250,250,0.2);
+
   margin-bottom: 1rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -1313,10 +1317,11 @@ img.logo {
 }
 
 .react-autosuggest__section-title {
-  padding: 1.5rem 0 1rem 1rem;
+  padding: 1.5rem 0 0.7rem 2.9rem;
   font-size: 1.3rem;
   color: #FFF;
   margin-left: 0.5rem;
+  opacity: 1;
 }
 
 .ml-description {
@@ -1376,7 +1381,7 @@ img.logo {
 }
 
 .react-grid-HeaderRow {
-  
+
 }
 
 .react-grid-HeaderCell{
