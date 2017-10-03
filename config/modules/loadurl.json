@@ -1,5 +1,5 @@
 {
-  "name": "Load from URL",
+  "name": "Add from URL",
   "id_name": "loadurl" ,
   "category" : "Add data",
   "icon" : "url",
