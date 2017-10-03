@@ -102,7 +102,7 @@ export default class ModuleSearch extends React.Component {
   renderSuggestion (suggestion) {
     return (
       <div>
-        <div className='content-3 t-d-gray'><strong>{suggestion.name}</strong></div>
+        <div className='content-3'><strong>{suggestion.name}</strong></div>
         <div className='content-3 t-d-blue ml-description'>{suggestion.description}</div>
       </div>
     );
