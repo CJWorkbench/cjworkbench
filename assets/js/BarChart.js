@@ -6,13 +6,20 @@ import ChartSeriesChooser from './ChartSeriesChooser';
 export default class BarChart extends React.Component {
   constructor(props) {
     super(props);
+    this.colorKeys = {};
+    JSON.parse(this.props.dataKeys).forEach(
+      (val) => {
+        this.colorKeys[val.value] = val.color;
+      }
+    );
     this.state = {
       data: null,
       height: 500,
       width: 500,
       index: null,
-      dataKeys: null
+      dataKeys: Object.keys(this.colorKeys)
     }
+    this.getColorFromKeys = this.getColorFromKeys.bind(this);
   }
 
   loadChart() {
@@ -29,6 +36,10 @@ export default class BarChart extends React.Component {
     this.loadChart();
   }
 
+  getColorFromKeys(data) {
+    return this.colorKeys[data.id];
+  }
+
   render() {
     if (this.state.data &&
       this.props.index !== '' &&
@@ -38,7 +49,8 @@ export default class BarChart extends React.Component {
         width={this.state.width}
         height={this.state.height}
         indexBy={this.props.index}
-        keys={this.props.dataKeys.split(',')}
+        keys={this.state.dataKeys}
+        colorBy={this.getColorFromKeys}
         enableLabel={true}
         axisBottom={{
             "orient": "bottom",
