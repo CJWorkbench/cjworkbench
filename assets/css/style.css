@@ -122,8 +122,9 @@ body {
 }
 .info-2 {
 	font-size: 1rem;
-	font-weight: 900;
+	font-weight: 600;
 	line-height: 1rem;
+  letter-spacing: 2;
 }
 
 .table-1 {
@@ -279,6 +280,7 @@ body {
 }
 .icon-close:before {
   content: "\e907";
+
 }
 .icon-code:before {
   content: "\e908";
@@ -509,6 +511,17 @@ body {
 .wfmoduleTextInput{
   width: 100%;
   resize: vertical;
+}
+
+.url-link{
+  height: 4rem;
+  width: 100%;
+  background-color: #FFFFFF !important;
+  border: 1px solid #E7E7E7;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  border-radius: 0px;
+  border-right: 0px;
+  margin-bottom: 1rem;
 }
 
 /* Hacks for registration/login/etc before we dig in to the form widgets */
@@ -742,18 +755,18 @@ body {
   margin-top: 1rem;
   border:1px solid rgba(171,185,194,0.1);
   /*border:1px solid #b4b4b4;*/
-  border-radius: 0px;
+  border-radius: 5px;
   box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.10);
   padding:0.5rem 0 0.5rem 0;
 }
 
 /*Alternate FLASHY design for dropdown*/
-.dropdown-menu {
+/*.dropdown-menu {
   margin-top: 1rem;
   border-radius:0px;
   border:2px solid rgba(72,200,215,0.5);
   padding:0.5rem 0 0.5rem 0;
-}
+}*/
 
 .dropdown-menu-item {
   height: 4rem;
@@ -1577,6 +1590,7 @@ img.logo {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 }
 
 .dialog-body {
@@ -1603,10 +1617,15 @@ img.logo {
 .close {
   font-size:2rem;
   color:#b4b4b4;
+}
 
+.icon-close {
+  font-size:1rem;
+  color:#b4b4b4;
 }
 
 /* from Export Data modal, in WfModuleContextMenu  */
+
 .download-icon-box {
 	height: 4rem;
 	width: 6rem;
@@ -1615,9 +1634,14 @@ img.logo {
   display: flex;
   align-items: center;
   justify-content: center;
+  color:#b4b4b4;
+  border-radius: 0px;
 }
+
+
 .download-icon-box:hover {
   background-color: #F8F8F8;
+  decoration:none;
 }
 
 

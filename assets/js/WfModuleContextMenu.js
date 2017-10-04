@@ -88,12 +88,12 @@ export default class WfModuleContextMenu extends React.Component {
 
     if (this.state.csvCopied) {
       return (
-        <div className='info-2 t-orange mt-3' onMouseLeave={this.onCsvLeave}>CSV link copied to clipboard</div>
+        <div className='info-2 t-orange mt-3' onMouseLeave={this.onCsvLeave}>CSV LINK COPIED TO CLIPBOARD</div>
       );
     } else {
       return (
         <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='info-2 t-f-blue mt-3 test-csv-copy'>
-          <div>Copy live link</div>
+          <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       );
     }
@@ -104,12 +104,12 @@ export default class WfModuleContextMenu extends React.Component {
 
     if (this.state.jsonCopied) {
       return (
-        <div className='info-2 t-orange mt-3' onMouseLeave={this.onJsonLeave}>JSON link copied to clipboard</div>
+        <div className='info-2 t-orange mt-3' onMouseLeave={this.onJsonLeave}>JSON LINK COPIED TO CLIPBOARD</div>
       );
     } else {
       return (
         <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='info-2 t-f-blue mt-3 test-json-copy'>
-          <div>Copy live link</div>
+          <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       );
     }
@@ -127,7 +127,7 @@ export default class WfModuleContextMenu extends React.Component {
 
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
-        <ModalHeader toggle={this.toggleModal} className='dialog-header modal-header' >
+        <ModalHeader toggle={this.toggleModal} className='dialog-header modal-header d-flex align-items-center' >
           <div className='t-d-gray title-4'>Export Data</div>
           <div className='icon-close' onClick={this.toggleExportModal}></div>
         </ModalHeader>
@@ -138,9 +138,9 @@ export default class WfModuleContextMenu extends React.Component {
               {csvCopyLink}
             </div>
             <div className='d-flex justify-content-between flex-row mb-3'>
-              <Input type='url' className='text-field t-d-gray content-2 test-csv-field' placeholder={csvString} readOnly/>
+              <Input type='url' className='url-link t-d-gray content-2 test-csv-field' placeholder={csvString} readOnly/>
               <div className='download-icon-box'>
-                <a href={csvString} className='icon-download button-icon test-csv-download' download></a>
+                <a href={csvString} className='icon-download t-d-gray button-icon test-csv-download' download></a>
               </div>
             </div>
             <div className='d-flex justify-content-between flex-row'>
@@ -148,9 +148,9 @@ export default class WfModuleContextMenu extends React.Component {
               {jsonCopyLink}
             </div>
             <div className='d-flex justify-content-between flex-row'>
-              <Input type='url' className='text-field t-d-gray content-2 test-json-field' placeholder={jsonString} readOnly/>
+              <Input type='url' className='url-link t-d-gray content-2 test-json-field' placeholder={jsonString} readOnly/>
               <div className='download-icon-box'>
-                <a href={jsonString} className='icon-download button-icon test-json-download' download></a>
+                <a href={jsonString} className='icon-download t-d-gray button-icon test-json-download' download></a>
               </div>
             </div>
           </FormGroup>
