@@ -247,7 +247,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                 type="button"
               >
                 <span
-                  className="icon-download button-icon"
+                  className="icon-download menu-icon"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
@@ -268,7 +268,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                 type="button"
               >
                 <span
-                  className="icon-info button-icon"
+                  className="icon-info menu-icon"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
@@ -290,7 +290,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                 type="button"
               >
                 <span
-                  className="icon-bin button-icon"
+                  className="icon-bin menu-icon"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
@@ -380,7 +380,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
                 type="button"
               >
                 <span
-                  className="icon-download button-icon"
+                  className="icon-download menu-icon"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
@@ -401,7 +401,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
                 type="button"
               >
                 <span
-                  className="icon-info button-icon"
+                  className="icon-info menu-icon"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
@@ -423,7 +423,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
                 type="button"
               >
                 <span
-                  className="icon-bin button-icon"
+                  className="icon-bin menu-icon"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
@@ -513,7 +513,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
                 type="button"
               >
                 <span
-                  className="icon-download button-icon"
+                  className="icon-download menu-icon"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
@@ -534,7 +534,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
                 type="button"
               >
                 <span
-                  className="icon-info button-icon"
+                  className="icon-info menu-icon"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
@@ -556,7 +556,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
                 type="button"
               >
                 <span
-                  className="icon-bin button-icon"
+                  className="icon-bin menu-icon"
                 />
                 <span
                   className="t-d-gray content-3 ml-3"
