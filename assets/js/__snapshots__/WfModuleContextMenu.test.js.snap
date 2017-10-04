@@ -9,12 +9,12 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
     className="modal-content"
   >
     <ModalHeader
-      className="dialog-header modal-header"
+      className="dialog-header modal-header d-flex align-items-center"
       tag="h4"
       wrapTag="div"
     >
       <div
-        className="dialog-header modal-header modal-header"
+        className="dialog-header modal-header d-flex align-items-center modal-header"
       >
         <h4
           className="modal-title"
@@ -66,7 +66,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                   className="info-2 t-f-blue mt-3 test-csv-copy"
                   onClick={[Function]}
                 >
-                  Copy live link
+                  COPY LIVE LINK
                 </div>
               </CopyToClipboard>
             </div>
@@ -74,14 +74,14 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
               className="d-flex justify-content-between flex-row mb-3"
             >
               <Input
-                className="text-field t-d-gray content-2 test-csv-field"
+                className="url-link t-d-gray content-2 test-csv-field"
                 placeholder="/public/moduledata/live/415.csv"
                 readOnly={true}
                 tag="p"
                 type="url"
               >
                 <input
-                  className="text-field t-d-gray content-2 test-csv-field form-control"
+                  className="url-link t-d-gray content-2 test-csv-field form-control"
                   placeholder="/public/moduledata/live/415.csv"
                   readOnly={true}
                   type="url"
@@ -91,7 +91,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                 className="download-icon-box"
               >
                 <a
-                  className="icon-download button-icon test-csv-download"
+                  className="icon-download t-d-gray button-icon test-csv-download"
                   download={true}
                   href="/public/moduledata/live/415.csv"
                 />
@@ -119,7 +119,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                   className="info-2 t-f-blue mt-3 test-json-copy"
                   onClick={[Function]}
                 >
-                  Copy live link
+                  COPY LIVE LINK
                 </div>
               </CopyToClipboard>
             </div>
@@ -127,14 +127,14 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
               className="d-flex justify-content-between flex-row"
             >
               <Input
-                className="text-field t-d-gray content-2 test-json-field"
+                className="url-link t-d-gray content-2 test-json-field"
                 placeholder="/public/moduledata/live/415.json"
                 readOnly={true}
                 tag="p"
                 type="url"
               >
                 <input
-                  className="text-field t-d-gray content-2 test-json-field form-control"
+                  className="url-link t-d-gray content-2 test-json-field form-control"
                   placeholder="/public/moduledata/live/415.json"
                   readOnly={true}
                   type="url"
@@ -144,7 +144,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                 className="download-icon-box"
               >
                 <a
-                  className="icon-download button-icon test-json-download"
+                  className="icon-download t-d-gray button-icon test-json-download"
                   download={true}
                   href="/public/moduledata/live/415.json"
                 />
