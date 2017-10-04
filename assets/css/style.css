@@ -470,7 +470,6 @@ body {
 /* ---- Data Input ---- */
 
 .text-field {
-  /*height: 4rem;*/
   width: 100%;
   background-color: #FFFFFF !important;
   border: 1px solid #E7E7E7;
@@ -741,9 +740,18 @@ body {
 
 .dropdown-menu {
   margin-top: 1rem;
-  border:1px solid rgba(251,170,109,0.5);
+  border:1px solid rgba(171,185,194,0.1);
+  /*border:1px solid #b4b4b4;*/
   border-radius: 0px;
   box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.10);
+  padding:0.5rem 0 0.5rem 0;
+}
+
+/*Alternate FLASHY design for dropdown*/
+.dropdown-menu {
+  margin-top: 1rem;
+  border-radius:0px;
+  border:2px solid rgba(72,200,215,0.5);
   padding:0.5rem 0 0.5rem 0;
 }
 
