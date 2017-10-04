@@ -147,7 +147,7 @@ export default class WfParameter extends React.Component {
 
       case 'checkbox':
         return (
-            <div>
+            <div className='checkbox-wrapper'>
                 <label className='parameter-margin t-d-gray content-3 mr-2'>{this.name}:</label>
                 <input
                   disabled={this.props.isReadOnly}
@@ -247,8 +247,8 @@ export default class WfParameter extends React.Component {
             var newNameCols = this.props.getParamText('newcolnames');
           var saveState = ( state => this.props.setParamText('newcolnames', state) );
           return (
-            <div>
-              <div>{this.name}:</div>
+            <div className='parameter-margin'>
+              <div className='t-d-gray content-3 label-margin'>Enter new column names:</div>
               <ColumnRenamer
                 isReadOnly={this.props.isReadOnly}
                 newNameCols={newNameCols}

@@ -1542,7 +1542,7 @@ img.logo {
   background-color: #E8726E;
 }
 
-/* wraps a checkbox selection for display in a list  */
+/* checkboxes solo or within a list  */
 .checkbox-list{
   margin:0px;
   padding:0px;
@@ -1561,6 +1561,13 @@ img.logo {
 
 }
 .checkbox-content{
+  overflow:hidden;
+}
+
+.checkbox-wrapper{
+  margin-right: 3rem;
+  margin-top:-1.5rem;
+  display:inline-block;
   overflow:hidden;
 }
 
