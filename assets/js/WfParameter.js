@@ -11,6 +11,7 @@ import DataVersionSelect from './DataVersionSelect'
 import DropZone from './DropZone'
 import UpdateFrequencySelect from './UpdateFrequencySelect'
 import BarChart from './BarChart'
+import ColumnColorPicker from './ColumnColorPicker'
 import { csrfToken } from './utils'
 
 
@@ -291,6 +292,15 @@ export default class WfParameter extends React.Component {
               setParamText={this.props.setParamText}
             />
           )
+        } else if (this.props.p.parameter_spec.id_name == 'multicolumn_colorpicker') {
+          return (
+            <ColumnColorPicker
+              selectedCols={this.props.getParamText('multicolumn_colorpicker')}
+              saveState={state => this.props.setParamText('multicolumn_colorpicker', state) }
+              getColNames={this.getInputColNames}
+              isReadOnly={this.props.isReadOnly}
+              revision={this.props.revision}
+            />
           )
         }
 
