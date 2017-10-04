@@ -12,17 +12,6 @@
       "default": ""
     },
     {
-      "name": "In columns",
-      "id_name": "colselect",
-      "type": "multicolumn",
-      "ui-only": true
-    },
-    {
-      "name": "Column names",
-      "id_name": "colnames",
-      "type": "string"
-    },
-    {
       "name": "Case sensitive",
       "id_name": "casesensitive",
       "type": "checkbox",
@@ -33,6 +22,12 @@
       "id_name": "regex",
       "type": "checkbox",
       "default": "False"
+    },
+    {
+      "name": "In columns",
+      "id_name": "colselect",
+      "type": "multicolumn",
+      "ui-only": true
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "name": "Count by Date",
+  "name": "Group by Date",
   "id_name": "countbydate",
   "category" : "Analyse",
   "icon" : "group",
