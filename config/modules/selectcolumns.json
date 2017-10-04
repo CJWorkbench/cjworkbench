@@ -17,6 +17,12 @@
       "id_name": "colselect",
       "type": "multicolumn",
       "ui-only": true
+    },
+    {
+      "name": "Column names",
+      "id_name": "colnames",
+      "type": "string",
+      "visible": false
     }
   ]
 }
