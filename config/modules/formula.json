@@ -12,7 +12,7 @@
       "default": ""
     },
     {
-      "name": "Name the output column",
+      "name": "Output column name",
       "id_name" : "out_column",
       "type": "string",
       "default": "output"
