@@ -29,11 +29,11 @@ exports[`ColumnSelector NOT Read-only Renders and loads column names 1`] = `
           onChange={[Function]}
           type="checkbox"
         />
-        <label
-          className="ml-2 mt-1 t-d-gray content-3"
+        <span
+          className="ml-3 t-d-gray checkbox-content content-3"
         >
           foo,bar,baz,wow,word wrap,ok then
-        </label>
+        </span>
       </div>
     </div>
   </div>
@@ -69,11 +69,11 @@ exports[`ColumnSelector Read-only Renders and loads column names 1`] = `
           onChange={[Function]}
           type="checkbox"
         />
-        <label
-          className="ml-2 mt-1 t-d-gray content-3"
+        <span
+          className="ml-3 t-d-gray checkbox-content content-3"
         >
           foo,bar,baz,wow,word wrap,ok then
-        </label>
+        </span>
       </div>
     </div>
   </div>
