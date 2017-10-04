@@ -383,6 +383,7 @@ body {
 }
 
 /* Customized icons, not in font sent  */
+
 .icon-l-gray {
   color:#b4b4b4;
 }
@@ -436,14 +437,34 @@ body {
   font-size: 1.5rem;
 }
 
-/* icons embedded within buttons  */
+/* icons embedded within buttons or menus  */
+.menu-icon {
+  width: 2rem;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+.icon-duplicate:before {
+  content: "\e90c";
+  font-size: 1rem;
+}
+
 .button-icon {
   font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
 }
 
 .module-menu-icon {
   font-size: 1.2rem ;
   color:#b4b4b4;
+}
+
+.dopdown-item:focus,
+.dropdown-item:hover {
+  color:#686768;
+  background-color:transparent;
 }
 
 /* ---- Data Input ---- */
@@ -720,15 +741,15 @@ body {
 
 .dropdown-menu {
   margin-top: 1rem;
-  border:0px;
+  border:1px solid rgba(251,170,109,0.5);
   border-radius: 0px;
-  box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.15);
-  padding:0px;
+  box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.10);
+  padding:0.5rem 0 0.5rem 0;
 }
 
 .dropdown-menu-item {
   height: 4rem;
-  width: 17rem;
+  width: 14rem;
   background-color: #FFFFFF;
   color: #686768;
   display: flex;
@@ -740,7 +761,7 @@ body {
   margin:0px;
 }
 .dropdown-menu-item:hover {
-  background-color: #F5F5F5;
+  background-color: #F9f9f9;
 }
 
 
