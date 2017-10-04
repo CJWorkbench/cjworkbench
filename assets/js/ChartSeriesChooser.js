@@ -1,6 +1,7 @@
-import React from 'react';
-import { InputGroup, InputGroupButton, Input, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap';
-import { SketchPicker } from 'react-color';
+import React from 'react'
+import { InputGroup, InputGroupButton, Input, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import { BlockPicker } from 'react-color'
+import { defaultColors } from './ChartColors'
 
 export default class ChartSeriesChooser extends React.Component {
   constructor(props) {
@@ -13,12 +14,7 @@ export default class ChartSeriesChooser extends React.Component {
     this.state = {
       dropdownOpen: false,
       displayColorPicker: false,
-      color: {
-        r: '241',
-        g: '112',
-        b: '19',
-        a: '1',
-      },
+      color: this.props.color || null,
       prevColor: null,
     };
   }
@@ -46,12 +42,13 @@ export default class ChartSeriesChooser extends React.Component {
   };
 
   handleChange(color) {
-    this.setState({ color: color.rgb });
+    this.setState({ color: color.hex });
+    this.props.onChange({value:this.props.value, color:color.hex});
   };
 
   render() {
     var backgroundColor =  {
-      background: `rgba(${ this.state.color.r }, ${ this.state.color.g }, ${ this.state.color.b }, ${ this.state.color.a })`
+      background: this.state.color
     }
     return (
       <div>
@@ -61,11 +58,12 @@ export default class ChartSeriesChooser extends React.Component {
               <div className="color-picker color" style={backgroundColor} />
             </Button>
             { this.state.displayColorPicker ? <div className="color-picker pop-over">
-              <div className="color-picker cover" />
-              <SketchPicker color={ this.state.color } onChange={ this.handleChange } />
+              <div className="color-picker cover" onClick={this.handleClose}/>
+              <BlockPicker color={ this.state.color } colors={ this.defaultColors } onChange={ this.handleChange } />
             </div> : null }
           </InputGroupButton>
-          <Input type="text" value={this.props.value} />
+          <Input type="text" value={this.props.value} readOnly />
+          <InputGroupButton onClick={() => this.props.deleteColumn(this.props.value)}>X</InputGroupButton>
         </InputGroup>
       </div>
     );
