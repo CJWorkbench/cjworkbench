@@ -1159,7 +1159,7 @@ img.logo {
 }
 
 .small-sort{
-  font-size: 0.6rem;
+  font-size: 0.7rem;
 }
 
 .card .second-level {
@@ -1421,12 +1421,12 @@ img.logo {
   padding: 2rem;
 }
 .module-card-header:hover {
-  background-color: #fafafa;
+
 }
 
 .module-card-params {
   padding: 2rem;
-  background-color: #fff;
+  background-color: #fafafa;
 }
 
 .module-description {
@@ -1498,12 +1498,25 @@ img.logo {
 }
 
 /* wraps a checkbox selection for display in a list  */
+.checkbox-list{
+  margin:0px;
+  padding:0px;
+  width:48rem;
+}
+
+
 .checkbox-container {
   background-color: #FFFFFF;
   height: 4rem;
   width: 48.74%;
   margin: 1px 3px 1px 3px;
   padding: 1.3rem 2rem 1.3rem 2rem;
+  display: flex;
+  align-items: center;
+
+}
+.checkbox-content{
+  overflow:hidden;
 }
 
 /* ---- Dialog Boxes ---- */
