@@ -101,9 +101,9 @@ export default class ModuleSearch extends React.Component {
 
   renderSuggestion (suggestion) {
     return (
-      <div>
-        <span className={'mr-2 icon-' + suggestion.icon}></span>
-        <span className='content-3'><strong>{suggestion.name}</strong></span>
+      <div className='d-flex align-items-center'>
+        <span className={'ml-icon-search icon-' + suggestion.icon}></span>
+        <span className='mt-1 content-3'><strong>{suggestion.name}</strong></span>
       </div>
     );
   }

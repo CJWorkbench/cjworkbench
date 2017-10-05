@@ -1248,8 +1248,14 @@ img.logo {
   justify-content: center;
 }
 
+.ml-icon-search{
+  font-size: 1.4rem;
+  color: #ffffff;
+  margin-right: 0.9rem;
+}
+
 .ml-module-name{
-  margin-left:0.8rem;
+  margin-left:0.6rem;
   margin-top: 0.2rem;
 }
 
@@ -1342,9 +1348,12 @@ img.logo {
 
 .react-autosuggest__suggestion {
   cursor: pointer;
-  padding: 1rem 0  1rem 4rem;
+  height:4rem;
+  padding: 0.5rem 0  0.5rem 2.8rem;
   color:#fff;
   opacity:0.7;
+  display:flex;
+  align-items: center;
 }
 
 .react-autosuggest__suggestion--highlighted {
@@ -1354,7 +1363,6 @@ img.logo {
 }
 
 .react-autosuggest__section-container {
-
   margin-bottom: 1rem;
   margin-left: 0.5rem;
   margin-right: 0.5rem;
@@ -1365,7 +1373,7 @@ img.logo {
 }
 
 .react-autosuggest__section-title {
-  padding: 1.5rem 0 0.7rem 2.9rem;
+  padding: 1.5rem 0 0.6rem 1.5rem;
   font-size: 1.3rem;
   color: #FFF;
   margin-left: 0.5rem;
