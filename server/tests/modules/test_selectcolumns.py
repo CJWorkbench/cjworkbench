@@ -27,12 +27,12 @@ class SelectColumnsTests(LoggedInTestCase):
         out = execute_wfmodule(self.wf_module)
         self.assertEqual(str(out), str(table))
 
-        # reverse column order
+        # reverse column order, should not reverse
         self.cols_pval.value = 'Amount,Month'
         self.cols_pval.save()
         out = execute_wfmodule(self.wf_module)
-        table = mock_csv_table[['Amount','Month']]
-        self.assertEqual(str(out), str(table))
+        table = mock_csv_table[['Month','Amount']]
+        self.assertEqual(str(out), str(mock_csv_table))
 
         # bad column name should produce error
         self.cols_pval.value = 'Amountxxx,Month'
