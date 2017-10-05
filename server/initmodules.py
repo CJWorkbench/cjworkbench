@@ -10,6 +10,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Top level call, (re)load module definitions from files
+# Returns a string indicating status
 def init_modules():
     module_path = os.path.join(BASE_DIR, 'config/modules')
 
@@ -17,8 +18,19 @@ def init_modules():
     modfiles = [f for f in os.listdir(module_path) if os.path.isfile(os.path.join(module_path, f)) and f.endswith(".json")]
 
     # Load all modules from files
+    cnt = 0
     for f in modfiles:
-        load_module_from_file(os.path.join(module_path, f))
+        try:
+            load_module_from_file(os.path.join(module_path, f))
+        except ValueError as e:
+            msg = "Error loading Module definition file " + f + ": " + str(e)
+            logger.error(msg)
+            return msg
+        cnt += 1
+
+    msg = "Loaded " + str(cnt) + " modules successfully."
+    logger.error(msg)
+    return msg
 
 
 # Create a module object by reading in the json description in a file
@@ -26,11 +38,8 @@ def load_module_from_file(fname):
     logger.info("Loading module " + fname)
 
     with open(fname) as json_data:
-        try:
-            d = json.load(json_data)
-            load_module_from_dict(d)
-        except ValueError as e:
-            logger.error("Error loading Module definition file " + fname + ": " + str(e))
+        d = json.load(json_data)
+        load_module_from_dict(d)
 
 
 # Create a module from dictionary of properties, corresponding to the json in the config file

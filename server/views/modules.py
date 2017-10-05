@@ -12,8 +12,7 @@ from server.initmodules import init_modules
 # Scaffolding: URL endpoint to trigger module reload from config file
 @staff_member_required
 def init_modules2(request):
-    init_modules()
-    return HttpResponse("Loaded module definitions.")
+    return HttpResponse(init_modules())
 
 
 # List of modules. Used to populate module library
