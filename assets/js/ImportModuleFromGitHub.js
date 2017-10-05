@@ -114,7 +114,7 @@ export default class ImportModuleFromGitHub extends React.Component {
                 <div onClick={this.toggleModal} className='button-gray action-button'>
                   Cancel
                 </div>
-                <div onClick={this.toggleModal} className='button-blue action-button ml-3'>
+                <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button ml-3'>
                   Retry
                 </div>
             </div>
