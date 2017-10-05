@@ -8,6 +8,7 @@ class ParameterSpec(models.Model):
         ordering = ['order']
 
     # Type constants
+    STATICTEXT = 'statictext'
     STRING = 'string'
     INTEGER = 'integer'
     FLOAT = 'float'

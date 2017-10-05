@@ -121,7 +121,7 @@ export default class Workflow extends React.Component {
     var moduleStack = <div className='modulestack-empty mx-auto d-flex align-items-center justify-content-center'>
                         <span className='icon-add-orange module-icon'/>
                         <span className='t-orange title-3 ml-4'>
-                          ADD A DATA MODULE
+                          ADD DATA MODULE
                         </span>
                       </div>
 
