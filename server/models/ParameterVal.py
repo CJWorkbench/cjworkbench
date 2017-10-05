@@ -104,7 +104,8 @@ class ParameterVal(models.Model):
         elif ptype == ParameterSpec.COLUMN or \
              ptype == ParameterSpec.MULTICOLUMN or \
              ptype == ParameterSpec.CUSTOM or \
-             ptype == ParameterSpec.BUTTON:
+             ptype == ParameterSpec.BUTTON or \
+             ptype == ParameterSpec.STATICTEXT:
             self.value = new_value
 
         else:
@@ -128,7 +129,8 @@ class ParameterVal(models.Model):
         elif ptype == ParameterSpec.COLUMN or \
              ptype == ParameterSpec.MULTICOLUMN or \
              ptype == ParameterSpec.CUSTOM or \
-             ptype == ParameterSpec.BUTTON:
+             ptype == ParameterSpec.BUTTON or \
+             ptype == ParameterSpec.STATICTEXT:
             return self.value
         else:
             raise ValueError('Unknown parameter ptype ' + ptype + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.get_value')

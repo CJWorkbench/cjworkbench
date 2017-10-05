@@ -144,6 +144,10 @@ export default class WfParameter extends React.Component {
         return (
           <div className='action-button button-blue mb-3' onClick={!this.props.readOnly && this.click}>{this.name}</div>
         );
+      case 'statictext':
+        return (
+          <div className='parameter-margin t-m-gray info-1'>{this.name}</div>
+        );
 
       case 'checkbox':
         return (

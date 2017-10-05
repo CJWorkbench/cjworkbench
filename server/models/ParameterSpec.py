@@ -20,6 +20,7 @@ class ParameterSpec(models.Model):
     CUSTOM = 'custom'           # rendered in front end
 
     TYPE_CHOICES = (
+        (STATICTEXT, 'Statictext'),
         (STRING, 'String'),
         (INTEGER, 'Integer'),
         (FLOAT, 'Float'),

@@ -6,6 +6,11 @@
   "description": "Connect a dataset from Enigma's collection via URL.",
   "parameters": [
     {
+      "name": "Public data collection at www.public.enigma.com",
+      "id_name": "enigma_statictext",
+      "type": "statictext"
+    },
+    {
       "name": "Enigma URL",
       "id_name": "enigma_url",
       "type": "string",
