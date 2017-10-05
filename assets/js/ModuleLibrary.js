@@ -52,7 +52,7 @@ export default class ModuleLibrary extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      libraryOpen: true,
+      libraryOpen: !this.props.isReadOnly,
       items: [],
     };
     this.addModule = this.props.addModule.bind(this);
@@ -110,7 +110,9 @@ export default class ModuleLibrary extends React.Component {
   }
 
   toggleLibrary() {
-    this.setState({ libraryOpen: !this.state.libraryOpen });
+    if (!this.props.isReadOnly) {
+      this.setState({ libraryOpen: !this.state.libraryOpen });
+    }
   }
 
 
@@ -190,7 +192,14 @@ export default class ModuleLibrary extends React.Component {
                       <div className="expand-lib">
                         <div className="expand-lib-button d-flex">
                           <div className="logo" onClick={this.toggleLibrary}><img src="/static/images/logo.png" width="20"/></div>
-                          <div className='icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle' onClick={this.toggleLibrary}></div>
+                          { 
+                            (this.props.isReadOnly)
+                              ? null
+                              : <div 
+                                  className='icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle' 
+                                  onClick={this.toggleLibrary}>
+                                </div>
+                          }
                         </div>
                       </div>
                     </div>
@@ -208,4 +217,5 @@ ModuleLibrary.propTypes = {
   addModule: PropTypes.func.isRequired,
   workflow:  PropTypes.object.isRequired,
   api:       PropTypes.object.isRequired,
+  isReadOnly: PropTypes.bool.isRequired,
 };
