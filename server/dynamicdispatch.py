@@ -16,11 +16,11 @@ class DynamicDispatch:
         self.dynamic_module_dispatches = {} # {module-{version-class}}
 
     def load_module(self, wf_module, table, dispatch):
-        if dispatch in self.dynamic_module_dispatches.keys():
-            return self.dynamic_module_dispatches[dispatch]
+        if wf_module.module_version in self.dynamic_module_dispatches.keys():
+            return self.dynamic_module_dispatches[wf_module.module_version]
         else:
             temp_class = self.dynamically_load_module(wf_module)
-            self.dynamic_module_dispatches[dispatch] = temp_class
+            self.dynamic_module_dispatches[wf_module.module_version] = temp_class
             return temp_class
 
     def dynamically_load_module(self, wf_module):
