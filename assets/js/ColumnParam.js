@@ -15,7 +15,7 @@ export default class ColumnParam extends React.Component {
       .then(cols => {
 
         // Always make it possible to select (or show) "(None)"
-        var colsPlusNone = ['(None)'].concat(cols);
+        var colsPlusNone = ['Select'].concat(cols);
         this.setState({colNames: colsPlusNone});
       });
   }
@@ -36,7 +36,7 @@ export default class ColumnParam extends React.Component {
 
   onChange(evt) {
     var colName = this.state.colNames[evt.target.value];
-    if (colName == "(None)") {
+    if (colName == "Select") {
       colName = ""; // user should see "please select column" not "no column named (None)"
     }
     this.setState({selectedCol: colName});
