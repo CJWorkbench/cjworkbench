@@ -62,21 +62,19 @@ def sanitise_url(url):
         url = url_form_field.clean(url)
         if "github" not in url:
             raise ValidationError('Invalid GitHub URL entered: %s' % (url))
+        # - if entered url has a tailing '/', remove it
+        if url[-1] == '/':
+            url = url[:-1]
+        # - strip out '.git' if it exists in the URL
+        if url.endswith('.git'):
+            url = url[0:-4]
         return url
     except ValidationError:
         raise ValidationError('Invalid GitHub URL entered: %s' % (url))
 
 def retrieve_project_name(url):
-    # extract directory/project name
-    # - if entered url has a tailing '/', remove it
-    if url[-1] == '/':
-        url = url[:-1]
     # - extract the folder name from the url
-    directory = url.rsplit('/', 1)[1]
-    # - strip out '.git' if it exists in the URL
-    if directory.endswith('.git'):
-        directory = directory[0:-4]
-    return directory
+    return url.rsplit('/', 1)[1]
 
 def retrieve_author(url):
     if url[-1] == '/':
