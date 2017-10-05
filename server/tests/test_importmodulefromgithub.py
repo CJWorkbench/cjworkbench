@@ -39,8 +39,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         #test valid url with a git suffix
         input_url_git = "https://github.com/anothercookiecrumbles/prototype-dynamic-loading.git"
         returned_url_git = sanitise_url(input_url_git)
-        self.assertEqual(input_url_git, returned_url_git, "In this case, the input url doesn't need to be cleaned. Therefore " +
-                         " the output {} should be the input {}.".format(returned_url_git, input_url_git))
+        self.assertEqual(input_url, returned_url_git, "In this case, the input url should have .git stripped out.")
 
         #test valid url with padding (i.e. extra spaces)
         input_url_spaces = "     https://github.com/anothercookiecrumbles/prototype-dynamic-loading"
@@ -79,11 +78,6 @@ class ImportFromGitHubTest(LoggedInTestCase):
     def test_retrieve_project_name(self):
         #Here, we assume that we have a _clean_/_sanitised_ URL; if we didn't, the code should've thrown an exception
         #earlier in the stack. Hence, we don't test _bad_ urls.
-
-        #retrieve project name for url with .git suffix
-        suffixed_git_url = "https://github.com/anothercookiecrumbles/prototype-dynamic-loading.git"
-        project_name = retrieve_project_name(suffixed_git_url)
-        self.assertEqual(project_name, "prototype-dynamic-loading")
 
         #retrieve project name for a GitHub url, but one that doesn't end .git.
         git_url = "https://github.com/anothercookiecrumbles/prototype-dynamic-loading"
