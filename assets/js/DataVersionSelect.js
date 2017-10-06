@@ -7,7 +7,6 @@ import dateFormat from 'dateformat'
 import PropTypes from 'prop-types'
 
 
-
 export default class DataVersionSelect extends React.Component {
   constructor(props) {
     super(props);
@@ -17,14 +16,6 @@ export default class DataVersionSelect extends React.Component {
       versions: {versions: [], selected: ''},
       originalSelected: ''
     };
-
-    // Allow props to specify a conversion from browser time to displayed time, so tests can run in UTC (not test machine tz)
-    if (props.timezoneOffset != undefined) {
-      this.state.timezoneOffset = props.timezoneOffset;
-    } else {
-      this.state.timezoneOffset = 0; // display in browser local time
-    }
-
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleDropdown = this.toggleDropdown.bind(this);
     this.setSelected = this.setSelected.bind(this);
@@ -34,17 +25,18 @@ export default class DataVersionSelect extends React.Component {
   // Takes a date string, interpreted as UTC, and produce a string for user display in user tz
   formatDate(datestr) {
 
-    // interpret date string as UTC always (comes from server this way)
-    var d = new Date(datestr + 'UTC');
-
+    // dates already arrive in UTC
+    var d = new Date(datestr);
+    
     // check if we have a valid date
     if (isNaN(d.getTime())) return null;
 
-    // Convert to milliseconds, then add tz offset (which is in minutes)
-    var nd = new Date(d.getTime() + (60000*this.state.timezoneOffset));
-
-    // return time as a user-readable string
-    return dateFormat(nd, "mmmm d yyyy - hh:MM TT")
+    // return time as a user-readable string - "true" to convert to UTC for tests
+    if (this.props.testing) {
+      return dateFormat(d, "mmmm d yyyy - hh:MM TT", true)
+    } else {
+      return dateFormat(d, "mmmm d yyyy - hh:MM TT")
+    }
   }
 
   toggleModal() {
@@ -111,7 +103,7 @@ export default class DataVersionSelect extends React.Component {
         <div className='t-d-gray content-3 mb-4'>Current Version</div>
 
         <div className='open-modal t-f-blue content-3 text-center' onClick={this.toggleModal}>
-            {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : ''}
+            {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : 'No versions loaded'}
         </div>
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window'>
           <ModalHeader toggle={this.toggleModal} >
@@ -150,5 +142,5 @@ DataVersionSelect.propTypes = {
   wfModuleId:       PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,
   api:              PropTypes.object.isRequired,
-  timezoneOffset:   PropTypes.number            // for testing only
+  testing:          PropTypes.bool            // for testing only
 };
