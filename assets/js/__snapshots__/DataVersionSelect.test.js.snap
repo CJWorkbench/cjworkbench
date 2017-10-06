@@ -17,12 +17,12 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
     className="version-item d-flex justify-content-center flex-column align-items-center"
   >
     <div
-      className="t-d-gray content-3 mb-4"
+      className="t-d-gray content-3 mb-3"
     >
       Current Version
     </div>
     <div
-      className="open-modal t-f-blue content-3 text-center"
+      className="open-modal t-f-blue content-4 text-center"
       onClick={[Function]}
     >
       April 10 2017 - 05:57 PM
@@ -60,12 +60,12 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     className="version-item d-flex justify-content-center flex-column align-items-center"
   >
     <div
-      className="t-d-gray content-3 mb-4"
+      className="t-d-gray content-3 mb-3"
     >
       Current Version
     </div>
     <div
-      className="open-modal t-f-blue content-3 text-center"
+      className="open-modal t-f-blue content-4 text-center"
       onClick={[Function]}
     >
       No versions loaded
@@ -196,7 +196,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
         className="dialog-footer modal-footer"
       >
         <div
-          className="button-blue action-button test-cancel-button"
+          className="button-gray mr-3 action-button test-cancel-button"
           onClick={[Function]}
         >
           Cancel
@@ -230,12 +230,12 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     className="version-item d-flex justify-content-center flex-column align-items-center"
   >
     <div
-      className="t-d-gray content-3 mb-4"
+      className="t-d-gray content-3 mb-3"
     >
       Current Version
     </div>
     <div
-      className="open-modal t-f-blue content-3 text-center"
+      className="open-modal t-f-blue content-4 text-center"
       onClick={[Function]}
     >
       July 10 2017 - 05:57 PM

@@ -5,7 +5,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
   className="version-item"
 >
   <div
-    className="mb-4"
+    className="mb-3"
   >
     <span
       className="content-3 t-d-gray"
@@ -13,14 +13,14 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
       Update 
     </span>
     <span
-      className="content-3 t-f-blue test-modal-button"
+      className="content-3 ml-2 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       manual
     </span>
   </div>
   <div
-    className="content-3 t-m-gray"
+    className="content-4 t-m-gray"
   >
     Checked 
     2 days ago
@@ -168,7 +168,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
   className="version-item"
 >
   <div
-    className="mb-4"
+    className="mb-3"
   >
     <span
       className="content-3 t-d-gray"
@@ -176,14 +176,14 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       Update 
     </span>
     <span
-      className="content-3 t-f-blue test-modal-button"
+      className="content-3 ml-2 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       manual
     </span>
   </div>
   <div
-    className="content-3 t-m-gray"
+    className="content-4 t-m-gray"
   >
     Checked 
     2 days ago
@@ -331,7 +331,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
   className="version-item"
 >
   <div
-    className="mb-4"
+    className="mb-3"
   >
     <span
       className="content-3 t-d-gray"
@@ -339,14 +339,14 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       Update 
     </span>
     <span
-      className="content-3 t-f-blue test-modal-button"
+      className="content-3 ml-2 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       manual
     </span>
   </div>
   <div
-    className="content-3 t-m-gray"
+    className="content-4 t-m-gray"
   >
     Checked 
     2 days ago
@@ -494,7 +494,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
   className="version-item"
 >
   <div
-    className="mb-4"
+    className="mb-3"
   >
     <span
       className="content-3 t-d-gray"
@@ -502,14 +502,14 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       Update 
     </span>
     <span
-      className="content-3 t-f-blue test-modal-button"
+      className="content-3 ml-2 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       auto
     </span>
   </div>
   <div
-    className="content-3 t-m-gray"
+    className="content-4 t-m-gray"
   >
     Checked 
     2 days ago
