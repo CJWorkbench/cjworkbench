@@ -91,7 +91,7 @@ export default class UpdateFrequencySelect extends React.Component {
     var lastChecked = null;
     var now = new Date();
     if (this.props.updateSettings.lastUpdateCheck)
-      lastChecked = <div className='content-3 t-m-gray'>
+      lastChecked = <div className='content-4 t-m-gray'>
                       Checked {timeDifference(this.props.updateSettings.lastUpdateCheck, now)}
                     </div>
 

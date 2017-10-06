@@ -27,7 +27,7 @@ export default class DataVersionSelect extends React.Component {
 
     // dates already arrive in UTC
     var d = new Date(datestr);
-    
+
     // check if we have a valid date
     if (isNaN(d.getTime())) return null;
 
@@ -102,7 +102,7 @@ export default class DataVersionSelect extends React.Component {
       <div className='version-item d-flex justify-content-center flex-column align-items-center'>
         <div className='t-d-gray content-3 mb-4'>Current Version</div>
 
-        <div className='open-modal t-f-blue content-3 text-center' onClick={this.toggleModal}>
+        <div className='open-modal t-f-blue content-4 text-center' onClick={this.toggleModal}>
             {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : 'No versions loaded'}
         </div>
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window'>
