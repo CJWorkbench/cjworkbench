@@ -598,7 +598,7 @@ body {
   color: #48C8D7;
   border: 1px solid #48C8D7 ;
   text-align: center;
-  background-color: none;
+  background-color: transparent;
 }
 .button-blue:active {
   background-color: #48C8D7 !important;

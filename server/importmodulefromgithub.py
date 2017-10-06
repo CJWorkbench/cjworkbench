@@ -130,7 +130,7 @@ def validate_json(url, extension_file_mapping, current_path, directory):
 
     with open(os.path.join(current_path, directory, json_file)) as readable:
         module_config = json.load(readable)
-    #note: parameters isn't a mandatory key. 
+    #note: parameters isn't a mandatory key.
     if "name" not in module_config or "id_name" not in module_config or "category" not in module_config:
         shutil.rmtree(os.path.join(current_path, directory))
         raise ValidationError("The module configuration isn't in the correct format. It should contain name, id_name, "
@@ -314,4 +314,3 @@ def import_module_from_github(url):
     message["name"] = module_config["name"]
 
     return message
-

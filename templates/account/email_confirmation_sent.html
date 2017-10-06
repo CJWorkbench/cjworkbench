@@ -8,5 +8,5 @@
     <h2 class='t-d-gray title-2 text-center mb-3'>{% trans "Confirm your email address" %}</h2>
 
     <p class='t-d-gray content-3 text-center mb-3'>{% blocktrans %}We have sent you an email to <b>{{ email }}</b> for verification. Follow the link provided to finalize the signup process. If you do not receive it within a few minutes, contact us at <a href="mailto:{{ THEME_CONTACT_EMAIL }}">{{ THEME_CONTACT_EMAIL }}</a>.{% endblocktrans %}</p>
-    <p><a href="{{ success_url }}" class='action-button button-blue mx-auto mt-3'>{% trans "Go back" %}</a></p>
+    <p><a href="{{ success_url }}" class='button-blue action-button mx-auto mt-3'>{% trans "Go back" %}</a></p>
 {% endblock %}
