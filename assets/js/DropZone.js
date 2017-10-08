@@ -21,8 +21,9 @@ export default class DropZone extends Component{
       <div>
         <Dropzone
             onDrop={this.onDrop}
-            wfModuleId={this.props.wfModuleId}>
-          <div>Try dropping some files here, or click to select files to upload.</div>
+            wfModuleId={this.props.wfModuleId} className="dropzone d-flex justify-content-center align-items-center">
+          <div className='icon-add-blue'></div>
+          <div className="title-3 ml-4">Drop file here, or click to select</div>
         </Dropzone>
       </div>
           );

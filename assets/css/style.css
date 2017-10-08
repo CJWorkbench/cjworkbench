@@ -395,6 +395,12 @@ body {
   font-size: 3rem;
 }
 
+.icon-add-blue:before {
+  content: "\e900";
+  color:#48C8D7;
+  font-size: 3rem;
+}
+
 .icon-sort-down-vl-gray:before {
   content: "\e91e";
   color: #FAFAFA;
@@ -1697,6 +1703,20 @@ img.logo {
   width: 30%;
 }
 
+/*Upload module*/
+.dropzone{
+  height:12rem;
+  border: 3px dashed #48C8D7;
+  cursor:pointer;
+  opacity: 0.5;
+  color:#48C8D7;
+}
+
+.dropzone:hover{
+  opacity: 1;
+}
+
+
 /* --- Editable text fields --- */
 
 .module-title {
@@ -1741,7 +1761,7 @@ img.logo {
 }
 /*Bottom margin for label above paramter*/
 .label-margin {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.3rem;
 }
 
 
