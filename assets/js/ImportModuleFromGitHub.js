@@ -108,7 +108,7 @@ export default class ImportModuleFromGitHub extends React.Component {
         visible =
           <div>
             <div className="import-github-error">
-                <div>Something is wrong</div>
+                <div>Something is wrong:</div>
                 <div>{this.state.message}</div>
             </div>
             <div className="d-flex flex-row modal-dual-button">

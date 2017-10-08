@@ -481,6 +481,8 @@ body {
   background-color: #FFFFFF !important;
   border: 1px solid #E7E7E7;
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  white-space: nowrap;
+  overflow: hidden;
 }
 .text-field:active {
   box-shadow: 0 0 1px 1px #48C8D7;
@@ -494,6 +496,10 @@ body {
   border: 1px solid #E7E7E7;
   border-radius: 0px;
   padding: 1rem 1.5rem 1rem 1.5rem;
+}
+
+.text-field input::placeholder {
+  color: #B4B4B4;
 }
 
 .import-url-field input::placeholder {
@@ -511,11 +517,13 @@ body {
 .wfmoduleStringInput{
   width: 100%;
   resize: none;
+  overflow:hidden;
 }
 
 .wfmoduleTextInput{
   width: 100%;
   resize: vertical;
+  overflow:hidden;
 }
 
 .url-link{
