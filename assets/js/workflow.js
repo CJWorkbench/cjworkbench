@@ -162,11 +162,11 @@ export default class Workflow extends React.Component {
           {navBar}
 
           <div className="workflow-columns">
-
-            <div className="modulestack">
-              {moduleStack}
-            </div>
-
+              <div className="modulestack">
+                <div className="modulestack-scroll">
+                  {moduleStack}
+                </div>
+              </div>
             <div className="outputpane">
               {outputPane}
             </div>

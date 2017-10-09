@@ -23,7 +23,7 @@ class ModulesList extends React.Component {
     if (!this.props || !this.props.data) {
       console.log("Something's gone terribly wrong, and we don't have any modules to render.")
       return (
-        <div className="list"></div>
+        <div className="ml-list"></div>
       )
     }
     var listItems = this.props.data.map(function (item, i) {
@@ -50,7 +50,7 @@ class ModulesList extends React.Component {
       );
     }, this);
     return (
-      <div className="list">{listItems}</div>
+        <div className="ml-list">{listItems}</div>
     )
   }
 }
@@ -109,17 +109,19 @@ export default class ModuleCategory extends React.Component {
 
     return (
       <div className={cardClass}>
-        <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
-          <div className='cat-container'>
-            <div className={symbol}></div>
-            {/* <span className={icon}></span> */}
-            <span className='content-3 t-vl-gray ml-3 ml-cat'>{categoryName}</span>
+        <div className="cat-open">
+          <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
+            <div className='cat-container'>
+              <div className={symbol}></div>
+              {/* <span className={icon}></span> */}
+              <span className='content-3 t-vl-gray ml-3 ml-cat'>{categoryName}</span>
+            </div>
           </div>
-        </div>
-        <div>
-          <Collapse className='' isOpen={isOpen}>
-            {contents}
-          </Collapse>
+          <div>
+            <Collapse className='' isOpen={isOpen}>
+              {contents}
+            </Collapse>
+          </div>
         </div>
       </div>
     );

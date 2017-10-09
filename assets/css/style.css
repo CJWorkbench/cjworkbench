@@ -995,6 +995,8 @@ body {
   display: flex;
   flex-direction: row;
   min-height: 100vh;
+  position: fixed;
+  width: 100%;
 }
 
 /* Contains Navbar, Modulestack, and Outputpane */
@@ -1116,15 +1118,20 @@ img.logo {
   border-left: 1px solid #DDDDDD;
   border-right: 1px solid #DDDDDD;
   width: 600px;
+  overflow: scroll;
+  height:100vh;
 }
-.modulestack-header {
-  color: #686768;
-  padding: 0.625rem;
+
+.modulestack-scroll {
+  overflow: scroll;
+  height:100vh;
 }
+
 .modulestack-list {
   width: 530px;
-  margin-bottom: 10rem;
+  padding-bottom: 30rem;
   padding-top: 2rem;
+  overflow-y: auto;
 }
 .modulestack-empty {
   width: 530px;
@@ -1133,7 +1140,6 @@ img.logo {
   padding: 5rem;
   border: 3px dashed #FBAA6D;
   opacity: 0.5;
-
 }
 
 /* Output Pane */
@@ -1154,9 +1160,8 @@ img.logo {
 }
 
 .outputpane-data {
-  height: 100%;
-  /*not sure why this was (100% - 3rem);*/
-  overflow: hidden; /* important as it prevents grid contents from interfering with window resizing */
+  height: calc(100% - 7rem);
+  overflow: hidden;
 }
 
 /* --- Module Library --- */
@@ -1197,6 +1202,39 @@ img.logo {
 }
 
 /*Categories and module list*/
+
+.library-card-category-open {
+  max-height: calc(100vh - 40rem);
+}
+
+.library-card-category-open  .cat-open{
+  border-top: 1px solid rgba(0,0,0,0.05);
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  overflow-y:auto;
+}
+
+.library-card-category-open .first-level{
+  background-color:#547081;
+  opacity: 1;
+}
+
+.library-card-category-open .ml-list{
+  background-color:#547081;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  opacity: 1;
+  cursor:pointer;
+}
+
+.library-card-category-closed {
+  margin-left: 0rem;
+  margin-right:0rem;
+}
+
+.library-card-category-closed:hover {
+  margin-left: 0rem;
+  margin-right:0rem;
+  background-color: #4E6878;
+}
 
 .module-library-open .card {
   border: 0;
@@ -1273,28 +1311,7 @@ img.logo {
   margin-top: 0.2rem;
 }
 
-.library-card-category-open .first-level{
-  background-color:#547081;
-  opacity: 1;
-}
 
-.library-card-category-open .list{
-  background-color:#547081;
-  opacity: 1;
-  cursor:pointer;
-}
-
-
-.library-card-category-closed {
-  margin-left: 0rem;
-  margin-right:0rem;
-}
-
-.library-card-category-closed:hover {
-  margin-left: 0rem;
-  margin-right:0rem;
-  background-color: #4E6878;
-}
 
 
 /* --- the Search Modules within the Module Library header - ModuleSearch.js --- */
