@@ -1208,7 +1208,6 @@ img.logo {
 }
 
 .library-card-category-open  .cat-open{
-  border-top: 1px solid rgba(0,0,0,0.05);
   border-bottom: 1px solid rgba(0,0,0,0.05);
   overflow-y:auto;
 }
