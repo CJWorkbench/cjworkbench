@@ -36,7 +36,7 @@ export default class ColumnColorPicker extends ColumnSelector {
     if (this.state.selected.map(v => v.value).includes(val)) {
       newSelected = this.state.selected.filter( n => n.value !== val );
       this.setState({ selected: newSelected });
-      this.props.saveState(JSON.stringify(selected));
+      this.props.saveState(JSON.stringify(newSelected));
     }
   }
 

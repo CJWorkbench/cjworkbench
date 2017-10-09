@@ -6,38 +6,68 @@ import ChartSeriesChooser from './ChartSeriesChooser';
 export default class BarChart extends React.Component {
   constructor(props) {
     super(props);
-    this.colorKeys = {};
-    JSON.parse(this.props.dataKeys).forEach(
-      (val) => {
-        this.colorKeys[val.value] = val.color;
-      }
-    );
     this.state = {
       data: null,
       height: 500,
       width: 500,
       index: null,
-      dataKeys: Object.keys(this.colorKeys)
+      dataKeys: null,
+      colorKeys: null,
     }
     this.getColorFromKeys = this.getColorFromKeys.bind(this);
-  }
-
-  loadChart() {
-    var self = this;
-    var url = '/api/wfmodules/' + this.props.wf_module_id + '/input';
-    fetch(url, { credentials: 'include'})
-      .then(response => response.json())
-      .then(json => {
-        self.setState({data:json.rows});
-      });
   }
 
   componentDidMount() {
     this.loadChart();
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.dataKeys === this.props.dataKeys) {
+      return false;
+    }
+
+    this.parseColors(nextProps);
+  }
+
+  loadChart() {
+    var self = this;
+    var url = '/api/wfmodules/' + this.props.wf_module_id + '/input';
+    var colorKeys = {};
+
+    JSON.parse(this.props.dataKeys).forEach(
+      (val) => {
+        colorKeys[val.value] = val.color;
+      }
+    );
+
+    fetch(url, { credentials: 'include'})
+      .then(response => response.json())
+      .then(json => {
+        self.setState({
+          data: json.rows,
+          dataKeys: Object.keys(colorKeys),
+          colorKeys: colorKeys,
+        });
+      });
+  }
+
+  parseColors(props) {
+    var colorKeys = {};
+
+    JSON.parse(props.dataKeys).forEach(
+      (val) => {
+        colorKeys[val.value] = val.color;
+      }
+    );
+
+    this.setState({
+      dataKeys: Object.keys(colorKeys),
+      colorKeys: colorKeys,
+    });
+  }
+
   getColorFromKeys(data) {
-    return this.colorKeys[data.id];
+    return this.state.colorKeys[data.id];
   }
 
   render() {
