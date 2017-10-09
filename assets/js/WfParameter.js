@@ -155,7 +155,7 @@ export default class WfParameter extends React.Component {
                 <label className='parameter-margin t-d-gray content-3 mr-2'>{this.name}:</label>
                 <input
                   disabled={this.props.isReadOnly}
-                  type="checkbox"
+                  type="checkbox" className="checkbox"
                   checked={this.props.p.value}
                   onChange={this.click}
                   ref={ el => this.checkboxRef = el}/>

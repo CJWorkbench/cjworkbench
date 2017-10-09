@@ -584,6 +584,12 @@ body {
   justify-content: flex-end;
 }
 
+
+
+
+
+
+
 /* - Button Colors - */
 .button-white {
   color: #FFFFFF;
@@ -1608,6 +1614,15 @@ img.logo {
   display:inline-block;
   overflow:hidden;
 }
+
+input[type=checkbox]
+{
+  -ms-transform: scale(1.4); /* IE */
+  -moz-transform: scale(1.4); /* FF */
+  -webkit-transform: scale(1.4); /* Safari and Chrome */
+  -o-transform: scale(1.4); /* Opera */
+}
+
 
 /* ---- Dialog Boxes ---- */
 
