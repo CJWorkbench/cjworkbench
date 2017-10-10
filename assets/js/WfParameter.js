@@ -149,17 +149,17 @@ export default class WfParameter extends React.Component {
           <div className='parameter-margin t-m-gray info-1'>{this.name}</div>
         );
 
-      case 'checkbox':
-        return (
-            <div className='checkbox-wrapper'>
-                <label className='parameter-margin t-d-gray content-3 mr-2'>{this.name}:</label>
-                <input
-                  disabled={this.props.isReadOnly}
-                  type="checkbox" className="checkbox"
-                  checked={this.props.p.value}
-                  onChange={this.click}
-                  ref={ el => this.checkboxRef = el}/>
-            </div>
+        case 'checkbox':
+          return (
+              <div className='checkbox-wrapper'>
+                  <input
+                    disabled={this.props.isReadOnly}
+                    type="checkbox" className="checkbox"
+                    checked={this.props.p.value}
+                    onChange={this.click}
+                    ref={ el => this.checkboxRef = el}/>
+                  <label className='parameter-margin t-d-gray content-3 mr-2'>{this.name}:</label>
+              </div>
         );
 
       case 'menu':
