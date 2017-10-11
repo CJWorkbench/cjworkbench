@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "Computational Journalism Workbench",
   "main": "index.js",
+  "comment" : [
+    "moment version is fixed at 2.18 as 2.19.0 and above gives",
+    "   Module not found: Error: Can't resolve './locale'",
+    "see https://github.com/moment/moment/issues/2979 "
+  ],
   "dependencies": {
     "babelify": "^7.3.0",
     "bootstrap": "4.0.0-alpha.6",
@@ -45,6 +50,7 @@
     "superagent": "^3.5.2",
     "svg-react": "^1.0.9",
     "timediff": "^1.1.1",
+    "moment": "2.18.0",
     "url-loader": "^0.5.9"
   },
   "devDependencies": {
@@ -55,6 +61,7 @@
     "babel-preset-react": "^6.23.0",
     "babel-preset-stage-0": "^6.22.0",
     "css-loader": "^0.26.1",
+    "empty-module": "0.0.2",
     "enzyme": "^2.8.2",
     "enzyme-to-json": "^1.5.1",
     "jest": "^19.0.2",
