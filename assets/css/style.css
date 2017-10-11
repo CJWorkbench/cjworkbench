@@ -840,7 +840,7 @@ body {
 .login-card {
   height: auto;
   width: 44rem;
-  padding: 3rem 3rem 3rem 3rem;
+  padding: 3rem 3rem 5rem 3rem;
   border: none;
   border-radius: 0px;
   box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
@@ -1624,18 +1624,24 @@ input[type=checkbox]
   -o-transform: scale(1.3); /* Opera */
 }
 
-/*Check box for Webkit supported browser: Chrome and Safari*/
+/*Check box hack for Webkit supported browser: Chrome and Safari*/
 input[type=checkbox]
 {
   -webkit-appearance: none;
 	background-color: #fff;
 	border: 1px solid #e1e1e1;
-	/*box-shadow: 0 1px 2px rgba(0,0,0,0.05), inset 0px -15px 10px -12px rgba(0,0,0,0.05);*/
 	padding: 0.8rem;
 	border-radius: 3px;
 	display: inline-block;
 	position: relative;
+}
 
+/*checkbox at login*/
+label[for=id_remember]{
+  margin-bottom: 1rem;
+  position: absolute;
+  margin-left: 0.5rem;
+  opacity: 0.6;
 }
 
 input[type=checkbox]:active, input[type=checkbox]:checked:active {
