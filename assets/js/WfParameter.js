@@ -151,14 +151,16 @@ export default class WfParameter extends React.Component {
 
         case 'checkbox':
           return (
-              <div className='checkbox-wrapper'>
-                  <input
-                    disabled={this.props.isReadOnly}
-                    type="checkbox" className="checkbox"
-                    checked={this.props.p.value}
-                    onChange={this.click}
-                    ref={ el => this.checkboxRef = el}/>
-                  <label className='parameter-margin t-d-gray content-3 mr-2'>{this.name}:</label>
+              <div className='checkbox-wrapper parameter-margin'>
+                  <div className='d-flex align-items-center'>
+                    <input
+                      disabled={this.props.isReadOnly}
+                      type="checkbox" className="checkbox"
+                      checked={this.props.p.value}
+                      onChange={this.click}
+                      ref={ el => this.checkboxRef = el}/>
+                    <label className='t-d-gray content-5 mt-1 ml-3'>{this.name}</label>
+                  </div>
               </div>
         );
 
@@ -228,7 +230,7 @@ export default class WfParameter extends React.Component {
             : null
 
           return (
-            <div className='version-box'>
+            <div className='version-box parameter-margin'>
                 <DataVersionSelect
                   isReadOnly={this.props.isReadOnly}
                   wfModuleId={this.props.wf_module_id}

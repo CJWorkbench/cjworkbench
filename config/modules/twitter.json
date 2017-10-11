@@ -17,17 +17,17 @@
       "id_name" : "query",
       "type": "string",
       "default": ""
-    },   
-    {
-      "name": "Add to previously loaded tweets",
-      "id_name": "accumulate",
-      "type": "checkbox",
-      "default": "True"
     },
     {
       "name": "Check Now",
       "id_name" : "version_select",
       "type": "custom"
+    },
+    {
+      "name": "Add new data to current version",
+      "id_name": "accumulate",
+      "type": "checkbox",
+      "default": "True"
     }
   ]
 }

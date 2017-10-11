@@ -483,6 +483,7 @@ body {
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
   white-space: nowrap;
   overflow: hidden;
+  margin-bottom: -0.5rem;
 }
 .text-field:active {
   box-shadow: 0 0 1px 1px #48C8D7;
@@ -1513,8 +1514,9 @@ img.logo {
 }
 
 .module-card-params {
-  padding: 2.5rem 2rem 2rem 2rem;
+  padding: 2rem 2rem 0 2rem;
   background-color: #fafafa;
+  overflow-y: hidden;
 }
 
 .module-description {
@@ -1609,11 +1611,10 @@ img.logo {
 
 .checkbox-wrapper{
   margin-right: 3rem;
-  margin-top:-1.5rem;
+  margin-top:-1.3rem;
   display:inline-block;
   overflow:hidden;
 }
-
 
 /*Bigger size for non webkit browsers*/
 
@@ -1757,7 +1758,7 @@ input[type=checkbox]:checked:after {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  padding: 1rem;
+  padding: 0.5rem;
   align-items:center;
 }
 
@@ -1841,6 +1842,10 @@ input[type=checkbox]:checked:after {
   margin-bottom: 2rem;
 }
 /*Bottom margin for label above paramter*/
+label {
+  margin:0;
+}
+
 .label-margin {
   margin-bottom: 0.3rem;
 }
