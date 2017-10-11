@@ -5,7 +5,7 @@ exports[`renders correctly 1`] = `
   className="parameter-margin d-flex flex-column"
 >
   <label
-    className="mr-1 t-d-gray content-3"
+    className="label-margin t-d-gray content-3"
   >
     SuperMenu
     :
