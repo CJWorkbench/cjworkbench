@@ -24,6 +24,11 @@ body {
 	width: 100%;
 }
 
+::-webkit-scrollbar-thumb{
+  width:0.2rem;
+  opacity: 0.2;
+}
+
 /* ---- NEW Type styles: use on all newly styled elements: phase out olds on edit ----- */
 
 /* --- Text Sizing ---  */
@@ -662,11 +667,11 @@ body {
 .context-button:hover {
   border: none;
   border-radius: 0.3rem;
-  background: #f9f9f9;
+  background: #f1f1f1;
 }
 
 .context-button.btn-secondary.active{
-  background: #f4f4f4;
+  background: #edecec;
 }
 
 .navbar-context-button {
@@ -1125,16 +1130,10 @@ img.logo {
   border-left: 1px solid #DDDDDD;
   border-right: 1px solid #DDDDDD;
   width: 47rem;
-  overflow: scroll;
-  height:100vh;
   background-color: #e9ebee;
-}
-
-.modulestack-scroll {
   overflow: scroll;
   height:100vh;
 }
-
 .modulestack-list {
   width: 47rem;
   padding-bottom: 30rem;
@@ -1497,7 +1496,6 @@ img.logo {
 
 .wf-card{
   margin-bottom: 0.5rem;
-  /*border-bottom: 1px solid #e7e7e7;*/
   background-color: rgba(250,250,250,0.8);
 }
 
@@ -1506,6 +1504,7 @@ img.logo {
 }
 .module-card-header {
   cursor: pointer;
+  clear:left;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -1815,8 +1814,9 @@ input[type=checkbox]:checked:after {
 
 
 .module-notes {
-  margin: 2rem 2rem 0rem 2rem;
+  padding: 1rem;
 }
+
 .editable-notes-field {
   border: none;
   outline: none;
@@ -1825,13 +1825,15 @@ input[type=checkbox]:checked:after {
   font-family: 'Nunito Sans', sans-serif;
   font-size: 1.3rem;
   font-weight: 100;
-	line-height: 2rem;
-  color: #686768;
+	line-height: 2.6rem;
+  color: #fff;
+  padding: 0 1.5rem;
+  background-color:rgba(251,170,109,0.7);
   display: table;
 }
 
 .editable-notes-field:hover {
-  background-color: #f9f9f9;
+  background-color:rgba(251,170,109,0.8);
 }
 
 .editable-text {

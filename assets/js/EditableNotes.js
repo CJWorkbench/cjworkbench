@@ -17,7 +17,7 @@ export default class EditableNotes extends React.Component {
   // Enter editing state upon mount
   //    Have to target child through parent b/c TextArea cannot be directly referenced
   componentDidMount() {
-    if (this.props.startFocused) 
+    if (this.props.startFocused)
       this.textInput.childNodes[0].select();
   }
 
@@ -55,14 +55,14 @@ export default class EditableNotes extends React.Component {
   render() {
 
     // Saves a ref to parent to allow targeting of imported component
-    return <div 
+    return <span className='note-wrapper'
               // Saves a reference to parent to allow targeting of imported component
               ref={(input) => {this.textInput = input;}}
               onClick={this.handleClick}
             >
-              {this.props.isReadOnly 
+              {this.props.isReadOnly
                 ? ( <span className='content-3 t-d-gray'>{this.props.value}</span> )
-                : ( 
+                : (
                     <Textarea
                       value={this.state.value}
                       onChange={this.handleChange}
@@ -73,7 +73,7 @@ export default class EditableNotes extends React.Component {
                     </Textarea>
                   )
               }
-          </div>
+          </span>
   }
 }
 
@@ -85,4 +85,3 @@ EditableNotes.propTypes = {
   isReadOnly:     PropTypes.bool.isRequired,
   startFocused:   PropTypes.bool.isRequired,
 };
-
