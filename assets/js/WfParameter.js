@@ -111,7 +111,7 @@ export default class WfParameter extends React.Component {
 
         return (
           <div className='parameter-margin'>
-            <div className='label-margin t-d-gray content-3'>{this.name}:</div>
+            <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <textarea
               readOnly={this.props.isReadOnly}
               className={sclass}
@@ -128,7 +128,7 @@ export default class WfParameter extends React.Component {
       case 'float':
         return (
           <div className='parameter-margin'>
-            <div className='label-margin t-d-gray content-3'>{this.name}:</div>
+            <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <textarea
               readOnly={this.props.isReadOnly}
               className='number-field t-d-gray content-3'
@@ -176,7 +176,7 @@ export default class WfParameter extends React.Component {
       case 'column':
         return (
           <div className='parameter-margin'>
-            <div className='t-d-gray content-3 label-margin'>{this.name}:</div>
+            <div className='t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
               getColNames={this.getInputColNames}
@@ -189,7 +189,7 @@ export default class WfParameter extends React.Component {
       case 'multicolumn':
         return (
           <div className='parameter-margin checkbox-list'>
-            <div className='ml-1 t-d-gray content-3 label-margin'>{this.name}:</div>
+            <div className='ml-1 t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}
               saveState={state => this.props.setParamText('colnames', state) }

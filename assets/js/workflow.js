@@ -127,7 +127,7 @@ export default class Workflow extends React.Component {
                       </div>
 
     if (!!this.props.workflow.wf_modules && !!this.props.workflow.wf_modules.length) {
-      moduleStack = <div className="modulestack-list mx-auto mt-3">
+      moduleStack = <div className="modulestack-list mx-auto">
                       <SortableList
                         data={this.props.workflow}
                         selected_wf_module={this.props.selected_wf_module}

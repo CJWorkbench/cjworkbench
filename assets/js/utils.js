@@ -16,13 +16,13 @@ export function getPageID () {
 };
 
 export function goToUrl(url) {
-  window.location.href = url;      
+  window.location.href = url;
 }
 
 // Current CSRF token
 export const csrfToken = Cookies.get('csrftoken');
 
-// Mocked server API object that does nothing, for tests where API never actually called 
+// Mocked server API object that does nothing, for tests where API never actually called
 export class EmptyAPI {};
 export var emptyAPI = new EmptyAPI();
 
@@ -55,34 +55,33 @@ export function timeDifference (start, end) {
 
   if (diff.years > 0) {
     if (diff.years == 1) {
-      return "1 year ago";
+      return "1y ago";
     } else {
-      return "" + diff.years + " years ago";
+      return "" + diff.years + "y ago";
     }
   }
   else if (diff.days > 0) {
     if (diff.days == 1) {
-      return "1 day ago";
+      return "1y ago";
     } else {
-      return "" + diff.days + " days ago";
+      return "" + diff.days + "d ago";
     }
   }
   else if (diff.hours > 0) {
     if (diff.hours == 1) {
-      return "1 hour ago";
+      return "1h ago";
     } else {
-      return "" + diff.hours + " hours ago";
+      return "" + diff.hours + "h ago";
     }
   }
   else if (diff.minutes > 0) {
     if (diff.minutes == 1) {
-      return "1 minute ago";
+      return "1m ago";
     } else {
-      return "" + diff.minutes + " minutes ago";
+      return "" + diff.minutes + "m ago";
     }
   }
   else {
-    return "just now";
+    return "now";
   }
 }
-

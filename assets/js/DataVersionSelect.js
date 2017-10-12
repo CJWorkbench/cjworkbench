@@ -33,9 +33,9 @@ export default class DataVersionSelect extends React.Component {
 
     // return time as a user-readable string - "true" to convert to UTC for tests
     if (this.props.testing) {
-      return dateFormat(d, "mmmm d yyyy - hh:MM TT", true)
+      return dateFormat(d, "mmm d, yyyy - hh:MM TT", true)
     } else {
-      return dateFormat(d, "mmmm d yyyy - hh:MM TT")
+      return dateFormat(d, "mmm d, yyyy - hh:MM TT")
     }
   }
 
@@ -99,7 +99,7 @@ export default class DataVersionSelect extends React.Component {
 
   render() {
     return (
-      <div className='version-item d-flex justify-content-center flex-column align-items-center'>
+      <div className='version-item'>
         <div className='t-d-gray content-3 mb-3'>Current Version</div>
 
         <div className='open-modal t-f-blue content-4 text-center' onClick={this.toggleModal}>

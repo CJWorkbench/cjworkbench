@@ -47,8 +47,8 @@ class StatusLine extends React.Component {
   render() {
     if (this.props.status == 'error') {
       return <div className='wf-module-error-msg mb-3'>{this.props.error_msg}</div>
-    } else if (this.props.status == 'busy') {
-      return <div className='wf-module-error-msg mb-3'>Working...</div>
+    // } else if (this.props.status == 'busy') {
+    //   return <div className='wf-module-error-msg mb-3'>Working...</div>
     } else {
       return false
     }
@@ -232,49 +232,34 @@ export default class WfModule extends React.Component {
     // Putting it all together: name, status, parameters, output
     return (
       <div className='container' {...this.props} onClick={this.click}>
-        {/* --- The whole card --- */}
-        <div
-          className='card mb-2'
-          style={{'borderRadius': 0, 'border': 0}}
-        >
-          <div className='card-block p-0 d-flex justify-content-between'>
-            {/* --- Everything but the status bar, on the left of card --- */}
+        <div className='wf-card'>
+          <div className='card-block p-0'>
             <div className='module-card-info'>
               {notes}
-              <div
-                className='module-card-header'
-                onClick={this.toggleCollapsed}
-                onMouseEnter={this.showArrow}
-                onMouseLeave={this.hideArrow}
-              >
-                <div className='d-flex justify-content-start align-items-center'>
-                  <div className={moduleIcon}></div>
-                  <div className='t-d-gray title-4 WFmodule-name'>
-                    {this.module.name}
+              <div className='module-card-header' onClick={this.toggleCollapsed} onMouseEnter={this.showArrow} onMouseLeave={this.hideArrow}>
+                <div className='module-header-content'>
+                  <div className='d-flex justify-content-start align-items-center'>
+                    <div className={moduleIcon}></div>
+                    <div className='t-d-gray title-4 WFmodule-name'>{this.module.name}</div>
+                    <div className=''>{arrow}</div>
                   </div>
-                  <div className=''>
-                    {arrow}
+                  {/* TODO: not necessary to pass in stopProp*/}
+                  <div className='d-flex justify-content-end'>
+                    {notesIcon}
+                    {contextMenu}
                   </div>
                 </div>
-                {/* TODO: not necessary to pass in stopProp*/}
-                <div className='d-flex justify-content-end'>
-                  {notesIcon}
-                  {contextMenu}
+                {/* --- Output bar --- */}
+                <div className='output-bar-container'>
+                  <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
                 </div>
               </div>
-              {/* --- Error messages appear here --- */}
-              <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
-              {/* --- Module details, will expand / collapse --- */}
+              {/* --- Module content when expanded --- */}
               <Collapse className='' isOpen={!this.state.isCollapsed} >
+                {/* --- Error message --- */}
+                <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
                 {inside}
               </Collapse>
-            </div>
-            {/* --- Color indicator of module status, on the right of card --- */}
-            <div className='output-bar-container'>
-              <StatusBar
-                status={this.wf_module.status}
-                isSelected={this.props['data-selected']}
-              />
             </div>
           </div>
         </div>
