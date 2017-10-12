@@ -12,7 +12,7 @@ class StoredObject(models.Model):
     # delete stored data if WfModule deleted
     wf_module = models.ForeignKey('WfModule', related_name='stored_objects', on_delete=models.CASCADE)
     file = models.FileField()
-    stored_at = models.DateTimeField('stored_at', auto_now=False)
+    stored_at = models.DateTimeField('stored_at', default=timezone.now())
 
     @staticmethod
     def __filename_for_id(id):
@@ -32,7 +32,10 @@ class StoredObject(models.Model):
 
     # make a deep copy for another WfModule
     def duplicate(self, to_wf_module):
-        new_file = default_storage.save(StoredObject.__filename_for_id(to_wf_module.id), self.file)
+        if self.file.url.endswith('.dat'):
+            new_file = default_storage.save(StoredObject.__filename_for_id(to_wf_module.id), self.file)
+        else:
+            new_file = default_storage.save(self.file.url, self.file)
         new_so = StoredObject.objects.create(wf_module=to_wf_module,
                                              stored_at=self.stored_at,
                                              file = new_file)
