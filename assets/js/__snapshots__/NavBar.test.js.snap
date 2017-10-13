@@ -135,7 +135,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
                   className="list-inline-item content-3 "
                 >
                   Updated 
-                  just now
+                  now
                 </li>
                 <li
                   className="list-inline-item test-button content-3 "
@@ -275,7 +275,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
                   className="list-inline-item content-3 "
                 >
                   Updated 
-                  just now
+                  now
                 </li>
                 <li
                   className="list-inline-item test-button content-3 "

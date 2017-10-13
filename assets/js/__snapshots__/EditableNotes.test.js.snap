@@ -13,7 +13,8 @@ exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state 
   value="This is the best module"
   wfModuleId={808}
 >
-  <div
+  <span
+    className="note-wrapper"
     onClick={[Function]}
   >
     <TextareaAutosize
@@ -38,7 +39,7 @@ exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state 
         value="This is the best module"
       />
     </TextareaAutosize>
-  </div>
+  </span>
 </EditableNotes>
 `;
 
@@ -51,7 +52,8 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
   value="This is the best module"
   wfModuleId={808}
 >
-  <div
+  <span
+    className="note-wrapper"
     onClick={[Function]}
   >
     <TextareaAutosize
@@ -76,12 +78,13 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
         value="This is the best module"
       />
     </TextareaAutosize>
-  </div>
+  </span>
 </EditableNotes>
 `;
 
 exports[`EditableNotes Read-only, starts NOT focused Renders plain note 1`] = `
-<div
+<span
+  className="note-wrapper"
   onClick={[Function]}
 >
   <span
@@ -89,5 +92,5 @@ exports[`EditableNotes Read-only, starts NOT focused Renders plain note 1`] = `
   >
     This is the best module
   </span>
-</div>
+</span>
 `;

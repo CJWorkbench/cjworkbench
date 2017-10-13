@@ -27,7 +27,7 @@ exports[`WorkflowMetadata modal operates 1`] = `
         className="list-inline-item content-3 "
       >
         Updated 
-        just now
+        now
       </li>
       <li
         className="list-inline-item test-button content-3 "
@@ -171,7 +171,7 @@ exports[`WorkflowMetadata modal operates 3`] = `
         className="list-inline-item content-3 "
       >
         Updated 
-        just now
+        now
       </li>
       <li
         className="list-inline-item test-button content-3 "
@@ -213,7 +213,7 @@ exports[`WorkflowMetadata renders correctly 1`] = `
         className="list-inline-item content-3 "
       >
         Updated 
-        just now
+        now
       </li>
       <li
         className="list-inline-item test-button content-3 "
