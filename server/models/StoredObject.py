@@ -12,7 +12,7 @@ class StoredObject(models.Model):
     # delete stored data if WfModule deleted
     wf_module = models.ForeignKey('WfModule', related_name='stored_objects', on_delete=models.CASCADE)
     file = models.FileField()
-    stored_at = models.DateTimeField('stored_at', default=timezone.now())
+    stored_at = models.DateTimeField('stored_at', default=timezone.now)
 
     @staticmethod
     def __filename_for_id(id):
