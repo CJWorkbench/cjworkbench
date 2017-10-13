@@ -1,39 +1,10 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import { sortable } from 'react-sortable';
 import ModuleCategory from './ModuleCategory';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
 import Module from './Module';
 import ModuleSearch from './ModuleSearch';
 
-
-var SortableCategories = sortable(ModuleCategory);
-
-class CategoriesList extends React.Component {
-  render() {
-    var hasModules = (!!this.props.workflow.wf_modules && !!this.props.workflow.wf_modules.length);
-
-    var listItems = this.props.data.map(function (item, i) {
-      return (
-        <SortableCategories
-          key={item.key}
-          category={item.props.category}
-          items={this.props}
-          sortId={item.key}
-          outline="list"
-          childProps={{
-            'data-name': item.key, // category
-            'data-modules': item.props.modules, // modules in this category
-            'collapsed': !(item.key == "Add data" && !hasModules), // Have "Add data" category open when no modules in workflow
-          }}
-        />
-      );
-    }, this);
-    return (
-      <div className="list">{listItems}</div>
-    );
-  }
-}
 
 /**
  * Contains the Module Library. The Module Library is effectively the place
@@ -115,44 +86,46 @@ export default class ModuleLibrary extends React.Component {
     }
   }
 
-
-  /**
-   * Renders the Module Library, i.e. a collection of <Module Category>,
-   * which in turn is a collection of <Module>.
-   *
-   * This is sorted by the Category name, but we might want to define a
-   * better sorting order.
-   */
+  // Renders the Module Library, i.e. a collection of <Module Category>,
+  // which in turn is a collection of <Module>.
   render() {
     // This assumes that the items are already sorted by category,
-    // which does happen in {code: componentDidMount}. So, if someone
+    // which happens in {code: componentDidMount}. So, if someone
     // changes that, there is a good chance that this will result in
     // unexpected behaviour.
-    let modules = this.state.items;
+    var modules = this.state.items;
     var previousCategory = null;
     var modulesByCategory = [];
     var categories = [];
-    for (let item of modules) { // Yes, for...of is ES6 syntax, and yes, it's gross.
+
+    // Do we have any modules at all? If not, "Add Data" category is always open
+    var workflowEmpty = (!this.props.workflow.wf_modules || !this.props.workflow.wf_modules.length);
+
+    for (var item of modules) { // Yes, for...of is ES6 syntax, and yes, it's gross.
+
       let module = <Module
-        icon={item.icon}
         key={item.name}
-        description={item.description}
-        category={item.category}
-        author={item.author}
+        name={item.name}
+        icon={item.icon}
         id={item.id}
         addModule={this.props.addModule}
-        workflow={this.props.workflow}
       />;
 
-      if (previousCategory == null) {
+      if (previousCategory === null) {
         previousCategory = item.category;
       } else if (previousCategory !== item.category) {
-        // We should only create the ModuleCategory once we have all modules
-        // for given category.
+        // We should only create the ModuleCategory once we have all modules for given category.
+
+        // Start Add Data open if there is nothing in the Workflow
+        var collapsed = !(workflowEmpty && previousCategory == "Add data");
+
         let moduleCategory = <ModuleCategory
+          name={previousCategory}
           key={previousCategory}
           modules={modulesByCategory}
-          />;
+          isReadOnly={this.props.isReadOnly}
+          collapsed={collapsed}
+        />;
         categories.push(moduleCategory);
         modulesByCategory = [];
         previousCategory = item.category;
@@ -160,35 +133,40 @@ export default class ModuleLibrary extends React.Component {
       modulesByCategory.push(module);
     }
 
-
     // the last item / category
-    let moduleCategory =  <ModuleCategory
-                            key={previousCategory}
-                            modules={modulesByCategory}
-                          />;
-    categories.push(moduleCategory);
+    if (previousCategory != null) {  // modules may not be loaded yet
+      let moduleCategory = <ModuleCategory
+        name={previousCategory}
+        key={previousCategory}
+        modules={modulesByCategory}
+        isReadOnly={this.props.isReadOnly}
+        collapsed={true} // betting that Add Data is not the last category
+      />;
+      categories.push(moduleCategory);
+    }
 
     let visible = <div className='module-library-open'>
                     <div className='library-nav-bar'>
+
                       <div className='d-flex align-items-center flex-row mb-4'>
                         <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="20"/></a>
                         <a href="/workflows" className='logo-2 ml-3 t-vl-gray '>Workbench</a>
                         <div className='icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle'onClick={this.toggleLibrary}></div>
                       </div>
+
                       <ModuleSearch addModule={this.props.addModule}
                                       items={this.state.items}
                                       workflow={this.workflow}/>
                     </div>
-                      <div className=''>
-                        <CategoriesList
-                          data={categories}
-                          workflow={this.props.workflow}
-                        />
-                    </div>
-                    <ImportModuleFromGitHub moduleLibrary={this}/>
-                  </div>
 
-    let collapsed = <div className='module-library-collapsed'>
+                    <div className="list">
+                      {categories}
+                    </div>
+
+                    <ImportModuleFromGitHub moduleLibrary={this}/>
+                  </div>;
+
+    let hidden =  <div className='module-library-collapsed'>
                       <div className="expand-lib">
                         <div className="expand-lib-button d-flex">
                           <div className="logo" onClick={this.toggleLibrary}><img src="/static/images/logo.png" width="20"/></div>
@@ -203,7 +181,8 @@ export default class ModuleLibrary extends React.Component {
                         </div>
                       </div>
                     </div>
-    let library = (this.state.libraryOpen) ? visible : collapsed
+
+    let library = (this.state.libraryOpen) ? visible : hidden;
 
     return (
       <div className=''>
