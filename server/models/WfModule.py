@@ -244,3 +244,9 @@ class WfModule(models.Model):
         # don't set status/error as first render on this wfm will set that
 
         return new_wfm
+
+# I don't think we want this -- API is use set_stored_data_version
+@receiver(post_save, sender=StoredObject)
+def update_stored_data_version(sender, **kwargs):
+    kwargs['instance'].wf_module.stored_data_version = kwargs['instance'].stored_at
+    kwargs['instance'].wf_module.save()

@@ -12,37 +12,19 @@ import { CardBlock, Card } from 'reactstrap';
 export default class Module extends React.Component {
   constructor(props) {
     super(props);
-    this.initFields(props);
-    this.state = {
-      name: props.key,
-      description: props.description,
-      category: props.category,
-      author: props.author,
-    };
     this.itemClick = this.itemClick.bind(this);
-    this.addModule = this.props.addModule.bind(this);
-    this.workflow = this.props.workflow;
-  }
-
-  initFields(props) {
-    this.key = props['data-name'];
-    this.name = props['data-name'];
-    this.description = props['data-description'];
-    this.category = props['data-category'];
-    this.author = props['data-author'];
-    this.id = props['data-id'];
+//    this.addModule = this.props.addModule.bind(this);
   }
 
   itemClick(evt) {
-    var itemID = evt.target.getAttribute('data-id');
-    this.props.addModule(this.props['data-id']);
+    this.props.addModule(this.props.id);
     // Toggle temporarily disabled
     // this.workflow.toggleModuleLibrary();
   }
 
   render() {
-    var moduleName = this.props['data-name'];
-    var icon = 'icon-' + this.props['icon'] + ' ml-icon';
+    var moduleName = this.props.name;
+    var icon = 'icon-' + this.props.icon + ' ml-icon';
 
     return (
       // TODO: remove inline styles
@@ -63,6 +45,9 @@ export default class Module extends React.Component {
 }
 
 Module.propTypes = {
+  id:         PropTypes.number.isRequired,
+  name:       PropTypes.string.isRequired,
+  icon:       PropTypes.string.isRequired,
   addModule:  PropTypes.func,
-  workflow: PropTypes.object,
+//  workflow:   PropTypes.object
 };
