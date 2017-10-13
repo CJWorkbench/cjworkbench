@@ -25,7 +25,7 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
       className="open-modal t-f-blue content-4 text-center"
       onClick={[Function]}
     >
-      Apr, 10 2017 - 05:57 PM
+      April 10 2017 - 05:57 PM
     </div>
     <Modal
       autoFocus={true}
@@ -172,7 +172,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             <span
               className="content-3"
             >
-              Apr, 10 2017 - 05:57 PM
+              April 10 2017 - 05:57 PM
             </span>
           </div>
           <div
