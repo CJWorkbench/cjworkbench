@@ -1,0 +1,257 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
+<DataVersionSelect
+  api={
+    Object {
+      "getWfModuleVersions": [Function],
+      "setWfModuleVersion": [Function],
+    }
+  }
+  isReadOnly={false}
+  revision={202}
+  testing={true}
+  wfModuleId={808}
+>
+  <div
+    className="version-item d-flex justify-content-center flex-column align-items-center"
+  >
+    <div
+      className="t-d-gray content-3 mb-3"
+    >
+      Current Version
+    </div>
+    <div
+      className="open-modal t-f-blue content-4 text-center"
+      onClick={[Function]}
+    >
+      Apr, 10 2017 - 05:57 PM
+    </div>
+    <Modal
+      autoFocus={true}
+      backdrop={true}
+      backdropTransitionTimeout={150}
+      className="dialog-window"
+      fade={true}
+      isOpen={false}
+      keyboard={true}
+      modalTransitionTimeout={300}
+      toggle={[Function]}
+      zIndex={1050}
+    />
+  </div>
+</DataVersionSelect>
+`;
+
+exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 1`] = `
+<DataVersionSelect
+  api={
+    Object {
+      "getWfModuleVersions": [Function],
+      "setWfModuleVersion": [Function],
+    }
+  }
+  isReadOnly={false}
+  revision={202}
+  testing={true}
+  wfModuleId={808}
+>
+  <div
+    className="version-item d-flex justify-content-center flex-column align-items-center"
+  >
+    <div
+      className="t-d-gray content-3 mb-3"
+    >
+      Current Version
+    </div>
+    <div
+      className="open-modal t-f-blue content-4 text-center"
+      onClick={[Function]}
+    >
+      No versions loaded
+    </div>
+    <Modal
+      autoFocus={true}
+      backdrop={true}
+      backdropTransitionTimeout={150}
+      className="dialog-window"
+      fade={true}
+      isOpen={false}
+      keyboard={true}
+      modalTransitionTimeout={300}
+      toggle={[Function]}
+      zIndex={1050}
+    />
+  </div>
+</DataVersionSelect>
+`;
+
+exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 2`] = `
+<div
+  className="modal-dialog dialog-window"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="modal-header"
+      >
+        <h4
+          className="modal-title"
+        >
+          <div
+            className=""
+          >
+            Dataset Versions
+          </div>
+        </h4>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <div
+        className="dialog-body modal-body"
+      >
+        <div
+          className="scolling-list"
+        >
+          <div
+            className="line-item-data list-test-class"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              July 10 2017 - 05:57 PM
+            </span>
+          </div>
+          <div
+            className="line-item-data list-test-class"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              June 10 2017 - 05:57 PM
+            </span>
+          </div>
+          <div
+            className="line-item-data list-test-class"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              May 10 2017 - 05:57 PM
+            </span>
+          </div>
+          <div
+            className="line-item-data-selected list-test-class"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              Apr, 10 2017 - 05:57 PM
+            </span>
+          </div>
+          <div
+            className="line-item-data list-test-class"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              March 10 2017 - 05:57 PM
+            </span>
+          </div>
+        </div>
+      </div>
+    </ModalBody>
+    <ModalFooter
+      className="dialog-footer"
+      tag="div"
+    >
+      <div
+        className="dialog-footer modal-footer"
+      >
+        <div
+          className="button-gray mr-3 action-button test-cancel-button"
+          onClick={[Function]}
+        >
+          Cancel
+        </div>
+        <div
+          className="button-blue action-button test-ok-button"
+          onClick={[Function]}
+        >
+          OK
+        </div>
+      </div>
+    </ModalFooter>
+  </div>
+</div>
+`;
+
+exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 3`] = `
+<DataVersionSelect
+  api={
+    Object {
+      "getWfModuleVersions": [Function],
+      "setWfModuleVersion": [Function],
+    }
+  }
+  isReadOnly={false}
+  revision={202}
+  testing={true}
+  wfModuleId={808}
+>
+  <div
+    className="version-item d-flex justify-content-center flex-column align-items-center"
+  >
+    <div
+      className="t-d-gray content-3 mb-3"
+    >
+      Current Version
+    </div>
+    <div
+      className="open-modal t-f-blue content-4 text-center"
+      onClick={[Function]}
+    >
+      July 10 2017 - 05:57 PM
+    </div>
+    <Modal
+      autoFocus={true}
+      backdrop={true}
+      backdropTransitionTimeout={150}
+      className="dialog-window"
+      fade={true}
+      isOpen={false}
+      keyboard={true}
+      modalTransitionTimeout={300}
+      toggle={[Function]}
+      zIndex={1050}
+    />
+  </div>
+</DataVersionSelect>
+`;
