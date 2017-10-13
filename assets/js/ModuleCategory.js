@@ -25,8 +25,16 @@ export default class ModuleCategory extends React.Component {
   }
 
   toggleCollapse() {
-    this.setState({collapsed: !this.state.collapsed});
-    console.log("Setting new collapsed " + !this.state.collapsed + " for " + this.props.name)
+    var newCollapsed = !this.state.collapsed;
+    this.setState({collapsed: newCollapsed});
+    if (!newCollapsed) {
+      this.props.setOpenCategory(this.props.name); // tell parent, so it can close other cats
+    }
+  }
+
+  // When our props change, update our collapsed state (this is the other end of setOpenCategory)
+  componentWillReceiveProps(newProps) {
+    this.setState({collapsed: newProps.collapsed})
   }
 
   render() {
@@ -67,8 +75,9 @@ export default class ModuleCategory extends React.Component {
 
 
 ModuleCategory.propTypes = {
-  name:         PropTypes.string.isRequired,
-  modules:      PropTypes.arrayOf(PropTypes.object).isRequired,
-  collapsed:    PropTypes.bool.isRequired,
-  isReadOnly:   PropTypes.bool.isRequired
+  name:             PropTypes.string.isRequired,
+  modules:          PropTypes.arrayOf(PropTypes.object).isRequired,
+  collapsed:        PropTypes.bool.isRequired,
+  setOpenCategory:  PropTypes.func.isRequired,
+  isReadOnly:       PropTypes.bool.isRequired
 };

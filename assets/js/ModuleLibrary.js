@@ -22,12 +22,17 @@ import ModuleSearch from './ModuleSearch';
 export default class ModuleLibrary extends React.Component {
   constructor(props) {
     super(props);
+
+    // Do we have any modules at all? If not, "Add Data" category starts open
+    var workflowEmpty = (!props.workflow.wf_modules || !props.workflow.wf_modules.length);
+
     this.state = {
       libraryOpen: !this.props.isReadOnly,
+      openCategory: workflowEmpty ? "Add data" : null,
       items: [],
     };
     this.addModule = this.props.addModule.bind(this);
-    this.workflow = this.props.workflow;
+    this.setOpenCategory = this.setOpenCategory.bind(this);
     this.toggleLibrary = this.toggleLibrary.bind(this);
   }
 
@@ -72,6 +77,11 @@ export default class ModuleLibrary extends React.Component {
       });
   }
 
+  // Categories call this to indicate that they've been opened, so we can close all the rest
+  setOpenCategory(name) {
+      this.setState({openCategory: name});
+  }
+
   itemClick(event) {
     this.props.addModule(event.target.id);
   }
@@ -94,12 +104,9 @@ export default class ModuleLibrary extends React.Component {
     // changes that, there is a good chance that this will result in
     // unexpected behaviour.
     var modules = this.state.items;
-    var previousCategory = null;
+    var currentCategory = null;
     var modulesByCategory = [];
     var categories = [];
-
-    // Do we have any modules at all? If not, "Add Data" category is always open
-    var workflowEmpty = (!this.props.workflow.wf_modules || !this.props.workflow.wf_modules.length);
 
     for (var item of modules) { // Yes, for...of is ES6 syntax, and yes, it's gross.
 
@@ -111,85 +118,87 @@ export default class ModuleLibrary extends React.Component {
         addModule={this.props.addModule}
       />;
 
-      if (previousCategory === null) {
-        previousCategory = item.category;
-      } else if (previousCategory !== item.category) {
+      if (currentCategory  === null) {
+        currentCategory  = item.category;
+      } else if (currentCategory !== item.category) {
         // We should only create the ModuleCategory once we have all modules for given category.
 
         // Start Add Data open if there is nothing in the Workflow
-        var collapsed = !(workflowEmpty && previousCategory == "Add data");
-
         let moduleCategory = <ModuleCategory
-          name={previousCategory}
-          key={previousCategory}
+          name={currentCategory }
+          key={currentCategory }
           modules={modulesByCategory}
           isReadOnly={this.props.isReadOnly}
-          collapsed={collapsed}
+          collapsed={currentCategory != this.state.openCategory}
+          setOpenCategory={this.setOpenCategory}
         />;
         categories.push(moduleCategory);
         modulesByCategory = [];
-        previousCategory = item.category;
+        currentCategory  = item.category;
       }
       modulesByCategory.push(module);
     }
 
     // the last item / category
-    if (previousCategory != null) {  // modules may not be loaded yet
+    if (currentCategory  != null) {  // modules may not be loaded yet
       let moduleCategory = <ModuleCategory
-        name={previousCategory}
-        key={previousCategory}
+        name={currentCategory }
+        key={currentCategory }
         modules={modulesByCategory}
         isReadOnly={this.props.isReadOnly}
-        collapsed={true} // betting that Add Data is not the last category
+        collapsed={currentCategory != this.state.openCategory}
+        setOpenCategory={this.setOpenCategory}
       />;
       categories.push(moduleCategory);
     }
 
-    let visible = <div className='module-library-open'>
-                    <div className='library-nav-bar'>
+    if (this.state.libraryOpen) {
+      // Outermost div seems necessary to set background color below ImportFromGithub
+      return (
+        <div>
+          <div className='module-library-open'>
+            <div className='library-nav-bar'>
 
-                      <div className='d-flex align-items-center flex-row mb-4'>
-                        <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="20"/></a>
-                        <a href="/workflows" className='logo-2 ml-3 t-vl-gray '>Workbench</a>
-                        <div className='icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle'onClick={this.toggleLibrary}></div>
-                      </div>
+              <div className='d-flex align-items-center flex-row mb-4'>
+                <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="20"/></a>
+                <a href="/workflows" className='logo-2 ml-3 t-vl-gray '>Workbench</a>
+                <div className='icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle' onClick={this.toggleLibrary}></div>
+              </div>
 
-                      <ModuleSearch addModule={this.props.addModule}
-                                      items={this.state.items}
-                                      workflow={this.workflow}/>
+              <ModuleSearch addModule={this.props.addModule}
+                            items={this.state.items}
+                            workflow={this.props.workflow}/>
+            </div>
+
+            <div className="list">
+              {categories}
+            </div>
+
+            <ImportModuleFromGitHub moduleLibrary={this}/>
+          </div>
+        </div>
+      )
+    } else {
+      return (
+        <div className='module-library-collapsed'>
+          <div className="expand-lib">
+            <div className="expand-lib-button d-flex">
+              <div className="logo" onClick={this.toggleLibrary}><img src="/static/images/logo.png" width="20"/></div>
+              {
+                (this.props.isReadOnly)
+                  ? null
+                  : <div
+                      className='icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle'
+                      onClick={this.toggleLibrary}>
                     </div>
-
-                    <div className="list">
-                      {categories}
-                    </div>
-
-                    <ImportModuleFromGitHub moduleLibrary={this}/>
-                  </div>;
-
-    let hidden =  <div className='module-library-collapsed'>
-                      <div className="expand-lib">
-                        <div className="expand-lib-button d-flex">
-                          <div className="logo" onClick={this.toggleLibrary}><img src="/static/images/logo.png" width="20"/></div>
-                          { 
-                            (this.props.isReadOnly)
-                              ? null
-                              : <div 
-                                  className='icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle' 
-                                  onClick={this.toggleLibrary}>
-                                </div>
-                          }
-                        </div>
-                      </div>
-                    </div>
-
-    let library = (this.state.libraryOpen) ? visible : hidden;
-
-    return (
-      <div className=''>
-        {library}
-      </div>
-    );
+              }
+            </div>
+          </div>
+        </div>
+      )
+    }
   }
+
 }
 
 ModuleLibrary.propTypes = {
