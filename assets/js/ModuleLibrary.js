@@ -53,28 +53,27 @@ export default class ModuleLibrary extends React.Component {
    * - version
    */
   componentWillMount() {
-    fetch('/api/modules/', { credentials: 'include' })
-      .then(response => response.json())
-      .then(json => {
-        // Sort modules – first by category, then by name
-        json.sort((a, b) => {
-          if (a.category > b.category) {
-            return 1;
-          } else if (a.category < b.category) {
-            return -1;
-          } else if (a.name > b.name) {
-            return 1;
-          } else if (a.name < b.name) {
-            return -1;
-          } else {
-            return 0;
-          }
-        });
-        this.setState({ items: json });
-      })
-      .catch((error) => {
-        console.log('Unable to retrieve modules to construct the Module Library.', error);
+    this.props.api.getModules()
+    .then(json => {
+      // Sort modules – first by category, then by name
+      json.sort((a, b) => {
+        if (a.category > b.category) {
+          return 1;
+        } else if (a.category < b.category) {
+          return -1;
+        } else if (a.name > b.name) {
+          return 1;
+        } else if (a.name < b.name) {
+          return -1;
+        } else {
+          return 0;
+        }
       });
+      this.setState({ items: json });
+    })
+    .catch((error) => {
+      console.log('Unable to retrieve modules to construct the Module Library.', error);
+    });
   }
 
   // Categories call this to indicate that they've been opened, so we can close all the rest
@@ -96,9 +95,8 @@ export default class ModuleLibrary extends React.Component {
     }
   }
 
-  // Renders the Module Library, i.e. a collection of <Module Category>,
-  // which in turn is a collection of <Module>.
-  render() {
+  // Return an array of <Module Category>, each of which has child <Module>s.
+  renderCategories() {
     // This assumes that the items are already sorted by category,
     // which happens in {code: componentDidMount}. So, if someone
     // changes that, there is a good chance that this will result in
@@ -152,6 +150,12 @@ export default class ModuleLibrary extends React.Component {
       categories.push(moduleCategory);
     }
 
+    return categories;
+  }
+
+  // Main render.
+  render() {
+
     if (this.state.libraryOpen) {
       // Outermost div seems necessary to set background color below ImportFromGithub
       return (
@@ -171,7 +175,7 @@ export default class ModuleLibrary extends React.Component {
             </div>
 
             <div className="list">
-              {categories}
+              {this.renderCategories()}
             </div>
 
             <ImportModuleFromGitHub moduleLibrary={this}/>

@@ -91,6 +91,14 @@ class WorkbenchAPI {
     )
   }
 
+  // All available modules in the system
+  getModules() {
+    return (
+      fetch('/api/modules/', { credentials: 'include' })
+      .then(response => response.json())
+    )
+  }
+
   getWfModuleVersions(wf_module_id) {
     // NB need parens around the contents of the return, or this will fail miserably (return undefined)
     return (
