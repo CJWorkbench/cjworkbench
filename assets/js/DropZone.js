@@ -11,9 +11,7 @@ export default class DropZone extends Component{
               .field('file', files[0])
               .field('wf_module', this.props.wfModuleId)
               .set('X-CSRFToken', csrfToken);
-    req.end(function(err,response){
-        console.log("upload done!!!!!");
-    });
+    req.end();
   }
 
   render(){
