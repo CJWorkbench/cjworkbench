@@ -1520,7 +1520,7 @@ img.logo {
 
 .module-card-params {
   margin: 0rem 2rem;
-  margin-top: 0.5rem;
+  padding-top: 0.5rem;
   overflow-y: hidden;
 }
 
