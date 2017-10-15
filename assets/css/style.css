@@ -1619,9 +1619,9 @@ img.logo {
 }
 
 .list-wrapper{
-  height: 20rem;
+  max-height: 20rem;
   overflow: scroll;
-  border:1px solid #f1f1f1;
+  border:1px solid #ededec;
 }
 
 .list-scroll{
