@@ -42,7 +42,7 @@ exports[`ModuleSearch Renders 1`] = `
     inputProps={
       Object {
         "onChange": [Function],
-        "placeholder": "Search Modules",
+        "placeholder": "Search modules",
         "value": "",
       }
     }
@@ -85,7 +85,7 @@ exports[`ModuleSearch Renders 1`] = `
           "onChange": [Function],
           "onFocus": [Function],
           "onKeyDown": [Function],
-          "placeholder": "Search Modules",
+          "placeholder": "Search modules",
           "value": "",
         }
       }
@@ -135,7 +135,7 @@ exports[`ModuleSearch Renders 1`] = `
           onChange={[Function]}
           onFocus={[Function]}
           onKeyDown={[Function]}
-          placeholder="Search Modules"
+          placeholder="Search modules"
           role="combobox"
           type="text"
           value=""

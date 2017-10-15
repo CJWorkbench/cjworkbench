@@ -1607,14 +1607,25 @@ img.logo {
   padding:0px;
   width:43rem;
 }
+
 .checkbox-container {
   background-color: #FFFFFF;
   height: 4rem;
-  width: 21rem;
+  width: 49.5%;
   margin: 1px;
   padding: 0 1.5rem;
-  display: flex;
+  display:flex;
   align-items: center;
+}
+
+.list-wrapper{
+  height: 20rem;
+  overflow: scroll;
+  border:1px solid #f1f1f1;
+}
+
+.list-scroll{
+  overflow-y:auto;
 }
 
 /*Solo-checkboxes*/
