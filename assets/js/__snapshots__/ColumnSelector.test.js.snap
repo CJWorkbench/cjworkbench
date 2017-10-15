@@ -9,10 +9,10 @@ exports[`ColumnSelector NOT Read-only Renders and loads column names 1`] = `
   selectedCols="foo,bar,baz"
 >
   <div
-    className="container mb-3"
+    className="container list-wrapper mb-3"
   >
     <div
-      className="row"
+      className="row list-scroll"
     >
       <div
         className="checkbox-container"
@@ -49,10 +49,10 @@ exports[`ColumnSelector Read-only Renders and loads column names 1`] = `
   selectedCols="foo,bar,baz"
 >
   <div
-    className="container mb-3"
+    className="container list-wrapper mb-3"
   >
     <div
-      className="row"
+      className="row list-scroll"
     >
       <div
         className="checkbox-container"
