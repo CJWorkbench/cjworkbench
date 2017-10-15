@@ -10,6 +10,7 @@ describe('ImportModuleFromGitHub', () => {
   beforeEach(() => wrapper = mount(
     <ImportModuleFromGitHub
       moduleLibrary={{}}
+      moduleAdded={()=>{}}
     />
   ));
   beforeEach(() => modalLink = wrapper.find('.import-module-button'));    

@@ -34,6 +34,7 @@ export default class ModuleLibrary extends React.Component {
     this.addModule = this.props.addModule.bind(this);
     this.setOpenCategory = this.setOpenCategory.bind(this);
     this.toggleLibrary = this.toggleLibrary.bind(this);
+    this.updated = this.updated.bind(this);
   }
 
   /**
@@ -53,27 +54,26 @@ export default class ModuleLibrary extends React.Component {
    * - version
    */
   componentWillMount() {
-    this.props.api.getModules()
-    .then(json => {
-      // Sort modules – first by category, then by name
-      json.sort((a, b) => {
-        if (a.category > b.category) {
-          return 1;
-        } else if (a.category < b.category) {
-          return -1;
-        } else if (a.name > b.name) {
-          return 1;
-        } else if (a.name < b.name) {
-          return -1;
-        } else {
-          return 0;
-        }
-      });
-      this.setState({ items: json });
-    })
-    .catch((error) => {
-      console.log('Unable to retrieve modules to construct the Module Library.', error);
-    });
+    if (!this.props.isReadOnly) { // don't load modules if we can't open library
+      this.props.api.getModules()
+        .then(json => {
+          // Sort modules – first by category, then by name
+          json.sort((a, b) => {
+            if (a.category > b.category) {
+              return 1;
+            } else if (a.category < b.category) {
+              return -1;
+            } else if (a.name > b.name) {
+              return 1;
+            } else if (a.name < b.name) {
+              return -1;
+            } else {
+              return 0;
+            }
+          });
+          this.setState({items: json});
+        })
+    }
   }
 
   // Categories call this to indicate that they've been opened, so we can close all the rest
@@ -85,7 +85,7 @@ export default class ModuleLibrary extends React.Component {
     this.props.addModule(event.target.id);
   }
 
-  updated(updated) {
+  updated() {
     this.componentWillMount() // dummy update to force a re-render.
   }
 
@@ -121,6 +121,8 @@ export default class ModuleLibrary extends React.Component {
       } else if (currentCategory !== item.category) {
         // We should only create the ModuleCategory once we have all modules for given category.
 
+        // console.log("Creating category " +  currentCategory);
+
         // Start Add Data open if there is nothing in the Workflow
         let moduleCategory = <ModuleCategory
           name={currentCategory }
@@ -139,6 +141,8 @@ export default class ModuleLibrary extends React.Component {
 
     // the last item / category
     if (currentCategory  != null) {  // modules may not be loaded yet
+      // console.log("Creating final category " +  currentCategory);
+
       let moduleCategory = <ModuleCategory
         name={currentCategory }
         key={currentCategory }
@@ -155,6 +159,8 @@ export default class ModuleLibrary extends React.Component {
 
   // Main render.
   render() {
+
+    // console.log("render...");
 
     if (this.state.libraryOpen) {
       // Outermost div seems necessary to set background color below ImportFromGithub
@@ -178,7 +184,7 @@ export default class ModuleLibrary extends React.Component {
               {this.renderCategories()}
             </div>
 
-            <ImportModuleFromGitHub moduleLibrary={this}/>
+            <ImportModuleFromGitHub moduleAdded={this.updated}/>
           </div>
         </div>
       )

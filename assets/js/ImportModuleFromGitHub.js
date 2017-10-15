@@ -24,7 +24,6 @@ export default class ImportModuleFromGitHub extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onKeyPress = this.keyPress.bind(this); // to handle user hitting enter, which then submits
-    this.moduleLibrary = this.props.moduleLibrary;
     this.handleResponse = this.handleResponse.bind(this);
     this.toggleModal = this.toggleModal.bind(this);
   }
@@ -71,7 +70,7 @@ export default class ImportModuleFromGitHub extends React.Component {
         this.handleResponse(result);
       })
       .then(() => {
-        this.moduleLibrary.updated(true);
+        this.props.moduleAdded();
       })
   }
 
@@ -183,5 +182,5 @@ export default class ImportModuleFromGitHub extends React.Component {
 
 
 ImportModuleFromGitHub.propTypes = {
-  moduleLibrary: PropTypes.object.isRequired
+  moduleAdded: PropTypes.func.isRequired
 };
