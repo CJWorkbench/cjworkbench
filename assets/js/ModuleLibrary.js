@@ -174,10 +174,12 @@ export default class ModuleLibrary extends React.Component {
                 <a href="/workflows" className='logo-2 ml-3 t-vl-gray '>Workbench</a>
                 <div className='icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle' onClick={this.toggleLibrary}></div>
               </div>
-
-              <ModuleSearch addModule={this.props.addModule}
-                            items={this.state.items}
-                            workflow={this.props.workflow}/>
+                <div className='d-flex align-items-center search-bar'>
+                  <div className='icon-search-white ml-icon-search ml-4'></div>
+                  <ModuleSearch addModule={this.props.addModule}
+                                items={this.state.items}
+                                workflow={this.props.workflow}/>
+                </div>
             </div>
 
             <div className="list">

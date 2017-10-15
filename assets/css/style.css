@@ -342,6 +342,7 @@ body {
 }
 .icon-search:before {
   content: "\e91a";
+  color:white;
 }
 .icon-settings:before {
   content: "\e91b";
@@ -392,6 +393,11 @@ body {
 
 .icon-l-gray {
   color:#b4b4b4;
+}
+
+.icon-search-white:before {
+  content: "\e91a";
+  color:rgba(250,250,250,0.5);
 }
 
 .icon-add-orange:before {
@@ -1321,36 +1327,39 @@ img.logo {
 
 /* --- the Search Modules within the Module Library header - ModuleSearch.js --- */
 
+.search-bar {
+  border-radius: 30px;
+  height:3.5rem;
+  background-color: rgba(250,250,250,0.2);
+}
+.search-bar:hover {
+  box-shadow: 0 0 0 1px rgba(250,250,250,0.35);
+}
+/*Actual search with autosuggest component*/
 .react-autosuggest__container {
-  margin-top: 1rem;
   width: 100%;
-  height: 3.5rem;
+  background-color:transparent;
 }
 
 .react-autosuggest__container input {
   border: 0px solid #DDDDDD;
   color:white;
+  background-color:transparent;
 }
 /* If we want to style the placeholder differently than the typed text */
  .react-autosuggest__input::placeholder {
   color: rgba(250,250,250,0.5);
 }
 
-.react-autosuggest__container input:hover {
-  box-shadow: 0 0 0 1px rgba(250,250,250,0.35);
-}
-
 /* does not accept a 'color' parameter  */
 .react-autosuggest__input {
   width: 100%;
   height: 100%;
-  padding-left: 2rem;
+  padding-left: 0.3rem;
   font-family: 'Nunito Sans', sans-serif;
   font-weight: 900;
   font-size: 1.4rem;
   line-height: 1.4rem;
-  border-radius: 10rem;
-  background-color: rgba(250,250,250,0.2);
 }
 
 .react-autosuggest__input--focused {
@@ -1361,9 +1370,10 @@ img.logo {
   display: none;
 }
 
+/*search result*/
 .react-autosuggest__suggestions-container--open {
-  margin-top: 1.5rem;
-  margin-left: -1.5rem;
+  margin-top: 2.2rem;
+  margin-left: -5.3rem;
   display: block;
   position: absolute;
   border: 0px;
