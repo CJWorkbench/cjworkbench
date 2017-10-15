@@ -1270,6 +1270,11 @@ img.logo {
   opacity: 0.7;
 }
 
+.ml-sort{
+  font-size: 0.6rem;
+  margin-top: 0.2rem;
+}
+
 .card .second-level {
   margin-left: 0.5rem;
   margin-right:0.5rem;
