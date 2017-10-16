@@ -242,22 +242,11 @@ class ImportFromGitHubTest(LoggedInTestCase):
                 "The destination directory should be {}/prototype-dynamic-loading/123456".format(pwd + "/../../importedmodules") +
                 " but it's {}".format(destination_directory))
 
-        #check if json already exists for the given module-version combination.
+        # should work even if files already exists for the given module-version combination
+        # in which case the dir should be deleted, so as to be ready for re-import
         os.makedirs(destination_directory)
-        with self.assertRaisesMessage(ValidationError, "Files for this repository and this version already exist."):
-            validate_python(mapping, pwd, module_directory, "prototype-dynamic-loading", "123456")
-        self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
-                         "Repository should be deleted on ValidationError (json file already exists).")
-        shutil.rmtree(destination_directory)
-
-        #check if python already exists for the given module-version combination.
-        os.makedirs(destination_directory)
-        self.setup_module_structure(pwd) # need to recopy the GitHub repo as it was deleted in the previous step.
-        with self.assertRaisesMessage(ValidationError, "Files for this repository and this version already exist."):
-            validate_python(mapping, pwd, module_directory, "prototype-dynamic-loading", "123456")
-        self.assertFalse(os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')),
-                             "Repository should be deleted on ValidationError (python file already exists).")
-        shutil.rmtree(destination_directory)
+        validate_python(mapping, pwd, module_directory, "prototype-dynamic-loading", "123456")
+        self.assertFalse(os.path.isdir(destination_directory))
 
 
     def test_compile_python(self):

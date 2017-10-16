@@ -157,11 +157,12 @@ def validate_python(extension_file_mapping, current_path, module_directory, dire
         shutil.rmtree(os.path.join(current_path, directory))
         raise ValidationError("No Python file found in remote repository.")
 
-    # check if files with the same name already exist
+    # check if files with the same name already exist.
+    # This can happen if a module is deleted from the server DB, then re-imported
+    # Just delete existing if so
     destination_directory = os.path.join(module_directory, directory, version)
     if os.path.isdir(destination_directory):
-        shutil.rmtree(os.path.join(current_path, directory))
-        raise ValidationError("Files for this repository and this version already exist.")
+        shutil.rmtree(destination_directory)
 
     return python_file, destination_directory
 
