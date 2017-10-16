@@ -18,12 +18,15 @@ from django.contrib import admin
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
+from django.views.defaults import page_not_found
+from django.http import Http404
 from cjworkbench.views.signup import SignupView
 from cjworkbench.views.login import LoginView
 
 urlpatterns = [
     url(r'^admin/?', admin.site.urls),
-    url(r'^account/signup/$', SignupView.as_view(), name='account_signup'),
+    url(r'^xyzzy/signup/$', SignupView.as_view(), name='account_signup'),
+    url(r'^account/signup/$', page_not_found,  {'exception': Http404()}),
     url(r'^account/login/$', LoginView.as_view(), name='account_login'),
     url(r'^account/', include('account.urls')),
     url(r'^', include('server.urls')),
