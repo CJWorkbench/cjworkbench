@@ -71,7 +71,33 @@ export default class ModuleLibrary extends React.Component {
               return 0;
             }
           });
-          this.setState({items: json});
+          
+          // First, filter out all the core modules, which should be displayed alphabetically. 
+          var coreModules = json.filter(function(x){
+            return x.category == 'Add data' || x.category == 'Analyse' || x.category == 'Visualize';
+          });
+
+          // Then, filter out the next set of core modules, also to be displayed alphabetically. 
+          // ...but, essentially, the thing is, we want 'Code' to appear after 'Visualize', so we have to do this.
+          var codeModules = json.filter(function(x){
+              return x.category == 'Code' || x.category == 'Other';
+          });
+
+          // Add codeModules to coreModules 
+          codeModules.forEach(function(x) {
+              coreModules.push(x);
+          });
+
+          // See if there are any remanining modules, and if there are, add them too. 
+          var remainingModules = json.filter(function (item) {
+            return coreModules.indexOf(item) === -1;
+          });
+
+          remainingModules.forEach(function(x) {
+            coreModules.push(x);
+          });
+
+          this.setState({ items: coreModules });
         })
     }
   }
@@ -106,7 +132,7 @@ export default class ModuleLibrary extends React.Component {
     var modulesByCategory = [];
     var categories = [];
 
-    for (var item of modules) { // Yes, for...of is ES6 syntax, and yes, it's gross.
+    for (var item of modules) {
 
       let module = <Module
         key={item.name}

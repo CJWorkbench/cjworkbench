@@ -265,9 +265,16 @@ def import_module_from_github(url):
         shutil.move(os.path.join(ROOT_DIRECTORY, directory), os.path.join(CURRENT_PATH, directory))
     except (ValidationError, GitCommandError) as ve:
         print('Unable to pull down content from GitHub: %s' % (url))
-        shutil.rmtree(os.path.join(ROOT_DIRECTORY, directory))
+        try:
+            shutil.rmtree(os.path.join(ROOT_DIRECTORY, directory))
+        except:
+            print('Nothing to delete.')
+        if type(ve) == GitCommandError:
+            message = "Received Git error status code {}".format(ve.status)
+        else:
+            message = ve.message
         raise ValidationError('Unable to pull down content from GitHub: %s' % (url) +
-                              ' due to %s' % (ve.message))
+                              ': %s' % (message))
 
     # retrieve Git hash to use as the version number.
     version = extract_version(CURRENT_PATH, directory)
