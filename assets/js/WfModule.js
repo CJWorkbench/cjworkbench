@@ -233,6 +233,9 @@ export default class WfModule extends React.Component {
     return (
       <div className='container' {...this.props} onClick={this.click}>
         <div className='wf-card'>
+          <div className='output-bar-container'>
+            <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
+          </div>
           <div className='card-block p-0'>
             <div className='module-card-info'>
               {notes}
@@ -248,10 +251,6 @@ export default class WfModule extends React.Component {
                     {notesIcon}
                     {contextMenu}
                   </div>
-                </div>
-                {/* --- Output bar --- */}
-                <div className='output-bar-container'>
-                  <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
                 </div>
               </div>
               {/* --- Module content when expanded --- */}

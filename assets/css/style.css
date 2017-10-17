@@ -1513,6 +1513,12 @@ img.logo {
   position: relative;
 }
 
+.card-block{
+  clear: both;
+  z-index: 100;
+  position:relative;
+}
+
 .module-card-info {
   width:100%;
 }
@@ -1527,8 +1533,10 @@ img.logo {
 .module-header-content{
   display: flex;
   justify-content: space-between;
+  align-items: center;
   width: 100%;
   margin:0 2rem;
+  height:5rem;
 }
 
 
@@ -1570,84 +1578,73 @@ img.logo {
 
 /* a dummy div around output status bar, for positioning purposes  */
 .output-bar-container {
-  border: 0;
-  height:5rem;
-  width:2rem;
-  overflow-y: hidden;
-  overflow-x: visible;
-  margin-right: -1.3rem;
+  position: absolute;
+  height: 100%;
+  width:100%;
 }
 /* all good */
 .module-output-bar-white {
-  width:0.5rem;
+  width:0.3rem;
   height: 100%;
   background-color: transparent;
 }
 /* all good & selected */
 .module-output-bar-blue {
-  width:0.5rem;
   height: 100%;
-  background-color: #7A9BB0;
-  position: relative;
-  border: transparent;
+  background-color: transparent;
+  border: 2px solid rgba(118,155,176,0.5);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
 }
+
 .module-output-bar-blue:after {
-	top: 50%;
 	border: solid transparent;
 	content: " ";
-	position: absolute;
-	border-color: transparent;
 	border-left-color: rgba(118,155,176,0.3);
-	border-width: 4rem 0 4rem 1.8rem;
-  border-right-width: 0px;
-	margin-top: -4rem;
+	border-width: 2.5rem 0 2.5rem 1.2rem;
+  margin-left: 47.2rem
 }
 
 /* standby  */
 .module-output-bar-orange {
-  width:0.5rem;
   height: 100%;
-  background-color: #FBAA6D;
-  position: relative;
-  border: transparent;
+  background-color: transparent;
+  border:2px solid rgba(251,170,109,0.7);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
 }
 .module-output-bar-orange:after {
-	top: 50%;
-	border: solid transparent;
+  border: solid transparent;
 	content: " ";
-	position: absolute;
-	border-color: transparent;
-	border-left-color: rgba(251,170,109,0.3);
-	border-width: 4rem 0 4rem 1.8rem;
-  border-right-width: 0px;
-	margin-top: -4rem;
+	border-left-color: rgba(251,170,109,0);
+	border-width: 2.5rem 0 2.5rem 1.2rem;
+  margin-left: 47.2rem
 }
 /* error  */
-.module-output-bar-pink {
-  width:0.5rem;
+.module-output-bar-pink:after {
+	content: " ";
+	position: absolute;
+	border:2px solid rgba(232,114,110,0.5);
+  margin-left: 47.5rem;
   height: 100%;
-  background-color: #F3B9B7;
-  position: relative;
-  border: transparent;
 }
 /* error & selected */
 .module-output-bar-red {
-  width: 0.5rem;
   height: 100%;
-  background-color: #E8726E;
-  position: relative;
-  border: transparent;
+  background-color: transparent;
+  border:2px solid rgba(232,114,110,0.4);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
 }
 .module-output-bar-red:after {
-	top: 50%;
-	border: solid transparent;
+  border: solid transparent;
 	content: " ";
-	position: absolute;
-	border-color: transparent;
-	border-left-color: rgba(232,114,110,0.3);
-	border-width: 4rem 0 4rem 1.8rem;
-  border-right-width: 0px;
-	margin-top: -4rem;
+	border-left-color: rgba(232,114,110,0.4);
+	border-width: 2.5rem 0 2.5rem 1.2rem;
+  margin-left: 47.2rem
 }
 
 /*checkbox-list*/
