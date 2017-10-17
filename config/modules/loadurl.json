@@ -12,7 +12,7 @@
       "default": ""
     },
     {
-      "name": "Path (for json data)",
+      "name": "JSON path (optional)",
       "id_name" : "json_path",
       "type": "string",
       "default": ""

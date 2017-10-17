@@ -254,7 +254,7 @@ export default class WfParameter extends React.Component {
           var saveState = ( state => this.props.setParamText('newcolnames', state) );
           return (
             <div className='parameter-margin'>
-              <div className='t-d-gray content-3 label-margin'>Enter new column names:</div>
+              <div className='t-d-gray content-3 label-margin'>Enter new column names</div>
               <ColumnRenamer
                 isReadOnly={this.props.isReadOnly}
                 newNameCols={newNameCols}
