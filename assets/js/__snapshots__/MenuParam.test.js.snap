@@ -8,7 +8,6 @@ exports[`renders correctly 1`] = `
     className="label-margin t-d-gray content-3"
   >
     SuperMenu
-    :
   </label>
   <select
     className="custom-select dropdown-selector"
