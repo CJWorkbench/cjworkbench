@@ -975,6 +975,7 @@ body {
 }
 .worflows-list > .card-block {
   padding:0;
+  z-index:1;
 }
 .workflows-list .workflows-sub-list {
   padding:1px 1px 1px 1px;
@@ -1514,8 +1515,6 @@ img.logo {
 }
 
 .card-block{
-  clear: both;
-  z-index: 100;
   position:relative;
 }
 
