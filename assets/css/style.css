@@ -1839,6 +1839,7 @@ input[type=checkbox]:checked:after {
 .version-item {
   margin: 0rem;
   display: inline-block;
+  align-self: flex-start;
 }
 
 /* --- UpdateFrequencySelect --- */
