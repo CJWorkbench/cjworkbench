@@ -231,4 +231,37 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
 </WorkflowMetadata>
 `;
 
-exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`] = `undefined`;
+exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`] = `
+<WorkflowMetadata
+  api={
+    Object {
+      "setWorkflowPublic": [Function],
+    }
+  }
+  test_now={2017-09-20T21:03:52.000Z}
+  workflow={
+    Object {
+      "id": 100,
+      "last_update": 1505941432000,
+      "owner_name": "Harry Harrison",
+      "public": true,
+      "read_only": true,
+    }
+  }
+>
+  <div
+    className=""
+  >
+    <ul
+      className="list-inline list-workflow-meta content-3 t-white"
+    >
+      <li
+        className="list-inline-item content-3 "
+      >
+        Updated 
+        now
+      </li>
+    </ul>
+  </div>
+</WorkflowMetadata>
+`;

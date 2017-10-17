@@ -87,6 +87,7 @@ describe('WorkflowMetadata - private mode', () => {
   var wrapper;
 
   var today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)');
+  var day_before = today.setDate(today.getDate() - 2);  
 
   var api = {
     setWorkflowPublic: okResponseMock()
