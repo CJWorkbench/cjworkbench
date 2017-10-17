@@ -81,7 +81,7 @@ export default class WorkflowMetadata extends React.Component {
                   Private
               </div>
             </div>
-            <div className="col-sm-9 mt-2">
+            <div className="col-sm-9 mt-2 mb-3">
               <p>Only you can access and edit the workflow</p>
             </div>
           </div>
@@ -101,6 +101,11 @@ export default class WorkflowMetadata extends React.Component {
     var attribution = (user && user.replace(/\s/g, '').length)
       ? <li className="list-inline-item content-3">by {user}</li>
       : null
+    var modalLink = (this.props.workflow.read_only)
+      ? null
+      : <li className="list-inline-item test-button content-3 " onClick={this.togglePrivacyModal}>
+          <u>{this.state.isPublic ? 'public' : 'private'}</u>
+        </li>
 
     return (
       <div className=''>
@@ -109,9 +114,7 @@ export default class WorkflowMetadata extends React.Component {
           <li className="list-inline-item content-3 ">
             Updated {timeDifference(this.props.workflow.last_update, now)}
           </li>
-          <li className="list-inline-item test-button content-3 " onClick={this.togglePrivacyModal}>
-            <u>{this.state.isPublic ? 'public' : 'private'}</u>
-          </li>
+          {modalLink}
         </ul>
         { this.renderPrivacyModal() }
       </div>
@@ -120,8 +123,8 @@ export default class WorkflowMetadata extends React.Component {
 }
 
 WorkflowMetadata.propTypes = {
-  workflow: PropTypes.object.isRequired,
-  api:      PropTypes.object.isRequired,
-  user:     PropTypes.object,
-  test_now: PropTypes.object  // optional injection for testing
+  workflow:   PropTypes.object.isRequired,
+  api:        PropTypes.object.isRequired,
+  user:       PropTypes.object,
+  test_now:   PropTypes.object  // optional injection for testing
 };

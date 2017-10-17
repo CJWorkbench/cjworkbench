@@ -4,16 +4,17 @@ import { mount, ReactWrapper } from 'enzyme'
 import { okResponseMock } from './utils'
 
 
-describe('WorkflowMetadata', () => {
+describe('WorkflowMetadata - private mode', () => {
 
   var today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)');
   var day_before = today.setDate(today.getDate() - 2);
 
   var workflow = {
     id: 100,
-    public: true,
+    public: false,
     owner_name: "Harry Harrison",
-    last_update: day_before
+    last_update: day_before,
+    read_only: false
   };
 
   var wrapper, api;
@@ -62,19 +63,60 @@ describe('WorkflowMetadata', () => {
         // Dialog should be closed, link should now say private
         //let modal_element = document.getElementsByClassName('dialog-window');
 
-        expect(publicLink.childAt(0).text()).toBe('private');
+        expect(publicLink.childAt(0).text()).toBe('public');
         expect(wrapper).toMatchSnapshot(); // 4
 
         // Check that the API was called
         expect(api.setWorkflowPublic.mock.calls.length).toBe(1);
         expect(api.setWorkflowPublic.mock.calls[0][0]).toBe(100);
-        expect(api.setWorkflowPublic.mock.calls[0][1]).toBe(false);     // checking if False was passed in for isPublic argument
+        expect(api.setWorkflowPublic.mock.calls[0][1]).toBe(true);     // checking if False was passed in for isPublic argument
 
-        expect(wrapper.state('isPublic')).toBe(false);
+        expect(wrapper.state('isPublic')).toBe(true);
         done();
       });
     });
   });
+
+
+
+});
+
+describe('WorkflowMetadata - private mode', () => {
+
+  var workflow;
+  var wrapper;
+
+  var today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)');
+
+  var api = {
+    setWorkflowPublic: okResponseMock()
+  };
+
+  beforeEach(() => {
+      
+    workflow = {
+      id: 100,
+      public: true,
+      owner_name: "Harry Harrison",
+      last_update: day_before,
+      read_only: true
+    };
+
+    wrapper = mount(
+      <WorkflowMetadata
+        workflow={workflow}
+        api={api}
+        test_now={today}
+      />);
+    });
+      
+    it('renders correctly in read-only mode', () => {
+      expect(wrapper).toMatchSnapshot(); // 5
+  
+      // check that privacy modal link does not render
+      var publicLink = wrapper.find('.test-button');
+      expect(publicLink).toHaveLength(0);
+    })
 
 });
 

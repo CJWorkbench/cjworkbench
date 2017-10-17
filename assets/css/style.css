@@ -1768,7 +1768,7 @@ input[type=checkbox]:checked:after {
 
 .dialog-body {
   background-color: #FFF;
-  padding: 3rem 3rem 0rem 3rem;
+  padding: 3rem;
   border: 0;
   max-height: 40rem;
   overflow: scroll;

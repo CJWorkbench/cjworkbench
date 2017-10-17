@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WorkflowMetadata modal operates 1`] = `
+exports[`WorkflowMetadata - private mode modal operates 1`] = `
 <WorkflowMetadata
   api={
     Object {
@@ -13,7 +13,8 @@ exports[`WorkflowMetadata modal operates 1`] = `
       "id": 100,
       "last_update": 1505941432000,
       "owner_name": "Harry Harrison",
-      "public": true,
+      "public": false,
+      "read_only": false,
     }
   }
 >
@@ -34,7 +35,7 @@ exports[`WorkflowMetadata modal operates 1`] = `
         onClick={[Function]}
       >
         <u>
-          public
+          private
         </u>
       </li>
     </ul>
@@ -53,7 +54,7 @@ exports[`WorkflowMetadata modal operates 1`] = `
 </WorkflowMetadata>
 `;
 
-exports[`WorkflowMetadata modal operates 2`] = `
+exports[`WorkflowMetadata - private mode modal operates 2`] = `
 <div
   className="modal-content"
 >
@@ -103,7 +104,7 @@ exports[`WorkflowMetadata modal operates 2`] = `
           className="col-sm-3"
         >
           <div
-            className="action-button button-full-blue"
+            className="action-button button-gray test-button-gray"
             onClick={[Function]}
           >
             Public
@@ -125,14 +126,14 @@ exports[`WorkflowMetadata modal operates 2`] = `
           className="col-sm-3"
         >
           <div
-            className="action-button button-gray test-button-gray"
+            className="action-button button-full-blue"
             onClick={[Function]}
           >
             Private
           </div>
         </div>
         <div
-          className="col-sm-9 mt-2"
+          className="col-sm-9 mt-2 mb-3"
         >
           <p>
             Only you can access and edit the workflow
@@ -144,7 +145,7 @@ exports[`WorkflowMetadata modal operates 2`] = `
 </div>
 `;
 
-exports[`WorkflowMetadata modal operates 3`] = `
+exports[`WorkflowMetadata - private mode modal operates 3`] = `
 <WorkflowMetadata
   api={
     Object {
@@ -157,7 +158,51 @@ exports[`WorkflowMetadata modal operates 3`] = `
       "id": 100,
       "last_update": 1505941432000,
       "owner_name": "Harry Harrison",
-      "public": true,
+      "public": false,
+      "read_only": false,
+    }
+  }
+>
+  <div
+    className=""
+  >
+    <ul
+      className="list-inline list-workflow-meta content-3 t-white"
+    >
+      <li
+        className="list-inline-item content-3 "
+      >
+        Updated 
+        now
+      </li>
+      <li
+        className="list-inline-item test-button content-3 "
+        onClick={[Function]}
+      >
+        <u>
+          public
+        </u>
+      </li>
+    </ul>
+  </div>
+</WorkflowMetadata>
+`;
+
+exports[`WorkflowMetadata - private mode renders correctly 1`] = `
+<WorkflowMetadata
+  api={
+    Object {
+      "setWorkflowPublic": [Function],
+    }
+  }
+  test_now={2017-09-20T21:03:52.000Z}
+  workflow={
+    Object {
+      "id": 100,
+      "last_update": 1505941432000,
+      "owner_name": "Harry Harrison",
+      "public": false,
+      "read_only": false,
     }
   }
 >
@@ -186,44 +231,4 @@ exports[`WorkflowMetadata modal operates 3`] = `
 </WorkflowMetadata>
 `;
 
-exports[`WorkflowMetadata renders correctly 1`] = `
-<WorkflowMetadata
-  api={
-    Object {
-      "setWorkflowPublic": [Function],
-    }
-  }
-  test_now={2017-09-20T21:03:52.000Z}
-  workflow={
-    Object {
-      "id": 100,
-      "last_update": 1505941432000,
-      "owner_name": "Harry Harrison",
-      "public": true,
-    }
-  }
->
-  <div
-    className=""
-  >
-    <ul
-      className="list-inline list-workflow-meta content-3 t-white"
-    >
-      <li
-        className="list-inline-item content-3 "
-      >
-        Updated 
-        now
-      </li>
-      <li
-        className="list-inline-item test-button content-3 "
-        onClick={[Function]}
-      >
-        <u>
-          public
-        </u>
-      </li>
-    </ul>
-  </div>
-</WorkflowMetadata>
-`;
+exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`] = `undefined`;
