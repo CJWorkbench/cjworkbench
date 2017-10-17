@@ -1754,7 +1754,7 @@ input[type=checkbox]:checked:after {
 .modal-header {
   height: 6rem;
   padding: 3rem;
-  background-color: #FFF;
+  background-color: #FAFAFA;
   border-bottom:none;
 }
 
@@ -1767,9 +1767,11 @@ input[type=checkbox]:checked:after {
 }
 
 .dialog-body {
-  background-color: #FAFAFA;
-  padding: 3rem 3rem 3rem 3rem;
+  background-color: #FFF;
+  padding: 3rem 3rem 0rem 3rem;
   border: 0;
+  max-height: 40rem;
+  overflow: scroll;
 }
 
 .dialog-body p{
@@ -1777,13 +1779,17 @@ input[type=checkbox]:checked:after {
   font-weight: 100;
 }
 
+.scrolling-list{
+
+}
+
 .dialog-body.content-3{
   font-size: 1.5rem;
 }
 
 .dialog-footer {
-  background-color: #FAFAFA;
-  padding: 0rem 3rem 3rem 3rem;
+  background-color: #FFF;
+  padding: 3rem 3rem 3rem 3rem;
   border-top: 0;
 }
 
