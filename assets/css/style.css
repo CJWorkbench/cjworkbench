@@ -1626,25 +1626,25 @@ img.logo {
 .module-output-bar-pink:after {
 	content: " ";
 	position: absolute;
-	border:2px solid rgba(232,114,110,0.5);
+	border:2px solid rgba(232,114,110,0.3);
   margin-left: 47.5rem;
-  height: 100%;
+  height: 5rem;
 }
 /* error & selected */
 .module-output-bar-red {
   height: 100%;
   background-color: transparent;
-  border:2px solid rgba(232,114,110,0.4);
+  border:2px solid rgba(232,114,110,0.5);
   display: flex;
   align-items: center;
   flex-direction: row;
 }
 .module-output-bar-red:after {
-  border: solid transparent;
-	content: " ";
-	border-left-color: rgba(232,114,110,0.4);
-	border-width: 2.5rem 0 2.5rem 1.2rem;
-  margin-left: 47.2rem
+  content: " ";
+	position: absolute;
+	border:2px solid rgba(232,114,110,0.3);
+  margin-left: 47.2rem;
+  height: 5rem;
 }
 
 /*checkbox-list*/
