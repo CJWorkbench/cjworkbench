@@ -96,6 +96,16 @@ class WorkflowSerializer(serializers.ModelSerializer):
 
 # Lite Workflow: Don't include any of the modules, just name and ID. For /workflows page
 class WorkflowSerializerLite(serializers.ModelSerializer):
+    last_update = serializers.SerializerMethodField()
+    def get_last_update(self, obj):
+        if not obj.last_delta:
+            return obj.creation_date
+        return obj.last_delta.datetime
+
+    read_only = serializers.SerializerMethodField()
+    def get_read_only(self, obj):
+        return False                    # lite serializer is only used when listing workflows, which only owner can do
+
     class Meta:
         model = Workflow
-        fields = ('id', 'name')
+        fields = ('id', 'name', 'public', 'read_only', 'last_update')

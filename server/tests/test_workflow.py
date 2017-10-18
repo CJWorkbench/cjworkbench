@@ -70,7 +70,13 @@ class WorkflowTests(LoggedInTestCase):
         response = workflow_list(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2) # should not pick up other user's workflows, even public ones
+
         self.assertEqual(response.data[0]['name'], 'Workflow 1')
+        self.assertEqual(response.data[0]['id'], self.workflow1.id)
+        self.assertEqual(response.data[0]['public'], self.workflow1.public)
+        self.assertEqual(response.data[0]['read_only'], False)  # if we can list it, it's ours and we can edit it
+        self.assertIsNotNone(response.data[0]['last_update'])
+
         self.assertEqual(response.data[1]['name'], 'Workflow 2')
 
     def test_workflow_list_post(self):
