@@ -978,9 +978,46 @@ exports[`Fetches and renders 1`] = `
 </OutputPane>
 `;
 
-exports[`No output when no module id 1`] = `
+exports[`Header only when no module id 1`] = `
 <OutputPane
   api={Object {}}
   revision={1}
-/>
+>
+  <div
+    className="outputpane-box"
+  >
+    <div
+      className="outputpane-header d-flex flex-row justify-content-start"
+    >
+      <div
+        className="d-flex flex-column align-items-center justify-content-center mr-5"
+      >
+        <div
+          className="content-4 t-m-gray mb-2"
+        >
+          Rows
+        </div>
+        <div
+          className="content-2 t-d-gray"
+        >
+          0
+        </div>
+      </div>
+      <div
+        className="d-flex flex-column align-items-center justify-content-center"
+      >
+        <div
+          className="content-4 t-m-gray mb-2"
+        >
+          Columns
+        </div>
+        <div
+          className="content-2 t-d-gray"
+        >
+          0
+        </div>
+      </div>
+    </div>
+  </div>
+</OutputPane>
 `;
