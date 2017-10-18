@@ -138,14 +138,12 @@ export default class Workflow extends React.Component {
                     </div>
     }
 
-    var outputPane = null;
-    if (this.props.workflow.wf_modules.length > 0) {
-      outputPane =  <OutputPane
-                      id={this.props.selected_wf_module}
-                      revision={this.props.workflow.revision}
-                      api={this.props.api}
-                    />
-    }
+    var outputPane =  <OutputPane
+                    id={this.props.selected_wf_module}
+                    revision={this.props.workflow.revision}
+                    api={this.props.api}
+                  />
+
 
     // Main Layout of Workflow Page:
     // Module Library occupies left-hand bar of page from top to bottom

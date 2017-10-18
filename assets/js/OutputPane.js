@@ -102,16 +102,12 @@ export default class OutputPane extends React.Component {
   }
 
   render() {
-    // Don't show anything if we don't have a selected WfModule to show
-    if (!this.props.id) {
-      return null
-    }
 
     // Make a table component if we have the data
     var tableView = null;
     var nrows = 0;
     var ncols = 0;
-    if (this.state.tableData && this.state.tableData.total_rows>0) {
+    if (this.props.id && this.state.tableData && this.state.tableData.total_rows>0) {
       tableView =
         <div className="outputpane-data">
           <TableView

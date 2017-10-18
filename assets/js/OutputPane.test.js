@@ -36,16 +36,22 @@ it('Fetches and renders', (done) => {
     expect(api.render.mock.calls.length).toBe(1);
     expect(api.render.mock.calls[0][0]).toBe(100);
 
+    expect(tree.find('.outputpane-header')).toHaveLength(1);
+    expect(tree.find('.outputpane-data')).toHaveLength(1);
     expect(tree).toMatchSnapshot();
     done();
   });
 });
 
 
-it('No output when no module id', () => {
+it('Header only when no module id', () => {
   const tree = mount( <OutputPane id={undefined} revision={1} api={{}}/> )
   tree.update();
+
+  expect(tree.find('.outputpane-header')).toHaveLength(1);
+  expect(tree.find('.outputpane-data')).toHaveLength(0);
   expect(tree).toMatchSnapshot();
+
 });
 
 
