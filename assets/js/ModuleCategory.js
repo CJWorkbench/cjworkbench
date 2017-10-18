@@ -27,9 +27,7 @@ export default class ModuleCategory extends React.Component {
   toggleCollapse() {
     var newCollapsed = !this.state.collapsed;
     this.setState({collapsed: newCollapsed});
-    if (!newCollapsed) {
-      this.props.setOpenCategory(this.props.name); // tell parent, so it can close other cats
-    }
+    this.props.setOpenCategory(newCollapsed ? null : this.props.name); // tell parent, so it can close other cats
   }
 
   // When our props change, update our collapsed state (this is the other end of setOpenCategory)
