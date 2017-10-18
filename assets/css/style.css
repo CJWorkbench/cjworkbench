@@ -1788,7 +1788,7 @@ input[type=checkbox]:checked:after {
 }
 
 .dialog-footer {
-  background-color: #FFF;
+  background-color: #FAFAFA;
   padding: 3rem 3rem 3rem 3rem;
   border-top: 0;
 }
@@ -1899,14 +1899,14 @@ input[type=checkbox]:checked:after {
   font-size: 1.3rem;
   font-weight: 100;
 	line-height: 2.6rem;
-  color: #fff;
+  color: #686768;
   padding: 0 1.5rem;
-  background-color:rgba(251,170,109,0.7);
+  background-color:rgba(72,200,215,0.2);
   display: table;
 }
 
 .editable-notes-field:hover {
-  background-color:rgba(251,170,109,0.8);
+  background-color:rgba(72,200,215,0.3);
 }
 
 .editable-text {
