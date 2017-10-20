@@ -408,7 +408,7 @@ body {
 
 .icon-add-blue:before {
   content: "\e900";
-  color:#48C8D7;
+  color:rgba(118,155,176,1);
   font-size: 3rem;
 }
 
@@ -1855,10 +1855,10 @@ input[type=checkbox]:checked:after {
 /*Upload module*/
 .dropzone{
   height:12rem;
-  border: 3px dashed #48C8D7;
+  border: 3px dashed rgba(118,155,176,1);
   cursor:pointer;
   opacity: 0.5;
-  color:#48C8D7;
+  color:rgba(118,155,176,1);
 }
 
 .dropzone:hover{
