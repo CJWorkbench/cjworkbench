@@ -71,5 +71,6 @@ export default class DropZone extends Component{
   render(){
     return(
         <Gallery uploader={ this.uploader } />
+      )
   }
 }
