@@ -188,7 +188,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
                 firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
                 secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
             ],
-            "selected": secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+            "selected": firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         }
         responsedata = json.loads(response.content.decode('UTF-8'))
         self.assertEqual(responsedata, versiondata)

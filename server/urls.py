@@ -2,18 +2,21 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views.StoredObject import *
+from .views.StoredObject import StoredObjectView
 from rest_framework import routers
 from django.conf.urls import include
 
-external_router = routers.DefaultRouter()
-external_router.register(r'uploadfile', StoredObjectView)
+#external_router = routers.DefaultRouter()
+#external_router.register(r'uploadfile', StoredObjectView)
 
 urlpatterns = [
     # ex: /
     #    url(r'^$', views.index, name='index'),
 
     url(r'^$', RedirectView.as_view(url='/workflows')),
+
+    url(r'^api/uploadfile/?$', StoredObjectView.as_view()),
+    url(r'^api/uploadfile/(?P<qquuid>\S+)?$', StoredObjectView.as_view()),
 
     # list all workflows
     url(r'^workflows/$', views.render_workflows),
@@ -31,7 +34,7 @@ urlpatterns = [
     url(r'^api/modules/?$', views.module_list),
     url(r'^api/modules/(?P<pk>[0-9]+)/?$', views.module_detail),
 
-    url(r'^api/', include(external_router.urls)),
+#    url(r'^api/', include(external_router.urls)),
 
     url(r'^api/initmodules/$', views.init_modules2),
     url(r'^api/importfromgithub/?$', views.import_from_github),

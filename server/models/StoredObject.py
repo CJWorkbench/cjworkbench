@@ -13,6 +13,9 @@ class StoredObject(models.Model):
     wf_module = models.ForeignKey('WfModule', related_name='stored_objects', on_delete=models.CASCADE)
     file = models.FileField()
     stored_at = models.DateTimeField('stored_at', default=timezone.now)
+    name = models.CharField('name', default=None, max_length=255, null=True)
+    size = models.IntegerField('size', default=None, null=True)
+    uuid = models.CharField('uuid', default=None, max_length=255, null=True)
 
     @staticmethod
     def __filename_for_id(id):

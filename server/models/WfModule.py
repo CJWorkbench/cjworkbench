@@ -246,7 +246,7 @@ class WfModule(models.Model):
         return new_wfm
 
 # I don't think we want this -- API is use set_stored_data_version
-@receiver(post_save, sender=StoredObject)
-def update_stored_data_version(sender, **kwargs):
-    kwargs['instance'].wf_module.stored_data_version = kwargs['instance'].stored_at
-    kwargs['instance'].wf_module.save()
+# @receiver(post_save, sender=StoredObject)
+# def update_stored_data_version(sender, **kwargs):
+#     kwargs['instance'].wf_module.stored_data_version = kwargs['instance'].stored_at
+#     kwargs['instance'].wf_module.save()

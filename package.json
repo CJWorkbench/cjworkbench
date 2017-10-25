@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Computational Journalism Workbench",
   "main": "index.js",
-  "comment" : [
+  "comment": [
     "moment version is fixed at 2.18 as 2.19.0 and above gives",
     "   Module not found: Error: Can't resolve './locale'",
     "see https://github.com/moment/moment/issues/2979 "
@@ -19,11 +19,13 @@
     "d3-time-format": "^2.0.3",
     "dateformat": "^2.0.0",
     "file-loader": "^0.11.2",
+    "fine-uploader": "^5.15.0",
     "fixed-data-table": "^0.6.3",
     "flux": "^3.1.2",
     "js-cookie": "^2.1.3",
     "lodash": "^4.17.4",
     "markdown-it": "^8.3.0",
+    "moment": "2.18.0",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-addons-css-transition-group": "^15.4.2",
@@ -37,6 +39,7 @@
     "react-dropdown": "^1.2.0",
     "react-dropzone": "^4.0.0",
     "react-faux-dom": "^3.0.0",
+    "react-fine-uploader": "^1.0.7",
     "react-redux": "^5.0.2",
     "react-sortable": "^1.2.0",
     "react-tangle": "git://github.com/Quartz/react-tangle.git#mb-pages",
@@ -50,7 +53,6 @@
     "superagent": "^3.5.2",
     "svg-react": "^1.0.9",
     "timediff": "^1.1.1",
-    "moment": "2.18.0",
     "url-loader": "^0.5.9"
   },
   "devDependencies": {

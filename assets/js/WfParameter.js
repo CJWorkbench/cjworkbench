@@ -265,7 +265,8 @@ export default class WfParameter extends React.Component {
         } else if (this.props.p.parameter_spec.id_name == 'file') {
           return (
                 <DropZone
-                wfModuleId={this.props.wf_module_id} />
+                wfModuleId={this.props.wf_module_id}
+                revision={this.props.revision} />
             );
         }
 
