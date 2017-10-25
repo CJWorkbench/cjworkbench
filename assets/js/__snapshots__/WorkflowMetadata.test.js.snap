@@ -7,6 +7,7 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
       "setWorkflowPublic": [Function],
     }
   }
+  isPublic={false}
   test_now={2017-09-20T21:03:52.000Z}
   workflow={
     Object {
@@ -152,6 +153,7 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
       "setWorkflowPublic": [Function],
     }
   }
+  isPublic={false}
   test_now={2017-09-20T21:03:52.000Z}
   workflow={
     Object {
@@ -195,6 +197,7 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
       "setWorkflowPublic": [Function],
     }
   }
+  isPublic={false}
   test_now={2017-09-20T21:03:52.000Z}
   workflow={
     Object {
@@ -238,6 +241,7 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
       "setWorkflowPublic": [Function],
     }
   }
+  isPublic={true}
   test_now={2017-09-20T21:03:52.000Z}
   workflow={
     Object {

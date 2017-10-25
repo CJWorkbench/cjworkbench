@@ -29,6 +29,7 @@ describe('WorkflowMetadata - private mode', () => {
         workflow={workflow}
         api={api}
         test_now={today}
+        isPublic={false}
       />);
   });
 
@@ -108,6 +109,7 @@ describe('WorkflowMetadata - private mode', () => {
         workflow={workflow}
         api={api}
         test_now={today}
+        isPublic={true}
       />);
     });
       

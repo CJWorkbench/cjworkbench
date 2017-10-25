@@ -1,8 +1,8 @@
 import React from 'react'
 import { WorkflowListNavBar, WorkflowNavBar } from './navbar'
-import { shallow, mount } from 'enzyme'
+import { shallow, mount, ReactWrapper } from 'enzyme'
 const Utils = require('./utils');
-import { mockResponse, jsonResponseMock } from './utils'
+import { mockResponse, jsonResponseMock, okResponseMock } from './utils'
 
 
 describe('NavBar', () => {
@@ -15,7 +15,8 @@ describe('NavBar', () => {
     name: "Copy of Original Version"
   }
   var api = {
-    duplicate: jsonResponseMock(mockWorkflowCopy)
+    duplicate: jsonResponseMock(mockWorkflowCopy),
+    setWorkflowPublic: okResponseMock()
   };
 
   // Over-write default behavior (changing page)
@@ -30,7 +31,7 @@ describe('NavBar', () => {
       wrapper = shallow(
         <WorkflowListNavBar />
       );
-      expect(wrapper).toMatchSnapshot();
+      expect(wrapper).toMatchSnapshot(); 
     });
 
   });
@@ -53,7 +54,7 @@ describe('NavBar', () => {
           user={user}
         />
       )
-      expect(wrapper).toMatchSnapshot();
+      expect(wrapper).toMatchSnapshot(); 
       expect(wrapper.state().spinnerVisible).toBe(false);
 
       let button = wrapper.find('.test-duplicate-button');
@@ -67,7 +68,6 @@ describe('NavBar', () => {
       setImmediate( () => {
         // no snapshot test here: 
         //  we have not actually rendered the new workflow copy, just mocked the calls to change url
-      
         expect(Utils.goToUrl.mock.calls.length).toBe(1);
         expect(Utils.goToUrl.mock.calls[0][0]).toBe('/workflows/77');
         expect(api.duplicate.mock.calls.length).toBe(1);
@@ -91,7 +91,7 @@ describe('NavBar', () => {
           user={user}
         />
       )
-      expect(wrapper).toMatchSnapshot();
+      expect(wrapper).toMatchSnapshot(); 
 
       let button = wrapper.find('.test-duplicate-button');
       expect(button).toHaveLength(1);
@@ -110,6 +110,111 @@ describe('NavBar', () => {
         done();
       });
 
+    });
+
+    it('In Private mode, Share button invites user to set to Public', (done) => {
+      user = {
+        id: 47
+      };
+      workflow = {
+        name: "Original Version",
+        public: false,
+        id: 808
+      }
+      wrapper = mount(
+        <WorkflowNavBar
+          workflow={workflow}
+          api={api}
+          isReadOnly={false}
+          user={user}
+        />
+      )
+
+      expect(wrapper).toMatchSnapshot();
+      expect(wrapper.state().modalsOpen).toBe(false);
+      
+      let button = wrapper.find('.test-share-button');
+      expect(button).toHaveLength(1);
+      button.simulate('click');
+
+      expect(wrapper.state().modalsOpen).toBe(true);      
+
+      // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
+      // So find them, and make a new Wrapper
+      // Reference: "https://github.com/airbnb/enzyme/issues/252"
+      let setpubModalElement = document.getElementsByClassName('test-setpublic-modal');
+      let setpubModal = new ReactWrapper(setpubModalElement[0], true)
+
+      expect(setpubModal).toMatchSnapshot(); 
+
+      let setPublicButton = setpubModal.find('.test-public-button');
+      expect(setPublicButton.length).toBe(1);
+      setPublicButton.simulate('click');
+
+      // wait for promise to resolve
+      setImmediate( () => {
+        // find the Share modal & wrap it
+        let shareModalElement = document.getElementsByClassName('test-share-modal');
+        let shareModal = new ReactWrapper(shareModalElement[0], true)
+
+        expect(shareModal).toMatchSnapshot(); 
+      
+        // check that link has rendered correctly
+        let linkField = shareModal.find('.test-link-field');
+        expect(linkField.length).toBe(1);
+        // Need to fix this once correct link string in place
+        // expect(linkField.props().placeholder).toEqual("");
+      
+        expect(api.setWorkflowPublic.mock.calls.length).toBe(1);
+        done();
+      });
+
+    });
+
+
+    it('In Public mode, Share button opens modal with links', () => {
+      user = {
+        id: 47
+      };
+      workflow = {
+        name: "Original Version",
+        public: true,
+        id: 808
+      }
+      wrapper = mount(
+        <WorkflowNavBar
+          workflow={workflow}
+          api={api}
+          isReadOnly={false}
+          user={user}
+        />
+      )
+
+      expect(wrapper).toMatchSnapshot();
+      expect(wrapper.state().modalsOpen).toBe(false);
+      
+      let button = wrapper.find('.test-share-button');
+      expect(button).toHaveLength(1);
+      button.simulate('click');
+
+      expect(wrapper.state().modalsOpen).toBe(true);      
+
+      // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
+      // So find them, and make a new Wrapper
+      // Reference: "https://github.com/airbnb/enzyme/issues/252"
+      let shareModalElement = document.getElementsByClassName('test-share-modal');
+      let shareModal = new ReactWrapper(shareModalElement[0], true)
+
+      expect(shareModal).toMatchSnapshot(); 
+
+      // check that link has rendered correctly
+      let linkField = shareModal.find('.test-link-field');
+      expect(linkField.length).toBe(1);
+      // Need to fix this once correct link string in place
+      // expect(linkField.props().placeholder).toEqual("");
+    
+      // no extra calls to API expected, 1 from last test
+      expect(api.setWorkflowPublic.mock.calls.length).toBe(1);
     });
 
   });

@@ -18,20 +18,21 @@ export default class WorkflowMetadata extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isPublic: props.workflow.public,
+      isPublic: this.props.isPublic,
       privacyModalOpen: false
     };
     this.setPublic = this.setPublic.bind(this);
     this.togglePrivacyModal = this.togglePrivacyModal.bind(this);
   }
 
+  // Listens for changes from parent
   componentWillReceiveProps(nextProps) {
     if (nextProps.workflow === undefined) {
       return false;
     }
 
     this.setState({
-      isPublic: nextProps.workflow.public
+      isPublic: nextProps.isPublic
     });
   }
 
@@ -39,6 +40,8 @@ export default class WorkflowMetadata extends React.Component {
     this.props.api.setWorkflowPublic(this.props.workflow.id, isPublic)
     .then(() => {
       this.setState({isPublic: isPublic});
+      // hard reload, to ensure consistency of state with Share button in parent Navbar component
+      location.reload();
     })
     .catch((error) => {
       console.log('Request failed', error);
@@ -125,6 +128,7 @@ export default class WorkflowMetadata extends React.Component {
 WorkflowMetadata.propTypes = {
   workflow:   PropTypes.object.isRequired,
   api:        PropTypes.object.isRequired,
+  isPublic:   PropTypes.bool.isRequired,
   user:       PropTypes.object,
   test_now:   PropTypes.object  // optional injection for testing
 };

@@ -7,6 +7,17 @@ import EditableWorkflowName from './EditableWorkflowName'
 import WorkflowMetadata from './WorkflowMetadata'
 import PropTypes from 'prop-types'
 import { goToUrl } from './utils'
+import {
+  Modal,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Form,
+  FormGroup,
+  Label,
+  Input
+} from 'reactstrap'
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 
 export class WorkflowListNavBar extends React.Component {
@@ -35,12 +46,19 @@ export class WorkflowNavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      spinnerVisible: false
+      spinnerVisible: false,
+      modalsOpen: false,
+      isPublic: this.props.workflow.public,
+      linkCopied: false,      
     };
     this.handleDuplicate = this.handleDuplicate.bind(this);
+    this.setPublic = this.setPublic.bind(this);
+    this.renderModals = this.renderModals.bind(this);
+    this.toggleModals = this.toggleModals.bind(this);
+    this.onLinkCopy = this.onLinkCopy.bind(this);
+    this.onLinkLeave = this.onLinkLeave.bind(this);
   }
 
-  // TODO: follow this pattern for Share button
   handleDuplicate() {
     if ((typeof this.props.user !== 'undefined' && !this.props.user.id)) {
       // user is NOT logged in, so navigate to sign in
@@ -53,6 +71,120 @@ export class WorkflowNavBar extends React.Component {
         .then(json => {
           goToUrl('/workflows/' + json.id);
         })
+    }
+  }
+
+  // similar BUT NOT THE SAME as from WorkflowMetadata - export this to Utils?
+  setPublic() {
+
+    this.props.api.setWorkflowPublic(this.props.workflow.id, true)
+    .then(() => {
+      this.setState({isPublic: true});
+      // close current modal      
+      this.toggleModals();
+      // ensure that child components are updated
+      this.forceUpdate();
+      // open new modal with sharing feature
+      this.toggleModals();      
+    })
+    .catch((error) => {
+      console.log('Request failed', error);
+    });
+  }
+
+  // this does not provide the correct link string yet
+  linkString(id) {
+    var path = "/this/isnt/real/" + id;
+    // allowing an out for testing (there is no window.location.href during test)
+    if (window.location.href == 'about:blank') {
+      return path;
+    } else {
+      var url = new URL(path, window.location.href).href;
+      return url;
+    }
+  }
+
+  onLinkCopy() {
+    this.setState({linkCopied: true});
+  }
+
+  onLinkLeave() {
+    this.setState({linkCopied: false});
+  }
+
+  renderCopyLink() {
+    var linkString = this.linkString(this.props.workflow.id);
+
+    if (this.state.linkCopied) {
+      return (
+        <div className='info-2 t-orange mt-3' onMouseLeave={this.onLinkLeave}>Link copied to clipboard</div>
+      );
+    } else {
+      return (
+        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='info-2 t-f-blue mt-3'>
+          <div>Copy to clipboard</div>
+        </CopyToClipboard>
+      );
+    }
+  }
+
+  toggleModals() {
+    if ((typeof this.props.user !== 'undefined' && !this.props.user.id)) {
+      // user is NOT logged in, so navigate to sign in instead
+      goToUrl('/account/login');
+    } else {
+      // user IS logged in, so toggle those modals
+      this.setState({ modalsOpen: !this.state.modalsOpen });
+    }
+  }
+
+  renderModals() {
+
+    var linkString = this.linkString(this.props.workflow.id);
+    var copyLink = this.renderCopyLink();
+
+    var setPublicModal = 
+      <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-setpublic-modal'>
+        <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
+          <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
+        </ModalHeader>
+        <ModalBody className='dialog-body'>
+          <div className='title-3 mb-3'>This workflow is currently private</div>
+          <div className='content-3'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>          
+        </ModalBody>
+        <ModalFooter className='dialog-footer'>
+          <div onClick={this.toggleModals} className='button-gray action-button'>Cancel</div>
+          <div onClick={this.setPublic} className='button-blue action-button test-public-button'>Set Public</div>          
+        </ModalFooter>
+      </Modal>
+
+    var shareModal = 
+      <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-share-modal'>
+        <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
+          <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
+        </ModalHeader>
+        <ModalBody className='dialog-body'>
+          <FormGroup>
+            <div className='d-flex justify-content-between flex-row test-link-field'>
+              <Label className='t-d-gray info-1'>Public link</Label>
+              {copyLink}
+            </div>
+            <div className='mb-3'>
+              <Input type='url' className='url-link t-d-gray content-2 ' placeholder={linkString} readOnly/>
+            </div>
+          </FormGroup>
+        </ModalBody>
+        <ModalFooter className='dialog-footer d-flex justify-content-start'>
+          <div className='icon-twitter button-icon'></div>
+        </ModalFooter>
+      </Modal>
+
+    if (!this.state.modalsOpen) {
+      return null;
+    } else if (this.state.isPublic) {
+      return shareModal;
+    } else {
+      return setPublicModal;
     }
   }
 
@@ -72,16 +204,21 @@ export class WorkflowNavBar extends React.Component {
                       Duplicate
                     </div>
 
+    var share = <div onClick={this.toggleModals} className='button-white action-button test-share-button'>
+                  Share
+                </div>
+
+    var modals = this.renderModals();        
 
     var spinner = (this.state.spinnerVisible)
-      ? <div id="spinner-container">
-          <div id="spinner-l1">
-            <div id="spinner-l2">
-              <div id="spinner-l3"></div>
-            </div>
-          </div>
-        </div>
-      : null
+                    ? <div id="spinner-container">
+                        <div id="spinner-l1">
+                          <div id="spinner-l2">
+                            <div id="spinner-l3"></div>
+                          </div>
+                        </div>
+                      </div>
+                    : null
 
     return (
       <div>
@@ -99,11 +236,14 @@ export class WorkflowNavBar extends React.Component {
                 workflow={this.props.workflow}
                 api={this.props.api}
                 user={this.props.user}
+                isPublic={this.state.isPublic}
               />
             </div>
           </div>
           <div className='d-flex flex-row align-items-center'>
             {duplicate}
+            {share}
+            {modals}
             <a href="http://cjworkbench.org/index.php/blog/" className='nav-link t-white content-2'>
               Learn
             </a>

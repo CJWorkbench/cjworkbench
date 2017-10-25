@@ -37,11 +37,966 @@ exports[`NavBar WorkflowListNavBar Renders correctly 1`] = `
 </div>
 `;
 
+exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set to Public 1`] = `
+<WorkflowNavBar
+  api={
+    Object {
+      "duplicate": [Function],
+      "setWorkflowPublic": [Function],
+    }
+  }
+  isReadOnly={false}
+  user={
+    Object {
+      "id": 47,
+    }
+  }
+  workflow={
+    Object {
+      "id": 808,
+      "name": "Original Version",
+      "public": false,
+    }
+  }
+>
+  <div>
+    <div
+      className="d-flex justify-content-center"
+    />
+    <nav
+      className="navbar-workflows"
+    >
+      <div
+        className="navbar-brand d-flex flex-row align-items-center"
+      >
+        <div
+          className="title-metadata-stack"
+        >
+          <EditableWorkflowName
+            api={
+              Object {
+                "duplicate": [Function],
+                "setWorkflowPublic": [Function],
+              }
+            }
+            value="Original Version"
+            wfId={808}
+          >
+            <div
+              className="editable-name-container"
+              onClick={[Function]}
+            >
+              <TextareaAutosize
+                className="editable-title-field"
+                maxRows={1}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onHeightChange={[Function]}
+                onKeyPress={[Function]}
+                useCacheForDOMMeasurements={false}
+                value="Original Version"
+              >
+                <textarea
+                  className="editable-title-field"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onKeyPress={[Function]}
+                  style={
+                    Object {
+                      "height": -4,
+                    }
+                  }
+                  value="Original Version"
+                />
+              </TextareaAutosize>
+            </div>
+          </EditableWorkflowName>
+          <WorkflowMetadata
+            api={
+              Object {
+                "duplicate": [Function],
+                "setWorkflowPublic": [Function],
+              }
+            }
+            isPublic={false}
+            user={
+              Object {
+                "id": 47,
+              }
+            }
+            workflow={
+              Object {
+                "id": 808,
+                "name": "Original Version",
+                "public": false,
+              }
+            }
+          >
+            <div
+              className=""
+            >
+              <ul
+                className="list-inline list-workflow-meta content-3 t-white"
+              >
+                <li
+                  className="list-inline-item content-3 "
+                >
+                  Updated 
+                  now
+                </li>
+                <li
+                  className="list-inline-item test-button content-3 "
+                  onClick={[Function]}
+                >
+                  <u>
+                    private
+                  </u>
+                </li>
+              </ul>
+            </div>
+          </WorkflowMetadata>
+        </div>
+      </div>
+      <div
+        className="d-flex flex-row align-items-center"
+      >
+        <div
+          className="button-white action-button test-duplicate-button"
+          onClick={[Function]}
+        >
+          Duplicate
+        </div>
+        <div
+          className="button-white action-button test-share-button"
+          onClick={[Function]}
+        >
+          Share
+        </div>
+        <a
+          className="nav-link t-white content-2"
+          href="http://cjworkbench.org/index.php/blog/"
+        >
+          Learn
+        </a>
+        <WfHamburgerMenu
+          api={
+            Object {
+              "duplicate": [Function],
+              "setWorkflowPublic": [Function],
+            }
+          }
+          isReadOnly={false}
+          user={
+            Object {
+              "id": 47,
+            }
+          }
+          wfId={808}
+        >
+          <UncontrolledDropdown>
+            <Dropdown
+              isOpen={false}
+              tag="div"
+              toggle={[Function]}
+            >
+              <div
+                className="dropdown"
+              >
+                <DropdownToggle
+                  aria-haspopup={true}
+                  className="navbar-context-button"
+                  color="secondary"
+                  data-toggle="dropdown"
+                >
+                  <Button
+                    aria-expanded={false}
+                    aria-haspopup="true"
+                    className="navbar-context-button"
+                    color="secondary"
+                    data-toggle="dropdown"
+                    onClick={[Function]}
+                    tag="button"
+                  >
+                    <button
+                      aria-expanded={false}
+                      aria-haspopup="true"
+                      className="navbar-context-button btn btn-secondary"
+                      data-toggle="dropdown"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      <div
+                        className="button-icon icon-more-white"
+                      />
+                    </button>
+                  </Button>
+                </DropdownToggle>
+                <DropdownMenu
+                  right={true}
+                  tag="div"
+                >
+                  <div
+                    aria-hidden={true}
+                    className="dropdown-menu dropdown-menu-right"
+                    role="menu"
+                    tabIndex="-1"
+                  >
+                    <DropdownItem
+                      className="dropdown-menu-item"
+                      href="/workflows"
+                      tag="a"
+                      toggle={true}
+                    >
+                      <a
+                        className="dropdown-menu-item dropdown-item"
+                        href="/workflows"
+                        onClick={[Function]}
+                        tabIndex="0"
+                      >
+                        <span
+                          className="t-d-gray content-3 ml-3"
+                        >
+                          My Workflows
+                        </span>
+                      </a>
+                    </DropdownItem>
+                    <div>
+                      <DropdownItem
+                        divider={true}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <div
+                          className="dropdown-divider"
+                          onClick={[Function]}
+                          tabIndex="-1"
+                        />
+                      </DropdownItem>
+                      <DropdownItem
+                        className="dropdown-menu-item"
+                        onClick={[Function]}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <button
+                          className="dropdown-menu-item dropdown-item"
+                          onClick={[Function]}
+                          tabIndex="0"
+                          type="button"
+                        >
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Undo
+                          </span>
+                        </button>
+                      </DropdownItem>
+                      <DropdownItem
+                        className="dropdown-menu-item"
+                        onClick={[Function]}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <button
+                          className="dropdown-menu-item dropdown-item"
+                          onClick={[Function]}
+                          tabIndex="0"
+                          type="button"
+                        >
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Redo
+                          </span>
+                        </button>
+                      </DropdownItem>
+                      <DropdownItem
+                        divider={true}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <div
+                          className="dropdown-divider"
+                          onClick={[Function]}
+                          tabIndex="-1"
+                        />
+                      </DropdownItem>
+                    </div>
+                    <div>
+                      <DropdownItem
+                        className="dropdown-menu-item"
+                        href="/account/logout"
+                        tag="a"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-menu-item dropdown-item"
+                          href="/account/logout"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Logout
+                          </span>
+                        </a>
+                      </DropdownItem>
+                    </div>
+                  </div>
+                </DropdownMenu>
+              </div>
+            </Dropdown>
+          </UncontrolledDropdown>
+        </WfHamburgerMenu>
+      </div>
+    </nav>
+  </div>
+</WorkflowNavBar>
+`;
+
+exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set to Public 2`] = `
+<div
+  className="modal-dialog test-setpublic-modal"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      className="dialog-header modal-header d-flex align-items-center"
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="dialog-header modal-header d-flex align-items-center modal-header"
+      >
+        <h4
+          className="modal-title"
+        >
+          <div
+            className="t-d-gray title-4"
+          >
+            SHARE THIS WORKFLOW
+          </div>
+        </h4>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <div
+        className="dialog-body modal-body"
+      >
+        <div
+          className="title-3 mb-3"
+        >
+          This workflow is currently private
+        </div>
+        <div
+          className="content-3"
+        >
+          Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
+        </div>
+      </div>
+    </ModalBody>
+    <ModalFooter
+      className="dialog-footer"
+      tag="div"
+    >
+      <div
+        className="dialog-footer modal-footer"
+      >
+        <div
+          className="button-gray action-button"
+          onClick={[Function]}
+        >
+          Cancel
+        </div>
+        <div
+          className="button-blue action-button test-public-button"
+          onClick={[Function]}
+        >
+          Set Public
+        </div>
+      </div>
+    </ModalFooter>
+  </div>
+</div>
+`;
+
+exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set to Public 3`] = `
+<div
+  className="modal-dialog test-share-modal"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      className="dialog-header modal-header d-flex align-items-center"
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="dialog-header modal-header d-flex align-items-center modal-header"
+      >
+        <h4
+          className="modal-title"
+        >
+          <div
+            className="t-d-gray title-4"
+          >
+            SHARE THIS WORKFLOW
+          </div>
+        </h4>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <div
+        className="dialog-body modal-body"
+      >
+        <FormGroup
+          tag="div"
+        >
+          <div
+            className="form-group"
+          >
+            <div
+              className="d-flex justify-content-between flex-row test-link-field"
+            >
+              <Label
+                className="t-d-gray info-1"
+                tag="label"
+              >
+                <label
+                  className="t-d-gray info-1  form-control-label"
+                >
+                  Public link
+                </label>
+              </Label>
+              <CopyToClipboard
+                className="info-2 t-f-blue mt-3"
+                onCopy={[Function]}
+                text="/this/isnt/real/808"
+              >
+                <div
+                  className="info-2 t-f-blue mt-3"
+                  onClick={[Function]}
+                >
+                  Copy to clipboard
+                </div>
+              </CopyToClipboard>
+            </div>
+            <div
+              className="mb-3"
+            >
+              <Input
+                className="url-link t-d-gray content-2 "
+                placeholder="/this/isnt/real/808"
+                readOnly={true}
+                tag="p"
+                type="url"
+              >
+                <input
+                  className="url-link t-d-gray content-2  form-control"
+                  placeholder="/this/isnt/real/808"
+                  readOnly={true}
+                  type="url"
+                />
+              </Input>
+            </div>
+          </div>
+        </FormGroup>
+      </div>
+    </ModalBody>
+    <ModalFooter
+      className="dialog-footer d-flex justify-content-start"
+      tag="div"
+    >
+      <div
+        className="dialog-footer d-flex justify-content-start modal-footer"
+      >
+        <div
+          className="icon-twitter button-icon"
+        />
+      </div>
+    </ModalFooter>
+  </div>
+</div>
+`;
+
+exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with links 1`] = `
+<WorkflowNavBar
+  api={
+    Object {
+      "duplicate": [Function],
+      "setWorkflowPublic": [Function],
+    }
+  }
+  isReadOnly={false}
+  user={
+    Object {
+      "id": 47,
+    }
+  }
+  workflow={
+    Object {
+      "id": 808,
+      "name": "Original Version",
+      "public": true,
+    }
+  }
+>
+  <div>
+    <div
+      className="d-flex justify-content-center"
+    />
+    <nav
+      className="navbar-workflows"
+    >
+      <div
+        className="navbar-brand d-flex flex-row align-items-center"
+      >
+        <div
+          className="title-metadata-stack"
+        >
+          <EditableWorkflowName
+            api={
+              Object {
+                "duplicate": [Function],
+                "setWorkflowPublic": [Function],
+              }
+            }
+            value="Original Version"
+            wfId={808}
+          >
+            <div
+              className="editable-name-container"
+              onClick={[Function]}
+            >
+              <TextareaAutosize
+                className="editable-title-field"
+                maxRows={1}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onHeightChange={[Function]}
+                onKeyPress={[Function]}
+                useCacheForDOMMeasurements={false}
+                value="Original Version"
+              >
+                <textarea
+                  className="editable-title-field"
+                  onBlur={[Function]}
+                  onChange={[Function]}
+                  onKeyPress={[Function]}
+                  style={
+                    Object {
+                      "height": -4,
+                    }
+                  }
+                  value="Original Version"
+                />
+              </TextareaAutosize>
+            </div>
+          </EditableWorkflowName>
+          <WorkflowMetadata
+            api={
+              Object {
+                "duplicate": [Function],
+                "setWorkflowPublic": [Function],
+              }
+            }
+            isPublic={true}
+            user={
+              Object {
+                "id": 47,
+              }
+            }
+            workflow={
+              Object {
+                "id": 808,
+                "name": "Original Version",
+                "public": true,
+              }
+            }
+          >
+            <div
+              className=""
+            >
+              <ul
+                className="list-inline list-workflow-meta content-3 t-white"
+              >
+                <li
+                  className="list-inline-item content-3 "
+                >
+                  Updated 
+                  now
+                </li>
+                <li
+                  className="list-inline-item test-button content-3 "
+                  onClick={[Function]}
+                >
+                  <u>
+                    public
+                  </u>
+                </li>
+              </ul>
+            </div>
+          </WorkflowMetadata>
+        </div>
+      </div>
+      <div
+        className="d-flex flex-row align-items-center"
+      >
+        <div
+          className="button-white action-button test-duplicate-button"
+          onClick={[Function]}
+        >
+          Duplicate
+        </div>
+        <div
+          className="button-white action-button test-share-button"
+          onClick={[Function]}
+        >
+          Share
+        </div>
+        <a
+          className="nav-link t-white content-2"
+          href="http://cjworkbench.org/index.php/blog/"
+        >
+          Learn
+        </a>
+        <WfHamburgerMenu
+          api={
+            Object {
+              "duplicate": [Function],
+              "setWorkflowPublic": [Function],
+            }
+          }
+          isReadOnly={false}
+          user={
+            Object {
+              "id": 47,
+            }
+          }
+          wfId={808}
+        >
+          <UncontrolledDropdown>
+            <Dropdown
+              isOpen={false}
+              tag="div"
+              toggle={[Function]}
+            >
+              <div
+                className="dropdown"
+              >
+                <DropdownToggle
+                  aria-haspopup={true}
+                  className="navbar-context-button"
+                  color="secondary"
+                  data-toggle="dropdown"
+                >
+                  <Button
+                    aria-expanded={false}
+                    aria-haspopup="true"
+                    className="navbar-context-button"
+                    color="secondary"
+                    data-toggle="dropdown"
+                    onClick={[Function]}
+                    tag="button"
+                  >
+                    <button
+                      aria-expanded={false}
+                      aria-haspopup="true"
+                      className="navbar-context-button btn btn-secondary"
+                      data-toggle="dropdown"
+                      onClick={[Function]}
+                      type="button"
+                    >
+                      <div
+                        className="button-icon icon-more-white"
+                      />
+                    </button>
+                  </Button>
+                </DropdownToggle>
+                <DropdownMenu
+                  right={true}
+                  tag="div"
+                >
+                  <div
+                    aria-hidden={true}
+                    className="dropdown-menu dropdown-menu-right"
+                    role="menu"
+                    tabIndex="-1"
+                  >
+                    <DropdownItem
+                      className="dropdown-menu-item"
+                      href="/workflows"
+                      tag="a"
+                      toggle={true}
+                    >
+                      <a
+                        className="dropdown-menu-item dropdown-item"
+                        href="/workflows"
+                        onClick={[Function]}
+                        tabIndex="0"
+                      >
+                        <span
+                          className="t-d-gray content-3 ml-3"
+                        >
+                          My Workflows
+                        </span>
+                      </a>
+                    </DropdownItem>
+                    <div>
+                      <DropdownItem
+                        divider={true}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <div
+                          className="dropdown-divider"
+                          onClick={[Function]}
+                          tabIndex="-1"
+                        />
+                      </DropdownItem>
+                      <DropdownItem
+                        className="dropdown-menu-item"
+                        onClick={[Function]}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <button
+                          className="dropdown-menu-item dropdown-item"
+                          onClick={[Function]}
+                          tabIndex="0"
+                          type="button"
+                        >
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Undo
+                          </span>
+                        </button>
+                      </DropdownItem>
+                      <DropdownItem
+                        className="dropdown-menu-item"
+                        onClick={[Function]}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <button
+                          className="dropdown-menu-item dropdown-item"
+                          onClick={[Function]}
+                          tabIndex="0"
+                          type="button"
+                        >
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Redo
+                          </span>
+                        </button>
+                      </DropdownItem>
+                      <DropdownItem
+                        divider={true}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <div
+                          className="dropdown-divider"
+                          onClick={[Function]}
+                          tabIndex="-1"
+                        />
+                      </DropdownItem>
+                    </div>
+                    <div>
+                      <DropdownItem
+                        className="dropdown-menu-item"
+                        href="/account/logout"
+                        tag="a"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-menu-item dropdown-item"
+                          href="/account/logout"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                          <span
+                            className="t-d-gray content-3 ml-3"
+                          >
+                            Logout
+                          </span>
+                        </a>
+                      </DropdownItem>
+                    </div>
+                  </div>
+                </DropdownMenu>
+              </div>
+            </Dropdown>
+          </UncontrolledDropdown>
+        </WfHamburgerMenu>
+      </div>
+    </nav>
+  </div>
+</WorkflowNavBar>
+`;
+
+exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with links 2`] = `
+<div
+  className="modal-dialog test-share-modal"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      className="dialog-header modal-header d-flex align-items-center"
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="dialog-header modal-header d-flex align-items-center modal-header"
+      >
+        <h4
+          className="modal-title"
+        >
+          <div
+            className="t-d-gray title-4"
+          >
+            SHARE THIS WORKFLOW
+          </div>
+        </h4>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <div
+        className="dialog-body modal-body"
+      >
+        <FormGroup
+          tag="div"
+        >
+          <div
+            className="form-group"
+          >
+            <div
+              className="d-flex justify-content-between flex-row test-link-field"
+            >
+              <Label
+                className="t-d-gray info-1"
+                tag="label"
+              >
+                <label
+                  className="t-d-gray info-1  form-control-label"
+                >
+                  Public link
+                </label>
+              </Label>
+              <CopyToClipboard
+                className="info-2 t-f-blue mt-3"
+                onCopy={[Function]}
+                text="/this/isnt/real/808"
+              >
+                <div
+                  className="info-2 t-f-blue mt-3"
+                  onClick={[Function]}
+                >
+                  Copy to clipboard
+                </div>
+              </CopyToClipboard>
+            </div>
+            <div
+              className="mb-3"
+            >
+              <Input
+                className="url-link t-d-gray content-2 "
+                placeholder="/this/isnt/real/808"
+                readOnly={true}
+                tag="p"
+                type="url"
+              >
+                <input
+                  className="url-link t-d-gray content-2  form-control"
+                  placeholder="/this/isnt/real/808"
+                  readOnly={true}
+                  type="url"
+                />
+              </Input>
+            </div>
+          </div>
+        </FormGroup>
+      </div>
+    </ModalBody>
+    <ModalFooter
+      className="dialog-footer d-flex justify-content-start"
+      tag="div"
+    >
+      <div
+        className="dialog-footer d-flex justify-content-start modal-footer"
+      >
+        <div
+          className="icon-twitter button-icon"
+        />
+      </div>
+    </ModalFooter>
+  </div>
+</div>
+`;
+
 exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends user to sign-in page 1`] = `
 <WorkflowNavBar
   api={
     Object {
       "duplicate": [Function],
+      "setWorkflowPublic": [Function],
     }
   }
   isReadOnly={false}
@@ -74,6 +1029,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
             api={
               Object {
                 "duplicate": [Function],
+                "setWorkflowPublic": [Function],
               }
             }
             value="Original Version"
@@ -111,8 +1067,10 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
             api={
               Object {
                 "duplicate": [Function],
+                "setWorkflowPublic": [Function],
               }
             }
+            isPublic={true}
             user={
               Object {
                 "id": null,
@@ -159,6 +1117,12 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
         >
           Duplicate
         </div>
+        <div
+          className="button-white action-button test-share-button"
+          onClick={[Function]}
+        >
+          Share
+        </div>
         <a
           className="nav-link t-white content-2"
           href="http://cjworkbench.org/index.php/blog/"
@@ -182,6 +1146,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
   api={
     Object {
       "duplicate": [Function],
+      "setWorkflowPublic": [Function],
     }
   }
   isReadOnly={false}
@@ -214,6 +1179,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
             api={
               Object {
                 "duplicate": [Function],
+                "setWorkflowPublic": [Function],
               }
             }
             value="Original Version"
@@ -251,8 +1217,10 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
             api={
               Object {
                 "duplicate": [Function],
+                "setWorkflowPublic": [Function],
               }
             }
+            isPublic={true}
             user={
               Object {
                 "id": 8,
@@ -299,6 +1267,12 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
         >
           Duplicate
         </div>
+        <div
+          className="button-white action-button test-share-button"
+          onClick={[Function]}
+        >
+          Share
+        </div>
         <a
           className="nav-link t-white content-2"
           href="http://cjworkbench.org/index.php/blog/"
@@ -309,6 +1283,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
           api={
             Object {
               "duplicate": [Function],
+              "setWorkflowPublic": [Function],
             }
           }
           isReadOnly={false}
