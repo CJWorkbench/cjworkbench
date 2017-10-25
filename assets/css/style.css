@@ -389,6 +389,10 @@ body {
   content: "\e928";
 }
 
+.icon-facebook:before{
+  content:"\e92b"
+}
+
 /* Customized icons, not in font sent  */
 
 .icon-l-gray {
