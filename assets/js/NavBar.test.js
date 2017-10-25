@@ -210,8 +210,7 @@ describe('NavBar', () => {
       // check that link has rendered correctly
       let linkField = shareModal.find('.test-link-field');
       expect(linkField.length).toBe(1);
-      // Need to fix this once correct link string in place
-      // expect(linkField.props().placeholder).toEqual("");
+      expect(linkField.props().placeholder).toEqual("/workflows/808");
     
       // no extra calls to API expected, 1 from last test
       expect(api.setWorkflowPublic.mock.calls.length).toBe(1);

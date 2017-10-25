@@ -74,9 +74,7 @@ export class WorkflowNavBar extends React.Component {
     }
   }
 
-  // similar BUT NOT THE SAME as from WorkflowMetadata - export this to Utils?
   setPublic() {
-
     this.props.api.setWorkflowPublic(this.props.workflow.id, true)
     .then(() => {
       this.setState({isPublic: true});
@@ -94,7 +92,7 @@ export class WorkflowNavBar extends React.Component {
 
   // this does not provide the correct link string yet
   linkString(id) {
-    var path = "/this/isnt/real/" + id;
+    var path = "/workflows/" + id;
     // allowing an out for testing (there is no window.location.href during test)
     if (window.location.href == 'about:blank') {
       return path;
@@ -129,13 +127,7 @@ export class WorkflowNavBar extends React.Component {
   }
 
   toggleModals() {
-    if ((typeof this.props.user !== 'undefined' && !this.props.user.id)) {
-      // user is NOT logged in, so navigate to sign in instead
-      goToUrl('/account/login');
-    } else {
-      // user IS logged in, so toggle those modals
-      this.setState({ modalsOpen: !this.state.modalsOpen });
-    }
+    this.setState({ modalsOpen: !this.state.modalsOpen });
   }
 
   renderModals() {
@@ -165,12 +157,12 @@ export class WorkflowNavBar extends React.Component {
         </ModalHeader>
         <ModalBody className='dialog-body'>
           <FormGroup>
-            <div className='d-flex justify-content-between flex-row test-link-field'>
+            <div className='d-flex justify-content-between flex-row'>
               <Label className='t-d-gray info-1'>Public link</Label>
               {copyLink}
             </div>
             <div className='mb-3'>
-              <Input type='url' className='url-link t-d-gray content-2 ' placeholder={linkString} readOnly/>
+              <Input type='url' className='url-link t-d-gray content-2 test-link-field' placeholder={linkString} readOnly/>
             </div>
           </FormGroup>
         </ModalBody>
