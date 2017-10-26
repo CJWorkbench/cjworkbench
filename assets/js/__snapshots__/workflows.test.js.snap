@@ -1,7 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<Workflows>
+<Workflows
+  api={EmptyAPI {}}
+>
   <div>
     <WorkflowListNavBar>
       <div>
@@ -172,7 +174,9 @@ exports[`renders correctly 1`] = `
 `;
 
 exports[`renders correctly 2`] = `
-<Workflows>
+<Workflows
+  api={EmptyAPI {}}
+>
   <div>
     <WorkflowListNavBar>
       <div>
@@ -352,20 +356,25 @@ exports[`renders correctly 2`] = `
                   </div>
                   <div
                     className="wf-id-meta"
+                    onClick={[Function]}
                   >
                     <WorkflowMetadata
+                      api={EmptyAPI {}}
+                      inWorkflowList={true}
+                      isPublic={true}
                       workflow={
                         Object {
                           "id": 1,
                           "name": "Charting",
+                          "public": true,
                         }
                       }
                     >
                       <div
                         className=""
                       >
-                        <div
-                          className="list-inline content-3 t-m-gray"
+                        <ul
+                          className="list-inline workflow-meta content-3 t-f-blue"
                         >
                           <li
                             className="list-inline-item content-3 "
@@ -377,16 +386,11 @@ exports[`renders correctly 2`] = `
                             className="list-inline-item test-button content-3 "
                             onClick={[Function]}
                           >
-                            <span>
-                              - 
-                            </span>
-                            <span
-                              className="t-f-blue"
-                            >
-                              private
-                            </span>
+                            <u>
+                              public
+                            </u>
                           </li>
-                        </div>
+                        </ul>
                       </div>
                     </WorkflowMetadata>
                   </div>
@@ -539,20 +543,25 @@ exports[`renders correctly 2`] = `
                   </div>
                   <div
                     className="wf-id-meta"
+                    onClick={[Function]}
                   >
                     <WorkflowMetadata
+                      api={EmptyAPI {}}
+                      inWorkflowList={true}
+                      isPublic={false}
                       workflow={
                         Object {
                           "id": 7,
                           "name": "Messy data cleanup",
+                          "public": false,
                         }
                       }
                     >
                       <div
                         className=""
                       >
-                        <div
-                          className="list-inline content-3 t-m-gray"
+                        <ul
+                          className="list-inline workflow-meta content-3 t-f-blue"
                         >
                           <li
                             className="list-inline-item content-3 "
@@ -564,16 +573,11 @@ exports[`renders correctly 2`] = `
                             className="list-inline-item test-button content-3 "
                             onClick={[Function]}
                           >
-                            <span>
-                              - 
-                            </span>
-                            <span
-                              className="t-f-blue"
-                            >
+                            <u>
                               private
-                            </span>
+                            </u>
                           </li>
-                        </div>
+                        </ul>
                       </div>
                     </WorkflowMetadata>
                   </div>
@@ -726,20 +730,25 @@ exports[`renders correctly 2`] = `
                   </div>
                   <div
                     className="wf-id-meta"
+                    onClick={[Function]}
                   >
                     <WorkflowMetadata
+                      api={EmptyAPI {}}
+                      inWorkflowList={true}
+                      isPublic={true}
                       workflow={
                         Object {
                           "id": 8,
                           "name": "Document search",
+                          "public": true,
                         }
                       }
                     >
                       <div
                         className=""
                       >
-                        <div
-                          className="list-inline content-3 t-m-gray"
+                        <ul
+                          className="list-inline workflow-meta content-3 t-f-blue"
                         >
                           <li
                             className="list-inline-item content-3 "
@@ -751,16 +760,11 @@ exports[`renders correctly 2`] = `
                             className="list-inline-item test-button content-3 "
                             onClick={[Function]}
                           >
-                            <span>
-                              - 
-                            </span>
-                            <span
-                              className="t-f-blue"
-                            >
-                              private
-                            </span>
+                            <u>
+                              public
+                            </u>
                           </li>
-                        </div>
+                        </ul>
                       </div>
                     </WorkflowMetadata>
                   </div>
@@ -913,20 +917,25 @@ exports[`renders correctly 2`] = `
                   </div>
                   <div
                     className="wf-id-meta"
+                    onClick={[Function]}
                   >
                     <WorkflowMetadata
+                      api={EmptyAPI {}}
+                      inWorkflowList={true}
+                      isPublic={false}
                       workflow={
                         Object {
                           "id": 9,
                           "name": "Visualization",
+                          "public": false,
                         }
                       }
                     >
                       <div
                         className=""
                       >
-                        <div
-                          className="list-inline content-3 t-m-gray"
+                        <ul
+                          className="list-inline workflow-meta content-3 t-f-blue"
                         >
                           <li
                             className="list-inline-item content-3 "
@@ -938,16 +947,11 @@ exports[`renders correctly 2`] = `
                             className="list-inline-item test-button content-3 "
                             onClick={[Function]}
                           >
-                            <span>
-                              - 
-                            </span>
-                            <span
-                              className="t-f-blue"
-                            >
+                            <u>
                               private
-                            </span>
+                            </u>
                           </li>
-                        </div>
+                        </ul>
                       </div>
                     </WorkflowMetadata>
                   </div>

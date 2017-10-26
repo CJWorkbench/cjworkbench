@@ -9,19 +9,23 @@ it('renders correctly', (done) => {
   var mockWorkflows = [
       {
         "id": 1,
-        "name": "Charting"
+        "name": "Charting",
+        "public":true
       },
       {
         "id": 7,
-        "name": "Messy data cleanup"
+        "name": "Messy data cleanup",
+        "public":false
       },
       {
         "id": 8,
-        "name": "Document search"
+        "name": "Document search",
+        "public":true
       },
       {
         "id": 9,
-        "name": "Visualization"
+        "name": "Visualization",
+        "public":false
       },
     ];
 
@@ -30,9 +34,9 @@ it('renders correctly', (done) => {
   );
 
   // Start with no workflows on the initial fetch (won't get loaded before expects anyway, due to asynchrony)
-  const wrapper = mount( <Workflows /> );
+  const wrapper = mount( <Workflows api={Utils.emptyAPI}/> );
   expect(wrapper).toMatchSnapshot();
-  
+
   // Manually add workflows by setting state
   wrapper.setState( { workflows: mockWorkflows} )
   expect(wrapper).toMatchSnapshot();
@@ -40,6 +44,10 @@ it('renders correctly', (done) => {
 
   // Make sure there is a context menu for each workflow
   var menus = wrapper.find('.menu-test-class');
+  expect(menus).toHaveLength(4);
+
+  // Make sure there is a metadata line for each workflow in the list
+  var menus = wrapper.find('.wf-id-meta');
   expect(menus).toHaveLength(4);
 
 
@@ -60,7 +68,7 @@ it('renders correctly', (done) => {
 
 it('new workflow button', (done) => {
 
-  const wrapper = mount( <Workflows /> );  
+  const wrapper = mount( <Workflows api={Utils.emptyAPI}/> );
 
   // Simulate click on New button - should go to page for new WF
   var newButton = wrapper.find('.new-workflow-button');
@@ -84,4 +92,3 @@ it('new workflow button', (done) => {
   });
 
 });
-

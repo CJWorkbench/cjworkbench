@@ -110,9 +110,11 @@ export default class WorkflowMetadata extends React.Component {
           <u>{this.state.isPublic ? 'public' : 'private'}</u>
         </li>
 
+    var textColor = this.props.inWorkflowList? 't-f-blue': 't-white';
+
     return (
       <div className=''>
-        <ul className="list-inline workflow-meta content-3 t-white">
+        <ul className={"list-inline workflow-meta content-3 "+textColor}>
            {attribution}
           <li className="list-inline-item content-3 ">
             Updated {timeDifference(this.props.workflow.last_update, now)}
@@ -130,5 +132,7 @@ WorkflowMetadata.propTypes = {
   api:        PropTypes.object.isRequired,
   isPublic:   PropTypes.bool.isRequired,
   user:       PropTypes.object,
+  inWorkflowList: PropTypes.bool, //change styling for use inside WF list
   test_now:   PropTypes.object  // optional injection for testing
+
 };
