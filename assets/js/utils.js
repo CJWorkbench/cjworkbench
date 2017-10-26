@@ -62,7 +62,7 @@ export function timeDifference (start, end) {
   }
   else if (diff.days > 0) {
     if (diff.days == 1) {
-      return "1y ago";
+      return "1d ago";
     } else {
       return "" + diff.days + "d ago";
     }
