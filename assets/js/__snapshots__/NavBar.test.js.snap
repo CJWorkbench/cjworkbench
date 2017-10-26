@@ -547,8 +547,23 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
       <div
         className="dialog-footer d-flex justify-content-start modal-footer"
       >
-        <div
-          className="icon-twitter button-icon"
+        <Share
+          onLoad={[Function]}
+          options={
+            Object {
+              "text": "Check out this data flow from CJ Workbench:",
+            }
+          }
+          url="/workflows/808"
+        >
+          <AbstractWidget
+            ready={[Function]}
+          >
+            <div />
+          </AbstractWidget>
+        </Share>
+        <span
+          className="icon-facebook button-icon"
         />
       </div>
     </ModalFooter>
@@ -982,8 +997,23 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
       <div
         className="dialog-footer d-flex justify-content-start modal-footer"
       >
-        <div
-          className="icon-twitter button-icon"
+        <Share
+          onLoad={[Function]}
+          options={
+            Object {
+              "text": "Check out this data flow from CJ Workbench:",
+            }
+          }
+          url="/workflows/808"
+        >
+          <AbstractWidget
+            ready={[Function]}
+          >
+            <div />
+          </AbstractWidget>
+        </Share>
+        <span
+          className="icon-facebook button-icon"
         />
       </div>
     </ModalFooter>
