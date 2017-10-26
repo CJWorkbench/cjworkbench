@@ -136,7 +136,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
               className=""
             >
               <ul
-                className="list-inline list-workflow-meta content-3 t-white"
+                className="list-inline workflow-meta content-3 t-white"
               >
                 <li
                   className="list-inline-item content-3 "
@@ -655,7 +655,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
               className=""
             >
               <ul
-                className="list-inline list-workflow-meta content-3 t-white"
+                className="list-inline workflow-meta content-3 t-white"
               >
                 <li
                   className="list-inline-item content-3 "
@@ -1087,7 +1087,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
               className=""
             >
               <ul
-                className="list-inline list-workflow-meta content-3 t-white"
+                className="list-inline workflow-meta content-3 t-white"
               >
                 <li
                   className="list-inline-item content-3 "
@@ -1237,7 +1237,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
               className=""
             >
               <ul
-                className="list-inline list-workflow-meta content-3 t-white"
+                className="list-inline workflow-meta content-3 t-white"
               >
                 <li
                   className="list-inline-item content-3 "

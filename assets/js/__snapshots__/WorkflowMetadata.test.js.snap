@@ -23,7 +23,7 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
     className=""
   >
     <ul
-      className="list-inline list-workflow-meta content-3 t-white"
+      className="list-inline workflow-meta content-3 t-white"
     >
       <li
         className="list-inline-item content-3 "
@@ -169,7 +169,7 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
     className=""
   >
     <ul
-      className="list-inline list-workflow-meta content-3 t-white"
+      className="list-inline workflow-meta content-3 t-white"
     >
       <li
         className="list-inline-item content-3 "
@@ -213,7 +213,7 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
     className=""
   >
     <ul
-      className="list-inline list-workflow-meta content-3 t-white"
+      className="list-inline workflow-meta content-3 t-white"
     >
       <li
         className="list-inline-item content-3 "
@@ -257,7 +257,7 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
     className=""
   >
     <ul
-      className="list-inline list-workflow-meta content-3 t-white"
+      className="list-inline workflow-meta content-3 t-white"
     >
       <li
         className="list-inline-item content-3 "
