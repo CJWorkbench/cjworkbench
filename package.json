@@ -44,6 +44,7 @@
     "react-sortable": "^1.2.0",
     "react-tangle": "git://github.com/Quartz/react-tangle.git#mb-pages",
     "react-textarea-autosize": "^5.1.0",
+    "react-twitter-widgets": "^1.7.1",
     "reactstrap": "^4.6.2",
     "redux": "^3.6.0",
     "redux-promise": "^0.5.3",

@@ -18,6 +18,7 @@ import {
   Input
 } from 'reactstrap'
 import CopyToClipboard from 'react-copy-to-clipboard';
+import { Share } from 'react-twitter-widgets'
 
 
 export class WorkflowListNavBar extends React.Component {
@@ -167,7 +168,12 @@ export class WorkflowNavBar extends React.Component {
           </FormGroup>
         </ModalBody>
         <ModalFooter className='dialog-footer d-flex justify-content-start'>
-          <div className='icon-twitter button-icon'></div>
+          {/* Twitter share link */}
+          <Share 
+            url={linkString} 
+            options={{text: "Check out this data flow from CJ Workbench:"}}
+          />
+          <span className='icon-facebook button-icon'></span>          
         </ModalFooter>
       </Modal>
 
