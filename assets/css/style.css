@@ -684,6 +684,10 @@ body {
   background: #edecec;
 }
 
+.menu-test-class{
+  height:2.5rem;
+}
+
 .navbar-context-button {
   cursor: pointer;
   border: 0;
@@ -1002,6 +1006,16 @@ body {
   margin-bottom: auto;
 }
 
+.wf-id-stack{
+}
+
+.wf-id-name{
+  margin-top: 0.8rem;
+}
+
+.wf-id-meta{
+  margin-top: 0.5rem;
+}
 
 /* ---- Workflow page ---- */
 
@@ -1117,7 +1131,7 @@ img.logo {
   color: #FFFFFF;
 }
 
-.list-workflow-meta{
+.workflow-meta{
   margin-top: 2.5rem;
 }
 

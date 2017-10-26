@@ -4,6 +4,7 @@ import React from 'react'
 import { WorkflowListNavBar } from './navbar'
 import { csrfToken, goToUrl } from './utils'
 import WfContextMenu from './WfContextMenu'
+import WorkflowMetadata from './WorkflowListMetadata'
 
 
 export default class Workflows extends React.Component {
@@ -97,13 +98,20 @@ export default class Workflows extends React.Component {
                 {this.state.workflows.map( listValue => {
                   return (
                       <a href={"/workflows/" + listValue.id} className="workflow-link card card-block item-test-class workflow-in-list"key={listValue.id}>
-                        <div className='my-auto'>
-                          <div className='d-flex justify-content-between'>
-                            <span className='t-d-gray title-4 mt-2'>{listValue.name}</span>
-                            {/* Extra div wrapper to prevent parent's navigation to WF page*/}
-                            <div onClick={(e) => e.preventDefault()} className="menu-test-class">
-                              <WfContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
+                        <div className='my-auto d-flex justify-content-between align-items-center'>
+                          <div className='wf-id-stack'>
+                            <div className='wf-id-name t-d-gray title-4'>{listValue.name}</div>
+                            <div className='wf-id-meta'>
+                              <WorkflowMetadata
+                                workflow={listValue}
+                                api={this.props.api}
+                                user={this.props.user}
+                                isPublic={this.state.isPublic}
+                              />
                             </div>
+                          </div>
+                          <div onClick={(e) => e.preventDefault()} className="menu-test-class">
+                            <WfContextMenu deleteWorkflow={ () => this.deleteWorkflow(listValue.id) }/>
                           </div>
                         </div>
                       </a>
