@@ -1,5 +1,6 @@
 from server.importmodulefromgithub import *
 from server.tests.utils import *
+from pathlib import Path
 
 import mock
 
@@ -238,7 +239,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
             validate_python(mapping, pwd, module_directory, "prototype-dynamic-loading", "123456")
 
         self.assertTrue(python_file == 'importable.py', "The python file should be importable.py")
-        self.assertTrue(destination_directory == pwd + "/../../importedmodules/prototype-dynamic-loading/123456",
+        self.assertTrue(Path(destination_directory) == Path(pwd) / "../../importedmodules/prototype-dynamic-loading/123456",
                 "The destination directory should be {}/prototype-dynamic-loading/123456".format(pwd + "/../../importedmodules") +
                 " but it's {}".format(destination_directory))
 

@@ -27,7 +27,7 @@ module.exports = {
       {
         test: /\.jsx?$/,
         // chartbuilder and included modules need their jsx compiled, but most node-modules do not
-        exclude: /node_modules(?!\/(react-tangle))/,
+        exclude: /node_modules(?!([\\]+|\/)(react-tangle))/,
         loader: 'babel-loader',
         query: {presets: ['es2015', 'react']}  // to transform JSX into JS
       },
