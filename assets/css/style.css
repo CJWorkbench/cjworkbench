@@ -993,7 +993,7 @@ body {
 }
 
 .workflow-in-list:hover {
-  background-color: #f9f9f9;
+  background-color: #fafafa;
   margin:none;
 }
 .workflow-link:hover {
@@ -1005,15 +1005,25 @@ body {
   margin-bottom: auto;
 }
 
+/*workflow in worfklow list*/
 .wf-id-stack{
 }
 
 .wf-id-name{
-  margin-top: 0.8rem;
+  margin-top: 1.7rem;
 }
 
 .wf-id-meta{
-  margin-top: 0.5rem;
+  margin-top: -2rem !important;
+}
+
+.metadataSeparator{
+  margin:0 0.5rem 0 0.3rem;
+  text-align: center;
+}
+
+.list-inline-item:not(:last-child){
+  margin-right: 0px;
 }
 
 /* ---- Workflow page ---- */
