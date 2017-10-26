@@ -374,22 +374,31 @@ exports[`renders correctly 2`] = `
                         className=""
                       >
                         <ul
-                          className="list-inline workflow-meta content-3 t-f-blue"
+                          className="list-inline workflow-meta content-3 "
                         >
                           <li
-                            className="list-inline-item content-3 "
+                            className="list-inline-item content-3 t-m-gray"
                           >
                             Updated 
                             now
+                            <span
+                              className="metadataSeparator"
+                            >
+                              -
+                            </span>
                           </li>
-                          <li
-                            className="list-inline-item test-button content-3 "
-                            onClick={[Function]}
+                          <span
+                            className="t-f-blue"
                           >
-                            <u>
-                              public
-                            </u>
-                          </li>
+                            <li
+                              className="list-inline-item test-button content-3 "
+                              onClick={[Function]}
+                            >
+                              <div>
+                                public
+                              </div>
+                            </li>
+                          </span>
                         </ul>
                       </div>
                     </WorkflowMetadata>
@@ -561,22 +570,31 @@ exports[`renders correctly 2`] = `
                         className=""
                       >
                         <ul
-                          className="list-inline workflow-meta content-3 t-f-blue"
+                          className="list-inline workflow-meta content-3 "
                         >
                           <li
-                            className="list-inline-item content-3 "
+                            className="list-inline-item content-3 t-m-gray"
                           >
                             Updated 
                             now
+                            <span
+                              className="metadataSeparator"
+                            >
+                              -
+                            </span>
                           </li>
-                          <li
-                            className="list-inline-item test-button content-3 "
-                            onClick={[Function]}
+                          <span
+                            className="t-f-blue"
                           >
-                            <u>
-                              private
-                            </u>
-                          </li>
+                            <li
+                              className="list-inline-item test-button content-3 "
+                              onClick={[Function]}
+                            >
+                              <div>
+                                private
+                              </div>
+                            </li>
+                          </span>
                         </ul>
                       </div>
                     </WorkflowMetadata>
@@ -748,22 +766,31 @@ exports[`renders correctly 2`] = `
                         className=""
                       >
                         <ul
-                          className="list-inline workflow-meta content-3 t-f-blue"
+                          className="list-inline workflow-meta content-3 "
                         >
                           <li
-                            className="list-inline-item content-3 "
+                            className="list-inline-item content-3 t-m-gray"
                           >
                             Updated 
                             now
+                            <span
+                              className="metadataSeparator"
+                            >
+                              -
+                            </span>
                           </li>
-                          <li
-                            className="list-inline-item test-button content-3 "
-                            onClick={[Function]}
+                          <span
+                            className="t-f-blue"
                           >
-                            <u>
-                              public
-                            </u>
-                          </li>
+                            <li
+                              className="list-inline-item test-button content-3 "
+                              onClick={[Function]}
+                            >
+                              <div>
+                                public
+                              </div>
+                            </li>
+                          </span>
                         </ul>
                       </div>
                     </WorkflowMetadata>
@@ -935,22 +962,31 @@ exports[`renders correctly 2`] = `
                         className=""
                       >
                         <ul
-                          className="list-inline workflow-meta content-3 t-f-blue"
+                          className="list-inline workflow-meta content-3 "
                         >
                           <li
-                            className="list-inline-item content-3 "
+                            className="list-inline-item content-3 t-m-gray"
                           >
                             Updated 
                             now
+                            <span
+                              className="metadataSeparator"
+                            >
+                              -
+                            </span>
                           </li>
-                          <li
-                            className="list-inline-item test-button content-3 "
-                            onClick={[Function]}
+                          <span
+                            className="t-f-blue"
                           >
-                            <u>
-                              private
-                            </u>
-                          </li>
+                            <li
+                              className="list-inline-item test-button content-3 "
+                              onClick={[Function]}
+                            >
+                              <div>
+                                private
+                              </div>
+                            </li>
+                          </span>
                         </ul>
                       </div>
                     </WorkflowMetadata>

@@ -136,22 +136,31 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
               className=""
             >
               <ul
-                className="list-inline workflow-meta content-3 t-white"
+                className="list-inline workflow-meta content-3 "
               >
                 <li
-                  className="list-inline-item content-3 "
+                  className="list-inline-item content-3 t-white"
                 >
                   Updated 
                   now
+                  <span
+                    className="metadataSeparator"
+                  >
+                    -
+                  </span>
                 </li>
-                <li
-                  className="list-inline-item test-button content-3 "
-                  onClick={[Function]}
+                <span
+                  className="t-white"
                 >
-                  <u>
-                    private
-                  </u>
-                </li>
+                  <li
+                    className="list-inline-item test-button content-3 "
+                    onClick={[Function]}
+                  >
+                    <div>
+                      private
+                    </div>
+                  </li>
+                </span>
               </ul>
             </div>
           </WorkflowMetadata>
@@ -670,22 +679,31 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
               className=""
             >
               <ul
-                className="list-inline workflow-meta content-3 t-white"
+                className="list-inline workflow-meta content-3 "
               >
                 <li
-                  className="list-inline-item content-3 "
+                  className="list-inline-item content-3 t-white"
                 >
                   Updated 
                   now
+                  <span
+                    className="metadataSeparator"
+                  >
+                    -
+                  </span>
                 </li>
-                <li
-                  className="list-inline-item test-button content-3 "
-                  onClick={[Function]}
+                <span
+                  className="t-white"
                 >
-                  <u>
-                    public
-                  </u>
-                </li>
+                  <li
+                    className="list-inline-item test-button content-3 "
+                    onClick={[Function]}
+                  >
+                    <div>
+                      public
+                    </div>
+                  </li>
+                </span>
               </ul>
             </div>
           </WorkflowMetadata>
@@ -1117,22 +1135,31 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
               className=""
             >
               <ul
-                className="list-inline workflow-meta content-3 t-white"
+                className="list-inline workflow-meta content-3 "
               >
                 <li
-                  className="list-inline-item content-3 "
+                  className="list-inline-item content-3 t-white"
                 >
                   Updated 
                   now
+                  <span
+                    className="metadataSeparator"
+                  >
+                    -
+                  </span>
                 </li>
-                <li
-                  className="list-inline-item test-button content-3 "
-                  onClick={[Function]}
+                <span
+                  className="t-white"
                 >
-                  <u>
-                    public
-                  </u>
-                </li>
+                  <li
+                    className="list-inline-item test-button content-3 "
+                    onClick={[Function]}
+                  >
+                    <div>
+                      public
+                    </div>
+                  </li>
+                </span>
               </ul>
             </div>
           </WorkflowMetadata>
@@ -1267,22 +1294,31 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
               className=""
             >
               <ul
-                className="list-inline workflow-meta content-3 t-white"
+                className="list-inline workflow-meta content-3 "
               >
                 <li
-                  className="list-inline-item content-3 "
+                  className="list-inline-item content-3 t-white"
                 >
                   Updated 
                   now
+                  <span
+                    className="metadataSeparator"
+                  >
+                    -
+                  </span>
                 </li>
-                <li
-                  className="list-inline-item test-button content-3 "
-                  onClick={[Function]}
+                <span
+                  className="t-white"
                 >
-                  <u>
-                    public
-                  </u>
-                </li>
+                  <li
+                    className="list-inline-item test-button content-3 "
+                    onClick={[Function]}
+                  >
+                    <div>
+                      public
+                    </div>
+                  </li>
+                </span>
               </ul>
             </div>
           </WorkflowMetadata>
