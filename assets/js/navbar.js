@@ -134,6 +134,7 @@ export class WorkflowNavBar extends React.Component {
   renderModals() {
 
     var linkString = this.linkString(this.props.workflow.id);
+    var facebookUrl = 'https://www.facebook.com/sharer.php?u=' + linkString;
     var copyLink = this.renderCopyLink();
 
     var setPublicModal =
@@ -174,6 +175,12 @@ export class WorkflowNavBar extends React.Component {
             options={{text: "Check out this data flow from CJ Workbench:"}}
           />
           <span className='icon-facebook button-icon'></span>
+          {/* Facebook share link */}
+          <a 
+            href={facebookUrl} 
+            className='icon-facebook button-icon'
+            target="_blank"  // link pops up new tab
+          />
         </ModalFooter>
       </Modal>
 
