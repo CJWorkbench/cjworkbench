@@ -97,6 +97,10 @@ export default class WorkflowMetadata extends React.Component {
 
     var now = this.props.test_now || new Date();
 
+    //giving a different style to metadata if it's displayed in WF list
+    var publicColor = this.props.inWorkflowList? 't-f-blue': 't-white-u';
+    var timeColor = this.props.inWorkflowList? 't-m-gray': 't-white';
+
     // only list User attribution if one exists & is not just whitespace
     var user = (this.props.user && this.props.user.display_name)
       ? this.props.user.display_name
@@ -106,13 +110,9 @@ export default class WorkflowMetadata extends React.Component {
       : null
     var modalLink = (this.props.workflow.read_only)
       ? null
-      : <li className="list-inline-item test-button content-3 " onClick={this.togglePrivacyModal}>
-          <div>{this.state.isPublic ? 'public' : 'private'}</div>
-        </li>
-
-    //giving a different style to metadata if it's displayed in WF list
-    var publicColor = this.props.inWorkflowList? 't-f-blue': 't-white';
-    var timeColor = this.props.inWorkflowList? 't-m-gray': 't-white';
+      : <div className="list-inline-item test-button content-3 " onClick={this.togglePrivacyModal}>
+          <div className={''+publicColor}>{this.state.isPublic ? 'public' : 'private'}</div>
+        </div>
 
     return (
       <div className=''>
@@ -120,11 +120,11 @@ export default class WorkflowMetadata extends React.Component {
            {attribution}
           <li className={"list-inline-item content-3 "+ timeColor}>
             Updated {timeDifference(this.props.workflow.last_update, now)}
-            <span className= 'metadataSeparator'>-</span>
+            <span className='metadataSeparator'>-</span>
           </li>
-          <span className={publicColor}>
+          <li className="list-inline-item content-3">
           {modalLink}
-          </span>
+          </li>
         </ul>
         { this.renderPrivacyModal() }
       </div>
