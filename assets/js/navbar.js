@@ -172,7 +172,7 @@ export class WorkflowNavBar extends React.Component {
           {/* Twitter share link */}
           <Share
             url={linkString}
-            options={{text: "Check out this data flow from CJ Workbench:"}}
+            options={{text: "Check out this chart created by CJ Workbench:"}}
           />
           {/* Facebook share link */}
           <a 
