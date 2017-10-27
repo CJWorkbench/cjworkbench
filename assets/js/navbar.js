@@ -174,7 +174,6 @@ export class WorkflowNavBar extends React.Component {
             url={linkString}
             options={{text: "Check out this data flow from CJ Workbench:"}}
           />
-          <span className='icon-facebook button-icon'></span>
           {/* Facebook share link */}
           <a 
             href={facebookUrl} 
