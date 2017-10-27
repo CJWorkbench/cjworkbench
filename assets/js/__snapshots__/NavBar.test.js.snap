@@ -551,7 +551,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
           onLoad={[Function]}
           options={
             Object {
-              "text": "Check out this data flow from CJ Workbench:",
+              "text": "Check out this chart created by CJ Workbench:",
             }
           }
           url="/workflows/808"
@@ -1008,7 +1008,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
           onLoad={[Function]}
           options={
             Object {
-              "text": "Check out this data flow from CJ Workbench:",
+              "text": "Check out this chart created by CJ Workbench:",
             }
           }
           url="/workflows/808"
