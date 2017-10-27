@@ -27,7 +27,7 @@ export default class EditableWorkflowName extends React.Component {
   keyPress(e) {
     if (e.key == 'Enter' ) {
       e.preventDefault();
-      // Blur event will trigger save 
+      // Blur event will trigger save
       // Have to target child through parent b/c TextArea cannot be directly referenced
       this.textInput.childNodes[0].blur();
     }

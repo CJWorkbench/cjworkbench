@@ -50,7 +50,7 @@ export class WorkflowNavBar extends React.Component {
       spinnerVisible: false,
       modalsOpen: false,
       isPublic: this.props.workflow.public,
-      linkCopied: false,      
+      linkCopied: false,
     };
     this.handleDuplicate = this.handleDuplicate.bind(this);
     this.setPublic = this.setPublic.bind(this);
@@ -79,12 +79,12 @@ export class WorkflowNavBar extends React.Component {
     this.props.api.setWorkflowPublic(this.props.workflow.id, true)
     .then(() => {
       this.setState({isPublic: true});
-      // close current modal      
+      // close current modal
       this.toggleModals();
       // ensure that child components are updated
       this.forceUpdate();
       // open new modal with sharing feature
-      this.toggleModals();      
+      this.toggleModals();
     })
     .catch((error) => {
       console.log('Request failed', error);
@@ -136,22 +136,22 @@ export class WorkflowNavBar extends React.Component {
     var linkString = this.linkString(this.props.workflow.id);
     var copyLink = this.renderCopyLink();
 
-    var setPublicModal = 
+    var setPublicModal =
       <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-setpublic-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
           <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
         <ModalBody className='dialog-body'>
           <div className='title-3 mb-3'>This workflow is currently private</div>
-          <div className='content-3'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>          
+          <div className='content-3'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>
+          <div className="modal-dual-button d-flex flex-row">
+            <div onClick={this.toggleModals} className='button-gray action-button'>Cancel</div>
+            <div onClick={this.setPublic} className='button-blue ml-3 action-button test-public-button'>Set Public</div>
+          </div>
         </ModalBody>
-        <ModalFooter className='dialog-footer'>
-          <div onClick={this.toggleModals} className='button-gray action-button'>Cancel</div>
-          <div onClick={this.setPublic} className='button-blue action-button test-public-button'>Set Public</div>          
-        </ModalFooter>
       </Modal>
 
-    var shareModal = 
+    var shareModal =
       <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-share-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
           <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
@@ -169,11 +169,11 @@ export class WorkflowNavBar extends React.Component {
         </ModalBody>
         <ModalFooter className='dialog-footer d-flex justify-content-start'>
           {/* Twitter share link */}
-          <Share 
-            url={linkString} 
+          <Share
+            url={linkString}
             options={{text: "Check out this data flow from CJ Workbench:"}}
           />
-          <span className='icon-facebook button-icon'></span>          
+          <span className='icon-facebook button-icon'></span>
         </ModalFooter>
       </Modal>
 
@@ -189,7 +189,7 @@ export class WorkflowNavBar extends React.Component {
   render() {
 
     // checks if there is a logged-in user, true = logged out
-    var signOff = ((typeof this.props.user !== 'undefined' && !this.props.user.id))
+    var contextMenu = ((typeof this.props.user !== 'undefined' && !this.props.user.id))
       ? <a href="http://app.cjworkbench.org/account/login" className='nav-link t-white content-2'>Sign in</a>
       : <WfHamburgerMenu
           wfId={this.props.workflow.id}
@@ -198,7 +198,7 @@ export class WorkflowNavBar extends React.Component {
           user={this.props.user}
         />
 
-    var duplicate = <div onClick={this.handleDuplicate} className='button-white action-button test-duplicate-button'>
+    var duplicate = <div onClick={this.handleDuplicate} className='button-white-full action-button test-duplicate-button'>
                       Duplicate
                     </div>
 
@@ -206,7 +206,7 @@ export class WorkflowNavBar extends React.Component {
                   Share
                 </div>
 
-    var modals = this.renderModals();        
+    var modals = this.renderModals();
 
     var spinner = (this.state.spinnerVisible)
                     ? <div id="spinner-container">
@@ -242,10 +242,7 @@ export class WorkflowNavBar extends React.Component {
             {duplicate}
             {share}
             {modals}
-            <a href="http://cjworkbench.org/index.php/blog/" className='nav-link t-white content-2'>
-              Learn
-            </a>
-            {signOff}
+            {contextMenu}
           </div>
         </nav>
       </div>

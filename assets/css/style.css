@@ -154,7 +154,7 @@ body {
 
 /* Text  */
 .t-white {
-  cursor:default;
+  cursor: default;
   color: #FFFFFF;
   white-space: nowrap;
 }
@@ -650,6 +650,13 @@ body {
   border:none;
 }
 
+.button-white-full {
+  background-color: #FFF;
+  color: #48C8D7;
+	text-align: center;
+  border:none;
+}
+
 .button-full-orange {
   background-color:#FBAA6D;
   color: #FFFFFF;
@@ -699,7 +706,6 @@ body {
   justify-content: center;
   background: none;
   margin-right: 5rem;
-  margin-left:1.8rem;
 }
 
 .navbar-context-button:hover {
@@ -1117,7 +1123,13 @@ img.logo {
 }
 
 .nav-link {
+  cursor: pointer;
   margin-right: 5rem;
+}
+
+.nav-link:hover{
+  text-decoration: underline;
+  color: #fff;
 }
 
 .title-metadata-stack {
@@ -1130,8 +1142,8 @@ img.logo {
 }
 
 .editable-title-field {
-  width: 100%;
-  margin-top: 0.4rem;
+  width: 55rem;
+  margin-top: 0.2rem;
   border: none;
   outline: none;
   padding: 0;
@@ -1139,8 +1151,12 @@ img.logo {
   background: none;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 1.8rem;
-	line-height: 1.8rem;
+	line-height: 2.4rem;
   color: #FFFFFF;
+}
+
+.editable-title-field:hover{
+  background-color: rgba(250,250,250,0.2);
 }
 
 .workflow-meta{

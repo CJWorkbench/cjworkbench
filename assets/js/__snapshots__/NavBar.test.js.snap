@@ -149,18 +149,20 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                     -
                   </span>
                 </li>
-                <span
-                  className="t-white"
+                <li
+                  className="list-inline-item content-3"
                 >
-                  <li
+                  <div
                     className="list-inline-item test-button content-3 "
                     onClick={[Function]}
                   >
-                    <div>
+                    <div
+                      className="t-white-u"
+                    >
                       private
                     </div>
-                  </li>
-                </span>
+                  </div>
+                </li>
               </ul>
             </div>
           </WorkflowMetadata>
@@ -170,7 +172,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
         className="d-flex flex-row align-items-center"
       >
         <div
-          className="button-white action-button test-duplicate-button"
+          className="button-white-full action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
@@ -181,12 +183,6 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
         >
           Share
         </div>
-        <a
-          className="nav-link t-white content-2"
-          href="http://cjworkbench.org/index.php/blog/"
-        >
-          Learn
-        </a>
         <WfHamburgerMenu
           api={
             Object {
@@ -421,29 +417,24 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
         >
           Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
         </div>
+        <div
+          className="modal-dual-button d-flex flex-row"
+        >
+          <div
+            className="button-gray action-button"
+            onClick={[Function]}
+          >
+            Cancel
+          </div>
+          <div
+            className="button-blue ml-3 action-button test-public-button"
+            onClick={[Function]}
+          >
+            Set Public
+          </div>
+        </div>
       </div>
     </ModalBody>
-    <ModalFooter
-      className="dialog-footer"
-      tag="div"
-    >
-      <div
-        className="dialog-footer modal-footer"
-      >
-        <div
-          className="button-gray action-button"
-          onClick={[Function]}
-        >
-          Cancel
-        </div>
-        <div
-          className="button-blue action-button test-public-button"
-          onClick={[Function]}
-        >
-          Set Public
-        </div>
-      </div>
-    </ModalFooter>
   </div>
 </div>
 `;
@@ -692,18 +683,20 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                     -
                   </span>
                 </li>
-                <span
-                  className="t-white"
+                <li
+                  className="list-inline-item content-3"
                 >
-                  <li
+                  <div
                     className="list-inline-item test-button content-3 "
                     onClick={[Function]}
                   >
-                    <div>
+                    <div
+                      className="t-white-u"
+                    >
                       public
                     </div>
-                  </li>
-                </span>
+                  </div>
+                </li>
               </ul>
             </div>
           </WorkflowMetadata>
@@ -713,7 +706,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
         className="d-flex flex-row align-items-center"
       >
         <div
-          className="button-white action-button test-duplicate-button"
+          className="button-white-full action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
@@ -724,12 +717,6 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
         >
           Share
         </div>
-        <a
-          className="nav-link t-white content-2"
-          href="http://cjworkbench.org/index.php/blog/"
-        >
-          Learn
-        </a>
         <WfHamburgerMenu
           api={
             Object {
@@ -1148,18 +1135,20 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
                     -
                   </span>
                 </li>
-                <span
-                  className="t-white"
+                <li
+                  className="list-inline-item content-3"
                 >
-                  <li
+                  <div
                     className="list-inline-item test-button content-3 "
                     onClick={[Function]}
                   >
-                    <div>
+                    <div
+                      className="t-white-u"
+                    >
                       public
                     </div>
-                  </li>
-                </span>
+                  </div>
+                </li>
               </ul>
             </div>
           </WorkflowMetadata>
@@ -1169,7 +1158,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
         className="d-flex flex-row align-items-center"
       >
         <div
-          className="button-white action-button test-duplicate-button"
+          className="button-white-full action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
@@ -1180,12 +1169,6 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
         >
           Share
         </div>
-        <a
-          className="nav-link t-white content-2"
-          href="http://cjworkbench.org/index.php/blog/"
-        >
-          Learn
-        </a>
         <a
           className="nav-link t-white content-2"
           href="http://app.cjworkbench.org/account/login"
@@ -1307,18 +1290,20 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
                     -
                   </span>
                 </li>
-                <span
-                  className="t-white"
+                <li
+                  className="list-inline-item content-3"
                 >
-                  <li
+                  <div
                     className="list-inline-item test-button content-3 "
                     onClick={[Function]}
                   >
-                    <div>
+                    <div
+                      className="t-white-u"
+                    >
                       public
                     </div>
-                  </li>
-                </span>
+                  </div>
+                </li>
               </ul>
             </div>
           </WorkflowMetadata>
@@ -1328,7 +1313,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
         className="d-flex flex-row align-items-center"
       >
         <div
-          className="button-white action-button test-duplicate-button"
+          className="button-white-full action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
@@ -1339,12 +1324,6 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
         >
           Share
         </div>
-        <a
-          className="nav-link t-white content-2"
-          href="http://cjworkbench.org/index.php/blog/"
-        >
-          Learn
-        </a>
         <WfHamburgerMenu
           api={
             Object {
