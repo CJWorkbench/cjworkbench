@@ -562,8 +562,10 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
             <div />
           </AbstractWidget>
         </Share>
-        <span
+        <a
           className="icon-facebook button-icon"
+          href="https://www.facebook.com/sharer.php?u=/workflows/808"
+          target="_blank"
         />
       </div>
     </ModalFooter>
@@ -1017,8 +1019,10 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
             <div />
           </AbstractWidget>
         </Share>
-        <span
+        <a
           className="icon-facebook button-icon"
+          href="https://www.facebook.com/sharer.php?u=/workflows/808"
+          target="_blank"
         />
       </div>
     </ModalFooter>
