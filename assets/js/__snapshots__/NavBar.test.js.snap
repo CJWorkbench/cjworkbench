@@ -413,7 +413,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
           This workflow is currently private
         </div>
         <div
-          className="content-3"
+          className="info-1"
         >
           Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
         </div>
@@ -493,25 +493,25 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
             className="form-group"
           >
             <div
-              className="d-flex justify-content-between flex-row"
+              className="d-flex align-items-center justify-content-between flex-row"
             >
               <Label
-                className="t-d-gray info-1"
+                className="label-margin info-1"
                 tag="label"
               >
                 <label
-                  className="t-d-gray info-1  form-control-label"
+                  className="label-margin info-1  form-control-label"
                 >
                   Public link
                 </label>
               </Label>
               <CopyToClipboard
-                className="info-2 t-f-blue mt-3"
+                className="info-2 t-f-blue"
                 onCopy={[Function]}
                 text="/workflows/808"
               >
                 <div
-                  className="info-2 t-f-blue mt-3"
+                  className="info-2 t-f-blue"
                   onClick={[Function]}
                 >
                   Copy to clipboard
@@ -538,37 +538,41 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
             </div>
           </div>
         </FormGroup>
+        <div
+          className="d-flex justify-content-start mt-4"
+        >
+          <div
+            className="twitter-button-container"
+          >
+            <Share
+              onLoad={[Function]}
+              options={
+                Object {
+                  "text": "Check out this chart I made using @cjworkbench:",
+                }
+              }
+              url="/workflows/808"
+            >
+              <AbstractWidget
+                ready={[Function]}
+              >
+                <div />
+              </AbstractWidget>
+            </Share>
+          </div>
+          <a
+            className="button-icon facebook-share ml-4"
+            href="https://www.facebook.com/sharer.php?u=/workflows/808"
+            target="_blank"
+          >
+            <div
+              className="icon-facebook"
+            />
+            Share
+          </a>
+        </div>
       </div>
     </ModalBody>
-    <ModalFooter
-      className="dialog-footer d-flex justify-content-start"
-      tag="div"
-    >
-      <div
-        className="dialog-footer d-flex justify-content-start modal-footer"
-      >
-        <Share
-          onLoad={[Function]}
-          options={
-            Object {
-              "text": "Check out this chart created by CJ Workbench:",
-            }
-          }
-          url="/workflows/808"
-        >
-          <AbstractWidget
-            ready={[Function]}
-          >
-            <div />
-          </AbstractWidget>
-        </Share>
-        <a
-          className="icon-facebook button-icon"
-          href="https://www.facebook.com/sharer.php?u=/workflows/808"
-          target="_blank"
-        />
-      </div>
-    </ModalFooter>
   </div>
 </div>
 `;
@@ -950,25 +954,25 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
             className="form-group"
           >
             <div
-              className="d-flex justify-content-between flex-row"
+              className="d-flex align-items-center justify-content-between flex-row"
             >
               <Label
-                className="t-d-gray info-1"
+                className="label-margin info-1"
                 tag="label"
               >
                 <label
-                  className="t-d-gray info-1  form-control-label"
+                  className="label-margin info-1  form-control-label"
                 >
                   Public link
                 </label>
               </Label>
               <CopyToClipboard
-                className="info-2 t-f-blue mt-3"
+                className="info-2 t-f-blue"
                 onCopy={[Function]}
                 text="/workflows/808"
               >
                 <div
-                  className="info-2 t-f-blue mt-3"
+                  className="info-2 t-f-blue"
                   onClick={[Function]}
                 >
                   Copy to clipboard
@@ -995,37 +999,41 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
             </div>
           </div>
         </FormGroup>
+        <div
+          className="d-flex justify-content-start mt-4"
+        >
+          <div
+            className="twitter-button-container"
+          >
+            <Share
+              onLoad={[Function]}
+              options={
+                Object {
+                  "text": "Check out this chart I made using @cjworkbench:",
+                }
+              }
+              url="/workflows/808"
+            >
+              <AbstractWidget
+                ready={[Function]}
+              >
+                <div />
+              </AbstractWidget>
+            </Share>
+          </div>
+          <a
+            className="button-icon facebook-share ml-4"
+            href="https://www.facebook.com/sharer.php?u=/workflows/808"
+            target="_blank"
+          >
+            <div
+              className="icon-facebook"
+            />
+            Share
+          </a>
+        </div>
       </div>
     </ModalBody>
-    <ModalFooter
-      className="dialog-footer d-flex justify-content-start"
-      tag="div"
-    >
-      <div
-        className="dialog-footer d-flex justify-content-start modal-footer"
-      >
-        <Share
-          onLoad={[Function]}
-          options={
-            Object {
-              "text": "Check out this chart created by CJ Workbench:",
-            }
-          }
-          url="/workflows/808"
-        >
-          <AbstractWidget
-            ready={[Function]}
-          >
-            <div />
-          </AbstractWidget>
-        </Share>
-        <a
-          className="icon-facebook button-icon"
-          href="https://www.facebook.com/sharer.php?u=/workflows/808"
-          target="_blank"
-        />
-      </div>
-    </ModalFooter>
   </div>
 </div>
 `;

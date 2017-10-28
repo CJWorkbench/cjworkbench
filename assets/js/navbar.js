@@ -116,11 +116,11 @@ export class WorkflowNavBar extends React.Component {
 
     if (this.state.linkCopied) {
       return (
-        <div className='info-2 t-orange mt-3' onMouseLeave={this.onLinkLeave}>Link copied to clipboard</div>
+        <div className='info-2 t-orange' >Link copied to clipboard</div>
       );
     } else {
       return (
-        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='info-2 t-f-blue mt-3'>
+        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='info-2 t-f-blue'>
           <div>Copy to clipboard</div>
         </CopyToClipboard>
       );
@@ -144,7 +144,7 @@ export class WorkflowNavBar extends React.Component {
         </ModalHeader>
         <ModalBody className='dialog-body'>
           <div className='title-3 mb-3'>This workflow is currently private</div>
-          <div className='content-3'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>
+          <div className='info-1'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>
           <div className="modal-dual-button d-flex flex-row">
             <div onClick={this.toggleModals} className='button-gray action-button'>Cancel</div>
             <div onClick={this.setPublic} className='button-blue ml-3 action-button test-public-button'>Set Public</div>
@@ -159,28 +159,33 @@ export class WorkflowNavBar extends React.Component {
         </ModalHeader>
         <ModalBody className='dialog-body'>
           <FormGroup>
-            <div className='d-flex justify-content-between flex-row'>
-              <Label className='t-d-gray info-1'>Public link</Label>
+            <div className='d-flex align-items-center justify-content-between flex-row'>
+              <Label className='label-margin info-1'>Public link</Label>
               {copyLink}
             </div>
             <div className='mb-3'>
               <Input type='url' className='url-link t-d-gray content-2 test-link-field' placeholder={linkString} readOnly/>
             </div>
           </FormGroup>
+          <div className='d-flex justify-content-start mt-4'>
+            {/* Twitter share link */}
+            <div className='twitter-button-container'>
+              <Share url={linkString}
+                options={{text: "Check out this chart I made using @cjworkbench:"}}
+              />
+            </div>
+            {/* Facebook share link */}
+
+              <a href={facebookUrl}
+                className='button-icon facebook-share ml-4'
+                target="_blank">
+                  <div className='icon-facebook'/>
+                  Share
+              </a>
+
+          </div>
         </ModalBody>
-        <ModalFooter className='dialog-footer d-flex justify-content-start'>
-          {/* Twitter share link */}
-          <Share
-            url={linkString}
-            options={{text: "Check out this chart created by CJ Workbench:"}}
-          />
-          {/* Facebook share link */}
-          <a 
-            href={facebookUrl} 
-            className='icon-facebook button-icon'
-            target="_blank"  // link pops up new tab
-          />
-        </ModalFooter>
+
       </Modal>
 
     if (!this.state.modalsOpen) {
