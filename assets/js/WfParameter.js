@@ -246,6 +246,18 @@ export default class WfParameter extends React.Component {
                 {button}
             </div>
           );
+        } else if (this.props.p.parameter_spec.id_name == 'version_select_simpler') {
+
+          return (
+            <div className='version-box parameter-margin'>
+                <DataVersionSelect
+                  isReadOnly={this.props.isReadOnly}
+                  wfModuleId={this.props.wf_module_id}
+                  revision={this.props.revision}
+                  api={this.props.api}
+                />
+            </div>
+          );
         } else if (this.props.p.parameter_spec.id_name == 'colrename') {
           if (this.props.getParamText('newcolnames') == '')
             var newNameCols = this.props.getParamText('colnames');

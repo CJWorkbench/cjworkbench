@@ -11,6 +11,11 @@
       "type": "custom",
       "visible": true,
       "ui-only": true
+    },
+    {
+      "name": "Check Now",
+      "id_name" : "version_select_simpler",
+      "type": "custom"
     }
   ]
 }

@@ -47,27 +47,28 @@ class StoredObjectView(APIView):
                                      'error': 'Please specify the wf_module'
                                  }))
         else:
-            qs = StoredObject.objects.filter(wf_module=WfModule.objects.get(pk=wf_module)).values('uuid', 'name', 'size')
+            wf_module_aux = WfModule.objects.get(pk=wf_module)
+            qs = StoredObject.objects.filter(wf_module=wf_module_aux, stored_at=wf_module_aux.stored_data_version).values('uuid', 'name', 'size')
             return make_response(status=200, content=json.dumps(list(qs)))
 
-    def delete(self, request, *args, **kwargs):
-        """A DELETE request. If found, deletes a file with the corresponding
-        UUID from the server's filesystem.
-        """
-        qquuid = kwargs.get('qquuid', '')
-        if qquuid:
-            instances = StoredObject.objects.filter(uuid = qquuid)
-            for instance in instances:
-                instance.wf_module.stored_data_version = None
-                instance.wf_module.save()
-                instance.delete()
-            return make_response(status=204, content=json.dumps({'success': True}))
-        else:
-            return make_response(status=404,
-                                 content=json.dumps({
-                                     'success': False,
-                                     'error': 'File not present'
-                                 }))
+    # def delete(self, request, *args, **kwargs):
+    #     """A DELETE request. If found, deletes a file with the corresponding
+    #     UUID from the server's filesystem.
+    #     """
+    #     qquuid = kwargs.get('qquuid', '')
+    #     if qquuid:
+    #         instances = StoredObject.objects.filter(uuid = qquuid)
+    #         for instance in instances:
+    #             instance.wf_module.stored_data_version = None
+    #             instance.wf_module.save()
+    #             instance.delete()
+    #         return make_response(status=204, content=json.dumps({'success': True}))
+    #     else:
+    #         return make_response(status=404,
+    #                              content=json.dumps({
+    #                                  'success': False,
+    #                                  'error': 'File not present'
+    #                              }))
 
 
 ##
