@@ -10,12 +10,16 @@ class UploadFile(ModuleImpl):
         file = wf_module.retrieve_file()
         if file != None:
             if file.name.endswith('.xls') or file.name.endswith('.xlsx') or file.name.endswith('.XLS') or file.name.endswith('.XLSX'):
-                return pd.read_excel(file)
+                table_aux = pd.read_excel(file)
+                wf_module.set_ready(notify=True)
+                return table_aux
             elif file.name.endswith('.csv') or file.name.endswith('.CSV'):
-                return pd.read_csv(file)
+                table_aux = pd.read_csv(file)
+                wf_module.set_ready(notify=True)
+                return table_aux
             else:
                 wf_module.set_error('Unknown file type.')
                 return None
         else:
+            wf_module.set_ready(notify=True)
             return None
-        wf_module.set_ready(notify=True)
