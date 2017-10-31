@@ -40,6 +40,7 @@ export function initialLoadWorkflowAction() {
 export function addModuleAction(moduleId, insertBefore) {
   return (
     api.addModule(getPageID(), moduleId, insertBefore)
+    .then( data => store.dispatch(changeSelectedWfModuleAction(data.id)))
     .then( reloadWorkflowAction )
   )
 }

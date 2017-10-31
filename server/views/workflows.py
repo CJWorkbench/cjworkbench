@@ -131,9 +131,9 @@ def workflow_addmodule(request, pk, format=None):
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
-    AddModuleCommand.create(workflow, module_version, insert_before)
+    delta = AddModuleCommand.create(workflow, module_version, insert_before)
 
-    return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response({"id": delta.wf_module.id}, status.HTTP_201_CREATED)
 
 
 # Duplicate a workflow. Returns new id

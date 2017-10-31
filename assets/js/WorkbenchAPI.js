@@ -14,16 +14,20 @@ class WorkbenchAPI {
 
   addModule(workflowId, moduleId, insertBefore) {
     return (
-      fetch('/api/workflows/' + workflowId + "/addmodule", {
-      method: 'put',
-      credentials: 'include',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-CSRFToken': csrfToken
-      },
-      body: JSON.stringify({insertBefore: insertBefore, moduleId: moduleId})
-    }));
+      fetch(
+        '/api/workflows/' + workflowId + "/addmodule",
+        {
+          method: 'put',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+          },
+          body: JSON.stringify({insertBefore: insertBefore, moduleId: moduleId})
+        }
+      ).then(response => response.json())
+    )
   }
 
   deleteModule(wfModuleId) {
