@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
-import { timeDifference } from './utils'
+import { timeDifference } from '../utils'
 
 export default class UpdateFrequencySelect extends React.Component {
   constructor(props) {

@@ -1,7 +1,7 @@
 // Chart JSX component wraps a ChartBuilder
 
 import React from 'react'
-import { store, wfModuleStatusAction } from './workflow-reducer'
+import { store, wfModuleStatusAction } from '../workflow-reducer'
 import PropTypes from 'prop-types'
 
 
@@ -22,7 +22,7 @@ function JSONtoCSV(d) {
       text += colnames.map(name => row[name]).join(',') + '\n';
     }
     return text;
-    
+
   } else {
 
     return '';

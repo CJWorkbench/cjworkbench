@@ -1,17 +1,17 @@
 // WfParameter - a single editable parameter
 
 import React from 'react'
-import MenuParam from './MenuParam'
-import ChartParameter from './Chart'
-import ColumnParam from './ColumnParam'
-import ColumnSelector from './ColumnSelector'
-import ColumnRenamer from './ColumnRenamer'
+import MenuParam from './wfparameters/MenuParam'
+import ChartParameter from './wfparameters/Chart'
+import ColumnParam from './wfparameters/ColumnParam'
+import ColumnSelector from './wfparameters/ColumnSelector'
+import ColumnRenamer from './wfparameters/ColumnRenamer'
 import PropTypes from 'prop-types'
-import DataVersionSelect from './DataVersionSelect'
-import DropZone from './DropZone'
-import UpdateFrequencySelect from './UpdateFrequencySelect'
-import BarChart from './BarChart'
-import ColumnColorPicker from './ColumnColorPicker'
+import DataVersionSelect from './wfparameters/DataVersionSelect'
+import DropZone from './wfparameters/DropZone'
+import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
+import BarChart from './wfparameters/BarChart'
+import ColumnColorPicker from './wfparameters/ColumnColorPicker'
 import { csrfToken } from './utils'
 
 
