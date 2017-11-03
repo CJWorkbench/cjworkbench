@@ -118,7 +118,6 @@ export default class ModuleSearch extends React.Component {
 
   onSuggestionSelected (event, { suggestion }) {
     this.props.addModule(suggestion.id);
-    this.props.workflow.toggleModuleLibrary();
     this.setState({value: ''});
   }
 
