@@ -62,7 +62,8 @@ class SortableList extends React.Component {
             'data-removeModule': this.props.removeModule,
             'data-revision': this.props.data.revision,
             'data-selected': (item.id == this.props.selected_wf_module),
-            'data-api': this.props.api
+            'data-api': this.props.api,
+            'data-user': this.props.user
           }}
         />
       );
@@ -134,6 +135,7 @@ export default class Workflow extends React.Component {
                         changeParam={this.props.changeParam}
                         removeModule={this.props.removeModule}
                         api={this.props.api}
+                        user={this.props.user}
                       />
                     </div>
     }

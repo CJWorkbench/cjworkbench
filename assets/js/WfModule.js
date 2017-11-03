@@ -176,6 +176,7 @@ export default class WfModule extends React.Component {
           updateSettings={updateSettings}
           getParamText={this.getParamText}
           setParamText={this.setParamText}
+          user={this.props['data-user']}
         />
       });
 
