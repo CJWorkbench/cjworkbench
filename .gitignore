@@ -10,6 +10,7 @@ webpack-stats.json
 db.sqlite3
 dbdata/
 local_mail/
+client_secret.json
 
 # Asset bundles, static files, downloaded modules, saved data
 /node_modules/
