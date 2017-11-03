@@ -40,7 +40,7 @@ def parameterval_detail(request, pk, format=None):
 
 # Handle a parameter event (like someone clicking the fetch button)
 # Get or set parameter value
-@api_view(['POST'])
+@api_view(['POST','GET'])
 @renderer_classes((JSONRenderer,))
 def parameterval_event(request, pk, format=None):
     try:
@@ -53,7 +53,9 @@ def parameterval_event(request, pk, format=None):
 
     # change parameter value
     data = request.data
-    module_dispatch_event(param.wf_module, param, data)
+    dispatch_response = module_dispatch_event(param.wf_module, param, data, request = request)
+    if dispatch_response:
+        return dispatch_response
 
     return Response(status=status.HTTP_204_NO_CONTENT)
 

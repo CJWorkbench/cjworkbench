@@ -1,0 +1,32 @@
+{
+  "name": "Import from Google Sheets",
+  "id_name": "googlesheets" ,
+  "category" : "Add data",
+  "icon" : "url",
+  "description" : "Connect to a Google Spreadsheet and stay updated with its source.",
+  "parameters": [
+    {
+      "name": "Connect",
+      "id_name": "connect",
+      "type": "custom"
+    },
+    {
+      "name": "File Select",
+      "id_name": "fileselect",
+      "type": "custom"
+    },
+    {
+      "name": "Has header row",
+      "id_name": "has_header_row",
+      "type": "checkbox",
+      "default": "True"
+    },
+    {
+      "name": "csv_data",
+      "id_name": "csv",
+      "type": "string",
+      "multiline": "True",
+      "visible": false
+    }
+  ]
+}

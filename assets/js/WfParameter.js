@@ -12,7 +12,10 @@ import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
 import BarChart from './wfparameters/BarChart'
 import ColumnColorPicker from './wfparameters/ColumnColorPicker'
+import GoogleConnect from './wfparameters/GoogleConnect'
+import FileSelect from './wfparameters/FileSelect'
 import { csrfToken } from './utils'
+import { store } from './workflow-reducer'
 
 
 export default class WfParameter extends React.Component {
@@ -297,26 +300,42 @@ export default class WfParameter extends React.Component {
                 wfModuleId={this.props.wf_module_id}
                 revision={this.props.revision} />
             );
-        } else if (this.props.p.parameter_spec.id_name == 'barchart') {
-          return (
-            <BarChart
-              wf_module_id={this.props.wf_module_id}
-              index={this.props.getParamText('column')}
-              dataKeys={this.props.getParamText('multicolumn_colorpicker')}
-              getParamText={this.props.getParamText}
-              setParamText={this.props.setParamText}
-            />
-          )
-        } else if (this.props.p.parameter_spec.id_name == 'multicolumn_colorpicker') {
-          return (
-            <ColumnColorPicker
-              selectedCols={this.props.getParamText('multicolumn_colorpicker')}
-              saveState={state => this.props.setParamText('multicolumn_colorpicker', state) }
-              getColNames={this.getNumericInputColNames}
-              isReadOnly={this.props.isReadOnly}
-              revision={this.props.revision}
-            />
-          )
+          } else if (this.props.p.parameter_spec.id_name == 'barchart') {
+            return (
+              <BarChart
+                wf_module_id={this.props.wf_module_id}
+                index={this.props.getParamText('column')}
+                dataKeys={this.props.getParamText('multicolumn_colorpicker')}
+                getParamText={this.props.getParamText}
+                setParamText={this.props.setParamText}
+              />
+            )
+          } else if (this.props.p.parameter_spec.id_name == 'multicolumn_colorpicker') {
+            return (
+              <ColumnColorPicker
+                selectedCols={this.props.getParamText('multicolumn_colorpicker')}
+                saveState={state => this.props.setParamText('multicolumn_colorpicker', state) }
+                getColNames={this.getNumericInputColNames}
+                isReadOnly={this.props.isReadOnly}
+                revision={this.props.revision}
+              />
+            )
+          } else if (this.props.p.parameter_spec.id_name == 'connect') {
+            return (
+              <GoogleConnect
+                userCreds={this.props.user.google_credentials}
+                wfModuleId={this.props.wf_module_id}
+              />
+            )
+          } else if (this.props.p.parameter_spec.id_name == 'fileselect') {
+            return (
+              <FileSelect
+                userCreds={this.props.user.google_credentials}
+                ps={this.props.p}
+                saveState={state => this.props.setParamText('fileselect', state)}
+                getState={() => this.props.getParamText('fileselect')}
+              />
+            )
         }
 
 
