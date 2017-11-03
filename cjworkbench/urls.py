@@ -23,12 +23,17 @@ from django.http import Http404
 from cjworkbench.views.signup import SignupView
 from cjworkbench.views.login import LoginView
 from cjworkbench.views.user import current_user
+from cjworkbench.google_oauth import authorize, get_creds
 
 urlpatterns = [
     url(r'^admin/?', admin.site.urls),
     url(r'^xyzzy/signup/$', SignupView.as_view(), name='account_signup'),
     url(r'^account/signup/$', page_not_found,  {'exception': Http404()}),
     url(r'^account/login/$', LoginView.as_view(), name='account_login'),
+    url(r'^authorize/$', authorize),
+    url(r'^oauth/$', get_creds),
+    #url(r'^spreadsheets/$', get_spreadsheets),
+    #url(r'^spreadsheets/(?P<id>[a-zA-Z0-9-_]+)$', get_spreadsheet),
     url(r'^account/', include('account.urls')),
     url(r'^', include('server.urls')),
     url(r'^api/user/$', current_user),
