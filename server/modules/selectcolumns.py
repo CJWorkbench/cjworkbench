@@ -12,13 +12,8 @@ class SelectColumns(ModuleImpl):
         if cols == [] or cols == ['']:
             return table
 
-        # ensure all column names are valid
-        for c in cols:
-            if not c in table.columns:
-                wf_module.set_error('There is no column named %s' % c)
-                return None
-
         # ensure we do not change the order of the columns, even if they are listed in another order
+        # this also silently removes any nonexistent columns (can happen when re-ordering module, etc.)
         existing = list(table.columns)
         newcols = []
         for c in existing:

@@ -180,7 +180,7 @@ class ReorderModulesCommand(Delta):
             command_description='Reordered modules')
         delta.forward()
 
-        # don't notify client of update as the client already updated its model. hacky.
+        notify_client_workflow_version_changed(workflow)
         return delta
 
 

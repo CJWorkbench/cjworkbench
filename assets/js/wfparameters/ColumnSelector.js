@@ -19,7 +19,9 @@ export default class ColumnSelector extends React.Component {
   loadColNames() {
     this.props.getColNames()
       .then(cols => {
-        this.setState({colNames: cols, selected: this.state.selected});
+        // Remove selected columns that no longer exist
+        var newSel = this.state.selected.filter( n => cols.includes(n) );
+        this.setState({colNames: cols, selected: newSel});
       });
   }
 
