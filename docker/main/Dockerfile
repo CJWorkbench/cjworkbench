@@ -1,4 +1,4 @@
-FROM jonathanstray/cjworkbench-reqs
+FROM cjworkbench/cjworkbench-requirements
 EXPOSE 8000
 
 # start from the repo
