@@ -738,6 +738,7 @@ body {
 
 .action-button {
   cursor: pointer;
+  width:auto!important;
 	height: 4rem;
   min-width: 9rem;
   border-radius: 2.5rem;
