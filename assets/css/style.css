@@ -789,6 +789,7 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding-left: 2.5rem;
+  cursor: pointer;
 }
 .line-item-data:hover {
   background-color: #F5F5F5;
