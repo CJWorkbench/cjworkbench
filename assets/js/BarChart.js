@@ -19,34 +19,26 @@ export default class BarChart extends React.Component {
 
   componentDidMount() {
     this.loadChart();
+    if(this.props.dataKeys) {
+      this.parseColors(this.props);
+    }
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.dataKeys === this.props.dataKeys) {
       return false;
     }
-
     this.parseColors(nextProps);
   }
 
   loadChart() {
     var self = this;
     var url = '/api/wfmodules/' + this.props.wf_module_id + '/input';
-    var colorKeys = {};
-
-    JSON.parse(this.props.dataKeys).forEach(
-      (val) => {
-        colorKeys[val.value] = val.color;
-      }
-    );
-
     fetch(url, { credentials: 'include'})
       .then(response => response.json())
       .then(json => {
         self.setState({
           data: json.rows,
-          dataKeys: Object.keys(colorKeys),
-          colorKeys: colorKeys,
         });
       });
   }
