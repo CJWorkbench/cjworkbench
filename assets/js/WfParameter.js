@@ -27,6 +27,7 @@ export default class WfParameter extends React.Component {
     this.blur = this.blur.bind(this);
     this.click = this.click.bind(this);
     this.getInputColNames = this.getInputColNames.bind(this);
+    this.getNumericInputColNames = this.getNumericInputColNames.bind(this);
   }
 
   paramChanged(newVal) {
@@ -79,6 +80,20 @@ export default class WfParameter extends React.Component {
     return (
       this.props.api.input(this.props.wf_module_id)
         .then( json => json.columns )
+    )
+  }
+
+  // Return array of columns containing numeric data. Eventually do this in Python.
+  getNumericInputColNames() {
+    return (
+      this.props.api.input(this.props.wf_module_id)
+        .then( json => {
+            var first_row = json.rows[0];
+            var cols = json.columns.filter(column => {
+              return isFinite(String(first_row[column]));
+            });
+            return cols;
+        })
     )
   }
 
@@ -297,7 +312,7 @@ export default class WfParameter extends React.Component {
             <ColumnColorPicker
               selectedCols={this.props.getParamText('multicolumn_colorpicker')}
               saveState={state => this.props.setParamText('multicolumn_colorpicker', state) }
-              getColNames={this.getInputColNames}
+              getColNames={this.getNumericInputColNames}
               isReadOnly={this.props.isReadOnly}
               revision={this.props.revision}
             />

@@ -52,7 +52,7 @@ export default class ChartSeriesChooser extends React.Component {
     }
     return (
       <div>
-        <InputGroup size="lg">
+        <InputGroup size="lg" style={{width:"76%",margin:"0 auto"}}>
           <InputGroupButton>
             <Button onClick={this.handleClick}>
               <div className="color-picker color" style={backgroundColor} />
@@ -63,7 +63,7 @@ export default class ChartSeriesChooser extends React.Component {
             </div> : null }
           </InputGroupButton>
           <Input type="text" value={this.props.value} readOnly />
-          <InputGroupButton onClick={() => this.props.deleteColumn(this.props.value)}>X</InputGroupButton>
+          {/*<InputGroupButton onClick={() => this.props.deleteColumn(this.props.value)}>X</InputGroupButton>*/}
         </InputGroup>
       </div>
     );

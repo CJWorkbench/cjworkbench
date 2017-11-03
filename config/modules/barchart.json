@@ -8,7 +8,8 @@
     {
       "name": "Group Axis",
       "id_name" : "column",
-      "type": "column"
+      "type": "column",
+      "visible": false
     },
     {
       "name": "Bars",
