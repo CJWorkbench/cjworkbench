@@ -230,6 +230,13 @@ class WorkbenchAPI {
     )
   }
 
+  currentUser() {
+    return (
+      fetch('/api/user', {credentials: 'include'})
+        .then(response => response.json())
+    )
+  }
+
 }
 
 // Singleton API object for global use

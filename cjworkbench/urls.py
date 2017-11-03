@@ -22,6 +22,7 @@ from django.views.defaults import page_not_found
 from django.http import Http404
 from cjworkbench.views.signup import SignupView
 from cjworkbench.views.login import LoginView
+from cjworkbench.views.user import current_user
 
 urlpatterns = [
     url(r'^admin/?', admin.site.urls),
@@ -30,4 +31,5 @@ urlpatterns = [
     url(r'^account/login/$', LoginView.as_view(), name='account_login'),
     url(r'^account/', include('account.urls')),
     url(r'^', include('server.urls')),
+    url(r'^api/user/$', current_user),
 ]

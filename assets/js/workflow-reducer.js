@@ -11,6 +11,7 @@ const INITIAL_LOAD_WORKFLOW = 'INITIAL_LOAD_WORKFLOW'
 const REMOVE_MODULE_ACTION = 'REMOVE_MODULE'
 const MODULE_STATUS_CHANGE = 'MODULE_STATUS_CHANGE'
 const SELECTED_MODULE_CHANGE = 'SELECTED_MODULE_CHANGE'
+const UPDATE_CURRENT_USER = 'UPDATE_CURRENT_USER'
 
 const api = WorkbenchAPI();
 
@@ -73,6 +74,13 @@ export function changeSelectedWfModuleAction(wfModuleID) {
     type : SELECTED_MODULE_CHANGE,
     id : wfModuleID,
   }
+}
+
+export function updateCurrentUserAction() {
+  return (
+    api.currentUser()
+      .then(user => ({type : UPDATE_CURRENT_USER, user: user}))
+  )
 }
 
 // ---- Reducer ----
@@ -149,6 +157,15 @@ export function workflowReducer(state, action) {
           }
         }
         return newState;
+      } else {
+        return state;
+      }
+
+    case UPDATE_CURRENT_USER:
+      if (state.user !== action.user) {
+        return Object.assign({}, state, {
+          user: action.user,
+        });
       } else {
         return state;
       }
