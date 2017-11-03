@@ -26,3 +26,5 @@ tmp/
 
 # imported modules
 importedmodules/
+
+client_secret.json
