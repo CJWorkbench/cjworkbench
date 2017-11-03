@@ -270,6 +270,8 @@ AUTHENTICATION_BACKENDS = [
     'account.auth_backends.EmailAuthenticationBackend',
 ]
 
+GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = os.path.join(BASE_DIR, 'client_secret.json')
+
 try:
     from local_settings import *
 except ImportError:
