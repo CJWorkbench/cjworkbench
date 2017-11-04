@@ -40,7 +40,7 @@ def parameterval_detail(request, pk, format=None):
 
 # Handle a parameter event (like someone clicking the fetch button)
 # Get or set parameter value
-@api_view(['POST','GET'])
+@api_view(['POST'])
 @renderer_classes((JSONRenderer,))
 def parameterval_event(request, pk, format=None):
     try:

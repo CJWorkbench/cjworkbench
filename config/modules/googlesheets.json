@@ -16,17 +16,9 @@
       "type": "custom"
     },
     {
-      "name": "Has header row",
-      "id_name": "has_header_row",
-      "type": "checkbox",
-      "default": "True"
-    },
-    {
-      "name": "csv_data",
-      "id_name": "csv",
-      "type": "string",
-      "multiline": "True",
-      "visible": false
+      "name": "Check Now",
+      "id_name" : "version_select",
+      "type": "custom"
     }
   ]
 }

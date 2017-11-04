@@ -6,6 +6,7 @@ import httplib2
 from googleapiclient.discovery import build
 from .utils import *
 import io
+import json
 
 class GoogleSheets(ModuleImpl):
 
@@ -51,14 +52,29 @@ class GoogleSheets(ModuleImpl):
 
     @staticmethod
     def event(wfmodule, parameter, event, request = None):
-        if not request:
-            return HttpResponseBadRequest
+        if not event:
+            file_meta = wfmodule.get_param_raw('fileselect', 'custom')
+            file_meta = json.loads(file_meta)
+            sheet_id = file_meta['id']
 
-        sheet_id = request.data.get('id', False)
+        event_type = event.get('type', False)
+
+        if not event_type:
+            return HttpResponseBadRequest()
+
+        if event_type == 'fetchFiles':
+            return GoogleSheets.get_spreadsheets(request)
+
+        if event_type == 'fetchFile':
+            file_meta = request.data.get('file', False)
+            sheet_id = file_meta['id']
+
+        if event_type == 'click':
+            file_meta = wfmodule.get_param_raw('fileselect', 'custom')
+            file_meta = json.loads(file_meta)
+            sheet_id = file_meta['id']
 
         if sheet_id:
             new_data = GoogleSheets.get_spreadsheet(request, sheet_id)
             save_data_if_changed(wfmodule, new_data, auto_change_version=True)
             return JsonResponse({}, status=204)
-
-        return GoogleSheets.get_spreadsheets(request)
