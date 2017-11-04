@@ -237,6 +237,23 @@ class WorkbenchAPI {
     )
   }
 
+  disconnectCurrentUser(id) {
+    return (
+      fetch('/api/user/google_credentials', {
+        credentials: 'include',
+        method: 'delete',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        data: {
+          credentialId: id
+        }
+      }).then(response => response.json())
+    )
+  }
+
 }
 
 // Singleton API object for global use

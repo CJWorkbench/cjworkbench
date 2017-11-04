@@ -83,6 +83,13 @@ export function updateCurrentUserAction() {
   )
 }
 
+export function disconnectCurrentUserAction(credentialId) {
+  return (
+    api.disconnectCurrentUser( credentialId )
+      .then( updateCurrentUserAction )
+  )
+}
+
 // ---- Reducer ----
 // Maps actions to state changes, for that is the Redux way
 // Our state fields:

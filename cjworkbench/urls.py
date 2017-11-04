@@ -22,7 +22,7 @@ from django.views.defaults import page_not_found
 from django.http import Http404
 from cjworkbench.views.signup import SignupView
 from cjworkbench.views.login import LoginView
-from cjworkbench.views.user import current_user
+from cjworkbench.views.user import current_user, delete_google_creds
 from cjworkbench.google_oauth import authorize, get_creds
 
 urlpatterns = [
@@ -37,4 +37,5 @@ urlpatterns = [
     url(r'^account/', include('account.urls')),
     url(r'^', include('server.urls')),
     url(r'^api/user/$', current_user),
+    url(r'^api/user/google_credentials$', delete_google_creds),
 ]

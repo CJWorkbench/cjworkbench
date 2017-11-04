@@ -9,3 +9,11 @@ from rest_framework.renderers import JSONRenderer
 def current_user(request, format=None):
     user_data = UserSerializer(request.user)
     return Response(user_data.data)
+
+@api_view(['DELETE'])
+@renderer_classes((JSONRenderer,))
+def delete_google_creds(request, format=None):
+    credential = request.user.google_credentials.get(pk=request.user)
+    result = credential.delete()
+    user_data = UserSerializer(request.user)
+    return Response(user_data.data)

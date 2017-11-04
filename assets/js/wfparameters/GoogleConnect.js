@@ -1,11 +1,12 @@
 import React from 'react';
-import { store,  updateCurrentUserAction, reloadWorkflowAction, wfModuleStatusAction } from '../workflow-reducer';
+import { store,  updateCurrentUserAction, disconnectCurrentUserAction, reloadWorkflowAction, wfModuleStatusAction } from '../workflow-reducer';
 
 export default class GoogleConnect extends React.Component {
   constructor(props) {
     super(props);
     this.oauthDialog = this.oauthDialog.bind(this);
     this.closeIt = this.closeIt.bind(this);
+    this.disconnect = this.disconnect.bind(this);
     this.state = {
       popup: null
     }
@@ -32,6 +33,10 @@ export default class GoogleConnect extends React.Component {
     }, 500);
   }
 
+  disconnect() {
+    store.dispatch(disconnectCurrentUserAction(this.props.userCreds[0]))
+  }
+
   closeIt() {
     this.state.popup.close()
   }
@@ -41,7 +46,7 @@ export default class GoogleConnect extends React.Component {
     if (this.props.userCreds.length === 0) {
       renderOutput = (<button onClick={this.oauthDialog}>Connect to Google</button>);
     } else {
-      renderOutput = (<p>Connected to Google</p>)
+      renderOutput = (<p>Connected to Google. <span className="t-f-blue" onClick={this.disconnect}>Disconnect</span></p>)
     }
     return(
       <div className="parameter-margin">
