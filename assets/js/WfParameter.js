@@ -15,7 +15,7 @@ import ColumnColorPicker from './wfparameters/ColumnColorPicker'
 import GoogleConnect from './wfparameters/GoogleConnect'
 import FileSelect from './wfparameters/FileSelect'
 import { csrfToken } from './utils'
-import { store } from './workflow-reducer'
+import { store, wfModuleStatusAction } from './workflow-reducer'
 
 
 export default class WfParameter extends React.Component {
