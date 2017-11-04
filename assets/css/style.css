@@ -638,6 +638,7 @@ body {
   text-align: center;
   background-color: transparent;
 }
+
 .button-blue:active {
   background-color: #48C8D7 !important;
   color: #FFFFFF !important;
@@ -754,13 +755,9 @@ body {
 	opacity: 0.5;
 }
 
-/*sharing buttons*/
-/*.twitter-button-container{
-  display: flex;
-  align-items: center;
-  background-color:#1DA1F2;
-  height: 2.5rem;
-}*/
+.react-fine-uploader-file-input-container{
+  display: flex!important;
+}
 
 .facebook-share {
   height: 2rem;
@@ -1890,7 +1887,7 @@ input[type=checkbox]:checked:after {
 }
 
 
-/* ---- Load URL Module: data versions box */
+/* ---- Data Module: data versions box */
 
 .version-box {
   border: 1px solid #E7E7E7;
@@ -1906,6 +1903,17 @@ input[type=checkbox]:checked:after {
   margin: 0rem;
   display: inline-block;
   align-self: flex-start;
+}
+
+.upload-box {
+  height: 5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items:center;
+}
+
+.file-item{
+
 }
 
 /* --- UpdateFrequencySelect --- */

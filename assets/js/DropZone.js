@@ -101,8 +101,8 @@ export default class DropZone extends Component {
 					</div>
                 ) : (
 				<div>
-                    <div className={"parameter-margin version-box"}>
-                        <div className={"version-item"}>
+                    <div className={"parameter-margin upload-box"}>
+                        <div className={""}>
                         <div className={"label-margin t-d-gray content-3"}>File name:</div>
                         {
                             this.state.files.map(id => (
@@ -119,7 +119,7 @@ export default class DropZone extends Component {
                      {
                             this.state.submittedFiles.map(id => (
                                 <div className={"parameter-margin react-fine-uploader-gallery-progress-bar-container"} key={id}>
-                                    <ProgressBar id={id} className={"react-fine-uploader-gallery-total-progress-bar"} 
+                                    <ProgressBar id={id} className={"react-fine-uploader-gallery-total-progress-bar"}
                                                  uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
                                 </div>
                             ))
@@ -129,21 +129,6 @@ export default class DropZone extends Component {
             </div>
         )
 
-        // return (
-        //     <div className={"react-fine-uploader-gallery-dropzone"}>
-        //             {
-        //                 this.state.files.map(id => {
-        //                     <div key={id}>
-        //                         <ProgressBar id={id} className={"react-fine-uploader-gallery-progress-bar"}
-        //                                      uploader={this.uploader}
-        //                                      hideBeforeStart={true} hideOnComplete={true}/>
-        //                         <Filename id={id} className={"react-fine-uploader-gallery-filename"} uploader={this.uploader}
-        //                                   />
-        //                     </div>
-        //                 })
-        //             }
-        //     </div>
-        // )
     }
 
 }
