@@ -270,7 +270,12 @@ AUTHENTICATION_BACKENDS = [
     'account.auth_backends.EmailAuthenticationBackend',
 ]
 
-GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = os.path.join(BASE_DIR, os.environ['CJW_GOOGLE_CLIENT_SECRETS'])
+CJW_GOOGLE_CLIENT_SECRETS = os.environ.get('CJW_GOOGLE_CLIENT_SECRETS', False)
+
+if not CJW_GOOGLE_CLIENT_SECRETS:
+    CJW_GOOGLE_CLIENT_SECRETS = 'client_secret.json'
+
+GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = os.path.join(BASE_DIR, CJW_GOOGLE_CLIENT_SECRETS)
 
 try:
     from local_settings import *
