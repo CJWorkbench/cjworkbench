@@ -34,11 +34,13 @@ class SelectColumnsTests(LoggedInTestCase):
         table = mock_csv_table[['Month','Amount']]
         self.assertEqual(str(out), str(mock_csv_table))
 
-        # bad column name should produce error
+        # bad column name should just be ignored
         self.cols_pval.value = 'Amountxxx,Month'
         self.cols_pval.save()
         out = execute_wfmodule(self.wf_module)
+        table = mock_csv_table[['Month']]
+        self.assertEqual(str(out), str(table))
         self.wf_module.refresh_from_db()
-        self.assertEqual(self.wf_module.status, WfModule.ERROR)
+        self.assertEqual(self.wf_module.status, WfModule.READY)
 
 
