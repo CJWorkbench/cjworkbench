@@ -1,7 +1,7 @@
 import React from 'react'
 import DataVersionSelect  from './DataVersionSelect'
 import { mount, ReactWrapper } from 'enzyme'
-import { okResponseMock, jsonResponseMock } from './utils'
+import { okResponseMock, jsonResponseMock } from '../utils'
 
 jest.useFakeTimers();
 
