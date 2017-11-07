@@ -12,8 +12,8 @@ export default class ColumnSelector extends React.Component {
 
   // selected columns string -> array of column names
   parseSelectedCols(sc) {
-    var selectedColNames =  sc != undefined ? sc.trim() : '';
-    return  selectedColNames.length > 0 ? selectedColNames.split(',') : [];   // empty string should give empty array
+    var selectedColNames = (typeof sc !== 'undefined') ? sc.trim() : '';
+    return selectedColNames.length > 0 ? selectedColNames.split(',') : [];   // empty string should give empty array
   }
 
   loadColNames() {

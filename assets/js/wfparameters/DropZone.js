@@ -140,12 +140,7 @@ export default class DropZone extends Component {
                         </div>
                         {
                             this.state.submittedFiles.map(id => (
-<<<<<<< 4c8347671fbc97ce8672cf211d89ea7b6023f938:assets/js/DropZone.js
-                                <div className={"parameter-margin react-fine-uploader-gallery-progress-bar-container"}
-                                     key={id}>
-=======
                                 <div className={"parameter-margin react-fine-uploader-gallery-progress-bar-container"} key={id}>
->>>>>>> Move parameter UI files into their own folder:assets/js/wfparameters/DropZone.js
                                     <ProgressBar id={id} className={"react-fine-uploader-gallery-total-progress-bar"}
                                                  uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
                                 </div>
