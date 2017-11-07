@@ -9,5 +9,5 @@ class ModuleImpl:
         return table
 
     @staticmethod
-    def event(parameter, e):
+    def event(wfm, parameter, e, user):
         pass

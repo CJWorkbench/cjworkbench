@@ -68,7 +68,7 @@ class Twitter(ModuleImpl):
 
     # Load specified user's timeline
     @staticmethod
-    def event(wfm, parameter, e):
+    def event(wfm, parameter, e, user):
         table = None
 
         # fetching could take a while so notify clients/users that we're working on it
@@ -111,6 +111,3 @@ class Twitter(ModuleImpl):
 
             # Also notifies client
             save_data_if_changed(wfm, new_csv, auto_change_version=auto)
-
-
-

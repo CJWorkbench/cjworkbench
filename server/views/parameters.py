@@ -53,7 +53,8 @@ def parameterval_event(request, pk, format=None):
 
     # change parameter value
     data = request.data
-    dispatch_response = module_dispatch_event(param.wf_module, param, data, request = request)
+    user = request.user
+    dispatch_response = module_dispatch_event(param.wf_module, param, data, user)
     if dispatch_response:
         return dispatch_response
 

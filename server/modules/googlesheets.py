@@ -12,7 +12,7 @@ class GoogleSheets(ModuleImpl):
 
     @staticmethod
     def get_spreadsheets(request):
-        authorized, credential = maybe_authorize(request)
+        authorized, credential = maybe_authorize(user)
 
         if not authorized:
             return JsonResponse({'login_url':credential}, status=401)
@@ -27,7 +27,7 @@ class GoogleSheets(ModuleImpl):
 
     @staticmethod
     def get_spreadsheet(request, id):
-        authorized, credential = maybe_authorize(request)
+        authorized, credential = maybe_authorize(user)
 
         if not authorized:
             return credential
@@ -41,7 +41,6 @@ class GoogleSheets(ModuleImpl):
         return the_file.decode("utf-8")
         #return JsonResponse({'file':the_file.decode("utf-8")})
 
-    # Input table ignored.
     @staticmethod
     def render(wf_module, table):
         tablestr = wf_module.retrieve_data()
@@ -51,7 +50,7 @@ class GoogleSheets(ModuleImpl):
             return None
 
     @staticmethod
-    def event(wfmodule, parameter, event, request = None):
+    def event(wfmodule, parameter, event, user):
         if not event:
             file_meta = wfmodule.get_param_raw('fileselect', 'custom')
             file_meta = json.loads(file_meta)
@@ -63,7 +62,7 @@ class GoogleSheets(ModuleImpl):
             return HttpResponseBadRequest()
 
         if event_type == 'fetchFiles':
-            return GoogleSheets.get_spreadsheets(request)
+            return GoogleSheets.get_spreadsheets(user)
 
         if event_type == 'fetchFile':
             file_meta = request.data.get('file', False)
@@ -75,6 +74,6 @@ class GoogleSheets(ModuleImpl):
             sheet_id = file_meta['id']
 
         if sheet_id:
-            new_data = GoogleSheets.get_spreadsheet(request, sheet_id)
+            new_data = GoogleSheets.get_spreadsheet(user, sheet_id)
             save_data_if_changed(wfmodule, new_data, auto_change_version=True)
             return JsonResponse({}, status=204)

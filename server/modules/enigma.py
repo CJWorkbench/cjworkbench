@@ -15,8 +15,8 @@ def handle_dotcom_url(wf_module, url, split_url, num_rows):
     """
     Constructs the URL we'll use to query Enigma if the user passes in a URL to the publicly
     browsable page as opposed to enigma.io.
-    Returns the Pandas table if everything goes off smoothly. 
-    Else, throws an error. 
+    Returns the Pandas table if everything goes off smoothly.
+    Else, throws an error.
     """
     if not "ENIGMA_COM_API_KEY" in os.environ:
         wf_module.set_error("No Enigma API Key set.")
@@ -43,10 +43,10 @@ def handle_dotcom_url(wf_module, url, split_url, num_rows):
         #now extract the actual data
         data = resultset["current_snapshot"]["table_rows"]["rows"]
 
-        #...and finally create the Pandas object to return. 
+        #...and finally create the Pandas object to return.
         table = pd.DataFrame(data, columns=column_headers)
         return table
-    else: 
+    else:
         error = json.loads(response.text)
         if "message" in error:
             wf_module.set_error("Received error \"{}\" whilst retrieving data from {}".format(error["message"], url))
@@ -55,9 +55,9 @@ def handle_dotcom_url(wf_module, url, split_url, num_rows):
 
 def handle_dotio_url(wf_module, url, split_url, num_rows):
     """
-    Processes response for any request to enigma.io. Here, we assume that the API key is provided, 
-    because, at least at first glance (or two or three) there doesn't seem to be any provisions for 
-    accessing dataset endpoints sans API key. 
+    Processes response for any request to enigma.io. Here, we assume that the API key is provided,
+    because, at least at first glance (or two or three) there doesn't seem to be any provisions for
+    accessing dataset endpoints sans API key.
     """
 
     if num_rows > 500:
@@ -86,7 +86,7 @@ def handle_dotio_url(wf_module, url, split_url, num_rows):
         json_text = json.loads(response.text)
         table = pd.read_json(json.dumps(json_text['result']))
         return table
-    except Exception as ex: # Generic exceptions suck, but is it the most pragmatic/all-encompassing here? 
+    except Exception as ex: # Generic exceptions suck, but is it the most pragmatic/all-encompassing here?
         wf_module.set_error("Unable to process request: {}".format(str(ex)))
         return
 
@@ -96,8 +96,8 @@ class EnigmaDataLoader:
         pass
 
     @staticmethod
-    def event(wf_module, parameter, event):
-        #number of rows we want to retrieve from Enigma. If you leave this blank/let it use the default, 
+    def event(wf_module, parameter, event, user):
+        #number of rows we want to retrieve from Enigma. If you leave this blank/let it use the default,
         #you get all of 0 rows, so it should have a value > 0.
         wf_module.set_busy(notify=False)
         try:
@@ -120,7 +120,7 @@ class EnigmaDataLoader:
         except ValidationError:
             wf_module.set_error('Invalid URL entered: {}'.format((url)))
             return
-        
+
         #let's break the url down to its components
         split_url = urlsplit(url)
         netloc = split_url.netloc
@@ -136,19 +136,19 @@ class EnigmaDataLoader:
                 " the top-level domain in the URL received is {}.".format(netloc.split(".")[2]))
             return None # there's no point going any further for obvious reasons
 
-        # Can wrap this around a single try because only one or the other will be called. 
-        try: 
+        # Can wrap this around a single try because only one or the other will be called.
+        try:
             if netloc.endswith("io"):
                 data = handle_dotio_url(wf_module, url, split_url, num_rows)
-                    
+
             else:
-                # this has to be ".com" as we've already done the check above for dodgy URLs. 
-                # this returns the Pandas table. 
+                # this has to be ".com" as we've already done the check above for dodgy URLs.
+                # this returns the Pandas table.
                 data = handle_dotcom_url(wf_module, url, split_url, num_rows)
         except Exception as ex:
             wf_module.set_error("Caught error whilst attempting to retrieve details from Enigma: {}".format(str(ex)))
 
-        # If we have got this far, and not run into any issues, we should do some data versioning magic. 
+        # If we have got this far, and not run into any issues, we should do some data versioning magic.
         if wf_module.status != wf_module.ERROR:
             wf_module.set_ready(notify=False)
             csv_data = data.to_csv(index=False)
@@ -159,8 +159,8 @@ class EnigmaDataLoader:
     @staticmethod
     def render(wf_module, table):
         """
-        Propagates the table to the front-end. 
-        Here, event() does all the heavy lifting. 
+        Propagates the table to the front-end.
+        Here, event() does all the heavy lifting.
         """
         retrieved_data = wf_module.retrieve_data()
         if retrieved_data != None and len(retrieved_data):

@@ -16,8 +16,8 @@ flow.params['approval_prompt'] = 'force'
 def authorize(request):
     return redirect(flow.step1_get_authorize_url())
 
-def maybe_authorize(request, redirect_url = False):
-    storage = DjangoORMStorage(GoogleCredentials, 'id', request.user, 'credential')
+def maybe_authorize(user, redirect_url = False):
+    storage = DjangoORMStorage(GoogleCredentials, 'id', user, 'credential')
     credential = storage.get()
     if credential is None or credential.invalid == True:
         authorize_url = flow.step1_get_authorize_url()
@@ -36,15 +36,6 @@ def get_creds(request):
     else:
         return HttpResponse(status=200)
 
-def refresh_creds(request):
-    storage = DjangoORMStorage(GoogleCredentials, 'id', request.user, 'credential')
-    credential = flow.step2_exchange(request.GET.get('code', False))
-    storage = DjangoORMStorage(GoogleCredentials, 'id', request.user, 'credential')
-    storage.put(credential)
-    if request.GET.get('state', False):
-        return redirect(unquote_plus(request.GET.get('state')))
-    else:
-        return HttpResponse(status=200)
 
 def add_query_param(url, param_name, param_value):
     scheme, netloc, path, query_string, fragment = urlsplit(url)
