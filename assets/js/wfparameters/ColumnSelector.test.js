@@ -5,57 +5,38 @@ import { mount } from 'enzyme'
 describe('ColumnSelector', () => {
 
   var wrapper; 
+  const testcols = ['foo','bar','baz','wow','word wrap','ok then'];
 
   describe('Read-only', () => {
 
     beforeEach(() => wrapper = mount(
       <ColumnSelector
         selectedCols='foo,bar,baz'
-        getColNames={ () => { return Promise.resolve(['foo,bar,baz,wow,word wrap,ok then']) } }
+        getColNames={ () => { return Promise.resolve(testcols) } }
         saveState={ () => {} }
         revision={101} 
         isReadOnly={true}
       />
     ));
   
-    it('Renders and loads column names', (done) => {
+    it('Loads and renders disabled column names', (done) => {
+      expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
+
       // need to give chance for componentdidMount to run
       setImmediate( () => {
         expect(wrapper).toMatchSnapshot();
-        //check that col names have loaded
-        expect(wrapper.state().colNames).toEqual(['foo,bar,baz,wow,word wrap,ok then']);   
-        expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);   
+
+        // check that col names have loaded and turned into disabled checkboxes
+        expect(wrapper.state().colNames).toEqual(testcols);
+        let checkboxList = wrapper.find('input[disabled=true]');
+        expect(checkboxList).toHaveLength(6);
+
+        expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
         done();
       });
     });
 
-    it('Checkboxes do not change on click - DUMMY TEST', (done) => {
-      setImmediate( () => {
-
-        expect(true).toBe(true);
-
-        //  *** CURRENTLY BROKEN: trying to find/target checkboxes ****
-        // // check state
-        // expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);           
-
-        // // find set of checkboxes
-        // let checkboxList = wrapper.find('input');
-        // expect(checkboxList).toHaveLength(6);
-        
-        // // filter list to grab one checkbox
-        // let wowBox = checkboxList.filterWhere(n => n.dataName() == 'wow');
-        // // click on it
-        // wowBox.simulate('change');
-
-        // // check state - should be same
-        // expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);           
-
-        // // run snap
-
-        done();
-      });
-    });
 
   });
 
@@ -66,39 +47,49 @@ describe('ColumnSelector', () => {
     beforeEach(() => wrapper = mount(
       <ColumnSelector
         selectedCols='foo,bar,baz'
-        getColNames={ () => { return Promise.resolve(['foo,bar,baz,wow,word wrap,ok then']) } }
+        getColNames={ () => { return Promise.resolve(testcols) } }
         saveState={ () => {} }
         revision={101} 
         isReadOnly={false}
       />
     ));
   
-    it('Renders and loads column names', (done) => {
+    it('Loads and renders column names', (done) => {
       setImmediate( () => {
         expect(wrapper).toMatchSnapshot();
-        //check that col names have loaded
-        expect(wrapper.state().colNames).toEqual(['foo,bar,baz,wow,word wrap,ok then']);   
+
+        // check that col names have loaded and turned into checkboxes
+        expect(wrapper.state().colNames).toEqual(testcols);
+        let checkboxList = wrapper.find('input');
+        expect(checkboxList).toHaveLength(6);
+
         expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);   
 
         done();
       });
     });
 
-    it('Checkboxes do change on click - DUMMY TEST', (done) => {
+    it('Selected columns change on click', (done) => {
       setImmediate( () => {
 
-        expect(true).toBe(true);
-        
-        // // check state
-        
-        // // find a checkbox
+        expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
-        // // click on it
+        // filter list to grab one checkbox, and click on it
+        // A bit of a pain to synthesize an event in the right format...
+        let wowBox = wrapper.find('input[data-name="wow"]');
+        expect(wowBox).toHaveLength(1);
+        wowBox.simulate('change', {
+                          target: {
+                            checked: true,
+                            attributes : {
+                              getNamedItem: () => { return { value: 'wow'} }
+                            }
+                          }
+                        });
 
-        // // check state - should have changed
+        // selected items should be the same
+        expect(wrapper.state().selected).toEqual(["foo", "bar", "baz", 'wow']);
 
-        // // run snap
-        // expect(wrapper).toMatchSnapshot();
         done();
       });
     });
