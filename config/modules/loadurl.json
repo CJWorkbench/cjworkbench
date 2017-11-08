@@ -12,6 +12,12 @@
       "default": ""
     },
     {
+      "name": "JSON path (optional)",
+      "id_name" : "json_path",
+      "type": "string",
+      "default": ""
+    },
+    {
       "name": "Check Now",
       "id_name" : "version_select",
       "type": "custom"
