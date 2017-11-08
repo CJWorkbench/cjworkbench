@@ -260,9 +260,21 @@ def import_module_from_github(url):
 
     # pull contents from GitHub
     try:
+        # clean up anything that might be left over from previous failed attempts
+        try:
+            shutil.rmtree(os.path.join(ROOT_DIRECTORY, directory))
+        except:
+            pass
+        try:
+            shutil.rmtree(os.path.join(CURRENT_PATH, directory))
+        except:
+            pass
+
         git.Git().clone(url)
+
         # move this to correct directory, i.e. where this file is.
         shutil.move(os.path.join(ROOT_DIRECTORY, directory), os.path.join(CURRENT_PATH, directory))
+
     except (ValidationError, GitCommandError) as ve:
         print('Unable to pull down content from GitHub: %s' % (url))
         try:
