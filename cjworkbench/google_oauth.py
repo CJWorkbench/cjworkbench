@@ -5,22 +5,27 @@ from django.shortcuts import redirect
 from oauth2client.contrib.django_util.storage import DjangoORMStorage
 from cjworkbench.models.GoogleCreds import GoogleCredentials
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode, quote_plus, unquote_plus
+import jsonpickle
 
-flow = flow_from_clientsecrets(
-    settings.GOOGLE_OAUTH2_CLIENT_SECRETS_JSON,
-    scope='https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.readonly',
-    redirect_uri='http://localhost:8000/oauth'
-)
-flow.params['approval_prompt'] = 'force'
+def create_and_store_flow(request):
+    flow = flow_from_clientsecrets(
+        settings.GOOGLE_OAUTH2_CLIENT_SECRETS_JSON,
+        scope='https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.readonly',
+        redirect_uri='http://localhost:8000/oauth'
+    )
+    flow.params['approval_prompt'] = 'force'
+    request.session['flow'] = jsonpickle.encode(flow)
+    return flow
 
 def authorize(request):
+    flow = create_and_store_flow(request)
     return redirect(flow.step1_get_authorize_url())
 
-def maybe_authorize(user, redirect_url = False):
-    storage = DjangoORMStorage(GoogleCredentials, 'id', user, 'credential')
+def maybe_authorize(request, redirect_url = False):
+    storage = DjangoORMStorage(GoogleCredentials, 'id', request.user, 'credential')
     credential = storage.get()
     if credential is None or credential.invalid == True:
-        authorize_url = flow.step1_get_authorize_url()
+        authorize_url = create_and_store_flow(request)
         if redirect_url:
             authorize_url = add_query_param(authorize_url, 'state', redirect_url)
         return (False, authorize_url)
@@ -28,6 +33,7 @@ def maybe_authorize(user, redirect_url = False):
         return (True, credential)
 
 def get_creds(request):
+    flow = jsonpickle.decode(request.session['flow'])
     credential = flow.step2_exchange(request.GET.get('code', False))
     storage = DjangoORMStorage(GoogleCredentials, 'id', request.user, 'credential')
     storage.put(credential)

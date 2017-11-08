@@ -68,7 +68,7 @@ class Twitter(ModuleImpl):
 
     # Load specified user's timeline
     @staticmethod
-    def event(wfm, parameter, e, user):
+    def event(wfm, event=None, **kwargs):
         table = None
 
         # fetching could take a while so notify clients/users that we're working on it
@@ -107,7 +107,7 @@ class Twitter(ModuleImpl):
             new_csv = tweets.to_csv(index=False)  # index=False to prevent pandas from adding an index col
 
             # Change the data version (when new data found) only if this module set to auto update, or user triggered
-            auto = wfm.auto_update_data or (e is not None and e.get('type') == "click")
+            auto = wfm.auto_update_data or (event is not None and event.get('type') == "click")
 
             # Also notifies client
             save_data_if_changed(wfm, new_csv, auto_change_version=auto)

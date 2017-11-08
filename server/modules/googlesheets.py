@@ -12,7 +12,7 @@ class GoogleSheets(ModuleImpl):
 
     @staticmethod
     def get_spreadsheets(request):
-        authorized, credential = maybe_authorize(user)
+        authorized, credential = maybe_authorize(request)
 
         if not authorized:
             return JsonResponse({'login_url':credential}, status=401)
@@ -50,7 +50,7 @@ class GoogleSheets(ModuleImpl):
             return None
 
     @staticmethod
-    def event(wfmodule, parameter, event, user):
+    def event(wfmodule, parameter=None, event=None, request=None, **kwargs):
         if not event:
             file_meta = wfmodule.get_param_raw('fileselect', 'custom')
             file_meta = json.loads(file_meta)
@@ -62,7 +62,7 @@ class GoogleSheets(ModuleImpl):
             return HttpResponseBadRequest()
 
         if event_type == 'fetchFiles':
-            return GoogleSheets.get_spreadsheets(user)
+            return GoogleSheets.get_spreadsheets(request)
 
         if event_type == 'fetchFile':
             file_meta = request.data.get('file', False)
@@ -74,6 +74,6 @@ class GoogleSheets(ModuleImpl):
             sheet_id = file_meta['id']
 
         if sheet_id:
-            new_data = GoogleSheets.get_spreadsheet(user, sheet_id)
+            new_data = GoogleSheets.get_spreadsheet(request, sheet_id)
             save_data_if_changed(wfmodule, new_data, auto_change_version=True)
             return JsonResponse({}, status=204)

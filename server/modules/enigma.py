@@ -96,7 +96,7 @@ class EnigmaDataLoader:
         pass
 
     @staticmethod
-    def event(wf_module, parameter, event, user):
+    def event(wf_module, **kwargs):
         #number of rows we want to retrieve from Enigma. If you leave this blank/let it use the default,
         #you get all of 0 rows, so it should have a value > 0.
         wf_module.set_busy(notify=False)
