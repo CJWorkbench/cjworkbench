@@ -21,8 +21,3 @@ git:
 notifications:
   slack:
     secure: kSu7kORuHC4ifkF/XyHg5Cm9Ks/ncminPL5GTdlzIXFjwsGQ2wsNSXeZ5z0PxRI6MINXHbtrrn2rNA+UhXexZ6p1RpjgbGYaoktqsAG6mXzFU9Pf4ytPVk+dJdGvtOiS9sz3OvyDgllZn/x75hG2o5Ky+fDSkSoOKzLv8AGYO4UpIORdtTJZVYqccS94I+hdIoKdh8G3kqkKsfkaXxYZY174t6xfvO3oAOEIR4KQouFHsjfHBNPA+7fI/BV1ortfweBQvWz32b1C0V/xpHPt+ATlTbzBh89X5myZxV6TB1/wwkpgI4FLLjEJCslwAF+KePvK/CDaYgLMYkQPNond12+Wyjwqerz7Zq2mPSrrWQMJvX8CvG23xhzqj8G9sOYHfAVHJ5FC3lSEECzdwVaEPqTs2BcSwrNOW+PVEnrcgdf9BxUCztl+FzRaj+rAYWW+ADd3FseQAiTyV1zIrZifXxztNM99p7d5rg+BTvDCkoHU6x1RWGKcde4oB4h7+W5NEXvEluMas1os5XEOrfVwGiozZgwhymD/inWpimK8RyxDCd+gPVYrwjzAzaAnnJG+YcyBdDu8kKBbvYMaP7Uk8YJYwvqB3cFY4uo0wN6SUo2iYNGrW2sdhriPqzehF5FPDpIYrL2hlP/APeMHyRs/esgZvZz6L6HM+P3myKPxAlA=
-before_install:
-- openssl aes-256-cbc -K $encrypted_704fe58c7d20_key -iv $encrypted_704fe58c7d20_iv
-  -in client_secret.json.enc -out client_secret.json -d
-env:
-- CJW_GOOGLE_CLIENT_SECRETS='client_secret.json'
