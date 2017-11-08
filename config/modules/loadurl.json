@@ -6,14 +6,8 @@
   "description" : "Connect a dataset via its URL and keep it updated with its source.",
   "parameters": [
     {
-      "name": "URL",
+      "name": "Link to CSV, JSON or xlsx",
       "id_name" : "url",
-      "type": "string",
-      "default": ""
-    },
-    {
-      "name": "JSON path (optional)",
-      "id_name" : "json_path",
       "type": "string",
       "default": ""
     },

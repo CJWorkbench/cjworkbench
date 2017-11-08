@@ -538,6 +538,17 @@ body {
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
 }
 
+.text-field-non-edit {
+  padding:0 1.5rem 0 0;
+  background: transparent;
+  border:none;
+  white-space: nowrap;
+  width:30rem;
+  line-height: 1.5rem;
+  height: 1.5rem;
+  resize: none;
+}
+
 .wfmoduleStringInput{
   width: 100%;
   resize: none;
@@ -635,6 +646,13 @@ body {
 .button-blue {
   color: #48C8D7;
   border: 1px solid #48C8D7 ;
+  text-align: center;
+  background-color: transparent;
+}
+
+.button-drop-zone {
+  color: rgba(118,155,176,1);
+  border: 1px solid rgba(118,155,176,1) ;
   text-align: center;
   background-color: transparent;
 }
@@ -751,12 +769,12 @@ body {
   padding: 0 1.8rem 0 1.8rem;
 }
 .action-button:hover {
-  cursor: pointer;
 	opacity: 0.5;
 }
 
 .react-fine-uploader-file-input-container{
   display: flex!important;
+  cursor:pointer;
 }
 
 .facebook-share {
@@ -1936,8 +1954,9 @@ input[type=checkbox]:checked:after {
 }
 
 /*Upload module*/
+
 .dropzone{
-  height:12rem;
+  height:10rem;
   border: 3px dashed rgba(118,155,176,1);
   cursor:pointer;
   opacity: 0.5;
@@ -1948,6 +1967,30 @@ input[type=checkbox]:checked:after {
   opacity: 1;
 }
 
+/*Progress bar*/
+.react-fine-uploader-gallery-progress-bar-container{
+  height:2px;
+  opacity:1;
+  width: 43rem;
+  top:12.5rem;
+}
+.react-fine-uploader-file-progress-bar-container,
+.react-fine-uploader-gallery-total-progress-bar-container{
+  height:2px;
+  margin-top:0px;
+  margin-right:0px;
+  margin-bottom:0px;
+  margin-left:0px;
+  width: 43rem;
+}
+.react-fine-uploader-file-progress-bar,
+.react-fine-uploader-gallery-total-progress-bar
+{
+  width: 100%;
+  background: #FBAA6D;
+  box-shadow: none;
+  height:2px;
+}
 
 /* --- Editable text fields --- */
 
@@ -1959,7 +2002,6 @@ input[type=checkbox]:checked:after {
   width: 100%;
   background: none;
 }
-
 
 .module-notes {
   padding: 1rem;
