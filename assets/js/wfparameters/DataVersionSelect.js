@@ -14,7 +14,7 @@ export default class DataVersionSelect extends React.Component {
       modalOpen: false,
       dropdownOpen: false,
       versions: {versions: [], selected: ''},
-      originalSelected: ''
+      originalSelected: null
     };
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleDropdown = this.toggleDropdown.bind(this);
@@ -103,7 +103,7 @@ export default class DataVersionSelect extends React.Component {
         <div className='t-d-gray content-3 mb-3'>Current Version</div>
 
         <div className='open-modal t-f-blue content-4 text-center' onClick={this.toggleModal}>
-            {this.state.originalSelected != '' ? this.formatDate(this.state.originalSelected) : 'No versions loaded'}
+            {this.state.originalSelected ? this.formatDate(this.state.originalSelected) : '-'}
         </div>
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window'>
           <ModalHeader toggle={this.toggleModal} >

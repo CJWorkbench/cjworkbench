@@ -17,24 +17,29 @@ describe('DataVersionSelect', () => {
     ],
     selected: '2017-04-10 17:57:58.324Z'
   };
-  var api = {
-    getWfModuleVersions: jsonResponseMock(mockVersions),
-    setWfModuleVersion: okResponseMock(),
-  };
+  var api;
   var wrapper;
   var modalLink;
 
   // Mount is necessary to invoke componentDidMount()
-  beforeEach(() => wrapper = mount(
-    <DataVersionSelect
-      isReadOnly={false}
-      wfModuleId={808}
-      revision={202}
-      api={api}
-      testing={true}
-    />
-  ));
-  beforeEach(() => modalLink = wrapper.find('div.open-modal'));
+  beforeEach(() => {
+    api = {
+      getWfModuleVersions: jsonResponseMock(mockVersions),
+      setWfModuleVersion: okResponseMock(),
+    };
+
+    wrapper = mount(
+      <DataVersionSelect
+        isReadOnly={false}
+        wfModuleId={808}
+        revision={202}
+        api={api}
+        testing={true}
+      />
+    );
+
+    modalLink = wrapper.find('div.open-modal')
+  });
 
   it('Renders correctly when in Private mode, and selection is confirmed when user hits OK', (done) => {
 
@@ -47,7 +52,7 @@ describe('DataVersionSelect', () => {
     expect(wrapper.state().modalOpen).toBe(false)
 
     // link renders with default text before versions are loaded
-    expect(modalLink.text()).toEqual("No versions loaded");
+    expect(modalLink.text()).toEqual("-");
 
     // give versions a chance to load
     setImmediate( () => {
@@ -108,7 +113,7 @@ describe('DataVersionSelect', () => {
   // Pared-down version of first test
   it('Does not save selection when user hits Cancel', (done) => {
 
-    expect(api.getWfModuleVersions.mock.calls.length).toBe(2);
+    expect(api.getWfModuleVersions.mock.calls.length).toBe(1);
 
     modalLink.simulate('click');
     expect(wrapper.state().modalOpen).toBe(true);
@@ -136,9 +141,7 @@ describe('DataVersionSelect', () => {
         expect(wrapper).toMatchSnapshot();              // 4
         expect(wrapper.state().modalOpen).toBe(false);
         expect(wrapper.state().originalSelected).toEqual('2017-04-10 17:57:58.324Z');
-        // includes calls from previous test
-        expect(api.getWfModuleVersions.mock.calls.length).toBe(2);
-        expect(api.setWfModuleVersion.mock.calls.length).toBe(1);
+        expect(api.setWfModuleVersion.mock.calls.length).toBe(0); // never called because user cancelled
         done();
       });
     });
@@ -153,8 +156,7 @@ describe('DataVersionSelect', () => {
       testing={true}
     />);
 
-    // This is "4" b/c of an extra API call from beforeEach()
-    expect(api.getWfModuleVersions.mock.calls.length).toBe(4);
+    expect(api.getWfModuleVersions.mock.calls.length).toBe(2); // 2 not 1 because beforeEach mounted "wrapper" already
 
     let readOnlyModalLink = readOnlywrapper.find('div.open-modal')
 
@@ -164,4 +166,30 @@ describe('DataVersionSelect', () => {
     done();
   });
 
+  it('Displays empty when no versions available', (done) => {
+
+    var emptyApi = {
+      getWfModuleVersions: jsonResponseMock({versions: [], selected: null}),
+      setWfModuleVersion: okResponseMock(),
+    };
+
+    let wrapper2 = mount(<DataVersionSelect
+      isReadOnly={true}
+      wfModuleId={808}
+      revision={202}
+      api={emptyApi}
+      testing={true}
+    />);
+
+    setImmediate( () => {
+      expect(emptyApi.getWfModuleVersions.mock.calls.length).toBe(1);
+
+      var modalLink2 = wrapper2.find('div.open-modal');
+      expect(modalLink2.text()).toEqual("-");
+
+      expect(wrapper2).toMatchSnapshot();
+      done();
+    });
+
+  });
 });
