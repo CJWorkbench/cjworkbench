@@ -11,6 +11,7 @@
   "dependencies": {
     "babelify": "^7.3.0",
     "bootstrap": "4.0.0-alpha.6",
+    "chartbuilder": "git://github.com/CJWorkbench/Chartbuilder.git#library-style",
     "classnames": "^2.2.5",
     "d3": "^3.5.5",
     "d3-array": "^1.0.2",
