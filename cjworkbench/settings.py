@@ -83,6 +83,7 @@ if DEBUG==False:
         'password_change': os.environ['CJW_SENDGRID_PASSWORD_CHANGE_ID'],
         'password_reset': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
     }
+    SESSION_ENGINE='django.contrib.sessions.backends.db'
 
 else:
     # We are running in debug
