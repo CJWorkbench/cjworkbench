@@ -1,37 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`renders correctly 1`] = `
-<div
-  className="parameter-margin d-flex flex-column"
+<select
+  className="custom-select dropdown-selector"
+  onChange={[Function]}
+  value={1}
 >
-  <label
-    className="label-margin t-d-gray content-3"
+  <option
+    className="dropdown-menu-item t-d-gray content-3"
+    value={0}
   >
-    SuperMenu
-  </label>
-  <select
-    className="custom-select dropdown-selector"
-    onChange={[Function]}
+    Apple
+  </option>
+  <option
+    className="dropdown-menu-item t-d-gray content-3"
     value={1}
   >
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      value={0}
-    >
-      Apple
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      value={1}
-    >
-      Kittens
-    </option>
-    <option
-      className="dropdown-menu-item t-d-gray content-3"
-      value={2}
-    >
-      Banana
-    </option>
-  </select>
-</div>
+    Kittens
+  </option>
+  <option
+    className="dropdown-menu-item t-d-gray content-3"
+    value={2}
+  >
+    Banana
+  </option>
+</select>
 `;
