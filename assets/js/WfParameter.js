@@ -179,23 +179,27 @@ export default class WfParameter extends React.Component {
                       checked={this.props.p.value}
                       onChange={this.click}
                       ref={ el => this.checkboxRef = el}/>
-                    <label className='t-d-gray content-5 mt-1 ml-3'>{this.name}</label>
+                    <div className='t-d-gray content-5 mt-1 ml-3'>{this.name}</div>
                   </div>
               </div>
         );
 
       case 'menu':
-        return (<MenuParam
-                  name={this.name}
-                  items={this.props.p.menu_items}
-                  selectedIdx={parseInt(this.props.p.value)}
-                  isReadOnly={this.props.isReadOnly}
-                  onChange={ idx => { this.paramChanged(idx) }}
-                /> );
+        return (
+          <div className='parameter-margin group-param'>
+            <div className='label-margin t-d-gray content-3'>{this.name}</div>
+            <MenuParam
+              name={this.name}
+              items={this.props.p.menu_items}
+              selectedIdx={parseInt(this.props.p.value)}
+              isReadOnly={this.props.isReadOnly}
+              onChange={ idx => { this.paramChanged(idx) }}
+            />
+          </div> );
 
       case 'column':
         return (
-          <div className='parameter-margin'>
+          <div className='parameter-margin group-param'>
             <div className='t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}

@@ -29,8 +29,6 @@ export default class MenuParam extends React.Component {
     });
 
     return (
-      <div className='parameter-margin d-flex flex-column'>
-        <label className='label-margin t-d-gray content-3'>{this.props.name}</label>
         <select
           className='custom-select dropdown-selector'
           value={this.state.selectedIdx}
@@ -39,7 +37,6 @@ export default class MenuParam extends React.Component {
         >
           {itemDivs}
         </select>
-      </div>
     );
   }
 }

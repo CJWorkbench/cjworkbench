@@ -828,7 +828,7 @@ body {
 
 .dropdown-selector {
   height: 4rem;
-  width: 17rem;
+  width: 15rem;
   border-radius:0px;
   border: 1px solid #f1f1f1;
   font-size: 1.3rem;
@@ -1626,7 +1626,7 @@ img.logo {
 
 
 .module-card-params {
-  margin: 0rem 2rem;
+  margin: 0 0 0 2rem;
   padding-top: 0.5rem;
   overflow-y: hidden;
 }
@@ -1658,6 +1658,29 @@ img.logo {
   width: 20%;
 }
 
+/*** Module Parameters spacing within modules ***/
+
+.label-margin {
+  margin-bottom: 0.2rem;
+  color:#b2b2b2;
+}
+
+.label{
+  margin-bottom: 0px;
+}
+
+/*Style for grouping parameters*/
+.group-param{
+  display: inline-block;
+  width:28.8%;
+
+}
+
+/*Bottom margin for a set of grouped parameters*/
+.parameter-margin {
+  margin-bottom: 2rem;
+  margin-right: 2rem;
+}
 
 /* ---- Wf Module status bars ---- */
 
@@ -1734,7 +1757,6 @@ img.logo {
 
 /*checkbox-list*/
 .checkbox-list{
-  margin:0px;
   padding:0px;
   width:43rem;
 }
@@ -2040,24 +2062,6 @@ input[type=checkbox]:checked:after {
 .editable-text {
   background-color: red;
 }
-
-/*Module Parameters spacing within modules*/
-
-/*Bottom margin for a set of grouped parameters*/
-.parameter-margin {
-  margin-bottom: 2rem;
-}
-/*Bottom margin for label above paramter*/
-label {
-  margin:0;
-}
-
-.label-margin {
-  margin-bottom: 0.2rem;
-  color:#b2b2b2;
-}
-
-
 
 /* --- Chartbuilder - override all sorts of styles to integrate --- */
 

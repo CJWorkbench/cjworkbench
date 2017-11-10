@@ -46,7 +46,7 @@ export default class GoogleConnect extends React.Component {
     if (this.props.userCreds.length === 0) {
       renderOutput = (
         <div>
-          <div className="title-3 t-d-gray centered">Connect with Google</div>
+          <div className="title-3 t-d-gray centered mb-1">Connect with Google</div>
           <div className="info-1 t-m-gray centered mb-3">Google spreadsheet, CSV supported</div>
           <button className='action-button button-orange centered' onClick={this.oauthDialog}>Connect</button>
         </div>

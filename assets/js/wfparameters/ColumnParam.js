@@ -37,7 +37,7 @@ export default class ColumnParam extends React.Component {
   onChange(evt) {
     var colName = this.state.colNames[evt.target.value];
     if (colName == "Select") {
-      colName = ""; // user should see "please select column" not "no column named (None)"
+      colName = ""; 
     }
     this.setState({selectedCol: colName});
     this.props.onChange(colName);
