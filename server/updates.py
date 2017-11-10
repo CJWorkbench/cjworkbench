@@ -17,7 +17,7 @@ def update_wfm_data_scan():
 def check_for_wfm_data_update(wfm):
     now = timezone.now()
     if now > wfm.next_update:
-        module_dispatch_event(wfm, None, None, None)  # None=no parameter, None = no event, None = no user, wasn't a user button press
+        module_dispatch_event(wfm)
 
         # schedule next update, skipping missed updates if any
         while (wfm.next_update <= now):
