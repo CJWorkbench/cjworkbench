@@ -64,7 +64,7 @@ describe('WorkflowMetadata - private mode', () => {
         // Dialog should be closed, link should now say private
         //let modal_element = document.getElementsByClassName('dialog-window');
 
-        expect(publicLink.childAt(0).text()).toBe('public');
+        expect(publicLink.childAt(0).text()).toBe('-');
         expect(wrapper).toMatchSnapshot(); // 4
 
         // Check that the API was called
@@ -88,14 +88,14 @@ describe('WorkflowMetadata - private mode', () => {
   var wrapper;
 
   var today = new Date('Fri Sep 22 2017 17:03:52 GMT-0400 (EDT)');
-  var day_before = today.setDate(today.getDate() - 2);  
+  var day_before = today.setDate(today.getDate() - 2);
 
   var api = {
     setWorkflowPublic: okResponseMock()
   };
 
   beforeEach(() => {
-      
+
     workflow = {
       id: 100,
       public: true,
@@ -112,17 +112,13 @@ describe('WorkflowMetadata - private mode', () => {
         isPublic={true}
       />);
     });
-      
+
     it('renders correctly in read-only mode', () => {
       expect(wrapper).toMatchSnapshot(); // 5
-  
+
       // check that privacy modal link does not render
       var publicLink = wrapper.find('.test-button');
       expect(publicLink).toHaveLength(0);
     })
 
 });
-
-
-
-

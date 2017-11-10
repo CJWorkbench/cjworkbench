@@ -25,24 +25,29 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
     <ul
       className="list-inline workflow-meta content-3 "
     >
+      <span
+        className="metadataSeparator"
+      >
+        -
+      </span>
       <li
         className="list-inline-item content-3 t-white"
       >
         Updated 
         now
-        <span
-          className="metadataSeparator"
-        >
-          -
-        </span>
       </li>
       <li
         className="list-inline-item content-3"
       >
         <div
-          className="list-inline-item test-button content-3 "
+          className="list-inline-item test-button d-flex content-3 "
           onClick={[Function]}
         >
+          <span
+            className="metadataSeparator"
+          >
+            -
+          </span>
           <div
             className="t-white-u"
           >
@@ -182,24 +187,29 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
     <ul
       className="list-inline workflow-meta content-3 "
     >
+      <span
+        className="metadataSeparator"
+      >
+        -
+      </span>
       <li
         className="list-inline-item content-3 t-white"
       >
         Updated 
         now
-        <span
-          className="metadataSeparator"
-        >
-          -
-        </span>
       </li>
       <li
         className="list-inline-item content-3"
       >
         <div
-          className="list-inline-item test-button content-3 "
+          className="list-inline-item test-button d-flex content-3 "
           onClick={[Function]}
         >
+          <span
+            className="metadataSeparator"
+          >
+            -
+          </span>
           <div
             className="t-white-u"
           >
@@ -237,24 +247,29 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
     <ul
       className="list-inline workflow-meta content-3 "
     >
+      <span
+        className="metadataSeparator"
+      >
+        -
+      </span>
       <li
         className="list-inline-item content-3 t-white"
       >
         Updated 
         now
-        <span
-          className="metadataSeparator"
-        >
-          -
-        </span>
       </li>
       <li
         className="list-inline-item content-3"
       >
         <div
-          className="list-inline-item test-button content-3 "
+          className="list-inline-item test-button d-flex content-3 "
           onClick={[Function]}
         >
+          <span
+            className="metadataSeparator"
+          >
+            -
+          </span>
           <div
             className="t-white-u"
           >
@@ -292,16 +307,16 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
     <ul
       className="list-inline workflow-meta content-3 "
     >
+      <span
+        className="metadataSeparator"
+      >
+        -
+      </span>
       <li
         className="list-inline-item content-3 t-white"
       >
         Updated 
         now
-        <span
-          className="metadataSeparator"
-        >
-          -
-        </span>
       </li>
       <li
         className="list-inline-item content-3"
