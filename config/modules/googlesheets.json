@@ -1,8 +1,8 @@
 {
-  "name": "Import from Google Sheets",
+  "name": "Google Drive",
   "id_name": "googlesheets" ,
   "category" : "Add data",
-  "icon" : "url",
+  "icon" : "google-drive",
   "description" : "Connect to a Google Spreadsheet and stay updated with its source.",
   "parameters": [
     {

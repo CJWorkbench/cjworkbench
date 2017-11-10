@@ -395,6 +395,10 @@ body {
   content:"\e92b"
 }
 
+.icon-google-drive:before{
+  content:"\e92c"
+}
+
 /* Customized icons, not in font sent  */
 
 .icon-l-gray {
@@ -543,7 +547,7 @@ body {
   background: transparent;
   border:none;
   white-space: nowrap;
-  width:30rem;
+  width:43rem;
   line-height: 1.5rem;
   height: 1.5rem;
   resize: none;
@@ -650,9 +654,9 @@ body {
   background-color: transparent;
 }
 
-.button-drop-zone {
-  color: rgba(118,155,176,1);
-  border: 1px solid rgba(118,155,176,1) ;
+.button-orange {
+  color: #FBAA6D;
+  border: 1px solid #FBAA6D ;
   text-align: center;
   background-color: transparent;
 }
@@ -757,7 +761,6 @@ body {
 
 .action-button {
   cursor: pointer;
-  width:auto!important;
 	height: 4rem;
   min-width: 9rem;
   border-radius: 2.5rem;
@@ -774,6 +777,7 @@ body {
 
 .react-fine-uploader-file-input-container{
   display: flex!important;
+  align-items: center;
   cursor:pointer;
 }
 
@@ -1924,13 +1928,6 @@ input[type=checkbox]:checked:after {
   align-self: flex-start;
 }
 
-.upload-box {
-  height: 5rem;
-  display: flex;
-  justify-content: space-between;
-  align-items:center;
-}
-
 .file-item{
 
 }
@@ -1957,10 +1954,10 @@ input[type=checkbox]:checked:after {
 
 .dropzone{
   height:10rem;
-  border: 3px dashed rgba(118,155,176,1);
+  border: 3px dashed #FBAA6D;
   cursor:pointer;
   opacity: 0.5;
-  color:rgba(118,155,176,1);
+  color:#FBAA6D;
 }
 
 .dropzone:hover{
@@ -1969,14 +1966,14 @@ input[type=checkbox]:checked:after {
 
 /*Progress bar*/
 .react-fine-uploader-gallery-progress-bar-container{
-  height:2px;
+  height:1px;
   opacity:1;
   width: 43rem;
   top:12.5rem;
 }
 .react-fine-uploader-file-progress-bar-container,
 .react-fine-uploader-gallery-total-progress-bar-container{
-  height:2px;
+  height:1px;
   margin-top:0px;
   margin-right:0px;
   margin-bottom:0px;
@@ -1989,7 +1986,20 @@ input[type=checkbox]:checked:after {
   width: 100%;
   background: #FBAA6D;
   box-shadow: none;
-  height:2px;
+  height:1px;
+}
+
+/*dropzone button gets set up within the version box when file is loaded*/
+
+.dropzone-button{
+  width:11.3rem!important;
+  position:absolute!important;
+  left:32rem;
+  top:13rem;
+}
+
+.upload-box{
+  display: flex;
 }
 
 /* --- Editable text fields --- */
