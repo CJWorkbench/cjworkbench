@@ -27,7 +27,7 @@ class GoogleSheets(ModuleImpl):
 
     @staticmethod
     def get_spreadsheet(request, id):
-        authorized, credential = maybe_authorize(user)
+        authorized, credential = maybe_authorize(request)
 
         if not authorized:
             return credential
