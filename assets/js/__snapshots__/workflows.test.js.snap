@@ -376,24 +376,29 @@ exports[`renders correctly 2`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
+                          <span
+                            className="metadataSeparator"
+                          >
+                            -
+                          </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
                           >
                             Updated 
                             now
-                            <span
-                              className="metadataSeparator"
-                            >
-                              -
-                            </span>
                           </li>
                           <li
                             className="list-inline-item content-3"
                           >
                             <div
-                              className="list-inline-item test-button content-3 "
+                              className="list-inline-item test-button d-flex content-3 "
                               onClick={[Function]}
                             >
+                              <span
+                                className="metadataSeparator"
+                              >
+                                -
+                              </span>
                               <div
                                 className="t-f-blue"
                               >
@@ -574,24 +579,29 @@ exports[`renders correctly 2`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
+                          <span
+                            className="metadataSeparator"
+                          >
+                            -
+                          </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
                           >
                             Updated 
                             now
-                            <span
-                              className="metadataSeparator"
-                            >
-                              -
-                            </span>
                           </li>
                           <li
                             className="list-inline-item content-3"
                           >
                             <div
-                              className="list-inline-item test-button content-3 "
+                              className="list-inline-item test-button d-flex content-3 "
                               onClick={[Function]}
                             >
+                              <span
+                                className="metadataSeparator"
+                              >
+                                -
+                              </span>
                               <div
                                 className="t-f-blue"
                               >
@@ -772,24 +782,29 @@ exports[`renders correctly 2`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
+                          <span
+                            className="metadataSeparator"
+                          >
+                            -
+                          </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
                           >
                             Updated 
                             now
-                            <span
-                              className="metadataSeparator"
-                            >
-                              -
-                            </span>
                           </li>
                           <li
                             className="list-inline-item content-3"
                           >
                             <div
-                              className="list-inline-item test-button content-3 "
+                              className="list-inline-item test-button d-flex content-3 "
                               onClick={[Function]}
                             >
+                              <span
+                                className="metadataSeparator"
+                              >
+                                -
+                              </span>
                               <div
                                 className="t-f-blue"
                               >
@@ -970,24 +985,29 @@ exports[`renders correctly 2`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
+                          <span
+                            className="metadataSeparator"
+                          >
+                            -
+                          </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
                           >
                             Updated 
                             now
-                            <span
-                              className="metadataSeparator"
-                            >
-                              -
-                            </span>
                           </li>
                           <li
                             className="list-inline-item content-3"
                           >
                             <div
-                              className="list-inline-item test-button content-3 "
+                              className="list-inline-item test-button d-flex content-3 "
                               onClick={[Function]}
                             >
+                              <span
+                                className="metadataSeparator"
+                              >
+                                -
+                              </span>
                               <div
                                 className="t-f-blue"
                               >

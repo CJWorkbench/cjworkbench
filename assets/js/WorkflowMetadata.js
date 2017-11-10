@@ -110,7 +110,8 @@ export default class WorkflowMetadata extends React.Component {
       : null
     var modalLink = (this.props.workflow.read_only)
       ? null
-      : <div className="list-inline-item test-button content-3 " onClick={this.togglePrivacyModal}>
+      : <div className="list-inline-item test-button d-flex content-3 " onClick={this.togglePrivacyModal}>
+          <span className='metadataSeparator'>-</span>
           <div className={''+publicColor}>{this.state.isPublic ? 'public' : 'private'}</div>
         </div>
 
@@ -118,9 +119,9 @@ export default class WorkflowMetadata extends React.Component {
       <div className=''>
         <ul className="list-inline workflow-meta content-3 ">
            {attribution}
+          <span className='metadataSeparator'>-</span>
           <li className={"list-inline-item content-3 "+ timeColor}>
             Updated {timeDifference(this.props.workflow.last_update, now)}
-            <span className='metadataSeparator'>-</span>
           </li>
           <li className="list-inline-item content-3">
           {modalLink}

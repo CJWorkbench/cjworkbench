@@ -138,24 +138,29 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
               <ul
                 className="list-inline workflow-meta content-3 "
               >
+                <span
+                  className="metadataSeparator"
+                >
+                  -
+                </span>
                 <li
                   className="list-inline-item content-3 t-white"
                 >
                   Updated 
                   now
-                  <span
-                    className="metadataSeparator"
-                  >
-                    -
-                  </span>
                 </li>
                 <li
                   className="list-inline-item content-3"
                 >
                   <div
-                    className="list-inline-item test-button content-3 "
+                    className="list-inline-item test-button d-flex content-3 "
                     onClick={[Function]}
                   >
+                    <span
+                      className="metadataSeparator"
+                    >
+                      -
+                    </span>
                     <div
                       className="t-white-u"
                     >
@@ -678,24 +683,29 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
               <ul
                 className="list-inline workflow-meta content-3 "
               >
+                <span
+                  className="metadataSeparator"
+                >
+                  -
+                </span>
                 <li
                   className="list-inline-item content-3 t-white"
                 >
                   Updated 
                   now
-                  <span
-                    className="metadataSeparator"
-                  >
-                    -
-                  </span>
                 </li>
                 <li
                   className="list-inline-item content-3"
                 >
                   <div
-                    className="list-inline-item test-button content-3 "
+                    className="list-inline-item test-button d-flex content-3 "
                     onClick={[Function]}
                   >
+                    <span
+                      className="metadataSeparator"
+                    >
+                      -
+                    </span>
                     <div
                       className="t-white-u"
                     >
@@ -1136,24 +1146,29 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
               <ul
                 className="list-inline workflow-meta content-3 "
               >
+                <span
+                  className="metadataSeparator"
+                >
+                  -
+                </span>
                 <li
                   className="list-inline-item content-3 t-white"
                 >
                   Updated 
                   now
-                  <span
-                    className="metadataSeparator"
-                  >
-                    -
-                  </span>
                 </li>
                 <li
                   className="list-inline-item content-3"
                 >
                   <div
-                    className="list-inline-item test-button content-3 "
+                    className="list-inline-item test-button d-flex content-3 "
                     onClick={[Function]}
                   >
+                    <span
+                      className="metadataSeparator"
+                    >
+                      -
+                    </span>
                     <div
                       className="t-white-u"
                     >
@@ -1291,24 +1306,29 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
               <ul
                 className="list-inline workflow-meta content-3 "
               >
+                <span
+                  className="metadataSeparator"
+                >
+                  -
+                </span>
                 <li
                   className="list-inline-item content-3 t-white"
                 >
                   Updated 
                   now
-                  <span
-                    className="metadataSeparator"
-                  >
-                    -
-                  </span>
                 </li>
                 <li
                   className="list-inline-item content-3"
                 >
                   <div
-                    className="list-inline-item test-button content-3 "
+                    className="list-inline-item test-button d-flex content-3 "
                     onClick={[Function]}
                   >
+                    <span
+                      className="metadataSeparator"
+                    >
+                      -
+                    </span>
                     <div
                       className="t-white-u"
                     >
