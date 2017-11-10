@@ -11,7 +11,7 @@ def create_and_store_flow(request):
     flow = flow_from_clientsecrets(
         settings.GOOGLE_OAUTH2_CLIENT_SECRETS_JSON,
         scope='https://www.googleapis.com/auth/spreadsheets.readonly https://www.googleapis.com/auth/drive.readonly',
-        redirect_uri='http://localhost:8000/oauth'
+        redirect_uri=request.build_absolute_uri('/oauth')
     )
     flow.params['approval_prompt'] = 'force'
     request.session['flow'] = jsonpickle.encode(flow)

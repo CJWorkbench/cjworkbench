@@ -76,4 +76,5 @@ class GoogleSheets(ModuleImpl):
         if sheet_id:
             new_data = GoogleSheets.get_spreadsheet(request, sheet_id)
             save_data_if_changed(wfmodule, new_data, auto_change_version=True)
+            # change this to no response method
             return JsonResponse({}, status=204)
