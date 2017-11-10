@@ -1928,8 +1928,9 @@ input[type=checkbox]:checked:after {
   align-self: flex-start;
 }
 
-.file-item{
-
+.centered{
+  margin:auto;
+  text-align: center;
 }
 
 /* --- UpdateFrequencySelect --- */
