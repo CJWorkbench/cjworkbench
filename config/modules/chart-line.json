@@ -1,0 +1,23 @@
+{
+  "name": "Line Chart",
+  "id_name": "chart-line",
+  "category" : "Visualize",
+  "icon" : "chart",
+  "description" : "Create a line chart.",
+  "parameters": [
+    {
+      "name": "Chart",
+      "id_name": "chart-line",
+      "type": "custom",
+      "ui-only": true,
+      "derived-data": true
+    },
+    {
+      "name": "hidden chart state",
+      "id_name": "chartstate",
+      "type": "string",
+      "visible": false,
+      "ui-only": true
+    }
+  ]
+}

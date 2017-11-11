@@ -1,0 +1,23 @@
+{
+  "name": "Column Chart",
+  "id_name": "chart-column",
+  "category" : "Visualize",
+  "icon" : "chart",
+  "description" : "Create a column chart.",
+  "parameters": [
+    {
+      "name": "Chart",
+      "id_name": "chart-column",
+      "type": "custom",
+      "ui-only": true,
+      "derived-data": true
+    },
+    {
+      "name": "hidden chart state",
+      "id_name": "chartstate",
+      "type": "string",
+      "visible": false,
+      "ui-only": true
+    }
+  ]
+}

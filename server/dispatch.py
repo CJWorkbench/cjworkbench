@@ -41,6 +41,8 @@ module_dispatch_tbl = {
     'selectcolumns':SelectColumns,
     'pythoncode':   PythonCode,
     'simplechart':  Chart,
+    'chart-line':   Chart,
+    'chart-column': Chart,
     'twitter':      Twitter,
     'textsearch':   TextSearch,
     'countvalues':  CountValues,

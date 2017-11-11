@@ -3,6 +3,7 @@
 import React from 'react'
 import MenuParam from './wfparameters/MenuParam'
 import ChartParameter from './wfparameters/Chart'
+import SimpleChartParameter from './wfparameters/SimpleChart'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
 import ColumnRenamer from './wfparameters/ColumnRenamer'
@@ -246,6 +247,44 @@ export default class WfParameter extends React.Component {
               />
             </div>
           );
+
+        } else if (
+          this.props.p.parameter_spec.id_name == 'chart-line' ||
+          this.props.p.parameter_spec.id_name == 'chart-column') {
+
+            // Load and save chart state, image to hidden parameters
+            var loadState = ( () => this.props.getParamText('chartstate') );
+            var saveState = ( state => this.props.setParamText('chartstate', state) );
+
+            var saveImageDataURI = ( data => this.props.setParamText('chart', data) );
+
+            var chartType;
+            switch(this.props.p.parameter_spec.id_name) {
+              case 'chart-line':
+                chartType = 'line';
+                break;
+              case 'chart-column':
+                chartType = 'column';
+                break;
+              default:
+                chartType = 'line';
+                break;
+            }
+
+            return (
+              <div>
+                <a href={'/public/paramdata/live/' + this.props.p.id + '.png'}>PNG</a>
+                <SimpleChartParameter
+                  isReadOnly={this.props.isReadOnly}
+                  wf_module_id={this.props.wf_module_id}
+                  revision={this.props.revision}
+                  saveState={saveState}
+                  loadState={loadState}
+                  chartType={chartType}
+                  saveImageDataURI={saveImageDataURI}
+                />
+              </div>
+            );
 
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
 
