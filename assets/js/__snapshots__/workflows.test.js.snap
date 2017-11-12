@@ -376,11 +376,11 @@ exports[`renders correctly 2`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
-                          <li
-                            className="metadataSeparator t-m-gray"
+                          <span
+                            className="metadataSeparator"
                           >
                             -
-                          </li>
+                          </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
                           >
@@ -395,12 +395,12 @@ exports[`renders correctly 2`] = `
                               onClick={[Function]}
                             >
                               <span
-                                className="metadataSeparator t-m-gray"
+                                className="metadataSeparator"
                               >
                                 -
                               </span>
                               <div
-                                className="t-m-gray"
+                                className="t-f-blue"
                               >
                                 public
                               </div>
@@ -579,11 +579,11 @@ exports[`renders correctly 2`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
-                          <li
-                            className="metadataSeparator t-m-gray"
+                          <span
+                            className="metadataSeparator"
                           >
                             -
-                          </li>
+                          </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
                           >
@@ -598,12 +598,12 @@ exports[`renders correctly 2`] = `
                               onClick={[Function]}
                             >
                               <span
-                                className="metadataSeparator t-m-gray"
+                                className="metadataSeparator"
                               >
                                 -
                               </span>
                               <div
-                                className="t-m-gray"
+                                className="t-f-blue"
                               >
                                 private
                               </div>
@@ -782,11 +782,11 @@ exports[`renders correctly 2`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
-                          <li
-                            className="metadataSeparator t-m-gray"
+                          <span
+                            className="metadataSeparator"
                           >
                             -
-                          </li>
+                          </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
                           >
@@ -801,12 +801,12 @@ exports[`renders correctly 2`] = `
                               onClick={[Function]}
                             >
                               <span
-                                className="metadataSeparator t-m-gray"
+                                className="metadataSeparator"
                               >
                                 -
                               </span>
                               <div
-                                className="t-m-gray"
+                                className="t-f-blue"
                               >
                                 public
                               </div>
@@ -985,11 +985,11 @@ exports[`renders correctly 2`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
-                          <li
-                            className="metadataSeparator t-m-gray"
+                          <span
+                            className="metadataSeparator"
                           >
                             -
-                          </li>
+                          </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
                           >
@@ -1004,12 +1004,12 @@ exports[`renders correctly 2`] = `
                               onClick={[Function]}
                             >
                               <span
-                                className="metadataSeparator t-m-gray"
+                                className="metadataSeparator"
                               >
                                 -
                               </span>
                               <div
-                                className="t-m-gray"
+                                className="t-f-blue"
                               >
                                 private
                               </div>
