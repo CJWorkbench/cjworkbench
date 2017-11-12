@@ -1078,6 +1078,10 @@ body {
   text-align: center;
 }
 
+.list-inline{
+  display: flex;
+}
+
 .list-inline-item:not(:last-child){
   margin-right: 0px;
 }

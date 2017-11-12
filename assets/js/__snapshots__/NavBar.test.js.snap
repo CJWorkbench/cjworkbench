@@ -138,11 +138,11 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
               <ul
                 className="list-inline workflow-meta content-3 "
               >
-                <span
-                  className="metadataSeparator"
+                <li
+                  className="metadataSeparator t-white"
                 >
                   -
-                </span>
+                </li>
                 <li
                   className="list-inline-item content-3 t-white"
                 >
@@ -157,7 +157,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                     onClick={[Function]}
                   >
                     <span
-                      className="metadataSeparator"
+                      className="metadataSeparator t-white"
                     >
                       -
                     </span>
@@ -683,11 +683,11 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
               <ul
                 className="list-inline workflow-meta content-3 "
               >
-                <span
-                  className="metadataSeparator"
+                <li
+                  className="metadataSeparator t-white"
                 >
                   -
-                </span>
+                </li>
                 <li
                   className="list-inline-item content-3 t-white"
                 >
@@ -702,7 +702,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                     onClick={[Function]}
                   >
                     <span
-                      className="metadataSeparator"
+                      className="metadataSeparator t-white"
                     >
                       -
                     </span>
@@ -1146,11 +1146,11 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
               <ul
                 className="list-inline workflow-meta content-3 "
               >
-                <span
-                  className="metadataSeparator"
+                <li
+                  className="metadataSeparator t-white"
                 >
                   -
-                </span>
+                </li>
                 <li
                   className="list-inline-item content-3 t-white"
                 >
@@ -1165,7 +1165,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
                     onClick={[Function]}
                   >
                     <span
-                      className="metadataSeparator"
+                      className="metadataSeparator t-white"
                     >
                       -
                     </span>
@@ -1306,11 +1306,11 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
               <ul
                 className="list-inline workflow-meta content-3 "
               >
-                <span
-                  className="metadataSeparator"
+                <li
+                  className="metadataSeparator t-white"
                 >
                   -
-                </span>
+                </li>
                 <li
                   className="list-inline-item content-3 t-white"
                 >
@@ -1325,7 +1325,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
                     onClick={[Function]}
                   >
                     <span
-                      className="metadataSeparator"
+                      className="metadataSeparator t-white"
                     >
                       -
                     </span>
