@@ -12,6 +12,11 @@ class PythonCode(ModuleImpl):
     def render(wf_module, table):
         code = wf_module.get_param_string('code')
 
+        # empty code, NOP
+        code = code.strip()
+        if code == '':
+            return table
+
         # turn the user-supplied text into a function declaration
         code = 'def process(table):\n' + indent_lines(code)
 

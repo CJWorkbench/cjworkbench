@@ -6,7 +6,12 @@
   "description" : "Python code editor to process data.",
   "parameters": [
     {
-      "name": "Code",
+      "name": "Write a function that takes a Pandas dataframe called 'table' and returns another dataframe.",
+      "id_name": "description_statictext",
+      "type": "statictext"
+    },
+    {
+      "name": "def process(table):",
       "id_name": "code",
       "type": "string",
       "multiline": true
