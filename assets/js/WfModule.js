@@ -62,11 +62,24 @@ class StatusLine extends React.Component {
 
 const targetSpec = {
   drop(props, monitor, component) {
+    const source = monitor.getItem();
+    const target = props.index;
+
+    if (source.insert = true) {
+      //console.log(props);
+      //console.log(source);
+      props.dropNew(props['data-wfmodule'].id, source.id, props.index)
+      return
+    }
     props.drop();
   },
   hover(props, monitor, component) {
     const sourceIndex = monitor.getItem().index;
     const targetIndex = props.index;
+
+    if (!sourceIndex) {
+      return
+    }
 
     if (sourceIndex === targetIndex) {
       return;

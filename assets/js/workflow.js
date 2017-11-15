@@ -19,6 +19,7 @@ class SortableList extends React.Component {
   constructor(props) {
     super(props);
     this.drag = this.drag.bind(this);
+    this.dropNew = this.dropNew.bind(this);
     this.drop = this.drop.bind(this);
     this.state = {
       wf_modules: this.props.data.wf_modules
@@ -34,6 +35,10 @@ class SortableList extends React.Component {
     this.setState({
       wf_modules: newArray
     });
+  }
+
+  dropNew(wfId, moduleId, insertBefore) {
+    this.props.addModule(moduleId, insertBefore);
   }
 
   drop() {
@@ -59,7 +64,6 @@ class SortableList extends React.Component {
 
   render() {
     var listItems = this.state.wf_modules.map(function(item, i) {
-
       var childProps = {
         'data-isReadOnly': this.props.data.read_only,
         'data-wfmodule': item,
@@ -71,15 +75,16 @@ class SortableList extends React.Component {
         'data-user': this.props.user,
         index:i,
         drag: this.drag,
+        dropNew: this.dropNew,
         drop: this.drop,
         key: item.id,
       }
-
       return (
         <SortableWfModule
           {...childProps}
         />
       );
+
     }, this);
 
     return (
@@ -146,6 +151,7 @@ class Workflow extends React.Component {
                         selected_wf_module={this.props.selected_wf_module}
                         changeParam={this.props.changeParam}
                         removeModule={this.props.removeModule}
+                        addModule={this.props.addModule}
                         api={this.props.api}
                         user={this.props.user}
                       />

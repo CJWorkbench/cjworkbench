@@ -2,6 +2,8 @@ import React from 'react'
 import ModuleLibrary  from './ModuleLibrary'
 import { mount, shallow } from 'enzyme'
 import { jsonResponseMock, emptyAPI } from './utils'
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContextProvider } from 'react-dnd'
 
 
 var wrapper;
@@ -45,12 +47,14 @@ it('ModuleLibrary renders open when not read-only, with list of module categorie
   expect(true).toBe(true);
 
   wrapper = mount(
-    <ModuleLibrary
-      addModule={addModule}
-      api={api}
-      workflow={workflow}
-      isReadOnly={false}
-    />
+    <DragDropContextProvider backend={HTML5Backend}>
+      <ModuleLibrary
+        addModule={addModule}
+        api={api}
+        workflow={workflow}
+        isReadOnly={false}
+      />
+    </DragDropContextProvider>
   );
 
   expect(wrapper).toMatchSnapshot();
@@ -92,5 +96,3 @@ it('ModuleLibrary renders closed when read-only', () => {
   expect(wrapper.find('.module-library-collapsed')).toHaveLength(1);
 
 });
-
-

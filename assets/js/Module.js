@@ -8,8 +8,27 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { CardBlock, Card } from 'reactstrap';
+import { DragSource } from 'react-dnd';
 
-export default class Module extends React.Component {
+const spec = {
+  beginDrag(props, monitor, component) {
+    console.log('dragging');
+    return {
+      index: false,
+      id: props.id,
+      insert: true,
+    }
+  }
+}
+
+function collect(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  }
+}
+
+class Module extends React.Component {
   constructor(props) {
     super(props);
     this.itemClick = this.itemClick.bind(this);
@@ -26,7 +45,7 @@ export default class Module extends React.Component {
     var moduleName = this.props.name;
     var icon = 'icon-' + this.props.icon + ' ml-icon';
 
-    return (
+    return this.props.connectDragSource(
       // TODO: remove inline styles
       <div className='card' style={{'borderRadius': 0, 'border': 0}}>
         <div className='' onClick={this.itemClick} >
@@ -51,3 +70,5 @@ Module.propTypes = {
   addModule:  PropTypes.func,
 //  workflow:   PropTypes.object
 };
+
+export default DragSource('module', spec, collect)(Module);
