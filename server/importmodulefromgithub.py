@@ -167,19 +167,48 @@ def move_files_to_final_location(destination_directory, curdir, json_file, pytho
     except (OSError, Exception) as error:
         raise ValidationError("Unable to move Python file to module directory.")
 
+
+# adds two spaces before every line
+def indent_lines(str):
+    return '  ' + str.replace('\n', '\n  ');
+
 # Ensure the Python file compiles
-def compile_python(destination_directory, python_file):
+# This function rewrites the file to add module definition boilerplate.
+def add_boilerplate_and_check_syntax(destination_directory, python_file):
+
+    boilerplate = """
+import numpy as np
+import pandas as pd
+
+class Importable:
+  @staticmethod
+  def __init__(self):
+    pass
+
+  @staticmethod
+"""
+
+    filename = os.path.join(destination_directory, python_file)
+
     try:
-        script = open(os.path.join(destination_directory, python_file), 'r').read() + '\n'
+        script = open(os.path.join(filename), 'r').read() + '\n'
     except:
         raise ValidationError("Unable to open Python code file {}.".format(python_file))
 
+    # Indent the user's function declaration to put it inside the Importable class, then replace file contents
+    script = boilerplate + indent_lines(script)
+    sfile = open(os.path.join(filename), 'w')
+    sfile.write(script)
+    sfile.close()
+
     try:
-        compiled = py_compile.compile(os.path.join(destination_directory, python_file))
+        compiled = compile(script, filename, 'exec')  # filename used only for stack traces etc.
         if compiled == None:
             raise ValidationError("Empty Python code file.")
-    except:
-        raise ValidationError("Unable to compile {}.".format(python_file))
+    except ValueError:
+        raise ValidationError("Source file {} contains bad characters.".format(python_file))
+    except SyntaxError as se:
+        raise ValidationError("{}: {}".format(python_file, str(se)))
 
     return compiled
 
@@ -269,7 +298,7 @@ def import_module_from_github(url):
         # The core work of creating a module
         destination_directory = destination_directory_name(moduledir, version)
         move_files_to_final_location(destination_directory, curdir, json_file, python_file)
-        compile_python(destination_directory, python_file)
+        add_boilerplate_and_check_syntax(destination_directory, python_file)
         validate_python_functions(destination_directory, python_file)
 
         # Initialise module in our database

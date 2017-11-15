@@ -214,7 +214,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.assertFalse(os.path.isdir(destination_directory))
 
 
-    def test_compile_python(self):
+    def test_add_boilerplate_and_check_syntax(self):
         #setup things like the destination directory and everything else –
         #this is kinda tedious...
         pwd = os.path.dirname(os.path.abspath(__file__))
@@ -225,11 +225,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         shutil.copy(os.path.join(test_dir, "importable.py"), destination_directory)
 
-        # test valid scenario
-        compiled = compile_python(destination_directory, "importable.py")
-        # I don't know if there's a better way of doing this, but for now, I'm just checking if the compile process
-        # returns a *pyc file.
-        self.assertTrue(compiled.endswith("pyc"), "{} should've compiled to a pyc file.".format("importable.py"))
+        # test valid scenario. Failures should raise ValidationError
+        compiled = add_boilerplate_and_check_syntax(destination_directory, "importable.py")
         shutil.rmtree(destination_directory)
         shutil.rmtree(test_dir)
 
@@ -237,7 +234,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.setup_module_structure(pwd)
         os.makedirs(destination_directory)
         with self.assertRaises(ValidationError):
-            compiled = compile_python(destination_directory, "importable.py")
+            compiled = add_boilerplate_and_check_syntax(destination_directory, "importable.py")
 
         # test invalid scenario: what if Python file exists but can't be compiled.
         # create file and add some random content to file
@@ -247,8 +244,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         shutil.copy(os.path.join(test_dir, "additional_file.py"), destination_directory)
 
-        with self.assertRaisesMessage(ValidationError, "Unable to compile {}.".format("additional_file.py")):
-            compiled = compile_python(destination_directory, "additional_file.py")
+        with self.assertRaises(ValidationError):
+            compiled = add_boilerplate_and_check_syntax(destination_directory, "additional_file.py")
 
     def test_validate_python_functions(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
@@ -261,6 +258,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         #test valid scenario
         shutil.copy(os.path.join(test_dir, "importable.py"), destination_directory)
+        add_boilerplate_and_check_syntax(destination_directory, "importable.py")  # adds crucial boilerplate to the file
         imported_class = validate_python_functions(destination_directory, "importable.py")
         self.assertTrue(type(imported_class[1]) == type, "The module must be importable, and be of type 'type'.")
 

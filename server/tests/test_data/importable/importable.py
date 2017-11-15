@@ -1,14 +1,3 @@
-class Importable:
-  @staticmethod
-  def event():
-    print("event")
+def render(wf_module, table):
+  return table
 
-  @staticmethod
-  def render(wf_module, table):
-    return table
-
-  def __init__(self, name):
-    self.name = name
-
-  def __init__(self, name):
-    self.name = name

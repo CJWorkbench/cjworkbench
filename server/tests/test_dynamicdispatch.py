@@ -2,7 +2,6 @@ from unittest import mock
 
 from server.tests.utils import *
 from ..dynamicdispatch import  DynamicDispatch
-
 import json, os, shutil, sys
 
 class DynamicDispatchTest(LoggedInTestCase):
@@ -11,14 +10,15 @@ class DynamicDispatchTest(LoggedInTestCase):
 
     def tearDown(self):
         super(DynamicDispatchTest, self).tearDown()
-        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "importedmodules", "importable"))
+        shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "importedmodules", "imported"))
 
 
     #creates dummy objects of things we need for testing like workflow, wf_module, module_version, module, etc.
     def create_components(self):
-        #extract module specification from test_data/importable
+        # Extract module specification from test_data/imported.
+        # This has the modified .py file that importfromgihub.compile_python() creates when it loads from github
         pwd = os.path.dirname(os.path.abspath(__file__))
-        test_json = os.path.join(pwd, "test_data/importable", "importable.json")
+        test_json = os.path.join(pwd, "test_data/imported", "imported.json")
         with open(test_json) as readable:
             module_config = json.load(readable)
         wf = add_new_workflow('workflow')
@@ -28,11 +28,15 @@ class DynamicDispatchTest(LoggedInTestCase):
     def setup_directory(self):
         #set-up structure, i.e. a way for the file to exist in a location where it can be loaded dynamically
         #copy files to where they would be if this were a real module, i.e. a non-test module.
-        if not os.path.isdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "importedmodules", "importable")):
-            os.makedirs(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "importedmodules", "importable"))
+        destdir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "importedmodules", "imported")
+        if not os.path.isdir(destdir):
+            os.makedirs(destdir)
 
-        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "importable"),
-                    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "importedmodules", "importable", "1.0"))
+        versiondir = os.path.join(destdir, "1.0")
+        if os.path.isdir(versiondir):
+            shutil.rmtree(versiondir)
+        shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "imported"), versiondir)
+
 
 
     def test_load_module(self):

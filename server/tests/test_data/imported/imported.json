@@ -1,0 +1,14 @@
+{
+  "name": "imported",
+  "id_name": "imported" ,
+  "category" : "tests",
+  "description": "This is a test module",
+  "parameters": [
+    {
+      "name": "Test",
+      "id_name" : "test",
+      "type": "string",
+      "default": ""
+    }
+  ]
+}
