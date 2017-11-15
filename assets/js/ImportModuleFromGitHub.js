@@ -65,15 +65,9 @@ export default class ImportModuleFromGitHub extends React.Component {
         },
         body: JSON.stringify(eventData)
       })
-      .then((result) => {
-        if (!result.ok)
-          return null;
-        else
-          return result.json();
-      })
-      .then((result) => {
-        this.handleResponse(result);
-      })
+      .then(result => result.json())
+      .then(json => this.handleResponse(json),
+            error => this.handleResponse(null)) // 500 error
       .then(() => {
         this.props.moduleAdded();
       })
