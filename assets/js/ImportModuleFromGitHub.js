@@ -65,7 +65,12 @@ export default class ImportModuleFromGitHub extends React.Component {
         },
         body: JSON.stringify(eventData)
       })
-      .then((result) => result.json())
+      .then((result) => {
+        if (!result.ok)
+          return null;
+        else
+          return result.json();
+      })
       .then((result) => {
         this.handleResponse(result);
       })
@@ -75,13 +80,17 @@ export default class ImportModuleFromGitHub extends React.Component {
   }
 
   handleResponse(response) {
-    // handle error callback
-    if (response.error) {
+    if (response === null) {
+      this.setState({
+        message_type: "error",
+        message: "Server error"
+      });
+    } else if (response.error) {
       this.setState({
         message_type: "error",
         message: response.error
       });
-    } else { // handle success callback
+    } else {
       this.setState({
         message_type: "success",
         message: response // contains the JSON with all the fields we might want to display.
@@ -107,7 +116,6 @@ export default class ImportModuleFromGitHub extends React.Component {
         visible =
           <div>
             <div className="import-github-error">
-                <div>Something is wrong:</div>
                 <div>{this.state.message}</div>
             </div>
             <div className="d-flex flex-row modal-dual-button">
