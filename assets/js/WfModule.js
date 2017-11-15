@@ -7,8 +7,11 @@ import WfModuleContextMenu from './WfModuleContextMenu'
 import EditableNotes from './EditableNotes'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 import { csrfToken } from './utils'
+import { findDOMNode } from 'react-dom'
 import * as Actions from './workflow-reducer'
 import PropTypes from 'prop-types'
+import { DropTarget, DragSource } from 'react-dnd'
+import flow from 'lodash.flow'
 
 // Libraries to provide a collapsable table view
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
@@ -57,7 +60,61 @@ class StatusLine extends React.Component {
 
 // ---- WfModule ----
 
-export default class WfModule extends React.Component {
+const targetSpec = {
+  drop(props, monitor, component) {
+    props.drop();
+  },
+  hover(props, monitor, component) {
+    const sourceIndex = monitor.getItem().index;
+    const targetIndex = props.index;
+
+    if (sourceIndex === targetIndex) {
+      return;
+    }
+    // getBoundingClientRect almost certainly doesn't
+    // work consistently in all browsers. Replace!
+    const targetBoundingRect = findDOMNode(component).getBoundingClientRect();
+    const targetMiddleY = (targetBoundingRect.bottom - targetBoundingRect.top) / 2;
+    const mouseY = monitor.getClientOffset();
+    const targetClientY = mouseY.y - targetBoundingRect.top;
+
+    // dragging down
+    if (sourceIndex < targetIndex && targetClientY < targetMiddleY) {
+      return;
+    }
+
+    // dragging up
+    if (sourceIndex > targetIndex && targetClientY > targetMiddleY) {
+      return;
+    }
+
+    props.drag(sourceIndex, targetIndex);
+    monitor.getItem().index = targetIndex;
+  }
+}
+
+function targetCollect(connect, monitor) {
+  return {
+    connectDropTarget: connect.dropTarget()
+  }
+}
+
+const sourceSpec = {
+  beginDrag(props, monitor, component) {
+    return {
+      index: props.index
+    }
+  }
+}
+
+function sourceCollect(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  }
+}
+
+class WfModule extends React.Component {
 
   constructor(props) {
     super(props);
@@ -231,8 +288,8 @@ export default class WfModule extends React.Component {
     var moduleIcon = 'icon-' + this.module.icon + ' module-icon mr-3';
 
     // Putting it all together: name, status, parameters, output
-    return (
-      <div className='container' {...this.props} onClick={this.click}>
+    return this.props.connectDropTarget(this.props.connectDragSource(
+      <div onClick={this.click}>
         <div className='wf-card'>
           <div className='output-bar-container'>
             <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
@@ -264,8 +321,8 @@ export default class WfModule extends React.Component {
           </div>
         </div>
       </div>
-    ); 
-  } 
+    ));
+  }
 }
 
 
@@ -277,4 +334,10 @@ WfModule.propTypes = {
   'data-changeParam':   PropTypes.func,
   'data-removeModule':  PropTypes.func,
   'data-api':           PropTypes.object.isRequired,
+  'connectDropTarget':  PropTypes.func,
 };
+
+export default flow(
+  DropTarget('module', targetSpec, targetCollect),
+  DragSource('module', sourceSpec, sourceCollect)
+)(WfModule)

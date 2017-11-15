@@ -8,77 +8,89 @@ import WfModule from './WfModule'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
 import { getPageID, csrfToken } from './utils'
-
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContextProvider } from 'react-dnd'
 
 // ---- Sortable WfModules within the workflow ----
-var SortableWfModule= sortable(WfModule);
+var SortableWfModule = WfModule;
 
 class SortableList extends React.Component {
 
   constructor(props) {
     super(props);
-    this.updateState = this.updateState.bind(this);
-    this.state = { draggingIndex: null }
+    this.drag = this.drag.bind(this);
+    this.drop = this.drop.bind(this);
+    this.state = {
+      wf_modules: this.props.data.wf_modules
+    }
   }
 
-  updateState(newState) {
-    this.setState(newState);
+  drag(sourceIndex, targetIndex) {
+    var newArray = this.state.wf_modules.slice(0);
+    // pull out the item we want...
+    var item = newArray.splice(sourceIndex, 1);
 
-    // If we've ended a drag, we need to post the new order to the server
-    if (newState.draggingIndex === null) {
+    newArray.splice(targetIndex, 0, ...item);
+    this.setState({
+      wf_modules: newArray
+    });
+  }
 
-      // Generate a JSON payload that has only module ID and order, then PATCH
-      var newOrder = this.props.data.wf_modules.map( (item, i) => ({id: item.id, order: i}) )
+  drop() {
+    var newOrder = this.state.wf_modules.map( (item, i) => ({id: item.id, order: i}) )
 
-      fetch('/api/workflows/' + getPageID(), {
-        method: 'patch',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify(newOrder) })
-      .catch( (error) => { console.log('Request failed', error); });
+    fetch('/api/workflows/' + getPageID(), {
+      method: 'patch',
+      credentials: 'include',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken
+      },
+      body: JSON.stringify(newOrder) })
+    .catch( (error) => { console.log('Request failed', error); });
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.data.wf_modules !== this.state.wf_modules) {
+      this.setState({ wf_modules: nextProps.data.wf_modules });
     }
   }
 
   render() {
-    var listItems = this.props.data.wf_modules.map(function(item, i) {
+    var listItems = this.state.wf_modules.map(function(item, i) {
+
+      var childProps = {
+        'data-isReadOnly': this.props.data.read_only,
+        'data-wfmodule': item,
+        'data-changeParam': this.props.changeParam,
+        'data-removeModule': this.props.removeModule,
+        'data-revision': this.props.data.revision,
+        'data-selected': (item.id == this.props.selected_wf_module),
+        'data-api': this.props.api,
+        'data-user': this.props.user,
+        index:i,
+        drag: this.drag,
+        drop: this.drop,
+        key: item.id,
+      }
 
       return (
         <SortableWfModule
-          key={item.id}
-          updateState={this.updateState}
-          items={this.props.data.wf_modules}
-          draggingIndex={this.state.draggingIndex}
-          sortId={i}
-          api={this.props.api}
-          outline="list"
-          childProps={{
-            'data-isReadOnly': this.props.data.read_only,
-            'data-wfmodule': item,
-            'data-changeParam': this.props.changeParam,
-            'data-removeModule': this.props.removeModule,
-            'data-revision': this.props.data.revision,
-            'data-selected': (item.id == this.props.selected_wf_module),
-            'data-api': this.props.api,
-            'data-user': this.props.user
-          }}
+          {...childProps}
         />
       );
     }, this);
 
     return (
-          <div className="list">{listItems}</div>
+      <div className="list">{listItems}</div>
     )
   }
 }
 
 // ---- WorkflowMain ----
 
-
-export default class Workflow extends React.Component {
+class Workflow extends React.Component {
 
   constructor(props: iProps) {
     super(props);
@@ -153,30 +165,36 @@ export default class Workflow extends React.Component {
     // Module Stack occupies fixed-width colum, right from edge of ML, from bottom of NavBar to end of page
     // Output Pane occupies remaining space in lower-right of page
     return (
-      <div className="workflow-root">
+      <DragDropContextProvider backend={HTML5Backend}>
 
-        {moduleLibrary}
+        <div className="workflow-root">
 
-        <div className="workflow-container">
+          {moduleLibrary}
 
-          {navBar}
+          <div className="workflow-container">
 
-          <div className="workflow-columns">
-              <div className="modulestack">
-                {moduleStack}
+            {navBar}
+
+            <div className="workflow-columns">
+                <div className="modulestack">
+                  {moduleStack}
+                </div>
+              <div className="outputpane">
+                {outputPane}
               </div>
-            <div className="outputpane">
-              {outputPane}
+
             </div>
 
           </div>
 
         </div>
 
-      </div>
+      </DragDropContextProvider>
     );
   }
 }
+
+export default Workflow;
 
 Workflow.propTypes = {
   api:                PropTypes.object.isRequired,
