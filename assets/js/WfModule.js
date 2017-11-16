@@ -65,10 +65,10 @@ const targetSpec = {
     const source = monitor.getItem();
     const target = props.index;
 
-    if (source.insert = true) {
+    if (source.insert === true) {
       //console.log(props);
       //console.log(source);
-      props.dropNew(props['data-wfmodule'].id, source.id, props.index)
+      props.dropNew(source.id, source.index)
       return
     }
     props.drop();
@@ -76,10 +76,6 @@ const targetSpec = {
   hover(props, monitor, component) {
     const sourceIndex = monitor.getItem().index;
     const targetIndex = props.index;
-
-    if (!sourceIndex) {
-      return
-    }
 
     if (sourceIndex === targetIndex) {
       return;
@@ -91,18 +87,26 @@ const targetSpec = {
     const mouseY = monitor.getClientOffset();
     const targetClientY = mouseY.y - targetBoundingRect.top;
 
-    // dragging down
-    if (sourceIndex < targetIndex && targetClientY < targetMiddleY) {
+    if (sourceIndex === false) {
+      props.dragNew(targetIndex, monitor.getItem());
+      monitor.getItem().index = targetIndex;
       return;
-    }
+    } else {
 
-    // dragging up
-    if (sourceIndex > targetIndex && targetClientY > targetMiddleY) {
-      return;
-    }
+      // dragging down
+      if (sourceIndex < targetIndex && targetClientY < targetMiddleY) {
+        return;
+      }
 
-    props.drag(sourceIndex, targetIndex);
-    monitor.getItem().index = targetIndex;
+      // dragging up
+      if (sourceIndex > targetIndex && targetClientY > targetMiddleY) {
+        return;
+      }
+
+      props.drag(sourceIndex, targetIndex);
+      monitor.getItem().index = targetIndex;
+
+    }
   }
 }
 
@@ -235,7 +239,7 @@ class WfModule extends React.Component {
 
     // Each parameter gets a WfParameter
     var paramdivs = this.params.map((ps, i) => {
-        return <WfParameter
+        return (<WfParameter
           api={this.props['data-api']}
           isReadOnly={this.props['data-isReadOnly']}
           key={i}
@@ -247,7 +251,7 @@ class WfModule extends React.Component {
           getParamText={this.getParamText}
           setParamText={this.setParamText}
           user={this.props['data-user']}
-        />
+        />)
       });
 
     var inside = undefined;
@@ -338,7 +342,6 @@ class WfModule extends React.Component {
   }
 }
 
-
 WfModule.propTypes = {
   'data-isReadOnly':    PropTypes.bool.isRequired,
   'data-wfmodule':      PropTypes.object,
@@ -350,7 +353,22 @@ WfModule.propTypes = {
   'connectDropTarget':  PropTypes.func,
 };
 
-export default flow(
+class WfModulePlaceholder extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return this.props.connectDropTarget(this.props.connectDragSource(
+      <div className="wf-card placeholder"></div>
+    ));
+  }
+}
+
+const sortableComponent = flow(
   DropTarget('module', targetSpec, targetCollect),
   DragSource('module', sourceSpec, sourceCollect)
-)(WfModule)
+);
+
+export const SortableWfModule = sortableComponent(WfModule);
+export const SortableWfModulePlaceholder = sortableComponent(WfModulePlaceholder);

@@ -4,7 +4,7 @@ import React from 'react'
 import { sortable } from 'react-sortable'
 import ModuleLibrary from './ModuleLibrary'
 import { WorkflowNavBar } from './navbar'
-import WfModule from './WfModule'
+import { SortableWfModule, SortableWfModulePlaceholder } from './WfModule'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
 import { getPageID, csrfToken } from './utils'
@@ -12,13 +12,12 @@ import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
 
 // ---- Sortable WfModules within the workflow ----
-var SortableWfModule = WfModule;
-
 class SortableList extends React.Component {
 
   constructor(props) {
     super(props);
     this.drag = this.drag.bind(this);
+    this.dragNew = this.dragNew.bind(this);
     this.dropNew = this.dropNew.bind(this);
     this.drop = this.drop.bind(this);
     this.state = {
@@ -37,7 +36,15 @@ class SortableList extends React.Component {
     });
   }
 
-  dropNew(wfId, moduleId, insertBefore) {
+  dragNew(targetIndex, props) {
+    var newArray = this.state.wf_modules.slice(0);
+    newArray.splice(targetIndex, 0, props);
+    this.setState({
+      wf_modules: newArray
+    });
+  }
+
+  dropNew(moduleId, insertBefore) {
     this.props.addModule(moduleId, insertBefore);
   }
 
@@ -75,10 +82,16 @@ class SortableList extends React.Component {
         'data-user': this.props.user,
         index:i,
         drag: this.drag,
-        dropNew: this.dropNew,
+        dragNew: this.dragNew,
         drop: this.drop,
+        dropNew: this.dropNew,
         key: item.id,
       }
+
+      if (item.insert) {
+        return <SortableWfModulePlaceholder {...childProps} />
+      }
+
       return (
         <SortableWfModule
           {...childProps}
@@ -88,7 +101,9 @@ class SortableList extends React.Component {
     }, this);
 
     return (
-      <div className="list">{listItems}</div>
+      <div className="list">
+        {listItems}
+      </div>
     )
   }
 }

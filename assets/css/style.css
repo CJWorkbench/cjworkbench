@@ -1600,6 +1600,10 @@ img.logo {
   position: relative;
 }
 
+.wf-card.placeholder {
+  height: 10px;
+}
+
 .card-block{
   position:relative;
 }
