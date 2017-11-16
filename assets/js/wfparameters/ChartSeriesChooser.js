@@ -59,7 +59,7 @@ export default class ChartSeriesChooser extends React.Component {
             </Button>
             { this.state.displayColorPicker ? <div className="color-picker pop-over">
               <div className="color-picker cover" onClick={this.handleClose}/>
-              <BlockPicker color={ this.state.color } colors={ this.defaultColors } onChange={ this.handleChange } />
+              <BlockPicker color={ this.state.color } colors={ defaultColors } onChange={ this.handleChange } />
             </div> : null }
           </InputGroupButton>
           <Input type="text" value={this.props.value} readOnly />

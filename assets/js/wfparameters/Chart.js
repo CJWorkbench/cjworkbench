@@ -11,7 +11,7 @@ var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
 var saveSvgAsPng = require("save-svg-as-png");
 
 require("chartbuilder/dist/css/core.css");
-require("chartbuilder/node_modules/chartbuilder-ui/dist/styles.css");
+require("chartbuilder-ui/dist/styles.css");
 //require("../../css/chartbuilder_fonts_colors.css");
 
 // adapter, eventually obsolete with CSV format /input call, or direct edit of ChartBuilder data model
