@@ -111,7 +111,7 @@ export default class FileSelect extends React.Component {
       if (this.state.file) {
         fileInfo = (
           <div>
-            <div className={"label-margin t-d-gray content-3"}>File name:</div>
+            <div className={"t-d-gray content-3"}>File name:</div>
             <div><span className={"t-d-gray content-3 mb-3"}>{this.state.file.name}</span></div>
           </div>
         )
@@ -124,8 +124,8 @@ export default class FileSelect extends React.Component {
       if (fileInfo) {
         return (
           <div className="parameter-margin">
-            <div className={"parameter-margin version-box"}>
-              <div className={"version-item"}>
+            <div className={"parameter-margin upload-box align-items-center"}>
+              <div className={""}>
                 {fileInfo}
               </div>
               {filesModal}

@@ -153,9 +153,8 @@ class Workflow extends React.Component {
 
 
     var moduleStack = <div className='modulestack-empty mx-auto d-flex align-items-center justify-content-center'>
-                        <span className='icon-add-orange module-icon'/>
                         <span className='t-orange title-3 ml-4'>
-                          ADD DATA MODULE
+                          DRAG AND DROP MODULE HERE
                         </span>
                       </div>
 

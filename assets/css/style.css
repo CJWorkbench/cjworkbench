@@ -1233,12 +1233,12 @@ img.logo {
   padding-top: 2rem;
 }
 .modulestack-empty {
+  cursor: default;
   width: 47rem;
-  margin-top: 3rem;
-  margin-bottom: 10rem;
-  padding: 5rem;
-  border: 3px dashed #FBAA6D;
-  opacity: 0.5;
+  margin-top: 2rem;
+  padding: 8rem 0 8rem 0;
+  border: 4px dashed #FBAA6D;
+  opacity: 0.4;
 }
 
 /* Output Pane */
@@ -2027,6 +2027,7 @@ input[type=checkbox]:checked:after {
 
 .upload-box{
   display: flex;
+  justify-content: space-between;
 }
 
 /* --- Editable text fields --- */
