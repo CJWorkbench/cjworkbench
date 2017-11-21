@@ -177,6 +177,8 @@ def indent_lines(str):
 module_boilerplate = """
 import numpy as np
 import pandas as pd
+from io import StringIO
+import re
 
 class Importable:
   @staticmethod
