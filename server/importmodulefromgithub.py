@@ -10,11 +10,12 @@ from importlib import import_module
 import inspect
 import json
 import os
+import re
 import py_compile
 import shutil
 import sys
-import time
 
+import time
 import git
 from git.exc import GitCommandError
 
@@ -185,6 +186,12 @@ class Importable:
   @staticmethod
 """
 
+# Convert line numbers in our imported module code back to line numbers in the original file
+# For the poor module writers
+def original_module_lineno(line):
+    return line - module_boilerplate.count('\n')
+
+
 # Ensure the Python file compiles
 # This function rewrites the file to add module definition boilerplate.
 def add_boilerplate_and_check_syntax(destination_directory, python_file):
@@ -210,14 +217,14 @@ def add_boilerplate_and_check_syntax(destination_directory, python_file):
     except ValueError:
         raise ValidationError("Source file {} contains bad characters.".format(python_file))
     except SyntaxError as se:
-        raise ValidationError("{}: {}".format(python_file, str(se)))
+        # We have to change the reported line number to account for our boilerplate
+        errstr = str(se)
+        linenostr = re.search('line (\d+)', errstr).group(1)
+        newlineno = original_module_lineno(int(linenostr))
+        newstr = errstr.replace(linenostr, str(newlineno))
+        raise ValidationError(newstr)
 
     return compiled
-
-# Convert line numbers in our imported module code back to line numbers in the original file
-# For the poor module writers
-def original_module_lineno(line):
-    return line - module_boilerplate.count('\n')
 
 
 # Now check if the module is importablr and defines the render function

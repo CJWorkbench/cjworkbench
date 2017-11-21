@@ -124,6 +124,7 @@ def module_dispatch_render(wf_module, table):
             try:
                 tableout = loadable.render(table, params)
             except Exception as e:
+                # Catch exceptions in the module render function, and return error message + line number to user
                 exc_type, exc_obj, exc_tb = sys.exc_info()
                 tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
                 fname = os.path.split(tb[0])[1]

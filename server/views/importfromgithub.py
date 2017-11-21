@@ -20,7 +20,7 @@ def import_from_github(request):
         response.status_code = status.HTTP_201_CREATED
         return response
     except ValidationError as error:
-        response = HttpResponse(json.dumps({'error': str(error)}),
+        response = HttpResponse(json.dumps({'error': error.message}),
                                 content_type='application/json')
         response.status_code = 400
         return response
