@@ -282,6 +282,6 @@ if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
     GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = CJW_GOOGLE_CLIENT_SECRETS_PATH
 
 try:
-    from local_settings import *
+    from cjworkbench.local_settings import *
 except ImportError:
     pass
