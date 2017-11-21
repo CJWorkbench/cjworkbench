@@ -50,7 +50,9 @@ def add_new_workflow(name):
     return Workflow.objects.create(name=name, owner=User.objects.first())
 
 def add_new_wf_module(workflow, module_version, order=1):
-    return WfModule.objects.create(workflow=workflow, module_version=module_version, order=order)
+    wfm = WfModule.objects.create(workflow=workflow, module_version=module_version, order=order)
+    wfm.create_default_parameters()
+    return wfm
 
 # setup a workflow with some test data loaded into a PasteCSV module
 # If no data given, use standard mock data
@@ -66,7 +68,6 @@ def create_testdata_workflow(csv_text=mock_csv_text):
 
     # Create new WfModule and set param to mock_csv_text
     wfmodule = add_new_wf_module(workflow, csv_module, 0)
-    wfmodule.create_default_parameters()
     pval = ParameterVal.objects.get(parameter_spec=pspec)
     pval.set_value(csv_text)
     pval.save()
@@ -111,6 +112,5 @@ def load_and_add_module(workflow, module_spec):
 
     module_version = load_module_from_dict(module_spec)
     wf_module = add_new_wf_module(workflow, module_version, 1)  # 1 = order after PasteCSV from create_mock_workflow
-    wf_module.create_default_parameters()
 
     return wf_module

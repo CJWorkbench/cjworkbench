@@ -242,50 +242,28 @@ def extract_version(repodir):
     version = repo.head.object.hexsha[:7]
     return version
 
-#path of this file
-CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
-#path of
+
+# Directories that the module files go through as we load and validate them
+CURRENT_PATH = os.path.dirname(os.path.abspath(__file__)) # path of this source file
 ROOT_DIRECTORY = os.path.dirname(CURRENT_PATH)
 MODULE_DIRECTORY = os.path.join(ROOT_DIRECTORY, "importedmodules")
 
 
-def import_module_from_github(url):
-    url = url.lower().strip()
+# Load a module after cloning from github
+# This is the guts of our module import, also a good place to hook into tests (bypassing github access)
+def import_module_from_directory(url, projname, version, importdir):
 
-    url = sanitise_url(url)
-
-    projname = retrieve_project_name(url)
-    tempdir = os.path.join(ROOT_DIRECTORY, projname)
-    curdir = os.path.join(CURRENT_PATH, projname)
     moduledir = os.path.join(MODULE_DIRECTORY, projname)
     destination_directory = None
     message = {}
 
     try:
-        # pull contents from GitHub
-        try:
-            git.Git().clone(url)
-
-            # move this temporarily to where this source file is.
-            shutil.move(tempdir, curdir)
-
-        except (ValidationError, GitCommandError) as ve:
-            if type(ve) == GitCommandError:
-                message = "Received Git error status code {}".format(ve.status)
-            else:
-                message = ve.message
-            raise ValidationError('Unable to clone from GitHub: %s' % (url) +
-                                  ': %s' % (message))
-
-        # retrieve Git hash to use as the version number.
-        version = extract_version(curdir)
-
         # check that right files exist
-        extension_file_mapping = validate_module_structure(curdir)
+        extension_file_mapping = validate_module_structure(importdir)
         python_file = extension_file_mapping['py']
         json_file = extension_file_mapping['json']
 
-        module_config = get_module_config_from_json(url, extension_file_mapping, curdir)
+        module_config = get_module_config_from_json(url, extension_file_mapping, importdir)
         module_config["source_version"] = version
         module_config["link"] = url
         module_config["author"] = module_config["author"] if "author" in module_config else retrieve_author(url)
@@ -297,7 +275,7 @@ def import_module_from_github(url):
 
         # The core work of creating a module
         destination_directory = destination_directory_name(moduledir, version)
-        move_files_to_final_location(destination_directory, curdir, json_file, python_file)
+        move_files_to_final_location(destination_directory, importdir, json_file, python_file)
         add_boilerplate_and_check_syntax(destination_directory, python_file)
         validate_python_functions(destination_directory, python_file)
 
@@ -312,7 +290,7 @@ def import_module_from_github(url):
         globals().update(temp.__dict__)
 
         # clean-up
-        shutil.rmtree(curdir)
+        shutil.rmtree(importdir)
 
         # data that we probably want displayed in the UI.
         message["category"] = module_config["category"]
@@ -321,20 +299,59 @@ def import_module_from_github(url):
         message["name"] = module_config["name"]
 
     except Exception as e:
-        # Clean up any existing dirs and pass exception up (ValidationErrors will have error message for user)
-        try:
-            shutil.rmtree(tempdir)
-        except:
-            pass
-        try:
-            shutil.rmtree(curdir)
-        except:
-            pass
         if destination_directory is not None:
             try:
                 shutil.rmtree(destination_directory)
             except:
                 pass
+        raise
+
+    return message
+
+
+# Top level import, clones from github
+def import_module_from_github(url):
+
+    url = url.lower().strip()
+    url = sanitise_url(url)
+
+    projname = retrieve_project_name(url)
+    clonedir = os.path.join(ROOT_DIRECTORY, projname)
+    importdir = os.path.join(CURRENT_PATH, projname)
+
+    try:
+        # pull contents from GitHub
+        try:
+            # clones into directory that this source file is in (i.e. /server)
+            git.Git().clone(url)
+
+            # move this temporarily to where this source file is.
+            shutil.move(clonedir, importdir)
+
+        except (ValidationError, GitCommandError) as ve:
+            if type(ve) == GitCommandError:
+                message = "Received Git error status code {}".format(ve.status)
+            else:
+                message = ve.message
+            raise ValidationError('Unable to clone from GitHub: %s' % (url) +
+                                  ': %s' % (message))
+
+        # retrieve Git hash to use as the version number.
+        version = extract_version(curdir)
+
+        message = import_module_from_directory(url, projname, version, curdir)
+
+
+    except Exception as e:
+        # Clean up any existing dirs and pass exception up (ValidationErrors will have error message for user)
+        try:
+            shutil.rmtree(clonedir)
+        except:
+            pass
+        try:
+            shutil.rmtree(importdir)
+        except:
+            pass
         raise
 
     return message

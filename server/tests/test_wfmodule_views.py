@@ -18,31 +18,6 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.createTestWorkflow()
         self.factory = APIRequestFactory()
 
-    # check that creating a wf_module correctly sets up new ParameterVals w/ defaults from ParameterSpec
-    def test_default_parameters(self):
-        # Module 2 parameters should have correct default values
-        self.wfmodule2.create_default_parameters()
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec21, wf_module=self.wfmodule2)
-        self.assertEqual(pval.get_value(), 'foo')
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec22, wf_module=self.wfmodule2)
-        self.assertEqual(pval.get_value(), 3.14)
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec23, wf_module=self.wfmodule2)
-        self.assertEqual(pval.get_value(), 42)
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec24, wf_module=self.wfmodule2)
-        self.assertEqual(pval.get_value(), True)
-
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec25, wf_module=self.wfmodule2)
-        self.assertEqual(pval.selected_menu_item_string(), 'Banana')
-
-        # button has no value, so just checking existence here
-        self.wfmodule3.create_default_parameters()
-        pval = ParameterVal.objects.get(parameter_spec=self.pspec31, wf_module=self.wfmodule3)
-        self.assertEqual(pval.visible, True)
-
     # TODO test parameter values returned from this call
     def test_wf_module_detail_get(self):
         # Also tests [Workflow, Module, WfModule].get

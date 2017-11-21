@@ -9,6 +9,16 @@
       "id_name" : "test",
       "type": "string",
       "default": ""
+    },
+    {
+      "name": "Column to double",
+      "id_name" : "test_column",
+      "type": "column"
+    },
+    {
+      "name": "Columns to triple",
+      "id_name" : "test_multicolumn",
+      "type": "multicolumn"
     }
   ]
 }

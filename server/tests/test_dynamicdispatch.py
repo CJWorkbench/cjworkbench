@@ -1,7 +1,7 @@
 from unittest import mock
 
 from server.tests.utils import *
-from ..dynamicdispatch import  DynamicDispatch
+from ..dynamicdispatch import DynamicDispatch
 import json, os, shutil, sys
 
 class DynamicDispatchTest(LoggedInTestCase):
@@ -46,7 +46,7 @@ class DynamicDispatchTest(LoggedInTestCase):
         self.setup_directory()
 
         # ensure item is loaded from file system
-        dispatched = dynamicdispatch.load_module(wf_module, [1,2,3,4], dispatch=wf_module.module_version.module.name)
+        dispatched = dynamicdispatch.load_module(wf_module)
         self.assertEquals(type(dispatched), type, "load_module should return a class.")
         self.assertEquals(dispatched.__name__, 'Importable', 'load_module should return an instance of Importable.')
 
@@ -58,10 +58,10 @@ class DynamicDispatchTest(LoggedInTestCase):
         self.setup_directory()
 
         # first call, which should cache the module
-        dispatched = dynamicdispatch.load_module(wf_module, [1, 2, 3, 4], dispatch=wf_module.module_version.module.name)
+        dispatched = dynamicdispatch.load_module(wf_module)
         self.assertEqual(mocked.call_count, 1, "DynamicDispatch.dynamically_load_module should've been called through load_module.")
 
         # second call, which should retrieve module from cache.
-        dispatched = dynamicdispatch.load_module(wf_module, [1, 2, 3, 4], dispatch=wf_module.module_version.module.name)
+        dispatched = dynamicdispatch.load_module(wf_module)
         self.assertLess(mocked.call_count, 2,
                  "DynamicDispatch.dynamically_load_module should've only been called once.")

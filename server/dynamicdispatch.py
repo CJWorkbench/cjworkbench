@@ -15,7 +15,7 @@ class DynamicDispatch:
         #dictionary. In this dictionary, the key is the version and the value is the class.
         self.dynamic_module_dispatches = {} # {module-{version-class}}
 
-    def load_module(self, wf_module, table, dispatch):
+    def load_module(self, wf_module):
         if wf_module.module_version in self.dynamic_module_dispatches.keys():
             return self.dynamic_module_dispatches[wf_module.module_version]
         else:

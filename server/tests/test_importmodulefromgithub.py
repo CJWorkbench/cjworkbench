@@ -1,9 +1,10 @@
 from server.importmodulefromgithub import *
+from server.dispatch import module_dispatch_render
 from server.tests.utils import *
 from pathlib import Path
-
+import pandas as pd
+import io
 import mock
-
 import json, os, shutil
 
 # Patch get_already_imported from importmodulefromgithub
@@ -23,12 +24,38 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.cleanup()
 
     def cleanup(self):
-        pwd = os.path.dirname(os.path.abspath(__file__))
-        if os.path.isdir(os.path.join(pwd, 'prototype-dynamic-loading')):
-            shutil.rmtree(os.path.join(pwd, 'prototype-dynamic-loading'))
-        if os.path.isdir(os.path.join(pwd, '..', '..', 'importedmodules', 'prototype-dynamic-loading')):
-            shutil.rmtree(os.path.join(pwd, '..', '..', 'importedmodules', 'prototype-dynamic-loading'))
+        # remove any directories we may have created during the last test
+        clonedir = self.clone_dir()
+        if os.path.isdir(clonedir):
+            shutil.rmtree(clonedir)
+        importdir = self.imported_dir()
+        if os.path.isdir(importdir):
+            shutil.rmtree(importdir)
+        importdir = self.imported_dir(project_name='importable') # used by test_load_and_dispatch
+        if os.path.isdir(importdir):
+            shutil.rmtree(importdir)
 
+    # Where do we initially "clone" (fake clone) github files to?
+    def clone_dir(self):
+        pwd = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(pwd, 'prototype-dynamic-loading')
+
+    # Where do we install the files?
+    # Actual final location has version number added to the end of this, e.g. imported_dir() + "/123456"
+    def imported_dir(self, project_name='prototype-dynamic-loading'):
+        pwd = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(pwd, '..', '..', 'importedmodules', project_name)
+
+
+    # fills clone_dir() with a set of module files in "freshly cloned from github" state
+    # erases anything previously there
+    def fake_github_clone(self):
+        clonedir = self.clone_dir()
+        if os.path.isdir(clonedir):
+            shutil.rmtree(clonedir)
+        pwd = os.path.dirname(os.path.abspath(__file__))
+        shutil.copytree(os.path.join(pwd, 'test_data/importable'), clonedir)
+        return clonedir
 
     def test_sanitise_url(self):
         #test valid url
@@ -85,21 +112,10 @@ class ImportFromGitHubTest(LoggedInTestCase):
         project_name = retrieve_project_name(git_url)
         self.assertEqual(project_name, "prototype-dynamic-loading")
 
-    def setup_module_structure(self, pwd):
-        test_dir = os.path.join(pwd, 'prototype-dynamic-loading')
-        if os.path.isdir(test_dir):
-            shutil.rmtree(test_dir)
-        shutil.copytree(os.path.join(pwd, 'test_data/importable'), test_dir)
-
     def test_validate_module_structure(self):
-        # OK, this seems gross, but it's necessary. We don't want to rely on a remote repo existing, so we're going
-        # to have to drive this test off a local repo that fits the structure that we expect whilst importing a module
-        # from GitHub.
-        pwd = os.path.dirname(os.path.abspath(__file__))
-        test_dir = os.path.join(pwd, 'prototype-dynamic-loading')
+        # We don't want to rely on a remote repo existing, so we drive this test off a local repo equivalent
+        test_dir = self.fake_github_clone()
 
-        # Test on valid git repo structure
-        self.setup_module_structure(pwd)
         mapping = validate_module_structure(test_dir)
         self.assertTrue(len(mapping) == 2, "We should only have two files in the module structure: one Python " +
                         "and one JSON.")
@@ -113,7 +129,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         # Test invalid modules: 1/ ensure only one Python and one JSON file exist.
         # Add additional JSON file to directory.
-        self.setup_module_structure(pwd)
+        self.fake_github_clone()
         more_json = os.path.join(test_dir, 'disposable.json')
         open(more_json, 'a').close()
         # ensure that disposable.json is created – we need this for the tests to run properly.
@@ -126,45 +142,40 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
 
         # Add additional Python file directory, assert this fails
-        self.setup_module_structure(pwd)
+        self.fake_github_clone()
         open(os.path.join(test_dir, 'disposable.py'), 'a').close()
         # ensure that disposable.py is created – we need this for the tests to run properly.
-        self.assertTrue(os.path.isfile(os.path.join(pwd, 'prototype-dynamic-loading', 'disposable.py')),
+        self.assertTrue(os.path.isfile(os.path.join(test_dir, 'disposable.py')),
                         "disposable.py must be created in order for these unit tests to run properly.")
 
         with self.assertRaises(ValidationError):
             mapping = validate_module_structure(test_dir)
 
         # Test invalid modules: 2/ ensure that at least one Python and one JSON file exist.
-        self.setup_module_structure(pwd)
+        self.fake_github_clone()
         os.remove(os.path.join(test_dir, 'importable.json'))
         with self.assertRaises(ValidationError):
             mapping = validate_module_structure(test_dir)
 
-        self.setup_module_structure(pwd)
+        self.fake_github_clone()
         os.remove(os.path.join(test_dir, 'importable.py'))
         with self.assertRaises(ValidationError):
             mapping = validate_module_structure(test_dir)
 
 
     def test_extract_version_hash(self):
-        pwd = os.path.dirname(os.path.abspath(__file__))
-        self.setup_module_structure(pwd)
-        curdir = os.path.join(pwd, 'prototype-dynamic-loading')
-        os.rename(os.path.join(curdir, 'git'),
-                  os.path.join(curdir, '.git'))
-        self.assertTrue(os.path.isdir(os.path.join(curdir, ".git")))
-        version = extract_version(curdir)
-        shutil.rmtree(curdir)
+        test_dir = self.fake_github_clone()
+        os.rename(os.path.join(test_dir, 'git'),
+                  os.path.join(test_dir, '.git'))
+        self.assertTrue(os.path.isdir(os.path.join(test_dir, ".git")))
+        version = extract_version(test_dir)
         self.assertEquals(version, '7832830',
                           "The hash of the git repo should be {}, but the function returned {}.".format('427847c',
                                                                                                         version))
 
     @mock.patch('server.importmodulefromgithub.get_already_imported', side_effect=overriden_get_already_imported)
     def test_validate_json(self, get_already_imported_function):
-        pwd = os.path.dirname(os.path.abspath(__file__))
-        self.setup_module_structure(pwd)
-        test_dir = os.path.join(pwd, "prototype-dynamic-loading")
+        test_dir = self.fake_github_clone()
 
         #ensure we get a ValidationError if the mapping doesn't have a json key, i.e. missing json file.
         mapping = {}
@@ -200,12 +211,9 @@ class ImportFromGitHubTest(LoggedInTestCase):
         pwd = os.path.dirname(os.path.abspath(__file__))
 
         #check valid scenario
-        self.setup_module_structure(pwd)
-        module_directory = os.path.join(pwd, "..", "..", "importedmodules/prototype-dynamic-loading")
+        module_directory = self.imported_dir()
         destination_directory = destination_directory_name(module_directory, "123456")
-        self.assertTrue(Path(destination_directory) == Path(pwd) / "../../importedmodules/prototype-dynamic-loading/123456",
-                "The destination directory should be {}/prototype-dynamic-loading/123456".format(pwd + "/../../importedmodules") +
-                " but it's {}".format(destination_directory))
+        self.assertTrue(Path(destination_directory) == Path(pwd) / "../../importedmodules/prototype-dynamic-loading/123456")
 
         # should work even if files already exists for the given module-version combination
         # in which case the dir should be deleted, so as to be ready for re-import
@@ -215,23 +223,18 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
 
     def test_add_boilerplate_and_check_syntax(self):
-        #setup things like the destination directory and everything else –
-        #this is kinda tedious...
-        pwd = os.path.dirname(os.path.abspath(__file__))
-        destination_directory = os.path.join(pwd, "../../importedmodules/prototype-dynamic-loading/123456")
-        test_dir = os.path.join(pwd, "prototype-dynamic-loading")
-        self.setup_module_structure(pwd)
-        os.makedirs(destination_directory)
+        test_dir = self.fake_github_clone()
+        destination_directory = os.path.join(self.imported_dir(), "123456")
 
+        os.makedirs(destination_directory)
         shutil.copy(os.path.join(test_dir, "importable.py"), destination_directory)
 
         # test valid scenario. Failures should raise ValidationError
         compiled = add_boilerplate_and_check_syntax(destination_directory, "importable.py")
         shutil.rmtree(destination_directory)
-        shutil.rmtree(test_dir)
 
         # test invalid scenario: what if Python file doesn't exist.
-        self.setup_module_structure(pwd)
+        self.fake_github_clone()
         os.makedirs(destination_directory)
         with self.assertRaises(ValidationError):
             compiled = add_boilerplate_and_check_syntax(destination_directory, "importable.py")
@@ -241,19 +244,14 @@ class ImportFromGitHubTest(LoggedInTestCase):
         f = open(os.path.join(test_dir, 'additional_file.py'), 'a')
         f.write("random content here")
         f.close()
-
         shutil.copy(os.path.join(test_dir, "additional_file.py"), destination_directory)
 
         with self.assertRaises(ValidationError):
             compiled = add_boilerplate_and_check_syntax(destination_directory, "additional_file.py")
 
     def test_validate_python_functions(self):
-        pwd = os.path.dirname(os.path.abspath(__file__))
-        destination_directory = os.path.join(pwd, "../../importedmodules/prototype-dynamic-loading/123456")
-
-        test_dir = os.path.join(pwd, "prototype-dynamic-loading")
-
-        self.setup_module_structure(pwd)
+        test_dir = self.fake_github_clone()
+        destination_directory = os.path.join(self.imported_dir(), "123456")
         os.makedirs(destination_directory)
 
         #test valid scenario
@@ -262,8 +260,52 @@ class ImportFromGitHubTest(LoggedInTestCase):
         imported_class = validate_python_functions(destination_directory, "importable.py")
         self.assertTrue(type(imported_class[1]) == type, "The module must be importable, and be of type 'type'.")
 
-        #test invalid scenario: > 1 class
-        # shutil.copy(os.path.join(pwd, "test_data", "unimportable_multiclass.py"),  destination_directory)
-        # with self.assertRaisesMessage(ValidationError, "Multiple classes exist in python file."):
-        #     validate_python_functions(destination_directory, pwd, "prototype-dynamic-loading",
-        #                                            "unimportable_multiclass.py")
+
+    # Load a module and test that we can render it correctly
+    # This is really an integration test, runs both load and dispatch code
+    def test_load_and_dispatch(self):
+        test_dir = self.fake_github_clone()
+
+        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+
+        # Module and ModuleVersion should have loaded -- these will raise exception if they don't exist
+        module = Module.objects.get(id_name='importable')
+        module_version = ModuleVersion.objects.get(module=module)
+
+        # Create a test workflow that uses this imported module
+        workflow = add_new_workflow('Dynamic Dispatch Test Workflow')
+        wfm = add_new_wf_module(workflow, module_version, order=1)
+
+        # These will fail if we haven't correctly loaded the json describing the parameters
+        colparam = ParameterVal.objects.get(wf_module=wfm, parameter_spec__id_name='test_column')
+        multicolparam = ParameterVal.objects.get(wf_module=wfm, parameter_spec__id_name='test_multicolumn')
+
+        # Does it render right?
+        test_csv = 'Class,M,F,Other\n' \
+                   'math,10,12,100\n' \
+                   'english,,7\,200\n' \
+                   'history,11,13,\n' \
+                   'economics,20,20,20'
+        test_table = pd.read_csv(io.StringIO(test_csv), header=0, skipinitialspace=True)
+        test_table_out = test_table.copy()
+        test_table_out['M'] *= 2
+        test_table_out[['F','Other']] *= 3
+
+        colparam.set_value('M') # double this
+        multicolparam.set_value('F,Other') # triple these
+        out = module_dispatch_render(wfm, test_table)
+
+        self.assertTrue(out.equals(test_table_out))
+
+        # Test that bad column parameter values are removed
+        colparam.set_value('missing_column_name')
+        multicolparam.set_value('Other,junk_column_name')
+        test_table_out = test_table.copy()
+        test_table_out[['Other']] *= 3   # multicolumn parameter has only one valid col
+
+        out = module_dispatch_render(wfm, test_table)
+        self.assertTrue(out.equals(test_table_out))
+
+
+
+

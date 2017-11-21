@@ -49,9 +49,6 @@ class WfModuleTests(WfModuleTestsBase):
     # check that creating a wf_module correctly sets up new ParameterVals w/ defaults from ParameterSpec
     def test_default_parameters(self):
 
-        # Module 2 parameters should have correct default values
-        self.wfmodule2.create_default_parameters()
-
         pval = ParameterVal.objects.get(parameter_spec=self.pspec21, wf_module=self.wfmodule2)
         self.assertEqual(pval.get_value(), 'foo')
 
@@ -68,7 +65,6 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(pval.selected_menu_item_string(), 'Banana')
 
         # button has no value, so just checking existence here
-        self.wfmodule3.create_default_parameters()
         pval = ParameterVal.objects.get(parameter_spec=self.pspec31, wf_module=self.wfmodule3)
         self.assertEqual(pval.visible, True)
 
