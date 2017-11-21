@@ -172,11 +172,8 @@ def move_files_to_final_location(destination_directory, curdir, json_file, pytho
 def indent_lines(str):
     return '  ' + str.replace('\n', '\n  ');
 
-# Ensure the Python file compiles
-# This function rewrites the file to add module definition boilerplate.
-def add_boilerplate_and_check_syntax(destination_directory, python_file):
 
-    boilerplate = """
+module_boilerplate = """
 import numpy as np
 import pandas as pd
 
@@ -188,6 +185,11 @@ class Importable:
   @staticmethod
 """
 
+# Ensure the Python file compiles
+# This function rewrites the file to add module definition boilerplate.
+def add_boilerplate_and_check_syntax(destination_directory, python_file):
+
+
     filename = os.path.join(destination_directory, python_file)
 
     try:
@@ -196,7 +198,7 @@ class Importable:
         raise ValidationError("Unable to open Python code file {}.".format(python_file))
 
     # Indent the user's function declaration to put it inside the Importable class, then replace file contents
-    script = boilerplate + indent_lines(script)
+    script = module_boilerplate + indent_lines(script)
     sfile = open(os.path.join(filename), 'w')
     sfile.write(script)
     sfile.close()
@@ -211,6 +213,11 @@ class Importable:
         raise ValidationError("{}: {}".format(python_file, str(se)))
 
     return compiled
+
+# Convert line numbers in our imported module code back to line numbers in the original file
+# For the poor module writers
+def original_module_lineno(line):
+    return line - module_boilerplate.count('\n')
 
 
 # Now check if the module is importablr and defines the render function
@@ -337,9 +344,9 @@ def import_module_from_github(url):
                                   ': %s' % (message))
 
         # retrieve Git hash to use as the version number.
-        version = extract_version(curdir)
+        version = extract_version(importdir)
 
-        message = import_module_from_directory(url, projname, version, curdir)
+        message = import_module_from_directory(url, projname, version, importdir)
 
 
     except Exception as e:

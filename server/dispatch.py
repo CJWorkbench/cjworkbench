@@ -20,6 +20,8 @@ from .modules.googlesheets import GoogleSheets
 from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
 from .dynamicdispatch import DynamicDispatch
+from .importmodulefromgithub import original_module_lineno
+import os, sys, traceback
 
 # ---- Test Support ----
 
@@ -121,8 +123,12 @@ def module_dispatch_render(wf_module, table):
 
             try:
                 tableout = loadable.render(table, params)
-            except ValueError as ve:
-                wf_module.set_error(str(ve))
+            except Exception as e:
+                exc_type, exc_obj, exc_tb = sys.exc_info()
+                tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
+                fname = os.path.split(tb[0])[1]
+                lineno = original_module_lineno(tb[1])
+                wf_module.set_error('{} at line {} of {}'.format(str(e), lineno, fname), notify=True)
                 return None
 
             wf_module.set_ready(notify=False)
