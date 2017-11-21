@@ -51,7 +51,8 @@ const WorkflowContainer = connect(
 // --- Websocket handling ----
 
 // Start listening for events
-const socket = new WebSocket("ws://" + window.location.host + "/workflows/" + getPageID());
+const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws';
+const socket = new WebSocket(protocol + "//" + window.location.host + "/workflows/" + getPageID());
 
 socket.onmessage = function(e) {
   var data = JSON.parse(e.data);
