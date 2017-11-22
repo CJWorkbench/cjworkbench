@@ -88,7 +88,6 @@ def retrieve_author(url):
 def validate_module_structure(directory):
     files = os.listdir(directory)
     if len(files) < 3:
-        shutil.rmtree(os.path.join(root_directory, directory))
         raise ValidationError('{} is not a valid workflow module.'.format(directory))
 
     extension_file_mapping = {}
@@ -332,17 +331,16 @@ def import_module_from_github(url):
     url = sanitise_url(url)
 
     projname = retrieve_project_name(url)
-    clonedir = os.path.join(ROOT_DIRECTORY, projname)
-    importdir = os.path.join(CURRENT_PATH, projname)
+    importdir = os.path.join(MODULE_DIRECTORY, 'clones', projname)
+
+    # Delete anything that might left over junk from previous failures (shouldn't happen, but)
+    if  os.path.isdir(importdir):
+        shutil.rmtree(importdir)
 
     try:
         # pull contents from GitHub
         try:
-            # clones into directory that this source file is in (i.e. /server)
-            git.Git().clone(url)
-
-            # move this temporarily to where this source file is.
-            shutil.move(clonedir, importdir)
+            git.Repo.clone_from(url, importdir)
 
         except (ValidationError, GitCommandError) as ve:
             if type(ve) == GitCommandError:
@@ -360,14 +358,8 @@ def import_module_from_github(url):
 
     except Exception as e:
         # Clean up any existing dirs and pass exception up (ValidationErrors will have error message for user)
-        try:
-            shutil.rmtree(clonedir)
-        except:
-            pass
-        try:
+        if os.path.isdir(importdir):
             shutil.rmtree(importdir)
-        except:
-            pass
         raise
 
     return message
