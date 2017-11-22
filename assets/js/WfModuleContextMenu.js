@@ -177,11 +177,6 @@ export default class WfModuleContextMenu extends React.Component {
             <span className='t-d-gray content-3 ml-3'>Export</span>
             {exportModal}
           </DropdownItem>
-          {/* Currently does nothing */}
-          <DropdownItem key={2} className='dropdown-menu-item test-update-button'>
-            <span className='icon-info menu-icon'></span>
-            <span className='t-d-gray content-3 ml-3'>Update</span>
-          </DropdownItem>
           {/* Will delete the parent WF Module from the list */}
           <DropdownItem key={3} onClick={this.deleteOption} className='dropdown-menu-item test-delete-button'>
             <span className='icon-bin menu-icon'></span>

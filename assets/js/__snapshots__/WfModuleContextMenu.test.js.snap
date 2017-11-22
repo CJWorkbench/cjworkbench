@@ -257,27 +257,6 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
               </button>
             </DropdownItem>
             <DropdownItem
-              className="dropdown-menu-item test-update-button"
-              tag="button"
-              toggle={true}
-            >
-              <button
-                className="dropdown-menu-item test-update-button dropdown-item"
-                onClick={[Function]}
-                tabIndex="0"
-                type="button"
-              >
-                <span
-                  className="icon-info menu-icon"
-                />
-                <span
-                  className="t-d-gray content-3 ml-3"
-                >
-                  Update
-                </span>
-              </button>
-            </DropdownItem>
-            <DropdownItem
               className="dropdown-menu-item test-delete-button"
               onClick={[Function]}
               tag="button"
@@ -390,27 +369,6 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
               </button>
             </DropdownItem>
             <DropdownItem
-              className="dropdown-menu-item test-update-button"
-              tag="button"
-              toggle={true}
-            >
-              <button
-                className="dropdown-menu-item test-update-button dropdown-item"
-                onClick={[Function]}
-                tabIndex="0"
-                type="button"
-              >
-                <span
-                  className="icon-info menu-icon"
-                />
-                <span
-                  className="t-d-gray content-3 ml-3"
-                >
-                  Update
-                </span>
-              </button>
-            </DropdownItem>
-            <DropdownItem
               className="dropdown-menu-item test-delete-button"
               onClick={[Function]}
               tag="button"
@@ -519,27 +477,6 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
                   className="t-d-gray content-3 ml-3"
                 >
                   Export
-                </span>
-              </button>
-            </DropdownItem>
-            <DropdownItem
-              className="dropdown-menu-item test-update-button"
-              tag="button"
-              toggle={true}
-            >
-              <button
-                className="dropdown-menu-item test-update-button dropdown-item"
-                onClick={[Function]}
-                tabIndex="0"
-                type="button"
-              >
-                <span
-                  className="icon-info menu-icon"
-                />
-                <span
-                  className="t-d-gray content-3 ml-3"
-                >
-                  Update
                 </span>
               </button>
             </DropdownItem>
