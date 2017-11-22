@@ -125,11 +125,12 @@ def module_dispatch_render(wf_module, table):
                 tableout = loadable.render(table, params)
             except Exception as e:
                 # Catch exceptions in the module render function, and return error message + line number to user
+                exc_name = type(e).__name__
                 exc_type, exc_obj, exc_tb = sys.exc_info()
                 tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
                 fname = os.path.split(tb[0])[1]
                 lineno = original_module_lineno(tb[1])
-                wf_module.set_error('{} at line {} of {}'.format(str(e), lineno, fname), notify=True)
+                wf_module.set_error('{}: {} at line {} of {}'.format(exc_name, str(e), lineno, fname), notify=True)
                 return None
 
             wf_module.set_ready(notify=False)

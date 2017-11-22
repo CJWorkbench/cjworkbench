@@ -166,7 +166,7 @@ export default class ImportModuleFromGitHub extends React.Component {
                 <input type="text"
                       className="text-field mb-3 mt-2 content-3"
                       value={this.state.value}
-                      placeholder='https://github.com..'
+                      placeholder='https://github.com/...'
                       onChange={this.handleChange}
                       onKeyPress={this.handleChange}
                       />
