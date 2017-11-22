@@ -73,7 +73,7 @@ def sanitize_column_param(pval, table_cols):
     if col in table_cols:
         return col
     else:
-        return None
+        return ''
 
 def sanitize_multicolumn_param(pval, table_cols):
     cols = pval.get_value().split(',')
