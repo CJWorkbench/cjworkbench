@@ -2,10 +2,10 @@ def render(table, params):
     col = params['test_column']
     colstring = params['test_multicolumn']
 
-    if col is not None:
+    if col != '':
         table[col] *= 2
 
-    if colstring is not None:
+    if colstring != '':
         cols = colstring.split(',')
         for c in cols:
             table[c] *= 3

@@ -294,7 +294,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         colparam.set_value('M') # double this
         multicolparam.set_value('F,Other') # triple these
         out = module_dispatch_render(wfm, test_table)
-
+        self.assertEqual(wfm.status, WfModule.READY)
         self.assertTrue(out.equals(test_table_out))
 
         # Test that bad column parameter values are removed
@@ -304,6 +304,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         test_table_out[['Other']] *= 3   # multicolumn parameter has only one valid col
 
         out = module_dispatch_render(wfm, test_table)
+        self.assertEqual(wfm.status, WfModule.READY)
         self.assertTrue(out.equals(test_table_out))
 
     # syntax errors in module source files should be detected
@@ -315,5 +316,14 @@ class ImportFromGitHubTest(LoggedInTestCase):
         test_dir = self.fake_github_clone('test_data/bad_py_module')
         with self.assertRaises(ValidationError):
             import_module_from_directory("https://test_url_of_test_module", "bad_py_module", "123456", test_dir)
+
+    # loading the same version of the same module twice should fail
+    def test_load_twice(self):
+        test_dir = self.fake_github_clone()
+        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+
+        test_dir = self.fake_github_clone() # import moves files, so get same files again
+        with self.assertRaises(ValidationError):
+            import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
 
 
