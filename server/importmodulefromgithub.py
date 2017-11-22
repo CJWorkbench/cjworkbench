@@ -124,7 +124,10 @@ def get_module_config_from_json(url, extension_file_mapping, directory):
         raise ValidationError("No JSON file found in remote repository.") # shouldn't happen, checked in validate_module_struture
 
     with open(os.path.join(directory, json_file)) as readable:
-        module_config = json.load(readable)
+        try:
+            module_config = json.load(readable)
+        except json.decoder.JSONDecodeError as e:
+            raise ValidationError('{} of {}'.format(str(e), json_file))
 
     if "name" not in module_config or "id_name" not in module_config or "category" not in module_config:
         raise ValidationError("The module configuration isn't in the correct format. It should contain name, id_name, "
@@ -299,7 +302,7 @@ def import_module_from_directory(url, projname, version, importdir):
         add_boilerplate_and_check_syntax(destination_directory, python_file)
         validate_python_functions(destination_directory, python_file)
 
-        # actually import the module into our Python environment
+        # actually import the module into our Python environment, as  test -- dynamicdispatch will load as needed
         temp = importlib.machinery.SourceFileLoader(os.path.join(destination_directory, python_file),
                                                     os.path.join(destination_directory, python_file)).load_module()
         globals().update(temp.__dict__)

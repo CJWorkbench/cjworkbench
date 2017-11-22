@@ -49,12 +49,12 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
     # fills clone_dir() with a set of module files in "freshly cloned from github" state
     # erases anything previously there
-    def fake_github_clone(self):
+    def fake_github_clone(self, source_dir='test_data/importable'):
         clonedir = self.clone_dir()
         if os.path.isdir(clonedir):
             shutil.rmtree(clonedir)
         pwd = os.path.dirname(os.path.abspath(__file__))
-        shutil.copytree(os.path.join(pwd, 'test_data/importable'), clonedir)
+        shutil.copytree(os.path.join(pwd, source_dir), clonedir)
         return clonedir
 
     def test_sanitise_url(self):
@@ -306,6 +306,14 @@ class ImportFromGitHubTest(LoggedInTestCase):
         out = module_dispatch_render(wfm, test_table)
         self.assertTrue(out.equals(test_table_out))
 
+    # syntax errors in module source files should be detected
+    def test_load_invalid_code(self):
+        test_dir = self.fake_github_clone('test_data/bad_json_module')
+        with self.assertRaises(ValidationError):
+            import_module_from_directory("https://test_url_of_test_module", "bad_json_module", "123456", test_dir)
 
+        test_dir = self.fake_github_clone('test_data/bad_py_module')
+        with self.assertRaises(ValidationError):
+            import_module_from_directory("https://test_url_of_test_module", "bad_py_module", "123456", test_dir)
 
 
