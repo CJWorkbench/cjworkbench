@@ -13,12 +13,21 @@ const MODULE_STATUS_CHANGE = 'MODULE_STATUS_CHANGE'
 const SELECTED_MODULE_CHANGE = 'SELECTED_MODULE_CHANGE'
 const UPDATE_CURRENT_USER = 'UPDATE_CURRENT_USER'
 
-const api = WorkbenchAPI();
+
+var api = WorkbenchAPI(); // var so it can be mocked for testing
+
+export function mockAPI(mock_api) {
+  api = mock_api;
+}
 
 // ---- Our Store ----
 // Master state for the workflow. Export so that components can store.dispatch()
+// var so it can be mocked for testing
+var store = createStore(workflowReducer, window.initState, applyMiddleware(promiseMiddleware));
 
-export let store = createStore(workflowReducer, window.initState, applyMiddleware(promiseMiddleware));
+export function mockStore(mock_store) {
+  store = mock_store;
+}
 
 // ---- Actions ----
 
@@ -47,15 +56,34 @@ export function addModuleAction(moduleId, insertBefore) {
 }
 
 // Call delete API, then dispatch a reload
-export function removeModuleAction(wf_module_id) {
+export function removeModuleAction(id_to_delete) {
 
-  // If we are deleting the selected module, then no selected module
-  if (wf_module_id == store.getState().selected_wf_module) {
-    store.dispatch(changeSelectedWfModuleAction(null))
+  // If we are deleting the selected module, then set previous module in stack as selected
+  var state = store.getState();
+  if (id_to_delete === state.selected_wf_module) {
+
+    // Find id of previous in stack
+    var wf_modules = state.workflow.wf_modules;
+    var new_selected_id = null;
+    for (var wfm of wf_modules) {
+      if (wfm.id === id_to_delete)
+        break;
+      new_selected_id = wfm.id;
+    }
+
+    // if we are deleting first module, set to new first module if any
+    if (new_selected_id === null) {
+      if (wf_modules.length > 1)
+        new_selected_id = wf_modules[1].id;
+      else
+        new_selected_id = null;
+    }
+
+    store.dispatch(changeSelectedWfModuleAction(new_selected_id))
   }
 
   return (
-    api.deleteModule(wf_module_id)
+    api.deleteModule(id_to_delete)
     .then( reloadWorkflowAction )
   )
 }
