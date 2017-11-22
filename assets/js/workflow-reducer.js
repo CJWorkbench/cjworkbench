@@ -23,7 +23,7 @@ export function mockAPI(mock_api) {
 // ---- Our Store ----
 // Master state for the workflow. Export so that components can store.dispatch()
 // var so it can be mocked for testing
-var store = createStore(workflowReducer, window.initState, applyMiddleware(promiseMiddleware));
+export var store = createStore(workflowReducer, window.initState, applyMiddleware(promiseMiddleware));
 
 export function mockStore(mock_store) {
   store = mock_store;
