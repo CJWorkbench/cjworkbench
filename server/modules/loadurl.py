@@ -78,15 +78,15 @@ class LoadURL(ModuleImpl):
         elif content_type == 'application/json':
             try:
                 table_json = res.json()
-                path = wfm.get_param_string('json_path')
-                if len(path)>0:
-                    table_json = parse_json_path(table_json, path)
+                # path = wfm.get_param_string('json_path')
+                # if len(path)>0:
+                #     table_json = parse_json_path(table_json, path)
                 table = pd.DataFrame(table_json)
 
-            except KeyError as e:
-                wfm.set_error('Bad json path %s' % path)
-                table = pd.DataFrame([{'result':res.text}])
-                return
+            # except KeyError as e:
+            #     wfm.set_error('Bad json path %s' % path)
+            #     table = pd.DataFrame([{'result':res.text}])
+            #     return
 
             except ValueError as e:
                 wfm.set_error(str(e))

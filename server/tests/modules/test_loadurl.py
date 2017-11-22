@@ -31,7 +31,7 @@ class LoadFromURLTests(LoggedInTestCase):
         # save references to our parameter values so we can tweak them later
         self.url_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='url'))
         self.fetch_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='version_select'))
-        self.path_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='json_path'))
+#        self.path_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='json_path'))
 
     # send fetch event to button to load data
     def press_fetch_button(self):
@@ -120,23 +120,23 @@ class LoadFromURLTests(LoggedInTestCase):
             self.wfmodule.refresh_from_db()
             self.assertEqual(self.wfmodule.status, WfModule.ERROR)
 
-        # success using json path
-        with requests_mock.Mocker() as m:
-            self.path_pval.set_value(mock_json_path)
-            self.path_pval.save()
-            m.get(url, text=mock_json_path_text, headers={'content-type': 'application/json'})
-            self.press_fetch_button()
-            response = self.get_render()
-            self.assertEqual(response.content, make_render_json(mock_json_table))
-
-        # bad json path should put module in error state
-        with requests_mock.Mocker() as m:
-            self.path_pval.set_value('hilarious')
-            self.path_pval.save()
-            m.get(url, text=mock_json_path_text, headers={'content-type': 'application/json'})
-            self.press_fetch_button()
-            self.wfmodule.refresh_from_db()
-            self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+        # success using json path - removed this parameter for now
+        # with requests_mock.Mocker() as m:
+        #     self.path_pval.set_value(mock_json_path)
+        #     self.path_pval.save()
+        #     m.get(url, text=mock_json_path_text, headers={'content-type': 'application/json'})
+        #     self.press_fetch_button()
+        #     response = self.get_render()
+        #     self.assertEqual(response.content, make_render_json(mock_json_table))
+        #
+        # # bad json path should put module in error state
+        # with requests_mock.Mocker() as m:
+        #     self.path_pval.set_value('hilarious')
+        #     self.path_pval.save()
+        #     m.get(url, text=mock_json_path_text, headers={'content-type': 'application/json'})
+        #     self.press_fetch_button()
+        #     self.wfmodule.refresh_from_db()
+        #     self.assertEqual(self.wfmodule.status, WfModule.ERROR)
 
 
     def test_load_xlsx(self):
