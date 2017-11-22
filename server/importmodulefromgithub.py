@@ -1,5 +1,5 @@
 from .initmodules import load_module_from_dict
-from server.models import Module
+from server.models import Module, ModuleVersion
 
 from django.forms import URLField
 from django.core.exceptions import ValidationError
@@ -279,6 +279,11 @@ def import_module_from_directory(url, projname, version, importdir):
         json_file = extension_file_mapping['json']
 
         module_config = get_module_config_from_json(url, extension_file_mapping, importdir)
+
+        # Don't allow importing the same version twice
+        if ModuleVersion.objects.filter(module__id_name=module_config['id_name'], source_version_hash=version):
+            raise ValidationError('Version {} of module {} has already been imported'.format(version, projname))
+
         module_config["source_version"] = version
         module_config["link"] = url
         module_config["author"] = module_config["author"] if "author" in module_config else retrieve_author(url)
@@ -294,15 +299,13 @@ def import_module_from_directory(url, projname, version, importdir):
         add_boilerplate_and_check_syntax(destination_directory, python_file)
         validate_python_functions(destination_directory, python_file)
 
-        # Initialise module in our database
-        load_module_from_dict(module_config)
-
-        # Possible TODO: do we want to/need to change the entitlements/ownership on the file for infosec?
-
         # actually import the module into our Python environment
         temp = importlib.machinery.SourceFileLoader(os.path.join(destination_directory, python_file),
                                                     os.path.join(destination_directory, python_file)).load_module()
         globals().update(temp.__dict__)
+
+        # If that succeeds, initialise module in our database
+        load_module_from_dict(module_config)
 
         # clean-up
         shutil.rmtree(importdir)

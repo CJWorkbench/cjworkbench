@@ -90,7 +90,7 @@ exports[`ImportModuleFromGitHub Link will open modal window 2`] = `
               className="text-field mb-3 mt-2 content-3"
               onChange={[Function]}
               onKeyPress={[Function]}
-              placeholder="https://github.com.."
+              placeholder="https://github.com/..."
               type="text"
             />
             <div
