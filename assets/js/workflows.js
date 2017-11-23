@@ -2,11 +2,10 @@
 
 import React from 'react'
 import { WorkflowListNavBar } from './navbar'
-import { csrfToken, goToUrl } from './utils'
 import WfContextMenu from './WfContextMenu'
 import WorkflowMetadata from './WorkflowMetadata'
 import PropTypes from 'prop-types'
-
+import { goToUrl } from "./utils";
 
 export default class Workflows extends React.Component {
   constructor(props) {
@@ -18,21 +17,9 @@ export default class Workflows extends React.Component {
 
   // Make a new workflow when button clicked, and navigate to its Module List page
   click(e) {
-
-    fetch('/api/workflows',
-      {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-      },
-      body: JSON.stringify({name: "New Workflow"})
-    })
-    .then(response => response.json())
+    this.props.api.newWorkflow('New Workflow')
     .then(json => {
-      // ID of new Workflow has been returned by this step, can navigate to new WF page
+      // navigate to new WF page
       goToUrl('/workflows/' + json.id);
     })
   }
@@ -41,34 +28,19 @@ export default class Workflows extends React.Component {
   deleteWorkflow(id) {
     if (!confirm("Permanently delete this workflow?"))
       return;
-    var _this = this;
 
-    fetch(
-      '/api/workflows/' + id ,
-      {
-        method: 'delete',
-        credentials: 'include',
-        headers: {
-          'X-CSRFToken': csrfToken
-        }
-      }
-    )
+    this.props.api.deleteWorkflow(id)
     .then(response => {
-      if (response.ok) {
-        var workflowsMinusID = this.state.workflows.filter(wf => wf.id != id);
-        _this.setState({workflows: workflowsMinusID, newWorkflowName: this.state.newWorkflowName})
-      }
+      var workflowsMinusID = this.state.workflows.filter(wf => wf.id != id);
+      this.setState({workflows: workflowsMinusID, newWorkflowName: this.state.newWorkflowName})
     })
   }
 
   componentDidMount() {
-    var _this = this;
-
-    fetch('/api/workflows', {credentials: 'include'})
-      .then(response => response.json())
-      .then(json => {
-        _this.setState({workflows: json, newWorkflowName: this.state.newWorkflowName})
-      })
+    this.props.api.listWorkflows()
+    .then(json => {
+      this.setState({workflows: json, newWorkflowName: this.state.newWorkflowName})
+    })
   }
 
   render() {
@@ -112,7 +84,10 @@ export default class Workflows extends React.Component {
                             </div>
                           </div>
                           <div onClick={(e) => e.preventDefault()} className="menu-test-class">
-                            <WfContextMenu deleteWorkflow={ () => this.deleteWorkflow(workflow.id) }/>
+                            <WfContextMenu
+                              duplicateWorkflow={ () => this.duplicateWorkflow(workflow.id) }
+                              deleteWorkflow={ () => this.deleteWorkflow(workflow.id) }
+                            />
                           </div>
                         </div>
                       </a>

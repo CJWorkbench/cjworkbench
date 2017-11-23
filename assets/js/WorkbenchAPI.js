@@ -6,10 +6,49 @@ import { csrfToken } from './utils'
 // All API calls which fetch data return a promise which returns JSON
 class WorkbenchAPI {
 
+  listWorkflows() {
+    return (
+      fetch('/api/workflows', {credentials: 'include'})
+      .then(response => response.json())
+    )
+  }
+
   loadWorkflow(workflowId) {
     return (
       fetch('/api/workflows/' + workflowId, { credentials: 'include'})
+      .then(response => response.json())
+    )
+  }
+
+  newWorkflow(newWorkflowName) {
+    return (
+      fetch('/api/workflows',
+        {
+          method: 'post',
+          credentials: 'include',
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+          },
+          body: JSON.stringify({name: newWorkflowName})
+        })
       .then(response => response.json()))
+  }
+
+  deleteWorkflow(workflowId) {
+    return (
+      fetch(
+        '/api/workflows/' + workflowId ,
+        {
+          method: 'delete',
+          credentials: 'include',
+          headers: {
+            'X-CSRFToken': csrfToken
+          }
+        }
+      )
+    )
   }
 
   addModule(workflowId, moduleId, insertBefore) {
@@ -143,11 +182,7 @@ class WorkbenchAPI {
       }))
   }
 
-  /** 
-   * Toggles whether the module is collapsed or expanded on the front-end. 
-   * This gets saved on the back-end, and so the state (collapsed or 
-   * expanded) persists across multiple sessions. 
-   */
+
   toggleWfModuleCollapsed(wf_module_id, isCollapsed) {
     return (
       fetch('/api/wfmodules/' + wf_module_id, {

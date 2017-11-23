@@ -1,181 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly 1`] = `
+exports[`Workflow list page renders correctly 1`] = `
 <Workflows
-  api={EmptyAPI {}}
->
-  <div>
-    <WorkflowListNavBar>
-      <div>
-        <nav
-          className="navbar"
-        >
-          <div
-            className="navbar-brand d-flex flex-row align-items-center"
-          >
-            <img
-              className="logo"
-              src="/static/images/logo.svg"
-            />
-            <h1
-              className="mb-0 mr-auto logo-1"
-            >
-              <a
-                href="/workflows"
-              >
-                Workbench
-              </a>
-            </h1>
-          </div>
-          <div
-            className="d-flex flex-row align-items-center"
-          >
-            <a
-              className="t-white nav-link content-2"
-              href="http://cjworkbench.org/index.php/blog/"
-            >
-              Learn
-            </a>
-            <WfHamburgerMenu>
-              <UncontrolledDropdown>
-                <Dropdown
-                  isOpen={false}
-                  tag="div"
-                  toggle={[Function]}
-                >
-                  <div
-                    className="dropdown"
-                  >
-                    <DropdownToggle
-                      aria-haspopup={true}
-                      className="navbar-context-button"
-                      color="secondary"
-                      data-toggle="dropdown"
-                    >
-                      <Button
-                        aria-expanded={false}
-                        aria-haspopup="true"
-                        className="navbar-context-button"
-                        color="secondary"
-                        data-toggle="dropdown"
-                        onClick={[Function]}
-                        tag="button"
-                      >
-                        <button
-                          aria-expanded={false}
-                          aria-haspopup="true"
-                          className="navbar-context-button btn btn-secondary"
-                          data-toggle="dropdown"
-                          onClick={[Function]}
-                          type="button"
-                        >
-                          <div
-                            className="button-icon icon-more-white"
-                          />
-                        </button>
-                      </Button>
-                    </DropdownToggle>
-                    <DropdownMenu
-                      right={true}
-                      tag="div"
-                    >
-                      <div
-                        aria-hidden={true}
-                        className="dropdown-menu dropdown-menu-right"
-                        role="menu"
-                        tabIndex="-1"
-                      >
-                        <div>
-                          <DropdownItem
-                            className="dropdown-menu-item"
-                            href="/account/logout"
-                            tag="a"
-                            toggle={true}
-                          >
-                            <a
-                              className="dropdown-menu-item dropdown-item"
-                              href="/account/logout"
-                              onClick={[Function]}
-                              tabIndex="0"
-                            >
-                              <span
-                                className="t-d-gray content-3 ml-3"
-                              >
-                                Logout
-                              </span>
-                            </a>
-                          </DropdownItem>
-                        </div>
-                      </div>
-                    </DropdownMenu>
-                  </div>
-                </Dropdown>
-              </UncontrolledDropdown>
-            </WfHamburgerMenu>
-          </div>
-        </nav>
-      </div>
-    </WorkflowListNavBar>
-    <div
-      className="container workflows-container"
-    >
-      <div
-        className="row justify-content-md-center"
-      >
-        <div
-          className="col col-lg-2"
-        />
-        <div
-          className="col-12 col-md-auto"
-        >
-          <div
-            className="input-group"
-          >
-            <span
-              className="input-group-btn"
-            >
-              <div
-                className="button-blue action-button new-workflow-button"
-                onClick={[Function]}
-              >
-                New
-              </div>
-            </span>
-          </div>
-        </div>
-        <div
-          className="col col-lg-2"
-        />
-      </div>
-      <div
-        className="card w-75 mx-auto workflows-list"
-        style={
-          Object {
-            "backgroundColor": "#f6f6f6",
-          }
-        }
-      >
-        <div
-          className="card-block"
-        >
-          <h3
-            className="card-title title-3 t-m-gray workflows-card-title"
-          >
-            WORKFLOWS
-          </h3>
-          <div
-            className="workflows-sub-list"
-          />
-        </div>
-      </div>
-    </div>
-  </div>
-</Workflows>
-`;
-
-exports[`renders correctly 2`] = `
-<Workflows
-  api={EmptyAPI {}}
+  api={
+    Object {
+      "deleteWorkflow": [Function],
+      "listWorkflows": [Function],
+      "newWorkflow": [Function],
+    }
+  }
 >
   <div>
     <WorkflowListNavBar>
@@ -359,7 +192,13 @@ exports[`renders correctly 2`] = `
                     onClick={[Function]}
                   >
                     <WorkflowMetadata
-                      api={EmptyAPI {}}
+                      api={
+                        Object {
+                          "deleteWorkflow": [Function],
+                          "listWorkflows": [Function],
+                          "newWorkflow": [Function],
+                        }
+                      }
                       inWorkflowList={true}
                       isPublic={true}
                       workflow={
@@ -417,6 +256,7 @@ exports[`renders correctly 2`] = `
                 >
                   <WfContextMenu
                     deleteWorkflow={[Function]}
+                    duplicateWorkflow={[Function]}
                   >
                     <UncontrolledDropdown>
                       <Dropdown
@@ -562,7 +402,13 @@ exports[`renders correctly 2`] = `
                     onClick={[Function]}
                   >
                     <WorkflowMetadata
-                      api={EmptyAPI {}}
+                      api={
+                        Object {
+                          "deleteWorkflow": [Function],
+                          "listWorkflows": [Function],
+                          "newWorkflow": [Function],
+                        }
+                      }
                       inWorkflowList={true}
                       isPublic={false}
                       workflow={
@@ -620,6 +466,7 @@ exports[`renders correctly 2`] = `
                 >
                   <WfContextMenu
                     deleteWorkflow={[Function]}
+                    duplicateWorkflow={[Function]}
                   >
                     <UncontrolledDropdown>
                       <Dropdown
@@ -765,7 +612,13 @@ exports[`renders correctly 2`] = `
                     onClick={[Function]}
                   >
                     <WorkflowMetadata
-                      api={EmptyAPI {}}
+                      api={
+                        Object {
+                          "deleteWorkflow": [Function],
+                          "listWorkflows": [Function],
+                          "newWorkflow": [Function],
+                        }
+                      }
                       inWorkflowList={true}
                       isPublic={true}
                       workflow={
@@ -823,6 +676,7 @@ exports[`renders correctly 2`] = `
                 >
                   <WfContextMenu
                     deleteWorkflow={[Function]}
+                    duplicateWorkflow={[Function]}
                   >
                     <UncontrolledDropdown>
                       <Dropdown
@@ -968,7 +822,13 @@ exports[`renders correctly 2`] = `
                     onClick={[Function]}
                   >
                     <WorkflowMetadata
-                      api={EmptyAPI {}}
+                      api={
+                        Object {
+                          "deleteWorkflow": [Function],
+                          "listWorkflows": [Function],
+                          "newWorkflow": [Function],
+                        }
+                      }
                       inWorkflowList={true}
                       isPublic={false}
                       workflow={
@@ -1026,6 +886,7 @@ exports[`renders correctly 2`] = `
                 >
                   <WfContextMenu
                     deleteWorkflow={[Function]}
+                    duplicateWorkflow={[Function]}
                   >
                     <UncontrolledDropdown>
                       <Dropdown
