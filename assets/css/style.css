@@ -275,6 +275,12 @@ body {
 .icon-chart:before {
   content: "\e903";
 }
+.icon-linechart:before{
+  content: "\e92d";
+}
+.icon-barchart:before{
+  content: "\e92e";
+}
 .icon-check:before {
   content: "\e904";
 }

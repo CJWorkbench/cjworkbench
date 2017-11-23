@@ -2,7 +2,7 @@
   "name": "Line Chart",
   "id_name": "chart-line",
   "category" : "Visualize",
-  "icon" : "chart",
+  "icon" : "linechart",
   "description" : "Create a line chart.",
   "parameters": [
     {
