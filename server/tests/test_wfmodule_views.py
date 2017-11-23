@@ -160,8 +160,8 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
         versiondata = {
             "versions": [
-                firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
-                secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+                secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ"),
+                firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
             ],
             "selected": firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         }

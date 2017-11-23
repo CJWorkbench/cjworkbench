@@ -129,7 +129,8 @@ class WfModule(models.Model):
         self.save()
 
     def list_stored_data_versions(self):
-        return list(StoredObject.objects.filter(wf_module=self).order_by('stored_at').values_list('stored_at', flat=True))
+        # sort newest first
+        return list(StoredObject.objects.filter(wf_module=self).order_by('-stored_at').values_list('stored_at', flat=True))
 
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects

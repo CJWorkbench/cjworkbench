@@ -105,7 +105,7 @@ class WfModuleTests(WfModuleTestsBase):
 
         # list versions
         verlist = self.wfmodule1.list_stored_data_versions()
-        self.assertListEqual(verlist, [firstver, secondver])  # sorted by creation date, ascending
+        self.assertListEqual(verlist, [secondver, firstver])  # sorted by creation date, latest first
 
         # but like, none of this should have created versions on any other wfmodule
         self.assertEqual(self.wfmodule2.list_stored_data_versions(), [])
