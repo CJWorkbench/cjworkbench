@@ -38,7 +38,7 @@ class ParameterSpec(models.Model):
     # fields
     type = models.CharField(max_length=16, choices=TYPE_CHOICES, default=STRING)
 
-    name = models.CharField('name', max_length=64)          # user-visible
+    name = models.CharField('name', max_length=256)          # user-visible
     id_name = models.CharField('id_name', max_length=32)    # unique to this Module
 
     module_version = models.ForeignKey(ModuleVersion, related_name='parameter_specs',
