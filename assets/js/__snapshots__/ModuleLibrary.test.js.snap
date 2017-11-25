@@ -470,12 +470,14 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
               Array [
                 <DragSource(Module)
                   addModule={[Function]}
+                  dropModule={undefined}
                   icon="url"
                   id={4}
                   name="Load from Enigma"
               />,
                 <DragSource(Module)
                   addModule={[Function]}
+                  dropModule={undefined}
                   icon="url"
                   id={2}
                   name="Load from Facebork"
@@ -641,6 +643,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
               Array [
                 <DragSource(Module)
                   addModule={[Function]}
+                  dropModule={undefined}
                   icon="chart"
                   id={1}
                   name="Chartbuilder"
