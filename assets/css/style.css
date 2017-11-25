@@ -381,6 +381,9 @@ body {
 .icon-transform:before {
   content: "\e923";
 }
+.icon-transform-v:before {
+  content: "\e92f";
+}
 .icon-twitter:before {
   content: "\e924";
 }
