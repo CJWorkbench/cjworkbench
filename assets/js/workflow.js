@@ -109,6 +109,18 @@ class WorkflowList extends React.Component {
   }
 
   render() {
+    if (!this.state.wf_modules || this.state.wf_modules.length === 0) {
+      return (
+        this.props.connectDropTarget(
+          <div className={'modulestack-empty mx-auto d-flex align-items-center justify-content-center ' + (this.props.dragItem ? 'dragging' : '')}>
+            <span className={'title-3 ml-4 ' + (this.props.dragItem ? 't-d-blue' : 't-orange')}>
+              DRAG AND DROP MODULE HERE
+            </span>
+          </div>
+        )
+      )
+    }
+
     var listItems = this.state.wf_modules.map(function(item, i) {
       var childProps = {
         'data-isReadOnly': this.props.data.read_only,
@@ -138,6 +150,7 @@ class WorkflowList extends React.Component {
       );
 
     }, this);
+
     return (
       this.props.connectDropTarget(
         <div className={"modulestack-list mx-auto " + (this.props.dragItem ? 'dragging' : '')}>
@@ -198,16 +211,7 @@ class Workflow extends React.Component {
                     user={this.props.user}
                   />
 
-
-
-    var moduleStack = <div className='modulestack-empty mx-auto d-flex align-items-center justify-content-center'>
-                        <span className='t-orange title-3 ml-4'>
-                          DRAG AND DROP MODULE HERE
-                        </span>
-                      </div>
-
-    if (!!this.props.workflow.wf_modules && !!this.props.workflow.wf_modules.length) {
-      moduleStack = <SortableList
+    var moduleStack = <SortableList
                         data={this.props.workflow}
                         selected_wf_module={this.props.selected_wf_module}
                         changeParam={this.props.changeParam}
@@ -218,7 +222,6 @@ class Workflow extends React.Component {
                         isOver={this.props.isOver}
                         dragItem={this.props.dragItem}
                       />
-    }
 
     var outputPane =  <OutputPane
                     id={this.props.selected_wf_module}

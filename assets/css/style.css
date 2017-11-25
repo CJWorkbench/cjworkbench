@@ -1243,11 +1243,14 @@ img.logo {
 }
 .modulestack-empty {
   cursor: default;
-  width: 100%;
+  width: 47rem;
   margin-top: 2rem;
   padding: 8rem 0 8rem 0;
   border: 4px dashed #FBAA6D;
   opacity: 0.4;
+}
+.modulestack-empty.dragging {
+  border-color: rgba(118,155,176,0.5);
 }
 
 /* Output Pane */
