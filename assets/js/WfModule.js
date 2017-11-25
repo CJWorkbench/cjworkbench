@@ -63,19 +63,14 @@ const targetSpec = {
   drop(props, monitor, component) {
     const source = monitor.getItem();
     const target = props.index;
-
-    if (source.insert === true) {
-      //console.log(props);
-      //console.log(source);
-      props.dropNew(source.id, source.index)
-      return
+    return {
+      source,
+      target
     }
-    props.drop();
   },
   hover(props, monitor, component) {
     const sourceIndex = monitor.getItem().index;
     const targetIndex = props.index;
-
     if (sourceIndex === targetIndex) {
       return;
     }
@@ -111,7 +106,8 @@ const targetSpec = {
 
 function targetCollect(connect, monitor) {
   return {
-    connectDropTarget: connect.dropTarget()
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver()
   }
 }
 
@@ -120,13 +116,18 @@ const sourceSpec = {
     return {
       index: props.index
     }
+  },
+  endDrag(props, monitor, component) {
+    if (monitor.didDrop()) {
+      const {source, target} = monitor.getDropResult();
+      props.drop();
+    }
   }
 }
 
 function sourceCollect(connect, monitor) {
   return {
-    connectDragSource: connect.dragSource(),
-    isDragging: monitor.isDragging()
+    connectDragSource: connect.dragSource()
   }
 }
 
@@ -305,8 +306,11 @@ class WfModule extends React.Component {
 
     // Putting it all together: name, status, parameters, output
     return this.props.connectDropTarget(this.props.connectDragSource(
+      // Removing this outer div breaks the drag and drop animation for reasons
+      // that aren't clear right now. It doen't hurt anything but it shouldn't
+      // be necessary either.
       <div onClick={this.click}>
-        <div className='wf-card'>
+        <div className='wf-card mx-auto'>
           <div className='output-bar-container'>
             <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
           </div>
@@ -359,7 +363,7 @@ class WfModulePlaceholder extends React.Component {
 
   render() {
     return this.props.connectDropTarget(this.props.connectDragSource(
-      <div className="wf-card placeholder"></div>
+      <div className="wf-card placeholder mx-auto"></div>
     ));
   }
 }

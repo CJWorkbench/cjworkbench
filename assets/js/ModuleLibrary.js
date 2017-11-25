@@ -140,6 +140,7 @@ export default class ModuleLibrary extends React.Component {
         icon={item.icon}
         id={item.id}
         addModule={this.props.addModule}
+        dropModule={this.props.dropModule}
       />;
 
       if (currentCategory  === null) {

@@ -194,7 +194,7 @@ export default class SimpleChartParameter extends React.Component {
     if (this.state.loaded_ever) {
       return (
         <RendererWrapper
-          editable={this.props.editable}
+          editable={false}
           showMetadata={true}
           model={this.state}
           enableResponsive={true}

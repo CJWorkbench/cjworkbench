@@ -12,11 +12,16 @@ import { DragSource } from 'react-dnd';
 
 const spec = {
   beginDrag(props, monitor, component) {
-    console.log('dragging');
     return {
       index: false,
       id: props.id,
       insert: true,
+    }
+  },
+  endDrag(props, monitor, component) {
+    if (monitor.didDrop()) {
+      const result = monitor.getDropResult();
+      props.dropModule(result.source.id, result.source.index);
     }
   }
 }

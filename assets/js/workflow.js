@@ -8,11 +8,35 @@ import { SortableWfModule, SortableWfModulePlaceholder } from './WfModule'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
 import { getPageID, csrfToken } from './utils'
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContextProvider } from 'react-dnd'
+import { DropTarget } from 'react-dnd'
+import withScrolling from 'react-dnd-scrollzone'
+import FlipMove from 'react-flip-move'
 
 // ---- Sortable WfModules within the workflow ----
-class SortableList extends React.Component {
+const targetSpec = {
+  drop (props, monitor, component) {
+    const source = monitor.getItem();
+    const target = props.index;
+    // Replace this with optimistic updates via redux
+    component.setState({
+      justDropped:true
+    });
+    return {
+      source,
+      target
+    }
+  }
+}
+
+function targetCollect(connect, monitor) {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    dragItem: monitor.getItem()
+  }
+}
+
+class WorkflowList extends React.Component {
 
   constructor(props) {
     super(props);
@@ -21,6 +45,7 @@ class SortableList extends React.Component {
     this.dropNew = this.dropNew.bind(this);
     this.drop = this.drop.bind(this);
     this.state = {
+      justDropped: false,
       wf_modules: this.props.data.wf_modules
     }
   }
@@ -29,7 +54,7 @@ class SortableList extends React.Component {
     var newArray = this.state.wf_modules.slice(0);
     // pull out the item we want...
     var item = newArray.splice(sourceIndex, 1);
-
+    //Use the spread operator instead of item[0]
     newArray.splice(targetIndex, 0, ...item);
     this.setState({
       wf_modules: newArray
@@ -64,8 +89,22 @@ class SortableList extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.data.wf_modules !== this.state.wf_modules) {
-      this.setState({ wf_modules: nextProps.data.wf_modules });
+    // If nothing is being dragged, and the original wf_modules are different
+    // from the re-ordered ones...
+    if (!nextProps.dragItem
+      && (nextProps.data.wf_modules !== this.state.wf_modules)) {
+      // And we just didn't just drop the thing that was being dragged,
+      if (this.state.justDropped === false) {
+        // Re-set the wf_modules in the list, drag is cancelled
+        this.setState({
+          wf_modules: nextProps.data.wf_modules
+        });
+      } else {
+        // We just dropped something. Re-set the state.
+        this.setState({
+          justDropped: false
+        });
+      }
     }
   }
 
@@ -99,14 +138,21 @@ class SortableList extends React.Component {
       );
 
     }, this);
-
     return (
-      <div className="list">
-        {listItems}
-      </div>
+      this.props.connectDropTarget(
+        <div className={"modulestack-list mx-auto " + (this.props.dragItem ? 'dragging' : '')}>
+          <FlipMove duration={100} easing="ease-out">
+            {listItems}
+          </FlipMove>
+        </div>
+      )
     )
   }
 }
+
+const SortableList = DropTarget('module', targetSpec, targetCollect)(WorkflowList);
+
+
 
 // ---- WorkflowMain ----
 
@@ -120,6 +166,7 @@ class Workflow extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+
     if (nextProps.workflow === undefined) {
       return false;
     }
@@ -138,6 +185,7 @@ class Workflow extends React.Component {
 
     var moduleLibrary = <ModuleLibrary
                           addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}
+                          dropModule={this.props.addModule}
                           api={this.props.api}
                           isReadOnly={this.props.workflow.read_only}
                           workflow={this.props.workflow} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
@@ -159,8 +207,7 @@ class Workflow extends React.Component {
                       </div>
 
     if (!!this.props.workflow.wf_modules && !!this.props.workflow.wf_modules.length) {
-      moduleStack = <div className="modulestack-list mx-auto">
-                      <SortableList
+      moduleStack = <SortableList
                         data={this.props.workflow}
                         selected_wf_module={this.props.selected_wf_module}
                         changeParam={this.props.changeParam}
@@ -168,8 +215,9 @@ class Workflow extends React.Component {
                         addModule={this.props.addModule}
                         api={this.props.api}
                         user={this.props.user}
+                        isOver={this.props.isOver}
+                        dragItem={this.props.dragItem}
                       />
-                    </div>
     }
 
     var outputPane =  <OutputPane
@@ -184,9 +232,13 @@ class Workflow extends React.Component {
     // Navbar occupies remaining top bar from edge of ML to right side
     // Module Stack occupies fixed-width colum, right from edge of ML, from bottom of NavBar to end of page
     // Output Pane occupies remaining space in lower-right of page
+    const ScrollingDiv = withScrolling('div');
+    const stackContainer = (
+      <ScrollingDiv className="modulestack">
+        {moduleStack}
+      </ScrollingDiv>
+    );
     return (
-      <DragDropContextProvider backend={HTML5Backend}>
-
         <div className="workflow-root">
 
           {moduleLibrary}
@@ -196,9 +248,7 @@ class Workflow extends React.Component {
             {navBar}
 
             <div className="workflow-columns">
-                <div className="modulestack">
-                  {moduleStack}
-                </div>
+              {stackContainer}
               <div className="outputpane">
                 {outputPane}
               </div>
@@ -208,8 +258,6 @@ class Workflow extends React.Component {
           </div>
 
         </div>
-
-      </DragDropContextProvider>
     );
   }
 }

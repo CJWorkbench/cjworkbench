@@ -7,6 +7,8 @@ import * as Actions from './workflow-reducer'
 import { getPageID, csrfToken } from './utils'
 import Workflow from './workflow'
 import workbenchAPI from './WorkbenchAPI'
+import { DragDropContextProvider } from 'react-dnd'
+import HTML5Backend from 'react-dnd-html5-backend'
 
 require('bootstrap/dist/css/bootstrap.css');
 require('../css/style.css');
@@ -76,7 +78,9 @@ socket.onmessage = function(e) {
 // Render with Provider to root so all objects in the React DOM can access state
 ReactDOM.render(
     <Provider store={Actions.store}>
-      <WorkflowContainer/>
+      <DragDropContextProvider backend={HTML5Backend}>
+        <WorkflowContainer/>
+      </DragDropContextProvider>
     </Provider>,
     document.getElementById('root')
 );
