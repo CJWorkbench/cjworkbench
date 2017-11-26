@@ -1711,11 +1711,6 @@ svg .svg-background{
   border: 1px red;
 }
 
-/*background container for vert axis label*/
-.concealer-label rect{
-  fill: transparent;
-}
-
 /*** Module Parameters spacing within modules ***/
 
 .label-margin {
