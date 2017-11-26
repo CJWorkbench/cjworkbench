@@ -148,7 +148,7 @@ export default class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className='parameter-margin'>
+          <div className='parameter-margin group-param'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <textarea
               readOnly={this.props.isReadOnly}

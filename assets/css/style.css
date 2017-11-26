@@ -527,7 +527,7 @@ body {
 }
 
 .number-field{
-  width: 25%;
+  width: 100%;
   resize: none;
   background-color: #FFFFFF !important;
   border: 1px solid #E7E7E7;
