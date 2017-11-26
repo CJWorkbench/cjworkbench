@@ -89,8 +89,16 @@ class WorkflowList extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    // If nothing is being dragged, and the original wf_modules are different
-    // from the re-ordered ones...
+    if (nextProps.data.revision !== this.props.data.revision) {
+      // New wfmodules, update
+      this.setState({
+        justDropped: false,
+        wf_modules: nextProps.data.wf_modules
+      });
+      return;
+    }
+
+    // If nothing is being dragged, and the order of wf_modules are different
     if (!nextProps.dragItem
       && (nextProps.data.wf_modules !== this.state.wf_modules)) {
       // And we just didn't just drop the thing that was being dragged,
@@ -235,11 +243,11 @@ class Workflow extends React.Component {
     // Navbar occupies remaining top bar from edge of ML to right side
     // Module Stack occupies fixed-width colum, right from edge of ML, from bottom of NavBar to end of page
     // Output Pane occupies remaining space in lower-right of page
-    const ScrollingDiv = withScrolling('div');
+    //const ScrollingDiv = withScrolling('div');
     const stackContainer = (
-      <ScrollingDiv className="modulestack">
+      <div className="modulestack">
         {moduleStack}
-      </ScrollingDiv>
+      </div>
     );
     return (
         <div className="workflow-root">
