@@ -1242,7 +1242,7 @@ img.logo {
   padding-top: 2rem;
 }
 .modulestack-list.dragging {
-  background: rgba(118,155,176,0.5);
+  background: rgba(118,155,176,0.15);
 }
 .modulestack-empty {
   cursor: default;
@@ -1618,7 +1618,9 @@ img.logo {
 }
 
 .wf-card.placeholder {
-  height: 10px;
+  height: 0.5rem;
+  background-color: #7A9BB0;
+  opacity:0.5;
 }
 
 .card-block{
