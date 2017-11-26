@@ -1647,9 +1647,9 @@ img.logo {
 
 
 .module-card-params {
-  margin: 0 0 0 2rem;
-  padding-top: 0.5rem;
+  margin: 0 2rem 0 2rem;
   overflow-y: hidden;
+  padding-top: 0.5rem;
 }
 
 .module-description {
@@ -1679,6 +1679,43 @@ img.logo {
   width: 20%;
 }
 
+/*Charts module using Chartbuilder*/
+
+.module-card-params a{
+  display: none;
+}
+
+.svg-credit-data {
+  display:none;
+}
+
+div.renderer-wrapper{
+  margin-bottom: 1.5rem;
+}
+
+.grid-lines{
+  opacity: 0.5;
+}
+
+.zero{
+  opacity: 0.3;
+}
+
+.chartbuilder-svg{
+  border:1px #f1f1f1 solid;
+}
+
+svg .svg-background{
+  opacity: 1;
+  fill:#fff;
+  border: 1px red;
+}
+
+/*background container for vert axis label*/
+.concealer-label rect{
+  fill: transparent;
+}
+
 /*** Module Parameters spacing within modules ***/
 
 .label-margin {
@@ -1690,17 +1727,23 @@ img.logo {
   margin-bottom: 0px;
 }
 
+
+
 /*Style for grouping parameters*/
 .group-param{
   display: inline-block;
-  width:28.8%;
+  width:30%;
+  margin-right: 2rem;
+}
 
+.group-param:last-child{
+  margin-right: 0;
 }
 
 /*Bottom margin for a set of grouped parameters*/
 .parameter-margin {
   margin-bottom: 2rem;
-  margin-right: 2rem;
+
 }
 
 /* ---- Wf Module status bars ---- */
@@ -1795,7 +1838,7 @@ img.logo {
 .list-wrapper{
   max-height: 20rem;
   overflow: scroll;
-  border:1px solid #ededec;
+  border:1px solid #f1f1f1;
 }
 
 .list-scroll{
