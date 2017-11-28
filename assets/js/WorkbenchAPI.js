@@ -258,7 +258,7 @@ class WorkbenchAPI {
       }))
   }
 
-  duplicate(workflow_id) {
+  duplicateWorkflow(workflow_id) {
     return (
       fetch('/api/workflows/' + workflow_id + '/duplicate', {credentials: 'include'})
         .then(response => response.json())

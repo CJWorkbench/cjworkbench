@@ -45,6 +45,7 @@ class WorkflowTests(LoggedInTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         new_id = response.data['id']
         self.assertFalse(new_id in old_ids)         # created at entirely new id
+        self.assertEqual(response.data['name'], 'Copy of ' + self.workflow1.name)
         new_wf = Workflow.objects.get(pk=new_id)    # will fail if no Workflow created
 
         # Ensure 404 with bad id
@@ -65,19 +66,26 @@ class WorkflowTests(LoggedInTestCase):
 
 
     def test_workflow_list_get(self):
+        # set dates to test reverse chron ordering
+        self.workflow1.creation_date = "2010-10-20 1:23Z"
+        self.workflow1.save()
+        self.workflow2.creation_date = "2015-09-18 2:34Z"
+        self.workflow2.save()
+
         request = self.factory.get('/api/workflows/')
         force_authenticate(request, user=self.user)
         response = workflow_list(request)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 2) # should not pick up other user's workflows, even public ones
 
-        self.assertEqual(response.data[0]['name'], 'Workflow 1')
-        self.assertEqual(response.data[0]['id'], self.workflow1.id)
+        self.assertEqual(response.data[0]['name'], 'Workflow 2')
+        self.assertEqual(response.data[0]['id'], self.workflow2.id)
         self.assertEqual(response.data[0]['public'], self.workflow1.public)
         self.assertEqual(response.data[0]['read_only'], False)  # if we can list it, it's ours and we can edit it
         self.assertIsNotNone(response.data[0]['last_update'])
 
-        self.assertEqual(response.data[1]['name'], 'Workflow 2')
+        self.assertEqual(response.data[1]['name'], 'Workflow 1')
+        self.assertEqual(response.data[1]['id'], self.workflow1.id)
 
     def test_workflow_list_post(self):
         start_count = Workflow.objects.count()

@@ -82,9 +82,7 @@ class WorkflowSerializer(serializers.ModelSerializer):
         return obj.read_only(self.context['user'])
 
     def get_last_update(self, obj):
-        if not obj.last_delta:
-            return obj.creation_date
-        return obj.last_delta.datetime
+        return obj.last_update()
 
     def get_owner_name(self, obj):
         return user_display(obj.owner)

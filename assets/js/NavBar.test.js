@@ -15,7 +15,7 @@ describe('NavBar', () => {
     name: "Copy of Original Version"
   }
   var api = {
-    duplicate: jsonResponseMock(mockWorkflowCopy),
+    duplicateWorkflow: jsonResponseMock(mockWorkflowCopy),
     setWorkflowPublic: okResponseMock()
   };
 
@@ -70,7 +70,7 @@ describe('NavBar', () => {
         //  we have not actually rendered the new workflow copy, just mocked the calls to change url
         expect(Utils.goToUrl.mock.calls.length).toBe(1);
         expect(Utils.goToUrl.mock.calls[0][0]).toBe('/workflows/77');
-        expect(api.duplicate.mock.calls.length).toBe(1);
+        expect(api.duplicateWorkflow.mock.calls.length).toBe(1);
         done();
       });
     });
@@ -106,7 +106,7 @@ describe('NavBar', () => {
         expect(Utils.goToUrl.mock.calls.length).toBe(2);
         expect(Utils.goToUrl.mock.calls[1][0]).toBe('/account/login');
         // check that API was NOT called (has one call from last test)
-        expect(api.duplicate.mock.calls.length).toBe(1);
+        expect(api.duplicateWorkflow.mock.calls.length).toBe(1);
         done();
       });
 

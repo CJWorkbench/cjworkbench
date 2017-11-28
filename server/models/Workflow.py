@@ -24,6 +24,11 @@ class Workflow(models.Model):
     def read_only(self, user):
         return self.user_authorized_read(user) and not self.user_authorized_write(user)
 
+    def last_update(self):
+        if not self.last_delta:
+            return self.creation_date
+        return self.last_delta.datetime
+
     # use last delta ID as (non sequential) revision number, as later deltas will always have later ids
     def revision(self):
         if not self.last_delta:

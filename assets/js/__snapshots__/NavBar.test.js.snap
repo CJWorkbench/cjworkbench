@@ -41,7 +41,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
 <WorkflowNavBar
   api={
     Object {
-      "duplicate": [Function],
+      "duplicateWorkflow": [Function],
       "setWorkflowPublic": [Function],
     }
   }
@@ -75,7 +75,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
           <EditableWorkflowName
             api={
               Object {
-                "duplicate": [Function],
+                "duplicateWorkflow": [Function],
                 "setWorkflowPublic": [Function],
               }
             }
@@ -114,7 +114,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
           <WorkflowMetadata
             api={
               Object {
-                "duplicate": [Function],
+                "duplicateWorkflow": [Function],
                 "setWorkflowPublic": [Function],
               }
             }
@@ -191,7 +191,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
         <WfHamburgerMenu
           api={
             Object {
-              "duplicate": [Function],
+              "duplicateWorkflow": [Function],
               "setWorkflowPublic": [Function],
             }
           }
@@ -586,7 +586,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
 <WorkflowNavBar
   api={
     Object {
-      "duplicate": [Function],
+      "duplicateWorkflow": [Function],
       "setWorkflowPublic": [Function],
     }
   }
@@ -620,7 +620,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
           <EditableWorkflowName
             api={
               Object {
-                "duplicate": [Function],
+                "duplicateWorkflow": [Function],
                 "setWorkflowPublic": [Function],
               }
             }
@@ -659,7 +659,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
           <WorkflowMetadata
             api={
               Object {
-                "duplicate": [Function],
+                "duplicateWorkflow": [Function],
                 "setWorkflowPublic": [Function],
               }
             }
@@ -736,7 +736,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
         <WfHamburgerMenu
           api={
             Object {
-              "duplicate": [Function],
+              "duplicateWorkflow": [Function],
               "setWorkflowPublic": [Function],
             }
           }
@@ -1052,7 +1052,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
 <WorkflowNavBar
   api={
     Object {
-      "duplicate": [Function],
+      "duplicateWorkflow": [Function],
       "setWorkflowPublic": [Function],
     }
   }
@@ -1085,7 +1085,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
           <EditableWorkflowName
             api={
               Object {
-                "duplicate": [Function],
+                "duplicateWorkflow": [Function],
                 "setWorkflowPublic": [Function],
               }
             }
@@ -1123,7 +1123,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
           <WorkflowMetadata
             api={
               Object {
-                "duplicate": [Function],
+                "duplicateWorkflow": [Function],
                 "setWorkflowPublic": [Function],
               }
             }
@@ -1212,7 +1212,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
 <WorkflowNavBar
   api={
     Object {
-      "duplicate": [Function],
+      "duplicateWorkflow": [Function],
       "setWorkflowPublic": [Function],
     }
   }
@@ -1245,7 +1245,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
           <EditableWorkflowName
             api={
               Object {
-                "duplicate": [Function],
+                "duplicateWorkflow": [Function],
                 "setWorkflowPublic": [Function],
               }
             }
@@ -1283,7 +1283,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
           <WorkflowMetadata
             api={
               Object {
-                "duplicate": [Function],
+                "duplicateWorkflow": [Function],
                 "setWorkflowPublic": [Function],
               }
             }
@@ -1359,7 +1359,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
         <WfHamburgerMenu
           api={
             Object {
-              "duplicate": [Function],
+              "duplicateWorkflow": [Function],
               "setWorkflowPublic": [Function],
             }
           }

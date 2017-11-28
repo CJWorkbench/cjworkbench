@@ -6,7 +6,7 @@ import { mockResponse, okResponseMock, jsonResponseMock } from './utils'
 
 describe('Workflow list page', () => {
 
-    var testWorkflows = [
+  var testWorkflows = [
     {
       "id": 1,
       "name": "Charting",
@@ -31,7 +31,14 @@ describe('Workflow list page', () => {
 
   var addResponse = {
     id: 543,
-    name: 'New Workflow'
+    name: 'New Workflow',
+    public: false
+  };
+
+  var dupResponse = {
+    id: 666,
+    name: 'Copy of Visualization',
+    public: false
   };
 
   var api;
@@ -42,6 +49,7 @@ describe('Workflow list page', () => {
     api = {
       listWorkflows: jsonResponseMock(testWorkflows),
       newWorkflow: jsonResponseMock(addResponse),
+      duplicateWorkflow: jsonResponseMock(dupResponse),
       deleteWorkflow: okResponseMock()
     };
 
@@ -67,7 +75,6 @@ describe('Workflow list page', () => {
       done();
     })
   });
-
 
   it('delete a workflow', (done) => {
 
@@ -106,9 +113,27 @@ describe('Workflow list page', () => {
         expect(Utils.goToUrl.mock.calls[0][0]).toBe('/workflows/543');
         done();
       });
-
     });
+  });
 
+  it('duplicate workflow callback', (done) => {
+
+    // let 4 workflows load
+    setImmediate( () => {
+      expect(wrapper.find('.item-test-class')).toHaveLength(4);
+
+      wrapper.instance().duplicateWorkflow(9);
+
+      // should be a new item at the top of the list
+      setImmediate(() => {
+        expect(api.duplicateWorkflow.mock.calls.length).toBe(1);
+        expect(api.duplicateWorkflow.mock.calls[0][0]).toBe(9);
+
+        expect(wrapper.find('.item-test-class')).toHaveLength(5);
+
+        done();
+      });
+    });
   });
 
 });

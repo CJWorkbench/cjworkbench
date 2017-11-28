@@ -5,6 +5,7 @@ exports[`Workflow list page renders correctly 1`] = `
   api={
     Object {
       "deleteWorkflow": [Function],
+      "duplicateWorkflow": [Function],
       "listWorkflows": [Function],
       "newWorkflow": [Function],
     }
@@ -195,6 +196,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       api={
                         Object {
                           "deleteWorkflow": [Function],
+                          "duplicateWorkflow": [Function],
                           "listWorkflows": [Function],
                           "newWorkflow": [Function],
                         }
@@ -308,28 +310,6 @@ exports[`Workflow list page renders correctly 1`] = `
                               tabIndex="-1"
                             >
                               <DropdownItem
-                                className="dropdown-menu-item test-share-button"
-                                onClick={[Function]}
-                                tag="button"
-                                toggle={true}
-                              >
-                                <button
-                                  className="dropdown-menu-item test-share-button dropdown-item"
-                                  onClick={[Function]}
-                                  tabIndex="0"
-                                  type="button"
-                                >
-                                  <i
-                                    className="icon-share menu-icon"
-                                  />
-                                  <span
-                                    className="t-d-gray content-3 ml-3"
-                                  >
-                                    Share
-                                  </span>
-                                </button>
-                              </DropdownItem>
-                              <DropdownItem
                                 className="dropdown-menu-item test-duplicate-button"
                                 onClick={[Function]}
                                 tag="button"
@@ -405,6 +385,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       api={
                         Object {
                           "deleteWorkflow": [Function],
+                          "duplicateWorkflow": [Function],
                           "listWorkflows": [Function],
                           "newWorkflow": [Function],
                         }
@@ -518,28 +499,6 @@ exports[`Workflow list page renders correctly 1`] = `
                               tabIndex="-1"
                             >
                               <DropdownItem
-                                className="dropdown-menu-item test-share-button"
-                                onClick={[Function]}
-                                tag="button"
-                                toggle={true}
-                              >
-                                <button
-                                  className="dropdown-menu-item test-share-button dropdown-item"
-                                  onClick={[Function]}
-                                  tabIndex="0"
-                                  type="button"
-                                >
-                                  <i
-                                    className="icon-share menu-icon"
-                                  />
-                                  <span
-                                    className="t-d-gray content-3 ml-3"
-                                  >
-                                    Share
-                                  </span>
-                                </button>
-                              </DropdownItem>
-                              <DropdownItem
                                 className="dropdown-menu-item test-duplicate-button"
                                 onClick={[Function]}
                                 tag="button"
@@ -615,6 +574,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       api={
                         Object {
                           "deleteWorkflow": [Function],
+                          "duplicateWorkflow": [Function],
                           "listWorkflows": [Function],
                           "newWorkflow": [Function],
                         }
@@ -728,28 +688,6 @@ exports[`Workflow list page renders correctly 1`] = `
                               tabIndex="-1"
                             >
                               <DropdownItem
-                                className="dropdown-menu-item test-share-button"
-                                onClick={[Function]}
-                                tag="button"
-                                toggle={true}
-                              >
-                                <button
-                                  className="dropdown-menu-item test-share-button dropdown-item"
-                                  onClick={[Function]}
-                                  tabIndex="0"
-                                  type="button"
-                                >
-                                  <i
-                                    className="icon-share menu-icon"
-                                  />
-                                  <span
-                                    className="t-d-gray content-3 ml-3"
-                                  >
-                                    Share
-                                  </span>
-                                </button>
-                              </DropdownItem>
-                              <DropdownItem
                                 className="dropdown-menu-item test-duplicate-button"
                                 onClick={[Function]}
                                 tag="button"
@@ -825,6 +763,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       api={
                         Object {
                           "deleteWorkflow": [Function],
+                          "duplicateWorkflow": [Function],
                           "listWorkflows": [Function],
                           "newWorkflow": [Function],
                         }
@@ -937,28 +876,6 @@ exports[`Workflow list page renders correctly 1`] = `
                               role="menu"
                               tabIndex="-1"
                             >
-                              <DropdownItem
-                                className="dropdown-menu-item test-share-button"
-                                onClick={[Function]}
-                                tag="button"
-                                toggle={true}
-                              >
-                                <button
-                                  className="dropdown-menu-item test-share-button dropdown-item"
-                                  onClick={[Function]}
-                                  tabIndex="0"
-                                  type="button"
-                                >
-                                  <i
-                                    className="icon-share menu-icon"
-                                  />
-                                  <span
-                                    className="t-d-gray content-3 ml-3"
-                                  >
-                                    Share
-                                  </span>
-                                </button>
-                              </DropdownItem>
                               <DropdownItem
                                 className="dropdown-menu-item test-duplicate-button"
                                 onClick={[Function]}

@@ -41,6 +41,11 @@ def render_workflow(request, pk=None):
 def workflow_list(request, format=None):
     if request.method == 'GET':
         workflows = Workflow.objects.filter(Q(owner=request.user))
+
+        # turn queryset into array so we can sort it ourselves by reverse chron
+        workflows = workflows.all()
+        workflows = sorted(workflows, key=lambda wf: wf.last_update(), reverse=True)
+
         serializer = WorkflowSerializerLite(workflows, many=True)
         return Response(serializer.data)
 
@@ -136,7 +141,7 @@ def workflow_addmodule(request, pk, format=None):
     return Response({"id": delta.wf_module.id}, status.HTTP_201_CREATED)
 
 
-# Duplicate a workflow. Returns new id
+# Duplicate a workflow. Returns new wf as json in same format as wf list
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 def workflow_duplicate(request, pk):
@@ -149,8 +154,9 @@ def workflow_duplicate(request, pk):
         return HttpResponseForbidden()
 
     workflow2 = workflow.duplicate(request.user)
+    serializer = WorkflowSerializerLite(workflow2)
 
-    return Response({"id": workflow2.id}, status.HTTP_201_CREATED)
+    return Response(serializer.data, status.HTTP_201_CREATED)
 
 
 # Undo or redo

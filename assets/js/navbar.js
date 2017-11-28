@@ -68,7 +68,7 @@ export class WorkflowNavBar extends React.Component {
       // user IS logged in: start spinner, make duplicate & navigate there
       this.setState({spinnerVisible: true});
 
-      this.props.api.duplicate(this.props.workflow.id)
+      this.props.api.duplicateWorkflow(this.props.workflow.id)
         .then(json => {
           goToUrl('/workflows/' + json.id);
         })

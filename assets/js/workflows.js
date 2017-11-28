@@ -12,6 +12,7 @@ export default class Workflows extends React.Component {
     super(props);
     this.click = this.click.bind(this);
     this.deleteWorkflow = this.deleteWorkflow.bind(this);
+    this.duplicateWorkflow = this.duplicateWorkflow.bind(this);
     this.state = { workflows: []}
   }
 
@@ -32,14 +33,24 @@ export default class Workflows extends React.Component {
     this.props.api.deleteWorkflow(id)
     .then(response => {
       var workflowsMinusID = this.state.workflows.filter(wf => wf.id != id);
-      this.setState({workflows: workflowsMinusID, newWorkflowName: this.state.newWorkflowName})
+      this.setState({workflows: workflowsMinusID})
+    })
+  }
+
+  duplicateWorkflow(id) {
+    this.props.api.duplicateWorkflow(id)
+    .then(json => {
+      // Add to beginning of list because wf list is reverse chron
+      var workflowsPlusDup = this.state.workflows.slice();
+      workflowsPlusDup.unshift(json);
+      this.setState({workflows: workflowsPlusDup})
     })
   }
 
   componentDidMount() {
     this.props.api.listWorkflows()
     .then(json => {
-      this.setState({workflows: json, newWorkflowName: this.state.newWorkflowName})
+      this.setState({workflows: json})
     })
   }
 
