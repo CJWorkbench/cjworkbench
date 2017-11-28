@@ -9,7 +9,7 @@ def update_wfm_data_scan():
     for wfm in WfModule.objects.all():
 
         # only check if an interval has been set (i.e. this module can load data)
-        if wfm.auto_update_data:
+        if wfm.auto_update_data and wfm.update_interval>0:
             check_for_wfm_data_update(wfm)
 
 
