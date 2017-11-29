@@ -5,6 +5,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
 from server.models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
 from server.tests.utils import *
+from server.utils import user_display
 import pandas as pd
 import json
 
@@ -83,6 +84,7 @@ class WorkflowTests(LoggedInTestCase):
         self.assertEqual(response.data[0]['public'], self.workflow1.public)
         self.assertEqual(response.data[0]['read_only'], False)  # if we can list it, it's ours and we can edit it
         self.assertIsNotNone(response.data[0]['last_update'])
+        self.assertEqual(response.data[0]['owner_name'], user_display(self.workflow2.owner))
 
         self.assertEqual(response.data[1]['name'], 'Workflow 1')
         self.assertEqual(response.data[1]['id'], self.workflow1.id)

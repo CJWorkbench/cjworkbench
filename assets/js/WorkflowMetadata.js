@@ -102,11 +102,12 @@ export default class WorkflowMetadata extends React.Component {
     var timeColor = this.props.inWorkflowList? 't-m-gray': 't-white';
 
     // only list User attribution if one exists & is not just whitespace
-    var user = (this.props.user && this.props.user.display_name)
-      ? this.props.user.display_name
-      : null
-    var attribution = (user && user.replace(/\s/g, '').length)
-      ? <li className="list-inline-item content-3">by {user}</li>
+    var user = this.props.workflow.owner_name.trim();
+    var attribution = user.length
+      ? <span>
+          <li className="list-inline-item content-3">by {user}</li>
+          <span className='metadataSeparator'>-</span>
+        </span>
       : null
     var modalLink = (this.props.workflow.read_only)
       ? null
@@ -119,7 +120,6 @@ export default class WorkflowMetadata extends React.Component {
       <div className=''>
         <ul className="list-inline workflow-meta content-3 ">
            {attribution}
-          <span className='metadataSeparator'>-</span>
           <li className={"list-inline-item content-3 "+ timeColor}>
             Updated {timeDifference(this.props.workflow.last_update, now)}
           </li>
@@ -137,8 +137,6 @@ WorkflowMetadata.propTypes = {
   workflow:   PropTypes.object.isRequired,
   api:        PropTypes.object.isRequired,
   isPublic:   PropTypes.bool.isRequired,
-  user:       PropTypes.object,
   inWorkflowList: PropTypes.bool, //change styling for use inside WF list
-  test_now:   PropTypes.object  // optional injection for testing
-
+  test_now:   PropTypes.object  // optional injection for testing, avoid time zone issues for Last Update time
 };

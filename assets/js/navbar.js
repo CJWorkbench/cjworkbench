@@ -244,7 +244,6 @@ export class WorkflowNavBar extends React.Component {
               <WorkflowMetadata
                 workflow={this.props.workflow}
                 api={this.props.api}
-                user={this.props.user}
                 isPublic={this.state.isPublic}
               />
             </div>
@@ -265,5 +264,5 @@ WorkflowNavBar.propTypes = {
   api:        PropTypes.object.isRequired,
   workflow:   PropTypes.object,
   isReadOnly: PropTypes.bool.isRequired,
-  user:       PropTypes.object
+  user:       PropTypes.object.isRequired
 };

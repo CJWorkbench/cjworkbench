@@ -207,6 +207,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         Object {
                           "id": 1,
                           "name": "Charting",
+                          "owner_name": "Fred Frederson",
                           "public": true,
                         }
                       }
@@ -217,10 +218,18 @@ exports[`Workflow list page renders correctly 1`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
-                          <span
-                            className="metadataSeparator"
-                          >
-                            -
+                          <span>
+                            <li
+                              className="list-inline-item content-3"
+                            >
+                              by 
+                              Fred Frederson
+                            </li>
+                            <span
+                              className="metadataSeparator"
+                            >
+                              -
+                            </span>
                           </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
@@ -396,6 +405,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         Object {
                           "id": 7,
                           "name": "Messy data cleanup",
+                          "owner_name": "John Johnson",
                           "public": false,
                         }
                       }
@@ -406,10 +416,18 @@ exports[`Workflow list page renders correctly 1`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
-                          <span
-                            className="metadataSeparator"
-                          >
-                            -
+                          <span>
+                            <li
+                              className="list-inline-item content-3"
+                            >
+                              by 
+                              John Johnson
+                            </li>
+                            <span
+                              className="metadataSeparator"
+                            >
+                              -
+                            </span>
                           </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
@@ -585,6 +603,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         Object {
                           "id": 8,
                           "name": "Document search",
+                          "owner_name": "Sally Sallerson",
                           "public": true,
                         }
                       }
@@ -595,10 +614,18 @@ exports[`Workflow list page renders correctly 1`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
-                          <span
-                            className="metadataSeparator"
-                          >
-                            -
+                          <span>
+                            <li
+                              className="list-inline-item content-3"
+                            >
+                              by 
+                              Sally Sallerson
+                            </li>
+                            <span
+                              className="metadataSeparator"
+                            >
+                              -
+                            </span>
                           </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"
@@ -774,6 +801,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         Object {
                           "id": 9,
                           "name": "Visualization",
+                          "owner_name": "Mr. Manfrengenson",
                           "public": false,
                         }
                       }
@@ -784,10 +812,18 @@ exports[`Workflow list page renders correctly 1`] = `
                         <ul
                           className="list-inline workflow-meta content-3 "
                         >
-                          <span
-                            className="metadataSeparator"
-                          >
-                            -
+                          <span>
+                            <li
+                              className="list-inline-item content-3"
+                            >
+                              by 
+                              Mr. Manfrengenson
+                            </li>
+                            <span
+                              className="metadataSeparator"
+                            >
+                              -
+                            </span>
                           </span>
                           <li
                             className="list-inline-item content-3 t-m-gray"

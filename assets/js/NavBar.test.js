@@ -12,8 +12,10 @@ describe('NavBar', () => {
   var workflow;
   var mockWorkflowCopy = {
     id: 77,
-    name: "Copy of Original Version"
-  }
+    name: 'Copy of Original Version',
+    owner_name: 'Paula Plagarizer',
+    public: false
+  };
   var api = {
     duplicateWorkflow: jsonResponseMock(mockWorkflowCopy),
     setWorkflowPublic: okResponseMock()
@@ -21,9 +23,6 @@ describe('NavBar', () => {
 
   // Over-write default behavior (changing page)
   Utils.goToUrl = jest.fn();
-  window.fetch = jest.fn().mockImplementation(()=>
-    Promise.resolve(mockResponse(200, null, JSON.stringify(mockWorkflowCopy)))
-  );
 
   describe('WorkflowListNavBar', () => {
 
@@ -43,9 +42,10 @@ describe('NavBar', () => {
         id: 8
       };
       workflow = {
-        name: "Original Version",
+        name: 'Original Version',
+        owner_name: 'John Johnson',
         public: true
-      }
+      };
       wrapper = mount(
         <WorkflowNavBar
           workflow={workflow}
@@ -53,7 +53,8 @@ describe('NavBar', () => {
           isReadOnly={false}
           user={user}
         />
-      )
+      );
+
       expect(wrapper).toMatchSnapshot(); 
       expect(wrapper.state().spinnerVisible).toBe(false);
 
@@ -77,12 +78,15 @@ describe('NavBar', () => {
     
     it('With user NOT logged in, Duplicate button sends user to sign-in page', (done) => {
       user = {
-        id: null
+        id: null  // not logged in
       };
       workflow = {
-        name: "Original Version",
+        id: 303,
+        name: 'Original Version',
+        owner_name: 'Not LogggedIn',
         public: true
-      }
+      };
+
       wrapper = mount(
         <WorkflowNavBar
           workflow={workflow}
@@ -90,7 +94,8 @@ describe('NavBar', () => {
           isReadOnly={false}
           user={user}
         />
-      )
+      );
+
       expect(wrapper).toMatchSnapshot(); 
 
       let button = wrapper.find('.test-duplicate-button');
@@ -114,13 +119,15 @@ describe('NavBar', () => {
 
     it('In Private mode, Share button invites user to set to Public', (done) => {
       user = {
-        id: 47
+        id: 99
       };
       workflow = {
-        name: "Original Version",
+        id: 808,
+        name: 'Original Version',
+        owner_name: 'Fred Frederson',
         public: false,
-        id: 808
-      }
+      };
+
       wrapper = mount(
         <WorkflowNavBar
           workflow={workflow}
@@ -128,7 +135,7 @@ describe('NavBar', () => {
           isReadOnly={false}
           user={user}
         />
-      )
+      );
 
       expect(wrapper).toMatchSnapshot();
       expect(wrapper.state().modalsOpen).toBe(false);
@@ -177,10 +184,11 @@ describe('NavBar', () => {
         id: 47
       };
       workflow = {
-        name: "Original Version",
+        id: 808,
+        name: 'Original Version',
+        owner_name: 'Fred Frederson',
         public: true,
-        id: 808
-      }
+      };
       wrapper = mount(
         <WorkflowNavBar
           workflow={workflow}
@@ -188,7 +196,7 @@ describe('NavBar', () => {
           isReadOnly={false}
           user={user}
         />
-      )
+      );
 
       expect(wrapper).toMatchSnapshot();
       expect(wrapper.state().modalsOpen).toBe(false);

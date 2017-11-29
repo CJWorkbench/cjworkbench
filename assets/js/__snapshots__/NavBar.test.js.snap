@@ -48,13 +48,14 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
   isReadOnly={false}
   user={
     Object {
-      "id": 47,
+      "id": 99,
     }
   }
   workflow={
     Object {
       "id": 808,
       "name": "Original Version",
+      "owner_name": "Fred Frederson",
       "public": false,
     }
   }
@@ -119,15 +120,11 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
               }
             }
             isPublic={false}
-            user={
-              Object {
-                "id": 47,
-              }
-            }
             workflow={
               Object {
                 "id": 808,
                 "name": "Original Version",
+                "owner_name": "Fred Frederson",
                 "public": false,
               }
             }
@@ -138,10 +135,18 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
               <ul
                 className="list-inline workflow-meta content-3 "
               >
-                <span
-                  className="metadataSeparator"
-                >
-                  -
+                <span>
+                  <li
+                    className="list-inline-item content-3"
+                  >
+                    by 
+                    Fred Frederson
+                  </li>
+                  <span
+                    className="metadataSeparator"
+                  >
+                    -
+                  </span>
                 </span>
                 <li
                   className="list-inline-item content-3 t-white"
@@ -198,7 +203,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
           isReadOnly={false}
           user={
             Object {
-              "id": 47,
+              "id": 99,
             }
           }
           wfId={808}
@@ -600,6 +605,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
     Object {
       "id": 808,
       "name": "Original Version",
+      "owner_name": "Fred Frederson",
       "public": true,
     }
   }
@@ -664,15 +670,11 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
               }
             }
             isPublic={true}
-            user={
-              Object {
-                "id": 47,
-              }
-            }
             workflow={
               Object {
                 "id": 808,
                 "name": "Original Version",
+                "owner_name": "Fred Frederson",
                 "public": true,
               }
             }
@@ -683,10 +685,18 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
               <ul
                 className="list-inline workflow-meta content-3 "
               >
-                <span
-                  className="metadataSeparator"
-                >
-                  -
+                <span>
+                  <li
+                    className="list-inline-item content-3"
+                  >
+                    by 
+                    Fred Frederson
+                  </li>
+                  <span
+                    className="metadataSeparator"
+                  >
+                    -
+                  </span>
                 </span>
                 <li
                   className="list-inline-item content-3 t-white"
@@ -1064,7 +1074,9 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
   }
   workflow={
     Object {
+      "id": 303,
       "name": "Original Version",
+      "owner_name": "Not LogggedIn",
       "public": true,
     }
   }
@@ -1090,6 +1102,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
               }
             }
             value="Original Version"
+            wfId={303}
           >
             <div
               className="editable-name-container"
@@ -1128,14 +1141,11 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
               }
             }
             isPublic={true}
-            user={
-              Object {
-                "id": null,
-              }
-            }
             workflow={
               Object {
+                "id": 303,
                 "name": "Original Version",
+                "owner_name": "Not LogggedIn",
                 "public": true,
               }
             }
@@ -1146,10 +1156,18 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
               <ul
                 className="list-inline workflow-meta content-3 "
               >
-                <span
-                  className="metadataSeparator"
-                >
-                  -
+                <span>
+                  <li
+                    className="list-inline-item content-3"
+                  >
+                    by 
+                    Not LogggedIn
+                  </li>
+                  <span
+                    className="metadataSeparator"
+                  >
+                    -
+                  </span>
                 </span>
                 <li
                   className="list-inline-item content-3 t-white"
@@ -1225,6 +1243,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
   workflow={
     Object {
       "name": "Original Version",
+      "owner_name": "John Johnson",
       "public": true,
     }
   }
@@ -1288,14 +1307,10 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
               }
             }
             isPublic={true}
-            user={
-              Object {
-                "id": 8,
-              }
-            }
             workflow={
               Object {
                 "name": "Original Version",
+                "owner_name": "John Johnson",
                 "public": true,
               }
             }
@@ -1306,10 +1321,18 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
               <ul
                 className="list-inline workflow-meta content-3 "
               >
-                <span
-                  className="metadataSeparator"
-                >
-                  -
+                <span>
+                  <li
+                    className="list-inline-item content-3"
+                  >
+                    by 
+                    John Johnson
+                  </li>
+                  <span
+                    className="metadataSeparator"
+                  >
+                    -
+                  </span>
                 </span>
                 <li
                   className="list-inline-item content-3 t-white"

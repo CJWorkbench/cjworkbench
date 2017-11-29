@@ -8,36 +8,42 @@ describe('Workflow list page', () => {
 
   var testWorkflows = [
     {
-      "id": 1,
-      "name": "Charting",
-      "public": true
+      id: 1,
+      name: "Charting",
+      owner_name: 'Fred Frederson',
+      public: true
     },
     {
-      "id": 7,
-      "name": "Messy data cleanup",
-      "public": false
+      id: 7,
+      name: "Messy data cleanup",
+      owner_name: 'John Johnson',
+      public: false
     },
     {
-      "id": 8,
-      "name": "Document search",
-      "public": true
+      id: 8,
+      name: "Document search",
+      owner_name: 'Sally Sallerson',
+      public: true
     },
     {
-      "id": 9,
-      "name": "Visualization",
-      "public": false
+      id: 9,
+      name: "Visualization",
+      owner_name: 'Mr. Manfrengenson',
+      public: false
     },
   ];
 
   var addResponse = {
     id: 543,
     name: 'New Workflow',
+    owner_name: 'Sally Sallerson',
     public: false
   };
 
   var dupResponse = {
     id: 666,
     name: 'Copy of Visualization',
+    owner_name: 'Paul Plagarizer',
     public: false
   };
 

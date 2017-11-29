@@ -94,6 +94,10 @@ class WorkflowSerializer(serializers.ModelSerializer):
 
 # Lite Workflow: Don't include any of the modules, just name and ID. For /workflows page
 class WorkflowSerializerLite(serializers.ModelSerializer):
+    owner_name = serializers.SerializerMethodField()
+    def get_owner_name(self, obj):
+        return user_display(obj.owner)
+
     last_update = serializers.SerializerMethodField()
     def get_last_update(self, obj):
         if not obj.last_delta:
@@ -106,4 +110,4 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
 
     class Meta:
         model = Workflow
-        fields = ('id', 'name', 'public', 'read_only', 'last_update')
+        fields = ('id', 'name', 'public', 'read_only', 'last_update', 'owner_name')
