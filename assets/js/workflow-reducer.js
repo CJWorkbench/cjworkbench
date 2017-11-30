@@ -12,6 +12,7 @@ const REMOVE_MODULE_ACTION = 'REMOVE_MODULE'
 const MODULE_STATUS_CHANGE = 'MODULE_STATUS_CHANGE'
 const SELECTED_MODULE_CHANGE = 'SELECTED_MODULE_CHANGE'
 const UPDATE_CURRENT_USER = 'UPDATE_CURRENT_USER'
+const TOGGLE_MODULE_COLLAPSED = 'TOGGLE_MODULE_COLLAPSED'
 
 
 var api = WorkbenchAPI(); // var so it can be mocked for testing
@@ -104,6 +105,14 @@ export function changeSelectedWfModuleAction(wfModuleID) {
   }
 }
 
+export function toggleModuleCollapsedAction(wfModuleID, isCollapsed) {
+  return {
+    type : TOGGLE_MODULE_COLLAPSED,
+    id : wfModuleID,
+    isCollapsed
+  }
+}
+
 export function updateCurrentUserAction() {
   return (
     api.currentUser()
@@ -179,11 +188,39 @@ export function workflowReducer(state, action) {
           // Find matching module, and change state if status changed or error message changed
           if (wfm.id == action.id &&
               ((wfm.status != action.status) || (wfm.status=='error' && wfm.error_msg != action.error_msg))) {
-
             // console.log("actually changed status for " + wfm.id);
 
             // Create a copy of the wf_module with new status
             var newWfm = Object.assign({}, wfm, { status: action.status, error_msg: action.error_msg });
+
+            // Clone the state, switch out this one wfm (keep position in wf_modules array )
+            newState = Object.assign({}, state);
+            newState.workflow = Object.assign({}, state.workflow);
+            newState.workflow.wf_modules = state.workflow.wf_modules.map(el => el!==wfm ? el : newWfm);
+          }
+        }
+        return newState;
+      } else {
+        return state;
+      }
+
+    case TOGGLE_MODULE_COLLAPSED:
+      //console.log(WF_MODULE_STATUS_CHANGE + " " + action.id);
+      if ('wf_modules' in state.workflow) {
+
+        var newState = state;
+
+        console.log(action);
+
+        for (var wfm of newState.workflow.wf_modules) {
+
+          // Find matching module, and change state if status changed or error message changed
+          if (wfm.id == action.id) {
+            // Create a copy of the wf_module with new status
+            console.log('heeeey');
+            var newWfm = Object.assign({}, wfm, {
+              is_collapsed: action.isCollapsed
+            });
 
             // Clone the state, switch out this one wfm (keep position in wf_modules array )
             newState = Object.assign({}, state);

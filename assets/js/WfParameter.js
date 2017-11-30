@@ -2,8 +2,9 @@
 
 import React from 'react'
 import MenuParam from './wfparameters/MenuParam'
-import ChartParameter from './wfparameters/Chart'
-import SimpleChartParameter from './wfparameters/SimpleChart'
+import ChartParameter from './wfparameters/charts/Chart'
+import SimpleChartParameter from './wfparameters/charts/SimpleChart'
+import ChartEditorColumn from './wfparameters/charts/ChartEditorColumn'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
 import ColumnRenamer from './wfparameters/ColumnRenamer'
@@ -11,8 +12,6 @@ import PropTypes from 'prop-types'
 import DataVersionSelect from './wfparameters/DataVersionSelect'
 import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
-import BarChart from './wfparameters/BarChart'
-import ColumnColorPicker from './wfparameters/ColumnColorPicker'
 import GoogleConnect from './wfparameters/GoogleConnect'
 import FileSelect from './wfparameters/FileSelect'
 import { csrfToken } from './utils'
@@ -286,6 +285,15 @@ export default class WfParameter extends React.Component {
               </div>
             );
 
+        } else if (this.props.p.parameter_spec.id_name == 'chart_editor_column') {
+          return (
+            <ChartEditorColumn
+              saveState={ (state) => {this.props.setParamText('chartstate', state)} }
+              chartState={ this.props.getParamText('chartstate') }
+              isReadOnly={ this.props.isReadOnly }
+              revision={ this.props.revision }
+            />
+          )
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
 
           var button = (!this.props.isReadOnly)
@@ -351,16 +359,6 @@ export default class WfParameter extends React.Component {
                 dataKeys={this.props.getParamText('multicolumn_colorpicker')}
                 getParamText={this.props.getParamText}
                 setParamText={this.props.setParamText}
-              />
-            )
-          } else if (this.props.p.parameter_spec.id_name == 'multicolumn_colorpicker') {
-            return (
-              <ColumnColorPicker
-                selectedCols={this.props.getParamText('multicolumn_colorpicker')}
-                saveState={state => this.props.setParamText('multicolumn_colorpicker', state) }
-                getColNames={this.getNumericInputColNames}
-                isReadOnly={this.props.isReadOnly}
-                revision={this.props.revision}
               />
             )
           } else if (this.props.p.parameter_spec.id_name == 'connect') {

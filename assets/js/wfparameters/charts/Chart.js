@@ -1,7 +1,7 @@
 // Chart JSX component wraps a ChartBuilder
 
 import React from 'react'
-import { store, wfModuleStatusAction } from '../workflow-reducer'
+import { store, wfModuleStatusAction } from '../../workflow-reducer'
 import PropTypes from 'prop-types'
 
 
@@ -10,7 +10,7 @@ var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions
 var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
 var saveSvgAsPng = require("save-svg-as-png");
 
-require("../../css/chartbuilder_fonts_colors.css");
+require("../../../css/chartbuilder_fonts_colors.css");
 require("chartbuilder-ui/dist/styles.css");
 
 // adapter, eventually obsolete with CSV format /input call, or direct edit of ChartBuilder data model

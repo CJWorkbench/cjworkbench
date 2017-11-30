@@ -11,12 +11,21 @@ export default class ChartSeriesChooser extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
+    this.handleTextChange = this.handleTextChange.bind(this);
     this.state = {
       dropdownOpen: false,
       displayColorPicker: false,
-      color: this.props.color || null,
+      color: defaultColors[this.props.colorIndex],
       prevColor: null,
+      value: this.props.value
     };
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      color: defaultColors[nextProps.colorIndex],
+      value: nextProps.value
+    });
   }
 
   toggle() {
@@ -42,9 +51,17 @@ export default class ChartSeriesChooser extends React.Component {
   };
 
   handleChange(color) {
+    var colorIndex = defaultColors.indexOf(color.hex.toUpperCase());
     this.setState({ color: color.hex });
-    this.props.onChange({value:this.props.value, color:color.hex});
+    this.props.onChange(this.props.index, {colorIndex:colorIndex});
   };
+
+  handleTextChange(e) {
+    this.setState({
+      value: e.target.value
+    });
+    this.props.onChange(this.props.index, {label:e.target.value})
+  }
 
   render() {
     var backgroundColor =  {
@@ -62,8 +79,7 @@ export default class ChartSeriesChooser extends React.Component {
               <BlockPicker color={ this.state.color } colors={ defaultColors } onChange={ this.handleChange } />
             </div> : null }
           </InputGroupButton>
-          <Input type="text" value={this.props.value} readOnly />
-          {/*<InputGroupButton onClick={() => this.props.deleteColumn(this.props.value)}>X</InputGroupButton>*/}
+          <Input type="text" value={this.state.value} onChange={this.handleTextChange}/>
         </InputGroup>
       </div>
     );

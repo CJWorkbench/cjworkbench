@@ -1,7 +1,7 @@
 // Chart JSX component wraps a ChartBuilder
 
 import React from 'react'
-import { store, wfModuleStatusAction } from '../workflow-reducer'
+import { store, wfModuleStatusAction } from '../../workflow-reducer'
 import PropTypes from 'prop-types'
 
 
@@ -16,7 +16,7 @@ var ChartMetadataStore = require("chartbuilder/src/js/stores/ChartMetadataStore"
 var SessionStore = require("chartbuilder/src/js/stores/SessionStore");
 var ErrorStore = require("chartbuilder/src/js/stores/ErrorStore");
 
-require("../../css/chartbuilder_fonts_colors.css")
+require("../../../css/chartbuilder_fonts_colors.css")
 require("chartbuilder-ui/dist/styles.css");
 
 // adapter, eventually obsolete with CSV format /input call, or direct edit of ChartBuilder data model
@@ -130,13 +130,16 @@ export default class SimpleChartParameter extends React.Component {
       .then(response => response.json())
       .then(json => {
         var model;
+        var newState;
         var modelText = this.props.loadState();
         if (modelText == '') {
+          console.log('we did not have a chart before');
           // never had a chart before, start with defaults
           model = Object.assign( {}, chartConfig.xy.defaultProps );
           model.chartProps.chartSettings[0].type = this.props.chartType;
           //console.log("loading defaults");
         } else {
+          console.log('we had a chart before');
           model = JSON.parse(this.props.loadState()); // retrieve from hidden param
           model.chartProps.data = [];
           //console.log("loading from param");
@@ -149,13 +152,20 @@ export default class SimpleChartParameter extends React.Component {
         //console.log(model);
         ChartServerActions.receiveModel(model);
 
+        var newState = this.getStateFromStores();
+
         this.setState(
           Object.assign(
             {},
             {loading: false, loaded_ever: true},
-            this.getStateFromStores(),
+            newState,
           )
         );
+
+        // Finally, save the state if this is the first time we've loaded it
+        if (modelText == '') {
+          this.saveState(newState);
+        }
       });
   }
 
@@ -178,19 +188,6 @@ export default class SimpleChartParameter extends React.Component {
   }
 
   render() {
-    // Don't render until we've set chart data at least once
-    /*if (this.state.loaded_ever) {
-      return (<Chartbuilder
-        autosave={!this.props.isReadOnly}
-        editable={!this.props.isReadOnly}
-        onStateChange={this.onStateChange}
-        postRender={this.saveImage}
-        showDataInput={false}
-        showExport={false}
-        showLoadPrevious={false}/>);
-    } else {
-      return false;
-    }*/
     if (this.state.loaded_ever) {
       return (
         <RendererWrapper
