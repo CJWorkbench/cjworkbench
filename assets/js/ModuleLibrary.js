@@ -71,24 +71,24 @@ export default class ModuleLibrary extends React.Component {
               return 0;
             }
           });
-          
-          // First, filter out all the core modules, which should be displayed alphabetically. 
+
+          // First, filter out all the core modules, which should be displayed alphabetically.
           var coreModules = json.filter(function(x){
             return x.category == 'Add data' || x.category == 'Analyse' || x.category == 'Visualize';
           });
 
-          // Then, filter out the next set of core modules, also to be displayed alphabetically. 
+          // Then, filter out the next set of core modules, also to be displayed alphabetically.
           // ...but, essentially, the thing is, we want 'Code' to appear after 'Visualize', so we have to do this.
           var codeModules = json.filter(function(x){
               return x.category == 'Code' || x.category == 'Other';
           });
 
-          // Add codeModules to coreModules 
+          // Add codeModules to coreModules
           codeModules.forEach(function(x) {
               coreModules.push(x);
           });
 
-          // See if there are any remanining modules, and if there are, add them too. 
+          // See if there are any remanining modules, and if there are, add them too.
           var remainingModules = json.filter(function (item) {
             return coreModules.indexOf(item) === -1;
           });
@@ -204,6 +204,7 @@ export default class ModuleLibrary extends React.Component {
                 <div className='d-flex align-items-center search-bar'>
                   <div className='icon-search-white ml-icon-search ml-4'></div>
                   <ModuleSearch addModule={this.props.addModule}
+                                dropModule={this.props.dropModule}
                                 items={this.state.items}
                                 workflow={this.props.workflow}/>
                 </div>

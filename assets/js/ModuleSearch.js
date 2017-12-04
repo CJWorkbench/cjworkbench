@@ -1,6 +1,46 @@
 import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types'
+import { DragSource } from 'react-dnd';
+
+const spec = {
+  beginDrag(props, monitor, component) {
+    return {
+      index: false,
+      id: props.id,
+      insert: true,
+    }
+  },
+  endDrag(props, monitor, component) {
+    if (monitor.didDrop()) {
+      const result = monitor.getDropResult();
+      props.dropModule(result.source.id, result.source.index);
+    }
+  }
+}
+
+function collect(connect, monitor) {
+  return {
+    connectDragSource: connect.dragSource(),
+    isDragging: monitor.isDragging()
+  }
+}
+
+class ModuleSearchResult extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render() {
+    return this.props.connectDragSource(
+      <div className='d-flex align-items-center'>
+        <span className={'ml-icon-search icon-' + this.props.icon}></span>
+        <span className='mt-1 content-3'><strong>{this.props.name}</strong></span>
+      </div>
+    )
+  }
+}
+
+const DraggableModuleSearchResult = DragSource('module', spec, collect)(ModuleSearchResult)
 
 export default class ModuleSearch extends React.Component {
   constructor(props) {
@@ -101,10 +141,11 @@ export default class ModuleSearch extends React.Component {
 
   renderSuggestion (suggestion) {
     return (
-      <div className='d-flex align-items-center'>
-        <span className={'ml-icon-search icon-' + suggestion.icon}></span>
-        <span className='mt-1 content-3'><strong>{suggestion.name}</strong></span>
-      </div>
+      <DraggableModuleSearchResult
+        dropModule={this.props.dropModule}
+        icon={suggestion.icon}
+        name={suggestion.name}
+        id={suggestion.id} />
     );
   }
 
