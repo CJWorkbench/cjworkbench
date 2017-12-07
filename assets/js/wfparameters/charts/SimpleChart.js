@@ -68,10 +68,10 @@ export default class SimpleChartParameter extends React.Component {
   parseErrors(errors) {
     var first_err= errors.messages.find(m => m.type=='error');
     if (first_err) {
-//      console.log("Chart errors");
+  // console.log("Chart errors");
       store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', first_err.text))
     } else {
-//      console.log("Chart no errors");
+  // console.log("Chart no errors");
       store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'ready'))
     }
   }
@@ -132,27 +132,32 @@ export default class SimpleChartParameter extends React.Component {
         var model;
         var newState;
         var modelText = this.props.loadState();
-        if (modelText == '') {
-          console.log('we did not have a chart before');
-          // never had a chart before, start with defaults
-          model = Object.assign( {}, chartConfig.xy.defaultProps );
-          model.chartProps.chartSettings[0].type = this.props.chartType;
-          //console.log("loading defaults");
+        var defaults = JSON.parse(JSON.stringify(chartConfig.xy.defaultProps));
+        var seriesCount;
+        var dataChanged = (modelText == ''); //UGH this is bad, there is a better way to do this
+
+        // Set this so that all new series get set to the chart type
+        defaults.chartProps.chartSettings[0].type = this.props.chartType;
+
+        if (dataChanged) {
+          model = JSON.parse(JSON.stringify(defaults));
         } else {
-          console.log('we had a chart before');
           model = JSON.parse(this.props.loadState()); // retrieve from hidden param
+          seriesCount = model.chartProps.chartSettings.length;
           model.chartProps.data = [];
-          //console.log("loading from param");
         }
 
-        // Add this module's input data to the chart properties we just loaded
         model.chartProps.input = { raw: JSONtoCSV(json.rows) };
 
-        //console.log("Updating chart");
-        //console.log(model);
-        ChartServerActions.receiveModel(model);
+        var newState = Object.assign(
+          {},
+          model,
+          {chartProps: chartConfig.xy.parser({defaultProps: defaults}, model.chartProps)}
+        );
 
-        var newState = this.getStateFromStores();
+        if (newState.chartProps.chartSettings.length !== seriesCount) {
+          dataChanged = true;
+        }
 
         this.setState(
           Object.assign(
@@ -163,7 +168,7 @@ export default class SimpleChartParameter extends React.Component {
         );
 
         // Finally, save the state if this is the first time we've loaded it
-        if (modelText == '') {
+        if (dataChanged) {
           this.saveState(newState);
         }
       });
@@ -191,7 +196,7 @@ export default class SimpleChartParameter extends React.Component {
     if (this.state.loaded_ever) {
       return (
         <RendererWrapper
-          editable={false}
+          editable={true}
           showMetadata={true}
           model={this.state}
           enableResponsive={true}
