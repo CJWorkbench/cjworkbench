@@ -28,3 +28,4 @@ tmp/
 importedmodules/
 
 client_secret.json
+.DS_Store
