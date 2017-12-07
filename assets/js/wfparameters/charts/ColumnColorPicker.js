@@ -21,18 +21,17 @@ export default class ColumnColorPicker extends React.Component {
   }
 
   render() {
-    console.log(this.props.series);
     if (this.props.series.length > 0) {
       var selectors = [];
       this.props.series.forEach((val, idx, arr) => {
         selectors.push(
           <ChartSeriesChooser
             key={idx}
-            value={val.label}
+            label={val.label}
+            colName={val.colName}
             colorIndex={val.colorIndex}
             index={idx}
-            onChange={this.onChange}
-          />
+            onChange={this.onChange} />
         )
       });
       return (<div>{selectors}</div>);

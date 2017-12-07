@@ -287,7 +287,16 @@ export default class WfParameter extends React.Component {
 
         } else if (this.props.p.parameter_spec.id_name == 'chart_editor_column') {
           return (
-            <ChartEditorColumn
+            <ChartEditor
+              saveState={ (state) => {this.props.setParamText('chartstate', state)} }
+              chartState={ this.props.getParamText('chartstate') }
+              isReadOnly={ this.props.isReadOnly }
+              revision={ this.props.revision }
+            />
+          )
+        } else if (this.props.p.parameter_spec.id_name == 'chart_editor_line') {
+          return (
+            <ChartEditor
               saveState={ (state) => {this.props.setParamText('chartstate', state)} }
               chartState={ this.props.getParamText('chartstate') }
               isReadOnly={ this.props.isReadOnly }

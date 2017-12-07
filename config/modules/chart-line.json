@@ -16,7 +16,12 @@
       "name": "hidden chart state",
       "id_name": "chartstate",
       "type": "string",
-      "visible": false,
+      "visible": false
+    },
+    {
+      "name": "Chart Options",
+      "id_name": "chart_editor_line",
+      "type": "custom",
       "ui-only": true
     }
   ]
