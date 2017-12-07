@@ -1612,6 +1612,7 @@ img.logo {
 .wf-card{
   width: 47rem;
   margin-bottom: 0.5rem;
+  padding-bottom: 2rem;
   background-color: rgba(250,250,250,0.8);
   position: relative;
   transition: all 0.5s ease-out;
@@ -1621,6 +1622,7 @@ img.logo {
   height: 0.5rem;
   background-color: #7A9BB0;
   opacity:0.5;
+  padding-bottom:0;
 }
 
 .card-block{
@@ -1737,9 +1739,8 @@ svg .svg-background{
 }
 
 /*Bottom margin for a set of grouped parameters*/
-.parameter-margin {
+.parameter-margin:not(:last-child) {
   margin-bottom: 2rem;
-
 }
 
 /* ---- Wf Module status bars ---- */
@@ -1945,10 +1946,6 @@ input[type=checkbox]:checked:after {
 .dialog-body p{
   font-size: 1.5rem;
   font-weight: 100;
-}
-
-.scrolling-list{
-
 }
 
 .dialog-body.content-3{
@@ -2193,9 +2190,14 @@ input[type=checkbox]:checked:after {
 
 /* color picker */
 .color-picker.color {
-  width: 36px;
-  height: 8px;
-  border-radius: 2px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display:flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .color-picker.pop-over {
@@ -2211,4 +2213,17 @@ input[type=checkbox]:checked:after {
   right: 0;
   bottom: 0;
   left: 0;
+}
+
+.input-group-btn > .color-picker.button {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.color-picker.button-icon {
+  font-size: 0.6rem;
+}
+
+.color-picker .block-picker input {
+  display: none;
 }
