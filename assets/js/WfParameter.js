@@ -4,7 +4,7 @@ import React from 'react'
 import MenuParam from './wfparameters/MenuParam'
 import ChartParameter from './wfparameters/charts/Chart'
 import SimpleChartParameter from './wfparameters/charts/SimpleChart'
-import ChartEditorColumn from './wfparameters/charts/ChartEditorColumn'
+import ChartEditor from './wfparameters/charts/ChartEditor'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
 import ColumnRenamer from './wfparameters/ColumnRenamer'
@@ -169,19 +169,19 @@ export default class WfParameter extends React.Component {
           <div className='parameter-margin t-m-gray info-1'>{this.name}</div>
         );
 
-        case 'checkbox':
-          return (
-              <div className='checkbox-wrapper parameter-margin'>
-                  <div className='d-flex align-items-center'>
-                    <input
-                      disabled={this.props.isReadOnly}
-                      type="checkbox" className="checkbox"
-                      checked={this.props.p.value}
-                      onChange={this.click}
-                      ref={ el => this.checkboxRef = el}/>
-                    <div className='t-d-gray content-5 mt-1 ml-3'>{this.name}</div>
-                  </div>
-              </div>
+      case 'checkbox':
+        return (
+            <div className='checkbox-wrapper parameter-margin'>
+                <div className='d-flex align-items-center'>
+                  <input
+                    disabled={this.props.isReadOnly}
+                    type="checkbox" className="checkbox"
+                    checked={this.props.p.value}
+                    onChange={this.click}
+                    ref={ el => this.checkboxRef = el}/>
+                  <div className='t-d-gray content-5 mt-1 ml-3'>{this.name}</div>
+                </div>
+            </div>
         );
 
       case 'menu':
@@ -311,31 +311,31 @@ export default class WfParameter extends React.Component {
 
           return (
             <div className='version-box parameter-margin'>
-                <DataVersionSelect
-                  isReadOnly={this.props.isReadOnly}
-                  wfModuleId={this.props.wf_module_id}
-                  revision={this.props.revision}
-                  api={this.props.api}
-                />
-                <UpdateFrequencySelect
-                  isReadOnly={this.props.isReadOnly}
-                  updateSettings={this.props.updateSettings}
-                  wfModuleId={this.props.wf_module_id}
-                  api={this.props.api}
-                />
-                {button}
+              <DataVersionSelect
+                isReadOnly={this.props.isReadOnly}
+                wfModuleId={this.props.wf_module_id}
+                revision={this.props.revision}
+                api={this.props.api}
+              />
+              <UpdateFrequencySelect
+                isReadOnly={this.props.isReadOnly}
+                updateSettings={this.props.updateSettings}
+                wfModuleId={this.props.wf_module_id}
+                api={this.props.api}
+              />
+              {button}
             </div>
           );
         } else if (this.props.p.parameter_spec.id_name == 'version_select_simpler') {
 
           return (
             <div className='version-box parameter-margin'>
-                <DataVersionSelect
-                  isReadOnly={this.props.isReadOnly}
-                  wfModuleId={this.props.wf_module_id}
-                  revision={this.props.revision}
-                  api={this.props.api}
-                />
+              <DataVersionSelect
+                isReadOnly={this.props.isReadOnly}
+                wfModuleId={this.props.wf_module_id}
+                revision={this.props.revision}
+                api={this.props.api}
+              />
             </div>
           );
         } else if (this.props.p.parameter_spec.id_name == 'colrename') {
