@@ -105,12 +105,13 @@ export default class DropZone extends Component {
     }
 
     render() {
+      // Classe names are in brackets becaue of : --->> [Fine Uploader 5.15.3] Caught exception in 'onStatusChange' callback - input is a void element tag and must neither have `children` nor use `dangerouslySetInnerHTML`. Check the render method of DropZone.
         return (
-            <div>
+            <div className={"parameter-margin"}>
                 {this.state.files.length == 0 ? (
                     <div>
                         <Dropzone
-                            className={"dropzone parameter-margin d-flex justify-content-center align-items-center"}
+                            className={"dropzone d-flex justify-content-center align-items-center"}
                             multiple={false}
                             uploader={this.uploader}>
                             <div className={"title-3 ml-4 mr-2"}>Drag file here, or&nbsp;</div>
@@ -120,7 +121,7 @@ export default class DropZone extends Component {
                         {
                             this.state.submittedFiles.map(id => (
                                 <div
-                                    className={"parameter-margin react-fine-uploader-gallery-total-progress-bar-container"}
+                                    className={"react-fine-uploader-gallery-total-progress-bar-container"}
                                     key={id}>
                                     <ProgressBar className={"react-fine-uploader-gallery-total-progress-bar"} id={id}
                                                  uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
@@ -130,7 +131,7 @@ export default class DropZone extends Component {
                     </div>
                 ) : (
                     <div>
-                        <div className={"parameter-margin upload-box"}>
+                        <div className={"upload-box"}>
                             <div className={""}>
                                 <div className={"label-margin t-d-gray content-3"}>File name</div>
                                 <textarea className={"t-d-gray content-3 text-field-non-edit"}>{this.state.filename}</textarea>

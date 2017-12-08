@@ -1612,7 +1612,6 @@ img.logo {
 .wf-card{
   width: 47rem;
   margin-bottom: 0.5rem;
-  padding-bottom: 2rem;
   background-color: rgba(250,250,250,0.8);
   position: relative;
   transition: all 0.5s ease-out;
@@ -1651,8 +1650,7 @@ img.logo {
 
 
 .module-card-params {
-  margin: 0 2rem 0 2rem;
-  padding-top: 0.5rem;
+  padding: 0.2rem 2rem 2rem 2rem;
 }
 
 .module-description {
@@ -1740,7 +1738,7 @@ svg .svg-background{
 
 /*Bottom margin for a set of grouped parameters*/
 .parameter-margin:not(:last-child) {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 /* ---- Wf Module status bars ---- */
@@ -2033,11 +2031,12 @@ input[type=checkbox]:checked:after {
 /*Upload module*/
 
 .dropzone{
-  height:10rem;
-  border: 3px dashed #FBAA6D;
+  height:8rem;
+  border: 2px dashed #FBAA6D;
   cursor:pointer;
   opacity: 0.5;
   color:#FBAA6D;
+  margin-bottom: 1.5rem;
 }
 
 .dropzone:hover{
@@ -2049,16 +2048,18 @@ input[type=checkbox]:checked:after {
   height:1px;
   opacity:1;
   width: 43rem;
-  top:12.5rem;
+  top:10.8rem;
+  background: #FBAA6D;
 }
 .react-fine-uploader-file-progress-bar-container,
 .react-fine-uploader-gallery-total-progress-bar-container{
   height:1px;
-  margin-top:0px;
+  margin-top:0rem;
   margin-right:0px;
   margin-bottom:0px;
   margin-left:0px;
   width: 43rem;
+  background: #FBAA6D;
 }
 .react-fine-uploader-file-progress-bar,
 .react-fine-uploader-gallery-total-progress-bar
@@ -2075,7 +2076,7 @@ input[type=checkbox]:checked:after {
   width:11.3rem!important;
   position:absolute!important;
   left:32rem;
-  top:13rem;
+  top:12.5rem;
 }
 
 .upload-box{
