@@ -1220,11 +1220,11 @@ img.logo {
   margin-top: 2.5rem;
 }
 
-.list-workflow-meta li:not(:last-child):after {
+/*.list-workflow-meta li:not(:last-child):after {
   content: '-';
   display:inline-block;
   margin-left: 5px;
-}
+}*/
 
 /* Module Stack */
 .modulestack {

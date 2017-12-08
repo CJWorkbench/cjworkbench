@@ -99,7 +99,7 @@ export default class WorkflowMetadata extends React.Component {
 
     //giving a different style to metadata if it's displayed in WF list
     var publicColor = this.props.inWorkflowList? 't-f-blue': 't-white-u';
-    var timeColor = this.props.inWorkflowList? 't-m-gray': 't-white';
+    var metaColor = this.props.inWorkflowList? 't-m-gray': 't-white';
 
     // only list User attribution if one exists & is not just whitespace
     var user = this.props.workflow.owner_name.trim();
@@ -113,14 +113,14 @@ export default class WorkflowMetadata extends React.Component {
       ? null
       : <div className="list-inline-item test-button d-flex content-3 " onClick={this.togglePrivacyModal}>
           <span className='metadataSeparator'>-</span>
-          <div className={''+publicColor}>{this.state.isPublic ? 'public' : 'private'}</div>
+          <li className={''+publicColor}>{this.state.isPublic ? 'public' : 'private'}</li>
         </div>
 
     return (
       <div className=''>
-        <ul className="list-inline workflow-meta content-3 ">
+        <ul className={"list-inline workflow-meta content-3 "+ metaColor}>
            {attribution}
-          <li className={"list-inline-item content-3 "+ timeColor}>
+          <li className={"list-inline-item content-3 "+ metaColor}>
             Updated {timeDifference(this.props.workflow.last_update, now)}
           </li>
           <li className="list-inline-item content-3">
