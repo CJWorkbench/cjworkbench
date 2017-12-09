@@ -54,12 +54,18 @@ class Module extends React.Component {
       // TODO: remove inline styles
       <div className='card' style={{'borderRadius': 0, 'border': 0}}>
         <div className='' onClick={this.itemClick} >
-          <div className='second-level d-flex flex-row align-items-center'>
-            <div className='ml-icon-container'>
-              <div className={icon}></div>
+          <div className='second-level d-flex'>
+            <div className='d-flex flex-row align-items-center'>
+              <div className='ml-icon-container'>
+                <div className={icon}></div>
+              </div>
+              <div>
+                <div className='content-5 ml-module-name'>{moduleName}</div>
+              </div>
             </div>
-            <div>
-              <div className='content-5 ml-module-name'>{moduleName}</div>
+            <div className='ml-handle'>
+              <div className='icon-add'></div>
+              <div className='icon-grip'></div>
             </div>
           </div>
         </div>

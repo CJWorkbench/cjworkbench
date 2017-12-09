@@ -263,14 +263,14 @@ body {
 .icon-sentiment:before {
   content: "\e929";
 }
-.icon-add:before {
+.icon-addc:before {
   content: "\e900";
 }
 .icon-bin:before {
   content: "\e901";
 }
 .icon-calendar:before {
-  content: "\e902";;
+  content: "\e902";
 }
 .icon-chart:before {
   content: "\e903";
@@ -372,6 +372,10 @@ body {
   content: "\e920";
 }
 
+.icon-grip:before{
+  content: "\e92a";
+}
+
 .icon-sort-up:before {
   content: "\e921";
 }
@@ -398,6 +402,10 @@ body {
 }
 .icon-wrangle:before {
   content: "\e928";
+}
+
+.icon-add:before {
+  content:"\e930";
 }
 
 .icon-facebook:before{
@@ -468,6 +476,10 @@ body {
 .icon-more-white:before {
   content: "\e914";
   color: #FFFFFF;
+}
+
+.icon-grip:before{
+  font-size: 3rem;
 }
 
 /* icon next to Wf Module title */
@@ -1386,8 +1398,6 @@ img.logo {
 }
 
 .card .second-level {
-  margin-left: 0.5rem;
-  margin-right:0.5rem;
   opacity: 0.7;
   position: relative;
   height: 4rem;
@@ -1398,6 +1408,24 @@ img.logo {
 .card .second-level:hover {
   background-color: #4E6878;
   opacity: 1;
+
+}
+
+.ml-handle{
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  opacity:0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ml-handle:hover{
+  opacity:0.6;
 }
 
 .cat-container {

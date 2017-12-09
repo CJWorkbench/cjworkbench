@@ -559,21 +559,35 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex flex-row align-items-center"
+                                  className="second-level d-flex"
                                 >
                                   <div
-                                    className="ml-icon-container"
+                                    className="d-flex flex-row align-items-center"
                                   >
                                     <div
-                                      className="icon-url ml-icon"
-                                    />
-                                  </div>
-                                  <div>
-                                    <div
-                                      className="content-5 ml-module-name"
+                                      className="ml-icon-container"
                                     >
-                                      Load from Enigma
+                                      <div
+                                        className="icon-url ml-icon"
+                                      />
                                     </div>
+                                    <div>
+                                      <div
+                                        className="content-5 ml-module-name"
+                                      >
+                                        Load from Enigma
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="ml-handle"
+                                  >
+                                    <div
+                                      className="icon-add"
+                                    />
+                                    <div
+                                      className="icon-grip"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -608,21 +622,35 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex flex-row align-items-center"
+                                  className="second-level d-flex"
                                 >
                                   <div
-                                    className="ml-icon-container"
+                                    className="d-flex flex-row align-items-center"
                                   >
                                     <div
-                                      className="icon-url ml-icon"
-                                    />
-                                  </div>
-                                  <div>
-                                    <div
-                                      className="content-5 ml-module-name"
+                                      className="ml-icon-container"
                                     >
-                                      Load from Facebork
+                                      <div
+                                        className="icon-url ml-icon"
+                                      />
                                     </div>
+                                    <div>
+                                      <div
+                                        className="content-5 ml-module-name"
+                                      >
+                                        Load from Facebork
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="ml-handle"
+                                  >
+                                    <div
+                                      className="icon-add"
+                                    />
+                                    <div
+                                      className="icon-grip"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -725,21 +753,35 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex flex-row align-items-center"
+                                  className="second-level d-flex"
                                 >
                                   <div
-                                    className="ml-icon-container"
+                                    className="d-flex flex-row align-items-center"
                                   >
                                     <div
-                                      className="icon-chart ml-icon"
-                                    />
-                                  </div>
-                                  <div>
-                                    <div
-                                      className="content-5 ml-module-name"
+                                      className="ml-icon-container"
                                     >
-                                      Chartbuilder
+                                      <div
+                                        className="icon-chart ml-icon"
+                                      />
                                     </div>
+                                    <div>
+                                      <div
+                                        className="content-5 ml-module-name"
+                                      >
+                                        Chartbuilder
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="ml-handle"
+                                  >
+                                    <div
+                                      className="icon-add"
+                                    />
+                                    <div
+                                      className="icon-grip"
+                                    />
                                   </div>
                                 </div>
                               </div>
