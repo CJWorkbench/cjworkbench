@@ -82,7 +82,8 @@ export default class ChartEditor extends React.Component {
           <div className="label-margin t-d-gray content-3">
             Chart Title
           </div>
-          <textarea
+          <input
+            type="text"
             className="wfmoduleStringInput t-d-gray content-2 text-field"
             value={this.state.metadata.title}
             onChange={this.onChangeTitle} />
@@ -93,7 +94,8 @@ export default class ChartEditor extends React.Component {
               <div className="label-margin t-d-gray content-3">
                 Axis prefix
               </div>
-              <textarea
+              <input
+                type="text"
                 className="wfmoduleStringInput t-d-gray content-2 text-field"
                 value={this.state.chartProps.scale.primaryScale.prefix}
                 onChange={this.onChangePrefix} />
@@ -103,7 +105,8 @@ export default class ChartEditor extends React.Component {
               <div className="label-margin t-d-gray content-3">
                 Axis suffix
               </div>
-              <textarea
+              <input
+                type="text"
                 className="wfmoduleStringInput t-d-gray content-2 text-field"
                 value={this.state.chartProps.scale.primaryScale.suffix}
                 onChange={this.onChangeSuffix} />

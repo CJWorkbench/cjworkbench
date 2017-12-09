@@ -1070,6 +1070,7 @@ svg .svg-background {
   stroke-width: 2px;
 }
 .axis text.tick {
+  font-size: 10px;
   fill: #666;
   shape-rendering: crispEdges;
 }
