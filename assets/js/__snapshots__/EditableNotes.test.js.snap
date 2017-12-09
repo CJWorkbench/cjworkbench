@@ -88,7 +88,7 @@ exports[`EditableNotes Read-only, starts NOT focused Renders plain note 1`] = `
   onClick={[Function]}
 >
   <span
-    className="content-3 t-d-gray"
+    className="editable-notes-field content-3 t-d-gray"
   >
     This is the best module
   </span>
