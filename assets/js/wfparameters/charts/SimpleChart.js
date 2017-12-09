@@ -4,7 +4,6 @@ import React from 'react'
 import { store, wfModuleStatusAction } from '../../workflow-reducer'
 import PropTypes from 'prop-types'
 
-
 var RendererWrapper = require("chartbuilder/src/js/components/RendererWrapper");
 var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
 var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
@@ -17,7 +16,7 @@ var SessionStore = require("chartbuilder/src/js/stores/SessionStore");
 var ErrorStore = require("chartbuilder/src/js/stores/ErrorStore");
 
 require("../../../css/chartbuilder_fonts_colors.css")
-require("chartbuilder-ui/dist/styles.css");
+require("../../../css/chartbuilder.css");
 
 // adapter, eventually obsolete with CSV format /input call, or direct edit of ChartBuilder data model
 function JSONtoCSV(d) {
@@ -134,10 +133,11 @@ export default class SimpleChartParameter extends React.Component {
         var modelText = this.props.loadState();
         var defaults = JSON.parse(JSON.stringify(chartConfig.xy.defaultProps));
         var seriesCount;
-        var dataChanged = (modelText == ''); //UGH this is bad, there is a better way to do this
+        var dataChanged = (modelText === ''); //UGH this is bad, there is a better way to do this
 
         // Set this so that all new series get set to the chart type
         defaults.chartProps.chartSettings[0].type = this.props.chartType;
+        defaults.chartProps.scale.typeSettings.maxLength = 7;
 
         if (dataChanged) {
           model = JSON.parse(JSON.stringify(defaults));
@@ -155,7 +155,8 @@ export default class SimpleChartParameter extends React.Component {
           {chartProps: chartConfig.xy.parser({defaultProps: defaults}, model.chartProps)}
         );
 
-        if (newState.chartProps.chartSettings.length !== seriesCount) {
+        if (newState.chartProps.chartSettings.length !== seriesCount
+          || typeof newState.chartProps.scale.hasDate !== typeof model.chartProps.scale.hasDate) {
           dataChanged = true;
         }
 
