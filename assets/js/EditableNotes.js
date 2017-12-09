@@ -61,7 +61,7 @@ export default class EditableNotes extends React.Component {
               onClick={this.handleClick}
             >
               {this.props.isReadOnly
-                ? ( <span className='content-3 t-d-gray'>{this.props.value}</span> )
+                ? ( <span className='editable-notes-field content-3 t-d-gray'>{this.props.value}</span> )
                 : (
                     <Textarea
                       value={this.state.value}
