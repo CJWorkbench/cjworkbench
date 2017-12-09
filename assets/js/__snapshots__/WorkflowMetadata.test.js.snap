@@ -56,11 +56,11 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
           >
             -
           </span>
-          <li
+          <div
             className="t-white-u"
           >
             private
-          </li>
+          </div>
         </div>
       </li>
     </ul>
@@ -226,11 +226,11 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
           >
             -
           </span>
-          <li
+          <div
             className="t-white-u"
           >
             public
-          </li>
+          </div>
         </div>
       </li>
     </ul>
@@ -294,11 +294,11 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
           >
             -
           </span>
-          <li
+          <div
             className="t-white-u"
           >
             private
-          </li>
+          </div>
         </div>
       </li>
     </ul>

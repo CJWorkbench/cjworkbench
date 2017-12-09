@@ -166,11 +166,11 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                     >
                       -
                     </span>
-                    <li
+                    <div
                       className="t-white-u"
                     >
                       private
-                    </li>
+                    </div>
                   </div>
                 </li>
               </ul>
@@ -716,11 +716,11 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                     >
                       -
                     </span>
-                    <li
+                    <div
                       className="t-white-u"
                     >
                       public
-                    </li>
+                    </div>
                   </div>
                 </li>
               </ul>
@@ -1187,11 +1187,11 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
                     >
                       -
                     </span>
-                    <li
+                    <div
                       className="t-white-u"
                     >
                       public
-                    </li>
+                    </div>
                   </div>
                 </li>
               </ul>
@@ -1352,11 +1352,11 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
                     >
                       -
                     </span>
-                    <li
+                    <div
                       className="t-white-u"
                     >
                       public
-                    </li>
+                    </div>
                   </div>
                 </li>
               </ul>

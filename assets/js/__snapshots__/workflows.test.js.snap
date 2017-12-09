@@ -249,11 +249,11 @@ exports[`Workflow list page renders correctly 1`] = `
                               >
                                 -
                               </span>
-                              <li
+                              <div
                                 className="t-f-blue"
                               >
                                 public
-                              </li>
+                              </div>
                             </div>
                           </li>
                         </ul>
@@ -447,11 +447,11 @@ exports[`Workflow list page renders correctly 1`] = `
                               >
                                 -
                               </span>
-                              <li
+                              <div
                                 className="t-f-blue"
                               >
                                 private
-                              </li>
+                              </div>
                             </div>
                           </li>
                         </ul>
@@ -645,11 +645,11 @@ exports[`Workflow list page renders correctly 1`] = `
                               >
                                 -
                               </span>
-                              <li
+                              <div
                                 className="t-f-blue"
                               >
                                 public
-                              </li>
+                              </div>
                             </div>
                           </li>
                         </ul>
@@ -843,11 +843,11 @@ exports[`Workflow list page renders correctly 1`] = `
                               >
                                 -
                               </span>
-                              <li
+                              <div
                                 className="t-f-blue"
                               >
                                 private
-                              </li>
+                              </div>
                             </div>
                           </li>
                         </ul>

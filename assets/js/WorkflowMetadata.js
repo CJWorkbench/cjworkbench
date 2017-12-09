@@ -113,7 +113,7 @@ export default class WorkflowMetadata extends React.Component {
       ? null
       : <div className="list-inline-item test-button d-flex content-3 " onClick={this.togglePrivacyModal}>
           <span className='metadataSeparator'>-</span>
-          <li className={''+publicColor}>{this.state.isPublic ? 'public' : 'private'}</li>
+          <div className={''+publicColor}>{this.state.isPublic ? 'public' : 'private'}</div>
         </div>
 
     return (
