@@ -21,7 +21,7 @@ export default class CjwDateScaleSettings extends DateScaleSettings {
 				<div>
 					<div className="label-margin t-d-gray content-3">Data Timezone</div>
           <select
-            className="custom-select dropdown-selector"
+            className="custom-select parameter-base dropdown-selector"
             onChange={(e) => this._handleDateScaleUpdate("inputTZ", e.target.value)} >
             {this.localizeTimeZoneOptions(this._config.timeZoneOptions, this.props.nowOffset).map((opt) => {
               return (<option key={opt.value} value={opt.value}>{opt.content}</option>)
@@ -48,7 +48,7 @@ export default class CjwDateScaleSettings extends DateScaleSettings {
           <div className="col-sm-4">
             <div className="label-margin t-d-gray content-3">Date frequency</div>
       			<select
-              className="custom-select dropdown-selector"
+              className="custom-select parameter-base dropdown-selector"
               onChange={(e) => this._handleDateScaleUpdate("dateFrequency", e.target.value)}
               defaultValue={this.props.scale.dateSettings.dateFrequency}>
               {this._config.dateFrequencyOptions.map((opt) => {
@@ -65,7 +65,7 @@ export default class CjwDateScaleSettings extends DateScaleSettings {
           <div className="col-sm-4">
             <div className="label-margin t-d-gray content-3">Date format</div>
       			<select
-              className="custom-select dropdown-selector"
+              className="custom-select parameter-base dropdown-selector"
               onChange={(e) => this._handleDateScaleUpdate("dateFormat", e.target.value)}
               defaultValue={this.props.scale.dateSettings.dateFormat}>
               {this.state.dateFormatOptions.map((opt) => {

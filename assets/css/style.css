@@ -509,18 +509,24 @@ body {
   background-color:transparent;
 }
 
-/* ---- Data Input ---- */
+/************** ---- Parameters and Data Input ---- ************/
+
+.parameter-base {
+  height:3.5rem;
+  border-radius: 0;
+  border: 1px solid #E7E7E7;
+  background-color: #FFFFFF !important;
+}
 
 .text-field {
-  background-color: #FFFFFF !important;
-  border: 1px solid #f1f1f1;
   padding: 0 1.25rem;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  line-height: 4rem;
-  height: 4rem;
+  line-height: 3.5rem;
   width: 100%;
+  resize: none;
+  overflow:hidden;
 }
 .text-field:active {
   box-shadow: 0 0 1px 1px #48C8D7;
@@ -529,10 +535,9 @@ body {
 .number-field{
   width: 100%;
   resize: none;
-  background-color: #FFFFFF !important;
-  border: 1px solid #E7E7E7;
-  border-radius: 0px;
-  padding: 1rem 1.5rem 1rem 1.5rem;
+  line-height: 3.5rem;
+  padding: 0 0 0 1.25rem;
+
 }
 
 .text-field input::placeholder {
@@ -544,11 +549,11 @@ body {
 }
 
 .text-field-large {
-  height: 16rem;
+  height: 12rem;
   width: 100%;
-  background-color: #FFFFFF !important;
-  border: 1px solid #E7E7E7;
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  resize: vertical;
+  overflow:hidden;
 }
 
 .text-field-non-edit {
@@ -562,36 +567,90 @@ body {
   resize: none;
 }
 
-.wfmoduleStringInput{
-  width: 100%;
-  resize: none;
-  overflow:hidden;
-}
-
-.wfmoduleTextInput{
-  width: 100%;
-  resize: vertical;
-  overflow:hidden;
-}
-
 .url-link{
-  height: 4rem;
   width: 100%;
-  background-color: #FFFFFF !important;
-  border: 1px solid #E7E7E7;
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
-  border-radius: 0px;
   margin-bottom: 1rem;
 }
 
-/* Hacks for registration/login/etc before we dig in to the form widgets */
+/* ---- Dropdowns and Lists---- */
 
+.line-item-data {
+  height: 4rem;
+  background-color: #FFFFFF;
+  color: #686768;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 2.5rem;
+  cursor: pointer;
+}
+
+.line-item-data:hover {
+  background-color: #F5F5F5;
+}
+
+.line-item-data-selected {
+  height: 4rem;
+  background-color: #48C8D7;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 2.5rem;
+}
+
+.dropdown-selector {
+  width: 15rem;
+  font-size: 1.3rem;
+  color:#686768;
+  border-radius:0;
+}
+
+.input-dropdown {
+  height: 4rem !important;
+  color: #686768;
+  background-color: #FFFFFF;
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+  border-radius:0px;
+  border: 1px solid #E7E7E7
+}
+
+.dropdown-menu {
+  margin-top: 1rem;
+  border:1px solid rgba(171,185,194,0.1);
+  /*border:1px solid #b4b4b4;*/
+  border-radius: 5px;
+  box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.10);
+  padding:0.5rem 0 0.5rem 0;
+}
+
+.dropdown-menu-item {
+  height: 4rem;
+  width: 14rem;
+  background-color: #FFFFFF;
+  color: #686768;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 1rem;
+}
+
+.dropdown-divider{
+  margin:0px;
+}
+
+.dropdown-menu-item:hover {
+  background-color: #F9f9f9;
+}
+
+
+/* Registration/login/etc before we dig in to the form widgets */
 
 .account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"] {
-  height: 4rem;
   width: 100%;
-  background-color: #FFFFFF !important;
-  border: 1px solid #E7E7E7;
   padding: 1.3rem 1.5rem 1.3rem 1.5rem;
   margin-bottom:1.5rem;
   font-size: 1.5rem;
@@ -615,7 +674,34 @@ body {
   margin-top: 3rem;
 }
 
+/*** Module Parameters spacing within modules ***/
 
+.label-margin {
+  margin-bottom: 0.2rem;
+  color:#b2b2b2;
+}
+
+.label{
+  margin-bottom: 0px;
+}
+
+/*Style for grouping parameters*/
+.sameLine-param{
+  display: inline-block;
+  width:30%;
+  margin-right: 1.5rem;
+}
+
+.sameLine-param:last-child{
+  margin-right: 0;
+}
+
+
+/***** Bottom margin for a parameter, or a group of parameters ******/
+
+.parameter-margin:not(:last-child) {
+  margin-bottom: 1.5rem;
+}
 
 /* ---- Buttons ---- */
 
@@ -630,12 +716,6 @@ body {
   margin-top: 3rem;
   justify-content: flex-end;
 }
-
-
-
-
-
-
 
 /* - Button Colors - */
 .button-white {
@@ -809,76 +889,6 @@ body {
   background-color:#2f4e87;
   color:#fff;
   text-decoration: none;
-}
-/* ---- Dropdowns and Lists---- */
-
-.line-item-data {
-  height: 4rem;
-  background-color: #FFFFFF;
-  color: #686768;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-left: 2.5rem;
-  cursor: pointer;
-}
-.line-item-data:hover {
-  background-color: #F5F5F5;
-}
-.line-item-data-selected {
-  height: 4rem;
-  background-color: #48C8D7;
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-left: 2.5rem;
-}
-
-.dropdown-selector {
-  height: 4rem;
-  width: 15rem;
-  border-radius:0px;
-  border: 1px solid #f1f1f1;
-  font-size: 1.3rem;
-  color:#686768;
-}
-
-.input-dropdown {
-  height: 4rem !important;
-  color: #686768;
-  background-color: #FFFFFF;
-	font-size: 1.4rem;
-	font-weight: 500;
-	line-height: 1.4rem;
-  border-radius:0px;
-  border: 1px solid #E7E7E7
-}
-
-.dropdown-menu {
-  margin-top: 1rem;
-  border:1px solid rgba(171,185,194,0.1);
-  /*border:1px solid #b4b4b4;*/
-  border-radius: 5px;
-  box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.10);
-  padding:0.5rem 0 0.5rem 0;
-}
-
-.dropdown-menu-item {
-  height: 4rem;
-  width: 14rem;
-  background-color: #FFFFFF;
-  color: #686768;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-left: 1rem;
-}
-.dropdown-divider{
-  margin:0px;
-}
-.dropdown-menu-item:hover {
-  background-color: #F9f9f9;
 }
 
 
@@ -1583,14 +1593,6 @@ img.logo {
 
 /*Table*/
 
-.react-grid-header {
-
-}
-
-.react-grid-HeaderRow {
-
-}
-
 .react-grid-HeaderCell{
   background-color: #7A9BB0;
   color:white;
@@ -1712,34 +1714,6 @@ svg .svg-background{
   border: 1px red;
 }
 
-/*** Module Parameters spacing within modules ***/
-
-.label-margin {
-  margin-bottom: 0.2rem;
-  color:#b2b2b2;
-}
-
-.label{
-  margin-bottom: 0px;
-}
-
-
-
-/*Style for grouping parameters*/
-.group-param{
-  display: inline-block;
-  width:30%;
-  margin-right: 2rem;
-}
-
-.group-param:last-child{
-  margin-right: 0;
-}
-
-/*Bottom margin for a set of grouped parameters*/
-.parameter-margin:not(:last-child) {
-  margin-bottom: 1.5rem;
-}
 
 /* ---- Wf Module status bars ---- */
 
@@ -1815,25 +1789,23 @@ svg .svg-background{
 }
 
 /*checkbox-list*/
-.checkbox-list{
-  padding:0px;
-  width:43rem;
-}
+
 
 .checkbox-container {
   background-color: #FFFFFF;
-  height: 4rem;
-  width: 49.5%;
-  margin: 1px;
+  height: 3.5rem;
+  width: 49.7%;
+  margin: 0.5px;
   padding: 0 1.5rem;
   display:flex;
   align-items: center;
 }
 
 .list-wrapper{
-  max-height: 20rem;
+  max-height: 12rem;
   overflow: scroll;
-  border:1px solid #f1f1f1;
+  background-color: #e7e7e7;
+  border: 1px solid #e7e7e7;
 }
 
 .list-scroll{
@@ -1846,7 +1818,7 @@ svg .svg-background{
 }
 .checkbox-wrapper{
   margin-right: 3rem;
-  margin-top:-1.3rem;
+  margin-top:-1rem;
   display:inline-block;
   overflow:hidden;
 }

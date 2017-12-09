@@ -9,7 +9,7 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
   selectedCols="foo,bar,baz"
 >
   <div
-    className="container list-wrapper mb-3"
+    className="container list-wrapper"
   >
     <div
       className="row list-scroll"
@@ -154,7 +154,7 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
   selectedCols="foo,bar,baz"
 >
   <div
-    className="container list-wrapper mb-3"
+    className="container list-wrapper"
   >
     <div
       className="row list-scroll"

@@ -23,7 +23,7 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
     className=""
   >
     <ul
-      className="list-inline workflow-meta content-3 "
+      className="list-inline workflow-meta content-3 t-white"
     >
       <span>
         <li
@@ -56,11 +56,11 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
           >
             -
           </span>
-          <div
+          <li
             className="t-white-u"
           >
             private
-          </div>
+          </li>
         </div>
       </li>
     </ul>
@@ -193,7 +193,7 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
     className=""
   >
     <ul
-      className="list-inline workflow-meta content-3 "
+      className="list-inline workflow-meta content-3 t-white"
     >
       <span>
         <li
@@ -226,11 +226,11 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
           >
             -
           </span>
-          <div
+          <li
             className="t-white-u"
           >
             public
-          </div>
+          </li>
         </div>
       </li>
     </ul>
@@ -261,7 +261,7 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
     className=""
   >
     <ul
-      className="list-inline workflow-meta content-3 "
+      className="list-inline workflow-meta content-3 t-white"
     >
       <span>
         <li
@@ -294,11 +294,11 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
           >
             -
           </span>
-          <div
+          <li
             className="t-white-u"
           >
             private
-          </div>
+          </li>
         </div>
       </li>
     </ul>
@@ -329,7 +329,7 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
     className=""
   >
     <ul
-      className="list-inline workflow-meta content-3 "
+      className="list-inline workflow-meta content-3 t-white"
     >
       <span>
         <li

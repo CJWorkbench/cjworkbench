@@ -216,7 +216,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         className=""
                       >
                         <ul
-                          className="list-inline workflow-meta content-3 "
+                          className="list-inline workflow-meta content-3 t-m-gray"
                         >
                           <span>
                             <li
@@ -249,11 +249,11 @@ exports[`Workflow list page renders correctly 1`] = `
                               >
                                 -
                               </span>
-                              <div
+                              <li
                                 className="t-f-blue"
                               >
                                 public
-                              </div>
+                              </li>
                             </div>
                           </li>
                         </ul>
@@ -414,7 +414,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         className=""
                       >
                         <ul
-                          className="list-inline workflow-meta content-3 "
+                          className="list-inline workflow-meta content-3 t-m-gray"
                         >
                           <span>
                             <li
@@ -447,11 +447,11 @@ exports[`Workflow list page renders correctly 1`] = `
                               >
                                 -
                               </span>
-                              <div
+                              <li
                                 className="t-f-blue"
                               >
                                 private
-                              </div>
+                              </li>
                             </div>
                           </li>
                         </ul>
@@ -612,7 +612,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         className=""
                       >
                         <ul
-                          className="list-inline workflow-meta content-3 "
+                          className="list-inline workflow-meta content-3 t-m-gray"
                         >
                           <span>
                             <li
@@ -645,11 +645,11 @@ exports[`Workflow list page renders correctly 1`] = `
                               >
                                 -
                               </span>
-                              <div
+                              <li
                                 className="t-f-blue"
                               >
                                 public
-                              </div>
+                              </li>
                             </div>
                           </li>
                         </ul>
@@ -810,7 +810,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         className=""
                       >
                         <ul
-                          className="list-inline workflow-meta content-3 "
+                          className="list-inline workflow-meta content-3 t-m-gray"
                         >
                           <span>
                             <li
@@ -843,11 +843,11 @@ exports[`Workflow list page renders correctly 1`] = `
                               >
                                 -
                               </span>
-                              <div
+                              <li
                                 className="t-f-blue"
                               >
                                 private
-                              </div>
+                              </li>
                             </div>
                           </li>
                         </ul>

@@ -122,17 +122,17 @@ export default class WfParameter extends React.Component {
         // Different size and style if it's a multiline string
         var sclass, srows;
         if (!this.props.p.parameter_spec.multiline) {
-          sclass='wfmoduleStringInput t-d-gray content-2 text-field';
+          sclass='parameter-base t-d-gray content-2 text-field';
           srows = 1;
         } else {
-          sclass='wfmoduleTextInput t-d-gray info-1 text-field-large';
+          sclass='parameter-base t-d-gray info-1 text-field-large';
           srows = 4;
         }
 
         return (
           <div className='parameter-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
-            <textarea
+            <input type="text"
               readOnly={this.props.isReadOnly}
               className={sclass}
               rows={srows}
@@ -147,11 +147,11 @@ export default class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className='parameter-margin group-param'>
+          <div className='parameter-margin sameLine-param'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
-            <textarea
+            <input type="text"
               readOnly={this.props.isReadOnly}
-              className='number-field t-d-gray content-3'
+              className='number-field parameter-base t-d-gray content-3'
               rows='1'
               defaultValue={this.props.p.value}
               onBlur={this.blur}
@@ -186,7 +186,7 @@ export default class WfParameter extends React.Component {
 
       case 'menu':
         return (
-          <div className='parameter-margin group-param'>
+          <div className='parameter-margin sameLine-param'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <MenuParam
               name={this.name}
@@ -199,7 +199,7 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className='parameter-margin group-param'>
+          <div className='parameter-margin sameLine-param'>
             <div className='t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
@@ -212,7 +212,7 @@ export default class WfParameter extends React.Component {
 
       case 'multicolumn':
         return (
-          <div className='parameter-margin checkbox-list'>
+          <div className='parameter-margin'>
             <div className='ml-1 t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}

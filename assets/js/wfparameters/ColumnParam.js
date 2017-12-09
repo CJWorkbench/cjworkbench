@@ -37,7 +37,7 @@ export default class ColumnParam extends React.Component {
   onChange(evt) {
     var colName = this.state.colNames[evt.target.value];
     if (colName == "Select") {
-      colName = ""; 
+      colName = "";
     }
     this.setState({selectedCol: colName});
     this.props.onChange(colName);
@@ -57,7 +57,7 @@ export default class ColumnParam extends React.Component {
 
     return (
         <select
-          className='custom-select dropdown-selector'
+          className='custom-select parameter-base dropdown-selector'
           value={idx}
           onChange={this.onChange}
           disabled={this.props.isReadOnly}

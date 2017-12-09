@@ -76,7 +76,7 @@ export default class ColumnSelector extends React.Component {
       });
 
     return (
-      <div className='container list-wrapper mb-3'>
+      <div className='container list-wrapper'>
         <div className='row list-scroll'>
           { checkboxes }
         </div>

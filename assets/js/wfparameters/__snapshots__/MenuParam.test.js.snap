@@ -2,7 +2,7 @@
 
 exports[`renders correctly 1`] = `
 <select
-  className="custom-select dropdown-selector"
+  className="custom-select parameter-base dropdown-selector"
   onChange={[Function]}
   value={1}
 >
