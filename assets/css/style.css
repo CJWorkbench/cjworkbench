@@ -1508,6 +1508,11 @@ img.logo {
 }
 
 .react-autosuggest__suggestion {
+  padding: 0;
+  margin: 0;
+}
+
+.react-autosuggest__suggestion-inner {
   cursor: pointer;
   height:4rem;
   padding: 0.5rem 0  0.5rem 2.8rem;
@@ -1517,7 +1522,7 @@ img.logo {
   align-items: center;
 }
 
-.react-autosuggest__suggestion--highlighted {
+.react-autosuggest__suggestion--highlighted .react-autosuggest__suggestion-inner  {
   background-color: #4E6878;
   width:100%;
   opacity:1;

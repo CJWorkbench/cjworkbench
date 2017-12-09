@@ -32,9 +32,11 @@ class ModuleSearchResult extends React.Component {
   }
   render() {
     return this.props.connectDragSource(
-      <div className='d-flex align-items-center'>
-        <span className={'ml-icon-search icon-' + this.props.icon}></span>
-        <span className='mt-1 content-3'><strong>{this.props.name}</strong></span>
+      <div className='react-autosuggest__suggestion-inner'>
+        <div className='d-flex align-items-center'>
+          <span className={'ml-icon-search icon-' + this.props.icon}></span>
+          <span className='mt-1 content-3'><strong>{this.props.name}</strong></span>
+        </div>
       </div>
     )
   }
