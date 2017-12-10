@@ -491,7 +491,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
               className="card b-l-gray library-card-category-open"
             >
               <div
-                className="cat-open"
+                className="ml-cat"
               >
                 <div
                   className="first-level d-flex align-items-center"
@@ -501,10 +501,10 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                     className="cat-container"
                   >
                     <div
-                      className="icon-sort-down-vl-gray ml-sort button-icon-library ml-3 mb-1"
+                      className="icon-sort-up-vl-gray ml-sort mb-1"
                     />
                     <span
-                      className="content-3 t-vl-gray ml-3 ml-cat"
+                      className="content-3 t-vl-gray ml-3"
                     >
                       Add data
                     </span>
@@ -583,9 +583,6 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                                     className="ml-handle"
                                   >
                                     <div
-                                      className="icon-add"
-                                    />
-                                    <div
                                       className="icon-grip"
                                     />
                                   </div>
@@ -646,9 +643,6 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                                     className="ml-handle"
                                   >
                                     <div
-                                      className="icon-add"
-                                    />
-                                    <div
                                       className="icon-grip"
                                     />
                                   </div>
@@ -685,7 +679,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
               className="card b-l-gray library-card-category-closed"
             >
               <div
-                className="cat-open"
+                className="ml-cat"
               >
                 <div
                   className="first-level d-flex align-items-center"
@@ -695,10 +689,10 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                     className="cat-container"
                   >
                     <div
-                      className="icon-sort-right-vl-gray button-icon-library ml-3"
+                      className="icon-sort-down-vl-gray ml-sort mb-1"
                     />
                     <span
-                      className="content-3 t-vl-gray ml-3 ml-cat"
+                      className="content-3 t-vl-gray ml-3"
                     >
                       Visualize
                     </span>
@@ -776,9 +770,6 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                                   <div
                                     className="ml-handle"
                                   >
-                                    <div
-                                      className="icon-add"
-                                    />
                                     <div
                                       className="icon-grip"
                                     />
