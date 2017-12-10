@@ -64,7 +64,6 @@ class Module extends React.Component {
               </div>
             </div>
             <div className='ml-handle'>
-              <div className='icon-add'></div>
               <div className='icon-grip'></div>
             </div>
           </div>
