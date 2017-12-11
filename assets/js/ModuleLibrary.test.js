@@ -70,7 +70,7 @@ it('ModuleLibrary renders open when not read-only, with list of module categorie
     expect(wrapper).toMatchSnapshot();
 
     // check that module categories have loaded
-    expect(wrapper.find('.cat-open')).toHaveLength(0);
+    expect(wrapper.find('.ml-cat')).toHaveLength(2);
 
     // check that modules have loaded
     expect(wrapper.find('.ml-icon-container')).toHaveLength(3);
