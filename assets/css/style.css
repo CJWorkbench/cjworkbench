@@ -1253,6 +1253,10 @@ img.logo {
   border-color: rgba(118,155,176,0.5);
 }
 
+.card-block{
+  position:relative;
+ }
+
 /* Output Pane */
 .outputpane {
   flex: 1 1 auto;
