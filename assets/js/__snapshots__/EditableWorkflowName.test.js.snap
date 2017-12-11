@@ -15,29 +15,14 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
     className="editable-name-container"
     onClick={[Function]}
   >
-    <TextareaAutosize
+    <input
       className="editable-title-field"
-      maxRows={1}
       onBlur={[Function]}
       onChange={[Function]}
-      onHeightChange={[Function]}
       onKeyPress={[Function]}
-      useCacheForDOMMeasurements={false}
+      type="text"
       value="Test Title"
-    >
-      <textarea
-        className="editable-title-field"
-        onBlur={[Function]}
-        onChange={[Function]}
-        onKeyPress={[Function]}
-        style={
-          Object {
-            "height": -4,
-          }
-        }
-        value="Test Title"
-      />
-    </TextareaAutosize>
+    />
   </div>
 </EditableWorkflowName>
 `;

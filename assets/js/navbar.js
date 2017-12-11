@@ -233,20 +233,18 @@ export class WorkflowNavBar extends React.Component {
       <div>
         <div className="d-flex justify-content-center">{spinner}</div>
         <nav className="navbar-workflows">
-          <div className="navbar-brand d-flex flex-row align-items-center">
-            <div className='title-metadata-stack'>
-              <EditableWorkflowName
-                value={this.props.workflow.name}
-                wfId={this.props.workflow.id}
-                isReadOnly={this.props.workflow.read_only}
-                api={this.props.api}
-              />
-              <WorkflowMetadata
-                workflow={this.props.workflow}
-                api={this.props.api}
-                isPublic={this.state.isPublic}
-              />
-            </div>
+          <div className='title-metadata-stack'>
+            <EditableWorkflowName
+              value={this.props.workflow.name}
+              wfId={this.props.workflow.id}
+              isReadOnly={this.props.workflow.read_only}
+              api={this.props.api}
+            />
+            <WorkflowMetadata
+              workflow={this.props.workflow}
+              api={this.props.api}
+              isPublic={this.state.isPublic}
+            />
           </div>
           <div className='d-flex flex-row align-items-center'>
             {duplicate}

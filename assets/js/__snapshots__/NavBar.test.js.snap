@@ -68,115 +68,96 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
       className="navbar-workflows"
     >
       <div
-        className="navbar-brand d-flex flex-row align-items-center"
+        className="title-metadata-stack"
       >
-        <div
-          className="title-metadata-stack"
+        <EditableWorkflowName
+          api={
+            Object {
+              "duplicateWorkflow": [Function],
+              "setWorkflowPublic": [Function],
+            }
+          }
+          value="Original Version"
+          wfId={808}
         >
-          <EditableWorkflowName
-            api={
-              Object {
-                "duplicateWorkflow": [Function],
-                "setWorkflowPublic": [Function],
-              }
-            }
-            value="Original Version"
-            wfId={808}
+          <div
+            className="editable-name-container"
+            onClick={[Function]}
           >
-            <div
-              className="editable-name-container"
-              onClick={[Function]}
-            >
-              <TextareaAutosize
-                className="editable-title-field"
-                maxRows={1}
-                onBlur={[Function]}
-                onChange={[Function]}
-                onHeightChange={[Function]}
-                onKeyPress={[Function]}
-                useCacheForDOMMeasurements={false}
-                value="Original Version"
-              >
-                <textarea
-                  className="editable-title-field"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  onKeyPress={[Function]}
-                  style={
-                    Object {
-                      "height": -4,
-                    }
-                  }
-                  value="Original Version"
-                />
-              </TextareaAutosize>
-            </div>
-          </EditableWorkflowName>
-          <WorkflowMetadata
-            api={
-              Object {
-                "duplicateWorkflow": [Function],
-                "setWorkflowPublic": [Function],
-              }
+            <input
+              className="editable-title-field"
+              onBlur={[Function]}
+              onChange={[Function]}
+              onKeyPress={[Function]}
+              type="text"
+              value="Original Version"
+            />
+          </div>
+        </EditableWorkflowName>
+        <WorkflowMetadata
+          api={
+            Object {
+              "duplicateWorkflow": [Function],
+              "setWorkflowPublic": [Function],
             }
-            isPublic={false}
-            workflow={
-              Object {
-                "id": 808,
-                "name": "Original Version",
-                "owner_name": "Fred Frederson",
-                "public": false,
-              }
+          }
+          isPublic={false}
+          workflow={
+            Object {
+              "id": 808,
+              "name": "Original Version",
+              "owner_name": "Fred Frederson",
+              "public": false,
             }
+          }
+        >
+          <div
+            className=""
           >
-            <div
-              className=""
+            <ul
+              className="list-inline workflow-meta content-3 t-white"
             >
-              <ul
-                className="list-inline workflow-meta content-3 t-white"
+              <span>
+                <li
+                  className="list-inline-item content-3"
+                >
+                  by 
+                  Fred Frederson
+                </li>
+                <span
+                  className="metadataSeparator"
+                >
+                  -
+                </span>
+              </span>
+              <li
+                className="list-inline-item content-3 t-white"
               >
-                <span>
-                  <li
-                    className="list-inline-item content-3"
-                  >
-                    by 
-                    Fred Frederson
-                  </li>
+                Updated 
+                now
+              </li>
+              <li
+                className="list-inline-item content-3"
+              >
+                <div
+                  className="list-inline-item test-button d-flex content-3 "
+                  onClick={[Function]}
+                >
                   <span
                     className="metadataSeparator"
                   >
                     -
                   </span>
-                </span>
-                <li
-                  className="list-inline-item content-3 t-white"
-                >
-                  Updated 
-                  now
-                </li>
-                <li
-                  className="list-inline-item content-3"
-                >
                   <div
-                    className="list-inline-item test-button d-flex content-3 "
-                    onClick={[Function]}
+                    className="t-white-u"
                   >
-                    <span
-                      className="metadataSeparator"
-                    >
-                      -
-                    </span>
-                    <div
-                      className="t-white-u"
-                    >
-                      private
-                    </div>
+                    private
                   </div>
-                </li>
-              </ul>
-            </div>
-          </WorkflowMetadata>
-        </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </WorkflowMetadata>
       </div>
       <div
         className="d-flex flex-row align-items-center"
@@ -618,115 +599,96 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
       className="navbar-workflows"
     >
       <div
-        className="navbar-brand d-flex flex-row align-items-center"
+        className="title-metadata-stack"
       >
-        <div
-          className="title-metadata-stack"
+        <EditableWorkflowName
+          api={
+            Object {
+              "duplicateWorkflow": [Function],
+              "setWorkflowPublic": [Function],
+            }
+          }
+          value="Original Version"
+          wfId={808}
         >
-          <EditableWorkflowName
-            api={
-              Object {
-                "duplicateWorkflow": [Function],
-                "setWorkflowPublic": [Function],
-              }
-            }
-            value="Original Version"
-            wfId={808}
+          <div
+            className="editable-name-container"
+            onClick={[Function]}
           >
-            <div
-              className="editable-name-container"
-              onClick={[Function]}
-            >
-              <TextareaAutosize
-                className="editable-title-field"
-                maxRows={1}
-                onBlur={[Function]}
-                onChange={[Function]}
-                onHeightChange={[Function]}
-                onKeyPress={[Function]}
-                useCacheForDOMMeasurements={false}
-                value="Original Version"
-              >
-                <textarea
-                  className="editable-title-field"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  onKeyPress={[Function]}
-                  style={
-                    Object {
-                      "height": -4,
-                    }
-                  }
-                  value="Original Version"
-                />
-              </TextareaAutosize>
-            </div>
-          </EditableWorkflowName>
-          <WorkflowMetadata
-            api={
-              Object {
-                "duplicateWorkflow": [Function],
-                "setWorkflowPublic": [Function],
-              }
+            <input
+              className="editable-title-field"
+              onBlur={[Function]}
+              onChange={[Function]}
+              onKeyPress={[Function]}
+              type="text"
+              value="Original Version"
+            />
+          </div>
+        </EditableWorkflowName>
+        <WorkflowMetadata
+          api={
+            Object {
+              "duplicateWorkflow": [Function],
+              "setWorkflowPublic": [Function],
             }
-            isPublic={true}
-            workflow={
-              Object {
-                "id": 808,
-                "name": "Original Version",
-                "owner_name": "Fred Frederson",
-                "public": true,
-              }
+          }
+          isPublic={true}
+          workflow={
+            Object {
+              "id": 808,
+              "name": "Original Version",
+              "owner_name": "Fred Frederson",
+              "public": true,
             }
+          }
+        >
+          <div
+            className=""
           >
-            <div
-              className=""
+            <ul
+              className="list-inline workflow-meta content-3 t-white"
             >
-              <ul
-                className="list-inline workflow-meta content-3 t-white"
+              <span>
+                <li
+                  className="list-inline-item content-3"
+                >
+                  by 
+                  Fred Frederson
+                </li>
+                <span
+                  className="metadataSeparator"
+                >
+                  -
+                </span>
+              </span>
+              <li
+                className="list-inline-item content-3 t-white"
               >
-                <span>
-                  <li
-                    className="list-inline-item content-3"
-                  >
-                    by 
-                    Fred Frederson
-                  </li>
+                Updated 
+                now
+              </li>
+              <li
+                className="list-inline-item content-3"
+              >
+                <div
+                  className="list-inline-item test-button d-flex content-3 "
+                  onClick={[Function]}
+                >
                   <span
                     className="metadataSeparator"
                   >
                     -
                   </span>
-                </span>
-                <li
-                  className="list-inline-item content-3 t-white"
-                >
-                  Updated 
-                  now
-                </li>
-                <li
-                  className="list-inline-item content-3"
-                >
                   <div
-                    className="list-inline-item test-button d-flex content-3 "
-                    onClick={[Function]}
+                    className="t-white-u"
                   >
-                    <span
-                      className="metadataSeparator"
-                    >
-                      -
-                    </span>
-                    <div
-                      className="t-white-u"
-                    >
-                      public
-                    </div>
+                    public
                   </div>
-                </li>
-              </ul>
-            </div>
-          </WorkflowMetadata>
-        </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </WorkflowMetadata>
       </div>
       <div
         className="d-flex flex-row align-items-center"
@@ -1089,115 +1051,96 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
       className="navbar-workflows"
     >
       <div
-        className="navbar-brand d-flex flex-row align-items-center"
+        className="title-metadata-stack"
       >
-        <div
-          className="title-metadata-stack"
+        <EditableWorkflowName
+          api={
+            Object {
+              "duplicateWorkflow": [Function],
+              "setWorkflowPublic": [Function],
+            }
+          }
+          value="Original Version"
+          wfId={303}
         >
-          <EditableWorkflowName
-            api={
-              Object {
-                "duplicateWorkflow": [Function],
-                "setWorkflowPublic": [Function],
-              }
-            }
-            value="Original Version"
-            wfId={303}
+          <div
+            className="editable-name-container"
+            onClick={[Function]}
           >
-            <div
-              className="editable-name-container"
-              onClick={[Function]}
-            >
-              <TextareaAutosize
-                className="editable-title-field"
-                maxRows={1}
-                onBlur={[Function]}
-                onChange={[Function]}
-                onHeightChange={[Function]}
-                onKeyPress={[Function]}
-                useCacheForDOMMeasurements={false}
-                value="Original Version"
-              >
-                <textarea
-                  className="editable-title-field"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  onKeyPress={[Function]}
-                  style={
-                    Object {
-                      "height": -4,
-                    }
-                  }
-                  value="Original Version"
-                />
-              </TextareaAutosize>
-            </div>
-          </EditableWorkflowName>
-          <WorkflowMetadata
-            api={
-              Object {
-                "duplicateWorkflow": [Function],
-                "setWorkflowPublic": [Function],
-              }
+            <input
+              className="editable-title-field"
+              onBlur={[Function]}
+              onChange={[Function]}
+              onKeyPress={[Function]}
+              type="text"
+              value="Original Version"
+            />
+          </div>
+        </EditableWorkflowName>
+        <WorkflowMetadata
+          api={
+            Object {
+              "duplicateWorkflow": [Function],
+              "setWorkflowPublic": [Function],
             }
-            isPublic={true}
-            workflow={
-              Object {
-                "id": 303,
-                "name": "Original Version",
-                "owner_name": "Not LogggedIn",
-                "public": true,
-              }
+          }
+          isPublic={true}
+          workflow={
+            Object {
+              "id": 303,
+              "name": "Original Version",
+              "owner_name": "Not LogggedIn",
+              "public": true,
             }
+          }
+        >
+          <div
+            className=""
           >
-            <div
-              className=""
+            <ul
+              className="list-inline workflow-meta content-3 t-white"
             >
-              <ul
-                className="list-inline workflow-meta content-3 t-white"
+              <span>
+                <li
+                  className="list-inline-item content-3"
+                >
+                  by 
+                  Not LogggedIn
+                </li>
+                <span
+                  className="metadataSeparator"
+                >
+                  -
+                </span>
+              </span>
+              <li
+                className="list-inline-item content-3 t-white"
               >
-                <span>
-                  <li
-                    className="list-inline-item content-3"
-                  >
-                    by 
-                    Not LogggedIn
-                  </li>
+                Updated 
+                now
+              </li>
+              <li
+                className="list-inline-item content-3"
+              >
+                <div
+                  className="list-inline-item test-button d-flex content-3 "
+                  onClick={[Function]}
+                >
                   <span
                     className="metadataSeparator"
                   >
                     -
                   </span>
-                </span>
-                <li
-                  className="list-inline-item content-3 t-white"
-                >
-                  Updated 
-                  now
-                </li>
-                <li
-                  className="list-inline-item content-3"
-                >
                   <div
-                    className="list-inline-item test-button d-flex content-3 "
-                    onClick={[Function]}
+                    className="t-white-u"
                   >
-                    <span
-                      className="metadataSeparator"
-                    >
-                      -
-                    </span>
-                    <div
-                      className="t-white-u"
-                    >
-                      public
-                    </div>
+                    public
                   </div>
-                </li>
-              </ul>
-            </div>
-          </WorkflowMetadata>
-        </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </WorkflowMetadata>
       </div>
       <div
         className="d-flex flex-row align-items-center"
@@ -1256,113 +1199,94 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
       className="navbar-workflows"
     >
       <div
-        className="navbar-brand d-flex flex-row align-items-center"
+        className="title-metadata-stack"
       >
-        <div
-          className="title-metadata-stack"
+        <EditableWorkflowName
+          api={
+            Object {
+              "duplicateWorkflow": [Function],
+              "setWorkflowPublic": [Function],
+            }
+          }
+          value="Original Version"
         >
-          <EditableWorkflowName
-            api={
-              Object {
-                "duplicateWorkflow": [Function],
-                "setWorkflowPublic": [Function],
-              }
-            }
-            value="Original Version"
+          <div
+            className="editable-name-container"
+            onClick={[Function]}
           >
-            <div
-              className="editable-name-container"
-              onClick={[Function]}
-            >
-              <TextareaAutosize
-                className="editable-title-field"
-                maxRows={1}
-                onBlur={[Function]}
-                onChange={[Function]}
-                onHeightChange={[Function]}
-                onKeyPress={[Function]}
-                useCacheForDOMMeasurements={false}
-                value="Original Version"
-              >
-                <textarea
-                  className="editable-title-field"
-                  onBlur={[Function]}
-                  onChange={[Function]}
-                  onKeyPress={[Function]}
-                  style={
-                    Object {
-                      "height": -4,
-                    }
-                  }
-                  value="Original Version"
-                />
-              </TextareaAutosize>
-            </div>
-          </EditableWorkflowName>
-          <WorkflowMetadata
-            api={
-              Object {
-                "duplicateWorkflow": [Function],
-                "setWorkflowPublic": [Function],
-              }
+            <input
+              className="editable-title-field"
+              onBlur={[Function]}
+              onChange={[Function]}
+              onKeyPress={[Function]}
+              type="text"
+              value="Original Version"
+            />
+          </div>
+        </EditableWorkflowName>
+        <WorkflowMetadata
+          api={
+            Object {
+              "duplicateWorkflow": [Function],
+              "setWorkflowPublic": [Function],
             }
-            isPublic={true}
-            workflow={
-              Object {
-                "name": "Original Version",
-                "owner_name": "John Johnson",
-                "public": true,
-              }
+          }
+          isPublic={true}
+          workflow={
+            Object {
+              "name": "Original Version",
+              "owner_name": "John Johnson",
+              "public": true,
             }
+          }
+        >
+          <div
+            className=""
           >
-            <div
-              className=""
+            <ul
+              className="list-inline workflow-meta content-3 t-white"
             >
-              <ul
-                className="list-inline workflow-meta content-3 t-white"
+              <span>
+                <li
+                  className="list-inline-item content-3"
+                >
+                  by 
+                  John Johnson
+                </li>
+                <span
+                  className="metadataSeparator"
+                >
+                  -
+                </span>
+              </span>
+              <li
+                className="list-inline-item content-3 t-white"
               >
-                <span>
-                  <li
-                    className="list-inline-item content-3"
-                  >
-                    by 
-                    John Johnson
-                  </li>
+                Updated 
+                now
+              </li>
+              <li
+                className="list-inline-item content-3"
+              >
+                <div
+                  className="list-inline-item test-button d-flex content-3 "
+                  onClick={[Function]}
+                >
                   <span
                     className="metadataSeparator"
                   >
                     -
                   </span>
-                </span>
-                <li
-                  className="list-inline-item content-3 t-white"
-                >
-                  Updated 
-                  now
-                </li>
-                <li
-                  className="list-inline-item content-3"
-                >
                   <div
-                    className="list-inline-item test-button d-flex content-3 "
-                    onClick={[Function]}
+                    className="t-white-u"
                   >
-                    <span
-                      className="metadataSeparator"
-                    >
-                      -
-                    </span>
-                    <div
-                      className="t-white-u"
-                    >
-                      public
-                    </div>
+                    public
                   </div>
-                </li>
-              </ul>
-            </div>
-          </WorkflowMetadata>
-        </div>
+                </div>
+              </li>
+            </ul>
+          </div>
+        </WorkflowMetadata>
       </div>
       <div
         className="d-flex flex-row align-items-center"

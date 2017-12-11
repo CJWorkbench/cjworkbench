@@ -1107,10 +1107,10 @@ body {
 }
 
 
-/* ---- Workflow page ---- */
+/******** ---- Workflow page ---- *********/
 
 /* Contains all of Workflow page */
-/* TODO: check other instances of 'display: flex' in this file, may be superfluous */
+
 .workflow-root {
   display: flex;
   flex-direction: row;
@@ -1136,7 +1136,7 @@ body {
 }
 
 
-/* ---- Navbar ----- */
+/***** ---- Navbar ----- *****/
 
 .navbar {
   flex: 0 0 6rem;
@@ -1149,15 +1149,13 @@ body {
   padding: 0.5rem 4rem 0.5rem 4rem;
 }
 
-.navbar-brand {
-  height: 100%;
-  width: 100%;
-  font-family: 'Lato', sans-serif;
+.title-metadata-stack {
+  display:block;
+  padding: 0.2rem 0;
 }
 
-.title-metadata-stack {
-  height: 100%;
-  width: 100%;
+.editable-title-field{
+  margin-bottom: 0.2rem;
 }
 
 img.logo {
@@ -1204,18 +1202,8 @@ img.logo {
   color: #fff;
 }
 
-.title-metadata-stack {
-  height: 100%;
-  width: 100%;
-}
-
-.title-metadata-stack div {
-  height:0rem;
-}
-
 .editable-title-field {
   width: 55rem;
-  margin-top: 0.2rem;
   border: none;
   outline: none;
   padding: 0;
@@ -1232,15 +1220,8 @@ img.logo {
 }
 
 .workflow-meta{
-  margin-top: 0.6rem;
   margin-bottom: 0;
 }
-
-/*.list-workflow-meta li:not(:last-child):after {
-  content: '-';
-  display:inline-block;
-  margin-left: 5px;
-}*/
 
 /* Module Stack */
 .modulestack {

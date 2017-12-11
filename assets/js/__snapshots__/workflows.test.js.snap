@@ -181,7 +181,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="mt-1"
               >
                 <div
-                  className="t-d-gray title-4"
+                  className="t-d-gray mb-2 title-4"
                 >
                   Charting
                 </div>
@@ -375,7 +375,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="mt-1"
               >
                 <div
-                  className="t-d-gray title-4"
+                  className="t-d-gray mb-2 title-4"
                 >
                   Messy data cleanup
                 </div>
@@ -569,7 +569,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="mt-1"
               >
                 <div
-                  className="t-d-gray title-4"
+                  className="t-d-gray mb-2 title-4"
                 >
                   Document search
                 </div>
@@ -763,7 +763,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 className="mt-1"
               >
                 <div
-                  className="t-d-gray title-4"
+                  className="t-d-gray mb-2 title-4"
                 >
                   Visualization
                 </div>
