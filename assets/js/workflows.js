@@ -81,10 +81,9 @@ export default class Workflows extends React.Component {
               <div className="workflows-sub-list">
                 {this.state.workflows.map( workflow => {
                   return (
-                      <a href={"/workflows/" + workflow.id} className="workflow-link card card-block item-test-class workflow-in-list"key={workflow.id}>
-                        <div className='my-auto d-flex justify-content-between align-items-center'>
-                          <div className='wf-id-stack'>
-                            <div className='wf-id-name t-d-gray title-4'>{workflow.name}</div>
+                      <a href={"/workflows/" + workflow.id} className="workflow-link workflow-in-list"key={workflow.id}>
+                          <div className='mt-1'>
+                            <div className='t-d-gray title-4'>{workflow.name}</div>
                             <div className='wf-id-meta' onClick={(e) => e.preventDefault()}>
                               <WorkflowMetadata
                                 workflow={workflow}
@@ -94,13 +93,12 @@ export default class Workflows extends React.Component {
                               />
                             </div>
                           </div>
-                          <div onClick={(e) => e.preventDefault()} className="menu-test-class">
+                          <div onClick={(e) => e.preventDefault()} className='menu-test-class'>
                             <WfContextMenu
                               duplicateWorkflow={ () => this.duplicateWorkflow(workflow.id) }
                               deleteWorkflow={ () => this.deleteWorkflow(workflow.id) }
                             />
                           </div>
-                        </div>
                       </a>
                   );
                 })}

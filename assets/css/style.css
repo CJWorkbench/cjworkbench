@@ -1046,9 +1046,6 @@ body {
 .workflows-container {
   margin-top:6rem;
 }
-/*.worfklows-container > .card {
-  background-color: none;
-}*/
 
 .workflows-list {
   border: 0;
@@ -1059,30 +1056,32 @@ body {
   margin-left: 2.4rem;
   margin-bottom: 1rem;
 }
-.worflows-list > .card-block {
-  padding:0;
-  z-index:1;
-}
+
 .workflows-list .workflows-sub-list {
   padding:1px 1px 1px 1px;
   background-color: #EDECEC;
-  }
+}
+
 .workflow-in-list {
   height: 7rem;
   margin-bottom: 1px;
   border: 0;
   border-radius:0;
-  padding: 1.5rem 2.5rem 1.5rem 2.5rem;
+  padding: 0 2.5rem;
+  Background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+}
+
+.workflow-in-list:hover {
+  background-color: #fafafa;
 }
 
 .workflows-sub-list:last-child .workflow-in-list:last-child {
   margin-bottom: 0px;
 }
 
-.workflow-in-list:hover {
-  background-color: #fafafa;
-  margin:none;
-}
 .workflow-link:hover {
   text-decoration: none;
 }
@@ -1093,15 +1092,9 @@ body {
 }
 
 /*workflow in worfklow list*/
-.wf-id-stack{
-}
 
 .wf-id-name{
   margin-top: 1.7rem;
-}
-
-.wf-id-meta{
-  margin-top: -2rem !important;
 }
 
 .metadataSeparator{
@@ -1239,7 +1232,8 @@ img.logo {
 }
 
 .workflow-meta{
-  margin-top: 2.5rem;
+  margin-top: 0.6rem;
+  margin-bottom: 0;
 }
 
 /*.list-workflow-meta li:not(:last-child):after {
@@ -1675,10 +1669,6 @@ img.logo {
   background-color: #7A9BB0;
   opacity:0.5;
   padding-bottom:0;
-}
-
-.card-block{
-  position:relative;
 }
 
 .module-card-info {
