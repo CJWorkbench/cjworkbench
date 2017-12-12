@@ -76,7 +76,7 @@ if DEBUG==False:
 
     EMAIL_BACKEND = 'sgbackend.SendGridBackend'
     SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
-    ACCOUNT_HOOKSET = "cjworkbench.sendgrid_email.SendgridEmails"
+    ACCOUNT_HOOKSET = "cjworkbench.views.sendgrid_email.SendgridEmails"
     SENDGRID_TEMPLATE_IDS = {
         'invitation': os.environ['CJW_SENDGRID_INVITATION_ID'],
         'confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],

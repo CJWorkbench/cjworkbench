@@ -1,11 +1,9 @@
 from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from account.hooks import AccountDefaultHookSet
 from cjworkbench import settings
-from django.core.mail import send_mail
-from django.core.mail import EmailMultiAlternatives
 import os
-import pdb
 
 class SendgridEmails(AccountDefaultHookSet):
     def ctx_to_subs(self, ctx):
