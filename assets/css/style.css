@@ -1058,6 +1058,9 @@ body {
 
 /* ---- Workflow list ---- */
 
+.container{
+}
+
 .workflows-container {
   margin-top:6rem;
 }
@@ -1065,6 +1068,7 @@ body {
 .workflows-list {
   border: 0;
   margin-top: 1.5rem;
+  background-color: transparent;
 }
 
 .workflows-card-title {

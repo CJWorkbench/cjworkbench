@@ -73,7 +73,7 @@ export default class Workflows extends React.Component {
             <div className="col col-lg-2"></div>
           </div>
 
-          <div className="card w-75 mx-auto workflows-list" style={{backgroundColor:"#f6f6f6"}}>
+          <div className="w-75 mx-auto workflows-list">
             <div className="card-block">
 
               <h3 className="card-title title-3 t-m-gray workflows-card-title">WORKFLOWS</h3>
