@@ -648,14 +648,17 @@ body {
   align-items: center;
   justify-content: flex-start;
   padding-left: 1rem;
+  cursor:pointer;
 }
 
 .dropdown-divider{
   margin:0px;
+  cursor:pointer;
 }
 
 .dropdown-menu-item:hover {
   background-color: #F9f9f9;
+  cursor: pointer;
 }
 
 
