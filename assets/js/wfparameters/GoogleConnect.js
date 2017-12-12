@@ -52,10 +52,10 @@ export default class GoogleConnect extends React.Component {
         </div>
       );
     } else {
-      renderOutput = (<p>Connected to Google. <span className="t-f-blue" onClick={this.disconnect}>Disconnect</span></p>)
+      renderOutput = (<p><span className="t-f-blue" onClick={this.disconnect}>Disconnect</span> from Google</p>)
     }
     return(
-      <div className="parameter-margin">
+      <div className="parameter-margin connected-account">
         {renderOutput}
       </div>
     )

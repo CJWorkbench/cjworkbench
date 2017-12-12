@@ -93,7 +93,7 @@ export default class FileSelect extends React.Component {
 
         filesModal = (
           <div>
-            <div className="button-blue action-button mt-0" onClick={this.toggleModal}>{this.state.file ? 'Change' : 'Choose'} file</div>
+            <div className="button-orange action-button mt-0" onClick={this.toggleModal}>{this.state.file ? 'Change' : 'Choose'} file</div>
             <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal}>
               <ModalHeader toggle={this.toggleModal}>
                 <div className='title-4 t-d-gray'>Choose File</div>
@@ -117,7 +117,7 @@ export default class FileSelect extends React.Component {
         )
       } else if (fileList) {
         fileInfo = (
-          <p>{this.state.files.length} files found.</p>
+          <p>{this.state.files.length} files found</p>
         )
       }
 
@@ -125,7 +125,7 @@ export default class FileSelect extends React.Component {
         return (
           <div className="parameter-margin">
             <div className={"parameter-margin upload-box align-items-center"}>
-              <div className={""}>
+              <div className={"file-info content-3"}>
                 {fileInfo}
               </div>
               {filesModal}
