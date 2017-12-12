@@ -104,6 +104,12 @@ else:
 if 'CJW_GOOGLE_ANALYTICS' in os.environ:
     GOOGLE_ANALYTICS_PROPERTY_ID = os.environ['CJW_GOOGLE_ANALYTICS']
 
+if 'HTTPS' in os.environ and os.environ['HTTPS'] == 'on':
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    USE_X_FORWARDED_HOST = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 ALLOWED_HOSTS = ['*']
 
 # Application definition
