@@ -628,9 +628,9 @@ body {
 
 .dropdown-menu {
   margin-top: 0.5rem;
-  border:1px solid rgba(72,200,215,0.4);
+  border:1px solid rgba(118,155,176,0.2);
   border-radius: 5px;
-  box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.10);
+  box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.10);
   padding:0.5rem 0 0.5rem 0;
 }
 
@@ -836,27 +836,26 @@ body {
 
 .navbar-context-button {
   cursor: pointer;
-  border: 0;
-  width: 2.5rem;
-  height: 2.5rem;
+  border:0;
+  width: 3rem;
+  height: 3rem;
   display: flex;
   align-items: center;
   justify-content: center;
   background: none;
   margin-right: 5rem;
   border-radius: 5rem;
+  opacity:0.8;
 }
 
-.navbar-context-button:hover {
-  cursor: pointer;
-  border: none;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.2);
-  border-radius: 5rem;
+.navbar-context-button:hover{
+  background: rgba(255,255,255,0.1);
+  opacity: 1;
+}
+
+.navbar-context-button.btn-secondary.active{
+  background: rgba(255,255,255,0.3);
+  opacity: 1;
 }
 
 /*overriding React styles for contextual button*/
