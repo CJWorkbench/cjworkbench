@@ -155,12 +155,7 @@ exports[`Workflow list page renders correctly 1`] = `
         />
       </div>
       <div
-        className="card w-75 mx-auto workflows-list"
-        style={
-          Object {
-            "backgroundColor": "#f6f6f6",
-          }
-        }
+        className="w-75 mx-auto workflows-list"
       >
         <div
           className="card-block"
