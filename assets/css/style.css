@@ -418,9 +418,6 @@ body {
 
 /* Customized icons, not in font sent  */
 
-.icon-l-gray {
-  color:#b4b4b4;
-}
 
 .icon-facebook-gray:before{
   content:"\e92b";
@@ -512,7 +509,6 @@ body {
 
 .module-menu-icon {
   font-size: 1.2rem ;
-  color:#b4b4b4;
 }
 
 .dopdown-item:focus,
@@ -812,17 +808,25 @@ body {
   justify-content: center;
   background: 0;
   border-radius: 5rem;
+  opacity: 0.4;
 }
 .context-button:hover {
   border: none;
   border-radius: 5rem;
   background: #f1f1f1;
-  :#686768;
+  color:#686768;
+  opacity: 1;
 }
 
 .context-button.btn-secondary.active{
   background: #edecec;
   border-radius: 5rem;
+  color:#686768;
+  opacity:1;
+}
+
+.btn{
+  -webkit-transition:all 0.1s;
 }
 
 .menu-test-class{
