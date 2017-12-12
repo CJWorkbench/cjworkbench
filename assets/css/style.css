@@ -631,9 +631,8 @@ body {
 }
 
 .dropdown-menu {
-  margin-top: 1rem;
-  border:1px solid rgba(171,185,194,0.1);
-  /*border:1px solid #b4b4b4;*/
+  margin-top: 0.5rem;
+  border:1px solid rgba(72,200,215,0.4);
   border-radius: 5px;
   box-shadow: -0.5rem 0.5rem 2rem 0 rgba(0,0,0,0.10);
   padding:0.5rem 0 0.5rem 0;
@@ -649,6 +648,13 @@ body {
   justify-content: flex-start;
   padding-left: 1rem;
   cursor:pointer;
+  opacity:0.8;
+}
+
+.dropdown-menu-item:hover {
+  background-color: #F9f9f9;
+  cursor: pointer;
+  opacity:1;
 }
 
 .dropdown-divider{
@@ -656,10 +662,7 @@ body {
   cursor:pointer;
 }
 
-.dropdown-menu-item:hover {
-  background-color: #F9f9f9;
-  cursor: pointer;
-}
+
 
 
 /* Registration/login/etc before we dig in to the form widgets */
@@ -808,15 +811,18 @@ body {
   align-items: center;
   justify-content: center;
   background: 0;
+  border-radius: 5rem;
 }
 .context-button:hover {
   border: none;
-  border-radius: 0.3rem;
+  border-radius: 5rem;
   background: #f1f1f1;
+  :#686768;
 }
 
 .context-button.btn-secondary.active{
   background: #edecec;
+  border-radius: 5rem;
 }
 
 .menu-test-class{
@@ -833,6 +839,7 @@ body {
   justify-content: center;
   background: none;
   margin-right: 5rem;
+  border-radius: 5rem;
 }
 
 .navbar-context-button:hover {
@@ -844,6 +851,7 @@ body {
   align-items: center;
   justify-content: center;
   background: rgba(255,255,255,0.2);
+  border-radius: 5rem;
 }
 
 /*overriding React styles for contextual button*/
