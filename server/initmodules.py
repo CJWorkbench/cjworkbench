@@ -71,6 +71,7 @@ def load_module_from_dict(d):
     module.author = d['author'] if 'author' in d else "Workbench"
     module.link = d['link'] if 'link' in d else ""
     module.icon = d['icon'] if 'icon' in d else "settings"
+    module.loads_data = d['loads_data'] if 'loads_data' in d else False
 
     module.save()
 
@@ -179,4 +180,3 @@ def load_parameter_spec(d, module_version, order):
             pval.save()
 
     return pspec
-

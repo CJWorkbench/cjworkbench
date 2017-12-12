@@ -4,6 +4,7 @@
   "category": "Add data",
   "icon" : "url",
   "description": "Connect a dataset from Enigma's collection via URL.",
+  "loads_data": true,
   "parameters": [
     {
       "name": "Public data collection at www.public.enigma.com",

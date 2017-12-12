@@ -4,6 +4,7 @@
   "category" : "Add data",
   "icon" : "url",
   "description" : "Connect a dataset via its URL and keep it updated with its source.",
+  "loads_data": true,
   "parameters": [
     {
       "name": "Link to CSV, JSON or Excel file",

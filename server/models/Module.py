@@ -33,5 +33,8 @@ class Module(models.Model):
     # icon name associated with module
     icon = models.CharField('icon', max_length=20, default='url')
 
+    # Does this model bring in external data?
+    loads_data = models.BooleanField('loads_data', default=False)
+
     def __str__(self):
         return self.name

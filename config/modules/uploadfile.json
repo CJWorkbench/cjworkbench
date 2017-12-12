@@ -4,6 +4,7 @@
   "category" : "Add data",
   "icon": "upload",
   "description": "Upload CSV or Excel file.",
+  "loads_data": true,
   "parameters": [
     {
       "name": "Upload File",
