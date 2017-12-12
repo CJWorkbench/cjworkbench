@@ -568,7 +568,7 @@ body {
   overflow:hidden;
 }
 
-.text-field-non-edit {
+.text-field-readonly {
   padding:0 1.5rem 0 0;
   background: transparent;
   border:none;
@@ -2046,23 +2046,27 @@ input[type=checkbox]:checked:after {
   height:1px;
   opacity:1;
   width: 43rem;
-  top:10.8rem;
+  top:10.3rem;
   background: #FBAA6D;
+  box-shadow: none;
 }
 .react-fine-uploader-file-progress-bar-container,
 .react-fine-uploader-gallery-total-progress-bar-container{
   height:1px;
+  opacity:1;
   margin-top:0rem;
   margin-right:0px;
   margin-bottom:0px;
   margin-left:0px;
   width: 43rem;
   background: #FBAA6D;
+  box-shadow: none;
 }
 .react-fine-uploader-file-progress-bar,
 .react-fine-uploader-gallery-total-progress-bar
 {
   width: 100%;
+  opacity:1;
   background: #FBAA6D;
   box-shadow: none;
   height:1px;
@@ -2074,7 +2078,7 @@ input[type=checkbox]:checked:after {
   width:11.3rem!important;
   position:absolute!important;
   left:32rem;
-  top:12.5rem;
+  top:11.8rem;
 }
 
 .upload-box{

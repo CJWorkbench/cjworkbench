@@ -134,7 +134,7 @@ export default class DropZone extends Component {
                         <div className={"upload-box"}>
                             <div className={""}>
                                 <div className={"label-margin t-d-gray content-3"}>File name</div>
-                                <textarea className={"t-d-gray content-3 text-field-non-edit"}>{this.state.filename}</textarea>
+                                <div className={"t-d-gray content-3 text-field-readonly"}>{this.state.filename}</div>
                             </div>
                             <FileInput className={"button-blue dropzone-button action-button"} multiple={false}
                                        uploader={this.uploader}>Change file</FileInput>

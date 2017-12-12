@@ -30,7 +30,7 @@ class StoredObjectView(APIView):
         if form.is_valid():
             new_stored_object = form.save()
             ChangeDataVersionCommand.create(new_stored_object.wf_module, new_stored_object.stored_at)
-            # debug loading bar: import pdb; pdb.set_trace()
+            # Block load bar for debug: --> // import pdb; pdb.set_trace()
             return make_response(content=json.dumps({'success': True}))
         else:
             return make_response(status=400,
