@@ -665,9 +665,11 @@ body {
 
 .account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"] {
   width: 100%;
-  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  height:4rem;
+  padding-left:1rem;
   margin-bottom:1.5rem;
   font-size: 1.5rem;
+  background-color: #fff;
 }
 
 .account_form label{
@@ -676,7 +678,6 @@ body {
 
 .account_form input:active {
   box-shadow: 0 0 0px 1px #48C8D7;
-  border: 0;
 }
 
 .account_form input[type="checkbox"] {
