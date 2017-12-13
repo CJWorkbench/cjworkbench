@@ -99,7 +99,7 @@ export default class DataVersionSelect extends React.Component {
   render() {
     return (
       <div className='version-item'>
-        <div className='t-d-gray content-3 mb-3'>Current Version</div>
+        <div className='t-d-gray content-3 mb-2'>Current Version</div>
 
         <div className='open-modal t-f-blue content-4 text-center' onClick={this.toggleModal}>
             {this.state.originalSelected ? this.formatDate(this.state.originalSelected) : '-'}

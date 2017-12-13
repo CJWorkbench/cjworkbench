@@ -102,8 +102,8 @@ body {
 	line-height: 1.9rem;
 }
 .content-4 {
-	font-size: 1.2rem;
-	font-weight: 400;
+	font-size: 1.1rem;
+	font-weight: 300;
 	line-height: 1.1rem;
 }
 .content-5 {
@@ -485,7 +485,7 @@ body {
 }
 
 .module-icon {
-  font-size: 1.5rem;
+  font-size: 1.4rem;
 }
 
 /* icons embedded within buttons or menus  */
@@ -736,7 +736,7 @@ body {
 /* Margins for 3 lined parameter, part of a group*/
 .param3-line-margin{
   display: inline-block;
-  width:13.3rem;
+  width:30.7%;
   margin-right: 1.5rem;
 }
 
@@ -1270,7 +1270,7 @@ img.logo {
 
 /* Module Stack */
 .modulestack {
-  flex: 0 0 51rem;
+  flex: 0 0 45rem;
   border-left: 1px solid #DDDDDD;
   border-right: 1px solid #DDDDDD;
   width: 47rem;
@@ -1281,7 +1281,7 @@ img.logo {
 .modulestack-list {
   width: 100%;
   padding-bottom: 30rem;
-  padding-top: 2rem;
+  padding-top: 1.5rem;
 }
 .modulestack-list.dragging {
   background: rgba(118,155,176,0.15);
@@ -1687,7 +1687,7 @@ img.logo {
 /* ---- WfModule ---- */
 
 .wf-card{
-  width: 47rem;
+  width: 42rem;
   margin-bottom: 0.5rem;
   background-color: rgba(250,250,250,0.8);
   position: relative;
@@ -1717,13 +1717,13 @@ img.logo {
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin:0 2rem;
-  height:5rem;
+  margin:0.3rem 1.5rem 0 1.5rem;
+  height:4rem;
 }
 
 
 .module-card-params {
-  padding: 0.2rem 2rem 2rem 2rem;
+  padding: 0.2rem 1.5rem 1.5rem 1.5rem;
 }
 
 .module-description {
@@ -1814,8 +1814,8 @@ svg .svg-background{
 	border: solid transparent;
 	content: " ";
 	border-left-color: rgba(118,155,176,0.3);
-	border-width: 2.5rem 0 2.5rem 1.2rem;
-  margin-left: 47.2rem
+	border-width: 2.5rem 0 2.5rem 1rem;
+  margin-left: 42rem
 }
 
 /* standby  */
@@ -1831,8 +1831,8 @@ svg .svg-background{
   border: solid transparent;
 	content: " ";
 	border-left-color: rgba(251,170,109,0);
-	border-width: 2.5rem 0 2.5rem 1.2rem;
-  margin-left: 47.2rem
+	border-width: 2.5rem 0 2.5rem 1rem;
+  margin-left: 42rem
 }
 /* error  */
 .module-output-bar-pink:after {
@@ -1855,7 +1855,7 @@ svg .svg-background{
   content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 47.2rem;
+  margin-left: 47rem;
   height: 5rem;
 }
 
@@ -2043,9 +2043,7 @@ input[type=checkbox]:checked:after {
 }
 
 .version-item {
-  margin: 0rem;
-  display: inline-block;
-  align-self: flex-start;
+
 }
 
 .centered{

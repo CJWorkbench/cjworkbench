@@ -13,7 +13,7 @@
       "default": ""
     },
     {
-      "name": "Check Now",
+      "name": "Check",
       "id_name" : "version_select",
       "type": "custom"
     }

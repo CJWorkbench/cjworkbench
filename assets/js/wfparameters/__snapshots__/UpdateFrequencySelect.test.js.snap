@@ -5,7 +5,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
   className="version-item"
 >
   <div
-    className="mb-3"
+    className="mb-2"
   >
     <span
       className="content-3 t-d-gray"
@@ -168,7 +168,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
   className="version-item"
 >
   <div
-    className="mb-3"
+    className="mb-2"
   >
     <span
       className="content-3 t-d-gray"
@@ -331,7 +331,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
   className="version-item"
 >
   <div
-    className="mb-3"
+    className="mb-2"
   >
     <span
       className="content-3 t-d-gray"
@@ -494,7 +494,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
   className="version-item"
 >
   <div
-    className="mb-3"
+    className="mb-2"
   >
     <span
       className="content-3 t-d-gray"

@@ -17,7 +17,7 @@ exports[`DataVersionSelect Displays empty when no versions available 1`] = `
     className="version-item"
   >
     <div
-      className="t-d-gray content-3 mb-3"
+      className="t-d-gray content-3 mb-2"
     >
       Current Version
     </div>
@@ -60,7 +60,7 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
     className="version-item"
   >
     <div
-      className="t-d-gray content-3 mb-3"
+      className="t-d-gray content-3 mb-2"
     >
       Current Version
     </div>
@@ -103,7 +103,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     className="version-item"
   >
     <div
-      className="t-d-gray content-3 mb-3"
+      className="t-d-gray content-3 mb-2"
     >
       Current Version
     </div>
@@ -273,7 +273,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     className="version-item"
   >
     <div
-      className="t-d-gray content-3 mb-3"
+      className="t-d-gray content-3 mb-2"
     >
       Current Version
     </div>
