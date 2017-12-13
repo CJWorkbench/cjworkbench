@@ -21,7 +21,11 @@ export default class TableView extends React.Component {
     var domNode = ReactDOM.findDOMNode(this);
     if (domNode) {
       var gridHeight = domNode.parentElement.offsetHeight;
-      this.setState({gridHeight: gridHeight});
+      var gridWidth = domNode.parentElement.offsetWidth;
+      this.setState({
+        gridHeight: gridHeight,
+        gridWidth: gridWidth
+      });
     }
   }
 
@@ -49,6 +53,7 @@ export default class TableView extends React.Component {
         columns={columns}
         rowGetter={this.props.getRow}
         rowsCount={this.props.totalRows }
+        minWidth={this.state.gridWidth -2}
         minHeight={this.state.gridHeight-2} />;   // -1 because grid has borders, don't want to expand flex grid
 
     }  else {
