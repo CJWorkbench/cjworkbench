@@ -69,6 +69,8 @@ class WfModule(models.Model):
     update_interval = models.IntegerField(default=0)             # time in seconds between updates
     last_update_check = models.DateTimeField(null=True, blank=True)
 
+    notifications= models.BooleanField(default=False)
+
     # status light and current error message
     READY = "ready"
     BUSY = "busy"

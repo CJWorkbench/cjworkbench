@@ -32,6 +32,12 @@ def patch_update_settings(wf_module, data):
     next_update = timezone.now() + timedelta(seconds=interval)
     ChangeWfModuleUpdateSettingsCommand.create(wf_module, auto_update_data, next_update, interval)
 
+def patch_wfmodule(wf_module, data):
+    # Just patch it using the built-in Django Rest Framework methods.
+    serializer = WfModuleSerializer(wf_module, data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on request type
 @api_view(['GET', 'DELETE', 'PATCH'])
@@ -62,7 +68,7 @@ def wfmodule_detail(request, pk, format=None):
         # For patch, we check which fields are set in data, and process all of them
         try:
 
-            if not set(request.data.keys()).intersection({"notes", "auto_update_data", "collapsed"}):
+            if not set(request.data.keys()).intersection({"notes", "auto_update_data", "collapsed", "notifications"}):
                 raise ValueError('Unknown fields: {}'.format(request.data))
 
             if 'notes' in request.data:
@@ -74,11 +80,13 @@ def wfmodule_detail(request, pk, format=None):
             if 'collapsed' in request.data:
                 wf_module.set_is_collapsed(request.data['collapsed'], notify=False)
 
+            if 'notifications' in request.data:
+                patch_wfmodule(wf_module, request.data)
+
         except Exception as e:
             return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
 # ---- render / input / livedata ----
 # These endpoints return actual table data

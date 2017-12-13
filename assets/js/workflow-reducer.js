@@ -127,6 +127,15 @@ export function disconnectCurrentUserAction(credentialId) {
   )
 }
 
+export function updateWfModuleAction(id, data) {
+  return (
+    api.updateWfModule(id, data)
+      // TODO: Eventually this should return a workflow that replaces the old
+      // one in the global store but for now just reload
+      .then( reloadWorkflowAction )
+  )
+}
+
 // ---- Reducer ----
 // Maps actions to state changes, for that is the Redux way
 // Our state fields:

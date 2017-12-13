@@ -236,6 +236,23 @@ class WorkbenchAPI {
     )
   }
 
+  updateWfModule(wf_module_id, params) {
+    return(
+      fetch('/api/wfmodules/' + wf_module_id, {
+        method: 'patch',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        // Don't validate here, but possibly filter out props not in
+        // a hardcoded list later
+        body: JSON.stringify(params)
+      })
+    )
+  }
+
   undo(workflow_id) {
     return (
       fetch('/api/workflows/' + workflow_id + '/undo', {

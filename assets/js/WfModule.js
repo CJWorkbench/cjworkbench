@@ -136,15 +136,6 @@ class WfModule extends React.Component {
   constructor(props) {
     super(props);
     this.initFields(props);
-    this.state = {
-      isCollapsed: this.wf_module.is_collapsed,
-      showArrow: false,
-      showNotes:  ( this.wf_module.notes
-                    && (this.wf_module.notes != "")
-                    && (this.wf_module.notes != "Write notes here")
-                  ),  // only show on load if a note exists & not default text
-      showEditableNotes: false             // do not display in edit state on initial load
-    };
     this.click = this.click.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
@@ -154,6 +145,7 @@ class WfModule extends React.Component {
     this.showArrow = this.showArrow.bind(this);
     this.hideArrow = this.hideArrow.bind(this);
     this.toggleCollapsed = this.toggleCollapsed.bind(this);
+    this.setNotifications = this.setNotifications.bind(this);
   }
 
   // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
@@ -163,6 +155,19 @@ class WfModule extends React.Component {
     this.module = this.wf_module.module_version.module;
     this.params = this.wf_module.parameter_vals;
     this.revision = props['data-revision'];
+  }
+
+  componentWillMount() {
+    this.setState({
+      isCollapsed: this.wf_module.is_collapsed,
+      showArrow: false,
+      showNotes:  ( this.wf_module.notes
+                    && (this.wf_module.notes != "")
+                    && (this.wf_module.notes != "Write notes here")
+                  ),  // only show on load if a note exists & not default text
+      showEditableNotes: false,             // do not display in edit state on initial load
+      notifications: this.wf_module.notifications
+    });
   }
 
   // alas, the drawback of the convienence of initFields is we need to call it whenever props change
@@ -226,6 +231,14 @@ class WfModule extends React.Component {
 
   hideArrow() {
     this.setState({showArrow: false});
+  }
+
+  setNotifications() {
+    Actions.store.dispatch(
+      Actions.updateWfModuleAction(
+        this.wf_module.id,
+        { notifications: !this.wf_module.notifications }
+    ));
   }
 
   render() {
