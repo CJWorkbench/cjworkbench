@@ -11,6 +11,7 @@ from server.models.StoredObject import StoredObject
 from django.core.files.storage import default_storage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from server.notifications import email_notification
 
 # Completely ridiculous work to resolve circular imports: websockets -> Workflow -> WfModule which needs websockets
 # So we create an object with callbacks, which we then set in websockets.py
