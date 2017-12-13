@@ -318,43 +318,47 @@ class WfModule extends React.Component {
     var moduleIcon = 'icon-' + this.module.icon + ' module-icon mr-3';
 
     // Putting it all together: name, status, parameters, output
-    return this.props.connectDropTarget(this.props.connectDragSource(
+    return (
       // Removing this outer div breaks the drag and drop animation for reasons
       // that aren't clear right now. It doen't hurt anything but it shouldn't
       // be necessary either.
       <div onClick={this.click}>
         <div className='wf-card mx-auto'>
-          <div className='output-bar-container'>
-            <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
-          </div>
-          <div className='card-block p-0'>
-            <div className='module-card-info'>
-              {notes}
-              <div className='module-card-header' onClick={this.toggleCollapsed} onMouseEnter={this.showArrow} onMouseLeave={this.hideArrow}>
-                <div className='module-header-content'>
-                  <div className='d-flex justify-content-start align-items-center'>
-                    <div className={moduleIcon}></div>
-                    <div className='t-d-gray title-4 WFmodule-name'>{this.module.name}</div>
-                    <div className=''>{arrow}</div>
-                  </div>
-                  {/* TODO: not necessary to pass in stopProp*/}
-                  <div className='d-flex justify-content-end'>
-                    {notesIcon}
-                    {contextMenu}
+        {this.props.connectDropTarget(this.props.connectDragSource(
+          <div>
+            <div className='output-bar-container'>
+              <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
+            </div>
+            <div className='card-block p-0'>
+              <div className='module-card-info'>
+                {notes}
+                <div className='module-card-header' onClick={this.toggleCollapsed} onMouseEnter={this.showArrow} onMouseLeave={this.hideArrow}>
+                  <div className='module-header-content'>
+                    <div className='d-flex justify-content-start align-items-center'>
+                      <div className={moduleIcon}></div>
+                      <div className='t-d-gray title-4 WFmodule-name'>{this.module.name}</div>
+                      <div className=''>{arrow}</div>
+                    </div>
+                    {/* TODO: not necessary to pass in stopProp*/}
+                    <div className='d-flex justify-content-end'>
+                      {notesIcon}
+                      {contextMenu}
+                    </div>
                   </div>
                 </div>
+                {/* --- Module content when expanded --- */}
+                <Collapse className='' isOpen={!this.state.isCollapsed} >
+                  {/* --- Error message --- */}
+                  <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
+                  {inside}
+                </Collapse>
               </div>
-              {/* --- Module content when expanded --- */}
-              <Collapse className='' isOpen={!this.state.isCollapsed} >
-                {/* --- Error message --- */}
-                <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
-                {inside}
-              </Collapse>
             </div>
           </div>
+        ))}
         </div>
       </div>
-    ));
+    );
   }
 }
 
