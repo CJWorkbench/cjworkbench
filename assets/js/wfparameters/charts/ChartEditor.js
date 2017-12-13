@@ -75,39 +75,41 @@ export default class ChartEditor extends React.Component {
     if (this.props.chartState !== "") {
       return (
         <div>
-          <ColumnColorPicker
-            series={this.state.chartProps.chartSettings}
-            saveState={this.onChangeChartSettings} />
-
-          <div className="label-margin t-d-gray content-3">
-            Chart Title
+          <div className="param-line-margin">
+            <ColumnColorPicker
+              series={this.state.chartProps.chartSettings}
+              saveState={this.onChangeChartSettings}/>
           </div>
-          <input
-            type="text"
-            className="wfmoduleStringInput t-d-gray content-2 text-field"
-            value={this.state.metadata.title}
-            onChange={this.onChangeTitle} />
+          <div className="param-line-margin">
+            <div className="label-margin t-d-gray content-3">
+              Chart Title
+            </div>
+            <input
+              type="text"
+              className="wfmoduleStringInput parameter-base t-d-gray content-2 text-field"
+              value={this.state.metadata.title}
+              onChange={this.onChangeTitle} />
+          </div>
+          <div className="paramX-line-margin">
 
-          <div className="row">
-
-            <div className="col-sm-6">
+            <div className="param2-line-margin">
               <div className="label-margin t-d-gray content-3">
                 Axis prefix
               </div>
               <input
                 type="text"
-                className="wfmoduleStringInput t-d-gray content-2 text-field"
+                className="wfmoduleStringInput t-d-gray parameter-base content-2 text-field"
                 value={this.state.chartProps.scale.primaryScale.prefix}
                 onChange={this.onChangePrefix} />
             </div>
 
-            <div className="col-sm-6">
+            <div className="param2-line-margin">
               <div className="label-margin t-d-gray content-3">
                 Axis suffix
               </div>
               <input
                 type="text"
-                className="wfmoduleStringInput t-d-gray content-2 text-field"
+                className="wfmoduleStringInput t-d-gray parameter-base content-2 text-field"
                 value={this.state.chartProps.scale.primaryScale.suffix}
                 onChange={this.onChangeSuffix} />
             </div>

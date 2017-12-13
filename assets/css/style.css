@@ -692,7 +692,7 @@ body {
 /*** Module Parameters spacing within modules ***/
 
 .label-margin {
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.1rem;
   color:#b2b2b2;
 }
 
@@ -700,22 +700,48 @@ body {
   margin-bottom: 0px;
 }
 
-/*Style for grouping parameters*/
-.sameLine-param{
-  display: inline-block;
-  width:30%;
-  margin-right: 1.5rem;
-}
 
-.sameLine-param:last-child{
-  margin-right: 0;
-}
-
-
-/***** Bottom margin for a parameter, or a group of parameters ******/
+/* Margin for a group of parameters (can include several lines)*/
 
 .parameter-margin:not(:last-child) {
   margin-bottom: 1.5rem;
+}
+
+/* Margin for a line of 1 parameters, part of a group */
+.param-line-margin:not(:last-child){
+  margin-bottom:1rem;
+}
+
+/* Margin for a line of X parameters, part of a group */
+.paramX-line-margin{
+  margin-bottom:1rem;
+  display:flex;
+}
+
+.paramX-line-margin:last-child{
+  margin-bottom:0rem;
+}
+
+/* Margins for 2 lined parameters, part of a group */
+.param2-line-margin{
+  width:20.75rem;
+  margin-right:1.5rem;
+  padding:0;
+}
+
+.param2-line-margin:last-child{
+  margin-right:0;
+}
+
+/* Margins for 3 lined parameter, part of a group*/
+.param3-line-margin{
+  display: inline-block;
+  width:13.3rem;
+  margin-right: 1.5rem;
+}
+
+.param3-line-margin:last-child{
+  margin-right: 0;
 }
 
 /* ---- Buttons ---- */
@@ -2212,6 +2238,12 @@ input[type=checkbox]:checked:after {
 /* TODO height (but not width) copied from dropdown-selector */
 .chartbuilder-main .cb-dropdown-select {
   height: 4rem;
+}
+
+/*Style form controls */
+.form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
+  border-radius: 0;
+  border: 1px solid #E7E7E7;
 }
 
 /* Hiden canvas element used for image export;
