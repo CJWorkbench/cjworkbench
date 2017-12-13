@@ -6,9 +6,10 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid'
 import PropTypes from 'prop-types'
+import debounce from 'lodash/debounce'
 
 export default class TableView extends React.Component {
- 
+
   constructor(props) {
     super(props);
     this.state = { gridHeight : null };
@@ -21,12 +22,11 @@ export default class TableView extends React.Component {
     if (domNode) {
       var gridHeight = domNode.parentElement.offsetHeight;
       this.setState({gridHeight: gridHeight});
-      //console.log("updated size to " + gridHeight);
     }
   }
 
   componentDidMount() {
-    window.addEventListener("resize", this.updateSize);
+    window.addEventListener("resize", debounce(this.updateSize, 200));
     this.updateSize();
   }
 

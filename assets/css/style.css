@@ -1309,8 +1309,9 @@ img.logo {
 
 /* This div may be superfluous wrt .outputpane */
 .outputpane-box {
-  height: 100%;
+  height: calc(100% - 6rem);
   background-color: #F2F2F2;
+  position: relative;
 }
 
 .outputpane-header {
@@ -1320,8 +1321,12 @@ img.logo {
 }
 
 .outputpane-data {
-  height: calc(100% - 7rem);
   overflow: hidden;
+  position: absolute;
+  top:7rem;
+  left:0;
+  right:0;
+  bottom:0;
 }
 
 /* --- Module Library --- */
