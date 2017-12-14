@@ -10,11 +10,10 @@ export default class OutputPane extends React.Component {
     super(props);
 
     // componentDidMount will trigger first load
-    this.startState = {
+    this.state = {
       tableData: null,
       lastLoadedRow : 0,
     };
-    this.state = this.startState;
 
     this.getRow = this.getRow.bind(this);
 
@@ -54,6 +53,19 @@ export default class OutputPane extends React.Component {
     }
   }
 
+  // Completely reload table data -- preserves visibility of old data while we wait
+  refreshTable(id) {
+    this.loading = true;
+    this.props.api.render(id, 0, this.initialRows)
+      .then(json => {
+        this.loading = false;
+        this.setState({
+          tableData: json,
+          lastLoadedRow: json.end_row
+        });
+      })
+  }
+
   // Load first 100 rows of table when first rendered
   componentDidMount() {
     this.loadTable(this.props.id, this.initialRows)
@@ -62,8 +74,7 @@ export default class OutputPane extends React.Component {
   // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
     if (this.props.revision != nextProps.revision || this.props.id != nextProps.id) {
-      // Reset our state to "empty", then use callback to start loading some rows
-      this.setState(this.startState, () => this.loadTable(nextProps.id, this.initialRows));
+      this.refreshTable(nextProps.id);
     }
   }
 
