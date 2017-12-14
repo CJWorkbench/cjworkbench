@@ -869,7 +869,7 @@ body {
   align-items: center;
   justify-content: center;
   background: none;
-  margin-right: 5rem;
+  margin-right: 3rem;
   border-radius: 5rem;
   opacity:0.8;
 }
@@ -1196,11 +1196,8 @@ body {
 
 .title-metadata-stack {
   display:block;
+  width:100%;
   padding: 0.2rem 0;
-}
-
-.editable-title-field{
-  margin-bottom: 0.2rem;
 }
 
 img.logo {
@@ -1221,7 +1218,7 @@ img.logo {
 }
 
 .navbar-workflows .action-button {
-  margin-right: 6rem;
+  margin-right: 4rem;
 }
 
 /*navbar:Workflow page*/
@@ -1234,7 +1231,7 @@ img.logo {
   justify-content: space-between;
   background-color: #48C8D7;
   color: #FFFFFF;
-  padding: 0.5rem 4rem 0.5rem 2rem;
+  padding: 0.5rem 4rem 0.5rem 1.5rem;
 }
 
 .nav-link {
@@ -1247,8 +1244,15 @@ img.logo {
   color: #fff;
 }
 
+.editable-name-container{
+  margin-bottom: 0.2rem;
+  min-width: 32rem;
+}
+
+
 .editable-title-field {
-  width: 55rem;
+  margin-bottom: 0.2rem;
+  min-width: 100%;
   border: none;
   outline: none;
   padding: 0;
@@ -1258,7 +1262,10 @@ img.logo {
   font-size: 1.8rem;
 	line-height: 2.4rem;
   color: #FFFFFF;
+  padding-right:1.5rem;
 }
+
+
 
 .editable-title-field:hover{
   background-color: rgba(250,250,250,0.2);
