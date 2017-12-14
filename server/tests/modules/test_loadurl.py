@@ -11,6 +11,7 @@ import os
 import json
 import tempfile
 from django.test import override_settings
+from server.utils import sanitize_dataframe
 
 mock_json_text = '[ {"Month" : "Jan", "Amount": 10},\n {"Month" : "Feb", "Amount": 20} ]'
 mock_json_table = pd.DataFrame(json.loads(mock_json_text))
@@ -48,8 +49,8 @@ class LoadFromURLTests(LoggedInTestCase):
         self.url_pval.save()
 
         # should be no data saved yet, no Deltas on the workflow
-        self.assertIsNone(self.wfmodule.get_stored_data_version())
-        self.assertIsNone(self.wfmodule.retrieve_data())
+        self.assertIsNone(self.wfmodule.get_fetched_data_version())
+        self.assertIsNone(self.wfmodule.retrieve_fetched_table())
         self.assertIsNone(self.wfmodule.workflow.last_delta)
 
         # success case
@@ -62,7 +63,7 @@ class LoadFromURLTests(LoggedInTestCase):
             # should create a new data version on the WfModule, and a new delta representing the change
             self.wfmodule.refresh_from_db()
             self.wfmodule.workflow.refresh_from_db()
-            first_version = self.wfmodule.get_stored_data_version()
+            first_version = self.wfmodule.get_fetched_data_version()
             first_delta = self.wfmodule.workflow.last_delta
             first_check_time = self.wfmodule.last_update_check
             self.assertIsNotNone(first_version)
@@ -75,7 +76,7 @@ class LoadFromURLTests(LoggedInTestCase):
 
             self.wfmodule.refresh_from_db()
             self.wfmodule.workflow.refresh_from_db()
-            self.assertEqual(self.wfmodule.get_stored_data_version(), first_version)
+            self.assertEqual(self.wfmodule.get_fetched_data_version(), first_version)
             self.assertEqual(self.wfmodule.workflow.last_delta, first_delta)
             second_check_time = self.wfmodule.last_update_check
             self.assertNotEqual(second_check_time, first_check_time)
@@ -89,7 +90,7 @@ class LoadFromURLTests(LoggedInTestCase):
 
             self.wfmodule.refresh_from_db()
             self.wfmodule.workflow.refresh_from_db()
-            self.assertNotEqual(self.wfmodule.get_stored_data_version(), first_version)
+            self.assertNotEqual(self.wfmodule.get_fetched_data_version(), first_version)
             self.assertNotEqual(self.wfmodule.workflow.last_delta, first_delta)
             self.assertNotEqual(self.wfmodule.last_update_check, second_check_time)
 
@@ -106,12 +107,18 @@ class LoadFromURLTests(LoggedInTestCase):
         self.url_pval.set_value(url)
         self.url_pval.save()
 
+        # use a complex example with nested data
+        fname = os.path.join(settings.BASE_DIR, 'server/tests/test_data/sfpd.json')
+        sfpd_json = open(fname).read()
+        sfpd_table = pd.DataFrame(json.loads(sfpd_json))
+        sanitize_dataframe(sfpd_table)
+
         # success case
         with requests_mock.Mocker() as m:
-            m.get(url, text=mock_json_text, headers={'content-type': 'application/json'})
+            m.get(url, text=sfpd_json, headers={'content-type': 'application/json'})
             self.press_fetch_button()
             response = self.get_render()
-            self.assertEqual(response.content, make_render_json(mock_json_table))
+            self.assertEqual(response.content, make_render_json(sfpd_table))
 
         # malformed json should put module in error state
         with requests_mock.Mocker() as m:

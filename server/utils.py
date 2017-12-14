@@ -1,4 +1,5 @@
 # --- Time unit conversion to/from seconds ---
+import pandas as pd
 
 time_units = {
     'seconds': 1,
@@ -33,3 +34,14 @@ def user_display(user):
         return user.email
     else:
         return 'Anonymous'
+
+
+# Convert all complex-typed rows to strings. Otherwise we cannot do many operations
+# including hash_pandas_object() and to_parquet()
+def sanitize_dataframe(table):
+    # full type list at https://pandas.pydata.org/pandas-docs/stable/generated/pandas.api.types.infer_dtype.html
+    allowed_types = ['string', 'floating', 'integer', 'categorical', 'boolean', 'datetime', 'date', 'time']
+    types = table.apply(pd.api.types.infer_dtype)
+    for idx,val in enumerate(types):
+        if val not in allowed_types:
+            table.iloc[:,idx] = table.iloc[:,idx].astype(str)

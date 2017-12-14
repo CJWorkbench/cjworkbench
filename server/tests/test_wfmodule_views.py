@@ -149,11 +149,9 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
 
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):
-        text1 = 'just pretend this is json'
-        text2 = 'and this is a later version'
-        firstver = self.wfmodule1.store_data(text1)
-        self.wfmodule1.set_stored_data_version(firstver)
-        secondver = self.wfmodule1.store_data(text2)
+        firstver = self.wfmodule1.store_fetched_table(mock_csv_table)
+        self.wfmodule1.set_fetched_data_version(firstver)
+        secondver = self.wfmodule1.store_fetched_table(mock_csv_table2)
 
         # retrieve version list through the API
         response = self.client.get('/api/wfmodules/%d/dataversion' % self.wfmodule1.id)
@@ -177,7 +175,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         response = wfmodule_dataversion(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.wfmodule1.refresh_from_db()
-        self.assertEqual(self.wfmodule1.get_stored_data_version(), secondver)
+        self.assertEqual(self.wfmodule1.get_fetched_data_version(), secondver)
 
 
     # test Wf Module Notes change API

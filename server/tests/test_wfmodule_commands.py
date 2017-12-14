@@ -155,15 +155,15 @@ class ChangeDataVersionCommandTests(TestCase):
     # Change version, then undo/redo
     def test_change_data_version(self):
         # Create two data versions, use the second
-        firstver = self.wfm.store_data('text1')
-        secondver = self.wfm.store_data('text2')
-        self.wfm.set_stored_data_version(secondver)
+        firstver = self.wfm.store_fetched_table(mock_csv_table)
+        secondver = self.wfm.store_fetched_table(mock_csv_table2)
+        self.wfm.set_fetched_data_version(secondver)
 
         start_rev = self.workflow.revision()
 
         # Change back to first version
         cmd = ChangeDataVersionCommand.create(self.wfm, firstver)
-        self.assertEqual(self.wfm.get_stored_data_version(), firstver)
+        self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
 
         # workflow revision should have been incremented
         self.workflow.refresh_from_db()
@@ -171,11 +171,11 @@ class ChangeDataVersionCommandTests(TestCase):
 
         # undo
         cmd.backward()
-        self.assertEqual(self.wfm.get_stored_data_version(), secondver)
+        self.assertEqual(self.wfm.get_fetched_data_version(), secondver)
 
         # redo
         cmd.forward()
-        self.assertEqual(self.wfm.get_stored_data_version(), firstver)
+        self.assertEqual(self.wfm.get_fetched_data_version(), firstver)
 
 
 class ChangeWfModuleNotesCommandTests(TestCase):

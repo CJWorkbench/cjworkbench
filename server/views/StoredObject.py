@@ -5,7 +5,6 @@ from django.http import HttpResponse
 from server.serializers import StoredObjectSerializer
 from server.models import StoredObject
 from server.forms import StoredObjectForm
-from server.versions import notify_client_workflow_version_changed
 from server.models import ChangeDataVersionCommand
 
 import json
@@ -26,11 +25,13 @@ class StoredObjectView(APIView):
     parser_classes = (MultiPartParser,)
 
     def post(self, request, format=None):
-        form = StoredObjectForm(request.POST, request.FILES)
+        form = StoredObjectForm(request.POST,
+                                request.FILES)
         if form.is_valid():
             new_stored_object = form.save()
+            new_stored_object.type = StoredObject.UPLOADED_FILE # gross, we need a better strategy for uploaded files
+            new_stored_object.save()
             ChangeDataVersionCommand.create(new_stored_object.wf_module, new_stored_object.stored_at)
-            # Block load bar for debug: --> // import pdb; pdb.set_trace()
             return make_response(content=json.dumps({'success': True}))
         else:
             return make_response(status=400,
@@ -52,24 +53,6 @@ class StoredObjectView(APIView):
             qs = StoredObject.objects.filter(wf_module=wf_module_aux, stored_at=wf_module_aux.stored_data_version).values('uuid', 'name', 'size')
             return make_response(status=200, content=json.dumps(list(qs)))
 
-    # def delete(self, request, *args, **kwargs):
-    #     """A DELETE request. If found, deletes a file with the corresponding
-    #     UUID from the server's filesystem.
-    #     """
-    #     qquuid = kwargs.get('qquuid', '')
-    #     if qquuid:
-    #         instances = StoredObject.objects.filter(uuid = qquuid)
-    #         for instance in instances:
-    #             instance.wf_module.stored_data_version = None
-    #             instance.wf_module.save()
-    #             instance.delete()
-    #         return make_response(status=204, content=json.dumps({'success': True}))
-    #     else:
-    #         return make_response(status=404,
-    #                              content=json.dumps({
-    #                                  'success': False,
-    #                                  'error': 'File not present'
-    #                              }))
 
 
 ##

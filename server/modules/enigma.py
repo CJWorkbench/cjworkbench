@@ -3,13 +3,10 @@ import json
 import os
 from urllib.parse import urlsplit
 import requests
-
 import pandas as pd
-
 from django.core.exceptions import ValidationError
 from django.forms import URLField
-
-from .utils import save_data_if_changed
+from server.versions import save_fetched_table_if_changed
 
 def handle_dotcom_url(wf_module, url, split_url, num_rows):
     """
@@ -154,7 +151,7 @@ class EnigmaDataLoader:
             csv_data = data.to_csv(index=False)
             updated = wf_module.auto_update_data or event.get('type') == 'click'
 
-            save_data_if_changed(wf_module, csv_data, auto_change_version=updated)
+            save_fetched_table_if_changed(wf_module, csv_data, auto_change_version=updated)
 
     @staticmethod
     def render(wf_module, table):

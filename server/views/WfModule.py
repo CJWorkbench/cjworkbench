@@ -214,8 +214,8 @@ def wfmodule_dataversion(request, pk, format=None):
         if not wf_module.user_authorized_read(request.user):
             return HttpResponseNotFound()
 
-        versions = wf_module.list_stored_data_versions()
-        current_version = wf_module.get_stored_data_version()
+        versions = wf_module.list_fetched_data_versions()
+        current_version = wf_module.get_fetched_data_version()
         response = {'versions': versions, 'selected': current_version}
         return Response(response)
 

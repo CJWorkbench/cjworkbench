@@ -7,7 +7,6 @@ import requests
 import csv
 import io
 from .moduleimpl import ModuleImpl
-from server.models import ChangeDataVersionCommand
 from .utils import *
 
 # ---- Twitter ----

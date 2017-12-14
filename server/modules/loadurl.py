@@ -1,14 +1,12 @@
 from .moduleimpl import ModuleImpl
-from django.utils import timezone
-import csv
 import pandas as pd
 from pandas.parser import CParserError
 from xlrd import XLRDError
 import io
-import json
 import requests
 import re
-from .utils import *
+from server.versions import save_fetched_table_if_changed
+from server.utils import sanitize_dataframe
 
 # ---- LoadURL ----
 
@@ -36,11 +34,7 @@ class LoadURL(ModuleImpl):
     # Input table ignored.
     @staticmethod
     def render(wf_module, table):
-        tablestr = wf_module.retrieve_data()
-        if (tablestr != None) and (len(tablestr)>0):
-            return pd.read_csv(io.StringIO(tablestr))
-        else:
-            return None
+        return wf_module.retrieve_fetched_table()
 
     # Load a CSV from file when fetch pressed
     @staticmethod
@@ -105,12 +99,12 @@ class LoadURL(ModuleImpl):
             return
 
         if wfm.status != wfm.ERROR:
-
             wfm.set_ready(notify=False)
-            new_csv = table.to_csv(index=False)  # index=False to prevent pandas from adding an index col
 
             # Change the data version (when new data found) only if this module set to auto update, or user triggered
             auto = wfm.auto_update_data or (event is not None and event.get('type') == "click")
 
+            sanitize_dataframe(table) # ensure all columns are simple types (e.g. nested json to strings)
+
             # Also notifies client
-            save_data_if_changed(wfm, new_csv, auto_change_version=auto)
+            save_fetched_table_if_changed(wfm, table, auto_change_version=auto)

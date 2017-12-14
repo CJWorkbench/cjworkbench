@@ -11,7 +11,6 @@ from server.models.StoredObject import StoredObject
 from django.core.files.storage import default_storage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-from server.notifications import email_notification
 
 # Completely ridiculous work to resolve circular imports: websockets -> Workflow -> WfModule which needs websockets
 # So we create an object with callbacks, which we then set in websockets.py
@@ -48,7 +47,6 @@ class WfModule(models.Model):
 
     order = models.IntegerField()
 
-    # DO NOT use null=True, causes problems in test
     notes = models.TextField(
         null=True,
         blank=True)
@@ -70,7 +68,7 @@ class WfModule(models.Model):
     update_interval = models.IntegerField(default=0)             # time in seconds between updates
     last_update_check = models.DateTimeField(null=True, blank=True)
 
-    notifications= models.BooleanField(default=False)
+    notifications = models.BooleanField(default=False)
 
     # status light and current error message
     READY = "ready"
@@ -88,6 +86,13 @@ class WfModule(models.Model):
     )
     error_msg = models.CharField('error_msg', max_length=200, blank=True)
 
+    # navigate through a stack
+    def previous_in_stack(self):
+        if self.order == 0:
+            return None
+        else:
+            return WfModule.objects.get(workflow=self.workflow, order=self.order-1)
+
     # ---- Authorization ----
     # User can access wf_module if they can access workflow
     def user_authorized_read(self, user):
@@ -97,42 +102,59 @@ class WfModule(models.Model):
         return self.workflow.user_authorized_write(user)
 
 
-
-
     # ---- Data versions ----
     # Modules that fetch data, like Load URL or Twitter or scrapers, store versions of all previously fetched data
 
-    def store_data(self, text):
-        stored_object = StoredObject.create(self, text)
-        return stored_object.stored_at
+    # Note: does not switch to new version automatically
+    def store_fetched_table(self, table):
+         stored_object = StoredObject.create_table(self, StoredObject.FETCHED_TABLE, table)
+         return stored_object.stored_at
 
-    def retrieve_data(self):
+    # Compares against latest version (which may not be current version)
+    # Note: does not switch to new version automatically
+    def store_fetched_table_if_different(self, table):
+        reference_so = StoredObject.objects.filter(
+            wf_module=self,
+            type=StoredObject.FETCHED_TABLE
+        ).order_by('-stored_at').first()
+
+        new_version = StoredObject.create_table_if_different(self, reference_so, StoredObject.FETCHED_TABLE, table)
+        return new_version.stored_at if new_version else None
+
+    def retrieve_fetched_table(self):
         if self.stored_data_version:
-            return StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).get_data()
+            return StoredObject.objects.get(
+                wf_module=self,
+                type=StoredObject.FETCHED_TABLE,
+                stored_at=self.stored_data_version
+            ).get_table()
         else:
             return None
 
-    def retrieve_file(self):
+    def retrieve_fetched_file(self):
         if self.stored_data_version:
-            return StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).file
-        else:
-            return None
+            return StoredObject.objects.get(
+                wf_module=self,
+                type=StoredObject.UPLOADED_FILE,
+                stored_at=self.stored_data_version
+            ).file
 
     # versions are ISO datetimes
-    def get_stored_data_version(self):
+    def get_fetched_data_version(self):
         return self.stored_data_version
 
-    # NOTE like all mutators, this should usually be wrapped in a command
+    # Like all mutators, this should usually be wrapped in a Command so it is undoable
     # In this case, a ChangeDataVersionCommand
-    def set_stored_data_version(self, version):
-        versions = self.list_stored_data_versions()
-        if version not in versions:
-            raise ValueError('No such stored data version')
+    def set_fetched_data_version(self, version):
+        if version is not None:
+            versions = self.list_fetched_data_versions()
+            if version not in versions:
+                raise ValueError('No such stored data version')
         self.stored_data_version = version
         self.save()
 
-    def list_stored_data_versions(self):
-        # sort newest first
+    def list_fetched_data_versions(self):
+        # sort newest first, get both file and table types
         return list(StoredObject.objects.filter(wf_module=self).order_by('-stored_at').values_list('stored_at', flat=True))
 
     # --- Parameter acessors ----
@@ -250,8 +272,3 @@ class WfModule(models.Model):
 
         return new_wfm
 
-# I don't think we want this -- API is use set_stored_data_version
-# @receiver(post_save, sender=StoredObject)
-# def update_stored_data_version(sender, **kwargs):
-#     kwargs['instance'].wf_module.stored_data_version = kwargs['instance'].stored_at
-#     kwargs['instance'].wf_module.save()
