@@ -7,6 +7,9 @@ from googleapiclient.discovery import build
 from .utils import *
 import io
 import json
+import pandas as pd
+from pandas.parser import CParserError
+from server.versions import save_fetched_table_if_changed
 
 class GoogleSheets(ModuleImpl):
 
@@ -43,11 +46,7 @@ class GoogleSheets(ModuleImpl):
 
     @staticmethod
     def render(wf_module, table):
-        tablestr = wf_module.retrieve_data()
-        if (tablestr != None) and (len(tablestr) > 0):
-            return pd.read_csv(io.StringIO(tablestr))
-        else:
-            return None
+        return wf_module.retrieve_fetched_table()
 
     @staticmethod
     def event(wfmodule, parameter=None, event=None, request=None, **kwargs):
@@ -75,6 +74,13 @@ class GoogleSheets(ModuleImpl):
 
         if sheet_id:
             new_data = GoogleSheets.get_spreadsheet(request, sheet_id)
-            save_data_if_changed(wfmodule, new_data, auto_change_version=True)
+
+            try:
+                table = pd.read_csv(io.StringIO(new_data))
+            except CParserError as e:
+                wfmodule.set_error(str(e))
+                table = pd.DataFrame([{'result':res.text}])
+
+            save_fetched_table_if_changed(wfmodule, table)
             # change this to no response method
             return JsonResponse({}, status=204)
