@@ -2,39 +2,48 @@ import React from 'react'
 import ColumnColorPicker from  './ColumnColorPicker'
 import debounce from 'lodash/debounce'
 import DateScaleSettings from './DateScaleSettings'
-//var DateScaleSettings = require('chartbuilder/src/js/components/shared/DateScaleSettings.jsx');
-var SessionStore = require('chartbuilder/src/js/stores/SessionStore');
+
+/* Flux stores */
+var RendererWrapper = require("chartbuilder/src/js/components/RendererWrapper");
+var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
+var ChartPropertiesStore = require("chartbuilder/src/js/stores/ChartPropertiesStore");
+var ChartMetadataStore = require("chartbuilder/src/js/stores/ChartMetadataStore");
+var SessionStore = require("chartbuilder/src/js/stores/SessionStore");
+var ErrorStore = require("chartbuilder/src/js/stores/ErrorStore");
 
 export default class ChartEditor extends React.Component {
   constructor(props) {
     super(props);
     this.onChangeChartSettings = this.onChangeChartSettings.bind(this);
     this.onChangeTitle = this.onChangeTitle.bind(this);
-    this.saveState = debounce(this.props.saveState, 500);
+    this.saveState = this.saveState.bind(this);
     this.onChangeDate = this.onChangeDate.bind(this);
     this.onChangePrefix = this.onChangePrefix.bind(this);
     this.onChangeSuffix = this.onChangeSuffix.bind(this);
+    this.getStateFromStores = this.getStateFromStores.bind(this);
+  }
+
+  getStateFromStores() {
+  	return {
+  		chartProps: ChartPropertiesStore.getAll(),
+  		metadata: ChartMetadataStore.getAll(),
+  		errors: ErrorStore.getAll(),
+  		session: SessionStore.getAll()
+  	};
+  }
+
+  saveState(model) {
+    ChartServerActions.receiveModel(model);
   }
 
   componentWillMount() {
-    if (this.props.chartState !== "") {
-      this.setState(
-        Object.assign( {},
-          JSON.parse(this.props.chartState),
-          {session: SessionStore.getAll()}
-        )
-      );
-    }
+    console.log(this.getStateFromStores());
+    this.setState(this.getStateFromStores());
   }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.revision !== nextProps.revision) {
-      this.setState(
-        Object.assign( {},
-          JSON.parse(nextProps.chartState),
-          {session: SessionStore.getAll()}
-        )
-      );
+      this.setState(this.getStateFromStores());
     }
   }
 

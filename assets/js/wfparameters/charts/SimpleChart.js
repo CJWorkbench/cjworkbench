@@ -4,12 +4,13 @@ import React from 'react'
 import { store, wfModuleStatusAction } from '../../workflow-reducer'
 import PropTypes from 'prop-types'
 
-var RendererWrapper = require("chartbuilder/src/js/components/RendererWrapper");
-var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
+var ChartViewActions = require("chartbuilder/src/js/actions/ChartViewActions");
 var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
 var saveSvgAsPng = require("save-svg-as-png");
 
 /* Flux stores */
+var RendererWrapper = require("chartbuilder/src/js/components/RendererWrapper");
+var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
 var ChartPropertiesStore = require("chartbuilder/src/js/stores/ChartPropertiesStore");
 var ChartMetadataStore = require("chartbuilder/src/js/stores/ChartMetadataStore");
 var SessionStore = require("chartbuilder/src/js/stores/SessionStore");
@@ -39,11 +40,6 @@ export default class SimpleChartParameter extends React.Component {
 
   constructor(props) {
     super(props);
-    this.loadingState = { loading: true, loaded_ever: true };
-    this.state = Object.assign({},
-      { loading: false, loaded_ever: false },
-      this.getStateFromStores()
-    ); // componentDidMount will trigger first load
     this.onStateChange = this.onStateChange.bind(this);
     this.saveImage = this.saveImage.bind(this);
 
@@ -52,6 +48,34 @@ export default class SimpleChartParameter extends React.Component {
     // the render, as this value is passed to us by the ChartBuilder component, so it's already rendered.
     // Only tricky bit is to remember to reset this when our props change.
     this.lastChartStateString = null;
+  }
+
+  componentWillMount(props) {
+    var modelText = this.props.loadState();
+    var model;
+    var defaults = chartConfig.xy.defaultProps;
+
+    if (modelText !== "") {
+      model = JSON.parse(this.props.loadState());
+    } else {
+      model = defaults;
+    }
+
+    model.chartProps.input = {raw: ''} //blank data to start
+
+    this.loadingState = { loading: true, loaded_ever: true };
+
+    this.setState({ loading: true, loaded_ever: false });
+
+    defaults.chartProps.chartSettings[0].type = this.props.chartType || 'line';
+    defaults.chartProps.scale.typeSettings.maxLength = 7;
+
+    ChartPropertiesStore.addChangeListener(this.onStateChange);
+    ChartMetadataStore.addChangeListener(this.onStateChange);
+    ErrorStore.addChangeListener(this.onStateChange);
+    SessionStore.addChangeListener(this.onStateChange);
+
+    ChartServerActions.receiveModel(model);
   }
 
   getStateFromStores() {
@@ -65,12 +89,12 @@ export default class SimpleChartParameter extends React.Component {
 
   // Turn ChartBuilder errors into module errors (so user gets the red light etc.)
   parseErrors(errors) {
-    var first_err= errors.messages.find(m => m.type=='error');
-    if (first_err) {
-  // console.log("Chart errors");
-      store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', first_err.text))
+    var errorMessage = errors.messages.map( (m) => {
+      return m.text + "\r\n";
+    });
+    if (errorMessage !== '') {
+      store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', errorMessage))
     } else {
-  // console.log("Chart no errors");
       store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'ready'))
     }
   }
@@ -108,70 +132,22 @@ export default class SimpleChartParameter extends React.Component {
   }
 
   // called when any change is made to chart. Update error status, save to hidden 'chartstate' text field
-  onStateChange(model) {
-    // console.log('onStateChange');
+  onStateChange(_uh) {
+    var model = this.getStateFromStores();
     this.parseErrors(model.errors);
-    this.saveState(model)
+    this.saveState(model);
+    this.setState(Object.assign({}, {loading: false, loaded_ever: true}, model));
   }
 
   // Load our input data from render API, restore start state from hidden param
   loadChart() {
     this.setState(this.loadingState);
-    var self = this;
     var url = '/api/wfmodules/' + this.props.wf_module_id + '/input';
-    var chartType;
-    if (this.props.chartType) {
-      chartType = this.props.chartType;
-    } else {
-      chartType = 'line';
-    }
     fetch(url, { credentials: 'include'})
       .then(response => response.json())
       .then(json => {
-        var model;
-        var newState;
-        var modelText = this.props.loadState();
-        var defaults = JSON.parse(JSON.stringify(chartConfig.xy.defaultProps));
-        var seriesCount;
-        var dataChanged = (modelText === ''); //UGH this is bad, there is a better way to do this
-
-        // Set this so that all new series get set to the chart type
-        defaults.chartProps.chartSettings[0].type = this.props.chartType;
-        defaults.chartProps.scale.typeSettings.maxLength = 7;
-
-        if (dataChanged) {
-          model = JSON.parse(JSON.stringify(defaults));
-        } else {
-          model = JSON.parse(this.props.loadState()); // retrieve from hidden param
-          seriesCount = model.chartProps.chartSettings.length;
-          model.chartProps.data = [];
-        }
-
-        model.chartProps.input = { raw: JSONtoCSV(json.rows) };
-
-        var newState = Object.assign(
-          {},
-          model,
-          {chartProps: chartConfig.xy.parser({defaultProps: defaults}, model.chartProps)}
-        );
-
-        if (newState.chartProps.chartSettings.length !== seriesCount
-          || typeof newState.chartProps.scale.hasDate !== typeof model.chartProps.scale.hasDate) {
-          dataChanged = true;
-        }
-
-        this.setState(
-          Object.assign(
-            {},
-            {loading: false, loaded_ever: true},
-            newState,
-          )
-        );
-
-        // Finally, save the state if this is the first time we've loaded it
-        if (dataChanged) {
-          this.saveState(newState);
-        }
+        var input = { raw: JSONtoCSV(json.rows) };
+        ChartViewActions.updateInput('input', input);
       });
   }
 
@@ -194,7 +170,7 @@ export default class SimpleChartParameter extends React.Component {
   }
 
   render() {
-    if (this.state.loaded_ever) {
+    if (this.state.loaded_ever && this.state.errors.valid) {
       return (
         <RendererWrapper
           editable={true}
@@ -202,8 +178,7 @@ export default class SimpleChartParameter extends React.Component {
           model={this.state}
           enableResponsive={true}
           className="render-svg-mobile"
-          svgClassName={this.props.renderedSVGClassName}
-        />
+          svgClassName={this.props.renderedSVGClassName} />
       )
     } else {
       return false;
