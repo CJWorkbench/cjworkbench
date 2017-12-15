@@ -17,7 +17,7 @@ def migrate_files(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('server', '0079_auto_20171212_1917'),
+        ('server', '0080_wfmodule_notifications'),
     ]
 
     operations = [
