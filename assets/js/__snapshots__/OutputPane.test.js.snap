@@ -88,6 +88,7 @@ exports[`Fetches and renders 1`] = `
           minColumnWidth={80}
           minHeight={-2}
           minWidth={-2}
+          onBeforeEdit={[Function]}
           overScan={
             Object {
               "colsEnd": 5,
@@ -216,6 +217,7 @@ exports[`Fetches and renders 1`] = `
                 minColumnWidth={80}
                 minHeight={-2}
                 minWidth={-2}
+                onBeforeEdit={[Function]}
                 onColumnResize={[Function]}
                 onSort={[Function]}
                 onViewportClick={[Function]}
