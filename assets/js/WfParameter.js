@@ -339,17 +339,14 @@ export default class WfParameter extends React.Component {
             </div>
           );
         } else if (this.props.p.parameter_spec.id_name == 'colrename') {
-          if (this.props.getParamText('newcolnames') == '')
-            var newNameCols = this.props.getParamText('colnames');
-          else
-            var newNameCols = this.props.getParamText('newcolnames');
-          var saveState = ( state => this.props.setParamText('newcolnames', state) );
+          var renameParam = this.props.getParamText('newcolnames');
+          let saveState = ( state => this.props.setParamText('newcolnames', state) );
           return (
             <div className='parameter-margin'>
               <div className='t-d-gray content-3 label-margin'>Enter new column names</div>
               <ColumnRenamer
                 isReadOnly={this.props.isReadOnly}
-                newNameCols={newNameCols}
+                renameParam={renameParam}
                 saveState={saveState}
                 getColNames={this.getInputColNames}
                 revision={this.props.revision} />

@@ -21,45 +21,54 @@ export default class ColumnRenamer extends React.Component {
             }
         ],
         oldColNames: [],
-        newColNames: this.parseNewColNames(props.newNameCols)
-    }
+        newColNames: []
+    };
     this.rowGetter = this.rowGetter.bind(this);
     this.handleGridRowsUpdated = this.handleGridRowsUpdated.bind(this);
   }
 
-    // selected columns string -> array of column names
-  parseNewColNames(sc) {
-    var newColNames =  sc != undefined ? sc.trim() : '';
-    return newColNames.length>0 ? newColNames.split(',') : [];   // empty string should give empty array
+  // column renaming parameter string + current column names -> array of new column names
+  parseNewColNames(nameParam, cols) {
+    var newColNames = cols.slice();
+
+    // We may have different columns than when we started. Keep whichever are still there.
+    if (nameParam && nameParam.length > 0) {
+
+      // Reset all column names if we can't parse data for any reason
+      try {
+        var nameMap = JSON.parse(nameParam);
+      } catch (e) {
+        return newColNames;
+      }
+
+      for (var i = 0; i < cols.length; i++) {
+        let c = cols[i];
+        if (nameMap.hasOwnProperty(c)) {
+          newColNames[i] = nameMap[c];
+        }
+      }
+    }
+
+    return newColNames
   }
 
   loadColNames() {
-     // console.log(this.state.newColNames)
-     if (this.state.newColNames.length == 0){
-       // console.log('empty');
-        this.props.getColNames()
-          .then(cols => {
-            this.setState({oldColNames: cols, newColNames: cols});
-          })
-      }
-     else {
-         // console.log('full');
-         this.props.getColNames()
-             .then(cols => {
-                 this.setState({oldColNames: cols, newColNames: this.parseNewColNames(this.props.newNameCols)});
-             });
-     }
+    this.props.getColNames()
+      .then(cols => {
+        this.setState({
+          oldColNames: cols,
+          newColNames: this.parseNewColNames(this.props.renameParam, cols)});
+      });
   }
-      // Load column names when first rendered
+
+  // Load column names when first rendered
   componentDidMount() {
     this.loadColNames();
   }
 
   // Update column names when workflow revision bumps
   componentWillReceiveProps(nextProps) {
-      // console.log('componentWillReceiveProps '+ nextProps.newNameCols);
     if (this.props.revision != nextProps.revision) {
-        this.setState({oldColNames: this.state.oldColNames, newColNames: this.parseNewColNames(nextProps.newNameCols)});
       this.loadColNames();
     }
   }
@@ -73,8 +82,14 @@ export default class ColumnRenamer extends React.Component {
       }
 
       this.setState({ newColNames: newColNames });
-      this.props.saveState(newColNames.join());
-      // console.log(newColNames);
+
+      var nameMap = {};
+      let cols = this.state.oldColNames;
+      for (let i=0; i<cols.length; i++) {
+        nameMap[cols[i]] = newColNames[i];
+      }
+
+      this.props.saveState(JSON.stringify(nameMap));
     }
   }
 
@@ -96,7 +111,8 @@ export default class ColumnRenamer extends React.Component {
 }
 
 ColumnRenamer.propTypes = {
-  saveState:    PropTypes.func,
-  getColNames:  PropTypes.func,
-  revision:     PropTypes.number
+  renameParam:  PropTypes.string.isRequired,
+  saveState:    PropTypes.func.isRequired,
+  getColNames:  PropTypes.func.isRequired,
+  revision:     PropTypes.number.isRequired
 };
