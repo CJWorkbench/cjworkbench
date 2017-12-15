@@ -19,7 +19,6 @@ describe('DataVersionSelect', () => {
   };
   var api;
   var wrapper;
-  var modalLink;
 
   // Mount is necessary to invoke componentDidMount()
   beforeEach(() => {
@@ -38,7 +37,6 @@ describe('DataVersionSelect', () => {
       />
     );
 
-    modalLink = wrapper.find('div.open-modal')
   });
 
   it('Renders correctly when in Private mode, and selection is confirmed when user hits OK', (done) => {
@@ -49,29 +47,29 @@ describe('DataVersionSelect', () => {
     expect(wrapper).toMatchSnapshot();  // 1
 
     // Start with dialog closed
-    expect(wrapper.state().modalOpen).toBe(false)
-
-    // link renders with default text before versions are loaded
-    expect(modalLink.text()).toEqual("-");
+    expect(wrapper.state().modalOpen).toBe(false);
 
     // give versions a chance to load
     setImmediate( () => {
+      var modalLink = wrapper.find('div.open-modal');
+      expect(modalLink).toHaveLength(1);
       expect(modalLink.text()).toEqual("Apr 10, 2017 - 05:57 PM");
 
-      expect(modalLink).toHaveLength(1);
+      expect(wrapper.find('.t-d-gray').text()).toEqual("Version 2 of 5");
+
       modalLink.simulate('click');
       expect(wrapper.state().modalOpen).toBe(true);
 
       // Need setImmediate to give modal a chance to fill with data, API returns a promise that must resolve
       setImmediate( () => {
-        expect(wrapper.state().modalOpen).toBe(true)
+        expect(wrapper.state().modalOpen).toBe(true);
 
         // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
         // So find them, and make a new Wrapper
         // Reference: "https://github.com/airbnb/enzyme/issues/252"
         let modal_element = document.getElementsByClassName('dialog-window');
         expect(modal_element.length).toBe(1);
-        let modal = new ReactWrapper(modal_element[0], true)
+        let modal = new ReactWrapper(modal_element[0], true);
 
         expect(modal).toMatchSnapshot(); // 2
         expect(modal.find('.dialog-body')).toHaveLength(1);
@@ -80,9 +78,6 @@ describe('DataVersionSelect', () => {
         expect(wrapper.state().versions).toEqual(mockVersions);
         let versionsList = modal.find('.list-test-class');
         expect(versionsList).toHaveLength(5);
-
-        // check that date has correctly converted to readable string
-        // ?????
 
         // filter list to grab first item
         let firstVersion = versionsList.filterWhere(n => n.key() == '2017-07-10 17:57:58.324Z');
@@ -115,10 +110,12 @@ describe('DataVersionSelect', () => {
 
     expect(api.getWfModuleVersions.mock.calls.length).toBe(1);
 
-    modalLink.simulate('click');
-    expect(wrapper.state().modalOpen).toBe(true);
-
     setImmediate( () => {
+      var modalLink = wrapper.find('div.open-modal');
+      expect(modalLink).toHaveLength(1);
+      modalLink.simulate('click');
+      expect(wrapper.state().modalOpen).toBe(true);
+
       let modal_element = document.getElementsByClassName('dialog-window');
       // select the second element in array for this test
       expect(modal_element.length).toBe(2);
@@ -158,12 +155,14 @@ describe('DataVersionSelect', () => {
 
     expect(api.getWfModuleVersions.mock.calls.length).toBe(2); // 2 not 1 because beforeEach mounted "wrapper" already
 
-    let readOnlyModalLink = readOnlywrapper.find('div.open-modal')
+    setImmediate(() => {
+      let readOnlyModalLink = readOnlywrapper.find('div.open-modal');
 
-    readOnlyModalLink.simulate('click');
-    expect(readOnlywrapper.state().modalOpen).toBe(false);
+      readOnlyModalLink.simulate('click');
+      expect(readOnlywrapper.state().modalOpen).toBe(false);
 
-    done();
+      done();
+    });
   });
 
   it('Displays empty when no versions available', (done) => {
@@ -185,7 +184,7 @@ describe('DataVersionSelect', () => {
       expect(emptyApi.getWfModuleVersions.mock.calls.length).toBe(1);
 
       var modalLink2 = wrapper2.find('div.open-modal');
-      expect(modalLink2.text()).toEqual("-");
+      expect(modalLink2).toHaveLength(0);
 
       expect(wrapper2).toMatchSnapshot();
       done();
