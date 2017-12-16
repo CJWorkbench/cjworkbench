@@ -2,7 +2,7 @@
   "name": "Column selector",
   "id_name": "selectcolumns",
   "category" : "Analyse",
-  "icon" : "filter",
+  "icon" : "transform",
   "description" : "",
   "parameters": [
     {
