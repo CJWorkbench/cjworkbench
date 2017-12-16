@@ -536,9 +536,6 @@ body {
   resize: none;
   overflow:hidden;
 }
-.text-field:active {
-  box-shadow: 0 0 1px 1px #48C8D7;
-}
 
 .number-field{
   width: 100%;
@@ -2254,6 +2251,11 @@ input[type=checkbox]:checked:after {
 .form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
   border-radius: 0;
   border: 1px solid #E7E7E7;
+  height: 3.5rem;
+}
+
+.form-control:focus{
+  border-color: #48C8D7;
 }
 
 /* Hiden canvas element used for image export;

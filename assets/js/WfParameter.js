@@ -132,7 +132,7 @@ export default class WfParameter extends React.Component {
         return (
           <div className='parameter-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
-            <input type="text"
+            <textarea
               readOnly={this.props.isReadOnly}
               className={sclass}
               rows={srows}
