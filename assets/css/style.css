@@ -1286,7 +1286,6 @@ img.logo {
   width: 100%;
   padding-bottom: 30rem;
   padding-top: 1.5rem;
-  min-height:100%;
 }
 .modulestack-list.dragging {
   background: rgba(118,155,176,0.15);
