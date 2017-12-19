@@ -8,7 +8,7 @@ from .utils import *
 import io
 import json
 import pandas as pd
-from pandas.parser import CParserError
+from pandas.io.common import CParserError
 from server.versions import save_fetched_table_if_changed
 
 class GoogleSheets(ModuleImpl):
