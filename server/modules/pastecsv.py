@@ -1,6 +1,6 @@
 from .moduleimpl import ModuleImpl
 import pandas as pd
-from pandas.parser import CParserError
+from pandas.io.common import CParserError
 import io
 
 

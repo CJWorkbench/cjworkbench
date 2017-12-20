@@ -3,12 +3,9 @@ from tweepy import TweepError
 import pandas as pd
 import time
 import os
-import requests
-import csv
-import io
 from .moduleimpl import ModuleImpl
 from .utils import *
-
+from server.versions import save_fetched_table_if_changed
 # ---- Twitter ----
 
 class Twitter(ModuleImpl):
@@ -20,11 +17,7 @@ class Twitter(ModuleImpl):
     # Get dataframe of last tweets fron our storage,
     @staticmethod
     def get_stored_tweets(wf_module):
-        tablestr = wf_module.retrieve_data()
-        if (tablestr != None) and (len(tablestr) > 0):
-            return pd.read_csv(io.StringIO(tablestr))
-        else:
-            return None
+        return wf_module.retrieve_fetched_table()
 
     # Get from Twitter, return as dataframe
     @staticmethod
@@ -103,10 +96,9 @@ class Twitter(ModuleImpl):
         if wfm.status != wfm.ERROR:
 
             wfm.set_ready(notify=False)
-            new_csv = tweets.to_csv(index=False)  # index=False to prevent pandas from adding an index col
 
             # Change the data version (when new data found) only if this module set to auto update, or user triggered
             auto = wfm.auto_update_data or (event is not None and event.get('type') == "click")
 
             # Also notifies client
-            save_data_if_changed(wfm, new_csv, auto_change_version=auto)
+            save_fetched_table_if_changed(wfm, tweets, auto_change_version=auto)
