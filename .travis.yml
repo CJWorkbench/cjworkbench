@@ -3,6 +3,8 @@ python:
 - '3.5'
 node_js:
 - '7.7'
+addons:
+  firefox: latest
 install:
 - ". $HOME/.nvm/nvm.sh"
 - nvm install stable
