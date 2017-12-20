@@ -57,9 +57,6 @@ export default class DropZone extends Component {
                         'wf_module': this.props.wfModuleId
                     }
                 },
-                validation: {
-                    allowedExtensions: ['csv', 'CSV', 'xls', 'xlsx', 'XLS', 'XLSX']
-                },
                 multiple: false
             }
         })

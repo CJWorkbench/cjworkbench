@@ -38,5 +38,5 @@ class UploadFile(ModuleImpl):
             return table_aux
 
         else:
-            wf_module.set_error('Unknown file type.')
+            wf_module.set_error('Unknown file type.', notify=True)
             return None

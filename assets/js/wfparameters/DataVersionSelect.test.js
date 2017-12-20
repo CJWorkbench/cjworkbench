@@ -185,6 +185,7 @@ describe('DataVersionSelect', () => {
 
       var modalLink2 = wrapper2.find('div.open-modal');
       expect(modalLink2).toHaveLength(1);
+      expect(modalLink2.text()).toBe('-');
 
       expect(wrapper2).toMatchSnapshot();
       done();
