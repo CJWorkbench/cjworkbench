@@ -16,8 +16,7 @@
       "name": "hidden chart state",
       "id_name": "chartstate",
       "type": "string",
-      "visible": false,
-      "ui-only": true
+      "visible": false
     },
     {
       "name": "Chart Options",

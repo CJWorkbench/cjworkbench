@@ -14,9 +14,12 @@ var ErrorStore = require("chartbuilder/src/js/stores/ErrorStore");
 export default class ChartEditor extends React.Component {
   constructor(props) {
     super(props);
+    this.state = this.getStateFromStores();
     this.onChangeChartSettings = this.onChangeChartSettings.bind(this);
     this.onChangeTitle = this.onChangeTitle.bind(this);
     this.saveState = this.saveState.bind(this);
+    this.onStateChange = this.onStateChange.bind(this);
+    this.onErrorsChange = this.onErrorsChange.bind(this);
     this.onChangeDate = this.onChangeDate.bind(this);
     this.onChangePrefix = this.onChangePrefix.bind(this);
     this.onChangeSuffix = this.onChangeSuffix.bind(this);
@@ -27,61 +30,68 @@ export default class ChartEditor extends React.Component {
   	return {
   		chartProps: ChartPropertiesStore.getAll(),
   		metadata: ChartMetadataStore.getAll(),
-  		errors: ErrorStore.getAll(),
   		session: SessionStore.getAll()
   	};
+  }
+
+  onErrorsChange() {
+    this.setState({errors: ErrorStore.getAll()})
   }
 
   saveState(model) {
     ChartServerActions.receiveModel(model);
   }
 
-  componentWillMount() {
-    console.log(this.getStateFromStores());
+  onStateChange() {
     this.setState(this.getStateFromStores());
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (this.props.revision !== nextProps.revision) {
-      this.setState(this.getStateFromStores());
-    }
+  componentDidMount() {
+    ChartPropertiesStore.addChangeListener(this.onStateChange);
+    ChartMetadataStore.addChangeListener(this.onStateChange);
+    ErrorStore.addChangeListener(this.onErrorsChange);
+    SessionStore.addChangeListener(this.onStateChange);
   }
+
+  componentWillUnmount() {
+		ChartPropertiesStore.removeChangeListener(this.onStateChange);
+		ChartMetadataStore.removeChangeListener(this.onStateChange);
+		ErrorStore.removeChangeListener(this.onErrorsChange);
+		SessionStore.removeChangeListener(this.onStateChange);
+	}
 
   onChangeChartSettings(state) {
     let stateCopy = Object.assign({}, this.state);
     stateCopy.chartProps.chartSettings = state;
-    this.saveState(JSON.stringify(stateCopy));
+    this.saveState(stateCopy);
   }
 
   onChangeTitle(e) {
     let stateCopy = Object.assign({}, this.state);
     stateCopy.metadata.title = e.target.value;
-    this.setState(stateCopy);
-    this.saveState(JSON.stringify(stateCopy));
+    this.saveState(stateCopy);
   }
 
   onChangePrefix(e) {
     let stateCopy = Object.assign({}, this.state);
     stateCopy.chartProps.scale.primaryScale.prefix = e.target.value;
-    this.setState(stateCopy);
-    this.saveState(JSON.stringify(stateCopy));
+    this.saveState(stateCopy);
   }
 
   onChangeSuffix(e) {
     let stateCopy = Object.assign({}, this.state);
     stateCopy.chartProps.scale.primaryScale.suffix = e.target.value;
-    this.setState(stateCopy);
-    this.saveState(JSON.stringify(stateCopy));
+    this.saveState(stateCopy);
   }
 
   onChangeDate(uh) {
     let stateCopy = Object.assign({}, this.state);
     stateCopy.chartProps.scale = uh;
-    this.saveState(JSON.stringify(stateCopy));
+    this.saveState(stateCopy);
   }
 
   render() {
-    if (this.props.chartState !== "") {
+    if (this.state.errors && this.state.errors.valid) {
       return (
         <div>
           <div className="param-line-margin">

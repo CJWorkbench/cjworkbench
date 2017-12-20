@@ -25,10 +25,15 @@ export default class ChartSeriesChooser extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({
-      color: defaultColors[nextProps.colorIndex],
-      value: nextProps.value
-    });
+    var nextState = {
+      color: defaultColors[nextProps.colorIndex]
+    };
+
+    if (this.state.label !== '') {
+      nextState.label = nextProps.label;
+    }
+
+    this.setState(nextState);
   }
 
   toggle() {
@@ -63,7 +68,10 @@ export default class ChartSeriesChooser extends React.Component {
     this.setState({
       label: e.target.value
     });
-    this.props.onChange(this.props.index, {label:e.target.value})
+    // If an empty string is saved Chartbuilder resets to the default value
+    if (e.target.value !== '') {
+      this.props.onChange(this.props.index, {label:e.target.value})
+    }
   }
 
   render() {
