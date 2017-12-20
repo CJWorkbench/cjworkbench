@@ -62,7 +62,7 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
         autoFocus={true}
         backdrop={true}
         backdropTransitionTimeout={150}
-        className="dialog-window"
+        className="modal-dialog"
         fade={true}
         isOpen={false}
         keyboard={true}
@@ -107,7 +107,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
 
 exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 2`] = `
 <div
-  className="modal-dialog dialog-window"
+  className="modal-dialog modal-dialog"
   role="document"
 >
   <div
@@ -264,7 +264,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
         autoFocus={true}
         backdrop={true}
         backdropTransitionTimeout={150}
-        className="dialog-window"
+        className="modal-dialog"
         fade={true}
         isOpen={false}
         keyboard={true}

@@ -237,7 +237,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
               autoFocus={true}
               backdrop={true}
               backdropTransitionTimeout={150}
-              className="dialog-window"
+              className="modal-dialog"
               fade={true}
               isOpen={false}
               keyboard={true}
@@ -802,7 +802,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
               autoFocus={true}
               backdrop={true}
               backdropTransitionTimeout={150}
-              className="dialog-window"
+              className="modal-dialog"
               fade={true}
               isOpen={false}
               keyboard={true}

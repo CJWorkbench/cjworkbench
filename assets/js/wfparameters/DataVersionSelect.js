@@ -109,12 +109,12 @@ export default class DataVersionSelect extends React.Component {
           <div className='open-modal t-f-blue content-4 text-center' onClick={this.toggleModal}>
                 {this.formatDate(this.state.originalSelected)}
           </div>
-          <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window'>
+          <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
             <ModalHeader toggle={this.toggleModal} >
               <div className=''>Dataset Versions</div>
             </ModalHeader>
-            <ModalBody className='dialog-body'>
-              <div className='scolling-list'>
+            <ModalBody className='list-body'>
+              <div className=''>
                 {this.state.versions.versions.map( date => {
                   return (
                     <div

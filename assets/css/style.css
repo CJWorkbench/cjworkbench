@@ -587,7 +587,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 2.5rem;
+  padding-left: 3rem;
   cursor: pointer;
 }
 
@@ -1958,17 +1958,19 @@ input[type=checkbox]:checked:after {
 /* ---- Dialog Boxes ---- */
 
 .modal-dialog{
-  margin-top: 10%;
+  max-height:50rem;
+  width: 40rem;
+  border: 0;
+  position:absolute;
+  margin:auto;
+  top: 0; left: 0; bottom: 0; right: 0;
 }
 
-.dialog-window {
-  border: 0;
-  width: 50rem;
-}
+
 
 .modal-content{
   border:0;
-  border-radius:5px;
+  border-radius:0px;
 }
 
 .modal-header {
@@ -1994,6 +1996,15 @@ input[type=checkbox]:checked:after {
   overflow: scroll;
 }
 
+.list-body{
+  background-color: #FFF;
+  padding: 3rem 0 3rem 0;
+  border: 0;
+  max-height: 40rem;
+  overflow: scroll;
+
+}
+
 .dialog-body p{
   font-size: 1.5rem;
   font-weight: 100;
@@ -2006,7 +2017,6 @@ input[type=checkbox]:checked:after {
 .dialog-footer {
   background-color: #FAFAFA;
   padding: 3rem 3rem 3rem 3rem;
-  border-top: 0;
 }
 
 .close {

@@ -99,11 +99,12 @@ export default class FileSelect extends React.Component {
                 <ModalHeader toggle={this.toggleModal}>
                   <div className='title-4 t-d-gray'>Choose File</div>
                 </ModalHeader>
-                <ModalBody className="dialog-body">
-                  <div className="scrolling-list">
+                <ModalBody className="list-body">
+                  <div className="">
                     {fileList}
                   </div>
                 </ModalBody>
+                <div className="dialog-footer modal-footer"></div>
               </Modal>
           </div>
         );

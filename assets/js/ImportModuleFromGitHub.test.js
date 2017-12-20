@@ -27,7 +27,7 @@ describe('ImportModuleFromGitHub', () => {
     // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
     // So find them, and make a new Wrapper
     // Reference: "https://github.com/airbnb/enzyme/issues/252"
-    let modal_element = document.getElementsByClassName('dialog-window');
+    let modal_element = document.getElementsByClassName('modal-dialog');
     expect(modal_element.length).toBe(1);
     let modal = new ReactWrapper(modal_element[0], true)
     expect(modal).toMatchSnapshot();

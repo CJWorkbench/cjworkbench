@@ -155,7 +155,7 @@ export default class ImportModuleFromGitHub extends React.Component {
           IMPORT FROM GITHUB
         </div>;
 
-        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='dialog-window'>
+        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
           <ModalHeader toggle={this.toggleModal} >
             <div className='title-4 t-d-gray'>Import from GitHub</div>
           </ModalHeader>

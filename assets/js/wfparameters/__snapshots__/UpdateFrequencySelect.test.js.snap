@@ -29,7 +29,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
     autoFocus={true}
     backdrop={true}
     backdropTransitionTimeout={150}
-    className="dialog-window"
+    className="modal-dialog"
     fade={true}
     isOpen={false}
     keyboard={true}
@@ -192,7 +192,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
     autoFocus={true}
     backdrop={true}
     backdropTransitionTimeout={150}
-    className="dialog-window"
+    className="modal-dialog"
     fade={true}
     isOpen={false}
     keyboard={true}
@@ -355,7 +355,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
     autoFocus={true}
     backdrop={true}
     backdropTransitionTimeout={150}
-    className="dialog-window"
+    className="modal-dialog"
     fade={true}
     isOpen={true}
     keyboard={true}
@@ -518,7 +518,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
     autoFocus={true}
     backdrop={true}
     backdropTransitionTimeout={150}
-    className="dialog-window"
+    className="modal-dialog"
     fade={true}
     isOpen={false}
     keyboard={true}

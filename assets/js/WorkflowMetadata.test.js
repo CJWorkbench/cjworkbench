@@ -62,7 +62,7 @@ describe('WorkflowMetadata - private mode', () => {
 
       setImmediate(() => {
         // Dialog should be closed, link should now say private
-        //let modal_element = document.getElementsByClassName('dialog-window');
+        //let modal_element = document.getElementsByClassName('modal-dialog');
 
         expect(publicLink.childAt(0).text()).toBe('-');
         expect(wrapper).toMatchSnapshot(); // 4
