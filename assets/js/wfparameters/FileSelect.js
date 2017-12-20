@@ -44,8 +44,10 @@ export default class FileSelect extends React.Component {
       this.getFiles();
     }
 
-    componentWillReceiveProps() {
-      this.getFiles();
+    componentWillReceiveProps(nextProps) {
+      if (nextProps.userCreds[0] !== this.props.userCreds[0]) {
+        this.getFiles();
+      }
     }
 
     handleClick(file) {
