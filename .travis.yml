@@ -23,6 +23,7 @@ install:
 - tar -xzf geckodriver-v0.19.1-linux64.tar.gz -C geckodriver
 - export PATH=$PATH:$PWD/geckodriver
 script:
+- ./node_modules/.bin/webpack --config webpack.config.js
 - python manage.py test integrationtests
 - python manage.py test
 - npm test
