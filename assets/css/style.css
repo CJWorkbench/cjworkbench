@@ -2098,8 +2098,8 @@ input[type=checkbox]:checked:after {
 .react-fine-uploader-gallery-progress-bar-container{
   height:1px;
   opacity:1;
-  width: 43rem;
-  top:10.3rem;
+  width: 39rem;
+  top:9.5rem;
   background: #FBAA6D;
   box-shadow: none;
 }
@@ -2111,7 +2111,7 @@ input[type=checkbox]:checked:after {
   margin-right:0px;
   margin-bottom:0px;
   margin-left:0px;
-  width: 43rem;
+  width: 39rem;
   background: #FBAA6D;
   box-shadow: none;
 }
@@ -2130,8 +2130,8 @@ input[type=checkbox]:checked:after {
 .dropzone-button{
   width:11.3rem!important;
   position:absolute!important;
-  left:32rem;
-  top:11.8rem;
+  left:28rem;
+  top:11rem;
 }
 
 .upload-box{
