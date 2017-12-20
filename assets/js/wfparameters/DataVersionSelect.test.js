@@ -72,7 +72,7 @@ describe('DataVersionSelect', () => {
         let modal = new ReactWrapper(modal_element[0], true);
 
         expect(modal).toMatchSnapshot(); // 2
-        expect(modal.find('.dialog-body')).toHaveLength(1);
+        expect(modal.find('.list-body')).toHaveLength(1);
 
         // check that the versions have loaded and are displayed in list
         expect(wrapper.state().versions).toEqual(mockVersions);

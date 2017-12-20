@@ -145,14 +145,14 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
       </div>
     </ModalHeader>
     <ModalBody
-      className="dialog-body"
+      className="list-body"
       tag="div"
     >
       <div
-        className="dialog-body modal-body"
+        className="list-body modal-body"
       >
         <div
-          className="scolling-list"
+          className=""
         >
           <div
             className="line-item-data list-test-class"
