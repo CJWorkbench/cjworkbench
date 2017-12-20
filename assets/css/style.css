@@ -2048,6 +2048,7 @@ input[type=checkbox]:checked:after {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  margin-top:-0.5rem;
   padding: 1.5rem;
   align-items:center;
 }
@@ -2137,7 +2138,7 @@ input[type=checkbox]:checked:after {
 .upload-box{
   display: flex;
   justify-content: space-between;
-  padding-right: 1.8rem;
+  padding-right: 1.5rem;
 }
 
 .file-info p{
@@ -2146,7 +2147,7 @@ input[type=checkbox]:checked:after {
 
 .connected-account p{
   margin:0;
-  margin-top: -1.5rem;
+  margin-top: -1rem;
 }
 
 /* --- Editable text fields --- */

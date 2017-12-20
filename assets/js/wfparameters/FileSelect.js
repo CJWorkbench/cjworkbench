@@ -93,17 +93,18 @@ export default class FileSelect extends React.Component {
 
         filesModal = (
           <div>
-            <div className="button-orange action-button mt-0" onClick={this.toggleModal}>{this.state.file ? 'Change' : 'Choose'} file</div>
-            <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal}>
-              <ModalHeader toggle={this.toggleModal}>
-                <div className='title-4 t-d-gray'>Choose File</div>
-              </ModalHeader>
-              <ModalBody className="dialog-body">
-                <div className="scrolling-list">
-                  {fileList}
-                </div>
-              </ModalBody>
-            </Modal>
+            {!this.state.file &&
+              <div className="button-orange action-button mt-0" onClick={this.toggleModal}>Choose file</div>}
+              <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal}>
+                <ModalHeader toggle={this.toggleModal}>
+                  <div className='title-4 t-d-gray'>Choose File</div>
+                </ModalHeader>
+                <ModalBody className="dialog-body">
+                  <div className="scrolling-list">
+                    {fileList}
+                  </div>
+                </ModalBody>
+              </Modal>
           </div>
         );
       }
@@ -111,7 +112,10 @@ export default class FileSelect extends React.Component {
       if (this.state.file) {
         fileInfo = (
           <div>
-            <div className={"t-d-gray content-3"}>File name:</div>
+            <div className="d-flex">
+              <div className={"t-d-gray content-3 label-margin"}>File</div>
+              <div onClick={this.toggleModal} className="t-f-blue ml-2">Change</div>
+            </div>
             <div><span className={"t-d-gray content-3 mb-3"}>{this.state.file.name}</span></div>
           </div>
         )
