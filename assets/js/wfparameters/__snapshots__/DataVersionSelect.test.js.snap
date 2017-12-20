@@ -21,6 +21,11 @@ exports[`DataVersionSelect Displays empty when no versions available 1`] = `
     >
       No data loaded
     </div>
+    <div
+      className="open-modal t-f-blue content-4 text-center"
+    >
+      -
+    </div>
   </div>
 </DataVersionSelect>
 `;
@@ -90,6 +95,11 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
       className="t-d-gray content-3 mb-2"
     >
       No data loaded
+    </div>
+    <div
+      className="open-modal t-f-blue content-4 text-center"
+    >
+      -
     </div>
   </div>
 </DataVersionSelect>

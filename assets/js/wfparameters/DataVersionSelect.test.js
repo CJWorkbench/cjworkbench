@@ -184,7 +184,7 @@ describe('DataVersionSelect', () => {
       expect(emptyApi.getWfModuleVersions.mock.calls.length).toBe(1);
 
       var modalLink2 = wrapper2.find('div.open-modal');
-      expect(modalLink2).toHaveLength(0);
+      expect(modalLink2).toHaveLength(1);
 
       expect(wrapper2).toMatchSnapshot();
       done();
