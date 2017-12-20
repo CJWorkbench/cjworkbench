@@ -100,13 +100,16 @@ export default class ColumnRenamer extends React.Component {
 
   render() {
     return  (
-      <ReactDataGrid
-        enableCellSelect={!this.props.isReadOnly}
-        columns={this.state.columns}
-        rowGetter={this.rowGetter}
-        rowsCount={this.state.oldColNames.length}
-        minHeight={200}
-        onGridRowsUpdated={this.handleGridRowsUpdated} />);
+      <div className='table-module-wrapper'>
+        <ReactDataGrid
+          enableCellSelect={!this.props.isReadOnly}
+          columns={this.state.columns}
+          rowGetter={this.rowGetter}
+          rowsCount={this.state.oldColNames.length}
+          minHeight={200}
+          onGridRowsUpdated={this.handleGridRowsUpdated} />
+      </div>
+        );
   }
 }
 

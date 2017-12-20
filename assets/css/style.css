@@ -1883,11 +1883,21 @@ svg .svg-background{
 }
 
 .list-wrapper{
-  max-height: 12rem;
-  overflow: scroll;
+  resize: vertical!important;
+  height: 12rem;
+  min-height: 6rem;
+  overflow: auto;
   background-color: #e7e7e7;
   border: 1px solid #e7e7e7;
 }
+
+/* Tried to make the column renamer list resizable but it conflicts with the react grid (outputpane) Love,PIERRE */
+/* .table-module-wrapper{
+  resize: vertical!important;
+  height: 12rem;
+  min-height: 6rem;
+  overflow: hidden;
+} */
 
 .list-scroll{
   overflow-y:auto;
