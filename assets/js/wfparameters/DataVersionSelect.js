@@ -141,7 +141,8 @@ export default class DataVersionSelect extends React.Component {
 
     } else {
       versionText = "No data loaded";
-      modalLink = null;
+      modalLink =
+        <div className='open-modal t-f-blue content-4 text-center'>-</div>
     }
 
     return (
