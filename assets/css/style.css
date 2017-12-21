@@ -1883,7 +1883,7 @@ svg .svg-background{
 }
 
 .list-wrapper{
-  resize: vertical!important;
+  resize: vertical;
   height: 12rem;
   min-height: 6rem;
   overflow: auto;
