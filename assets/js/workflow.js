@@ -46,7 +46,7 @@ class WorkflowList extends React.Component {
     this.drop = this.drop.bind(this);
     this.state = {
       justDropped: false,
-      wf_modules: this.props.data.wf_modules
+      wf_modules: this.props.data.wf_modules // This is dumb, modifying state modifes the original
     }
   }
 
@@ -206,7 +206,7 @@ class Workflow extends React.Component {
 
     var moduleLibrary = <ModuleLibrary
                           addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}
-                          dropModule={this.props.addModule}
+                          dropModule={(module_id, insert_before) => this.props.addModule(module_id, insert_before || this.props.workflow.wf_modules.length)}
                           api={this.props.api}
                           isReadOnly={this.props.workflow.read_only}
                           workflow={this.props.workflow} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
