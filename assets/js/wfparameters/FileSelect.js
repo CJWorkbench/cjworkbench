@@ -45,8 +45,14 @@ export default class FileSelect extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
-      if (nextProps.userCreds[0] !== this.props.userCreds[0]) {
+      if (nextProps.userCreds.length > 0 && nextProps.userCreds[0] !== this.props.userCreds[0]) {
         this.getFiles();
+      }
+
+      if (nextProps.userCreds.length === 0) {
+        this.setState({
+          files: []
+        });
       }
     }
 
@@ -117,7 +123,8 @@ export default class FileSelect extends React.Component {
           <div>
             <div className="d-flex">
               <div className={"t-d-gray content-3 label-margin"}>File</div>
-              <div onClick={this.toggleModal} className="t-f-blue ml-2">Change</div>
+              {this.state.files.length > 0 &&
+              <div onClick={this.toggleModal} className="t-f-blue ml-2">Change</div>}
             </div>
             <div><span className={"t-d-gray content-3 mb-3"}>{this.state.file.name}</span></div>
           </div>

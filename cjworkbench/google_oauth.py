@@ -25,7 +25,8 @@ def maybe_authorize(request, redirect_url = False):
     storage = DjangoORMStorage(GoogleCredentials, 'id', request.user, 'credential')
     credential = storage.get()
     if credential is None or credential.invalid == True:
-        authorize_url = create_and_store_flow(request)
+        flow = create_and_store_flow(request)
+        authorize_url = flow.step1_get_authorize_url()
         if redirect_url:
             authorize_url = add_query_param(authorize_url, 'state', redirect_url)
         return (False, authorize_url)
