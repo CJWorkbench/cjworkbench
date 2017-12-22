@@ -26,12 +26,12 @@ export const errorText = {
 	},
 	"NAN_VALUES": {
 		location: "input",
-		text: "At least one data points cannot be converted into a number",
+		text: "At least one data points cannot be converted into a number.",
 		type: "error"
 	},
 	"NOT_DATES": {
 		location: "input",
-		text: "A least one date in your data is the wrong format",
+		text: "A least one date in your data is the wrong format.",
 		type: "error"
 	},
 	"TOO_MUCH_DATA": {
@@ -46,17 +46,17 @@ export const errorText = {
 	},
 	"UNEVEN_TICKS": {
 		location: "axis",
-		text: "Adjust axis settings to make your y-axis ticks even",
+		text: "Adjust axis settings to make your y-axis ticks even.",
 		type: "warning"
 	},
 	"NO_PREFIX_SUFFIX": {
 		location: "axis",
-		text: "Prefix and suffix are missing. Consider labelling your chart",
+		text: "Prefix and suffix are missing. Consider labelling your chart.",
 		type: "warning"
 	},
 	"LARGE_NUMBERS": {
 		location: "input",
-		text: "Numbers are large. Consider dividing and labelling the unit in the axis",
+		text: "Numbers are large. Consider dividing and labelling the unit in the axis.",
 		type: "warning"
 	},
 	"UNEVEN_TZ": {
