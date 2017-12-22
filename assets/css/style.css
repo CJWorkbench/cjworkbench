@@ -930,7 +930,6 @@ body {
 .action-button {
   cursor: pointer;
 	height: 4rem;
-  min-width: 9rem;
   border-radius: 2.5rem;
   display: flex;
   align-items: center;
@@ -2109,7 +2108,7 @@ input[type=checkbox]:checked:after {
   justify-content: space-between;
   margin-top:-0.5rem;
   padding: 1.5rem;
-  align-items:center;
+  align-items:top;
 }
 
 .version-item {
