@@ -76,11 +76,14 @@ def execute_wfmodule(wfmodule):
     workflow = wfmodule.workflow
     for wfm in workflow.wf_modules.all():
         table = module_dispatch_render(wfm, table)
+
+        # don't ever give modules None, or return None. Empty table instead.
+        if table is None:
+            table = pd.DataFrame()
+
         if wfm == wfmodule:
             break
 
-    if table is None:
-        table = pd.DataFrame()
 
     return table
 
