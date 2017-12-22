@@ -418,6 +418,10 @@ body {
 
 /* Customized icons, not in font sent  */
 
+.icon-note:before{
+  font-size: 1.5rem;
+}
+
 .icon-collapse:before{
   content:"\e931";
   font-size:2rem;
