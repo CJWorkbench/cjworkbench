@@ -1729,9 +1729,9 @@ img.logo {
 }
 
 .react-grid-Cell:hover{
-  -webkit-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,0.75);
-  -moz-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,0.75);
-  box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,0.75);
+  -webkit-box-shadow: inset 0px 0px 0px 2px #719BB0;
+  -moz-box-shadow: inset 0px 0px 0px 2px #719BB0;
+  box-shadow: inset 0px 0px 0px 2px #719BB0;
 }
 
 .react-grid-Cell:not(.editing) .react-grid-Cell__value{
