@@ -45,7 +45,7 @@ class GoogleSheets(ModuleImpl):
         #return JsonResponse({'file':the_file.decode("utf-8")})
 
     @staticmethod
-    def render(wf_module, table):
+    def render(wf_module):
         return wf_module.retrieve_fetched_table()
 
     @staticmethod

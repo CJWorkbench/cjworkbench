@@ -24,8 +24,8 @@ client_secret.json
 .idea/
 tmp/
 
-#atom
-.ropeproject
+#atom-ide
+.ropeproject/
 
 # imported modules
 importedmodules/

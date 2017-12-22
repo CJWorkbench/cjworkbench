@@ -70,7 +70,7 @@ class TwitterTests(LoggedInTestCase):
         self.assertIsNone(self.wf_module.retrieve_fetched_table())
         self.assertIsNone(self.wf_module.workflow.last_delta)
 
-        with  patch.dict('os.environ', self.env_patch):
+        with patch.dict('os.environ', self.env_patch):
             with mock.patch('tweepy.AppAuthHandler') as auth:
                 with mock.patch('tweepy.API') as api:
                     instance = api.return_value
