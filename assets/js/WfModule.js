@@ -297,15 +297,8 @@ class WfModule extends React.Component {
     var notesIcon = undefined;
     if (!this.state.showNotes && !this.props['data-isReadOnly'])
       notesIcon = <div className='context-button btn mr-4' onClick={this.showNotes}>
-                    <div className='icon-note icon-l-gray '></div>
+                    <div className='icon-note btn icon-l-gray '></div>
                   </div>
-
-    var arrow = undefined;
-    if (this.state.showArrow) {
-      arrow = (this.state.isCollapsed)
-        ? <div className='icon-sort-down small-sort ml-4'></div>
-        : <div className='icon-sort-up small-sort ml-4'></div>
-    }
 
     var contextMenu = undefined;
     if(!this.props['data-isReadOnly'])
@@ -315,6 +308,24 @@ class WfModule extends React.Component {
           id={this.wf_module.id}
           className=''
         />
+
+    var modBtn = undefined;
+    if (this.state.showArrow) {
+      modBtn =
+        <div className='d-flex align-items-center'>
+          <div className={
+            this.state.isCollapsed ?
+              'icon-collapse btn collapse-button' :
+              'icon-collapse-o btn collapse-button'
+            }
+            onClick={this.toggleCollapsed} >
+          </div>
+            <div>{notesIcon}</div>
+            <div>{contextMenu}</div>
+          </div>
+    }
+
+
     var moduleIcon = 'icon-' + this.module.icon + ' module-icon mr-3';
 
     // Putting it all together: name, status, parameters, output
@@ -329,20 +340,19 @@ class WfModule extends React.Component {
             <div className='output-bar-container'>
               <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
             </div>
-            <div className='card-block p-0'>
+            <div className='card-block p-0'onMouseEnter={this.showArrow} onMouseLeave={this.hideArrow}>
               <div className='module-card-info'>
                 {notes}
-                <div className='module-card-header' onClick={this.toggleCollapsed} onMouseEnter={this.showArrow} onMouseLeave={this.hideArrow}>
+                <div className='module-card-header'>
                   <div className='module-header-content'>
                     <div className='d-flex justify-content-start align-items-center'>
                       <div className={moduleIcon}></div>
                       <div className='t-d-gray title-4 WFmodule-name'>{this.module.name}</div>
-                      <div className=''>{arrow}</div>
+                      <div className=''></div>
                     </div>
                     {/* TODO: not necessary to pass in stopProp*/}
-                    <div className='d-flex justify-content-end'>
-                      {notesIcon}
-                      {contextMenu}
+                    <div>
+                      {modBtn}
                     </div>
                   </div>
                 </div>
