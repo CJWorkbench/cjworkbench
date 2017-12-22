@@ -158,6 +158,7 @@ class WfModuleTests(WfModuleTestsBase):
         # duplicate into another workflow, as we would do when duplicating a workflow
         workflow2 = add_new_workflow("Test Workflow 2")
         wfm1d = wfm1.duplicate(workflow2)
+        wfm1d.refresh_from_db() # test what we actually have in the db
 
         self.assertEqual(wfm1d.workflow, workflow2)
         self.assertEqual(wfm1d.module_version, wfm1.module_version)
@@ -167,6 +168,7 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(wfm1d.last_update_check, wfm1.last_update_check)
         self.assertEqual(wfm1d.update_interval, wfm1.update_interval)
         self.assertEqual(wfm1d.is_collapsed, wfm1.is_collapsed)
+        self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
 
         # parameters should be duplicated
         self.assertEqual(ParameterVal.objects.filter(wf_module=wfm1d).count(), ParameterVal.objects.filter(wf_module=wfm1).count())

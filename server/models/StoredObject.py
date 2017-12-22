@@ -110,7 +110,9 @@ class StoredObject(models.Model):
                                              name=self.name,
                                              hash=self.hash,
                                              metadata=self.metadata,
-                                             file = new_path)
+                                             file = new_path,
+                                             size = self.size,
+                                             uuid = self.uuid)
         return new_so
 
 

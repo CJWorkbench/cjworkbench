@@ -267,6 +267,7 @@ class WfModule(models.Model):
         if self.stored_data_version is not None:
             StoredObject.objects.get(wf_module=self, stored_at=self.stored_data_version).duplicate(new_wfm)
             new_wfm.stored_data_version = self.stored_data_version
+            new_wfm.save()
 
         # don't set status/error as first render on this wfm will set that
 
