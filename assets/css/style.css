@@ -1302,10 +1302,9 @@ img.logo {
 
 /* Module Stack */
 .modulestack {
-  flex: 0 0 45rem;
+  flex: 0 0 43rem;
   border-left: 1px solid #DDDDDD;
   border-right: 1px solid #DDDDDD;
-  width: 47rem;
   background-color: #e9ebee;
   overflow: scroll;
   height:100vh;
@@ -1725,7 +1724,7 @@ img.logo {
 /* ---- WfModule ---- */
 
 .wf-card{
-  width: 42rem;
+  width: 40rem;
   margin-bottom: 0.5rem;
   background-color: rgba(250,250,250,0.8);
   position: relative;
@@ -1863,7 +1862,7 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(118,155,176,0.3);
 	border-width: 2.25rem 0 2.25rem 1rem;
-  margin-left: 42rem
+  margin-left: 40rem
 }
 
 /* standby  */
@@ -1880,7 +1879,7 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(251,170,109,0);
 	border-width: 2.5rem 0 2.5rem 1rem;
-  margin-left: 42rem
+  margin-left: 40rem
 }
 /* error  */
 .module-output-bar-pink:after {
@@ -1903,7 +1902,7 @@ svg .svg-background{
   content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 47rem;
+  margin-left: 40rem;
   height: 5rem;
 }
 
@@ -2101,13 +2100,13 @@ input[type=checkbox]:checked:after {
 /* ---- Data Module: data versions box */
 
 .version-box {
-  border: 1px solid #E7E7E7;
-  height: 7rem;
+  border: 1px solid #E9E9E9;
+  height: 6.4rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   margin-top:-0.5rem;
-  padding: 1.5rem;
+  padding: 1.2rem;
   align-items:top;
 }
 
