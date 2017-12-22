@@ -315,8 +315,8 @@ class WfModule extends React.Component {
         <div className='d-flex align-items-center'>
           <div className={
             this.state.isCollapsed ?
-              'icon-collapse btn collapse-button' :
-              'icon-collapse-o btn collapse-button'
+              'icon-collapse-o btn collapse-button' :
+              'icon-collapse btn collapse-button'
             }
             onClick={this.toggleCollapsed} >
           </div>
