@@ -649,24 +649,22 @@ body {
   height: 4rem;
   width: 14rem;
   background-color: #FFFFFF;
-  color: #686768;
+  color: rgba(104,103,104,0.6);
   display: flex;
   align-items: center;
   justify-content: flex-start;
   padding-left: 1rem;
   cursor:pointer;
-  opacity:0.8;
 }
 
 .dropdown-menu-item:hover {
   background-color: #F9f9f9;
   cursor: pointer;
-  opacity:1;
+  color: rgba(104,103,104,1);
 }
 
 .dropdown-divider{
-  margin:0px;
-  cursor:pointer;
+  opacity: 0;
 }
 
 
