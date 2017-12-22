@@ -1789,7 +1789,7 @@ img.logo {
 
 .wf-module-error-msg {
   border: 0px;
-  padding: 1rem;
+  padding: 1rem 1.5rem;
   border-radius: 0px;
   background-color: rgba(232,114,110,0.6);
   color: #fff;
