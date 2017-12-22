@@ -847,7 +847,7 @@ body {
 .context-button:hover {
   border: none;
   background: #f1f1f1;
-  color:#686768;
+  color:#8b8b8b;
   opacity: 1;
 }
 
@@ -867,7 +867,7 @@ body {
 .collapse-button:hover {
   border: none;
   background: #f1f1f1;
-  color:#686768;
+  color:#8b8b8b;
   opacity: 1;
 }
 
@@ -1320,9 +1320,9 @@ img.logo {
 }
 .modulestack-empty {
   cursor: default;
-  width: 42rem;
+  width: 40rem;
   margin-top: 1.5rem;
-  padding: 8rem 0 8rem 0;
+  padding: 6rem 0;
   border: 4px dashed #FBAA6D;
   opacity: 0.4;
 }
