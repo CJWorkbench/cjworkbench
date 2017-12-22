@@ -747,8 +747,8 @@ body {
 /* Margins for 3 lined parameter, part of a group*/
 .param3-line-margin{
   display: inline-block;
-  width:30.7%;
-  margin-right: 1.5rem;
+  width:32.4%;
+  margin-right: 0.5rem;
 }
 
 .param3-line-margin:last-child{
@@ -933,6 +933,7 @@ body {
 
 .action-button {
   cursor: pointer;
+  min-width: 7rem;
 	height: 4rem;
   border-radius: 2.5rem;
   display: flex;
@@ -1884,11 +1885,20 @@ svg .svg-background{
   margin-left: 40rem
 }
 /* error  */
+.module-output-bar-pink {
+  height: 100%;
+  background-color: transparent;
+  border:2px solid rgba(0,114,110,0);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
 .module-output-bar-pink:after {
 	content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 47.5rem;
+  margin-left: 40.2rem;
   height: 5rem;
 }
 /* error & selected */
