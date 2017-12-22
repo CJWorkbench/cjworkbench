@@ -113,7 +113,7 @@ export default class DropZone extends Component {
                             uploader={this.uploader}>
                             <div className={"title-3 ml-4 mr-2"}>Drag file here, or&nbsp;</div>
                             <FileInput className={"button-orange action-button mt-0"} multiple={false}
-                                       uploader={this.uploader}>Select one</FileInput>
+                                       uploader={this.uploader}>Browse</FileInput>
                         </Dropzone>
                         {
                             this.state.submittedFiles.map(id => (

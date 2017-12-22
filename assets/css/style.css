@@ -1785,14 +1785,12 @@ img.logo {
 
 .wf-module-error-msg {
   border: 0px;
-  margin: 1rem 2rem;
   padding: 1rem;
   border-radius: 0px;
-  background-color: rgba(232,114,110,0.6);
+  background-color: rgba(232,114,110,0.4);
   color: #fff;
   font-size: 1.2rem;
   font-family: 'Nunito Light', sans-serif;
-  letter-spacing:0.07rem;
   text-align: center;
 }
 
@@ -1902,7 +1900,7 @@ svg .svg-background{
   content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 40rem;
+  margin-left: 40.2rem;
   height: 5rem;
 }
 
@@ -2101,7 +2099,7 @@ input[type=checkbox]:checked:after {
 
 .version-box {
   border: 1px solid #E9E9E9;
-  height: 6.4rem;
+  height: 6.6rem;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -2111,7 +2109,9 @@ input[type=checkbox]:checked:after {
 }
 
 .version-item {
-
+  display: flex;
+  flex-direction:column;
+  justify-content: space-between;
 }
 
 .centered{
@@ -2141,7 +2141,7 @@ input[type=checkbox]:checked:after {
 
 .dropzone{
   height:8rem;
-  border: 2px dashed #FBAA6D;
+  border: 3px dashed #FBAA6D;
   cursor:pointer;
   opacity: 0.5;
   color:#FBAA6D;
@@ -2156,8 +2156,8 @@ input[type=checkbox]:checked:after {
 .react-fine-uploader-gallery-progress-bar-container{
   height:1px;
   opacity:1;
-  width: 39rem;
-  top:9.5rem;
+  width: 37rem;
+  top:9rem;
   background: #FBAA6D;
   box-shadow: none;
 }
@@ -2169,7 +2169,7 @@ input[type=checkbox]:checked:after {
   margin-right:0px;
   margin-bottom:0px;
   margin-left:0px;
-  width: 39rem;
+  width: 37rem;
   background: #FBAA6D;
   box-shadow: none;
 }
@@ -2186,10 +2186,9 @@ input[type=checkbox]:checked:after {
 /*dropzone button gets set up within the version box when file is loaded*/
 
 .dropzone-button{
-  width:11.3rem!important;
   position:absolute!important;
-  left:28rem;
-  top:11rem;
+  right:2.75rem;
+  bottom:2.75rem;
 }
 
 .upload-box{
