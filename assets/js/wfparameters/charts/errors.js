@@ -6,32 +6,32 @@ export const errorText = {
 	},
 	"UNEVEN_SERIES": {
 		location: "input",
-		text: "At least one of your rows does not have the same number of columns as the rest.",
+		text: "At least one row does not have the same number of columns as the rest.",
 		type: "error"
 	},
 	"COLUMN_ZERO": {
 		location: "input",
-		text: "You have a column chart that doesn't have a zero axis. Double check that this is ok.",
+		text: "This chart that doesn't have a zero axis. Double check that this is ok.",
 		type: "warning"
 	},
 	"TOO_MANY_SERIES": {
 		location: "input",
-		text: "You have more than 12 columns, which is more than Workbench supports.",
+		text: "The maximum number of columns supported to produce a chart is 12.",
 		type: "error"
 	},
 	"TOO_FEW_SERIES": {
 		location: "input",
-		text: "You have fewer than 2 columns, which is fewer than Chartbuilder supports.",
+		text: "You need at least 2 columns to produce a chart.",
 		type: "error"
 	},
 	"NAN_VALUES": {
 		location: "input",
-		text: "At least one of your data points cannot be converted into a number",
+		text: "At least one data points cannot be converted into a number",
 		type: "error"
 	},
 	"NOT_DATES": {
 		location: "input",
-		text: "A least one of your dates cannot be understood by Chartbuilder",
+		text: "A least one date in your data is the wrong format",
 		type: "error"
 	},
 	"TOO_MUCH_DATA": {
@@ -41,7 +41,7 @@ export const errorText = {
 	},
 	"CANT_AUTO_TYPE": {
 		location: "input",
-		text: "The type of information in the first column of your data cannot be automatically determined. Please select one below.",
+		text: "The type of information in the first column of your data cannot be automatically determined.",
 		type: "warning",
 	},
 	"UNEVEN_TICKS": {
@@ -51,17 +51,17 @@ export const errorText = {
 	},
 	"NO_PREFIX_SUFFIX": {
 		location: "axis",
-		text: "You are missing a prefix and suffix. Consider labelling your data",
+		text: "Prefix and suffix are missing. Consider labelling your chart",
 		type: "warning"
 	},
 	"LARGE_NUMBERS": {
 		location: "input",
-		text: "Your numbers are large. Consider dividing and labelling the unit in the axis",
+		text: "Numbers are large. Consider dividing and labelling the unit in the axis",
 		type: "warning"
 	},
 	"UNEVEN_TZ": {
 		location: "input",
-		text: "Some of your dates are specified with timezones and some of them are not. This may cause erroneous plotting.",
+		text: "Some dates are specified with timezones and some of them are not. This may cause erroneous plotting.",
 		type: "warning"
 	}
 };
