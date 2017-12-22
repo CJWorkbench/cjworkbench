@@ -3,40 +3,41 @@ from server.utils import sanitize_dataframe
 from pandas.errors import ParserError
 from xlrd import XLRDError
 from .utils import *
+import os
 
 class UploadFile(ModuleImpl):
 
     # Input table ignored.
     @staticmethod
     def render(wf_module, table):
-        file = wf_module.retrieve_fetched_file()
-        if file is None:
+        so = wf_module.retrieve_fetched_file_so()
+        if so is None:
             wf_module.set_ready(notify=True)
             return
 
-        if file.name.endswith('.xls') or file.name.endswith('.xlsx') or file.name.endswith('.XLS') or file.name.endswith('.XLSX'):
+        filename, file_ext= os.path.splitext(so.name)  # original upload name, not the name of our cache file
+        file_ext = file_ext.lower()
 
+        if file_ext=='.xlsx' or file_ext=='.xls':
             try:
-                table_aux = pd.read_excel(file)
+                table_aux = pd.read_excel(so.file)
             except XLRDError as e:
                 wf_module.set_error(str(e))
                 return None
 
-            sanitize_dataframe(table_aux)
-            wf_module.set_ready(notify=True)
-            return table_aux
-
-        elif file.name.endswith('.csv') or file.name.endswith('.CSV'):
+        elif file_ext=='.csv':
             try:
-                table_aux = pd.read_csv(file)
+                table_aux = pd.read_csv(so.file)
             except ParserError as e:
                 wf_module.set_error(str(e))
                 return None
 
-            sanitize_dataframe(table_aux)
-            wf_module.set_ready(notify=True)
-            return table_aux
-
         else:
-            wf_module.set_error('Unknown file type.', notify=True)
+            wf_module.set_error('Unknown file type ' + file_ext, notify=True)
             return None
+
+        sanitize_dataframe(table_aux)
+        wf_module.set_ready(notify=True)
+        return table_aux
+
+

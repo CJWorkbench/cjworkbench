@@ -131,13 +131,14 @@ class WfModule(models.Model):
         else:
             return None
 
-    def retrieve_fetched_file(self):
+    def retrieve_fetched_file_so(self):
         if self.stored_data_version:
             return StoredObject.objects.get(
                 wf_module=self,
                 type=StoredObject.UPLOADED_FILE,
-                stored_at=self.stored_data_version
-            ).file
+                stored_at=self.stored_data_version)
+        else:
+            return None
 
     # versions are ISO datetimes
     def get_fetched_data_version(self):
