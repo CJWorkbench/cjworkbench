@@ -734,7 +734,7 @@ body {
 /* Margins for 2 lined parameters, part of a group */
 .param2-line-margin{
   width:20.75rem;
-  margin-right:1.5rem;
+  margin-right:.5rem;
   padding:0;
 }
 
@@ -1731,9 +1731,9 @@ img.logo {
 }
 
 .react-grid-Cell:hover{
-  -webkit-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
-  -moz-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
-  box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
+  -webkit-box-shadow: inset 0px 0px 0px 2px rgba(118,155,176,1);
+  -moz-box-shadow: inset 0px 0px 0px 2px rgba(118,155,176,1);
+  box-shadow: inset 0px 0px 0px 2px rgba(118,155,176,0);
 }
 
 .react-grid-Cell:not(.editing) .react-grid-Cell__value{
@@ -1745,8 +1745,8 @@ img.logo {
 }
 
 .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
-  background-color: rgba(251,170,109,0.3);
-  /* color: #fff; */
+  background-color: rgba(118,155,176,0.8);
+  color: #fff;
 }
 
 
