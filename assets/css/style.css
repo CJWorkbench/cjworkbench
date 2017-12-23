@@ -1726,20 +1726,27 @@ img.logo {
 
 .react-grid-Cell{
   border-color:rgba(237,237,237,1);
+  /* border-bottom: 0px;
+  border-top: 0px; */
 }
 
 .react-grid-Cell:hover{
-  -webkit-box-shadow: inset 0px 0px 0px 2px #719BB0;
-  -moz-box-shadow: inset 0px 0px 0px 2px #719BB0;
-  box-shadow: inset 0px 0px 0px 2px #719BB0;
+  -webkit-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
+  -moz-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
+  box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
 }
 
 .react-grid-Cell:not(.editing) .react-grid-Cell__value{
   font-size: 1.2rem;
 }
 
+.react-grid-Row--odd .react-grid-Cell{
+  background-color: rgba(237,244,246,0.8);
+}
+
 .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
-  background-color: rgba(227,240,244,0.5);
+  background-color: rgba(251,170,109,0.3);
+  /* color: #fff; */
 }
 
 
@@ -1916,7 +1923,7 @@ svg .svg-background{
 	content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 40.2rem;
+  margin-left: 40.3rem;
   height: 4.5rem;
 }
 /* error & selected */
@@ -1932,7 +1939,7 @@ svg .svg-background{
   content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 40.2rem;
+  margin-left: 40.3rem;
   height: 4.5rem;
 }
 
