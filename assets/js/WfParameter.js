@@ -4,6 +4,7 @@ import React from 'react'
 import MenuParam from './wfparameters/MenuParam'
 import ChartParameter from './wfparameters/charts/Chart'
 import SimpleChartParameter from './wfparameters/charts/SimpleChart'
+import MapChart from './wfparameters/maps/MapChart'
 import ChartEditor from './wfparameters/charts/ChartEditor'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
@@ -132,7 +133,7 @@ export default class WfParameter extends React.Component {
         return (
           <div className='parameter-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
-            <textarea
+            <input type="text"
               readOnly={this.props.isReadOnly}
               className={sclass}
               rows={srows}
@@ -147,7 +148,7 @@ export default class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className='parameter-margin param3-line-margin'>
+          <div className='parameter-margin sameLine-param'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
@@ -186,7 +187,7 @@ export default class WfParameter extends React.Component {
 
       case 'menu':
         return (
-          <div className='parameter-margin param3-line-margin'>
+          <div className='parameter-margin sameLine-param'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <MenuParam
               name={this.name}
@@ -199,7 +200,7 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className='parameter-margin param3-line-margin'>
+          <div className='parameter-margin sameLine-param'>
             <div className='t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
@@ -285,6 +286,22 @@ export default class WfParameter extends React.Component {
               </div>
             );
 
+        } else if (this.props.p.parameter_spec.id_name == 'chart-map') {
+            var loadState = ( () => this.props.getParamText('chartstate') );
+            var saveState = ( state => this.props.setParamText('chartstate', state) );
+
+            console.log(loadState);
+            console.log(saveState);
+            return (
+                <div>
+                    <MapChart
+                        wf_module_id={this.props.wf_module_id}
+                        saveState={saveState}
+                        loadState={loadState}
+                        chartTyle={chartType}
+                    />
+                </div>
+            );
         } else if (this.props.p.parameter_spec.id_name == 'chart_editor_column') {
           return (
             <ChartEditor
@@ -339,14 +356,17 @@ export default class WfParameter extends React.Component {
             </div>
           );
         } else if (this.props.p.parameter_spec.id_name == 'colrename') {
-          var renameParam = this.props.getParamText('newcolnames');
-          let saveState = ( state => this.props.setParamText('newcolnames', state) );
+          if (this.props.getParamText('newcolnames') == '')
+            var newNameCols = this.props.getParamText('colnames');
+          else
+            var newNameCols = this.props.getParamText('newcolnames');
+          var saveState = ( state => this.props.setParamText('newcolnames', state) );
           return (
             <div className='parameter-margin'>
               <div className='t-d-gray content-3 label-margin'>Enter new column names</div>
               <ColumnRenamer
                 isReadOnly={this.props.isReadOnly}
-                renameParam={renameParam}
+                newNameCols={newNameCols}
                 saveState={saveState}
                 getColNames={this.getInputColNames}
                 revision={this.props.revision} />

@@ -1,0 +1,23 @@
+{
+  "name": "Choropleth Map",
+  "id_name": "chart-map",
+  "category" : "Visualize",
+  "icon" : "linechart",
+  "description" : "Create a choropleth map.",
+  "parameters": [
+    {
+      "name": "Chart",
+      "id_name": "chart-map",
+      "type": "custom",
+      "ui-only": true,
+      "derived-data": true
+    },
+    {
+      "name": "hidden chart state",
+      "id_name": "chartstate",
+      "type": "string",
+      "visible": false,
+      "ui-only": true
+    }
+  ]
+}
