@@ -557,6 +557,7 @@ body {
   line-height: 3.5rem;
   padding: 0 0 0 1.25rem;
   border-radius:0px;
+  border-color:#e7e7e7;
 
 }
 
@@ -670,7 +671,26 @@ body {
   opacity: 0;
 }
 
+/*Style form controls */
 
+
+.form-control:focus{
+  border-color: #48C8D7;
+}
+
+.form-control{
+  height:3.5rem;
+}
+
+select.form-control {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+    background-image: url("data:image/svg+xml;utf8,<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='24' height='24' viewBox='0 0 24 24'><path fill='#444' d='M7.406 7.828l4.594 4.594 4.594-4.594 1.406 1.406-6 6-6-6z'></path></svg>");
+    background-position: 100% 50%;
+    background-repeat: no-repeat;
+    padding: 0 1.25rem;
+    height:3.5rem;
+}
 
 
 
@@ -2180,6 +2200,10 @@ input[type=checkbox]:checked:after {
 #updateFreqUnit {
   display: inline;
   width:10rem;
+  height: 3.5rem!important;
+}
+
+select {
   border-radius: 0px;
 }
 
@@ -2349,17 +2373,6 @@ input[type=checkbox]:checked:after {
 /* TODO height (but not width) copied from dropdown-selector */
 .chartbuilder-main .cb-dropdown-select {
   height: 4rem;
-}
-
-/*Style form controls */
-.form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
-  border-radius: 0px;
-  border: 1px solid #E7E7E7;
-  height: 3.5rem;
-}
-
-.form-control:focus{
-  border-color: #48C8D7;
 }
 
 /* Hiden canvas element used for image export;

@@ -108,7 +108,7 @@ export default class UpdateFrequencySelect extends React.Component {
           </ModalHeader>
           <ModalBody className='dialog-body'>
             <FormGroup>
-              <Label for="updateFreq" className='content-3 t-d-gray mb-3'>Check for update every</Label>
+              <Label for="updateFreq" className='content-3 t-d-gray mb-4'>Check for update every</Label>
               <div className='update-freq-settings update-freq-test-class mb-5'>
                 <Input
                   type="number"
@@ -126,7 +126,7 @@ export default class UpdateFrequencySelect extends React.Component {
                   onChange={this.updateUnit}
                   name="updateFreq"
                   id="updateFreqUnit"
-                  className='ml-4 input-dropdown'
+                  className='ml-3 input-dropdown'
                 >
                   <option>seconds</option>
                   <option>minutes</option>
