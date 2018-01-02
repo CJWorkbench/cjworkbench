@@ -556,6 +556,7 @@ body {
   resize: none;
   line-height: 3.5rem;
   padding: 0 0 0 1.25rem;
+  border-radius:0px;
 
 }
 
@@ -603,6 +604,7 @@ body {
   justify-content: flex-start;
   padding-left: 3rem;
   cursor: pointer;
+  margin-bottom: 1px;
 }
 
 .line-item-data:hover {
@@ -637,6 +639,7 @@ body {
   border: 1px solid #E7E7E7
 }
 
+
 .dropdown-menu {
   margin-top: 0.5rem;
   border:1px solid rgba(118,155,176,0.2);
@@ -666,6 +669,7 @@ body {
 .dropdown-divider{
   opacity: 0;
 }
+
 
 
 
@@ -931,7 +935,7 @@ body {
 
 .action-button {
   cursor: pointer;
-  min-width: 7rem;
+  min-width: 9rem;
 	height: 4rem;
   border-radius: 2.5rem;
   display: flex;
@@ -2043,7 +2047,7 @@ input[type=checkbox]:checked:after {
 
 .modal-dialog{
   max-height:50rem;
-  width: 40rem;
+  width: 48rem;
   border: 0;
   position:absolute;
   margin:auto;
@@ -2059,9 +2063,8 @@ input[type=checkbox]:checked:after {
 
 .modal-header {
   height: 6rem;
-  padding: 3rem;
+  padding: 2rem;
   background-color: #FAFAFA;
-  border-bottom:none;
 }
 
 .modal-header .modal-title {
@@ -2072,17 +2075,20 @@ input[type=checkbox]:checked:after {
   align-items: center;
 }
 
+.modal-body{
+  padding:0px;
+}
+
 .dialog-body {
   background-color: #FFF;
-  padding: 3rem;
+  padding: 2rem;
   border: 0;
   max-height: 40rem;
   overflow: scroll;
 }
 
 .list-body{
-  background-color: #FFF;
-  padding: 3rem 0 3rem 0;
+  background-color: #edecec;
   border: 0;
   max-height: 40rem;
   overflow: scroll;
@@ -2099,8 +2105,8 @@ input[type=checkbox]:checked:after {
 }
 
 .dialog-footer {
-  background-color: #FAFAFA;
-  padding: 3rem 3rem 3rem 3rem;
+  background-color: #fff;
+  padding: 2rem;
 }
 
 .close {
@@ -2168,12 +2174,13 @@ input[type=checkbox]:checked:after {
 
 #updateFreqNum {
   display: inline;
-  width: 20%;
+  width: 5rem;
 }
 
-#updateFreqPeriod {
+#updateFreqUnit {
   display: inline;
-  width: 30%;
+  width:10rem;
+  border-radius: 0px;
 }
 
 /*Upload module*/
@@ -2346,7 +2353,7 @@ input[type=checkbox]:checked:after {
 
 /*Style form controls */
 .form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
-  border-radius: 0;
+  border-radius: 0px;
   border: 1px solid #E7E7E7;
   height: 3.5rem;
 }
