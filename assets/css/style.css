@@ -1753,15 +1753,13 @@ img.logo {
 
 .react-grid-Cell{
   border-color:rgba(237,237,237,1);
-  /* border-bottom: 0px;
-  border-top: 0px; */
 }
 
-.react-grid-Cell:hover{
-  -webkit-box-shadow: inset 0px 0px 0px 2px rgba(118,155,176,1);
-  -moz-box-shadow: inset 0px 0px 0px 2px rgba(118,155,176,1);
-  box-shadow: inset 0px 0px 0px 2px rgba(118,155,176,0);
-}
+/* .react-grid-Cell:hover{
+  -webkit-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
+  -moz-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
+  box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
+} */
 
 .react-grid-Cell:not(.editing) .react-grid-Cell__value{
   font-size: 1.2rem;
@@ -1772,8 +1770,9 @@ img.logo {
 }
 
 .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
-  background-color: rgba(118,155,176,0.8);
-  color: #fff;
+  background-color: rgba(251,170,109,1);
+  color:#fff;
+
 }
 
 
