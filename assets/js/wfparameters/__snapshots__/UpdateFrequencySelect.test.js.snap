@@ -57,7 +57,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
         tag="div"
       >
         <Label
-          className="content-3 t-d-gray mb-3"
+          className="content-3 t-d-gray mb-4"
           for="updateFreq"
           tag="label"
         >
@@ -78,7 +78,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
             value={888}
           />
           <Input
-            className="ml-4 input-dropdown"
+            className="ml-3 input-dropdown"
             id="updateFreqUnit"
             name="updateFreq"
             onChange={[Function]}
@@ -220,7 +220,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
         tag="div"
       >
         <Label
-          className="content-3 t-d-gray mb-3"
+          className="content-3 t-d-gray mb-4"
           for="updateFreq"
           tag="label"
         >
@@ -241,7 +241,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             value={5}
           />
           <Input
-            className="ml-4 input-dropdown"
+            className="ml-3 input-dropdown"
             id="updateFreqUnit"
             name="updateFreq"
             onChange={[Function]}
@@ -383,7 +383,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
         tag="div"
       >
         <Label
-          className="content-3 t-d-gray mb-3"
+          className="content-3 t-d-gray mb-4"
           for="updateFreq"
           tag="label"
         >
@@ -404,7 +404,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             value={5}
           />
           <Input
-            className="ml-4 input-dropdown"
+            className="ml-3 input-dropdown"
             id="updateFreqUnit"
             name="updateFreq"
             onChange={[Function]}
@@ -546,7 +546,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
         tag="div"
       >
         <Label
-          className="content-3 t-d-gray mb-3"
+          className="content-3 t-d-gray mb-4"
           for="updateFreq"
           tag="label"
         >
@@ -567,7 +567,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             value={888}
           />
           <Input
-            className="ml-4 input-dropdown"
+            className="ml-3 input-dropdown"
             id="updateFreqUnit"
             name="updateFreq"
             onChange={[Function]}
