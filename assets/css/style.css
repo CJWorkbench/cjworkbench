@@ -672,14 +672,18 @@ body {
 }
 
 /*Style form controls */
-
+.form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
+  border-radius: 0px;
+  border: 1px solid #E7E7E7;
+  height: 3.5rem;
+}
 
 .form-control:focus{
   border-color: #48C8D7;
 }
 
 .form-control{
-  height:3.5rem;
+  height:3.5rem!important;
 }
 
 select.form-control {
@@ -689,7 +693,6 @@ select.form-control {
     background-position: 100% 50%;
     background-repeat: no-repeat;
     padding: 0 1.25rem;
-    height:3.5rem;
 }
 
 
@@ -2200,7 +2203,7 @@ input[type=checkbox]:checked:after {
 #updateFreqUnit {
   display: inline;
   width:10rem;
-  height: 3.5rem!important;
+  border-radius: 0px!important;
 }
 
 select {
