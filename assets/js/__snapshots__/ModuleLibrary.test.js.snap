@@ -222,6 +222,58 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
         <div
           className="list"
         />
+        <div
+          className="ml-divider"
+        />
+        <DragSource(AddNotificationButton)>
+          <AddNotificationButton
+            connectDragSource={[Function]}
+            isDragging={false}
+          >
+            <div
+              className="card"
+              style={
+                Object {
+                  "border": 0,
+                  "borderRadius": 0,
+                }
+              }
+            >
+              <div
+                className="second-level t-vl-gray d-flex"
+              >
+                <div
+                  className="d-flex flex-row align-items-center"
+                >
+                  <div
+                    className="ml-icon-container ml-2"
+                  >
+                    <div
+                      className="icon-notification ml-icon"
+                    />
+                  </div>
+                  <div>
+                    <div
+                      className="content-5 ml-module-name"
+                    >
+                      New alert
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="ml-handle"
+                >
+                  <div
+                    className="icon-grip"
+                  />
+                </div>
+              </div>
+            </div>
+          </AddNotificationButton>
+        </DragSource(AddNotificationButton)>
+        <div
+          className="ml-divider"
+        />
         <ImportModuleFromGitHub
           moduleAdded={[Function]}
         >
@@ -787,6 +839,58 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
             </div>
           </ModuleCategory>
         </div>
+        <div
+          className="ml-divider"
+        />
+        <DragSource(AddNotificationButton)>
+          <AddNotificationButton
+            connectDragSource={[Function]}
+            isDragging={false}
+          >
+            <div
+              className="card"
+              style={
+                Object {
+                  "border": 0,
+                  "borderRadius": 0,
+                }
+              }
+            >
+              <div
+                className="second-level t-vl-gray d-flex"
+              >
+                <div
+                  className="d-flex flex-row align-items-center"
+                >
+                  <div
+                    className="ml-icon-container ml-2"
+                  >
+                    <div
+                      className="icon-notification ml-icon"
+                    />
+                  </div>
+                  <div>
+                    <div
+                      className="content-5 ml-module-name"
+                    >
+                      New alert
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="ml-handle"
+                >
+                  <div
+                    className="icon-grip"
+                  />
+                </div>
+              </div>
+            </div>
+          </AddNotificationButton>
+        </DragSource(AddNotificationButton)>
+        <div
+          className="ml-divider"
+        />
         <ImportModuleFromGitHub
           moduleAdded={[Function]}
         >
