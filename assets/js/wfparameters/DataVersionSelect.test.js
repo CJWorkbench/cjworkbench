@@ -33,10 +33,10 @@ describe('DataVersionSelect', () => {
         wfModuleId={808}
         revision={202}
         api={api}
+        setClickNotification={()=>{return false}}
         testing={true}
       />
     );
-
   });
 
   it('Renders correctly when in Private mode, and selection is confirmed when user hits OK', (done) => {
@@ -151,6 +151,7 @@ describe('DataVersionSelect', () => {
       revision={202}
       api={api}
       testing={true}
+      setClickNotification={()=>{return false;}}
     />);
 
     expect(api.getWfModuleVersions.mock.calls.length).toBe(2); // 2 not 1 because beforeEach mounted "wrapper" already
@@ -178,6 +179,7 @@ describe('DataVersionSelect', () => {
       revision={202}
       api={emptyApi}
       testing={true}
+      setClickNotification={()=>{return false;}}
     />);
 
     setImmediate( () => {

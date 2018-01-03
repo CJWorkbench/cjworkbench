@@ -10,6 +10,7 @@ exports[`DataVersionSelect Displays empty when no versions available 1`] = `
   }
   isReadOnly={true}
   revision={202}
+  setClickNotification={[Function]}
   testing={true}
   wfModuleId={808}
 >
@@ -40,6 +41,7 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
   }
   isReadOnly={false}
   revision={202}
+  setClickNotification={[Function]}
   testing={true}
   wfModuleId={808}
 >
@@ -85,6 +87,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
   }
   isReadOnly={false}
   revision={202}
+  setClickNotification={[Function]}
   testing={true}
   wfModuleId={808}
 >
@@ -214,17 +217,20 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
       <div
         className="dialog-footer modal-footer"
       >
+        <p>
+          If a new version of the data is released at the source, a notification will be sent to your email address.
+        </p>
         <div
           className="button-gray mr-3 action-button test-cancel-button"
           onClick={[Function]}
         >
-          Cancel
+          Cancel Alert
         </div>
         <div
           className="button-blue action-button test-ok-button"
           onClick={[Function]}
         >
-          OK
+          Apply
         </div>
       </div>
     </ModalFooter>
@@ -242,6 +248,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
   }
   isReadOnly={false}
   revision={202}
+  setClickNotification={[Function]}
   testing={true}
   wfModuleId={808}
 >
