@@ -1,7 +1,7 @@
 # Undo, redo, and other version related things
 from server.models import Delta, Workflow
 from server.websockets import *
-from server.models import ChangeDataVersionCommand
+from server.models import ChangeDataVersionCommand, Notification
 from server.triggerrender import notify_client_workflow_version_changed
 from django.utils import timezone
 
@@ -51,6 +51,8 @@ def save_fetched_table_if_changed(wfm, new_table, auto_change_version=True):
     version_added = wfm.store_fetched_table_if_different(new_table)
 
     if version_added and auto_change_version:
+        if wfm.notifications == True:
+            Notification.create(wfm, "New data version available")
         if auto_change_version:
             ChangeDataVersionCommand.create(wfm, version_added)  # also notifies client
     else:

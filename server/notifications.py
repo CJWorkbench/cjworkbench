@@ -4,8 +4,8 @@ from cjworkbench import settings
 
 def email_notification(to, wfm):
     subject = "New data version"
-    message = "New data is available for workflow module %s at %s" \
-        (wfm.workflow_version.workflow.name, wfm.stored_data_version)
+    message = "New data is available for module %s in workflow %s at %s" % \
+        (wfm.module_version.module.name, wfm.workflow.name, wfm.stored_data_version)
     mail = EmailMultiAlternatives(
         subject=subject,
         body=message,

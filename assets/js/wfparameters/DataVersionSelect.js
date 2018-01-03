@@ -1,6 +1,7 @@
 import React from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import dateFormat from 'dateformat'
+import * as Actions from '../workflow-reducer'
 import PropTypes from 'prop-types'
 
 
@@ -48,6 +49,14 @@ export default class DataVersionSelect extends React.Component {
     }
   }
 
+  toggleNotifications() {
+    Actions.store.dispatch(
+      Actions.updateWfModuleAction(
+        this.props.wfModuleId,
+        { notifications: !this.props.notifications }
+    ));
+  }
+
   loadVersions() {
     this.props.api.getWfModuleVersions(this.props.wfModuleId)
       .then(json => {
@@ -60,6 +69,7 @@ export default class DataVersionSelect extends React.Component {
   // Load version list / current version when first created
   componentDidMount() {
     this.loadVersions();
+    this.props.setClickNotification(this.toggleModal);
   }
 
   // If the workflow revision changes, reload the versions in case they've changed too
@@ -133,8 +143,9 @@ export default class DataVersionSelect extends React.Component {
               </div>
             </ModalBody>
             <ModalFooter className='dialog-footer'>
-              <div className='button-gray mr-3 action-button test-cancel-button' onClick={this.toggleModal}>Cancel</div>
-              <div className='button-blue action-button test-ok-button' onClick={this.changeVersions}>OK</div>
+              <p>If a new version of the data is released at the source, a notification will be sent to your email address.</p>
+              <div className='button-gray mr-3 action-button test-cancel-button' onClick={() => {this.toggleNotifications(); this.toggleModal()}}>Cancel Alert</div>
+              <div className='button-blue action-button test-ok-button' onClick={this.changeVersions}>Apply</div>
             </ModalFooter>
           </Modal>
         </div>
