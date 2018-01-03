@@ -1687,18 +1687,24 @@ img.logo {
   display: none;
 }
 
+.ml-divider {
+  margin-top: 2rem;
+  border-top: 1px solid rgba(255,255,255, .2);
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
 
 /* ImportModuleFromGitHub */
 
 .import-module-button {
   cursor: pointer;
   color: #FAFAFA;
-  margin-top: 2rem;
-  margin-left: 2rem;
-  margin-right: 2rem;
-  border-top: 1px solid rgba(255,255,255, .2);
   padding-top: 3rem;
   opacity: 0.7;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  text-align:center;
 }
 .import-module-button:hover {
   cursor: pointer;
@@ -2421,4 +2427,19 @@ select {
 
 .color-picker .block-picker input {
   display: none;
+}
+
+.drop-indicator.active {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: red;
+  opacity: 0.3;
+}
+
+.drop-indicator.over {
+  opacity: 0.6;
 }

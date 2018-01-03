@@ -13,6 +13,7 @@ import { DragSource } from 'react-dnd';
 const spec = {
   beginDrag(props, monitor, component) {
     return {
+      type: 'module',
       index: false,
       id: props.id,
       insert: true,

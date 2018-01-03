@@ -316,6 +316,8 @@ export default class WfParameter extends React.Component {
                 wfModuleId={this.props.wf_module_id}
                 revision={this.props.revision}
                 api={this.props.api}
+                setClickNotification={this.props.setClickNotification}
+                notifications={this.props.notifications}
               />
               <UpdateFrequencySelect
                 isReadOnly={this.props.isReadOnly}
@@ -335,6 +337,8 @@ export default class WfParameter extends React.Component {
                 wfModuleId={this.props.wf_module_id}
                 revision={this.props.revision}
                 api={this.props.api}
+                setClickNotification={this.props.setClickNotification}
+                notifications={this.props.notifications}
               />
             </div>
           );

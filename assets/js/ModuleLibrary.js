@@ -4,6 +4,7 @@ import ModuleCategory from './ModuleCategory';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
 import Module from './Module';
 import ModuleSearch from './ModuleSearch';
+import AddNotificationButton from './AddNotificationButton';
 
 
 /**
@@ -213,6 +214,12 @@ export default class ModuleLibrary extends React.Component {
             <div className="list">
               {this.renderCategories()}
             </div>
+
+            <div className="ml-divider"></div>
+
+            <AddNotificationButton />
+
+            <div className="ml-divider"></div>
 
             <ImportModuleFromGitHub moduleAdded={this.updated}/>
           </div>

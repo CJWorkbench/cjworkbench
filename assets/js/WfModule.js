@@ -60,46 +60,62 @@ class StatusLine extends React.Component {
 // ---- WfModule ----
 
 const targetSpec = {
+  canDrop(props, monitor) {
+    return monitor.getItemType() === 'module' ||
+      (monitor.getItemType() === 'notification' && props.loads_data && !props['data-wfmodule'].notifications);
+  },
+
   drop(props, monitor, component) {
-    const source = monitor.getItem();
-    const target = props.index;
-    return {
-      source,
-      target
+    if (monitor.getItemType() === 'module') {
+      const source = monitor.getItem();
+      const target = props.index;
+      return {
+        source,
+        target
+      }
+    }
+
+    if (monitor.getItemType() === 'notification') {
+      component.setNotifications();
+      return {
+        notifications: true
+      }
     }
   },
+
   hover(props, monitor, component) {
-    const sourceIndex = monitor.getItem().index;
-    const targetIndex = props.index;
-    if (sourceIndex === targetIndex) {
-      return;
-    }
-    // getBoundingClientRect almost certainly doesn't
-    // work consistently in all browsers. Replace!
-    const targetBoundingRect = findDOMNode(component).getBoundingClientRect();
-    const targetMiddleY = (targetBoundingRect.bottom - targetBoundingRect.top) / 2;
-    const mouseY = monitor.getClientOffset();
-    const targetClientY = mouseY.y - targetBoundingRect.top;
-
-    if (sourceIndex === false) {
-      props.dragNew(targetIndex, monitor.getItem());
-      monitor.getItem().index = targetIndex;
-      return;
-    } else {
-
-      // dragging down
-      if (sourceIndex < targetIndex && targetClientY < targetMiddleY) {
+    if (monitor.getItemType() === 'module') {
+      const sourceIndex = monitor.getItem().index;
+      const targetIndex = props.index;
+      if (sourceIndex === targetIndex) {
         return;
       }
+      // getBoundingClientRect almost certainly doesn't
+      // work consistently in all browsers. Replace!
+      const targetBoundingRect = findDOMNode(component).getBoundingClientRect();
+      const targetMiddleY = (targetBoundingRect.bottom - targetBoundingRect.top) / 2;
+      const mouseY = monitor.getClientOffset();
+      const targetClientY = mouseY.y - targetBoundingRect.top;
 
-      // dragging up
-      if (sourceIndex > targetIndex && targetClientY > targetMiddleY) {
+      if (sourceIndex === false) {
+        props.dragNew(targetIndex, monitor.getItem());
+        monitor.getItem().index = targetIndex;
         return;
+      } else {
+
+        // dragging down
+        if (sourceIndex < targetIndex && targetClientY < targetMiddleY) {
+          return;
+        }
+
+        // dragging up
+        if (sourceIndex > targetIndex && targetClientY > targetMiddleY) {
+          return;
+        }
+
+        props.drag(sourceIndex, targetIndex);
+        monitor.getItem().index = targetIndex;
       }
-
-      props.drag(sourceIndex, targetIndex);
-      monitor.getItem().index = targetIndex;
-
     }
   }
 }
@@ -107,7 +123,10 @@ const targetSpec = {
 function targetCollect(connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver()
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop(),
+    dragItem: monitor.getItem(),
+    dragItemType: monitor.getItemType()
   }
 }
 
@@ -146,6 +165,7 @@ class WfModule extends React.Component {
     this.hideArrow = this.hideArrow.bind(this);
     this.toggleCollapsed = this.toggleCollapsed.bind(this);
     this.setNotifications = this.setNotifications.bind(this);
+    this.setClickNotification = this.setClickNotification.bind(this);
   }
 
   // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
@@ -168,6 +188,17 @@ class WfModule extends React.Component {
       showEditableNotes: false,             // do not display in edit state on initial load
       notifications: this.wf_module.notifications
     });
+  }
+
+  // pass a function to all wf_parameters to allow them to overload
+  // the function that runs when a user clicks on the notification
+  // icon
+  setClickNotification(cb) {
+    this.clickNotification = cb;
+  }
+
+  clickNotification() {
+    return false;
   }
 
   // alas, the drawback of the convienence of initFields is we need to call it whenever props change
@@ -263,6 +294,8 @@ class WfModule extends React.Component {
           updateSettings={updateSettings}
           getParamText={this.getParamText}
           setParamText={this.setParamText}
+          setClickNotification={this.setClickNotification}
+          notifications={this.props['data-wfmodule'].notifications}
           user={this.props['data-user']}
         />)
       });
@@ -348,7 +381,11 @@ class WfModule extends React.Component {
                     <div className='d-flex justify-content-start align-items-center'>
                       <div className={moduleIcon}></div>
                       <div className='t-d-gray title-4 WFmodule-name'>{this.module.name}</div>
-                      <div className=''></div>
+                      {this.props['data-wfmodule'].notifications &&
+                        <div
+                          className="icon-notification module-icon ml-3"
+                          onClick={this.clickNotification}></div>
+                      }
                     </div>
                     {/* TODO: not necessary to pass in stopProp*/}
                     <div>
@@ -360,10 +397,18 @@ class WfModule extends React.Component {
                 <Collapse className='' isOpen={!this.state.isCollapsed} >
                   {/* --- Error message --- */}
                   <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
+
                   {inside}
                 </Collapse>
               </div>
             </div>
+
+            <div className={
+              'drop-indicator ' +
+              ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.dragItem) ? 'active ' : '' ) +
+              ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.isOver) ? 'over ' : '')
+              } ></div>
+
           </div>
         ))}
         </div>
@@ -396,7 +441,7 @@ class WfModulePlaceholder extends React.Component {
 }
 
 const sortableComponent = flow(
-  DropTarget('module', targetSpec, targetCollect),
+  DropTarget(['module', 'notification'], targetSpec, targetCollect),
   DragSource('module', sourceSpec, sourceCollect)
 );
 

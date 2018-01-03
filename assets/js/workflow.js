@@ -32,6 +32,7 @@ function targetCollect(connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
     isOver: monitor.isOver(),
+    canDrop: monitor.canDrop(),
     dragItem: monitor.getItem()
   }
 }
@@ -101,7 +102,7 @@ class WorkflowList extends React.Component {
     // If nothing is being dragged, and the order of wf_modules are different
     if (!nextProps.dragItem
       && (nextProps.data.wf_modules !== this.state.wf_modules)) {
-      // And we just didn't just drop the thing that was being dragged,
+      // And we didn't just drop the thing that was being dragged,
       if (this.state.justDropped === false) {
         // Re-set the wf_modules in the list, drag is cancelled
         this.setState({
@@ -139,6 +140,7 @@ class WorkflowList extends React.Component {
         'data-selected': (item.id == this.props.selected_wf_module),
         'data-api': this.props.api,
         'data-user': this.props.user,
+        loads_data: item.module_version.module.loads_data,
         index:i,
         drag: this.drag,
         dragNew: this.dragNew,
@@ -161,7 +163,7 @@ class WorkflowList extends React.Component {
 
     return (
       this.props.connectDropTarget(
-        <div className={"modulestack-list mx-auto " + (this.props.dragItem ? 'dragging' : '')}>
+        <div className={"modulestack-list mx-auto " + ((this.props.dragItem && this.props.canDrop) ? 'dragging' : '')}>
           <FlipMove duration={100} easing="ease-out">
             {listItems}
           </FlipMove>
