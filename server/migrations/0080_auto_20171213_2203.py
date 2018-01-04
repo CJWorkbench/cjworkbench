@@ -4,11 +4,11 @@ from __future__ import unicode_literals
 
 from django.db import migrations, models
 import django.utils.timezone
-from server.models import StoredObject, WfModule
 
 # Simplest migration: delete all previous StoredObjects. Will require "check now" on existing wf, or re-upload files
 def migrate_files(apps, schema_editor):
-    for so in StoredObject.objects.all():
+    stored_objects = apps.get_model('server', 'StoredObject')
+    for so in stored_objects.objects.all():
         wfm = so.wf_module
         wfm.set_fetched_data_version(None)
         wfm.save()
