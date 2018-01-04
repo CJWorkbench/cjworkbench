@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import io
 from server.models import Module, ModuleVersion, WfModule, Workflow, ParameterSpec, ParameterVal
+from django.core.exceptions import ValidationError
 from server.tests.utils import *
 
 # Set up a simple pipeline on test data
@@ -103,12 +104,12 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertTrue(tableout1.equals(table1))
 
         # invalid version string should error
-        with self.assertRaises(ValueError):
+        with self.assertRaises(ValidationError):
             self.wfmodule1.set_fetched_data_version('foo')
 
         # list versions
         verlist = self.wfmodule1.list_fetched_data_versions()
-        self.assertListEqual(verlist, [secondver, firstver])  # sorted by creation date, latest first
+        self.assertListEqual([ver[0] for ver in verlist], [secondver, firstver])  # sorted by creation date, latest first
 
         # but like, none of this should have created versions on any other wfmodule
         self.assertEqual(self.wfmodule2.list_fetched_data_versions(), [])
@@ -178,5 +179,3 @@ class WfModuleTests(WfModuleTestsBase):
         self.assertEqual(wfm1d.stored_data_version, wfm1.stored_data_version)
         self.assertTrue(wfm1d.retrieve_fetched_table().equals(wfm1.retrieve_fetched_table()))
         self.assertEqual(len(wfm1d.list_fetched_data_versions()), 1)
-
-
