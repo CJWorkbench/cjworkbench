@@ -166,10 +166,13 @@ class WfModule extends React.Component {
     this.toggleCollapsed = this.toggleCollapsed.bind(this);
     this.setNotifications = this.setNotifications.bind(this);
     this.setClickNotification = this.setClickNotification.bind(this);
+    this.onClickNotification = this.onClickNotification.bind(this);
   }
 
   // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
   // so save them into this
+
+  // TODO: We're not using Sortable anymore, remove this.
   initFields(props) {
     this.wf_module = props['data-wfmodule'];
     this.module = this.wf_module.module_version.module;
@@ -186,7 +189,8 @@ class WfModule extends React.Component {
                     && (this.wf_module.notes != "Write notes here")
                   ),  // only show on load if a note exists & not default text
       showEditableNotes: false,             // do not display in edit state on initial load
-      notifications: this.wf_module.notifications
+      notifications: this.wf_module.notifications,
+      notification_count: this.wf_module.notification_count
     });
   }
 
@@ -199,6 +203,11 @@ class WfModule extends React.Component {
 
   clickNotification() {
     return false;
+  }
+
+  onClickNotification() {
+    Actions.store.dispatch(Actions.clearNotificationsAction(this.wf_module.id));
+    this.clickNotification();
   }
 
   // alas, the drawback of the convienence of initFields is we need to call it whenever props change
@@ -382,9 +391,14 @@ class WfModule extends React.Component {
                       <div className={moduleIcon}></div>
                       <div className='t-d-gray title-4 WFmodule-name'>{this.module.name}</div>
                       {this.props['data-wfmodule'].notifications &&
+                      <div className={'notification-badge' + (this.props['data-wfmodule'].notification_count > 0 ? ' active t-f-blue' : '' )}>
                         <div
                           className="icon-notification module-icon ml-3"
-                          onClick={this.clickNotification}></div>
+                          onClick={this.onClickNotification}></div>
+                        {this.props['data-wfmodule'].notification_count > 0 &&
+                        <span>{this.props['data-wfmodule'].notification_count}</span>
+                        }
+                      </div>
                       }
                     </div>
                     {/* TODO: not necessary to pass in stopProp*/}
