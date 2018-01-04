@@ -26,5 +26,5 @@ class Migration(migrations.Migration):
             name='read',
             field=models.BooleanField(default=False),
         ),
-        migrations.RunPython(set_existing_to_true, reverse_code=um)
+        migrations.RunPython(set_existing_to_true, reverse_code=reverse)
     ]
