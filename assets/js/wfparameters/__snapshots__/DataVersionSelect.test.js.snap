@@ -218,13 +218,13 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
         className="dialog-footer modal-footer"
       >
         <p>
-          If a new version of the data is released at the source, a notification will be sent to your email address.
+          If a new version of the data is released at the source, send a notification to your email address.
         </p>
         <div
           className="button-gray mr-3 action-button test-cancel-button"
           onClick={[Function]}
         >
-          Cancel Alert
+          Set Alert
         </div>
         <div
           className="button-blue action-button test-ok-button"

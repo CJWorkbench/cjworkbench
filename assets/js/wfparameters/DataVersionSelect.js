@@ -1,7 +1,7 @@
 import React from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import dateFormat from 'dateformat'
-//import * as Actions from '../workflow-reducer'
+import * as Actions from '../workflow-reducer'
 import PropTypes from 'prop-types'
 
 
@@ -49,13 +49,13 @@ export default class DataVersionSelect extends React.Component {
     }
   }
 
-  /*toggleNotifications() {
+  toggleNotifications() {
     Actions.store.dispatch(
       Actions.updateWfModuleAction(
         this.props.wfModuleId,
         { notifications: !this.props.notifications }
     ));
-  }*/
+  }
 
   loadVersions() {
     this.props.api.getWfModuleVersions(this.props.wfModuleId)
@@ -143,9 +143,13 @@ export default class DataVersionSelect extends React.Component {
               </div>
             </ModalBody>
             <ModalFooter className='dialog-footer'>
-              <p>If a new version of the data is released at the source, a notification will be sent to your email address.</p>
-              {/*this.toggleNotifications();*/}
-              <div className='button-gray mr-3 action-button test-cancel-button' onClick={() => {this.toggleModal()}}>Cancel Alert</div>
+            {this.props.notifications ? (
+              [<p key='1'>If a new version of the data is released at the source, a notification will be sent to your email address.</p>,
+              <div key='2' className='button-gray mr-3 action-button test-cancel-button' onClick={() => {this.toggleNotifications(); this.toggleModal()}}>Cancel Alert</div>]
+            ) : (
+              [<p key='1'>If a new version of the data is released at the source, send a notification to your email address.</p>,
+              <div key='2' className='button-gray mr-3 action-button test-cancel-button' onClick={() => {this.toggleNotifications(); this.toggleModal()}}>Set Alert</div>]
+            )}
               <div className='button-blue action-button test-ok-button' onClick={this.changeVersions}>Apply</div>
             </ModalFooter>
           </Modal>
@@ -167,8 +171,10 @@ export default class DataVersionSelect extends React.Component {
 }
 
 DataVersionSelect.propTypes = {
-  wfModuleId:       PropTypes.number.isRequired,
-  revision:         PropTypes.number.isRequired,
-  api:              PropTypes.object.isRequired,
-  testing:          PropTypes.bool            // for testing only
+  wfModuleId:           PropTypes.number.isRequired,
+  revision:             PropTypes.number.isRequired,
+  api:                  PropTypes.object.isRequired,
+  setClickNotification: PropTypes.func.isRequired,
+  notifications:        PropTypes.bool,
+  testing:              PropTypes.bool            // for testing only
 };
