@@ -148,15 +148,21 @@ class WfModule(models.Model):
     # In this case, a ChangeDataVersionCommand
     def set_fetched_data_version(self, version):
         if version is not None:
-            versions = self.list_fetched_data_versions()
-            if version not in versions:
+            try:
+                stored_object_at_version = StoredObject.objects.filter(wf_module=self).get(stored_at=version)
+            except StoredObject.DoesNotExist:
                 raise ValueError('No such stored data version')
+
+            if not stored_object_at_version.read:
+                stored_object_at_version.read = True
+                stored_object_at_version.save()
+
         self.stored_data_version = version
         self.save()
 
     def list_fetched_data_versions(self):
         # sort newest first, get both file and table types
-        return list(StoredObject.objects.filter(wf_module=self).order_by('-stored_at').values_list('stored_at', flat=True))
+        return list(StoredObject.objects.filter(wf_module=self).order_by('-stored_at').values_list('stored_at', 'read'))
 
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects
@@ -273,4 +279,3 @@ class WfModule(models.Model):
         # don't set status/error as first render on this wfm will set that
 
         return new_wfm
-

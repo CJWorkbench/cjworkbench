@@ -111,7 +111,7 @@ export default class DataVersionSelect extends React.Component {
     var totalVers = this.state.versions.versions.length;
 
     if (totalVers > 0) {
-      var curVers = totalVers - this.state.versions.versions.indexOf(this.state.versions.selected);
+      var curVers = totalVers - this.state.versions.versions.map((version) => version[0]).indexOf(this.state.versions.selected);
       versionText = "Version " + curVers + " of " + totalVers;
 
       modalLink =
@@ -125,18 +125,21 @@ export default class DataVersionSelect extends React.Component {
             </ModalHeader>
             <ModalBody className='list-body'>
               <div className=''>
-                {this.state.versions.versions.map( date => {
+                {this.state.versions.versions.map( version => {
                   return (
                     <div
-                      key={date}
+                      key={version[0]}
                       className={
-                        (date == this.state.versions.selected)
+                        (version[0] == this.state.versions.selected)
                           ? 'line-item-data-selected list-test-class'
                           : 'line-item-data list-test-class'
                       }
-                      onClick={() => this.setSelected(date)}
+                      onClick={() => this.setSelected(version[0])}
                     >
-                      <span className='content-3'>{ this.formatDate(date) }</span>
+                      <span className='content-3'>{ this.formatDate(version[0]) }</span>
+                      {!version[1] &&
+                        <span className='icon icon-notification'></span>
+                      }
                     </div>
                   );
                 })}

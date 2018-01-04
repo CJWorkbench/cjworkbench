@@ -37,6 +37,10 @@ class StoredObject(models.Model):
     size = models.IntegerField(default=None, null=True)
     uuid = models.CharField(default=None, max_length=255, null=True)
 
+    # keeping track of whether this version of the data has ever been loaded
+    # and delivered to the frontend
+    read = models.BooleanField(default=False)
+
     def is_table(self):
         return self.type == StoredObject.FETCHED_TABLE or self.type == StoredObject.CACHED_TABLE
 
