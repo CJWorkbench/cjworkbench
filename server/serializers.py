@@ -65,10 +65,14 @@ class WfModuleSerializer(serializers.ModelSerializer):
     def get_update_units(self, wfm):
         return seconds_to_count_and_units(wfm.update_interval)['units']
 
+    notification_count = serializers.SerializerMethodField()
+    def get_notification_count(self, wfm):
+        return wfm.notification_set.count()
+
     class Meta:
         model = WfModule
         fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals', 'is_collapsed',
-                  'notes', 'auto_update_data', 'update_interval', 'update_units', 'last_update_check', 'notifications')
+                  'notes', 'auto_update_data', 'update_interval', 'update_units', 'last_update_check', 'notifications', 'notification_count')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):
