@@ -166,6 +166,9 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             >
               Jul 10, 2017 - 05:57 PM
             </span>
+            <span
+              className="icon icon-notification"
+            />
           </div>
           <div
             className="line-item-data list-test-class"
