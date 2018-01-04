@@ -66,6 +66,7 @@ def wfmodule_detail(request, pk, format=None):
 
     elif request.method == 'PATCH':
         # For patch, we check which fields are set in data, and process all of them
+        # TODO: replace all of these with the generic patch method, most of this is unnecessary
         try:
 
             if not set(request.data.keys()).intersection({"notes", "auto_update_data", "collapsed", "notifications"}):

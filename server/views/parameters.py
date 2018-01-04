@@ -1,10 +1,9 @@
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseForbidden, HttpResponseNotFound, HttpResponseBadRequest
 from django.views.decorators.http import require_GET
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.decorators import renderer_classes
+from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module, Workflow, WfModule, ParameterSpec, ParameterVal
