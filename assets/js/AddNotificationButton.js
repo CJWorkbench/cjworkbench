@@ -8,9 +8,6 @@ const spec = {
       id: props.id,
       insert: true,
     }
-  },
-  endDrag(props, monitor, component) {
-    console.log(monitor.getItem());
   }
 }
 
