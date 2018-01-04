@@ -136,6 +136,13 @@ export function updateWfModuleAction(id, data) {
   )
 }
 
+export function clearNotificationsAction(id) {
+  return (
+    api.deleteWfModuleNotifications(id)
+      .then( reloadWorkflowAction )
+  )
+}
+
 // ---- Reducer ----
 // Maps actions to state changes, for that is the Redux way
 // Our state fields:

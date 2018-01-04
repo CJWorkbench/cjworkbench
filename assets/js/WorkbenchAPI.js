@@ -306,6 +306,20 @@ class WorkbenchAPI {
     )
   }
 
+  deleteWfModuleNotifications(wf_module_id) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id + '/notifications', {
+        credentials: 'include',
+        method: 'delete',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        }
+      }).then(response => response.json())
+    )
+  }
+
 }
 
 // Singleton API object for global use
