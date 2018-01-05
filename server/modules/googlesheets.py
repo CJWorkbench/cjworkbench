@@ -54,11 +54,8 @@ class GoogleSheets(ModuleImpl):
             file_meta = wfmodule.get_param_raw('fileselect', 'custom')
             file_meta = json.loads(file_meta)
             sheet_id = file_meta['id']
-
-        event_type = event.get('type', False)
-
-        if not event_type:
-            return HttpResponseBadRequest()
+        else:
+            event_type = event.get('type', False)
 
         if event_type == 'fetchFiles':
             return GoogleSheets.get_spreadsheets(request)
