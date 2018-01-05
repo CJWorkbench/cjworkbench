@@ -108,41 +108,51 @@ export default class UpdateFrequencySelect extends React.Component {
           </ModalHeader>
           <ModalBody className='dialog-body'>
             <FormGroup>
-              <Label for="updateFreq" className='content-3 t-d-gray mb-4'>Check for update every</Label>
-              <div className='update-freq-settings update-freq-test-class mb-5'>
-                <Input
-                  type="number"
-                  onChange={this.updatePeriod}
-                  value={this.state.dialogSettings.period}
-                  min='1'
-                  max='500'
-                  name="updateFreq"
-                  id="updateFreqNum"
-                  className='number-field t-d-gray content-2'>
-                </Input>
-                <Input
-                  type="select"
-                  value={this.state.dialogSettings.unit}
-                  onChange={this.updateUnit}
-                  name="updateFreq"
-                  id="updateFreqUnit"
-                  className='ml-3 input-dropdown'
-                >
-                  <option>seconds</option>
-                  <option>minutes</option>
-                  <option>hours</option>
-                  <option id='days-option'>days</option>
-                  <option>weeks</option>
-                </Input>
+              <div className="row">
+                <div className="col-sm-3">
+                  <div onClick={this.toggleManual} className={highlightAuto}>On</div>
+                </div>
+
+                <div className="col-sm-9">
+                  <p>Automatically save the current version of the workflow and update it with the newest data.</p>
+                  <Label for="updateFreq" className='content-3 t-d-gray mb-4'>Check for update every</Label>
+                  <div className='update-freq-settings update-freq-test-class mb-5'>
+                    <Input
+                      type="number"
+                      onChange={this.updatePeriod}
+                      value={this.state.dialogSettings.period}
+                      min='1'
+                      max='500'
+                      name="updateFreq"
+                      id="updateFreqNum"
+                      className='number-field t-d-gray content-2'>
+                    </Input>
+                    <Input
+                      type="select"
+                      value={this.state.dialogSettings.unit}
+                      onChange={this.updateUnit}
+                      name="updateFreq"
+                      id="updateFreqUnit"
+                      className='ml-3 input-dropdown'
+                    >
+                      <option>seconds</option>
+                      <option>minutes</option>
+                      <option>hours</option>
+                      <option id='days-option'>days</option>
+                      <option>weeks</option>
+                    </Input>
+                  </div>
+                </div>
               </div>
-              <div className='content-3 t-d-gray mt-5 mb-4'>When an update is found:</div>
-              <div className="d-flex flex-row mb-4">
-                <div onClick={this.toggleManual} className={highlightManual} >Manual</div>
-                <div className='t-d-gray info-1 ml-4'>Notify me, but do not update the workflow. (recommended)</div>
-              </div>
-              <div className="d-flex flex-row">
-                <div onClick={this.toggleManual} className={highlightAuto} >Auto</div>
-                <div className='t-d-gray info-1 ml-4'>Automatically save the current version of the workflow and update it with the newest data.</div>
+
+              <div className="row">
+                <div className="col-sm-3">
+                  <div onClick={this.toggleManual} className={highlightManual}>Off</div>
+                </div>
+
+                <div className="col-sm-9">
+                  <p>Keep the workflow the way it is. Do not check for new data automatically.</p>
+                </div>
               </div>
             </FormGroup>
           </ModalBody>
