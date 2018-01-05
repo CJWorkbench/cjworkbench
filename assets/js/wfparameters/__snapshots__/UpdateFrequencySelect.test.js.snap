@@ -56,88 +56,95 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
       <FormGroup
         tag="div"
       >
-        <Label
-          className="content-3 t-d-gray mb-4"
-          for="updateFreq"
-          tag="label"
-        >
-          Check for update every
-        </Label>
         <div
-          className="update-freq-settings update-freq-test-class mb-5"
+          className="row"
         >
-          <Input
-            className="number-field t-d-gray content-2"
-            id="updateFreqNum"
-            max="500"
-            min="1"
-            name="updateFreq"
-            onChange={[Function]}
-            tag="p"
-            type="number"
-            value={888}
-          />
-          <Input
-            className="ml-3 input-dropdown"
-            id="updateFreqUnit"
-            name="updateFreq"
-            onChange={[Function]}
-            tag="p"
-            type="select"
-            value="days"
+          <div
+            className="col-sm-3"
           >
-            <option>
-              seconds
-            </option>
-            <option>
-              minutes
-            </option>
-            <option>
-              hours
-            </option>
-            <option
-              id="days-option"
+            <div
+              className="action-button auto-button button-full-blue"
+              onClick={[Function]}
             >
-              days
-            </option>
-            <option>
-              weeks
-            </option>
-          </Input>
-        </div>
-        <div
-          className="content-3 t-d-gray mt-5 mb-4"
-        >
-          When an update is found:
-        </div>
-        <div
-          className="d-flex flex-row mb-4"
-        >
-          <div
-            className="action-button manual-button button-gray "
-            onClick={[Function]}
-          >
-            Manual
+              On
+            </div>
           </div>
           <div
-            className="t-d-gray info-1 ml-4"
+            className="col-sm-9"
           >
-            Notify me, but do not update the workflow. (recommended)
+            <p>
+              Automatically save the current version of the workflow and update it with the newest data.
+            </p>
+            <Label
+              className="content-3 t-d-gray mb-4"
+              for="updateFreq"
+              tag="label"
+            >
+              Check for update every
+            </Label>
+            <div
+              className="update-freq-settings update-freq-test-class mb-5"
+            >
+              <Input
+                className="number-field t-d-gray content-2"
+                id="updateFreqNum"
+                max="500"
+                min="1"
+                name="updateFreq"
+                onChange={[Function]}
+                tag="p"
+                type="number"
+                value={888}
+              />
+              <Input
+                className="ml-3 input-dropdown"
+                id="updateFreqUnit"
+                name="updateFreq"
+                onChange={[Function]}
+                tag="p"
+                type="select"
+                value="days"
+              >
+                <option>
+                  seconds
+                </option>
+                <option>
+                  minutes
+                </option>
+                <option>
+                  hours
+                </option>
+                <option
+                  id="days-option"
+                >
+                  days
+                </option>
+                <option>
+                  weeks
+                </option>
+              </Input>
+            </div>
           </div>
         </div>
         <div
-          className="d-flex flex-row"
+          className="row"
         >
           <div
-            className="action-button auto-button button-full-blue"
-            onClick={[Function]}
+            className="col-sm-3"
           >
-            Auto
+            <div
+              className="action-button manual-button button-gray "
+              onClick={[Function]}
+            >
+              Off
+            </div>
           </div>
           <div
-            className="t-d-gray info-1 ml-4"
+            className="col-sm-9"
           >
-            Automatically save the current version of the workflow and update it with the newest data.
+            <p>
+              Keep the workflow the way it is. Do not check for new data automatically.
+            </p>
           </div>
         </div>
       </FormGroup>
@@ -219,88 +226,95 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       <FormGroup
         tag="div"
       >
-        <Label
-          className="content-3 t-d-gray mb-4"
-          for="updateFreq"
-          tag="label"
-        >
-          Check for update every
-        </Label>
         <div
-          className="update-freq-settings update-freq-test-class mb-5"
+          className="row"
         >
-          <Input
-            className="number-field t-d-gray content-2"
-            id="updateFreqNum"
-            max="500"
-            min="1"
-            name="updateFreq"
-            onChange={[Function]}
-            tag="p"
-            type="number"
-            value={5}
-          />
-          <Input
-            className="ml-3 input-dropdown"
-            id="updateFreqUnit"
-            name="updateFreq"
-            onChange={[Function]}
-            tag="p"
-            type="select"
-            value="minutes"
+          <div
+            className="col-sm-3"
           >
-            <option>
-              seconds
-            </option>
-            <option>
-              minutes
-            </option>
-            <option>
-              hours
-            </option>
-            <option
-              id="days-option"
+            <div
+              className="action-button auto-button button-gray"
+              onClick={[Function]}
             >
-              days
-            </option>
-            <option>
-              weeks
-            </option>
-          </Input>
-        </div>
-        <div
-          className="content-3 t-d-gray mt-5 mb-4"
-        >
-          When an update is found:
-        </div>
-        <div
-          className="d-flex flex-row mb-4"
-        >
-          <div
-            className="action-button manual-button button-full-blue"
-            onClick={[Function]}
-          >
-            Manual
+              On
+            </div>
           </div>
           <div
-            className="t-d-gray info-1 ml-4"
+            className="col-sm-9"
           >
-            Notify me, but do not update the workflow. (recommended)
+            <p>
+              Automatically save the current version of the workflow and update it with the newest data.
+            </p>
+            <Label
+              className="content-3 t-d-gray mb-4"
+              for="updateFreq"
+              tag="label"
+            >
+              Check for update every
+            </Label>
+            <div
+              className="update-freq-settings update-freq-test-class mb-5"
+            >
+              <Input
+                className="number-field t-d-gray content-2"
+                id="updateFreqNum"
+                max="500"
+                min="1"
+                name="updateFreq"
+                onChange={[Function]}
+                tag="p"
+                type="number"
+                value={5}
+              />
+              <Input
+                className="ml-3 input-dropdown"
+                id="updateFreqUnit"
+                name="updateFreq"
+                onChange={[Function]}
+                tag="p"
+                type="select"
+                value="minutes"
+              >
+                <option>
+                  seconds
+                </option>
+                <option>
+                  minutes
+                </option>
+                <option>
+                  hours
+                </option>
+                <option
+                  id="days-option"
+                >
+                  days
+                </option>
+                <option>
+                  weeks
+                </option>
+              </Input>
+            </div>
           </div>
         </div>
         <div
-          className="d-flex flex-row"
+          className="row"
         >
           <div
-            className="action-button auto-button button-gray"
-            onClick={[Function]}
+            className="col-sm-3"
           >
-            Auto
+            <div
+              className="action-button manual-button button-full-blue"
+              onClick={[Function]}
+            >
+              Off
+            </div>
           </div>
           <div
-            className="t-d-gray info-1 ml-4"
+            className="col-sm-9"
           >
-            Automatically save the current version of the workflow and update it with the newest data.
+            <p>
+              Keep the workflow the way it is. Do not check for new data automatically.
+            </p>
           </div>
         </div>
       </FormGroup>
@@ -382,88 +396,95 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       <FormGroup
         tag="div"
       >
-        <Label
-          className="content-3 t-d-gray mb-4"
-          for="updateFreq"
-          tag="label"
-        >
-          Check for update every
-        </Label>
         <div
-          className="update-freq-settings update-freq-test-class mb-5"
+          className="row"
         >
-          <Input
-            className="number-field t-d-gray content-2"
-            id="updateFreqNum"
-            max="500"
-            min="1"
-            name="updateFreq"
-            onChange={[Function]}
-            tag="p"
-            type="number"
-            value={5}
-          />
-          <Input
-            className="ml-3 input-dropdown"
-            id="updateFreqUnit"
-            name="updateFreq"
-            onChange={[Function]}
-            tag="p"
-            type="select"
-            value="minutes"
+          <div
+            className="col-sm-3"
           >
-            <option>
-              seconds
-            </option>
-            <option>
-              minutes
-            </option>
-            <option>
-              hours
-            </option>
-            <option
-              id="days-option"
+            <div
+              className="action-button auto-button button-gray"
+              onClick={[Function]}
             >
-              days
-            </option>
-            <option>
-              weeks
-            </option>
-          </Input>
-        </div>
-        <div
-          className="content-3 t-d-gray mt-5 mb-4"
-        >
-          When an update is found:
-        </div>
-        <div
-          className="d-flex flex-row mb-4"
-        >
-          <div
-            className="action-button manual-button button-full-blue"
-            onClick={[Function]}
-          >
-            Manual
+              On
+            </div>
           </div>
           <div
-            className="t-d-gray info-1 ml-4"
+            className="col-sm-9"
           >
-            Notify me, but do not update the workflow. (recommended)
+            <p>
+              Automatically save the current version of the workflow and update it with the newest data.
+            </p>
+            <Label
+              className="content-3 t-d-gray mb-4"
+              for="updateFreq"
+              tag="label"
+            >
+              Check for update every
+            </Label>
+            <div
+              className="update-freq-settings update-freq-test-class mb-5"
+            >
+              <Input
+                className="number-field t-d-gray content-2"
+                id="updateFreqNum"
+                max="500"
+                min="1"
+                name="updateFreq"
+                onChange={[Function]}
+                tag="p"
+                type="number"
+                value={5}
+              />
+              <Input
+                className="ml-3 input-dropdown"
+                id="updateFreqUnit"
+                name="updateFreq"
+                onChange={[Function]}
+                tag="p"
+                type="select"
+                value="minutes"
+              >
+                <option>
+                  seconds
+                </option>
+                <option>
+                  minutes
+                </option>
+                <option>
+                  hours
+                </option>
+                <option
+                  id="days-option"
+                >
+                  days
+                </option>
+                <option>
+                  weeks
+                </option>
+              </Input>
+            </div>
           </div>
         </div>
         <div
-          className="d-flex flex-row"
+          className="row"
         >
           <div
-            className="action-button auto-button button-gray"
-            onClick={[Function]}
+            className="col-sm-3"
           >
-            Auto
+            <div
+              className="action-button manual-button button-full-blue"
+              onClick={[Function]}
+            >
+              Off
+            </div>
           </div>
           <div
-            className="t-d-gray info-1 ml-4"
+            className="col-sm-9"
           >
-            Automatically save the current version of the workflow and update it with the newest data.
+            <p>
+              Keep the workflow the way it is. Do not check for new data automatically.
+            </p>
           </div>
         </div>
       </FormGroup>
@@ -545,88 +566,95 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       <FormGroup
         tag="div"
       >
-        <Label
-          className="content-3 t-d-gray mb-4"
-          for="updateFreq"
-          tag="label"
-        >
-          Check for update every
-        </Label>
         <div
-          className="update-freq-settings update-freq-test-class mb-5"
+          className="row"
         >
-          <Input
-            className="number-field t-d-gray content-2"
-            id="updateFreqNum"
-            max="500"
-            min="1"
-            name="updateFreq"
-            onChange={[Function]}
-            tag="p"
-            type="number"
-            value={888}
-          />
-          <Input
-            className="ml-3 input-dropdown"
-            id="updateFreqUnit"
-            name="updateFreq"
-            onChange={[Function]}
-            tag="p"
-            type="select"
-            value="days"
+          <div
+            className="col-sm-3"
           >
-            <option>
-              seconds
-            </option>
-            <option>
-              minutes
-            </option>
-            <option>
-              hours
-            </option>
-            <option
-              id="days-option"
+            <div
+              className="action-button auto-button button-full-blue"
+              onClick={[Function]}
             >
-              days
-            </option>
-            <option>
-              weeks
-            </option>
-          </Input>
-        </div>
-        <div
-          className="content-3 t-d-gray mt-5 mb-4"
-        >
-          When an update is found:
-        </div>
-        <div
-          className="d-flex flex-row mb-4"
-        >
-          <div
-            className="action-button manual-button button-gray "
-            onClick={[Function]}
-          >
-            Manual
+              On
+            </div>
           </div>
           <div
-            className="t-d-gray info-1 ml-4"
+            className="col-sm-9"
           >
-            Notify me, but do not update the workflow. (recommended)
+            <p>
+              Automatically save the current version of the workflow and update it with the newest data.
+            </p>
+            <Label
+              className="content-3 t-d-gray mb-4"
+              for="updateFreq"
+              tag="label"
+            >
+              Check for update every
+            </Label>
+            <div
+              className="update-freq-settings update-freq-test-class mb-5"
+            >
+              <Input
+                className="number-field t-d-gray content-2"
+                id="updateFreqNum"
+                max="500"
+                min="1"
+                name="updateFreq"
+                onChange={[Function]}
+                tag="p"
+                type="number"
+                value={888}
+              />
+              <Input
+                className="ml-3 input-dropdown"
+                id="updateFreqUnit"
+                name="updateFreq"
+                onChange={[Function]}
+                tag="p"
+                type="select"
+                value="days"
+              >
+                <option>
+                  seconds
+                </option>
+                <option>
+                  minutes
+                </option>
+                <option>
+                  hours
+                </option>
+                <option
+                  id="days-option"
+                >
+                  days
+                </option>
+                <option>
+                  weeks
+                </option>
+              </Input>
+            </div>
           </div>
         </div>
         <div
-          className="d-flex flex-row"
+          className="row"
         >
           <div
-            className="action-button auto-button button-full-blue"
-            onClick={[Function]}
+            className="col-sm-3"
           >
-            Auto
+            <div
+              className="action-button manual-button button-gray "
+              onClick={[Function]}
+            >
+              Off
+            </div>
           </div>
           <div
-            className="t-d-gray info-1 ml-4"
+            className="col-sm-9"
           >
-            Automatically save the current version of the workflow and update it with the newest data.
+            <p>
+              Keep the workflow the way it is. Do not check for new data automatically.
+            </p>
           </div>
         </div>
       </FormGroup>
