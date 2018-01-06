@@ -147,15 +147,9 @@ class WfModule(models.Model):
     # Like all mutators, this should usually be wrapped in a Command so it is undoable
     # In this case, a ChangeDataVersionCommand
     def set_fetched_data_version(self, version):
-        if version is not None:
-            try:
-                stored_object_at_version = StoredObject.objects.filter(wf_module=self).get(stored_at=version)
-            except StoredObject.DoesNotExist:
-                raise ValueError('No such stored data version')
-
-            if not stored_object_at_version.read:
-                stored_object_at_version.read = True
-                stored_object_at_version.save()
+        if version is None or not \
+            StoredObject.objects.filter(wf_module=self, stored_at=version).exists():
+            raise ValueError('No such stored data version')
 
         self.stored_data_version = version
         self.save()

@@ -39,7 +39,36 @@ export default class DataVersionSelect extends React.Component {
 
   toggleModal() {
     if (!this.props.isReadOnly) {
-      this.setState(Object.assign({}, this.state, { modalOpen: !this.state.modalOpen }));
+      // If we're closing the modal we need to set the current data version
+      // to 'read'.
+      var nextState = {
+        modalOpen: !this.state.modalOpen
+      }
+
+      if (!this.state.modalOpen === false) {
+        var idx = this.state.versions.versions.map((vers) => {
+          return vers[0]
+        }).indexOf(this.state.versions.selected);
+
+        // If the selected version is false,
+        if (!this.state.versions.versions[idx][1]) {
+          // Copy the versions
+          var nextVersions = JSON.parse(JSON.stringify(this.state.versions));
+          // Set the read bit on the copy of the selected state to 'true'
+          nextVersions.versions[idx][1] = true;
+
+          // Add to the state we're changing
+          nextState.versions = nextVersions;
+
+          // Persist the change to the db
+          Actions.store.dispatch(
+            Actions.markDataVersionsReadAction(
+              this.props.wfModuleId,
+              nextVersions.versions[idx][0],
+          ));
+        };
+      }
+      this.setState(Object.assign({}, this.state, nextState));
     }
   }
 

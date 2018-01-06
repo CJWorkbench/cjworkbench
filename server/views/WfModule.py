@@ -4,7 +4,7 @@ from rest_framework.decorators import api_view, renderer_classes, permission_cla
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from server.models import WfModule
+from server.models import WfModule, StoredObject
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
 from django.utils import timezone
@@ -225,4 +225,30 @@ def wfmodule_dataversion(request, pk, format=None):
             return HttpResponseForbidden()
 
         ChangeDataVersionCommand.create(wf_module, datetime.datetime.strptime(request.data['selected'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=pytz.UTC))
+
+        stored_object_at_version = StoredObject.objects.filter(wf_module=wf_module).get(stored_at=request.data['selected'])
+
+        if not stored_object_at_version.read:
+            stored_object_at_version.read = True
+            stored_object_at_version.save()
+
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+@api_view(['PATCH'])
+@renderer_classes((JSONRenderer,))
+def wfmodule_dataversion_read(request, pk):
+    try:
+        wf_module = WfModule.objects.get(pk=pk)
+    except WfModule.DoesNotExist:
+        return HttpResponseNotFound()
+
+    if not wf_module.user_authorized_write(request.user):
+        return HttpResponseForbidden()
+
+    stored_objects = StoredObject.objects.filter(wf_module=wf_module, \
+        stored_at__in=request.data['versions'])
+
+    stored_objects.update(read=True)
+
+    return Response(status=status.HTTP_204_NO_CONTENT)

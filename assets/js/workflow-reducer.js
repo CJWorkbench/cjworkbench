@@ -136,6 +136,14 @@ export function updateWfModuleAction(id, data) {
   )
 }
 
+export function markDataVersionsReadAction(id, versions) {
+  var versions_to_update = [].concat(versions); // will accept one or many
+  return (
+    api.markDataVersionsRead(id, versions_to_update)
+      .then( reloadWorkflowAction )
+  )
+}
+
 export function clearNotificationsAction(id) {
   return (
     api.deleteWfModuleNotifications(id)

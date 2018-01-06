@@ -299,9 +299,9 @@ class WorkbenchAPI {
           'Content-Type': 'application/json',
           'X-CSRFToken': csrfToken
         },
-        data: {
+        body: JSON.stringify({
           credentialId: id
-        }
+        })
       }).then(response => response.json())
     )
   }
@@ -317,6 +317,27 @@ class WorkbenchAPI {
           'X-CSRFToken': csrfToken
         }
       }).then(response => response.json())
+    )
+  }
+
+  // This is Bad. You should get a list of serialized data versions on the
+  // workflow module instead of a 2-tuple, and there should be a generic
+  // data version create/read/update/delete method. As there should be for
+  // every object in the database.
+  markDataVersionsRead(wf_module_id, data_versions) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id + '/dataversion/read', {
+        credentials: 'include',
+        method: 'patch',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+          versions: data_versions
+        })
+      })
     )
   }
 
