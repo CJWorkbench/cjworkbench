@@ -159,7 +159,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         versiondata = {
             "versions": [
                 [secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), False],
-                [firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), True]
+                [firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ"), False]
             ],
             "selected": firstver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
         }
