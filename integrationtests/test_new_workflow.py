@@ -15,8 +15,6 @@ class TestNewWorkflow(LoggedInIntegrationTest):
         # Check that all the parts exist
         self.assertTrue(b.is_text_present('DRAG AND DROP MODULE HERE'))
         self.assertTrue(b.is_text_present('Add data'))
-        self.assertTrue(b.is_text_present('IMPORT FROM GITHUB'))
+        self.assertTrue(b.is_text_present('IMPORT CUSTOM MODULE'))
         self.assertTrue(b.is_text_present('Duplicate'))
         self.assertTrue(b.is_text_present('Rows'))
-
-
