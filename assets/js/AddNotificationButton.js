@@ -29,12 +29,12 @@ class AddNotificationButton extends React.Component {
         <div className='second-level t-vl-gray d-flex'>
           <div className='d-flex flex-row align-items-center'>
 
-            <div className='ml-icon-container ml-2'>
+            <div className='ml-icon-container'>
               <div className="icon-notification ml-icon"></div>
             </div>
 
             <div>
-              <div className='content-5 ml-module-name'>New alert</div>
+              <div className='content-5 ml-module-name'>Add data alert</div>
             </div>
           </div>
 

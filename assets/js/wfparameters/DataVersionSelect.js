@@ -150,7 +150,7 @@ export default class DataVersionSelect extends React.Component {
           </div>
           <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
             <ModalHeader toggle={this.toggleModal} >
-              <div className=''>Dataset Versions</div>
+              <div className='title-4 t-d-gray'>DATA VERSIONS</div>
             </ModalHeader>
             <ModalBody className='list-body'>
               <div className=''>
@@ -175,14 +175,28 @@ export default class DataVersionSelect extends React.Component {
               </div>
             </ModalBody>
             <ModalFooter className='dialog-footer'>
-            {this.props.notifications ? (
-              [<p key='1'>If a new version of the data is released at the source, a notification will be sent to your email address.</p>,
-              <div key='2' className='button-gray mr-3 action-button test-cancel-button' onClick={() => {this.toggleNotifications(); this.toggleModal()}}>Cancel Alert</div>]
-            ) : (
-              [<p key='1'>If a new version of the data is released at the source, send a notification to your email address.</p>,
-              <div key='2' className='button-gray mr-3 action-button test-cancel-button' onClick={() => {this.toggleNotifications(); this.toggleModal()}}>Set Alert</div>]
-            )}
-              <div className='button-blue action-button test-ok-button' onClick={this.changeVersions}>Apply</div>
+            <div className='alert-setting-modal'>
+              {this.props.notifications ? (
+                [<div className='alert-setting' key='1'>
+                  <div className='d-flex align-items-center mb-2'>
+                    <div className='icon-notification t-o-red module-icon mr-3'></div>
+                    <div className='info-1 t-o-red'>Alerts are ON</div>
+                  </div>
+                  <div> If new data is released, you will be notified via email.</div>
+                </div>,
+                <div key='2' className='button-gray action-button test-cancel-button' onClick={() => {this.toggleNotifications(); this.toggleModal()}}>Turn off</div>]
+              ) : (
+                [<div className='alert-setting' key='1'>
+                  <div className='d-flex align-items-center mb-2'>
+                    <div className='icon-notification module-icon mr-3'></div>
+                    <div className='info-1'>Alerts are OFF</div>
+                  </div>
+                  <div>Turn alerts ON to be notified via email if new data is released.</div>
+                </div>,
+                <div key='2' className='button-gray action-button test-cancel-button' onClick={() => {this.toggleNotifications(); this.toggleModal()}}>Turn on</div>]
+              )}
+            </div>
+              <div className='button-blue action-button test-ok-button' onClick={this.changeVersions}>Load</div>
             </ModalFooter>
           </Modal>
         </div>

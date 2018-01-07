@@ -393,10 +393,10 @@ class WfModule extends React.Component {
                       {this.props['data-wfmodule'].notifications &&
                       <div className={'notification-badge' + (this.props['data-wfmodule'].notification_count > 0 ? ' active t-f-blue' : '' )}>
                         <div
-                          className="icon-notification module-icon ml-3"
+                          className="icon-notification notification-badge-icon ml-3 mr-1"
                           onClick={this.onClickNotification}></div>
                         {this.props['data-wfmodule'].notification_count > 0 &&
-                        <span>{this.props['data-wfmodule'].notification_count}</span>
+                        <div>{this.props['data-wfmodule'].notification_count}</div>
                         }
                       </div>
                       }

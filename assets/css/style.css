@@ -119,9 +119,9 @@ body {
 }
 
 .info-1 {
-	font-size: 1.3rem;
+	font-size: 1.2rem;
 	font-weight: 100;
-	line-height: 2.1rem;
+	line-height: 2rem;
   font-family: 'Nunito Sans', sans-serif;
 }
 .info-2 {
@@ -1400,6 +1400,9 @@ img.logo {
   flex: 0 0 200px;
   background-color: #577485;
 }
+.module-library-open.list{
+  margin-bottom: 1rem;
+}
 .module-library-collapsed {
   width: 60px;
   flex: 0 0 60px;
@@ -1688,10 +1691,11 @@ img.logo {
 }
 
 .ml-divider {
-  margin-top: 2rem;
+  margin-top: 1rem;
   border-top: 1px solid rgba(255,255,255, .2);
   margin-left: 2rem;
   margin-right: 2rem;
+  margin-bottom: 1rem;
 }
 
 
@@ -1700,7 +1704,7 @@ img.logo {
 .import-module-button {
   cursor: pointer;
   color: #FAFAFA;
-  padding-top: 3rem;
+  padding-top: 2rem;
   opacity: 0.7;
   margin-left: 2rem;
   margin-right: 2rem;
@@ -1825,6 +1829,14 @@ img.logo {
 
 .module-header-buttons:hover{
   display:flex;
+}
+
+.notification-badge{
+  display: flex;
+}
+
+.notification-badge-icon{
+  font-size: 1.4rem;
 }
 
 
@@ -2132,11 +2144,6 @@ input[type=checkbox]:checked:after {
   font-size: 1.5rem;
 }
 
-.dialog-footer {
-  background-color: #fff;
-  padding: 2rem;
-}
-
 .close {
   font-size:2rem;
   color:#b4b4b4;
@@ -2144,7 +2151,39 @@ input[type=checkbox]:checked:after {
 
 .icon-close {
   font-size:1rem;
-  color:#b4b4b4;
+  color:red;
+}
+
+
+/* imported modal setting cancelled */
+.modal-footer{
+  border-top:0;
+  display: block;
+}
+
+/* new style for dialog..footer */
+.dialog-footer {
+  background-color: #fff;
+  padding: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Data version modal */
+
+.alert-setting-modal {
+  width: 70%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 4rem;
+  border-right: 1px solid #E9E9E9;
+
+}
+
+.alert-setting {
+  margin-right: 1rem;
+  width:60%;
 }
 
 /* from Export Data modal, in WfModuleContextMenu  */
