@@ -246,7 +246,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                   className="d-flex flex-row align-items-center"
                 >
                   <div
-                    className="ml-icon-container ml-2"
+                    className="ml-icon-container"
                   >
                     <div
                       className="icon-notification ml-icon"
@@ -256,7 +256,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                     <div
                       className="content-5 ml-module-name"
                     >
-                      New alert
+                      Add data alert
                     </div>
                   </div>
                 </div>
@@ -279,10 +279,10 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
         >
           <div>
             <div
-              className="import-module-button content-3 mb-5 t-vl-gray"
+              className="import-module-button content-4 t-vl-gray"
               onClick={[Function]}
             >
-              IMPORT FROM GITHUB
+              IMPORT CUSTOM MODULE
             </div>
             ;
             <Modal
@@ -863,7 +863,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                   className="d-flex flex-row align-items-center"
                 >
                   <div
-                    className="ml-icon-container ml-2"
+                    className="ml-icon-container"
                   >
                     <div
                       className="icon-notification ml-icon"
@@ -873,7 +873,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
                     <div
                       className="content-5 ml-module-name"
                     >
-                      New alert
+                      Add data alert
                     </div>
                   </div>
                 </div>
@@ -896,10 +896,10 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
         >
           <div>
             <div
-              className="import-module-button content-3 mb-5 t-vl-gray"
+              className="import-module-button content-4 t-vl-gray"
               onClick={[Function]}
             >
-              IMPORT FROM GITHUB
+              IMPORT CUSTOM MODULE
             </div>
             ;
             <Modal

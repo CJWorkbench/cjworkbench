@@ -128,9 +128,9 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
           className="modal-title"
         >
           <div
-            className=""
+            className="title-4 t-d-gray"
           >
-            Dataset Versions
+            DATA VERSIONS
           </div>
         </h4>
         <button
@@ -220,20 +220,40 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
       <div
         className="dialog-footer modal-footer"
       >
-        <p>
-          If a new version of the data is released at the source, send a notification to your email address.
-        </p>
         <div
-          className="button-gray mr-3 action-button test-cancel-button"
-          onClick={[Function]}
+          className="alert-setting-modal"
         >
-          Set Alert
+          <div
+            className="alert-setting"
+          >
+            <div
+              className="d-flex align-items-center mb-2"
+            >
+              <div
+                className="icon-notification module-icon mr-3"
+              />
+              <div
+                className="info-1"
+              >
+                Alerts are OFF
+              </div>
+            </div>
+            <div>
+              Turn alerts ON to be notified via email if new data is released.
+            </div>
+          </div>
+          <div
+            className="button-gray action-button test-cancel-button"
+            onClick={[Function]}
+          >
+            Turn on
+          </div>
         </div>
         <div
           className="button-blue action-button test-ok-button"
           onClick={[Function]}
         >
-          Apply
+          Load
         </div>
       </div>
     </ModalFooter>
