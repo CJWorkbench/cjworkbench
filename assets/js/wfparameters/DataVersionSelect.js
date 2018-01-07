@@ -179,8 +179,8 @@ export default class DataVersionSelect extends React.Component {
               {this.props.notifications ? (
                 [<div className='alert-setting' key='1'>
                   <div className='d-flex align-items-center mb-2'>
-                    <div className='icon-notification t-o-red module-icon mr-3'></div>
-                    <div className='info-1 t-o-red'>Alerts are ON</div>
+                    <div className='icon-notification t-orange module-icon mr-3'></div>
+                    <div className='info-1 t-orange'>Alerts are ON</div>
                   </div>
                   <div> If new data is released, you will be notified via email.</div>
                 </div>,
