@@ -1464,6 +1464,11 @@ img.logo {
   margin-bottom: 1rem;
 }
 
+/* To conceal the transition animation when selecting from Library in collapsed state */
+.hide-animation {
+  display: none;
+}
+
 /*Categories and module list*/
 
 .ml-cat{

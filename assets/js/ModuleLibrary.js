@@ -124,13 +124,9 @@ export default class ModuleLibrary extends React.Component {
   }
 
   openLibraryToSearch() {
-
     if (!this.props.isReadOnly) {
-      this.setState(
-        { libraryOpen: true }
-      );
+      this.setState({ libraryOpen: true });
     }
-
   }
 
 
@@ -217,15 +213,12 @@ export default class ModuleLibrary extends React.Component {
                 <div className='icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle' onClick={this.toggleLibrary}></div>
               </div>
 
-              <div  className='d-flex align-items-center search-bar' 
-                   
-              >
+              <div className='d-flex align-items-center search-bar'>
                 <div className='icon-search-white ml-icon-search ml-4'></div>
                 <ModuleSearch addModule={this.props.addModule}
                               dropModule={this.props.dropModule}
                               items={this.state.items}
-                              workflow={this.props.workflow} 
-                              />
+                              workflow={this.props.workflow} />
               </div>
 
             </div>

@@ -19,15 +19,42 @@ export default class ModuleCategory extends React.Component {
     super(props);
     this.state = {
       collapsed: props.collapsed,
+      visible: true
     };
-
-    this.toggleCollapse = this.toggleCollapse.bind(this)
+    this.toggleCollapse = this.toggleCollapse.bind(this);
+    this.onEntering = this.onEntering.bind(this);
+    this.onEntered = this.onEntered.bind(this);
+    this.onExiting = this.onExiting.bind(this);
+    this.onExited = this.onExited.bind(this);
   }
 
   toggleCollapse() {
     var newCollapsed = !this.state.collapsed;
     this.setState({collapsed: newCollapsed});
     this.props.setOpenCategory(newCollapsed ? null : this.props.name); // tell parent, so it can close other cats
+  }
+
+  onEntering() {
+    console.log("Entering");
+    this.setState({ visible: false });
+  }
+
+  onEntered() {
+    console.log("Has Entered");
+    
+    this.setState({ visible: true  });
+  }
+
+  onExiting() {
+    console.log("Exiting");
+    
+    this.setState({ visible: false  });
+  }
+
+  onExited() {
+    console.log("Has Exited");
+    
+    this.setState({ visible: true });
   }
 
   // When our props change, update our collapsed state (this is the other end of setOpenCategory)
@@ -49,6 +76,8 @@ export default class ModuleCategory extends React.Component {
 
     // --- Grabs icon from first module in category for category icon
     var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
+
+    var hideAnimation = (!!this.state.visible) ? 'hide-animation' : null;
 
     if (this.props.libraryOpen) {
       return (
@@ -79,9 +108,17 @@ export default class ModuleCategory extends React.Component {
               </div>
             </div>
             <div>
-              <Collapse className='' isOpen={isOpen}>
-                <div className="ml-list-mini">{this.props.modules}</div>
-              </Collapse>
+              {/* Hide transition animation when opening/closing */}
+                <Collapse 
+                  className={hideAnimation} 
+                  isOpen={isOpen}
+                  onEntering={this.onEntering}
+                  onEntered={this.onEntered}
+                  onExiting={this.onExiting}
+                  onExited={this.onExited}
+                >
+                  <div className="ml-list-mini">{this.props.modules}</div>
+                </Collapse>
             </div>
           </div>
         </div>
