@@ -9,6 +9,7 @@
     "see https://github.com/moment/moment/issues/2979 "
   ],
   "dependencies": {
+    "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
     "babelify": "^7.3.0",
     "bootstrap": "4.0.0-alpha.6",
     "chartbuilder": "git://github.com/CJWorkbench/Chartbuilder.git#library-style",
