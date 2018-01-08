@@ -165,10 +165,12 @@ export default class DataVersionSelect extends React.Component {
                       }
                       onClick={() => this.setSelected(version[0])}
                     >
-                      <span className='content-3'>{ this.formatDate(version[0]) }</span>
-                      {!version[1] &&
-                        <span className='icon icon-notification'></span>
-                      }
+                      <div className='d-flex justify-content-between'>
+                        <div className='content-3'>{ this.formatDate(version[0]) }</div>
+                        {!version[1] &&
+                          <div className='icon icon-notification'></div>
+                        }
+                      </div>
                     </div>
                   );
                 })}
