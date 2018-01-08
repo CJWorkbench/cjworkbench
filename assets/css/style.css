@@ -99,7 +99,7 @@ body {
 }
 .content-3 {
 	font-size: 1.3rem;
-	line-height: 1.9rem;
+	line-height: 1.6rem;
 }
 .content-4 {
 	font-size: 1.1rem;
@@ -125,10 +125,10 @@ body {
   font-family: 'Nunito Sans', sans-serif;
 }
 .info-2 {
-	font-size: 1rem;
-	font-weight: 600;
-	line-height: 1rem;
-  letter-spacing: 2;
+	font-size: 1.4rem;
+	font-weight: 100;
+	line-height: 2rem;
+  font-family: 'Nunito Sans', sans-serif;
 }
 
 .table-1 {
@@ -603,7 +603,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 3rem;
+  padding-left: 2rem;
   cursor: pointer;
   margin-bottom: 1px;
 }
@@ -619,7 +619,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding-left: 2.5rem;
+  padding-left: 2rem;
 }
 
 .dropdown-selector {
@@ -958,7 +958,7 @@ select.form-control {
 
 .action-button {
   cursor: pointer;
-  min-width: 9rem;
+  min-width: 8rem;
 	height: 4rem;
   border-radius: 2.5rem;
   display: flex;
@@ -1836,7 +1836,7 @@ img.logo {
 }
 
 .notification-badge-icon{
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 
@@ -2154,6 +2154,10 @@ input[type=checkbox]:checked:after {
   color:red;
 }
 
+.form-group {
+  margin-bottom:0;
+}
+
 
 /* imported modal setting cancelled */
 .modal-footer{
@@ -2163,6 +2167,14 @@ input[type=checkbox]:checked:after {
 
 /* new style for dialog..footer */
 .dialog-footer {
+  background-color: #FAFAFA;
+  padding: 2rem;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #eceeef;
+}
+
+.dialog-footer-dual {
   background-color: #fff;
   padding: 2rem;
   display: flex;
@@ -2468,7 +2480,7 @@ select {
   display: none;
 }
 
-.drop-indicator.active {
+.drop-alert.active {
   position: absolute;
   z-index: 3;
   top: 0;
@@ -2476,9 +2488,9 @@ select {
   bottom: 0;
   left: 0;
   background: #FBAA6D;
-  opacity: 0.2;
+  opacity: 0.3;
 }
 
-.drop-indicator.over {
+.drop-alert.over {
   opacity: 0.5;
 }

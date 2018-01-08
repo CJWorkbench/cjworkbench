@@ -46,7 +46,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
       <span
         className="title-4 t-d-gray"
       >
-        Sync Settings
+        SYNC SETTINGS
       </span>
     </ModalHeader>
     <ModalBody
@@ -72,11 +72,13 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
           <div
             className="col-sm-9"
           >
-            <p>
+            <div
+              className="info-2"
+            >
               Automatically save the current version of the workflow and update it with the newest data.
-            </p>
+            </div>
             <Label
-              className="content-3 t-d-gray mb-4"
+              className="content-3 t-d-gray mt-4 mb-2"
               for="updateFreq"
               tag="label"
             >
@@ -127,7 +129,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
           </div>
         </div>
         <div
-          className="row"
+          className="row d-flex align-items-center"
         >
           <div
             className="col-sm-3"
@@ -142,9 +144,11 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
           <div
             className="col-sm-9"
           >
-            <p>
-              Keep the workflow the way it is. Do not check for new data automatically.
-            </p>
+            <div
+              className="info-2"
+            >
+              Check for new data manually.
+            </div>
           </div>
         </div>
       </FormGroup>
@@ -216,7 +220,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       <span
         className="title-4 t-d-gray"
       >
-        Sync Settings
+        SYNC SETTINGS
       </span>
     </ModalHeader>
     <ModalBody
@@ -242,11 +246,13 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           <div
             className="col-sm-9"
           >
-            <p>
+            <div
+              className="info-2"
+            >
               Automatically save the current version of the workflow and update it with the newest data.
-            </p>
+            </div>
             <Label
-              className="content-3 t-d-gray mb-4"
+              className="content-3 t-d-gray mt-4 mb-2"
               for="updateFreq"
               tag="label"
             >
@@ -297,7 +303,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </div>
         </div>
         <div
-          className="row"
+          className="row d-flex align-items-center"
         >
           <div
             className="col-sm-3"
@@ -312,9 +318,11 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           <div
             className="col-sm-9"
           >
-            <p>
-              Keep the workflow the way it is. Do not check for new data automatically.
-            </p>
+            <div
+              className="info-2"
+            >
+              Check for new data manually.
+            </div>
           </div>
         </div>
       </FormGroup>
@@ -386,7 +394,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       <span
         className="title-4 t-d-gray"
       >
-        Sync Settings
+        SYNC SETTINGS
       </span>
     </ModalHeader>
     <ModalBody
@@ -412,11 +420,13 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           <div
             className="col-sm-9"
           >
-            <p>
+            <div
+              className="info-2"
+            >
               Automatically save the current version of the workflow and update it with the newest data.
-            </p>
+            </div>
             <Label
-              className="content-3 t-d-gray mb-4"
+              className="content-3 t-d-gray mt-4 mb-2"
               for="updateFreq"
               tag="label"
             >
@@ -467,7 +477,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </div>
         </div>
         <div
-          className="row"
+          className="row d-flex align-items-center"
         >
           <div
             className="col-sm-3"
@@ -482,9 +492,11 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           <div
             className="col-sm-9"
           >
-            <p>
-              Keep the workflow the way it is. Do not check for new data automatically.
-            </p>
+            <div
+              className="info-2"
+            >
+              Check for new data manually.
+            </div>
           </div>
         </div>
       </FormGroup>
@@ -556,7 +568,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       <span
         className="title-4 t-d-gray"
       >
-        Sync Settings
+        SYNC SETTINGS
       </span>
     </ModalHeader>
     <ModalBody
@@ -582,11 +594,13 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           <div
             className="col-sm-9"
           >
-            <p>
+            <div
+              className="info-2"
+            >
               Automatically save the current version of the workflow and update it with the newest data.
-            </p>
+            </div>
             <Label
-              className="content-3 t-d-gray mb-4"
+              className="content-3 t-d-gray mt-4 mb-2"
               for="updateFreq"
               tag="label"
             >
@@ -637,7 +651,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           </div>
         </div>
         <div
-          className="row"
+          className="row d-flex align-items-center"
         >
           <div
             className="col-sm-3"
@@ -652,9 +666,11 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
           <div
             className="col-sm-9"
           >
-            <p>
-              Keep the workflow the way it is. Do not check for new data automatically.
-            </p>
+            <div
+              className="info-2"
+            >
+              Check for new data manually.
+            </div>
           </div>
         </div>
       </FormGroup>

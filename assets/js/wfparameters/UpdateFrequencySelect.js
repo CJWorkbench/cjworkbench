@@ -104,7 +104,7 @@ export default class UpdateFrequencySelect extends React.Component {
         {lastChecked}
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
           <ModalHeader toggle={this.toggleModal} className='dialog-header'>
-            <span className='title-4 t-d-gray'>Sync Settings</span>
+            <span className='title-4 t-d-gray'>SYNC SETTINGS</span>
           </ModalHeader>
           <ModalBody className='dialog-body'>
             <FormGroup>
@@ -114,8 +114,8 @@ export default class UpdateFrequencySelect extends React.Component {
                 </div>
 
                 <div className="col-sm-9">
-                  <p>Automatically save the current version of the workflow and update it with the newest data.</p>
-                  <Label for="updateFreq" className='content-3 t-d-gray mb-4'>Check for update every</Label>
+                  <div className='info-2'>Automatically save the current version of the workflow and update it with the newest data.</div>
+                  <Label for="updateFreq" className='content-3 t-d-gray mt-4 mb-2'>Check for update every</Label>
                   <div className='update-freq-settings update-freq-test-class mb-5'>
                     <Input
                       type="number"
@@ -145,13 +145,13 @@ export default class UpdateFrequencySelect extends React.Component {
                 </div>
               </div>
 
-              <div className="row">
+              <div className="row d-flex align-items-center">
                 <div className="col-sm-3">
                   <div onClick={this.toggleManual} className={highlightManual}>Off</div>
                 </div>
 
                 <div className="col-sm-9">
-                  <p>Keep the workflow the way it is. Do not check for new data automatically.</p>
+                  <div className='info-2'>Check for new data manually.</div>
                 </div>
               </div>
             </FormGroup>

@@ -214,11 +214,11 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
       </div>
     </ModalBody>
     <ModalFooter
-      className="dialog-footer"
+      className="dialog-footer-dual"
       tag="div"
     >
       <div
-        className="dialog-footer modal-footer"
+        className="dialog-footer-dual modal-footer"
       >
         <div
           className="alert-setting-modal"

@@ -418,7 +418,7 @@ class WfModule extends React.Component {
             </div>
 
             <div className={
-              'drop-indicator ' +
+              'drop-alert ' +
               ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.dragItem) ? 'active ' : '' ) +
               ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.isOver) ? 'over ' : '')
               } ></div>

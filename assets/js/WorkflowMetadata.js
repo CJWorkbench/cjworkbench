@@ -60,10 +60,10 @@ export default class WorkflowMetadata extends React.Component {
     return (
       <Modal isOpen={this.state.privacyModalOpen} toggle={this.togglePrivacyModal}>
         <ModalHeader toggle={this.togglePrivacyModal} className='dialog-header' >
-          <span className='t-d-gray title-4'>Privacy Setting</span>
+          <span className='t-d-gray title-4'>PRIVACY SETTING</span>
         </ModalHeader>
         <ModalBody className='dialog-body'>
-          <div className="row">
+          <div className="row d-flex align-items-center mb-5">
             <div className="col-sm-3">
               <div
                 className={"action-button " + (this.state.isPublic ? "button-full-blue" : "button-gray test-button-gray") }
@@ -72,10 +72,9 @@ export default class WorkflowMetadata extends React.Component {
               </div>
             </div>
             <div className="col-sm-9">
-              <p>Anyone can access and duplicate the workflow or any of its modules</p>
+              <div className='info-2'>Anyone can access and duplicate the workflow or any of its modules</div>
             </div>
           </div>
-          <br></br>
           <div className="row d-flex align-items-center">
             <div className="col-sm-3">
               <div
@@ -84,8 +83,8 @@ export default class WorkflowMetadata extends React.Component {
                   Private
               </div>
             </div>
-            <div className="col-sm-9 mt-2 mb-3">
-              <p>Only you can access and edit the workflow</p>
+            <div className="col-sm-9">
+              <div className='info-2'>Only you can access and edit the workflow</div>
             </div>
           </div>
         </ModalBody>
