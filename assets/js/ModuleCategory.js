@@ -47,27 +47,46 @@ export default class ModuleCategory extends React.Component {
       ? 'icon-sort-up-vl-gray ml-sort mb-1'
       : 'icon-sort-down-vl-gray ml-sort mb-1';
 
-    // --- Need a mapping of category-to-icon before implementing
-    // var icon = 'icon-' + ??? + ' button-icon mr-2';
+    // --- Grabs icon from first module in category for category icon
+    var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
 
-    return (
-      <div className={cardClass}>
-        <div className="ml-cat">
-          <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
-            <div className='cat-container'>
-              <div className={symbol} />
-              {/* <span className={icon}></span> */}
-              <span className='content-3 t-vl-gray ml-3'>{this.props.name}</span>
+    if (this.props.libraryOpen) {
+      return (
+        <div className={cardClass}>
+          <div className="ml-cat">
+            <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
+              <div className='cat-container'>
+                <div className={symbol} />
+                <span className={icon}></span>
+                <span className='content-3 t-vl-gray ml-3'>{this.props.name}</span>
+              </div>
+            </div>
+            <div>
+              <Collapse className='' isOpen={isOpen}>
+                <div className="ml-list">{this.props.modules}</div>
+              </Collapse>
             </div>
           </div>
-          <div>
-            <Collapse className='' isOpen={isOpen}>
-              <div className="ml-list">{this.props.modules}</div>
-            </Collapse>
+        </div>
+      );
+    } else {
+      return (
+        <div className={cardClass}>
+          <div className="ml-cat">
+            <div className='first-level d-flex align-items-center' onClick={this.toggleCollapse}>
+              <div className='cat-container'>
+                <span className={'ml-2 ' + icon}></span>
+              </div>
+            </div>
+            <div>
+              <Collapse className='' isOpen={isOpen}>
+                <div className="ml-list-mini">{this.props.modules}</div>
+              </Collapse>
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 
@@ -77,5 +96,6 @@ ModuleCategory.propTypes = {
   modules:          PropTypes.arrayOf(PropTypes.object).isRequired,
   collapsed:        PropTypes.bool.isRequired,
   setOpenCategory:  PropTypes.func.isRequired,
-  isReadOnly:       PropTypes.bool.isRequired
+  isReadOnly:       PropTypes.bool.isRequired,
+  libraryOpen:      PropTypes.bool.isRequired
 };

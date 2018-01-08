@@ -1481,9 +1481,15 @@ img.logo {
   background-color: #4E6878;
 }
 
-.module-library-open .card {
+.module-library-open .card,
+.module-library-collapsed .card {
   border: 0;
   background-color: rgba(0,0,0,0);
+  border-radius: 0;
+}
+
+.module-library-collapsed > .card {
+  border-bottom: 1px solid rgba(255,255,255, .1);
 }
 
 .card .first-level {
@@ -1522,6 +1528,16 @@ img.logo {
   background-color:#547081;
   opacity: 1;
   cursor:pointer;
+}
+
+.library-card-category-open .ml-list-mini {
+  background-color:#547081;
+  opacity: 1;
+  cursor: pointer;
+  z-index: 100;
+  position: absolute;
+  left: 60px;
+  top: 0;
 }
 
 .card .second-level {
@@ -1571,6 +1587,7 @@ img.logo {
   width: 2rem;
   display: flex;
   justify-content: center;
+  align-items: center;
 }
 
 .ml-icon-search{
@@ -1582,6 +1599,10 @@ img.logo {
 .ml-module-name{
   margin-left:0.6rem;
   margin-top: 0.2rem;
+}
+
+.ml-module-card { 
+  width: 200px;
 }
 
 

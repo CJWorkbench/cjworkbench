@@ -52,8 +52,7 @@ class Module extends React.Component {
     var icon = 'icon-' + this.props.icon + ' ml-icon';
 
     return this.props.connectDragSource(
-      // TODO: remove inline styles
-      <div className='card' style={{'borderRadius': 0, 'border': 0}}>
+      <div className='card ml-module-card'>
         <div className='' onClick={this.itemClick} >
           <div className='second-level d-flex'>
             <div className='d-flex flex-row align-items-center'>

@@ -35,6 +35,7 @@ export default class ModuleLibrary extends React.Component {
     this.addModule = this.props.addModule.bind(this);
     this.setOpenCategory = this.setOpenCategory.bind(this);
     this.toggleLibrary = this.toggleLibrary.bind(this);
+    this.openLibraryToSearch = this.openLibraryToSearch.bind(this);   
     this.updated = this.updated.bind(this);
   }
 
@@ -122,6 +123,17 @@ export default class ModuleLibrary extends React.Component {
     }
   }
 
+  openLibraryToSearch() {
+
+    if (!this.props.isReadOnly) {
+      this.setState(
+        { libraryOpen: true }
+      );
+    }
+
+  }
+
+
   // Return an array of <Module Category>, each of which has child <Module>s.
   renderCategories() {
     // This assumes that the items are already sorted by category,
@@ -159,6 +171,7 @@ export default class ModuleLibrary extends React.Component {
           isReadOnly={this.props.isReadOnly}
           collapsed={currentCategory != this.state.openCategory}
           setOpenCategory={this.setOpenCategory}
+          libraryOpen={this.state.libraryOpen}
         />;
         categories.push(moduleCategory);
         modulesByCategory = [];
@@ -178,6 +191,7 @@ export default class ModuleLibrary extends React.Component {
         isReadOnly={this.props.isReadOnly}
         collapsed={currentCategory != this.state.openCategory}
         setOpenCategory={this.setOpenCategory}
+        libraryOpen={this.state.libraryOpen}        
       />;
       categories.push(moduleCategory);
     }
@@ -202,13 +216,18 @@ export default class ModuleLibrary extends React.Component {
                 <a href="/workflows" className='logo-2 ml-3 t-vl-gray '>Workbench</a>
                 <div className='icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle' onClick={this.toggleLibrary}></div>
               </div>
-                <div className='d-flex align-items-center search-bar'>
-                  <div className='icon-search-white ml-icon-search ml-4'></div>
-                  <ModuleSearch addModule={this.props.addModule}
-                                dropModule={this.props.dropModule}
-                                items={this.state.items}
-                                workflow={this.props.workflow}/>
-                </div>
+
+              <div  className='d-flex align-items-center search-bar' 
+                   
+              >
+                <div className='icon-search-white ml-icon-search ml-4'></div>
+                <ModuleSearch addModule={this.props.addModule}
+                              dropModule={this.props.dropModule}
+                              items={this.state.items}
+                              workflow={this.props.workflow} 
+                              />
+              </div>
+
             </div>
 
             <div className="list">
@@ -217,17 +236,18 @@ export default class ModuleLibrary extends React.Component {
 
             <div className="ml-divider"></div>
 
-            <AddNotificationButton />
+            <AddNotificationButton libraryOpen={true}/>
 
             <div className="ml-divider"></div>
 
-            <ImportModuleFromGitHub moduleAdded={this.updated}/>
+            <ImportModuleFromGitHub moduleAdded={this.updated} libraryOpen={true}/>
           </div>
         </div>
       )
     } else {
       return (
         <div className='module-library-collapsed'>
+
           <div className="expand-lib">
             <div className="expand-lib-button d-flex">
               <div className="logo" onClick={this.toggleLibrary}><img src="/static/images/logo.png" width="20"/></div>
@@ -241,6 +261,21 @@ export default class ModuleLibrary extends React.Component {
               }
             </div>
           </div>
+
+          <div className='card' onClick={this.openLibraryToSearch}>
+            <div className='first-level'>
+              <div className='icon-search-white ml-icon-search text-center mt-3'></div>
+            </div>
+          </div>
+
+          <div className="list">
+            {this.renderCategories()}
+          </div>
+
+          <AddNotificationButton libraryOpen={false}/>
+
+          <ImportModuleFromGitHub moduleAdded={this.updated} libraryOpen={false}/>          
+
         </div>
       )
     }

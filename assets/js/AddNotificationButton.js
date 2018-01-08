@@ -1,5 +1,7 @@
 import React from 'react';
+import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
+
 
 const spec = {
   beginDrag(props, monitor, component) {
@@ -24,10 +26,11 @@ class AddNotificationButton extends React.Component {
   }
 
   render() {
-    return this.props.connectDragSource(
-      <div className='card' style={{'borderRadius': 0, 'border': 0}}>
-        <div className='second-level t-vl-gray d-flex'>
-          <div className='d-flex flex-row align-items-center'>
+    if (this.props.libraryOpen) {
+      return this.props.connectDragSource(
+        <div className='card'>
+          <div className='second-level t-vl-gray d-flex'>
+            <div className='d-flex flex-row align-items-center'>
 
             <div className='ml-icon-container'>
               <div className="icon-notification ml-icon"></div>
@@ -37,15 +40,30 @@ class AddNotificationButton extends React.Component {
               <div className='content-5 ml-module-name'>Add data alert</div>
             </div>
           </div>
+        </div>
+      )
+    } else {
+      return this.props.connectDragSource(
+        <div className='card'>
+          <div className='second-level t-vl-gray d-flex'>
 
-          <div className='ml-handle'>
-            <div className='icon-grip'></div>
+            <div className='ml-icon-container mr-2'>
+              <div className="icon-notification ml-icon"></div>
+            </div>
+
+            <div className='ml-handle'>
+              <div className='icon-grip'></div>
+            </div>
           </div>
         </div>
-      </div>
-    )
+      )
+    }
   }
 
 }
 
 export default DragSource('notification', spec, collect)(AddNotificationButton)
+
+AddNotificationButton.propTypes = {
+  libraryOpen: PropTypes.bool.isRequired
+};

@@ -150,13 +150,19 @@ export default class ImportModuleFromGitHub extends React.Component {
         </div>
     };
 
+    var button = (this.props.libraryOpen)
+      ? <div className='import-module-button content-3 mb-5 t-vl-gray' onClick={ this.toggleModal }>
+          <span className='icon-add mr-2'></span>
+          <span>IMPORT FROM GITHUB</span>
+        </div>
+      : <div className='import-module-button mb-5' onClick={ this.toggleModal }>
+          <div className='icon-add'></div>
+        </div>
 
     return (
       <div>
 
-        <div className='import-module-button content-4 t-vl-gray' onClick={ this.toggleModal }>
-          IMPORT CUSTOM MODULE
-        </div>;
+        {button}
 
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
           <ModalHeader toggle={this.toggleModal} >
@@ -188,5 +194,6 @@ export default class ImportModuleFromGitHub extends React.Component {
 
 
 ImportModuleFromGitHub.propTypes = {
-  moduleAdded: PropTypes.func.isRequired
+  moduleAdded: PropTypes.func.isRequired,
+  libraryOpen: PropTypes.bool.isRequired  
 };

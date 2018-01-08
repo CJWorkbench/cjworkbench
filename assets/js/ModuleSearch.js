@@ -68,6 +68,11 @@ export default class ModuleSearch extends React.Component {
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
   }
 
+  componentDidMount() {
+    if (this.props.items) {
+      this.formatModules(this.props.items);
+    }
+  }
 
   componentWillReceiveProps(nextProps) {
     if (this.props.items !== nextProps.items) {
@@ -173,7 +178,8 @@ export default class ModuleSearch extends React.Component {
     const inputProps = {
       placeholder: 'Search modules',
       value,
-      onChange: this.onChange
+      onChange: this.onChange,
+      autoFocus: true
     };
     return (
       <Autosuggest
