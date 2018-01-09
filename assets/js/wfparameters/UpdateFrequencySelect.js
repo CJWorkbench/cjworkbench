@@ -9,6 +9,7 @@ export default class UpdateFrequencySelect extends React.Component {
     super(props);
     this.state = {
       modalOpen: false,
+      message: "",
       liveSettings: {
         manual: !this.props.updateSettings.autoUpdateData,
         period: this.props.updateSettings.updateInterval,
@@ -29,6 +30,16 @@ export default class UpdateFrequencySelect extends React.Component {
     this.updatePeriod = this.updatePeriod.bind(this);
     this.updateUnit = this.updateUnit.bind(this);
     this.saveSettings = this.saveSettings.bind(this);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.notifications && (!this.props.notifications && this.state.dialogSettings.manual)) {
+      this.toggleModal();
+      this.toggleManual();
+      this.setState({
+        message: "You have just added an alert, but sync settings are set to 'manual'. Please choose an update frequency and click 'apply'."
+      })
+    }
   }
 
   toggleModal() {
@@ -107,6 +118,9 @@ export default class UpdateFrequencySelect extends React.Component {
             <span className='title-4 t-d-gray'>SYNC SETTINGS</span>
           </ModalHeader>
           <ModalBody className='dialog-body'>
+            {this.state.message.length > 0 &&
+              <p>{this.state.message}</p>
+            }
             <FormGroup>
               <div className="row">
                 <div className="col-sm-3">

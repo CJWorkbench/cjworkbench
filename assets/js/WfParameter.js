@@ -343,6 +343,7 @@ export default class WfParameter extends React.Component {
                 updateSettings={this.props.updateSettings}
                 wfModuleId={this.props.wf_module_id}
                 api={this.props.api}
+                notifications={this.props.notifications}
               />
               {button}
             </div>
