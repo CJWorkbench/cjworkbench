@@ -1808,7 +1808,6 @@ img.logo {
   width:100%;
 }
 .module-card-header {
-  cursor: pointer;
   clear:left;
   display: flex;
   justify-content: space-between;
