@@ -10,7 +10,6 @@ def runcron(request):
     # Fortunately django channels distributes requests across workers (4 by default).
     # But if this takes more than 1 minute, we could end up with multiple workers
     # checking for updates at once. Will db locks take care of us if so?
-    update_wfm_data_scan()
+    update_wfm_data_scan(request)
 
     return HttpResponse(status=204) # no content
-
