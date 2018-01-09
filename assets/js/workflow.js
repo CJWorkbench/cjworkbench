@@ -140,7 +140,7 @@ class WorkflowList extends React.Component {
         'data-selected': (item.id == this.props.selected_wf_module),
         'data-api': this.props.api,
         'data-user': this.props.user,
-        loads_data: item.module_version.module.loads_data,
+        loads_data: item.module_version ? item.module_version.module.loads_data : false,
         index:i,
         drag: this.drag,
         dragNew: this.dragNew,
@@ -208,7 +208,7 @@ class Workflow extends React.Component {
 
     var moduleLibrary = <ModuleLibrary
                           addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}
-                          dropModule={(module_id, insert_before) => this.props.addModule(module_id, insert_before || this.props.workflow.wf_modules.length)}
+                          dropModule={(module_id, insert_before) => this.props.addModule(module_id, (insert_before === false) ? this.props.workflow.wf_modules.length : insert_before)}
                           api={this.props.api}
                           isReadOnly={this.props.workflow.read_only}
                           workflow={this.props.workflow} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
@@ -281,6 +281,7 @@ Workflow.propTypes = {
   api:                PropTypes.object.isRequired,
   workflow:           PropTypes.object,             // not required as fetched after page loads
   selected_wf_module: PropTypes.number,
+  changeParam:        PropTypes.func.isRequired,
   addModule:          PropTypes.func.isRequired,
   removeModule:       PropTypes.func.isRequired,
   user:               PropTypes.object,

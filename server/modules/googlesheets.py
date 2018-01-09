@@ -14,8 +14,8 @@ from server.versions import save_fetched_table_if_changed
 class GoogleSheets(ModuleImpl):
 
     @staticmethod
-    def get_spreadsheets(request):
-        authorized, credential = maybe_authorize(request)
+    def get_spreadsheets(request, owner=False):
+        authorized, credential = maybe_authorize(request, user=owner)
 
         if not authorized:
             return JsonResponse({'login_url':credential}, status=401)
@@ -29,8 +29,8 @@ class GoogleSheets(ModuleImpl):
         return JsonResponse(files)
 
     @staticmethod
-    def get_spreadsheet(request, id):
-        authorized, credential = maybe_authorize(request)
+    def get_spreadsheet(request, id, owner=False):
+        authorized, credential = maybe_authorize(request, user=owner)
 
         if not authorized:
             return credential
@@ -54,11 +54,14 @@ class GoogleSheets(ModuleImpl):
             file_meta = wfmodule.get_param_raw('fileselect', 'custom')
             file_meta = json.loads(file_meta)
             sheet_id = file_meta['id']
+            event_type = False
         else:
             event_type = event.get('type', False)
 
+        owner = wfmodule.workflow.owner
+
         if event_type == 'fetchFiles':
-            return GoogleSheets.get_spreadsheets(request)
+            return GoogleSheets.get_spreadsheets(request, owner=owner)
 
         if event_type == 'fetchFile':
             file_meta = request.data.get('file', False)
@@ -70,7 +73,7 @@ class GoogleSheets(ModuleImpl):
             sheet_id = file_meta['id']
 
         if sheet_id:
-            new_data = GoogleSheets.get_spreadsheet(request, sheet_id)
+            new_data = GoogleSheets.get_spreadsheet(request, sheet_id, owner=owner)
 
             try:
                 table = pd.read_csv(io.StringIO(new_data))
