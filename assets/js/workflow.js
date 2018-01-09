@@ -140,7 +140,7 @@ class WorkflowList extends React.Component {
         'data-selected': (item.id == this.props.selected_wf_module),
         'data-api': this.props.api,
         'data-user': this.props.user,
-        loads_data: item.module_version.module.loads_data,
+        loads_data: item.module_version ? item.module_version.module.loads_data : false,
         index:i,
         drag: this.drag,
         dragNew: this.dragNew,
