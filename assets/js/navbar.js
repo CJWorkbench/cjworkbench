@@ -33,7 +33,7 @@ export class WorkflowListNavBar extends React.Component {
             <h1 className="mb-0 mr-auto logo-1"><a href="/workflows">Workbench</a></h1>
           </div>
           <div className='d-flex flex-row align-items-center'>
-            <a href="https://intercom.help/tables" className='t-white nav-link content-2'>Help</a>
+            <a target="_blank" href="https://intercom.help/tables" className='t-white nav-link content-2'>Help</a>
             <WfHamburgerMenu />
           </div>
         </nav>

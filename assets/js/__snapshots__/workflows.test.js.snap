@@ -39,7 +39,7 @@ exports[`Workflow list page renders correctly 1`] = `
           >
             <a
               className="t-white nav-link content-2"
-              href="http://cjworkbench.org/index.php/blog/"
+              href="https://intercom.help/tables"
             >
               Help
             </a>

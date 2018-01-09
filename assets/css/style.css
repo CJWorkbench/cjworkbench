@@ -416,6 +416,12 @@ body {
   content:"\e92c"
 }
 
+.icon-help:before{
+  content:"\e933";
+  Color:#fff;
+  font-size: 3rem;
+}
+
 /* Customized icons, not in font sent  */
 
 .icon-note:before{
@@ -1433,10 +1439,6 @@ img.logo {
 
 /*Categories and module list*/
 
-.module-library-open .list{
-
-}
-
 .ml-cat{
   overflow-y:auto;
 }
@@ -1743,6 +1745,38 @@ img.logo {
   cursor: pointer;
 }
 
+/* help button */
+
+
+.help-container{
+  position: absolute;
+  bottom: 10rem;
+  left: 1.5rem;
+}
+
+.help-shortcut{
+  margin: auto;
+  background-color: rgba(250,250,250,0.2);
+  height: 3rem;
+  width:3rem;
+  z-index: 1000;
+  border-radius: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.40);
+  opacity:0.6;
+  cursor:pointer;
+}
+
+.help-shortcut:hover{
+  opacity: 0.8;
+  text-decoration: none;
+}
+
+.help-container a:hover{
+  text-decoration: none;
+}
 
 /*Table*/
 

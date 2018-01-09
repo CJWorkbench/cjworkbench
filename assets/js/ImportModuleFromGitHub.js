@@ -170,7 +170,7 @@ export default class ImportModuleFromGitHub extends React.Component {
                       onChange={this.handleChange}
                       onKeyPress={this.handleChange}
                       />
-              <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a href="http://cjworkbench.org/index.php/build-a-module/" className=' t-f-blue'>here</a></div>
+              <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a target="_blank" href="http://cjworkbench.org/index.php/build-a-module/" className=' t-f-blue'>here</a></div>
               </div>
               {visible}
             </form>
