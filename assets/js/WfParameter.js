@@ -26,6 +26,8 @@ export default class WfParameter extends React.Component {
     this.type = this.props.p.parameter_spec.type;
     this.name = this.props.p.parameter_spec.name;
 
+    this.firstProps = true;
+
     this.keyPress = this.keyPress.bind(this);
     this.blur = this.blur.bind(this);
     this.click = this.click.bind(this);
@@ -34,8 +36,9 @@ export default class WfParameter extends React.Component {
   }
 
   paramChanged(newVal) {
-    this.props.changeParam(this.props.p.id, {value : newVal});
+    this.props.changeParam(this.props.p.id, {value: newVal});
   }
+
 
   // Save value (and re-render) when user presses enter (but not on multiline fields)
   // Applies only to non-multiline fields
@@ -86,7 +89,7 @@ export default class WfParameter extends React.Component {
     )
   }
 
-  // Return array of columns containing numeric data. Eventually do this in Python.
+  // Return array of all columns which contain numeric data. Should be provided by back end.
   getNumericInputColNames() {
     return (
       this.props.api.input(this.props.wf_module_id)
@@ -100,15 +103,28 @@ export default class WfParameter extends React.Component {
     )
   }
 
-  // We need to update input contents when we get new props. Hmm, is there a managed form components library?
+  // set contents of HTML input field corresponding to our type
+  setInputValue(val) {
+    if (this.type === 'string' && this.stringRef) {
+      this.stringRef.value = val;
+    } else if (this.type === 'checkbox' && this.checkboxRef) {
+      this.checkboxRef.value = val;
+    } else if ((this.type === 'integer' || this.type == 'float') && this.numberRef) {
+      this.numberRef.value = val;
+    }
+  }
+
+  // We need to update input contents when we get new props
   componentWillReceiveProps(newProps) {
     this.type = newProps.p.parameter_spec.type;
     this.name = newProps.p.parameter_spec.name;
 
-    // update form controls to current values
-    if (this.stringRef) this.stringRef.value = newProps.p.value;
-    if (this.numberRef) this.numberRef.value = newProps.p.value;
-    if (this.checkboxRef) this.checkboxRef.value = newProps.p.value;
+    // If this is our first time through, update form controls to current values
+    // this conditional fixes https://www.pivotaltracker.com/story/show/154104065
+    if (this.firstProps) {
+      this.setInputValue(newProps.p.value);
+      this.firstProps = false;
+    }
   }
 
 

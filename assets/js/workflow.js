@@ -281,6 +281,7 @@ Workflow.propTypes = {
   api:                PropTypes.object.isRequired,
   workflow:           PropTypes.object,             // not required as fetched after page loads
   selected_wf_module: PropTypes.number,
+  changeParam:        PropTypes.func.isRequired,
   addModule:          PropTypes.func.isRequired,
   removeModule:       PropTypes.func.isRequired,
   user:               PropTypes.object,
