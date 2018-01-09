@@ -158,57 +158,57 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
           className=""
         >
           <div
-            className="line-item-data list-test-class"
+            className="line-item-data d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
-            <span
+            <div
               className="content-3"
             >
               Jul 10, 2017 - 05:57 PM
-            </span>
-            <span
-              className="icon icon-notification"
+            </div>
+            <div
+              className="icon icon-notification mr-5"
             />
           </div>
           <div
-            className="line-item-data list-test-class"
+            className="line-item-data d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
-            <span
+            <div
               className="content-3"
             >
               Jun 10, 2017 - 05:57 PM
-            </span>
+            </div>
           </div>
           <div
-            className="line-item-data list-test-class"
+            className="line-item-data d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
-            <span
+            <div
               className="content-3"
             >
               May 10, 2017 - 05:57 PM
-            </span>
+            </div>
           </div>
           <div
-            className="line-item-data-selected list-test-class"
+            className="line-item-data-selected d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
-            <span
+            <div
               className="content-3"
             >
               Apr 10, 2017 - 05:57 PM
-            </span>
+            </div>
           </div>
           <div
-            className="line-item-data list-test-class"
+            className="line-item-data d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
-            <span
+            <div
               className="content-3"
             >
               Mar 10, 2017 - 05:57 PM
-            </span>
+            </div>
           </div>
         </div>
       </div>
