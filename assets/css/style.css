@@ -973,6 +973,8 @@ select.form-control {
 	font-size: 1.4rem;
   line-height: 1.4rem;
   padding: 0 1.8rem 0 1.8rem;
+  -webkit-transition: opacity 0.1s;
+    transition: opacity 0.1s;
 }
 .action-button:hover {
 	opacity: 0.5;
@@ -1767,6 +1769,9 @@ img.logo {
   box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.40);
   opacity:0.6;
   cursor:pointer;
+  -webkit-transition: opacity 0.1s;
+    transition: opacity 0.1s;
+
 }
 
 .help-shortcut:hover{
@@ -1871,6 +1876,7 @@ img.logo {
 
 .notification-badge-icon{
   font-size: 1.2rem;
+  cursor: pointer;
 }
 
 
