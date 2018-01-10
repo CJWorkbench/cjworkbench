@@ -37,7 +37,7 @@ class GoogleSheets(ModuleImpl):
 
         http = httplib2.Http()
         http = credential.authorize(http)
-        service = build("drive", "v2", http=http)
+        service = build("drive", "v3", http=http)
 
         files_request = service.files().export(fileId=id, mimeType="text/csv")
         the_file = files_request.execute()
@@ -45,7 +45,7 @@ class GoogleSheets(ModuleImpl):
         #return JsonResponse({'file':the_file.decode("utf-8")})
 
     @staticmethod
-    def render(wf_module):
+    def render(wf_module, table):
         return wf_module.retrieve_fetched_table()
 
     @staticmethod
@@ -64,7 +64,8 @@ class GoogleSheets(ModuleImpl):
             return GoogleSheets.get_spreadsheets(request, owner=owner)
 
         if event_type == 'fetchFile':
-            file_meta = request.data.get('file', False)
+            req_body = request.body.decode('utf-8')
+            file_meta = json.loads(req_body)['file']
             sheet_id = file_meta['id']
 
         if event_type == 'click':
