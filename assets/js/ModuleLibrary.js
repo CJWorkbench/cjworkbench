@@ -1,8 +1,9 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-import ModuleCategory from './ModuleCategory';
+// import ModuleCategory from './ModuleCategory';
+import ModuleCategories from './ModuleCategories';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
-import Module from './Module';
+// import Module from './Module';
 import ModuleSearch from './ModuleSearch';
 import AddNotificationButton from './AddNotificationButton';
 
@@ -28,14 +29,14 @@ export default class ModuleLibrary extends React.Component {
     var workflowEmpty = (!props.workflow.wf_modules || !props.workflow.wf_modules.length);
 
     this.state = {
-      libraryOpen: !this.props.isReadOnly,
+      libraryOpen: !this.props.isReadOnly, // TODO: remember this state after exiting
       openCategory: workflowEmpty ? "Add data" : null,
       items: [],
     };
     this.addModule = this.props.addModule.bind(this);
     this.setOpenCategory = this.setOpenCategory.bind(this);
     this.toggleLibrary = this.toggleLibrary.bind(this);
-    this.openLibraryToSearch = this.openLibraryToSearch.bind(this);   
+    this.openLibrary = this.openLibrary.bind(this);   
     this.updated = this.updated.bind(this);
   }
 
@@ -123,7 +124,7 @@ export default class ModuleLibrary extends React.Component {
     }
   }
 
-  openLibraryToSearch() {
+  openLibrary() {
     if (!this.props.isReadOnly) {
       this.setState({ libraryOpen: true });
     }
@@ -131,69 +132,69 @@ export default class ModuleLibrary extends React.Component {
 
 
   // Return an array of <Module Category>, each of which has child <Module>s.
-  renderCategories() {
-    // This assumes that the items are already sorted by category,
-    // which happens in {code: componentDidMount}. So, if someone
-    // changes that, there is a good chance that this will result in
-    // unexpected behaviour.
-    var modules = this.state.items;
-    var currentCategory = null;
-    var modulesByCategory = [];
-    var categories = [];
+  // renderCategories() {
+  //   // This assumes that the items are already sorted by category,
+  //   // which happens in {code: componentDidMount}. So, if someone
+  //   // changes that, there is a good chance that this will result in
+  //   // unexpected behaviour.
+  //   var modules = this.state.items;
+  //   var currentCategory = null;
+  //   var modulesByCategory = [];
+  //   var categories = [];
 
-    for (var item of modules) {
+  //   for (var item of modules) {
 
-      let module = <Module
-        key={item.name}
-        name={item.name}
-        icon={item.icon}
-        id={item.id}
-        addModule={this.props.addModule}
-        dropModule={this.props.dropModule}
-      />;
+  //     let module = <Module
+  //       key={item.name}
+  //       name={item.name}
+  //       icon={item.icon}
+  //       id={item.id}
+  //       addModule={this.props.addModule}
+  //       dropModule={this.props.dropModule}
+  //     />;
 
-      if (currentCategory  === null) {
-        currentCategory  = item.category;
-      } else if (currentCategory !== item.category) {
-        // We should only create the ModuleCategory once we have all modules for given category.
+  //     if (currentCategory  === null) {
+  //       currentCategory  = item.category;
+  //     } else if (currentCategory !== item.category) {
+  //       // We should only create the ModuleCategory once we have all modules for given category.
 
-        // console.log("Creating category " +  currentCategory);
+  //       // console.log("Creating category " +  currentCategory);
 
-        // Start Add Data open if there is nothing in the Workflow
-        let moduleCategory = <ModuleCategory
-          name={currentCategory }
-          key={currentCategory }
-          modules={modulesByCategory}
-          isReadOnly={this.props.isReadOnly}
-          collapsed={currentCategory != this.state.openCategory}
-          setOpenCategory={this.setOpenCategory}
-          libraryOpen={this.state.libraryOpen}
-        />;
-        categories.push(moduleCategory);
-        modulesByCategory = [];
-        currentCategory  = item.category;
-      }
-      modulesByCategory.push(module);
-    }
+  //       // Start Add Data open if there is nothing in the Workflow
+  //       let moduleCategory = <ModuleCategory
+  //         name={currentCategory }
+  //         key={currentCategory }
+  //         modules={modulesByCategory}
+  //         isReadOnly={this.props.isReadOnly}
+  //         collapsed={currentCategory != this.state.openCategory}
+  //         setOpenCategory={this.setOpenCategory}
+  //         libraryOpen={this.state.libraryOpen}
+  //       />;
+  //       categories.push(moduleCategory);
+  //       modulesByCategory = [];
+  //       currentCategory  = item.category;
+  //     }
+  //     modulesByCategory.push(module);
+  //   }
 
-    // the last item / category
-    if (currentCategory  != null) {  // modules may not be loaded yet
-      // console.log("Creating final category " +  currentCategory);
+  //   // the last item / category
+  //   if (currentCategory  != null) {  // modules may not be loaded yet
+  //     // console.log("Creating final category " +  currentCategory);
 
-      let moduleCategory = <ModuleCategory
-        name={currentCategory }
-        key={currentCategory }
-        modules={modulesByCategory}
-        isReadOnly={this.props.isReadOnly}
-        collapsed={currentCategory != this.state.openCategory}
-        setOpenCategory={this.setOpenCategory}
-        libraryOpen={this.state.libraryOpen}        
-      />;
-      categories.push(moduleCategory);
-    }
+  //     let moduleCategory = <ModuleCategory
+  //       name={currentCategory }
+  //       key={currentCategory }
+  //       modules={modulesByCategory}
+  //       isReadOnly={this.props.isReadOnly}
+  //       collapsed={currentCategory != this.state.openCategory}
+  //       setOpenCategory={this.setOpenCategory}
+  //       libraryOpen={this.state.libraryOpen}        
+  //     />;
+  //     categories.push(moduleCategory);
+  //   }
 
-    return categories;
-  }
+  //   return categories;
+  // }
 
   // Main render.
   render() {
@@ -222,10 +223,22 @@ export default class ModuleLibrary extends React.Component {
               </div>
 
             </div>
-
+{/* 
             <div className="list">
-              {this.renderCategories()}
-            </div>
+               {this.renderCategories()}
+            </div> */}
+
+
+            <ModuleCategories
+              openCategory={this.state.openCategory} // check this
+              setOpenCategory={this.setOpenCategory} // check this
+              libraryOpen={true}
+              isReadOnly={this.props.isReadOnly}            
+              addModule={this.props.addModule}
+              dropModule={this.props.dropModule}
+              items={this.state.items}
+            />;
+
 
             <div className="ml-divider"></div>
 
@@ -255,15 +268,21 @@ export default class ModuleLibrary extends React.Component {
             </div>
           </div>
 
-          <div className='card' onClick={this.openLibraryToSearch}>
+          <div className='card' onClick={this.openLibrary}>
             <div className='first-level'>
               <div className='icon-search-white ml-icon-search text-center mt-3'></div>
             </div>
           </div>
 
-          <div className="list">
-            {this.renderCategories()}
-          </div>
+          <ModuleCategories
+            openCategory={this.state.openCategory} // check this
+            setOpenCategory={this.setOpenCategory} // check this
+            libraryOpen={false}
+            isReadOnly={this.props.isReadOnly}            
+            addModule={this.props.addModule}
+            dropModule={this.props.dropModule}
+            items={this.state.items}
+          />;
 
           <AddNotificationButton libraryOpen={false}/>
 
@@ -278,6 +297,7 @@ export default class ModuleLibrary extends React.Component {
 
 ModuleLibrary.propTypes = {
   addModule: PropTypes.func.isRequired,
+  dropModule: PropTypes.func.isRequired,
   workflow:  PropTypes.object.isRequired,
   api:       PropTypes.object.isRequired,
   isReadOnly: PropTypes.bool.isRequired,

@@ -45,10 +45,10 @@ class AddNotificationButton extends React.Component {
     } else {
       return this.props.connectDragSource(
         <div className='card'>
-          <div className='second-level t-vl-gray d-flex'>
+          <div className='first-level t-vl-gray d-flex'>
 
-            <div className='ml-icon-container mr-2'>
-              <div className="icon-notification ml-icon"></div>
+            <div className='ml-icon-container mr-5' >
+              <div className="icon-notification ml-icon" title='Add Notification'></div>
             </div>
 
             <div className='ml-handle'>

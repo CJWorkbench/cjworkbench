@@ -35,25 +35,18 @@ export default class ModuleCategory extends React.Component {
   }
 
   onEntering() {
-    console.log("Entering");
     this.setState({ visible: false });
   }
 
   onEntered() {
-    console.log("Has Entered");
-    
     this.setState({ visible: true  });
   }
 
   onExiting() {
-    console.log("Exiting");
-    
     this.setState({ visible: false  });
   }
 
   onExited() {
-    console.log("Has Exited");
-    
     this.setState({ visible: true });
   }
 
@@ -74,7 +67,7 @@ export default class ModuleCategory extends React.Component {
       ? 'icon-sort-up-vl-gray ml-sort mb-1'
       : 'icon-sort-down-vl-gray ml-sort mb-1';
 
-    // --- Grabs icon from first module in category for category icon
+    // Grabs icon from first module in category for category icon
     var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
 
     var hideAnimation = (!!this.state.visible) ? 'hide-animation' : null;
@@ -102,24 +95,26 @@ export default class ModuleCategory extends React.Component {
       return (
         <div className={cardClass}>
           <div className="ml-cat">
+
             <div className='first-level d-flex align-items-center' onClick={this.toggleCollapse}>
               <div className='cat-container'>
                 <span className={'ml-2 ' + icon}></span>
               </div>
             </div>
-            <div>
-              {/* Hide transition animation when opening/closing */}
-                <Collapse 
-                  className={hideAnimation} 
-                  isOpen={isOpen}
-                  onEntering={this.onEntering}
-                  onEntered={this.onEntered}
-                  onExiting={this.onExiting}
-                  onExited={this.onExited}
-                >
-                  <div className="ml-list-mini">{this.props.modules}</div>
-                </Collapse>
-            </div>
+
+            {/* Hide transition animation when opening/closing */}
+            {/* 'on-*' props trigger an objection from Facebook, see: https://reactjs.org/warnings/unknown-prop.html */}
+            <Collapse 
+              className={hideAnimation} 
+              isOpen={isOpen}
+              onEntering={this.onEntering}
+              onEntered={this.onEntered}
+              onExiting={this.onExiting}
+              onExited={this.onExited}
+            >
+              <div className="ml-list-mini">{this.props.modules}</div>
+            </Collapse>
+
           </div>
         </div>
       );
