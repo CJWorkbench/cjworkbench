@@ -17,14 +17,6 @@ gdrive_file_meta = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data
 
 gdrive_file = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data/police_data.csv') ).read()
 
-mock_http_files = HttpMockSequence([
-    ({'status': '200'}, gdrive_discovery),
-    ({'status': '200'}, gdrive_files)])
-
-mock_http_file = HttpMockSequence([
-    ({'status': '200'}, gdrive_discovery),
-    ({'status': '200'}, gdrive_file)])
-
 class DumbCredential():
     def authorize(self, the_request):
         return the_request
@@ -35,7 +27,13 @@ class GoogleSheetsTests(LoggedInTestCase):
         super(GoogleSheetsTests, self).setUp()
         googlesheets_def = load_module_def('googlesheets')
         self.wf_module = load_and_add_module(None, googlesheets_def)
-        param_id = get_param_by_id_name('fileselect').pk
+        self.file_param = get_param_by_id_name('fileselect')
+
+        drive_file_response = json.loads(gdrive_file_meta)
+        self.file_param.value = json.dumps(drive_file_response['file'])
+        self.file_param.save()
+
+        param_id = self.file_param.pk
 
         factory = APIRequestFactory()
 
@@ -58,21 +56,41 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.auth_patch.return_value = (True, dumb_credential)
         self.addCleanup(auth_patch.stop)
 
-        # To mock the Google api we mock httplib2 so it returns a specialized
-        # mock http object, which returns the "api discovery" document
+        # To mock the Google api we mock httplib2 so it returns a sequence of
+        # specialized mock http objects, which are set per test depending on
+        # what we're trying to return.
         httplib_patch = patch('server.modules.googlesheets.httplib2.Http')
         self.httplib_patch = httplib_patch.start()
         self.addCleanup(httplib_patch.stop)
+
+        self.mock_http_files = HttpMockSequence([
+            ({'status': '200'}, gdrive_discovery),
+            ({'status': '200'}, gdrive_files)])
+
+        self.mock_http_file = HttpMockSequence([
+            ({'status': '200'}, gdrive_discovery),
+            ({'status': '200'}, gdrive_file)])
 
     def test_render_no_file(self):
         self.assertIsNone(GoogleSheets.render(self.wf_module, None))
 
     def test_event_fetch_files(self):
-        self.httplib_patch.return_value = mock_http_files
+        self.httplib_patch.return_value = self.mock_http_files
         result = GoogleSheets.event(self.wf_module, event={'type':'fetchFiles'}, request=self.request_event)
         self.assertEqual(json.loads(result.content), json.loads(gdrive_files))
 
-    def test_event_fetch_file(self):
-        self.httplib_patch.return_value = mock_http_file
+    @patch('server.modules.googlesheets.GoogleSheets.get_spreadsheet', return_value=gdrive_file)
+    def test_event_fetch_file(self, mock_get_spreadshet):
+        self.httplib_patch.return_value = self.mock_http_file
         result = GoogleSheets.event(self.wf_module, event={'type':'fetchFile'}, request=self.request_post)
+        self.assertEqual(result.status_code, 204)
         self.assertEqual(json.loads(result.content), {})
+
+    def test_event_click(self):
+        self.httplib_patch.return_value = self.mock_http_file
+        result = GoogleSheets.event(self.wf_module, event={'type':'click'}, request=self.request_post)
+        self.assertEqual(result.status_code, 204)
+        self.assertEqual(json.loads(result.content), {})
+
+    def test_event(self):
+        pass
