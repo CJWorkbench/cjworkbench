@@ -49,7 +49,7 @@ def add_new_workflow(name):
         User.objects.create_user(username='username', password='password')
     return Workflow.objects.create(name=name, owner=User.objects.first())
 
-def add_new_wf_module(workflow, module_version, order=1):
+def add_new_wf_module(workflow, module_version, order=0):
     wfm = WfModule.objects.create(workflow=workflow, module_version=module_version, order=order)
     wfm.create_default_parameters()
     return wfm

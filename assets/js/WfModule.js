@@ -351,10 +351,12 @@ class WfModule extends React.Component {
           className=''
         />
 
-    var modBtn = undefined;
-    if (this.state.showButtons) {
-      modBtn =
-        <div className='d-flex align-items-center'>
+
+    // Set opacity to 0/1 instead of just not rendering these elements, so that any children that these
+    // buttons create (e.g. export dialog) are still visible. Can't use display: none as we need display: flex
+    // Fixes https://www.pivotaltracker.com/story/show/154033690
+    var modBtns =
+        <div className='d-flex align-items-center module-context-buttons' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
           <div className='btn help-button d-flex align-items-center'>
             <div className='icon-help'></div>
           </div>
@@ -368,8 +370,6 @@ class WfModule extends React.Component {
           <div>{notesIcon}</div>
           <div>{contextMenu}</div>
         </div>
-    }
-
 
     var moduleIcon = 'icon-' + this.module.icon + ' module-icon mr-3';
 
@@ -404,10 +404,7 @@ class WfModule extends React.Component {
                       </div>
                       }
                     </div>
-                    {/* TODO: not necessary to pass in stopProp*/}
-                    <div>
-                      {modBtn}
-                    </div>
+                    {modBtns}
                   </div>
                 </div>
                 {/* --- Module content when expanded --- */}
