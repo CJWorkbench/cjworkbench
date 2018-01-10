@@ -363,6 +363,13 @@ body {
 }
 .icon-sort-down:before {
   content: "\e91e";
+  font-size: .6rem;
+  margin-top: .2rem;
+}
+
+.icon-sort-up:before {
+  content: "\e921";
+  font-size: .6rem;
 }
 
 .icon-sort-left:before {
@@ -376,9 +383,6 @@ body {
   content: "\e92a";
 }
 
-.icon-sort-up:before {
-  content: "\e921";
-}
 .icon-table:before {
   content: "\e922";
 }
@@ -418,11 +422,21 @@ body {
 
 .icon-help:before{
   content:"\e933";
-  Color:#fff;
-  font-size: 3rem;
+  font-size: 1.7rem;
 }
 
 /* Customized icons, not in font sent  */
+
+.small-sort{
+  font-size: 0.7rem;
+}
+
+
+.icon-knowledge:before{
+  content:"\e933";
+  Color:#fff;
+  font-size: 3rem;
+}
 
 .icon-note:before{
   font-size: 1.5rem;
@@ -430,14 +444,13 @@ body {
 
 .icon-collapse:before{
   content:"\e931";
-  font-size:2rem;
+  font-size:2.2rem;
 }
 
 .icon-collapse-o:before{
   content:"\e932";
-  font-size:2rem;
+  font-size:2.2rem;
 }
-
 
 .icon-facebook-gray:before{
   content:"\e92b";
@@ -465,31 +478,38 @@ body {
   content: "\e91e";
   color: #FAFAFA;
 }
+
 .icon-sort-up-vl-gray:before {
   content: "\e921";
   color: #FAFAFA;
 }
+
 .icon-sort-right-vl-gray:before {
   content: "\e920";
   color: #FAFAFA;
 }
+
 .icon-sort-left-vl-gray:before {
   content: "\e91f";
   color: #FAFAFA;
 }
+
 .close-open-toggle{
   opacity: 0.6;
 }
+
 .close-open-toggle:hover{
   opacity: 1;
   cursor: pointer;
 }
+
 .icon-close-white:before {
   content: "\e907";
   color: #FFFFFF;
   opacity: 0.6;
   font-size: 1.2rem;
 }
+
 .icon-more-white:before {
   content: "\e914";
   color: #FFFFFF;
@@ -875,42 +895,46 @@ select.form-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: 0;
+  background-color: transparent;
+  color:#8b8b8b;
   border-radius: 5rem;
-  opacity: 0.3;
+  opacity: 0.5;
+  margin-left:1rem;
 }
 .context-button:hover {
   border: none;
-  background: #f1f1f1;
-  color:#8b8b8b;
-  opacity: 1;
-}
-
-.collapse-button {
-  cursor: pointer;
-  border: 0;
-  width: 2rem;
-  height: 2rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: 0;
-  border-radius: 5rem;
-  opacity: 0.3;
-  margin-right: 2rem;
-}
-.collapse-button:hover {
-  border: none;
-  background: #f1f1f1;
+  background-color: #edecec;
   color:#8b8b8b;
   opacity: 1;
 }
 
 .context-button.btn-secondary.active{
-  background: #edecec;
+  background: #E7EAEB;
+  border:0;
   border-radius: 5rem;
   color:#686768;
   opacity:1;
+}
+
+.help-button {
+  cursor: pointer;
+  border-radius:5rem;
+  width:1.7rem;
+  height:1.7rem;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color:#8b8b8b;
+  opacity: 0.5;
+}
+
+.help-button:hover {
+  border: none;
+  color:#8b8b8b;
+  opacity: 1;
+  decoration:none;
 }
 
 .btn{
@@ -1474,11 +1498,6 @@ img.logo {
   opacity:1;
 }
 
-.small-sort{
-  font-size: 0.7rem;
-  opacity: 0.7;
-}
-
 .ml-sort{
   font-size: 0.6rem;
   position: absolute;
@@ -1776,7 +1795,6 @@ img.logo {
 
 .help-shortcut:hover{
   opacity: 0.8;
-  text-decoration: none;
 }
 
 .help-container a:hover{

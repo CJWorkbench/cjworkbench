@@ -272,7 +272,7 @@ class Workflow extends React.Component {
           <div className='help-container'>
             <a target="_blank" href="https://intercom.help/tables" className=''>
               <div className='help-shortcut'>
-                <div className='icon-help'></div>
+                <div className='icon-knowledge'></div>
               </div>
             </a>
           </div>

@@ -161,8 +161,8 @@ class WfModule extends React.Component {
     this.removeModule = this.removeModule.bind(this);
     this.showNotes = this.showNotes.bind(this);
     this.hideNotes = this.hideNotes.bind(this);
-    this.showArrow = this.showArrow.bind(this);
-    this.hideArrow = this.hideArrow.bind(this);
+    this.showButtons = this.showButtons.bind(this);
+    this.hideButtons = this.hideButtons.bind(this);
     this.toggleCollapsed = this.toggleCollapsed.bind(this);
     this.setNotifications = this.setNotifications.bind(this);
     this.setClickNotification = this.setClickNotification.bind(this);
@@ -183,7 +183,7 @@ class WfModule extends React.Component {
   componentWillMount() {
     this.setState({
       isCollapsed: this.wf_module.is_collapsed,
-      showArrow: false,
+      showButtons: false,
       showNotes:  ( this.wf_module.notes
                     && (this.wf_module.notes != "")
                     && (this.wf_module.notes != "Write notes here")
@@ -265,12 +265,12 @@ class WfModule extends React.Component {
     this.setState({showNotes: false});
   }
 
-  showArrow() {
-    this.setState({showArrow: true});
+  showButtons() {
+    this.setState({showButtons: true});
   }
 
-  hideArrow() {
-    this.setState({showArrow: false});
+  hideButtons() {
+    this.setState({showButtons: false});
   }
 
   setNotifications() {
@@ -338,7 +338,7 @@ class WfModule extends React.Component {
 
     var notesIcon = undefined;
     if (!this.state.showNotes && !this.props['data-isReadOnly'])
-      notesIcon = <div className='context-button btn mr-4' onClick={this.showNotes}>
+      notesIcon = <div className='context-button btn' onClick={this.showNotes}>
                     <div className='icon-note btn icon-l-gray '></div>
                   </div>
 
@@ -352,19 +352,22 @@ class WfModule extends React.Component {
         />
 
     var modBtn = undefined;
-    if (this.state.showArrow) {
+    if (this.state.showButtons) {
       modBtn =
         <div className='d-flex align-items-center'>
+          <div className='btn help-button d-flex align-items-center'>
+            <div className='icon-help'></div>
+          </div>
           <div className={
             this.state.isCollapsed ?
-              'icon-collapse-o btn collapse-button' :
-              'icon-collapse btn collapse-button'
+              'icon-sort-down btn context-button' :
+              'icon-sort-up btn context-button'
             }
             onClick={this.toggleCollapsed} >
           </div>
-            <div>{notesIcon}</div>
-            <div>{contextMenu}</div>
-          </div>
+          <div>{notesIcon}</div>
+          <div>{contextMenu}</div>
+        </div>
     }
 
 
@@ -382,7 +385,7 @@ class WfModule extends React.Component {
             <div className='output-bar-container'>
               <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
             </div>
-            <div className='card-block p-0'onMouseEnter={this.showArrow} onMouseLeave={this.hideArrow}>
+            <div className='card-block p-0'onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
               <div className='module-card-info'>
                 {notes}
                 <div className='module-card-header'>
