@@ -1,9 +1,7 @@
 import React from 'react'
 import FileSelect  from './FileSelect'
 import { mount, ReactWrapper } from 'enzyme'
-import { okResponseMock, jsonResponseMock } from '../utils'
-
-jest.useFakeTimers();
+import { jsonResponseMock } from '../utils'
 
 describe('FileSelect', () => {
 
