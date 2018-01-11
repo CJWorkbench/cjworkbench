@@ -1,5 +1,5 @@
 /**
- * A component that holds a collection of modules for a given category. For example,
+ * A component that holds a collection of <Module>s for a given category. For example,
  * Category: Source
  * Modules: Load URL, Paste CSV, Twitter
  *
@@ -7,11 +7,14 @@
  * Modules: Melt, Select Columns
  *
  * Categories should be expandable and collapsible, just like each individual module.
+ * 
+ * When Module Library is closed, animation of collapse is hidden
+ * 
+ * Rendered by <ModuleCategories> component
  */
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import Module from './Module'
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
 
 export default class ModuleCategory extends React.Component {
@@ -19,7 +22,7 @@ export default class ModuleCategory extends React.Component {
     super(props);
     this.state = {
       collapsed: props.collapsed,
-      visible: true
+      visible: true               // switch for animation of collapse action
     };
     this.toggleCollapse = this.toggleCollapse.bind(this);
     this.onEntering = this.onEntering.bind(this);

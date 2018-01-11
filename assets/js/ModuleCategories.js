@@ -1,12 +1,16 @@
+
+/**
+* Returns an array of <Module Category> components, 
+*  each of which has child <Module>, sorted by type.
+* 
+* Rendered by <ModuleLibraryClosed> and <ModuleLibraryClosed> components
+*/
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleCategory from './ModuleCategory';
 import Module from './Module';
 
-/**
-* Returns an array of <Module Category> components, 
-*  each of which has child <Module>, sorted by type.
-*/
 
 export default class ModuleCategories extends React.Component {
   constructor(props) {

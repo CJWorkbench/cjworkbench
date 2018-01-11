@@ -1,3 +1,7 @@
+/**
+ * Draggable icon which can attach a notification to a data import module
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';

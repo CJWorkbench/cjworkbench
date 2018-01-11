@@ -1,3 +1,9 @@
+/**
+ * Testing Stories:
+ * -Renders a search bar
+ * -Search bar will render suggestions of modules matching input
+ */
+
 import React from 'react'
 import ModuleSearch  from './ModuleSearch'
 import { mount } from 'enzyme'

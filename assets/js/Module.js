@@ -1,6 +1,9 @@
 /**
  * A component that holds a single module that is then contained within the
  * Module Library.
+ * 
+ * Rendered by ModuleCategories.
+ * 
  * The render function here will drive the "card" of each module within
  * the library.
  */

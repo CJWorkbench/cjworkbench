@@ -1,9 +1,3 @@
-import PropTypes from 'prop-types';
-import React from 'react';
-import ModuleLibraryClosed from './ModuleLibraryClosed';
-import ModuleLibraryOpen from './ModuleLibraryOpen';
-
-
 /**
  * Contains the Module Library. The Module Library is effectively the place
  * that allows users to browse all the modules in the system that are
@@ -16,7 +10,15 @@ import ModuleLibraryOpen from './ModuleLibraryOpen';
  * should be, so that newcomers to the system can get an idea as to the modules
  * that are supported – both, those created by us and those created by third
  * parties.
+ * 
+ * Rendered by <Workflow>
  */
+
+import PropTypes from 'prop-types';
+import React from 'react';
+import ModuleLibraryClosed from './ModuleLibraryClosed';
+import ModuleLibraryOpen from './ModuleLibraryOpen';
+
 export default class ModuleLibrary extends React.Component {
   constructor(props) {
     super(props);
@@ -167,7 +169,6 @@ export default class ModuleLibrary extends React.Component {
       )
     }
   }
-
 }
 
 ModuleLibrary.propTypes = {

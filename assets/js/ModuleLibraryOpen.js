@@ -1,4 +1,11 @@
-import PropTypes from 'prop-types';
+/**
+ * Full version of the <ModuleLibrary>. 
+ * 
+ * Renders a wide menu, with <ModuleSearch>, <ModuleCategories>, <AddNotificationButton>, 
+ *    and <ImportModuleFromGitHub> components, and toggle arrow to Clossed version.
+ */
+
+ import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleCategories from './ModuleCategories';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
@@ -6,9 +13,6 @@ import ModuleSearch from './ModuleSearch';
 import AddNotificationButton from './AddNotificationButton';
 
 
-/**
- * Full version of the Module Library. 
- */
 
 export default class ModuleLibraryOpen extends React.Component {
   constructor(props) {

@@ -1,3 +1,11 @@
+/**
+ * Testing Stories:
+ * -Renders <ModuleLibraryOpen> by default in not-read-only 
+ * -Renders <ModuleLibraryClosed> when ...
+ * -Queries mock API to set 'items' state with sorted modules
+ * -In read-only state, renders closed
+ */
+
 import React from 'react'
 import ModuleLibrary  from './ModuleLibrary'
 import { mount, shallow } from 'enzyme'

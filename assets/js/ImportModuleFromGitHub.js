@@ -1,8 +1,3 @@
-import React from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
-import PropTypes from 'prop-types'
-import { csrfToken } from './utils'
-
 /**
  * Component that handles the Import from GitHub functionality. This functionality allows users
  * to insert a URL to a GitHub repository in a textfield, and, if there are no errors,
@@ -11,6 +6,11 @@ import { csrfToken } from './utils'
  * Currently, users can't set any entitlements on these modules. Also, there is no client-side
  * validation albeit maybe there should be?
  */
+
+import React from 'react'
+import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import PropTypes from 'prop-types'
+import { csrfToken } from './utils'
 
 export default class ImportModuleFromGitHub extends React.Component {
   constructor(props) {

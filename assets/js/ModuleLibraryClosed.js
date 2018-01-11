@@ -1,14 +1,18 @@
+
+/**
+ * Collapsed version of the <ModuleLibrary>. 
+ * 
+ *  Renders a narrow menu, with <ModuleCategories>, <AddNotificationButton>, 
+ *    and <ImportModuleFromGitHub> components, and toggle arrow to Clossed version.
+ */
+
 import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleCategories from './ModuleCategories';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
-import ModuleSearch from './ModuleSearch';
+// import ModuleSearch from './ModuleSearch';
 import AddNotificationButton from './AddNotificationButton';
 
-
-/**
- * Collapsed version of the Module Library. 
- */
 
 export default class ModuleLibraryClosed extends React.Component {
   constructor(props) {
