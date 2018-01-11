@@ -123,7 +123,7 @@ class GoogleSheetsTests(LoggedInTestCase):
         GoogleSheets.event(self.wf_module, event={'type':'fetchFile'}, request=self.request_post)
         render = GoogleSheets.render(self.wf_module, None)
         table = pd.read_csv(io.StringIO(gdrive_file))
-        self.assertEqual(make_render_json(render), make_render_json(table))
+        self.assertTrue(render.equals(table))
 
     def test_get_sheets(self):
         self.httplib_patch.return_value = mock_http_files()
