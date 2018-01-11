@@ -29,7 +29,9 @@ export default class FileSelect extends React.Component {
     }
 
     componentDidMount() {
-      this.getFiles();
+      if (this.props.userCreds.length > 0) {
+        this.getFiles();
+      }
     }
 
     componentWillReceiveProps(nextProps) {
