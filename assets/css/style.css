@@ -1434,15 +1434,19 @@ img.logo {
   flex: 0 0 200px;
   background-color: #577485;
 }
+<<<<<<< 867f78f435654728fa4bce079b34a3f16783b2d0
 .module-library-open.list{
   margin-bottom: 1rem;
 }
 .module-library-collapsed {
+=======
+.module-library-closed {
+>>>>>>> Create Open and Closed versions of Module Library
   width: 60px;
   flex: 0 0 60px;
   background-color: #577485;
 }
-.module-library-collapsed:hover{
+.module-library-closed:hover{
   cursor:pointer;
 }
 .expand-lib{
@@ -1487,13 +1491,13 @@ img.logo {
 }
 
 .module-library-open .card,
-.module-library-collapsed .card {
+.module-library-closed .card {
   border: 0;
   background-color: rgba(0,0,0,0);
   border-radius: 0;
 }
 
-.module-library-collapsed > .card {
+.module-library-closed > .card {
   border-bottom: 1px solid rgba(255,255,255, .1);
 }
 

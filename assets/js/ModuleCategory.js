@@ -78,9 +78,11 @@ export default class ModuleCategory extends React.Component {
           <div className="ml-cat">
             <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
               <div className='cat-container'>
+
                 <div className={symbol} />
                 <span className={icon}></span>
                 <span className='content-3 t-vl-gray ml-3'>{this.props.name}</span>
+                
               </div>
             </div>
             <div>

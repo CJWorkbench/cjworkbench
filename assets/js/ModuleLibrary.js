@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-// import ModuleCategory from './ModuleCategory';
-import ModuleCategories from './ModuleCategories';
-import ImportModuleFromGitHub from './ImportModuleFromGitHub';
-// import Module from './Module';
-import ModuleSearch from './ModuleSearch';
-import AddNotificationButton from './AddNotificationButton';
+// import ModuleCategories from './ModuleCategories';
+// import ImportModuleFromGitHub from './ImportModuleFromGitHub';
+// import ModuleSearch from './ModuleSearch';
+// import AddNotificationButton from './AddNotificationButton';
+import ModuleLibraryClosed from './ModuleLibraryClosed';
+import ModuleLibraryOpen from './ModuleLibraryOpen';
+
 
 
 /**
@@ -130,72 +131,6 @@ export default class ModuleLibrary extends React.Component {
     }
   }
 
-
-  // Return an array of <Module Category>, each of which has child <Module>s.
-  // renderCategories() {
-  //   // This assumes that the items are already sorted by category,
-  //   // which happens in {code: componentDidMount}. So, if someone
-  //   // changes that, there is a good chance that this will result in
-  //   // unexpected behaviour.
-  //   var modules = this.state.items;
-  //   var currentCategory = null;
-  //   var modulesByCategory = [];
-  //   var categories = [];
-
-  //   for (var item of modules) {
-
-  //     let module = <Module
-  //       key={item.name}
-  //       name={item.name}
-  //       icon={item.icon}
-  //       id={item.id}
-  //       addModule={this.props.addModule}
-  //       dropModule={this.props.dropModule}
-  //     />;
-
-  //     if (currentCategory  === null) {
-  //       currentCategory  = item.category;
-  //     } else if (currentCategory !== item.category) {
-  //       // We should only create the ModuleCategory once we have all modules for given category.
-
-  //       // console.log("Creating category " +  currentCategory);
-
-  //       // Start Add Data open if there is nothing in the Workflow
-  //       let moduleCategory = <ModuleCategory
-  //         name={currentCategory }
-  //         key={currentCategory }
-  //         modules={modulesByCategory}
-  //         isReadOnly={this.props.isReadOnly}
-  //         collapsed={currentCategory != this.state.openCategory}
-  //         setOpenCategory={this.setOpenCategory}
-  //         libraryOpen={this.state.libraryOpen}
-  //       />;
-  //       categories.push(moduleCategory);
-  //       modulesByCategory = [];
-  //       currentCategory  = item.category;
-  //     }
-  //     modulesByCategory.push(module);
-  //   }
-
-  //   // the last item / category
-  //   if (currentCategory  != null) {  // modules may not be loaded yet
-  //     // console.log("Creating final category " +  currentCategory);
-
-  //     let moduleCategory = <ModuleCategory
-  //       name={currentCategory }
-  //       key={currentCategory }
-  //       modules={modulesByCategory}
-  //       isReadOnly={this.props.isReadOnly}
-  //       collapsed={currentCategory != this.state.openCategory}
-  //       setOpenCategory={this.setOpenCategory}
-  //       libraryOpen={this.state.libraryOpen}        
-  //     />;
-  //     categories.push(moduleCategory);
-  //   }
-
-  //   return categories;
-  // }
-
   // Main render.
   render() {
 
@@ -205,90 +140,35 @@ export default class ModuleLibrary extends React.Component {
       // Outermost div seems necessary to set background color below ImportFromGithub
       return (
         <div>
-          <div className='module-library-open'>
-            <div className='library-nav-bar'>
-
-              <div className='d-flex align-items-center flex-row mb-4'>
-                <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="20"/></a>
-                <a href="/workflows" className='logo-2 ml-3 t-vl-gray '>Workbench</a>
-                <div className='icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle' onClick={this.toggleLibrary}></div>
-              </div>
-
-              <div className='d-flex align-items-center search-bar'>
-                <div className='icon-search-white ml-icon-search ml-4'></div>
-                <ModuleSearch addModule={this.props.addModule}
-                              dropModule={this.props.dropModule}
-                              items={this.state.items}
-                              workflow={this.props.workflow} />
-              </div>
-
-            </div>
-{/* 
-            <div className="list">
-               {this.renderCategories()}
-            </div> */}
-
-
-            <ModuleCategories
-              openCategory={this.state.openCategory} // check this
-              setOpenCategory={this.setOpenCategory} // check this
-              libraryOpen={true}
-              isReadOnly={this.props.isReadOnly}            
-              addModule={this.props.addModule}
-              dropModule={this.props.dropModule}
-              items={this.state.items}
-            />;
-
-
-            <div className="ml-divider"></div>
-
-            <AddNotificationButton libraryOpen={true}/>
-
-            <div className="ml-divider"></div>
-
-            <ImportModuleFromGitHub moduleAdded={this.updated} libraryOpen={true}/>
-          </div>
+          <ModuleLibraryOpen
+            workflow={this.props.workflow}
+            libraryOpen={true}
+            isReadOnly={this.props.isReadOnly}            
+            items={this.state.items}
+            addModule={this.props.addModule}
+            dropModule={this.props.dropModule}
+            moduleAdded={this.updated}
+            toggleLibrary={this.toggleLibrary}
+            openLibrary={this.openLibrary}
+            openCategory={this.state.openCategory} 
+            setOpenCategory={this.setOpenCategory}
+          />
         </div>
       )
     } else {
       return (
-        <div className='module-library-collapsed'>
-
-          <div className="expand-lib">
-            <div className="expand-lib-button d-flex">
-              <div className="logo" onClick={this.toggleLibrary}><img src="/static/images/logo.png" width="20"/></div>
-              {
-                (this.props.isReadOnly)
-                  ? null
-                  : <div
-                      className='icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle'
-                      onClick={this.toggleLibrary}>
-                    </div>
-              }
-            </div>
-          </div>
-
-          <div className='card' onClick={this.openLibrary}>
-            <div className='first-level'>
-              <div className='icon-search-white ml-icon-search text-center mt-3'></div>
-            </div>
-          </div>
-
-          <ModuleCategories
-            openCategory={this.state.openCategory} // check this
-            setOpenCategory={this.setOpenCategory} // check this
-            libraryOpen={false}
-            isReadOnly={this.props.isReadOnly}            
-            addModule={this.props.addModule}
-            dropModule={this.props.dropModule}
-            items={this.state.items}
-          />;
-
-          <AddNotificationButton libraryOpen={false}/>
-
-          <ImportModuleFromGitHub moduleAdded={this.updated} libraryOpen={false}/>          
-
-        </div>
+        <ModuleLibraryClosed
+          libraryOpen={false}
+          isReadOnly={this.props.isReadOnly}            
+          items={this.state.items}
+          addModule={this.props.addModule}
+          dropModule={this.props.dropModule}
+          moduleAdded={this.updated}
+          toggleLibrary={this.toggleLibrary}
+          openLibrary={this.openLibrary}
+          openCategory={this.state.openCategory} 
+          setOpenCategory={this.setOpenCategory}
+        />
       )
     }
   }

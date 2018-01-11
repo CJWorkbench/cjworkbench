@@ -150,6 +150,7 @@ export default class ImportModuleFromGitHub extends React.Component {
         </div>
     };
 
+    // refactor this
     var button = (this.props.libraryOpen)
       ? <div className='import-module-button content-3 mb-5 t-vl-gray' onClick={ this.toggleModal }>
           <span className='icon-add mr-2'></span>
@@ -194,6 +195,6 @@ export default class ImportModuleFromGitHub extends React.Component {
 
 
 ImportModuleFromGitHub.propTypes = {
-  moduleAdded: PropTypes.func.isRequired,
+  moduleAdded: PropTypes.func.isRequired, // tripping Warning, showing as 'undefined', yet still works
   libraryOpen: PropTypes.bool.isRequired  
 };
