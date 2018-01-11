@@ -1,6 +1,7 @@
 from .moduleimpl import ModuleImpl
 from .utils import *
-import pandas as pd
+import sys
+import traceback
 
 # ---- PythonCode ----
 
@@ -8,7 +9,11 @@ import pandas as pd
 def indent_lines(str):
     return '  ' + str.replace('\n', '\n  ');
 
+def errorstring(line, errstr):
+    return errstr + ' at line ' + str(line-1)  # line-1 to remove the def line we added
+
 class PythonCode(ModuleImpl):
+
     def render(wf_module, table):
         code = wf_module.get_param_string('code')
 
@@ -26,15 +31,16 @@ class PythonCode(ModuleImpl):
         # Catch errors with the code and display to user
         try:
             exec(code, custom_code_globals, locals )
+            out_table = locals['process'](table)
 
-        except Exception as e:
-            wf_module.set_error(str(e))
+        except SyntaxError as err:
+            wf_module.set_error(errorstring(err.lineno, str(err)))
+            return None
+        except Exception as err:
+            cl, exc, tb = sys.exc_info()
+            lineno = traceback.extract_tb(tb)[1][1]
+            wf_module.set_error(errorstring(lineno, str(err)))
             return None
 
-        if not 'process' in locals:
-            wf_module.set_error('Problem defining function')
-            return None
-
-        out_table = locals['process'](table)
         return out_table
 

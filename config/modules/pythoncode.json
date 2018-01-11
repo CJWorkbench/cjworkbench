@@ -15,6 +15,11 @@
       "id_name": "code",
       "type": "string",
       "multiline": true
+    },
+    {
+      "name": "Run",
+      "id_name": "run",
+      "type": "button"
     }
   ]
 }

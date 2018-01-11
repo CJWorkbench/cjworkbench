@@ -237,15 +237,15 @@ class WfModule(models.Model):
     def set_error(self, message, notify=True):
         self.error_msg = message
         self.status = self.ERROR
+        self.save()
         if notify:
             ws_callbacks.ws_client_rerender_workflow(self.workflow)
-        self.save()
 
     def set_is_collapsed(self, collapsed, notify=True):
         self.is_collapsed = collapsed
+        self.save()
         if notify:
             ws_callbacks.ws_client_rerender_workflow(self.workflow)
-        self.save()
 
     # --- Duplicate ---
     # used when duplicating a whole workflow
