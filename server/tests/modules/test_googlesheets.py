@@ -77,20 +77,20 @@ class GoogleSheetsTests(LoggedInTestCase):
     def test_event_fetch_files(self):
         self.httplib_patch.return_value = self.mock_http_files
         result = GoogleSheets.event(self.wf_module, event={'type':'fetchFiles'}, request=self.request_event)
-        self.assertEqual(json.loads(result.content), json.loads(gdrive_files))
+        self.assertEqual(json.loads(result.content.decode('utf-8')), json.loads(gdrive_files))
 
     @patch('server.modules.googlesheets.GoogleSheets.get_spreadsheet', return_value=gdrive_file)
     def test_event_fetch_file(self, mock_get_spreadshet):
         self.httplib_patch.return_value = self.mock_http_file
         result = GoogleSheets.event(self.wf_module, event={'type':'fetchFile'}, request=self.request_post)
         self.assertEqual(result.status_code, 204)
-        self.assertEqual(json.loads(result.content), {})
+        self.assertEqual(json.loads(result.content.decode('utf-8')), {})
 
     def test_event_click(self):
         self.httplib_patch.return_value = self.mock_http_file
         result = GoogleSheets.event(self.wf_module, event={'type':'click'}, request=self.request_post)
         self.assertEqual(result.status_code, 204)
-        self.assertEqual(json.loads(result.content), {})
+        self.assertEqual(json.loads(result.content.decode('utf-8')), {})
 
     def test_event(self):
         pass
