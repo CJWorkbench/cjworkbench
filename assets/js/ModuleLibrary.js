@@ -1,12 +1,7 @@
 import PropTypes from 'prop-types';
 import React from 'react';
-// import ModuleCategories from './ModuleCategories';
-// import ImportModuleFromGitHub from './ImportModuleFromGitHub';
-// import ModuleSearch from './ModuleSearch';
-// import AddNotificationButton from './AddNotificationButton';
 import ModuleLibraryClosed from './ModuleLibraryClosed';
 import ModuleLibraryOpen from './ModuleLibraryOpen';
-
 
 
 /**

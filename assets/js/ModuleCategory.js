@@ -70,57 +70,48 @@ export default class ModuleCategory extends React.Component {
     // Grabs icon from first module in category for category icon
     var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
 
+    var header = (this.props.libraryOpen)
+    
+    ? <div className='cat-container'>
+        <div className={symbol} />
+        <span className={icon}></span>
+        <span className='content-3 t-vl-gray ml-3'>{this.props.name}</span>
+      </div>
+    : <div className='cat-container'>
+        <span className={'ml-2 ' + icon}></span>
+      </div>
+
     var hideAnimation = (!!this.state.visible) ? 'hide-animation' : null;
 
-    if (this.props.libraryOpen) {
-      return (
-        <div className={cardClass}>
-          <div className="ml-cat">
-            <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
-              <div className='cat-container'>
+    // 'on-*' props trigger an objection from Facebook, see: https://reactjs.org/warnings/unknown-prop.html
+    var collapse = (this.props.libraryOpen)
+      ? <Collapse className='' isOpen={isOpen}>
+          <div className="ml-list">{this.props.modules}</div>
+        </Collapse>
+      : <Collapse 
+          className={hideAnimation} 
+          isOpen={isOpen}
+          onEntering={this.onEntering}
+          onEntered={this.onEntered}
+          onExiting={this.onExiting}
+          onExited={this.onExited}
+        >
+          <div className="ml-list-mini">{this.props.modules}</div>
+        </Collapse>
 
-                <div className={symbol} />
-                <span className={icon}></span>
-                <span className='content-3 t-vl-gray ml-3'>{this.props.name}</span>
-                
-              </div>
-            </div>
-            <div>
-              <Collapse className='' isOpen={isOpen}>
-                <div className="ml-list">{this.props.modules}</div>
-              </Collapse>
-            </div>
+    return (
+      <div className={cardClass}>
+        <div className="ml-cat">
+
+          <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
+            {header}
           </div>
+
+          {collapse}
+
         </div>
-      );
-    } else {
-      return (
-        <div className={cardClass}>
-          <div className="ml-cat">
-
-            <div className='first-level d-flex align-items-center' onClick={this.toggleCollapse}>
-              <div className='cat-container'>
-                <span className={'ml-2 ' + icon}></span>
-              </div>
-            </div>
-
-            {/* Hide transition animation when opening/closing */}
-            {/* 'on-*' props trigger an objection from Facebook, see: https://reactjs.org/warnings/unknown-prop.html */}
-            <Collapse 
-              className={hideAnimation} 
-              isOpen={isOpen}
-              onEntering={this.onEntering}
-              onEntered={this.onEntered}
-              onExiting={this.onExiting}
-              onExited={this.onExited}
-            >
-              <div className="ml-list-mini">{this.props.modules}</div>
-            </Collapse>
-
-          </div>
-        </div>
-      );
-    }
+      </div>
+    );
   }
 }
 

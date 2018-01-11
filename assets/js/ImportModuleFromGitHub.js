@@ -195,6 +195,6 @@ export default class ImportModuleFromGitHub extends React.Component {
 
 
 ImportModuleFromGitHub.propTypes = {
-  moduleAdded: PropTypes.func.isRequired, // tripping Warning, showing as 'undefined', yet still works
+  moduleAdded: PropTypes.func.isRequired, 
   libraryOpen: PropTypes.bool.isRequired  
 };
