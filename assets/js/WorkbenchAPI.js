@@ -341,6 +341,28 @@ class WorkbenchAPI {
     )
   }
 
+  postParamEvent(paramId, data) {
+    return (
+      fetch( '/api/parameters/' + paramId + '/event', {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(data)
+      }).then((response) => {
+        if (response.status === 204) {
+          //Don't try to parse JSON if we got an empty response
+          return {};
+        } else {
+          return response.json();
+        }
+      })
+    )
+  }
+
 }
 
 // Singleton API object for global use

@@ -397,8 +397,9 @@ export default class WfParameter extends React.Component {
           } else if (this.props.p.parameter_spec.id_name == 'fileselect') {
             return (
               <FileSelect
+                api={this.props.api}
                 userCreds={this.props.user.google_credentials}
-                ps={this.props.p}
+                pid={this.props.p.id}
                 saveState={state => this.props.setParamText('fileselect', state)}
                 getState={() => this.props.getParamText('fileselect')}
               />

@@ -20,22 +20,10 @@ export default class FileSelect extends React.Component {
     }
 
     getFiles() {
-      var url = '/api/parameters/'+this.props.ps.id+'/event';
-      var data = {
-        type: 'fetchFiles'
-      }
-      fetch(url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify(data)
-      })
-      .then(result => result.json())
-      .then(result => {
+      return this.props.api.postParamEvent(
+        this.props.pid,
+        { type: 'fetchFiles' }
+      ).then(result => {
         this.setState({files: result.files});
       });
     }
@@ -57,24 +45,15 @@ export default class FileSelect extends React.Component {
     }
 
     handleClick(file) {
-      var url = '/api/parameters/'+this.props.ps.id+'/event';
-      var data = {
-        file: file,
-        type: 'fetchFile'
-      }
-      fetch(url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify(data)
-      })
-      .then(() => {
+      this.props.api.postParamEvent(
+        this.props.pid,
+        {
+          file: file,
+          type: 'fetchFile'
+        }
+      ).then((response) => {
           this.props.saveState(JSON.stringify(file));
-          this.setState({file: data.file});
+          this.setState({file: file});
           this.toggleModal();
         }
       );
