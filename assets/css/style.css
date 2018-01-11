@@ -364,12 +364,13 @@ body {
 .icon-sort-down:before {
   content: "\e91e";
   font-size: .6rem;
-  margin-top: .2rem;
+  margin-top: .1rem;
 }
 
 .icon-sort-up:before {
   content: "\e921";
   font-size: .6rem;
+  margin-bottom: .1rem;
 }
 
 .icon-sort-left:before {
@@ -422,7 +423,7 @@ body {
 
 .icon-help:before{
   content:"\e933";
-  font-size: 1.7rem;
+  font-size: 1.3rem;
 }
 
 /* Customized icons, not in font sent  */
@@ -435,7 +436,7 @@ body {
 .icon-knowledge:before{
   content:"\e933";
   Color:#fff;
-  font-size: 3rem;
+  font-size: 1.5rem;
 }
 
 .icon-note:before{
@@ -884,9 +885,9 @@ select.form-control {
   color: #FBAA6D;
 }
 
-/* - Button Shapes - */
 
-/* Box around an icon, for context menus  */
+/* Context button in modules */
+
 .context-button {
   cursor: pointer;
   border: 0;
@@ -899,7 +900,7 @@ select.form-control {
   color:#8b8b8b;
   border-radius: 5rem;
   opacity: 0.5;
-  margin-left:1rem;
+  margin-right:0.5rem;
 }
 .context-button:hover {
   border: none;
@@ -919,8 +920,8 @@ select.form-control {
 .help-button {
   cursor: pointer;
   border-radius:5rem;
-  width:1.7rem;
-  height:1.7rem;
+  width:2.5rem;
+  height:2.5rem;
   border: 0;
   display: flex;
   align-items: center;
@@ -928,10 +929,13 @@ select.form-control {
   background-color: transparent;
   color:#8b8b8b;
   opacity: 0.5;
+  margin-right:1rem;
+  margin-left:1rem;
 }
 
 .help-button:hover {
   border: none;
+  background-color: #edecec;
   color:#8b8b8b;
   opacity: 1;
   decoration:none;
@@ -1782,6 +1786,7 @@ img.logo {
   width:3rem;
   z-index: 1000;
   border-radius: 50px;
+  border:2px solid #fff;
   display: flex;
   justify-content: center;
   align-items: center;

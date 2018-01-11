@@ -355,17 +355,17 @@ class WfModule extends React.Component {
     // Set opacity to 0/1 instead of just not rendering these elements, so that any children that these
     // buttons create (e.g. export dialog) are still visible. Can't use display: none as we need display: flex
     // Fixes https://www.pivotaltracker.com/story/show/154033690
-    var modBtns =
+    var contextBtns =
         <div className='d-flex align-items-center module-context-buttons' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
-          <div className='btn help-button d-flex align-items-center'>
-            <div className='icon-help'></div>
-          </div>
           <div className={
             this.state.isCollapsed ?
               'icon-sort-down btn context-button' :
               'icon-sort-up btn context-button'
             }
             onClick={this.toggleCollapsed} >
+          </div>
+          <div className='btn help-button d-flex align-items-center'>
+            <div className='icon-help'></div>
           </div>
           <div>{notesIcon}</div>
           <div>{contextMenu}</div>
@@ -404,7 +404,7 @@ class WfModule extends React.Component {
                       </div>
                       }
                     </div>
-                    {modBtns}
+                    {contextBtns}
                   </div>
                 </div>
                 {/* --- Module content when expanded --- */}
