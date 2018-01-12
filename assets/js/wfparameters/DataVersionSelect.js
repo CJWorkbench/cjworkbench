@@ -31,9 +31,9 @@ export default class DataVersionSelect extends React.Component {
 
     // return time as a user-readable string - "true" to convert to UTC for tests
     if (this.props.testing) {
-      return dateFormat(d, "mmm d, yyyy - hh:MM TT", true)
+      return dateFormat(d, "mmm d yyyy - hh:MMTT", true)
     } else {
-      return dateFormat(d, "mmm d, yyyy - hh:MM TT")
+      return dateFormat(d, "mmm d yyyy - hh:MMTT")
     }
   }
 

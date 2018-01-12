@@ -2,18 +2,16 @@
 
 exports[`UpdateFrequencySelect Does not save changed settings when user hits Cancel 1`] = `
 <div
-  className="version-item"
+  className="frequency-item"
 >
-  <div
-    className="mb-2"
-  >
+  <div>
     <span
       className="content-3 t-d-gray"
     >
       Update 
     </span>
     <span
-      className="content-3 ml-2 t-f-blue test-modal-button"
+      className="content-3 ml-1 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       manual
@@ -173,18 +171,16 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
 
 exports[`UpdateFrequencySelect Renders correctly when in Private mode and changes are confirmed with OK 1`] = `
 <div
-  className="version-item"
+  className="frequency-item"
 >
-  <div
-    className="mb-2"
-  >
+  <div>
     <span
       className="content-3 t-d-gray"
     >
       Update 
     </span>
     <span
-      className="content-3 ml-2 t-f-blue test-modal-button"
+      className="content-3 ml-1 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       manual
@@ -344,18 +340,16 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
 
 exports[`UpdateFrequencySelect Renders correctly when in Private mode and changes are confirmed with OK 2`] = `
 <div
-  className="version-item"
+  className="frequency-item"
 >
-  <div
-    className="mb-2"
-  >
+  <div>
     <span
       className="content-3 t-d-gray"
     >
       Update 
     </span>
     <span
-      className="content-3 ml-2 t-f-blue test-modal-button"
+      className="content-3 ml-1 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       manual
@@ -515,18 +509,16 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
 
 exports[`UpdateFrequencySelect Renders correctly when in Private mode and changes are confirmed with OK 3`] = `
 <div
-  className="version-item"
+  className="frequency-item"
 >
-  <div
-    className="mb-2"
-  >
+  <div>
     <span
       className="content-3 t-d-gray"
     >
       Update 
     </span>
     <span
-      className="content-3 ml-2 t-f-blue test-modal-button"
+      className="content-3 ml-1 t-f-blue test-modal-button"
       onClick={[Function]}
     >
       auto

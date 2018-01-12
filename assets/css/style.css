@@ -2028,7 +2028,7 @@ svg .svg-background{
 	content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 40.3rem;
+  margin-left: 38.3rem;
   height: 4.5rem;
 }
 /* error & selected */
@@ -2284,7 +2284,7 @@ input[type=checkbox]:checked:after {
 }
 
 .version-item {
-  width: 14.5rem;
+  width: 14rem;
   display: flex;
   flex-direction:column;
   justify-content: space-between;
