@@ -14,6 +14,7 @@ import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
 import GoogleConnect from './wfparameters/GoogleConnect'
 import FileSelect from './wfparameters/FileSelect'
+import WorkbenchAceEditor from './wfparameters/AceEditor'
 import { csrfToken } from './utils'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 
@@ -403,7 +404,14 @@ export default class WfParameter extends React.Component {
                 getState={() => this.props.getParamText('fileselect')}
               />
             )
-        }
+          } else if (this.props.p.parameter_spec.id_name == 'code') {
+            return (
+              <WorkbenchAceEditor
+                name={this.props.p.parameter_spec.name}
+                onSave={ (val) => { this.paramChanged( val ) } }
+                defaultValue={this.props.p.value} />
+            )
+          }
 
 
       default:

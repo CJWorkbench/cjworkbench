@@ -15,7 +15,7 @@ def errorstring(line, errstr):
 class PythonCode(ModuleImpl):
 
     def render(wf_module, table):
-        code = wf_module.get_param_string('code')
+        code = wf_module.get_param_raw('code', 'custom')
 
         # empty code, NOP
         code = code.strip()
@@ -43,4 +43,3 @@ class PythonCode(ModuleImpl):
             return None
 
         return out_table
-

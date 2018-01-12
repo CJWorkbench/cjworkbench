@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AceEditor Mounts correctly and saves on blur 1`] = `
+<WorkbenchAceEditor
+  defaultValue="return table"
+  name="def process(table)"
+  onSave={[Function]}
+>
+  <div
+    className="parameter-margin"
+  >
+    <div
+      className="label-margin t-d-gray content-3"
+    >
+      def process(table)
+    </div>
+    <ReactAce
+      cursorStart={1}
+      editorProps={
+        Object {
+          "$blockScrolling": true,
+        }
+      }
+      enableBasicAutocompletion={false}
+      enableLiveAutocompletion={false}
+      focus={false}
+      fontSize={12}
+      height="300px"
+      highlightActiveLine={true}
+      maxLines={null}
+      minLines={null}
+      mode="python"
+      name="code-editor"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onLoad={null}
+      onPaste={null}
+      onScroll={null}
+      readOnly={false}
+      scrollMargin={
+        Array [
+          0,
+          0,
+          0,
+          0,
+        ]
+      }
+      setOptions={Object {}}
+      showGutter={true}
+      showPrintMargin={true}
+      style={Object {}}
+      tabSize={4}
+      theme="tomorrow"
+      value="return table"
+      width="100%"
+      wrapEnabled={false}
+    >
+      <div
+        id="code-editor"
+        style={
+          Object {
+            "height": "300px",
+            "width": "100%",
+          }
+        }
+      />
+    </ReactAce>
+  </div>
+</WorkbenchAceEditor>
+`;

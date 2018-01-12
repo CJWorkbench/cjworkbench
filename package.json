@@ -33,6 +33,7 @@
     "nivo": "^0.29.4",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
+    "react-ace": "^5.9.0",
     "react-addons-css-transition-group": "^15.4.2",
     "react-addons-pure-render-mixin": "^15.4.2",
     "react-addons-transition-group": "^15.5.2",

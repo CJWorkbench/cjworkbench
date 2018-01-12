@@ -13,7 +13,7 @@
     {
       "name": "def process(table):",
       "id_name": "code",
-      "type": "string",
+      "type": "custom",
       "multiline": true
     },
     {
