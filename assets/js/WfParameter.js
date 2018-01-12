@@ -391,7 +391,6 @@ export default class WfParameter extends React.Component {
             return (
               <GoogleConnect
                 userCreds={this.props.user.google_credentials}
-                wfModuleId={this.props.wf_module_id}
               />
             )
           } else if (this.props.p.parameter_spec.id_name == 'fileselect') {

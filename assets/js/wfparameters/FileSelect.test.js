@@ -49,8 +49,6 @@ describe('FileSelect', () => {
     ]
   };
 
-  var wrapper;
-  var noCredsWrapper;
   var api;
 
   // Mount is necessary to invoke componentDidMount()
@@ -61,7 +59,7 @@ describe('FileSelect', () => {
   });
 
   it('Loads correctly and allows a user to choose a new file', (done) => {
-    wrapper = mount(
+    var wrapper = mount(
       <FileSelect
         api={api}
         userCreds={[0]}
@@ -73,9 +71,9 @@ describe('FileSelect', () => {
 
     expect(api.postParamEvent.mock.calls.length).toBe(1);
 
-    // should call API for its data on componentDidMount
     expect(wrapper).toMatchSnapshot();
 
+    // should call API for its data on componentDidMount
     expect(wrapper.state().modalOpen).toBe(false);
 
     setImmediate( () => {
@@ -130,6 +128,8 @@ describe('FileSelect', () => {
 
     expect(api.postParamEvent.mock.calls.length).toBe(1);
 
+    expect(noFileWrapper).toMatchSnapshot();
+
     setImmediate( () => {
       var fileCount = noFileWrapper.find('.file-info p');
       expect(fileCount).toHaveLength(1);
@@ -143,7 +143,7 @@ describe('FileSelect', () => {
   });
 
   it('Does not show the modal link if there is no user credential present', (done) => {
-    noCredsWrapper = mount(
+    var noCredsWrapper = mount(
       <FileSelect
         api={api}
         userCreds={[]}
@@ -154,6 +154,8 @@ describe('FileSelect', () => {
     );
 
     expect(api.postParamEvent.mock.calls.length).toBe(0);
+
+    expect(noCredsWrapper).toMatchSnapshot();
 
     var modalLink = noCredsWrapper.find('.file-info .t-f-blue');
 
@@ -174,6 +176,8 @@ describe('FileSelect', () => {
     );
 
     expect(api.postParamEvent.mock.calls.length).toBe(0);
+
+    expect(noCredsNoFileWrapper).toMatchSnapshot();
 
     expect(noCredsNoFileWrapper.find('.parameter-margin').length).toBe(0);
 

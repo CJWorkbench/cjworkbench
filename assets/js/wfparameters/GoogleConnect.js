@@ -1,5 +1,5 @@
 import React from 'react';
-import { store,  updateCurrentUserAction, disconnectCurrentUserAction, reloadWorkflowAction, wfModuleStatusAction } from '../workflow-reducer';
+import { store,  updateCurrentUserAction, disconnectCurrentUserAction } from '../workflow-reducer';
 
 export default class GoogleConnect extends React.Component {
   constructor(props) {
