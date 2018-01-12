@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GoogleConnect Mounts correctly with user creds 1`] = `
+exports[`GoogleConnect Mounts correctly with user creds and fires call to delete creds on click 1`] = `
 <GoogleConnect
   userCreds={
     Array [
