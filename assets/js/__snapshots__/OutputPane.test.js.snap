@@ -102,6 +102,7 @@ exports[`Fetches and renders 1`] = `
           rowKey="id"
           rowScrollTimeout={0}
           rowsCount={2}
+          scrollToRowIndex={0}
           tabIndex={-1}
         >
           <div
@@ -241,6 +242,7 @@ exports[`Fetches and renders 1`] = `
                 rowScrollTimeout={0}
                 rowSelection={null}
                 rowsCount={2}
+                scrollToRowIndex={0}
                 selectedRows={Array []}
                 sortColumn={null}
                 sortDirection={null}
@@ -669,7 +671,7 @@ exports[`Fetches and renders 1`] = `
                     onDragStart={[Function]}
                     onKeyDown={[Function]}
                     onKeyUp={[Function]}
-                    tabIndex="0"
+                    tabIndex={-1}
                   >
                     <Viewport
                       cellMetaData={
@@ -753,6 +755,7 @@ exports[`Fetches and renders 1`] = `
                       rowScrollTimeout={0}
                       rowSelection={null}
                       rowsCount={2}
+                      scrollToRowIndex={0}
                       selectedRows={Array []}
                       totalWidth={-2}
                       width={0}
@@ -848,6 +851,7 @@ exports[`Fetches and renders 1`] = `
                           rowScrollTimeout={0}
                           rowSelection={null}
                           rowsCount={2}
+                          scrollToRowIndex={0}
                           selectedRows={Array []}
                           totalWidth={-2}
                           visibleEnd={-4}
