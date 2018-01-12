@@ -799,7 +799,7 @@ select.form-control {
 /* Margins for 3 lined parameter, part of a group*/
 .param3-line-margin{
   display: inline-block;
-  width:32.4%;
+  width:32.3%;
   margin-right: 0.5rem;
 }
 
