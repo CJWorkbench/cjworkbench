@@ -25,7 +25,7 @@ exports[`AceEditor Mounts correctly and saves on blur 1`] = `
       enableLiveAutocompletion={false}
       focus={false}
       fontSize={12}
-      height="300px"
+      height="10rem"
       highlightActiveLine={true}
       maxLines={null}
       minLines={null}
@@ -59,7 +59,7 @@ exports[`AceEditor Mounts correctly and saves on blur 1`] = `
         id="code-editor"
         style={
           Object {
-            "height": "300px",
+            "height": "10rem",
             "width": "100%",
           }
         }
