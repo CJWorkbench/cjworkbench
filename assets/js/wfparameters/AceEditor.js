@@ -27,7 +27,7 @@ export default class WorkbenchAceEditor extends React.Component {
         <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
         <AceEditor
           width="100%"
-          height="300px"
+          height="10rem"
           mode="python"
           theme="tomorrow"
           name="code-editor"
