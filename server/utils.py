@@ -1,5 +1,6 @@
 # --- Time unit conversion to/from seconds ---
 import pandas as pd
+from django.contrib.sites.models import Site
 
 time_units = {
     'seconds': 1,
@@ -25,17 +26,6 @@ def seconds_to_count_and_units(seconds):
         if seconds % unit_len == 0:
             return {'units': unit, 'count': int(seconds/unit_len)}
 
-# Displays the user name depending on what user data
-# we have available
-def user_display(user):
-    if hasattr(user, 'first_name') or hasattr(user, 'last_name'):
-        return '%s %s' % (user.first_name, user.last_name)
-    elif hasattr(user, 'email'):
-        return user.email
-    else:
-        return 'Anonymous'
-
-
 # Convert all complex-typed rows to strings. Otherwise we cannot do many operations
 # including hash_pandas_object() and to_parquet()
 def sanitize_dataframe(table):
@@ -45,3 +35,7 @@ def sanitize_dataframe(table):
     for idx,val in enumerate(types):
         if val not in allowed_types:
             table.iloc[:,idx] = table.iloc[:,idx].astype(str)
+
+# It is unbelievable that Django is 10+ years old and doesn't already do this for you
+def get_absolute_url(abs_url):
+    return 'https://%s%s' % ( Site.objects.get_current().domain, abs_url )

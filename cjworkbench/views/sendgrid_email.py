@@ -11,6 +11,7 @@ class SendgridEmails(AccountDefaultHookSet):
 
     def send_invitation_email(self, to, ctx):
         subject = render_to_string("account/email/invite_user_subject.txt", ctx)
+        subject = "".join(subject.splitlines())
         message = render_to_string("account/email/invite_user.txt", ctx)
         mail = EmailMultiAlternatives(
             subject=subject,

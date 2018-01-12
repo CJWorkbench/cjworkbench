@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from server.models.WfModule import WfModule
+from django.urls import reverse
 
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
@@ -45,6 +46,9 @@ class Workflow(models.Model):
             wfm.duplicate(new_wf)
 
         return new_wf
+
+    def get_absolute_url(self):
+        return reverse('workflow', args=[str(self.pk)])
 
     def __str__(self):
         return self.name

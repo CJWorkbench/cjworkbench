@@ -23,7 +23,8 @@ urlpatterns = [
     url(r'^api/workflows/?$', views.workflow_list),
 
     # workflows
-    url(r'^workflows/(?P<pk>[0-9]+)/$', views.render_workflow),
+    #TODO: Name the rest of the urls or implement some kind of naming scheme
+    url(r'^workflows/(?P<pk>[0-9]+)/$', views.render_workflow, name="workflow"),
     url(r'^api/workflows/(?P<pk>[0-9]+)/?$', views.workflow_detail),
 
     url(r'^api/workflows/(?P<pk>[0-9]+)/addmodule/?$', views.workflow_addmodule),

@@ -1,0 +1,1 @@
+New data version available for {{ workflow_name }} on {{ date }}

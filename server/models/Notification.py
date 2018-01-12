@@ -14,5 +14,5 @@ class Notification(models.Model):
             message = message
         )
         saved = new_notification.save()
-        email_notification(wf_module.workflow.owner.email, wf_module)
+        email_notification(wf_module.workflow.owner, wf_module)
         return saved
