@@ -18,7 +18,7 @@ exports[`DataVersionSelect Displays empty when no versions available 1`] = `
     className="version-item"
   >
     <div
-      className="t-d-gray content-3 mb-2"
+      className="t-d-gray content-3"
     >
       No data loaded
     </div>
@@ -49,7 +49,7 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
     className="version-item"
   >
     <div
-      className="t-d-gray content-3 mb-2"
+      className="t-d-gray content-3"
     >
       Version 1 of 5
     </div>
@@ -58,7 +58,7 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
         className="open-modal t-f-blue content-4 text-center"
         onClick={[Function]}
       >
-        Apr 10, 2017 - 05:57 PM
+        Apr 10 2017 - 05:57PM
       </div>
       <Modal
         autoFocus={true}
@@ -95,7 +95,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     className="version-item"
   >
     <div
-      className="t-d-gray content-3 mb-2"
+      className="t-d-gray content-3"
     >
       No data loaded
     </div>
@@ -164,7 +164,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             <div
               className="content-3"
             >
-              Jul 10, 2017 - 05:57 PM
+              Jul 10 2017 - 05:57PM
             </div>
             <div
               className="icon icon-notification mr-5"
@@ -177,7 +177,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             <div
               className="content-3"
             >
-              Jun 10, 2017 - 05:57 PM
+              Jun 10 2017 - 05:57PM
             </div>
           </div>
           <div
@@ -187,7 +187,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             <div
               className="content-3"
             >
-              May 10, 2017 - 05:57 PM
+              May 10 2017 - 05:57PM
             </div>
           </div>
           <div
@@ -197,7 +197,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             <div
               className="content-3"
             >
-              Apr 10, 2017 - 05:57 PM
+              Apr 10 2017 - 05:57PM
             </div>
           </div>
           <div
@@ -207,7 +207,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             <div
               className="content-3"
             >
-              Mar 10, 2017 - 05:57 PM
+              Mar 10 2017 - 05:57PM
             </div>
           </div>
         </div>
@@ -279,7 +279,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     className="version-item"
   >
     <div
-      className="t-d-gray content-3 mb-2"
+      className="t-d-gray content-3"
     >
       Version 5 of 5
     </div>
@@ -288,7 +288,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
         className="open-modal t-f-blue content-4 text-center"
         onClick={[Function]}
       >
-        Jul 10, 2017 - 05:57 PM
+        Jul 10 2017 - 05:57PM
       </div>
       <Modal
         autoFocus={true}
