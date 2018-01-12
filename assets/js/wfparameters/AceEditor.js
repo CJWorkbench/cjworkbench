@@ -34,7 +34,6 @@ export default class WorkbenchAceEditor extends React.Component {
           onChange={this.onChange}
           onBlur={() => this.props.onSave(this.state.value)}
           value={this.state.value}
-          editorProps={{$blockScrolling: true}}
         />
       </div>
     );

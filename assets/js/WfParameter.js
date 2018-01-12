@@ -179,7 +179,7 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          <div className="param-button-container col-md-3 offset-md-9">
+          <div className="param-button-container d-flex justify-content-end">
             <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{this.name}</div>
           </div>
         );

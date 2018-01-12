@@ -1902,9 +1902,6 @@ img.logo {
   cursor: pointer;
 }
 
-
-
-
 .module-card-params {
   padding: 0.2rem 1.5rem 1.5rem 1.5rem;
 }
@@ -2071,14 +2068,6 @@ svg .svg-background{
   background-color: #e7e7e7;
   border: 1px solid #e7e7e7;
 }
-
-/* Tried to make the column renamer list resizable but it conflicts with the react grid (outputpane) Love,PIERRE */
-/* .table-module-wrapper{
-  resize: vertical!important;
-  height: 12rem;
-  min-height: 6rem;
-  overflow: hidden;
-} */
 
 .list-scroll{
   overflow-y:auto;
@@ -2435,6 +2424,24 @@ select {
 .editable-text {
   background-color: red;
 }
+
+/* Ace editor */
+
+.ace_editor{
+
+}
+
+.ace-tomorrow .ace_gutter {
+  background: #7A9BB0!important;
+  color:#fff!important;
+}
+
+.ace-tomorrow .ace_gutter-active-line {
+  background-color: #fff!important;
+  opacity: 0.2!important;
+}
+
+
 
 /* --- Chartbuilder - override all sorts of styles to integrate --- */
 
