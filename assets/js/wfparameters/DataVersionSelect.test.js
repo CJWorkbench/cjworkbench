@@ -53,7 +53,7 @@ describe('DataVersionSelect', () => {
     setImmediate( () => {
       var modalLink = wrapper.find('div.open-modal');
       expect(modalLink).toHaveLength(1);
-      expect(modalLink.text()).toEqual("Apr 10, 2017 - 05:57 PM");
+      expect(modalLink.text()).toEqual("Apr 10 2017 - 05:57PM");
 
       expect(wrapper.find('.t-d-gray').text()).toEqual("Version 2 of 5");
 
