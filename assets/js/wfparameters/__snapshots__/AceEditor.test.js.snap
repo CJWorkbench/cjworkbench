@@ -16,11 +16,7 @@ exports[`AceEditor Mounts correctly and saves on blur 1`] = `
     </div>
     <ReactAce
       cursorStart={1}
-      editorProps={
-        Object {
-          "$blockScrolling": true,
-        }
-      }
+      editorProps={Object {}}
       enableBasicAutocompletion={false}
       enableLiveAutocompletion={false}
       focus={false}

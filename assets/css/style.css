@@ -992,7 +992,7 @@ select.form-control {
 
 .action-button {
   cursor: pointer;
-  min-width: 8rem;
+  min-width: 7rem;
 	height: 4rem;
   border-radius: 2.5rem;
   display: flex;
@@ -1369,7 +1369,7 @@ img.logo {
 
 /* Module Stack */
 .modulestack {
-  flex: 0 0 43rem;
+  flex: 0 0 41rem;
   border-left: 1px solid #DDDDDD;
   border-right: 1px solid #DDDDDD;
   background-color: #e9ebee;
@@ -1852,7 +1852,7 @@ img.logo {
 /* ---- WfModule ---- */
 
 .wf-card{
-  width: 40rem;
+  width: 38rem;
   margin-bottom: 0.5rem;
   background-color: rgba(250,250,250,0.8);
   position: relative;
@@ -1973,12 +1973,13 @@ svg .svg-background{
   height: 100%;
   width:100%;
 }
-/* all good */
-.module-output-bar-white {
+/* all good NOT IN USE ANYMORE?? PIERRE 1/10/2018*/
+/* .module-output-bar-white {
   width:0.3rem;
   height: 100%;
   background-color: transparent;
-}
+} */
+
 /* all good & selected */
 .module-output-bar-blue {
   height: 100%;
@@ -1994,7 +1995,7 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(118,155,176,0.3);
 	border-width: 2.25rem 0 2.25rem 1rem;
-  margin-left: 40rem
+  margin-left: 38rem
 }
 
 /* standby  */
@@ -2011,7 +2012,7 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(251,170,109,0);
 	border-width: 2.5rem 0 2.5rem 1rem;
-  margin-left: 40rem
+  margin-left: 38rem
 }
 /* error  */
 .module-output-bar-pink {
@@ -2043,7 +2044,7 @@ svg .svg-background{
   content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 40.3rem;
+  margin-left: 38.3rem;
   height: 4.5rem;
 }
 
@@ -2275,19 +2276,28 @@ input[type=checkbox]:checked:after {
 
 .version-box {
   border: 1px solid #E9E9E9;
-  height: 6.6rem;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   margin-top:-0.5rem;
   padding: 1.2rem;
   align-items:top;
 }
 
 .version-item {
+  width: 14.5rem;
   display: flex;
   flex-direction:column;
   justify-content: space-between;
+  align-items: flex-start;
+}
+
+.frequency-item {
+  width: 10.5rem;
+  display: flex;
+  flex-direction:column;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-right: 1rem;
 }
 
 .centered{
@@ -2426,10 +2436,6 @@ select {
 }
 
 /* Ace editor */
-
-.ace_editor{
-
-}
 
 .ace-tomorrow .ace_gutter {
   background: #7A9BB0!important;

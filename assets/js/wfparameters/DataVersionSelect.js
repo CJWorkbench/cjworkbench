@@ -209,7 +209,7 @@ export default class DataVersionSelect extends React.Component {
 
     return (
       <div className='version-item'>
-        <div className='t-d-gray content-3 mb-2'>{versionText}</div>
+        <div className='t-d-gray content-3'>{versionText}</div>
         {modalLink}
       </div>
     );
