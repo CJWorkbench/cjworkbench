@@ -135,7 +135,6 @@ export default class UpdateFrequencySelect extends React.Component {
                       id="updateFreqUnit"
                       className='ml-3 input-dropdown'
                     >
-                      <option>seconds</option>
                       <option>minutes</option>
                       <option>hours</option>
                       <option id='days-option'>days</option>

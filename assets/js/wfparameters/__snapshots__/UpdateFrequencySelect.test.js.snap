@@ -108,9 +108,6 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
                 value="days"
               >
                 <option>
-                  seconds
-                </option>
-                <option>
                   minutes
                 </option>
                 <option>
@@ -281,9 +278,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
                 type="select"
                 value="minutes"
               >
-                <option>
-                  seconds
-                </option>
                 <option>
                   minutes
                 </option>
@@ -456,9 +450,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
                 value="minutes"
               >
                 <option>
-                  seconds
-                </option>
-                <option>
                   minutes
                 </option>
                 <option>
@@ -629,9 +620,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
                 type="select"
                 value="days"
               >
-                <option>
-                  seconds
-                </option>
                 <option>
                   minutes
                 </option>
