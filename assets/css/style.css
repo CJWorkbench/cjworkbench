@@ -1815,9 +1815,9 @@ img.logo {
   border-bottom:0px;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 1.2rem;
-  letter-spacing: 0.05rem;
-  display: flex;
   height: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }
 
 .react-grid-Grid{
@@ -1826,13 +1826,11 @@ img.logo {
 
 .react-grid-Cell{
   border-color:rgba(237,237,237,1);
+  padding-right:1rem;
+  padding-left:1rem;
+  border-right: none;
+  border-bottom: none;
 }
-
-/* .react-grid-Cell:hover{
-  -webkit-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
-  -moz-box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
-  box-shadow: inset 0px 0px 0px 2px rgba(251,170,109,1);
-} */
 
 .react-grid-Cell:not(.editing) .react-grid-Cell__value{
   font-size: 1.2rem;
@@ -1843,9 +1841,7 @@ img.logo {
 }
 
 .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
-  background-color: rgba(251,170,109,1);
-  color:#fff;
-
+  background-color: #C9E8F1;
 }
 
 
