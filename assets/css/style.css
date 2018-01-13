@@ -121,7 +121,7 @@ body {
 .info-1 {
 	font-size: 1.2rem;
 	font-weight: 100;
-	line-height: 2rem;
+	line-height: 1.2rem;
   font-family: 'Nunito Sans', sans-serif;
 }
 .info-2 {
@@ -711,6 +711,8 @@ body {
 
 .form-control{
   height:3.5rem!important;
+  border-radius: 0px;
+  border: 1px solid #E7E7E7;
 }
 
 select.form-control {
@@ -2194,8 +2196,12 @@ input[type=checkbox]:checked:after {
 }
 
 .icon-close {
-  font-size:1rem;
-  color:red;
+  font-size:1.2rem;
+  color:#b4b4b4;
+}
+
+.icon-close:hover{
+  color:black;
 }
 
 .form-group {
@@ -2245,9 +2251,11 @@ input[type=checkbox]:checked:after {
 /* from Export Data modal, in WfModuleContextMenu  */
 
 .download-icon-box {
-	height: 4rem;
+	height: 3.5rem;
 	width: 6rem;
-	border: 1px solid #EDECEC;
+	border-top: 1px solid #E7E7E7;
+  border-right: 1px solid #E7E7E7;
+  border-bottom: 1px solid #E7E7E7;
   background-color: #FFFFFF;
   display: flex;
   align-items: center;

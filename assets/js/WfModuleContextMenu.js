@@ -92,7 +92,7 @@ export default class WfModuleContextMenu extends React.Component {
       );
     } else {
       return (
-        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='info-2 t-f-blue mt-3 test-csv-copy'>
+        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='info-1 t-f-blue test-csv-copy'>
           <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       );
@@ -108,7 +108,7 @@ export default class WfModuleContextMenu extends React.Component {
       );
     } else {
       return (
-        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='info-2 t-f-blue mt-3 test-json-copy'>
+        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='info-1 t-f-blue test-json-copy'>
           <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       );
@@ -128,7 +128,7 @@ export default class WfModuleContextMenu extends React.Component {
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
         <ModalHeader toggle={this.toggleModal} className='dialog-header modal-header d-flex align-items-center' >
-          <div className='t-d-gray title-4'>Export Data</div>
+          <div className='t-d-gray title-4'>EXPORT DATA</div>
           <div className='icon-close' onClick={this.toggleExportModal}></div>
         </ModalHeader>
         <ModalBody className='dialog-body'>
