@@ -5,7 +5,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
 from server.models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
 from server.tests.utils import *
-from server.utils import user_display
+from account.utils import user_display
 import pandas as pd
 import json
 
