@@ -11,7 +11,7 @@ import { DragDropContextProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 
 require('bootstrap/dist/css/bootstrap.css');
-require('../css/style.css');
+require('../css/style.scss');
 
 // Global API object, encapsulates all calls to the server
 const api = workbenchAPI();
