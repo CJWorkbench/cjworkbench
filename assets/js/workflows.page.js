@@ -8,7 +8,7 @@ import workbenchAPI from './WorkbenchAPI'
 const api = workbenchAPI();
 
 require('bootstrap/dist/css/bootstrap.css');
-require('../css/style.css');
+require('../css/style.scss');
 
 ReactDOM.render(
   <Workflows api={api}/>,
