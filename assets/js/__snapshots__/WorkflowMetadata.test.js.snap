@@ -170,6 +170,16 @@ exports[`WorkflowMetadata - private mode modal operates 2`] = `
       </div>
     </div>
   </ModalBody>
+  <div
+    className="dialog-footer modal-footer"
+  >
+    <div
+      className="action-button button-gray"
+      onClick={[Function]}
+    >
+      Cancel
+    </div>
+  </div>
 </div>
 `;
 

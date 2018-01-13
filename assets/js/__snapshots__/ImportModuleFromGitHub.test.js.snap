@@ -106,25 +106,25 @@ exports[`ImportModuleFromGitHub Link will open modal window 2`] = `
               </a>
             </div>
           </div>
-          <div
-            className="modal-dual-button d-flex flex-row"
-          >
-            <div
-              className="button-gray action-button"
-              onClick={[Function]}
-            >
-              Cancel
-            </div>
-            <div
-              className="button-blue action-button ml-3"
-              onClick={[Function]}
-            >
-              Import
-            </div>
-          </div>
         </form>
       </div>
     </ModalBody>
+    <div
+      className="dialog-footer modal-footer"
+    >
+      <div
+        className="button-gray action-button mr-4"
+        onClick={[Function]}
+      >
+        Cancel
+      </div>
+      <div
+        className="button-blue action-button"
+        onClick={[Function]}
+      >
+        Import
+      </div>
+    </div>
   </div>
 </div>
 `;

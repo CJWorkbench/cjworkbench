@@ -103,45 +103,48 @@ export default class ImportModuleFromGitHub extends React.Component {
 
   render() {
 
-    var visible = null;
+    var formContent = null;
+    var footer = null;
 
     if (this.state.message) {
       if (this.state.message_type == 'error') {
-        visible =
+        formContent =
           <div>
             <div className="import-github-error">
                 <div>{this.state.message}</div>
             </div>
-            <div className="d-flex flex-row modal-dual-button">
-                <div onClick={this.toggleModal} className='button-gray action-button'>
-                  Cancel
-                </div>
-                <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button ml-3'>
-                  Retry
-                </div>
-            </div>
+          </div>
+        footer =
+          <div className="dialog-footer modal-footer">
+              <div onClick={this.toggleModal} className='button-gray action-button'>
+                Cancel
+              </div>
+              <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button ml-3'>
+                Retry
+              </div>
           </div>
       } else if (this.state.message_type == 'success') {
         var json = JSON.parse(this.state.message);
-        visible =
+        formContent =
           <div>
             <div className="import-github-success">
               Successfully imported {json.author} module "{json.name}" under category "{json.category}".
             </div>
-            <div className="modal-solo-button">
-              <div onClick={this.toggleModal} className='button-blue action-button mt-5'>
-                OK
-              </div>
+          </div>
+        footer =
+          <div className="dialog-footer modal-footer">
+            <div onClick={this.toggleModal} className='button-blue action-button'>
+              OK
             </div>
           </div>
       }
     } else {
-      visible =
-        <div className="modal-dual-button d-flex flex-row">
-          <div onClick={this.toggleModal} className='button-gray action-button'>
+      footer =
+        <div className='dialog-footer modal-footer'>
+          <div onClick={this.toggleModal} className='button-gray action-button mr-4'>
             Cancel
           </div>
-          <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button ml-3'>
+          <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button'>
             Import
           </div>
         </div>
@@ -172,9 +175,10 @@ export default class ImportModuleFromGitHub extends React.Component {
                       />
               <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a target="_blank" href="https://intercom.help/tables/build-a-custom-module" className=' t-f-blue'>here</a></div>
               </div>
-              {visible}
+              {formContent}
             </form>
           </ModalBody>
+          {footer}
         </Modal>
 
       </div>

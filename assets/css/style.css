@@ -815,11 +815,6 @@ select.form-control {
   width: 15%;
 }
 
-.modal-dual-button {
-  float: right;
-  margin-top: 3rem;
-  justify-content: flex-end;
-}
 
 /* - Button Colors - */
 .button-white {
@@ -2223,12 +2218,12 @@ input[type=checkbox]:checked:after {
   border-top: 1px solid #eceeef;
 }
 
-.dialog-footer-dual {
+/* .dialog-footer-dual {
   background-color: #fff;
   padding: 2rem;
   display: flex;
   justify-content: space-between;
-}
+} */
 
 /* Data version modal */
 

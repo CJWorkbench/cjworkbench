@@ -88,6 +88,9 @@ export default class WorkflowMetadata extends React.Component {
             </div>
           </div>
         </ModalBody>
+        <div className='dialog-footer modal-footer'>
+          <div onClick={this.togglePrivacyModal} className='action-button button-gray'>Cancel</div>
+        </div>
       </Modal>
     );
   }
