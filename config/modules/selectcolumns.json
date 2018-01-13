@@ -6,7 +6,7 @@
   "description" : "",
   "parameters": [
     {
-      "name" : "Choose columns to",
+      "name" : "",
       "id_name" : "drop_or_keep",
       "type" : "menu",
       "menu_items" : "Drop|Keep",
