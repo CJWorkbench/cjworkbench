@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import { Form, FormGroup, Label, Input } from 'reactstrap'
 import { timeDifference } from '../utils'
+import { store, updateWfModuleAction } from '../workflow-reducer'
 
 export default class UpdateFrequencySelect extends React.Component {
   constructor(props) {
@@ -16,7 +17,7 @@ export default class UpdateFrequencySelect extends React.Component {
         unit: this.props.updateSettings.updateUnits
       }
     };
-    this.state.dialogSettings = this.state.liveSettings;
+    this.state.dialogSettings = Object.assign({}, this.state.liveSettings);
 
     // Allow props to specify a conversion from browser time to displayed time, so tests can run in UTC (not test machine tz)
     if (props.timezoneOffset != undefined) {
@@ -33,7 +34,7 @@ export default class UpdateFrequencySelect extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.notifications && (!this.props.notifications && this.state.dialogSettings.manual)) {
+    if (nextProps.notifications && (!this.props.notifications && this.state.liveSettings.manual)) {
       this.toggleModal();
       this.toggleManual();
       this.setState({
@@ -44,7 +45,16 @@ export default class UpdateFrequencySelect extends React.Component {
 
   toggleModal() {
     if (!this.props.isReadOnly) {
-      this.setState({modalOpen: !this.state.modalOpen })
+      this.setState({
+        modalOpen: !this.state.modalOpen,
+        dialogSettings: Object.assign({}, this.state.liveSettings)
+      }, () => {
+        if (!this.state.modalOpen && this.state.liveSettings.manual && this.props.notifications) {
+          store.dispatch(updateWfModuleAction(this.props.wfModuleId, {
+            notifications: false
+          }));
+        }
+      });
     }
   }
 
@@ -82,8 +92,9 @@ export default class UpdateFrequencySelect extends React.Component {
       update_units: this.state.dialogSettings.unit
     };
     this.props.api.setWfModuleUpdateSettings(this.props.wfModuleId, params);
-    this.setState({liveSettings: this.state.dialogSettings});
-    this.toggleModal();
+    this.setState({liveSettings: Object.assign({}, this.state.dialogSettings)}, () => {
+      this.toggleModal();
+    });
   }
 
 
