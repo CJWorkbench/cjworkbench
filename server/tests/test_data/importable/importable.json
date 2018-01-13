@@ -1,6 +1,6 @@
 {
-  "name": "importable",
-  "id_name": "importable" ,
+  "name": "importable test module",
+  "id_name": "importable_not_repo_name",
   "category" : "tests",
   "description": "This is a test module",
   "parameters": [

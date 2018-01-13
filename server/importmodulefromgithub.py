@@ -28,7 +28,6 @@ parent_directory = os.path.dirname(cwd)
 sys.path.insert(0, parent_directory)
 
 categories = set()
-already_imported = dict()
 
 def get_categories():
     #cache categories
@@ -40,12 +39,12 @@ def get_categories():
         categories.add("Analyse")
     return categories
 
-def get_already_imported():
-    # cache modules already imported to ensure that we don't override existing modules
-    if not already_imported:
-        modules = Module.objects.all()
-        for module in modules:
-            already_imported[module.id_name] = module.link
+# Returns dict of {id_name: url} for existing Module objects
+def get_already_imported_module_urls():
+    already_imported = dict()
+    modules = Module.objects.all()
+    for module in modules:
+        already_imported[module.id_name] = module.link
     return already_imported
 
 def refresh_module_from_github(url):
@@ -133,21 +132,15 @@ def get_module_config_from_json(url, extension_file_mapping, directory):
         raise ValidationError("The module configuration isn't in the correct format. It should contain name, id_name, "
                       "category and parameters")
 
-    # Check if we've already loaded a module with the same name.
-    modules = get_already_imported()
-    if module_config["id_name"] in modules and url != modules[module_config["id_name"]]:
-        source = modules[module_config["id_name"]] if modules[module_config["id_name"]] != '' else "Internal"
-        raise ValidationError("Module {} has already been loaded, and its source is {}.".format(module_config["id_name"], source))
-
     return module_config
 
-# Where this version of this module actually lives
-def destination_directory_name(moduledir, version):
+# Where this version of this module actually lives. Filed under importedmodules/reponame/git_version_hash
+def destination_directory_name(reponame, version):
 
     # check if files with the same name already exist.
     # This can happen if a module is deleted from the server DB, then re-imported
     # Just delete existing if so
-    destination_directory = os.path.join(moduledir, version)
+    destination_directory = os.path.join(MODULE_DIRECTORY, reponame, version)
     if os.path.isdir(destination_directory):
         shutil.rmtree(destination_directory)
 
@@ -269,9 +262,8 @@ MODULE_DIRECTORY = os.path.join(ROOT_DIRECTORY, "importedmodules")
 
 # Load a module after cloning from github
 # This is the guts of our module import, also a good place to hook into tests (bypassing github access)
-def import_module_from_directory(url, projname, version, importdir):
+def import_module_from_directory(url, reponame, version, importdir):
 
-    moduledir = os.path.join(MODULE_DIRECTORY, projname)
     destination_directory = None
     message = {}
 
@@ -282,10 +274,18 @@ def import_module_from_directory(url, projname, version, importdir):
         json_file = extension_file_mapping['json']
 
         module_config = get_module_config_from_json(url, extension_file_mapping, importdir)
+        id_name = module_config['id_name']
 
         # Don't allow importing the same version twice
-        if ModuleVersion.objects.filter(module__id_name=module_config['id_name'], source_version_hash=version):
-            raise ValidationError('Version {} of module {} has already been imported'.format(version, projname))
+        if ModuleVersion.objects.filter(module__id_name=id_name, source_version_hash=version):
+            raise ValidationError('Version {} of module {} has already been imported'.format(version, url))
+
+        # Don't allow loading a module with the same id_name from a different repo.
+        modules = get_already_imported_module_urls()
+        if module_config["id_name"] in modules and url != modules[module_config["id_name"]]:
+            source = modules[module_config["id_name"]] if modules[module_config["id_name"]] != '' else "Internal"
+            raise ValidationError(
+                "Module {} has already been loaded, and its source is {}.".format(module_config["id_name"], source))
 
         module_config["source_version"] = version
         module_config["link"] = url
@@ -297,7 +297,7 @@ def import_module_from_directory(url, projname, version, importdir):
             module_config["category"] = "Other"
 
         # The core work of creating a module
-        destination_directory = destination_directory_name(moduledir, version)
+        destination_directory = destination_directory_name(id_name, version)
         move_files_to_final_location(destination_directory, importdir, json_file, python_file)
         add_boilerplate_and_check_syntax(destination_directory, python_file)
         validate_python_functions(destination_directory, python_file)
@@ -315,7 +315,7 @@ def import_module_from_directory(url, projname, version, importdir):
 
         # data that we probably want displayed in the UI.
         message["category"] = module_config["category"]
-        message["project"] = projname
+        message["project"] = reponame
         message["author"] = module_config["author"]
         message["name"] = module_config["name"]
 
@@ -336,8 +336,8 @@ def import_module_from_github(url):
     url = url.lower().strip()
     url = sanitise_url(url)
 
-    projname = retrieve_project_name(url)
-    importdir = os.path.join(MODULE_DIRECTORY, 'clones', projname)
+    reponame = retrieve_project_name(url)
+    importdir = os.path.join(MODULE_DIRECTORY, 'clones', reponame)
 
     # Delete anything that might left over junk from previous failures (shouldn't happen, but)
     if  os.path.isdir(importdir):
@@ -359,7 +359,7 @@ def import_module_from_github(url):
         # retrieve Git hash to use as the version number.
         version = extract_version(importdir)
 
-        message = import_module_from_directory(url, projname, version, importdir)
+        message = import_module_from_directory(url, reponame, version, importdir)
 
 
     except Exception as e:

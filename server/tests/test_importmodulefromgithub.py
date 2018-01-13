@@ -17,6 +17,10 @@ def overriden_get_already_imported():
 class ImportFromGitHubTest(LoggedInTestCase):
     def setUp(self):
         super(ImportFromGitHubTest, self).setUp()  # log in
+
+        self.importable_repo_name = 'importable'
+        self.importable_id_name ='importable_not_repo_name'  # must match importable.json test data file
+
         self.cleanup()
 
     def tearDown(self):
@@ -31,20 +35,17 @@ class ImportFromGitHubTest(LoggedInTestCase):
         importdir = self.imported_dir()
         if os.path.isdir(importdir):
             shutil.rmtree(importdir)
-        importdir = self.imported_dir(project_name='importable') # used by test_load_and_dispatch
-        if os.path.isdir(importdir):
-            shutil.rmtree(importdir)
 
     # Where do we initially "clone" (fake clone) github files to?
     def clone_dir(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(pwd, 'prototype-dynamic-loading')
+        return os.path.join(pwd, 'importedmodules-test')
 
     # Where do we install the files?
     # Actual final location has version number added to the end of this, e.g. imported_dir() + "/123456"
-    def imported_dir(self, project_name='prototype-dynamic-loading'):
+    def imported_dir(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
-        return os.path.join(pwd, '..', '..', 'importedmodules', project_name)
+        return os.path.join(pwd, '..', '..', 'importedmodules', self.importable_id_name)
 
 
     # fills clone_dir() with a set of module files in "freshly cloned from github" state
@@ -59,23 +60,23 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
     def test_sanitise_url(self):
         #test valid url
-        input_url = "https://github.com/anothercookiecrumbles/prototype-dynamic-loading"
+        input_url = "https://github.com/anothercookiecrumbles/somerepo"
         returned_url = sanitise_url(input_url)
         self.assertEqual(input_url, returned_url, "In this case, the input url doesn't need to be cleaned. Therefore " +
                          " the output {} should be the input {}.".format(returned_url, input_url))
 
         #test valid url with a git suffix
-        input_url_git = "https://github.com/anothercookiecrumbles/prototype-dynamic-loading.git"
+        input_url_git = "https://github.com/anothercookiecrumbles/somerepo.git"
         returned_url_git = sanitise_url(input_url_git)
         self.assertEqual(input_url, returned_url_git, "In this case, the input url should have .git stripped out.")
 
         #test valid url with padding (i.e. extra spaces)
-        input_url_spaces = "     https://github.com/anothercookiecrumbles/prototype-dynamic-loading"
+        input_url_spaces = "     https://github.com/anothercookiecrumbles/somerepo"
         returned_url_spaces = sanitise_url(input_url)
         self.assertEqual(input_url, returned_url_spaces, "In this case, the input url just needs to be trimmed."
                 "Therefore the output {} should be the trimmed input {}.".format(returned_url, input_url_spaces))
 
-        input_url_spaces = "     https://github.com/anothercookiecrumbles/prototype-dynamic-loading     "
+        input_url_spaces = "     https://github.com/anothercookiecrumbles/somerepo     "
         returned_url_spaces = sanitise_url(input_url)
         self.assertEqual(input_url, returned_url_spaces, "In this case, the input url needs to be trimmed. "
                     "Therefore the output {} should be the input trimmed {}.".format(returned_url, input_url_spaces))
@@ -108,9 +109,9 @@ class ImportFromGitHubTest(LoggedInTestCase):
         #earlier in the stack. Hence, we don't test _bad_ urls.
 
         #retrieve project name for a GitHub url, but one that doesn't end .git.
-        git_url = "https://github.com/anothercookiecrumbles/prototype-dynamic-loading"
+        git_url = "https://github.com/anothercookiecrumbles/somerepo"
         project_name = retrieve_project_name(git_url)
-        self.assertEqual(project_name, "prototype-dynamic-loading")
+        self.assertEqual(project_name, "somerepo")
 
     def test_validate_module_structure(self):
         # We don't want to rely on a remote repo existing, so we drive this test off a local repo equivalent
@@ -173,7 +174,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
                           "The hash of the git repo should be {}, but the function returned {}.".format('427847c',
                                                                                                         version))
 
-    @mock.patch('server.importmodulefromgithub.get_already_imported', side_effect=overriden_get_already_imported)
+    @mock.patch('server.importmodulefromgithub.get_already_imported_module_urls', side_effect=overriden_get_already_imported)
     def test_validate_json(self, get_already_imported_function):
         test_dir = self.fake_github_clone()
 
@@ -190,35 +191,18 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.assertTrue(all (k in module_config for k in ("id_name", "description", "name", "category", "parameters")),
                         "Not all mandatory keys exist in the module_config/json file.")
 
-        # ensure error if module is already loaded.
-        # whilst this is artificially loading an item in the system, it's a reasonable way to do a unit test for potential _real_ modules.
-        sys.modules['server.modules.importable'] = ""
-        # amend underlying JSON file
-        open_file = open(os.path.join(test_dir, 'importable.json'))
-        try:
-            module_config = json.load(open_file)
-            module_config['id_name'] = "lumos"
-        finally:
-            open_file.close()
-
-        with open(os.path.join(test_dir, 'importable.json'), "w") as writable:
-            json.dump(module_config, writable)
-        with self.assertRaisesMessage(ValidationError, "Module lumos has already been loaded, and its source is Internal."):
-            get_module_config_from_json("someurl", mapping, test_dir)
-
-
     def test_destination_directory_name(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
 
         #check valid scenario
-        module_directory = self.imported_dir()
-        destination_directory = destination_directory_name(module_directory, "123456")
-        self.assertTrue(Path(destination_directory) == Path(pwd) / "../../importedmodules/prototype-dynamic-loading/123456")
+        destination_directory = destination_directory_name('my_id_name', '123456')
+        expected_path = os.path.normpath(pwd + '/../../importedmodules/my_id_name/123456')
+        self.assertTrue(Path(destination_directory) == Path(expected_path))
 
         # should work even if files already exists for the given module-version combination
         # in which case the dir should be deleted, so as to be ready for re-import
         os.makedirs(destination_directory)
-        destination_directory_name(module_directory,"123456")
+        destination_directory_name('my_id_name','123456')
         self.assertFalse(os.path.isdir(destination_directory))
 
 
@@ -266,10 +250,10 @@ class ImportFromGitHubTest(LoggedInTestCase):
     def test_load_and_dispatch(self):
         test_dir = self.fake_github_clone()
 
-        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+        import_module_from_directory('https://github.com/account/reponame', 'reponame', '123456', test_dir)
 
         # Module and ModuleVersion should have loaded -- these will raise exception if they don't exist
-        module = Module.objects.get(id_name='importable')
+        module = Module.objects.get(id_name=self.importable_id_name)
         module_version = ModuleVersion.objects.get(module=module)
 
         # Create a test workflow that uses this imported module
@@ -327,3 +311,11 @@ class ImportFromGitHubTest(LoggedInTestCase):
             import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
 
 
+    # don't allow loading the same id_name from a different URL. Prevents module replacement attacks, and user confusion
+    def test_already_imported(self):
+        test_dir = self.fake_github_clone()
+        import_module_from_directory("https://github.com/account/importable1", "importable1", "123456", test_dir)
+
+        test_dir = self.fake_github_clone() # import moves files, so get same files again
+        with self.assertRaises(ValidationError):
+            import_module_from_directory("https://github.com/account/importable2", "importable2", "123456", test_dir)

@@ -27,7 +27,7 @@ class Module(models.Model):
     # the author of the given module
     author = models.CharField('author', max_length=200, default="Workbench")
 
-    # the link to the module
+    # the url of the module repo
     link = models.CharField('link', max_length=200, default="")
 
     # icon name associated with module
