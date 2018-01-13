@@ -21,7 +21,7 @@ from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
 from .dynamicdispatch import DynamicDispatch
 from .importmodulefromgithub import original_module_lineno
-import os, sys, traceback
+import os, sys, traceback, types
 
 # ---- Test Support ----
 
@@ -120,6 +120,8 @@ def module_dispatch_render(wf_module, table):
             raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
         else:
             params = create_parameter_dict(wf_module, table)
+            error = None
+            tableout = None
 
             try:
                 tableout = loadable.render(table, params)
@@ -130,11 +132,20 @@ def module_dispatch_render(wf_module, table):
                 tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
                 fname = os.path.split(tb[0])[1]
                 lineno = original_module_lineno(tb[1])
-                wf_module.set_error('{}: {} at line {} of {}'.format(exc_name, str(e), lineno, fname), notify=True)
-                return None
+                error = ('{}: {} at line {} of {}'.format(exc_name, str(e), lineno, fname))
 
-            wf_module.set_ready(notify=False)
-            return tableout
+            if isinstance(tableout, str):
+                # If the module returns a string, it's an error message
+                error = tableout
+            elif (not isinstance(tableout, pd.DataFrame)) and (tableout is not None):
+                # if it's not a string it needs to be a table
+                error = 'Module did not return a table or None'
+
+            if error:
+                wf_module.set_error(error, notify=True)
+            else:
+                wf_module.set_ready(notify=False)
+                return tableout
 
     # Internal module -- has access to internal data structures
     else:
