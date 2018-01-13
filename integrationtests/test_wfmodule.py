@@ -52,7 +52,7 @@ class TestWfModule(DummyWorkflowIntegrationTest):
 
         # open, then close the export dialog
         header.find_by_text('Export').first.click()
-        self.assertTrue(b.is_element_present_by_text('Export Data'))
+        self.assertTrue(b.is_element_present_by_text('EXPORT DATA'))
         self.assertTrue(b.find_link_by_partial_href('/public/moduledata/live/' + str(self.wfm.id) + '.csv')) # b not header as modal is a portal component
         self.assertTrue(b.find_link_by_partial_href('/public/moduledata/live/' + str(self.wfm.id) + '.json'))
 

@@ -61,7 +61,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
             className="col-sm-3"
           >
             <div
-              className="action-button auto-button button-full-blue"
+              className="action-button auto-button button-gray"
               onClick={[Function]}
             >
               On
@@ -94,7 +94,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
                 onChange={[Function]}
                 tag="p"
                 type="number"
-                value={888}
+                value={5}
               />
               <Input
                 className="ml-3 input-dropdown"
@@ -103,7 +103,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
                 onChange={[Function]}
                 tag="p"
                 type="select"
-                value="days"
+                value="minutes"
               >
                 <option>
                   minutes
@@ -130,7 +130,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
             className="col-sm-3"
           >
             <div
-              className="action-button manual-button button-gray "
+              className="action-button manual-button button-full-blue"
               onClick={[Function]}
             >
               Off
