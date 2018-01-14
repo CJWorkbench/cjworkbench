@@ -1384,7 +1384,7 @@ img.logo {
 }
 .modulestack-empty {
   cursor: default;
-  width: 38rem;
+  width: 38 rem;
   margin-top: 1.5rem;
   padding: 6rem 0;
   border: 4px dashed #FBAA6D;
@@ -2224,17 +2224,10 @@ input[type=checkbox]:checked:after {
   border-top: 1px solid #eceeef;
 }
 
-/* .dialog-footer-dual {
-  background-color: #fff;
-  padding: 2rem;
-  display: flex;
-  justify-content: space-between;
-} */
-
 /* Data version modal */
 
 .alert-setting-modal {
-  width: 70%;
+  width: 75%;
   display: flex;
   align-items: center;
   justify-content: space-between;

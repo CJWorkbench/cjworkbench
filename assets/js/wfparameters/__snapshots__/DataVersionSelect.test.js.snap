@@ -214,11 +214,11 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
       </div>
     </ModalBody>
     <ModalFooter
-      className="dialog-footer-dual"
+      className="dialog-footer d-flex justify-content-between"
       tag="div"
     >
       <div
-        className="dialog-footer-dual modal-footer"
+        className="dialog-footer d-flex justify-content-between modal-footer"
       >
         <div
           className="alert-setting-modal"

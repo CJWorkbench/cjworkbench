@@ -174,7 +174,7 @@ export default class DataVersionSelect extends React.Component {
                 })}
               </div>
             </ModalBody>
-            <ModalFooter className='dialog-footer-dual'>
+            <ModalFooter className='dialog-footer d-flex justify-content-between'>
             <div className='alert-setting-modal'>
               {this.props.notifications ? (
                 [<div className='alert-setting' key='1'>
