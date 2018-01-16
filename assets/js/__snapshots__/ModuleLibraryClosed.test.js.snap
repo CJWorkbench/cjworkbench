@@ -1,0 +1,133 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
+<DragDropContextProvider
+  backend={[Function]}
+>
+  <ModuleLibraryClosed
+    addModule={[Function]}
+    dropModule={[Function]}
+    isReadOnly={false}
+    items={Array []}
+    libraryOpen={true}
+    moduleAdded={[Function]}
+    openCategory="Add Data"
+    openLibrary={[Function]}
+    setOpenCategory={[Function]}
+    toggleLibrary={[Function]}
+  >
+    <div
+      className="module-library-closed"
+    >
+      <div
+        className="expand-lib"
+      >
+        <div
+          className="expand-lib-button d-flex"
+        >
+          <div
+            className="logo"
+            onClick={[Function]}
+          >
+            <img
+              src="/static/images/logo.png"
+              width="20"
+            />
+          </div>
+          <div
+            className="icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle"
+            onClick={[Function]}
+          />
+        </div>
+      </div>
+      <div
+        className="card"
+        onClick={[Function]}
+      >
+        <div
+          className="first-level"
+        >
+          <div
+            className="icon-search-white ml-icon-search text-center mt-3"
+          />
+        </div>
+      </div>
+      <ModuleCategories
+        addModule={[Function]}
+        dropModule={[Function]}
+        isReadOnly={false}
+        items={Array []}
+        libraryOpen={false}
+        openCategory="Add Data"
+        setOpenCategory={[Function]}
+      >
+        <div
+          className="list"
+        />
+      </ModuleCategories>
+      ;
+      <DragSource(AddNotificationButton)
+        libraryOpen={false}
+      >
+        <AddNotificationButton
+          connectDragSource={[Function]}
+          isDragging={false}
+          libraryOpen={false}
+        >
+          <div
+            className="card"
+          >
+            <div
+              className="second-level t-vl-gray d-flex"
+            >
+              <div
+                className="ml-icon-container mr-5"
+              >
+                <div
+                  className="icon-notification ml-icon"
+                  title="Add Notification"
+                />
+              </div>
+              <div
+                className="ml-handle"
+              >
+                <div
+                  className="icon-grip"
+                />
+              </div>
+            </div>
+          </div>
+        </AddNotificationButton>
+      </DragSource(AddNotificationButton)>
+      <ImportModuleFromGitHub
+        libraryOpen={false}
+        moduleAdded={[Function]}
+      >
+        <div>
+          <div
+            className="import-module-button mb-5"
+            onClick={[Function]}
+          >
+            <div
+              className="icon-add"
+              title="Import From Github"
+            />
+          </div>
+          <Modal
+            autoFocus={true}
+            backdrop={true}
+            backdropTransitionTimeout={150}
+            className="modal-dialog"
+            fade={true}
+            isOpen={false}
+            keyboard={true}
+            modalTransitionTimeout={300}
+            toggle={[Function]}
+            zIndex={1050}
+          />
+        </div>
+      </ImportModuleFromGitHub>
+    </div>
+  </ModuleLibraryClosed>
+</DragDropContextProvider>
+`;

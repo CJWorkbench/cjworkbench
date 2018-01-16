@@ -160,8 +160,8 @@ export default class ModuleLibrary extends React.Component {
           items={this.state.items}
           addModule={this.props.addModule}
           dropModule={this.props.dropModule}
-          moduleAdded={this.updated}
-          toggleLibrary={this.toggleLibrary}
+          moduleAdded={() => {}}
+          toggleLibrary={() => {}}
           openLibrary={this.openLibrary}
           openCategory={this.state.openCategory} 
           setOpenCategory={this.setOpenCategory}

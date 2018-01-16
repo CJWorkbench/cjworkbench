@@ -1,18 +1,22 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ImportModuleFromGitHub Link will open modal window 1`] = `
+exports[`ImportModuleFromGitHub Library closed Renders a link, which will open modal window 1`] = `
 <ImportModuleFromGitHub
+  libraryOpen={true}
   moduleAdded={[Function]}
-  moduleLibrary={Object {}}
 >
   <div>
     <div
-      className="import-module-button content-4 t-vl-gray"
+      className="import-module-button content-3 mb-5 t-vl-gray"
       onClick={[Function]}
     >
-      IMPORT CUSTOM MODULE
+      <span
+        className="icon-add mr-2"
+      />
+      <span>
+        IMPORT FROM GITHUB
+      </span>
     </div>
-    ;
     <Modal
       autoFocus={true}
       backdrop={true}
@@ -29,7 +33,140 @@ exports[`ImportModuleFromGitHub Link will open modal window 1`] = `
 </ImportModuleFromGitHub>
 `;
 
-exports[`ImportModuleFromGitHub Link will open modal window 2`] = `
+exports[`ImportModuleFromGitHub Library closed Renders a link, which will open modal window 2`] = `
+<div
+  className="modal-dialog modal-dialog"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      tag="h4"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="modal-header"
+      >
+        <h4
+          className="modal-title"
+        >
+          <div
+            className="title-4 t-d-gray"
+          >
+            IMPORT CUSTOM MODULE
+          </div>
+        </h4>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      className="dialog-body"
+      tag="div"
+    >
+      <div
+        className="dialog-body modal-body"
+      >
+        <form
+          onSubmit={[Function]}
+        >
+          <div
+            className="label-margin t-d-gray content-3"
+          >
+            Git Url:
+          </div>
+          <div
+            className="import-url-field"
+          >
+            <input
+              className="text-field mb-3 mt-2 content-3"
+              onChange={[Function]}
+              onKeyPress={[Function]}
+              placeholder="https://github.com/..."
+              type="text"
+            />
+            <div
+              className="label-margin t-m-gray info-1"
+            >
+              Learn more about how to build your own module 
+              <a
+                className=" t-f-blue"
+                href="http://cjworkbench.org/index.php/build-a-module/"
+                target="_blank"
+              >
+                here
+              </a>
+            </div>
+          </div>
+          <div
+            className="modal-dual-button d-flex flex-row"
+          >
+            <div
+              className="button-gray action-button"
+              onClick={[Function]}
+            >
+              Cancel
+            </div>
+            <div
+              className="button-blue action-button ml-3"
+              onClick={[Function]}
+            >
+              Import
+            </div>
+          </div>
+        </form>
+      </div>
+    </ModalBody>
+  </div>
+</div>
+`;
+
+exports[`ImportModuleFromGitHub Library open Renders a link, which will open modal window 1`] = `
+<ImportModuleFromGitHub
+  libraryOpen={true}
+  moduleAdded={[Function]}
+>
+  <div>
+    <div
+      className="import-module-button content-3 mb-5 t-vl-gray"
+      onClick={[Function]}
+    >
+      <span
+        className="icon-add mr-2"
+      />
+      <span>
+        IMPORT FROM GITHUB
+      </span>
+    </div>
+    <Modal
+      autoFocus={true}
+      backdrop={true}
+      backdropTransitionTimeout={150}
+      className="modal-dialog"
+      fade={true}
+      isOpen={false}
+      keyboard={true}
+      modalTransitionTimeout={300}
+      toggle={[Function]}
+      zIndex={1050}
+    />
+  </div>
+</ImportModuleFromGitHub>
+`;
+
+exports[`ImportModuleFromGitHub Library open Renders a link, which will open modal window 2`] = `
 <div
   className="modal-dialog modal-dialog"
   role="document"

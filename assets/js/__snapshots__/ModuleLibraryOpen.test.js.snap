@@ -1,0 +1,278 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
+<DragDropContextProvider
+  backend={[Function]}
+>
+  <ModuleLibraryOpen
+    addModule={[Function]}
+    dropModule={[Function]}
+    isReadOnly={false}
+    items={Array []}
+    libraryOpen={true}
+    moduleAdded={[Function]}
+    openCategory="Add Data"
+    openLibrary={[Function]}
+    setOpenCategory={[Function]}
+    toggleLibrary={[Function]}
+    workflow={Object {}}
+  >
+    <div
+      className="module-library-open"
+    >
+      <div
+        className="library-nav-bar"
+      >
+        <div
+          className="d-flex align-items-center flex-row mb-4"
+        >
+          <a
+            className="logo"
+            href="/workflows"
+          >
+            <img
+              src="/static/images/logo.png"
+              width="20"
+            />
+          </a>
+          <a
+            className="logo-2 ml-3 t-vl-gray "
+            href="/workflows"
+          >
+            Workbench
+          </a>
+          <div
+            className="icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle"
+            onClick={[Function]}
+          />
+        </div>
+        <div
+          className="d-flex align-items-center search-bar"
+        >
+          <div
+            className="icon-search-white ml-icon-search ml-4"
+          />
+          <ModuleSearch
+            addModule={[Function]}
+            dropModule={[Function]}
+            items={Array []}
+            workflow={Object {}}
+          >
+            <Autosuggest
+              alwaysRenderSuggestions={false}
+              focusInputOnSuggestionClick={true}
+              getSectionSuggestions={[Function]}
+              getSuggestionValue={[Function]}
+              highlightFirstSuggestion={false}
+              id="1"
+              inputProps={
+                Object {
+                  "autoFocus": true,
+                  "onChange": [Function],
+                  "placeholder": "Search modules",
+                  "value": "",
+                }
+              }
+              multiSection={true}
+              onSuggestionSelected={[Function]}
+              onSuggestionsClearRequested={[Function]}
+              onSuggestionsFetchRequested={[Function]}
+              renderSectionTitle={[Function]}
+              renderSuggestion={[Function]}
+              renderSuggestionsContainer={[Function]}
+              shouldRenderSuggestions={[Function]}
+              suggestions={Array []}
+              theme={
+                Object {
+                  "container": "react-autosuggest__container",
+                  "containerOpen": "react-autosuggest__container--open",
+                  "input": "react-autosuggest__input",
+                  "inputFocused": "react-autosuggest__input--focused",
+                  "inputOpen": "react-autosuggest__input--open",
+                  "sectionContainer": "react-autosuggest__section-container",
+                  "sectionContainerFirst": "react-autosuggest__section-container--first",
+                  "sectionTitle": "react-autosuggest__section-title",
+                  "suggestion": "react-autosuggest__suggestion",
+                  "suggestionFirst": "react-autosuggest__suggestion--first",
+                  "suggestionHighlighted": "react-autosuggest__suggestion--highlighted",
+                  "suggestionsContainer": "react-autosuggest__suggestions-container",
+                  "suggestionsContainerOpen": "react-autosuggest__suggestions-container--open",
+                  "suggestionsList": "react-autosuggest__suggestions-list",
+                }
+              }
+            >
+              <Autowhatever
+                getSectionItems={[Function]}
+                highlightedItemIndex={null}
+                highlightedSectionIndex={null}
+                id="1"
+                inputProps={
+                  Object {
+                    "autoFocus": true,
+                    "onBlur": [Function],
+                    "onChange": [Function],
+                    "onFocus": [Function],
+                    "onKeyDown": [Function],
+                    "placeholder": "Search modules",
+                    "value": "",
+                  }
+                }
+                itemProps={[Function]}
+                items={Array []}
+                multiSection={true}
+                renderInputComponent={[Function]}
+                renderItem={[Function]}
+                renderItemData={
+                  Object {
+                    "query": "",
+                  }
+                }
+                renderItemsContainer={[Function]}
+                renderSectionTitle={[Function]}
+                theme={
+                  Object {
+                    "container": "react-autosuggest__container",
+                    "containerOpen": "react-autosuggest__container--open",
+                    "input": "react-autosuggest__input",
+                    "inputFocused": "react-autosuggest__input--focused",
+                    "inputOpen": "react-autosuggest__input--open",
+                    "item": "react-autosuggest__suggestion",
+                    "itemFirst": "react-autosuggest__suggestion--first",
+                    "itemHighlighted": "react-autosuggest__suggestion--highlighted",
+                    "itemsContainer": "react-autosuggest__suggestions-container",
+                    "itemsContainerOpen": "react-autosuggest__suggestions-container--open",
+                    "itemsList": "react-autosuggest__suggestions-list",
+                    "sectionContainer": "react-autosuggest__section-container",
+                    "sectionContainerFirst": "react-autosuggest__section-container--first",
+                    "sectionTitle": "react-autosuggest__section-title",
+                  }
+                }
+              >
+                <div
+                  className="react-autosuggest__container"
+                >
+                  <input
+                    aria-activedescendant={null}
+                    aria-autocomplete="list"
+                    aria-expanded={false}
+                    aria-haspopup={false}
+                    aria-owns="react-autowhatever-1"
+                    autoComplete="off"
+                    autoFocus={true}
+                    className="react-autosuggest__input"
+                    onBlur={[Function]}
+                    onChange={[Function]}
+                    onFocus={[Function]}
+                    onKeyDown={[Function]}
+                    placeholder="Search modules"
+                    role="combobox"
+                    type="text"
+                    value=""
+                  />
+                  <div
+                    className="react-autosuggest__suggestions-container"
+                    id="react-autowhatever-1"
+                  />
+                </div>
+              </Autowhatever>
+            </Autosuggest>
+          </ModuleSearch>
+        </div>
+      </div>
+      <ModuleCategories
+        addModule={[Function]}
+        dropModule={[Function]}
+        isReadOnly={false}
+        items={Array []}
+        libraryOpen={true}
+        openCategory="Add Data"
+        setOpenCategory={[Function]}
+      >
+        <div
+          className="list"
+        />
+      </ModuleCategories>
+      ;
+      <div
+        className="ml-divider"
+      />
+      <DragSource(AddNotificationButton)
+        libraryOpen={true}
+      >
+        <AddNotificationButton
+          connectDragSource={[Function]}
+          isDragging={false}
+          libraryOpen={true}
+        >
+          <div
+            className="card"
+          >
+            <div
+              className="second-level t-vl-gray d-flex"
+            >
+              <div
+                className="d-flex flex-row align-items-center"
+              >
+                <div
+                  className="ml-icon-container ml-2"
+                >
+                  <div
+                    className="icon-notification ml-icon"
+                  />
+                </div>
+                <div>
+                  <div
+                    className="content-5 ml-module-name"
+                  >
+                    New alert
+                  </div>
+                </div>
+              </div>
+              <div
+                className="ml-handle"
+              >
+                <div
+                  className="icon-grip"
+                />
+              </div>
+            </div>
+          </div>
+        </AddNotificationButton>
+      </DragSource(AddNotificationButton)>
+      <div
+        className="ml-divider"
+      />
+      <ImportModuleFromGitHub
+        libraryOpen={true}
+        moduleAdded={[Function]}
+      >
+        <div>
+          <div
+            className="import-module-button content-3 mb-5 t-vl-gray"
+            onClick={[Function]}
+          >
+            <span
+              className="icon-add mr-2"
+            />
+            <span>
+              IMPORT FROM GITHUB
+            </span>
+          </div>
+          <Modal
+            autoFocus={true}
+            backdrop={true}
+            backdropTransitionTimeout={150}
+            className="modal-dialog"
+            fade={true}
+            isOpen={false}
+            keyboard={true}
+            modalTransitionTimeout={300}
+            toggle={[Function]}
+            zIndex={1050}
+          />
+        </div>
+      </ImportModuleFromGitHub>
+    </div>
+  </ModuleLibraryOpen>
+</DragDropContextProvider>
+`;

@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ModuleCategories  Renders list of ModuleCategory components 1`] = `
+<ModuleCategories
+  addModule={[Function]}
+  dropModule={[Function]}
+  isReadOnly={false}
+  items={Array []}
+  libraryOpen={true}
+  openCategory="Add Data"
+  setOpenCategory={[Function]}
+>
+  <div
+    className="list"
+  />
+</ModuleCategories>
+`;

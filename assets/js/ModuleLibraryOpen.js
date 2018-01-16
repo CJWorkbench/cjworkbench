@@ -66,6 +66,7 @@ export default class ModuleLibraryOpen extends React.Component {
 }
 
 ModuleLibraryOpen.propTypes = {
+  workflow:         PropTypes.object.isRequired,
   openCategory:     PropTypes.string,
   addModule:        PropTypes.func.isRequired,
   dropModule:       PropTypes.func.isRequired,

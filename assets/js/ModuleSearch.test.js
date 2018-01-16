@@ -45,9 +45,14 @@ describe('ModuleSearch', () => {
     />
   ));
 
-  it('Renders', () => { 
+  it('Renders search bar', () => { 
     expect(wrapper).toMatchSnapshot(); // 1    
   });
+
+  // it('Typing in search bar will render suggestions', () => { 
+  //   // expect(wrapper).toMatchSnapshot(); // 1   
+  //   expect(true).toBe(true);
+  // });
 
   // FAILING: how can we get State to load from the props?
   // it('Loads modules from props ', (done) => { 

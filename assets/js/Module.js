@@ -81,6 +81,7 @@ Module.propTypes = {
   name:       PropTypes.string.isRequired,
   icon:       PropTypes.string.isRequired,
   addModule:  PropTypes.func,
+  dropModule: PropTypes.func,
 //  workflow:   PropTypes.object
 };
 

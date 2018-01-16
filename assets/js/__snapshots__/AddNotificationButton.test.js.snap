@@ -1,0 +1,51 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`AddNotificationButton  Library Open  Renders 1`] = `
+<DragDropContextProvider
+  backend={[Function]}
+>
+  <DragSource(AddNotificationButton)
+    libraryOpen={true}
+  >
+    <AddNotificationButton
+      connectDragSource={[Function]}
+      isDragging={false}
+      libraryOpen={true}
+    >
+      <div
+        className="card"
+      >
+        <div
+          className="second-level t-vl-gray d-flex"
+        >
+          <div
+            className="d-flex flex-row align-items-center"
+          >
+            <div
+              className="ml-icon-container ml-2"
+            >
+              <div
+                className="icon-notification ml-icon"
+              />
+            </div>
+            <div>
+              <div
+                className="content-5 ml-module-name"
+              >
+                New alert
+              </div>
+            </div>
+          </div>
+          <div
+            className="ml-handle"
+          >
+            <div
+              className="icon-grip"
+            />
+          </div>
+        </div>
+      </div>
+    </AddNotificationButton>
+  </DragSource(AddNotificationButton)>
+</DragDropContextProvider>
+`;
