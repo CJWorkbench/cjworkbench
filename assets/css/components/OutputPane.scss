@@ -1,0 +1,36 @@
+/* Output Pane */
+.outputpane {
+  flex: 1 1 auto;
+}
+
+.outputpane iframe {
+  border:none;
+  width:100%;
+  height: calc(50% - 3rem);
+}
+
+/* This div may be superfluous wrt .outputpane */
+.outputpane-box {
+  height: calc(100% - 6rem);
+  background-color: #F2F2F2;
+  position: relative;
+}
+
+iframe + .outputpane-box {
+  height: calc(50% - 3rem);
+}
+
+.outputpane-header {
+  height: 7rem;
+  background-color: #FFFFFF;
+  padding: 2rem 3rem 2rem 3rem;
+}
+
+.outputpane-data {
+  overflow: hidden;
+  position: absolute;
+  top:7rem;
+  left:0;
+  right:0;
+  bottom:0;
+}
