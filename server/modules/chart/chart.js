@@ -1,0 +1,1 @@
+/Users/matthew/dev/bar-chart/dist/chart.js
