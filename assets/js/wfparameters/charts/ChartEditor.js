@@ -61,31 +61,31 @@ export default class ChartEditor extends React.Component {
 	}
 
   onChangeChartSettings(state) {
-    let stateCopy = Object.assign({}, this.state);
+    let stateCopy = JSON.parse(JSON.stringify(this.state));
     stateCopy.chartProps.chartSettings = state;
     this.saveState(stateCopy);
   }
 
   onChangeTitle(e) {
-    let stateCopy = Object.assign({}, this.state);
+    let stateCopy = JSON.parse(JSON.stringify(this.state));
     stateCopy.metadata.title = e.target.value;
     this.saveState(stateCopy);
   }
 
   onChangePrefix(e) {
-    let stateCopy = Object.assign({}, this.state);
+    let stateCopy = JSON.parse(JSON.stringify(this.state));
     stateCopy.chartProps.scale.primaryScale.prefix = e.target.value;
     this.saveState(stateCopy);
   }
 
   onChangeSuffix(e) {
-    let stateCopy = Object.assign({}, this.state);
+    let stateCopy = JSON.parse(JSON.stringify(this.state));
     stateCopy.chartProps.scale.primaryScale.suffix = e.target.value;
     this.saveState(stateCopy);
   }
 
   onChangeDate(uh) {
-    let stateCopy = Object.assign({}, this.state);
+    let stateCopy = JSON.parse(JSON.stringify(this.state));
     stateCopy.chartProps.scale = uh;
     this.saveState(stateCopy);
   }
