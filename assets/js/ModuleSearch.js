@@ -1,7 +1,7 @@
 /**
- * Search field that returns modules matching text input.
- * 
- */
+* Search field that returns modules matching text input.
+* 
+*/
 
 import React from 'react';
 import Autosuggest from 'react-autosuggest';

@@ -1,4 +1,3 @@
-
 /**
  * Collapsed version of the <ModuleLibrary>. 
  * 
@@ -10,14 +9,12 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleCategories from './ModuleCategories';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
-// import ModuleSearch from './ModuleSearch';
 import AddNotificationButton from './AddNotificationButton';
 
 
 export default class ModuleLibraryClosed extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {};
   }
 
@@ -26,7 +23,7 @@ export default class ModuleLibraryClosed extends React.Component {
       ? null
       : <div
           className='icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle'
-          onClick={this.props.toggleLibrary}>
+          onClick={this.props.openLibrary}>
         </div>
 
     return (
@@ -34,7 +31,9 @@ export default class ModuleLibraryClosed extends React.Component {
       
         <div className="expand-lib">
           <div className="expand-lib-button d-flex">
-            <div className="logo" onClick={this.props.toggleLibrary}><img src="/static/images/logo.png" width="20"/></div>
+            <a href="/workflows"  className="logo">
+              <img src="/static/images/logo.png" width="20"/>
+            </a>
             { toggleArrow }
           </div>
         </div>
@@ -57,7 +56,11 @@ export default class ModuleLibraryClosed extends React.Component {
 
         <AddNotificationButton libraryOpen={false}/>
 
-        <ImportModuleFromGitHub moduleAdded={this.props.moduleAdded} libraryOpen={false}/>          
+        <ImportModuleFromGitHub 
+          moduleAdded={this.props.moduleAdded} 
+          libraryOpen={false}
+          api={this.props.api}
+        />          
 
       </div>
     )
@@ -65,6 +68,7 @@ export default class ModuleLibraryClosed extends React.Component {
 }
 
 ModuleLibraryClosed.propTypes = {
+  api:              PropTypes.object.isRequired,  
   openCategory:     PropTypes.string,
   addModule:        PropTypes.func.isRequired,
   dropModule:       PropTypes.func.isRequired,
@@ -73,7 +77,6 @@ ModuleLibraryClosed.propTypes = {
   libraryOpen:      PropTypes.bool.isRequired,
   isReadOnly:       PropTypes.bool.isRequired,
   moduleAdded:      PropTypes.func.isRequired,
-  toggleLibrary:    PropTypes.func.isRequired,
   openLibrary:      PropTypes.func.isRequired,
 };
 

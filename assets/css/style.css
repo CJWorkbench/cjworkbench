@@ -1490,7 +1490,8 @@ img.logo {
   border-radius: 0;
 }
 
-.module-library-closed > .card {
+.module-library-closed > .card,
+.module-library-closed > .list {
   border-bottom: 1px solid rgba(255,255,255, .1);
 }
 
@@ -1749,6 +1750,10 @@ img.logo {
 
 /* ImportModuleFromGitHub */
 
+.import-module {
+  border-bottom: 1px solid rgba(255,255,255, .1);
+}
+
 .import-module-button {
   cursor: pointer;
   color: #FAFAFA;
@@ -1758,6 +1763,7 @@ img.logo {
   margin-right: 2rem;
   text-align:center;
 }
+
 .import-module-button:hover {
   cursor: pointer;
   color: #FFFFFF;

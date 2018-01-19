@@ -1,5 +1,6 @@
 /**
- * Draggable icon which can attach a notification to a data import module
+ * Component which can be dragged to a data import module
+ *     to attach a notification
  */
 
 import React from 'react';
@@ -47,19 +48,14 @@ class AddNotificationButton extends React.Component {
     return this.props.connectDragSource(
       <div className='card'>
         <div className='second-level t-vl-gray d-flex'>
-          
           {header}
-
           <div className='ml-handle'>
             <div className='icon-grip'></div>
           </div>
-
         </div>
       </div>
     )
-    
   }
-
 }
 
 export default DragSource('notification', spec, collect)(AddNotificationButton)

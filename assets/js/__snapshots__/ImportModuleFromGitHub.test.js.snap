@@ -2,10 +2,17 @@
 
 exports[`ImportModuleFromGitHub Library closed Renders a link, which will open modal window 1`] = `
 <ImportModuleFromGitHub
+  api={
+    Object {
+      "importFromGithub": [Function],
+    }
+  }
   libraryOpen={true}
   moduleAdded={[Function]}
 >
-  <div>
+  <div
+    className="import-module"
+  >
     <div
       className="import-module-button content-3 mb-5 t-vl-gray"
       onClick={[Function]}
@@ -135,10 +142,17 @@ exports[`ImportModuleFromGitHub Library closed Renders a link, which will open m
 
 exports[`ImportModuleFromGitHub Library open Renders a link, which will open modal window 1`] = `
 <ImportModuleFromGitHub
+  api={
+    Object {
+      "importFromGithub": [Function],
+    }
+  }
   libraryOpen={true}
   moduleAdded={[Function]}
 >
-  <div>
+  <div
+    className="import-module"
+  >
     <div
       className="import-module-button content-3 mb-5 t-vl-gray"
       onClick={[Function]}

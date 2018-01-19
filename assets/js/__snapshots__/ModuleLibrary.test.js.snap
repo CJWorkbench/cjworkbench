@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ModuleLibrary renders open when not read-only, with list of module categories 1`] = `
+exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
@@ -23,13 +23,17 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
     <div>
       <ModuleLibraryOpen
         addModule={[Function]}
+        api={
+          Object {
+            "getModules": [Function],
+          }
+        }
         dropModule={[Function]}
         isReadOnly={false}
         items={Array []}
         libraryOpen={true}
         moduleAdded={[Function]}
         openCategory="Add data"
-        openLibrary={[Function]}
         setOpenCategory={[Function]}
         toggleLibrary={[Function]}
         workflow={
@@ -270,10 +274,17 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
             className="ml-divider"
           />
           <ImportModuleFromGitHub
+            api={
+              Object {
+                "getModules": [Function],
+              }
+            }
             libraryOpen={true}
             moduleAdded={[Function]}
           >
-            <div>
+            <div
+              className="import-module"
+            >
               <div
                 className="import-module-button content-3 mb-5 t-vl-gray"
                 onClick={[Function]}
@@ -306,7 +317,7 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
 </DragDropContextProvider>
 `;
 
-exports[`ModuleLibrary renders open when not read-only, with list of module categories 2`] = `
+exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
@@ -329,6 +340,11 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
     <div>
       <ModuleLibraryOpen
         addModule={[Function]}
+        api={
+          Object {
+            "getModules": [Function],
+          }
+        }
         dropModule={[Function]}
         isReadOnly={false}
         items={
@@ -359,7 +375,6 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
         libraryOpen={true}
         moduleAdded={[Function]}
         openCategory="Add data"
-        openLibrary={[Function]}
         setOpenCategory={[Function]}
         toggleLibrary={[Function]}
         workflow={
@@ -964,10 +979,17 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
             className="ml-divider"
           />
           <ImportModuleFromGitHub
+            api={
+              Object {
+                "getModules": [Function],
+              }
+            }
             libraryOpen={true}
             moduleAdded={[Function]}
           >
-            <div>
+            <div
+              className="import-module"
+            >
               <div
                 className="import-module-button content-3 mb-5 t-vl-gray"
                 onClick={[Function]}
@@ -996,6 +1018,162 @@ exports[`ModuleLibrary renders open when not read-only, with list of module cate
         </div>
       </ModuleLibraryOpen>
     </div>
+  </ModuleLibrary>
+</DragDropContextProvider>
+`;
+
+exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = `
+<DragDropContextProvider
+  backend={[Function]}
+>
+  <ModuleLibrary
+    addModule={[Function]}
+    api={
+      Object {
+        "getModules": [Function],
+      }
+    }
+    dropModule={[Function]}
+    isReadOnly={true}
+    workflow={
+      Object {
+        "id": 15,
+        "name": "What a workflow!",
+      }
+    }
+  >
+    <ModuleLibraryClosed
+      addModule={[Function]}
+      api={
+        Object {
+          "getModules": [Function],
+        }
+      }
+      dropModule={[Function]}
+      isReadOnly={true}
+      items={Array []}
+      libraryOpen={false}
+      moduleAdded={[Function]}
+      openCategory="Add data"
+      openLibrary={[Function]}
+      setOpenCategory={[Function]}
+    >
+      <div
+        className="module-library-closed"
+      >
+        <div
+          className="expand-lib"
+        >
+          <div
+            className="expand-lib-button d-flex"
+          >
+            <a
+              className="logo"
+              href="/workflows"
+            >
+              <img
+                src="/static/images/logo.png"
+                width="20"
+              />
+            </a>
+          </div>
+        </div>
+        <div
+          className="card"
+          onClick={[Function]}
+        >
+          <div
+            className="first-level"
+          >
+            <div
+              className="icon-search-white ml-icon-search text-center mt-3"
+            />
+          </div>
+        </div>
+        <ModuleCategories
+          addModule={[Function]}
+          dropModule={[Function]}
+          isReadOnly={true}
+          items={Array []}
+          libraryOpen={false}
+          openCategory="Add data"
+          setOpenCategory={[Function]}
+        >
+          <div
+            className="list"
+          />
+        </ModuleCategories>
+        ;
+        <DragSource(AddNotificationButton)
+          libraryOpen={false}
+        >
+          <AddNotificationButton
+            connectDragSource={[Function]}
+            isDragging={false}
+            libraryOpen={false}
+          >
+            <div
+              className="card"
+            >
+              <div
+                className="second-level t-vl-gray d-flex"
+              >
+                <div
+                  className="ml-icon-container mr-5"
+                >
+                  <div
+                    className="icon-notification ml-icon"
+                    title="Add Notification"
+                  />
+                </div>
+                <div
+                  className="ml-handle"
+                >
+                  <div
+                    className="icon-grip"
+                  />
+                </div>
+              </div>
+            </div>
+          </AddNotificationButton>
+        </DragSource(AddNotificationButton)>
+        <ImportModuleFromGitHub
+          api={
+            Object {
+              "getModules": [Function],
+            }
+          }
+          libraryOpen={false}
+          moduleAdded={[Function]}
+        >
+          <div
+            className="import-module"
+          >
+            <div
+              className="import-module-button mb-5"
+              onClick={[Function]}
+            >
+              <div
+                className="icon-add"
+                title="Import From Github"
+              />
+            </div>
+            <Modal
+              autoFocus={true}
+              backdrop={true}
+              backdropTransitionTimeout={150}
+              className="modal-dialog"
+              fade={true}
+              isOpen={false}
+              keyboard={true}
+              modalTransitionTimeout={300}
+              toggle={[Function]}
+              zIndex={1050}
+            />
+          </div>
+        </ImportModuleFromGitHub>
+      </div>
+    </ModuleLibraryClosed>
   </ModuleLibrary>
 </DragDropContextProvider>
 `;

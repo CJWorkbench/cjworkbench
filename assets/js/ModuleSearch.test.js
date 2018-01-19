@@ -2,6 +2,7 @@
  * Testing Stories:
  * -Renders a search bar
  * -Search bar will render suggestions of modules matching input
+ * 
  */
 
 import React from 'react'
@@ -11,6 +12,7 @@ import { mount } from 'enzyme'
 describe('ModuleSearch', () => {
 
   var wrapper;  
+  var searchField;
   var addModule = () => {};
   var items = [
     {
@@ -44,48 +46,41 @@ describe('ModuleSearch', () => {
       workflow={workflow}
     />
   ));
+  beforeEach(() => searchField = wrapper.find('.react-autosuggest__input'));    
 
   it('Renders search bar', () => { 
     expect(wrapper).toMatchSnapshot(); // 1    
   });
 
-  // it('Typing in search bar will render suggestions', () => { 
-  //   // expect(wrapper).toMatchSnapshot(); // 1   
-  //   expect(true).toBe(true);
-  // });
-
-  // FAILING: how can we get State to load from the props?
-  // it('Loads modules from props ', (done) => { 
+  it('Loads modules from props ', (done) => { 
     
-  //   // wait modules to load from props
-  //   setImmediate( () => {
-  //     expect(wrapper).toMatchSnapshot(); // 2
+    // wait modules to load from props
+    setImmediate( () => {
+      expect(wrapper).toMatchSnapshot(); 
         
-  //     // FAILS
-  //     // ??? why has State not loaded up the modules from props ??? 
-  //     expect(wrapper.state().modules.length).toBe(2);      
+      expect(wrapper.state().modules.length).toBe(2);      
 
-  //     expect(wrapper.state().modules[0].title).toEqual("Add data");
-  //     expect(wrapper.state().modules[1].title).toEqual("Filter");
+      expect(wrapper.state().modules[0].title).toEqual("Add data");
+      expect(wrapper.state().modules[1].title).toEqual("Filter");
       
-  //     done();
-  //   });
-  // });
+      done();
+    });
+  });
 
-  // TODO:
-  // it('Finds a suggestion matching search input', (done) => { 
-  //   expect(true).toBe(true);
-  //   // set immediate to load
+  it('Finds a suggestion matching search input', (done) => { 
+    // wait modules to load from props
+    setImmediate( () => {
+      // Search field is focused by default,
+      //  enter value to text field
+      searchField.simulate('change', {target: {value: 'a'}});
+      expect(wrapper).toMatchSnapshot();      
+      // check for presence of suggestion
+      expect(wrapper.state().suggestions.length).toEqual(1);              
+      expect(wrapper.state().suggestions[0].modules[0].name).toEqual("Load from Enigma");      
 
-  //   // enter value to text field
-
-  //   // 
-  // });
-
-  // TODO: 
-  // it('Loads selected module to workflow', () => { 
-  //   expect(true).toBe(true);
-  // });
+      done();
+    });
+  });
     
 });
 

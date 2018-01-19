@@ -2,14 +2,13 @@
  * Testing Stories:
  * -Renders library-open version
  * -Renders library-closed version
- * -Either version can be dragged to a data source module, which successfully adds alert
- * -Drag & drop to anything else does nothing
+ * -Either version can be dragged 
+ * 
  */
 
 import React from 'react'
 import AddNotificationButton  from './AddNotificationButton'
-import { mount, shallow } from 'enzyme'
-// import { jsonResponseMock, emptyAPI } from './utils'
+import { mount } from 'enzyme'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
 
@@ -27,43 +26,42 @@ describe('AddNotificationButton ', () => {
         />
       </DragDropContextProvider>
     ));
+    afterEach(() => wrapper.unmount());    
 
     it('Renders', () => { 
       expect(wrapper).toMatchSnapshot();
+      // find matching icon
+      expect(wrapper.find('.icon-notification')).toHaveLength(1);
     });
 
-    // Issue: "Cannot have two HTML5 backends at the same time" - how to do multiple tests?
+    it('Card is draggable', () => { 
+      // search for property on the component that indicates drag-ability
+      expect( Object.keys(wrapper.find('AddNotificationButton').props()).includes('connectDragSource') ).toBe(true);
+    });
 
-    // it('Dragging icon to a data source will add an alert', () => { 
-    //   expect(true).toBe(true);
-    // });
-
-    // it('Dragging icon to non data source will have no effect', () => { 
-    //   expect(true).toBe(true);
-    // });
   });
 
-  // describe('Library Closed ', () => {
+  describe('Library Closed ', () => {
     
-  //   beforeEach(() => wrapper = mount(
-  //     <DragDropContextProvider backend={HTML5Backend}>
-  //       <AddNotificationButton
-  //         libraryOpen={false}
-  //       />
-  //     </DragDropContextProvider>
-  //   ));
+    beforeEach(() => wrapper = mount(
+      <DragDropContextProvider backend={HTML5Backend}>
+        <AddNotificationButton
+          libraryOpen={false}
+        />
+      </DragDropContextProvider>
+    ));
+    afterEach(() => wrapper.unmount());    
+    
+    it('Renders', () => { 
+      expect(wrapper).toMatchSnapshot();
+      // find matching icon
+      expect(wrapper.find('.icon-notification')).toHaveLength(1);
+    });
 
-  //   it('Renders', () => { 
-  //     expect(wrapper).toMatchSnapshot();
-  //   });
-
-  //   it('Dragging icon to a data source will add an alert', () => { 
-  //     expect(true).toBe(true);
-  //   });
-
-  //   it('Dragging icon to non data source will have no effect', () => { 
-  //     expect(true).toBe(true);
-  //   });
-  // });
+    it('Card is draggable', () => { 
+      // search for property on the component that indicates drag-ability
+      expect( Object.keys(wrapper.find('AddNotificationButton').props()).includes('connectDragSource') ).toBe(true);
+    });
+  });
 
 });

@@ -11,6 +11,9 @@
  * When Module Library is closed, animation of collapse is hidden
  * 
  * Rendered by <ModuleCategories> component
+ * 
+ * TODO: Refactor into separate components for Open/Closed versions;
+ *     Closed version expands/collapses on hover instead of click
  */
 
 import React from 'react'
@@ -22,7 +25,7 @@ export default class ModuleCategory extends React.Component {
     super(props);
     this.state = {
       collapsed: props.collapsed,
-      visible: true               // switch for animation of collapse action
+      visible: true               // switch to show animation of collapse action
     };
     this.toggleCollapse = this.toggleCollapse.bind(this);
     this.onEntering = this.onEntering.bind(this);

@@ -1,15 +1,13 @@
 /**
  * Testing Stories:
- * -Renders <ModuleLibraryOpen> by default in not-read-only 
- * -Renders <ModuleLibraryClosed> when ...
- * -Queries mock API to set 'items' state with sorted modules
- * -In read-only state, renders closed
- * -??? (TBD)
+ * -In not-read-only, renders <ModuleLibraryOpen> by default in not-read-only 
+ * -When read-only, renders <ModuleLibraryClosed> without modules.
+ * 
  */
 
 import React from 'react'
 import ModuleLibrary  from './ModuleLibrary'
-import { mount, shallow } from 'enzyme'
+import { mount } from 'enzyme'
 import { jsonResponseMock, emptyAPI } from './utils'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
@@ -22,7 +20,6 @@ var workflow = {
   "id":15,
   "name":"What a workflow!",
 };
-
 var modules = [
   {
     "id":1,
@@ -46,74 +43,71 @@ var modules = [
     "icon":"url"
   }
 ];
-
 var api = {
   getModules: jsonResponseMock(modules),
 };
 
+describe('ModuleLibrary', () => {
 
-it('ModuleLibrary renders open when not read-only, with list of module categories', (done) => {
-  expect(true).toBe(true);
+  describe('Not Read-only', () => {
+  
+    beforeEach(() => wrapper = mount(
+      <DragDropContextProvider backend={HTML5Backend}>
+        <ModuleLibrary
+          addModule={addModule}
+          dropModule={dropModule}
+          api={api}
+          workflow={workflow}
+          isReadOnly={false}
+        />
+      </DragDropContextProvider>
+    ));
+    afterEach(() => wrapper.unmount());  
+    
+    it('Renders in open state and loads modules', (done) => {
+      expect(wrapper).toMatchSnapshot();
+      // should have called API for its data on componentDidMount
+      expect(api.getModules.mock.calls.length).toBe(1);
+      // check that Library is open
+      expect(wrapper.find('.module-library-open')).toHaveLength(1);
+      // let json promise resolve (wait for modules to load)
+      setImmediate( () => {
+        expect(wrapper).toMatchSnapshot();
+        // check that module categories have loaded
+        expect(wrapper.find('.ml-cat')).toHaveLength(2);
+        // check that modules have loaded
+        expect(wrapper.find('.ml-list .ml-icon-container')).toHaveLength(3);
+        done();
+      });
+    });
 
-  wrapper = mount(
-    <DragDropContextProvider backend={HTML5Backend}>
-      <ModuleLibrary
-        addModule={addModule}
-        dropModule={dropModule}
-        api={api}
-        workflow={workflow}
-        isReadOnly={false}
-      />
-    </DragDropContextProvider>
-  );
+  });
 
-  expect(wrapper).toMatchSnapshot();
+  describe('Read-only', () => {
+    
+    beforeEach(() => wrapper = mount(
+      <DragDropContextProvider backend={HTML5Backend}>
+        <ModuleLibrary
+          addModule={addModule}
+          dropModule={dropModule}
+          api={api}
+          workflow={workflow}
+          isReadOnly={true}
+        />
+      </DragDropContextProvider>
+    ));
+    afterEach(() => wrapper.unmount());  
+    
+    it('Renders in closed state, without modules', () => {
+      expect(wrapper).toMatchSnapshot();
+      // should NOT call getModules (one call from previous test)
+      expect(api.getModules.mock.calls.length).toBe(1);
+      // check that Library is closed
+      expect(wrapper.find('.module-library-closed')).toHaveLength(1);
+    });
 
-  // should call API for its data on componentDidMount
-  expect(api.getModules.mock.calls.length).toBe(1);
-
-  // check that Library is open
-  expect(wrapper.find('.module-library-open')).toHaveLength(1);
-
-  // let json promise resolve (wait for modules to load)
-  setImmediate( () => {
-    expect(wrapper).toMatchSnapshot();
-
-    // check that module categories have loaded
-    expect(wrapper.find('.ml-cat')).toHaveLength(2);
-
-    // check that modules have loaded
-    expect(wrapper.find('.ml-list .ml-icon-container')).toHaveLength(3);
-
-    done();
   });
 
 });
 
-// *** How to work around restriction of only one backend at a time? ***
 
-// it('ModuleLibrary renders closed when read-only', () => {
-//   wrapper = mount(
-//     <DragDropContextProvider backend={HTML5Backend}>
-//       <ModuleLibrary
-//         addModule={addModule}
-//         dropModule={dropModule}
-//         api={api}
-//         workflow={workflow}
-//         isReadOnly={true}
-//       />
-//     </DragDropContextProvider>
-//   );
-
-//   expect(wrapper).toMatchSnapshot();
-
-//   // check that Library is closed
-//   expect(wrapper.find('.module-library-collapsed')).toHaveLength(1);
-
-// });
-
-
-// it('ModuleLibrary may be toggled between open and closed states', () => {
-
-
-// });

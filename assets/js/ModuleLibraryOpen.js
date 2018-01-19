@@ -2,7 +2,7 @@
  * Full version of the <ModuleLibrary>. 
  * 
  * Renders a wide menu, with <ModuleSearch>, <ModuleCategories>, <AddNotificationButton>, 
- *    and <ImportModuleFromGitHub> components, and toggle arrow to Clossed version.
+ *    and <ImportModuleFromGitHub> components, and toggle arrow to Closed version.
  */
 
  import PropTypes from 'prop-types';
@@ -13,11 +13,9 @@ import ModuleSearch from './ModuleSearch';
 import AddNotificationButton from './AddNotificationButton';
 
 
-
 export default class ModuleLibraryOpen extends React.Component {
   constructor(props) {
     super(props);
-
     this.state = {};
   }
 
@@ -40,7 +38,6 @@ export default class ModuleLibraryOpen extends React.Component {
                           items={this.props.items}
                           workflow={this.props.workflow} />
           </div>
-
         </div>
 
         <ModuleCategories
@@ -59,7 +56,11 @@ export default class ModuleLibraryOpen extends React.Component {
 
         <div className="ml-divider"></div>
 
-        <ImportModuleFromGitHub moduleAdded={this.props.moduleAdded} libraryOpen={true}/>
+        <ImportModuleFromGitHub 
+          moduleAdded={this.props.moduleAdded} 
+          libraryOpen={true}
+          api={this.props.api}
+        />
       </div>
     )
   }
@@ -67,6 +68,7 @@ export default class ModuleLibraryOpen extends React.Component {
 
 ModuleLibraryOpen.propTypes = {
   workflow:         PropTypes.object.isRequired,
+  api:              PropTypes.object.isRequired,
   openCategory:     PropTypes.string,
   addModule:        PropTypes.func.isRequired,
   dropModule:       PropTypes.func.isRequired,
@@ -76,6 +78,5 @@ ModuleLibraryOpen.propTypes = {
   isReadOnly:       PropTypes.bool.isRequired,
   moduleAdded:      PropTypes.func.isRequired,
   toggleLibrary:    PropTypes.func.isRequired,
-  openLibrary:      PropTypes.func.isRequired,
 };
 

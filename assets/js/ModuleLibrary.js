@@ -11,7 +11,6 @@
  * that are supported – both, those created by us and those created by third
  * parties.
  * 
- * Rendered by <Workflow>
  */
 
 import PropTypes from 'prop-types';
@@ -140,13 +139,13 @@ export default class ModuleLibrary extends React.Component {
           <ModuleLibraryOpen
             workflow={this.props.workflow}
             libraryOpen={true}
+            api={this.props.api}
             isReadOnly={this.props.isReadOnly}            
             items={this.state.items}
             addModule={this.props.addModule}
             dropModule={this.props.dropModule}
             moduleAdded={this.updated}
             toggleLibrary={this.toggleLibrary}
-            openLibrary={this.openLibrary}
             openCategory={this.state.openCategory} 
             setOpenCategory={this.setOpenCategory}
           />
@@ -156,12 +155,12 @@ export default class ModuleLibrary extends React.Component {
       return (
         <ModuleLibraryClosed
           libraryOpen={false}
+          api={this.props.api}
           isReadOnly={this.props.isReadOnly}            
           items={this.state.items}
           addModule={this.props.addModule}
           dropModule={this.props.dropModule}
           moduleAdded={() => {}}
-          toggleLibrary={() => {}}
           openLibrary={this.openLibrary}
           openCategory={this.state.openCategory} 
           setOpenCategory={this.setOpenCategory}

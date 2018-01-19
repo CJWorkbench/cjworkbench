@@ -1,13 +1,13 @@
 /**
  * Testing Stories:
  * -Renders a Module card, with icon received from props
- * -Drag feature works ( details TBD)
+ * -Draggable feature exists
+ * 
  */
 
 import React from 'react'
 import Module  from './Module'
-import { mount, shallow } from 'enzyme'
-// import { jsonResponseMock, emptyAPI } from './utils'
+import { mount } from 'enzyme'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
 
@@ -19,6 +19,7 @@ describe('Module ', () => {
   beforeEach(() => wrapper = mount(
     <DragDropContextProvider backend={HTML5Backend}>
       <Module
+        key={"Sweet Module"}
         name={"Sweet Module"}
         icon={"add"}
         id={88}
@@ -27,13 +28,16 @@ describe('Module ', () => {
       />
     </DragDropContextProvider>
   ));
+  afterEach(() => wrapper.unmount());
 
   it('Renders a card, with icon received from props', () => { 
     expect(wrapper).toMatchSnapshot();
+    expect(wrapper.find('.icon-add')).toHaveLength(1);
   });
 
-  // it('Card can be dragged and added to module stack', () => { 
-  //   expect(true).toBe(true);
-  // });
+  it('Card is draggable', () => { 
+    // search for property on the Module component that indicates drag-ability
+    expect( Object.keys(wrapper.find('Module').props()).includes('connectDragSource') ).toBe(true);
+  });
     
 });

@@ -52,25 +52,14 @@ export default class ImportModuleFromGitHub extends React.Component {
    * @param {*} event
    */
   handleSubmit(event) {
-      event.preventDefault(); // stops the page from refreshing
-      var url = '/api/importfromgithub/';
-      var eventData = {'url': this.state.url};
-      fetch(url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify(eventData)
-      })
-      .then(result => result.json())
-      .then(json => this.handleResponse(json),
-            error => this.handleResponse(null)) // 500 error
-      .then(() => {
-        this.props.moduleAdded();
-      })
+    event.preventDefault(); // stops the page from refreshing
+    var eventData = {'url': this.state.url};
+    this.props.api.importFromGithub(eventData)
+    .then(json => this.handleResponse(json),
+          error => this.handleResponse(null)) // 500 error
+    .then(() => {
+      this.props.moduleAdded();
+    })
   }
 
   handleResponse(response) {
@@ -161,7 +150,7 @@ export default class ImportModuleFromGitHub extends React.Component {
         </div>
 
     return (
-      <div>
+      <div className='import-module'>
 
         {button}
 
@@ -196,5 +185,6 @@ export default class ImportModuleFromGitHub extends React.Component {
 
 ImportModuleFromGitHub.propTypes = {
   moduleAdded: PropTypes.func.isRequired, 
-  libraryOpen: PropTypes.bool.isRequired  
+  libraryOpen: PropTypes.bool.isRequired,
+  api:         PropTypes.object.isRequired  
 };

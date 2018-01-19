@@ -320,6 +320,21 @@ class WorkbenchAPI {
     )
   }
 
+  importFromGithub(eventData) {
+    return (
+      fetch('/api/importfromgithub/', {
+        method: 'post',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(eventData)
+      }).then(response => response.json())
+    )
+  }
+
   // This is Bad. You should get a list of serialized data versions on the
   // workflow module instead of a 2-tuple, and there should be a generic
   // data version create/read/update/delete method. As there should be for

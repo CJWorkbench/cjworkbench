@@ -1,9 +1,9 @@
-
 /**
 * Returns an array of <Module Category> components, 
 *  each of which has child <Module>, sorted by type.
 * 
-* Rendered by <ModuleLibraryClosed> and <ModuleLibraryClosed> components
+* Currently rendered by <ModuleLibraryClosed> and <ModuleLibraryClosed> components
+*
 */
 
 import PropTypes from 'prop-types';
@@ -26,6 +26,7 @@ export default class ModuleCategories extends React.Component {
   }
 
   // props.items is empty on initial render, necessary to show items on initial load
+  // ??? Should this check for difference in Props, like in ModuleSearch.js?
   componentWillReceiveProps(newProps) {
     this.renderCategories(newProps);
   }
@@ -103,7 +104,6 @@ export default class ModuleCategories extends React.Component {
   }
 }
 
-// Refactor check: are all of these needed?
 ModuleCategories.propTypes = {
   openCategory:     PropTypes.string,
   addModule:        PropTypes.func.isRequired,

@@ -2,24 +2,31 @@
  * Testing Stories:
  * -Renders library-open version, which opens to modal
  * -Renders library-closed version, "
- * -Modal will import a module to library 
+ * -Modal will call API to begin import process
+ * 
  */
 
 import React from 'react'
 import ImportModuleFromGitHub  from './ImportModuleFromGitHub'
 import { mount, ReactWrapper } from 'enzyme'
+import { jsonResponseMock } from './utils'
 
 describe('ImportModuleFromGitHub', () => {
   
   var wrapper;  
   var modalLink;
+  var moduleAdded = jest.fn();
+  var api = {
+    importFromGithub: jsonResponseMock()  // what should this return?
+  };
 
   describe('Library open', () => {
 
     beforeEach(() => wrapper = mount(
       <ImportModuleFromGitHub
         libraryOpen={true}
-        moduleAdded={()=>{}}
+        moduleAdded={moduleAdded}
+        api={api}
       />
     ));
     beforeEach(() => modalLink = wrapper.find('.import-module-button'));    
@@ -43,8 +50,18 @@ describe('ImportModuleFromGitHub', () => {
       expect(modal.find('.dialog-body')).toHaveLength(1);
     });
 
-    it('A module may be imported via the modal to the library', () => { 
-      expect(true).toBe(true);
+    it('Import button makes API call', () => { 
+      //open modal
+      modalLink.simulate('click');
+      // find modal, wrap it
+      let modal_element = document.getElementsByClassName('modal-dialog');
+      let modal = new ReactWrapper(modal_element[0], true)
+      // find Import button and click it
+      let importButton = modal.find('.button-blue');
+      expect(importButton).toHaveLength(1);
+      importButton.simulate('click');
+      // check on function calls
+      expect(api.importFromGithub.mock.calls.length).toBe(1);
     });
   });
 
@@ -53,7 +70,8 @@ describe('ImportModuleFromGitHub', () => {
     beforeEach(() => wrapper = mount(
       <ImportModuleFromGitHub
         libraryOpen={true}
-        moduleAdded={()=>{}}
+        moduleAdded={moduleAdded}
+        api={api}        
       />
     ));
     beforeEach(() => modalLink = wrapper.find('.import-module-button'));    
@@ -71,16 +89,13 @@ describe('ImportModuleFromGitHub', () => {
       // So find them, and make a new Wrapper
       // Reference: "https://github.com/airbnb/enzyme/issues/252"
       let modal_element = document.getElementsByClassName('modal-dialog');
-      // second rendering of modal element, so length of 2
-      expect(modal_element.length).toBe(2);
+      // thirs rendering of modal element, so length of 3
+      expect(modal_element.length).toBe(3);
       let modal = new ReactWrapper(modal_element[0], true)
       expect(modal).toMatchSnapshot();
       expect(modal.find('.dialog-body')).toHaveLength(1);
     });
 
-    it('A module may be imported via the modal to the library', () => { 
-      expect(true).toBe(true);
-    });
   });
 
 });
