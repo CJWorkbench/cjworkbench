@@ -21,7 +21,7 @@ exports[`ImportModuleFromGitHub Library closed Renders a link, which will open m
         className="icon-add mr-2"
       />
       <span>
-        IMPORT FROM GITHUB
+        IMPORT CUSTOM MODULE
       </span>
     </div>
     <Modal
@@ -161,7 +161,7 @@ exports[`ImportModuleFromGitHub Library open Renders a link, which will open mod
         className="icon-add mr-2"
       />
       <span>
-        IMPORT FROM GITHUB
+        IMPORT CUSTOM MODULE
       </span>
     </div>
     <Modal

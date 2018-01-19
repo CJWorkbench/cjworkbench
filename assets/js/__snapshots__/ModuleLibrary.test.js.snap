@@ -255,7 +255,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                       <div
                         className="content-5 ml-module-name"
                       >
-                        New alert
+                        Add data alert
                       </div>
                     </div>
                   </div>
@@ -293,7 +293,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                   className="icon-add mr-2"
                 />
                 <span>
-                  IMPORT FROM GITHUB
+                  IMPORT CUSTOM MODULE
                 </span>
               </div>
               <Modal
@@ -960,7 +960,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       <div
                         className="content-5 ml-module-name"
                       >
-                        New alert
+                        Add data alert
                       </div>
                     </div>
                   </div>
@@ -998,7 +998,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                   className="icon-add mr-2"
                 />
                 <span>
-                  IMPORT FROM GITHUB
+                  IMPORT CUSTOM MODULE
                 </span>
               </div>
               <Modal

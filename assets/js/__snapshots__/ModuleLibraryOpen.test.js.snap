@@ -540,7 +540,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                   <div
                     className="content-5 ml-module-name"
                   >
-                    New alert
+                    Add data alert
                   </div>
                 </div>
               </div>
@@ -574,7 +574,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
               className="icon-add mr-2"
             />
             <span>
-              IMPORT FROM GITHUB
+              IMPORT CUSTOM MODULE
             </span>
           </div>
           <Modal
