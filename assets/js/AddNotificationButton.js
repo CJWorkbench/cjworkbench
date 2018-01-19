@@ -38,7 +38,7 @@ class AddNotificationButton extends React.Component {
             <div className="icon-notification ml-icon"></div>
           </div>
           <div>
-            <div className='content-5 ml-module-name'>New alert</div>
+            <div className='content-5 ml-module-name'>Add data alert</div>
           </div>
         </div>
       : <div className='ml-icon-container mr-5' >
