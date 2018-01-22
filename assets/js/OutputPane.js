@@ -4,8 +4,6 @@ import React from 'react'
 import TableView from './TableView'
 import PropTypes from 'prop-types'
 
-require('../css/components/OutputPane.scss');
-
 export default class OutputPane extends React.Component {
 
   constructor(props) {
