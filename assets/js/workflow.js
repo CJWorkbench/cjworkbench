@@ -11,6 +11,7 @@ import { getPageID, csrfToken } from './utils'
 import { DropTarget } from 'react-dnd'
 import withScrolling from 'react-dnd-scrollzone'
 import FlipMove from 'react-flip-move'
+import { OutputIframe } from './OutputIframe'
 
 // ---- Sortable WfModules within the workflow ----
 const targetSpec = {
@@ -90,7 +91,7 @@ class WorkflowList extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.data.revision !== this.props.data.revision) {
+    if (nextProps.data.revision !== this.props.data.revision) { //TODO: Does this ever fire?
       // New wfmodules, update
       this.setState({
         justDropped: false,
@@ -200,11 +201,14 @@ class Workflow extends React.Component {
   }
 
   render() {
-
     // Wait until we have a workflow to render
     if (this.props.workflow === undefined) {
       return null;
     }
+
+    let selected_workflow_module_ref = this.props.workflow.wf_modules.find((wf) => {
+      return wf.id === this.props.selected_wf_module;
+    });
 
     var moduleLibrary = <ModuleLibrary
                           addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}
@@ -263,6 +267,9 @@ class Workflow extends React.Component {
             <div className="workflow-columns">
               {stackContainer}
               <div className="outputpane">
+                {(selected_workflow_module_ref && selected_workflow_module_ref.html_output) &&
+                <OutputIframe id="output_iframe" selectedWfModule={this.props.selected_wf_module} revision={this.props.workflow.revision}></OutputIframe>
+                }
                 {outputPane}
               </div>
 

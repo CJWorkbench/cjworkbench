@@ -5,6 +5,7 @@ import { store, wfModuleStatusAction } from '../../workflow-reducer'
 import PropTypes from 'prop-types'
 import { errorText } from './errors'
 import debounce from 'lodash/debounce'
+import { OutputIframeCtrl } from '../../OutputIframe'
 
 var ChartViewActions = require("chartbuilder/src/js/actions/ChartViewActions");
 var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
@@ -113,6 +114,9 @@ export default class SimpleChartParameter extends React.Component {
     if (this.state && this.state.loaded_ever && !this.state.loading) {
       this.setState(Object.assign({}, model, {errors: errors || this.state.errors}));
       this.saveState(model);
+      if (OutputIframeCtrl) {
+        OutputIframeCtrl.postMessage({model: model}, '*');
+      }
       if (errors) {
         this.parseErrors(errors);
       }
@@ -151,6 +155,10 @@ export default class SimpleChartParameter extends React.Component {
   loadChartProps(modelText) {
     var model;
     var defaults = chartConfig.xy.defaultProps;
+
+    defaults.chartProps.chartSettings[0].type = this.props.chartType || 'line';
+    defaults.chartProps.scale.typeSettings.maxLength = 7;
+
     if (modelText !== "") {
       model = JSON.parse(modelText);
       this.lastChartStateString = modelText;
@@ -162,11 +170,8 @@ export default class SimpleChartParameter extends React.Component {
   }
 
   componentWillMount(props) {
-    var defaults = chartConfig.xy.defaultProps;
     var modelText = this.props.loadState();
     var newModel = this.loadChartProps(modelText);
-    defaults.chartProps.chartSettings[0].type = this.props.chartType || 'line';
-    defaults.chartProps.scale.typeSettings.maxLength = 7;
     ChartServerActions.receiveModel(newModel);
   }
 
@@ -214,22 +219,9 @@ export default class SimpleChartParameter extends React.Component {
     return !nextState.loading;
   }
 
+  // omg do not do this
   render() {
-    if (!this.state.loading &&
-      (typeof this.state.errors !== 'undefined' &&
-      this.state.errors.valid)) {
-      return (
-        <RendererWrapper
-          editable={true}
-          showMetadata={true}
-          model={this.state}
-          enableResponsive={true}
-          className="render-svg-mobile"
-          svgClassName={this.props.renderedSVGClassName} />
-      )
-    } else {
-      return <div></div>;
-    }
+    return <div></div>;
   }
 }
 
