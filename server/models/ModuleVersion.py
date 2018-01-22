@@ -17,5 +17,8 @@ class ModuleVersion(models.Model):
     module = models.ForeignKey('Module', related_name='module_versions',
                                 on_delete=models.CASCADE)  # nullifies when the corresponding module's deleted.
 
+    # Does this module provide an html file for additional output?
+    html_output = models.BooleanField('html_output', default=False)
+
     def __str__(self):
         return self.module.name + ":" + self.source_version_hash
