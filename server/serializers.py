@@ -69,10 +69,15 @@ class WfModuleSerializer(serializers.ModelSerializer):
     def get_notification_count(self, wfm):
         return wfm.notification_set.count()
 
+    html_output = serializers.SerializerMethodField()
+    def get_html_output(self, wfm):
+        return wfm.module_version.html_output
+
     class Meta:
         model = WfModule
         fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals', 'is_collapsed',
-                  'notes', 'auto_update_data', 'update_interval', 'update_units', 'last_update_check', 'notifications', 'notification_count')
+                  'notes', 'auto_update_data', 'update_interval', 'update_units', 'last_update_check',
+                  'notifications', 'notification_count', 'html_output')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):

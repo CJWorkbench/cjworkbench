@@ -98,7 +98,7 @@ def validate_module_structure(directory):
                 extension = extension[1]
             else:
                 continue
-            if extension in ["py", "json"]:
+            if extension in ["py", "json", "html"]:
                 if extension not in extension_file_mapping:
                     if item not in '__init__.py':
                         extension_file_mapping[extension] = item
@@ -149,7 +149,7 @@ def destination_directory_name(reponame, version):
 
 # Move py and json files to the directory where they will live henceforth
 # that's /importedmodules/projname/version
-def move_files_to_final_location(destination_directory, curdir, json_file, python_file):
+def move_files_to_final_location(destination_directory, curdir, json_file, python_file, html_file=None):
 
     try:
         os.makedirs(destination_directory)
@@ -162,6 +162,13 @@ def move_files_to_final_location(destination_directory, curdir, json_file, pytho
                   os.path.join(destination_directory, python_file))
     except (OSError, Exception) as error:
         raise ValidationError("Unable to move Python file to module directory.")
+
+    if html_file:
+        try:
+            shutil.move(os.path.join(curdir, html_file),
+                      os.path.join(destination_directory, html_file))
+        except (OSError, Exception) as error:
+            raise ValidationError("Unable to move HTML file to module directory.")
 
 
 # adds two spaces before every line
@@ -272,6 +279,7 @@ def import_module_from_directory(url, reponame, version, importdir):
         extension_file_mapping = validate_module_structure(importdir)
         python_file = extension_file_mapping['py']
         json_file = extension_file_mapping['json']
+        html_file = extension_file_mapping.get('html', None)
 
         module_config = get_module_config_from_json(url, extension_file_mapping, importdir)
         id_name = module_config['id_name']
@@ -298,7 +306,7 @@ def import_module_from_directory(url, reponame, version, importdir):
 
         # The core work of creating a module
         destination_directory = destination_directory_name(id_name, version)
-        move_files_to_final_location(destination_directory, importdir, json_file, python_file)
+        move_files_to_final_location(destination_directory, importdir, json_file, python_file, html_file=html_file)
         add_boilerplate_and_check_syntax(destination_directory, python_file)
         validate_python_functions(destination_directory, python_file)
 

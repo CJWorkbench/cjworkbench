@@ -9,12 +9,11 @@ from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
 from django.utils import timezone
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
+from server.dispatch import module_dispatch_output
 from datetime import timedelta
 from server.utils import units_to_seconds
 import pandas as pd
-import json
-import datetime
-import pytz
+import json, datetime, pytz, re
 
 
 # The guts of patch commands for various WfModule fields
@@ -153,6 +152,46 @@ def wfmodule_render(request, pk, format=None):
             return HttpResponseForbidden()
 
         return table_result(request, wf_module)
+
+
+def wfmodule_output(request, pk, format=None):
+    if request.method == 'GET':
+        try:
+            wf_module = WfModule.objects.get(pk=pk)
+        except WfModule.DoesNotExist:
+            return HttpResponseNotFound()
+
+        if not wf_module.workflow.user_authorized_read(request.user):
+            return HttpResponseForbidden()
+
+        table = execute_wfmodule(wf_module)
+
+        html, input_data, params = module_dispatch_output(wf_module, table, request=request)
+
+        input_data_json = make_render_json(input_data)
+
+        init_data =  json.dumps({
+            'input': json.loads(input_data_json),
+            'params': params
+        })
+
+        js="""
+        <script>
+        var workbench = %s
+        </script>""" % init_data
+
+        head_tag_pattern = re.compile('<\w*[H|h][E|e][A|a][D|d]\w*>')
+        result = head_tag_pattern.search(html)
+
+        modified_html = '%s %s %s' % (
+            html[:result.end()],
+            js,
+            html[result.end():]
+        )
+
+        return HttpResponse(content=modified_html)
+
+
 
 
 # /input is just /render on the previous wfmodule

@@ -44,6 +44,7 @@ urlpatterns = [
     # WfModules (Modules applied in a workflow)
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/?$', views.wfmodule_detail),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/render$', views.wfmodule_render),
+    url(r'^api/wfmodules/(?P<pk>[0-9]+)/output$', views.wfmodule_output), #TODO: These names are bad and basically backwards
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/input$', views.wfmodule_input),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion/read', views.wfmodule_dataversion_read),
     url(r'^api/wfmodules/(?P<pk>[0-9]+)/dataversion', views.wfmodule_dataversion),

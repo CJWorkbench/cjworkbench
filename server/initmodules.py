@@ -90,6 +90,8 @@ def load_module_from_dict(d):
     #possible todo: should this be driven based on the last_commit time or the last system time?
     module_version.module = module
 
+    module_version.html_output = d['html_output'] if 'html_output' in d else False
+
     module_version.save()
 
     # load params

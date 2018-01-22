@@ -1,8 +1,6 @@
 # Module dispatch table and implementations
 import pandas as pd
 from django.conf import settings
-from .modules.barchart import BarChart
-from .modules.chart import Chart
 from .modules.countvalues import CountValues
 from .modules.counybydate import CountByDate
 from .modules.formula import Formula
@@ -21,7 +19,7 @@ from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
 from .dynamicdispatch import DynamicDispatch
 from .importmodulefromgithub import original_module_lineno
-import os, sys, traceback, types
+import os, sys, traceback, types, inspect
 
 # ---- Test Support ----
 
@@ -45,16 +43,12 @@ module_dispatch_tbl = {
     'formula':      Formula,
     'selectcolumns':SelectColumns,
     'pythoncode':   PythonCode,
-    'simplechart':  Chart,
-    'chart-line':   Chart,
-    'chart-column': Chart,
     'twitter':      Twitter,
     'textsearch':   TextSearch,
     'countvalues':  CountValues,
     'countbydate':  CountByDate,
     'enigma':       EnigmaDataLoader,
     'uploadfile':   UploadFile,
-    'barchart':     BarChart,
     'googlesheets': GoogleSheets,
 
     # For testing
@@ -160,3 +154,23 @@ def module_dispatch_event(wf_module, **kwargs):
     # Clear errors on every new event. (The other place they are cleared is on parameter change)
     wf_module.set_ready(notify=False)
     return module_dispatch_tbl[dispatch].event(wf_module, **kwargs)
+
+def module_dispatch_output(wf_module, table, **kwargs):
+    dispatch = wf_module.module_version.module.dispatch
+    if dispatch not in module_dispatch_tbl.keys():
+        html_file_path = dynamic_dispatch.html_output_path(wf_module)
+    else:
+        module_path = os.path.dirname(inspect.getfile(module_dispatch_tbl[dispatch]))
+        for f in os.listdir(module_path):
+            if f.endswith(".html"):
+                html_file_path = os.path.join(module_path, f)
+                break
+
+    tableout = module_dispatch_render(wf_module, table)
+    params = create_parameter_dict(wf_module, table)
+    # got some error handling in here if, for some reason, someone tries to call
+    # output on this and it doesn't have any defined html output
+    html_file = open(html_file_path, 'r+')
+    html_str = html_file.read()
+
+    return (html_str, tableout, params)

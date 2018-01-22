@@ -57,3 +57,16 @@ class DynamicDispatch:
         else:
             raise ValueError("Unable to find module {} with version {}".format(wf_module.module_version.module,
                                                                     wf_module.module_version.source_version_hash))
+
+    def html_output_path(self, wf_module):
+        module_version = ModuleVersion.objects.filter(module=wf_module.module_version.module,
+                                    source_version_hash=wf_module.module_version.source_version_hash)
+
+        path_to_file = os.path.join(self.DYNAMIC_MODULES_BASE_DIRECTORY, wf_module.module_version.module.id_name,
+                                        wf_module.module_version.source_version_hash)
+
+        for f in os.listdir(path_to_file):
+            if f.endswith(".html"):
+                return os.path.join(path_to_file, f)
+
+        return ''
