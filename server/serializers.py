@@ -15,7 +15,7 @@ class StoredObjectSerializer(serializers.ModelSerializer):
 class ParameterSpecSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParameterSpec
-        fields = ('id', 'name', 'id_name', 'type', 'multiline')
+        fields = ('id', 'name', 'id_name', 'type', 'multiline', 'placeholder')
 
 class ParameterValSerializer(serializers.ModelSerializer):
     parameter_spec = ParameterSpecSerializer(many=False, read_only=True)

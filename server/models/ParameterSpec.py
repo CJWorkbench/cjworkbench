@@ -1,5 +1,4 @@
 from django.db import models
-from server.models.Workflow import *
 from server.models.ModuleVersion import *
 
 # ParameterSpec defines a parameter UI and defaults for a particular Module
@@ -56,7 +55,7 @@ class ParameterSpec(models.Model):
     ui_only = models.BooleanField(default=False)            # Don't bother pushing value to server
     multiline = models.BooleanField(default=False)          # For edit fields
     derived_data = models.BooleanField(default=False)       # Don't save in the undo stack, it comes from other params
-
+    placeholder = models.TextField(null=True, blank=True)   # Placeholder/help text. Different from default in that it's not actually a value.
 
     def __str__(self):
         return self.module_version.module.name + ' - ' + self.name
