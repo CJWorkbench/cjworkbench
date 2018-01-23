@@ -91,8 +91,10 @@ def validate_module_structure(directory):
 
     extension_file_mapping = {}
     for item in files:
-        # check file extension and ensure that we have exactly one python file and one JSON file.
-        if not os.path.isdir(item): # to make sure we don't get caught out by __pycaches__ and the like.
+        # check file extension and ensure that we have one python, one JSON, and optionally one HTML file.
+
+        # Skip directories (__pycache__ etc.) and test_*
+        if not os.path.isdir(item) and not item.startswith('test'):
             extension = item.rsplit('.', 1)
             if len(extension) > 1:
                 extension = extension[1]
