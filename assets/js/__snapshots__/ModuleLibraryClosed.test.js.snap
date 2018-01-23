@@ -42,22 +42,33 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
     >
       <div
         className="expand-lib"
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
       >
         <div
           className="expand-lib-button d-flex"
         >
-          <a
+          <div
             className="logo"
-            href="/workflows"
+            style={
+              Object {
+                "display": "block",
+              }
+            }
           >
             <img
               src="/static/images/logo.png"
               width="20"
             />
-          </a>
+          </div>
           <div
-            className="icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle"
+            className="icon-sort-right-vl-gray close-open-toggle"
             onClick={[Function]}
+            style={
+              Object {
+                "display": "none",
+              }
+            }
           />
         </div>
       </div>
