@@ -86,8 +86,8 @@ def load_module_from_dict(d):
         module_version = ModuleVersion()
 
     module_version.source_version_hash = source_version
-    #the last_update_time should automatically be added based on _now_.
-    #possible todo: should this be driven based on the last_commit time or the last system time?
+    # the last_update_time should automatically be added based on _now_.
+    # possible todo: should this be driven based on the last_commit time or the last system time?
     module_version.module = module
 
     module_version.html_output = d['html_output'] if 'html_output' in d else False
@@ -162,6 +162,7 @@ def load_parameter_spec(d, module_version, order):
     pspec.ui_only = flag_default('ui-only', False)
     pspec.multiline = flag_default('multiline', False)
     pspec.derived_data = flag_default('derived-data', False)
+    pspec.placeholder = flag_default('placeholder', None)
 
     pspec.order = order
     pspec.save()
