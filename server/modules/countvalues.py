@@ -13,12 +13,10 @@ class CountValues(ModuleImpl):
         sortby = wf_module.get_param_menu_string('sortby')
 
         if col == '':
-            wf_module.set_error('Please select a column')
-            return table
+            return('Please select a column')
 
         if col not in table.columns:
-            wf_module.set_error('There is no column named %s' % col)
-            return None
+            return('There is no column named %s' % col)
 
         newtab = pd.DataFrame(table[col].value_counts(sort=(sortby == 'Frequency')))
         newtab.reset_index(level=0, inplace=True) # turn index into a column, or we can't see the column names

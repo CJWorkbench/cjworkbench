@@ -34,12 +34,10 @@ class PythonCode(ModuleImpl):
             out_table = locals['process'](table)
 
         except SyntaxError as err:
-            wf_module.set_error(errorstring(err.lineno, str(err)))
-            return None
+            return(errorstring(err.lineno, str(err)))
         except Exception as err:
             cl, exc, tb = sys.exc_info()
             lineno = traceback.extract_tb(tb)[1][1]
-            wf_module.set_error(errorstring(lineno, str(err)))
-            return None
+            return(errorstring(lineno, str(err)))
 
         return out_table

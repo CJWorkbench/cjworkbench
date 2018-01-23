@@ -106,44 +106,45 @@ def load_dynamically(wf_module):
 
 def module_dispatch_render(wf_module, table):
     dispatch = wf_module.module_version.module.dispatch
+    error = None
+    tableout = None
 
     # External module -- gets only a parameter dictionary
     if dispatch not in module_dispatch_tbl.keys():
+
         loadable = load_dynamically(wf_module=wf_module)
         if not loadable:
             raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
-        else:
-            params = create_parameter_dict(wf_module, table)
-            error = None
-            tableout = None
 
-            try:
-                tableout = loadable.render(table, params)
-            except Exception as e:
-                # Catch exceptions in the module render function, and return error message + line number to user
-                exc_name = type(e).__name__
-                exc_type, exc_obj, exc_tb = sys.exc_info()
-                tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
-                fname = os.path.split(tb[0])[1]
-                lineno = original_module_lineno(tb[1])
-                error = ('{}: {} at line {} of {}'.format(exc_name, str(e), lineno, fname))
-
-            if isinstance(tableout, str):
-                # If the module returns a string, it's an error message
-                error = tableout
-            elif (not isinstance(tableout, pd.DataFrame)) and (tableout is not None):
-                # if it's not a string it needs to be a table
-                error = 'Module did not return a table or None'
-
-            if error:
-                wf_module.set_error(error, notify=True)
-            else:
-                wf_module.set_ready(notify=False)
-                return tableout
+        params = create_parameter_dict(wf_module, table)
+        try:
+            tableout = loadable.render(table, params)
+        except Exception as e:
+            # Catch exceptions in the module render function, and return error message + line number to user
+            exc_name = type(e).__name__
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
+            fname = os.path.split(tb[0])[1]
+            lineno = original_module_lineno(tb[1])
+            error = ('{}: {} at line {} of {}'.format(exc_name, str(e), lineno, fname))
 
     # Internal module -- has access to internal data structures
     else:
-        return module_dispatch_tbl[dispatch].render(wf_module, table)
+        tableout = module_dispatch_tbl[dispatch].render(wf_module, table)
+
+    if isinstance(tableout, str):
+        # If the module returns a string, it's an error message.
+        error = tableout
+    elif (not isinstance(tableout, pd.DataFrame)) and (tableout is not None):
+        # if it's not a string it needs to be a table
+        error = 'Module did not return a table or None'
+
+    if error:
+        wf_module.set_error(error, notify=True)
+        return table  # NOP if error
+    else:
+        wf_module.set_ready(notify=False)
+        return tableout
 
 
 def module_dispatch_event(wf_module, **kwargs):

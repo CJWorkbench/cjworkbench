@@ -24,20 +24,17 @@ class CountByDate(ModuleImpl):
         tc = table.columns
 
         if col not in table.columns:
-            wf_module.set_error('There is no column named %s' % col)
-            return None
+            return('There is no column named %s' % col)
 
         # integer columns, just... no. Never really want to interpret as seconds since 1970
         if table[col].dtype == 'int64':
-            wf_module.set_error('Column %s does not seem to be dates' % col)
-            return None
+            return('Column %s does not seem to be dates' % col)
 
         # parse string as date, pull out day, convert back to string
         try:
             dates = pd.to_datetime(table[col])
         except (ValueError, TypeError):
-            wf_module.set_error('Column %s does not seem to be dates' % col)
-            return None
+            return('Column %s does not seem to be dates' % col)
 
         def safedatestr(date):
             if type(date) == datetime.date:
@@ -46,8 +43,7 @@ class CountByDate(ModuleImpl):
                 return ""
 
         if table[col].dtype == 'int64':
-            wf_module.set_error('Column %s does not seem to be dates' % col)
-            return None
+            return('Column %s does not seem to be dates' % col)
 
         dates = dates.dt.date.apply(lambda x: safedatestr(x))  # reformat dates to strings
         newtab = pd.DataFrame(dates.value_counts(sort=(sortby == CountByDate.SORT_BY_FREQ)))

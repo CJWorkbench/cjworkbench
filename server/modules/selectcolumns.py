@@ -20,7 +20,6 @@ class SelectColumns(ModuleImpl):
             if c in cols:
                 newcols.append(c)
 
-        wf_module.set_ready(notify=False)
         if drop_or_keep == 1:
             newtab = table[newcols]
         else:

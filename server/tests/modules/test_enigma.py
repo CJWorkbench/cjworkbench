@@ -50,27 +50,27 @@ class EnigmaTests(LoggedInTestCase):
     def test_enigma_io_error_conditions(self):
         url = "www.test.com"
         split_url = urlsplit(url)
-        handle_dotio_url(self.wfmodule, url, split_url, 1000)
-        self.assertEquals("You can request a maximum of 500 rows.", self.wfmodule.error_msg)
+        out = handle_dotio_url(self.wfmodule, url, split_url, 1000)
+        self.assertEquals(out, "You can request a maximum of 500 rows.")
 
     def test_enigma_com_error_conditions(self):
         # tests existence of API key 
         url = "www.test.com"
         split_url = urlsplit(url)
-        handle_dotcom_url(self.wfmodule, url, split_url, 1000)
-        self.assertEquals("No Enigma API Key set.", self.wfmodule.error_msg)
+        out = handle_dotcom_url(self.wfmodule, url, split_url, 1000)
+        self.assertEquals(out, "No Enigma API Key set.")
 
         # tests proper URL
         os.environ["ENIGMA_COM_API_KEY"] = "TESTKEY"
-        handle_dotcom_url(self.wfmodule, url, split_url, 1000)        
-        self.assertEquals("Unable to retrieve the dataset id from request.", self.wfmodule.error_msg)
+        out = handle_dotcom_url(self.wfmodule, url, split_url, 1000)
+        self.assertEquals(out, "Unable to retrieve the dataset id from request.")
 
     @mock.patch('requests.get', side_effect=mock_response)
     def test_enigma_com_request_response_failure(self, mock_get):
         url = "http://test.com/failure/datasets/dataset_failure/limit/500"
         split_url = urlsplit(url)
-        handle_dotcom_url(self.wfmodule, url, split_url, 500)
-        self.assertTrue("Requested resource not found" in self.wfmodule.error_msg)
+        out = handle_dotcom_url(self.wfmodule, url, split_url, 500)
+        self.assertTrue("Requested resource not found" in out)
 
         
     @mock.patch('requests.get', side_effect=mock_response)
