@@ -1554,7 +1554,6 @@ img.logo {
 .card .second-level:hover {
   background-color: #4E6878;
   opacity: 1;
-
 }
 
 .ml-handle{
@@ -1607,8 +1606,6 @@ img.logo {
 .ml-module-card { 
   width: 200px;
 }
-
-
 
 
 /* --- the Search Modules within the Module Library header - ModuleSearch.js --- */
@@ -1747,6 +1744,15 @@ img.logo {
   margin-bottom: 1rem;
 }
 
+/* AddNotificationButtonClosed */
+
+.notification-button-popout {
+  background-color: #4E6878 !important;
+  z-index: 100;
+  position: absolute;
+  left: 60px;
+  top: 252px;
+}
 
 /* ImportModuleFromGitHub */
 

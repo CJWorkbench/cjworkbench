@@ -10,7 +10,7 @@ import React from 'react';
 import ModuleCategories from './ModuleCategories';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
 import ModuleSearch from './ModuleSearch';
-import AddNotificationButton from './AddNotificationButton';
+import AddNotificationButtonOpen from './AddNotificationButtonOpen';
 
 
 export default class ModuleLibraryOpen extends React.Component {
@@ -52,7 +52,7 @@ export default class ModuleLibraryOpen extends React.Component {
 
         <div className="ml-divider"></div>
 
-        <AddNotificationButton libraryOpen={true}/>
+        <AddNotificationButtonOpen/>
 
         <div className="ml-divider"></div>
 

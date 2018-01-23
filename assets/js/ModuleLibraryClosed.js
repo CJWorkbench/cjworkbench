@@ -9,7 +9,7 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleCategories from './ModuleCategories';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
-import AddNotificationButton from './AddNotificationButton';
+import AddNotificationButtonClosed from './AddNotificationButtonClosed';
 
 
 export default class ModuleLibraryClosed extends React.Component {
@@ -31,20 +31,23 @@ export default class ModuleLibraryClosed extends React.Component {
   }
 
   render() {
+    var arrow = (this.state.showArrow)
+      ? <div className='icon-sort-right-vl-gray close-open-toggle'/>
+      : <div className="logo">
+          <img src="/static/images/logo.png" width="20"/>
+        </div>
 
     return (
       <div className='module-library-closed'>
       
-        <div className="expand-lib" onMouseEnter={this.showArrow} onMouseLeave={this.hideArrow}>
+        <div 
+          className="expand-lib" 
+          onMouseEnter={this.showArrow} 
+          onMouseLeave={this.hideArrow}
+          onClick={this.props.openLibrary}
+        >
           <div className="expand-lib-button d-flex">
-            <div className="logo" style={{ display: this.state.showArrow ? 'none' : 'block' }}>
-              <img src="/static/images/logo.png" width="20"/>
-            </div>
-            <div
-              className='icon-sort-right-vl-gray close-open-toggle'
-              onClick={this.props.openLibrary}
-              style={{ display: this.state.showArrow ? 'block' : 'none' }}>
-            </div>
+            {arrow}
           </div>
         </div>
 
@@ -64,7 +67,7 @@ export default class ModuleLibraryClosed extends React.Component {
           items={this.props.items}
         />;
 
-        <AddNotificationButton libraryOpen={false}/>
+        <AddNotificationButtonClosed/>
 
         <ImportModuleFromGitHub 
           moduleAdded={this.props.moduleAdded} 

@@ -42,6 +42,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
     >
       <div
         className="expand-lib"
+        onClick={[Function]}
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
       >
@@ -50,26 +51,12 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
         >
           <div
             className="logo"
-            style={
-              Object {
-                "display": "block",
-              }
-            }
           >
             <img
               src="/static/images/logo.png"
               width="20"
             />
           </div>
-          <div
-            className="icon-sort-right-vl-gray close-open-toggle"
-            onClick={[Function]}
-            style={
-              Object {
-                "display": "none",
-              }
-            }
-          />
         </div>
       </div>
       <div
@@ -372,39 +359,56 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
         </div>
       </ModuleCategories>
       ;
-      <DragSource(AddNotificationButton)
-        libraryOpen={false}
-      >
-        <AddNotificationButton
+      <DragSource(AddNotificationButtonClosed)>
+        <AddNotificationButtonClosed
           connectDragSource={[Function]}
           isDragging={false}
-          libraryOpen={false}
         >
-          <div
-            className="card"
-          >
+          <div>
             <div
-              className="second-level t-vl-gray d-flex"
+              className="card notification-button-closed"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
             >
               <div
-                className="ml-icon-container mr-5"
+                className="second-level t-vl-gray d-flex"
               >
                 <div
-                  className="icon-notification ml-icon"
-                  title="Add Notification"
-                />
+                  className="ml-icon-container mr-5"
+                >
+                  <div
+                    className="icon-notification ml-icon"
+                    title="Add Notification"
+                  />
+                </div>
               </div>
+            </div>
+            <div
+              className="card notification-button-popout"
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+              style={
+                Object {
+                  "display": "none",
+                }
+              }
+            >
               <div
-                className="ml-handle"
+                className="second-level d-flex "
               >
                 <div
-                  className="icon-grip"
+                  className="content-5 ml-module-name my-auto mr-3"
+                >
+                  Add data alert
+                </div>
+                <div
+                  className="icon-grip my-auto"
                 />
               </div>
             </div>
           </div>
-        </AddNotificationButton>
-      </DragSource(AddNotificationButton)>
+        </AddNotificationButtonClosed>
+      </DragSource(AddNotificationButtonClosed)>
       <ImportModuleFromGitHub
         api={Object {}}
         libraryOpen={false}

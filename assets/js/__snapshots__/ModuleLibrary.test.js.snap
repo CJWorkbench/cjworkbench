@@ -227,13 +227,10 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
           <div
             className="ml-divider"
           />
-          <DragSource(AddNotificationButton)
-            libraryOpen={true}
-          >
-            <AddNotificationButton
+          <DragSource(AddNotificationButtonOpen)>
+            <AddNotificationButtonOpen
               connectDragSource={[Function]}
               isDragging={false}
-              libraryOpen={true}
             >
               <div
                 className="card"
@@ -251,12 +248,10 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                         className="icon-notification ml-icon"
                       />
                     </div>
-                    <div>
-                      <div
-                        className="content-5 ml-module-name"
-                      >
-                        Add data alert
-                      </div>
+                    <div
+                      className="content-5 ml-module-name"
+                    >
+                      Add data alert
                     </div>
                   </div>
                   <div
@@ -268,8 +263,8 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                   </div>
                 </div>
               </div>
-            </AddNotificationButton>
-          </DragSource(AddNotificationButton)>
+            </AddNotificationButtonOpen>
+          </DragSource(AddNotificationButtonOpen)>
           <div
             className="ml-divider"
           />
@@ -932,13 +927,10 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
           <div
             className="ml-divider"
           />
-          <DragSource(AddNotificationButton)
-            libraryOpen={true}
-          >
-            <AddNotificationButton
+          <DragSource(AddNotificationButtonOpen)>
+            <AddNotificationButtonOpen
               connectDragSource={[Function]}
               isDragging={false}
-              libraryOpen={true}
             >
               <div
                 className="card"
@@ -956,12 +948,10 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                         className="icon-notification ml-icon"
                       />
                     </div>
-                    <div>
-                      <div
-                        className="content-5 ml-module-name"
-                      >
-                        Add data alert
-                      </div>
+                    <div
+                      className="content-5 ml-module-name"
+                    >
+                      Add data alert
                     </div>
                   </div>
                   <div
@@ -973,8 +963,8 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                   </div>
                 </div>
               </div>
-            </AddNotificationButton>
-          </DragSource(AddNotificationButton)>
+            </AddNotificationButtonOpen>
+          </DragSource(AddNotificationButtonOpen)>
           <div
             className="ml-divider"
           />
@@ -1063,19 +1053,21 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
       >
         <div
           className="expand-lib"
+          onClick={[Function]}
+          onMouseEnter={[Function]}
+          onMouseLeave={[Function]}
         >
           <div
             className="expand-lib-button d-flex"
           >
-            <a
+            <div
               className="logo"
-              href="/workflows"
             >
               <img
                 src="/static/images/logo.png"
                 width="20"
               />
-            </a>
+            </div>
           </div>
         </div>
         <div
@@ -1104,39 +1096,56 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
           />
         </ModuleCategories>
         ;
-        <DragSource(AddNotificationButton)
-          libraryOpen={false}
-        >
-          <AddNotificationButton
+        <DragSource(AddNotificationButtonClosed)>
+          <AddNotificationButtonClosed
             connectDragSource={[Function]}
             isDragging={false}
-            libraryOpen={false}
           >
-            <div
-              className="card"
-            >
+            <div>
               <div
-                className="second-level t-vl-gray d-flex"
+                className="card notification-button-closed"
+                onMouseEnter={[Function]}
+                onMouseLeave={[Function]}
               >
                 <div
-                  className="ml-icon-container mr-5"
+                  className="second-level t-vl-gray d-flex"
                 >
                   <div
-                    className="icon-notification ml-icon"
-                    title="Add Notification"
-                  />
+                    className="ml-icon-container mr-5"
+                  >
+                    <div
+                      className="icon-notification ml-icon"
+                      title="Add Notification"
+                    />
+                  </div>
                 </div>
+              </div>
+              <div
+                className="card notification-button-popout"
+                onMouseEnter={[Function]}
+                onMouseLeave={[Function]}
+                style={
+                  Object {
+                    "display": "none",
+                  }
+                }
+              >
                 <div
-                  className="ml-handle"
+                  className="second-level d-flex "
                 >
                   <div
-                    className="icon-grip"
+                    className="content-5 ml-module-name my-auto mr-3"
+                  >
+                    Add data alert
+                  </div>
+                  <div
+                    className="icon-grip my-auto"
                   />
                 </div>
               </div>
             </div>
-          </AddNotificationButton>
-        </DragSource(AddNotificationButton)>
+          </AddNotificationButtonClosed>
+        </DragSource(AddNotificationButtonClosed)>
         <ImportModuleFromGitHub
           api={
             Object {

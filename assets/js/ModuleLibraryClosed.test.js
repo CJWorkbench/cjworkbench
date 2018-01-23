@@ -61,7 +61,7 @@ describe('ModuleLibraryClosed', () => {
   });
 
   it('Clicking arrow will invoke Open Library function', () => { 
-    let arrow = wrapper.find('.close-open-toggle');
+    let arrow = wrapper.find('.expand-lib');
     expect(arrow).toHaveLength(1);
     arrow.simulate('click');
     expect(openLibrary.mock.calls.length).toBe(1);
