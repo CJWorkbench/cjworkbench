@@ -32,3 +32,5 @@ importedmodules/
 
 client_secret.json
 .DS_Store
+
+.idea
