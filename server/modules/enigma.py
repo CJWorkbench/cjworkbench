@@ -16,16 +16,14 @@ def handle_dotcom_url(wf_module, url, split_url, num_rows):
     Else, throws an error.
     """
     if not "ENIGMA_COM_API_KEY" in os.environ:
-        wf_module.set_error("No Enigma API Key set.")
-        return
+        return("No Enigma API Key set.")
 
     api_key = os.environ["ENIGMA_COM_API_KEY"]
 
     try:
         dataset_id = split_url.path.split('/')[3]
     except Exception as e:
-        wf_module.set_error("Unable to retrieve the dataset id from request.")
-        return
+        return("Unable to retrieve the dataset id from request.")
 
     request_url = "https://public.enigma.com/api/datasets/{}?row_limit={}".format(dataset_id, num_rows)
     headers = {
@@ -46,9 +44,9 @@ def handle_dotcom_url(wf_module, url, split_url, num_rows):
     else:
         error = json.loads(response.text)
         if "message" in error:
-            wf_module.set_error("Received error \"{}\" whilst retrieving data from {}".format(error["message"], url))
+            return("Received error \"{}\" whilst retrieving data from {}".format(error["message"], url))
         else: # this should hopefully never get hit, but let's err on the side of caution.
-            wf_module.set_error("Received error status {} whilst retrieving data from {}}".format(response.status_code, url))
+            return("Received error status {} whilst retrieving data from {}}".format(response.status_code, url))
 
 def handle_dotio_url(wf_module, url, split_url, num_rows):
     """
@@ -58,8 +56,7 @@ def handle_dotio_url(wf_module, url, split_url, num_rows):
     """
 
     if num_rows > 500:
-        wf_module.set_error("You can request a maximum of 500 rows.")
-        return
+        return("You can request a maximum of 500 rows.")
 
     if "/limit/" not in url:
         if url.endswith('/'):
@@ -76,16 +73,14 @@ def handle_dotio_url(wf_module, url, split_url, num_rows):
             message = error["info"]["message"]
             if "additional" in error["info"]:
                message += ": " + error["info"]["additional"]["message"]
-        wf_module.set_error("Unable to retrieve data from Enigma. Received {} status, with message {}"
+        return("Unable to retrieve data from Enigma. Received {} status, with message {}"
             .format(response.status_code, message))
-        return
     try:
         json_text = json.loads(response.text)
         table = pd.read_json(json.dumps(json_text['result']))
         return table
     except Exception as ex: # Generic exceptions suck, but is it the most pragmatic/all-encompassing here?
-        wf_module.set_error("Unable to process request: {}".format(str(ex)))
-        return
+        return("Unable to process request: {}".format(str(ex)))
 
 class EnigmaDataLoader:
     @staticmethod

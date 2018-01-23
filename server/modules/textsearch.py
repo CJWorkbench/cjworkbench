@@ -21,8 +21,7 @@ class TextSearch(ModuleImpl):
         keeprows = None
         for c in cols:
             if not c in table.columns:
-                wf_module.set_error('There is no column named %s' % c)
-                return None
+                return('There is no column named %s' % c)
 
             kr = table[c].astype(str).str.contains(query, case=case_sensitive, regex=regex)
 
@@ -33,5 +32,4 @@ class TextSearch(ModuleImpl):
                 keeprows = kr
 
         newtab = table[keeprows]
-        wf_module.set_ready(notify=False)
         return newtab

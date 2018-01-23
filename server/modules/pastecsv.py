@@ -19,14 +19,11 @@ class PasteCSV(ModuleImpl):
             header_row = None
 
         if (len(tablestr)==0):
-            wf_module.set_error('Paste data here')
-            return None
+            return('Paste data here')
         try:
             table = pd.read_csv(io.StringIO(tablestr), header=header_row,
                                 skipinitialspace=True)
         except CParserError as e:
-            wf_module.set_error(str(e))
-            return None
+            return(str(e))
 
-        wf_module.set_ready(notify=False)
         return table

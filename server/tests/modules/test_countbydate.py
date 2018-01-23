@@ -36,7 +36,7 @@ class CountValuesTests(LoggedInTestCase):
         set_string(self.col_pval, '')
         out = execute_wfmodule(self.wf_module)
         self.wf_module.refresh_from_db()
-        self.assertEqual(self.wf_module.status, WfModule.ERROR)
+        self.assertEqual(self.wf_module.status, WfModule.READY)
         self.assertFalse(out.empty)
 
         # bad column name should produce error

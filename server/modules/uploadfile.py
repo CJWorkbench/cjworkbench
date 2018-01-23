@@ -22,19 +22,16 @@ class UploadFile(ModuleImpl):
             try:
                 table_aux = pd.read_excel(so.file)
             except XLRDError as e:
-                wf_module.set_error(str(e))
-                return None
+                return(str(e))
 
         elif file_ext=='.csv':
             try:
                 table_aux = pd.read_csv(so.file)
             except ParserError as e:
-                wf_module.set_error(str(e))
-                return None
+                return(str(e))
 
         else:
-            wf_module.set_error('Unknown file type ' + file_ext, notify=True)
-            return None
+            return('Unknown file type ' + file_ext)
 
         sanitize_dataframe(table_aux)
         wf_module.set_ready(notify=True)

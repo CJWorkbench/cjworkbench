@@ -26,8 +26,7 @@ class Formula(ModuleImpl):
             for i,row in enumerate(table.values):
                 newcol[i] = eval(code, custom_code_globals, dict(zip(colnames, row)))
         except Exception as e:
-            wf_module.set_error(str(e))
-            return None
+            return(str(e))
 
         # if no output column supplied, use result0, result1, etc.
         out_column = wf_module.get_param_string('out_column')

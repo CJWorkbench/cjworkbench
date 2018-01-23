@@ -1,5 +1,5 @@
 from django.test import TestCase
-from server.views.WfModule import make_render_json
+from server.execute import execute_wfmodule
 from server.tests.utils import *
 
 # ---- Formula ----
@@ -23,25 +23,25 @@ class FormulaTests(LoggedInTestCase):
         table = mock_csv_table.copy()
         table['output'] = table['Amount']*2.0  # need the .0 as output is going to be floating point
 
-        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule.id)
+        out = execute_wfmodule(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.READY)
-        self.assertEqual(response.content, make_render_json(table))
+        self.assertTrue(out.equals(table))
 
         # empty result parameter should produce 'result'
         self.rpval.value = ''
         self.rpval.save()
         table = mock_csv_table.copy()
         table['result'] = table['Amount']*2.0  # need the .0 as output is going to be floating point
-        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule.id)
+        out = execute_wfmodule(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.READY)
-        self.assertEqual(response.content, make_render_json(table))
+        self.assertTrue(out.equals(table))
 
         # formula with missing column name should error
         self.fpval.value = 'xxx*2'
         self.fpval.save()
-        response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule.id)
+        out = execute_wfmodule(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
-        self.assertEqual(response.content, make_render_json(pd.DataFrame()))
+        self.assertTrue(out.equals(mock_csv_table))  # NOP on error
