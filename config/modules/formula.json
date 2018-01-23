@@ -9,7 +9,8 @@
       "name": "Type in formula, using column names",
       "id_name" : "formula",
       "type": "string",
-      "default": ""
+      "default": "",
+      "placeholder": "Example: column 1 * (column 2 + column 3)"
     },
     {
       "name": "Output column name",
