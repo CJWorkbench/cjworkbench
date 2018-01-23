@@ -156,6 +156,7 @@ export default class WfParameter extends React.Component {
               defaultValue={this.props.p.value}
               onBlur={this.blur}
               onKeyPress={this.keyPress}
+              placeholder={this.props.p.parameter_spec.placeholder || ''}
               ref={ el => this.stringRef = el}/>
 
           </div>
@@ -173,6 +174,7 @@ export default class WfParameter extends React.Component {
               defaultValue={this.props.p.value}
               onBlur={this.blur}
               onKeyPress={this.keyPress}
+              placeholder={this.props.p.parameter_spec.placeholder || ''}
               ref={ el => this.numberRef = el}/>
           </div>
         );
@@ -244,7 +246,7 @@ export default class WfParameter extends React.Component {
 
       case 'custom':
 
-        if (this.props.p.parameter_spec.id_name == 'chart') {
+        if (this.props.p.parameter_spec.id_name === 'chart') {
 
           // Load and save chart state, image to hidden parameters
           var loadState = ( () => this.props.getParamText('chartstate') );
@@ -267,8 +269,8 @@ export default class WfParameter extends React.Component {
           );
 
         } else if (
-          this.props.p.parameter_spec.id_name == 'chart-line' ||
-          this.props.p.parameter_spec.id_name == 'chart-column') {
+          this.props.p.parameter_spec.id_name === 'chart-line' ||
+          this.props.p.parameter_spec.id_name === 'chart-column') {
 
             // Load and save chart state, image to hidden parameters
             var loadState = ( () => this.props.getParamText('chartstate') );
