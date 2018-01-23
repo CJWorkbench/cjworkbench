@@ -15,26 +15,36 @@ import AddNotificationButton from './AddNotificationButton';
 export default class ModuleLibraryClosed extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      showArrow: false
+    };
+    this.showArrow = this.showArrow.bind(this);
+    this.hideArrow = this.hideArrow.bind(this);
+  }
+
+  showArrow() {
+    if (!this.props.isReadOnly) this.setState({showArrow: true});
+  }
+
+  hideArrow() {
+    if (!this.props.isReadOnly) this.setState({showArrow: false});
   }
 
   render() {
-    var toggleArrow = (this.props.isReadOnly)
-      ? null
-      : <div
-          className='icon-sort-right-vl-gray ml-auto ml-3 mt-2 close-open-toggle'
-          onClick={this.props.openLibrary}>
-        </div>
 
     return (
       <div className='module-library-closed'>
       
-        <div className="expand-lib">
+        <div className="expand-lib" onMouseEnter={this.showArrow} onMouseLeave={this.hideArrow}>
           <div className="expand-lib-button d-flex">
-            <a href="/workflows"  className="logo">
+            <div className="logo" style={{ display: this.state.showArrow ? 'none' : 'block' }}>
               <img src="/static/images/logo.png" width="20"/>
-            </a>
-            { toggleArrow }
+            </div>
+            <div
+              className='icon-sort-right-vl-gray close-open-toggle'
+              onClick={this.props.openLibrary}
+              style={{ display: this.state.showArrow ? 'block' : 'none' }}>
+            </div>
           </div>
         </div>
 
