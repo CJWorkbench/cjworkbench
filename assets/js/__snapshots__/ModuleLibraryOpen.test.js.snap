@@ -512,13 +512,10 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
       <div
         className="ml-divider"
       />
-      <DragSource(AddNotificationButton)
-        libraryOpen={true}
-      >
-        <AddNotificationButton
+      <DragSource(AddNotificationButtonOpen)>
+        <AddNotificationButtonOpen
           connectDragSource={[Function]}
           isDragging={false}
-          libraryOpen={true}
         >
           <div
             className="card"
@@ -536,12 +533,10 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                     className="icon-notification ml-icon"
                   />
                 </div>
-                <div>
-                  <div
-                    className="content-5 ml-module-name"
-                  >
-                    Add data alert
-                  </div>
+                <div
+                  className="content-5 ml-module-name"
+                >
+                  Add data alert
                 </div>
               </div>
               <div
@@ -553,8 +548,8 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
               </div>
             </div>
           </div>
-        </AddNotificationButton>
-      </DragSource(AddNotificationButton)>
+        </AddNotificationButtonOpen>
+      </DragSource(AddNotificationButtonOpen)>
       <div
         className="ml-divider"
       />
