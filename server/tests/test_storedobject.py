@@ -47,6 +47,7 @@ class StoredObjectTests(TestCase):
                                         metadata=self.metadata)
         self.assertEqual(so1.type, StoredObject.CACHED_TABLE)
         self.assertEqual(so1.metadata, self.metadata )
+        self.assertEqual(so1.size, os.stat(so1.file.name).st_size)
         table2 = so1.get_table()
         self.assertTrue(table2.equals(self.test_table))
 

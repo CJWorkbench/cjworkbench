@@ -88,6 +88,7 @@ class StoredObject(models.Model):
             type=type,
             metadata=metadata,
             file=path,
+            size=os.stat(path).st_size,
             stored_at=timezone.now(),
             hash=hash
         )
