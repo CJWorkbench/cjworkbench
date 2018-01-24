@@ -364,11 +364,13 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
           connectDragSource={[Function]}
           isDragging={false}
         >
-          <div>
+          <div
+            className="notification-button-closed"
+            onMouseEnter={[Function]}
+            onMouseLeave={[Function]}
+          >
             <div
-              className="card notification-button-closed"
-              onMouseEnter={[Function]}
-              onMouseLeave={[Function]}
+              className="card"
             >
               <div
                 className="second-level t-vl-gray d-flex"
@@ -385,8 +387,6 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
             </div>
             <div
               className="card notification-button-popout"
-              onMouseEnter={[Function]}
-              onMouseLeave={[Function]}
               style={
                 Object {
                   "display": "none",

@@ -9,7 +9,7 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
 
-
+// TODO: gather all functions for dragging into one utility file
 const spec = {
   beginDrag(props, monitor, component) {
     return {

@@ -18,16 +18,11 @@ export default class ModuleLibraryClosed extends React.Component {
     this.state = {
       showArrow: false
     };
-    this.showArrow = this.showArrow.bind(this);
-    this.hideArrow = this.hideArrow.bind(this);
+    this.toggleArrow = this.toggleArrow.bind(this);
   }
 
-  showArrow() {
-    if (!this.props.isReadOnly) this.setState({showArrow: true});
-  }
-
-  hideArrow() {
-    if (!this.props.isReadOnly) this.setState({showArrow: false});
+  toggleArrow() {
+    if (!this.props.isReadOnly) this.setState({showArrow: !this.state.showArrow});
   }
 
   render() {
@@ -42,8 +37,8 @@ export default class ModuleLibraryClosed extends React.Component {
       
         <div 
           className="expand-lib" 
-          onMouseEnter={this.showArrow} 
-          onMouseLeave={this.hideArrow}
+          onMouseEnter={this.toggleArrow} 
+          onMouseLeave={this.toggleArrow}
           onClick={this.props.openLibrary}
         >
           <div className="expand-lib-button d-flex">
