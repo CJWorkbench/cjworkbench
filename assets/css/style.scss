@@ -1730,6 +1730,17 @@ img.logo {
   top: 25.2rem;
 }
 
+/* AddNotificationButtonClosed */
+
+// Absolute position used to make element appear outside of Module Library div
+.notification-button-popout {
+  background-color: #4E6878 !important;
+  z-index: 100;
+  position: absolute;
+  left: 6rem;
+  top: 25.2rem;
+}
+
 /* ImportModuleFromGitHub */
 
 .import-module {
