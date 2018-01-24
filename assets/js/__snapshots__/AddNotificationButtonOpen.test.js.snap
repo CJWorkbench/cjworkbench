@@ -19,7 +19,7 @@ exports[`AddNotificationButtonOpen  Renders 1`] = `
             className="d-flex flex-row align-items-center"
           >
             <div
-              className="ml-icon-container ml-2"
+              className="ml-icon-container"
             >
               <div
                 className="icon-notification ml-icon"

@@ -7,11 +7,11 @@
  * Modules: Melt, Select Columns
  *
  * Categories should be expandable and collapsible, just like each individual module.
- * 
+ *
  * When Module Library is closed, animation of collapse is hidden
- * 
+ *
  * Rendered by <ModuleCategories> component
- * 
+ *
  * TODO: Refactor into separate components for Open/Closed versions;
  *     Closed version expands/collapses on hover instead of click
  */
@@ -69,22 +69,21 @@ export default class ModuleCategory extends React.Component {
       ? 'card b-l-gray library-card-category-open'
       : 'card b-l-gray library-card-category-closed';
 
-    var symbol = isOpen
+    var sort = isOpen
       ? 'icon-sort-up-vl-gray ml-sort mb-1'
       : 'icon-sort-down-vl-gray ml-sort mb-1';
 
     // Grabs icon from first module in category for category icon
     var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
 
-    var header = (this.props.libraryOpen)
-    
+    var catName = (this.props.libraryOpen)
+
     ? <div className='cat-container'>
-        <div className={symbol} />
-        <span className={icon}></span>
-        <span className='content-3 t-vl-gray ml-3'>{this.props.name}</span>
+        <div className={sort} />
+        <span className='open-ML-cat content-3 t-vl-gray'>{this.props.name}</span>
       </div>
-    : <div className='cat-container'>
-        <span className={'ml-2 ' + icon}></span>
+    : <div className='cat-container closed-ML-cat'>
+        <span className={icon}></span>
       </div>
 
     var hideAnimation = (!!this.state.visible) ? 'hide-animation' : null;
@@ -94,8 +93,8 @@ export default class ModuleCategory extends React.Component {
       ? <Collapse className='' isOpen={isOpen}>
           <div className="ml-list">{this.props.modules}</div>
         </Collapse>
-      : <Collapse 
-          className={hideAnimation} 
+      : <Collapse
+          className={hideAnimation}
           isOpen={isOpen}
           onEntering={this.onEntering}
           onEntered={this.onEntered}
@@ -110,7 +109,7 @@ export default class ModuleCategory extends React.Component {
         <div className="ml-cat">
 
           <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
-            {header}
+            {catName}
           </div>
 
           {collapse}

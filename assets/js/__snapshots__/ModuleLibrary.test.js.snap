@@ -68,9 +68,13 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                 Workbench
               </a>
               <div
-                className="icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle"
+                className="close-open-toggle"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  className="icon-sort-left-vl-gray ml-4 mt-1"
+                />
+              </div>
             </div>
             <div
               className="d-flex align-items-center search-bar"
@@ -242,7 +246,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                     className="d-flex flex-row align-items-center"
                   >
                     <div
-                      className="ml-icon-container ml-2"
+                      className="ml-icon-container"
                     >
                       <div
                         className="icon-notification ml-icon"
@@ -278,15 +282,12 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
             moduleAdded={[Function]}
           >
             <div
-              className="import-module"
+              className=""
             >
               <div
-                className="import-module-button content-3 mb-5 t-vl-gray"
+                className="import-module-button content-4 t-vl-gray"
                 onClick={[Function]}
               >
-                <span
-                  className="icon-add mr-2"
-                />
                 <span>
                   IMPORT CUSTOM MODULE
                 </span>
@@ -404,9 +405,13 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                 Workbench
               </a>
               <div
-                className="icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle"
+                className="close-open-toggle"
                 onClick={[Function]}
-              />
+              >
+                <div
+                  className="icon-sort-left-vl-gray ml-4 mt-1"
+                />
+              </div>
             </div>
             <div
               className="d-flex align-items-center search-bar"
@@ -648,10 +653,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           className="icon-sort-up-vl-gray ml-sort mb-1"
                         />
                         <span
-                          className="icon-url ml-icon"
-                        />
-                        <span
-                          className="content-3 t-vl-gray ml-3"
+                          className="open-ML-cat content-3 t-vl-gray"
                         >
                           Add data
                         </span>
@@ -830,10 +832,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           className="icon-sort-down-vl-gray ml-sort mb-1"
                         />
                         <span
-                          className="icon-chart ml-icon"
-                        />
-                        <span
-                          className="content-3 t-vl-gray ml-3"
+                          className="open-ML-cat content-3 t-vl-gray"
                         >
                           Visualize
                         </span>
@@ -942,7 +941,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     className="d-flex flex-row align-items-center"
                   >
                     <div
-                      className="ml-icon-container ml-2"
+                      className="ml-icon-container"
                     >
                       <div
                         className="icon-notification ml-icon"
@@ -978,15 +977,12 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
             moduleAdded={[Function]}
           >
             <div
-              className="import-module"
+              className=""
             >
               <div
-                className="import-module-button content-3 mb-5 t-vl-gray"
+                className="import-module-button content-4 t-vl-gray"
                 onClick={[Function]}
               >
-                <span
-                  className="icon-add mr-2"
-                />
                 <span>
                   IMPORT CUSTOM MODULE
                 </span>
@@ -1058,16 +1054,12 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
           onMouseLeave={[Function]}
         >
           <div
-            className="expand-lib-button d-flex"
+            className="logo"
           >
-            <div
-              className="logo"
-            >
-              <img
-                src="/static/images/logo.png"
-                width="20"
-              />
-            </div>
+            <img
+              src="/static/images/logo.png"
+              width="20"
+            />
           </div>
         </div>
         <div
@@ -1075,10 +1067,10 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
           onClick={[Function]}
         >
           <div
-            className="first-level"
+            className="closed-ML-cat"
           >
             <div
-              className="icon-search-white ml-icon-search text-center mt-3"
+              className="icon-search-white ml-icon-search"
             />
           </div>
         </div>
@@ -1110,10 +1102,10 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
                 className="card"
               >
                 <div
-                  className="second-level t-vl-gray d-flex"
+                  className="closed-ML-cat t-vl-gray"
                 >
                   <div
-                    className="ml-icon-container mr-5"
+                    className="ml-icon-container"
                   >
                     <div
                       className="icon-notification ml-icon"
@@ -1156,10 +1148,10 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
           moduleAdded={[Function]}
         >
           <div
-            className="import-module"
+            className=""
           >
             <div
-              className="import-module-button mb-5"
+              className="closed-ML-cat"
               onClick={[Function]}
             >
               <div

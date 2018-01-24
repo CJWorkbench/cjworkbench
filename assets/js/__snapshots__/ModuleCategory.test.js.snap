@@ -40,10 +40,10 @@ exports[`ModuleCategory  Library closed  Renders with list of Module components 
           onClick={[Function]}
         >
           <div
-            className="cat-container"
+            className="cat-container closed-ML-cat"
           >
             <span
-              className="ml-2 icon-add ml-icon"
+              className="icon-add ml-icon"
             />
           </div>
         </div>
@@ -242,10 +242,7 @@ exports[`ModuleCategory  Library open  Renders with list of Module components 1`
               className="icon-sort-down-vl-gray ml-sort mb-1"
             />
             <span
-              className="icon-add ml-icon"
-            />
-            <span
-              className="content-3 t-vl-gray ml-3"
+              className="open-ML-cat content-3 t-vl-gray"
             >
               Add Data
             </span>

@@ -18,10 +18,10 @@ exports[`AddNotificationButtonOpen  Renders 1`] = `
           className="card"
         >
           <div
-            className="second-level t-vl-gray d-flex"
+            className="closed-ML-cat t-vl-gray"
           >
             <div
-              className="ml-icon-container mr-5"
+              className="ml-icon-container"
             >
               <div
                 className="icon-notification ml-icon"

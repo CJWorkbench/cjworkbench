@@ -66,10 +66,10 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
               onClick={[Function]}
             >
               <div
-                className="cat-container"
+                className="cat-container closed-ML-cat"
               >
                 <span
-                  className="ml-2 icon-url ml-icon"
+                  className="icon-url ml-icon"
                 />
               </div>
             </div>
@@ -192,10 +192,10 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
               onClick={[Function]}
             >
               <div
-                className="cat-container"
+                className="cat-container closed-ML-cat"
               >
                 <span
-                  className="ml-2 icon-filter ml-icon"
+                  className="icon-filter ml-icon"
                 />
               </div>
             </div>
@@ -366,10 +366,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                   className="icon-sort-down-vl-gray ml-sort mb-1"
                 />
                 <span
-                  className="icon-url ml-icon"
-                />
-                <span
-                  className="content-3 t-vl-gray ml-3"
+                  className="open-ML-cat content-3 t-vl-gray"
                 >
                   Add data
                 </span>
@@ -492,10 +489,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                   className="icon-sort-down-vl-gray ml-sort mb-1"
                 />
                 <span
-                  className="icon-filter ml-icon"
-                />
-                <span
-                  className="content-3 t-vl-gray ml-3"
+                  className="open-ML-cat content-3 t-vl-gray"
                 >
                   Filter
                 </span>

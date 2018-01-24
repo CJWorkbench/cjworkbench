@@ -47,16 +47,12 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
         onMouseLeave={[Function]}
       >
         <div
-          className="expand-lib-button d-flex"
+          className="logo"
         >
-          <div
-            className="logo"
-          >
-            <img
-              src="/static/images/logo.png"
-              width="20"
-            />
-          </div>
+          <img
+            src="/static/images/logo.png"
+            width="20"
+          />
         </div>
       </div>
       <div
@@ -64,10 +60,10 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
         onClick={[Function]}
       >
         <div
-          className="first-level"
+          className="closed-ML-cat"
         >
           <div
-            className="icon-search-white ml-icon-search text-center mt-3"
+            className="icon-search-white ml-icon-search"
           />
         </div>
       </div>
@@ -133,10 +129,10 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                   onClick={[Function]}
                 >
                   <div
-                    className="cat-container"
+                    className="cat-container closed-ML-cat"
                   >
                     <span
-                      className="ml-2 icon-url ml-icon"
+                      className="icon-url ml-icon"
                     />
                   </div>
                 </div>
@@ -259,10 +255,10 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                   onClick={[Function]}
                 >
                   <div
-                    className="cat-container"
+                    className="cat-container closed-ML-cat"
                   >
                     <span
-                      className="ml-2 icon-filter ml-icon"
+                      className="icon-filter ml-icon"
                     />
                   </div>
                 </div>
@@ -373,10 +369,10 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
               className="card"
             >
               <div
-                className="second-level t-vl-gray d-flex"
+                className="closed-ML-cat t-vl-gray"
               >
                 <div
-                  className="ml-icon-container mr-5"
+                  className="ml-icon-container"
                 >
                   <div
                     className="icon-notification ml-icon"
@@ -415,10 +411,10 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
         moduleAdded={[Function]}
       >
         <div
-          className="import-module"
+          className=""
         >
           <div
-            className="import-module-button mb-5"
+            className="closed-ML-cat"
             onClick={[Function]}
           >
             <div

@@ -57,8 +57,8 @@ class AddNotificationButtonClosed extends React.Component {
       onMouseEnter={this.toggleButton}
       onMouseLeave={this.toggleButton}>
         <div className='card'>
-          <div className='second-level t-vl-gray d-flex'>
-            <div className='ml-icon-container mr-5' >
+          <div className='closed-ML-cat t-vl-gray'>
+            <div className='ml-icon-container' >
               <div className="icon-notification ml-icon" title='Add Notification'></div>
             </div>
           </div>

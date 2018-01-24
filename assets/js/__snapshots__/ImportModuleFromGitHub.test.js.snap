@@ -11,15 +11,12 @@ exports[`ImportModuleFromGitHub Library closed Renders a link, which will open m
   moduleAdded={[Function]}
 >
   <div
-    className="import-module"
+    className=""
   >
     <div
-      className="import-module-button content-3 mb-5 t-vl-gray"
+      className="import-module-button content-4 t-vl-gray"
       onClick={[Function]}
     >
-      <span
-        className="icon-add mr-2"
-      />
       <span>
         IMPORT CUSTOM MODULE
       </span>
@@ -151,15 +148,12 @@ exports[`ImportModuleFromGitHub Library open Renders a link, which will open mod
   moduleAdded={[Function]}
 >
   <div
-    className="import-module"
+    className=""
   >
     <div
-      className="import-module-button content-3 mb-5 t-vl-gray"
+      className="import-module-button content-4 t-vl-gray"
       onClick={[Function]}
     >
-      <span
-        className="icon-add mr-2"
-      />
       <span>
         IMPORT CUSTOM MODULE
       </span>

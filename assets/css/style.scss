@@ -31,8 +31,6 @@ body {
   opacity: 0.2;
 }
 
-/* ---- NEW Type styles: use on all newly styled elements: phase out olds on edit ----- */
-
 /* --- Text Sizing ---  */
 .logo-1 {
 	font-size: 2.4rem;
@@ -413,6 +411,7 @@ body {
 
 .icon-add:before {
   content:"\e930";
+  color:#fff;
 }
 
 .icon-facebook:before{
@@ -499,6 +498,11 @@ body {
 
 .close-open-toggle{
   opacity: 0.6;
+  height:2rem;
+  width:100%;
+  display:flex;
+  align-items: center;
+  justify-content:center;
 }
 
 .close-open-toggle:hover{
@@ -1420,9 +1424,9 @@ img.logo {
 .expand-lib{
   height:6rem;
   border-bottom: 1px solid rgba(255,255,255, .1);
-}
-.expand-lib-button{
-  padding:2rem 1.2rem 1.5rem 1.5rem;
+  display:flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .module-library-open .library-nav-bar {
@@ -1432,7 +1436,7 @@ img.logo {
   min-width: 0;
   position: relative;
   text-align: left;
-  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  padding: 2rem 1.5rem 1rem 2rem;
   margin-bottom: 1rem;
 }
 
@@ -1474,11 +1478,30 @@ img.logo {
   cursor: pointer;
   height: 3.5rem;
   width: 100%;
-  padding-left: 1rem;
   opacity: 0.7;
 }
 
 .card .first-level:hover {
+  background-color: #4E6878;
+  opacity:1;
+}
+
+.open-ML-cat{
+  margin-left: 2rem;
+}
+
+
+.closed-ML-cat{
+  cursor: pointer;
+  height: 3.5rem;
+  width: 100%;
+  opacity: 0.7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.closed-ML-cat:hover{
   background-color: #4E6878;
   opacity:1;
 }
@@ -1567,23 +1590,22 @@ img.logo {
   align-items: center;
 }
 
-.ml-icon-search{
-  font-size: 1.4rem;
-  color: #ffffff;
-  margin-right: 0.9rem;
-}
-
 .ml-module-name{
   margin-left:0.6rem;
   margin-top: 0.2rem;
 }
 
-.ml-module-card { 
+.ml-module-card {
   width: 200px;
 }
 
 
 /* --- the Search Modules within the Module Library header - ModuleSearch.js --- */
+
+.ml-icon-search{
+  font-size: 1.4rem;
+  color: #ffffff;
+}
 
 .search-bar {
   border-radius: 30px;
@@ -1595,6 +1617,7 @@ img.logo {
 }
 /*Actual search with autosuggest component*/
 .react-autosuggest__container {
+  padding-left:1rem;
   width: 100%;
   background-color:transparent;
 }

@@ -1,7 +1,7 @@
 /**
- * Collapsed version of the <ModuleLibrary>. 
- * 
- *  Renders a narrow menu, with <ModuleCategories>, <AddNotificationButton>, 
+ * Collapsed version of the <ModuleLibrary>.
+ *
+ *  Renders a narrow menu, with <ModuleCategories>, <AddNotificationButton>,
  *    and <ImportModuleFromGitHub> components, and toggle arrow to Clossed version.
  */
 
@@ -27,28 +27,26 @@ export default class ModuleLibraryClosed extends React.Component {
 
   render() {
     var arrow = (this.state.showArrow)
-      ? <div className='icon-sort-right-vl-gray close-open-toggle'/>
+      ? <div className='icon-sort-right-vl-gray'/>
       : <div className="logo">
           <img src="/static/images/logo.png" width="20"/>
         </div>
 
     return (
       <div className='module-library-closed'>
-      
-        <div 
-          className="expand-lib" 
-          onMouseEnter={this.toggleArrow} 
+
+        <div
+          className="expand-lib"
+          onMouseEnter={this.toggleArrow}
           onMouseLeave={this.toggleArrow}
           onClick={this.props.openLibrary}
         >
-          <div className="expand-lib-button d-flex">
             {arrow}
-          </div>
         </div>
 
         <div className='card' onClick={this.props.openLibrary}>
-          <div className='first-level'>
-            <div className='icon-search-white ml-icon-search text-center mt-3'></div>
+          <div className='closed-ML-cat'>
+            <div className='icon-search-white ml-icon-search'></div>
           </div>
         </div>
 
@@ -56,7 +54,7 @@ export default class ModuleLibraryClosed extends React.Component {
           openCategory={this.props.openCategory}
           setOpenCategory={this.props.setOpenCategory}
           libraryOpen={false}
-          isReadOnly={this.props.isReadOnly}            
+          isReadOnly={this.props.isReadOnly}
           addModule={this.props.addModule}
           dropModule={this.props.dropModule}
           items={this.props.items}
@@ -64,11 +62,11 @@ export default class ModuleLibraryClosed extends React.Component {
 
         <AddNotificationButtonClosed/>
 
-        <ImportModuleFromGitHub 
-          moduleAdded={this.props.moduleAdded} 
+        <ImportModuleFromGitHub
+          moduleAdded={this.props.moduleAdded}
           libraryOpen={false}
           api={this.props.api}
-        />          
+        />
 
       </div>
     )
@@ -76,7 +74,7 @@ export default class ModuleLibraryClosed extends React.Component {
 }
 
 ModuleLibraryClosed.propTypes = {
-  api:              PropTypes.object.isRequired,  
+  api:              PropTypes.object.isRequired,
   openCategory:     PropTypes.string,
   addModule:        PropTypes.func.isRequired,
   dropModule:       PropTypes.func.isRequired,
@@ -87,4 +85,3 @@ ModuleLibraryClosed.propTypes = {
   moduleAdded:      PropTypes.func.isRequired,
   openLibrary:      PropTypes.func.isRequired,
 };
-

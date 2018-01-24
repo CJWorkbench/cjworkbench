@@ -1,7 +1,7 @@
 /**
- * Full version of the <ModuleLibrary>. 
- * 
- * Renders a wide menu, with <ModuleSearch>, <ModuleCategories>, <AddNotificationButton>, 
+ * Full version of the <ModuleLibrary>.
+ *
+ * Renders a wide menu, with <ModuleSearch>, <ModuleCategories>, <AddNotificationButton>,
  *    and <ImportModuleFromGitHub> components, and toggle arrow to Closed version.
  */
 
@@ -28,7 +28,9 @@ export default class ModuleLibraryOpen extends React.Component {
           <div className='d-flex align-items-center flex-row mb-4'>
             <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="20"/></a>
             <a href="/workflows" className='logo-2 ml-3 t-vl-gray '>Workbench</a>
-            <div className='icon-sort-left-vl-gray ml-auto mt-2 close-open-toggle' onClick={this.props.toggleLibrary}></div>
+            <div className='close-open-toggle' onClick={this.props.toggleLibrary}>
+              <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
+            </div>
           </div>
 
           <div className='d-flex align-items-center search-bar'>
@@ -41,10 +43,10 @@ export default class ModuleLibraryOpen extends React.Component {
         </div>
 
         <ModuleCategories
-          openCategory={this.props.openCategory} 
+          openCategory={this.props.openCategory}
           setOpenCategory={this.props.setOpenCategory}
           libraryOpen={true}
-          isReadOnly={this.props.isReadOnly}            
+          isReadOnly={this.props.isReadOnly}
           addModule={this.props.addModule}
           dropModule={this.props.dropModule}
           items={this.props.items}
@@ -56,8 +58,8 @@ export default class ModuleLibraryOpen extends React.Component {
 
         <div className="ml-divider"></div>
 
-        <ImportModuleFromGitHub 
-          moduleAdded={this.props.moduleAdded} 
+        <ImportModuleFromGitHub
+          moduleAdded={this.props.moduleAdded}
           libraryOpen={true}
           api={this.props.api}
         />
@@ -79,4 +81,3 @@ ModuleLibraryOpen.propTypes = {
   moduleAdded:      PropTypes.func.isRequired,
   toggleLibrary:    PropTypes.func.isRequired,
 };
-
