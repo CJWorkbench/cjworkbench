@@ -16,7 +16,13 @@ class ParameterValTestsBase(TestCase):
             id_name='stringparam',
             module_version=self.module_version,
             type= ParameterSpec.STRING,
-            def_value='foo')
+            def_value='foo',
+            placeholder='placeholder')
+        stringSpecEmpty = ParameterSpec.objects.create(
+            name='StringParamEmpty',
+            id_name='stringparamempty',
+            module_version=self.module_version,
+            type=ParameterSpec.STRING)
         integerSpec = ParameterSpec.objects.create(
             name='IntegerParam',
             id_name='integerparam',
@@ -53,6 +59,9 @@ class ParameterValTestsBase(TestCase):
         stringVal = ParameterVal.objects.create(parameter_spec=stringSpec, wf_module=self.wfmodule, value='fooval')
         self.stringID = stringVal.id
 
+        emptyStringVal = ParameterVal.objects.create(parameter_spec=stringSpecEmpty, wf_module=self.wfmodule)
+        self.stringemptyID = emptyStringVal.id
+
         integerVal = ParameterVal.objects.create(parameter_spec=integerSpec, wf_module=self.wfmodule, value='10')
         self.integerID = integerVal.id
 
@@ -79,6 +88,9 @@ class ParameterValTests(ParameterValTestsBase):
         # current values are as set when created
         s = self.wfmodule.get_param_string('stringparam')
         self.assertEqual(s, 'fooval')
+
+        se = self.wfmodule.get_param_string('stringparamempty')
+        self.assertEqual(se, '')
 
         i = self.wfmodule.get_param_integer('integerparam')
         self.assertEqual(i, 10)

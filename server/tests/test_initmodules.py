@@ -15,24 +15,30 @@ class InitmoduleTests(LoggedInTestCase):
             'category': 'Sources',
             'parameters': [
                 {
-                  'name': 'URL',
-                  'id_name' : 'url',
-                  'type': 'string',
-                  'default': 'http://foo.com'
+                    'name': 'URL',
+                    'id_name' : 'url',
+                    'type': 'string',
+                    'default': 'http://foo.com'
                 },
                 {
-                  'name': 'Fetch',
-                  'id_name' : 'fetch',
-                  'type': 'button',
-                  'visible': False,
-                  'ui-only': True
+                    'name': 'Name',
+                    'id_name': 'name',
+                    'type': 'string',
+                    'placeholder': 'Type in a name and hit enter'
                 },
                 {
-                  'name': 'No default',
-                  'id_name': 'nodefault',
-                  'type': 'string',
-                  'multiline': True,
-                  'derived-data' : True
+                    'name': 'Fetch',
+                    'id_name' : 'fetch',
+                    'type': 'button',
+                    'visible': False,
+                    'ui-only': True
+                },
+                {
+                    'name': 'No default',
+                    'id_name': 'nodefault',
+                    'type': 'string',
+                    'multiline': True,
+                    'derived-data' : True
                 },
                 {
                     'name': 'Do it checkbox',
@@ -41,7 +47,7 @@ class InitmoduleTests(LoggedInTestCase):
                     'default': True
                 }
             ]
-            }            
+        }
 
         # a new version of LoadCSV that deletes one parameter, changes the type and order of another, and adds a new one
         # Also tests menu param
@@ -98,7 +104,7 @@ class InitmoduleTests(LoggedInTestCase):
 
         # parameters
         pspecs = ParameterSpec.objects.all()
-        self.assertEqual(len(pspecs), 4)
+        self.assertEqual(len(pspecs), 5)
 
         url_spec = ParameterSpec.objects.get(id_name='url')
         self.assertEqual(url_spec.name, 'URL')
@@ -111,13 +117,19 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(url_spec.derived_data, False)
         self.assertEqual(url_spec.order, 0)
 
+        name = ParameterSpec.objects.get(id_name='name')
+        self.assertEqual(name.name, 'Name')
+        self.assertEqual(name.id_name, 'name')
+        self.assertEqual(name.type, ParameterSpec.STRING)
+        self.assertEqual(name.placeholder, 'Type in a name and hit enter')
+
         button_spec = ParameterSpec.objects.get(id_name='fetch')
         self.assertEqual(button_spec.name, 'Fetch')
         self.assertEqual(button_spec.id_name, 'fetch')
         self.assertEqual(button_spec.type, ParameterSpec.BUTTON)
         self.assertEqual(button_spec.def_visible, False)
         self.assertEqual(button_spec.ui_only, True)
-        self.assertEqual(button_spec.order, 1)
+        self.assertEqual(button_spec.order, 2)
 
         # check missing default has a default, and that multiline works
         nodef_spec = ParameterSpec.objects.get(id_name='nodefault')
