@@ -52,9 +52,10 @@ class AddNotificationButtonClosed extends React.Component {
 
     return this.props.connectDragSource(
       <div
+      className='notification-button-closed'
       onMouseEnter={this.toggleButton}
       onMouseLeave={this.toggleButton}>
-        <div className='card notification-button-closed'>
+        <div className='card'>
           <div className='second-level t-vl-gray d-flex'>
             <div className='ml-icon-container mr-5' >
               <div className="icon-notification ml-icon" title='Add Notification'></div>
