@@ -30,26 +30,19 @@ class AddNotificationButtonClosed extends React.Component {
     this.state = {
       showButton: false
     };
-    this.showButton = this.showButton.bind(this);
-    this.hideButton = this.hideButton.bind(this);
+    this.toggleButton = this.toggleButton.bind(this);
   }
 
-  showButton() {
-    this.setState({showButton: true});
-  }
-
-  hideButton() {
-    this.setState({showButton: false});
+  toggleButton() {
+    this.setState({showButton: !this.state.showButton});
   }
 
   render() {
 
     var button =
-      <div 
-        className='card notification-button-popout' 
+      <div
+        className='card notification-button-popout'
         style={{ display: this.state.showButton ? 'block' : 'none' }}
-        onMouseEnter={this.showButton} 
-        onMouseLeave={this.hideButton}
       >
         <div className='second-level d-flex '>
           <div className='content-5 ml-module-name my-auto mr-3'>Add data alert</div>
@@ -58,8 +51,10 @@ class AddNotificationButtonClosed extends React.Component {
       </div>
 
     return this.props.connectDragSource(
-      <div >
-        <div className='card notification-button-closed' onMouseEnter={this.showButton} onMouseLeave={this.hideButton}>
+      <div
+      onMouseEnter={this.toggleButton}
+      onMouseLeave={this.toggleButton}>
+        <div className='card notification-button-closed'>
           <div className='second-level t-vl-gray d-flex'>
             <div className='ml-icon-container mr-5' >
               <div className="icon-notification ml-icon" title='Add Notification'></div>
@@ -67,7 +62,7 @@ class AddNotificationButtonClosed extends React.Component {
           </div>
         </div>
         {button}
-      </div>      
+      </div>
     )
   }
 }
