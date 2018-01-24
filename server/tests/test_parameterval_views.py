@@ -26,8 +26,8 @@ class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
         self.assertEqual(response.data['wf_modules'][0]['id'], self.moduleID)
 
         # wfmodule has correct parameters
-        self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 5)
-        valIDs = [self.stringID, self.integerID, self.floatID, self.checkboxID, self.menuID]
+        self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 6)
+        valIDs = [self.stringID, self.stringemptyID, self.integerID, self.floatID, self.checkboxID, self.menuID]
         param_vals = response.data['wf_modules'][0]['parameter_vals']
         responseIDs = [x['id'] for x in param_vals]
         self.assertCountEqual(responseIDs, valIDs)
@@ -37,7 +37,16 @@ class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
         self.assertEqual(str_val['parameter_spec']['name'], 'StringParam')
         self.assertEqual(str_val['parameter_spec']['id_name'], 'stringparam')
         self.assertEqual(str_val['parameter_spec']['type'], ParameterSpec.STRING)
+        self.assertEqual(str_val['parameter_spec']['placeholder'], 'placeholder')
         self.assertEqual(str_val['value'], 'fooval')
+
+        # parameters have correct types and values
+        str_val = [p for p in param_vals if p['id'] == self.stringemptyID][0]
+        self.assertEqual(str_val['parameter_spec']['name'], 'StringParamEmpty')
+        self.assertEqual(str_val['parameter_spec']['id_name'], 'stringparamempty')
+        self.assertEqual(str_val['parameter_spec']['type'], ParameterSpec.STRING)
+        self.assertEqual(str_val['parameter_spec']['placeholder'], '')
+        self.assertEqual(str_val['value'], '')
 
         int_val = [p for p in param_vals if p['id']==self.integerID][0]
         self.assertEqual(int_val['parameter_spec']['name'], 'IntegerParam')
