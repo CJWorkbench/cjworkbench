@@ -22,8 +22,7 @@ class ExecuteTests(LoggedInTestCase):
         # workflow pastes a CSV in then picks columns (by default all columns as cols_pval is empty)
         self.workflow = create_testdata_workflow(test_csv)
         self.wfm1 = WfModule.objects.get()
-        module_def = load_module_def('selectcolumns')
-        self.wfm2 = load_and_add_module(self.workflow, module_def)
+        self.wfm2 = load_and_add_module('selectcolumns', workflow=self.workflow)
         self.cols_pval = get_param_by_id_name('colnames')
 
 

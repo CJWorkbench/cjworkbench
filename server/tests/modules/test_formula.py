@@ -7,8 +7,7 @@ from server.tests.utils import *
 class FormulaTests(LoggedInTestCase):
     def setUp(self):
         super(FormulaTests, self).setUp()  # log in
-        formula_def = load_module_def('formula')
-        self.wfmodule = load_and_add_module(create_testdata_workflow(), formula_def)
+        self.wfmodule = load_and_add_module('formula', workflow=create_testdata_workflow())
         formula_pspec = ParameterSpec.objects.get(id_name='formula')
         self.fpval = ParameterVal.objects.get(parameter_spec=formula_pspec)
         output_pspec = ParameterSpec.objects.get(id_name='out_column')

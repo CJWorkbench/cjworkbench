@@ -8,8 +8,7 @@ class TextSearchTest(LoggedInTestCase):
     def setUp(self):
         super(TextSearchTest, self).setUp()  # log in
         workflow = create_testdata_workflow()
-        module_def = load_module_def('textsearch')
-        self.wf_module = load_and_add_module(workflow, module_def)
+        self.wf_module = load_and_add_module('textsearch', workflow=workflow)
         self.query_pval = get_param_by_id_name('query')
         self.colnames_pval = get_param_by_id_name('colnames')
         self.case_pval = get_param_by_id_name('casesensitive')

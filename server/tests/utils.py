@@ -93,7 +93,7 @@ def set_integer(pval, integer):
 # ---- Load Modules ----
 
 # Load module spec from same place initmodules gets it, return dict
-def load_module_def(filename):
+def load_module_dict(filename):
     module_path = os.path.join(settings.BASE_DIR, 'config/modules')
     fullname = os.path.join(module_path, filename + '.json')
     with open(fullname) as json_data:
@@ -102,15 +102,21 @@ def load_module_def(filename):
 
 # Load module spec from filename, return module_version ready for use
 def load_module_version(filename):
-    return load_module_from_dict(load_module_def(filename))
+    return load_module_from_dict(load_module_dict(filename))
 
-# Given a module spec, add it to a workflow. Create new workflow if null
+# Given a module spec, add it to end of workflow. Create new workflow if null
 # Returns WfModule
-def load_and_add_module(workflow, module_spec):
+def load_and_add_module_from_dict(module_dict, workflow=None):
     if not workflow:
         workflow = add_new_workflow('Workflow 1')
 
-    module_version = load_module_from_dict(module_spec)
-    wf_module = add_new_wf_module(workflow, module_version, 1)  # 1 = order after PasteCSV from create_mock_workflow
+    module_version = load_module_from_dict(module_dict)
+    num_modules = WfModule.objects.filter(workflow=workflow).count()
+    wf_module = add_new_wf_module(workflow, module_version, order=num_modules)
 
     return wf_module
+
+# Given a module spec, add it to end of workflow. Create new workflow if null.
+# Returns WfModule
+def load_and_add_module(filename, workflow=None):
+    return load_and_add_module_from_dict(load_module_dict(filename), workflow=workflow)

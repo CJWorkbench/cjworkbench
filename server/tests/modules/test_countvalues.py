@@ -13,8 +13,7 @@ class CountValuesTests(LoggedInTestCase):
         count_csv = 'Month,Amount\nJan,10\nFeb,5\nMar,10\n'
         workflow = create_testdata_workflow(count_csv)
 
-        module_def = load_module_def('countvalues')
-        self.wf_module = load_and_add_module(workflow, module_def)
+        self.wf_module = load_and_add_module('countvalues', workflow=workflow)
         self.col_pval = get_param_by_id_name('column')
         self.sort_pval = get_param_by_id_name('sortby')
         self.data_pval = get_param_by_id_name('csv')

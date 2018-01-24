@@ -8,8 +8,7 @@ class PythonCodeTest(LoggedInTestCase):
     def setUp(self):
         super(PythonCodeTest, self).setUp()  # log in
         workflow = create_testdata_workflow()
-        module_def = load_module_def('pythoncode')
-        self.wf_module = load_and_add_module(workflow, module_def)
+        self.wf_module = load_and_add_module('pythoncode', workflow=workflow)
         self.code_pval = get_param_by_id_name('code')
 
     def test_render(self):

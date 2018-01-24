@@ -45,8 +45,7 @@ class TwitterTests(LoggedInTestCase):
 
     def setUp(self):
         super(TwitterTests, self).setUp()  # log in
-        loadurl_def = load_module_def('twitter')
-        self.wf_module = load_and_add_module(None, loadurl_def)
+        self.wf_module = load_and_add_module('twitter')
         self.query_pval = get_param_by_id_name('query')
 
         self.env_patch = { 'CJW_TWITTER_CONSUMER_KEY':'mykey',

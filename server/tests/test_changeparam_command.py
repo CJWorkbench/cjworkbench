@@ -29,7 +29,7 @@ class ParameterValTests(TestCase):
                 }
               ]
             }
-        self.wf_module = load_and_add_module(None, testmodule)
+        self.wf_module = load_and_add_module_from_dict(testmodule)
 
     # Change a value, then undo, redo
     def test_change(self):
