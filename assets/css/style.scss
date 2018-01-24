@@ -1410,8 +1410,8 @@ img.logo {
   background-color: #577485;
 }
 .module-library-closed {
-  width: 60px;
-  flex: 0 0 60px;
+  width: 6rem;
+  flex: 0 0 6rem;
   background-color: #577485;
 }
 .module-library-closed:hover{
@@ -1723,12 +1723,13 @@ img.logo {
 
 /* AddNotificationButtonClosed */
 
+// Absolute position used to make element appear outside of Module Library div
 .notification-button-popout {
   background-color: #4E6878 !important;
   z-index: 100;
   position: absolute;
-  left: 60px;
-  top: 252px;
+  left: 6rem;
+  top: 25.2rem;
 }
 
 /* ImportModuleFromGitHub */
