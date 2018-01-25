@@ -1479,6 +1479,8 @@ img.logo {
   height: 4rem;
   width: 100%;
   opacity: 0.7;
+  display: flex;
+  align-items: center;
 }
 
 .card .first-level:hover {
@@ -1486,10 +1488,13 @@ img.logo {
   opacity:1;
 }
 
+// This should inherit from content-3 & t-vl-gray, copy/paste for now
 .open-ML-cat {
   margin-left: 2rem;
+  font-size: 1.3rem;
+  line-height: 1.6rem;
+  color: #FFF;
 }
-
 
 .closed-ML-cat{
   cursor: pointer;
@@ -1537,7 +1542,7 @@ img.logo {
   cursor: pointer;
   z-index: 100;
   position: absolute;
-  left: 60px;
+  left: 6rem;
   top: 0;
 }
 
@@ -2212,7 +2217,6 @@ input[type=checkbox]:checked:after {
   border: 0;
   max-height: 40rem;
   overflow: scroll;
-
 }
 
 .dialog-body p{

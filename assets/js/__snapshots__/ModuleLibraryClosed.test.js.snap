@@ -125,8 +125,8 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                 className="ml-cat"
               >
                 <div
-                  className="first-level d-flex align-items-center"
-                  onClick={[Function]}
+                  className="first-level"
+                  onMouseEnter={[Function]}
                 >
                   <div
                     className="cat-container closed-ML-cat"
@@ -136,93 +136,71 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                     />
                   </div>
                 </div>
-                <Collapse
-                  className="hide-animation"
-                  delay={
+                <div
+                  className="ml-list-mini"
+                  style={
                     Object {
-                      "hide": 350,
-                      "show": 350,
+                      "display": "none",
                     }
                   }
-                  isOpen={false}
-                  onClosed={[Function]}
-                  onEntered={[Function]}
-                  onEntering={[Function]}
-                  onExited={[Function]}
-                  onExiting={[Function]}
-                  onOpened={[Function]}
-                  tag="div"
                 >
-                  <div
-                    className="hide-animation collapse"
-                    onEntered={[Function]}
-                    onEntering={[Function]}
-                    onExited={[Function]}
-                    onExiting={[Function]}
-                    style={Object {}}
+                  <DragSource(Module)
+                    addModule={[Function]}
+                    dropModule={[Function]}
+                    icon="url"
+                    id={4}
+                    name="Load from Enigma"
                   >
-                    <div
-                      className="ml-list-mini"
+                    <Module
+                      addModule={[Function]}
+                      connectDragSource={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={4}
+                      isDragging={false}
+                      name="Load from Enigma"
                     >
-                      <DragSource(Module)
-                        addModule={[Function]}
-                        dropModule={[Function]}
-                        icon="url"
-                        id={4}
-                        name="Load from Enigma"
+                      <div
+                        className="card ml-module-card"
                       >
-                        <Module
-                          addModule={[Function]}
-                          connectDragSource={[Function]}
-                          dropModule={[Function]}
-                          icon="url"
-                          id={4}
-                          isDragging={false}
-                          name="Load from Enigma"
+                        <div
+                          className=""
+                          onClick={[Function]}
                         >
                           <div
-                            className="card ml-module-card"
+                            className="second-level d-flex"
                           >
                             <div
-                              className=""
-                              onClick={[Function]}
+                              className="d-flex flex-row align-items-center"
                             >
                               <div
-                                className="second-level d-flex"
+                                className="ml-icon-container"
                               >
                                 <div
-                                  className="d-flex flex-row align-items-center"
-                                >
-                                  <div
-                                    className="ml-icon-container"
-                                  >
-                                    <div
-                                      className="icon-url ml-icon"
-                                    />
-                                  </div>
-                                  <div>
-                                    <div
-                                      className="content-5 ml-module-name"
-                                    >
-                                      Load from Enigma
-                                    </div>
-                                  </div>
-                                </div>
+                                  className="icon-url ml-icon"
+                                />
+                              </div>
+                              <div>
                                 <div
-                                  className="ml-handle"
+                                  className="content-5 ml-module-name"
                                 >
-                                  <div
-                                    className="icon-grip"
-                                  />
+                                  Load from Enigma
                                 </div>
                               </div>
                             </div>
+                            <div
+                              className="ml-handle"
+                            >
+                              <div
+                                className="icon-grip"
+                              />
+                            </div>
                           </div>
-                        </Module>
-                      </DragSource(Module)>
-                    </div>
-                  </div>
-                </Collapse>
+                        </div>
+                      </div>
+                    </Module>
+                  </DragSource(Module)>
+                </div>
               </div>
             </div>
           </ModuleCategory>
@@ -251,8 +229,8 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                 className="ml-cat"
               >
                 <div
-                  className="first-level d-flex align-items-center"
-                  onClick={[Function]}
+                  className="first-level"
+                  onMouseEnter={[Function]}
                 >
                   <div
                     className="cat-container closed-ML-cat"
@@ -262,103 +240,84 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                     />
                   </div>
                 </div>
-                <Collapse
-                  className="hide-animation"
-                  delay={
+                <div
+                  className="ml-list-mini"
+                  style={
                     Object {
-                      "hide": 350,
-                      "show": 350,
+                      "display": "none",
                     }
                   }
-                  isOpen={false}
-                  onClosed={[Function]}
-                  onEntered={[Function]}
-                  onEntering={[Function]}
-                  onExited={[Function]}
-                  onExiting={[Function]}
-                  onOpened={[Function]}
-                  tag="div"
                 >
-                  <div
-                    className="hide-animation collapse"
-                    onEntered={[Function]}
-                    onEntering={[Function]}
-                    onExited={[Function]}
-                    onExiting={[Function]}
-                    style={Object {}}
+                  <DragSource(Module)
+                    addModule={[Function]}
+                    dropModule={[Function]}
+                    icon="filter"
+                    id={10}
+                    name="Filter by Text"
                   >
-                    <div
-                      className="ml-list-mini"
+                    <Module
+                      addModule={[Function]}
+                      connectDragSource={[Function]}
+                      dropModule={[Function]}
+                      icon="filter"
+                      id={10}
+                      isDragging={false}
+                      name="Filter by Text"
                     >
-                      <DragSource(Module)
-                        addModule={[Function]}
-                        dropModule={[Function]}
-                        icon="filter"
-                        id={10}
-                        name="Filter by Text"
+                      <div
+                        className="card ml-module-card"
                       >
-                        <Module
-                          addModule={[Function]}
-                          connectDragSource={[Function]}
-                          dropModule={[Function]}
-                          icon="filter"
-                          id={10}
-                          isDragging={false}
-                          name="Filter by Text"
+                        <div
+                          className=""
+                          onClick={[Function]}
                         >
                           <div
-                            className="card ml-module-card"
+                            className="second-level d-flex"
                           >
                             <div
-                              className=""
-                              onClick={[Function]}
+                              className="d-flex flex-row align-items-center"
                             >
                               <div
-                                className="second-level d-flex"
+                                className="ml-icon-container"
                               >
                                 <div
-                                  className="d-flex flex-row align-items-center"
-                                >
-                                  <div
-                                    className="ml-icon-container"
-                                  >
-                                    <div
-                                      className="icon-filter ml-icon"
-                                    />
-                                  </div>
-                                  <div>
-                                    <div
-                                      className="content-5 ml-module-name"
-                                    >
-                                      Filter by Text
-                                    </div>
-                                  </div>
-                                </div>
+                                  className="icon-filter ml-icon"
+                                />
+                              </div>
+                              <div>
                                 <div
-                                  className="ml-handle"
+                                  className="content-5 ml-module-name"
                                 >
-                                  <div
-                                    className="icon-grip"
-                                  />
+                                  Filter by Text
                                 </div>
                               </div>
                             </div>
+                            <div
+                              className="ml-handle"
+                            >
+                              <div
+                                className="icon-grip"
+                              />
+                            </div>
                           </div>
-                        </Module>
-                      </DragSource(Module)>
-                    </div>
-                  </div>
-                </Collapse>
+                        </div>
+                      </div>
+                    </Module>
+                  </DragSource(Module)>
+                </div>
               </div>
             </div>
           </ModuleCategory>
         </div>
       </ModuleCategories>
       ;
-      <DragSource(AddNotificationButtonClosed)>
+      <DragSource(AddNotificationButtonClosed)
+        setOpenCategory={[Function]}
+      >
         <AddNotificationButtonClosed
           connectDragSource={[Function]}
           isDragging={false}
+          setOpenCategory={[Function]}
         >
           <div
             className="notification-button-closed"

@@ -283,7 +283,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                 className="ml-cat"
               >
                 <div
-                  className="first-level d-flex align-items-center"
+                  className="first-level"
                   onClick={[Function]}
                 >
                   <div
@@ -293,14 +293,13 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                       className="icon-sort-down-vl-gray ml-sort mb-1"
                     />
                     <span
-                      className="open-ML-cat content-3 t-vl-gray"
+                      className="open-ML-cat"
                     >
                       Add data
                     </span>
                   </div>
                 </div>
                 <Collapse
-                  className=""
                   delay={
                     Object {
                       "hide": 350,
@@ -406,7 +405,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                 className="ml-cat"
               >
                 <div
-                  className="first-level d-flex align-items-center"
+                  className="first-level"
                   onClick={[Function]}
                 >
                   <div
@@ -416,14 +415,13 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                       className="icon-sort-down-vl-gray ml-sort mb-1"
                     />
                     <span
-                      className="open-ML-cat content-3 t-vl-gray"
+                      className="open-ML-cat"
                     >
                       Filter
                     </span>
                   </div>
                 </div>
                 <Collapse
-                  className=""
                   delay={
                     Object {
                       "hide": 350,

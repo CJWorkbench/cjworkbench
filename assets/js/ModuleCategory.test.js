@@ -1,11 +1,9 @@
 /**
  * Testing Stories:
- * -Renders library-open version, which has collapsible list of Module components
- * -Renders library-closed version, "
- * -When one category is expanded, others collapse
- * 
- * Note: holding on collapse tests until after library-closed version 
- *    has hover-based collapse implemented 
+ * -Renders library-open version
+ *    -Clicking on category will toggle collapse of module list
+ * -Renders library-closed version
+ *    -Mouse enter on category will toggle display of module list
  */
 
 import React from 'react'
@@ -55,18 +53,30 @@ describe('ModuleCategory ', () => {
   
     it('Renders with list of Module components', () => { 
       expect(wrapper).toMatchSnapshot();
-
       // check for list of Modules
       expect(wrapper.find('.ml-module-card')).toHaveLength(2);
     });
   
-    // it('Clicking on a category will expand it', () => { 
-    //   expect(true).toBe(true);
-    // });
-
-    // it('Expanding one category will collapse the others', () => { 
-    //   expect(true).toBe(true);
-    // });
+    it('Click events on a category will toggle its module list display', () => { 
+      expect(true).toBe(true);
+      // find category card
+      let category = wrapper.find('.first-level');
+      expect(category).toHaveLength(1);
+      // find Collapse component
+      let moduleList = wrapper.find('Collapse');
+      expect(moduleList).toHaveLength(1);
+      // access isOpen property of Collapse, check that it is closed
+      expect(moduleList.get(0).props.isOpen).toBe(false);
+      // simulate a click on category
+      category.simulate('click');
+      expect(wrapper).toMatchSnapshot();      
+      // check isOpen, should be open
+      expect(moduleList.get(0).props.isOpen).toBe(true);
+      // another click
+      category.simulate('click');      
+      // isOpen should be closed
+      expect(moduleList.get(0).props.isOpen).toBe(false);
+    });
 
   });
 
@@ -88,20 +98,29 @@ describe('ModuleCategory ', () => {
   
     it('Renders with list of Module components', () => { 
       expect(wrapper).toMatchSnapshot();
-      
-      // check for list of Modules
+      // check for presence of Modules
       expect(wrapper.find('.ml-module-card')).toHaveLength(2);
     });
-  
-    // it('Hovering a category will expand it', () => { 
-    //   expect(true).toBe(true);
-    // });
 
-    // it('Mouse leaving a category will collapse it', () => { 
-    //   expect(true).toBe(true);
-    // });
-      
+    it('Mouse enter events on a category will toggle its module list display', () => { 
+      // find category card
+      let category = wrapper.find('.first-level');
+      expect(category).toHaveLength(1);
+      // find module list
+      let moduleList = wrapper.find('.ml-list-mini');
+      expect(moduleList).toHaveLength(1);
+      // access styles of module list
+      let listStyle = moduleList.get(0).style._values;
+      // check that module list is not displayed
+      expect(listStyle).toEqual({'display': 'none'});
+      // simulate a mouse enter
+      category.simulate('mouseEnter');
+      expect(wrapper).toMatchSnapshot();   
+      // check that module list is displayed
+      expect(listStyle).toEqual({'display': 'block'});
+      // mouse enter again to close
+      category.simulate('mouseEnter');
+      expect(listStyle).toEqual({'display': 'none'});
+    });
   });
-  
-      
 });

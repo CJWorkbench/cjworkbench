@@ -8,12 +8,7 @@
  *
  * Categories should be expandable and collapsible, just like each individual module.
  *
- * When Module Library is closed, animation of collapse is hidden
- *
  * Rendered by <ModuleCategories> component
- *
- * TODO: Refactor into separate components for Open/Closed versions;
- *     Closed version expands/collapses on hover instead of click
  */
 
 import React from 'react'
@@ -24,41 +19,20 @@ export default class ModuleCategory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapsed: props.collapsed,
-      visible: true               // switch to show animation of collapse action
+      collapsed: props.collapsed
     };
     this.toggleCollapse = this.toggleCollapse.bind(this);
-    this.onEntering = this.onEntering.bind(this);
-    this.onEntered = this.onEntered.bind(this);
-    this.onExiting = this.onExiting.bind(this);
-    this.onExited = this.onExited.bind(this);
+  }
+
+  // When our props change, update our collapsed state (this is the other end of setOpenCategory)
+  componentWillReceiveProps(newProps) {
+    this.setState({collapsed: newProps.collapsed})
   }
 
   toggleCollapse() {
     var newCollapsed = !this.state.collapsed;
     this.setState({collapsed: newCollapsed});
     this.props.setOpenCategory(newCollapsed ? null : this.props.name); // tell parent, so it can close other cats
-  }
-
-  onEntering() {
-    this.setState({ visible: false });
-  }
-
-  onEntered() {
-    this.setState({ visible: true  });
-  }
-
-  onExiting() {
-    this.setState({ visible: false  });
-  }
-
-  onExited() {
-    this.setState({ visible: true });
-  }
-
-  // When our props change, update our collapsed state (this is the other end of setOpenCategory)
-  componentWillReceiveProps(newProps) {
-    this.setState({collapsed: newProps.collapsed})
   }
 
   render() {
@@ -76,44 +50,32 @@ export default class ModuleCategory extends React.Component {
     // Grabs icon from first module in category for category icon
     var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
 
-    var catName = (this.props.libraryOpen)
+    var categoryHead = (this.props.libraryOpen)
+      ? <div className='first-level' onClick={this.toggleCollapse} >
+          <div className='cat-container' >
+            <div className={sort} />
+            <span className='open-ML-cat'>{this.props.name}</span>
+          </div>
+        </div>
+      : <div className='first-level' onMouseEnter={this.toggleCollapse} >
+          <div className='cat-container closed-ML-cat' >
+            <span className={icon}></span>
+          </div>
+        </div>
 
-    ? <div className='cat-container'>
-        <div className={sort} />
-        <span className='open-ML-cat content-3 t-vl-gray'>{this.props.name}</span>
-      </div>
-    : <div className='cat-container closed-ML-cat'>
-        <span className={icon}></span>
-      </div>
-
-    var hideAnimation = (!!this.state.visible) ? 'hide-animation' : null;
-
-    // 'on-*' props trigger an objection from Facebook, see: https://reactjs.org/warnings/unknown-prop.html
-    var collapse = (this.props.libraryOpen)
-      ? <Collapse className='' isOpen={isOpen}>
+    var moduleList = (this.props.libraryOpen)
+      ? <Collapse isOpen={isOpen}>
           <div className="ml-list">{this.props.modules}</div>
         </Collapse>
-      : <Collapse
-          className={hideAnimation}
-          isOpen={isOpen}
-          onEntering={this.onEntering}
-          onEntered={this.onEntered}
-          onExiting={this.onExiting}
-          onExited={this.onExited}
-        >
-          <div className="ml-list-mini">{this.props.modules}</div>
-        </Collapse>
+      : <div className="ml-list-mini" style={{ display : (isOpen) ? 'block' : 'none'}}>
+          {this.props.modules}
+        </div>
 
     return (
-      <div className={cardClass}>
-        <div className="ml-cat">
-
-          <div className='first-level d-flex align-items-center'onClick={this.toggleCollapse}>
-            {catName}
-          </div>
-
-          {collapse}
-
+      <div className={cardClass} >
+        <div className="ml-cat" >
+          {categoryHead}
+          {moduleList}
         </div>
       </div>
     );

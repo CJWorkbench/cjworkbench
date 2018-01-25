@@ -16,10 +16,11 @@ import { DragDropContextProvider } from 'react-dnd'
 describe('AddNotificationButtonOpen ', () => {
 
   var wrapper;  
+  var setOpenCategory = () => {};
 
   beforeEach(() => wrapper = mount(
     <DragDropContextProvider backend={HTML5Backend}>
-      <AddNotificationButtonClosed/>
+      <AddNotificationButtonClosed setOpenCategory={setOpenCategory}/>
     </DragDropContextProvider>
   ));
   afterEach(() => wrapper.unmount());    
