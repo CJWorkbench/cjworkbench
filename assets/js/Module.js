@@ -42,7 +42,6 @@ class Module extends React.Component {
   constructor(props) {
     super(props);
     this.itemClick = this.itemClick.bind(this);
-//    this.addModule = this.props.addModule.bind(this);
   }
 
   itemClick(evt) {

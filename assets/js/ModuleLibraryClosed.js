@@ -59,8 +59,8 @@ export default class ModuleLibraryClosed extends React.Component {
           dropModule={this.props.dropModule}
           items={this.props.items}
         />;
-
-        <AddNotificationButtonClosed/>
+          
+        <AddNotificationButtonClosed setOpenCategory={this.props.setOpenCategory} />
 
         <ImportModuleFromGitHub
           moduleAdded={this.props.moduleAdded}

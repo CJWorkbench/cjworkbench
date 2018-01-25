@@ -4,10 +4,13 @@ exports[`AddNotificationButtonOpen  Renders 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
-  <DragSource(AddNotificationButtonClosed)>
+  <DragSource(AddNotificationButtonClosed)
+    setOpenCategory={[Function]}
+  >
     <AddNotificationButtonClosed
       connectDragSource={[Function]}
       isDragging={false}
+      setOpenCategory={[Function]}
     >
       <div
         className="notification-button-closed"

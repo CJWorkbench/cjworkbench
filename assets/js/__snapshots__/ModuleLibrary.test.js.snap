@@ -643,7 +643,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     className="ml-cat"
                   >
                     <div
-                      className="first-level d-flex align-items-center"
+                      className="first-level"
                       onClick={[Function]}
                     >
                       <div
@@ -653,14 +653,13 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           className="icon-sort-up-vl-gray ml-sort mb-1"
                         />
                         <span
-                          className="open-ML-cat content-3 t-vl-gray"
+                          className="open-ML-cat"
                         >
                           Add data
                         </span>
                       </div>
                     </div>
                     <Collapse
-                      className=""
                       delay={
                         Object {
                           "hide": 350,
@@ -822,7 +821,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     className="ml-cat"
                   >
                     <div
-                      className="first-level d-flex align-items-center"
+                      className="first-level"
                       onClick={[Function]}
                     >
                       <div
@@ -832,14 +831,13 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           className="icon-sort-down-vl-gray ml-sort mb-1"
                         />
                         <span
-                          className="open-ML-cat content-3 t-vl-gray"
+                          className="open-ML-cat"
                         >
                           Visualize
                         </span>
                       </div>
                     </div>
                     <Collapse
-                      className=""
                       delay={
                         Object {
                           "hide": 350,
@@ -1088,10 +1086,13 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
           />
         </ModuleCategories>
         ;
-        <DragSource(AddNotificationButtonClosed)>
+        <DragSource(AddNotificationButtonClosed)
+          setOpenCategory={[Function]}
+        >
           <AddNotificationButtonClosed
             connectDragSource={[Function]}
             isDragging={false}
+            setOpenCategory={[Function]}
           >
             <div
               className="notification-button-closed"
