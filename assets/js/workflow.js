@@ -222,7 +222,7 @@ class Workflow extends React.Component {
                     workflow={this.props.workflow}
                     api={this.props.api}
                     isReadOnly={this.props.workflow.read_only}
-                    user={this.props.user}
+                    loggedInUser={this.props.user}
                   />
 
     var moduleStack = <SortableList
@@ -298,6 +298,5 @@ Workflow.propTypes = {
   changeParam:        PropTypes.func.isRequired,
   addModule:          PropTypes.func.isRequired,
   removeModule:       PropTypes.func.isRequired,
-  user:               PropTypes.object,
-  isReadOnly:         PropTypes.bool  // is this an active prop? to cull?
+  loggedInUser:       PropTypes.object,             // undefined if no one logged in (viewing public wf)
 };

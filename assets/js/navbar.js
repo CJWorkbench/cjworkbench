@@ -61,7 +61,7 @@ export class WorkflowNavBar extends React.Component {
   }
 
   handleDuplicate() {
-    if ((typeof this.props.user !== 'undefined' && !this.props.user.id)) {
+    if (!this.props.loggedInUser) {
       // user is NOT logged in, so navigate to sign in
       goToUrl('/account/login');
     } else {
@@ -199,15 +199,18 @@ export class WorkflowNavBar extends React.Component {
 
   render() {
 
-    // checks if there is a logged-in user, true = logged out
-    var contextMenu = ((typeof this.props.user !== 'undefined' && !this.props.user.id))
-      ? <a href="http://app.cjworkbench.org/account/login" className='nav-link t-white content-2'>Sign in</a>
-      : <WfHamburgerMenu
+    // menu only if there is a logged-in user
+    var contextMenu;
+    if (this.props.loggedInUser) {
+      contextMenu = <WfHamburgerMenu
           wfId={this.props.workflow.id}
           api={this.props.api}
           isReadOnly={this.props.isReadOnly}
-          user={this.props.user}
-        />
+          user={this.props.loggedInUser}
+      />
+    } else {
+      contextMenu = <a href="http://app.cjworkbench.org/account/login" className='nav-link t-white content-2'>Sign in</a>
+    }
 
     var duplicate = <div onClick={this.handleDuplicate} className='button-white-full action-button test-duplicate-button'>
                       Duplicate
@@ -259,8 +262,8 @@ export class WorkflowNavBar extends React.Component {
 }
 
 WorkflowNavBar.propTypes = {
-  api:        PropTypes.object.isRequired,
-  workflow:   PropTypes.object,
-  isReadOnly: PropTypes.bool.isRequired,
-  user:       PropTypes.object.isRequired
+  api:            PropTypes.object.isRequired,
+  workflow:       PropTypes.object,
+  isReadOnly:     PropTypes.bool.isRequired,
+  loggedInUser:   PropTypes.object            // undefined if no user logged in
 };

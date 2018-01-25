@@ -21,9 +21,6 @@ describe('NavBar', () => {
     setWorkflowPublic: okResponseMock()
   };
 
-  // Over-write default behavior (changing page)
-  Utils.goToUrl = jest.fn();
-
   describe('WorkflowListNavBar', () => {
 
     it('Renders correctly', () => {
@@ -46,12 +43,15 @@ describe('NavBar', () => {
         owner_name: 'John Johnson',
         public: true
       };
+
+      Utils.goToUrl = jest.fn();
+
       wrapper = mount(
         <WorkflowNavBar
           workflow={workflow}
           api={api}
           isReadOnly={false}
-          user={user}
+          loggedInUser={user}
         />
       );
 
@@ -77,9 +77,6 @@ describe('NavBar', () => {
     });
     
     it('With user NOT logged in, Duplicate button sends user to sign-in page', (done) => {
-      user = {
-        id: null  // not logged in
-      };
       workflow = {
         id: 303,
         name: 'Original Version',
@@ -87,12 +84,13 @@ describe('NavBar', () => {
         public: true
       };
 
+      Utils.goToUrl = jest.fn();
+
       wrapper = mount(
         <WorkflowNavBar
           workflow={workflow}
           api={api}
-          isReadOnly={false}
-          user={user}
+          isReadOnly={false}      // no loggedInUser prop
         />
       );
 
@@ -108,8 +106,8 @@ describe('NavBar', () => {
         //  we have not actually rendered the sign in page, just mocked the calls to change url
       
         // goToUrl() called once previously
-        expect(Utils.goToUrl.mock.calls.length).toBe(2);
-        expect(Utils.goToUrl.mock.calls[1][0]).toBe('/account/login');
+        expect(Utils.goToUrl.mock.calls.length).toBe(1);
+        expect(Utils.goToUrl.mock.calls[0][0]).toBe('/account/login');
         // check that API was NOT called (has one call from last test)
         expect(api.duplicateWorkflow.mock.calls.length).toBe(1);
         done();
@@ -133,7 +131,7 @@ describe('NavBar', () => {
           workflow={workflow}
           api={api}
           isReadOnly={false}
-          user={user}
+          loggedInUser={user}
         />
       );
 
@@ -194,7 +192,7 @@ describe('NavBar', () => {
           workflow={workflow}
           api={api}
           isReadOnly={false}
-          user={user}
+          loggedInUser={user}
         />
       );
 

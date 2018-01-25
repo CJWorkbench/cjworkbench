@@ -47,7 +47,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
     }
   }
   isReadOnly={false}
-  user={
+  loggedInUser={
     Object {
       "id": 99,
     }
@@ -578,7 +578,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
     }
   }
   isReadOnly={false}
-  user={
+  loggedInUser={
     Object {
       "id": 47,
     }
@@ -1030,11 +1030,6 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
     }
   }
   isReadOnly={false}
-  user={
-    Object {
-      "id": null,
-    }
-  }
   workflow={
     Object {
       "id": 303,
@@ -1179,7 +1174,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
     }
   }
   isReadOnly={false}
-  user={
+  loggedInUser={
     Object {
       "id": 8,
     }

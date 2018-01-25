@@ -16,28 +16,33 @@ from server.versions import WorkflowUndo, WorkflowRedo
 from django.db.models import Q
 import json
 
+# Data that is embedded in the initial HTML, so we don't need to call back server for it
+def make_init_state(request):
+    if request.user.is_authenticated():
+        user = UserSerializer(request.user)
+        init_state = {
+            'loggedInUser': user.data,
+            'intercomAppId': get_intercom_app_id()
+        }
+        return json.dumps(init_state)
+    else:
+        return '{}'
+
 # ---- Workflows list page ----
+
 
 @login_required
 def render_workflows(request):
-    user = UserSerializer(request.user)
-    initState = {
-        'user': user.data,
-        'app_id': get_intercom_app_id()
-    }
-    return TemplateResponse(request, 'workflows.html', {'initState': json.dumps(initState)})
+    init_state = make_init_state(request)
+    return TemplateResponse(request, 'workflows.html', {'initState': init_state})
 
 
 # ---- Workflow ----
 
-# not login_required as logged out users can view public workflows
+# no login_required as logged out users can view public workflows
 def render_workflow(request, pk=None):
-    user = UserSerializer(request.user)
-    initState = {
-        'user': user.data,
-        'app_id' : get_intercom_app_id()
-    }
-    return TemplateResponse(request, 'workflow.html', {'initState': json.dumps(initState)})
+    init_state = make_init_state(request)
+    return TemplateResponse(request, 'workflow.html', {'initState': init_state})
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])

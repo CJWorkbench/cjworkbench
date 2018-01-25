@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import sys
 from os.path import abspath, basename, dirname, join, normpath
+from server.settingsutils import *
 
 if sys.version_info[0] < 3:
     raise RuntimeError('CJ Workbench requires Python 3')
@@ -278,16 +279,7 @@ LOGGING = {
 
 ACCOUNT_EMAIL_UNIQUE = True
 ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
-
-def user_display(user):
-    if hasattr(user, 'first_name') or hasattr(user, 'last_name'):
-        return '%s %s' % (user.first_name, user.last_name)
-    elif hasattr(user, 'email'):
-        return user.email
-    else:
-        return 'Anonymous'
-
-ACCOUNT_USER_DISPLAY = user_display
+ACCOUNT_USER_DISPLAY = workbench_user_display
 
 AUTHENTICATION_BACKENDS = [
     'account.auth_backends.EmailAuthenticationBackend',
