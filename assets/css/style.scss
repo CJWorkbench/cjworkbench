@@ -558,7 +558,7 @@ body {
   font-size: 1.2rem ;
 }
 
-.dopdown-item:focus,
+.dropdown-item:focus,
 .dropdown-item:hover {
   color:#686768;
   background-color:transparent;
@@ -701,7 +701,7 @@ body {
 }
 
 .dropdown-divider{
-  opacity: 0;
+  opacity: 0.5;
 }
 
 /*Style form controls */
