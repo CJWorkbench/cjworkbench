@@ -17,6 +17,14 @@ from os.path import abspath, basename, dirname, join, normpath
 if sys.version_info[0] < 3:
     raise RuntimeError('CJ Workbench requires Python 3')
 
+# ----- Configurable Parameters -----
+
+# How much StoredObject space can each module take up?
+MAX_STORAGE_PER_MODULE = 1024*1024*1024
+
+
+# ----- App Boilerplate -----
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 

@@ -1,9 +1,10 @@
 # Undo, redo, and other version related things
 from server.models import Delta, Workflow
 from server.websockets import *
-from server.models import ChangeDataVersionCommand, Notification
+from server.models import ChangeDataVersionCommand, Notification, StoredObject
 from server.triggerrender import notify_client_workflow_version_changed
 from django.utils import timezone
+from django.conf import settings
 
 # Undo is pretty much just running workflow.last_delta backwards
 def WorkflowUndo(workflow):
@@ -50,6 +51,9 @@ def save_fetched_table_if_changed(wfm, new_table, auto_change_version=True):
     # Store this data only if it's different from most recent data
     version_added = wfm.store_fetched_table_if_different(new_table)
 
+    if version_added:
+        enforce_storage_limits(wfm)
+
     if version_added and auto_change_version:
         if wfm.notifications == True:
             Notification.create(wfm, "New data version available")
@@ -58,3 +62,22 @@ def save_fetched_table_if_changed(wfm, new_table, auto_change_version=True):
     else:
         # no new data version, but we still want client to update WfModule status and last update check time
         notify_client_workflow_version_changed(wfm.workflow)
+
+
+# Ensures that no one WfModule can suck up too much disk space, by deleting old versions
+# This is a problem with frequently updating modules that add to the previous table, e.g. Twitter search,
+# because we store whole files and not just deltas.
+def enforce_storage_limits(wfm):
+    limit = settings.MAX_STORAGE_PER_MODULE
+
+    # walk over this WfM's StoredObjects from newest to oldest, deleting all that are over the limit
+    sos = StoredObject.objects.filter(wf_module=wfm).order_by('-stored_at')
+    cumulative = 0
+    first = True
+
+    for so in sos:
+        cumulative += so.size
+        if cumulative > limit and not first:  # allow most recent version to be stored even if it is itself over limit
+            so.delete()
+        first = False
+
