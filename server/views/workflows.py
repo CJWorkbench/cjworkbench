@@ -1,5 +1,4 @@
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, HttpResponseForbidden
+from django.http import HttpResponseForbidden
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
 from rest_framework import status
@@ -9,7 +8,8 @@ from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from server.models import Module, ModuleVersion, Workflow, WfModule
+from server.utils import *
+from server.models import Module, ModuleVersion, Workflow
 from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite, UserSerializer
 from server.versions import WorkflowUndo, WorkflowRedo
@@ -17,23 +17,27 @@ from django.db.models import Q
 import json
 
 # ---- Workflows list page ----
+
 @login_required
 def render_workflows(request):
     user = UserSerializer(request.user)
     initState = {
-        'user': user.data
+        'user': user.data,
+        'app_id': get_intercom_app_id()
     }
     return TemplateResponse(request, 'workflows.html', {'initState': json.dumps(initState)})
+
+
+# ---- Workflow ----
 
 # not login_required as logged out users can view public workflows
 def render_workflow(request, pk=None):
     user = UserSerializer(request.user)
     initState = {
-        'user': user.data
+        'user': user.data,
+        'app_id' : get_intercom_app_id()
     }
     return TemplateResponse(request, 'workflow.html', {'initState': json.dumps(initState)})
-
-# ---- Workflow ----
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])

@@ -1,6 +1,7 @@
 # --- Time unit conversion to/from seconds ---
 import pandas as pd
 from django.contrib.sites.models import Site
+import os
 
 time_units = {
     'seconds': 1,
@@ -40,3 +41,11 @@ def sanitize_dataframe(table):
 # It is unbelievable that Django is 10+ years old and doesn't already do this for you
 def get_absolute_url(abs_url):
     return 'https://%s%s' % ( Site.objects.get_current().domain, abs_url )
+
+
+# returns intercom.io app ID if set
+def get_intercom_app_id():
+    try:
+        return os.environ['CJW_INTERCOM_APP_ID']
+    except KeyError:
+        return None

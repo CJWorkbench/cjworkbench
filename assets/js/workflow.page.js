@@ -86,4 +86,11 @@ ReactDOM.render(
 );
 
 // Load the page, Select the first module in the workflow (if one exists, else shows Module Library)
-Actions.store.dispatch(Actions.initialLoadWorkflowAction())
+Actions.store.dispatch(Actions.initialLoadWorkflowAction());
+
+// Start Intercom, if we're that sort of installation
+if (window.APP_ID) {
+  window.Intercom("boot", {
+    app_id: window.APP_ID
+  });
+}
