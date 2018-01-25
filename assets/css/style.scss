@@ -611,11 +611,11 @@ body {
 }
 
 .text-field-readonly {
-  padding:0 1.5rem 0 0;
+  padding:0.25rem 1.5rem 0 0;
   background: transparent;
   border:none;
   white-space: nowrap;
-  width:43rem;
+  width:38rem;
   line-height: 1.5rem;
   height: 1.5rem;
   resize: none;
@@ -2301,6 +2301,7 @@ input[type=checkbox]:checked:after {
 /* ---- Data Module: data versions box */
 
 .version-box {
+  height:6.6rem;
   border: 1px solid #E9E9E9;
   display: flex;
   flex-direction: row;
