@@ -34,7 +34,8 @@ def sanitize_dataframe(table):
     types = table.apply(pd.api.types.infer_dtype)
     for idx,val in enumerate(types):
         if val not in allowed_types:
-            table.iloc[:,idx] = table.iloc[:,idx].astype(str)
+            col = table.iloc[:,idx]
+            col[col.notnull()] = col.astype(str)  # preserve missing values, don't cast to string 'nan'
 
 # It is unbelievable that Django is 10+ years old and doesn't already do this for you
 def get_absolute_url(abs_url):
