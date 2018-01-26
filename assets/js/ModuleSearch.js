@@ -7,6 +7,7 @@ import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
+import {logEvent} from "./utils";
 
 const spec = {
   beginDrag(props, monitor, component) {
@@ -71,6 +72,9 @@ export default class ModuleSearch extends React.Component {
     this.getSuggestionValue = this.getSuggestionValue.bind(this);
     this.getSectionSuggestions = this.getSectionSuggestions.bind(this);
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+
+    this.lastLoggedQuery = ''; // debounce query logging
   }
 
   componentDidMount() {
@@ -177,6 +181,14 @@ export default class ModuleSearch extends React.Component {
     this.setState({value: ''});
   }
 
+  // When the user moves away from the search box, log the query
+  onBlur() {
+    var value = this.state.value;
+    if (value !== '' && value != this.lastLoggedQuery) {
+      logEvent('Module search', {'value': value})
+      this.lastLoggedQuery = value;
+    }
+  }
 
   render () {
     const { value, suggestions } = this.state;
@@ -187,18 +199,20 @@ export default class ModuleSearch extends React.Component {
       autoFocus: true
     };
     return (
-      <Autosuggest
-        multiSection={true}
-        suggestions={suggestions}
-        onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-        onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-        getSuggestionValue={this.getSuggestionValue}
-        renderSuggestion={this.renderSuggestion}
-        renderSectionTitle={this.renderSectionTitle}
-        getSectionSuggestions={this.getSectionSuggestions}
-        inputProps={inputProps}
-        onSuggestionSelected={this.onSuggestionSelected}
-      />
+      <div onBlur={this.onBlur}>
+        <Autosuggest
+          multiSection={true}
+          suggestions={suggestions}
+          onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+          getSuggestionValue={this.getSuggestionValue}
+          renderSuggestion={this.renderSuggestion}
+          renderSectionTitle={this.renderSectionTitle}
+          getSectionSuggestions={this.getSectionSuggestions}
+          inputProps={inputProps}
+          onSuggestionSelected={this.onSuggestionSelected}
+        />
+      </div>
     );
   }
 }
