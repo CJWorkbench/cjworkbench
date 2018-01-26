@@ -67,7 +67,7 @@ exports[`Fetches and renders 1`] = `
               Object {
                 "formatter": [Function],
                 "key": "row-xxxxxxxxx",
-                "name": "#",
+                "name": "",
                 "width": 40,
               },
               Object {
@@ -165,7 +165,7 @@ exports[`Fetches and renders 1`] = `
                         "formatter": [Function],
                         "key": "row-xxxxxxxxx",
                         "left": 0,
-                        "name": "#",
+                        "name": "",
                         "width": 40,
                       },
                       Object {
@@ -200,7 +200,7 @@ exports[`Fetches and renders 1`] = `
                     Object {
                       "formatter": [Function],
                       "key": "row-xxxxxxxxx",
-                      "name": "#",
+                      "name": "",
                       "width": 40,
                     },
                     Object {
@@ -320,7 +320,7 @@ exports[`Fetches and renders 1`] = `
                             "formatter": [Function],
                             "key": "row-xxxxxxxxx",
                             "left": 0,
-                            "name": "#",
+                            "name": "",
                             "width": 40,
                           },
                           Object {
@@ -386,7 +386,7 @@ exports[`Fetches and renders 1`] = `
                               "formatter": [Function],
                               "key": "row-xxxxxxxxx",
                               "left": 0,
-                              "name": "#",
+                              "name": "",
                               "width": 40,
                             },
                             Object {
@@ -465,7 +465,7 @@ exports[`Fetches and renders 1`] = `
                                   "formatter": [Function],
                                   "key": "row-xxxxxxxxx",
                                   "left": 0,
-                                  "name": "#",
+                                  "name": "",
                                   "rowType": "header",
                                   "width": 40,
                                 }
@@ -493,9 +493,7 @@ exports[`Fetches and renders 1`] = `
                               >
                                 <div
                                   className="widget-HeaderCell__value"
-                                >
-                                  #
-                                </div>
+                                />
                               </div>
                             </HeaderCell>
                             <HeaderCell
@@ -787,7 +785,7 @@ exports[`Fetches and renders 1`] = `
                               "formatter": [Function],
                               "key": "row-xxxxxxxxx",
                               "left": 0,
-                              "name": "#",
+                              "name": "",
                               "width": 40,
                             },
                             Object {
@@ -898,7 +896,7 @@ exports[`Fetches and renders 1`] = `
                                 "formatter": [Function],
                                 "key": "row-xxxxxxxxx",
                                 "left": 0,
-                                "name": "#",
+                                "name": "",
                                 "width": 40,
                               },
                               Object {

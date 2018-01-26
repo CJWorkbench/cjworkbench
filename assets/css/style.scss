@@ -1825,8 +1825,8 @@ img.logo {
 
 .help-container{
   position: absolute;
-  bottom: 10rem;
-  left: 1.5rem;
+  bottom: 15.5rem;
+  left: 4.5rem;
 }
 
 .help-shortcut{
@@ -1841,7 +1841,6 @@ img.logo {
   justify-content: center;
   align-items: center;
   box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.40);
-  opacity:0.8;
   cursor:pointer;
   -webkit-transition: opacity 0.1s;
     transition: opacity 0.1s;
@@ -1849,7 +1848,7 @@ img.logo {
 }
 
 .help-shortcut:hover{
-  opacity: 1;
+  box-shadow: -0.5rem 0.8rem 2.5rem 0 rgba(0,0,0,0.40);
 }
 
 .help-container a:hover{
