@@ -171,7 +171,7 @@ def module_dispatch_output(wf_module, table, **kwargs):
     params = create_parameter_dict(wf_module, table)
     # got some error handling in here if, for some reason, someone tries to call
     # output on this and it doesn't have any defined html output
-    html_file = open(html_file_path, 'r+')
+    html_file = open(html_file_path, 'r+', encoding="utf-8")
     html_str = html_file.read()
 
     return (html_str, tableout, params)
