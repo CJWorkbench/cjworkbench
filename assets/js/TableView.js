@@ -31,7 +31,7 @@ function makeFormattedCols(cols) {
 
   var formattedCols = [{
     key: rowKey,
-    name: '#',
+    name: '',
     formatter: RowNumberFormatter,
     width: 40
   }];
