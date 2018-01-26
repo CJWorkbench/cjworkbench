@@ -290,7 +290,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                     className="cat-container"
                   >
                     <div
-                      className="icon-sort-down-vl-gray ml-sort mb-1"
+                      className="ml-sort icon-sort-down-vl-gray"
                     />
                     <span
                       className="open-ML-cat"
@@ -412,7 +412,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                     className="cat-container"
                   >
                     <div
-                      className="icon-sort-down-vl-gray ml-sort mb-1"
+                      className="ml-sort icon-sort-down-vl-gray"
                     />
                     <span
                       className="open-ML-cat"

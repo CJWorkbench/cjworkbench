@@ -391,7 +391,7 @@ exports[`ModuleCategory  Library open  Click events on a category will toggle it
             className="cat-container"
           >
             <div
-              className="icon-sort-up-vl-gray ml-sort mb-1"
+              className="ml-sort icon-sort-up-vl-gray"
             />
             <span
               className="open-ML-cat"
@@ -587,7 +587,7 @@ exports[`ModuleCategory  Library open  Renders with list of Module components 1`
             className="cat-container"
           >
             <div
-              className="icon-sort-down-vl-gray ml-sort mb-1"
+              className="ml-sort icon-sort-down-vl-gray"
             />
             <span
               className="open-ML-cat"
