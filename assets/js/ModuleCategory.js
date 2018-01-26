@@ -39,40 +39,42 @@ export default class ModuleCategory extends React.Component {
     var isOpen = !this.state.collapsed;
 
     // Provides margins around opened library category
-    var cardClass = isOpen
-      ? 'card b-l-gray library-card-category-open'
-      : 'card b-l-gray library-card-category-closed';
+    var cardClass = isOpen ? 'library-card-category-open' : 'library-card-category-closed';
 
-    var sort = isOpen
-      ? 'icon-sort-up-vl-gray ml-sort mb-1'
-      : 'icon-sort-down-vl-gray ml-sort mb-1';
+    var sortIcon = isOpen ? 'icon-sort-up-vl-gray' : 'icon-sort-down-vl-gray';
 
     // Grabs icon from first module in category for category icon
     var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
 
-    var categoryHead = (this.props.libraryOpen)
-      ? <div className='first-level' onClick={this.toggleCollapse} >
-          <div className='cat-container' >
-            <div className={sort} />
-            <span className='open-ML-cat'>{this.props.name}</span>
-          </div>
-        </div>
-      : <div className='first-level' onMouseEnter={this.toggleCollapse} >
-          <div className='cat-container closed-ML-cat' >
-            <span className={icon}></span>
-          </div>
-        </div>
+    var categoryHead;
+    if (this.props.libraryOpen) {
+      categoryHead =  <div className='first-level' onClick={this.toggleCollapse} >
+                        <div className='cat-container' >
+                          <div className={'ml-sort ' + sortIcon} />
+                          <span className='open-ML-cat'>{this.props.name}</span>
+                        </div>
+                      </div> 
+    } else {
+      categoryHead =  <div className='first-level' onMouseEnter={this.toggleCollapse} >
+                        <div className='cat-container closed-ML-cat' >
+                          <span className={icon}></span>
+                        </div>
+                      </div>
+    }
 
-    var moduleList = (this.props.libraryOpen)
-      ? <Collapse isOpen={isOpen}>
-          <div className="ml-list">{this.props.modules}</div>
-        </Collapse>
-      : <div className="ml-list-mini" style={{ display : (isOpen) ? 'block' : 'none'}}>
-          {this.props.modules}
-        </div>
+    var moduleList;
+    if (this.props.libraryOpen) {
+      moduleList =  <Collapse isOpen={isOpen}>
+                      <div className="ml-list">{this.props.modules}</div>
+                    </Collapse>
+    } else {
+      moduleList =  <div className="ml-list-mini" style={{ display : (isOpen) ? 'block' : 'none'}}>
+                      {this.props.modules}
+                    </div>
+    }
 
     return (
-      <div className={cardClass} >
+      <div className={"card b-l-gray " + cardClass} >
         <div className="ml-cat" >
           {categoryHead}
           {moduleList}

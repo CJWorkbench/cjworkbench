@@ -58,7 +58,6 @@ describe('ModuleCategory ', () => {
     });
   
     it('Click events on a category will toggle its module list display', () => { 
-      expect(true).toBe(true);
       // find category card
       let category = wrapper.find('.first-level');
       expect(category).toHaveLength(1);
