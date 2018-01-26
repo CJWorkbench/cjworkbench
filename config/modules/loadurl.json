@@ -10,7 +10,8 @@
       "name": "Link to CSV, JSON or Excel file",
       "id_name" : "url",
       "type": "string",
-      "default": ""
+      "default": "",
+      "placeholder":"wadduuuup"
     },
     {
       "name": "Check",
