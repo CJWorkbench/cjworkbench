@@ -515,6 +515,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
         >
           <div
             className="card"
+            onClick={[Function]}
           >
             <div
               className="second-level t-vl-gray d-flex"

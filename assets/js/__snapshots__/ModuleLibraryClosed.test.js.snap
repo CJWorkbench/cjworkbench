@@ -326,6 +326,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
           >
             <div
               className="card"
+              onClick={[Function]}
             >
               <div
                 className="closed-ML-cat t-vl-gray"
@@ -342,6 +343,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
             </div>
             <div
               className="card notification-button-popout"
+              onClick={[Function]}
               style={
                 Object {
                   "display": "none",
