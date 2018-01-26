@@ -1840,7 +1840,7 @@ img.logo {
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.40);
+  box-shadow: 0 0 1rem 0 rgba(0,0,0,0.10);
   cursor:pointer;
   -webkit-transition: opacity 0.1s;
     transition: opacity 0.1s;
@@ -1848,7 +1848,7 @@ img.logo {
 }
 
 .help-shortcut:hover{
-  box-shadow: -0.5rem 0.8rem 2.5rem 0 rgba(0,0,0,0.40);
+  box-shadow: 0.3rem 0.3rem 2.5rem 0 rgba(0,0,0,0.20);
 }
 
 .help-container a:hover{
