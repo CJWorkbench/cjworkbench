@@ -364,9 +364,10 @@ class WfModule extends React.Component {
             }
             onClick={this.toggleCollapsed} >
           </div>
-          <div className='btn help-button d-flex align-items-center'>
+          <a className='btn help-button d-flex align-items-center'
+             href={'https://intercom.help/tables/modules/' + this.module.id_name}>
             <div className='icon-help'></div>
-          </div>
+          </a>
           <div>{notesIcon}</div>
           <div>{contextMenu}</div>
         </div>
