@@ -66,10 +66,14 @@ exports[`Fetches and renders 1`] = `
             Array [
               Object {
                 "formatter": [Function],
+                "key": "row-xxxxxxxxx",
+                "name": "row",
+                "width": 40,
+              },
+              Object {
                 "key": "a",
                 "name": "a",
                 "resizable": true,
-                "width": 40,
               },
               Object {
                 "key": "b",
@@ -159,22 +163,28 @@ exports[`Fetches and renders 1`] = `
                     "columns": Array [
                       Object {
                         "formatter": [Function],
-                        "key": "a",
+                        "key": "row-xxxxxxxxx",
                         "left": 0,
-                        "name": "a",
-                        "resizable": true,
+                        "name": "row",
                         "width": 40,
                       },
                       Object {
-                        "key": "b",
+                        "key": "a",
                         "left": 40,
+                        "name": "a",
+                        "resizable": true,
+                        "width": 80,
+                      },
+                      Object {
+                        "key": "b",
+                        "left": 120,
                         "name": "b",
                         "resizable": true,
                         "width": 80,
                       },
                       Object {
                         "key": "c",
-                        "left": 120,
+                        "left": 200,
                         "name": "c",
                         "resizable": true,
                         "width": 80,
@@ -189,10 +199,14 @@ exports[`Fetches and renders 1`] = `
                   Array [
                     Object {
                       "formatter": [Function],
+                      "key": "row-xxxxxxxxx",
+                      "name": "row",
+                      "width": 40,
+                    },
+                    Object {
                       "key": "a",
                       "name": "a",
                       "resizable": true,
-                      "width": 40,
                     },
                     Object {
                       "key": "b",
@@ -304,22 +318,28 @@ exports[`Fetches and renders 1`] = `
                         "columns": Array [
                           Object {
                             "formatter": [Function],
-                            "key": "a",
+                            "key": "row-xxxxxxxxx",
                             "left": 0,
-                            "name": "a",
-                            "resizable": true,
+                            "name": "row",
                             "width": 40,
                           },
                           Object {
-                            "key": "b",
+                            "key": "a",
                             "left": 40,
+                            "name": "a",
+                            "resizable": true,
+                            "width": 80,
+                          },
+                          Object {
+                            "key": "b",
+                            "left": 120,
                             "name": "b",
                             "resizable": true,
                             "width": 80,
                           },
                           Object {
                             "key": "c",
-                            "left": 120,
+                            "left": 200,
                             "name": "c",
                             "resizable": true,
                             "width": 80,
@@ -364,22 +384,28 @@ exports[`Fetches and renders 1`] = `
                           Array [
                             Object {
                               "formatter": [Function],
-                              "key": "a",
+                              "key": "row-xxxxxxxxx",
                               "left": 0,
-                              "name": "a",
-                              "resizable": true,
+                              "name": "row",
                               "width": 40,
                             },
                             Object {
-                              "key": "b",
+                              "key": "a",
                               "left": 40,
+                              "name": "a",
+                              "resizable": true,
+                              "width": 80,
+                            },
+                            Object {
+                              "key": "b",
+                              "left": 120,
                               "name": "b",
                               "resizable": true,
                               "width": 80,
                             },
                             Object {
                               "key": "c",
-                              "left": 120,
+                              "left": 200,
                               "name": "c",
                               "resizable": true,
                               "width": 80,
@@ -437,10 +463,9 @@ exports[`Fetches and renders 1`] = `
                               column={
                                 Object {
                                   "formatter": [Function],
-                                  "key": "a",
+                                  "key": "row-xxxxxxxxx",
                                   "left": 0,
-                                  "name": "a",
-                                  "resizable": true,
+                                  "name": "row",
                                   "rowType": "header",
                                   "width": 40,
                                 }
@@ -463,6 +488,45 @@ exports[`Fetches and renders 1`] = `
                                     "textOverflow": "ellipsis",
                                     "whiteSpace": "nowrap",
                                     "width": 40,
+                                  }
+                                }
+                              >
+                                <div
+                                  className="widget-HeaderCell__value"
+                                >
+                                  row
+                                </div>
+                              </div>
+                            </HeaderCell>
+                            <HeaderCell
+                              column={
+                                Object {
+                                  "key": "a",
+                                  "left": 40,
+                                  "name": "a",
+                                  "resizable": true,
+                                  "rowType": "header",
+                                  "width": 80,
+                                }
+                              }
+                              height={35}
+                              onResize={[Function]}
+                              onResizeEnd={[Function]}
+                              renderer={[Function]}
+                              resizing={false}
+                            >
+                              <div
+                                className="react-grid-HeaderCell"
+                                style={
+                                  Object {
+                                    "display": "inline-block",
+                                    "height": 35,
+                                    "left": 40,
+                                    "margin": 0,
+                                    "position": "absolute",
+                                    "textOverflow": "ellipsis",
+                                    "whiteSpace": "nowrap",
+                                    "width": 80,
                                   }
                                 }
                               >
@@ -516,7 +580,7 @@ exports[`Fetches and renders 1`] = `
                               column={
                                 Object {
                                   "key": "b",
-                                  "left": 40,
+                                  "left": 120,
                                   "name": "b",
                                   "resizable": true,
                                   "rowType": "header",
@@ -535,7 +599,7 @@ exports[`Fetches and renders 1`] = `
                                   Object {
                                     "display": "inline-block",
                                     "height": 35,
-                                    "left": 40,
+                                    "left": 120,
                                     "margin": 0,
                                     "position": "absolute",
                                     "textOverflow": "ellipsis",
@@ -594,7 +658,7 @@ exports[`Fetches and renders 1`] = `
                               column={
                                 Object {
                                   "key": "c",
-                                  "left": 120,
+                                  "left": 200,
                                   "name": "c",
                                   "resizable": true,
                                   "rowType": "header",
@@ -613,7 +677,7 @@ exports[`Fetches and renders 1`] = `
                                   Object {
                                     "display": "inline-block",
                                     "height": 35,
-                                    "left": 120,
+                                    "left": 200,
                                     "margin": 0,
                                     "position": "absolute",
                                     "textOverflow": "ellipsis",
@@ -721,22 +785,28 @@ exports[`Fetches and renders 1`] = `
                           "columns": Array [
                             Object {
                               "formatter": [Function],
-                              "key": "a",
+                              "key": "row-xxxxxxxxx",
                               "left": 0,
-                              "name": "a",
-                              "resizable": true,
+                              "name": "row",
                               "width": 40,
                             },
                             Object {
-                              "key": "b",
+                              "key": "a",
                               "left": 40,
+                              "name": "a",
+                              "resizable": true,
+                              "width": 80,
+                            },
+                            Object {
+                              "key": "b",
+                              "left": 120,
                               "name": "b",
                               "resizable": true,
                               "width": 80,
                             },
                             Object {
                               "key": "c",
-                              "left": 120,
+                              "left": 200,
                               "name": "c",
                               "resizable": true,
                               "width": 80,
@@ -818,30 +888,36 @@ exports[`Fetches and renders 1`] = `
                               },
                             }
                           }
-                          colDisplayEnd={3}
+                          colDisplayEnd={4}
                           colDisplayStart={0}
-                          colVisibleEnd={3}
+                          colVisibleEnd={4}
                           colVisibleStart={0}
                           columns={
                             Array [
                               Object {
                                 "formatter": [Function],
-                                "key": "a",
+                                "key": "row-xxxxxxxxx",
                                 "left": 0,
-                                "name": "a",
-                                "resizable": true,
+                                "name": "row",
                                 "width": 40,
                               },
                               Object {
-                                "key": "b",
+                                "key": "a",
                                 "left": 40,
+                                "name": "a",
+                                "resizable": true,
+                                "width": 80,
+                              },
+                              Object {
+                                "key": "b",
+                                "left": 120,
                                 "name": "b",
                                 "resizable": true,
                                 "width": 80,
                               },
                               Object {
                                 "key": "c",
-                                "left": 120,
+                                "left": 200,
                                 "name": "c",
                                 "resizable": true,
                                 "width": 80,
@@ -917,6 +993,13 @@ exports[`Fetches and renders 1`] = `
                                               }
                                         }
                                     />
+                                    <div
+                                        style={
+                                            Object {
+                                                "width": 80,
+                                              }
+                                        }
+                                    />
                                 </div>,
                                 ]
                               }
@@ -955,6 +1038,13 @@ exports[`Fetches and renders 1`] = `
                                                 }
                                           }
                                       />
+                                      <div
+                                          style={
+                                              Object {
+                                                  "width": 80,
+                                                }
+                                          }
+                                      />
                                   </div>,
                                   ]
                                 }
@@ -972,6 +1062,13 @@ exports[`Fetches and renders 1`] = `
                                       style={
                                         Object {
                                           "width": 40,
+                                        }
+                                      }
+                                    />
+                                    <div
+                                      style={
+                                        Object {
+                                          "width": 80,
                                         }
                                       }
                                     />

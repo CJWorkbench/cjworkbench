@@ -104,9 +104,6 @@ def make_render_json(table, startrow=None, endrow=None):
     endrow = min(nrows, endrow)
     table = table[startrow:endrow]
 
-    # Add row numbers
-    table.insert(0, 'row', range(1, len(table)+1))
-
     # In a sane and just world, we could now just do something like
     #  rows = table.to_dict(orient='records')
     # Alas, this is not the world we live in. Several problems. First,
