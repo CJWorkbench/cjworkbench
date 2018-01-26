@@ -41,8 +41,6 @@ function makeFormattedCols(cols) {
     formattedCols.push(d)
   }
 
-  console.log(formattedCols)
-
   return formattedCols;
 }
 
