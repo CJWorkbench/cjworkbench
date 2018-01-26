@@ -10,25 +10,61 @@ class CountValuesTests(LoggedInTestCase):
         super(CountValuesTests, self).setUp()  # log in
 
         # test data designed to give different output if sorted by freq vs value
-        count_csv = 'Date,Amount,Foo\nJan 10 2016,10,Foo\nJul 25 2011,5,Goo\nJan 10 2016,1,Hoo\n'
+        count_csv = 'Date,Amount,Foo\nJan 10 2011,10,Foo\nJul 25 2016,5,Goo\nJan 10 2011 01:00:00,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:01:00,1,Hoo\nJan 15 2011,1,Too\n'
         workflow = create_testdata_workflow(count_csv)
 
         self.wf_module = load_and_add_module('countbydate', workflow=workflow)
         self.col_pval = get_param_by_id_name('column')
         self.sort_pval = get_param_by_id_name('sortby')
+        self.group_pval = get_param_by_id_name('groupby')
+        self.csv_data = get_param_by_id_name('csv')
 
     def test_render(self):
         # sort by value.
         # Use out.to_csv() instead of str(out) to ensure rows are output in index order (otherwise variable)
         set_string(self.col_pval, 'Date')
-        set_integer(self.sort_pval,0)  # 0 = sort by value
-        out = execute_wfmodule(self.wf_module)
-        self.assertEqual(out.to_csv(index=False), 'date,count\n2011-07-25,1\n2016-01-10,2\n' )
 
         # sort by freq
-        set_integer(self.sort_pval,1)  # 1 = sort by freq
+        set_integer(self.sort_pval, 1)  # 1 = sort by freq
         out = execute_wfmodule(self.wf_module)
-        self.assertEqual(out.to_csv(index=False), 'date,count\n2016-01-10,2\n2011-07-25,1\n')
+        self.assertEqual(out.to_csv(index=False), 'date,count\n2011-01-15,1\n2016-07-25,1\n2011-01-10,5\n')
+
+        set_integer(self.sort_pval, 0)  # 0 = sort by value
+        out = execute_wfmodule(self.wf_module)
+        self.assertEqual(out.to_csv(index=False), 'date,count\n2011-01-10,5\n2011-01-15,1\n2016-07-25,1\n')
+
+        # sort by date & set groupby to 'seconds'
+        set_integer(self.group_pval, 0)  # 0 = group by seconds
+        out = execute_wfmodule(self.wf_module)
+        self.assertEqual(out.to_csv(index=False),
+                         'date,count\n2011-01-10 00:00:00,1\n2011-01-10 00:00:01,2\n2011-01-10 00:01:00,1\n2011-01-10 01:00:00,1\n2011-01-15 00:00:00,1\n2016-07-25 00:00:00,1\n')
+
+        # sort by date & set groupby to 'minutes'
+        set_integer(self.group_pval, 1)  # 0 = group by minutes
+        out = execute_wfmodule(self.wf_module)
+        self.assertEqual(out.to_csv(index=False),
+                         'date,count\n2011-01-10 00:00,3\n2011-01-10 00:01,1\n2011-01-10 01:00,1\n2011-01-15 00:00,1\n2016-07-25 00:00,1\n')
+
+        # sort by date & set groupby to 'hours'
+        set_integer(self.group_pval, 2)  # 0 = group by minutes
+        out = execute_wfmodule(self.wf_module)
+        self.assertEqual(out.to_csv(index=False),
+                         'date,count\n2011-01-10 00:00,4\n2011-01-10 01:00,1\n2011-01-15 00:00,1\n2016-07-25 00:00,1\n')
+
+        # sort by date & set groupby to 'months'
+        set_integer(self.group_pval, 4)  # 4 = group by months
+        out = execute_wfmodule(self.wf_module)
+        self.assertEqual(out.to_csv(index=False), 'date,count\n2011-01,6\n2016-07,1\n')
+
+        # sort by date & set groupby to 'quarters'
+        set_integer(self.group_pval, 5)  # 4 = group by quarters
+        out = execute_wfmodule(self.wf_module)
+        self.assertEqual(out.to_csv(index=False), 'date,count\n2011 Q1,6\n2016 Q3,1\n')
+
+        # sort by date & set groupby to 'years'
+        set_integer(self.group_pval, 6)  # 6 = group by years
+        out = execute_wfmodule(self.wf_module)
+        self.assertEqual(out.to_csv(index=False), 'date,count\n2011,6\n2016,1\n')
 
     def test_bad_colname(self):
         # NOP if no column given
@@ -56,4 +92,3 @@ class CountValuesTests(LoggedInTestCase):
         out = execute_wfmodule(self.wf_module)
         self.wf_module.refresh_from_db()
         self.assertEqual(self.wf_module.status, WfModule.ERROR)
-
