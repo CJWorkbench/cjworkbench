@@ -54,6 +54,7 @@ class AddNotificationButtonClosed extends React.Component {
     });
 
     if (typeof dataModule === 'undefined') return;
+    if (dataModule.notifications === true) return;
 
     store.dispatch(updateWfModuleAction(dataModule.id, {
         notifications: true
