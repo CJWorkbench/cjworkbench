@@ -17,10 +17,11 @@ describe('AddNotificationButtonClosed ', () => {
 
   var wrapper;  
   var mockSetOpenCategory;
+  var notificationsOn;
+  var notificationsOff;
 
   beforeEach(() => {
-      var mockGetState = jest.fn();
-      mockGetState.mockReturnValue({
+      notificationsOff = jest.fn().mockReturnValue({
          workflow: {
              wf_modules: [
                  {
@@ -45,8 +46,33 @@ describe('AddNotificationButtonClosed ', () => {
          }
       });
 
+      notificationsOn = jest.fn().mockReturnValue({
+         workflow: {
+             wf_modules: [
+                 {
+                     id: 1,
+                     notifications: true,
+                     module_version: {
+                         module: {
+                             loads_data: true
+                         }
+                     }
+                 },
+                 {
+                     id: 2,
+                     notifications: false,
+                     module_version: {
+                         module: {
+                             loads_data: false
+                         }
+                     }
+                 }
+             ]
+         }
+      });
+
       reducer.store = {
-          getState: mockGetState,
+          getState: notificationsOff,
           dispatch: jest.fn()
       };
       reducer.updateWfModuleAction = jest.fn();
@@ -83,13 +109,18 @@ describe('AddNotificationButtonClosed ', () => {
     expect(popout.props().style).toEqual({display:'none'});
   });
 
-  it('Should fire click events on click', () => {
+  it('Finds correct wfmodule on click and dispatches change to notifications', () => {
       let icon = wrapper.find('.notification-button-closed');
       icon.simulate('click');
       expect(reducer.store.getState.mock.calls.length).toBe(1);
       expect(reducer.store.dispatch.mock.calls.length).toBe(1);
       expect(reducer.updateWfModuleAction.mock.calls[0][0]).toBe(1); //Should have found wfmodule id 1
       expect(reducer.updateWfModuleAction.mock.calls[0][1].notifications).toBe(true);
+
+      reducer.store.getState = notificationsOn; // Set notifications to "on" to test that we do't make the API call a second time
+
+      icon.simulate('click');
+      expect(reducer.updateWfModuleAction.mock.calls.length).toBe(1);
   });
 
   it('Card is draggable', () => { 

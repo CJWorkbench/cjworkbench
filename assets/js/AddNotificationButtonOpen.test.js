@@ -16,36 +16,62 @@ var reducer = require('./workflow-reducer.js');
 describe('AddNotificationButtonOpen ', () => {
 
   var wrapper;
+  var notificationsOn;
+  var notificationsOff;
 
   beforeEach(() => {
-    var mockGetState = jest.fn();
-    mockGetState.mockReturnValue({
-       workflow: {
-           wf_modules: [
-               {
-                   id: 1,
-                   notifications: false,
-                   module_version: {
-                       module: {
-                           loads_data: true
-                       }
-                   }
-               },
-               {
-                   id: 2,
-                   notifications: false,
-                   module_version: {
-                       module: {
-                           loads_data: false
-                       }
-                   }
-               }
-           ]
-       }
-    });
+    notificationsOff = jest.fn().mockReturnValue({
+         workflow: {
+             wf_modules: [
+                 {
+                     id: 1,
+                     notifications: false,
+                     module_version: {
+                         module: {
+                             loads_data: true
+                         }
+                     }
+                 },
+                 {
+                     id: 2,
+                     notifications: false,
+                     module_version: {
+                         module: {
+                             loads_data: false
+                         }
+                     }
+                 }
+             ]
+         }
+      });
+
+    notificationsOn = jest.fn().mockReturnValue({
+         workflow: {
+             wf_modules: [
+                 {
+                     id: 1,
+                     notifications: true,
+                     module_version: {
+                         module: {
+                             loads_data: true
+                         }
+                     }
+                 },
+                 {
+                     id: 2,
+                     notifications: false,
+                     module_version: {
+                         module: {
+                             loads_data: false
+                         }
+                     }
+                 }
+             ]
+         }
+      });
 
     reducer.store = {
-        getState: mockGetState,
+        getState: notificationsOff,
         dispatch: jest.fn()
     };
 
@@ -71,6 +97,11 @@ describe('AddNotificationButtonOpen ', () => {
     expect(reducer.store.getState.mock.calls.length).toBe(1);
     expect(reducer.updateWfModuleAction.mock.calls[0][0]).toBe(1);
     expect(reducer.updateWfModuleAction.mock.calls[0][1].notifications).toBe(true);
+
+    reducer.store.getState = notificationsOn; // Set notifications to "on" to test that we do't make the API call a second time
+
+    button.simulate('click');
+    expect(reducer.updateWfModuleAction.mock.calls.length).toBe(1);
   });
 
   it('Card is draggable', () => {
