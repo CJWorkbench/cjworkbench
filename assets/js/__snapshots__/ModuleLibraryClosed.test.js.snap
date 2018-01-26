@@ -138,6 +138,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                 </div>
                 <div
                   className="ml-list-mini"
+                  onMouseLeave={[Function]}
                   style={
                     Object {
                       "display": "none",
@@ -242,6 +243,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                 </div>
                 <div
                   className="ml-list-mini"
+                  onMouseLeave={[Function]}
                   style={
                     Object {
                       "display": "none",
