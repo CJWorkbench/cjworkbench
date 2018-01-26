@@ -10,9 +10,27 @@ class CountByDate(ModuleImpl):
     SORT_BY_VALUE = 0
     SORT_BY_FREQ = 1
 
+    SECOND = 0
+    MINUTE = 1
+    HOUR = 2
+    DAY = 3
+    MONTH = 4
+    QUARTER = 5
+    YEAR = 6
+
     def render(wf_module, table):
         col  = wf_module.get_param_column('column')
         sortby = wf_module.get_param_menu_idx('sortby')
+        groupby = wf_module.get_param_menu_idx('groupby')
+        group_options = [
+            "%Y-%m-%d %H:%M:%S",  # Seconds
+            "%Y-%m-%d %H:%M",  # Minutes
+            "%Y-%m-%d %H:00",  # Hours
+            "%Y-%m-%d",  # Days
+            "%Y-%m",  # Months
+            lambda d: "%d Q%d" % (d.year, d.quarter),  # Quarters
+            "%Y",  # Years
+        ]
 
         if col == '':
             wf_module.set_error('Please select a column containing dates')
@@ -21,8 +39,6 @@ class CountByDate(ModuleImpl):
         if table is None:
             return None
 
-        tc = table.columns
-
         if col not in table.columns:
             return('There is no column named %s' % col)
 
@@ -30,26 +46,28 @@ class CountByDate(ModuleImpl):
         if table[col].dtype == 'int64':
             return('Column %s does not seem to be dates' % col)
 
-        # parse string as date, pull out day, convert back to string
+        # convert the date column to actual datetimes
         try:
-            dates = pd.to_datetime(table[col])
+            table[col] = pd.to_datetime(table[col])
         except (ValueError, TypeError):
             return('Column %s does not seem to be dates' % col)
-
-        def safedatestr(date):
-            if type(date) == datetime.date:
-                return date.strftime('%Y-%m-%d')
-            else:
-                return ""
 
         if table[col].dtype == 'int64':
             return('Column %s does not seem to be dates' % col)
 
-        dates = dates.dt.date.apply(lambda x: safedatestr(x))  # reformat dates to strings
-        newtab = pd.DataFrame(dates.value_counts(sort=(sortby == CountByDate.SORT_BY_FREQ)))
-        newtab.reset_index(level=0, inplace=True) # turn index into a column, or we can't see the column names
+        if groupby is CountByDate.QUARTER:
+            table['groupcol'] = table[col].apply(group_options[groupby])
+        else:
+            table['groupcol'] = table[col].dt.strftime(group_options[groupby])
+
+        newtab = pd.DataFrame(table.groupby(table['groupcol']).size())
+
+        newtab.reset_index(level=0, inplace=True)  # turn index into a column, or we can't see the column names
         newtab.columns = ['date', 'count']
+
         if sortby != CountByDate.SORT_BY_FREQ:
             newtab = newtab.sort_values('date')
+        else:
+            newtab = newtab.sort_values('count')
 
         return newtab
