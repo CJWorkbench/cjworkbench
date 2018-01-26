@@ -38,7 +38,7 @@ export default class UpdateFrequencySelect extends React.Component {
       this.toggleModal();
       this.toggleManual();
       this.setState({
-        message: "You have just added an alert, but sync settings are set to 'manual'. Please choose an update frequency and click 'apply'."
+        message: "Choose a frequency to check on new data and click 'Apply'."
       })
     }
   }
@@ -130,7 +130,7 @@ export default class UpdateFrequencySelect extends React.Component {
           </ModalHeader>
           <ModalBody className='dialog-body'>
             {this.state.message.length > 0 &&
-              <p>{this.state.message}</p>
+              <div className='info-3 mt-2 mb-5'>{this.state.message}</div>
             }
             <FormGroup>
               <div className="row">
