@@ -16,4 +16,4 @@ class PasteCSVTests(LoggedInTestCase):
     def test_csv(self):
         response = self.client.get('/api/wfmodules/%d/render' % self.wf_module.id)
         table = pd.read_csv(io.StringIO(mock_csv_text))
-        self.assertEqual(response.content, make_render_json(table))
+        self.assertEqual(response.content.decode('utf-8'), make_render_json(table))
