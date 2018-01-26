@@ -650,7 +650,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                         className="cat-container"
                       >
                         <div
-                          className="icon-sort-up-vl-gray ml-sort mb-1"
+                          className="ml-sort icon-sort-up-vl-gray"
                         />
                         <span
                           className="open-ML-cat"
@@ -828,7 +828,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                         className="cat-container"
                       >
                         <div
-                          className="icon-sort-down-vl-gray ml-sort mb-1"
+                          className="ml-sort icon-sort-down-vl-gray"
                         />
                         <span
                           className="open-ML-cat"

@@ -319,7 +319,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                 className="cat-container"
               >
                 <div
-                  className="icon-sort-down-vl-gray ml-sort mb-1"
+                  className="ml-sort icon-sort-down-vl-gray"
                 />
                 <span
                   className="open-ML-cat"
@@ -441,7 +441,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                 className="cat-container"
               >
                 <div
-                  className="icon-sort-down-vl-gray ml-sort mb-1"
+                  className="ml-sort icon-sort-down-vl-gray"
                 />
                 <span
                   className="open-ML-cat"
