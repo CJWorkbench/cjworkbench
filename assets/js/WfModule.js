@@ -305,7 +305,7 @@ class WfModule extends React.Component {
           setParamText={this.setParamText}
           setClickNotification={this.setClickNotification}
           notifications={this.props['data-wfmodule'].notifications}
-          user={this.props['data-user']}
+          loggedInUser={this.props['data-user']}
         />)
       });
 

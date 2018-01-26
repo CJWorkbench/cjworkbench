@@ -396,14 +396,14 @@ export default class WfParameter extends React.Component {
           } else if (this.props.p.parameter_spec.id_name == 'connect') {
             return (
               <GoogleConnect
-                userCreds={this.props.user.google_credentials}
+                userCreds={this.props.loggedInUser.google_credentials}
               />
             )
           } else if (this.props.p.parameter_spec.id_name == 'fileselect') {
             return (
               <FileSelect
                 api={this.props.api}
-                userCreds={this.props.user.google_credentials}
+                userCreds={this.props.loggedInUser.google_credentials}
                 pid={this.props.p.id}
                 saveState={state => this.props.setParamText('fileselect', state)}
                 getState={() => this.props.getParamText('fileselect')}

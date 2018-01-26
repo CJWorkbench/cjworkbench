@@ -140,7 +140,7 @@ class WorkflowList extends React.Component {
         'data-revision': this.props.data.revision,
         'data-selected': (item.id == this.props.selected_wf_module),
         'data-api': this.props.api,
-        'data-user': this.props.user,
+        'data-user': this.props.loggedInUser,
         loads_data: item.module_version ? item.module_version.module.loads_data : false,
         index:i,
         drag: this.drag,
@@ -232,7 +232,7 @@ class Workflow extends React.Component {
                         removeModule={this.props.removeModule}
                         addModule={this.props.addModule}
                         api={this.props.api}
-                        user={this.props.user}
+                        loggedInUser={this.props.loggedInUser}
                         isOver={this.props.isOver}
                         dragItem={this.props.dragItem}
                       />
