@@ -13,7 +13,7 @@ class RowNumberFormatter extends React.Component {
 
   render() {
     return (
-      <div className='t-orange'>
+      <div className='rowNumber'>
           {this.props.value}
       </div>)
   }
@@ -31,7 +31,7 @@ function makeFormattedCols(cols) {
 
   var formattedCols = [{
     key: rowKey,
-    name: 'row',
+    name: '#',
     formatter: RowNumberFormatter,
     width: 40
   }];
