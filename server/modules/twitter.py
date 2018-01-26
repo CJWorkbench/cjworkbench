@@ -1,12 +1,12 @@
 import tweepy
 from tweepy import TweepError
 import pandas as pd
-import time
 import os
 from .moduleimpl import ModuleImpl
 from .utils import *
 from server.versions import save_fetched_table_if_changed
-# ---- Twitter ----
+
+# ---- Twitter import module ----
 
 class Twitter(ModuleImpl):
 
@@ -23,6 +23,9 @@ class Twitter(ModuleImpl):
     @staticmethod
     def get_new_tweets(wfm, querytype, query, old_tweets):
 
+        if query=='':
+            return pd.DataFrame()
+
         # Authenticate with "app authentication" mode (high rate limit, read only)
         consumer_key = os.environ['CJW_TWITTER_CONSUMER_KEY']
         consumer_secret = os.environ['CJW_TWITTER_CONSUMER_SECRET']
@@ -31,6 +34,8 @@ class Twitter(ModuleImpl):
 
         # Only get last 100 tweets, because that is twitter API max for single call
         if querytype == Twitter.QUERY_TYPE_USER:
+            if query[0] == '@':                     # allow user to type @username or username
+                query = query[1:]
             tweetsgen = api.user_timeline(query, count=200)
         else:
             tweetsgen = api.search(q=query, count=100)
