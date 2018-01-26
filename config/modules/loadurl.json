@@ -11,7 +11,7 @@
       "id_name" : "url",
       "type": "string",
       "default": "",
-      "placeholder":"wadduuuup"
+      "placeholder":"http://"
     },
     {
       "name": "Check",
