@@ -18,7 +18,7 @@ gdrive_files = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data/goo
 
 gdrive_file_meta = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data/google_drive_file.json') ).read()
 
-gdrive_file = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data/police_data.csv') ).read()
+gdrive_file = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data/sfpd.csv') ).read()
 
 def mock_http_files():
     return HttpMockSequence([
@@ -89,7 +89,7 @@ class GoogleSheetsTests(LoggedInTestCase):
         file_meta = json.loads(gdrive_file_meta)
         result = GoogleSheets.event(self.wf_module, event={'type':'fetchFile'}, request=self.request_post)
 
-        mock_get_spreadsheet.assert_called_with( \
+        mock_get_spreadsheet.assert_called_with(
             self.request_post, file_meta['file']['id'], owner=self.wf_module.workflow.owner)
         self.assertEqual(result.status_code, 204)
         self.assertEqual(json.loads(result.content.decode('utf-8')), {})
@@ -100,7 +100,7 @@ class GoogleSheetsTests(LoggedInTestCase):
         file_meta = json.loads(self.file_param.value)
         result = GoogleSheets.event(self.wf_module, event={'type':'click'}, request=self.request_post)
 
-        mock_get_spreadsheet.assert_called_with( \
+        mock_get_spreadsheet.assert_called_with(
             self.request_post, file_meta['id'], owner=self.wf_module.workflow.owner)
         self.assertEqual(result.status_code, 204)
         self.assertEqual(json.loads(result.content.decode('utf-8')), {})
@@ -111,7 +111,7 @@ class GoogleSheetsTests(LoggedInTestCase):
         file_meta = json.loads(self.file_param.value)
         result = GoogleSheets.event(self.wf_module, None, request=self.request_post)
 
-        mock_get_spreadsheet.assert_called_with( \
+        mock_get_spreadsheet.assert_called_with(
             self.request_post, file_meta['id'], owner=self.wf_module.workflow.owner)
         self.assertEqual(result.status_code, 204)
         self.assertEqual(json.loads(result.content.decode('utf-8')), {})
