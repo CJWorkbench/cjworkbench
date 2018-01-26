@@ -29,8 +29,7 @@ class DispatchTests(TestCase):
 
     def test_error_render(self):
         # Force an error, ensure that it's returned and the output is a NOP
-        module_def = load_module_def('pythoncode')
-        wfm = load_and_add_module(self.workflow, module_def)
+        wfm = load_and_add_module('pythoncode', workflow=self.workflow)
         code_pval = get_param_by_id_name('code')
         code_pval.set_value('not python code')
 

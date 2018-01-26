@@ -1,12 +1,7 @@
-from django.test import TestCase
-from rest_framework import status
-from server.models import Module, WfModule, Workflow, ParameterSpec, ParameterVal
 from server.views.WfModule import make_render_json
-from server.execute import execute_wfmodule
 from server.tests.utils import *
 import requests_mock
 import pandas as pd
-import io
 import os
 import json
 import tempfile
@@ -26,13 +21,11 @@ mock_xslx_path = os.path.join(settings.BASE_DIR, 'server/tests/modules/test.xlsx
 class LoadFromURLTests(LoggedInTestCase):
     def setUp(self):
         super(LoadFromURLTests, self).setUp()  # log in
-        loadurl_def = load_module_def('loadurl')
-        self.wfmodule = load_and_add_module(None, loadurl_def)
+        self.wfmodule = load_and_add_module('loadurl')
 
         # save references to our parameter values so we can tweak them later
         self.url_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='url'))
         self.fetch_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='version_select'))
-#        self.path_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='json_path'))
 
     # send fetch event to button to load data
     def press_fetch_button(self):

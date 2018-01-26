@@ -46,6 +46,7 @@ export default class ModuleCategory extends React.Component {
     // Grabs icon from first module in category for category icon
     var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
 
+
     var categoryHead;
     if (this.props.libraryOpen) {
       categoryHead =  <div className='first-level' onClick={this.toggleCollapse} >
@@ -75,6 +76,7 @@ export default class ModuleCategory extends React.Component {
 
     return (
       <div className={"card b-l-gray " + cardClass} >
+
         <div className="ml-cat" >
           {categoryHead}
           {moduleList}

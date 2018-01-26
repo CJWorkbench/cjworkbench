@@ -38,8 +38,7 @@ class GoogleSheetsTests(LoggedInTestCase):
 
     def setUp(self):
         super(GoogleSheetsTests, self).setUp()
-        googlesheets_def = load_module_def('googlesheets')
-        self.wf_module = load_and_add_module(None, googlesheets_def)
+        self.wf_module = load_and_add_module('googlesheets')
         self.file_param = get_param_by_id_name('fileselect')
 
         drive_file_response = json.loads(gdrive_file_meta)

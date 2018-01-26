@@ -18,6 +18,7 @@ install:
 - npm install -g
 - pip install -r requirements.txt
 - pip install -r requirements-dev.txt
+- ./node_modules/.bin/webpack --config webpack.config.js
 # media directory must exist already for StoredObject tests
 - mkdir media
 # Geckodriver needed  for integration tests
@@ -29,7 +30,6 @@ install:
 script:
 - python manage.py test
 - npm test
-- ./node_modules/.bin/webpack --config webpack.config.js
 - python manage.py test integrationtests
 
 notifications:

@@ -22,7 +22,7 @@ class DynamicDispatchTest(LoggedInTestCase):
         with open(test_json) as readable:
             module_config = json.load(readable)
         wf = add_new_workflow('workflow')
-        wf_module = load_and_add_module(wf, module_config)
+        wf_module = load_and_add_module_from_dict(module_config, workflow=wf)
         return wf, wf_module
 
     def setup_directory(self):

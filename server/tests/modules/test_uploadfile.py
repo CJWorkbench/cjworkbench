@@ -15,8 +15,7 @@ mock_xslx_path = os.path.join(settings.BASE_DIR, 'server/tests/modules/test.xlsx
 class UploadFileTests(LoggedInTestCase):
     def setUp(self):
         super(UploadFileTests, self).setUp()  # log in
-        module_def = load_module_def('uploadfile')
-        self.wfm = load_and_add_module(None, module_def)
+        self.wfm = load_and_add_module('uploadfile')
 
         self.csv_table = pd.read_csv(mock_csv_path)
         self.xlsx_table = pd.read_excel(mock_xslx_path)

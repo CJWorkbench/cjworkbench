@@ -134,7 +134,7 @@ export default class DropZone extends Component {
                                 <div className={"t-d-gray content-3 text-field-readonly"}>{this.state.filename}</div>
                             </div>
                             <FileInput className={"button-blue dropzone-button action-button"} multiple={false}
-                                       uploader={this.uploader}>Change file</FileInput>
+                                       uploader={this.uploader}>Replace</FileInput>
                         </div>
                         {
                             this.state.submittedFiles.map(id => (

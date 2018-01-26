@@ -131,6 +131,13 @@ body {
   font-family: 'Nunito Sans', sans-serif;
 }
 
+.info-3{
+  font-size: 1.6rem;
+	font-weight: 100;
+	line-height: 1.2rem;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
 .table-1 {
 	font-size: 1.3rem;
 	font-weight: 200;
@@ -558,7 +565,7 @@ body {
   font-size: 1.2rem ;
 }
 
-.dopdown-item:focus,
+.dropdown-item:focus,
 .dropdown-item:hover {
   color:#686768;
   background-color:transparent;
@@ -594,14 +601,6 @@ body {
 
 }
 
-.text-field input::placeholder {
-  color: #B4B4B4;
-}
-
-.import-url-field input::placeholder {
-  color: #B4B4B4;
-}
-
 .text-field-large {
   height: 12rem;
   width: 100%;
@@ -611,11 +610,11 @@ body {
 }
 
 .text-field-readonly {
-  padding:0 1.5rem 0 0;
+  padding:0.25rem 1.5rem 0 0;
   background: transparent;
   border:none;
   white-space: nowrap;
-  width:43rem;
+  width:38rem;
   line-height: 1.5rem;
   height: 1.5rem;
   resize: none;
@@ -627,6 +626,20 @@ body {
   margin-bottom: 1rem;
 }
 
+// placeholder text
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color:#d3d3d3;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: #d3d3d3;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color:#d3d3d3;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color:#d3d3d3;
+}
 /* ---- Dropdowns and Lists---- */
 
 .line-item-data {
@@ -701,7 +714,7 @@ body {
 }
 
 .dropdown-divider{
-  opacity: 0;
+  opacity: 0.5;
 }
 
 /*Style form controls */
@@ -1836,7 +1849,7 @@ img.logo {
 }
 
 .help-shortcut:hover{
-  opacity: 0.8;
+  opacity: 1;
 }
 
 .help-container a:hover{
@@ -2306,6 +2319,7 @@ input[type=checkbox]:checked:after {
 /* ---- Data Module: data versions box */
 
 .version-box {
+  height:6.6rem;
   border: 1px solid #E9E9E9;
   display: flex;
   flex-direction: row;

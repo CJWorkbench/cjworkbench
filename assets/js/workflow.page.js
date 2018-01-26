@@ -23,7 +23,7 @@ const mapStateToProps = (state) => {
   return {
     workflow: state.workflow,
     selected_wf_module: state.selected_wf_module,
-    user: state.user,
+    loggedInUser: state.loggedInUser,
     // This is the top level dependency injection for all API calls on this page
     api: api
   }
@@ -86,4 +86,13 @@ ReactDOM.render(
 );
 
 // Load the page, Select the first module in the workflow (if one exists, else shows Module Library)
-Actions.store.dispatch(Actions.initialLoadWorkflowAction())
+Actions.store.dispatch(Actions.initialLoadWorkflowAction());
+
+// Start Intercom, if we're that sort of installation
+if (window.APP_ID) {
+  window.Intercom("boot", {
+    app_id: window.APP_ID,
+    email: window.initState.loggedInUser.email,
+    user_id: window.initState.loggedInUser.id
+  });
+}

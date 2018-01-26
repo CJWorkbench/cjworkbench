@@ -86,8 +86,8 @@ def load_module_from_dict(d):
         module_version = ModuleVersion()
 
     module_version.source_version_hash = source_version
-    #the last_update_time should automatically be added based on _now_.
-    #possible todo: should this be driven based on the last_commit time or the last system time?
+    # the last_update_time should automatically be added based on _now_.
+    # possible todo: should this be driven based on the last_commit time or the last system time?
     module_version.module = module
 
     module_version.html_output = d['html_output'] if 'html_output' in d else False
@@ -151,17 +151,11 @@ def load_parameter_spec(d, module_version, order):
             raise ValueError("Menu parameter specification missing menu_items")
         pspec.def_menu_items = d['menu_items']
 
-    # Default flags. We don't change these on existing ParameterVals, prolly should
-    def flag_default(fname, dval):
-        if fname in d:
-            return d[fname]
-        else:
-            return dval
-
-    pspec.def_visible = flag_default('visible', True)
-    pspec.ui_only = flag_default('ui-only', False)
-    pspec.multiline = flag_default('multiline', False)
-    pspec.derived_data = flag_default('derived-data', False)
+    pspec.def_visible = d.get('visible', True)
+    pspec.ui_only = d.get('ui-only', False)
+    pspec.multiline = d.get('multiline', False)
+    pspec.derived_data = d.get('derived-data', False)
+    pspec.placeholder = d.get('placeholder', '')
 
     pspec.order = order
     pspec.save()

@@ -34,7 +34,7 @@ class StoredObject(models.Model):
 
     # these fields only used for uploaded files
     name = models.CharField(default=None, max_length=255, null=True)
-    size = models.IntegerField(default=None, null=True)
+    size = models.IntegerField(default=0)
     uuid = models.CharField(default=None, max_length=255, null=True)
 
     # keeping track of whether this version of the data has ever been loaded
@@ -88,6 +88,7 @@ class StoredObject(models.Model):
             type=type,
             metadata=metadata,
             file=path,
+            size=os.stat(path).st_size,
             stored_at=timezone.now(),
             hash=hash
         )

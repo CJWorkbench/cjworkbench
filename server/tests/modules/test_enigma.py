@@ -36,8 +36,7 @@ def mock_response(*args, **kwargs):
 class EnigmaTests(LoggedInTestCase):
     def setUp(self):
         super(EnigmaTests, self).setUp()  # log in
-        enigma_definition = load_module_def('enigma')
-        self.wfmodule = load_and_add_module(None, enigma_definition)
+        self.wfmodule = load_and_add_module('enigma')
 
     # send fetch event to button to load data
     def press_fetch_button(self):

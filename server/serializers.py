@@ -3,6 +3,7 @@ from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Modul
 from server.utils import seconds_to_count_and_units
 from account.utils import user_display
 from django.contrib.auth import get_user_model
+from server.settingsutils import *
 
 User = get_user_model()
 
@@ -15,7 +16,7 @@ class StoredObjectSerializer(serializers.ModelSerializer):
 class ParameterSpecSerializer(serializers.ModelSerializer):
     class Meta:
         model = ParameterSpec
-        fields = ('id', 'name', 'id_name', 'type', 'multiline')
+        fields = ('id', 'name', 'id_name', 'type', 'multiline', 'placeholder')
 
 class ParameterValSerializer(serializers.ModelSerializer):
     parameter_spec = ParameterSpecSerializer(many=False, read_only=True)
@@ -94,7 +95,11 @@ class WorkflowSerializer(serializers.ModelSerializer):
         return obj.last_update()
 
     def get_owner_name(self, obj):
-        return user_display(obj.owner)
+        # don't leak user info (e.g. email) if viewer is not owner
+        if (self.context['user'] == obj.owner):
+            return workbench_user_display(obj.owner)
+        else:
+            return workbench_user_display_public(obj.owner)
 
     class Meta:
         model = Workflow
