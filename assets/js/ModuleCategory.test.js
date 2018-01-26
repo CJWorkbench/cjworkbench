@@ -71,9 +71,9 @@ describe('ModuleCategory ', () => {
       expect(wrapper).toMatchSnapshot();      
       // check isOpen, should be open
       expect(moduleList.get(0).props.isOpen).toBe(true);
-      // another click
+      // another click to close
       category.simulate('click');      
-      // isOpen should be closed
+      expect(wrapper).toMatchSnapshot();               
       expect(moduleList.get(0).props.isOpen).toBe(false);
     });
 
@@ -112,13 +112,36 @@ describe('ModuleCategory ', () => {
       let listStyle = moduleList.get(0).style._values;
       // check that module list is not displayed
       expect(listStyle).toEqual({'display': 'none'});
-      // simulate a mouse enter
+      // mouse enters category
       category.simulate('mouseEnter');
       expect(wrapper).toMatchSnapshot();   
-      // check that module list is displayed
+      // module list is displayed
       expect(listStyle).toEqual({'display': 'block'});
       // mouse enter again to close
       category.simulate('mouseEnter');
+      expect(wrapper).toMatchSnapshot();      
+      // module list is hidden         
+      expect(listStyle).toEqual({'display': 'none'});
+    });
+
+    // TODO: put repeat 'find's in beforeEach
+    it('Mouse leave events on module list will close list display', () => { 
+      // find category card
+      let category = wrapper.find('.first-level');
+      // find module list
+      let moduleList = wrapper.find('.ml-list-mini');
+      // access styles of module list
+      let listStyle = moduleList.get(0).style._values;
+      // check that module list is not displayed
+      expect(listStyle).toEqual({'display': 'none'});
+      // mouse enters category
+      category.simulate('mouseEnter');
+      // check that module list is displayed
+      expect(listStyle).toEqual({'display': 'block'});
+      // mouse exits from module list
+      moduleList.simulate('mouseLeave');
+      expect(wrapper).toMatchSnapshot();     
+      // module list is hidden                   
       expect(listStyle).toEqual({'display': 'none'});
     });
   });

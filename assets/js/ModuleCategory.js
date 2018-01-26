@@ -22,6 +22,7 @@ export default class ModuleCategory extends React.Component {
       collapsed: props.collapsed
     };
     this.toggleCollapse = this.toggleCollapse.bind(this);
+    this.collapseAll = this.collapseAll.bind(this);    
   }
 
   // When our props change, update our collapsed state (this is the other end of setOpenCategory)
@@ -33,6 +34,11 @@ export default class ModuleCategory extends React.Component {
     var newCollapsed = !this.state.collapsed;
     this.setState({collapsed: newCollapsed});
     this.props.setOpenCategory(newCollapsed ? null : this.props.name); // tell parent, so it can close other cats
+  }
+
+  collapseAll() {
+    this.setState({collapsed: true});
+    this.props.setOpenCategory(null); // tell parent to close all
   }
 
   render() {
@@ -69,7 +75,11 @@ export default class ModuleCategory extends React.Component {
                       <div className="ml-list">{this.props.modules}</div>
                     </Collapse>
     } else {
-      moduleList =  <div className="ml-list-mini" style={{ display : (isOpen) ? 'block' : 'none'}}>
+      moduleList =  <div
+                      className="ml-list-mini" 
+                      style={{ display : (isOpen) ? 'block' : 'none'}}
+                      onMouseLeave={this.collapseAll}
+                    >
                       {this.props.modules}
                     </div>
     }
