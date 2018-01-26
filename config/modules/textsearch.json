@@ -9,7 +9,8 @@
       "name": "Search for",
       "id_name" : "query",
       "type": "string",
-      "default": ""
+      "default": "",
+      "placeholder":"Type something"
     },
     {
       "name": "Case sensitive",

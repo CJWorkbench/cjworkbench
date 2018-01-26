@@ -10,14 +10,16 @@
       "name" : "Search for",
       "id_name" : "querytype",
       "type" : "menu",
-      "menu_items" : "User tweets|Any tweet matching content",
-      "default": "0"
+      "menu_items" : "User tweets|Any tweet",
+      "default": "1"
+
     },
     {
-      "name": "Username or content to match",
+      "name": "Username or content",
       "id_name" : "query",
       "type": "string",
-      "default": ""
+      "default": "",
+      "placeholder":"e.g. @UserName, or 'keywords to match'"
     },
     {
       "name": "Check",
