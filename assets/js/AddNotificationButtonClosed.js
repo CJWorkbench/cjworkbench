@@ -6,6 +6,7 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
+import { store, updateWfModuleAction } from "./workflow-reducer";
 
 // TODO: gather all functions for dragging into one utility file
 const spec = {
@@ -33,6 +34,7 @@ class AddNotificationButtonClosed extends React.Component {
     };
     this.showButton = this.showButton.bind(this);
     this.hideButton = this.hideButton.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
   showButton() {
@@ -43,6 +45,19 @@ class AddNotificationButtonClosed extends React.Component {
 
   hideButton() {
     this.setState({showButton: false});
+  }
+
+  handleClick() {
+    let state = store.getState();
+    let dataModule = state.workflow.wf_modules.find((wfmodule) => {
+       return wfmodule.module_version.module.loads_data === true;
+    });
+
+    if (typeof dataModule === 'undefined') return;
+
+    store.dispatch(updateWfModuleAction(dataModule.id, {
+        notifications: true
+    }));
   }
 
   render() {
@@ -63,6 +78,7 @@ class AddNotificationButtonClosed extends React.Component {
         className='notification-button-closed'
         onMouseEnter={this.showButton}
         onMouseLeave={this.hideButton}
+        onClick={this.handleClick}
       >
         <div className='card'>
           <div className='closed-ML-cat t-vl-gray'>
