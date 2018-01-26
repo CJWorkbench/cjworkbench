@@ -8,6 +8,45 @@ import ReactDataGrid from 'react-data-grid'
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
+// Custom Formatter component
+class RowNumberFormatter extends React.Component {
+
+  render() {
+    return (
+      <div className='t-orange'>
+          {this.props.value}
+      </div>)
+  }
+}
+
+// RowNumberFormatter.propTypes = {
+//   value:    PropTypes.node.isRequired
+// };
+
+
+// Make all cols resizble, also add custom formatter to the row number column.
+function makeFormattedCols(cols) {
+
+  var formattedCols = [];
+  for (let idx in cols) {
+    let d = {
+      key: cols[idx],
+      name: cols[idx],
+      resizable: true
+    };
+    if (idx==0) {
+      d['formatter'] = RowNumberFormatter;
+      d['width'] = 40;
+    }
+    formattedCols.push(d)
+  }
+
+  console.log(formattedCols)
+
+  return formattedCols;
+}
+
+
 export default class TableView extends React.Component {
 
   constructor(props) {
@@ -48,7 +87,8 @@ export default class TableView extends React.Component {
     // Generate the table if there's any data, and we've figured out our available height
     if (this.props.totalRows > 0) {
 
-      var columns = this.props.columns.map( key => { return { 'key': key, 'name': key, 'resizable':true } });
+      var columns = makeFormattedCols(this.props.columns);
+
       return <ReactDataGrid
         columns={columns}
         rowGetter={this.props.getRow}
@@ -66,5 +106,4 @@ TableView.propTypes = {
   totalRows:  PropTypes.number.isRequired,
   columns:    PropTypes.array.isRequired,
   getRow:     PropTypes.func.isRequired
-
 };

@@ -50,12 +50,12 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
             'total_rows': 4,
             'start_row': 0,
             'end_row': 4,
-            'columns': ['Class', 'M', 'F'],
+            'columns': ['row', 'Class', 'M', 'F'],
             'rows': [
-                {'Class': 'math', 'F': 12, 'M': 10.0},
-                {'Class': 'english', 'F': 7, 'M': None},
-                {'Class': 'history', 'F': 13, 'M': 11.0},
-                {'Class': 'economics', 'F': 20, 'M': 20.0}
+                { 'row':1, 'Class': 'math', 'F': 12, 'M': 10.0},
+                { 'row':2, 'Class': 'english', 'F': 7, 'M': None},
+                { 'row':3, 'Class': 'history', 'F': 13, 'M': 11.0},
+                { 'row':4, 'Class': 'economics', 'F': 20, 'M': 20.0}
             ]
         }
         self.assertEqual(d1, d2)
