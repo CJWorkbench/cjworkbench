@@ -1124,7 +1124,7 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
                 </div>
               </div>
               <div
-                className="card notification-button-popout"
+                className="card alert-closed-ML"
                 style={
                   Object {
                     "display": "none",
@@ -1135,13 +1135,17 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
                   className="second-level d-flex "
                 >
                   <div
-                    className="content-5 ml-module-name my-auto mr-3"
+                    className="content-5  my-auto mr-5"
                   >
                     Add data alert
                   </div>
                   <div
-                    className="icon-grip my-auto"
-                  />
+                    className="ml-handle"
+                  >
+                    <div
+                      className="icon-grip"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

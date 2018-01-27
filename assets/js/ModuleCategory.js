@@ -57,7 +57,7 @@ export default class ModuleCategory extends React.Component {
                       </div>
     } else {
       categoryHead =  <div className='first-level' onMouseEnter={this.toggleCollapse} >
-                        <div className='cat-container closed-ML-cat' >
+                        <div className='closed-ML-cat' >
                           <span className={icon}></span>
                         </div>
                       </div>
