@@ -1526,10 +1526,8 @@ img.logo {
 
 .ml-sort{
   font-size: 0.6rem;
-  position: absolute;
-  left: 16.5rem;
-  padding-bottom: 0.2rem;
-  margin-bottom: 0.2rem;
+  padding-bottom: 0.1rem;
+  margin-right: 2rem;
 }
 
 /*When Categories are open */
@@ -1593,8 +1591,9 @@ img.logo {
 .cat-container {
   margin-top: 0.2rem;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
+  width:100%;
 }
 
 .ml-icon{
