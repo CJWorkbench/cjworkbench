@@ -1,6 +1,6 @@
 /**
 * Search field that returns modules matching text input.
-* 
+*
 */
 
 import React from 'react';
@@ -43,8 +43,8 @@ class ModuleSearchResult extends React.Component {
         <div className='icon-grip'></div>
       </div>
         <div className='d-flex align-items-center'>
-          <span className={'ml-icon-search icon-' + this.props.icon}></span>
-          <span className='mt-1 content-3'><strong>{this.props.name}</strong></span>
+          <span className={'ml-icon-search ml-icon-container icon-' + this.props.icon}></span>
+          <span className='mt-1 content-3 ml-module-name'><strong>{this.props.name}</strong></span>
         </div>
       </div>
     )
