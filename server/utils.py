@@ -27,6 +27,13 @@ def seconds_to_count_and_units(seconds):
         if seconds % unit_len == 0:
             return {'units': unit, 'count': int(seconds/unit_len)}
 
+# don't convert missing values to the string 'NaN'
+def string_or_null(val):
+    if pd.isnull(val):
+        return ''
+    else:
+        return str(val)
+
 # Convert all complex-typed rows to strings. Otherwise we cannot do many operations
 # including hash_pandas_object() and to_parquet()
 def sanitize_dataframe(table):
@@ -35,8 +42,7 @@ def sanitize_dataframe(table):
     types = table.apply(pd.api.types.infer_dtype)
     for idx,val in enumerate(types):
         if val not in allowed_types:
-            col = table.iloc[:,idx]
-            col[col.notnull()] = col.astype(str)  # preserve missing values, don't cast to string 'nan'
+            table.iloc[:,idx] = table.iloc[:,idx].apply(string_or_null)
 
 # It is unbelievable that Django is 10+ years old and doesn't already do this for you
 def get_absolute_url(abs_url):
