@@ -187,7 +187,7 @@ export default class WfParameter extends React.Component {
         );
       case 'statictext':
         return (
-          <div className='parameter-margin t-m-gray info-1'>{this.name}</div>
+          <div className='parameter-margin t-m-gray info-2'>{this.name}</div>
         );
 
       case 'checkbox':
