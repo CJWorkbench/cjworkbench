@@ -390,14 +390,14 @@ exports[`ModuleCategory  Library open  Click events on a category will toggle it
           <div
             className="cat-container"
           >
-            <div
-              className="ml-sort icon-sort-up-vl-gray"
-            />
             <span
               className="open-ML-cat"
             >
               Add Data
             </span>
+            <div
+              className="ml-sort icon-sort-up-vl-gray"
+            />
           </div>
         </div>
         <Collapse
@@ -586,14 +586,14 @@ exports[`ModuleCategory  Library open  Renders with list of Module components 1`
           <div
             className="cat-container"
           >
-            <div
-              className="ml-sort icon-sort-down-vl-gray"
-            />
             <span
               className="open-ML-cat"
             >
               Add Data
             </span>
+            <div
+              className="ml-sort icon-sort-down-vl-gray"
+            />
           </div>
         </div>
         <Collapse

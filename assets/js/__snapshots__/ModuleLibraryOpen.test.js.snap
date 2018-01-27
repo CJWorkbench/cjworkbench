@@ -293,14 +293,14 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                   <div
                     className="cat-container"
                   >
-                    <div
-                      className="ml-sort icon-sort-down-vl-gray"
-                    />
                     <span
                       className="open-ML-cat"
                     >
                       Add data
                     </span>
+                    <div
+                      className="ml-sort icon-sort-down-vl-gray"
+                    />
                   </div>
                 </div>
                 <Collapse
@@ -415,14 +415,14 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                   <div
                     className="cat-container"
                   >
-                    <div
-                      className="ml-sort icon-sort-down-vl-gray"
-                    />
                     <span
                       className="open-ML-cat"
                     >
                       Filter
                     </span>
+                    <div
+                      className="ml-sort icon-sort-down-vl-gray"
+                    />
                   </div>
                 </div>
                 <Collapse
