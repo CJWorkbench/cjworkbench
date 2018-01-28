@@ -2609,6 +2609,11 @@ select {
   display: none;
 }
 
+.block-picker{
+  width: 11rem!important;
+  box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0, 0, 0, 0.1)!important;
+}
+
 .drop-alert.active {
   position: absolute;
   z-index: 3;
