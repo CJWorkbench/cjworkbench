@@ -1,6 +1,6 @@
 {
   "name": "Add from URL",
-  "id_name": "loadurl" ,
+  "id_name": "add-from-URL" ,
   "category" : "Add data",
   "icon" : "url",
   "description" : "Connect a dataset via its URL and keep it updated with its source.",

@@ -1,6 +1,6 @@
 {
   "name": "Filter by text",
-  "id_name": "textsearch",
+  "id_name": "filter-by-text",
   "category" : "Analyse",
   "icon" : "filter",
   "description" : "Filter rows by matching text in specific columns.",

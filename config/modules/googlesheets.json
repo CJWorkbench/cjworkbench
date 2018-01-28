@@ -1,6 +1,6 @@
 {
   "name": "Google Drive",
-  "id_name": "googlesheets" ,
+  "id_name": "google-drive" ,
   "category" : "Add data",
   "icon" : "google-drive",
   "description" : "Connect to a Google Spreadsheet and stay updated with its source.",

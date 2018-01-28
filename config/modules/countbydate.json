@@ -1,6 +1,6 @@
 {
   "name": "Group by date",
-  "id_name": "countbydate",
+  "id_name": "group-by-date",
   "category" : "Analyse",
   "icon" : "group",
   "description": "Group and count rows by dates.",

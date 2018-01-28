@@ -1,6 +1,6 @@
 {
   "name": "Upload",
-  "id_name": "uploadfile",
+  "id_name": "upload",
   "category" : "Add data",
   "icon": "upload",
   "description": "Upload CSV or Excel file.",

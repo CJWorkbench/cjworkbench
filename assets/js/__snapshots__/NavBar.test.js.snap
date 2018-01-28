@@ -27,7 +27,7 @@ exports[`NavBar WorkflowListNavBar Renders correctly 1`] = `
     >
       <a
         className="t-white nav-link content-2"
-        href="https://intercom.help/tables"
+        href="https://intercom.help/cjworkbench"
         target="_blank"
       >
         Help

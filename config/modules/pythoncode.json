@@ -1,6 +1,6 @@
 {
   "name": "Python editor",
-  "id_name": "pythoncode",
+  "id_name": "python-editor",
   "category" : "Code",
   "icon" : "code",
   "description" : "Write a function that takes a Pandas dataframe called 'table' and returns another dataframe.",
