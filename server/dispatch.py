@@ -38,18 +38,18 @@ class DoubleMColumn(ModuleImpl):
 # ---- Interal modules Dispatch Table ----
 
 module_dispatch_tbl = {
-    'add-from-URL':      LoadURL,
-    'paste-data':     PasteCSV,
+    'loadurl':      LoadURL,
+    'pastecsv':     PasteCSV,
     'formula':      Formula,
-    'column-selector':SelectColumns,
-    'python-editor':   PythonCode,
+    'selectcolumns':SelectColumns,
+    'pythoncode':   PythonCode,
     'twitter':      Twitter,
-    'filter-by-text':   TextSearch,
+    'textsearch':   TextSearch,
     'countvalues':  CountValues,
-    'group-by-date':  CountByDate,
+    'countbydate':  CountByDate,
     'enigma':       EnigmaDataLoader,
-    'upload':   UploadFile,
-    'google-drive': GoogleSheets,
+    'uploadfile':   UploadFile,
+    'googlesheets': GoogleSheets,
 
     # For testing
     'NOP':          NOP,

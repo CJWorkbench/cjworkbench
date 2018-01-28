@@ -1,6 +1,6 @@
 {
   "name": "Column selector",
-  "id_name": "column-selector",
+  "id_name": "selectcolumns",
   "category" : "Analyse",
   "icon" : "transform",
   "description" : "",

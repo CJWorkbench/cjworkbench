@@ -1,6 +1,6 @@
 {
   "name": "Paste data",
-  "id_name": "paste-data",
+  "id_name": "pastecsv",
   "category" : "Add data",
   "icon" : "doc",
   "description" : "Enter coma separated value to generate a table.",
