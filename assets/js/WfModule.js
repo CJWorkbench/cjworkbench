@@ -356,11 +356,11 @@ class WfModule extends React.Component {
     // buttons create (e.g. export dialog) are still visible. Can't use display: none as we need display: flex
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     var contextBtns =
-        <div className='d-flex align-items-center module-context-buttons' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
+        <div className='d-flex align-items-center' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
           <div className={
             this.state.isCollapsed ?
-              'icon-sort-down btn context-button' :
-              'icon-sort-up btn context-button'
+              'icon-sort-down btn context-collapse-button' :
+              'icon-sort-up btn context-collapse-button'
             }
             onClick={this.toggleCollapsed} >
           </div>
