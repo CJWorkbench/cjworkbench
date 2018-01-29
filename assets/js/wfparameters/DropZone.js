@@ -118,7 +118,7 @@ export default class DropZone extends Component {
                         {
                             this.state.submittedFiles.map(id => (
                                 <div
-                                    className={"react-fine-uploader-gallery-total-progress-bar-container"}
+                                    className={"loader-empty react-fine-uploader-gallery-total-progress-bar-container"}
                                     key={id}>
                                     <ProgressBar className={"react-fine-uploader-gallery-total-progress-bar"} id={id}
                                                  uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
@@ -138,7 +138,7 @@ export default class DropZone extends Component {
                         </div>
                         {
                             this.state.submittedFiles.map(id => (
-                                <div className={"parameter-margin react-fine-uploader-gallery-progress-bar-container"} key={id}>
+                                <div className={"loader-replace react-fine-uploader-gallery-progress-bar-container"} key={id}>
                                     <ProgressBar id={id} className={"react-fine-uploader-gallery-total-progress-bar"}
                                                  uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
                                 </div>

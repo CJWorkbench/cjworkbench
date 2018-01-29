@@ -2436,11 +2436,20 @@ select {
 }
 
 /*Progress bar*/
+
+// positioning when module is empty or loaded with at least a file
+.loader-empty{
+  top:13.2rem;
+}
+.loader-replace{
+  top:8.5rem;
+}
+
+
 .react-fine-uploader-gallery-progress-bar-container{
   height:1px;
   opacity:1;
   width: 35rem;
-  top:8.5rem;
   background: #FBAA6D;
   box-shadow: none;
 }
