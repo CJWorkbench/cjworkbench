@@ -40,7 +40,7 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with list o
           onMouseEnter={[Function]}
         >
           <div
-            className="cat-container closed-ML-cat"
+            className="closed-ML-cat"
           >
             <span
               className="icon-add ml-icon"
@@ -210,7 +210,7 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders without lis
           onMouseEnter={[Function]}
         >
           <div
-            className="cat-container closed-ML-cat"
+            className="closed-ML-cat"
           >
             <span
               className="icon-add ml-icon"
@@ -265,14 +265,14 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
           <div
             className="cat-container"
           >
-            <div
-              className="ml-sort icon-sort-down-vl-gray"
-            />
             <span
               className="open-ML-cat"
             >
               Add Data
             </span>
+            <div
+              className="ml-sort icon-sort-down-vl-gray"
+            />
           </div>
         </div>
         <Collapse

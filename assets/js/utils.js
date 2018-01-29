@@ -85,3 +85,10 @@ export function timeDifference (start, end) {
     return "now";
   }
 }
+
+// Log to Intercom, if installed
+export function logEvent(name, metadata) {
+  if (window.APP_ID) {
+    window.Intercom("trackEvent", name, metadata);
+  }
+}

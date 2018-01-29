@@ -48,7 +48,7 @@ class WorkflowList extends React.Component {
     this.drop = this.drop.bind(this);
     this.state = {
       justDropped: false,
-      wf_modules: this.props.data.wf_modules // This is dumb, modifying state modifes the original
+      wf_modules: this.props.workflow.wf_modules // This is dumb, modifying state modifes the original
     }
   }
 
@@ -91,23 +91,23 @@ class WorkflowList extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.data.revision !== this.props.data.revision) { //TODO: Does this ever fire?
+    if (nextProps.workflow.revision !== this.props.workflow.revision) { //TODO: Does this ever fire?
       // New wfmodules, update
       this.setState({
         justDropped: false,
-        wf_modules: nextProps.data.wf_modules
+        wf_modules: nextProps.workflow.wf_modules
       });
       return;
     }
 
     // If nothing is being dragged, and the order of wf_modules are different
     if (!nextProps.dragItem
-      && (nextProps.data.wf_modules !== this.state.wf_modules)) {
+      && (nextProps.workflow.wf_modules !== this.state.wf_modules)) {
       // And we didn't just drop the thing that was being dragged,
       if (this.state.justDropped === false) {
         // Re-set the wf_modules in the list, drag is cancelled
         this.setState({
-          wf_modules: nextProps.data.wf_modules
+          wf_modules: nextProps.workflow.wf_modules
         });
       } else {
         // We just dropped something. Re-set the state.
@@ -133,14 +133,14 @@ class WorkflowList extends React.Component {
 
     var listItems = this.state.wf_modules.map(function(item, i) {
       var childProps = {
-        'data-isReadOnly': this.props.data.read_only,
+        'data-isReadOnly': this.props.workflow.read_only,
         'data-wfmodule': item,
         'data-changeParam': this.props.changeParam,
         'data-removeModule': this.props.removeModule,
-        'data-revision': this.props.data.revision,
+        'data-revision': this.props.workflow.revision,
         'data-selected': (item.id == this.props.selected_wf_module),
         'data-api': this.props.api,
-        'data-user': this.props.user,
+        'data-user': this.props.loggedInUser,
         loads_data: item.module_version ? item.module_version.module.loads_data : false,
         index:i,
         drag: this.drag,
@@ -173,6 +173,16 @@ class WorkflowList extends React.Component {
     )
   }
 }
+
+WorkflowList.propTypes = {
+  api:                PropTypes.object.isRequired,
+  workflow:           PropTypes.object,
+  selected_wf_module: PropTypes.number,
+  changeParam:        PropTypes.func.isRequired,
+  addModule:          PropTypes.func.isRequired,
+  removeModule:       PropTypes.func.isRequired,
+  loggedInUser:       PropTypes.object             // undefined if no one logged in (viewing public wf)
+};
 
 const SortableList = DropTarget('module', targetSpec, targetCollect)(WorkflowList);
 
@@ -222,17 +232,17 @@ class Workflow extends React.Component {
                     workflow={this.props.workflow}
                     api={this.props.api}
                     isReadOnly={this.props.workflow.read_only}
-                    loggedInUser={this.props.user}
+                    loggedInUser={this.props.loggedInUser}
                   />
 
     var moduleStack = <SortableList
-                        data={this.props.workflow}
+                        workflow={this.props.workflow}
                         selected_wf_module={this.props.selected_wf_module}
                         changeParam={this.props.changeParam}
                         removeModule={this.props.removeModule}
                         addModule={this.props.addModule}
                         api={this.props.api}
-                        user={this.props.user}
+                        loggedInUser={this.props.loggedInUser}
                         isOver={this.props.isOver}
                         dragItem={this.props.dragItem}
                       />
@@ -277,8 +287,8 @@ class Workflow extends React.Component {
 
           </div>
           <div className='help-container'>
-            <a target="_blank" href="https://intercom.help/tables" className=''>
-              <div className='help-shortcut'>
+            <a target="_blank" href="https://intercom.help/cjworkbench" className=''>
+              <div className='help-shortcut btn'>
                 <div className='icon-knowledge'></div>
               </div>
             </a>

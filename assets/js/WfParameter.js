@@ -187,7 +187,7 @@ export default class WfParameter extends React.Component {
         );
       case 'statictext':
         return (
-          <div className='parameter-margin t-m-gray info-1'>{this.name}</div>
+          <div className='parameter-margin t-m-gray info-2'>{this.name}</div>
         );
 
       case 'checkbox':
@@ -396,14 +396,14 @@ export default class WfParameter extends React.Component {
           } else if (this.props.p.parameter_spec.id_name == 'connect') {
             return (
               <GoogleConnect
-                userCreds={this.props.user.google_credentials}
+                userCreds={this.props.loggedInUser.google_credentials}
               />
             )
           } else if (this.props.p.parameter_spec.id_name == 'fileselect') {
             return (
               <FileSelect
                 api={this.props.api}
-                userCreds={this.props.user.google_credentials}
+                userCreds={this.props.loggedInUser.google_credentials}
                 pid={this.props.p.id}
                 saveState={state => this.props.setParamText('fileselect', state)}
                 getState={() => this.props.getParamText('fileselect')}
@@ -429,9 +429,9 @@ WfParameter.propTypes = {
   p:                PropTypes.object.isRequired,  // the actual parameter json
   wf_module_id:     PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,
+  loggedInUser:     PropTypes.object.isRequired,
   api:              PropTypes.object.isRequired,
-  // only for "Load From Url"
-  updateSettings:   PropTypes.object,
+  updateSettings:   PropTypes.object,             // only for modules that load data
   changeParam:      PropTypes.func.isRequired,
 	getParamText:     PropTypes.func.isRequired,
 	setParamText:     PropTypes.func.isRequired

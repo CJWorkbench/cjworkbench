@@ -24,7 +24,10 @@ class ModuleTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 3)
         self.assertEqual(response.data[0]['name'], 'Module 1')
+        self.assertEqual(response.data[0]['id_name'], 'Module 1_internal')
         self.assertEqual(response.data[1]['name'], 'Module 2')
+        self.assertEqual(response.data[1]['id_name'], 'Module 2_internal')
         self.assertEqual(response.data[2]['name'], 'Module 3')
+        self.assertEqual(response.data[2]['id_name'], 'Module 3_internal')
 
 

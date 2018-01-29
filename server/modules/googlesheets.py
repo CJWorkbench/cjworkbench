@@ -4,7 +4,7 @@ from cjworkbench.google_oauth import maybe_authorize
 from django.http import JsonResponse, HttpResponseBadRequest
 import httplib2
 from googleapiclient.discovery import build
-from .utils import *
+from server.utils import *
 import io
 import json
 import pandas as pd
@@ -82,6 +82,8 @@ class GoogleSheets(ModuleImpl):
                 wfmodule.set_error(str(e))
                 table = pd.DataFrame([{'result':res.text}])
 
+            sanitize_dataframe(table)
             save_fetched_table_if_changed(wfmodule, table)
+
             # change this to no response method
             return JsonResponse({}, status=204)

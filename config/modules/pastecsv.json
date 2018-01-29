@@ -6,10 +6,11 @@
   "description" : "Enter coma separated value to generate a table.",
   "parameters": [
     {
-      "name": "Paste CSV",
+      "name": "",
       "id_name": "csv",
       "type": "string",
-      "multiline": "True"
+      "multiline": "True",
+      "placeholder":"Paste data from Excel or Google sheet, or type in CSV."
     },
     {
       "name": "Has header row",

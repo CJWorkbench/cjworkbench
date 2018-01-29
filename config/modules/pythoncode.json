@@ -6,10 +6,15 @@
   "description" : "Write a function that takes a Pandas dataframe called 'table' and returns another dataframe.",
   "parameters": [
     {
-      "name": "",
-      "id_name": "code",
-      "type": "custom",
-      "multiline": true
+      "name": "Write a function that takes a Pandas dataframe called 'table' and returns another dataframe.",
+      "id_name": "description_statictext",
+      "type": "statictext"
+    },
+    {
+    "name": "def process(table):",
+    "id_name": "code",
+    "type": "custom",
+    "multiline": true
     },
     {
       "name": "Run",

@@ -305,7 +305,7 @@ class WfModule extends React.Component {
           setParamText={this.setParamText}
           setClickNotification={this.setClickNotification}
           notifications={this.props['data-wfmodule'].notifications}
-          user={this.props['data-user']}
+          loggedInUser={this.props['data-user']}
         />)
       });
 
@@ -356,17 +356,18 @@ class WfModule extends React.Component {
     // buttons create (e.g. export dialog) are still visible. Can't use display: none as we need display: flex
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     var contextBtns =
-        <div className='d-flex align-items-center module-context-buttons' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
+        <div className='d-flex align-items-center' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
           <div className={
             this.state.isCollapsed ?
-              'icon-sort-down btn context-button' :
-              'icon-sort-up btn context-button'
+              'icon-sort-down btn context-collapse-button' :
+              'icon-sort-up btn context-collapse-button'
             }
             onClick={this.toggleCollapsed} >
           </div>
-          <div className='btn help-button d-flex align-items-center'>
+          <a className='btn help-button d-flex align-items-center'
+             href={'https://intercom.help/cjworkbench/modules/' + this.module.id_name} target="_blank">
             <div className='icon-help'></div>
-          </div>
+          </a>
           <div>{notesIcon}</div>
           <div>{contextMenu}</div>
         </div>

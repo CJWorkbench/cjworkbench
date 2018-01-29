@@ -11,6 +11,13 @@
       "type": "column"
     },
     {
+      "name": "Group by",
+      "id_name" : "groupby",
+      "type" : "menu",
+      "menu_items" : "Second|Minute|Hour|Day|Month|Quarter|Year",
+      "default": "3"
+    },
+    {
       "name": "Sort by",
       "id_name" : "sortby",
       "type" : "menu",

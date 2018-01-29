@@ -45,17 +45,18 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
     def test_make_render_json(self):
         # test our basic test data
         output = make_render_json(self.test_table)
-        d1 = json.loads(str(output, 'utf-8'))
+        self.assertTrue(isinstance(output,str))
+        d1 = json.loads(output)
         d2 = {
             'total_rows': 4,
             'start_row': 0,
             'end_row': 4,
             'columns': ['Class', 'M', 'F'],
             'rows': [
-                {'Class': 'math', 'F': 12, 'M': 10.0},
-                {'Class': 'english', 'F': 7, 'M': None},
-                {'Class': 'history', 'F': 13, 'M': 11.0},
-                {'Class': 'economics', 'F': 20, 'M': 20.0}
+                { 'Class': 'math', 'F': 12, 'M': 10.0},
+                { 'Class': 'english', 'F': 7, 'M': None},
+                { 'Class': 'history', 'F': 13, 'M': 11.0},
+                { 'Class': 'economics', 'F': 20, 'M': 20.0}
             ]
         }
         self.assertEqual(d1, d2)
@@ -77,12 +78,12 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         test_data_json = make_render_json(self.test_table)
-        self.assertEqual(response.content, test_data_json)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
         # second module: NOP
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.content, test_data_json)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
         # Third module: doubles M column
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule3.id)
@@ -90,29 +91,29 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         double_test_data = self.test_table.copy()
         double_test_data['M'] *= 2
         double_test_data = make_render_json(double_test_data)
-        self.assertEqual(response.content, double_test_data)
+        self.assertEqual(response.content.decode('utf-8'), double_test_data)
 
         # Now test retrieving specified rows only
         response = self.client.get('/api/wfmodules/%d/render?startrow=1' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         test_data_json = make_render_json(self.test_table, startrow=1)
-        self.assertEqual(response.content, test_data_json)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
         response = self.client.get('/api/wfmodules/%d/render?startrow=1&endrow=3' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         test_data_json = make_render_json(self.test_table, startrow=1, endrow=3)
-        self.assertEqual(response.content, test_data_json)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
         response = self.client.get('/api/wfmodules/%d/render?endrow=3' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         test_data_json = make_render_json(self.test_table, endrow=3)
-        self.assertEqual(response.content, test_data_json)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
         # index out of bounds should clip
         response = self.client.get('/api/wfmodules/%d/render?startrow=-1&endrow=500' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         test_data_json = make_render_json(self.test_table)
-        self.assertEqual(response.content, test_data_json)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
         # index not a number -> bad request
         response = self.client.get('/api/wfmodules/%d/render?startrow=0&endrow=frog' % self.wfmodule1.id)
@@ -134,18 +135,18 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         test_data_json = make_render_json(pd.DataFrame())
-        self.assertEqual(response.content, test_data_json)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
         # Second module: input should be test data produced by first module
         response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         test_data_json = make_render_json(self.test_table)
-        self.assertEqual(response.content, test_data_json)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
         # Third module: should be same as second, as second module is NOP
         response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule3.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.content, test_data_json)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):

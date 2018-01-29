@@ -107,7 +107,7 @@ exports[`ImportModuleFromGitHub Library closed Renders a link, which will open m
               Learn more about how to build your own module 
               <a
                 className=" t-f-blue"
-                href="https://intercom.help/tables/build-a-custom-module"
+                href="https://intercom.help/cjworkbench/build-a-custom-module"
                 target="_blank"
               >
                 here
@@ -244,7 +244,7 @@ exports[`ImportModuleFromGitHub Library open Renders a link, which will open mod
               Learn more about how to build your own module 
               <a
                 className=" t-f-blue"
-                href="https://intercom.help/tables/build-a-custom-module"
+                href="https://intercom.help/cjworkbench/build-a-custom-module"
                 target="_blank"
               >
                 here

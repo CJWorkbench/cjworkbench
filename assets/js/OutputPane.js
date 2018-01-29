@@ -19,6 +19,7 @@ export default class OutputPane extends React.Component {
 
     // loading flag cannot be in state because we need to suppress fetches in getRow, which is called many times in a tick
     this.loading = false;
+    this.spinnerEl = null;
 
     // constants to control loading behaviour
     this.initialRows = 120;   // because react-data-grid seems to preload to 100
@@ -26,12 +27,33 @@ export default class OutputPane extends React.Component {
     this.deltaRows = 100;     // get this many new rows at a time
   }
 
+  // Spinner state did not work as part of component state, conditionally visible in render()
+  // It didn't appear when refreshing a large table. My guess is that is because React updates are batched,
+  // so spinner/spinner off updates are combined and we never see when the table re-render is long.
+  // So, now we turn the spinner on and off immediately through direct DOM styling
+  spinnerOn() {
+//    console.log("spinnerOn, el = " + this.spinnerEl);
+
+    if (this.spinnerEl)
+      this.spinnerEl.style.display = 'flex';
+  }
+
+  spinnerOff() {
+//    console.log("spinnerOff, el = " + this.spinnerEl);
+
+    if (this.spinnerEl)
+      this.spinnerEl.style.display = 'none';
+  }
+
+
   // Load table data from render API
   loadTable(id, toRow) {
     if (id) {
       // console.log("Asked to load to " + toRow );
 
       this.loading = true;
+      this.spinnerOn();
+
       this.props.api.render(id, this.state.lastLoadedRow, toRow)
         .then(json => {
 
@@ -44,11 +66,11 @@ export default class OutputPane extends React.Component {
 
           // triggers re-render
           this.loading = false;
+          this.spinnerOff();
           this.setState({
             tableData: json,
-            lastLoadedRow : json.end_row
+            lastLoadedRow : json.end_row,
           });
-
         });
     }
   }
@@ -56,12 +78,15 @@ export default class OutputPane extends React.Component {
   // Completely reload table data -- preserves visibility of old data while we wait
   refreshTable(id) {
     this.loading = true;
+    this.spinnerOn();
+
     this.props.api.render(id, 0, this.initialRows)
       .then(json => {
         this.loading = false;
+        this.spinnerOff();
         this.setState({
           tableData: json,
-          lastLoadedRow: json.end_row
+          lastLoadedRow: json.end_row,
         });
       })
   }
@@ -113,7 +138,6 @@ export default class OutputPane extends React.Component {
   }
 
   render() {
-
     // Make a table component if we have the data
     var tableView = null;
     var nrows = 0;
@@ -131,8 +155,29 @@ export default class OutputPane extends React.Component {
       ncols = this.state.tableData.columns.length;
     }
 
+    // Spinner is in the DOM if the table is, but we toggle display: none on this.spinnerEl
+    var spinner = null;
+    if (this.props.id) {
+      spinner =
+        <div
+          id="spinner-container-transparent"
+          ref={(el) => {
+            this.spinnerEl = el
+          }}
+        >
+          <div id="spinner-l1">
+            <div id="spinner-l2">
+              <div id="spinner-l3"></div>
+            </div>
+          </div>
+        </div>
+    } else {
+      this.spinnerEl = null;
+    }
+
     return (
       <div className="outputpane-box">
+        {spinner}
         <div className="outputpane-header d-flex flex-row justify-content-start">
           <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
             <div className='content-4 t-m-gray mb-2'>Rows</div>

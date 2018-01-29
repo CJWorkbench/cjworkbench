@@ -89,10 +89,14 @@ ReactDOM.render(
 Actions.store.dispatch(Actions.initialLoadWorkflowAction());
 
 // Start Intercom, if we're that sort of installation
+//// We are indeed: Very mission, much business!
 if (window.APP_ID) {
   window.Intercom("boot", {
     app_id: window.APP_ID,
     email: window.initState.loggedInUser.email,
-    user_id: window.initState.loggedInUser.id
+    user_id: window.initState.loggedInUser.id,
+    alignment: 'left',
+    horizontal_padding: 30,
+    vertical_padding: 20
   });
 }

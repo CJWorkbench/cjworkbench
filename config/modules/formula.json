@@ -10,10 +10,10 @@
       "id_name" : "formula",
       "type": "string",
       "default": "",
-      "placeholder": "Example: column 1 * (column 2 + column 3)"
+      "placeholder": "e.g. column 1 * (column 2 + column 3)"
     },
     {
-      "name": "Output column name",
+      "name": "Output column",
       "id_name" : "out_column",
       "type": "string",
       "default": "formula output"
