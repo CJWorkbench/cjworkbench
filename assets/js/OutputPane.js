@@ -13,11 +13,21 @@ export default class OutputPane extends React.Component {
 
     // componentDidMount will trigger first load
     this.state = {
-      tableData: null,
-      lastLoadedRow : 0,
+        tableData: null,
+        lastLoadedRow : 0,
+        leftOffset : 0,
+        initLeftOffset: 0,
+        width: "100%",
+        height: "100%",
+        parentBase: null,
+        pctBase: null,
+        resizing: false,
     };
 
     this.getRow = this.getRow.bind(this);
+    this.resizePaneStart = this.resizePaneStart.bind(this);
+    this.resizePane = this.resizePane.bind(this);
+    this.resizePaneEnd = this.resizePaneEnd.bind(this);
 
     // loading flag cannot be in state because we need to suppress fetches in getRow, which is called many times in a tick
     this.loading = false;
@@ -139,6 +149,28 @@ export default class OutputPane extends React.Component {
     }
   }
 
+  resizePaneStart() {
+    this.setState({
+       pctBase: this.state.parentBase.clientWidth
+    });
+  }
+
+  resizePane(e, direction, ref, d) {
+    let offset = this.state.initLeftOffset - d.width;
+    this.setState({
+        leftOffset: offset,
+        resizing: true
+    });
+  }
+
+  resizePaneEnd(e, direction, ref, d) {
+      this.setState({
+          initLeftOffset: this.state.leftOffset,
+          width: (this.state.width + d.width) / this.state.pctBase + '%',
+          resizing: false
+      });
+  }
+
   render() {
     // Make a table component if we have the data
     var tableView = null;
@@ -151,6 +183,8 @@ export default class OutputPane extends React.Component {
             totalRows={this.state.tableData.total_rows}
             columns={this.state.tableData.columns}
             getRow={this.getRow}
+            resizing={this.state.resizing}
+            onClick={this.props.toggleFocus}
           />
         </div>
       nrows = this.state.tableData.total_rows;
@@ -178,20 +212,50 @@ export default class OutputPane extends React.Component {
     }
 
     return (
-      <div className="outputpane-box">
-        {spinner}
-        <div className="outputpane-header d-flex flex-row justify-content-start">
-          <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
-            <div className='content-4 t-m-gray mb-2'>Rows</div>
-            <div className='content-2 t-d-gray'>{nrows}</div>
-          </div>
-          <div className='d-flex flex-column align-items-center justify-content-center'>
-            <div className='content-4 t-m-gray mb-2'>Columns</div>
-            <div className='content-2 t-d-gray'>{ncols}</div>
-          </div>
+        <div className={"outputpane" + (this.props.focus ? " focus" : "")}
+             ref={(ref) => this.state.parentBase = ref} >
+            <Resizable
+                style={{
+                    transform: "translateX(" + this.state.leftOffset + "px)"
+                }}
+                ref
+                className="outputpane-box"
+                enable={{
+                    top:false,
+                    right:false,
+                    bottom:false,
+                    left:true,
+                    topRight:false,
+                    bottomRight:false,
+                    bottomLeft:false,
+                    topLeft:false
+                }}
+                size={{
+                    width: this.state.width,
+                    height: this.state.height,
+                }}
+                onResizeStart={this.resizePaneStart}
+                onResize={this.resizePane}
+                onResizeStop={this.resizePaneEnd}
+                onClick={this.props.toggleFocus} >
+                {spinner}
+                {this.props.html_output &&
+                <OutputIframe id="output_iframe" selectedWfModule={this.props.selected_wf_module}
+                            revision={this.props.workflow.revision} />
+                }
+                <div className="outputpane-header d-flex flex-row justify-content-start">
+                    <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
+                        <div className='content-4 t-m-gray mb-2'>Rows</div>
+                        <div className='content-2 t-d-gray'>{nrows}</div>
+                    </div>
+                    <div className='d-flex flex-column align-items-center justify-content-center'>
+                        <div className='content-4 t-m-gray mb-2'>Columns</div>
+                        <div className='content-2 t-d-gray'>{ncols}</div>
+                    </div>
+                </div>
+                {tableView}
+            </Resizable>
         </div>
-        {tableView}
-      </div>
     );
   }
 }
