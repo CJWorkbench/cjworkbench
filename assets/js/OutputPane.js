@@ -3,6 +3,8 @@
 import React from 'react'
 import TableView from './TableView'
 import PropTypes from 'prop-types'
+import { OutputIframe } from './OutputIframe'
+import Resizable from 're-resizable'
 
 export default class OutputPane extends React.Component {
 

@@ -276,13 +276,7 @@ class Workflow extends React.Component {
 
             <div className="workflow-columns">
               {stackContainer}
-              <div className="outputpane">
-                {(selected_workflow_module_ref && selected_workflow_module_ref.html_output) &&
-                <OutputIframe id="output_iframe" selectedWfModule={this.props.selected_wf_module} revision={this.props.workflow.revision}></OutputIframe>
-                }
-                {outputPane}
-              </div>
-
+              {outputPane}
             </div>
 
           </div>
