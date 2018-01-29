@@ -32,11 +32,15 @@ export default class OutputPane extends React.Component {
   // so spinner/spinner off updates are combined and we never see when the table re-render is long.
   // So, now we turn the spinner on and off immediately through direct DOM styling
   spinnerOn() {
+//    console.log("spinnerOn, el = " + this.spinnerEl);
+
     if (this.spinnerEl)
       this.spinnerEl.style.display = 'flex';
   }
 
   spinnerOff() {
+//    console.log("spinnerOff, el = " + this.spinnerEl);
+
     if (this.spinnerEl)
       this.spinnerEl.style.display = 'none';
   }
@@ -134,7 +138,6 @@ export default class OutputPane extends React.Component {
   }
 
   render() {
-
     // Make a table component if we have the data
     var tableView = null;
     var nrows = 0;
@@ -152,18 +155,25 @@ export default class OutputPane extends React.Component {
       ncols = this.state.tableData.columns.length;
     }
 
-    // Spinner is always in the DOM but we toggle display: none on this.spinnerEl
-    var spinner =
-      <div
-        id="spinner-container-transparent"
-        ref={(el) => {this.spinnerEl=el}}
-      >
-        <div id="spinner-l1">
-          <div id="spinner-l2">
-            <div id="spinner-l3"></div>
+    // Spinner is in the DOM if the table is, but we toggle display: none on this.spinnerEl
+    var spinner = null;
+    if (this.props.id) {
+      spinner =
+        <div
+          id="spinner-container-transparent"
+          ref={(el) => {
+            this.spinnerEl = el
+          }}
+        >
+          <div id="spinner-l1">
+            <div id="spinner-l2">
+              <div id="spinner-l3"></div>
+            </div>
           </div>
         </div>
-      </div>
+    } else {
+      this.spinnerEl = null;
+    }
 
     return (
       <div className="outputpane-box">
