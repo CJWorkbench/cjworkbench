@@ -32,6 +32,7 @@
     "moment": "2.18.0",
     "nivo": "^0.29.4",
     "prop-types": "^15.5.10",
+    "re-resizable": "^4.3.1",
     "react": "^15.6.1",
     "react-ace": "^5.9.0",
     "react-addons-css-transition-group": "^15.4.2",
