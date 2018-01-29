@@ -1,11 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ModuleCategory  Library closed  Mouse enter events on a category will toggle its module list display 1`] = `
+exports[`ModuleCategory  Library closed, category collapsed  Renders with list of Module components 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
   <ModuleCategory
-    collapsed={true}
+    collapsed={false}
     isReadOnly={false}
     libraryOpen={false}
     modules={
@@ -49,11 +49,7 @@ exports[`ModuleCategory  Library closed  Mouse enter events on a category will t
         </div>
         <div
           className="ml-list-mini"
-          style={
-            Object {
-              "display": "block",
-            }
-          }
+          onMouseLeave={[Function]}
         >
           <DragSource(Module)
             addModule={[Function]}
@@ -174,7 +170,7 @@ exports[`ModuleCategory  Library closed  Mouse enter events on a category will t
 </DragDropContextProvider>
 `;
 
-exports[`ModuleCategory  Library closed  Renders with list of Module components 1`] = `
+exports[`ModuleCategory  Library closed, category collapsed  Renders without list of Module components 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
@@ -221,330 +217,13 @@ exports[`ModuleCategory  Library closed  Renders with list of Module components 
             />
           </div>
         </div>
-        <div
-          className="ml-list-mini"
-          style={
-            Object {
-              "display": "none",
-            }
-          }
-        >
-          <DragSource(Module)
-            addModule={[Function]}
-            dropModule={[Function]}
-            icon="add"
-            id={88}
-            name="First Module"
-          >
-            <Module
-              addModule={[Function]}
-              connectDragSource={[Function]}
-              dropModule={[Function]}
-              icon="add"
-              id={88}
-              isDragging={false}
-              name="First Module"
-            >
-              <div
-                className="card ml-module-card"
-              >
-                <div
-                  className=""
-                  onClick={[Function]}
-                >
-                  <div
-                    className="second-level d-flex"
-                  >
-                    <div
-                      className="d-flex flex-row align-items-center"
-                    >
-                      <div
-                        className="ml-icon-container"
-                      >
-                        <div
-                          className="icon-add ml-icon"
-                        />
-                      </div>
-                      <div>
-                        <div
-                          className="content-5 ml-module-name"
-                        >
-                          First Module
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="ml-handle"
-                    >
-                      <div
-                        className="icon-grip"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Module>
-          </DragSource(Module)>
-          <DragSource(Module)
-            addModule={[Function]}
-            dropModule={[Function]}
-            icon="url"
-            id={101}
-            name="Second Module"
-          >
-            <Module
-              addModule={[Function]}
-              connectDragSource={[Function]}
-              dropModule={[Function]}
-              icon="url"
-              id={101}
-              isDragging={false}
-              name="Second Module"
-            >
-              <div
-                className="card ml-module-card"
-              >
-                <div
-                  className=""
-                  onClick={[Function]}
-                >
-                  <div
-                    className="second-level d-flex"
-                  >
-                    <div
-                      className="d-flex flex-row align-items-center"
-                    >
-                      <div
-                        className="ml-icon-container"
-                      >
-                        <div
-                          className="icon-url ml-icon"
-                        />
-                      </div>
-                      <div>
-                        <div
-                          className="content-5 ml-module-name"
-                        >
-                          Second Module
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      className="ml-handle"
-                    >
-                      <div
-                        className="icon-grip"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </Module>
-          </DragSource(Module)>
-        </div>
       </div>
     </div>
   </ModuleCategory>
 </DragDropContextProvider>
 `;
 
-exports[`ModuleCategory  Library open  Click events on a category will toggle its module list display 1`] = `
-<DragDropContextProvider
-  backend={[Function]}
->
-  <ModuleCategory
-    collapsed={true}
-    isReadOnly={false}
-    libraryOpen={true}
-    modules={
-      Array [
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="add"
-          id={88}
-          name="First Module"
-      />,
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="url"
-          id={101}
-          name="Second Module"
-      />,
-      ]
-    }
-    name="Add Data"
-    setOpenCategory={[Function]}
-  >
-    <div
-      className="card b-l-gray library-card-category-open"
-    >
-      <div
-        className="ml-cat"
-      >
-        <div
-          className="first-level"
-          onClick={[Function]}
-        >
-          <div
-            className="cat-container"
-          >
-            <span
-              className="open-ML-cat"
-            >
-              Add Data
-            </span>
-            <div
-              className="ml-sort icon-sort-up-vl-gray"
-            />
-          </div>
-        </div>
-        <Collapse
-          delay={
-            Object {
-              "hide": 350,
-              "show": 350,
-            }
-          }
-          isOpen={true}
-          onClosed={[Function]}
-          onOpened={[Function]}
-          tag="div"
-        >
-          <div
-            className="collapsing"
-            style={
-              Object {
-                "height": 0,
-              }
-            }
-          >
-            <div
-              className="ml-list"
-            >
-              <DragSource(Module)
-                addModule={[Function]}
-                dropModule={[Function]}
-                icon="add"
-                id={88}
-                name="First Module"
-              >
-                <Module
-                  addModule={[Function]}
-                  connectDragSource={[Function]}
-                  dropModule={[Function]}
-                  icon="add"
-                  id={88}
-                  isDragging={false}
-                  name="First Module"
-                >
-                  <div
-                    className="card ml-module-card"
-                  >
-                    <div
-                      className=""
-                      onClick={[Function]}
-                    >
-                      <div
-                        className="second-level d-flex"
-                      >
-                        <div
-                          className="d-flex flex-row align-items-center"
-                        >
-                          <div
-                            className="ml-icon-container"
-                          >
-                            <div
-                              className="icon-add ml-icon"
-                            />
-                          </div>
-                          <div>
-                            <div
-                              className="content-5 ml-module-name"
-                            >
-                              First Module
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          className="ml-handle"
-                        >
-                          <div
-                            className="icon-grip"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Module>
-              </DragSource(Module)>
-              <DragSource(Module)
-                addModule={[Function]}
-                dropModule={[Function]}
-                icon="url"
-                id={101}
-                name="Second Module"
-              >
-                <Module
-                  addModule={[Function]}
-                  connectDragSource={[Function]}
-                  dropModule={[Function]}
-                  icon="url"
-                  id={101}
-                  isDragging={false}
-                  name="Second Module"
-                >
-                  <div
-                    className="card ml-module-card"
-                  >
-                    <div
-                      className=""
-                      onClick={[Function]}
-                    >
-                      <div
-                        className="second-level d-flex"
-                      >
-                        <div
-                          className="d-flex flex-row align-items-center"
-                        >
-                          <div
-                            className="ml-icon-container"
-                          >
-                            <div
-                              className="icon-url ml-icon"
-                            />
-                          </div>
-                          <div>
-                            <div
-                              className="content-5 ml-module-name"
-                            >
-                              Second Module
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          className="ml-handle"
-                        >
-                          <div
-                            className="icon-grip"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </Module>
-              </DragSource(Module)>
-            </div>
-          </div>
-        </Collapse>
-      </div>
-    </div>
-  </ModuleCategory>
-</DragDropContextProvider>
-`;
-
-exports[`ModuleCategory  Library open  Renders with list of Module components 1`] = `
+exports[`ModuleCategory  Library open, category collapsed Renders with list of Module components 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >

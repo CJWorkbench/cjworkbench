@@ -22,6 +22,7 @@ export default class ModuleCategory extends React.Component {
       collapsed: props.collapsed
     };
     this.toggleCollapse = this.toggleCollapse.bind(this);
+    this.collapseAll = this.collapseAll.bind(this);    
   }
 
   // When our props change, update our collapsed state (this is the other end of setOpenCategory)
@@ -31,8 +32,11 @@ export default class ModuleCategory extends React.Component {
 
   toggleCollapse() {
     var newCollapsed = !this.state.collapsed;
-    this.setState({collapsed: newCollapsed});
     this.props.setOpenCategory(newCollapsed ? null : this.props.name); // tell parent, so it can close other cats
+  }
+
+  collapseAll() {
+    this.props.setOpenCategory(null); // tell parent to close all
   }
 
   render() {
@@ -45,7 +49,6 @@ export default class ModuleCategory extends React.Component {
 
     // Grabs icon from first module in category for category icon
     var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
-
 
     var categoryHead;
     if (this.props.libraryOpen) {
@@ -63,21 +66,23 @@ export default class ModuleCategory extends React.Component {
                       </div>
     }
 
+    // do not render list of modules if both library and category are closed
     var moduleList;
     if (this.props.libraryOpen) {
       moduleList =  <Collapse isOpen={isOpen}>
                       <div className="ml-list">{this.props.modules}</div>
                     </Collapse>
-    } else {
-      moduleList =  <div className="ml-list-mini" style={{ display : (isOpen) ? 'block' : 'none'}}>
+    } else if (isOpen) {
+      moduleList =  <div className="ml-list-mini" onMouseLeave={this.collapseAll}>
                       {this.props.modules}
                     </div>
+    } else {
+      moduleList = null;
     }
 
     return (
-      <div className={"card b-l-gray " + cardClass} >
-
-        <div className="ml-cat" >
+      <div className={"card b-l-gray " + cardClass}>
+        <div className="ml-cat">
           {categoryHead}
           {moduleList}
         </div>
