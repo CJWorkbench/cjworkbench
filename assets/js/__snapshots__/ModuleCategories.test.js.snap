@@ -66,7 +66,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
               onMouseEnter={[Function]}
             >
               <div
-                className="cat-container closed-ML-cat"
+                className="closed-ML-cat"
               >
                 <span
                   className="icon-url ml-icon"
@@ -170,7 +170,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
               onMouseEnter={[Function]}
             >
               <div
-                className="cat-container closed-ML-cat"
+                className="closed-ML-cat"
               >
                 <span
                   className="icon-filter ml-icon"
@@ -318,14 +318,14 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
               <div
                 className="cat-container"
               >
-                <div
-                  className="ml-sort icon-sort-down-vl-gray"
-                />
                 <span
                   className="open-ML-cat"
                 >
                   Add data
                 </span>
+                <div
+                  className="ml-sort icon-sort-down-vl-gray"
+                />
               </div>
             </div>
             <Collapse
@@ -440,14 +440,14 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
               <div
                 className="cat-container"
               >
-                <div
-                  className="ml-sort icon-sort-down-vl-gray"
-                />
                 <span
                   className="open-ML-cat"
                 >
                   Filter
                 </span>
+                <div
+                  className="ml-sort icon-sort-down-vl-gray"
+                />
               </div>
             </div>
             <Collapse

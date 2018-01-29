@@ -25,12 +25,11 @@ class UtilsTestCase(TestCase):
 
         hash_pandas_object(sfpd) # will crash on complex types, used by StoredObject
 
-        # check that sanitizing a non-string column with missing data keeps the data missing
-        # rather than producing 'nan' strings
+        # check that sanitizing a non-string column with missing data produces empty cells, not 'nan' strings
         # https://www.pivotaltracker.com/story/show/154619564
         fname = os.path.join(settings.BASE_DIR, 'server/tests/test_data/missing_values.json')
         mv_json = open(fname).read()
         mv_table = pd.DataFrame(json.loads(mv_json))
         sanitize_dataframe(mv_table)
-        numnulls = sum(mv_table['recording_date'].isnull())
-        self.assertTrue(numnulls > 0)
+        numempty = sum(mv_table['recording_date'].apply(lambda x: x==''))
+        self.assertTrue(numempty > 0)

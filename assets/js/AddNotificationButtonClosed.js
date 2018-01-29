@@ -40,7 +40,7 @@ class AddNotificationButtonClosed extends React.Component {
   showButton() {
     this.setState({showButton: true});
     // tell parent to close any open Module Categories
-    this.props.setOpenCategory(null); 
+    this.props.setOpenCategory(null);
   }
 
   hideButton() {
@@ -65,12 +65,14 @@ class AddNotificationButtonClosed extends React.Component {
 
     var popout =
       <div
-        className='card notification-button-popout'
+        className='card alert-closed-ML'
         style={{ display: this.state.showButton ? 'block' : 'none' }}
       >
         <div className='second-level d-flex '>
-          <div className='content-5 ml-module-name my-auto mr-3'>Add data alert</div>
-          <div className='icon-grip my-auto'></div>
+          <div className='content-5  my-auto mr-5'>Add data alert</div>
+          <div className='ml-handle'>
+            <div className='icon-grip'></div>
+          </div>
         </div>
       </div>
 

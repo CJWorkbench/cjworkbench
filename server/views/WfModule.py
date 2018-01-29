@@ -108,18 +108,17 @@ def make_render_json(table, startrow=None, endrow=None):
     #  rows = table.to_dict(orient='records')
     # Alas, this is not the world we live in. Several problems. First,
     #  json.dumps(table.to_dict)
-    # does not convert NaN to null. It also fails on int64 columns. And in Pandas < 0.22,
-    # there is a terrible, terrible bug
+    # does not convert NaN to null. It also fails on int64 columns.
+    # And in Pandas < 0.22 there is a terrible, terrible bug
     # https://github.com/pandas-dev/pandas/issues/13258#issuecomment-326671257
 
     # The workaround is to usr table.to_json to get a string, and then glue the other
     # fields we want around that string. Like savages.
 
-
-    rowstr = table.to_json(orient="records").encode('utf-8')
+    rowstr = table.to_json(orient="records")
     colnames = list(table.columns.astype(str)) # Don't want int64 column names. Can get that from CSV with no header row
-    colstr = json.dumps(colnames, ensure_ascii=False).encode('utf-8')
-    outfmt =  b'{"total_rows": %d, "start_row" :%d, "end_row": %d, "columns": %s, "rows": %s}'
+    colstr = json.dumps(colnames, ensure_ascii=False)
+    outfmt = '{"total_rows": %d, "start_row" :%d, "end_row": %d, "columns": %s, "rows": %s}'
     outstr = outfmt % (nrows, startrow, endrow, colstr, rowstr)
 
     return outstr

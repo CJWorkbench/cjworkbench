@@ -51,7 +51,7 @@ class LoadFromURLTests(LoggedInTestCase):
             m.get(url, text=mock_csv_text, headers={'content-type':'text/csv'})
             self.press_fetch_button()
             response = self.get_render()
-            self.assertEqual(response.content, make_render_json(mock_csv_table))
+            self.assertEqual(response.content.decode('utf-8'), make_render_json(mock_csv_table))
 
             # should create a new data version on the WfModule, and a new delta representing the change
             self.wfmodule.refresh_from_db()
@@ -79,7 +79,7 @@ class LoadFromURLTests(LoggedInTestCase):
             m.get(url, text=mock_csv_text2, headers={'content-type': 'text/csv'})
             self.press_fetch_button()
             response = self.get_render()
-            self.assertEqual(response.content, make_render_json(mock_csv_table2))
+            self.assertEqual(response.content.decode('utf-8'), make_render_json(mock_csv_table2))
 
             self.wfmodule.refresh_from_db()
             self.wfmodule.workflow.refresh_from_db()
@@ -111,7 +111,7 @@ class LoadFromURLTests(LoggedInTestCase):
             m.get(url, text=sfpd_json, headers={'content-type': 'application/json'})
             self.press_fetch_button()
             response = self.get_render()
-            self.assertEqual(response.content, make_render_json(sfpd_table))
+            self.assertEqual(response.content.decode('utf-8'), make_render_json(sfpd_table))
 
         # malformed json should put module in error state
         with requests_mock.Mocker() as m:
@@ -152,7 +152,7 @@ class LoadFromURLTests(LoggedInTestCase):
             m.get(url, content=xlsx_bytes, headers={'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
             self.press_fetch_button()
             response = self.get_render()
-            self.assertEqual(response.content, make_render_json(xlsx_table))
+            self.assertEqual(response.content.decode('utf-8'), make_render_json(xlsx_table))
 
         # malformed file  should put module in error state
         with requests_mock.Mocker() as m:

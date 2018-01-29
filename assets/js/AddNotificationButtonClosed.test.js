@@ -4,6 +4,7 @@
  * -Mouse events on icon will show/hide full card
  * -Icon and card can be dragged
  * -Click on button will find data-loading module and update notifications
+ *
  */
 
 import React from 'react'
@@ -85,17 +86,17 @@ describe('AddNotificationButtonClosed ', () => {
           </DragDropContextProvider>
       );
   });
-  afterEach(() => wrapper.unmount());    
+  afterEach(() => wrapper.unmount());
 
-  it('Renders', () => { 
+  it('Renders', () => {
     expect(wrapper).toMatchSnapshot();
     // find matching icon
     expect(wrapper.find('.icon-notification')).toHaveLength(1);
   });
 
-  it('Mouse events on icon will show/hide full card', () => { 
+  it('Mouse events on icon will show/hide full card', () => {
     let icon = wrapper.find('.notification-button-closed');
-    let popout = wrapper.find('.notification-button-popout');
+    let popout = wrapper.find('.alert-closed-ML');
     // check that card not displayed initially (governed by 'display' property)
     expect(popout.props().style).toEqual({display:'none'});
     // simulate mouse enter
