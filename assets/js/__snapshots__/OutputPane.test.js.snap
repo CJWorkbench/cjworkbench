@@ -14,6 +14,21 @@ exports[`Fetches and renders 1`] = `
     className="outputpane-box"
   >
     <div
+      id="spinner-container-transparent"
+    >
+      <div
+        id="spinner-l1"
+      >
+        <div
+          id="spinner-l2"
+        >
+          <div
+            id="spinner-l3"
+          />
+        </div>
+      </div>
+    </div>
+    <div
       className="outputpane-header d-flex flex-row justify-content-start"
     >
       <div
@@ -1112,6 +1127,21 @@ exports[`Header only when no module id 1`] = `
   <div
     className="outputpane-box"
   >
+    <div
+      id="spinner-container-transparent"
+    >
+      <div
+        id="spinner-l1"
+      >
+        <div
+          id="spinner-l2"
+        >
+          <div
+            id="spinner-l3"
+          />
+        </div>
+      </div>
+    </div>
     <div
       className="outputpane-header d-flex flex-row justify-content-start"
     >
