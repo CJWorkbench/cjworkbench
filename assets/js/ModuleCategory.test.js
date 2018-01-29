@@ -16,6 +16,7 @@ import { DragDropContextProvider } from 'react-dnd'
 describe('ModuleCategory ', () => {
   
   var wrapper;  
+  const setOpenCategory = jest.fn();
   var modules = [
     <Module
       key={"First Module"}
@@ -35,7 +36,7 @@ describe('ModuleCategory ', () => {
     />
   ];
   
-  describe('Library open ', () => {
+  describe('Library open, category collapsed', () => {
   
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
@@ -44,7 +45,7 @@ describe('ModuleCategory ', () => {
           modules={modules}
           isReadOnly={false}
           collapsed={true} 
-          setOpenCategory={() => {}} 
+          setOpenCategory={setOpenCategory} 
           libraryOpen={true}
         />
       </DragDropContextProvider>
@@ -53,11 +54,37 @@ describe('ModuleCategory ', () => {
   
     it('Renders with list of Module components', () => { 
       expect(wrapper).toMatchSnapshot();
-      // check for list of Modules
       expect(wrapper.find('.ml-module-card')).toHaveLength(2);
     });
   
-    it('Click events on a category will toggle its module list display', () => { 
+    it('Clicking an collapsed category will expand it', () => { 
+      let category = wrapper.find('.first-level');
+      expect(category).toHaveLength(1);
+      let moduleList = wrapper.find('Collapse');
+      expect(moduleList).toHaveLength(1);
+      expect(moduleList.get(0).props.isOpen).toBe(false);
+      category.simulate('click');
+      expect(setOpenCategory.mock.calls.length).toBe(1); 
+    });
+  });
+
+  describe('Library open, category open', () => {
+  
+    beforeEach(() => wrapper = mount(
+      <DragDropContextProvider backend={HTML5Backend}>
+        <ModuleCategory
+          name={"Add Data"}
+          modules={modules}
+          isReadOnly={false}
+          collapsed={false} 
+          setOpenCategory={setOpenCategory} 
+          libraryOpen={true}
+        />
+      </DragDropContextProvider>
+    ));
+    afterEach(() => wrapper.unmount());    
+  
+    it('Clicking an open category will collapse it', () => { 
       // find category card
       let category = wrapper.find('.first-level');
       expect(category).toHaveLength(1);
@@ -65,21 +92,15 @@ describe('ModuleCategory ', () => {
       let moduleList = wrapper.find('Collapse');
       expect(moduleList).toHaveLength(1);
       // access isOpen property of Collapse, check that it is closed
-      expect(moduleList.get(0).props.isOpen).toBe(false);
+      expect(moduleList.get(0).props.isOpen).toBe(true);
       // simulate a click on category
       category.simulate('click');
-      expect(wrapper).toMatchSnapshot();      
-      // check isOpen, should be open
-      expect(moduleList.get(0).props.isOpen).toBe(true);
-      // another click to close
-      category.simulate('click');      
-      expect(wrapper).toMatchSnapshot();               
-      expect(moduleList.get(0).props.isOpen).toBe(false);
+      // check: was setOpenCategory() called from props?
+      expect(setOpenCategory.mock.calls.length).toBe(2); // called once before
     });
-
   });
 
-  describe('Library closed ', () => {
+  describe('Library closed, category collapsed ', () => {
   
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
@@ -88,7 +109,43 @@ describe('ModuleCategory ', () => {
           modules={modules}
           isReadOnly={false}
           collapsed={true} 
-          setOpenCategory={() => {}} 
+          setOpenCategory={setOpenCategory} 
+          libraryOpen={false}
+        />
+      </DragDropContextProvider>
+    ));
+    afterEach(() => wrapper.unmount());    
+  
+    it('Renders without list of Module components', () => { 
+      expect(wrapper).toMatchSnapshot();
+      // check for absence of Modules
+      expect(wrapper.find('.ml-module-card')).toHaveLength(0);
+    });
+
+    it('Mouse enter events on a category will open module list', () => { 
+      // find category card
+      let category = wrapper.find('.first-level');
+      expect(category).toHaveLength(1);
+      // ensure absence of module list
+      let moduleList = wrapper.find('.ml-list-mini');
+      expect(moduleList).toHaveLength(0);
+      // mouse enters category
+      category.simulate('mouseEnter');
+      // check: setOpenCategory() called from props
+      expect(setOpenCategory.mock.calls.length).toBe(3); // called twice before
+    });
+  });
+
+  describe('Library closed, category collapsed ', () => {
+  
+    beforeEach(() => wrapper = mount(
+      <DragDropContextProvider backend={HTML5Backend}>
+        <ModuleCategory
+          name={"Add Data"}
+          modules={modules}
+          isReadOnly={false}
+          collapsed={false} 
+          setOpenCategory={setOpenCategory} 
           libraryOpen={false}
         />
       </DragDropContextProvider>
@@ -101,48 +158,22 @@ describe('ModuleCategory ', () => {
       expect(wrapper.find('.ml-module-card')).toHaveLength(2);
     });
 
-    it('Mouse enter events on a category will toggle its module list display', () => { 
+    it('Mouse enter events on a category will close module list', () => { 
       // find category card
       let category = wrapper.find('.first-level');
       expect(category).toHaveLength(1);
-      // find module list
+      // ensure presence of module list
       let moduleList = wrapper.find('.ml-list-mini');
       expect(moduleList).toHaveLength(1);
-      // access styles of module list
-      let listStyle = moduleList.get(0).style._values;
-      // check that module list is not displayed
-      expect(listStyle).toEqual({'display': 'none'});
-      // mouse enters category
       category.simulate('mouseEnter');
-      expect(wrapper).toMatchSnapshot();   
-      // module list is displayed
-      expect(listStyle).toEqual({'display': 'block'});
-      // mouse enter again to close
-      category.simulate('mouseEnter');
-      expect(wrapper).toMatchSnapshot();      
-      // module list is hidden         
-      expect(listStyle).toEqual({'display': 'none'});
+      expect(setOpenCategory.mock.calls.length).toBe(4);
     });
 
-    // TODO: put repeat 'find's in beforeEach
     it('Mouse leave events on module list will close list display', () => { 
-      // find category card
       let category = wrapper.find('.first-level');
-      // find module list
       let moduleList = wrapper.find('.ml-list-mini');
-      // access styles of module list
-      let listStyle = moduleList.get(0).style._values;
-      // check that module list is not displayed
-      expect(listStyle).toEqual({'display': 'none'});
-      // mouse enters category
-      category.simulate('mouseEnter');
-      // check that module list is displayed
-      expect(listStyle).toEqual({'display': 'block'});
-      // mouse exits from module list
       moduleList.simulate('mouseLeave');
-      expect(wrapper).toMatchSnapshot();     
-      // module list is hidden                   
-      expect(listStyle).toEqual({'display': 'none'});
+      expect(setOpenCategory.mock.calls.length).toBe(5); 
     });
   });
 });
