@@ -84,6 +84,10 @@ export default class TableView extends React.Component {
     window.removeEventListener("resize", this.updateSize);
   }
 
+  shouldComponentUpdate(nextProps) {
+    return !nextProps.resizing;
+  }
+
   // Prepend row number
   getRow(i) {
     var row = this.props.getRow(i);
@@ -104,7 +108,8 @@ export default class TableView extends React.Component {
         rowGetter={this.getRow}
         rowsCount={this.props.totalRows }
         minWidth={this.state.gridWidth -2}
-        minHeight={this.state.gridHeight-2} />;   // -1 because grid has borders, don't want to expand flex grid
+        minHeight={this.state.gridHeight-2}
+        onRowClick={this.props.onClick} />;   // -1 because grid has borders, don't want to expand flex grid
 
     }  else {
       return null;

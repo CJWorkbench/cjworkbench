@@ -11,7 +11,6 @@ import { getPageID, csrfToken } from './utils'
 import { DropTarget } from 'react-dnd'
 import withScrolling from 'react-dnd-scrollzone'
 import FlipMove from 'react-flip-move'
-import { OutputIframe } from './OutputIframe'
 
 // ---- Sortable WfModules within the workflow ----
 const targetSpec = {
@@ -195,7 +194,8 @@ class Workflow extends React.Component {
   constructor(props: iProps) {
     super(props);
     this.state = {
-      isPublic: false
+        isPublic: false,
+        focus: false
     };
   }
 
@@ -248,10 +248,13 @@ class Workflow extends React.Component {
                       />
 
     var outputPane =  <OutputPane
-                    id={this.props.selected_wf_module}
-                    revision={this.props.workflow.revision}
-                    api={this.props.api}
-                  />
+                        id={this.props.selected_wf_module}
+                        revision={this.props.workflow.revision}
+                        api={this.props.api}
+                        html_output={(selected_workflow_module_ref && selected_workflow_module_ref.html_output)}
+                        focus={!this.state.focus}
+                        toggleFocus={(e) => { this.setState({ focus: false }) }}
+                      />
 
 
     // Main Layout of Workflow Page:
@@ -261,7 +264,8 @@ class Workflow extends React.Component {
     // Output Pane occupies remaining space in lower-right of page
     //const ScrollingDiv = withScrolling('div');
     const stackContainer = (
-      <div className="modulestack">
+      <div className={"modulestack" + (this.state.focus ? " focus": "")}
+           onClick={() => { this.setState({ focus: true }) }}>
         {moduleStack}
       </div>
     );

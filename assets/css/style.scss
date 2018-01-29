@@ -1384,6 +1384,10 @@ img.logo {
 }
 
 /* Module Stack */
+.focus {
+  z-index: 2;
+}
+
 .modulestack {
   flex: 0 0 41rem;
   border-left: 1px solid #DDDDDD;
@@ -1391,6 +1395,7 @@ img.logo {
   background-color: #e9ebee;
   overflow: scroll;
   height:100vh;
+  position: relative;
 }
 .modulestack-list {
   min-height:100%;

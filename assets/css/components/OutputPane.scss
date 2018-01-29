@@ -1,6 +1,7 @@
 /* Output Pane */
 .outputpane {
   flex: 1 1 auto;
+  position: relative;
 }
 
 .outputpane iframe {
