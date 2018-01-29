@@ -6,7 +6,6 @@
  */
 
 import React from 'react';
-import PropTypes from 'prop-types' //TODO: actually add prop types
 import { DragSource } from 'react-dnd';
 import { store, updateWfModuleAction } from "./workflow-reducer";
 
@@ -14,9 +13,7 @@ import { store, updateWfModuleAction } from "./workflow-reducer";
 const spec = {
   beginDrag(props, monitor, component) {
     return {
-      index: false,
-      id: props.id,
-      insert: true,
+      type: 'notification'
     }
   }
 }
