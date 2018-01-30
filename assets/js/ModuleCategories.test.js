@@ -40,7 +40,7 @@ describe('ModuleCategories ', () => {
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
         <ModuleCategories
-          openCategory={"Add Data"} 
+          openCategory={"Add data"} 
           setOpenCategory={() => {}}
           libraryOpen={true}
           isReadOnly={false}            
@@ -64,7 +64,7 @@ describe('ModuleCategories ', () => {
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
         <ModuleCategories
-          openCategory={"Add Data"} 
+          openCategory={"Add data"} 
           setOpenCategory={() => {}}
           libraryOpen={false}
           isReadOnly={false}            

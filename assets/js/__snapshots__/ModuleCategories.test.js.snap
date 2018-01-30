@@ -31,14 +31,14 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
       ]
     }
     libraryOpen={false}
-    openCategory="Add Data"
+    openCategory="Add data"
     setOpenCategory={[Function]}
   >
     <div
       className="list"
     >
       <ModuleCategory
-        collapsed={true}
+        collapsed={false}
         isReadOnly={false}
         libraryOpen={false}
         modules={
@@ -56,7 +56,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
         setOpenCategory={[Function]}
       >
         <div
-          className="card b-l-gray library-card-category-closed"
+          className="card b-l-gray library-card-category-open"
         >
           <div
             className="ml-cat"
@@ -72,6 +72,67 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
                   className="icon-url ml-icon"
                 />
               </div>
+            </div>
+            <div
+              className="ml-list-mini"
+              onMouseLeave={[Function]}
+            >
+              <DragSource(Module)
+                addModule={[Function]}
+                dropModule={[Function]}
+                icon="url"
+                id={4}
+                name="Load from Enigma"
+              >
+                <Module
+                  addModule={[Function]}
+                  connectDragSource={[Function]}
+                  dropModule={[Function]}
+                  icon="url"
+                  id={4}
+                  isDragging={false}
+                  name="Load from Enigma"
+                >
+                  <div
+                    className="card ml-module-card"
+                  >
+                    <div
+                      className=""
+                      onClick={[Function]}
+                    >
+                      <div
+                        className="second-level d-flex"
+                      >
+                        <div
+                          className="d-flex flex-row align-items-center"
+                        >
+                          <div
+                            className="ml-icon-container"
+                          >
+                            <div
+                              className="icon-url ml-icon"
+                            />
+                          </div>
+                          <div>
+                            <div
+                              className="content-5 ml-module-name"
+                            >
+                              Load from Enigma
+                            </div>
+                          </div>
+                        </div>
+                        <div
+                          className="ml-handle"
+                        >
+                          <div
+                            className="icon-grip"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </Module>
+              </DragSource(Module)>
             </div>
           </div>
         </div>
@@ -108,7 +169,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
                 className="closed-ML-cat"
               >
                 <span
-                  className="icon-filter ml-icon"
+                  className="icon-undefined ml-icon"
                 />
               </div>
             </div>
@@ -151,14 +212,14 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
       ]
     }
     libraryOpen={true}
-    openCategory="Add Data"
+    openCategory="Add data"
     setOpenCategory={[Function]}
   >
     <div
       className="list"
     >
       <ModuleCategory
-        collapsed={true}
+        collapsed={false}
         isReadOnly={false}
         libraryOpen={true}
         modules={
@@ -176,7 +237,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
         setOpenCategory={[Function]}
       >
         <div
-          className="card b-l-gray library-card-category-closed"
+          className="card b-l-gray library-card-category-open"
         >
           <div
             className="ml-cat"
@@ -194,7 +255,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                   Add data
                 </span>
                 <div
-                  className="ml-sort icon-sort-down-vl-gray"
+                  className="ml-sort icon-sort-up-vl-gray"
                 />
               </div>
             </div>
@@ -205,13 +266,13 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                   "show": 350,
                 }
               }
-              isOpen={false}
+              isOpen={true}
               onClosed={[Function]}
               onOpened={[Function]}
               tag="div"
             >
               <div
-                className="collapse"
+                className="collapse show"
                 style={Object {}}
               >
                 <div

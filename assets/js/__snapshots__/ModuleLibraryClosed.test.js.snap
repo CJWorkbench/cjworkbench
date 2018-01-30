@@ -33,7 +33,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
     }
     libraryOpen={true}
     moduleAdded={[Function]}
-    openCategory="Add Data"
+    openCategory="Add data"
     openLibrary={[Function]}
     setOpenCategory={[Function]}
   >
@@ -94,14 +94,14 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
           ]
         }
         libraryOpen={false}
-        openCategory="Add Data"
+        openCategory="Add data"
         setOpenCategory={[Function]}
       >
         <div
           className="list"
         >
           <ModuleCategory
-            collapsed={true}
+            collapsed={false}
             isReadOnly={false}
             libraryOpen={false}
             modules={
@@ -119,7 +119,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
             setOpenCategory={[Function]}
           >
             <div
-              className="card b-l-gray library-card-category-closed"
+              className="card b-l-gray library-card-category-open"
             >
               <div
                 className="ml-cat"
@@ -135,6 +135,67 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                       className="icon-url ml-icon"
                     />
                   </div>
+                </div>
+                <div
+                  className="ml-list-mini"
+                  onMouseLeave={[Function]}
+                >
+                  <DragSource(Module)
+                    addModule={[Function]}
+                    dropModule={[Function]}
+                    icon="url"
+                    id={4}
+                    name="Load from Enigma"
+                  >
+                    <Module
+                      addModule={[Function]}
+                      connectDragSource={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={4}
+                      isDragging={false}
+                      name="Load from Enigma"
+                    >
+                      <div
+                        className="card ml-module-card"
+                      >
+                        <div
+                          className=""
+                          onClick={[Function]}
+                        >
+                          <div
+                            className="second-level d-flex"
+                          >
+                            <div
+                              className="d-flex flex-row align-items-center"
+                            >
+                              <div
+                                className="ml-icon-container"
+                              >
+                                <div
+                                  className="icon-url ml-icon"
+                                />
+                              </div>
+                              <div>
+                                <div
+                                  className="content-5 ml-module-name"
+                                >
+                                  Load from Enigma
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className="ml-handle"
+                            >
+                              <div
+                                className="icon-grip"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </Module>
+                  </DragSource(Module)>
                 </div>
               </div>
             </div>
@@ -171,7 +232,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                     className="closed-ML-cat"
                   >
                     <span
-                      className="icon-filter ml-icon"
+                      className="icon-undefined ml-icon"
                     />
                   </div>
                 </div>
