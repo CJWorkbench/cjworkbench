@@ -69,6 +69,7 @@ let notificationsOnFactory = function() {
       });
 };
 
+
 let notificationToggleTest = function(el, reducer) {
     el.simulate('click');
     expect(reducer.store.getState.mock.calls.length).toBe(1);
@@ -81,7 +82,7 @@ let notificationToggleTest = function(el, reducer) {
     expect(reducer.updateWfModuleAction.mock.calls.length).toBe(1);
 };
 
-describe('AddNotificationButtonClosed ', () => {
+describe('AddNotificationButtonClosed', () => {
 
   let wrapper;
   let mockSetOpenCategory;
@@ -130,13 +131,13 @@ describe('AddNotificationButtonClosed ', () => {
       notificationToggleTest(icon, reducer);
   });
 
-  it('Card is draggable', () => { 
+  it('Card is draggable', () => {
     // search for property on the component that indicates drag-ability
     expect( Object.keys(wrapper.find('AddNotificationButtonClosed').props()).includes('connectDragSource') ).toBe(true);
   });
 });
 
-describe('AddNotificationButtonOpen ', () => {
+describe('AddNotificationButtonOpen', () => {
 
   let wrapper;
 
