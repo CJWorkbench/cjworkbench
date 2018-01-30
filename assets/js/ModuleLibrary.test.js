@@ -43,8 +43,9 @@ var modules = [
     "icon":"url"
   }
 ];
-var api = {
+const api = {
   getModules: jsonResponseMock(modules),
+  setWfLibraryCollapse: jest.fn()
 };
 
 describe('ModuleLibrary', () => {
@@ -81,6 +82,17 @@ describe('ModuleLibrary', () => {
       });
     });
 
+    it('Clicking on arrow will invoke API to toggle collapse', (done) => {
+      // let json promise resolve (wait for modules to load)
+      setImmediate( () => {
+        let arrow = wrapper.find('.close-open-toggle');
+        expect(arrow).toHaveLength(1);
+        arrow.simulate('click');
+        expect(api.setWfLibraryCollapse.mock.calls.length).toBe(1);
+        done();
+      });
+    });
+
   });
 
   describe('Read-only', () => {
@@ -100,8 +112,8 @@ describe('ModuleLibrary', () => {
     
     it('Renders in closed state, without modules', () => {
       expect(wrapper).toMatchSnapshot();
-      // should NOT call getModules (one call from previous test)
-      expect(api.getModules.mock.calls.length).toBe(1);
+      // should NOT call getModules (two calls from previous tests)
+      expect(api.getModules.mock.calls.length).toBe(2);
       // check that Library is closed
       expect(wrapper.find('.module-library-closed')).toHaveLength(1);
     });

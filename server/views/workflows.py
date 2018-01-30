@@ -103,7 +103,7 @@ def workflow_detail(request, pk, format=None):
             return HttpResponseForbidden()
 
         try:
-            if not set(request.data.keys()).intersection({"newName", "public"}):
+            if not set(request.data.keys()).intersection({"newName", "public", "module_library_collapsed"}):
                 raise ValueError('Unknown fields: {}'.format(request.data))
 
             if 'newName' in request.data:
@@ -111,6 +111,10 @@ def workflow_detail(request, pk, format=None):
 
             if 'public' in request.data:
                 workflow.public = request.data['public']
+                workflow.save()
+
+            if 'module_library_collapsed' in request.data:
+                workflow.module_library_collapsed = request.data['module_library_collapsed']
                 workflow.save()
 
         except Exception as e:

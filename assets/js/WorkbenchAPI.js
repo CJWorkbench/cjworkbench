@@ -3,6 +3,12 @@
 
 import { csrfToken } from './utils'
 
+const apiHeaders = {
+  'Accept': 'application/json',
+  'Content-Type': 'application/json',
+  'X-CSRFToken': csrfToken
+};
+
 // All API calls which fetch data return a promise which returns JSON
 class WorkbenchAPI {
 
@@ -26,11 +32,7 @@ class WorkbenchAPI {
         {
           method: 'post',
           credentials: 'include',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
-          },
+          headers: apiHeaders,
           body: JSON.stringify({name: newWorkflowName})
         })
       .then(response => response.json()))
@@ -58,11 +60,7 @@ class WorkbenchAPI {
         {
           method: 'put',
           credentials: 'include',
-          headers: {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json',
-            'X-CSRFToken': csrfToken
-          },
+          headers: apiHeaders,
           body: JSON.stringify({insertBefore: insertBefore, moduleId: moduleId})
         }
       ).then(response => response.json())
@@ -83,11 +81,7 @@ class WorkbenchAPI {
       fetch('/api/workflows/' + workflowID, {
         method: 'post',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify({'public': isPublic})
       }));
   }
@@ -97,11 +91,7 @@ class WorkbenchAPI {
       fetch('/api/parameters/' + paramID, {
         method: 'patch',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify(newVal)
       }));
   }
@@ -155,11 +145,7 @@ class WorkbenchAPI {
       fetch('/api/wfmodules/' + wf_module_id + '/dataversions', {
         method: 'patch',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify({
           selected: version
         })
@@ -171,11 +157,7 @@ class WorkbenchAPI {
       fetch('/api/wfmodules/' + wf_module_id, {
         method: 'patch',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify({
           notes: text
         })
@@ -188,11 +170,7 @@ class WorkbenchAPI {
       fetch('/api/wfmodules/' + wf_module_id, {
         method: 'patch',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify({
           collapsed: isCollapsed
         })
@@ -204,13 +182,22 @@ class WorkbenchAPI {
       fetch('/api/workflows/' + wfId, {
         method: 'post',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify({
           newName: newName
+        })
+      })
+    )
+  }
+
+  setWfLibraryCollapse(workflow_id, isCollapsed) {
+    return (
+      fetch('/api/workflows/' + workflow_id, {
+        method: 'post',
+        credentials: 'include',
+        headers: apiHeaders,
+        body: JSON.stringify({
+          module_library_collapsed: isCollapsed
         })
       })
     )
@@ -222,11 +209,7 @@ class WorkbenchAPI {
       fetch('/api/wfmodules/' + wf_module_id, {
         method: 'patch',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify({
           'auto_update_data' : params.auto_update_data,  // bool
           'update_interval'  : params.update_interval,   // int
@@ -241,11 +224,7 @@ class WorkbenchAPI {
       fetch('/api/wfmodules/' + wf_module_id, {
         method: 'patch',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         // Don't validate here, but possibly filter out props not in
         // a hardcoded list later
         body: JSON.stringify(params)
@@ -294,11 +273,7 @@ class WorkbenchAPI {
       fetch('/api/user/google_credentials', {
         credentials: 'include',
         method: 'delete',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify({
           credentialId: id
         })
@@ -311,11 +286,7 @@ class WorkbenchAPI {
       fetch('/api/wfmodules/' + wf_module_id + '/notifications', {
         credentials: 'include',
         method: 'delete',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        }
+        headers: apiHeaders
       }).then(response => response.json())
     )
   }
@@ -325,11 +296,7 @@ class WorkbenchAPI {
       fetch('/api/importfromgithub/', {
         method: 'post',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify(eventData)
       }).then(response => response.json())
     )
@@ -344,11 +311,7 @@ class WorkbenchAPI {
       fetch('/api/wfmodules/' + wf_module_id + '/dataversion/read', {
         credentials: 'include',
         method: 'patch',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify({
           versions: data_versions
         })
@@ -361,11 +324,7 @@ class WorkbenchAPI {
       fetch( '/api/parameters/' + paramId + '/event', {
         method: 'post',
         credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
+        headers: apiHeaders,
         body: JSON.stringify(data)
       }).then((response) => {
         if (response.status === 204) {

@@ -9,6 +9,7 @@ class Workflow(models.Model):
     creation_date = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     public = models.BooleanField(default=False)
+    module_library_collapsed = models.BooleanField(default=False)    
     last_delta = models.ForeignKey('server.Delta',                # specify as string to avoid circular import
                                    related_name='+',              # + means no backward link
 				                   blank=True,
