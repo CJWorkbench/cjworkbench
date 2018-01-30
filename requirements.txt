@@ -38,3 +38,4 @@ git+https://github.com/CJWorkbench/oauth2client.git#egg=oauth2client
 httplib2==0.10.3
 google-api-python-client==1.6.4
 jsonpickle==0.9.5
+python-intercom=3.1.0

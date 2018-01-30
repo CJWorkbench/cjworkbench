@@ -62,8 +62,10 @@ def workflow_list(request, format=None):
         serializer = WorkflowSerializer(data=request.data, context={'user': request.user})
         if serializer.is_valid():
             serializer.save(owner=request.user)
+            log_user_event(request.user, 'Create Workflow')
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 # Retrieve or delete a workflow instance.
@@ -145,6 +147,8 @@ def workflow_addmodule(request, pk, format=None):
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    log_user_event(request.user, 'Add Module', {'name': module.name, 'id_name':module.id_name})
+
     delta = AddModuleCommand.create(workflow, module_version, insert_before)
 
     return Response({"id": delta.wf_module.id}, status.HTTP_201_CREATED)
@@ -164,6 +168,8 @@ def workflow_duplicate(request, pk):
 
     workflow2 = workflow.duplicate(request.user)
     serializer = WorkflowSerializerLite(workflow2)
+
+    log_user_event(request.user, 'Duplicate Workflow', {'name':workflow.name})
 
     return Response(serializer.data, status.HTTP_201_CREATED)
 

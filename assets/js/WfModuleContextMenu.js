@@ -18,6 +18,7 @@ import {
   } from 'reactstrap'
 import PropTypes from 'prop-types'
 import CopyToClipboard from 'react-copy-to-clipboard';
+import {logUserEvent} from "./utils";
 
 
 export default class WfModuleContextMenu extends React.Component {
@@ -25,11 +26,12 @@ export default class WfModuleContextMenu extends React.Component {
     super(props);
     this.deleteOption = this.deleteOption.bind(this);
     this.toggleExportModal = this.toggleExportModal.bind(this);
-    this.renderExportModal = this.renderExportModal.bind(this);
     this.onCsvCopy = this.onCsvCopy.bind(this);
     this.onCsvLeave = this.onCsvLeave.bind(this);
     this.onJsonCopy = this.onJsonCopy.bind(this);
     this.onJsonLeave = this.onJsonLeave.bind(this);
+    this.logExport = this.logExport.bind(this)
+
     this.state = {
       exportModalOpen: false,
       csvCopied: false,
@@ -81,6 +83,10 @@ export default class WfModuleContextMenu extends React.Component {
 
   onJsonLeave() {
     this.setState({jsonCopied: false});
+  }
+
+  logExport(type) {
+    logUserEvent('Export ' + type)
   }
 
   renderCsvCopyLink() {
@@ -140,7 +146,7 @@ export default class WfModuleContextMenu extends React.Component {
             <div className='d-flex justify-content-between flex-row mb-3'>
               <Input type='url' className='url-link t-d-gray content-2 test-csv-field' placeholder={csvString} readOnly/>
               <div className='download-icon-box'>
-                <a href={csvString} className='icon-download t-d-gray button-icon test-csv-download' download></a>
+                <a href={csvString} onClick={() => this.logExport('CSV')} className='icon-download t-d-gray button-icon test-csv-download' download></a>
               </div>
             </div>
             <div className='d-flex justify-content-between flex-row'>
@@ -150,7 +156,7 @@ export default class WfModuleContextMenu extends React.Component {
             <div className='d-flex justify-content-between flex-row'>
               <Input type='url' className='url-link t-d-gray content-2 test-json-field' placeholder={jsonString} readOnly/>
               <div className='download-icon-box'>
-                <a href={jsonString} className='icon-download t-d-gray button-icon test-json-download' download></a>
+                <a href={jsonString} onClick={() => this.logExport('JSON')} className='icon-download t-d-gray button-icon test-json-download' download></a>
               </div>
             </div>
           </FormGroup>

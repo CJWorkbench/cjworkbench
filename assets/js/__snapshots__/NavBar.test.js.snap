@@ -555,6 +555,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
           <a
             className="button-icon facebook-share ml-4"
             href="https://www.facebook.com/sharer.php?u=/workflows/808"
+            onClick={[Function]}
             target="_blank"
           >
             <div
@@ -1007,6 +1008,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
           <a
             className="button-icon facebook-share ml-4"
             href="https://www.facebook.com/sharer.php?u=/workflows/808"
+            onClick={[Function]}
             target="_blank"
           >
             <div

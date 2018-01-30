@@ -6,7 +6,7 @@ import WfHamburgerMenu from './WfHamburgerMenu'
 import EditableWorkflowName from './EditableWorkflowName'
 import WorkflowMetadata from './WorkflowMetadata'
 import PropTypes from 'prop-types'
-import { goToUrl } from './utils'
+import {goToUrl, logUserEvent} from './utils'
 import {
   Modal,
   ModalHeader,
@@ -58,6 +58,7 @@ export class WorkflowNavBar extends React.Component {
     this.toggleModals = this.toggleModals.bind(this);
     this.onLinkCopy = this.onLinkCopy.bind(this);
     this.onLinkLeave = this.onLinkLeave.bind(this);
+    this.logShare =  this.logShare.bind(this);
   }
 
   handleDuplicate() {
@@ -105,10 +106,15 @@ export class WorkflowNavBar extends React.Component {
 
   onLinkCopy() {
     this.setState({linkCopied: true});
+    this.logShare('URL copied')
   }
 
   onLinkLeave() {
     this.setState({linkCopied: false});
+  }
+
+  logShare(type) {
+    logUserEvent('Share workflow ' + type);
   }
 
   renderCopyLink() {
@@ -151,6 +157,8 @@ export class WorkflowNavBar extends React.Component {
           <div onClick={this.setPublic} className='button-blue action-button test-public-button'>Set Public</div>
         </div>
       </Modal>
+    
+    // TODO: log Twitter shares. Probably need a different component with an "onshare" handler.
 
     var shareModal =
       <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-share-modal'>
@@ -167,21 +175,19 @@ export class WorkflowNavBar extends React.Component {
               <Input type='url' className='url-link t-d-gray content-2 test-link-field' placeholder={linkString} readOnly/>
             </div>
           </FormGroup>
+
           <div className='d-flex justify-content-start mt-4'>
-            {/* Twitter share link */}
+
             <div className='twitter-button-container'>
               <Share url={linkString}
                 options={{text: "Check out this chart I made using @cjworkbench:"}}
               />
             </div>
-            {/* Facebook share link */}
 
-              <a href={facebookUrl}
-                className='button-icon facebook-share ml-4'
-                target="_blank">
+            <a href={facebookUrl} onClick={() => this.logShare('Facebook')} className='button-icon facebook-share ml-4' target="_blank">
                   <div className='icon-facebook'/>
-                  Share
-              </a>
+              Share
+            </a>
 
           </div>
         </ModalBody>

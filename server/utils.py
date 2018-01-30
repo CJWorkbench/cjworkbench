@@ -1,7 +1,9 @@
 # --- Time unit conversion to/from seconds ---
 import pandas as pd
 from django.contrib.sites.models import Site
+from intercom.client import Client
 import os
+import time
 
 time_units = {
     'seconds': 1,
@@ -55,3 +57,25 @@ def get_intercom_app_id():
         return os.environ['CJW_INTERCOM_APP_ID']
     except KeyError:
         return None
+
+
+intercom_client = None
+
+def log_user_event(user, event, metadata=None):
+    if intercom_client == None:
+        try:
+            token = os.environ['CJW_INTERCOM_ACCESS_TOKEN']
+            intercom = Client(personal_access_token=token)
+        except KeyError:
+            return  # env var not set
+        except Exception as e:
+            print('Error creating Intercom client: ' + str(e))
+            return
+
+    intercom.events.create(
+        event_name=event,
+        email=user.email,
+        id=user.id,
+        created_at=int(time.time()),
+        metadata=metadata)
+

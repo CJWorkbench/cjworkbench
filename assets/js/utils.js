@@ -87,7 +87,7 @@ export function timeDifference (start, end) {
 }
 
 // Log to Intercom, if installed
-export function logEvent(name, metadata) {
+export function logUserEvent(name, metadata) {
   if (window.APP_ID) {
     window.Intercom("trackEvent", name, metadata);
   }

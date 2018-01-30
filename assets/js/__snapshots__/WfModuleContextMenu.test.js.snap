@@ -94,6 +94,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                   className="icon-download t-d-gray button-icon test-csv-download"
                   download={true}
                   href="/public/moduledata/live/415.csv"
+                  onClick={[Function]}
                 />
               </div>
             </div>
@@ -147,6 +148,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                   className="icon-download t-d-gray button-icon test-json-download"
                   download={true}
                   href="/public/moduledata/live/415.json"
+                  onClick={[Function]}
                 />
               </div>
             </div>

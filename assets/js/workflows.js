@@ -5,7 +5,7 @@ import { WorkflowListNavBar } from './navbar'
 import WfContextMenu from './WfContextMenu'
 import WorkflowMetadata from './WorkflowMetadata'
 import PropTypes from 'prop-types'
-import { goToUrl, logEvent } from "./utils";
+import { goToUrl, logUserEvent } from "./utils";
 
 export default class Workflows extends React.Component {
   constructor(props) {
@@ -20,7 +20,6 @@ export default class Workflows extends React.Component {
   click(e) {
     this.props.api.newWorkflow('New Workflow')
     .then(json => {
-      logEvent('New Workflow');
       // navigate to new WF page
       goToUrl('/workflows/' + json.id);
     })
