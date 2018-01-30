@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AddNotificationButtonClosed  Renders 1`] = `
+exports[`AddNotificationButtonClosed Renders 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
@@ -65,7 +65,7 @@ exports[`AddNotificationButtonClosed  Renders 1`] = `
 </DragDropContextProvider>
 `;
 
-exports[`AddNotificationButtonOpen  Renders 1`] = `
+exports[`AddNotificationButtonOpen Renders 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
