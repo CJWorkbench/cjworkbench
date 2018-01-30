@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AddNotificationButtonOpen  Renders 1`] = `
+exports[`AddNotificationButtonClosed Renders 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
@@ -14,6 +14,7 @@ exports[`AddNotificationButtonOpen  Renders 1`] = `
     >
       <div
         className="notification-button-closed"
+        onClick={[Function]}
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
       >
@@ -61,5 +62,51 @@ exports[`AddNotificationButtonOpen  Renders 1`] = `
       </div>
     </AddNotificationButtonClosed>
   </DragSource(AddNotificationButtonClosed)>
+</DragDropContextProvider>
+`;
+
+exports[`AddNotificationButtonOpen Renders 1`] = `
+<DragDropContextProvider
+  backend={[Function]}
+>
+  <DragSource(AddNotificationButtonOpen)>
+    <AddNotificationButtonOpen
+      connectDragSource={[Function]}
+      isDragging={false}
+    >
+      <div
+        className="card"
+        onClick={[Function]}
+      >
+        <div
+          className="second-level t-vl-gray d-flex"
+        >
+          <div
+            className="d-flex flex-row align-items-center"
+          >
+            <div
+              className="ml-icon-container"
+            >
+              <div
+                className="icon-notification ml-icon"
+              />
+            </div>
+            <div
+              className="content-5 ml-module-name"
+            >
+              Add data alert
+            </div>
+          </div>
+          <div
+            className="ml-handle"
+          >
+            <div
+              className="icon-grip"
+            />
+          </div>
+        </div>
+      </div>
+    </AddNotificationButtonOpen>
+  </DragSource(AddNotificationButtonOpen)>
 </DragDropContextProvider>
 `;

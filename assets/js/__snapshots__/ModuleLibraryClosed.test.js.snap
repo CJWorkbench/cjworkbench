@@ -191,6 +191,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
         >
           <div
             className="notification-button-closed"
+            onClick={[Function]}
             onMouseEnter={[Function]}
             onMouseLeave={[Function]}
           >

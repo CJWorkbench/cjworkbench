@@ -246,6 +246,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
             >
               <div
                 className="card"
+                onClick={[Function]}
               >
                 <div
                   className="second-level t-vl-gray d-flex"
@@ -947,6 +948,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
             >
               <div
                 className="card"
+                onClick={[Function]}
               >
                 <div
                   className="second-level t-vl-gray d-flex"
@@ -1112,6 +1114,7 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
           >
             <div
               className="notification-button-closed"
+              onClick={[Function]}
               onMouseEnter={[Function]}
               onMouseLeave={[Function]}
             >
