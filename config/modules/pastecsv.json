@@ -3,14 +3,14 @@
   "id_name": "pastecsv",
   "category" : "Add data",
   "icon" : "doc",
-  "description" : "Enter coma separated value to generate a table.",
+  "description" : "Paste in a CSV or TSV file",
   "parameters": [
     {
       "name": "",
       "id_name": "csv",
       "type": "string",
       "multiline": "True",
-      "placeholder":"Paste data from Excel or Google sheet, or type in CSV."
+      "placeholder":"Paste data from a spreadsheet, or a CSV"
     },
     {
       "name": "Has header row",
