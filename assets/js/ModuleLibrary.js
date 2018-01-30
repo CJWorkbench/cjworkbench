@@ -26,7 +26,7 @@ export default class ModuleLibrary extends React.Component {
     var workflowEmpty = (!props.workflow.wf_modules || !props.workflow.wf_modules.length);
 
     this.state = {
-      libraryOpen: !this.props.isReadOnly, // TODO: remember this state after exiting
+      libraryOpen: (!this.props.isReadOnly && !this.props.workflow.module_library_collapsed), 
       openCategory: workflowEmpty ? "Add data" : null,
       items: [],
     };
@@ -118,12 +118,16 @@ export default class ModuleLibrary extends React.Component {
   toggleLibrary() {
     if (!this.props.isReadOnly) {
       this.setState({ libraryOpen: !this.state.libraryOpen });
+      // make API call to set
+      this.props.api.setWfLibraryCollapse(this.props.workflow.id, this.state.libraryOpen)
     }
   }
 
   openLibrary() {
     if (!this.props.isReadOnly) {
       this.setState({ libraryOpen: true });
+      // make API call to set
+      this.props.api.setWfLibraryCollapse(this.props.workflow.id, false)
     }
   }
 
