@@ -53,33 +53,42 @@ describe('ModuleSearch', () => {
   });
 
   it('Loads modules from props ', (done) => { 
-    
     // wait modules to load from props
     setImmediate( () => {
       expect(wrapper).toMatchSnapshot(); 
-        
       expect(wrapper.state().modules.length).toBe(2);      
-
       expect(wrapper.state().modules[0].title).toEqual("Add data");
       expect(wrapper.state().modules[1].title).toEqual("Filter");
-      
       done();
     });
   });
 
   it('Finds a suggestion matching search input', (done) => { 
-    // wait modules to load from props
+    // wait modules to load 
     setImmediate( () => {
-      // Search field is focused by default,
-      //  enter value to text field
+      // Search field is focused by default, enter value to text field
       searchField.simulate('change', {target: {value: 'a'}});
       expect(wrapper).toMatchSnapshot();      
-      // check for presence of suggestion
+      // check for presence of suggestion matching input
       expect(wrapper.state().suggestions.length).toEqual(1);              
       expect(wrapper.state().suggestions[0].modules[0].name).toEqual("Load from Enigma");      
-
       done();
     });
+  });
+
+  it('Close icon will clear text from search field', () => { 
+    // check 'value' state at start
+    expect(wrapper.state().value).toEqual('');              
+    // enter value to text field
+    searchField.simulate('change', {target: {value: 'wow'}});
+    // check value state, should have text
+    expect(wrapper.state().value).toEqual('wow'); 
+    // find and click on Close icon
+    let closeIcon = wrapper.find('.icon-close-white');
+    expect(closeIcon).toHaveLength(1);
+    closeIcon.simulate('click');
+    // value state should be empty again
+    expect(wrapper.state().value).toEqual('');              
   });
     
 });

@@ -76,23 +76,23 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                 />
               </div>
             </div>
-            <div
-              className="d-flex align-items-center search-bar"
+            <ModuleSearch
+              addModule={[Function]}
+              dropModule={[Function]}
+              items={Array []}
+              workflow={
+                Object {
+                  "id": 15,
+                  "name": "What a workflow!",
+                }
+              }
             >
               <div
-                className="icon-search-white ml-icon-search ml-4"
-              />
-              <ModuleSearch
-                addModule={[Function]}
-                dropModule={[Function]}
-                items={Array []}
-                workflow={
-                  Object {
-                    "id": 15,
-                    "name": "What a workflow!",
-                  }
-                }
+                className="d-flex align-items-center search-bar"
               >
+                <div
+                  className="icon-search-white ml-icon-search ml-4"
+                />
                 <div
                   onBlur={[Function]}
                 >
@@ -215,8 +215,12 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                     </Autowhatever>
                   </Autosuggest>
                 </div>
-              </ModuleSearch>
-            </div>
+                <div
+                  className="icon-close-white ml-icon-search mr-3"
+                  onClick={[Function]}
+                />
+              </div>
+            </ModuleSearch>
           </div>
           <ModuleCategories
             addModule={[Function]}
@@ -417,47 +421,47 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                 />
               </div>
             </div>
-            <div
-              className="d-flex align-items-center search-bar"
+            <ModuleSearch
+              addModule={[Function]}
+              dropModule={[Function]}
+              items={
+                Array [
+                  Object {
+                    "category": "Add data",
+                    "description": "Connect a dataset from Enigma's collection via URL.",
+                    "icon": "url",
+                    "id": 4,
+                    "name": "Load from Enigma",
+                  },
+                  Object {
+                    "category": "Add data",
+                    "description": "Import from your favorite snowshall media",
+                    "icon": "url",
+                    "id": 2,
+                    "name": "Load from Facebork",
+                  },
+                  Object {
+                    "category": "Visualize",
+                    "description": "Create line, column and scatter plot charts.",
+                    "icon": "chart",
+                    "id": 1,
+                    "name": "Chartbuilder",
+                  },
+                ]
+              }
+              workflow={
+                Object {
+                  "id": 15,
+                  "name": "What a workflow!",
+                }
+              }
             >
               <div
-                className="icon-search-white ml-icon-search ml-4"
-              />
-              <ModuleSearch
-                addModule={[Function]}
-                dropModule={[Function]}
-                items={
-                  Array [
-                    Object {
-                      "category": "Add data",
-                      "description": "Connect a dataset from Enigma's collection via URL.",
-                      "icon": "url",
-                      "id": 4,
-                      "name": "Load from Enigma",
-                    },
-                    Object {
-                      "category": "Add data",
-                      "description": "Import from your favorite snowshall media",
-                      "icon": "url",
-                      "id": 2,
-                      "name": "Load from Facebork",
-                    },
-                    Object {
-                      "category": "Visualize",
-                      "description": "Create line, column and scatter plot charts.",
-                      "icon": "chart",
-                      "id": 1,
-                      "name": "Chartbuilder",
-                    },
-                  ]
-                }
-                workflow={
-                  Object {
-                    "id": 15,
-                    "name": "What a workflow!",
-                  }
-                }
+                className="d-flex align-items-center search-bar"
               >
+                <div
+                  className="icon-search-white ml-icon-search ml-4"
+                />
                 <div
                   onBlur={[Function]}
                 >
@@ -580,8 +584,12 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     </Autowhatever>
                   </Autosuggest>
                 </div>
-              </ModuleSearch>
-            </div>
+                <div
+                  className="icon-close-white ml-icon-search mr-3"
+                  onClick={[Function]}
+                />
+              </div>
+            </ModuleSearch>
           </div>
           <ModuleCategories
             addModule={[Function]}

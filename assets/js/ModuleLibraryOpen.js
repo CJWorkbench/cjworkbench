@@ -33,13 +33,10 @@ export default class ModuleLibraryOpen extends React.Component {
             </div>
           </div>
 
-          <div className='d-flex align-items-center search-bar'>
-            <div className='icon-search-white ml-icon-search ml-4'></div>
-            <ModuleSearch addModule={this.props.addModule}
-                          dropModule={this.props.dropModule}
-                          items={this.props.items}
-                          workflow={this.props.workflow} />
-          </div>
+          <ModuleSearch addModule={this.props.addModule}
+                        dropModule={this.props.dropModule}
+                        items={this.props.items}
+                        workflow={this.props.workflow} />
         </div>
 
         <ModuleCategories

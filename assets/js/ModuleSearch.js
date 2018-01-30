@@ -73,6 +73,7 @@ export default class ModuleSearch extends React.Component {
     this.getSectionSuggestions = this.getSectionSuggestions.bind(this);
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
     this.onBlur = this.onBlur.bind(this);
+    this.clearSearchField = this.clearSearchField.bind(this);    
 
     this.lastLoggedQuery = ''; // debounce query logging
   }
@@ -190,6 +191,12 @@ export default class ModuleSearch extends React.Component {
     }
   }
 
+  clearSearchField() {
+    this.setState({value: ''});
+    // focus on search field by targeting element nested inside imported component
+    this.textInput.childNodes[0].childNodes[0].focus();
+  }
+
   render () {
     const { value, suggestions } = this.state;
     const inputProps = {
@@ -199,19 +206,27 @@ export default class ModuleSearch extends React.Component {
       autoFocus: true
     };
     return (
-      <div onBlur={this.onBlur}>
-        <Autosuggest
-          multiSection={true}
-          suggestions={suggestions}
-          onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
-          onSuggestionsClearRequested={this.onSuggestionsClearRequested}
-          getSuggestionValue={this.getSuggestionValue}
-          renderSuggestion={this.renderSuggestion}
-          renderSectionTitle={this.renderSectionTitle}
-          getSectionSuggestions={this.getSectionSuggestions}
-          inputProps={inputProps}
-          onSuggestionSelected={this.onSuggestionSelected}
-        />
+      <div className='d-flex align-items-center search-bar'>
+        <div className='icon-search-white ml-icon-search ml-4'></div>
+        <div 
+          onBlur={this.onBlur} 
+          // can not set ref on imported component, so anchoring to parent div
+          ref={input => this.textInput = input}          
+        > 
+          <Autosuggest
+            multiSection={true}
+            suggestions={suggestions}
+            onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
+            onSuggestionsClearRequested={this.onSuggestionsClearRequested}
+            getSuggestionValue={this.getSuggestionValue}
+            renderSuggestion={this.renderSuggestion}
+            renderSectionTitle={this.renderSectionTitle}
+            getSectionSuggestions={this.getSectionSuggestions}
+            inputProps={inputProps}
+            onSuggestionSelected={this.onSuggestionSelected}
+          />
+        </div>
+        <div className='icon-close-white ml-icon-search mr-3' onClick={this.clearSearchField}></div>
       </div>
     );
   }
