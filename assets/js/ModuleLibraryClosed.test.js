@@ -49,7 +49,7 @@ describe('ModuleLibraryClosed', () => {
         dropModule={() => {}}
         moduleAdded={() => {}}
         openLibrary={openLibrary}
-        openCategory={"Add Data"} 
+        openCategory={"Add data"} 
         setOpenCategory={() => {}}
       />
     </DragDropContextProvider>

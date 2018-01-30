@@ -47,8 +47,14 @@ export default class ModuleCategory extends React.Component {
 
     var sortIcon = isOpen ? 'icon-sort-up-vl-gray' : 'icon-sort-down-vl-gray';
 
-    // Grabs icon from first module in category for category icon
-    var icon = 'icon-' + this.props.modules[0].props.icon + ' ml-icon';
+    // ??? are these the correct icons per category ???
+    const icons = {
+      'Add data': 'url',
+      'Analyse': 'transform',
+      'Code': 'code',
+      'Other': 'chart'
+    }
+    var categoryIcon = 'icon-' + icons[this.props.name] + ' ml-icon';
 
     var categoryHead;
     if (this.props.libraryOpen) {
@@ -61,7 +67,7 @@ export default class ModuleCategory extends React.Component {
     } else {
       categoryHead =  <div className='first-level' onMouseEnter={this.toggleCollapse} >
                         <div className='closed-ML-cat' >
-                          <span className={icon}></span>
+                          <span className={categoryIcon}></span>
                         </div>
                       </div>
     }

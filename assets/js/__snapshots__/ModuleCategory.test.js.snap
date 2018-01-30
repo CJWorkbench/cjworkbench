@@ -1,6 +1,59 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ModuleCategory  Library closed, category collapsed  Renders with list of Module components 1`] = `
+exports[`ModuleCategory  Library closed, category collapsed  Renders with category icon, but without list of Module components 1`] = `
+<DragDropContextProvider
+  backend={[Function]}
+>
+  <ModuleCategory
+    collapsed={true}
+    isReadOnly={false}
+    libraryOpen={false}
+    modules={
+      Array [
+        <DragSource(Module)
+          addModule={[Function]}
+          dropModule={[Function]}
+          icon="add"
+          id={88}
+          name="First Module"
+      />,
+        <DragSource(Module)
+          addModule={[Function]}
+          dropModule={[Function]}
+          icon="url"
+          id={101}
+          name="Second Module"
+      />,
+      ]
+    }
+    name="Add data"
+    setOpenCategory={[Function]}
+  >
+    <div
+      className="card b-l-gray library-card-category-closed"
+    >
+      <div
+        className="ml-cat"
+      >
+        <div
+          className="first-level"
+          onMouseEnter={[Function]}
+        >
+          <div
+            className="closed-ML-cat"
+          >
+            <span
+              className="icon-url ml-icon"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </ModuleCategory>
+</DragDropContextProvider>
+`;
+
+exports[`ModuleCategory  Library closed, category open Renders with list of Module components 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
@@ -43,7 +96,7 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with list o
             className="closed-ML-cat"
           >
             <span
-              className="icon-add ml-icon"
+              className="icon-undefined ml-icon"
             />
           </div>
         </div>
@@ -163,59 +216,6 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with list o
               </div>
             </Module>
           </DragSource(Module)>
-        </div>
-      </div>
-    </div>
-  </ModuleCategory>
-</DragDropContextProvider>
-`;
-
-exports[`ModuleCategory  Library closed, category collapsed  Renders without list of Module components 1`] = `
-<DragDropContextProvider
-  backend={[Function]}
->
-  <ModuleCategory
-    collapsed={true}
-    isReadOnly={false}
-    libraryOpen={false}
-    modules={
-      Array [
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="add"
-          id={88}
-          name="First Module"
-      />,
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="url"
-          id={101}
-          name="Second Module"
-      />,
-      ]
-    }
-    name="Add Data"
-    setOpenCategory={[Function]}
-  >
-    <div
-      className="card b-l-gray library-card-category-closed"
-    >
-      <div
-        className="ml-cat"
-      >
-        <div
-          className="first-level"
-          onMouseEnter={[Function]}
-        >
-          <div
-            className="closed-ML-cat"
-          >
-            <span
-              className="icon-add ml-icon"
-            />
-          </div>
         </div>
       </div>
     </div>

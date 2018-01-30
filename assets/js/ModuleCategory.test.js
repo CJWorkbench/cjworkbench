@@ -105,7 +105,7 @@ describe('ModuleCategory ', () => {
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
         <ModuleCategory
-          name={"Add Data"}
+          name={"Add data"}
           modules={modules}
           isReadOnly={false}
           collapsed={true} 
@@ -116,8 +116,10 @@ describe('ModuleCategory ', () => {
     ));
     afterEach(() => wrapper.unmount());    
   
-    it('Renders without list of Module components', () => { 
+    it('Renders with category icon, but without list of Module components', () => { 
       expect(wrapper).toMatchSnapshot();
+      // check that correct icon is displayed for "Add Data"
+      expect(wrapper.find('.icon-url')).toHaveLength(1);
       // check for absence of Modules
       expect(wrapper.find('.ml-module-card')).toHaveLength(0);
     });
@@ -136,7 +138,7 @@ describe('ModuleCategory ', () => {
     });
   });
 
-  describe('Library closed, category collapsed ', () => {
+  describe('Library closed, category open', () => {
   
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
