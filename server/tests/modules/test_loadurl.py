@@ -7,6 +7,7 @@ import json
 import tempfile
 from django.test import override_settings
 from server.utils import sanitize_dataframe
+from collections import OrderedDict
 
 mock_json_text = '[ {"Month" : "Jan", "Amount": 10},\n {"Month" : "Feb", "Amount": 20} ]'
 mock_json_table = pd.DataFrame(json.loads(mock_json_text))
@@ -103,7 +104,7 @@ class LoadFromURLTests(LoggedInTestCase):
         # use a complex example with nested data
         fname = os.path.join(settings.BASE_DIR, 'server/tests/test_data/sfpd.json')
         sfpd_json = open(fname).read()
-        sfpd_table = pd.DataFrame(json.loads(sfpd_json))
+        sfpd_table = pd.DataFrame(json.loads(sfpd_json, object_pairs_hook=OrderedDict)) # OrderedDict otherwise cols get sorted
         sanitize_dataframe(sfpd_table)
 
         # success case
@@ -119,25 +120,6 @@ class LoadFromURLTests(LoggedInTestCase):
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
             self.assertEqual(self.wfmodule.status, WfModule.ERROR)
-
-        # success using json path - removed this parameter for now
-        # with requests_mock.Mocker() as m:
-        #     self.path_pval.set_value(mock_json_path)
-        #     self.path_pval.save()
-        #     m.get(url, text=mock_json_path_text, headers={'content-type': 'application/json'})
-        #     self.press_fetch_button()
-        #     response = self.get_render()
-        #     self.assertEqual(response.content, make_render_json(mock_json_table))
-        #
-        # # bad json path should put module in error state
-        # with requests_mock.Mocker() as m:
-        #     self.path_pval.set_value('hilarious')
-        #     self.path_pval.save()
-        #     m.get(url, text=mock_json_path_text, headers={'content-type': 'application/json'})
-        #     self.press_fetch_button()
-        #     self.wfmodule.refresh_from_db()
-        #     self.assertEqual(self.wfmodule.status, WfModule.ERROR)
-
 
     def test_load_xlsx(self):
         url = 'http://test.com/the.xlsx'

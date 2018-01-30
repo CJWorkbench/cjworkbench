@@ -1,33 +1,15 @@
 from .moduleimpl import ModuleImpl
+from collections import OrderedDict
 import pandas as pd
 from pandas.io.common import CParserError
 from xlrd import XLRDError
 import io
 import requests
-import re
+import json
 from server.versions import save_fetched_table_if_changed
 from server.utils import sanitize_dataframe
 
 # ---- LoadURL ----
-
-# Walks down through a dict through keys and arrays
-# e.g. "Results.series[0].data" -> jsondict['Results']['Series'][0]['data']
-def parse_json_path(d, path):
-    if path == '':
-        return d
-
-    pattern = re.compile('([^\[]+)\[([0-9]+)\]$') # 'key[8]' -> 'key','8'
-
-    # walk down keys and arrays
-    for p in path.split('.'):
-        m = pattern.match(p)
-        if m:
-            d = d[m.group(1)]           # d['key']
-            d = d[int(m.group(2))]      # d[8]
-        else:
-            d = d[p]
-
-    return d
 
 class LoadURL(ModuleImpl):
 
@@ -71,16 +53,9 @@ class LoadURL(ModuleImpl):
 
         elif content_type == 'application/json':
             try:
-                table_json = res.json()
-                # path = wfm.get_param_string('json_path')
-                # if len(path)>0:
-                #     table_json = parse_json_path(table_json, path)
-                table = pd.DataFrame(table_json)
+                json_string = res.text
 
-            # except KeyError as e:
-            #     wfm.set_error('Bad json path %s' % path)
-            #     table = pd.DataFrame([{'result':res.text}])
-            #     return
+                table = pd.DataFrame(json.loads(json_string, object_pairs_hook=OrderedDict)) # OrderedDict otherwise cols get sorted)
 
             except ValueError as e:
                 wfm.set_error(str(e))
