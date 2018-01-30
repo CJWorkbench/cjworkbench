@@ -43,26 +43,28 @@ var modules = [
     "icon":"url"
   }
 ];
-const api = {
-  getModules: jsonResponseMock(modules),
-  setWfLibraryCollapse: jest.fn()
-};
+var api = {};
 
 describe('ModuleLibrary', () => {
 
   describe('Not Read-only', () => {
   
-    beforeEach(() => wrapper = mount(
-      <DragDropContextProvider backend={HTML5Backend}>
-        <ModuleLibrary
-          addModule={addModule}
-          dropModule={dropModule}
-          api={api}
-          workflow={workflow}
-          isReadOnly={false}
-        />
-      </DragDropContextProvider>
-    ));
+    beforeEach(() => {
+      api = {
+        getModules: jsonResponseMock(modules),
+        setWfLibraryCollapse: jest.fn()
+      };
+      wrapper = mount(
+        <DragDropContextProvider backend={HTML5Backend}>
+          <ModuleLibrary
+            addModule={addModule}
+            dropModule={dropModule}
+            api={api}
+            workflow={workflow}
+            isReadOnly={false}
+          />
+        </DragDropContextProvider>);
+    });
     afterEach(() => wrapper.unmount());  
     
     it('Renders in open state and loads modules', (done) => {
@@ -97,23 +99,28 @@ describe('ModuleLibrary', () => {
 
   describe('Read-only', () => {
     
-    beforeEach(() => wrapper = mount(
-      <DragDropContextProvider backend={HTML5Backend}>
-        <ModuleLibrary
-          addModule={addModule}
-          dropModule={dropModule}
-          api={api}
-          workflow={workflow}
-          isReadOnly={true}
-        />
-      </DragDropContextProvider>
-    ));
+    beforeEach(() => {
+      api = {
+        getModules: jsonResponseMock(modules),
+        setWfLibraryCollapse: jest.fn()
+      };
+      wrapper = mount(
+        <DragDropContextProvider backend={HTML5Backend}>
+          <ModuleLibrary
+            addModule={addModule}
+            dropModule={dropModule}
+            api={api}
+            workflow={workflow}
+            isReadOnly={true}
+          />
+        </DragDropContextProvider>);
+    });
     afterEach(() => wrapper.unmount());  
     
     it('Renders in closed state, without modules', () => {
       expect(wrapper).toMatchSnapshot();
-      // should NOT call getModules (two calls from previous tests)
-      expect(api.getModules.mock.calls.length).toBe(2);
+      // should NOT call getModules 
+      expect(api.getModules.mock.calls.length).toBe(0);
       // check that Library is closed
       expect(wrapper.find('.module-library-closed')).toHaveLength(1);
     });
