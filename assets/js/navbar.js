@@ -157,7 +157,7 @@ export class WorkflowNavBar extends React.Component {
           <div onClick={this.setPublic} className='button-blue action-button test-public-button'>Set Public</div>
         </div>
       </Modal>
-    
+
     // TODO: log Twitter shares. Probably need a different component with an "onshare" handler.
 
     var shareModal =
