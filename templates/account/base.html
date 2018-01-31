@@ -1,10 +1,9 @@
-{% load analytical %}
+{% load analytics_tags %}
 {% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    {% analytical_head_top %}
     <meta charset="utf-8">
     <title>{% block title %}{% endblock %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,13 +15,24 @@
     <link rel="shortcut icon" href="/static/images/app-icons/favicon.ico">
     <meta name="msapplication-config" content="/static/images/app-icons/browserconfig.xml">
     <meta name="theme-color" content="#ffffff">
+
+    {%  google_analytics_id  as google_analytics_id_var %}
+    {% if google_analytics_id_var %}
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+      ga('create', '{% google_analytics_id %}', 'auto');
+      ga('send', 'pageview');
+    </script>
+    {% endif %}
+
     <!-- styles -->
     {% render_bundle 'login' 'css' %}
-    {% analytical_head_bottom %}
   </head>
 
   <body>
-    {% analytical_body_top %}
 
     <div class="login-fullscreen-container">
       <div class="container">
@@ -44,6 +54,5 @@
     <!-- JavaScript scripts -->
     {% render_bundle 'login' 'js' %}
 
-    {% analytical_body_bottom %}
   </body>
 </html>

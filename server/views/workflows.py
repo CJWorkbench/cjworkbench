@@ -21,8 +21,7 @@ def make_init_state(request):
     if request.user.is_authenticated():
         user = UserSerializer(request.user)
         init_state = {
-            'loggedInUser': user.data,
-            'intercomAppId': get_intercom_app_id()
+            'loggedInUser': user.data
         }
         return json.dumps(init_state)
     else:

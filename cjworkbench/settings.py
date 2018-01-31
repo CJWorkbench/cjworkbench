@@ -130,13 +130,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'cjworkbench',
-    'server.apps.ServerConfig',
+    'server',
     'webpack_loader',
     'rest_framework',
     'channels',
     'account',
     'polymorphic',
-    'analytical'
 ]
 
 MIDDLEWARE = [

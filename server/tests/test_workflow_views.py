@@ -23,15 +23,17 @@ class WorkflowViewTests(LoggedInTestCase):
 
     def test_workflow_init_state(self):
         # checks to make sure the right initial data is embedded in the HTML (username etc.)
-        with patch.dict('os.environ', { 'CJW_INTERCOM_APP_ID':'myappid'}):
+        with patch.dict('os.environ', { 'CJW_INTERCOM_APP_ID':'myIntercomId', 'CJW_GOOGLE_ANALYTICS':'myGaId'}):
             response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
             self.assertContains(response, '"loggedInUser":')
             self.assertContains(response, user_display(self.user))
             self.assertContains(response, self.user.email)
-            self.assertContains(response, '"intercomAppId":')
-            self.assertContains(response, '"myappid"')
+
+            self.assertContains(response, 'myIntercomId')
+
+            self.assertContains(response, 'myGaId')
 
 
     def test_workflow_duplicate_view(self):

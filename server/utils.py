@@ -51,10 +51,16 @@ def get_absolute_url(abs_url):
     return 'https://%s%s' % ( Site.objects.get_current().domain, abs_url )
 
 
-# returns intercom.io app ID if set
+# returns analytics IDs if they are set
 def get_intercom_app_id():
     try:
         return os.environ['CJW_INTERCOM_APP_ID']
+    except KeyError:
+        return None
+
+def get_google_analytics_id():
+    try:
+        return os.environ['CJW_GOOGLE_ANALYTICS']
     except KeyError:
         return None
 
