@@ -10,7 +10,7 @@
  * should be, so that newcomers to the system can get an idea as to the modules
  * that are supported – both, those created by us and those created by third
  * parties.
- * 
+ *
  */
 
 import PropTypes from 'prop-types';
@@ -26,14 +26,13 @@ export default class ModuleLibrary extends React.Component {
     var workflowEmpty = (!props.workflow.wf_modules || !props.workflow.wf_modules.length);
 
     this.state = {
-      libraryOpen: (!this.props.isReadOnly && !this.props.workflow.module_library_collapsed), 
       openCategory: workflowEmpty ? "Add data" : null,
       items: [],
     };
     this.addModule = this.props.addModule.bind(this);
     this.setOpenCategory = this.setOpenCategory.bind(this);
     this.toggleLibrary = this.toggleLibrary.bind(this);
-    this.openLibrary = this.openLibrary.bind(this);   
+    this.openLibrary = this.openLibrary.bind(this);
     this.updated = this.updated.bind(this);
   }
 
@@ -117,14 +116,14 @@ export default class ModuleLibrary extends React.Component {
 
   toggleLibrary() {
     if (!this.props.isReadOnly) {
-      this.setState({ libraryOpen: !this.state.libraryOpen });
+      this.props.setLibraryOpen(!this.props.libraryOpen);
       this.props.api.setWfLibraryCollapse(this.props.workflow.id, this.state.libraryOpen)
     }
   }
 
   openLibrary() {
     if (!this.props.isReadOnly) {
-      this.setState({ libraryOpen: true });
+      this.props.setLibraryOpen(true);
       // make API call to set
       this.props.api.setWfLibraryCollapse(this.props.workflow.id, false)
     }
@@ -133,9 +132,7 @@ export default class ModuleLibrary extends React.Component {
   // Main render.
   render() {
 
-    // console.log("render...");
-
-    if (this.state.libraryOpen) {
+    if (this.props.libraryOpen) {
       // Outermost div seems necessary to set background color below ImportFromGithub
       return (
         <div>
@@ -143,13 +140,13 @@ export default class ModuleLibrary extends React.Component {
             workflow={this.props.workflow}
             libraryOpen={true}
             api={this.props.api}
-            isReadOnly={this.props.isReadOnly}            
+            isReadOnly={this.props.isReadOnly}
             items={this.state.items}
             addModule={this.props.addModule}
             dropModule={this.props.dropModule}
             moduleAdded={this.updated}
             toggleLibrary={this.toggleLibrary}
-            openCategory={this.state.openCategory} 
+            openCategory={this.state.openCategory}
             setOpenCategory={this.setOpenCategory}
           />
         </div>
@@ -159,13 +156,13 @@ export default class ModuleLibrary extends React.Component {
         <ModuleLibraryClosed
           libraryOpen={false}
           api={this.props.api}
-          isReadOnly={this.props.isReadOnly}            
+          isReadOnly={this.props.isReadOnly}
           items={this.state.items}
           addModule={this.props.addModule}
           dropModule={this.props.dropModule}
           moduleAdded={this.updated}
           openLibrary={this.openLibrary}
-          openCategory={this.state.openCategory} 
+          openCategory={this.state.openCategory}
           setOpenCategory={this.setOpenCategory}
         />
       )
@@ -174,9 +171,10 @@ export default class ModuleLibrary extends React.Component {
 }
 
 ModuleLibrary.propTypes = {
-  addModule: PropTypes.func.isRequired,
-  dropModule: PropTypes.func.isRequired,
-  workflow:  PropTypes.object.isRequired,
-  api:       PropTypes.object.isRequired,
-  isReadOnly: PropTypes.bool.isRequired,
+  addModule:    PropTypes.func.isRequired,
+  dropModule:   PropTypes.func.isRequired,
+  workflow:     PropTypes.object.isRequired,
+  api:          PropTypes.object.isRequired,
+  isReadOnly:   PropTypes.bool.isRequired,
+  libraryOpen:  PropTypes.bool.isRequired,
 };
