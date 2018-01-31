@@ -14,8 +14,8 @@ import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
 
 describe('ModuleCategory ', () => {
-  
-  var wrapper;  
+
+  var wrapper;
   const setOpenCategory = jest.fn();
   var modules = [
     <Module
@@ -35,56 +35,56 @@ describe('ModuleCategory ', () => {
       dropModule={() => {}}
     />
   ];
-  
+
   describe('Library open, category collapsed', () => {
-  
+
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
         <ModuleCategory
           name={"Add Data"}
           modules={modules}
           isReadOnly={false}
-          collapsed={true} 
-          setOpenCategory={setOpenCategory} 
+          collapsed={true}
+          setOpenCategory={setOpenCategory}
           libraryOpen={true}
         />
       </DragDropContextProvider>
     ));
-    afterEach(() => wrapper.unmount());    
-  
-    it('Renders with list of Module components', () => { 
+    afterEach(() => wrapper.unmount());
+
+    it('Renders with list of Module components', () => {
       expect(wrapper).toMatchSnapshot();
       expect(wrapper.find('.ml-module-card')).toHaveLength(2);
     });
-  
-    it('Clicking an collapsed category will expand it', () => { 
+
+    it('Clicking an collapsed category will expand it', () => {
       let category = wrapper.find('.first-level');
       expect(category).toHaveLength(1);
       let moduleList = wrapper.find('Collapse');
       expect(moduleList).toHaveLength(1);
       expect(moduleList.get(0).props.isOpen).toBe(false);
       category.simulate('click');
-      expect(setOpenCategory.mock.calls.length).toBe(1); 
+      expect(setOpenCategory.mock.calls.length).toBe(1);
     });
   });
 
   describe('Library open, category open', () => {
-  
+
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
         <ModuleCategory
           name={"Add Data"}
           modules={modules}
           isReadOnly={false}
-          collapsed={false} 
-          setOpenCategory={setOpenCategory} 
+          collapsed={false}
+          setOpenCategory={setOpenCategory}
           libraryOpen={true}
         />
       </DragDropContextProvider>
     ));
-    afterEach(() => wrapper.unmount());    
-  
-    it('Clicking an open category will collapse it', () => { 
+    afterEach(() => wrapper.unmount());
+
+    it('Clicking an open category will collapse it', () => {
       // find category card
       let category = wrapper.find('.first-level');
       expect(category).toHaveLength(1);
@@ -101,30 +101,30 @@ describe('ModuleCategory ', () => {
   });
 
   describe('Library closed, category collapsed ', () => {
-  
+
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
         <ModuleCategory
           name={"Add data"}
           modules={modules}
           isReadOnly={false}
-          collapsed={true} 
-          setOpenCategory={setOpenCategory} 
+          collapsed={true}
+          setOpenCategory={setOpenCategory}
           libraryOpen={false}
         />
       </DragDropContextProvider>
     ));
-    afterEach(() => wrapper.unmount());    
-  
-    it('Renders with category icon, but without list of Module components', () => { 
+    afterEach(() => wrapper.unmount());
+
+    it('Renders with category icon, but without list of Module components', () => {
       expect(wrapper).toMatchSnapshot();
       // check that correct icon is displayed for "Add Data"
-      expect(wrapper.find('.icon-url')).toHaveLength(1);
+      expect(wrapper.find('.icon-database')).toHaveLength(1);
       // check for absence of Modules
       expect(wrapper.find('.ml-module-card')).toHaveLength(0);
     });
 
-    it('Mouse enter events on a category will open module list', () => { 
+    it('Mouse enter events on a category will open module list', () => {
       // find category card
       let category = wrapper.find('.first-level');
       expect(category).toHaveLength(1);
@@ -139,28 +139,28 @@ describe('ModuleCategory ', () => {
   });
 
   describe('Library closed, category open', () => {
-  
+
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
         <ModuleCategory
           name={"Add Data"}
           modules={modules}
           isReadOnly={false}
-          collapsed={false} 
-          setOpenCategory={setOpenCategory} 
+          collapsed={false}
+          setOpenCategory={setOpenCategory}
           libraryOpen={false}
         />
       </DragDropContextProvider>
     ));
-    afterEach(() => wrapper.unmount());    
-  
-    it('Renders with list of Module components', () => { 
+    afterEach(() => wrapper.unmount());
+
+    it('Renders with list of Module components', () => {
       expect(wrapper).toMatchSnapshot();
       // check for presence of Modules
       expect(wrapper.find('.ml-module-card')).toHaveLength(2);
     });
 
-    it('Mouse enter events on a category will close module list', () => { 
+    it('Mouse enter events on a category will close module list', () => {
       // find category card
       let category = wrapper.find('.first-level');
       expect(category).toHaveLength(1);
@@ -171,11 +171,11 @@ describe('ModuleCategory ', () => {
       expect(setOpenCategory.mock.calls.length).toBe(4);
     });
 
-    it('Mouse leave events on module list will close list display', () => { 
+    it('Mouse leave events on module list will close list display', () => {
       let category = wrapper.find('.first-level');
       let moduleList = wrapper.find('.ml-list-mini');
       moduleList.simulate('mouseLeave');
-      expect(setOpenCategory.mock.calls.length).toBe(5); 
+      expect(setOpenCategory.mock.calls.length).toBe(5);
     });
   });
 });

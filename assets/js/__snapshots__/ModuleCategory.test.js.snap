@@ -43,7 +43,7 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with catego
             className="closed-ML-cat"
           >
             <span
-              className="icon-url ml-icon"
+              className="icon-database ml-icon"
             />
           </div>
         </div>

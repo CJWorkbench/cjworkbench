@@ -69,7 +69,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
                 className="closed-ML-cat"
               >
                 <span
-                  className="icon-url ml-icon"
+                  className="icon-database ml-icon"
                 />
               </div>
             </div>

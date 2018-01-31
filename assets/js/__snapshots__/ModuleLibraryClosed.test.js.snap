@@ -132,7 +132,7 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                     className="closed-ML-cat"
                   >
                     <span
-                      className="icon-url ml-icon"
+                      className="icon-database ml-icon"
                     />
                   </div>
                 </div>

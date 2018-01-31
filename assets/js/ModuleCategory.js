@@ -22,7 +22,7 @@ export default class ModuleCategory extends React.Component {
       collapsed: props.collapsed
     };
     this.toggleCollapse = this.toggleCollapse.bind(this);
-    this.collapseAll = this.collapseAll.bind(this);    
+    this.collapseAll = this.collapseAll.bind(this);
   }
 
   // When our props change, update our collapsed state (this is the other end of setOpenCategory)
@@ -49,8 +49,8 @@ export default class ModuleCategory extends React.Component {
 
     // ??? are these the correct icons per category ???
     const icons = {
-      'Add data': 'url',
-      'Analyse': 'transform',
+      'Add data': 'database',
+      'Analyse': 'wrangle',
       'Code': 'code',
       'Other': 'chart'
     }
