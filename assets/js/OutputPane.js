@@ -290,26 +290,32 @@ export default class OutputPane extends React.Component {
                     width: this.state.width,
                     height: this.state.height,
                 }}
+                minWidth="100%"
+                maxWidth={this.state.maxWidth}
                 onResizeStart={this.resizePaneStart}
                 onResize={this.resizePane}
-                onResizeStop={this.resizePaneEnd}
-                onClick={this.props.toggleFocus} >
+                onResizeStop={this.resizePaneEnd} >
                 {spinner}
-                {this.props.html_output &&
-                <OutputIframe id="output_iframe" selectedWfModule={this.props.selected_wf_module}
-                            revision={this.props.workflow.revision} />
+                {this.props.htmlOutput &&
+                <OutputIframe
+                    id="output_iframe"
+                    selectedWfModuleId={this.props.selectedWfModuleId}
+                    revision={this.props.revision}
+                />
                 }
-                <div className="outputpane-header d-flex flex-row justify-content-start">
-                    <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
-                        <div className='content-4 t-m-gray mb-2'>Rows</div>
-                        <div className='content-2 t-d-gray'>{nrows}</div>
+                <div className="outputpane-table">
+                    <div className="outputpane-header d-flex flex-row justify-content-start">
+                        <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
+                            <div className='content-4 t-m-gray mb-2'>Rows</div>
+                            <div className='content-2 t-d-gray'>{nrows}</div>
+                        </div>
+                        <div className='d-flex flex-column align-items-center justify-content-center'>
+                            <div className='content-4 t-m-gray mb-2'>Columns</div>
+                            <div className='content-2 t-d-gray'>{ncols}</div>
+                        </div>
                     </div>
-                    <div className='d-flex flex-column align-items-center justify-content-center'>
-                        <div className='content-4 t-m-gray mb-2'>Columns</div>
-                        <div className='content-2 t-d-gray'>{ncols}</div>
-                    </div>
+                    {tableView}
                 </div>
-                {tableView}
             </Resizable>
         </div>
     );
