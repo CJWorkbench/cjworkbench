@@ -1,10 +1,8 @@
 import React from 'react'
 import ColumnColorPicker from  './ColumnColorPicker'
-import debounce from 'lodash/debounce'
 import DateScaleSettings from './DateScaleSettings'
 
 /* Flux stores */
-var RendererWrapper = require("chartbuilder/src/js/components/RendererWrapper");
 var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
 var ChartPropertiesStore = require("chartbuilder/src/js/stores/ChartPropertiesStore");
 var ChartMetadataStore = require("chartbuilder/src/js/stores/ChartMetadataStore");
