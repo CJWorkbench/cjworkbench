@@ -241,7 +241,6 @@ export default class OutputPane extends React.Component {
             columns={this.state.tableData.columns}
             getRow={this.getRow}
             resizing={this.state.resizing}
-            onClick={this.props.toggleFocus}
           />
         </div>
       nrows = this.state.tableData.total_rows;
@@ -270,12 +269,12 @@ export default class OutputPane extends React.Component {
 
     return (
         <div className={"outputpane" + (this.props.focus ? " focus" : "")}
-             ref={(ref) => this.state.parentBase = ref} >
+             ref={(ref) => this.state.parentBase = ref}
+             onClick={this.props.setFocus} >
             <Resizable
                 style={{
                     transform: "translateX(" + this.state.leftOffset + "px)"
                 }}
-                ref
                 className="outputpane-box"
                 enable={{
                     top:false,
