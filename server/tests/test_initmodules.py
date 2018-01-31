@@ -192,7 +192,7 @@ class InitmoduleTests(LoggedInTestCase):
         m2 = load_module_from_dict(self.loadcsv2)
         self.assertEqual(m1.id, m2.id)
 
-        self.assertEqual(m2.module.help_url, KB_ROOT_URL)
+        self.assertEqual(m2.module.help_url, '')
 
         # button pspec should be gone
         with self.assertRaises(ParameterSpec.DoesNotExist):
