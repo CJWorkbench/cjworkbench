@@ -3,7 +3,7 @@
 
 import os
 import json
-from cjworkbench.settings import BASE_DIR, KB_ROOT_URL
+from cjworkbench.settings import BASE_DIR
 from server.models import Module, ModuleVersion, WfModule, ParameterSpec, ParameterVal
 
 import logging
@@ -72,7 +72,7 @@ def load_module_from_dict(d):
     module.link = d.get('link', '')
     module.icon = d.get('icon', 'settings')
     module.loads_data = d.get('loads_data', False)
-    module.help_url = d.get('help_url', KB_ROOT_URL)
+    module.help_url = d.get('help_url', '')
 
     module.save()
 

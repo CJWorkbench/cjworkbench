@@ -4,6 +4,7 @@ from server.utils import seconds_to_count_and_units
 from account.utils import user_display
 from django.contrib.auth import get_user_model
 from server.settingsutils import *
+from cjworkbench.settings import KB_ROOT_URL
 
 User = get_user_model()
 
@@ -32,8 +33,13 @@ class ParameterValSerializer(serializers.ModelSerializer):
 
 
 class ModuleSerializer(serializers.ModelSerializer):
+    help_url = serializers.SerializerMethodField()
+
+    def get_help_url(self, obj):
+        return obj.help_url if obj.help_url else KB_ROOT_URL
     class Meta:
         model = Module
+
         fields = ('id', 'id_name', 'name', 'category', 'description', 'link', 'author', 'icon', 'loads_data', 'help_url')
 
 class ModuleVersionSerializer(serializers.ModelSerializer):
