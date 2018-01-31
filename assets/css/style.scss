@@ -1384,10 +1384,6 @@ img.logo {
 }
 
 /* Module Stack */
-.focus {
-  z-index: 2;
-}
-
 .modulestack {
   flex: 0 0 41rem;
   border-left: 1px solid #DDDDDD;
@@ -1396,6 +1392,21 @@ img.logo {
   overflow: scroll;
   height:100vh;
   position: relative;
+}
+.overlapping .modulestack.focus {
+  z-index: 2;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+/* Create an overlay to absorb click events so we don't change settings or set a different
+active wfmodule on focus change */
+.overlapping .modulestack:not(.focus):after {
+  content:' ';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 .modulestack-list {
   min-height:100%;

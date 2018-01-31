@@ -11,14 +11,13 @@
 }
 
 /* This div may be superfluous wrt .outputpane */
-.outputpane-box {
-  height: calc(100% - 6rem);
-  background-color: #F2F2F2;
-  position: relative;
-}
 
-iframe + .outputpane-box {
+iframe + .outputpane-table {
   height: calc(50% - 3rem);
+}
+.outputpane-table {
+  height:100%;
+  position:relative;
 }
 
 .outputpane-header {
@@ -34,4 +33,19 @@ iframe + .outputpane-box {
   left:0;
   right:0;
   bottom:0;
+}
+
+.overlapping .outputpane.focus .outputpane-box {
+  z-index: 2;
+  box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
+}
+
+.overlapping .outputpane:not(.focus):after {
+  content:' ';
+  display: block;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  position:absolute;
 }
