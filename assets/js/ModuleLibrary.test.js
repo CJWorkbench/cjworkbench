@@ -1,8 +1,8 @@
 /**
  * Testing Stories:
- * -In not-read-only, renders <ModuleLibraryOpen> by default in not-read-only 
+ * -In not-read-only, renders <ModuleLibraryOpen> by default in not-read-only
  * -When read-only, renders <ModuleLibraryClosed> without modules.
- * 
+ *
  */
 
 import React from 'react'
@@ -46,11 +46,15 @@ var modules = [
 var api = {
   getModules: jsonResponseMock(modules),
 };
+var libraryOpen = true;
+var setLibraryOpen = function(libraryOpen) {
+    libraryOpen = libraryOpen;
+}
 
 describe('ModuleLibrary', () => {
 
   describe('Not Read-only', () => {
-  
+
     beforeEach(() => wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
         <ModuleLibrary
@@ -59,11 +63,13 @@ describe('ModuleLibrary', () => {
           api={api}
           workflow={workflow}
           isReadOnly={false}
+          libraryOpen={libraryOpen}
+          setLibraryOpen={setLibraryOpen}
         />
       </DragDropContextProvider>
     ));
-    afterEach(() => wrapper.unmount());  
-    
+    afterEach(() => wrapper.unmount());
+
     it('Renders in open state and loads modules', (done) => {
       expect(wrapper).toMatchSnapshot();
       // should have called API for its data on componentDidMount
@@ -84,8 +90,10 @@ describe('ModuleLibrary', () => {
   });
 
   describe('Read-only', () => {
-    
-    beforeEach(() => wrapper = mount(
+
+    beforeEach(() => {
+        libraryOpen = false;
+        wrapper = mount(
       <DragDropContextProvider backend={HTML5Backend}>
         <ModuleLibrary
           addModule={addModule}
@@ -93,11 +101,13 @@ describe('ModuleLibrary', () => {
           api={api}
           workflow={workflow}
           isReadOnly={true}
+          libraryOpen={libraryOpen}
+          setLibraryOpen={setLibraryOpen}
         />
       </DragDropContextProvider>
-    ));
-    afterEach(() => wrapper.unmount());  
-    
+    )});
+    afterEach(() => wrapper.unmount());
+
     it('Renders in closed state, without modules', () => {
       expect(wrapper).toMatchSnapshot();
       // should NOT call getModules (one call from previous test)
@@ -109,5 +119,3 @@ describe('ModuleLibrary', () => {
   });
 
 });
-
-

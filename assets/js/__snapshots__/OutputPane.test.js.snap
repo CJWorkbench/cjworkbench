@@ -11,190 +11,121 @@ exports[`Fetches and renders 1`] = `
   revision={1}
 >
   <div
-    className="outputpane-box"
+    className="outputpane"
   >
-    <div
-      className="outputpane-header d-flex flex-row justify-content-start"
-    >
-      <div
-        className="d-flex flex-column align-items-center justify-content-center mr-5"
-      >
-        <div
-          className="content-4 t-m-gray mb-2"
-        >
-          Rows
-        </div>
-        <div
-          className="content-2 t-d-gray"
-        >
-          2
-        </div>
-      </div>
-      <div
-        className="d-flex flex-column align-items-center justify-content-center"
-      >
-        <div
-          className="content-4 t-m-gray mb-2"
-        >
-          Columns
-        </div>
-        <div
-          className="content-2 t-d-gray"
-        >
-          3
-        </div>
-      </div>
-    </div>
-    <div
-      className="outputpane-data"
-    >
-      <TableView
-        columns={
-          Array [
-            "a",
-            "b",
-            "c",
-          ]
+    <Resizable
+      className="outputpane-box"
+      enable={
+        Object {
+          "bottom": false,
+          "bottomLeft": false,
+          "bottomRight": false,
+          "left": true,
+          "right": false,
+          "top": false,
+          "topLeft": false,
+          "topRight": false,
         }
-        getRow={[Function]}
-        totalRows={2}
+      }
+      grid={
+        Array [
+          1,
+          1,
+        ]
+      }
+      lockAspectRatio={false}
+      lockAspectRatioExtraHeight={0}
+      lockAspectRatioExtraWidth={0}
+      maxWidth="Infinity%"
+      minWidth="100%"
+      onResize={[Function]}
+      onResizeStart={[Function]}
+      onResizeStop={[Function]}
+      size={
+        Object {
+          "height": "100%",
+          "width": "100%",
+        }
+      }
+      style={
+        Object {
+          "transform": "translateX(0px)",
+        }
+      }
+    >
+      <div
+        className="outputpane-box"
+        style={
+          Object {
+            "MozUserSelect": "auto",
+            "MsUserSelect": "auto",
+            "WebkitUserSelect": "auto",
+            "boxSizing": "border-box",
+            "height": "100%",
+            "maxHeight": undefined,
+            "maxWidth": "Infinity%",
+            "minHeight": undefined,
+            "minWidth": "100%",
+            "position": "relative",
+            "transform": "translateX(0px)",
+            "userSelect": "auto",
+            "width": "100%",
+          }
+        }
       >
-        <ReactDataGrid
-          cellNavigationMode="none"
-          columnEquality={[Function]}
-          columns={
-            Array [
-              Object {
-                "formatter": [Function],
-                "key": "row-xxxxxxxxx",
-                "name": "",
-                "width": 40,
-              },
-              Object {
-                "key": "a",
-                "name": "a",
-                "resizable": true,
-              },
-              Object {
-                "key": "b",
-                "name": "b",
-                "resizable": true,
-              },
-              Object {
-                "key": "c",
-                "name": "c",
-                "resizable": true,
-              },
-            ]
-          }
-          enableCellAutoFocus={true}
-          enableCellSelect={false}
-          enableRowSelect={false}
-          headerFiltersHeight={45}
-          minColumnWidth={80}
-          minHeight={-2}
-          minWidth={-2}
-          onBeforeEdit={[Function]}
-          overScan={
-            Object {
-              "colsEnd": 5,
-              "colsStart": 5,
-              "rowsEnd": 5,
-              "rowsStart": 5,
-            }
-          }
-          rowGetter={[Function]}
-          rowHeight={35}
-          rowKey="id"
-          rowScrollTimeout={0}
-          rowsCount={2}
-          scrollToRowIndex={0}
-          tabIndex={-1}
+        <div
+          className="outputpane-table"
         >
           <div
-            className="react-grid-Container"
-            style={
-              Object {
-                "width": -2,
-              }
-            }
+            className="outputpane-header d-flex flex-row justify-content-start"
           >
             <div
-              className="react-grid-Main"
+              className="d-flex flex-column align-items-center justify-content-center mr-5"
             >
-              <Grid
-                cellMetaData={
-                  Object {
-                    "copied": null,
-                    "dragged": null,
-                    "enableCellAutoFocus": true,
-                    "enableCellSelect": false,
-                    "getCellActions": undefined,
-                    "getDataGridDOMNode": [Function],
-                    "handleDragEnterRow": [Function],
-                    "handleTerminateDrag": [Function],
-                    "hoveredRowIdx": undefined,
-                    "isScrollingHorizontallyWithKeyboard": false,
-                    "isScrollingVerticallyWithKeyboard": false,
-                    "onAddSubRow": undefined,
-                    "onCellClick": [Function],
-                    "onCellContextMenu": [Function],
-                    "onCellDoubleClick": [Function],
-                    "onCellExpand": [Function],
-                    "onColumnEvent": [Function],
-                    "onCommit": [Function],
-                    "onCommitCancel": [Function],
-                    "onDeleteSubRow": undefined,
-                    "onDragHandleDoubleClick": [Function],
-                    "onRowExpandToggle": [Function],
-                    "onRowHover": undefined,
-                    "openCellEditor": [Function],
-                    "rowKey": "id",
-                    "selected": Object {
-                      "idx": -1,
-                      "rowIdx": -1,
-                    },
-                  }
-                }
+              <div
+                className="content-4 t-m-gray mb-2"
+              >
+                Rows
+              </div>
+              <div
+                className="content-2 t-d-gray"
+              >
+                2
+              </div>
+            </div>
+            <div
+              className="d-flex flex-column align-items-center justify-content-center"
+            >
+              <div
+                className="content-4 t-m-gray mb-2"
+              >
+                Columns
+              </div>
+              <div
+                className="content-2 t-d-gray"
+              >
+                3
+              </div>
+            </div>
+          </div>
+          <div
+            className="outputpane-data"
+          >
+            <TableView
+              columns={
+                Array [
+                  "a",
+                  "b",
+                  "c",
+                ]
+              }
+              getRow={[Function]}
+              resizing={false}
+              totalRows={2}
+            >
+              <ReactDataGrid
                 cellNavigationMode="none"
                 columnEquality={[Function]}
-                columnMetrics={
-                  Object {
-                    "columns": Array [
-                      Object {
-                        "formatter": [Function],
-                        "key": "row-xxxxxxxxx",
-                        "left": 0,
-                        "name": "",
-                        "width": 40,
-                      },
-                      Object {
-                        "key": "a",
-                        "left": 40,
-                        "name": "a",
-                        "resizable": true,
-                        "width": 80,
-                      },
-                      Object {
-                        "key": "b",
-                        "left": 120,
-                        "name": "b",
-                        "resizable": true,
-                        "width": 80,
-                      },
-                      Object {
-                        "key": "c",
-                        "left": 200,
-                        "name": "c",
-                        "resizable": true,
-                        "width": 80,
-                      },
-                    ],
-                    "minColumnWidth": 80,
-                    "totalWidth": -2,
-                    "width": 40,
-                  }
-                }
                 columns={
                   Array [
                     Object {
@@ -223,29 +154,11 @@ exports[`Fetches and renders 1`] = `
                 enableCellAutoFocus={true}
                 enableCellSelect={false}
                 enableRowSelect={false}
-                expandedRows={Array []}
                 headerFiltersHeight={45}
-                headerRows={
-                  Array [
-                    Object {
-                      "height": 35,
-                      "ref": [Function],
-                      "rowType": "header",
-                    },
-                  ]
-                }
                 minColumnWidth={80}
                 minHeight={-2}
                 minWidth={-2}
                 onBeforeEdit={[Function]}
-                onColumnResize={[Function]}
-                onSort={[Function]}
-                onViewportClick={[Function]}
-                onViewportDoubleClick={[Function]}
-                onViewportDragEnd={[Function]}
-                onViewportDragStart={[Function]}
-                onViewportKeydown={[Function]}
-                onViewportKeyup={[Function]}
                 overScan={
                   Object {
                     "colsEnd": 5,
@@ -257,494 +170,23 @@ exports[`Fetches and renders 1`] = `
                 rowGetter={[Function]}
                 rowHeight={35}
                 rowKey="id"
-                rowOffsetHeight={35}
                 rowScrollTimeout={0}
-                rowSelection={null}
                 rowsCount={2}
                 scrollToRowIndex={0}
-                selectedRows={Array []}
-                sortColumn={null}
-                sortDirection={null}
                 tabIndex={-1}
-                totalWidth={-2}
               >
                 <div
-                  className="react-grid-Grid"
+                  className="react-grid-Container"
                   style={
                     Object {
-                      "minHeight": -2,
-                      "outline": 0,
-                      "overflow": "hidden",
-                      "position": "relative",
+                      "width": -2,
                     }
                   }
                 >
-                  <Header
-                    cellMetaData={
-                      Object {
-                        "copied": null,
-                        "dragged": null,
-                        "enableCellAutoFocus": true,
-                        "enableCellSelect": false,
-                        "getCellActions": undefined,
-                        "getDataGridDOMNode": [Function],
-                        "handleDragEnterRow": [Function],
-                        "handleTerminateDrag": [Function],
-                        "hoveredRowIdx": undefined,
-                        "isScrollingHorizontallyWithKeyboard": false,
-                        "isScrollingVerticallyWithKeyboard": false,
-                        "onAddSubRow": undefined,
-                        "onCellClick": [Function],
-                        "onCellContextMenu": [Function],
-                        "onCellDoubleClick": [Function],
-                        "onCellExpand": [Function],
-                        "onColumnEvent": [Function],
-                        "onCommit": [Function],
-                        "onCommitCancel": [Function],
-                        "onDeleteSubRow": undefined,
-                        "onDragHandleDoubleClick": [Function],
-                        "onRowExpandToggle": [Function],
-                        "onRowHover": undefined,
-                        "openCellEditor": [Function],
-                        "rowKey": "id",
-                        "selected": Object {
-                          "idx": -1,
-                          "rowIdx": -1,
-                        },
-                      }
-                    }
-                    columnMetrics={
-                      Object {
-                        "columns": Array [
-                          Object {
-                            "formatter": [Function],
-                            "key": "row-xxxxxxxxx",
-                            "left": 0,
-                            "name": "",
-                            "width": 40,
-                          },
-                          Object {
-                            "key": "a",
-                            "left": 40,
-                            "name": "a",
-                            "resizable": true,
-                            "width": 80,
-                          },
-                          Object {
-                            "key": "b",
-                            "left": 120,
-                            "name": "b",
-                            "resizable": true,
-                            "width": 80,
-                          },
-                          Object {
-                            "key": "c",
-                            "left": 200,
-                            "name": "c",
-                            "resizable": true,
-                            "width": 80,
-                          },
-                        ],
-                        "minColumnWidth": 80,
-                        "totalWidth": -2,
-                        "width": 40,
-                      }
-                    }
-                    headerRows={
-                      Array [
-                        Object {
-                          "height": 35,
-                          "ref": [Function],
-                          "rowType": "header",
-                        },
-                      ]
-                    }
-                    height={35}
-                    onColumnResize={[Function]}
-                    onScroll={[Function]}
-                    onSort={[Function]}
-                    sortColumn={null}
-                    sortDirection={null}
-                    totalWidth={-2}
-                  >
-                    <div
-                      className="react-grid-Header"
-                      height={35}
-                      onClick={[Function]}
-                      onScroll={[Function]}
-                      style={
-                        Object {
-                          "height": 35,
-                          "position": "relative",
-                        }
-                      }
-                    >
-                      <HeaderRow
-                        columns={
-                          Array [
-                            Object {
-                              "formatter": [Function],
-                              "key": "row-xxxxxxxxx",
-                              "left": 0,
-                              "name": "",
-                              "width": 40,
-                            },
-                            Object {
-                              "key": "a",
-                              "left": 40,
-                              "name": "a",
-                              "resizable": true,
-                              "width": 80,
-                            },
-                            Object {
-                              "key": "b",
-                              "left": 120,
-                              "name": "b",
-                              "resizable": true,
-                              "width": 80,
-                            },
-                            Object {
-                              "key": "c",
-                              "left": 200,
-                              "name": "c",
-                              "resizable": true,
-                              "width": 80,
-                            },
-                          ]
-                        }
-                        height={35}
-                        onColumnResize={[Function]}
-                        onColumnResizeEnd={[Function]}
-                        onScroll={[Function]}
-                        onSort={[Function]}
-                        rowType="header"
-                        sortColumn={null}
-                        sortDirection={null}
-                        style={
-                          Object {
-                            "left": 0,
-                            "minHeight": "auto",
-                            "overflowX": "hidden",
-                            "position": "absolute",
-                            "top": 0,
-                            "width": -2,
-                          }
-                        }
-                        width={40}
-                      >
-                        <div
-                          className="react-grid-HeaderRow"
-                          height={35}
-                          onScroll={[Function]}
-                          style={
-                            Object {
-                              "left": 0,
-                              "minHeight": "auto",
-                              "overflowX": "hidden",
-                              "position": "absolute",
-                              "top": 0,
-                              "width": -2,
-                            }
-                          }
-                          width={40}
-                        >
-                          <div
-                            style={
-                              Object {
-                                "height": 35,
-                                "overflowX": "hidden",
-                                "overflowY": "hidden",
-                                "whiteSpace": "nowrap",
-                                "width": 40,
-                              }
-                            }
-                          >
-                            <HeaderCell
-                              column={
-                                Object {
-                                  "formatter": [Function],
-                                  "key": "row-xxxxxxxxx",
-                                  "left": 0,
-                                  "name": "",
-                                  "rowType": "header",
-                                  "width": 40,
-                                }
-                              }
-                              height={35}
-                              onResize={[Function]}
-                              onResizeEnd={[Function]}
-                              renderer={[Function]}
-                              resizing={false}
-                            >
-                              <div
-                                className="react-grid-HeaderCell"
-                                style={
-                                  Object {
-                                    "display": "inline-block",
-                                    "height": 35,
-                                    "left": 0,
-                                    "margin": 0,
-                                    "position": "absolute",
-                                    "textOverflow": "ellipsis",
-                                    "whiteSpace": "nowrap",
-                                    "width": 40,
-                                  }
-                                }
-                              >
-                                <div
-                                  className="widget-HeaderCell__value"
-                                />
-                              </div>
-                            </HeaderCell>
-                            <HeaderCell
-                              column={
-                                Object {
-                                  "key": "a",
-                                  "left": 40,
-                                  "name": "a",
-                                  "resizable": true,
-                                  "rowType": "header",
-                                  "width": 80,
-                                }
-                              }
-                              height={35}
-                              onResize={[Function]}
-                              onResizeEnd={[Function]}
-                              renderer={[Function]}
-                              resizing={false}
-                            >
-                              <div
-                                className="react-grid-HeaderCell"
-                                style={
-                                  Object {
-                                    "display": "inline-block",
-                                    "height": 35,
-                                    "left": 40,
-                                    "margin": 0,
-                                    "position": "absolute",
-                                    "textOverflow": "ellipsis",
-                                    "whiteSpace": "nowrap",
-                                    "width": 80,
-                                  }
-                                }
-                              >
-                                <div
-                                  className="widget-HeaderCell__value"
-                                >
-                                  a
-                                </div>
-                                <ResizeHandle
-                                  onDrag={[Function]}
-                                  onDragEnd={[Function]}
-                                  onDragStart={[Function]}
-                                >
-                                  <Draggable
-                                    className="react-grid-HeaderCell__resizeHandle"
-                                    onDrag={[Function]}
-                                    onDragEnd={[Function]}
-                                    onDragStart={[Function]}
-                                    style={
-                                      Object {
-                                        "height": "100%",
-                                        "position": "absolute",
-                                        "right": 0,
-                                        "top": 0,
-                                        "width": 6,
-                                      }
-                                    }
-                                  >
-                                    <div
-                                      className="react-grid-HeaderCell__draggable"
-                                      onDrag={[Function]}
-                                      onDragEnd={[Function]}
-                                      onDragStart={[Function]}
-                                      onMouseDown={[Function]}
-                                      onTouchStart={[Function]}
-                                      style={
-                                        Object {
-                                          "height": "100%",
-                                          "position": "absolute",
-                                          "right": 0,
-                                          "top": 0,
-                                          "width": 6,
-                                        }
-                                      }
-                                    />
-                                  </Draggable>
-                                </ResizeHandle>
-                              </div>
-                            </HeaderCell>
-                            <HeaderCell
-                              column={
-                                Object {
-                                  "key": "b",
-                                  "left": 120,
-                                  "name": "b",
-                                  "resizable": true,
-                                  "rowType": "header",
-                                  "width": 80,
-                                }
-                              }
-                              height={35}
-                              onResize={[Function]}
-                              onResizeEnd={[Function]}
-                              renderer={[Function]}
-                              resizing={false}
-                            >
-                              <div
-                                className="react-grid-HeaderCell"
-                                style={
-                                  Object {
-                                    "display": "inline-block",
-                                    "height": 35,
-                                    "left": 120,
-                                    "margin": 0,
-                                    "position": "absolute",
-                                    "textOverflow": "ellipsis",
-                                    "whiteSpace": "nowrap",
-                                    "width": 80,
-                                  }
-                                }
-                              >
-                                <div
-                                  className="widget-HeaderCell__value"
-                                >
-                                  b
-                                </div>
-                                <ResizeHandle
-                                  onDrag={[Function]}
-                                  onDragEnd={[Function]}
-                                  onDragStart={[Function]}
-                                >
-                                  <Draggable
-                                    className="react-grid-HeaderCell__resizeHandle"
-                                    onDrag={[Function]}
-                                    onDragEnd={[Function]}
-                                    onDragStart={[Function]}
-                                    style={
-                                      Object {
-                                        "height": "100%",
-                                        "position": "absolute",
-                                        "right": 0,
-                                        "top": 0,
-                                        "width": 6,
-                                      }
-                                    }
-                                  >
-                                    <div
-                                      className="react-grid-HeaderCell__draggable"
-                                      onDrag={[Function]}
-                                      onDragEnd={[Function]}
-                                      onDragStart={[Function]}
-                                      onMouseDown={[Function]}
-                                      onTouchStart={[Function]}
-                                      style={
-                                        Object {
-                                          "height": "100%",
-                                          "position": "absolute",
-                                          "right": 0,
-                                          "top": 0,
-                                          "width": 6,
-                                        }
-                                      }
-                                    />
-                                  </Draggable>
-                                </ResizeHandle>
-                              </div>
-                            </HeaderCell>
-                            <HeaderCell
-                              column={
-                                Object {
-                                  "key": "c",
-                                  "left": 200,
-                                  "name": "c",
-                                  "resizable": true,
-                                  "rowType": "header",
-                                  "width": 80,
-                                }
-                              }
-                              height={35}
-                              onResize={[Function]}
-                              onResizeEnd={[Function]}
-                              renderer={[Function]}
-                              resizing={false}
-                            >
-                              <div
-                                className="react-grid-HeaderCell"
-                                style={
-                                  Object {
-                                    "display": "inline-block",
-                                    "height": 35,
-                                    "left": 200,
-                                    "margin": 0,
-                                    "position": "absolute",
-                                    "textOverflow": "ellipsis",
-                                    "whiteSpace": "nowrap",
-                                    "width": 80,
-                                  }
-                                }
-                              >
-                                <div
-                                  className="widget-HeaderCell__value"
-                                >
-                                  c
-                                </div>
-                                <ResizeHandle
-                                  onDrag={[Function]}
-                                  onDragEnd={[Function]}
-                                  onDragStart={[Function]}
-                                >
-                                  <Draggable
-                                    className="react-grid-HeaderCell__resizeHandle"
-                                    onDrag={[Function]}
-                                    onDragEnd={[Function]}
-                                    onDragStart={[Function]}
-                                    style={
-                                      Object {
-                                        "height": "100%",
-                                        "position": "absolute",
-                                        "right": 0,
-                                        "top": 0,
-                                        "width": 6,
-                                      }
-                                    }
-                                  >
-                                    <div
-                                      className="react-grid-HeaderCell__draggable"
-                                      onDrag={[Function]}
-                                      onDragEnd={[Function]}
-                                      onDragStart={[Function]}
-                                      onMouseDown={[Function]}
-                                      onTouchStart={[Function]}
-                                      style={
-                                        Object {
-                                          "height": "100%",
-                                          "position": "absolute",
-                                          "right": 0,
-                                          "top": 0,
-                                          "width": 6,
-                                        }
-                                      }
-                                    />
-                                  </Draggable>
-                                </ResizeHandle>
-                              </div>
-                            </HeaderCell>
-                          </div>
-                        </div>
-                      </HeaderRow>
-                    </div>
-                  </Header>
                   <div
-                    onClick={[Function]}
-                    onDoubleClick={[Function]}
-                    onDragEnd={[Function]}
-                    onDragStart={[Function]}
-                    onKeyDown={[Function]}
-                    onKeyUp={[Function]}
-                    tabIndex={-1}
+                    className="react-grid-Main"
                   >
-                    <Viewport
+                    <Grid
                       cellMetaData={
                         Object {
                           "copied": null,
@@ -778,6 +220,8 @@ exports[`Fetches and renders 1`] = `
                           },
                         }
                       }
+                      cellNavigationMode="none"
+                      columnEquality={[Function]}
                       columnMetrics={
                         Object {
                           "columns": Array [
@@ -815,9 +259,57 @@ exports[`Fetches and renders 1`] = `
                           "width": 40,
                         }
                       }
+                      columns={
+                        Array [
+                          Object {
+                            "formatter": [Function],
+                            "key": "row-xxxxxxxxx",
+                            "name": "",
+                            "width": 40,
+                          },
+                          Object {
+                            "key": "a",
+                            "name": "a",
+                            "resizable": true,
+                          },
+                          Object {
+                            "key": "b",
+                            "name": "b",
+                            "resizable": true,
+                          },
+                          Object {
+                            "key": "c",
+                            "name": "c",
+                            "resizable": true,
+                          },
+                        ]
+                      }
+                      enableCellAutoFocus={true}
+                      enableCellSelect={false}
+                      enableRowSelect={false}
                       expandedRows={Array []}
+                      headerFiltersHeight={45}
+                      headerRows={
+                        Array [
+                          Object {
+                            "height": 35,
+                            "ref": [Function],
+                            "rowType": "header",
+                          },
+                        ]
+                      }
+                      minColumnWidth={80}
                       minHeight={-2}
-                      onScroll={[Function]}
+                      minWidth={-2}
+                      onBeforeEdit={[Function]}
+                      onColumnResize={[Function]}
+                      onSort={[Function]}
+                      onViewportClick={[Function]}
+                      onViewportDoubleClick={[Function]}
+                      onViewportDragEnd={[Function]}
+                      onViewportDragStart={[Function]}
+                      onViewportKeydown={[Function]}
+                      onViewportKeyup={[Function]}
                       overScan={
                         Object {
                           "colsEnd": 5,
@@ -835,24 +327,23 @@ exports[`Fetches and renders 1`] = `
                       rowsCount={2}
                       scrollToRowIndex={0}
                       selectedRows={Array []}
+                      sortColumn={null}
+                      sortDirection={null}
+                      tabIndex={-1}
                       totalWidth={-2}
-                      width={40}
                     >
                       <div
-                        className="react-grid-Viewport"
+                        className="react-grid-Grid"
                         style={
                           Object {
-                            "bottom": 0,
-                            "left": 0,
+                            "minHeight": -2,
+                            "outline": 0,
                             "overflow": "hidden",
-                            "padding": 0,
-                            "position": "absolute",
-                            "right": 0,
-                            "top": 35,
+                            "position": "relative",
                           }
                         }
                       >
-                        <Canvas
+                        <Header
                           cellMetaData={
                             Object {
                               "copied": null,
@@ -886,220 +377,819 @@ exports[`Fetches and renders 1`] = `
                               },
                             }
                           }
-                          colDisplayEnd={4}
-                          colDisplayStart={0}
-                          colVisibleEnd={4}
-                          colVisibleStart={0}
-                          columns={
+                          columnMetrics={
+                            Object {
+                              "columns": Array [
+                                Object {
+                                  "formatter": [Function],
+                                  "key": "row-xxxxxxxxx",
+                                  "left": 0,
+                                  "name": "",
+                                  "width": 40,
+                                },
+                                Object {
+                                  "key": "a",
+                                  "left": 40,
+                                  "name": "a",
+                                  "resizable": true,
+                                  "width": 80,
+                                },
+                                Object {
+                                  "key": "b",
+                                  "left": 120,
+                                  "name": "b",
+                                  "resizable": true,
+                                  "width": 80,
+                                },
+                                Object {
+                                  "key": "c",
+                                  "left": 200,
+                                  "name": "c",
+                                  "resizable": true,
+                                  "width": 80,
+                                },
+                              ],
+                              "minColumnWidth": 80,
+                              "totalWidth": -2,
+                              "width": 40,
+                            }
+                          }
+                          headerRows={
                             Array [
                               Object {
-                                "formatter": [Function],
-                                "key": "row-xxxxxxxxx",
-                                "left": 0,
-                                "name": "",
-                                "width": 40,
-                              },
-                              Object {
-                                "key": "a",
-                                "left": 40,
-                                "name": "a",
-                                "resizable": true,
-                                "width": 80,
-                              },
-                              Object {
-                                "key": "b",
-                                "left": 120,
-                                "name": "b",
-                                "resizable": true,
-                                "width": 80,
-                              },
-                              Object {
-                                "key": "c",
-                                "left": 200,
-                                "name": "c",
-                                "resizable": true,
-                                "width": 80,
+                                "height": 35,
+                                "ref": [Function],
+                                "rowType": "header",
                               },
                             ]
                           }
-                          displayEnd={-4}
-                          displayStart={0}
-                          expandedRows={Array []}
-                          height={-37}
-                          isScrolling={false}
-                          onRows={[Function]}
+                          height={35}
+                          onColumnResize={[Function]}
                           onScroll={[Function]}
-                          rowGetter={[Function]}
-                          rowHeight={35}
-                          rowKey="id"
-                          rowRenderer={[Function]}
-                          rowScrollTimeout={0}
-                          rowSelection={null}
-                          rowsCount={2}
-                          scrollToRowIndex={0}
-                          selectedRows={Array []}
+                          onSort={[Function]}
+                          sortColumn={null}
+                          sortDirection={null}
                           totalWidth={-2}
-                          visibleEnd={-4}
-                          visibleStart={0}
-                          width={40}
                         >
                           <div
-                            className="react-grid-Canvas"
+                            className="react-grid-Header"
+                            height={35}
+                            onClick={[Function]}
                             onScroll={[Function]}
                             style={
                               Object {
-                                "height": -37,
-                                "left": 0,
-                                "overflowX": "auto",
-                                "overflowY": "scroll",
-                                "position": "absolute",
-                                "top": 0,
-                                "width": -2,
+                                "height": 35,
+                                "position": "relative",
                               }
                             }
                           >
-                            <RowsContainer
-                              idx={-1}
-                              rowIdx={-1}
-                              rows={
+                            <HeaderRow
+                              columns={
                                 Array [
-                                  <div
-                                    style={
-                                        Object {
-                                            "height": 210,
-                                          }
-                                    }
-                                >
-                                    <div
-                                        style={
-                                            Object {
-                                                "width": 40,
-                                              }
-                                        }
-                                    />
-                                    <div
-                                        style={
-                                            Object {
-                                                "width": 80,
-                                              }
-                                        }
-                                    />
-                                    <div
-                                        style={
-                                            Object {
-                                                "width": 80,
-                                              }
-                                        }
-                                    />
-                                    <div
-                                        style={
-                                            Object {
-                                                "width": 80,
-                                              }
-                                        }
-                                    />
-                                </div>,
+                                  Object {
+                                    "formatter": [Function],
+                                    "key": "row-xxxxxxxxx",
+                                    "left": 0,
+                                    "name": "",
+                                    "width": 40,
+                                  },
+                                  Object {
+                                    "key": "a",
+                                    "left": 40,
+                                    "name": "a",
+                                    "resizable": true,
+                                    "width": 80,
+                                  },
+                                  Object {
+                                    "key": "b",
+                                    "left": 120,
+                                    "name": "b",
+                                    "resizable": true,
+                                    "width": 80,
+                                  },
+                                  Object {
+                                    "key": "c",
+                                    "left": 200,
+                                    "name": "c",
+                                    "resizable": true,
+                                    "width": 80,
+                                  },
                                 ]
+                              }
+                              height={35}
+                              onColumnResize={[Function]}
+                              onColumnResizeEnd={[Function]}
+                              onScroll={[Function]}
+                              onSort={[Function]}
+                              rowType="header"
+                              sortColumn={null}
+                              sortDirection={null}
+                              style={
+                                Object {
+                                  "left": 0,
+                                  "minHeight": "auto",
+                                  "overflowX": "hidden",
+                                  "position": "absolute",
+                                  "top": 0,
+                                  "width": -2,
+                                }
                               }
                               width={40}
                             >
-                              <SimpleRowsContainer
-                                idx={-1}
-                                rowIdx={-1}
-                                rows={
-                                  Array [
-                                    <div
-                                      style={
-                                          Object {
-                                              "height": 210,
-                                            }
-                                      }
-                                  >
-                                      <div
-                                          style={
-                                              Object {
-                                                  "width": 40,
-                                                }
-                                          }
-                                      />
-                                      <div
-                                          style={
-                                              Object {
-                                                  "width": 80,
-                                                }
-                                          }
-                                      />
-                                      <div
-                                          style={
-                                              Object {
-                                                  "width": 80,
-                                                }
-                                          }
-                                      />
-                                      <div
-                                          style={
-                                              Object {
-                                                  "width": 80,
-                                                }
-                                          }
-                                      />
-                                  </div>,
-                                  ]
+                              <div
+                                className="react-grid-HeaderRow"
+                                height={35}
+                                onScroll={[Function]}
+                                style={
+                                  Object {
+                                    "left": 0,
+                                    "minHeight": "auto",
+                                    "overflowX": "hidden",
+                                    "position": "absolute",
+                                    "top": 0,
+                                    "width": -2,
+                                  }
                                 }
                                 width={40}
                               >
-                                <div>
-                                  <div
-                                    style={
+                                <div
+                                  style={
+                                    Object {
+                                      "height": 35,
+                                      "overflowX": "hidden",
+                                      "overflowY": "hidden",
+                                      "whiteSpace": "nowrap",
+                                      "width": 40,
+                                    }
+                                  }
+                                >
+                                  <HeaderCell
+                                    column={
                                       Object {
-                                        "height": 210,
+                                        "formatter": [Function],
+                                        "key": "row-xxxxxxxxx",
+                                        "left": 0,
+                                        "name": "",
+                                        "rowType": "header",
+                                        "width": 40,
                                       }
                                     }
+                                    height={35}
+                                    onResize={[Function]}
+                                    onResizeEnd={[Function]}
+                                    renderer={[Function]}
+                                    resizing={false}
                                   >
                                     <div
+                                      className="react-grid-HeaderCell"
                                       style={
                                         Object {
+                                          "display": "inline-block",
+                                          "height": 35,
+                                          "left": 0,
+                                          "margin": 0,
+                                          "position": "absolute",
+                                          "textOverflow": "ellipsis",
+                                          "whiteSpace": "nowrap",
                                           "width": 40,
                                         }
                                       }
-                                    />
+                                    >
+                                      <div
+                                        className="widget-HeaderCell__value"
+                                      />
+                                    </div>
+                                  </HeaderCell>
+                                  <HeaderCell
+                                    column={
+                                      Object {
+                                        "key": "a",
+                                        "left": 40,
+                                        "name": "a",
+                                        "resizable": true,
+                                        "rowType": "header",
+                                        "width": 80,
+                                      }
+                                    }
+                                    height={35}
+                                    onResize={[Function]}
+                                    onResizeEnd={[Function]}
+                                    renderer={[Function]}
+                                    resizing={false}
+                                  >
                                     <div
+                                      className="react-grid-HeaderCell"
                                       style={
                                         Object {
+                                          "display": "inline-block",
+                                          "height": 35,
+                                          "left": 40,
+                                          "margin": 0,
+                                          "position": "absolute",
+                                          "textOverflow": "ellipsis",
+                                          "whiteSpace": "nowrap",
                                           "width": 80,
                                         }
                                       }
-                                    />
+                                    >
+                                      <div
+                                        className="widget-HeaderCell__value"
+                                      >
+                                        a
+                                      </div>
+                                      <ResizeHandle
+                                        onDrag={[Function]}
+                                        onDragEnd={[Function]}
+                                        onDragStart={[Function]}
+                                      >
+                                        <Draggable
+                                          className="react-grid-HeaderCell__resizeHandle"
+                                          onDrag={[Function]}
+                                          onDragEnd={[Function]}
+                                          onDragStart={[Function]}
+                                          style={
+                                            Object {
+                                              "height": "100%",
+                                              "position": "absolute",
+                                              "right": 0,
+                                              "top": 0,
+                                              "width": 6,
+                                            }
+                                          }
+                                        >
+                                          <div
+                                            className="react-grid-HeaderCell__draggable"
+                                            onDrag={[Function]}
+                                            onDragEnd={[Function]}
+                                            onDragStart={[Function]}
+                                            onMouseDown={[Function]}
+                                            onTouchStart={[Function]}
+                                            style={
+                                              Object {
+                                                "height": "100%",
+                                                "position": "absolute",
+                                                "right": 0,
+                                                "top": 0,
+                                                "width": 6,
+                                              }
+                                            }
+                                          />
+                                        </Draggable>
+                                      </ResizeHandle>
+                                    </div>
+                                  </HeaderCell>
+                                  <HeaderCell
+                                    column={
+                                      Object {
+                                        "key": "b",
+                                        "left": 120,
+                                        "name": "b",
+                                        "resizable": true,
+                                        "rowType": "header",
+                                        "width": 80,
+                                      }
+                                    }
+                                    height={35}
+                                    onResize={[Function]}
+                                    onResizeEnd={[Function]}
+                                    renderer={[Function]}
+                                    resizing={false}
+                                  >
                                     <div
+                                      className="react-grid-HeaderCell"
                                       style={
                                         Object {
+                                          "display": "inline-block",
+                                          "height": 35,
+                                          "left": 120,
+                                          "margin": 0,
+                                          "position": "absolute",
+                                          "textOverflow": "ellipsis",
+                                          "whiteSpace": "nowrap",
                                           "width": 80,
                                         }
                                       }
-                                    />
+                                    >
+                                      <div
+                                        className="widget-HeaderCell__value"
+                                      >
+                                        b
+                                      </div>
+                                      <ResizeHandle
+                                        onDrag={[Function]}
+                                        onDragEnd={[Function]}
+                                        onDragStart={[Function]}
+                                      >
+                                        <Draggable
+                                          className="react-grid-HeaderCell__resizeHandle"
+                                          onDrag={[Function]}
+                                          onDragEnd={[Function]}
+                                          onDragStart={[Function]}
+                                          style={
+                                            Object {
+                                              "height": "100%",
+                                              "position": "absolute",
+                                              "right": 0,
+                                              "top": 0,
+                                              "width": 6,
+                                            }
+                                          }
+                                        >
+                                          <div
+                                            className="react-grid-HeaderCell__draggable"
+                                            onDrag={[Function]}
+                                            onDragEnd={[Function]}
+                                            onDragStart={[Function]}
+                                            onMouseDown={[Function]}
+                                            onTouchStart={[Function]}
+                                            style={
+                                              Object {
+                                                "height": "100%",
+                                                "position": "absolute",
+                                                "right": 0,
+                                                "top": 0,
+                                                "width": 6,
+                                              }
+                                            }
+                                          />
+                                        </Draggable>
+                                      </ResizeHandle>
+                                    </div>
+                                  </HeaderCell>
+                                  <HeaderCell
+                                    column={
+                                      Object {
+                                        "key": "c",
+                                        "left": 200,
+                                        "name": "c",
+                                        "resizable": true,
+                                        "rowType": "header",
+                                        "width": 80,
+                                      }
+                                    }
+                                    height={35}
+                                    onResize={[Function]}
+                                    onResizeEnd={[Function]}
+                                    renderer={[Function]}
+                                    resizing={false}
+                                  >
                                     <div
+                                      className="react-grid-HeaderCell"
                                       style={
                                         Object {
+                                          "display": "inline-block",
+                                          "height": 35,
+                                          "left": 200,
+                                          "margin": 0,
+                                          "position": "absolute",
+                                          "textOverflow": "ellipsis",
+                                          "whiteSpace": "nowrap",
                                           "width": 80,
                                         }
                                       }
-                                    />
-                                  </div>
+                                    >
+                                      <div
+                                        className="widget-HeaderCell__value"
+                                      >
+                                        c
+                                      </div>
+                                      <ResizeHandle
+                                        onDrag={[Function]}
+                                        onDragEnd={[Function]}
+                                        onDragStart={[Function]}
+                                      >
+                                        <Draggable
+                                          className="react-grid-HeaderCell__resizeHandle"
+                                          onDrag={[Function]}
+                                          onDragEnd={[Function]}
+                                          onDragStart={[Function]}
+                                          style={
+                                            Object {
+                                              "height": "100%",
+                                              "position": "absolute",
+                                              "right": 0,
+                                              "top": 0,
+                                              "width": 6,
+                                            }
+                                          }
+                                        >
+                                          <div
+                                            className="react-grid-HeaderCell__draggable"
+                                            onDrag={[Function]}
+                                            onDragEnd={[Function]}
+                                            onDragStart={[Function]}
+                                            onMouseDown={[Function]}
+                                            onTouchStart={[Function]}
+                                            style={
+                                              Object {
+                                                "height": "100%",
+                                                "position": "absolute",
+                                                "right": 0,
+                                                "top": 0,
+                                                "width": 6,
+                                              }
+                                            }
+                                          />
+                                        </Draggable>
+                                      </ResizeHandle>
+                                    </div>
+                                  </HeaderCell>
                                 </div>
-                              </SimpleRowsContainer>
-                            </RowsContainer>
+                              </div>
+                            </HeaderRow>
                           </div>
-                        </Canvas>
+                        </Header>
+                        <div
+                          onClick={[Function]}
+                          onDoubleClick={[Function]}
+                          onDragEnd={[Function]}
+                          onDragStart={[Function]}
+                          onKeyDown={[Function]}
+                          onKeyUp={[Function]}
+                          tabIndex={-1}
+                        >
+                          <Viewport
+                            cellMetaData={
+                              Object {
+                                "copied": null,
+                                "dragged": null,
+                                "enableCellAutoFocus": true,
+                                "enableCellSelect": false,
+                                "getCellActions": undefined,
+                                "getDataGridDOMNode": [Function],
+                                "handleDragEnterRow": [Function],
+                                "handleTerminateDrag": [Function],
+                                "hoveredRowIdx": undefined,
+                                "isScrollingHorizontallyWithKeyboard": false,
+                                "isScrollingVerticallyWithKeyboard": false,
+                                "onAddSubRow": undefined,
+                                "onCellClick": [Function],
+                                "onCellContextMenu": [Function],
+                                "onCellDoubleClick": [Function],
+                                "onCellExpand": [Function],
+                                "onColumnEvent": [Function],
+                                "onCommit": [Function],
+                                "onCommitCancel": [Function],
+                                "onDeleteSubRow": undefined,
+                                "onDragHandleDoubleClick": [Function],
+                                "onRowExpandToggle": [Function],
+                                "onRowHover": undefined,
+                                "openCellEditor": [Function],
+                                "rowKey": "id",
+                                "selected": Object {
+                                  "idx": -1,
+                                  "rowIdx": -1,
+                                },
+                              }
+                            }
+                            columnMetrics={
+                              Object {
+                                "columns": Array [
+                                  Object {
+                                    "formatter": [Function],
+                                    "key": "row-xxxxxxxxx",
+                                    "left": 0,
+                                    "name": "",
+                                    "width": 40,
+                                  },
+                                  Object {
+                                    "key": "a",
+                                    "left": 40,
+                                    "name": "a",
+                                    "resizable": true,
+                                    "width": 80,
+                                  },
+                                  Object {
+                                    "key": "b",
+                                    "left": 120,
+                                    "name": "b",
+                                    "resizable": true,
+                                    "width": 80,
+                                  },
+                                  Object {
+                                    "key": "c",
+                                    "left": 200,
+                                    "name": "c",
+                                    "resizable": true,
+                                    "width": 80,
+                                  },
+                                ],
+                                "minColumnWidth": 80,
+                                "totalWidth": -2,
+                                "width": 40,
+                              }
+                            }
+                            expandedRows={Array []}
+                            minHeight={-2}
+                            onScroll={[Function]}
+                            overScan={
+                              Object {
+                                "colsEnd": 5,
+                                "colsStart": 5,
+                                "rowsEnd": 5,
+                                "rowsStart": 5,
+                              }
+                            }
+                            rowGetter={[Function]}
+                            rowHeight={35}
+                            rowKey="id"
+                            rowOffsetHeight={35}
+                            rowScrollTimeout={0}
+                            rowSelection={null}
+                            rowsCount={2}
+                            scrollToRowIndex={0}
+                            selectedRows={Array []}
+                            totalWidth={-2}
+                            width={40}
+                          >
+                            <div
+                              className="react-grid-Viewport"
+                              style={
+                                Object {
+                                  "bottom": 0,
+                                  "left": 0,
+                                  "overflow": "hidden",
+                                  "padding": 0,
+                                  "position": "absolute",
+                                  "right": 0,
+                                  "top": 35,
+                                }
+                              }
+                            >
+                              <Canvas
+                                cellMetaData={
+                                  Object {
+                                    "copied": null,
+                                    "dragged": null,
+                                    "enableCellAutoFocus": true,
+                                    "enableCellSelect": false,
+                                    "getCellActions": undefined,
+                                    "getDataGridDOMNode": [Function],
+                                    "handleDragEnterRow": [Function],
+                                    "handleTerminateDrag": [Function],
+                                    "hoveredRowIdx": undefined,
+                                    "isScrollingHorizontallyWithKeyboard": false,
+                                    "isScrollingVerticallyWithKeyboard": false,
+                                    "onAddSubRow": undefined,
+                                    "onCellClick": [Function],
+                                    "onCellContextMenu": [Function],
+                                    "onCellDoubleClick": [Function],
+                                    "onCellExpand": [Function],
+                                    "onColumnEvent": [Function],
+                                    "onCommit": [Function],
+                                    "onCommitCancel": [Function],
+                                    "onDeleteSubRow": undefined,
+                                    "onDragHandleDoubleClick": [Function],
+                                    "onRowExpandToggle": [Function],
+                                    "onRowHover": undefined,
+                                    "openCellEditor": [Function],
+                                    "rowKey": "id",
+                                    "selected": Object {
+                                      "idx": -1,
+                                      "rowIdx": -1,
+                                    },
+                                  }
+                                }
+                                colDisplayEnd={4}
+                                colDisplayStart={0}
+                                colVisibleEnd={4}
+                                colVisibleStart={0}
+                                columns={
+                                  Array [
+                                    Object {
+                                      "formatter": [Function],
+                                      "key": "row-xxxxxxxxx",
+                                      "left": 0,
+                                      "name": "",
+                                      "width": 40,
+                                    },
+                                    Object {
+                                      "key": "a",
+                                      "left": 40,
+                                      "name": "a",
+                                      "resizable": true,
+                                      "width": 80,
+                                    },
+                                    Object {
+                                      "key": "b",
+                                      "left": 120,
+                                      "name": "b",
+                                      "resizable": true,
+                                      "width": 80,
+                                    },
+                                    Object {
+                                      "key": "c",
+                                      "left": 200,
+                                      "name": "c",
+                                      "resizable": true,
+                                      "width": 80,
+                                    },
+                                  ]
+                                }
+                                displayEnd={-4}
+                                displayStart={0}
+                                expandedRows={Array []}
+                                height={-37}
+                                isScrolling={false}
+                                onRows={[Function]}
+                                onScroll={[Function]}
+                                rowGetter={[Function]}
+                                rowHeight={35}
+                                rowKey="id"
+                                rowRenderer={[Function]}
+                                rowScrollTimeout={0}
+                                rowSelection={null}
+                                rowsCount={2}
+                                scrollToRowIndex={0}
+                                selectedRows={Array []}
+                                totalWidth={-2}
+                                visibleEnd={-4}
+                                visibleStart={0}
+                                width={40}
+                              >
+                                <div
+                                  className="react-grid-Canvas"
+                                  onScroll={[Function]}
+                                  style={
+                                    Object {
+                                      "height": -37,
+                                      "left": 0,
+                                      "overflowX": "auto",
+                                      "overflowY": "scroll",
+                                      "position": "absolute",
+                                      "top": 0,
+                                      "width": -2,
+                                    }
+                                  }
+                                >
+                                  <RowsContainer
+                                    idx={-1}
+                                    rowIdx={-1}
+                                    rows={
+                                      Array [
+                                        <div
+                                          style={
+                                              Object {
+                                                  "height": 210,
+                                                }
+                                          }
+                                      >
+                                          <div
+                                              style={
+                                                  Object {
+                                                      "width": 40,
+                                                    }
+                                              }
+                                          />
+                                          <div
+                                              style={
+                                                  Object {
+                                                      "width": 80,
+                                                    }
+                                              }
+                                          />
+                                          <div
+                                              style={
+                                                  Object {
+                                                      "width": 80,
+                                                    }
+                                              }
+                                          />
+                                          <div
+                                              style={
+                                                  Object {
+                                                      "width": 80,
+                                                    }
+                                              }
+                                          />
+                                      </div>,
+                                      ]
+                                    }
+                                    width={40}
+                                  >
+                                    <SimpleRowsContainer
+                                      idx={-1}
+                                      rowIdx={-1}
+                                      rows={
+                                        Array [
+                                          <div
+                                            style={
+                                                Object {
+                                                    "height": 210,
+                                                  }
+                                            }
+                                        >
+                                            <div
+                                                style={
+                                                    Object {
+                                                        "width": 40,
+                                                      }
+                                                }
+                                            />
+                                            <div
+                                                style={
+                                                    Object {
+                                                        "width": 80,
+                                                      }
+                                                }
+                                            />
+                                            <div
+                                                style={
+                                                    Object {
+                                                        "width": 80,
+                                                      }
+                                                }
+                                            />
+                                            <div
+                                                style={
+                                                    Object {
+                                                        "width": 80,
+                                                      }
+                                                }
+                                            />
+                                        </div>,
+                                        ]
+                                      }
+                                      width={40}
+                                    >
+                                      <div>
+                                        <div
+                                          style={
+                                            Object {
+                                              "height": 210,
+                                            }
+                                          }
+                                        >
+                                          <div
+                                            style={
+                                              Object {
+                                                "width": 40,
+                                              }
+                                            }
+                                          />
+                                          <div
+                                            style={
+                                              Object {
+                                                "width": 80,
+                                              }
+                                            }
+                                          />
+                                          <div
+                                            style={
+                                              Object {
+                                                "width": 80,
+                                              }
+                                            }
+                                          />
+                                          <div
+                                            style={
+                                              Object {
+                                                "width": 80,
+                                              }
+                                            }
+                                          />
+                                        </div>
+                                      </div>
+                                    </SimpleRowsContainer>
+                                  </RowsContainer>
+                                </div>
+                              </Canvas>
+                            </div>
+                          </Viewport>
+                        </div>
                       </div>
-                    </Viewport>
+                    </Grid>
                   </div>
                 </div>
-              </Grid>
-            </div>
+              </ReactDataGrid>
+            </TableView>
           </div>
-        </ReactDataGrid>
-      </TableView>
-    </div>
+        </div>
+        <span>
+          <Resizer
+            direction="left"
+            onResizeStart={[Function]}
+          >
+            <div
+              onMouseDown={[Function]}
+              onTouchStart={[Function]}
+              style={
+                Object {
+                  "MsUserSelect": "none",
+                  "cursor": "col-resize",
+                  "height": "100%",
+                  "left": "-5px",
+                  "position": "absolute",
+                  "top": "0px",
+                  "userSelect": "none",
+                  "width": "10px",
+                }
+              }
+            />
+          </Resizer>
+        </span>
+      </div>
+    </Resizable>
   </div>
 </OutputPane>
 `;
@@ -1110,40 +1200,129 @@ exports[`Header only when no module id 1`] = `
   revision={1}
 >
   <div
-    className="outputpane-box"
+    className="outputpane"
   >
-    <div
-      className="outputpane-header d-flex flex-row justify-content-start"
+    <Resizable
+      className="outputpane-box"
+      enable={
+        Object {
+          "bottom": false,
+          "bottomLeft": false,
+          "bottomRight": false,
+          "left": true,
+          "right": false,
+          "top": false,
+          "topLeft": false,
+          "topRight": false,
+        }
+      }
+      grid={
+        Array [
+          1,
+          1,
+        ]
+      }
+      lockAspectRatio={false}
+      lockAspectRatioExtraHeight={0}
+      lockAspectRatioExtraWidth={0}
+      maxWidth="Infinity%"
+      minWidth="100%"
+      onResize={[Function]}
+      onResizeStart={[Function]}
+      onResizeStop={[Function]}
+      size={
+        Object {
+          "height": "100%",
+          "width": "100%",
+        }
+      }
+      style={
+        Object {
+          "transform": "translateX(0px)",
+        }
+      }
     >
       <div
-        className="d-flex flex-column align-items-center justify-content-center mr-5"
+        className="outputpane-box"
+        style={
+          Object {
+            "MozUserSelect": "auto",
+            "MsUserSelect": "auto",
+            "WebkitUserSelect": "auto",
+            "boxSizing": "border-box",
+            "height": "100%",
+            "maxHeight": undefined,
+            "maxWidth": "Infinity%",
+            "minHeight": undefined,
+            "minWidth": "100%",
+            "position": "relative",
+            "transform": "translateX(0px)",
+            "userSelect": "auto",
+            "width": "100%",
+          }
+        }
       >
         <div
-          className="content-4 t-m-gray mb-2"
+          className="outputpane-table"
         >
-          Rows
+          <div
+            className="outputpane-header d-flex flex-row justify-content-start"
+          >
+            <div
+              className="d-flex flex-column align-items-center justify-content-center mr-5"
+            >
+              <div
+                className="content-4 t-m-gray mb-2"
+              >
+                Rows
+              </div>
+              <div
+                className="content-2 t-d-gray"
+              >
+                0
+              </div>
+            </div>
+            <div
+              className="d-flex flex-column align-items-center justify-content-center"
+            >
+              <div
+                className="content-4 t-m-gray mb-2"
+              >
+                Columns
+              </div>
+              <div
+                className="content-2 t-d-gray"
+              >
+                0
+              </div>
+            </div>
+          </div>
         </div>
-        <div
-          className="content-2 t-d-gray"
-        >
-          0
-        </div>
+        <span>
+          <Resizer
+            direction="left"
+            onResizeStart={[Function]}
+          >
+            <div
+              onMouseDown={[Function]}
+              onTouchStart={[Function]}
+              style={
+                Object {
+                  "MsUserSelect": "none",
+                  "cursor": "col-resize",
+                  "height": "100%",
+                  "left": "-5px",
+                  "position": "absolute",
+                  "top": "0px",
+                  "userSelect": "none",
+                  "width": "10px",
+                }
+              }
+            />
+          </Resizer>
+        </span>
       </div>
-      <div
-        className="d-flex flex-column align-items-center justify-content-center"
-      >
-        <div
-          className="content-4 t-m-gray mb-2"
-        >
-          Columns
-        </div>
-        <div
-          className="content-2 t-d-gray"
-        >
-          0
-        </div>
-      </div>
-    </div>
+    </Resizable>
   </div>
 </OutputPane>
 `;
