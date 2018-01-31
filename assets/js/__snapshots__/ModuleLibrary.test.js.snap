@@ -217,10 +217,6 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                     </Autowhatever>
                   </Autosuggest>
                 </div>
-                <div
-                  className="icon-close-white ml-icon-search mr-3"
-                  onClick={[Function]}
-                />
               </div>
             </ModuleSearch>
           </div>
@@ -590,10 +586,6 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     </Autowhatever>
                   </Autosuggest>
                 </div>
-                <div
-                  className="icon-close-white ml-icon-search mr-3"
-                  onClick={[Function]}
-                />
               </div>
             </ModuleSearch>
           </div>
