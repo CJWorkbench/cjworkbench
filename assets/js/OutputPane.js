@@ -174,11 +174,15 @@ export default class OutputPane extends React.Component {
   }
 
   resizePaneEnd(e, direction, ref, d) {
+      let width = parseFloat(this.state.width) + ((d.width / this.state.pctBase) * 100) + '%';
       this.setState({
           initLeftOffset: this.state.leftOffset,
-          width: (this.state.width + d.width) / this.state.pctBase + '%',
+          width,
           resizing: false
       });
+      this.props.setOverlapping((this.state.leftOffset < 0));
+  }
+
   reset(libraryState, libraryToggle) {
       let libraryOffset = 0;
       let resetWidth;
