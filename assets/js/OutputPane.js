@@ -160,9 +160,8 @@ export default class OutputPane extends React.Component {
   }
 
   resizePaneStart() {
-    this.setState({
-       pctBase: this.state.parentBase.clientWidth
-    });
+      this.props.setOverlapping(true);
+      this.props.setFocus();
   }
 
   resizePane(e, direction, ref, d) {
