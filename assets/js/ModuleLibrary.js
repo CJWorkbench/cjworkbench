@@ -26,7 +26,7 @@ export default class ModuleLibrary extends React.Component {
     var workflowEmpty = (!props.workflow.wf_modules || !props.workflow.wf_modules.length);
 
     this.state = {
-      libraryOpen: !this.props.isReadOnly, // TODO: remember this state after exiting
+      //libraryOpen: this.props.libraryOpen, // TODO: remember this state after exiting
       openCategory: workflowEmpty ? "Add data" : null,
       items: [],
     };
@@ -117,22 +117,20 @@ export default class ModuleLibrary extends React.Component {
 
   toggleLibrary() {
     if (!this.props.isReadOnly) {
-      this.setState({ libraryOpen: !this.state.libraryOpen });
+      this.props.setLibraryOpen(!this.props.libraryOpen);
     }
   }
 
   openLibrary() {
     if (!this.props.isReadOnly) {
-      this.setState({ libraryOpen: true });
+      this.props.setLibraryOpen(true);
     }
   }
 
   // Main render.
   render() {
 
-    // console.log("render...");
-
-    if (this.state.libraryOpen) {
+    if (this.props.libraryOpen) {
       // Outermost div seems necessary to set background color below ImportFromGithub
       return (
         <div>
@@ -171,9 +169,10 @@ export default class ModuleLibrary extends React.Component {
 }
 
 ModuleLibrary.propTypes = {
-  addModule: PropTypes.func.isRequired,
-  dropModule: PropTypes.func.isRequired,
-  workflow:  PropTypes.object.isRequired,
-  api:       PropTypes.object.isRequired,
-  isReadOnly: PropTypes.bool.isRequired,
+  addModule:    PropTypes.func.isRequired,
+  dropModule:   PropTypes.func.isRequired,
+  workflow:     PropTypes.object.isRequired,
+  api:          PropTypes.object.isRequired,
+  isReadOnly:   PropTypes.bool.isRequired,
+  libraryOpen:  PropTypes.bool.isRequired,
 };
