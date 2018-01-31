@@ -241,48 +241,39 @@ class WorkflowViewTests(LoggedInTestCase):
 
 
     def test_workflow_title_post(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id
+        workflow = Workflow.objects.get(name='Workflow 1')
+        self.assertEqual(workflow.name, 'Workflow 1')
+        pk_workflow = workflow.id
         request = self.factory.post('/api/workflows/%d' % pk_workflow,
                                    {'newName': 'Billy Bob Thornton'})
         force_authenticate(request, user=self.user)
         response = workflow_detail(request, pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        # see that we get the new value back
-        request = self.factory.get('/api/wfmodules/%d/' % pk_workflow,)
-        force_authenticate(request, user=self.user)
-        response = workflow_detail(request,  pk=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'Billy Bob Thornton')
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.name, 'Billy Bob Thornton')
 
 
     def test_workflow_public_post(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id
+        workflow = Workflow.objects.get(name='Workflow 1')
+        self.assertEqual(workflow.public, False)
+        pk_workflow = workflow.id
         request = self.factory.post('/api/workflows/%d' % pk_workflow,
                                    {'public': True})
         force_authenticate(request, user=self.user)
         response = workflow_detail(request, pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        # see that we get the new value back
-        request = self.factory.get('/api/wfmodules/%d/' % pk_workflow,)
-        force_authenticate(request, user=self.user)
-        response = workflow_detail(request,  pk=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['public'], True)
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.public, True)
 
 
     def test_workflow_library_collapse_post(self):
-        pk_workflow = Workflow.objects.get(name='Workflow 1').id
+        workflow = Workflow.objects.get(name='Workflow 1')
+        self.assertEqual(workflow.module_library_collapsed, False)
+        pk_workflow = workflow.id
         request = self.factory.post('/api/workflows/%d' % pk_workflow,
                                    {'module_library_collapsed': True})
         force_authenticate(request, user=self.user)
         response = workflow_detail(request, pk=pk_workflow)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-
-        # see that we get the new value back
-        request = self.factory.get('/api/wfmodules/%d/' % pk_workflow,)
-        force_authenticate(request, user=self.user)
-        response = workflow_detail(request,  pk=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['module_library_collapsed'], True)
+        workflow.refresh_from_db()
+        self.assertEqual(workflow.module_library_collapsed, True)
