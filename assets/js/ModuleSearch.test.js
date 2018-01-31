@@ -77,17 +77,19 @@ describe('ModuleSearch', () => {
   });
 
   it('Close icon will clear text from search field', () => { 
-    // check 'value' state at start
-    expect(wrapper.state().value).toEqual('');              
+    // search field should be empty at start
+    expect(wrapper.state().value).toEqual(''); 
+    // close icon whould not be rendered
+    let closeIcon = wrapper.find('.icon-close-white');
+    expect(closeIcon).toHaveLength(0);             
     // enter value to text field
     searchField.simulate('change', {target: {value: 'wow'}});
-    // check value state, should have text
+    expect(wrapper).toMatchSnapshot();          
     expect(wrapper.state().value).toEqual('wow'); 
-    // find and click on Close icon
-    let closeIcon = wrapper.find('.icon-close-white');
+    // find Close icon again, click to clear search field
+    closeIcon = wrapper.find('.icon-close-white');
     expect(closeIcon).toHaveLength(1);
     closeIcon.simulate('click');
-    // value state should be empty again
     expect(wrapper.state().value).toEqual('');              
   });
     

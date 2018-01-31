@@ -205,6 +205,11 @@ export default class ModuleSearch extends React.Component {
       onChange: this.onChange,
       autoFocus: true
     };
+    var closeIcon = null;
+    if (this.state.value != '') {
+      closeIcon = <div className='icon-close-white ml-icon-search mr-3' onClick={this.clearSearchField}></div>
+    }
+    
     return (
       <div className='d-flex align-items-center search-bar'>
         <div className='icon-search-white ml-icon-search ml-4'></div>
@@ -226,7 +231,7 @@ export default class ModuleSearch extends React.Component {
             onSuggestionSelected={this.onSuggestionSelected}
           />
         </div>
-        <div className='icon-close-white ml-icon-search mr-3' onClick={this.clearSearchField}></div>
+        {closeIcon}
       </div>
     );
   }
