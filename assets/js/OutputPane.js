@@ -20,9 +20,11 @@ export default class OutputPane extends React.Component {
         initLeftOffset: 0,
         width: "100%",
         height: "100%",
+        maxWidth: "300%",
         parentBase: null,
         pctBase: null,
         resizing: false,
+        overlapping: false,
     };
 
     this.getRow = this.getRow.bind(this);
