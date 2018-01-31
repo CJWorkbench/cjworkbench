@@ -169,6 +169,53 @@ export default class OutputPane extends React.Component {
           width: (this.state.width + d.width) / this.state.pctBase + '%',
           resizing: false
       });
+  reset(libraryState, libraryToggle) {
+      let libraryOffset = 0;
+      let resetWidth;
+      let resetOffset;
+      let maxWidthOffset = 0;
+      let resetMaxWidth;
+
+      if (libraryState === true) {
+          maxWidthOffset = 240;
+          if (libraryToggle === true) {
+              libraryOffset = -140;
+          }
+      }
+
+      if (libraryState === false) {
+          maxWidthOffset = 100;
+          if (libraryToggle === true) {
+              libraryOffset = 140;
+          }
+
+      }
+
+      resetOffset = this.state.leftOffset + libraryOffset;
+
+      if (resetOffset > 0 || this.state.leftOffset === 0) {
+          resetOffset = 0;
+          resetWidth = '100%';
+      } else {
+          resetWidth = ((this.state.parentBase.clientWidth - resetOffset) / this.state.parentBase.clientWidth) * 100 + '%';
+      }
+
+      resetMaxWidth = ((this.getWindowWidth() - maxWidthOffset) / this.state.parentBase.clientWidth) * 100 + '%';
+
+      if ( parseFloat(resetWidth) > parseFloat(resetMaxWidth) ) {
+          resetOffset = resetOffset + ( this.state.parentBase.clientWidth * ( ( parseFloat(resetWidth) - parseFloat(resetMaxWidth) ) / 100 ) );
+          resetWidth = resetMaxWidth;
+      }
+
+      this.setState({
+          leftOffset : resetOffset,
+          initLeftOffset: resetOffset,
+          width: resetWidth,
+          height: "100%",
+          maxWidth: resetMaxWidth,
+          pctBase: this.state.parentBase.clientWidth,
+          overlapping: (resetOffset < 0)
+      });
   }
 
   render() {
