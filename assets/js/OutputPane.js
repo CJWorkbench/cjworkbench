@@ -23,8 +23,7 @@ export default class OutputPane extends React.Component {
         maxWidth: "300%",
         parentBase: null,
         pctBase: null,
-        resizing: false,
-        overlapping: false,
+        resizing: false
     };
 
     this.getRow = this.getRow.bind(this);
@@ -206,8 +205,7 @@ export default class OutputPane extends React.Component {
           width: resetWidth,
           height: "100%",
           maxWidth: resetMaxWidth,
-          pctBase: this.state.parentBase.clientWidth,
-          overlapping: (resetOffset < 0)
+          pctBase: this.state.parentBase.clientWidth
       });
   }
 
