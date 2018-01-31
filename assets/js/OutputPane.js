@@ -153,6 +153,12 @@ export default class OutputPane extends React.Component {
     }
   }
 
+  getWindowWidth() {
+      return window.innerWidth
+        || document.documentElement.clientWidth
+        || document.body.clientWidth;
+  }
+
   resizePaneStart() {
     this.setState({
        pctBase: this.state.parentBase.clientWidth
