@@ -15,8 +15,12 @@ class Workflow extends React.Component {
     super(props);
     this.state = {
         isPublic: false,
-        focus: false
+        focus: false,
+        overlapping: false,
+        libraryOpen: false, //TODO: get this from the server
     };
+    this.setOverlapping = this.setOverlapping.bind(this);
+    this.setLibraryOpen = this.setLibraryOpen.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
