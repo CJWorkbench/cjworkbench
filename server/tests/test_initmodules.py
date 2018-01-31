@@ -5,6 +5,7 @@ from server.initmodules import load_module_from_dict
 from server.tests.utils import *
 import json
 import copy
+from cjworkbench.settings import KB_ROOT_URL
 
 class InitmoduleTests(LoggedInTestCase):
     def setUp(self):
@@ -13,6 +14,7 @@ class InitmoduleTests(LoggedInTestCase):
             'name': 'Load CSV',
             'id_name': 'loadcsv',
             'category': 'Sources',
+            'help_url': 'http://help.com/help',
             'parameters': [
                 {
                     'name': 'URL',
@@ -101,6 +103,7 @@ class InitmoduleTests(LoggedInTestCase):
         m = Module.objects.all()[0]
         self.assertEqual(m.name, 'Load CSV')
         self.assertEqual(m.id_name, 'loadcsv')
+        self.assertEqual(m.help_url, 'http://help.com/help')
 
         # parameters
         pspecs = ParameterSpec.objects.all()
@@ -188,6 +191,8 @@ class InitmoduleTests(LoggedInTestCase):
         # load the revised module, check that it ends up with the same primary key
         m2 = load_module_from_dict(self.loadcsv2)
         self.assertEqual(m1.id, m2.id)
+
+        self.assertEqual(m2.module.help_url, KB_ROOT_URL)
 
         # button pspec should be gone
         with self.assertRaises(ParameterSpec.DoesNotExist):
