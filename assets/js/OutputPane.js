@@ -5,6 +5,7 @@ import TableView from './TableView'
 import PropTypes from 'prop-types'
 import { OutputIframe } from './OutputIframe'
 import Resizable from 're-resizable'
+import debounce from 'lodash/debounce'
 
 export default class OutputPane extends React.Component {
 
@@ -28,6 +29,7 @@ export default class OutputPane extends React.Component {
     this.resizePaneStart = this.resizePaneStart.bind(this);
     this.resizePane = this.resizePane.bind(this);
     this.resizePaneEnd = this.resizePaneEnd.bind(this);
+    this.reset = this.reset.bind(this);
 
     // loading flag cannot be in state because we need to suppress fetches in getRow, which is called many times in a tick
     this.loading = false;
@@ -80,7 +82,9 @@ export default class OutputPane extends React.Component {
 
   // Load first 100 rows of table when first rendered
   componentDidMount() {
-    this.loadTable(this.props.id, this.initialRows)
+    window.addEventListener("resize", debounce(() => { this.reset(this.props.libraryOpen) }, 200));
+    this.reset(this.props.libraryOpen);
+    this.loadTable(this.props.id, this.initialRows);
   }
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
