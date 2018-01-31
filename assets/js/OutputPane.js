@@ -114,8 +114,11 @@ export default class OutputPane extends React.Component {
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
-    if (this.props.revision != nextProps.revision || this.props.id != nextProps.id) {
-      this.refreshTable(nextProps.id);
+    if (this.props.revision !== nextProps.revision || this.props.id !== nextProps.id) {
+        this.refreshTable(nextProps.id);
+    }
+    if (nextProps.libraryOpen !== this.props.libraryOpen) {
+        this.reset(nextProps.libraryOpen, true);
     }
   }
 
