@@ -3,7 +3,7 @@
 
 import os
 import json
-from cjworkbench.settings import BASE_DIR
+from cjworkbench.settings import BASE_DIR, KB_ROOT_URL
 from server.models import Module, ModuleVersion, WfModule, ParameterSpec, ParameterVal
 
 import logging
@@ -62,21 +62,22 @@ def load_module_from_dict(d):
         module = Module()
 
     # save module data
-    module.name=d['name']
-    module.category=d['category']
-    module.id_name=id_name
-    module.dispatch=id_name
-    module.source=d['source'] if 'source' in d else ""
-    module.description = d['description'] if 'description' in d else ""
-    module.author = d['author'] if 'author' in d else "Workbench"
-    module.link = d['link'] if 'link' in d else ""
-    module.icon = d['icon'] if 'icon' in d else "settings"
-    module.loads_data = d['loads_data'] if 'loads_data' in d else False
+    module.name = d['name']
+    module.category = d['category']
+    module.id_name = id_name
+    module.dispatch = id_name
+    module.source = d.get('source', '')
+    module.description = d.get('description', '')
+    module.author = d.get('author', 'Workbench')
+    module.link = d.get('link', '')
+    module.icon = d.get('icon', 'settings')
+    module.loads_data = d.get('loads_data', False)
+    module.help_url = d.get('help_url', KB_ROOT_URL)
 
     module.save()
 
     #add module.last_updated here.
-    source_version = d['source_version'] if 'source_version' in d else '1.0'
+    source_version = d.get('source_version', '1.0')
     version_matches = ModuleVersion.objects.filter(module=module, source_version_hash = source_version)
 
     if len(version_matches) > 0:
@@ -90,7 +91,7 @@ def load_module_from_dict(d):
     # possible todo: should this be driven based on the last_commit time or the last system time?
     module_version.module = module
 
-    module_version.html_output = d['html_output'] if 'html_output' in d else False
+    module_version.html_output = d.get('html_output', False)
 
     module_version.save()
 
