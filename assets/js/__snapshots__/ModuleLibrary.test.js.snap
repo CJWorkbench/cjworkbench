@@ -217,6 +217,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                     </Autowhatever>
                   </Autosuggest>
                 </div>
+                <div
+                  className="search-close"
+                />
               </div>
             </ModuleSearch>
           </div>
@@ -586,6 +589,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     </Autowhatever>
                   </Autosuggest>
                 </div>
+                <div
+                  className="search-close"
+                />
               </div>
             </ModuleSearch>
           </div>

@@ -73,7 +73,7 @@ export default class ModuleSearch extends React.Component {
     this.getSectionSuggestions = this.getSectionSuggestions.bind(this);
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
     this.onBlur = this.onBlur.bind(this);
-    this.clearSearchField = this.clearSearchField.bind(this);    
+    this.clearSearchField = this.clearSearchField.bind(this);
 
     this.lastLoggedQuery = ''; // debounce query logging
   }
@@ -207,17 +207,17 @@ export default class ModuleSearch extends React.Component {
     };
     var closeIcon = null;
     if (this.state.value != '') {
-      closeIcon = <div className='icon-close-white ml-icon-search mr-3' onClick={this.clearSearchField}></div>
+      closeIcon = <div className='icon-close-white mr-4' onClick={this.clearSearchField}></div>
     }
-    
+
     return (
       <div className='d-flex align-items-center search-bar'>
         <div className='icon-search-white ml-icon-search ml-4'></div>
-        <div 
-          onBlur={this.onBlur} 
+        <div
+          onBlur={this.onBlur}
           // can not set ref on imported component, so anchoring to parent div
-          ref={input => this.textInput = input}          
-        > 
+          ref={input => this.textInput = input}
+        >
           <Autosuggest
             multiSection={true}
             suggestions={suggestions}
@@ -231,7 +231,9 @@ export default class ModuleSearch extends React.Component {
             onSuggestionSelected={this.onSuggestionSelected}
           />
         </div>
-        {closeIcon}
+        <div className='search-close'>
+          {closeIcon}
+        </div>
       </div>
     );
   }

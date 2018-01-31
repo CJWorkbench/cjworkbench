@@ -521,8 +521,8 @@ body {
 .icon-close-white:before {
   content: "\e907";
   color: #FFFFFF;
-  opacity: 0.6;
-  font-size: 1.2rem;
+  font-size: 1.1rem;
+  cursor: pointer;
 }
 
 .icon-more-white:before {
@@ -1459,6 +1459,15 @@ img.logo {
 /* --- Module Library --- */
 
 /*Expand and Search*/
+
+.search-close{
+  opacity: 0.6;
+}
+
+.search-close:hover{
+  opacity: 1;
+}
+
 .module-library-open {
   height: 100%;
   width: 200px;

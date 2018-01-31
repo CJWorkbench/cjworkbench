@@ -226,6 +226,9 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                 </Autowhatever>
               </Autosuggest>
             </div>
+            <div
+              className="search-close"
+            />
           </div>
         </ModuleSearch>
       </div>
