@@ -30,7 +30,7 @@ export default class OutputPane extends React.Component {
     this.resizePaneStart = this.resizePaneStart.bind(this);
     this.resizePane = this.resizePane.bind(this);
     this.resizePaneEnd = this.resizePaneEnd.bind(this);
-    this.reset = this.reset.bind(this);
+    this.setResizePaneRelativeDimensions = this.setResizePaneRelativeDimensions.bind(this);
 
     // loading flag cannot be in state because we need to suppress fetches in getRow, which is called many times in a tick
     this.loading = false;
@@ -108,8 +108,8 @@ export default class OutputPane extends React.Component {
 
   // Load first 100 rows of table when first rendered
   componentDidMount() {
-    window.addEventListener("resize", debounce(() => { this.reset(this.props.libraryOpen) }, 200));
-    this.reset(this.props.libraryOpen);
+    window.addEventListener("resize", debounce(() => { this.setResizePaneRelativeDimensions(this.props.libraryOpen) }, 200));
+    this.setResizePaneRelativeDimensions(this.props.libraryOpen);
     this.loadTable(this.props.id, this.initialRows);
   }
 
@@ -119,7 +119,7 @@ export default class OutputPane extends React.Component {
         this.refreshTable(nextProps.id);
     }
     if (nextProps.libraryOpen !== this.props.libraryOpen) {
-        this.reset(nextProps.libraryOpen, true);
+        this.setResizePaneRelativeDimensions(nextProps.libraryOpen, true);
     }
   }
 
@@ -186,7 +186,23 @@ export default class OutputPane extends React.Component {
       this.props.setOverlapping((this.state.leftOffset < 0));
   }
 
-  reset(libraryState, libraryToggle) {
+  /* Set the width and left offset of the resize pane relative to the window size and collapsed state of the
+        module library. Deals with the following cases:
+
+  1. Window resize -- re-position and resize right pane to new relative position with new maximum width relative to
+        window size while maintaining the same visual offset from the left edge
+
+  2. Open/close module library while right pane is at "0" -- re-position and resize right pane to "0" position relative
+        to ML state
+
+  3. Open/close module library while right pane is expanded but less than max: re-position and resize right pane so
+        it maintains the same visual position on the screen
+
+  4. Open module library while right pane is at max width relative to closed ML: re-position and re-size right pane to
+        max width relative to open ML position
+   */
+
+  setResizePaneRelativeDimensions(libraryState, libraryToggle) {
       let libraryOffset = 0;
       let resetWidth;
       let resetOffset;
