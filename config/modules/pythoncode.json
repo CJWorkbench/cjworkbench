@@ -4,6 +4,7 @@
   "category" : "Code",
   "icon" : "code",
   "description" : "Write a function that takes a Pandas dataframe called 'table' and returns another dataframe.",
+  "help_url":"modules/code/python-code",
   "parameters": [
     {
       "name": "Write a function that takes a Pandas dataframe called 'table' and returns another dataframe.",

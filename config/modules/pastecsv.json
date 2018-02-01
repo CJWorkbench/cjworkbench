@@ -4,6 +4,7 @@
   "category" : "Add data",
   "icon" : "doc",
   "description" : "Paste in a CSV or TSV file",
+  "help_url":"modules/add-data/paste-data",
   "parameters": [
     {
       "name": "",

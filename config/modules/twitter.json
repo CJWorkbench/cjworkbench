@@ -5,6 +5,7 @@
   "icon" : "twitter",
   "description" : "Load tweets and associated metadata for a specific user, or by searching globally for specific content.",
   "loads_data": true,
+  "help_url":"modules/add-data/twitter",
   "parameters": [
     {
       "name" : "Search for",

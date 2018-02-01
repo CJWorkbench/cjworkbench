@@ -1,9 +1,10 @@
 {
-  "name": "Column selector",
+  "name": "Selector columns",
   "id_name": "selectcolumns",
   "category" : "Analyse",
   "icon" : "transform",
   "description" : "",
+  "help_url":"modules/analyse/column-selector",
   "parameters": [
     {
       "name" : "",

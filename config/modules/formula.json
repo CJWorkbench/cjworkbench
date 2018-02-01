@@ -4,6 +4,7 @@
   "category" : "Analyse",
   "icon" : "sigma",
   "description": "Apply a formula between columns and store its result in a new column.",
+  "help_url":"modules/analyse/formula",
   "parameters": [
     {
       "name": "Type in formula, using column names",

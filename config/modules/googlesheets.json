@@ -4,6 +4,7 @@
   "category" : "Add data",
   "icon" : "google-drive",
   "description" : "Connect to a Google Spreadsheet and stay updated with its source.",
+  "help_url":"modules/add-data/google-drive",
   "loads_data": true,
   "parameters": [
     {

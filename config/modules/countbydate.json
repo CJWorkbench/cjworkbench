@@ -1,9 +1,10 @@
 {
-  "name": "Group by date",
+  "name": "Count by date",
   "id_name": "countbydate",
   "category" : "Analyse",
   "icon" : "group",
   "description": "Group and count rows by dates.",
+  "help_url":"modules/analyse/count-by-date",
   "parameters": [
     {
       "name": "Date column",

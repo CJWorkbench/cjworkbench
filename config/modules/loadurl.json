@@ -5,6 +5,7 @@
   "icon" : "url",
   "description" : "Connect a dataset via its URL and keep it updated with its source.",
   "loads_data": true,
+  "help_url":"modules/add-data/add-from-url",
   "parameters": [
     {
       "name": "Link to CSV, JSON or Excel file",
