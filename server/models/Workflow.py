@@ -10,6 +10,7 @@ class Workflow(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     public = models.BooleanField(default=False)
     module_library_collapsed = models.BooleanField(default=False)    
+    selected_wf_module = models.IntegerField(default=None, null=True)   
     last_delta = models.ForeignKey('server.Delta',                # specify as string to avoid circular import
                                    related_name='+',              # + means no backward link
 				                   blank=True,
@@ -40,7 +41,7 @@ class Workflow(models.Model):
 
     # duplicate workflow, make it belong to specified user
     # No authorization checking here, that needs to be handled in the view
-    # Loses undo historty (do we want that?)
+    # Loses undo history (do we want that?)
     def duplicate(self, target_user):
         new_wf = Workflow.objects.create(name="Copy of " + self.name, owner=target_user, public=False, last_delta=None)
         for wfm in WfModule.objects.filter(workflow=self):
