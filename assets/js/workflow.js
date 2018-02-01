@@ -5,7 +5,7 @@ import ModuleLibrary from './ModuleLibrary'
 import { WorkflowNavBar } from './navbar'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
-import WorkflowList from './WorkflowList'
+import ModuleStack from './ModuleStack'
 
 // ---- WorkflowMain ----
 
@@ -83,7 +83,7 @@ class Workflow extends React.Component {
             <div className={"workflow-columns" + (this.state.overlapping ? " overlapping" : "")}>
               <div className={"modulestack" + (this.state.focus ? " focus": "")}
            onClick={() => { this.setState({ focus: true }) }}>
-                <WorkflowList
+                <ModuleStack
                   workflow={this.props.workflow}
                   selected_wf_module={this.props.selected_wf_module}
                   changeParam={this.props.changeParam}

@@ -31,7 +31,7 @@ function targetCollect(connect, monitor) {
   }
 }
 
-class WorkflowList extends React.Component {
+class ModuleStack extends React.Component {
 
   constructor(props) {
     super(props);
@@ -167,7 +167,7 @@ class WorkflowList extends React.Component {
   }
 }
 
-WorkflowList.propTypes = {
+ModuleStack.propTypes = {
   api:                PropTypes.object.isRequired,
   workflow:           PropTypes.object,
   selected_wf_module: PropTypes.number,
@@ -177,4 +177,4 @@ WorkflowList.propTypes = {
   loggedInUser:       PropTypes.object             // undefined if no one logged in (viewing public wf)
 };
 
-export default DropTarget('module', targetSpec, targetCollect)(WorkflowList);
+export default DropTarget('module', targetSpec, targetCollect)(ModuleStack);
