@@ -1889,6 +1889,7 @@ div into the DOM, since we don't really want another element, we just want this 
 
 
 .help-container{
+  z-index: 2000;
   position: absolute;
   bottom: 15.5rem;
   left: 4.5rem;
