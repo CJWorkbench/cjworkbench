@@ -17,7 +17,7 @@ class Workflow extends React.Component {
         isPublic: false,
         focus: false,
         overlapping: false,
-        libraryOpen: false, //TODO: get this from the server
+        libraryOpen: false
     };
     this.setOverlapping = this.setOverlapping.bind(this);
     this.setLibraryOpen = this.setLibraryOpen.bind(this);
@@ -31,7 +31,7 @@ class Workflow extends React.Component {
 
     this.setState({
       isPublic: nextProps.workflow.public,
-      libraryOpen: !nextProps.workflow.readOnly
+      libraryOpen: (!nextProps.isReadOnly && !nextProps.workflow.module_library_collapsed)
     });
   }
 
