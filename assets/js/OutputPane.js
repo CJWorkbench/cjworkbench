@@ -123,11 +123,6 @@ export default class OutputPane extends React.Component {
     }
   }
 
-  // Update only when we are not loading
-//  shouldComponentUpdate(nextProps, nextState) {
-//    return !nextState.loading;
-//  }
-
   emptyRow() {
     return this.state.tableData.columns.reduce( (obj,col) => { obj[col]=null; return obj; }, {} );
   }
