@@ -37,7 +37,7 @@ iframe + .outputpane-table {
 
 .overlapping .outputpane.focus .outputpane-box {
   z-index: 2;
-  box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
+  box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
 }
 
 /* Create an overlay to absorb click events so we don't change settings or set a different
