@@ -203,6 +203,19 @@ class WorkbenchAPI {
     )
   }
 
+  setSelectedWfModule(workflow_id, module_id) {
+    return (
+      fetch('/api/workflows/' + workflow_id, {
+        method: 'post',
+        credentials: 'include',
+        headers: apiHeaders,
+        body: JSON.stringify({
+          selected_wf_module: module_id
+        })
+      })
+    )
+  }
+
   // Params should be an object matching format below
   setWfModuleUpdateSettings(wf_module_id, params) {
     return (

@@ -171,28 +171,39 @@ export function workflowReducer(state, action) {
     case RELOAD_WORKFLOW:
       console.log("RELOAD_WORKFLOW");
       console.log("new workflow revision " + action.workflow.revision);
+      var selectedWfModule = null;
+      if (action.workflow.selected_wf_module) {
+        selectedWfModule = action.workflow.selected_wf_module;
+      } else if (action.workflow.wf_modules && action.workflow.wf_modules.length) {
+        selectedWfModule = action.workflow.wf_modules[0].id;
+      };
       return Object.assign({}, state, {
+        selected_wf_module: selectedWfModule,
         workflow: action.workflow
       });
 
-    // Sets the selected module to the first in list
+
+    // Sets the selected module from backend if it exists, or the first module if there are any at all
     case INITIAL_LOAD_WORKFLOW:
       console.log("INITIAL_LOAD_WORKFLOW");
-      if (action.workflow.wf_modules && action.workflow.wf_modules.length) {
-        return Object.assign({}, state, {
-          selected_wf_module: action.workflow.wf_modules[0].id,
-          workflow: action.workflow
-        });
-      } else {
-        return Object.assign({}, state, {
-          workflow: action.workflow
-        });
-      }
+      var selectedWfModule = null;
+      if (action.workflow.selected_wf_module) {
+        selectedWfModule = action.workflow.selected_wf_module;
+      } else if (action.workflow.wf_modules && action.workflow.wf_modules.length) {
+        selectedWfModule = action.workflow.wf_modules[0].id;
+      };
+      return Object.assign({}, state, {
+        selected_wf_module: selectedWfModule,
+        workflow: action.workflow
+      });
+
 
     // Change id of module currently selected
     case SELECTED_MODULE_CHANGE:
       // console.log(SELECTED_MODULE_CHANGE + " old " +  state.selected_wf_module + " new " + action.id);
       if (!'selected_wf_module' in state || (action.id != state.selected_wf_module)) {
+        // call API to set selected WF module in backend
+        api.setSelectedWfModule(state.workflow.id, action.id);
         return Object.assign({}, state, {
           selected_wf_module: action.id,
         });
