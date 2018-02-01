@@ -263,7 +263,7 @@ class WorkbenchAPI {
 
   currentUser() {
     return (
-      fetch('/api/user', {credentials: 'include'})
+      fetch('/api/user/', {credentials: 'include'})
         .then(response => response.json())
     )
   }

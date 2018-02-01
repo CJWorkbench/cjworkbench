@@ -44,7 +44,7 @@ def get_creds(request):
     storage = GoogleCredentials.objects.get(pk=request.GET.get('state'))
     flow = storage.flow
     credential = flow.step2_exchange(request.GET.get('code', False))
-    storage.credential = credential;
+    storage.credential = credential
     storage.save()
 
     #don't do this, all we do right now is close the window anyway
@@ -63,3 +63,4 @@ def add_query_param(url, param_name, param_value):
     new_query_string = urlencode(query_params, doseq=True)
 
     return urlunsplit((scheme, netloc, path, new_query_string, fragment))
+

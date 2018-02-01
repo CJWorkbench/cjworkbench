@@ -258,9 +258,9 @@ export function workflowReducer(state, action) {
       }
 
     case UPDATE_CURRENT_USER:
-      if (state.user !== action.user) {
+      if (state.loggedInUser !== action.user) {
         return Object.assign({}, state, {
-          user: action.user,
+          loggedInUser: action.user,
         });
       } else {
         return state;
