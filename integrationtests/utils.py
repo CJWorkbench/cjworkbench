@@ -66,7 +66,7 @@ class DummyWorkflowIntegrationTest(StaticLiveServerTestCase):
 
     @classmethod
     def tearDownClass(cls):
-        cls.browser.quit()
+        # cls.browser.quit()
         super().tearDownClass()
 
 
