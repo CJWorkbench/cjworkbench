@@ -34,7 +34,7 @@ function JSONtoCSV(d) {
     var colnames = Object.keys(d[0]).filter(key => key != 'index');
     var text = colnames.join(',') + '\n';
     for (var row of d) {
-      text += colnames.map(name => row[name]).join(',') + '\n';
+      text += colnames.map((name) => {return "\"" + row[name] + "\""}).join(',') + '\n';
     }
     return text;
   } else {
