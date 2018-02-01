@@ -13,7 +13,7 @@ class TextSearch(ModuleImpl):
         regex = wf_module.get_param_checkbox('regex')
 
         if cols == ['']:
-            return None     # no columns, no matches
+            return table    # NOP
 
         if query=='':
             return table    # no query, everything matches

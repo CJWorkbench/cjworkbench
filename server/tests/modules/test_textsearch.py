@@ -15,9 +15,9 @@ class TextSearchTest(LoggedInTestCase):
         self.regex_pval = get_param_by_id_name('regex')
 
     def test_render(self):
-        # No columns specified, no output
+        # No columns specified, NOP
         out = execute_wfmodule(self.wf_module)
-        self.assertTrue(out.empty)
+        self.assertTrue(out.equals(mock_csv_table))
 
         # Basic search
         self.query_pval.set_value('Feb')
