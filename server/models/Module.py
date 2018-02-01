@@ -37,7 +37,7 @@ class Module(models.Model):
     loads_data = models.BooleanField('loads_data', default=False)
 
     # URL for the module's documentation, defaults to our knowledge base root
-    help_url = models.URLField('help_url', max_length=200, default=False)
+    help_url = models.CharField('help_url', max_length=200, default="")
 
     def __str__(self):
         return self.name
