@@ -23,9 +23,6 @@ class Twitter(ModuleImpl):
     @staticmethod
     def get_new_tweets(wfm, querytype, query, old_tweets):
 
-        if query=='':
-            return pd.DataFrame()
-
         # Authenticate with "app authentication" mode (high rate limit, read only)
         consumer_key = os.environ['CJW_TWITTER_CONSUMER_KEY']
         consumer_secret = os.environ['CJW_TWITTER_CONSUMER_SECRET']
@@ -74,6 +71,10 @@ class Twitter(ModuleImpl):
         try:
             querytype = wfm.get_param_menu_idx("querytype")
             query = wfm.get_param_string('query')
+
+            if query.strip() == '':
+                wfm.set_error('Please enter a query')
+                return
 
             if wfm.get_param_checkbox('accumulate'):
                 old_tweets = Twitter.get_stored_tweets(wfm)

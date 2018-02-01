@@ -61,6 +61,12 @@ class TwitterTests(LoggedInTestCase):
     def press_fetch_button(self):
         Twitter.event(self.wf_module,  {'type': 'click'})
 
+    def test_empty_query(self):
+        self.query_pval.set_value('')
+        self.query_pval.save()
+        self.press_fetch_button()
+        self.assertEqual(self.wf_module.status, WfModule.ERROR)
+
     def test_user_timeline(self):
         self.query_pval.set_value('foouser')
         self.query_pval.save()
