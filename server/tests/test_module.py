@@ -4,17 +4,18 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
 from server.models import Module
 from server.tests.utils import *
+from cjworkbench.settings import KB_ROOT_URL
 
 class ModuleTests(LoggedInTestCase):
     def setUp(self):
         super(ModuleTests, self).setUp()  # log in
         self.factory = APIRequestFactory()
-        self.add_new_module('Module 1')
-        self.add_new_module('Module 2')
+        self.add_new_module('Module 1', help_url='category/help')
+        self.add_new_module('Module 2', help_url='https://help.you')
         self.add_new_module('Module 3')
 
-    def add_new_module(self, name):
-        module = Module(name=name, id_name=name+'_internal', dispatch=name+'_dispatch')
+    def add_new_module(self, name, help_url=''):
+        module = Module(name=name, id_name=name+'_internal', dispatch=name+'_dispatch', help_url=help_url)
         module.save()
 
     def test_module_list_get(self):
@@ -25,9 +26,14 @@ class ModuleTests(LoggedInTestCase):
         self.assertEqual(len(response.data), 3)
         self.assertEqual(response.data[0]['name'], 'Module 1')
         self.assertEqual(response.data[0]['id_name'], 'Module 1_internal')
+        self.assertEqual(response.data[0]['help_url'], f'{KB_ROOT_URL}category/help')
+
         self.assertEqual(response.data[1]['name'], 'Module 2')
         self.assertEqual(response.data[1]['id_name'], 'Module 2_internal')
+        self.assertEqual(response.data[1]['help_url'], 'https://help.you')
+
         self.assertEqual(response.data[2]['name'], 'Module 3')
         self.assertEqual(response.data[2]['id_name'], 'Module 3_internal')
+        self.assertEqual(response.data[2]['help_url'], KB_ROOT_URL)
 
 
