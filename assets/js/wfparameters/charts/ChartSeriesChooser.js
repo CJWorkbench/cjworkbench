@@ -70,7 +70,9 @@ export default class ChartSeriesChooser extends React.Component {
     });
     // If an empty string is saved Chartbuilder resets to the default value
     if (e.target.value !== '') {
-      this.props.onChange(this.props.index, {label:e.target.value})
+      this.props.onChange(this.props.index, {label:e.target.value.replace(/^\s+/g, '')});
+    } else {
+      this.props.onChange(this.props.index, {label:' '});
     }
   }
 
