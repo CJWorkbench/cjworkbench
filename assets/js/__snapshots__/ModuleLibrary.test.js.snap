@@ -14,6 +14,8 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
     }
     dropModule={[Function]}
     isReadOnly={false}
+    libraryOpen={true}
+    setLibraryOpen={[Function]}
     workflow={
       Object {
         "id": 15,
@@ -338,6 +340,8 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
     }
     dropModule={[Function]}
     isReadOnly={false}
+    libraryOpen={true}
+    setLibraryOpen={[Function]}
     workflow={
       Object {
         "id": 15,
@@ -1042,6 +1046,8 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
     }
     dropModule={[Function]}
     isReadOnly={true}
+    libraryOpen={false}
+    setLibraryOpen={[Function]}
     workflow={
       Object {
         "id": 15,

@@ -1,6 +1,7 @@
 /* Output Pane */
 .outputpane {
   flex: 1 1 auto;
+  position: relative;
 }
 
 .outputpane iframe {
@@ -10,14 +11,13 @@
 }
 
 /* This div may be superfluous wrt .outputpane */
-.outputpane-box {
-  height: calc(100% - 6rem);
-  background-color: #F2F2F2;
-  position: relative;
-}
 
-iframe + .outputpane-box {
+iframe + .outputpane-table {
   height: calc(50% - 3rem);
+}
+.outputpane-table {
+  height:100%;
+  position:relative;
 }
 
 .outputpane-header {
@@ -33,4 +33,23 @@ iframe + .outputpane-box {
   left:0;
   right:0;
   bottom:0;
+}
+
+.overlapping .outputpane.focus .outputpane-box {
+  z-index: 2;
+  box-shadow: -2px 2px 5px rgba(0,0,0,0.3);
+}
+
+/* Create an overlay to absorb click events so we don't change settings or set a different
+active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
+div into the DOM, since we don't really want another element, we just want this behavior. */
+
+.overlapping .outputpane:not(.focus)::after {
+  content:' ';
+  display: block;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  position:absolute;
 }

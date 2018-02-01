@@ -3,6 +3,9 @@
 import React from 'react'
 import TableView from './TableView'
 import PropTypes from 'prop-types'
+import { OutputIframe } from './OutputIframe'
+import Resizable from 're-resizable'
+import debounce from 'lodash/debounce'
 
 export default class OutputPane extends React.Component {
 
@@ -11,11 +14,23 @@ export default class OutputPane extends React.Component {
 
     // componentDidMount will trigger first load
     this.state = {
-      tableData: null,
-      lastLoadedRow : 0,
+        tableData: null,
+        lastLoadedRow : 0,
+        leftOffset : 0,
+        initLeftOffset: 0,
+        width: "100%",
+        height: "100%",
+        maxWidth: "300%",
+        parentBase: null,
+        pctBase: null,
+        resizing: false
     };
 
     this.getRow = this.getRow.bind(this);
+    this.resizePaneStart = this.resizePaneStart.bind(this);
+    this.resizePane = this.resizePane.bind(this);
+    this.resizePaneEnd = this.resizePaneEnd.bind(this);
+    this.setResizePaneRelativeDimensions = this.setResizePaneRelativeDimensions.bind(this);
 
     // loading flag cannot be in state because we need to suppress fetches in getRow, which is called many times in a tick
     this.loading = false;
@@ -93,20 +108,20 @@ export default class OutputPane extends React.Component {
 
   // Load first 100 rows of table when first rendered
   componentDidMount() {
-    this.loadTable(this.props.id, this.initialRows)
+    window.addEventListener("resize", debounce(() => { this.setResizePaneRelativeDimensions(this.props.libraryOpen) }, 200));
+    this.setResizePaneRelativeDimensions(this.props.libraryOpen);
+    this.loadTable(this.props.id, this.initialRows);
   }
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
-    if (this.props.revision != nextProps.revision || this.props.id != nextProps.id) {
-      this.refreshTable(nextProps.id);
+    if (this.props.revision !== nextProps.revision || this.props.id !== nextProps.id) {
+        this.refreshTable(nextProps.id);
+    }
+    if (nextProps.libraryOpen !== this.props.libraryOpen) {
+        this.setResizePaneRelativeDimensions(nextProps.libraryOpen, true);
     }
   }
-
-  // Update only when we are not loading
-//  shouldComponentUpdate(nextProps, nextState) {
-//    return !nextState.loading;
-//  }
 
   emptyRow() {
     return this.state.tableData.columns.reduce( (obj,col) => { obj[col]=null; return obj; }, {} );
@@ -137,6 +152,102 @@ export default class OutputPane extends React.Component {
     }
   }
 
+  getWindowWidth() {
+      return window.innerWidth
+        || document.documentElement.clientWidth
+        || document.body.clientWidth;
+  }
+
+  resizePaneStart() {
+      this.props.setOverlapping(true);
+      this.props.setFocus();
+  }
+
+  resizePane(e, direction, ref, d) {
+    let offset = this.state.initLeftOffset - d.width;
+    this.setState({
+        leftOffset: offset,
+        resizing: true
+    });
+  }
+
+  resizePaneEnd(e, direction, ref, d) {
+      // We set percentage width so that we can maintain the outer layout of the module stack and output pane
+      // while still allowing the right pane to stretch beyond its boundaries. Setting a pixel width on the inner
+      // part of the output pane expands the outer frame, distorting the layout of the entire page.
+      let width = parseFloat(this.state.width) + ((d.width / this.state.pctBase) * 100) + '%';
+      this.setState({
+          initLeftOffset: this.state.leftOffset,
+          width,
+          resizing: false
+      });
+      this.props.setOverlapping((this.state.leftOffset < 0));
+  }
+
+  /* Set the width and left offset of the resize pane relative to the window size and collapsed state of the
+        module library. Deals with the following cases:
+
+  1. Window resize -- re-position and resize right pane to new relative position with new maximum width relative to
+        window size while maintaining the same visual offset from the left edge
+
+  2. Open/close module library while right pane is at "0" -- re-position and resize right pane to "0" position relative
+        to ML state
+
+  3. Open/close module library while right pane is expanded but less than max: re-position and resize right pane so
+        it maintains the same visual position on the screen
+
+  4. Open module library while right pane is at max width relative to closed ML: re-position and re-size right pane to
+        max width relative to open ML position
+   */
+
+  setResizePaneRelativeDimensions(libraryState, libraryToggle) {
+      let libraryOffset = 0;
+      let resetWidth;
+      let resetOffset;
+      let maxWidthOffset = 0;
+      let resetMaxWidth;
+
+      if (libraryState === true) {
+          maxWidthOffset = 240;
+          if (libraryToggle === true) {
+              libraryOffset = -140;
+          }
+      }
+
+      if (libraryState === false) {
+          maxWidthOffset = 100;
+          if (libraryToggle === true) {
+              libraryOffset = 140;
+          }
+
+      }
+
+      resetOffset = this.state.leftOffset + libraryOffset;
+
+      if (resetOffset > 0 || this.state.leftOffset === 0) {
+          resetOffset = 0;
+          resetWidth = '100%';
+      } else {
+          resetWidth = ((this.state.parentBase.clientWidth - resetOffset) / this.state.parentBase.clientWidth) * 100 + '%';
+      }
+
+      resetMaxWidth = ((this.getWindowWidth() - maxWidthOffset) / this.state.parentBase.clientWidth) * 100 + '%';
+
+      if ( parseFloat(resetWidth) > parseFloat(resetMaxWidth) ) {
+          resetOffset = resetOffset + ( this.state.parentBase.clientWidth * ( ( parseFloat(resetWidth) - parseFloat(resetMaxWidth) ) / 100 ) );
+          resetWidth = resetMaxWidth;
+      }
+
+      this.setState({
+          leftOffset : resetOffset,
+          initLeftOffset: resetOffset,
+          width: resetWidth,
+          height: "100%",
+          maxWidth: resetMaxWidth,
+          pctBase: this.state.parentBase.clientWidth
+      });
+  }
+
   render() {
     // Make a table component if we have the data
     var tableView = null;
@@ -149,6 +260,7 @@ export default class OutputPane extends React.Component {
             totalRows={this.state.tableData.total_rows}
             columns={this.state.tableData.columns}
             getRow={this.getRow}
+            resizing={this.state.resizing}
           />
         </div>
       nrows = this.state.tableData.total_rows;
@@ -176,20 +288,56 @@ export default class OutputPane extends React.Component {
     }
 
     return (
-      <div className="outputpane-box">
-        {spinner}
-        <div className="outputpane-header d-flex flex-row justify-content-start">
-          <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
-            <div className='content-4 t-m-gray mb-2'>Rows</div>
-            <div className='content-2 t-d-gray'>{nrows}</div>
-          </div>
-          <div className='d-flex flex-column align-items-center justify-content-center'>
-            <div className='content-4 t-m-gray mb-2'>Columns</div>
-            <div className='content-2 t-d-gray'>{ncols}</div>
-          </div>
+        <div className={"outputpane" + (this.props.focus ? " focus" : "")}
+             ref={(ref) => this.state.parentBase = ref}
+             onClick={this.props.setFocus} >
+            <Resizable
+                style={{
+                    transform: "translateX(" + this.state.leftOffset + "px)"
+                }}
+                className="outputpane-box"
+                enable={{
+                    top:false,
+                    right:false,
+                    bottom:false,
+                    left:true,
+                    topRight:false,
+                    bottomRight:false,
+                    bottomLeft:false,
+                    topLeft:false
+                }}
+                size={{
+                    width: this.state.width,
+                    height: this.state.height,
+                }}
+                minWidth="100%"
+                maxWidth={this.state.maxWidth}
+                onResizeStart={this.resizePaneStart}
+                onResize={this.resizePane}
+                onResizeStop={this.resizePaneEnd} >
+                {spinner}
+                {this.props.htmlOutput &&
+                <OutputIframe
+                    id="output_iframe"
+                    selectedWfModuleId={this.props.selectedWfModuleId}
+                    revision={this.props.revision}
+                />
+                }
+                <div className="outputpane-table">
+                    <div className="outputpane-header d-flex flex-row justify-content-start">
+                        <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
+                            <div className='content-4 t-m-gray mb-2'>Rows</div>
+                            <div className='content-2 t-d-gray'>{nrows}</div>
+                        </div>
+                        <div className='d-flex flex-column align-items-center justify-content-center'>
+                            <div className='content-4 t-m-gray mb-2'>Columns</div>
+                            <div className='content-2 t-d-gray'>{ncols}</div>
+                        </div>
+                    </div>
+                    {tableView}
+                </div>
+            </Resizable>
         </div>
-        {tableView}
-      </div>
     );
   }
 }

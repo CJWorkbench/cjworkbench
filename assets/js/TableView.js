@@ -84,6 +84,10 @@ export default class TableView extends React.Component {
     window.removeEventListener("resize", this.updateSize);
   }
 
+  shouldComponentUpdate(nextProps) {
+    return !nextProps.resizing;
+  }
+
   // Prepend row number
   getRow(i) {
     var row = this.props.getRow(i);
