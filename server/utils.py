@@ -77,11 +77,21 @@ def log_user_event(user, event, metadata=None):
         except Exception as e:
             print('Error creating Intercom client: ' + str(e))
             return
+    try:
+        if metadata is not None:   # api errors if metadata=None. Who does that?
+            intercom.events.create(
+                event_name=event,
+                email=user.email,
+                id=user.id,
+                created_at=int(time.time()),
+                metadata=metadata)
+        else:
+            intercom.events.create(
+                event_name=event,
+                email=user.email,
+                id=user.id,
+                created_at=int(time.time()))
+    except Exception as e:
+        print("Error logging Intercom event '{}': {}".format(event, str(e)))
 
-    intercom.events.create(
-        event_name=event,
-        email=user.email,
-        id=user.id,
-        created_at=int(time.time()),
-        metadata=metadata)
 

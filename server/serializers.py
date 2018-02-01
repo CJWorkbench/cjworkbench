@@ -42,7 +42,7 @@ class ModuleSerializer(serializers.ModelSerializer):
         if re.search(url_pattern, obj.help_url):
             return obj.help_url
 
-        return f"{KB_ROOT_URL}{obj.help_url}"
+        return "%s%s" % (KB_ROOT_URL, obj.help_url)
 
     class Meta:
         model = Module
