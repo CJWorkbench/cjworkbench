@@ -296,7 +296,7 @@ if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
     GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = CJW_GOOGLE_CLIENT_SECRETS_PATH
 
 # Knowledge base root url, used as a default for missing help links
-KB_ROOT_URL = 'http://intercom.help/cjworkbench'
+KB_ROOT_URL = 'http://intercom.help/cjworkbench/'
 
 try:
     from cjworkbench.local_settings import *
