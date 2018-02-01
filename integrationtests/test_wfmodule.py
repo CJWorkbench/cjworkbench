@@ -19,7 +19,7 @@ class TestWfModule(DummyWorkflowIntegrationTest):
         self.assertTrue(b.is_element_present_by_text('Has header row'))
 
         # output table with correct values
-        self.assertTrue(b.is_element_present_by_text('Jan'))
+        self.assertTrue(b.is_element_present_by_text('Jan')) 
         self.assertTrue(b.is_element_present_by_text('Feb'))
         self.assertTrue(b.is_element_present_by_text('Alicia Aliciason'))
         self.assertTrue(b.is_element_present_by_text('Fred Frederson'))
