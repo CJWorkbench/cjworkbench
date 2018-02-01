@@ -5,6 +5,7 @@ from account.utils import user_display
 from django.contrib.auth import get_user_model
 from server.settingsutils import *
 from cjworkbench.settings import KB_ROOT_URL
+import re
 
 User = get_user_model()
 
@@ -36,7 +37,13 @@ class ModuleSerializer(serializers.ModelSerializer):
     help_url = serializers.SerializerMethodField()
 
     def get_help_url(self, obj):
-        return obj.help_url if obj.help_url else KB_ROOT_URL
+        url_pattern = re.compile('^http(?:s?)://', re.IGNORECASE)
+
+        if re.search(url_pattern, obj.help_url):
+            return obj.help_url
+
+        return f"{KB_ROOT_URL}{obj.help_url}"
+
     class Meta:
         model = Module
 
