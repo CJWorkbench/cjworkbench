@@ -117,7 +117,7 @@ export default class ModuleLibrary extends React.Component {
   toggleLibrary() {
     if (!this.props.isReadOnly) {
       this.props.setLibraryOpen(!this.props.libraryOpen);
-      this.props.api.setWfLibraryCollapse(this.props.workflow.id, this.state.libraryOpen)
+      this.props.api.setWfLibraryCollapse(this.props.workflow.id, this.props.libraryOpen)
     }
   }
 
