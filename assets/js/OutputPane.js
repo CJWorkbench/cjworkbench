@@ -177,6 +177,9 @@ export default class OutputPane extends React.Component {
   }
 
   resizePaneEnd(e, direction, ref, d) {
+      // We set percentage width so that we can maintain the outer layout of the module stack and output pane
+      // while still allowing the right pane to stretch beyond its boundaries. Setting a pixel width on the inner
+      // part of the output pane expands the outer frame, distorting the layout of the entire page.
       let width = parseFloat(this.state.width) + ((d.width / this.state.pctBase) * 100) + '%';
       this.setState({
           initLeftOffset: this.state.leftOffset,
