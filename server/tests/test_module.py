@@ -26,7 +26,7 @@ class ModuleTests(LoggedInTestCase):
         self.assertEqual(len(response.data), 3)
         self.assertEqual(response.data[0]['name'], 'Module 1')
         self.assertEqual(response.data[0]['id_name'], 'Module 1_internal')
-        self.assertEqual(response.data[0]['help_url'], f'{KB_ROOT_URL}category/help')
+        self.assertEqual(response.data[0]['help_url'], '%scategory/help' % KB_ROOT_URL)
 
         self.assertEqual(response.data[1]['name'], 'Module 2')
         self.assertEqual(response.data[1]['id_name'], 'Module 2_internal')
