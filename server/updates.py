@@ -3,6 +3,9 @@ from server.models import WfModule
 from server.dispatch import module_dispatch_event
 from django.utils import timezone
 from datetime import timedelta
+import logging
+
+logger = logging.getLogger(__name__)
 
 # update all modules' data
 def update_wfm_data_scan(request):
@@ -13,12 +16,23 @@ def update_wfm_data_scan(request):
             check_for_wfm_data_update(wfm, request)
 
 
+# schedule next update, skipping missed updates if any
+def update_next_update_time(wfm, now):
+    while (wfm.next_update <= now):
+        wfm.next_update += timedelta(seconds=wfm.update_interval)
+    wfm.save()
+
 # Call this periodically corresponding to smallest possible update cycle (currently every minute)
 def check_for_wfm_data_update(wfm, request):
     now = timezone.now()
     if now > wfm.next_update:
-        module_dispatch_event(wfm, request=request)
-        # schedule next update, skipping missed updates if any
-        while (wfm.next_update <= now):
-            wfm.next_update += timedelta(seconds=wfm.update_interval)
-        wfm.save()
+        try:
+            module_dispatch_event(wfm, request=request)
+        except Exception as e:
+            # Log exceptions but keep going
+            update_next_update_time(wfm, now)     # Avoid throwing same exception until time for next update
+            logger.exception("Error updating data for module " + str(wfm))
+        else:
+            # It worked, update the checked time
+            wfm.last_update_check = now
+            update_next_update_time(wfm, now)
