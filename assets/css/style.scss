@@ -1111,7 +1111,7 @@ select.form-control {
 }
 .login-card {
   height: auto;
-  width: 44rem;
+  width: 20rem;
   padding: 3rem 3rem 5rem 3rem;
   border: none;
   border-radius: 0px;
@@ -1135,6 +1135,36 @@ select.form-control {
   margin-left:3rem;
   margin-top:1rem
 }
+
+.signup-card-left{
+  width: 20rem;
+  background-color: transparent;
+  border-radius: 0;
+  border: 0;
+  padding-left: 0;
+}
+
+.signup-card-right{
+  background: #fff;
+  height: auto;
+  width: 20%;
+  padding: 3rem 3rem 5rem 3rem;
+  border: none;
+  border-radius: 0px;
+  box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
+  margin:auto;
+}
+
+
+.demosignup{
+  width: 100%;
+}
+
+.gif-container{
+  width:100%;
+}
+
+
 
 /* --------Preloader/spinner------*/
 

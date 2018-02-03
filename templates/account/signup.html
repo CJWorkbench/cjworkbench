@@ -1,47 +1,107 @@
-{% extends 'account/base.html' %}
-{% block content %}
-  <form method="post" class="account_form" action=''>
-    <div class="row d-flex align-items-center mt-3 mb-5">
-            <div class='col'></div>
-            <div class='title-1 t-d-gray text-center'>Create account</div>
-            <div class='col switch mt-1'>
-                <a href="/account/login" class='t-f-blue'>Log in</a>
+{% load analytics_tags %}
+{% load render_bundle from webpack_loader %}
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>{% block title %}{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/images/app-icons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/static/images/app-icons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/static/images/app-icons/favicon-16x16.png">
+    <link rel="manifest" href="/static/images/app-icons/manifest.json">
+    <link rel="mask-icon" href="/static/images/app-icons/safari-pinned-tab.svg" color="#5bbad5">
+    <link rel="shortcut icon" href="/static/images/app-icons/favicon.ico">
+    <meta name="msapplication-config" content="/static/images/app-icons/browserconfig.xml">
+    <meta name="theme-color" content="#ffffff">
+
+    {% google_analytics_id as google_analytics_id_var %}
+    {% if google_analytics_id_var %}
+      <script async src="https://www.googletagmanager.com/gtag/js?id={%google_analytics_id%}"></script>
+      <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', '{%google_analytics_id%}');
+      </script>
+    {% endif %}
+
+    <!-- styles -->
+    {% render_bundle 'login' 'css' %}
+  </head>
+  <body>
+    <div class="login-fullscreen-container">
+      <div class="container">
+        <div class="row">
+          <div class="col-6 signup-card-left drop-shadow">
+            <div class="d-flex justify-content-center">
+              <div class="login-bigbrand mb-5 d-flex flex-row align-items-center">
+                <img src="/static/images/logo.svg" class="logo"/>
+                <h1 className="title-2 login-bigbrand"><a href="http://cjworkbench.org">Workbench</a></h1>
+              </div>
             </div>
+            <div class="title-1 t-white text-center mb-3">
+              Build data pipeline with simple tools
+            </div>
+            <div class="d-flex justify-content-center">
+              <div class>
+                <img class="demosignup mb-5"src="/static/images/demotwitter.gif"/>
+                <div class="title-1 t-white text-center mb-3">
+                  Explore and visualize in a few steps
+                </div>
+                <img class="demosignup"src="/static/images/topdown.gif"/>
+              </div>
+            </div>
+          </div>
+          <div class="col-5 signup-card-right drop-shadow">
+            <div class="col">
+            </div>
+              <form method="post" class="account_form" action=''>
+                <div class="mt-3 mb-5">
+                    <div class='title-1 t-d-gray text-center'>Create account</div>
+                    <div class='switch mt-1 mr-3 text-center'>
+                        <a href="/account/login" class='t-f-blue'>Log in</a>
+                    </div>
+                    </div>
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    {# fields are broken out here so we can change the field order #}
+                    {{ form.first_name.errors }}
+                    {{ form.first_name.label_tag }}
+                    {{ form.first_name }}
+
+                    {{ form.last_name.errors }}
+                    {{ form.last_name.label_tag }}
+                    {{ form.last_name }}
+
+                    {{ form.email.errors }}
+                    {{ form.email.label_tag }}
+                    {{ form.email }}
+
+                    {{ form.password.errors }}
+                    {{ form.password.label_tag }}
+                    {{ form.password }}
+
+                    {{ form.password_confirm.errors }}
+                    {{ form.password_confirm.label_tag }}
+                    {{ form.password_confirm }}
+
+                    {{ form.get_newsletter.errors }}
+                    {{ form.get_newsletter }}
+                    {{ form.get_newsletter.label_tag }}
+                    <div class='mx-auto content-3 mt-3 text-center'>
+                      <span>Read our </span>
+                        <a href="http://intercom.help/cjworkbench/privacy-policy/privacy-policy" class='t-f-blue'>Privacy policy</a>
+                    </div>
+                <button type="submit" class="button-blue action-button mx-auto mb-3">Register</button>
+              </form>
+          </div>
+      </div>
     </div>
 
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-    {# fields are broken out here so we can change the field order #}
-    {{ form.first_name.errors }}
-    {{ form.first_name.label_tag }}
-    {{ form.first_name }}
+    <!-- JavaScript scripts -->
+    {% render_bundle 'login' 'js' %}
 
-    {{ form.last_name.errors }}
-    {{ form.last_name.label_tag }}
-    {{ form.last_name }}
-
-    {{ form.email.errors }}
-    {{ form.email.label_tag }}
-    {{ form.email }}
-
-    {{ form.password.errors }}
-    {{ form.password.label_tag }}
-    {{ form.password }}
-
-    {{ form.password_confirm.errors }}
-    {{ form.password_confirm.label_tag }}
-    {{ form.password_confirm }}
-
-    {{ form.get_newsletter.errors }}
-    {{ form.get_newsletter }}
-    {{ form.get_newsletter.label_tag }}
-    <div class='mx-auto content-3 mt-3 text-center'>
-      <span>Read our </span>
-      <a href="http://intercom.help/cjworkbench/privacy-policy/privacy-policy" class='t-f-blue'>Privacy policy</a>
-    </div>
-    <button type="submit" class="button-blue action-button mx-auto mb-3">Register</button>
-  </form>
-  <br />
-<!--   <p class="login-footer content-3 t-d-gray text-center">
-    Already have an account? </p> -->
-{% endblock %}
+  </body>
+</html>
