@@ -13,6 +13,7 @@ const MODULE_STATUS_CHANGE = 'MODULE_STATUS_CHANGE'
 const SELECTED_MODULE_CHANGE = 'SELECTED_MODULE_CHANGE'
 const UPDATE_CURRENT_USER = 'UPDATE_CURRENT_USER'
 const TOGGLE_MODULE_COLLAPSED = 'TOGGLE_MODULE_COLLAPSED'
+const PARAM_CHANGE = 'PARAM_CHANGE'
 
 
 var api = WorkbenchAPI(); // var so it can be mocked for testing
@@ -151,6 +152,15 @@ export function clearNotificationsAction(id) {
   )
 }
 
+export function changeParamAction(wfModuleId, paramIdName, paramValue) {
+    return {
+        type: PARAM_CHANGE,
+        wfModuleId,
+        paramIdName,
+        paramValue
+    }
+}
+
 // ---- Reducer ----
 // Maps actions to state changes, for that is the Redux way
 // Our state fields:
@@ -238,6 +248,49 @@ export function workflowReducer(state, action) {
       } else {
         return state;
       }
+
+
+      case PARAM_CHANGE:
+        let wfModule, wfModuleIdx, param, paramCopy, paramIdx;
+        wfModule = state.workflow.wf_modules.find((wfModule, idx) => {
+            wfModuleIdx = idx;
+            return wfModule.id === action.wfModuleId;
+        });
+
+        if (wfModule) {
+            param = wfModule.parameter_vals.find((parameterVal, idx) => {
+                paramIdx = idx;
+                return parameterVal.parameter_spec.id_name === action.paramIdName;
+            })
+        }
+
+        if (!param || param.value === action.paramValue) {
+            return state;
+        }
+
+        paramCopy = Object.assign({}, param, {
+            value: action.paramValue
+        });
+
+        api.onParamChanged(param.id, {value: action.paramValue});
+
+        // All of this is for getting a deep copy down to the individual param value.
+        // TODO: Find a more concise way to do this
+
+        newState = Object.assign({}, state);
+        newState.workflow = Object.assign({}, state.workflow);
+
+        let newModules = newState.workflow.wf_modules.slice();
+        newState.workflow.wf_modules = newModules;
+
+        let newParams = newModules[wfModuleIdx].parameter_vals.slice();
+        newModules[wfModuleIdx].parameter_vals = newParams;
+
+        newParams[paramIdx] = paramCopy;
+
+        return newState;
+
+
 
     case TOGGLE_MODULE_COLLAPSED:
       //console.log(WF_MODULE_STATUS_CHANGE + " " + action.id);

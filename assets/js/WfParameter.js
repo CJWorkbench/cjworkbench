@@ -3,7 +3,6 @@
 import React from 'react'
 import MenuParam from './wfparameters/MenuParam'
 import ChartParameter from './wfparameters/charts/Chart'
-import SimpleChartParameter from './wfparameters/charts/SimpleChart'
 import ChartEditor from './wfparameters/charts/ChartEditor'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
@@ -268,60 +267,15 @@ export default class WfParameter extends React.Component {
             </div>
           );
 
-        } else if (
-          this.props.p.parameter_spec.id_name === 'chart-line' ||
-          this.props.p.parameter_spec.id_name === 'chart-column') {
-
-            // Load and save chart state, image to hidden parameters
-            var loadState = ( () => this.props.getParamText('chartstate') );
-            var saveState = ( state => this.props.setParamText('chartstate', state) );
-
-            var saveImageDataURI = ( data => this.props.setParamText('chart', data) );
-
-            var chartType;
-            switch(this.props.p.parameter_spec.id_name) {
-              case 'chart-line':
-                chartType = 'line';
-                break;
-              case 'chart-column':
-                chartType = 'column';
-                break;
-              default:
-                chartType = 'line';
-                break;
-            }
-
-            return (
-              <div>
-                <a href={'/public/paramdata/live/' + this.props.p.id + '.png'}>PNG</a>
-                <SimpleChartParameter
-                  isReadOnly={this.props.isReadOnly}
-                  wf_module_id={this.props.wf_module_id}
-                  revision={this.props.revision}
-                  saveState={saveState}
-                  loadState={loadState}
-                  chartType={chartType}
-                  saveImageDataURI={saveImageDataURI}
-                />
-              </div>
-            );
-
-        } else if (this.props.p.parameter_spec.id_name == 'chart_editor_column') {
+        } else if (this.props.p.parameter_spec.id_name == 'chart_editor') {
           return (
             <ChartEditor
-              saveState={ (state) => {this.props.setParamText('chartstate', state)} }
-              chartState={ this.props.getParamText('chartstate') }
               isReadOnly={ this.props.isReadOnly }
               revision={ this.props.revision }
-            />
-          )
-        } else if (this.props.p.parameter_spec.id_name == 'chart_editor_line') {
-          return (
-            <ChartEditor
-              saveState={ (state) => {this.props.setParamText('chartstate', state)} }
-              chartState={ this.props.getParamText('chartstate') }
-              isReadOnly={ this.props.isReadOnly }
-              revision={ this.props.revision }
+              wfModuleId={this.props.wf_module_id}
+              modelText={this.props.p.value}
+              type={ this.props.getParamText('chart_type') }
+              api={this.props.api}
             />
           )
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
