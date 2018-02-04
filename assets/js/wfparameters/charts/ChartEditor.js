@@ -7,13 +7,12 @@ import {changeParamAction, wfModuleStatusAction, store} from "../../workflow-red
 import debounce from 'lodash/debounce'
 import { OutputIframeCtrl } from '../../OutputIframe'
 
-/* Flux stores */
+// Chartbuilder Flux stores. These are global but we only uses them synchronously to put data in, parse it, get CB state out
 var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
 var ChartPropertiesStore = require("chartbuilder/src/js/stores/ChartPropertiesStore");
 var ChartMetadataStore = require("chartbuilder/src/js/stores/ChartMetadataStore");
 var SessionStore = require("chartbuilder/src/js/stores/SessionStore");
 var ErrorStore = require("chartbuilder/src/js/stores/ErrorStore");
-
 
 var ChartViewActions = require("chartbuilder/src/js/actions/ChartViewActions");
 var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
@@ -24,7 +23,7 @@ Object.keys(cbErrorText).map( (key) => {
   cbErrorText[key].text = errorText[key].text;
 });
 
-// adapter, eventually obsolete with CSV format /input call, or direct edit of ChartBuilder data model
+// Data format adapter, would eventually be obsolete with a CSV format /input endpoint
 function JSONtoCSV(d) {
   if (d && d.length > 0) {
     var colnames = Object.keys(d[0]).filter(key => key != 'index');
@@ -44,7 +43,7 @@ export default class ChartEditor extends React.Component {
     super(props);
     this.state = {
       loading: true,
-      parsedChartState: null,
+      model: null,      // Chartbuilder model object. Also where we store/update current parameter values
       inputData: null
     };
     this.onChangeChartSettings = this.onChangeChartSettings.bind(this);
@@ -71,24 +70,24 @@ export default class ChartEditor extends React.Component {
     } else {
       store.dispatch(wfModuleStatusAction(this.props.wfModuleId, 'ready'))
     }
-}
+  }
 
+  // Rehydrate saved chart state text into a model object that Chartbuilder can use
   loadChartProps(modelText, data) {
     let model;
-    let defaults = chartConfig.xy.defaultProps;
-
-    defaults.chartProps.chartSettings[0].type = this.props.type;
-    defaults.chartProps.scale.typeSettings.maxLength = 7;
-
     if (modelText !== "") {
       model = JSON.parse(modelText);
     } else {
+      let defaults = chartConfig.xy.defaultProps;
+      defaults.chartProps.chartSettings[0].type = this.props.type;
+      defaults.chartProps.scale.typeSettings.maxLength = 7;
       model = defaults;
     }
     model.chartProps.input = {raw: data};
     return model;
   }
 
+  // Retrieve Chartbuilder's current state from its global store 
   getStateFromStores() {
   	return {
   		chartProps: ChartPropertiesStore.getAll(),
@@ -98,6 +97,7 @@ export default class ChartEditor extends React.Component {
   	};
   }
 
+  // Go from input data + saved model text to a Chartbuilder model, handling data parser errors if any 
   parseChartState(data) {
     let newModel = this.loadChartProps(this.props.modelText, data);
     let parsedModel;
@@ -114,6 +114,7 @@ export default class ChartEditor extends React.Component {
     return parsedModel;
   }
 
+  // Retreive the data we want to chart from the server, then chart it
   loadChartState() {
     this.setState({loading: true});
     this.props.api.input(this.props.wfModuleId).then((json) => {
@@ -123,6 +124,7 @@ export default class ChartEditor extends React.Component {
     })
   }
 
+  // When the model state changes (when a parameter is changed) the chart needs to update, and we need to store to the server
   saveState(state) {
     if (OutputIframeCtrl) {
       OutputIframeCtrl.postMessage({model: state}, '*');
@@ -130,9 +132,9 @@ export default class ChartEditor extends React.Component {
     this.saveStateToDatabase(state);
   }
 
+  // Push new state to server, sans the data we are charting (which comes from the previous module)
   saveStateToDatabase(state) {
-    // Don't save the input data to the database here, since we get it from the previous module
-    // Since we already have a copy we can remove the input data from the original
+    // Make a copy so we can remove the inpit data 
     let stateCopy = this.deepCopyState(state);
     Object.assign(stateCopy.chartProps, {data: undefined, input: undefined});
     let newStateString = JSON.stringify(state);
@@ -153,6 +155,10 @@ export default class ChartEditor extends React.Component {
     }
   }
 
+  // Callbacks to handle parameter changes. Some components are controlled input fields. 
+  // All parameters must both setState on this component so that we get a re-render with new settings,
+  // and saveState so that the chart re-renders and we save the change to the server.
+  
   onChangeChartSettings(state) {
     let stateCopy = this.deepCopyState(this.state.model);
     stateCopy.chartProps.chartSettings = state;
