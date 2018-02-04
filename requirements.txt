@@ -9,6 +9,7 @@ Cython==0.25.2
 pyOpenSSL==16.2.0
 certifi==2017.1.23
 channels==1.1.2
+daphne==1.2.0
 Django==1.11
 ed25519ll==0.6
 protobuf==3.2.0
