@@ -22,7 +22,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.other_workflow_public = Workflow.objects.create(name="Other workflow public", owner=self.otheruser, public=True)
 
     def workflow_view(self):
-        # The actual workflow page html
+        # View own non-public workflow
         response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -30,24 +30,16 @@ class WorkflowViewTests(LoggedInTestCase):
         response = self.client.get('/workflows/%d/' % 999999)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        # 404 when another user tries to view private workflow
-        self.assertFalse(self.workflow1.public)
-        self.client.force_login(self.otheruser)
+        # View someone else's public workflow
+        self.assertTrue(self.other_workflow_public.public)
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
-        # someone else's public workflow should be gettable
-        self.assertFalse(self.other_workflow_public.public)
-        request = self.client.get('/workflows/%d/' % self.other_workflow_public.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
 
-        self.assertEqual(response.data['name'], 'Other workflow public')
-        # Public workflow viewable
+        # 404 viewing someone else' private workflow
         self.assertFalse(self.workflow1.public)
         self.client.force_login(self.otheruser)
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-
 
 
     def test_workflow_init_state(self):
