@@ -1,6 +1,7 @@
-from django.http import HttpResponseForbidden
+from django.http import HttpResponseForbidden, Http404
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
@@ -29,19 +30,10 @@ def make_init_state(request):
 
 # ---- Workflows list page ----
 
-
 @login_required
 def render_workflows(request):
     init_state = make_init_state(request)
     return TemplateResponse(request, 'workflows.html', {'initState': init_state})
-
-
-# ---- Workflow ----
-
-# no login_required as logged out users can view public workflows
-def render_workflow(request, pk=None):
-    init_state = make_init_state(request)
-    return TemplateResponse(request, 'workflow.html', {'initState': init_state})
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])
@@ -65,6 +57,20 @@ def workflow_list(request, format=None):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# ---- Workflow ----
+
+# no login_required as logged out users can view public workflows
+def render_workflow(request, pk=None):
+    # Workflow must exist and be readable by this user
+    workflow = get_object_or_404(Workflow, pk=pk)
+
+    if not workflow.user_authorized_read(request.user):
+        raise Http404()
+
+    init_state = make_init_state(request)
+    return TemplateResponse(request, 'workflow.html', {'initState': init_state})
 
 
 # Retrieve or delete a workflow instance.

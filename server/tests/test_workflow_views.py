@@ -21,6 +21,35 @@ class WorkflowViewTests(LoggedInTestCase):
         self.other_workflow_private = Workflow.objects.create(name="Other workflow private", owner=self.otheruser)
         self.other_workflow_public = Workflow.objects.create(name="Other workflow public", owner=self.otheruser, public=True)
 
+    def workflow_view(self):
+        # The actual workflow page html
+        response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        # 404 with bad id
+        response = self.client.get('/workflows/%d/' % 999999)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # 404 when another user tries to view private workflow
+        self.assertFalse(self.workflow1.public)
+        self.client.force_login(self.otheruser)
+        response = self.client.get('/workflows/%d/' % self.workflow1.id)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+        # someone else's public workflow should be gettable
+        self.assertFalse(self.other_workflow_public.public)
+        request = self.client.get('/workflows/%d/' % self.other_workflow_public.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(response.data['name'], 'Other workflow public')
+        # Public workflow viewable
+        self.assertFalse(self.workflow1.public)
+        self.client.force_login(self.otheruser)
+        response = self.client.get('/workflows/%d/' % self.workflow1.id)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+
+
     def test_workflow_init_state(self):
         # checks to make sure the right initial data is embedded in the HTML (username etc.)
         with patch.dict('os.environ', { 'CJW_INTERCOM_APP_ID':'myIntercomId', 'CJW_GOOGLE_ANALYTICS':'myGaId'}):
