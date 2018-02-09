@@ -18,8 +18,8 @@ class PasteCSV(ModuleImpl):
         else:
             header_row = None
 
-        if (len(tablestr)==0):
-            return('Paste data here')
+        if (len(tablestr.strip())==0):
+            return None
 
         # Guess at format by counting commas and tabs
         commas = tablestr.count(',')
