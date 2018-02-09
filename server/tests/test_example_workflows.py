@@ -22,3 +22,7 @@ class ExecuteTests(TestCase):
         u3wf = Workflow.objects.filter(owner=user3).first()
         self.assertEqual(u3wf.name, wf.name)  # should not have 'Copy of'
 
+        # merely saving a user (not creating) should not duplicate examples
+        user3.password = 'foobaz'
+        user3.save()
+        self.assertEqual(Workflow.objects.count(), 2)
