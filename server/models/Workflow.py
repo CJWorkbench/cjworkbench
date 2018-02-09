@@ -8,9 +8,13 @@ class Workflow(models.Model):
     name = models.CharField('name',max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
+
     public = models.BooleanField(default=False)
-    module_library_collapsed = models.BooleanField(default=False)    
-    selected_wf_module = models.IntegerField(default=None, null=True)   
+    example = models.BooleanField(default=False)    # if set, will be duplicated for new users
+
+    module_library_collapsed = models.BooleanField(default=False)
+    selected_wf_module = models.IntegerField(default=None, null=True, blank=True)
+
     last_delta = models.ForeignKey('server.Delta',                # specify as string to avoid circular import
                                    related_name='+',              # + means no backward link
 				                   blank=True,
@@ -43,7 +47,8 @@ class Workflow(models.Model):
     # No authorization checking here, that needs to be handled in the view
     # Loses undo history (do we want that?)
     def duplicate(self, target_user):
-        new_wf = Workflow.objects.create(name="Copy of " + self.name, owner=target_user, public=False, last_delta=None)
+        new_wf_name = 'Copy of ' + self.name if not self.example else self.name  # don't prepend 'Copy of' to examples
+        new_wf = Workflow.objects.create(name=new_wf_name, owner=target_user, public=False, last_delta=None)
         for wfm in WfModule.objects.filter(workflow=self):
             wfm.duplicate(new_wf)
 
