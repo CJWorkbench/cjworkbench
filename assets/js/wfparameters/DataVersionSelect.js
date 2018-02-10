@@ -141,12 +141,12 @@ export default class DataVersionSelect extends React.Component {
 
     if (totalVers > 0) {
       var curVers = totalVers - this.state.versions.versions.map((version) => version[0]).indexOf(this.state.versions.selected);
-      versionText = "Version " + curVers + " of " + totalVers;
+      versionText = curVers + " of " + totalVers;
 
       modalLink =
         <div>
-          <div className='open-modal t-f-blue content-4 text-center' onClick={this.toggleModal}>
-                {this.formatDate(this.state.originalSelected)}
+          <div className='open-modal t-f-blue content-3 text-center' onClick={this.toggleModal}>
+            {versionText}
           </div>
           <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
             <ModalHeader toggle={this.toggleModal} >
@@ -204,12 +204,12 @@ export default class DataVersionSelect extends React.Component {
     } else {
       versionText = "No data loaded";
       modalLink =
-        <div className='open-modal t-f-blue content-4 text-center'>-</div>
+        <div className='open-modal t-f-blue content-3 text-center'>-</div>
     }
 
     return (
       <div className='version-item'>
-        <div className='t-d-gray content-3'>{versionText}</div>
+        <div className='t-d-gray content-3 mb-1'>Version</div>
         {modalLink}
       </div>
     );

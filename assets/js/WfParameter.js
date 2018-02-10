@@ -164,7 +164,7 @@ export default class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className='parameter-margin param3-line-margin'>
+          <div className='parameter-margin param2-line-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
@@ -206,7 +206,7 @@ export default class WfParameter extends React.Component {
 
       case 'menu':
         return (
-          <div className='parameter-margin param3-line-margin'>
+          <div className='parameter-margin param2-line-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <MenuParam
               name={this.name}
@@ -219,7 +219,7 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className='parameter-margin param3-line-margin'>
+          <div className='parameter-margin param2-line-margin'>
             <div className='t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
@@ -285,15 +285,7 @@ export default class WfParameter extends React.Component {
             : null
 
           return (
-            <div className='version-box parameter-margin'>
-              <DataVersionSelect
-                isReadOnly={this.props.isReadOnly}
-                wfModuleId={this.props.wf_module_id}
-                revision={this.props.revision}
-                api={this.props.api}
-                setClickNotification={this.props.setClickNotification}
-                notifications={this.props.notifications}
-              />
+            <div className='version-box'>
               <UpdateFrequencySelect
                 isReadOnly={this.props.isReadOnly}
                 updateSettings={this.props.updateSettings}
@@ -301,7 +293,18 @@ export default class WfParameter extends React.Component {
                 api={this.props.api}
                 notifications={this.props.notifications}
               />
-              {button}
+              <div className="d-flex justify-content-between mt-2">
+                <DataVersionSelect
+                  isReadOnly={this.props.isReadOnly}
+                  wfModuleId={this.props.wf_module_id}
+                  revision={this.props.revision}
+                  api={this.props.api}
+                  setClickNotification={this.props.setClickNotification}
+                  notifications={this.props.notifications}
+                />
+                {button}
+              </div>
+
             </div>
           );
         } else if (this.props.p.parameter_spec.id_name == 'version_select_simpler') {

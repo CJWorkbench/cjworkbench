@@ -69,7 +69,7 @@ body {
   letter-spacing: 0.2px;
 }
 .title-4 {
-	font-size: 1.4rem;
+	font-size: 1.3rem;
 	font-weight: 500;
 	line-height: 1.4rem;
 }
@@ -788,44 +788,28 @@ select.form-control {
 
 /* Margin for a group of parameters (can include several lines)*/
 
-.parameter-margin:not(:last-child) {
-  margin-bottom: 1.5rem;
+.parameter-margin {
+  margin-bottom: 1rem;
 }
 
 /* Margin for a line of 1 parameters, part of a group */
-.param-line-margin:not(:last-child){
+.param-line-margin{
   margin-bottom:1rem;
-}
-
-/* Margin for a line of X parameters, part of a group */
-.paramX-line-margin{
-  margin-bottom:1rem;
-  display:flex;
-}
-
-.paramX-line-margin:last-child{
-  margin-bottom:0rem;
 }
 
 /* Margins for 2 lined parameters, part of a group */
 .param2-line-margin{
-  width:20.75rem;
-  margin-right:.5rem;
-  padding:0;
+  display: inline-block;
+  width:48.9%;
+  margin-right: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .param2-line-margin:last-child{
   margin-right:0;
 }
 
-/* Margins for 3 lined parameter, part of a group*/
-.param3-line-margin{
-  display: inline-block;
-  width:32.3%;
-  margin-right: 0.5rem;
-}
-
-.param3-line-margin:last-child{
+.param2-line-margin:last-child{
   margin-right: 0;
 }
 
@@ -917,13 +901,13 @@ select.form-control {
   color:#8b8b8b;
   border-radius: 5rem;
   opacity: 0.5;
-  margin-right:0.5rem;
+  margin-right:0;
 }
 
 
 .context-button:hover {
   border: none;
-  background-color: #edecec;
+  background-color: transparent;
   color:#8b8b8b;
   opacity: 1;
 }
@@ -938,7 +922,7 @@ select.form-control {
 
 .context-collapse-button {
   cursor: pointer;
-  border: 1px solid #edecec;
+  border: 0;
   width: 2.5rem;
   height: 2.5rem;
   display: flex;
@@ -947,13 +931,13 @@ select.form-control {
   background-color: transparent;
   color:#b4b4b4;
   border-radius: 5rem;
-  margin-right:0.5rem;
+  margin-right:0rem;
   opacity: 1;
 }
 
 .context-collapse-button:hover {
   border: none;
-  background-color: #edecec;
+  background-color: transparent;
   color:#8b8b8b;
   decoration:none;
 }
@@ -971,12 +955,12 @@ select.form-control {
   background-color: transparent;
   color:#8b8b8b;
   opacity: 0.5;
-  margin-right:0.5rem;
+  margin-right:0;
 }
 
 .help-button:hover {
   border: none;
-  background-color: #edecec;
+  background-color: transparent;
   color:#8b8b8b;
   opacity: 1;
   decoration:none;
@@ -1034,7 +1018,7 @@ select.form-control {
 .action-button {
   cursor: pointer;
   min-width: 7rem;
-	height: 4rem;
+	height: 3.5rem;
   border-radius: 2.5rem;
   display: flex;
   align-items: center;
@@ -1454,7 +1438,7 @@ img.logo {
 
 /* Module Stack */
 .modulestack {
-  flex: 0 0 41rem;
+  flex: 0 0 28rem;
   border-left: 1px solid #DDDDDD;
   border-right: 1px solid #DDDDDD;
   background-color: #e9ebee;
@@ -1713,7 +1697,9 @@ div into the DOM, since we don't really want another element, we just want this 
   width: 200px;
 }
 
-
+.outputpane-header{
+  background-color:#D4DCE0;
+}
 /* --- the Search Modules within the Module Library header - ModuleSearch.js --- */
 
 .ml-icon-search{
@@ -2003,11 +1989,11 @@ div into the DOM, since we don't really want another element, we just want this 
 /* ---- WfModule ---- */
 
 .wf-card{
-  width: 38rem;
+  width: 25rem;
   margin-bottom: 0.5rem;
-  background-color: rgba(250,250,250,0.8);
+  background-color: #fafafa;
   position: relative;
-  transition: all 0.5s ease-out;
+  transition: all 0.3s ease-out;
 }
 
 .wf-card.placeholder {
@@ -2032,7 +2018,7 @@ div into the DOM, since we don't really want another element, we just want this 
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin:0 1.5rem 0 1.5rem;
+  margin:0 1rem 0 1rem;
   height:4rem;
 }
 
@@ -2054,7 +2040,7 @@ div into the DOM, since we don't really want another element, we just want this 
 }
 
 .module-card-params {
-  padding: 0.2rem 1.5rem 1.5rem 1.5rem;
+  padding: 0 1rem 0 1rem;
 }
 
 .module-description {
@@ -2094,6 +2080,7 @@ div into the DOM, since we don't really want another element, we just want this 
 }
 
 div.renderer-wrapper{
+  background-color: #e9ebee;
   margin-bottom: 1.5rem;
 }
 
@@ -2124,18 +2111,12 @@ svg .svg-background{
   height: 100%;
   width:100%;
 }
-/* all good NOT IN USE ANYMORE?? PIERRE 1/10/2018*/
-/* .module-output-bar-white {
-  width:0.3rem;
-  height: 100%;
-  background-color: transparent;
-} */
 
 /* all good & selected */
 .module-output-bar-blue {
   height: 100%;
-  background-color: transparent;
-  border: 2px solid rgba(118,155,176,0.5);
+  background-color:rgba(118,155,176,0.05);
+  border: 1px solid rgba(118,155,176,0.3);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -2146,7 +2127,7 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(118,155,176,0.3);
 	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 38rem
+  margin-left: 25.1rem
 }
 
 /* standby  */
@@ -2163,7 +2144,7 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(251,170,109,0);
 	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 38rem
+  margin-left: 25.1rem
 }
 /* error  */
 .module-output-bar-pink {
@@ -2179,7 +2160,7 @@ svg .svg-background{
 	content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 38.3rem;
+  margin-left: 25.1rem;
   height: 4rem;
 }
 /* error & selected */
@@ -2195,7 +2176,7 @@ svg .svg-background{
   content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 38.3rem;
+  margin-left: 25.1rem;
   height: 4.5rem;
 }
 
@@ -2424,29 +2405,23 @@ input[type=checkbox]:checked:after {
 /* ---- Data Module: data versions box */
 
 .version-box {
-  height:6.6rem;
-  border: 1px solid #E9E9E9;
-  display: flex;
-  flex-direction: row;
-  margin-top:-0.5rem;
-  padding: 1.2rem;
-  align-items:top;
+  height: 6.7rem;
+
 }
 
 .version-item {
-  width: 14rem;
   display: flex;
-  flex-direction:column;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width:9.5rem;
 }
 
 .frequency-item {
-  width: 10.5rem;
+  width: 100%;
   display: flex;
-  flex-direction:column;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-right: 1rem;
 }
 
@@ -2568,26 +2543,23 @@ select {
 }
 
 .module-notes {
-  padding: 1rem;
+  padding: 1rem 0 0.5rem 0;
 }
 
 .editable-notes-field {
   border: none;
   outline: none;
-  width: 100%;
+  width: 25rem;
+  min-height: 3rem;
   resize: none;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 1.3rem;
   font-weight: 100;
-	line-height: 2.6rem;
+	line-height: 2.2rem;
   color: #686768;
-  padding: 0 1.5rem;
-  background-color:rgba(72,200,215,0.2);
+  background-color:transparent;
   display: table;
-}
-
-.editable-notes-field:hover {
-  background-color:rgba(72,200,215,0.3);
+  margin:auto;
 }
 
 .editable-text {

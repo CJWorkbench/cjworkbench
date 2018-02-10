@@ -87,7 +87,7 @@ export default class ChartEditor extends React.Component {
     return model;
   }
 
-  // Retrieve Chartbuilder's current state from its global store 
+  // Retrieve Chartbuilder's current state from its global store
   getStateFromStores() {
   	return {
   		chartProps: ChartPropertiesStore.getAll(),
@@ -97,7 +97,7 @@ export default class ChartEditor extends React.Component {
   	};
   }
 
-  // Go from input data + saved model text to a Chartbuilder model, handling data parser errors if any 
+  // Go from input data + saved model text to a Chartbuilder model, handling data parser errors if any
   parseChartState(data) {
     let newModel = this.loadChartProps(this.props.modelText, data);
     let parsedModel;
@@ -134,7 +134,7 @@ export default class ChartEditor extends React.Component {
 
   // Push new state to server, sans the data we are charting (which comes from the previous module)
   saveStateToDatabase(state) {
-    // Make a copy so we can remove the inpit data 
+    // Make a copy so we can remove the inpit data
     let stateCopy = this.deepCopyState(state);
     Object.assign(stateCopy.chartProps, {data: undefined, input: undefined});
     let newStateString = JSON.stringify(state);
@@ -155,10 +155,10 @@ export default class ChartEditor extends React.Component {
     }
   }
 
-  // Callbacks to handle parameter changes. Some components are controlled input fields. 
+  // Callbacks to handle parameter changes. Some components are controlled input fields.
   // All parameters must both setState on this component so that we get a re-render with new settings,
   // and saveState so that the chart re-renders and we save the change to the server.
-  
+
   onChangeChartSettings(state) {
     let stateCopy = this.deepCopyState(this.state.model);
     stateCopy.chartProps.chartSettings = state;
@@ -198,7 +198,7 @@ export default class ChartEditor extends React.Component {
     if (this.state.model && this.state.model.errors && this.state.model.errors.valid) {
       return (
         <div>
-          <div className="param-line-margin">
+          <div>
             <ColumnColorPicker
               series={this.state.model.chartProps.chartSettings}
               saveState={this.onChangeChartSettings}/>
@@ -213,7 +213,7 @@ export default class ChartEditor extends React.Component {
               value={this.state.model.metadata.title}
               onChange={this.onChangeTitle} />
           </div>
-          <div className="paramX-line-margin">
+          <div className="param-line-margin">
 
             <div className="param2-line-margin">
               <div className="label-margin t-d-gray content-3">

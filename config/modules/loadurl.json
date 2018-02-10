@@ -8,7 +8,7 @@
   "help_url":"modules/add-data/add-from-url",
   "parameters": [
     {
-      "name": "Link to CSV, JSON or Excel file",
+      "name": "",
       "id_name" : "url",
       "type": "string",
       "default": "",

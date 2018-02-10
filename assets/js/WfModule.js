@@ -380,6 +380,7 @@ class WfModule extends React.Component {
       // that aren't clear right now. It doen't hurt anything but it shouldn't
       // be necessary either.
       <div onClick={this.click}>
+        {notes}
         <div className='wf-card mx-auto'>
         {this.props.connectDropTarget(this.props.connectDragSource(
           <div>
@@ -388,7 +389,6 @@ class WfModule extends React.Component {
             </div>
             <div className='card-block p-0'onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
               <div className='module-card-info'>
-                {notes}
                 <div className='module-card-header'>
                   <div className='module-header-content'>
                     <div className='d-flex justify-content-start align-items-center'>
