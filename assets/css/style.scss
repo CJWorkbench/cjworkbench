@@ -24,6 +24,7 @@ body {
 #root {
   height: 100vh;
 	width: 100%;
+  background-color:#FFF;
 }
 
 ::-webkit-scrollbar-thumb{
@@ -1340,6 +1341,11 @@ select.form-control {
   min-height:100vh;
 }
 
+// contain iframe
+.data-reactroot{
+  background-color: red;
+}
+
 
 /***** ---- Navbar ----- *****/
 
@@ -1439,8 +1445,6 @@ img.logo {
 /* Module Stack */
 .modulestack {
   flex: 0 0 28rem;
-  border-left: 1px solid #DDDDDD;
-  border-right: 1px solid #DDDDDD;
   background-color: #e9ebee;
   overflow: scroll;
   height:100vh;
@@ -1697,9 +1701,6 @@ div into the DOM, since we don't really want another element, we just want this 
   width: 200px;
 }
 
-.outputpane-header{
-  background-color:#D4DCE0;
-}
 /* --- the Search Modules within the Module Library header - ModuleSearch.js --- */
 
 .ml-icon-search{
@@ -2077,11 +2078,6 @@ div into the DOM, since we don't really want another element, we just want this 
 
 .svg-credit-data {
   display:none;
-}
-
-div.renderer-wrapper{
-  background-color: #e9ebee;
-  margin-bottom: 1.5rem;
 }
 
 .grid-lines{
@@ -2543,7 +2539,7 @@ select {
 }
 
 .module-notes {
-  padding: 1rem 0 0.5rem 0;
+  padding: 0.5rem 0 0.5rem 0;
 }
 
 .editable-notes-field {
