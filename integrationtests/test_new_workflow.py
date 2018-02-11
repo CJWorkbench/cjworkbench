@@ -12,7 +12,7 @@ class TestNewWorkflow(LoggedInIntegrationTest):
         self.assertTrue(re.match(r'.*/workflows/\d+/?$', b.url))
 
         # Empty module stack
-        self.assertTrue(b.is_text_present('DRAG AND DROP MODULE HERE'))
+        self.assertTrue(b.is_text_present('DROP MODULE HERE'))
 
         # Module library
         self.assertTrue(b.is_text_present('Add data'))
