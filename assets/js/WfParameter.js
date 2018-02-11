@@ -141,7 +141,7 @@ export default class WfParameter extends React.Component {
           sclass='parameter-base t-d-gray content-2 text-field';
           srows = 1;
         } else {
-          sclass='parameter-base t-d-gray info-1 text-field-large';
+          sclass='parameter-base t-d-gray content-3 text-field-large';
           srows = 4;
         }
 
