@@ -164,7 +164,7 @@ export default class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className='parameter-margin param2-line-margin'>
+          <div className='param2-line-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
@@ -206,7 +206,7 @@ export default class WfParameter extends React.Component {
 
       case 'menu':
         return (
-          <div className='parameter-margin param2-line-margin'>
+          <div className='param2-line-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <MenuParam
               name={this.name}
@@ -219,7 +219,7 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className='parameter-margin param2-line-margin'>
+          <div className='param2-line-margin'>
             <div className='t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
@@ -281,7 +281,7 @@ export default class WfParameter extends React.Component {
         } else if (this.props.p.parameter_spec.id_name == 'version_select') {
 
           var button = (!this.props.isReadOnly)
-            ? <div className='button-blue action-button mt-0' onClick={this.click}>{this.name}</div>
+            ? <div className='button-blue action-button-M mt-0' onClick={this.click}>{this.name}</div>
             : null
 
           return (

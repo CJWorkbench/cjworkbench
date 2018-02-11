@@ -205,7 +205,7 @@ export default class ChartEditor extends React.Component {
           </div>
           <div className="param-line-margin">
             <div className="label-margin t-d-gray content-3">
-              Chart Title
+              Title
             </div>
             <input
               type="text"
@@ -213,11 +213,11 @@ export default class ChartEditor extends React.Component {
               value={this.state.model.metadata.title}
               onChange={this.onChangeTitle} />
           </div>
-          <div className="param-line-margin">
+          <div className="">
 
             <div className="param2-line-margin">
               <div className="label-margin t-d-gray content-3">
-                Axis prefix
+                Prefix
               </div>
               <input
                 type="text"
@@ -228,7 +228,7 @@ export default class ChartEditor extends React.Component {
 
             <div className="param2-line-margin">
               <div className="label-margin t-d-gray content-3">
-                Axis suffix
+                Suffix
               </div>
               <input
                 type="text"

@@ -583,7 +583,7 @@ body {
 }
 
 .text-field {
-  padding: 0 1.25rem;
+  padding: 0 1rem;
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -597,7 +597,7 @@ body {
   width: 100%;
   resize: none;
   line-height: 3.5rem;
-  padding: 0 0 0 1.25rem;
+  padding: 0 0 0 1rem;
   border-radius:0px;
   border-color:#e7e7e7;
 
@@ -606,7 +606,7 @@ body {
 .text-field-large {
   height: 12rem;
   width: 100%;
-  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  padding: 1rem;
   resize: vertical;
   overflow:hidden;
 }
@@ -778,7 +778,7 @@ select.form-control {
 /*** Module Parameters spacing within modules ***/
 
 .label-margin {
-  margin-bottom: 0.1rem;
+  margin-bottom: -0.1rem;
   color:#b2b2b2;
 }
 
@@ -1019,7 +1019,7 @@ select.form-control {
 .action-button {
   cursor: pointer;
   min-width: 7rem;
-	height: 3.5rem;
+	height: 4rem;
   border-radius: 2.5rem;
   display: flex;
   align-items: center;
@@ -1031,6 +1031,24 @@ select.form-control {
     transition: opacity 0.1s;
 }
 .action-button:hover {
+	opacity: 0.5;
+}
+
+.action-button-M {
+  cursor: pointer;
+  min-width: 7rem;
+	height: 3.5rem;
+  border-radius: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+	font-size: 1.4rem;
+  line-height: 1.4rem;
+  padding: 0 1.8rem 0 1.8rem;
+  -webkit-transition: opacity 0.1s;
+    transition: opacity 0.1s;
+}
+.action-button-L:hover {
 	opacity: 0.5;
 }
 
@@ -2041,7 +2059,7 @@ div into the DOM, since we don't really want another element, we just want this 
 }
 
 .module-card-params {
-  padding: 0 1rem 0 1rem;
+  padding: 0 1rem 0.01rem 1rem;
 }
 
 .module-description {
@@ -2098,6 +2116,10 @@ svg .svg-background{
   border: 1px red;
 }
 
+.chart-label{
+  width: 100%;
+  margin-left: 0.5rem;
+}
 
 /* ---- Wf Module status bars ---- */
 
@@ -2156,7 +2178,7 @@ svg .svg-background{
 	content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 25.1rem;
+  margin-left: 25.3rem;
   height: 4rem;
 }
 /* error & selected */
@@ -2182,9 +2204,9 @@ svg .svg-background{
 .checkbox-container {
   background-color: #FFFFFF;
   height: 3.5rem;
-  width: 49.7%;
-  margin: 0.5px;
-  padding: 0 1.5rem;
+  width: 100%;
+  margin-bottom: 1px;
+  padding: 0 1rem;
   display:flex;
   align-items: center;
 }
@@ -2194,7 +2216,6 @@ svg .svg-background{
   height: 12rem;
   min-height: 6rem;
   overflow: auto;
-  background-color: #e7e7e7;
   border: 1px solid #e7e7e7;
 }
 
@@ -2401,7 +2422,7 @@ input[type=checkbox]:checked:after {
 /* ---- Data Module: data versions box */
 
 .version-box {
-  height: 6.7rem;
+  height: 7rem;
 
 }
 
