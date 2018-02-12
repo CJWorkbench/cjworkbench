@@ -180,8 +180,8 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          <div className="param-button-container d-flex justify-content-end">
-            <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{this.name}</div>
+          <div className="parameter-margin d-flex justify-content-end">
+            <div className='action-button-M button-blue' onClick={!this.props.readOnly && this.click}>{this.name}</div>
           </div>
         );
       case 'statictext':
@@ -285,7 +285,7 @@ export default class WfParameter extends React.Component {
             : null
 
           return (
-            <div className='version-box'>
+            <div className='version-box parameter-margin'>
               <UpdateFrequencySelect
                 isReadOnly={this.props.isReadOnly}
                 updateSettings={this.props.updateSettings}
