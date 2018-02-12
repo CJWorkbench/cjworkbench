@@ -137,8 +137,12 @@ INSTALLED_APPS = [
     'webpack_loader',
     'rest_framework',
     'channels',
-    'account',
     'polymorphic',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
 ]
 
 MIDDLEWARE = [
@@ -149,8 +153,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'account.middleware.LocaleMiddleware',
-    'account.middleware.TimezoneMiddleware',
+    #'account.middleware.LocaleMiddleware',
+    #'account.middleware.TimezoneMiddleware',
 ]
 
 ROOT_URLCONF = 'cjworkbench.urls'
@@ -167,7 +171,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-                'account.context_processors.account',
+                #'account.context_processors.account',
             ],
         },
     },
@@ -279,12 +283,15 @@ LOGGING = {
 
 # User accounts
 
-ACCOUNT_EMAIL_UNIQUE = True
-ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USER_DISPLAY = workbench_user_display
 
 AUTHENTICATION_BACKENDS = [
-    'account.auth_backends.EmailAuthenticationBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 CJW_GOOGLE_CLIENT_SECRETS_PATH = os.environ.get('CJW_GOOGLE_CLIENT_SECRETS', False)

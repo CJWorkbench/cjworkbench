@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from server.models import Workflow, WfModule, ParameterVal, ParameterSpec, Module, ModuleVersion, StoredObject
 from server.utils import seconds_to_count_and_units
-from account.utils import user_display
+from allauth.account.utils import user_display
 from django.contrib.auth import get_user_model
 from server.settingsutils import *
 from cjworkbench.settings import KB_ROOT_URL
