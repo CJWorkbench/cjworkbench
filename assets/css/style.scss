@@ -778,7 +778,7 @@ select.form-control {
 /*** Module Parameters spacing within modules ***/
 
 .label-margin {
-  margin-bottom: -0.1rem;
+  margin-bottom: 0.1rem;
   color:#b2b2b2;
 }
 
@@ -1462,7 +1462,7 @@ img.logo {
 
 /* Module Stack */
 .modulestack {
-  flex: 0 0 28rem;
+  flex: 0 0 30rem;
   background-color: #e9ebee;
   overflow: scroll;
   height:100vh;
@@ -2008,7 +2008,7 @@ div into the DOM, since we don't really want another element, we just want this 
 /* ---- WfModule ---- */
 
 .wf-card{
-  width: 25rem;
+  width: 26rem;
   margin-bottom: 0.5rem;
   background-color: #fafafa;
   position: relative;
@@ -2037,7 +2037,7 @@ div into the DOM, since we don't really want another element, we just want this 
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin:0 1rem 0 1rem;
+  margin:0 1rem 0 1.5rem;
   height:4rem;
 }
 
@@ -2059,7 +2059,7 @@ div into the DOM, since we don't really want another element, we just want this 
 }
 
 .module-card-params {
-  padding: 0 1rem 0.01rem 1rem;
+  padding: 0 1.5rem 0.01rem 1.5rem;
 }
 
 .module-description {
@@ -2145,14 +2145,14 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(118,155,176,0.3);
 	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 25.1rem
+  margin-left: 26.3rem
 }
 
 /* standby  */
 .module-output-bar-orange {
   height: 100%;
   background-color: transparent;
-  border:2px solid rgba(251,170,109,0.7);
+  border:1px solid rgba(251,170,109,0.7);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -2162,13 +2162,13 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(251,170,109,0);
 	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 25.1rem
+  margin-left: 26.3rem
 }
 /* error  */
 .module-output-bar-pink {
   height: 100%;
   background-color: transparent;
-  border:2px solid rgba(0,114,110,0);
+  border:1px solid rgba(0,114,110,0);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -2178,14 +2178,14 @@ svg .svg-background{
 	content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 25.3rem;
+  margin-left: 26.4rem;
   height: 4rem;
 }
 /* error & selected */
 .module-output-bar-red {
   height: 100%;
   background-color: transparent;
-  border:2px solid rgba(232,114,110,0.5);
+  border:1px solid rgba(232,114,110,0.5);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -2193,8 +2193,8 @@ svg .svg-background{
 .module-output-bar-red:after {
   content: " ";
 	position: absolute;
-	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 25.1rem;
+	border:1px solid rgba(232,114,110,0.3);
+  margin-left: 25.2rem;
   height: 4.5rem;
 }
 
