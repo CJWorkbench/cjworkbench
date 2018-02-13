@@ -10,7 +10,7 @@
         <div class="row d-flex align-items-center mt-3 mb-5">
             <div class='col'></div>
             <div class=' col title-1 t-d-gray text-center'>Sign in</div>
-            <div class='col switch mt-1'>
+            <div class='col switch align-items-center'>
                 <a href="/signup_closed_test" class='t-f-blue mb-1'>{% trans "Sign up" %}</a>
             </div>
         </div>
@@ -23,27 +23,25 @@
         {% endif %}
 
         <div class='text-center'>
-            <a class="content-4 t-f-blue mb-5" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+            <a class="content-4 t-f-blue mx-auto" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
         </div>
-
         <button class="button-blue action-button mx-auto mb-4" type="submit">{% trans "Sign In" %}</button>
 
     </form>
 
+    <div class="d-flex justify-content-center mb-4">
+      <div class="content-4">or</div>
+    </div>
+
     {% get_providers as socialaccount_providers %}
 
     {% if socialaccount_providers %}
-    <p>{% blocktrans with site.name as site_name %}Please sign in with one
-    of your existing third party accounts. Or, <a href="{{ signup_url }}">sign up</a>
-    for a {{ site_name }} account and sign in below:{% endblocktrans %}</p>
 
     <div class="socialaccount_ballot">
 
-        <ul class="socialaccount_providers">
+        <div>
             {% include "socialaccount/snippets/provider_list.html" with process="login" %}
-        </ul>
-
-        <div class="login-or">{% trans 'or' %}</div>
+        </div>
 
     </div>
 

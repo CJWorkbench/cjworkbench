@@ -438,13 +438,7 @@ input[type=checkbox]
 	position: relative;
 }
 
-/*checkbox at login*/
-label[for=id_remember]{
-  margin-bottom: 1rem;
-  position: absolute;
-  margin-left: 0.5rem;
-  opacity: 0.6;
-}
+
 
 input[type=checkbox]:active, input[type=checkbox]:checked:active {
 	box-shadow: inset 0px 1px 0px #FBAA6D;
