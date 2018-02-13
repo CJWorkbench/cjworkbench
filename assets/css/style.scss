@@ -108,9 +108,9 @@ body {
 	line-height: 1.1rem;
 }
 .content-5 {
-	font-size: 1.3rem;
-	line-height: 1.3rem;
-  font-weight: 500;
+	font-size: 1.2rem;
+	line-height: 1.4rem;
+  font-weight: 400;
 }
 
 .code-1 {
@@ -1650,16 +1650,6 @@ div into the DOM, since we don't really want another element, we just want this 
   cursor:pointer;
 }
 
-.library-card-category-open .ml-list-mini {
-  background-color:#547081;
-  opacity: 1;
-  cursor: pointer;
-  z-index: 100;
-  position: absolute;
-  left: 6rem;
-  top: 0;
-}
-
 .card .second-level {
   opacity: 0.7;
   position: relative;
@@ -1672,6 +1662,44 @@ div into the DOM, since we don't really want another element, we just want this 
   background-color: #4E6878;
   opacity: 1;
 }
+
+// Modules in closed library
+
+
+.library-card-category-open .ml-list-mini {
+  background-color:#547081;
+  cursor: pointer;
+  z-index: 100;
+  position: absolute;
+  left: 6rem;
+  top: -0.1rem;
+  overflow-y: scroll;
+  max-height: calc(70vh);
+  border-right: 1px solid #4A6676;
+  border-top: 1px solid #4A6676;
+  border-bottom: 1px solid #4A6676;
+  box-shadow: 0.5rem 0.5rem 2.5rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.library-card-category-open .ml-list-mini .ml-module-card {
+  width: 17.5rem;
+}
+
+.library-card-category-open .ml-list-mini .ml-module-card .ml-icon {
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.library-card-category-open .ml-list-mini .ml-module-card .ml-module-name{
+  margin-left: 0.4rem;
+}
+
+
+.card .ml-list-mini .second-level{
+  padding-left: 1rem;
+}
+
+///
 
 .ml-handle{
   padding: 0 0.5rem;
@@ -1712,7 +1740,6 @@ div into the DOM, since we don't really want another element, we just want this 
 
 .ml-module-name{
   margin-left:0.6rem;
-  margin-top: 0.2rem;
 }
 
 .ml-module-card {
