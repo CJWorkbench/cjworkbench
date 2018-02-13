@@ -1,7 +1,7 @@
 {
   "name": "Select columns",
   "id_name": "selectcolumns",
-  "category" : "Analyse",
+  "category" : "Prepare",
   "icon" : "transform",
   "description" : "",
   "help_url":"modules/analyse/column-selector",

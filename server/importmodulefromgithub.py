@@ -29,15 +29,9 @@ sys.path.insert(0, parent_directory)
 
 categories = set()
 
+# Categories allowed for modules. If not in this list, will be assigned "Other"
 def get_categories():
-    #cache categories
-    if not categories:
-        modules = Module.objects.all()
-        for module in modules:
-            categories.add(module.category)
-        categories.add("Edit") #Ick, double ick, but hard-coding as a temporary measure.
-        categories.add("Analyse")
-    return categories
+    return ['Add data', 'Prepare', 'Analyze', 'Code', 'Visualize']
 
 # Returns dict of {id_name: url} for existing Module objects
 def get_already_imported_module_urls():
