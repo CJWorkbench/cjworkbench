@@ -1463,7 +1463,7 @@ img.logo {
 /* Module Stack */
 .modulestack {
   flex: 0 0 30rem;
-  background-color: #e9ebee;
+  background-color: #EBEEF1;
   overflow: scroll;
   height:100vh;
   position: relative;
@@ -2015,6 +2015,10 @@ div into the DOM, since we don't really want another element, we just want this 
   transition: all 0.3s ease-out;
 }
 
+.wf-card:hover{
+  background:#F5F7F8;
+}
+
 .wf-card.placeholder {
   height: 0.5rem;
   background-color: #7A9BB0;
@@ -2133,7 +2137,7 @@ svg .svg-background{
 /* all good & selected */
 .module-output-bar-blue {
   height: 100%;
-  background-color:rgba(118,155,176,0.05);
+  background-color:#F5F7F8;
   border: 1px solid rgba(118,155,176,0.3);
   display: flex;
   align-items: center;
@@ -2422,7 +2426,7 @@ input[type=checkbox]:checked:after {
 /* ---- Data Module: data versions box */
 
 .version-box {
-  
+
 
 }
 
