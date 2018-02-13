@@ -1,0 +1,15 @@
+{
+  "name": "Edit Cells",
+  "id_name": "editcells" ,
+  "category" : "Edit",
+  "icon" : "url",
+  "description" : "Enter values for individual cells",
+  "help_url":"modules/edit/editcells",
+  "parameters": [
+    {
+      "name": "Cell Editor",
+      "id_name" : "celledits",
+      "type": "custom"
+    }
+  ]
+}
