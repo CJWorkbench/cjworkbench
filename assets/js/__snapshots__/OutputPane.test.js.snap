@@ -136,6 +136,7 @@ exports[`Fetches and renders 1`] = `
               }
               getRow={[Function]}
               resizing={false}
+              setRow={[Function]}
               totalRows={2}
             >
               <ReactDataGrid
@@ -146,20 +147,24 @@ exports[`Fetches and renders 1`] = `
                     Object {
                       "formatter": [Function],
                       "key": "row-xxxxxxxxx",
+                      "locked": true,
                       "name": "",
                       "width": 40,
                     },
                     Object {
+                      "editable": true,
                       "key": "a",
                       "name": "a",
                       "resizable": true,
                     },
                     Object {
+                      "editable": true,
                       "key": "b",
                       "name": "b",
                       "resizable": true,
                     },
                     Object {
+                      "editable": true,
                       "key": "c",
                       "name": "c",
                       "resizable": true,
@@ -167,13 +172,14 @@ exports[`Fetches and renders 1`] = `
                   ]
                 }
                 enableCellAutoFocus={true}
-                enableCellSelect={false}
+                enableCellSelect={true}
                 enableRowSelect={false}
                 headerFiltersHeight={45}
                 minColumnWidth={80}
                 minHeight={-2}
                 minWidth={-2}
                 onBeforeEdit={[Function]}
+                onGridRowsUpdated={[Function]}
                 overScan={
                   Object {
                     "colsEnd": 5,
@@ -207,7 +213,7 @@ exports[`Fetches and renders 1`] = `
                           "copied": null,
                           "dragged": null,
                           "enableCellAutoFocus": true,
-                          "enableCellSelect": false,
+                          "enableCellSelect": true,
                           "getCellActions": undefined,
                           "getDataGridDOMNode": [Function],
                           "handleDragEnterRow": [Function],
@@ -220,6 +226,7 @@ exports[`Fetches and renders 1`] = `
                           "onCellContextMenu": [Function],
                           "onCellDoubleClick": [Function],
                           "onCellExpand": [Function],
+                          "onCellFocus": [Function],
                           "onColumnEvent": [Function],
                           "onCommit": [Function],
                           "onCommitCancel": [Function],
@@ -230,8 +237,8 @@ exports[`Fetches and renders 1`] = `
                           "openCellEditor": [Function],
                           "rowKey": "id",
                           "selected": Object {
-                            "idx": -1,
-                            "rowIdx": -1,
+                            "idx": 0,
+                            "rowIdx": 0,
                           },
                         }
                       }
@@ -244,10 +251,12 @@ exports[`Fetches and renders 1`] = `
                               "formatter": [Function],
                               "key": "row-xxxxxxxxx",
                               "left": 0,
+                              "locked": true,
                               "name": "",
                               "width": 40,
                             },
                             Object {
+                              "editable": true,
                               "key": "a",
                               "left": 40,
                               "name": "a",
@@ -255,6 +264,7 @@ exports[`Fetches and renders 1`] = `
                               "width": 80,
                             },
                             Object {
+                              "editable": true,
                               "key": "b",
                               "left": 120,
                               "name": "b",
@@ -262,6 +272,7 @@ exports[`Fetches and renders 1`] = `
                               "width": 80,
                             },
                             Object {
+                              "editable": true,
                               "key": "c",
                               "left": 200,
                               "name": "c",
@@ -279,20 +290,24 @@ exports[`Fetches and renders 1`] = `
                           Object {
                             "formatter": [Function],
                             "key": "row-xxxxxxxxx",
+                            "locked": true,
                             "name": "",
                             "width": 40,
                           },
                           Object {
+                            "editable": true,
                             "key": "a",
                             "name": "a",
                             "resizable": true,
                           },
                           Object {
+                            "editable": true,
                             "key": "b",
                             "name": "b",
                             "resizable": true,
                           },
                           Object {
+                            "editable": true,
                             "key": "c",
                             "name": "c",
                             "resizable": true,
@@ -300,7 +315,7 @@ exports[`Fetches and renders 1`] = `
                         ]
                       }
                       enableCellAutoFocus={true}
-                      enableCellSelect={false}
+                      enableCellSelect={true}
                       enableRowSelect={false}
                       expandedRows={Array []}
                       headerFiltersHeight={45}
@@ -318,6 +333,7 @@ exports[`Fetches and renders 1`] = `
                       minWidth={-2}
                       onBeforeEdit={[Function]}
                       onColumnResize={[Function]}
+                      onGridRowsUpdated={[Function]}
                       onSort={[Function]}
                       onViewportClick={[Function]}
                       onViewportDoubleClick={[Function]}
@@ -364,7 +380,7 @@ exports[`Fetches and renders 1`] = `
                               "copied": null,
                               "dragged": null,
                               "enableCellAutoFocus": true,
-                              "enableCellSelect": false,
+                              "enableCellSelect": true,
                               "getCellActions": undefined,
                               "getDataGridDOMNode": [Function],
                               "handleDragEnterRow": [Function],
@@ -377,6 +393,7 @@ exports[`Fetches and renders 1`] = `
                               "onCellContextMenu": [Function],
                               "onCellDoubleClick": [Function],
                               "onCellExpand": [Function],
+                              "onCellFocus": [Function],
                               "onColumnEvent": [Function],
                               "onCommit": [Function],
                               "onCommitCancel": [Function],
@@ -387,8 +404,8 @@ exports[`Fetches and renders 1`] = `
                               "openCellEditor": [Function],
                               "rowKey": "id",
                               "selected": Object {
-                                "idx": -1,
-                                "rowIdx": -1,
+                                "idx": 0,
+                                "rowIdx": 0,
                               },
                             }
                           }
@@ -399,10 +416,12 @@ exports[`Fetches and renders 1`] = `
                                   "formatter": [Function],
                                   "key": "row-xxxxxxxxx",
                                   "left": 0,
+                                  "locked": true,
                                   "name": "",
                                   "width": 40,
                                 },
                                 Object {
+                                  "editable": true,
                                   "key": "a",
                                   "left": 40,
                                   "name": "a",
@@ -410,6 +429,7 @@ exports[`Fetches and renders 1`] = `
                                   "width": 80,
                                 },
                                 Object {
+                                  "editable": true,
                                   "key": "b",
                                   "left": 120,
                                   "name": "b",
@@ -417,6 +437,7 @@ exports[`Fetches and renders 1`] = `
                                   "width": 80,
                                 },
                                 Object {
+                                  "editable": true,
                                   "key": "c",
                                   "left": 200,
                                   "name": "c",
@@ -465,10 +486,12 @@ exports[`Fetches and renders 1`] = `
                                     "formatter": [Function],
                                     "key": "row-xxxxxxxxx",
                                     "left": 0,
+                                    "locked": true,
                                     "name": "",
                                     "width": 40,
                                   },
                                   Object {
+                                    "editable": true,
                                     "key": "a",
                                     "left": 40,
                                     "name": "a",
@@ -476,6 +499,7 @@ exports[`Fetches and renders 1`] = `
                                     "width": 80,
                                   },
                                   Object {
+                                    "editable": true,
                                     "key": "b",
                                     "left": 120,
                                     "name": "b",
@@ -483,6 +507,7 @@ exports[`Fetches and renders 1`] = `
                                     "width": 80,
                                   },
                                   Object {
+                                    "editable": true,
                                     "key": "c",
                                     "left": 200,
                                     "name": "c",
@@ -541,43 +566,7 @@ exports[`Fetches and renders 1`] = `
                                   <HeaderCell
                                     column={
                                       Object {
-                                        "formatter": [Function],
-                                        "key": "row-xxxxxxxxx",
-                                        "left": 0,
-                                        "name": "",
-                                        "rowType": "header",
-                                        "width": 40,
-                                      }
-                                    }
-                                    height={35}
-                                    onResize={[Function]}
-                                    onResizeEnd={[Function]}
-                                    renderer={[Function]}
-                                    resizing={false}
-                                  >
-                                    <div
-                                      className="react-grid-HeaderCell"
-                                      style={
-                                        Object {
-                                          "display": "inline-block",
-                                          "height": 35,
-                                          "left": 0,
-                                          "margin": 0,
-                                          "position": "absolute",
-                                          "textOverflow": "ellipsis",
-                                          "whiteSpace": "nowrap",
-                                          "width": 40,
-                                        }
-                                      }
-                                    >
-                                      <div
-                                        className="widget-HeaderCell__value"
-                                      />
-                                    </div>
-                                  </HeaderCell>
-                                  <HeaderCell
-                                    column={
-                                      Object {
+                                        "editable": true,
                                         "key": "a",
                                         "left": 40,
                                         "name": "a",
@@ -656,6 +645,7 @@ exports[`Fetches and renders 1`] = `
                                   <HeaderCell
                                     column={
                                       Object {
+                                        "editable": true,
                                         "key": "b",
                                         "left": 120,
                                         "name": "b",
@@ -734,6 +724,7 @@ exports[`Fetches and renders 1`] = `
                                   <HeaderCell
                                     column={
                                       Object {
+                                        "editable": true,
                                         "key": "c",
                                         "left": 200,
                                         "name": "c",
@@ -809,6 +800,44 @@ exports[`Fetches and renders 1`] = `
                                       </ResizeHandle>
                                     </div>
                                   </HeaderCell>
+                                  <HeaderCell
+                                    column={
+                                      Object {
+                                        "formatter": [Function],
+                                        "key": "row-xxxxxxxxx",
+                                        "left": 0,
+                                        "locked": true,
+                                        "name": "",
+                                        "rowType": "header",
+                                        "width": 40,
+                                      }
+                                    }
+                                    height={35}
+                                    onResize={[Function]}
+                                    onResizeEnd={[Function]}
+                                    renderer={[Function]}
+                                    resizing={false}
+                                  >
+                                    <div
+                                      className="react-grid-HeaderCell react-grid-HeaderCell--locked"
+                                      style={
+                                        Object {
+                                          "display": "inline-block",
+                                          "height": 35,
+                                          "left": 0,
+                                          "margin": 0,
+                                          "position": "absolute",
+                                          "textOverflow": "ellipsis",
+                                          "whiteSpace": "nowrap",
+                                          "width": 40,
+                                        }
+                                      }
+                                    >
+                                      <div
+                                        className="widget-HeaderCell__value"
+                                      />
+                                    </div>
+                                  </HeaderCell>
                                 </div>
                               </div>
                             </HeaderRow>
@@ -829,7 +858,7 @@ exports[`Fetches and renders 1`] = `
                                 "copied": null,
                                 "dragged": null,
                                 "enableCellAutoFocus": true,
-                                "enableCellSelect": false,
+                                "enableCellSelect": true,
                                 "getCellActions": undefined,
                                 "getDataGridDOMNode": [Function],
                                 "handleDragEnterRow": [Function],
@@ -842,6 +871,7 @@ exports[`Fetches and renders 1`] = `
                                 "onCellContextMenu": [Function],
                                 "onCellDoubleClick": [Function],
                                 "onCellExpand": [Function],
+                                "onCellFocus": [Function],
                                 "onColumnEvent": [Function],
                                 "onCommit": [Function],
                                 "onCommitCancel": [Function],
@@ -852,8 +882,8 @@ exports[`Fetches and renders 1`] = `
                                 "openCellEditor": [Function],
                                 "rowKey": "id",
                                 "selected": Object {
-                                  "idx": -1,
-                                  "rowIdx": -1,
+                                  "idx": 0,
+                                  "rowIdx": 0,
                                 },
                               }
                             }
@@ -864,10 +894,12 @@ exports[`Fetches and renders 1`] = `
                                     "formatter": [Function],
                                     "key": "row-xxxxxxxxx",
                                     "left": 0,
+                                    "locked": true,
                                     "name": "",
                                     "width": 40,
                                   },
                                   Object {
+                                    "editable": true,
                                     "key": "a",
                                     "left": 40,
                                     "name": "a",
@@ -875,6 +907,7 @@ exports[`Fetches and renders 1`] = `
                                     "width": 80,
                                   },
                                   Object {
+                                    "editable": true,
                                     "key": "b",
                                     "left": 120,
                                     "name": "b",
@@ -882,6 +915,7 @@ exports[`Fetches and renders 1`] = `
                                     "width": 80,
                                   },
                                   Object {
+                                    "editable": true,
                                     "key": "c",
                                     "left": 200,
                                     "name": "c",
@@ -937,7 +971,7 @@ exports[`Fetches and renders 1`] = `
                                     "copied": null,
                                     "dragged": null,
                                     "enableCellAutoFocus": true,
-                                    "enableCellSelect": false,
+                                    "enableCellSelect": true,
                                     "getCellActions": undefined,
                                     "getDataGridDOMNode": [Function],
                                     "handleDragEnterRow": [Function],
@@ -950,6 +984,7 @@ exports[`Fetches and renders 1`] = `
                                     "onCellContextMenu": [Function],
                                     "onCellDoubleClick": [Function],
                                     "onCellExpand": [Function],
+                                    "onCellFocus": [Function],
                                     "onColumnEvent": [Function],
                                     "onCommit": [Function],
                                     "onCommitCancel": [Function],
@@ -960,8 +995,8 @@ exports[`Fetches and renders 1`] = `
                                     "openCellEditor": [Function],
                                     "rowKey": "id",
                                     "selected": Object {
-                                      "idx": -1,
-                                      "rowIdx": -1,
+                                      "idx": 0,
+                                      "rowIdx": 0,
                                     },
                                   }
                                 }
@@ -975,10 +1010,12 @@ exports[`Fetches and renders 1`] = `
                                       "formatter": [Function],
                                       "key": "row-xxxxxxxxx",
                                       "left": 0,
+                                      "locked": true,
                                       "name": "",
                                       "width": 40,
                                     },
                                     Object {
+                                      "editable": true,
                                       "key": "a",
                                       "left": 40,
                                       "name": "a",
@@ -986,6 +1023,7 @@ exports[`Fetches and renders 1`] = `
                                       "width": 80,
                                     },
                                     Object {
+                                      "editable": true,
                                       "key": "b",
                                       "left": 120,
                                       "name": "b",
@@ -993,6 +1031,7 @@ exports[`Fetches and renders 1`] = `
                                       "width": 80,
                                     },
                                     Object {
+                                      "editable": true,
                                       "key": "c",
                                       "left": 200,
                                       "name": "c",
@@ -1038,8 +1077,8 @@ exports[`Fetches and renders 1`] = `
                                   }
                                 >
                                   <RowsContainer
-                                    idx={-1}
-                                    rowIdx={-1}
+                                    idx={0}
+                                    rowIdx={0}
                                     rows={
                                       Array [
                                         <div
@@ -1083,8 +1122,8 @@ exports[`Fetches and renders 1`] = `
                                     width={40}
                                   >
                                     <SimpleRowsContainer
-                                      idx={-1}
-                                      rowIdx={-1}
+                                      idx={0}
+                                      rowIdx={0}
                                       rows={
                                         Array [
                                           <div

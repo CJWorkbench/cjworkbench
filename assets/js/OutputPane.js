@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import { OutputIframe } from './OutputIframe'
 import Resizable from 're-resizable'
 import debounce from 'lodash/debounce'
+import update from 'immutability-helper'
 
 export default class OutputPane extends React.Component {
 
@@ -27,12 +28,13 @@ export default class OutputPane extends React.Component {
     };
 
     this.getRow = this.getRow.bind(this);
+    this.setRow = this.setRow.bind(this);
     this.resizePaneStart = this.resizePaneStart.bind(this);
     this.resizePane = this.resizePane.bind(this);
     this.resizePaneEnd = this.resizePaneEnd.bind(this);
     this.setResizePaneRelativeDimensions = this.setResizePaneRelativeDimensions.bind(this);
 
-    // loading flag cannot be in state because we need to suppress fetches in getRow, which is called many times in a tick
+    // loading flag cannot be in state because, see below
     this.loading = false;
     this.spinnerEl = null;
 
@@ -47,15 +49,11 @@ export default class OutputPane extends React.Component {
   // so spinner/spinner off updates are combined and we never see when the table re-render is long.
   // So, now we turn the spinner on and off immediately through direct DOM styling
   spinnerOn() {
-//    console.log("spinnerOn, el = " + this.spinnerEl);
-
     if (this.spinnerEl)
       this.spinnerEl.style.display = 'flex';
   }
 
   spinnerOff() {
-//    console.log("spinnerOff, el = " + this.spinnerEl);
-
     if (this.spinnerEl)
       this.spinnerEl.style.display = 'none';
   }
@@ -151,6 +149,20 @@ export default class OutputPane extends React.Component {
         return null;
     }
   }
+
+  setRow(i, rowVal) {
+    if (i<this.state.lastLoadedRow && this.state.tableData) {    // should always be true if user clicked on cell to edit it
+
+      let newRows = update(this.state.tableData.rows, {[i]: {$merge: rowVal}});
+      let newTableData = update(this.state.tableData, {$merge: { rows: newRows }});
+
+      this.setState({ tableData: newTableData });
+
+    } else {
+      console.log('However did you edit a row that wasn\'t loaded?')
+    }
+  }
+
 
   getWindowWidth() {
       return window.innerWidth
@@ -260,6 +272,7 @@ export default class OutputPane extends React.Component {
             totalRows={this.state.tableData.total_rows}
             columns={this.state.tableData.columns}
             getRow={this.getRow}
+            setRow={this.setRow}
             resizing={this.state.resizing}
           />
         </div>
@@ -315,7 +328,9 @@ export default class OutputPane extends React.Component {
                 onResizeStart={this.resizePaneStart}
                 onResize={this.resizePane}
                 onResizeStop={this.resizePaneEnd} >
+
                 {spinner}
+
                 {this.props.htmlOutput &&
                 <OutputIframe
                     id="output_iframe"
@@ -323,6 +338,7 @@ export default class OutputPane extends React.Component {
                     revision={this.props.revision}
                 />
                 }
+
                 <div className="outputpane-table">
                     <div className="outputpane-header d-flex flex-row justify-content-start">
                         <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
@@ -336,6 +352,7 @@ export default class OutputPane extends React.Component {
                     </div>
                     {tableView}
                 </div>
+
             </Resizable>
         </div>
     );
@@ -343,7 +360,9 @@ export default class OutputPane extends React.Component {
 }
 
 OutputPane.propTypes = {
-  id:       PropTypes.number,
-  revision: PropTypes.number,
-  api:      PropTypes.object.isRequired
+  id:                 PropTypes.number.isRequired,
+  revision:           PropTypes.number.isRequired,
+  api:                PropTypes.object.isRequired,
+  selectedWfModuleId: PropTypes.number,
+  htmlOutput:         PropTypes.bool,
 };

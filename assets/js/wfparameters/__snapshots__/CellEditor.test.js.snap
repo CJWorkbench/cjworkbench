@@ -1,0 +1,99 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CellEditor Renders correctly 1`] = `
+<CellEditor
+  edits="[
+    { \\"row\\": 3, \\"col\\": \\"foo\\", \\"value\\":\\"bar\\" },
+    { \\"row\\": 6, \\"col\\": \\"food\\", \\"value\\":\\"sandwich\\" },
+    { \\"row\\": 5, \\"col\\": \\"foo\\", \\"value\\":\\"gak\\" },
+    { \\"row\\": 17,  \\"col\\": \\"food\\", \\"value\\":\\"pizza\\" }
+ ]"
+  onSave={[Function]}
+>
+  <div>
+    <div
+      className="cell-edits-column"
+    >
+      foo
+      <div
+        className="cell-edits-rows"
+      >
+        <div
+          className="cell-edits-row"
+        >
+          <div
+            className="cell-edits-row-number"
+          >
+            3
+          </div>
+          <div
+            className="cell-edits-new-value"
+          >
+            bar
+          </div>
+        </div>
+        <div
+          className="cell-edits-row"
+        >
+          <div
+            className="cell-edits-row-number"
+          >
+            5
+          </div>
+          <div
+            className="cell-edits-new-value"
+          >
+            gak
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      className="cell-edits-column"
+    >
+      food
+      <div
+        className="cell-edits-rows"
+      >
+        <div
+          className="cell-edits-row"
+        >
+          <div
+            className="cell-edits-row-number"
+          >
+            6
+          </div>
+          <div
+            className="cell-edits-new-value"
+          >
+            sandwich
+          </div>
+        </div>
+        <div
+          className="cell-edits-row"
+        >
+          <div
+            className="cell-edits-row-number"
+          >
+            17
+          </div>
+          <div
+            className="cell-edits-new-value"
+          >
+            pizza
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</CellEditor>
+`;
+
+exports[`CellEditor Renders empty data 1`] = `
+<CellEditor
+  edits=""
+  onSave={[Function]}
+>
+  <div />
+</CellEditor>
+`;

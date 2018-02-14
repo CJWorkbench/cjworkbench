@@ -33,14 +33,16 @@ function makeFormattedCols(cols) {
     key: rowKey,
     name: '',
     formatter: RowNumberFormatter,
-    width: 40
+    width: 40,
+    locked: true
   }];
 
   for (let idx in cols) {
     let d = {
       key: cols[idx],
       name: cols[idx],
-      resizable: true
+      resizable: true,
+      editable: true
     };
     formattedCols.push(d)
   }
@@ -55,7 +57,8 @@ export default class TableView extends React.Component {
     super(props);
     this.state = { gridHeight : null };
     this.updateSize = this.updateSize.bind(this);
-    this.getRow = this.getRow.bind(this)
+    this.getRow = this.getRow.bind(this);
+    this.onEditCell = this.onEditCell.bind(this);
   }
 
   // After the component mounts, and on any change, set the height to parent div height
@@ -84,21 +87,31 @@ export default class TableView extends React.Component {
     window.removeEventListener("resize", this.updateSize);
   }
 
+  // don't re-render while we are being dragged. makes things very smooth.
   shouldComponentUpdate(nextProps) {
     return !nextProps.resizing;
   }
 
-  // Prepend row number
+  // Add row number as first column, when we look up data
   getRow(i) {
     var row = this.props.getRow(i);
     row[rowKey] = i+1;            // 1 based row numbers
     return row;
   }
 
+
+  onEditCell({ fromRow, toRow, updated }) {
+    if (fromRow !== toRow) {
+      console.log('More than one row changed at a time in TableView, should not be possible')
+    }
+
+    this.props.setRow(fromRow, updated)
+  }
+
   render() {
     var tableData = this.props.tableData;
 
-    // Generate the table if there's any data, and we've figured out our available height
+    // Generate the table if there's any data
     if (this.props.totalRows > 0) {
 
       var columns = makeFormattedCols(this.props.columns);
@@ -106,7 +119,9 @@ export default class TableView extends React.Component {
       return <ReactDataGrid
         columns={columns}
         rowGetter={this.getRow}
-        rowsCount={this.props.totalRows }
+        enableCellSelect={true}
+        onGridRowsUpdated={this.onEditCell}
+        rowsCount={this.props.totalRows}
         minWidth={this.state.gridWidth -2}
         minHeight={this.state.gridHeight-2} />;   // -1 because grid has borders, don't want to expand flex grid
 
@@ -120,4 +135,5 @@ TableView.propTypes = {
   totalRows:  PropTypes.number.isRequired,
   columns:    PropTypes.array.isRequired,
   getRow:     PropTypes.func.isRequired,
+  setRow:     PropTypes.func.isRequired
 };
