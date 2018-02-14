@@ -582,7 +582,7 @@ body {
 .parameter-base {
   height:3.5rem;
   border-radius: 0;
-  border: 1px solid #E7E7E7;
+  border: 1px solid #e9e9e9;
   background-color: #FFFFFF !important;
 }
 
@@ -603,7 +603,7 @@ body {
   line-height: 3.5rem;
   padding: 0 0 0 1rem;
   border-radius:0px;
-  border-color:#e7e7e7;
+  border-color:#e9e9e9;
 
 }
 
@@ -689,7 +689,7 @@ body {
 	font-weight: 500;
 	line-height: 1.4rem;
   border-radius:0px;
-  border: 1px solid #E7E7E7
+  border: 1px solid #e9e9e9
 }
 
 
@@ -726,7 +726,7 @@ body {
 /*Style form controls */
 .form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
   border-radius: 0px;
-  border: 1px solid #E7E7E7;
+  border: 1px solid #e9e9e9;
   height: 3.5rem;
 }
 
@@ -737,7 +737,7 @@ body {
 .form-control{
   height:3.5rem!important;
   border-radius: 0px;
-  border: 1px solid #E7E7E7;
+  border: 1px solid #e9e9e9;
 }
 
 select.form-control {
@@ -2043,7 +2043,7 @@ div into the DOM, since we don't really want another element, we just want this 
   margin-bottom: 0.5rem;
   background-color: #fcfcfc;
   position: relative;
-  transition: all 0.3s ease-out;
+  transition: all 0.1s ease-out;
 }
 
 .wf-card:hover{
@@ -2251,7 +2251,7 @@ svg .svg-background{
   height: 12rem;
   min-height: 6rem;
   overflow: auto;
-  border: 1px solid #e7e7e7;
+  border: 1px solid #e9e9e9;
 }
 
 .list-scroll{
@@ -2283,7 +2283,7 @@ input[type=checkbox]
 {
   -webkit-appearance: none;
 	background-color: #fff;
-	border: 1px solid #e1e1e1;
+	border: 1px solid #e9e9e9;
 	padding: 0.7rem;
 	border-radius: 3px;
 	display: inline-block;
@@ -2436,9 +2436,9 @@ input[type=checkbox]:checked:after {
 .download-icon-box {
 	height: 3.5rem;
 	width: 6rem;
-	border-top: 1px solid #E7E7E7;
-  border-right: 1px solid #E7E7E7;
-  border-bottom: 1px solid #E7E7E7;
+	border-top: 1px solid #e9e9e9;
+  border-right: 1px solid #e9e9e9;
+  border-bottom: 1px solid #e9e9e9;
   background-color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -2463,8 +2463,7 @@ input[type=checkbox]:checked:after {
 
 .version-item {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   width:9.5rem;
 }
@@ -2571,7 +2570,8 @@ select {
 .upload-box{
   display: flex;
   justify-content: space-between;
-  padding-right: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e9e9e9;
 }
 
 .file-info p{

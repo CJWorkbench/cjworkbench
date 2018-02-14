@@ -145,7 +145,7 @@ export default class DataVersionSelect extends React.Component {
 
       modalLink =
         <div>
-          <div className='open-modal t-f-blue content-3 text-center' onClick={this.toggleModal}>
+          <div className='open-modal t-f-blue content-3 ml-2' onClick={this.toggleModal}>
             {versionText}
           </div>
           <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
@@ -204,7 +204,7 @@ export default class DataVersionSelect extends React.Component {
     } else {
       versionText = "No data loaded";
       modalLink =
-        <div className='open-modal t-f-blue content-3 text-center'>-</div>
+        <div className='open-modal t-f-blue content-3 ml-2'>-</div>
     }
 
     return (

@@ -56,47 +56,23 @@ export default class ModuleLibrary extends React.Component {
     if (!this.props.isReadOnly) { // don't load modules if we can't open library
       this.props.api.getModules()
         .then(json => {
-          // Sort modules – first by category, then by name
-          json.sort((a, b) => {
-            if (a.category > b.category) {
-              return 1;
-            } else if (a.category < b.category) {
-              return -1;
-            } else if (a.name > b.name) {
-              return 1;
-            } else if (a.name < b.name) {
-              return -1;
-            } else {
-              return 0;
-            }
-          });
 
-          // First, filter out all the core modules, which should be displayed alphabetically.
-          var coreModules = json.filter(function(x){
-            return x.category == 'Add data' || x.category == 'Analyse' || x.category == 'Visualize';
-          });
+          var categories = ['Add data', 'Prepare', 'Analyze', 'Visualize', 'Code', 'Other']
+          var modules = [];
 
-          // Then, filter out the next set of core modules, also to be displayed alphabetically.
-          // ...but, essentially, the thing is, we want 'Code' to appear after 'Visualize', so we have to do this.
-          var codeModules = json.filter(function(x){
-              return x.category == 'Code' || x.category == 'Other';
-          });
+          // Order modules by categories in order above, then alphabetically by name within category
+          for (var cat of categories) {
+            let catModules = json.filter( (m) => { return m.category == cat; } );
+            catModules.sort( (a,b) => { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; } );
+            modules = modules.concat(catModules)
+          }
 
-          // Add codeModules to coreModules
-          codeModules.forEach(function(x) {
-              coreModules.push(x);
-          });
+          // See if there are any remanining modules, and if there are, add them under Other
+          var remainingModules = json.filter( (item) =>
+            { return modules.indexOf(item) === -1; });
+          modules = modules.concat(remainingModules);
 
-          // See if there are any remanining modules, and if there are, add them too.
-          var remainingModules = json.filter(function (item) {
-            return coreModules.indexOf(item) === -1;
-          });
-
-          remainingModules.forEach(function(x) {
-            coreModules.push(x);
-          });
-
-          this.setState({ items: coreModules });
+          this.setState({ items: modules });
         })
     }
   }
