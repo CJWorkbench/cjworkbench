@@ -541,11 +541,13 @@ body {
 
 /* icon next to Wf Module title */
 .WFmodule-name{
-  margin-top: 0.1rem;
+  font-size: 1.2rem;
+  line-height: 1.2rem;
+  font-weight: 500;
 }
 
 .module-icon {
-  font-size: 1.3rem;
+  font-size: 1.2rem;
 }
 
 /* icons embedded within buttons or menus  */
@@ -620,7 +622,7 @@ body {
   background: transparent;
   border:none;
   white-space: nowrap;
-  width:38rem;
+  width:24rem;
   line-height: 1.5rem;
   height: 1.5rem;
   resize: none;

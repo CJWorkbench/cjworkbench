@@ -393,7 +393,7 @@ class WfModule extends React.Component {
                   <div className='module-header-content'>
                     <div className='d-flex justify-content-start align-items-center'>
                       <div className={moduleIcon}></div>
-                      <div className='t-d-gray title-4 WFmodule-name'>{this.module.name}</div>
+                      <div className='t-d-gray WFmodule-name'>{this.module.name}</div>
                       {this.props['data-wfmodule'].notifications &&
                       <div className={'notification-badge' + (this.props['data-wfmodule'].notification_count > 0 ? ' active t-f-blue' : '' )}>
                         <div
