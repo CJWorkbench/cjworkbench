@@ -52,7 +52,7 @@ export default class ModuleCategory extends React.Component {
       'Add data': 'database',
       'Analyze': 'notepad',
       'Prepare':'wrangle',
-      'Other': 'chart',
+      'Visualize': 'chart',
       'Code': 'code',
 
     }
