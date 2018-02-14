@@ -255,7 +255,7 @@ body {
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'Workbench' !important;
+  font-family: 'workbench' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
@@ -267,7 +267,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+.icon-notepad:before {
+  content: "\e934";
+  font-size: 1.4rem;
+}
 .icon-sentiment:before {
   content: "\e929";
 }
@@ -434,6 +437,7 @@ body {
   content:"\e933";
   font-size: 1.3rem;
 }
+
 
 /* Customized icons, not in font sent  */
 
