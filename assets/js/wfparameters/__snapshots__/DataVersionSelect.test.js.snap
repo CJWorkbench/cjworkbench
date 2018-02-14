@@ -117,12 +117,13 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     className="modal-content"
   >
     <ModalHeader
+      className="dialog-header"
       tag="h4"
       toggle={[Function]}
       wrapTag="div"
     >
       <div
-        className="modal-header"
+        className="dialog-header modal-header"
       >
         <h4
           className="modal-title"

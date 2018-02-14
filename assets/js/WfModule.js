@@ -357,7 +357,6 @@ class WfModule extends React.Component {
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     var contextBtns =
         <div className='d-flex align-items-center' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
-
           <a className='btn help-button d-flex align-items-center'
              href={this.module.help_url} target="_blank">
             <div className='icon-help'></div>

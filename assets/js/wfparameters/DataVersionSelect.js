@@ -149,7 +149,7 @@ export default class DataVersionSelect extends React.Component {
             {versionText}
           </div>
           <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
-            <ModalHeader toggle={this.toggleModal} >
+            <ModalHeader toggle={this.toggleModal} className='dialog-header'>
               <div className='title-4 t-d-gray'>DATA VERSIONS</div>
             </ModalHeader>
             <ModalBody className='list-body'>
