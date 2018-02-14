@@ -119,7 +119,7 @@ export default class FileSelect extends React.Component {
       if (fileInfo) {
         return (
           <div className="parameter-margin">
-            <div className={"parameter-margin upload-box align-items-center"}>
+            <div className={"parameter-margin gdrive-fileSelect align-items-center"}>
               <div className={"file-info content-3"}>
                 {fileInfo}
               </div>

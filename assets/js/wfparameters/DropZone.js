@@ -111,8 +111,8 @@ export default class DropZone extends Component {
                             className={"dropzone d-flex justify-content-center align-items-center"}
                             multiple={false}
                             uploader={this.uploader}>
-                            <div className={"title-3 ml-4 mr-2"}>Drag file here, or&nbsp;</div>
-                            <FileInput className={"button-orange action-button mt-0"} multiple={false}
+                            <div className={"content-3 ml-4 mr-2"}>Drag file here, or&nbsp;</div>
+                            <FileInput className={"content-3 t-f-blue"} multiple={false}
                                        uploader={this.uploader}>Browse</FileInput>
                         </Dropzone>
                         {
@@ -129,11 +129,11 @@ export default class DropZone extends Component {
                 ) : (
                     <div>
                         <div className={"upload-box"}>
-                            <div className={""}>
+                            <div>
                                 <div className={"label-margin t-d-gray content-3"}>File name</div>
                                 <div className={"t-d-gray content-3 text-field-readonly"}>{this.state.filename}</div>
                             </div>
-                            <FileInput className={"button-blue dropzone-button action-button"} multiple={false}
+                            <FileInput className={"button-blue dropzone-button action-button-M"} multiple={false}
                                        uploader={this.uploader}>Replace</FileInput>
                         </div>
                         {

@@ -199,7 +199,7 @@ export default class WfParameter extends React.Component {
                     checked={this.props.p.value}
                     onChange={this.click}
                     ref={ el => this.checkboxRef = el}/>
-                  <div className='t-d-gray content-5 mt-1 ml-3'>{this.name}</div>
+                  <div className='t-d-gray content-5 ml-2'>{this.name}</div>
                 </div>
             </div>
         );
@@ -285,7 +285,7 @@ export default class WfParameter extends React.Component {
             : null
 
           return (
-            <div className='version-box parameter-margin'>
+            <div className='parameter-margin'>
               <UpdateFrequencySelect
                 isReadOnly={this.props.isReadOnly}
                 updateSettings={this.props.updateSettings}
@@ -310,7 +310,7 @@ export default class WfParameter extends React.Component {
         } else if (this.props.p.parameter_spec.id_name == 'version_select_simpler') {
 
           return (
-            <div className='version-box parameter-margin'>
+            <div className='VersionSelect-UploadFile'>
               <DataVersionSelect
                 isReadOnly={this.props.isReadOnly}
                 wfModuleId={this.props.wf_module_id}
