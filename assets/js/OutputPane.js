@@ -6,17 +6,13 @@ import PropTypes from 'prop-types'
 import { OutputIframe } from './OutputIframe'
 import Resizable from 're-resizable'
 import debounce from 'lodash/debounce'
-import update from 'immutability-helper'
 
 export default class OutputPane extends React.Component {
 
   constructor(props) {
     super(props);
 
-    // componentDidMount will trigger first load
     this.state = {
-        tableData: null,
-        lastLoadedRow : 0,
         leftOffset : 0,
         initLeftOffset: 0,
         width: "100%",
@@ -27,142 +23,44 @@ export default class OutputPane extends React.Component {
         resizing: false
     };
 
-    this.getRow = this.getRow.bind(this);
-    this.setRow = this.setRow.bind(this);
+    this.setBusySpinner = this.setBusySpinner.bind(this);
+    this.saveSpinnerEl = this.saveSpinnerEl.bind(this);
     this.resizePaneStart = this.resizePaneStart.bind(this);
     this.resizePane = this.resizePane.bind(this);
     this.resizePaneEnd = this.resizePaneEnd.bind(this);
     this.setResizePaneRelativeDimensions = this.setResizePaneRelativeDimensions.bind(this);
 
-    // loading flag cannot be in state because, see below
+    // loading flag (controls spinner) cannot be in state, see below
     this.loading = false;
     this.spinnerEl = null;
-
-    // constants to control loading behaviour
-    this.initialRows = 120;   // because react-data-grid seems to preload to 100
-    this.preloadRows = 20;    // get new rows when we are this close to the end
-    this.deltaRows = 100;     // get this many new rows at a time
   }
 
   // Spinner state did not work as part of component state, conditionally visible in render()
   // It didn't appear when refreshing a large table. My guess is that is because React updates are batched,
-  // so spinner/spinner off updates are combined and we never see when the table re-render is long.
+  // the spinner on and spinner off updates are combined and we never see it when the table re-render is long.
   // So, now we turn the spinner on and off immediately through direct DOM styling
-  spinnerOn() {
-    if (this.spinnerEl)
-      this.spinnerEl.style.display = 'flex';
-  }
-
-  spinnerOff() {
-    if (this.spinnerEl)
-      this.spinnerEl.style.display = 'none';
-  }
-
-
-  // Load table data from render API
-  loadTable(id, toRow) {
-    if (id) {
-      // console.log("Asked to load to " + toRow );
-
-      this.loading = true;
-      this.spinnerOn();
-
-      this.props.api.render(id, this.state.lastLoadedRow, toRow)
-        .then(json => {
-
-          // console.log("Got data to " + json.end_row);
-          // Add just retrieved rows to current data, if any
-          if (this.state.tableData) {
-            json.rows = this.state.tableData.rows.concat(json.rows);
-            json.start_row = 0;  // no one looks at this currently, but they might
-          }
-
-          // triggers re-render
-          this.loading = false;
-          this.spinnerOff();
-          this.setState({
-            tableData: json,
-            lastLoadedRow : json.end_row,
-          });
-        });
+  setBusySpinner(visible) {
+    if (this.spinnerEl) {
+      this.spinnerEl.style.display = visible ? 'flex' : 'none';
     }
   }
 
-  // Completely reload table data -- preserves visibility of old data while we wait
-  refreshTable(id) {
-    this.loading = true;
-    this.spinnerOn();
-
-    this.props.api.render(id, 0, this.initialRows)
-      .then(json => {
-        this.loading = false;
-        this.spinnerOff();
-        this.setState({
-          tableData: json,
-          lastLoadedRow: json.end_row,
-        });
-      })
+  // Can't do this as an anonymous function like ref={ (el) => {this.spinnerEl=el} }
+  // because el will sometimes be null if we do. See https://reactjs.org/docs/refs-and-the-dom.html#caveats
+  saveSpinnerEl(el) {
+    this.spinnerEl = el;
   }
 
-  // Load first 100 rows of table when first rendered
   componentDidMount() {
     window.addEventListener("resize", debounce(() => { this.setResizePaneRelativeDimensions(this.props.libraryOpen) }, 200));
     this.setResizePaneRelativeDimensions(this.props.libraryOpen);
-    this.loadTable(this.props.id, this.initialRows);
   }
 
-  // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
-    if (this.props.revision !== nextProps.revision || this.props.id !== nextProps.id) {
-        this.refreshTable(nextProps.id);
-    }
     if (nextProps.libraryOpen !== this.props.libraryOpen) {
         this.setResizePaneRelativeDimensions(nextProps.libraryOpen, true);
     }
   }
-
-  emptyRow() {
-    return this.state.tableData.columns.reduce( (obj,col) => { obj[col]=null; return obj; }, {} );
-  }
-
-  getRow(i) {
-    if (this.state.tableData) {
-
-      // Time to load more rows?
-      if (!this.loading) {
-        var target = Math.min(i + this.preloadRows, this.state.tableData.total_rows);  // don't try to load past end of data
-        if (target > this.state.lastLoadedRow) {
-          //console.log("Triggered reload at getRow " + i);
-          this.loadTable(this.props.id, this.state.lastLoadedRow + this.deltaRows);
-        }
-      }
-
-      // Return the row if we have it
-      if (i < this.state.lastLoadedRow ) {
-        return this.state.tableData.rows[i];
-      } else {
-        return this.emptyRow();
-      }
-
-    } else {
-        // nothing loaded yet
-        return null;
-    }
-  }
-
-  setRow(i, rowVal) {
-    if (i<this.state.lastLoadedRow && this.state.tableData) {    // should always be true if user clicked on cell to edit it
-
-      let newRows = update(this.state.tableData.rows, {[i]: {$merge: rowVal}});
-      let newTableData = update(this.state.tableData, {$merge: { rows: newRows }});
-
-      this.setState({ tableData: newTableData });
-
-    } else {
-      console.log('However did you edit a row that wasn\'t loaded?')
-    }
-  }
-
 
   getWindowWidth() {
       return window.innerWidth
@@ -261,97 +159,75 @@ export default class OutputPane extends React.Component {
   }
 
   render() {
-    // Make a table component if we have the data
-    var tableView = null;
-    var nrows = 0;
-    var ncols = 0;
-    if (this.props.id && this.state.tableData && this.state.tableData.total_rows>0) {
-      tableView =
-        <div className="outputpane-data">
-          <TableView
-            totalRows={this.state.tableData.total_rows}
-            columns={this.state.tableData.columns}
-            getRow={this.getRow}
-            setRow={this.setRow}
-            resizing={this.state.resizing}
-          />
-        </div>
-      nrows = this.state.tableData.total_rows;
-      ncols = this.state.tableData.columns.length;
+
+    // Make a table component even if no module ID (should still show an empty table header)
+    var tableView =
+      <TableView
+        id={this.props.id}
+        revision={this.props.revision}
+        resizing={this.state.resizing}
+        api={this.props.api}
+        setBusySpinner={this.setBusySpinner}
+      />
+
+    // This iframe holds the module HTML output, e.g. a visualization
+    var outputIFrame = null;
+    if (this.props.htmlOutput) {
+      outputIFrame = <OutputIframe
+          id="output_iframe"
+          selectedWfModuleId={this.props.selectedWfModuleId}
+          revision={this.props.revision}
+      />
     }
 
-    // Spinner is in the DOM if the table is, but we toggle display: none on this.spinnerEl
-    var spinner = null;
-    if (this.props.id) {
-      spinner =
-        <div
-          id="spinner-container-transparent"
-          ref={(el) => {
-            this.spinnerEl = el
-          }}
-        >
-          <div id="spinner-l1">
-            <div id="spinner-l2">
-              <div id="spinner-l3"></div>
-            </div>
+    // Spinner is always rendered, but we toggle 'display: none' in setBusySpinner()
+    var spinner =
+      <div
+        id="spinner-container-transparent"
+        ref={ this.saveSpinnerEl }
+      >
+        <div id="spinner-l1">
+          <div id="spinner-l2">
+            <div id="spinner-l3"></div>
           </div>
         </div>
-    } else {
-      this.spinnerEl = null;
-    }
+      </div>
 
     return (
         <div className={"outputpane" + (this.props.focus ? " focus" : "")}
              ref={(ref) => this.state.parentBase = ref}
              onClick={this.props.setFocus} >
             <Resizable
-                style={{
-                    transform: "translateX(" + this.state.leftOffset + "px)"
-                }}
-                className="outputpane-box"
-                enable={{
-                    top:false,
-                    right:false,
-                    bottom:false,
-                    left:true,
-                    topRight:false,
-                    bottomRight:false,
-                    bottomLeft:false,
-                    topLeft:false
-                }}
-                size={{
-                    width: this.state.width,
-                    height: this.state.height,
-                }}
-                minWidth="100%"
-                maxWidth={this.state.maxWidth}
-                onResizeStart={this.resizePaneStart}
-                onResize={this.resizePane}
-                onResizeStop={this.resizePaneEnd} >
+              style={{
+                  transform: "translateX(" + this.state.leftOffset + "px)"
+              }}
+              className="outputpane-box"
+              enable={{
+                  top:false,
+                  right:false,
+                  bottom:false,
+                  left:true,
+                  topRight:false,
+                  bottomRight:false,
+                  bottomLeft:false,
+                  topLeft:false
+              }}
+              size={{
+                  width: this.state.width,
+                  height: this.state.height,
+              }}
+              minWidth="100%"
+              maxWidth={this.state.maxWidth}
+              onResizeStart={this.resizePaneStart}
+              onResize={this.resizePane}
+              onResizeStop={this.resizePaneEnd}
+            >
 
-                {spinner}
+              {spinner}
 
-                {this.props.htmlOutput &&
-                <OutputIframe
-                    id="output_iframe"
-                    selectedWfModuleId={this.props.selectedWfModuleId}
-                    revision={this.props.revision}
-                />
-                }
+              { outputIFrame }
 
-                <div className="outputpane-table">
-                    <div className="outputpane-header d-flex flex-row justify-content-start">
-                        <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
-                            <div className='content-4 t-m-gray mb-2'>Rows</div>
-                            <div className='content-2 t-d-gray'>{nrows}</div>
-                        </div>
-                        <div className='d-flex flex-column align-items-center justify-content-center'>
-                            <div className='content-4 t-m-gray mb-2'>Columns</div>
-                            <div className='content-2 t-d-gray'>{ncols}</div>
-                        </div>
-                    </div>
-                    {tableView}
-                </div>
+              { tableView }
 
             </Resizable>
         </div>
@@ -360,7 +236,7 @@ export default class OutputPane extends React.Component {
 }
 
 OutputPane.propTypes = {
-  id:                 PropTypes.number.isRequired,
+  id:                 PropTypes.number,             // can be undefined, if no selected module
   revision:           PropTypes.number.isRequired,
   api:                PropTypes.object.isRequired,
   selectedWfModuleId: PropTypes.number,
