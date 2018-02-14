@@ -357,13 +357,7 @@ class WfModule extends React.Component {
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     var contextBtns =
         <div className='d-flex align-items-center' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
-          <div className={
-            this.state.isCollapsed ?
-              'icon-sort-down btn context-collapse-button' :
-              'icon-sort-up btn context-collapse-button'
-            }
-            onClick={this.toggleCollapsed} >
-          </div>
+
           <a className='btn help-button d-flex align-items-center'
              href={this.module.help_url} target="_blank">
             <div className='icon-help'></div>
@@ -404,6 +398,14 @@ class WfModule extends React.Component {
                         }
                       </div>
                       }
+                      <div style={{ opacity: this.state.showButtons ? '1' : '0' }} className={
+                        this.state.isCollapsed ?
+                          'icon-sort-down btn context-collapse-button' :
+                          'icon-sort-up btn context-collapse-button'
+                        }
+                        onClick={this.toggleCollapsed} >
+                      </div>
+
                     </div>
                     {contextBtns}
                   </div>
