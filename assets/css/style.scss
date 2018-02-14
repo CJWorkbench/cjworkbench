@@ -2266,7 +2266,7 @@ svg .svg-background{
 }
 .checkbox-wrapper{
   margin-right: 3rem;
-  margin-top:-1rem;
+  margin-top:-0.5rem;
   display:inline-block;
   overflow:hidden;
 }
@@ -2320,6 +2320,8 @@ input[type=checkbox]:checked:after {
 	left: 2.5px;
 	color: #fff;
 }
+
+
 
 
 /* ---- Dialog Boxes ---- */

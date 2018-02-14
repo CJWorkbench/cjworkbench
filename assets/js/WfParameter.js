@@ -199,7 +199,7 @@ export default class WfParameter extends React.Component {
                     checked={this.props.p.value}
                     onChange={this.click}
                     ref={ el => this.checkboxRef = el}/>
-                  <div className='t-d-gray content-5 ml-2'>{this.name}</div>
+                  <div className='t-d-gray content-3 ml-2'>{this.name}</div>
                 </div>
             </div>
         );
