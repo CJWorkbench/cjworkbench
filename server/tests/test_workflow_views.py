@@ -45,6 +45,10 @@ class WorkflowViewTests(LoggedInTestCase):
     def test_workflow_init_state(self):
         # checks to make sure the right initial data is embedded in the HTML (username etc.)
         with patch.dict('os.environ', { 'CJW_INTERCOM_APP_ID':'myIntercomId', 'CJW_GOOGLE_ANALYTICS':'myGaId'}):
+
+            # create an Edit Cells module so we can check that its ID is returned correctly
+            edit_cells_module_id = add_new_module_version('Edit Cells', id_name='editcells').module_id
+
             response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -52,8 +56,9 @@ class WorkflowViewTests(LoggedInTestCase):
             self.assertContains(response, user_display(self.user))
             self.assertContains(response, self.user.email)
 
-            self.assertContains(response, 'myIntercomId')
+            self.assertContains(response, '"editCellsModuleId": ' + str(edit_cells_module_id))
 
+            self.assertContains(response, 'myIntercomId')
             self.assertContains(response, 'myGaId')
 
 

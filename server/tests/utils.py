@@ -30,8 +30,8 @@ class LoggedInTestCase(TestCase):
 
 # ---- Setting up workflows ----
 
-def add_new_module_version(name, dispatch=''):
-    module = Module.objects.create(name=name, dispatch=dispatch)
+def add_new_module_version(name, *, id_name='', dispatch=''):  # * means don't let extra arguments fill up the kwargs
+    module = Module.objects.create(name=name, id_name=id_name, dispatch=dispatch)
     module_version = ModuleVersion.objects.create(source_version_hash='1.0', module=module)
     return module_version
 
@@ -59,7 +59,7 @@ def add_new_wf_module(workflow, module_version, order=0):
 # returns workflow
 def create_testdata_workflow(csv_text=mock_csv_text):
     # Define paste CSV module from scratch
-    csv_module = add_new_module_version('Module 1', 'pastecsv')
+    csv_module = add_new_module_version('Module 1', dispatch='pastecsv')
     pspec = add_new_parameter_spec(csv_module, ParameterSpec.STRING, id_name='csv')
     add_new_parameter_spec(csv_module, ParameterSpec.CHECKBOX, id_name='has_header_row', def_value='True')
 

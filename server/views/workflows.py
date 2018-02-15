@@ -17,12 +17,26 @@ from server.versions import WorkflowUndo, WorkflowRedo
 from django.db.models import Q
 import json
 
+# Cache this because we need it on every Workflow page load, and it never changes
+def edit_cells_module_id():
+    if edit_cells_module_id.id is None:
+        try:
+            edit_cells_module_id.id = Module.objects.get(id_name='editcells').id
+        except Module.DoesNotExist:
+            return None     # should only happen in testing
+
+    return edit_cells_module_id.id
+
+edit_cells_module_id.id = None
+
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
 def make_init_state(request):
     if request.user.is_authenticated():
         user = UserSerializer(request.user)
+        edit_cells_module = edit_cells_module_id()
         init_state = {
-            'loggedInUser': user.data
+            'loggedInUser': user.data,
+            'editCellsModuleId' : edit_cells_module
         }
         return json.dumps(init_state)
     else:
