@@ -131,7 +131,8 @@ export default class TableView extends React.Component {
       let newTableData = update(this.state.tableData, {$merge: { rows: newRows }});
       this.setState({ tableData: newTableData });
 
-      // TODO: add to edit cells module
+
+
     } else {
       console.log('However did you edit a row that wasn\'t loaded?')
     }
