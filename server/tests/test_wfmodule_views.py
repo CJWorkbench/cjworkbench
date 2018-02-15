@@ -21,22 +21,27 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
     # TODO test parameter values returned from this call
     def test_wf_module_detail_get(self):
         # Also tests [Workflow, Module, WfModule].get
-        workflow_id = Workflow.objects.get(name='Workflow 1').id
+        workflow = Workflow.objects.get(name='Workflow 1')
         module_id = Module.objects.get(name='Module 1').id
         module_version = ModuleVersion.objects.get(module=Module.objects.get(name='Module 1'))
-        pk_wf_module = WfModule.objects.get(workflow_id=workflow_id,
-                                            module_version=module_version).id
-        notes = WfModule.objects.get(workflow_id=workflow_id,
-                                     module_version=module_version).notes
+        wf_module = WfModule.objects.get(workflow_id=workflow.id, module_version=module_version)
 
-        response = self.client.get('/api/wfmodules/%d/' % pk_wf_module)
+        response = self.client.get('/api/wfmodules/%d/' % wf_module.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['id'], pk_wf_module)
-        self.assertEqual(response.data['workflow'], workflow_id)
-        self.assertEqual(response.data['notes'], notes)
+        self.assertEqual(response.data['id'], wf_module.id)
+        self.assertEqual(response.data['workflow'], workflow.id)
+        self.assertEqual(response.data['notes'], wf_module.notes)
         self.assertEqual(response.data['module_version']['module']['id'], module_id)
-        self.assertEqual(response.data['status'], WfModule.READY)
-        self.assertEqual(response.data['error_msg'], '')
+        self.assertEqual(response.data['status'], wf_module.status)
+        self.assertEqual(response.data['error_msg'], wf_module.error_msg)
+        self.assertEqual(response.data['is_collapsed'], wf_module.is_collapsed)
+        self.assertEqual(response.data['auto_update_data'], wf_module.auto_update_data)
+        self.assertEqual(response.data['last_update_check'], wf_module.last_update_check)
+        self.assertEqual(response.data['update_interval'], 1)       # defaults here to avoid time unit conversion
+        self.assertEqual(response.data['update_units'], 'days')
+        self.assertEqual(response.data['notifications'], wf_module.notifications)
+        self.assertEqual(response.data['notification_count'], wf_module.notification_set.count())
+        self.assertEqual(response.data['html_output'], wf_module.module_version.html_output)
 
         response = self.client.get('/api/wfmodules/%d/' % 10000)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
