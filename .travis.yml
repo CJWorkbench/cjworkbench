@@ -16,7 +16,6 @@ install:
 - nvm use stable
 - npm install
 - npm install -g
-- npm list
 - pip install -r requirements.txt
 - pip install -r requirements-dev.txt
 - ./node_modules/.bin/webpack --config webpack.config.js
