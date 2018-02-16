@@ -130,6 +130,7 @@ export default class WfParameter extends React.Component {
 
   // Render one of the many parameter types that are specific to a particular module
   render_custom_parameter() {
+
     if (this.props.p.parameter_spec.id_name === 'chart') {
 
       // Load and save chart state, image to hidden parameters
@@ -155,30 +156,22 @@ export default class WfParameter extends React.Component {
     } else if (this.props.p.parameter_spec.id_name == 'chart_editor') {
       return (
         <ChartEditor
-          isReadOnly={this.props.isReadOnly}
-          revision={this.props.revision}
+          isReadOnly={ this.props.isReadOnly }
+          revision={ this.props.revision }
           wfModuleId={this.props.wf_module_id}
           modelText={this.props.p.value}
-          type={this.props.getParamText('chart_type')}
+          type={ this.props.getParamText('chart_type') }
           api={this.props.api}
         />
       )
-
     } else if (this.props.p.parameter_spec.id_name == 'version_select') {
+
       var button = (!this.props.isReadOnly)
-        ? <div className='button-blue action-button mt-0' onClick={this.click}>{this.name}</div>
+        ? <div className='button-blue action-button-M mt-0' onClick={this.click}>{this.name}</div>
         : null
 
       return (
-        <div className='version-box parameter-margin'>
-          <DataVersionSelect
-            isReadOnly={this.props.isReadOnly}
-            wfModuleId={this.props.wf_module_id}
-            revision={this.props.revision}
-            api={this.props.api}
-            setClickNotification={this.props.setClickNotification}
-            notifications={this.props.notifications}
-          />
+        <div className='parameter-margin'>
           <UpdateFrequencySelect
             isReadOnly={this.props.isReadOnly}
             updateSettings={this.props.updateSettings}
@@ -186,14 +179,24 @@ export default class WfParameter extends React.Component {
             api={this.props.api}
             notifications={this.props.notifications}
           />
-          {button}
+          <div className="d-flex justify-content-between mt-2">
+            <DataVersionSelect
+              isReadOnly={this.props.isReadOnly}
+              wfModuleId={this.props.wf_module_id}
+              revision={this.props.revision}
+              api={this.props.api}
+              setClickNotification={this.props.setClickNotification}
+              notifications={this.props.notifications}
+            />
+            {button}
+          </div>
+
         </div>
       );
-
     } else if (this.props.p.parameter_spec.id_name == 'version_select_simpler') {
 
       return (
-        <div className='version-box parameter-margin'>
+        <div className='VersionSelect-UploadFile'>
           <DataVersionSelect
             isReadOnly={this.props.isReadOnly}
             wfModuleId={this.props.wf_module_id}
@@ -204,7 +207,6 @@ export default class WfParameter extends React.Component {
           />
         </div>
       );
-
     } else if (this.props.p.parameter_spec.id_name == 'colrename') {
       var renameParam = this.props.getParamText('newcolnames');
       let saveState = ( state => this.props.setParamText('newcolnames', state) );
@@ -216,16 +218,14 @@ export default class WfParameter extends React.Component {
             renameParam={renameParam}
             saveState={saveState}
             getColNames={this.getInputColNames}
-            revision={this.props.revision}/>
+            revision={this.props.revision} />
         </div> );
-
     } else if (this.props.p.parameter_spec.id_name == 'file') {
       return (
-        <DropZone
-          wfModuleId={this.props.wf_module_id}
-          revision={this.props.revision}/>
-      );
-
+            <DropZone
+            wfModuleId={this.props.wf_module_id}
+            revision={this.props.revision} />
+        );
     } else if (this.props.p.parameter_spec.id_name == 'barchart') {
       return (
         <BarChart
@@ -236,14 +236,12 @@ export default class WfParameter extends React.Component {
           setParamText={this.props.setParamText}
         />
       )
-
     } else if (this.props.p.parameter_spec.id_name == 'connect') {
       return (
         <GoogleConnect
           userCreds={this.props.loggedInUser.google_credentials}
         />
       )
-
     } else if (this.props.p.parameter_spec.id_name == 'fileselect') {
       return (
         <FileSelect
@@ -254,25 +252,12 @@ export default class WfParameter extends React.Component {
           getState={() => this.props.getParamText('fileselect')}
         />
       )
-
     } else if (this.props.p.parameter_spec.id_name == 'code') {
       return (
         <WorkbenchAceEditor
           name={this.props.p.parameter_spec.name}
-          onSave={(val) => {
-            this.paramChanged(val)
-          }}
-          defaultValue={this.props.p.value}/>
-      )
-
-    } else if (this.props.p.parameter_spec.id_name == 'celledits') {
-      return (
-        <CellEditor
-          edits={this.props.p.value}
-          onSave={(val) => {
-            this.paramChanged(val)
-          }}
-        />
+          onSave={ (val) => { this.paramChanged( val ) } }
+          defaultValue={this.props.p.value} />
       )
     }
   }
@@ -290,7 +275,7 @@ export default class WfParameter extends React.Component {
           sclass='parameter-base t-d-gray content-2 text-field';
           srows = 1;
         } else {
-          sclass='parameter-base t-d-gray info-1 text-field-large';
+          sclass='parameter-base t-d-gray content-3 text-field-large';
           srows = 4;
         }
 
@@ -313,7 +298,7 @@ export default class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className='parameter-margin param3-line-margin'>
+          <div className='param2-line-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
@@ -329,8 +314,8 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          <div className="param-button-container d-flex justify-content-end">
-            <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{this.name}</div>
+          <div className="parameter-margin d-flex justify-content-end">
+            <div className='action-button-M button-blue' onClick={!this.props.readOnly && this.click}>{this.name}</div>
           </div>
         );
       case 'statictext':
@@ -348,14 +333,14 @@ export default class WfParameter extends React.Component {
                     checked={this.props.p.value}
                     onChange={this.click}
                     ref={ el => this.checkboxRef = el}/>
-                  <div className='t-d-gray content-5 mt-1 ml-3'>{this.name}</div>
+                  <div className='t-d-gray content-3 ml-2'>{this.name}</div>
                 </div>
             </div>
         );
 
       case 'menu':
         return (
-          <div className='parameter-margin param3-line-margin'>
+          <div className='param2-line-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <MenuParam
               name={this.name}
@@ -368,7 +353,7 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className='parameter-margin param3-line-margin'>
+          <div className='param2-line-margin'>
             <div className='t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
@@ -382,7 +367,7 @@ export default class WfParameter extends React.Component {
       case 'multicolumn':
         return (
           <div className='parameter-margin'>
-            <div className='ml-1 t-d-gray content-3 label-margin'>{this.name}</div>
+            <div className='t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}
               saveState={state => this.props.setParamText('colnames', state) }
