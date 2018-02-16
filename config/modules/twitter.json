@@ -16,11 +16,11 @@
 
     },
     {
-      "name": "Username or content",
+      "name": "",
       "id_name" : "query",
       "type": "string",
       "default": "",
-      "placeholder":"e.g. @UserName, or 'keywords to match'"
+      "placeholder":"@UserName or keywords"
     },
     {
       "name": "Check",
@@ -28,7 +28,7 @@
       "type": "custom"
     },
     {
-      "name": "Add new data to current version",
+      "name": "Concatenate",
       "id_name": "accumulate",
       "type": "checkbox",
       "default": "True"

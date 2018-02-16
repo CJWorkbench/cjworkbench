@@ -30,7 +30,7 @@ exports[`FileSelect Does not show the modal link if there is no user credential 
     className="parameter-margin"
   >
     <div
-      className="parameter-margin upload-box align-items-center"
+      className="parameter-margin gdrive-fileSelect align-items-center"
     >
       <div
         className="file-info content-3"
@@ -77,7 +77,7 @@ exports[`FileSelect Loads correctly and allows a user to choose a new file 1`] =
     className="parameter-margin"
   >
     <div
-      className="parameter-margin upload-box align-items-center"
+      className="parameter-margin gdrive-fileSelect align-items-center"
     >
       <div
         className="file-info content-3"

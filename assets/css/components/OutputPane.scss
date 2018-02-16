@@ -8,6 +8,7 @@
   border:none;
   width:100%;
   height: calc(50% - 3rem);
+  margin-bottom: -0.5rem;
 }
 
 /* This div may be superfluous wrt .outputpane */
@@ -21,7 +22,7 @@ iframe + .outputpane-table {
 }
 
 .outputpane-header {
-  height: 7rem;
+  height: 5.5rem;
   background-color: #FFFFFF;
   padding: 2rem 3rem 2rem 3rem;
 }
@@ -29,10 +30,14 @@ iframe + .outputpane-table {
 .outputpane-data {
   overflow: hidden;
   position: absolute;
-  top:7rem;
+  top:5.5rem;
   left:0;
   right:0;
   bottom:0;
+}
+
+.react-grid-Canvas{
+  background-color:#fff;
 }
 
 .overlapping .outputpane.focus .outputpane-box {

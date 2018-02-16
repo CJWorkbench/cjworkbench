@@ -1,7 +1,7 @@
 {
   "name": "Filter by text",
   "id_name": "textsearch",
-  "category" : "Analyse",
+  "category" : "Analyze",
   "icon" : "filter",
   "description" : "Filter rows by matching text in specific columns.",
   "help_url": "modules/analyse/filter-by-text",

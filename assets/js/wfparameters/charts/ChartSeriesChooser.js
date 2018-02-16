@@ -81,9 +81,8 @@ export default class ChartSeriesChooser extends React.Component {
       background: this.state.color
     }
     return (
-      <div className="color-picker d-flex">
-
-        <div className="param2-line-margin">
+      <div className="color-picker d-flex parameter-margin">
+        <div className="">
           <InputGroup size="lg">
             <InputGroupButton>
               <Button onClick={this.handleClick} className="color-picker button">
@@ -96,11 +95,10 @@ export default class ChartSeriesChooser extends React.Component {
                 <BlockPicker color={ this.state.color } colors={ defaultColors } onChange={ this.handleChange } triangle="hide" />
               </div> : null }
             </InputGroupButton>
-            <Input type="text" value={this.props.colName} readOnly />
           </InputGroup>
         </div>
 
-        <div className="param2-line-margin">
+        <div className="chart-label">
           <Input size="lg" type="text" value={this.state.label} onChange={this.handleTextChange} />
         </div>
       </div>

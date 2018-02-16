@@ -1,7 +1,7 @@
 {
   "name": "Formula",
   "id_name": "formula",
-  "category" : "Analyse",
+  "category" : "Analyze",
   "icon" : "sigma",
   "description": "Apply a formula between columns and store its result in a new column.",
   "help_url":"modules/analyse/formula",
@@ -11,7 +11,7 @@
       "id_name" : "formula",
       "type": "string",
       "default": "",
-      "placeholder": "e.g. column 1 * (column 2 + column 3)"
+      "placeholder": "e.g. col1 * (col2 + colu3)"
     },
     {
       "name": "Output column",

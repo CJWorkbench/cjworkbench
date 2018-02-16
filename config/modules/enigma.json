@@ -1,7 +1,7 @@
 {
   "name": "Enigma",
   "id_name": "enigma",
-  "category": "Add data",
+  "category": "do not load",
   "icon" : "url",
   "description": "Connect a dataset from Enigma's collection via URL.",
   "loads_data": true,

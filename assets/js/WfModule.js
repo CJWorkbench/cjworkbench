@@ -357,13 +357,6 @@ class WfModule extends React.Component {
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     var contextBtns =
         <div className='d-flex align-items-center' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
-          <div className={
-            this.state.isCollapsed ?
-              'icon-sort-down btn context-collapse-button' :
-              'icon-sort-up btn context-collapse-button'
-            }
-            onClick={this.toggleCollapsed} >
-          </div>
           <a className='btn help-button d-flex align-items-center'
              href={this.module.help_url} target="_blank">
             <div className='icon-help'></div>
@@ -372,7 +365,7 @@ class WfModule extends React.Component {
           <div>{contextMenu}</div>
         </div>
 
-    var moduleIcon = 'icon-' + this.module.icon + ' module-icon mr-3';
+    var moduleIcon = 'icon-' + this.module.icon + ' module-icon mr-2';
 
     // Putting it all together: name, status, parameters, output
     return (
@@ -380,6 +373,7 @@ class WfModule extends React.Component {
       // that aren't clear right now. It doen't hurt anything but it shouldn't
       // be necessary either.
       <div onClick={this.click}>
+        {notes}
         <div className='wf-card mx-auto'>
         {this.props.connectDropTarget(this.props.connectDragSource(
           <div>
@@ -388,12 +382,11 @@ class WfModule extends React.Component {
             </div>
             <div className='card-block p-0'onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
               <div className='module-card-info'>
-                {notes}
                 <div className='module-card-header'>
                   <div className='module-header-content'>
                     <div className='d-flex justify-content-start align-items-center'>
                       <div className={moduleIcon}></div>
-                      <div className='t-d-gray title-4 WFmodule-name'>{this.module.name}</div>
+                      <div className='t-d-gray WFmodule-name'>{this.module.name}</div>
                       {this.props['data-wfmodule'].notifications &&
                       <div className={'notification-badge' + (this.props['data-wfmodule'].notification_count > 0 ? ' active t-f-blue' : '' )}>
                         <div
@@ -404,6 +397,14 @@ class WfModule extends React.Component {
                         }
                       </div>
                       }
+                      <div style={{ opacity: this.state.showButtons ? '1' : '0' }} className={
+                        this.state.isCollapsed ?
+                          'icon-sort-down btn context-collapse-button' :
+                          'icon-sort-up btn context-collapse-button'
+                        }
+                        onClick={this.toggleCollapsed} >
+                      </div>
+
                     </div>
                     {contextBtns}
                   </div>

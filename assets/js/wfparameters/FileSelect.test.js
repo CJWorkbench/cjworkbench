@@ -135,7 +135,7 @@ describe('FileSelect', () => {
       expect(fileCount).toHaveLength(1);
       expect(fileCount.text()).toBe('5 files found');
 
-      var modalLink = noFileWrapper.find('.button-orange.action-button');
+      var modalLink = noFileWrapper.find('.button-orange.action-button-M');
       expect(modalLink).toHaveLength(1);
 
       done();

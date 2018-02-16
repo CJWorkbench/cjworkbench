@@ -26,6 +26,7 @@ body {
 #root {
   height: 100vh;
 	width: 100%;
+  background-color:#f6f6f6;
 }
 
 ::-webkit-scrollbar-thumb{
@@ -71,7 +72,7 @@ body {
   letter-spacing: 0.2px;
 }
 .title-4 {
-	font-size: 1.4rem;
+	font-size: 1.3rem;
 	font-weight: 500;
 	line-height: 1.4rem;
 }
@@ -101,7 +102,7 @@ body {
 }
 .content-3 {
 	font-size: 1.3rem;
-	line-height: 1.6rem;
+	line-height: 2rem;
 }
 .content-4 {
 	font-size: 1.1rem;
@@ -109,9 +110,9 @@ body {
 	line-height: 1.1rem;
 }
 .content-5 {
-	font-size: 1.3rem;
-	line-height: 1.3rem;
-  font-weight: 500;
+	font-size: 1.2rem;
+	line-height: 1.4rem;
+  font-weight: 400;
 }
 
 .code-1 {
@@ -165,7 +166,6 @@ body {
 .t-white {
   cursor: default;
   color: #FFFFFF;
-  white-space: nowrap;
 }
 
 .t-white-u {
@@ -256,7 +256,7 @@ body {
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'Workbench' !important;
+  font-family: 'workbench' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
@@ -268,7 +268,10 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
+.icon-notepad:before {
+  content: "\e934";
+  font-size: 1.4rem;
+}
 .icon-sentiment:before {
   content: "\e929";
 }
@@ -436,6 +439,7 @@ body {
   font-size: 1.3rem;
 }
 
+
 /* Customized icons, not in font sent  */
 
 .small-sort{
@@ -538,11 +542,13 @@ body {
 
 /* icon next to Wf Module title */
 .WFmodule-name{
-  margin-top: 0.1rem;
+  font-size: 1.3rem;
+  line-height: 1.2rem;
+  font-weight: 500;
 }
 
 .module-icon {
-  font-size: 1.4rem;
+  font-size: 1.2rem;
 }
 
 /* icons embedded within buttons or menus  */
@@ -579,12 +585,12 @@ body {
 .parameter-base {
   height:3.5rem;
   border-radius: 0;
-  border: 1px solid #E7E7E7;
+  border: 1px solid #e9e9e9;
   background-color: #FFFFFF !important;
 }
 
 .text-field {
-  padding: 0 1.25rem;
+  padding: 0 1rem;
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -598,16 +604,16 @@ body {
   width: 100%;
   resize: none;
   line-height: 3.5rem;
-  padding: 0 0 0 1.25rem;
+  padding: 0 0 0 1rem;
   border-radius:0px;
-  border-color:#e7e7e7;
+  border-color:#e9e9e9;
 
 }
 
 .text-field-large {
   height: 12rem;
   width: 100%;
-  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  padding: 1rem;
   resize: vertical;
   overflow:hidden;
 }
@@ -617,7 +623,7 @@ body {
   background: transparent;
   border:none;
   white-space: nowrap;
-  width:38rem;
+  width:24rem;
   line-height: 1.5rem;
   height: 1.5rem;
   resize: none;
@@ -686,7 +692,7 @@ body {
 	font-weight: 500;
 	line-height: 1.4rem;
   border-radius:0px;
-  border: 1px solid #E7E7E7
+  border: 1px solid #e9e9e9
 }
 
 
@@ -723,7 +729,7 @@ body {
 /*Style form controls */
 .form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
   border-radius: 0px;
-  border: 1px solid #E7E7E7;
+  border: 1px solid #e9e9e9;
   height: 3.5rem;
 }
 
@@ -734,7 +740,7 @@ body {
 .form-control{
   height:3.5rem!important;
   border-radius: 0px;
-  border: 1px solid #E7E7E7;
+  border: 1px solid #e9e9e9;
 }
 
 select.form-control {
@@ -761,6 +767,7 @@ select.form-control {
 
 .account_form label{
   font-size: 1.2rem;
+  margin-bottom: 0;
 }
 
 .account_form input:active {
@@ -790,44 +797,28 @@ select.form-control {
 
 /* Margin for a group of parameters (can include several lines)*/
 
-.parameter-margin:not(:last-child) {
-  margin-bottom: 1.5rem;
+.parameter-margin {
+  margin-bottom: 1rem;
 }
 
 /* Margin for a line of 1 parameters, part of a group */
-.param-line-margin:not(:last-child){
+.param-line-margin{
   margin-bottom:1rem;
-}
-
-/* Margin for a line of X parameters, part of a group */
-.paramX-line-margin{
-  margin-bottom:1rem;
-  display:flex;
-}
-
-.paramX-line-margin:last-child{
-  margin-bottom:0rem;
 }
 
 /* Margins for 2 lined parameters, part of a group */
 .param2-line-margin{
-  width:20.75rem;
-  margin-right:.5rem;
-  padding:0;
+  display: inline-block;
+  width:48.9%;
+  margin-right: 0.5rem;
+  margin-bottom: 1rem;
 }
 
 .param2-line-margin:last-child{
   margin-right:0;
 }
 
-/* Margins for 3 lined parameter, part of a group*/
-.param3-line-margin{
-  display: inline-block;
-  width:32.3%;
-  margin-right: 0.5rem;
-}
-
-.param3-line-margin:last-child{
+.param2-line-margin:last-child{
   margin-right: 0;
 }
 
@@ -910,8 +901,8 @@ select.form-control {
 .context-button {
   cursor: pointer;
   border: 0;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.2rem;
+  height: 2rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -919,13 +910,13 @@ select.form-control {
   color:#8b8b8b;
   border-radius: 5rem;
   opacity: 0.5;
-  margin-right:0.5rem;
+  margin-right:0;
 }
 
 
 .context-button:hover {
   border: none;
-  background-color: #edecec;
+  background-color: transparent;
   color:#8b8b8b;
   opacity: 1;
 }
@@ -940,7 +931,7 @@ select.form-control {
 
 .context-collapse-button {
   cursor: pointer;
-  border: 1px solid #edecec;
+  border: 0;
   width: 2.5rem;
   height: 2.5rem;
   display: flex;
@@ -949,13 +940,13 @@ select.form-control {
   background-color: transparent;
   color:#b4b4b4;
   border-radius: 5rem;
-  margin-right:0.5rem;
+  margin-right:0rem;
   opacity: 1;
 }
 
 .context-collapse-button:hover {
   border: none;
-  background-color: #edecec;
+  background-color: transparent;
   color:#8b8b8b;
   decoration:none;
 }
@@ -973,12 +964,12 @@ select.form-control {
   background-color: transparent;
   color:#8b8b8b;
   opacity: 0.5;
-  margin-right:0.5rem;
+  margin-right:0;
 }
 
 .help-button:hover {
   border: none;
-  background-color: #edecec;
+  background-color: transparent;
   color:#8b8b8b;
   opacity: 1;
   decoration:none;
@@ -1048,6 +1039,24 @@ select.form-control {
     transition: opacity 0.1s;
 }
 .action-button:hover {
+	opacity: 0.5;
+}
+
+.action-button-M {
+  cursor: pointer;
+  min-width: 7rem;
+	height: 3.5rem;
+  border-radius: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+	font-size: 1.4rem;
+  line-height: 1.4rem;
+  padding: 0 1.8rem 0 1.8rem;
+  -webkit-transition: opacity 0.1s;
+    transition: opacity 0.1s;
+}
+.action-button-L:hover {
 	opacity: 0.5;
 }
 
@@ -1138,12 +1147,16 @@ select.form-control {
   margin-top:1rem
 }
 
+
+// Signup page
+
 .signup-card-left{
-  width: 20rem;
+  width: 20%;
   background-color: transparent;
   border-radius: 0;
   border: 0;
   padding-left: 0;
+  margin: auto;
 }
 
 .signup-card-right{
@@ -1157,15 +1170,27 @@ select.form-control {
   margin:auto;
 }
 
-
-.demosignup{
+.demoSignup{
   width: 100%;
+  box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
 }
 
-.gif-container{
-  width:100%;
+.signupByline{
+  background-color: pink;
 }
 
+.login-fullscreen-container .t-white{
+  white-space: normal;
+}
+
+.login-fullscreen-container .title-1 {
+  line-height: 3.5rem;
+}
+
+
+.login-fullscreen-container .title-2 {
+  line-height: normal;
+}
 
 
 /* --------Preloader/spinner------*/
@@ -1358,6 +1383,11 @@ select.form-control {
   min-height:100vh;
 }
 
+// contain iframe
+.data-reactroot{
+  background-color: red;
+}
+
 
 /***** ---- Navbar ----- *****/
 
@@ -1409,7 +1439,7 @@ img.logo {
   justify-content: space-between;
   background-color: #48C8D7;
   color: #FFFFFF;
-  padding: 0.5rem 4rem 0.5rem 1.5rem;
+  padding: 0.5rem 4rem 0.5rem 2rem;
 }
 
 .nav-link {
@@ -1456,10 +1486,8 @@ img.logo {
 
 /* Module Stack */
 .modulestack {
-  flex: 0 0 41rem;
-  border-left: 1px solid #DDDDDD;
-  border-right: 1px solid #DDDDDD;
-  background-color: #e9ebee;
+  flex: 0 0 30rem;
+  background-color: #EBEEF1;
   overflow: scroll;
   height:100vh;
   position: relative;
@@ -1492,9 +1520,9 @@ div into the DOM, since we don't really want another element, we just want this 
 }
 .modulestack-empty {
   cursor: default;
-  width: 38rem;
+  width: 26rem;
   margin-top: 1.5rem;
-  padding: 6rem 0;
+  padding: 5rem 0;
   border: 4px dashed #FBAA6D;
   opacity: 0.4;
 }
@@ -1646,16 +1674,6 @@ div into the DOM, since we don't really want another element, we just want this 
   cursor:pointer;
 }
 
-.library-card-category-open .ml-list-mini {
-  background-color:#547081;
-  opacity: 1;
-  cursor: pointer;
-  z-index: 100;
-  position: absolute;
-  left: 6rem;
-  top: 0;
-}
-
 .card .second-level {
   opacity: 0.7;
   position: relative;
@@ -1668,6 +1686,44 @@ div into the DOM, since we don't really want another element, we just want this 
   background-color: #4E6878;
   opacity: 1;
 }
+
+// Modules in closed library
+
+
+.library-card-category-open .ml-list-mini {
+  background-color:#547081;
+  cursor: pointer;
+  z-index: 100;
+  position: absolute;
+  left: 6rem;
+  top: -0.1rem;
+  overflow-y: scroll;
+  max-height: calc(70vh);
+  border-right: 1px solid #4A6676;
+  border-top: 1px solid #4A6676;
+  border-bottom: 1px solid #4A6676;
+  box-shadow: 0.5rem 0.5rem 2.5rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.library-card-category-open .ml-list-mini .ml-module-card {
+  width: 17.5rem;
+}
+
+.library-card-category-open .ml-list-mini .ml-module-card .ml-icon {
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.library-card-category-open .ml-list-mini .ml-module-card .ml-module-name{
+  margin-left: 0.4rem;
+}
+
+
+.card .ml-list-mini .second-level{
+  padding-left: 1rem;
+}
+
+///
 
 .ml-handle{
   padding: 0 0.5rem;
@@ -1708,13 +1764,11 @@ div into the DOM, since we don't really want another element, we just want this 
 
 .ml-module-name{
   margin-left:0.6rem;
-  margin-top: 0.2rem;
 }
 
 .ml-module-card {
   width: 200px;
 }
-
 
 /* --- the Search Modules within the Module Library header - ModuleSearch.js --- */
 
@@ -1866,7 +1920,7 @@ div into the DOM, since we don't really want another element, we just want this 
   z-index: 100;
   position: absolute;
   left: 6rem;
-  top: 27.7rem;
+  top: 31.7rem;
 }
 
 /* ImportModuleFromGitHub */
@@ -1958,11 +2012,15 @@ div into the DOM, since we don't really want another element, we just want this 
 /* ---- WfModule ---- */
 
 .wf-card{
-  width: 38rem;
+  width: 26rem;
   margin-bottom: 0.5rem;
-  background-color: rgba(250,250,250,0.8);
+  background-color: #fcfcfc;
   position: relative;
-  transition: all 0.5s ease-out;
+  transition: all 0.1s ease-out;
+}
+
+.wf-card:hover{
+  background:#F5F7F8;
 }
 
 .wf-card.placeholder {
@@ -1987,7 +2045,7 @@ div into the DOM, since we don't really want another element, we just want this 
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  margin:0 1.5rem 0 1.5rem;
+  margin:0 1rem 0 1.5rem;
   height:4rem;
 }
 
@@ -2009,7 +2067,7 @@ div into the DOM, since we don't really want another element, we just want this 
 }
 
 .module-card-params {
-  padding: 0.2rem 1.5rem 1.5rem 1.5rem;
+  padding: 0 1.5rem 0.01rem 1.5rem;
 }
 
 .module-description {
@@ -2048,10 +2106,6 @@ div into the DOM, since we don't really want another element, we just want this 
   display:none;
 }
 
-div.renderer-wrapper{
-  margin-bottom: 1.5rem;
-}
-
 .grid-lines{
   opacity: 0.5;
 }
@@ -2070,6 +2124,10 @@ svg .svg-background{
   border: 1px red;
 }
 
+.chart-label{
+  width: 100%;
+  margin-left: 0.5rem;
+}
 
 /* ---- Wf Module status bars ---- */
 
@@ -2079,18 +2137,12 @@ svg .svg-background{
   height: 100%;
   width:100%;
 }
-/* all good NOT IN USE ANYMORE?? PIERRE 1/10/2018*/
-/* .module-output-bar-white {
-  width:0.3rem;
-  height: 100%;
-  background-color: transparent;
-} */
 
 /* all good & selected */
 .module-output-bar-blue {
   height: 100%;
-  background-color: transparent;
-  border: 2px solid rgba(118,155,176,0.5);
+  background-color:#F5F7F8;
+  border: 1px solid rgba(118,155,176,0.3);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -2101,14 +2153,14 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(118,155,176,0.3);
 	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 38rem
+  margin-left: 26.3rem
 }
 
 /* standby  */
 .module-output-bar-orange {
   height: 100%;
-  background-color: transparent;
-  border:2px solid rgba(251,170,109,0.7);
+  background-color:rgba(251,170,109,0.3);
+  border:1px solid rgba(251,170,109,0.7);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -2118,13 +2170,13 @@ svg .svg-background{
 	content: " ";
 	border-left-color: rgba(251,170,109,0);
 	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 38rem
+  margin-left: 26.3rem
 }
 /* error  */
 .module-output-bar-pink {
   height: 100%;
   background-color: transparent;
-  border:2px solid rgba(0,114,110,0);
+  border:1px solid rgba(0,114,110,0);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -2134,14 +2186,14 @@ svg .svg-background{
 	content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 38.3rem;
+  margin-left: 26.4rem;
   height: 4rem;
 }
 /* error & selected */
 .module-output-bar-red {
   height: 100%;
   background-color: transparent;
-  border:2px solid rgba(232,114,110,0.5);
+  border:1px solid rgba(232,114,110,0.5);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -2149,8 +2201,8 @@ svg .svg-background{
 .module-output-bar-red:after {
   content: " ";
 	position: absolute;
-	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 38.3rem;
+	border:1px solid rgba(232,114,110,0.3);
+  margin-left: 25.2rem;
   height: 4.5rem;
 }
 
@@ -2160,9 +2212,9 @@ svg .svg-background{
 .checkbox-container {
   background-color: #FFFFFF;
   height: 3.5rem;
-  width: 49.7%;
-  margin: 0.5px;
-  padding: 0 1.5rem;
+  width: 100%;
+  margin-bottom: 1px;
+  padding: 0 1rem;
   display:flex;
   align-items: center;
 }
@@ -2172,8 +2224,7 @@ svg .svg-background{
   height: 12rem;
   min-height: 6rem;
   overflow: auto;
-  background-color: #e7e7e7;
-  border: 1px solid #e7e7e7;
+  border: 1px solid #e9e9e9;
 }
 
 .list-scroll{
@@ -2186,7 +2237,7 @@ svg .svg-background{
 }
 .checkbox-wrapper{
   margin-right: 3rem;
-  margin-top:-1rem;
+  margin-top:-0.5rem;
   display:inline-block;
   overflow:hidden;
 }
@@ -2205,7 +2256,7 @@ input[type=checkbox]
 {
   -webkit-appearance: none;
 	background-color: #fff;
-	border: 1px solid #e1e1e1;
+	border: 1px solid #e9e9e9;
 	padding: 0.7rem;
 	border-radius: 3px;
 	display: inline-block;
@@ -2240,6 +2291,8 @@ input[type=checkbox]:checked:after {
 	left: 2.5px;
 	color: #fff;
 }
+
+
 
 
 /* ---- Dialog Boxes ---- */
@@ -2358,9 +2411,9 @@ input[type=checkbox]:checked:after {
 .download-icon-box {
 	height: 3.5rem;
 	width: 6rem;
-	border-top: 1px solid #E7E7E7;
-  border-right: 1px solid #E7E7E7;
-  border-bottom: 1px solid #E7E7E7;
+	border-top: 1px solid #e9e9e9;
+  border-right: 1px solid #e9e9e9;
+  border-bottom: 1px solid #e9e9e9;
   background-color: #FFFFFF;
   display: flex;
   align-items: center;
@@ -2378,30 +2431,18 @@ input[type=checkbox]:checked:after {
 
 /* ---- Data Module: data versions box */
 
-.version-box {
-  height:6.6rem;
-  border: 1px solid #E9E9E9;
-  display: flex;
-  flex-direction: row;
-  margin-top:-0.5rem;
-  padding: 1.2rem;
-  align-items:top;
-}
 
 .version-item {
-  width: 14rem;
   display: flex;
-  flex-direction:column;
-  justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
+  width:9.5rem;
 }
 
 .frequency-item {
-  width: 10.5rem;
+  width: 100%;
   display: flex;
-  flex-direction:column;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-right: 1rem;
 }
 
@@ -2433,7 +2474,7 @@ select {
   border-radius: 0px;
 }
 
-/*Upload module*/
+/////*Upload module*/
 
 .dropzone{
   height:8rem;
@@ -2448,58 +2489,45 @@ select {
   opacity: 1;
 }
 
+.upload-box{
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.drop-alert{
+  display: none;
+}
+
+.VersionSelect-UploadFile{
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
 /*Progress bar*/
 
 // positioning when module is empty or loaded with at least a file
 .loader-empty{
-  top:13.2rem;
+  top:11.2rem;
+  display:none;
 }
 .loader-replace{
-  top:8.5rem;
-}
-
-
-.react-fine-uploader-gallery-progress-bar-container{
-  height:1px;
-  opacity:1;
-  width: 35rem;
-  background: #FBAA6D;
-  box-shadow: none;
-}
-.react-fine-uploader-file-progress-bar-container,
-.react-fine-uploader-gallery-total-progress-bar-container{
-  height:1px;
-  opacity:1;
-  margin-top:0rem;
-  margin-right:0px;
-  margin-bottom:0px;
-  margin-left:0px;
-  width: 35rem;
-  background: #FBAA6D;
-  box-shadow: none;
-}
-.react-fine-uploader-file-progress-bar,
-.react-fine-uploader-gallery-total-progress-bar
-{
-  width: 100%;
-  opacity:1;
-  background: #FBAA6D;
-  box-shadow: none;
-  height:1px;
+  top:9.1rem;
+  display: none;
 }
 
 /*dropzone button gets set up within the version box when file is loaded*/
 
 .dropzone-button{
   position:absolute!important;
-  right:2.75rem;
-  bottom:2.75rem;
+  right:1.5rem;
+  bottom:1rem;
 }
 
-.upload-box{
+.gdrive-fileSelect{
   display: flex;
   justify-content: space-between;
-  padding-right: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e9e9e9;
 }
 
 .file-info p{
@@ -2523,26 +2551,23 @@ select {
 }
 
 .module-notes {
-  padding: 1rem;
+  padding: 0.5rem 0 0.5rem 0;
 }
 
 .editable-notes-field {
   border: none;
   outline: none;
-  width: 100%;
+  width: 25rem;
+  min-height: 3rem;
   resize: none;
   font-family: 'Nunito Sans', sans-serif;
   font-size: 1.3rem;
   font-weight: 100;
-	line-height: 2.6rem;
+	line-height: 2.2rem;
   color: #686768;
-  padding: 0 1.5rem;
-  background-color:rgba(72,200,215,0.2);
+  background-color:transparent;
   display: table;
-}
-
-.editable-notes-field:hover {
-  background-color:rgba(72,200,215,0.3);
+  margin:auto;
 }
 
 .editable-text {

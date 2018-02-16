@@ -89,7 +89,7 @@ exports[`ImportModuleFromGitHub Library closed Renders a link, which will open m
           <div
             className="label-margin t-d-gray content-3"
           >
-            Git Url:
+            Git Url
           </div>
           <div
             className="import-url-field"
@@ -226,7 +226,7 @@ exports[`ImportModuleFromGitHub Library open Renders a link, which will open mod
           <div
             className="label-margin t-d-gray content-3"
           >
-            Git Url:
+            Git Url
           </div>
           <div
             className="import-url-field"

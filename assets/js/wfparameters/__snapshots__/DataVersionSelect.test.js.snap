@@ -20,10 +20,10 @@ exports[`DataVersionSelect Displays empty when no versions available 1`] = `
     <div
       className="t-d-gray content-3"
     >
-      No data loaded
+      Version
     </div>
     <div
-      className="open-modal t-f-blue content-4 text-center"
+      className="open-modal t-f-blue content-3 ml-2"
     >
       -
     </div>
@@ -51,14 +51,14 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
     <div
       className="t-d-gray content-3"
     >
-      Version 1 of 5
+      Version
     </div>
     <div>
       <div
-        className="open-modal t-f-blue content-4 text-center"
+        className="open-modal t-f-blue content-3 ml-2"
         onClick={[Function]}
       >
-        Apr 10 2017 - 05:57PM
+        1 of 5
       </div>
       <Modal
         autoFocus={true}
@@ -97,10 +97,10 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     <div
       className="t-d-gray content-3"
     >
-      No data loaded
+      Version
     </div>
     <div
-      className="open-modal t-f-blue content-4 text-center"
+      className="open-modal t-f-blue content-3 ml-2"
     >
       -
     </div>
@@ -117,12 +117,13 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     className="modal-content"
   >
     <ModalHeader
+      className="dialog-header"
       tag="h4"
       toggle={[Function]}
       wrapTag="div"
     >
       <div
-        className="modal-header"
+        className="dialog-header modal-header"
       >
         <h4
           className="modal-title"
@@ -281,14 +282,14 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     <div
       className="t-d-gray content-3"
     >
-      Version 5 of 5
+      Version
     </div>
     <div>
       <div
-        className="open-modal t-f-blue content-4 text-center"
+        className="open-modal t-f-blue content-3 ml-2"
         onClick={[Function]}
       >
-        Jul 10 2017 - 05:57PM
+        5 of 5
       </div>
       <Modal
         autoFocus={true}

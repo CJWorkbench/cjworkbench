@@ -1,7 +1,7 @@
 {
   "name": "Count unique values",
   "id_name": "countvalues",
-  "category" : "Analyse",
+  "category" : "do not load",
   "icon" : "group",
   "description" : "Group and count rows for every unique value in a specific column.",
   "parameters": [
