@@ -91,8 +91,8 @@ describe('Edit Cell actions', () => {
   });
 
 
-  it('Add edit to existing module', () => {
-      addCellEdit({row: 10, col:'bar', 'value':'yippee!'}, 20);
+  it('Add edit to existing Edit Cell module', () => {
+      addCellEdit(20, {row: 10, col:'bar', 'value':'yippee!'});
 
       expect(api.onParamChanged.mock.calls).toHaveLength(1);
       expect(api.onParamChanged.mock.calls[0][0]).toBe(101);
@@ -100,8 +100,8 @@ describe('Edit Cell actions', () => {
         { value: '[{"row":3,"col":"foo","value":"bar"},{"row":10,"col":"bar","value":"yippee!"}]' } );
   });
 
-    it('Add edit to immediately following module', () => {
-      addCellEdit({row: 10, col:'bar', 'value':'yippee!'}, 10);
+    it('Add edit to immediately following Edit Cell module', () => {
+      addCellEdit(10, {row: 10, col:'bar', 'value':'yippee!'});
 
       expect(api.onParamChanged.mock.calls).toHaveLength(1);
       expect(api.onParamChanged.mock.calls[0][0]).toBe(101);
@@ -110,7 +110,7 @@ describe('Edit Cell actions', () => {
   });
 
   it('Add new Edit Cells module before end of stack', (done) => {
-      addCellEdit({row: 10, col:'bar', 'value':'yippee!'}, 30);
+      addCellEdit(30, {row: 10, col:'bar', 'value':'yippee!'});
 
       expect(api.addModule.mock.calls).toHaveLength(1);
       expect(api.addModule.mock.calls[0][1]).toEqual(initialState.editCellsModuleId);
@@ -127,7 +127,7 @@ describe('Edit Cell actions', () => {
   });
 
   it('Add new Edit Cells module at end of stack', (done) => {
-      addCellEdit({row: 10, col:'bar', 'value':'yippee!'}, 40);
+      addCellEdit(40, {row: 10, col:'bar', 'value':'yippee!'});
 
       expect(api.addModule.mock.calls).toHaveLength(1);
       expect(api.addModule.mock.calls[0][1]).toEqual(initialState.editCellsModuleId);

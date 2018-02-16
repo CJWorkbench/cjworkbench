@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Fetches and renders 1`] = `
+exports[`TableView Fetches and renders 1`] = `
 <TableView
   api={
     Object {
@@ -2665,7 +2665,7 @@ exports[`Fetches and renders 1`] = `
 </TableView>
 `;
 
-exports[`Header only when no module id 1`] = `
+exports[`TableView Header only when no module id 1`] = `
 <TableView
   api={Object {}}
   revision={1}

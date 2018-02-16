@@ -103,14 +103,16 @@ export default class DataGrid extends React.Component {
   }
 
 
-  onGridRowsUpdated({ colKey, fromRow, toRow, updated }) {
+  onGridRowsUpdated({ fromRow, toRow, updated }) {
     if (fromRow !== toRow) {
       // possible if drag handle not hidden, see https://github.com/adazzle/react-data-grid/issues/822
-      console.log('More than one row changed at a time in DataGrid, should not be possible')
+      console.log('More than one row changed at a time in DataGrid, how?')
     }
 
     if (this.props.onEditCell)
-      this.props.onEditCell(fromRow, colKey, updated)  // column key is also column name
+      var colKey = Object.keys(updated)[0];
+      var newVal = updated[colKey];
+      this.props.onEditCell(fromRow, colKey, newVal)  // column key is also column name
   }
 
   render() {

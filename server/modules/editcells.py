@@ -70,10 +70,17 @@ class EditCells(ModuleImpl):
         table2 = table.copy()
         try:
             for ed in edits:
-                col = ed['col']
-                # silently ignore missing columns, maybe they'll come back
-                if col in table2.columns:
-                    sanitized_edit_cell(table2, col, ed['row'], ed['value'])
+                try:
+                    col = ed['col']
+
+                    # silently ignore missing columns, maybe they'll come back
+                    if col in table2.columns:
+                        sanitized_edit_cell(table2, col, ed['row'], ed['value'])
+
+                except (TypeError, KeyError) as e:
+                    format_error()
+                    return table
+
         except KeyError:
             format_error()
             return table        # return unmodified table if bad json

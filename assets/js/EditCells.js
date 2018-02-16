@@ -1,7 +1,7 @@
 // Code required to add a cell edit.
 // Including creating an Edit Cells module if needed, and syncing to server
 import React from 'react'
-import {store} from "./workflow-reducer";
+import {store, changeSelectedWfModuleAction} from "./workflow-reducer";
 import {getPageID} from "./utils";
 import WorkbenchAPI from './WorkbenchAPI'
 
@@ -9,7 +9,6 @@ var api = WorkbenchAPI(); // var so it can be mocked for testing
 export function mockAPI(mock_api) {
   api = mock_api;
 }
-
 
 function findParamValByIdName(wfm, paramValIdName) {
   return wfm.parameter_vals.find((parameterVal) => {
@@ -57,6 +56,7 @@ function addEditCellWfModule(state, insertBefore) {
       api.addModule(getPageID(), moduleId, insertBefore)
   )
 }
+
 // Given an Edit Cells module, add a single edit to its list of edited cells, and set this param on server
 function addEditToEditCellsModule(wfm, edit) {
   var state = store.getState();
@@ -79,21 +79,26 @@ function addEditToEditCellsModule(wfm, edit) {
 
 
 // User edited output of wfModuleId
-export function addCellEdit(edit, wfModuleId) {
+export function addCellEdit(wfModuleId, edit) {
   var state = store.getState();
 
   var existingEditCellsWfm = findEditCellsModule(state, wfModuleId);
   if (existingEditCellsWfm) {
     // Adding edit to existing module
     addEditToEditCellsModule(existingEditCellsWfm, edit);
+    if (existingEditCellsWfm.id != wfModuleId) {
+      store.dispatch(changeSelectedWfModuleAction(existingEditCellsWfm.id));
+    }
 
   } else {
     // Create a new module after current one and add edit to it
     var wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
 
     addEditCellWfModule(state, wfModuleIdx+1)
-      .then(data => {
-        addEditToEditCellsModule(data, edit); // add edit to newly created module
+      .then((newWfm)=> {
+        // add edit to newly created module and select it
+        addEditToEditCellsModule(newWfm, edit);
+        store.dispatch(changeSelectedWfModuleAction(newWfm.id));
       });
   }
 }

@@ -6,6 +6,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import DataGrid from "./DataGrid";
 import update from 'immutability-helper'
+import * as EditCells from './EditCells'
+
+export function mockAddCellEdit(fn) {
+  EditCells.addCellEdit = fn;
+}
 
 export default class TableView extends React.Component {
 
@@ -123,15 +128,15 @@ export default class TableView extends React.Component {
   }
 
   // When a cell is edited we need to 1) update our own state 2) add this edit to an Edit Cells module
-  onEditCell(row, colName, rowUpdates) {
+  onEditCell(row, colName, newVal) {
     if (row<this.state.lastLoadedRow && this.state.tableData) {    // should always be true if user clicked on cell to edit it
 
       // Change just this one row, keeping as much of the old tableData as possible
-      let newRows = update(this.state.tableData.rows, {[row]: {$merge: rowUpdates}});
+      let newRows = update(this.state.tableData.rows, {[row]: {$merge: {[colName]: newVal}}});
       let newTableData = update(this.state.tableData, {$merge: { rows: newRows }});
       this.setState({ tableData: newTableData });
 
-
+      EditCells.addCellEdit(this.props.id, {row: row, col: colName, value: newVal})
 
     } else {
       console.log('However did you edit a row that wasn\'t loaded?')

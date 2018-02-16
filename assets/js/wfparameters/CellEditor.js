@@ -61,9 +61,9 @@ export default class CellEditor extends React.Component {
     var editList = edits.map((colEdits) => {
 
       // Each row in this list of edits for this column also gets div love
-      let rows = colEdits['edits'].map( (row) => {
+      let rows = colEdits['edits'].map( (row, idx) => {
         return (
-          <div className='cell-edits-row' key={row['row']}>
+          <div className='cell-edits-row' key={idx}>
             <div className='cell-edits-row-number'>{row['row']}</div>
             <div className='cell-edits-new-value'>{row['value']}</div>
           </div>
