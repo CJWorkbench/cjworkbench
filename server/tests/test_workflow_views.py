@@ -1,7 +1,7 @@
 from server.views import workflow_list, workflow_addmodule, workflow_detail
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
-from server.utils import *
+from server.serializers import WfModuleSerializer
 from server.tests.utils import *
 from account.utils import user_display
 from unittest.mock import patch
@@ -45,6 +45,10 @@ class WorkflowViewTests(LoggedInTestCase):
     def test_workflow_init_state(self):
         # checks to make sure the right initial data is embedded in the HTML (username etc.)
         with patch.dict('os.environ', { 'CJW_INTERCOM_APP_ID':'myIntercomId', 'CJW_GOOGLE_ANALYTICS':'myGaId'}):
+
+            # create an Edit Cells module so we can check that its ID is returned correctly
+            edit_cells_module_id = add_new_module_version('Edit Cells', id_name='editcells').module_id
+
             response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -52,8 +56,9 @@ class WorkflowViewTests(LoggedInTestCase):
             self.assertContains(response, user_display(self.user))
             self.assertContains(response, self.user.email)
 
-            self.assertContains(response, 'myIntercomId')
+            self.assertContains(response, '"editCellsModuleId": ' + str(edit_cells_module_id))
 
+            self.assertContains(response, 'myIntercomId')
             self.assertContains(response, 'myGaId')
 
 
@@ -125,6 +130,7 @@ class WorkflowViewTests(LoggedInTestCase):
         module2 = Module.objects.get(name='Module 2')
         module3 = Module.objects.get(name='Module 3')
 
+        # add to empty stack
         request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
                                    {'moduleId': module1.id,
                                     'insertBefore': 0})
@@ -134,7 +140,11 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(WfModule.objects.filter(workflow=pk_workflow).count(), 1)
         wfm1 = WfModule.objects.filter(module_version__module=module1.id).first()
         self.assertEqual(response.data['id'], wfm1.id)
+        # we should get a full serialization back, same as /wfmodules/xx call
+        serializer = WfModuleSerializer(wfm1)
+        self.assertEqual(response.data, serializer.data)
 
+        # insert before first module
         request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
                                    {'moduleId': module2.id,
                                     'insertBefore': 0})
@@ -145,6 +155,7 @@ class WorkflowViewTests(LoggedInTestCase):
         wfm2 = WfModule.objects.filter(module_version__module=module2.id).first()
         self.assertEqual(response.data['id'], wfm2.id)
 
+        # insert before second module
         request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
                                    {'moduleId': module3.id,
                                     'insertBefore': 1})

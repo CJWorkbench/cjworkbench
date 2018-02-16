@@ -3,6 +3,8 @@
 /* Font */
 @import url('https://fonts.googleapis.com/css?family=Lato:400,700|Nunito+Sans');
 @import './components/OutputPane.scss';
+@import './components/TableView.scss';
+@import './components/CellEditor.scss';
 
 
 html {
@@ -2005,53 +2007,6 @@ div into the DOM, since we don't really want another element, we just want this 
   text-decoration: none;
 }
 
-/*Table*/
-
-.rowNumber {
-  color:#b4b4b4;
-  text-align: center;
-  font-size: 1.1rem!important;
-}
-
-// .widget-HeaderCell__value {
-//   text-align: center;
-// }
-
-.react-grid-HeaderCell{
-  background-color: #7A9BB0;
-  color:white;
-  border-right:0px;
-  border-bottom:0px;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1.2rem;
-  height: 4rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
-}
-
-.react-grid-Grid{
-  border:#b4b4b4;
-}
-
-.react-grid-Cell{
-  border-color:rgba(237,237,237,1);
-  padding-right:1rem;
-  padding-left:1rem;
-  border-right: none;
-  border-bottom: none;
-}
-
-.react-grid-Cell:not(.editing) .react-grid-Cell__value{
-  font-size: 1.2rem;
-}
-
-.react-grid-Row--odd .react-grid-Cell{
-  background-color: rgba(237,244,246,0.8);
-}
-
-.react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
-  background-color: #C9E8F1;
-}
 
 
 /* ---- WfModule ---- */

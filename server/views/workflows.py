@@ -12,17 +12,31 @@ from rest_framework.renderers import JSONRenderer
 from server.utils import *
 from server.models import Module, ModuleVersion, Workflow
 from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
-from server.serializers import WorkflowSerializer, WorkflowSerializerLite, UserSerializer
+from server.serializers import WorkflowSerializer, WorkflowSerializerLite, WfModuleSerializer, UserSerializer
 from server.versions import WorkflowUndo, WorkflowRedo
 from django.db.models import Q
 import json
+
+# Cache this because we need it on every Workflow page load, and it never changes
+def edit_cells_module_id():
+    if edit_cells_module_id.id is None:
+        try:
+            edit_cells_module_id.id = Module.objects.get(id_name='editcells').id
+        except Module.DoesNotExist:
+            return None     # should only happen in testing
+
+    return edit_cells_module_id.id
+
+edit_cells_module_id.id = None
 
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
 def make_init_state(request):
     if request.user.is_authenticated():
         user = UserSerializer(request.user)
+        edit_cells_module = edit_cells_module_id()
         init_state = {
-            'loggedInUser': user.data
+            'loggedInUser': user.data,
+            'editCellsModuleId' : edit_cells_module
         }
         return json.dumps(init_state)
     else:
@@ -79,10 +93,8 @@ def render_workflow(request, pk=None):
 @renderer_classes((JSONRenderer,))
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def workflow_detail(request, pk, format=None):
-    try:
-        workflow = Workflow.objects.get(pk=pk)
-    except Workflow.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    workflow = get_object_or_404(Workflow, pk=pk)
 
     if not workflow.user_authorized_read(request.user):
         return Response(status=status.HTTP_404_NOT_FOUND)
@@ -115,6 +127,7 @@ def workflow_detail(request, pk, format=None):
                 ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
 
             if 'public' in request.data:
+                # TODO this should be a command, so it's undoable
                 workflow.public = request.data['public']
                 workflow.save()
 
@@ -137,34 +150,33 @@ def workflow_detail(request, pk, format=None):
         workflow.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-# Invoked when user pressess add_module button
+
+# Invoked when user adds a module
 @api_view(['PUT'])
 @renderer_classes((JSONRenderer,))
 def workflow_addmodule(request, pk, format=None):
-    try:
-        workflow = Workflow.objects.get(pk=pk)
-    except Workflow.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    workflow = get_object_or_404(Workflow, pk=pk)
 
     if not workflow.user_authorized_write(request.user):
         return HttpResponseForbidden()
 
+    module_id = request.data['moduleId']
+    insert_before = int(request.data['insertBefore'])
     try:
-        module_id = request.data['moduleId']
-        insert_before = int(request.data['insertBefore'])
         module = Module.objects.get(pk=module_id)
-
-        # always add the latest version of a module
-        module_versions = ModuleVersion.objects.filter(module=module)
-        module_version=module_versions[len(module_versions)-1]
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    # always add the latest version of a module (do we need ordering on the objects to ensure last is always latest?)
+    module_version = ModuleVersion.objects.filter(module=module).last()
 
     log_user_event(request.user, 'Add Module', {'name': module.name, 'id_name':module.id_name})
 
     delta = AddModuleCommand.create(workflow, module_version, insert_before)
 
-    return Response({"id": delta.wf_module.id}, status.HTTP_201_CREATED)
+    serializer = WfModuleSerializer(delta.wf_module)
+    return Response(serializer.data, status.HTTP_201_CREATED)
 
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list

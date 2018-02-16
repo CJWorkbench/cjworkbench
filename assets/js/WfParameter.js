@@ -14,6 +14,7 @@ import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
 import GoogleConnect from './wfparameters/GoogleConnect'
 import FileSelect from './wfparameters/FileSelect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
+import CellEditor from './wfparameters/CellEditor'
 import { csrfToken } from './utils'
 import { store, wfModuleStatusAction } from './workflow-reducer'
 
@@ -127,6 +128,139 @@ export default class WfParameter extends React.Component {
     }
   }
 
+  // Render one of the many parameter types that are specific to a particular module
+  render_custom_parameter() {
+
+    if (this.props.p.parameter_spec.id_name === 'chart') {
+
+      // Load and save chart state, image to hidden parameters
+      var loadState = ( () => this.props.getParamText('chartstate') );
+      var saveState = ( state => this.props.setParamText('chartstate', state) );
+
+      var saveImageDataURI = ( data => this.props.setParamText('chart', data) );
+
+      return (
+        <div>
+          <a href={'/public/paramdata/live/' + this.props.p.id + '.png'}>PNG</a>
+          <ChartParameter
+            isReadOnly={this.props.isReadOnly}
+            wf_module_id={this.props.wf_module_id}
+            revision={this.props.revision}
+            saveState={saveState}
+            loadState={loadState}
+            saveImageDataURI={saveImageDataURI}
+          />
+        </div>
+      );
+
+    } else if (this.props.p.parameter_spec.id_name == 'chart_editor') {
+      return (
+        <ChartEditor
+          isReadOnly={ this.props.isReadOnly }
+          revision={ this.props.revision }
+          wfModuleId={this.props.wf_module_id}
+          modelText={this.props.p.value}
+          type={ this.props.getParamText('chart_type') }
+          api={this.props.api}
+        />
+      )
+    } else if (this.props.p.parameter_spec.id_name == 'version_select') {
+
+      var button = (!this.props.isReadOnly)
+        ? <div className='button-blue action-button-M mt-0' onClick={this.click}>{this.name}</div>
+        : null
+
+      return (
+        <div className='parameter-margin'>
+          <UpdateFrequencySelect
+            isReadOnly={this.props.isReadOnly}
+            updateSettings={this.props.updateSettings}
+            wfModuleId={this.props.wf_module_id}
+            api={this.props.api}
+            notifications={this.props.notifications}
+          />
+          <div className="d-flex justify-content-between mt-2">
+            <DataVersionSelect
+              isReadOnly={this.props.isReadOnly}
+              wfModuleId={this.props.wf_module_id}
+              revision={this.props.revision}
+              api={this.props.api}
+              setClickNotification={this.props.setClickNotification}
+              notifications={this.props.notifications}
+            />
+            {button}
+          </div>
+
+        </div>
+      );
+    } else if (this.props.p.parameter_spec.id_name == 'version_select_simpler') {
+
+      return (
+        <div className='VersionSelect-UploadFile'>
+          <DataVersionSelect
+            isReadOnly={this.props.isReadOnly}
+            wfModuleId={this.props.wf_module_id}
+            revision={this.props.revision}
+            api={this.props.api}
+            setClickNotification={this.props.setClickNotification}
+            notifications={this.props.notifications}
+          />
+        </div>
+      );
+    } else if (this.props.p.parameter_spec.id_name == 'colrename') {
+      var renameParam = this.props.getParamText('newcolnames');
+      let saveState = ( state => this.props.setParamText('newcolnames', state) );
+      return (
+        <div className='parameter-margin'>
+          <div className='t-d-gray content-3 label-margin'>Enter new column names</div>
+          <ColumnRenamer
+            isReadOnly={this.props.isReadOnly}
+            renameParam={renameParam}
+            saveState={saveState}
+            getColNames={this.getInputColNames}
+            revision={this.props.revision} />
+        </div> );
+    } else if (this.props.p.parameter_spec.id_name == 'file') {
+      return (
+            <DropZone
+            wfModuleId={this.props.wf_module_id}
+            revision={this.props.revision} />
+        );
+    } else if (this.props.p.parameter_spec.id_name == 'barchart') {
+      return (
+        <BarChart
+          wf_module_id={this.props.wf_module_id}
+          index={this.props.getParamText('column')}
+          dataKeys={this.props.getParamText('multicolumn_colorpicker')}
+          getParamText={this.props.getParamText}
+          setParamText={this.props.setParamText}
+        />
+      )
+    } else if (this.props.p.parameter_spec.id_name == 'connect') {
+      return (
+        <GoogleConnect
+          userCreds={this.props.loggedInUser.google_credentials}
+        />
+      )
+    } else if (this.props.p.parameter_spec.id_name == 'fileselect') {
+      return (
+        <FileSelect
+          api={this.props.api}
+          userCreds={this.props.loggedInUser.google_credentials}
+          pid={this.props.p.id}
+          saveState={state => this.props.setParamText('fileselect', state)}
+          getState={() => this.props.getParamText('fileselect')}
+        />
+      )
+    } else if (this.props.p.parameter_spec.id_name == 'code') {
+      return (
+        <WorkbenchAceEditor
+          name={this.props.p.parameter_spec.name}
+          onSave={ (val) => { this.paramChanged( val ) } }
+          defaultValue={this.props.p.value} />
+      )
+    }
+  }
 
   render() {
     if (!this.props.p.visible) {
@@ -244,137 +378,7 @@ export default class WfParameter extends React.Component {
 
 
       case 'custom':
-
-        if (this.props.p.parameter_spec.id_name === 'chart') {
-
-          // Load and save chart state, image to hidden parameters
-          var loadState = ( () => this.props.getParamText('chartstate') );
-          var saveState = ( state => this.props.setParamText('chartstate', state) );
-
-          var saveImageDataURI = ( data => this.props.setParamText('chart', data) );
-
-          return (
-            <div>
-              <a href={'/public/paramdata/live/' + this.props.p.id + '.png'}>PNG</a>
-              <ChartParameter
-                isReadOnly={this.props.isReadOnly}
-                wf_module_id={this.props.wf_module_id}
-                revision={this.props.revision}
-                saveState={saveState}
-                loadState={loadState}
-                saveImageDataURI={saveImageDataURI}
-              />
-            </div>
-          );
-
-        } else if (this.props.p.parameter_spec.id_name == 'chart_editor') {
-          return (
-            <ChartEditor
-              isReadOnly={ this.props.isReadOnly }
-              revision={ this.props.revision }
-              wfModuleId={this.props.wf_module_id}
-              modelText={this.props.p.value}
-              type={ this.props.getParamText('chart_type') }
-              api={this.props.api}
-            />
-          )
-        } else if (this.props.p.parameter_spec.id_name == 'version_select') {
-
-          var button = (!this.props.isReadOnly)
-            ? <div className='button-blue action-button-M mt-0' onClick={this.click}>{this.name}</div>
-            : null
-
-          return (
-            <div className='parameter-margin'>
-              <UpdateFrequencySelect
-                isReadOnly={this.props.isReadOnly}
-                updateSettings={this.props.updateSettings}
-                wfModuleId={this.props.wf_module_id}
-                api={this.props.api}
-                notifications={this.props.notifications}
-              />
-              <div className="d-flex justify-content-between mt-2">
-                <DataVersionSelect
-                  isReadOnly={this.props.isReadOnly}
-                  wfModuleId={this.props.wf_module_id}
-                  revision={this.props.revision}
-                  api={this.props.api}
-                  setClickNotification={this.props.setClickNotification}
-                  notifications={this.props.notifications}
-                />
-                {button}
-              </div>
-
-            </div>
-          );
-        } else if (this.props.p.parameter_spec.id_name == 'version_select_simpler') {
-
-          return (
-            <div className='VersionSelect-UploadFile'>
-              <DataVersionSelect
-                isReadOnly={this.props.isReadOnly}
-                wfModuleId={this.props.wf_module_id}
-                revision={this.props.revision}
-                api={this.props.api}
-                setClickNotification={this.props.setClickNotification}
-                notifications={this.props.notifications}
-              />
-            </div>
-          );
-        } else if (this.props.p.parameter_spec.id_name == 'colrename') {
-          var renameParam = this.props.getParamText('newcolnames');
-          let saveState = ( state => this.props.setParamText('newcolnames', state) );
-          return (
-            <div className='parameter-margin'>
-              <div className='t-d-gray content-3 label-margin'>Enter new column names</div>
-              <ColumnRenamer
-                isReadOnly={this.props.isReadOnly}
-                renameParam={renameParam}
-                saveState={saveState}
-                getColNames={this.getInputColNames}
-                revision={this.props.revision} />
-            </div> );
-        } else if (this.props.p.parameter_spec.id_name == 'file') {
-          return (
-                <DropZone
-                wfModuleId={this.props.wf_module_id}
-                revision={this.props.revision} />
-            );
-          } else if (this.props.p.parameter_spec.id_name == 'barchart') {
-            return (
-              <BarChart
-                wf_module_id={this.props.wf_module_id}
-                index={this.props.getParamText('column')}
-                dataKeys={this.props.getParamText('multicolumn_colorpicker')}
-                getParamText={this.props.getParamText}
-                setParamText={this.props.setParamText}
-              />
-            )
-          } else if (this.props.p.parameter_spec.id_name == 'connect') {
-            return (
-              <GoogleConnect
-                userCreds={this.props.loggedInUser.google_credentials}
-              />
-            )
-          } else if (this.props.p.parameter_spec.id_name == 'fileselect') {
-            return (
-              <FileSelect
-                api={this.props.api}
-                userCreds={this.props.loggedInUser.google_credentials}
-                pid={this.props.p.id}
-                saveState={state => this.props.setParamText('fileselect', state)}
-                getState={() => this.props.getParamText('fileselect')}
-              />
-            )
-          } else if (this.props.p.parameter_spec.id_name == 'code') {
-            return (
-              <WorkbenchAceEditor
-                name={this.props.p.parameter_spec.name}
-                onSave={ (val) => { this.paramChanged( val ) } }
-                defaultValue={this.props.p.value} />
-            )
-          }
-
+        return this.render_custom_parameter();
 
       default:
         return null;  // unrecognized parameter type

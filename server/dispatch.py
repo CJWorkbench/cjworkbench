@@ -14,6 +14,7 @@ from .modules.twitter import Twitter
 from .modules.enigma import EnigmaDataLoader
 from .modules.uploadfile import UploadFile
 from .modules.googlesheets import GoogleSheets
+from .modules.editcells import EditCells
 
 from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
@@ -50,6 +51,7 @@ module_dispatch_tbl = {
     'enigma':       EnigmaDataLoader,
     'uploadfile':   UploadFile,
     'googlesheets': GoogleSheets,
+    'editcells':    EditCells,
 
     # For testing
     'NOP':          NOP,

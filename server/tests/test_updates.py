@@ -21,10 +21,11 @@ class UpdatesTests(LoggedInTestCase):
 
         # fake out the current time so we can run the test just-so
         self.nowtime = parser.parse('Aug 28 1999 2:35PM UTC')
-        timezone.now = MagicMock(name='fixed test time', return_value=self.nowtime)
 
     @patch('server.updates.module_dispatch_event')
-    def test_update_scan(self, mock_dispatch):
+    @patch('server.updates.timezone.now')
+    def test_update_scan(self, mock_now, mock_dispatch):
+        mock_now.return_value = self.nowtime
 
         # This module does not auto update
         self.wfm1.auto_update_data = False
@@ -61,7 +62,10 @@ class UpdatesTests(LoggedInTestCase):
 
 
     @patch('server.updates.module_dispatch_event')
-    def test_crashing_module(self, mock_dispatch):
+    @patch('server.updates.timezone.now')
+    def test_crashing_module(self, mock_now, mock_dispatch):
+        mock_now.return_value = self.nowtime
+
         # When a module throws an exception, it should get updated to the correct time
         # and all others should still be called
 
