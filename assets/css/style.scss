@@ -164,7 +164,6 @@ body {
 .t-white {
   cursor: default;
   color: #FFFFFF;
-  white-space: nowrap;
 }
 
 .t-white-u {
@@ -766,6 +765,7 @@ select.form-control {
 
 .account_form label{
   font-size: 1.2rem;
+  margin-bottom: 0;
 }
 
 .account_form input:active {
@@ -1145,12 +1145,16 @@ select.form-control {
   margin-top:1rem
 }
 
+
+// Signup page
+
 .signup-card-left{
-  width: 20rem;
+  width: 20%;
   background-color: transparent;
   border-radius: 0;
   border: 0;
   padding-left: 0;
+  margin: auto;
 }
 
 .signup-card-right{
@@ -1164,15 +1168,27 @@ select.form-control {
   margin:auto;
 }
 
-
-.demosignup{
+.demoSignup{
   width: 100%;
+  box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
 }
 
-.gif-container{
-  width:100%;
+.signupByline{
+  background-color: pink;
 }
 
+.login-fullscreen-container .t-white{
+  white-space: normal;
+}
+
+.login-fullscreen-container .title-1 {
+  line-height: 3.5rem;
+}
+
+
+.login-fullscreen-container .title-2 {
+  line-height: normal;
+}
 
 
 /* --------Preloader/spinner------*/
