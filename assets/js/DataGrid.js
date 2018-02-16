@@ -24,14 +24,12 @@ RowNumberFormatter.propTypes = {
   value:    PropTypes.node.isRequired
 };
 
-var rowKey = 'row-xxxxxxxxx';  // could be a real col called row, so don't use that name
-
-
 // Add row number col and make all cols resizeable
-function makeFormattedCols(cols) {
+function makeFormattedCols(cols, rowNumKey) {
 
+  // Add a row number column, which has its own formatting
   var formattedCols = [{
-    key: rowKey,
+    key: rowNumKey,
     name: '',
     formatter: RowNumberFormatter,
     width: 40,
@@ -59,7 +57,10 @@ export default class DataGrid extends React.Component {
     this.state = {
       gridHeight : 100  // arbitrary, reset at componentDidMount, but non-zero means we get row elements in testing
     };
+    this.rowNumKey = null;  // can't be in state because we need to update it in render() for getRow() to use
+
     this.updateSize = this.updateSize.bind(this);
+    // this.updateRowNumKey= this.updateRowNumKey.bind(this);
     this.getRow = this.getRow.bind(this);
     this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
   }
@@ -75,6 +76,15 @@ export default class DataGrid extends React.Component {
         gridWidth: gridWidth
       });
     }
+  }
+
+  // Each ReactDataGrid col needs a unique key. Make one for our row number column
+  updateRowNumKey(props) {
+    var rowNumKey = 'rn_';
+    while (props.columns.includes(rowNumKey)) {
+      rowNumKey += '_';
+    }
+    this.rowNumKey = rowNumKey;
   }
 
   componentDidMount() {
@@ -98,10 +108,9 @@ export default class DataGrid extends React.Component {
   // Add row number as first column, when we look up data
   getRow(i) {
     var row = this.props.getRow(i);
-    row[rowKey] = i+1;            // 1 based row numbers
+    row[this.rowNumKey] = i+1;            // 1 based row numbers
     return row;
   }
-
 
   onGridRowsUpdated({ fromRow, toRow, updated }) {
     if (fromRow !== toRow) {
@@ -121,7 +130,8 @@ export default class DataGrid extends React.Component {
     // Generate the table if there's any data
     if (this.props.totalRows > 0) {
 
-      var columns = makeFormattedCols(this.props.columns);
+      this.updateRowNumKey(this.props);
+      var columns = makeFormattedCols(this.props.columns, this.rowNumKey);
 
       return <ReactDataGrid
         columns={columns}

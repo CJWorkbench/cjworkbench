@@ -7,7 +7,7 @@ from server.utils import safe_column_to_string
 
 logger = logging.getLogger(__name__)
 
-# This will perform poorly if many values are not convertable
+# This will perform poorly if many values are not convertible
 def to_numeric(val):
     try:
         return pd.to_numeric(val)

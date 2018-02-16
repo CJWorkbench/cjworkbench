@@ -6,23 +6,24 @@ it('Renders the grid', () => {
 
   var testData = {
     totalRows : 2,
-    columns : ["aaa", "bbbb", "ccccc"],
+    columns : ["aaa", "bbbb", "ccccc", "rn_"],
     rows : [
       {
-      "aaa": "1",
+      "aaa": "9",
       "bbbb": "foo",
-      "ccccc": "3"
+      "ccccc": "9",       // use digits that will not appear in our row numbers, so we can test
+      "rn_" : "someval"   // deliberately conflict with DataGrid's default row number column key
       },
       {
-      "aaa": "4",
-      "bbbb": "5",
-      "ccccc": "baz"
+      "aaa": "9",
+      "bbbb": "9",
+      "ccccc": "baz",
+      "rn_" : "someotherval"
       }
     ]
   };
 
   function getRow(i) {
-//    console.log('getting row ' + str(i));
     return testData.rows[i];
   }
 
@@ -35,14 +36,23 @@ it('Renders the grid', () => {
     onEditCell={editCellMock}
   />);
 
-  // Check that we ended up with four columns (first is row number), with the right names
+  // Check that we ended up with five columns (first is row number), with the right names
   // If rows values are not present, ensure intial DataGrid state.gridHeight > 0
-  expect(tree.find('HeaderCell')).toHaveLength(4);
+  expect(tree.find('HeaderCell')).toHaveLength(5);
   let text = tree.text();
-  expect(text).toContain('aaa');
+  expect(text).toContain('aaa');      // columns
   expect(text).toContain('bbbb');
   expect(text).toContain('ccccc');
-  expect(text).toContain('foo');
+  expect(text).toContain('rn_');
+
+  expect(text).toContain('foo');      // some cell values
+  expect(text).toContain('someval');
+
+  expect(text).toContain('1');        // row numbers
+  expect(text).toContain('2');
+
+  // row number column should not have the same name as any of our cols
+  expect(testData.columns.includes(tree.state().rowNumKey)).toBeFalsy();
 
   expect(tree).toMatchSnapshot();
 

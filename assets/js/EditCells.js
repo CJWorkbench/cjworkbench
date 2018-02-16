@@ -50,6 +50,8 @@ function findEditCellsModule(state, wfModuleId) {
   return null;
 }
 
+// TODO: Approximately from here down, move into reducer
+
 function addEditCellWfModule(state, insertBefore) {
   var moduleId =  state.editCellsModuleId;
   return (
