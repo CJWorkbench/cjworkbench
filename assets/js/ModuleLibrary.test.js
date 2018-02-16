@@ -7,49 +7,67 @@
 
 import React from 'react'
 import ModuleLibrary  from './ModuleLibrary'
-import { mount } from 'enzyme'
+import { mount, ReactWrapper } from 'enzyme'
 import { jsonResponseMock, emptyAPI } from './utils'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
 
-
-var wrapper;
-var addModule =  () => {};
-var dropModule =  () => {};
-var workflow = {
-  "id":15,
-  "name":"What a workflow!",
-};
-var modules = [
-  {
-    "id":1,
-    "name":"Chartbuilder",
-    "category":"Visualize",
-    "description":"Create line, column and scatter plot charts.",
-    "icon":"chart"
-  },
-  {
-    "id":2,
-    "name":"Load from Facebork",
-    "category":"Add data",
-    "description":"Import from your favorite snowshall media",
-    "icon":"url"
-  },
-  {
-    "id":4,
-    "name":"Load from Enigma",
-    "category":"Add data",
-    "description":"Connect a dataset from Enigma's collection via URL.",
-    "icon":"url"
-  }
-];
-var api = {};
-var libraryOpen = true;
-var setLibraryOpen = function(libraryOpen) {
-    libraryOpen = libraryOpen;
-}
-
 describe('ModuleLibrary', () => {
+
+  var wrapper;
+  var addModule =  () => {};
+  var dropModule =  () => {};
+  var workflow = {
+    "id":15,
+    "name":"What a workflow!",
+  };
+  var modules = [
+    {
+      "id":1,
+      "name":"Chartbuilder",
+      "category":"Visualize",
+      "description":"Create line, column and scatter plot charts.",
+      "icon":"chart"
+    },
+    {
+      "id":2,
+      "name":"Load from Facebork",
+      "category":"Add data",
+      "description":"Import from your favorite snowshall media",
+      "icon":"url"
+    },
+    {
+      "id":3,
+      "name":"Load from Enigma",
+      "category":"Add data",
+      "description":"Connect a dataset from Enigma's collection via URL.",
+      "icon":"url"
+    },
+    {
+      "id":4,
+      "name":"Other Module 1",
+      "category":"other category",    // test modules outside the predefined categories
+      "icon":"url"
+    },
+    {
+      "id":5,
+      "name":"Other Module 2",
+      "category":"x category",
+      "icon":"url"
+    },
+    {
+      "id":6,
+      "name":"Other Module 3",
+      "category":"other category",
+      "icon":"url"
+    },
+  ];
+
+  var api = {};
+  var libraryOpen = true;
+  var setLibraryOpen = function(libraryOpen) {
+      libraryOpen = libraryOpen;
+  };
 
   describe('Not Read-only', () => {
 
@@ -75,17 +93,31 @@ describe('ModuleLibrary', () => {
 
     it('Renders in open state and loads modules', (done) => {
       expect(wrapper).toMatchSnapshot();
-      // should have called API for its data on componentDidMount
-      expect(api.getModules.mock.calls.length).toBe(1);
-      // check that Library is open
-      expect(wrapper.find('.module-library-open')).toHaveLength(1);
+
+      expect(api.getModules.mock.calls.length).toBe(1);   // should have called API for its data on componentDidMount
+      expect(wrapper.find('.module-library-open')).toHaveLength(1);  // check that Library is open
+
       // let json promise resolve (wait for modules to load)
       setImmediate( () => {
+
+        // Sadly this does not work: https://github.com/airbnb/enzyme/issues/431
+        // // Ensure all modules in each category are contiguous
+        // var modules = wrapper.childAt(0).state('items');
+        // var seenCats = [];
+        // var currentCat = null;
+        // for (var m of modules) {
+        //   if (m.category != currentCat) {                       // different cat than last module
+        //     expect(seenCats.includes(m.category)).toBeFalsy();  // should not repeat category
+        //     seenCats.push(m.category);
+        //   }
+        //   currentCat = m.category;
+        // }
+
         expect(wrapper).toMatchSnapshot();
-        // check that module categories have loaded
-        expect(wrapper.find('.ml-cat')).toHaveLength(2);
-        // check that modules have loaded
-        expect(wrapper.find('.ml-list .ml-icon-container')).toHaveLength(3);
+
+        expect(wrapper.find('.ml-cat')).toHaveLength(4);                      // module categories
+        expect(wrapper.find('.ml-list .ml-icon-container')).toHaveLength(6);  // modules
+
         done();
       });
     });
