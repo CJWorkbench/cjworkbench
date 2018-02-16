@@ -18,6 +18,21 @@ import React from 'react';
 import ModuleLibraryClosed from './ModuleLibraryClosed';
 import ModuleLibraryOpen from './ModuleLibraryOpen';
 
+// Helper to sort modules by category, then name
+function compareCategoryName(a,b) {
+  if (a.category > b.category) {
+    return 1;
+  } else if (a.category < b.category) {
+    return -1;
+  } else if (a.name > b.name) {
+    return 1;
+  } else if (a.name < b.name) {
+    return -1;
+  } else {
+    return 0;
+  }
+}
+
 export default class ModuleLibrary extends React.Component {
   constructor(props) {
     super(props);
@@ -35,6 +50,7 @@ export default class ModuleLibrary extends React.Component {
     this.openLibrary = this.openLibrary.bind(this);
     this.updated = this.updated.bind(this);
   }
+
 
   /**
    * Queries server for all the available modules for the given credentials.
@@ -57,19 +73,20 @@ export default class ModuleLibrary extends React.Component {
       this.props.api.getModules()
         .then(json => {
 
-          var categories = ['Add data', 'Prepare', 'Analyze', 'Visualize', 'Code', 'Other']
+          var categories = ['Add data', 'Prepare', 'Analyze', 'Visualize', 'Code', 'Other'];
           var modules = [];
 
           // Order modules by categories in order above, then alphabetically by name within category
           for (var cat of categories) {
             let catModules = json.filter( (m) => { return m.category == cat; } );
-            catModules.sort( (a,b) => { return a.name > b.name ? 1 : a.name < b.name ? -1 : 0; } );
+            catModules.sort(compareCategoryName);
             modules = modules.concat(catModules)
           }
 
           // See if there are any remanining modules, and if there are, add them under Other
           var remainingModules = json.filter( (item) =>
             { return modules.indexOf(item) === -1; });
+          remainingModules.sort(compareCategoryName);
           modules = modules.concat(remainingModules);
 
           this.setState({ items: modules });

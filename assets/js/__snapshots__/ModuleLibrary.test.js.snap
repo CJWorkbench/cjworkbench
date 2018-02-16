@@ -366,7 +366,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
               "category": "Add data",
               "description": "Connect a dataset from Enigma's collection via URL.",
               "icon": "url",
-              "id": 4,
+              "id": 3,
               "name": "Load from Enigma",
             },
             Object {
@@ -382,6 +382,24 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
               "icon": "chart",
               "id": 1,
               "name": "Chartbuilder",
+            },
+            Object {
+              "category": "other category",
+              "icon": "url",
+              "id": 4,
+              "name": "Other Module 1",
+            },
+            Object {
+              "category": "other category",
+              "icon": "url",
+              "id": 6,
+              "name": "Other Module 3",
+            },
+            Object {
+              "category": "x category",
+              "icon": "url",
+              "id": 5,
+              "name": "Other Module 2",
             },
           ]
         }
@@ -439,7 +457,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     "category": "Add data",
                     "description": "Connect a dataset from Enigma's collection via URL.",
                     "icon": "url",
-                    "id": 4,
+                    "id": 3,
                     "name": "Load from Enigma",
                   },
                   Object {
@@ -455,6 +473,24 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     "icon": "chart",
                     "id": 1,
                     "name": "Chartbuilder",
+                  },
+                  Object {
+                    "category": "other category",
+                    "icon": "url",
+                    "id": 4,
+                    "name": "Other Module 1",
+                  },
+                  Object {
+                    "category": "other category",
+                    "icon": "url",
+                    "id": 6,
+                    "name": "Other Module 3",
+                  },
+                  Object {
+                    "category": "x category",
+                    "icon": "url",
+                    "id": 5,
+                    "name": "Other Module 2",
                   },
                 ]
               }
@@ -609,7 +645,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                   "category": "Add data",
                   "description": "Connect a dataset from Enigma's collection via URL.",
                   "icon": "url",
-                  "id": 4,
+                  "id": 3,
                   "name": "Load from Enigma",
                 },
                 Object {
@@ -625,6 +661,24 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                   "icon": "chart",
                   "id": 1,
                   "name": "Chartbuilder",
+                },
+                Object {
+                  "category": "other category",
+                  "icon": "url",
+                  "id": 4,
+                  "name": "Other Module 1",
+                },
+                Object {
+                  "category": "other category",
+                  "icon": "url",
+                  "id": 6,
+                  "name": "Other Module 3",
+                },
+                Object {
+                  "category": "x category",
+                  "icon": "url",
+                  "id": 5,
+                  "name": "Other Module 2",
                 },
               ]
             }
@@ -645,7 +699,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       addModule={[Function]}
                       dropModule={[Function]}
                       icon="url"
-                      id={4}
+                      id={3}
                       name="Load from Enigma"
                   />,
                     <DragSource(Module)
@@ -706,7 +760,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             addModule={[Function]}
                             dropModule={[Function]}
                             icon="url"
-                            id={4}
+                            id={3}
                             name="Load from Enigma"
                           >
                             <Module
@@ -714,7 +768,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               connectDragSource={[Function]}
                               dropModule={[Function]}
                               icon="url"
-                              id={4}
+                              id={3}
                               isDragging={false}
                               name="Load from Enigma"
                             >
@@ -921,6 +975,313 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                                           className="content-5 ml-module-name"
                                         >
                                           Chartbuilder
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      className="ml-handle"
+                                    >
+                                      <div
+                                        className="icon-grip"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Module>
+                          </DragSource(Module)>
+                        </div>
+                      </div>
+                    </Collapse>
+                  </div>
+                </div>
+              </ModuleCategory>
+              <ModuleCategory
+                collapsed={true}
+                isReadOnly={false}
+                libraryOpen={true}
+                modules={
+                  Array [
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={4}
+                      name="Other Module 1"
+                  />,
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={6}
+                      name="Other Module 3"
+                  />,
+                  ]
+                }
+                name="other category"
+                setOpenCategory={[Function]}
+              >
+                <div
+                  className="card b-l-gray library-card-category-closed"
+                >
+                  <div
+                    className="ml-cat"
+                  >
+                    <div
+                      className="first-level"
+                      onClick={[Function]}
+                    >
+                      <div
+                        className="cat-container"
+                      >
+                        <span
+                          className="open-ML-cat"
+                        >
+                          other category
+                        </span>
+                        <div
+                          className="ml-sort icon-sort-down-vl-gray"
+                        />
+                      </div>
+                    </div>
+                    <Collapse
+                      delay={
+                        Object {
+                          "hide": 350,
+                          "show": 350,
+                        }
+                      }
+                      isOpen={false}
+                      onClosed={[Function]}
+                      onOpened={[Function]}
+                      tag="div"
+                    >
+                      <div
+                        className="collapse"
+                        style={Object {}}
+                      >
+                        <div
+                          className="ml-list"
+                        >
+                          <DragSource(Module)
+                            addModule={[Function]}
+                            dropModule={[Function]}
+                            icon="url"
+                            id={4}
+                            name="Other Module 1"
+                          >
+                            <Module
+                              addModule={[Function]}
+                              connectDragSource={[Function]}
+                              dropModule={[Function]}
+                              icon="url"
+                              id={4}
+                              isDragging={false}
+                              name="Other Module 1"
+                            >
+                              <div
+                                className="card ml-module-card"
+                              >
+                                <div
+                                  className=""
+                                  onClick={[Function]}
+                                >
+                                  <div
+                                    className="second-level d-flex"
+                                  >
+                                    <div
+                                      className="d-flex flex-row align-items-center"
+                                    >
+                                      <div
+                                        className="ml-icon-container"
+                                      >
+                                        <div
+                                          className="icon-url ml-icon"
+                                        />
+                                      </div>
+                                      <div>
+                                        <div
+                                          className="content-5 ml-module-name"
+                                        >
+                                          Other Module 1
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      className="ml-handle"
+                                    >
+                                      <div
+                                        className="icon-grip"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Module>
+                          </DragSource(Module)>
+                          <DragSource(Module)
+                            addModule={[Function]}
+                            dropModule={[Function]}
+                            icon="url"
+                            id={6}
+                            name="Other Module 3"
+                          >
+                            <Module
+                              addModule={[Function]}
+                              connectDragSource={[Function]}
+                              dropModule={[Function]}
+                              icon="url"
+                              id={6}
+                              isDragging={false}
+                              name="Other Module 3"
+                            >
+                              <div
+                                className="card ml-module-card"
+                              >
+                                <div
+                                  className=""
+                                  onClick={[Function]}
+                                >
+                                  <div
+                                    className="second-level d-flex"
+                                  >
+                                    <div
+                                      className="d-flex flex-row align-items-center"
+                                    >
+                                      <div
+                                        className="ml-icon-container"
+                                      >
+                                        <div
+                                          className="icon-url ml-icon"
+                                        />
+                                      </div>
+                                      <div>
+                                        <div
+                                          className="content-5 ml-module-name"
+                                        >
+                                          Other Module 3
+                                        </div>
+                                      </div>
+                                    </div>
+                                    <div
+                                      className="ml-handle"
+                                    >
+                                      <div
+                                        className="icon-grip"
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </Module>
+                          </DragSource(Module)>
+                        </div>
+                      </div>
+                    </Collapse>
+                  </div>
+                </div>
+              </ModuleCategory>
+              <ModuleCategory
+                collapsed={true}
+                isReadOnly={false}
+                libraryOpen={true}
+                modules={
+                  Array [
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={5}
+                      name="Other Module 2"
+                  />,
+                  ]
+                }
+                name="x category"
+                setOpenCategory={[Function]}
+              >
+                <div
+                  className="card b-l-gray library-card-category-closed"
+                >
+                  <div
+                    className="ml-cat"
+                  >
+                    <div
+                      className="first-level"
+                      onClick={[Function]}
+                    >
+                      <div
+                        className="cat-container"
+                      >
+                        <span
+                          className="open-ML-cat"
+                        >
+                          x category
+                        </span>
+                        <div
+                          className="ml-sort icon-sort-down-vl-gray"
+                        />
+                      </div>
+                    </div>
+                    <Collapse
+                      delay={
+                        Object {
+                          "hide": 350,
+                          "show": 350,
+                        }
+                      }
+                      isOpen={false}
+                      onClosed={[Function]}
+                      onOpened={[Function]}
+                      tag="div"
+                    >
+                      <div
+                        className="collapse"
+                        style={Object {}}
+                      >
+                        <div
+                          className="ml-list"
+                        >
+                          <DragSource(Module)
+                            addModule={[Function]}
+                            dropModule={[Function]}
+                            icon="url"
+                            id={5}
+                            name="Other Module 2"
+                          >
+                            <Module
+                              addModule={[Function]}
+                              connectDragSource={[Function]}
+                              dropModule={[Function]}
+                              icon="url"
+                              id={5}
+                              isDragging={false}
+                              name="Other Module 2"
+                            >
+                              <div
+                                className="card ml-module-card"
+                              >
+                                <div
+                                  className=""
+                                  onClick={[Function]}
+                                >
+                                  <div
+                                    className="second-level d-flex"
+                                  >
+                                    <div
+                                      className="d-flex flex-row align-items-center"
+                                    >
+                                      <div
+                                        className="ml-icon-container"
+                                      >
+                                        <div
+                                          className="icon-url ml-icon"
+                                        />
+                                      </div>
+                                      <div>
+                                        <div
+                                          className="content-5 ml-module-name"
+                                        >
+                                          Other Module 2
                                         </div>
                                       </div>
                                     </div>
