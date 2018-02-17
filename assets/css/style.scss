@@ -1095,8 +1095,7 @@ select.form-control {
 }
 
 .login-bigbrand .logo{
-  width: 4.2rem;
-  margin-bottom: 0.5rem;
+  width: 4.5rem;
 }
 
 .login-bigbrand h1 a {
@@ -1106,6 +1105,7 @@ select.form-control {
   padding: 1.3rem 0 1 0;
   font-family: 'Lato', sans-serif;
   font-weight: 400;
+  letter-spacing: -0.2rem;
 }
 
 .login-bigbrand h1 a:hover {
@@ -1128,6 +1128,8 @@ select.form-control {
   border-radius: 0px;
   box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
 }
+
+.img.logo
 
 .login-card :-webkit-input-placeholder {
   color: #ccc
@@ -1410,7 +1412,7 @@ select.form-control {
 
 img.logo {
   vertical-align: middle;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
 }
 
 .navbar-brand h1, img.logo {
