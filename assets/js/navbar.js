@@ -27,15 +27,12 @@ export class WorkflowListNavBar extends React.Component {
 
     return (
       <div>
-        <nav className="navbar">
-          <div className="navbar-brand d-flex flex-row align-items-center">
+        <nav className="navbar d-flex align-items-center">
+          <div className="navbar-brand d-flex align-items-center">
             <img src="/static/images/logo.svg" className="logo"/>
             <h1 className="mb-0 mr-auto logo-1"><a href="/workflows">Workbench</a></h1>
           </div>
-          <div className='d-flex flex-row align-items-center'>
-            <a target="_blank" href="https://intercom.help/cjworkbench/getting-started/build-your-first-workflow" className='t-white nav-link content-2'>Help</a>
-            <WfHamburgerMenu />
-          </div>
+          <WfHamburgerMenu />
         </nav>
       </div>
     );

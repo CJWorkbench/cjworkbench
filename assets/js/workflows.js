@@ -56,7 +56,7 @@ export default class Workflows extends React.Component {
 
   render() {
     return (
-      <div>
+      <div className="workflows-page">
         <WorkflowListNavBar/>
 
         <div className="container workflows-container">
@@ -106,6 +106,13 @@ export default class Workflows extends React.Component {
 
             </div>
           </div>
+        </div>
+        <div className='help-container'>
+          <a target="_blank" href="http://help.cjworkbench.org/getting-started/build-your-first-workflow" className=''>
+            <div className='help-shortcut btn'>
+              <div className='icon-knowledge' />
+            </div>
+          </a>
         </div>
       </div>
     );

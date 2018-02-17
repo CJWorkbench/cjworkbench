@@ -1984,6 +1984,13 @@ div into the DOM, since we don't really want another element, we just want this 
   left: 4.5rem;
 }
 
+.workflows-page .help-container{
+  z-index: 2000;
+  position: absolute;
+  bottom: 9rem;
+  left: 3.5rem;
+}
+
 .help-shortcut{
   margin: auto;
   background-color: #769BB0;

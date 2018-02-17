@@ -3,10 +3,10 @@
 exports[`NavBar WorkflowListNavBar Renders correctly 1`] = `
 <div>
   <nav
-    className="navbar"
+    className="navbar d-flex align-items-center"
   >
     <div
-      className="navbar-brand d-flex flex-row align-items-center"
+      className="navbar-brand d-flex align-items-center"
     >
       <img
         className="logo"
@@ -22,18 +22,7 @@ exports[`NavBar WorkflowListNavBar Renders correctly 1`] = `
         </a>
       </h1>
     </div>
-    <div
-      className="d-flex flex-row align-items-center"
-    >
-      <a
-        className="t-white nav-link content-2"
-        href="https://intercom.help/cjworkbench/getting-started/build-your-first-workflow"
-        target="_blank"
-      >
-        Help
-      </a>
-      <WfHamburgerMenu />
-    </div>
+    <WfHamburgerMenu />
   </nav>
 </div>
 `;

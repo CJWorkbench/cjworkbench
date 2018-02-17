@@ -11,14 +11,16 @@ exports[`Workflow list page renders correctly 1`] = `
     }
   }
 >
-  <div>
+  <div
+    className="workflows-page"
+  >
     <WorkflowListNavBar>
       <div>
         <nav
-          className="navbar"
+          className="navbar d-flex align-items-center"
         >
           <div
-            className="navbar-brand d-flex flex-row align-items-center"
+            className="navbar-brand d-flex align-items-center"
           >
             <img
               className="logo"
@@ -34,93 +36,82 @@ exports[`Workflow list page renders correctly 1`] = `
               </a>
             </h1>
           </div>
-          <div
-            className="d-flex flex-row align-items-center"
-          >
-            <a
-              className="t-white nav-link content-2"
-              href="https://intercom.help/cjworkbench/getting-started/build-your-first-workflow"
-              target="_blank"
-            >
-              Help
-            </a>
-            <WfHamburgerMenu>
-              <UncontrolledDropdown>
-                <Dropdown
-                  isOpen={false}
-                  tag="div"
-                  toggle={[Function]}
+          <WfHamburgerMenu>
+            <UncontrolledDropdown>
+              <Dropdown
+                isOpen={false}
+                tag="div"
+                toggle={[Function]}
+              >
+                <div
+                  className="dropdown"
                 >
-                  <div
-                    className="dropdown"
+                  <DropdownToggle
+                    aria-haspopup={true}
+                    className="navbar-context-button"
+                    color="secondary"
+                    data-toggle="dropdown"
                   >
-                    <DropdownToggle
-                      aria-haspopup={true}
+                    <Button
+                      aria-expanded={false}
+                      aria-haspopup="true"
                       className="navbar-context-button"
                       color="secondary"
                       data-toggle="dropdown"
+                      onClick={[Function]}
+                      tag="button"
                     >
-                      <Button
+                      <button
                         aria-expanded={false}
                         aria-haspopup="true"
-                        className="navbar-context-button"
-                        color="secondary"
+                        className="navbar-context-button btn btn-secondary"
                         data-toggle="dropdown"
                         onClick={[Function]}
-                        tag="button"
+                        type="button"
                       >
-                        <button
-                          aria-expanded={false}
-                          aria-haspopup="true"
-                          className="navbar-context-button btn btn-secondary"
-                          data-toggle="dropdown"
-                          onClick={[Function]}
-                          type="button"
-                        >
-                          <div
-                            className="button-icon icon-more-white"
-                          />
-                        </button>
-                      </Button>
-                    </DropdownToggle>
-                    <DropdownMenu
-                      right={true}
-                      tag="div"
+                        <div
+                          className="button-icon icon-more-white"
+                        />
+                      </button>
+                    </Button>
+                  </DropdownToggle>
+                  <DropdownMenu
+                    right={true}
+                    tag="div"
+                  >
+                    <div
+                      aria-hidden={true}
+                      className="dropdown-menu dropdown-menu-right"
+                      role="menu"
+                      tabIndex="-1"
                     >
-                      <div
-                        aria-hidden={true}
-                        className="dropdown-menu dropdown-menu-right"
-                        role="menu"
-                        tabIndex="-1"
-                      >
-                        <div>
-                          <DropdownItem
-                            className="dropdown-menu-item"
+                      <div>
+                        <DropdownItem
+                          className="dropdown-menu-item"
+                          href="/account/logout"
+                          tag="a"
+                          toggle={true}
+                        >
+                          <a
+                            className="dropdown-menu-item dropdown-item"
                             href="/account/logout"
-                            tag="a"
-                            toggle={true}
+                            onClick={[Function]}
+                            tabIndex="0"
                           >
-                            <a
-                              className="dropdown-menu-item dropdown-item"
-                              href="/account/logout"
-                              onClick={[Function]}
-                              tabIndex="0"
+                            <span
+                              className="t-d-gray content-3 ml-3"
                             >
-                              <span
-                                className="t-d-gray content-3 ml-3"
-                              >
-                                Logout
-                              </span>
-                            </a>
-                          </DropdownItem>
-                        </div>
+                              Logout
+                            </span>
+                          </a>
+                        </DropdownItem>
                       </div>
-                    </DropdownMenu>
-                  </div>
-                </Dropdown>
-              </UncontrolledDropdown>
-            </WfHamburgerMenu>
-          </div>
+                    </div>
+                  </DropdownMenu>
+                </div>
+              </Dropdown>
+            </UncontrolledDropdown>
+          </WfHamburgerMenu>
         </nav>
       </div>
     </WorkflowListNavBar>
@@ -948,6 +939,23 @@ exports[`Workflow list page renders correctly 1`] = `
           </div>
         </div>
       </div>
+    </div>
+    <div
+      className="help-container"
+    >
+      <a
+        className=""
+        href="http://help.cjworkbench.org/getting-started/build-your-first-workflow"
+        target="_blank"
+      >
+        <div
+          className="help-shortcut btn"
+        >
+          <div
+            className="icon-knowledge"
+          />
+        </div>
+      </a>
     </div>
   </div>
 </Workflows>

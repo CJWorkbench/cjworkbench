@@ -109,9 +109,8 @@ class Workflow extends React.Component {
               />
             </div>
           </div>
-
           <div className='help-container'>
-            <a target="_blank" href="https://intercom.help/cjworkbench/getting-started/build-your-first-workflow" className=''>
+            <a target="_blank" href="http://help.cjworkbench.org/getting-started/build-your-first-workflow" className=''>
               <div className='help-shortcut btn'>
                 <div className='icon-knowledge' />
               </div>

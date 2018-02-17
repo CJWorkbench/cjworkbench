@@ -11,12 +11,11 @@ require('bootstrap/dist/css/bootstrap.css');
 require('../css/style.scss');
 
 ReactDOM.render(
-  <Workflows api={api}/>,
-  document.getElementById('root')
+    <Workflows api={api}/>,
+    document.getElementById('root')
 );
 
 // Start Intercom, if we're that sort of installation
-// We are indeed: Very mission, much business!
 if (window.APP_ID) {
   window.Intercom("boot", {
     app_id: window.APP_ID,
