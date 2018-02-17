@@ -1,7 +1,6 @@
 # Module dispatch table and implementations
 import pandas as pd
 from django.conf import settings
-from .modules.countvalues import CountValues
 from .modules.counybydate import CountByDate
 from .modules.formula import Formula
 from .modules.loadurl import LoadURL
@@ -11,7 +10,6 @@ from .modules.pythoncode import PythonCode
 from .modules.selectcolumns import SelectColumns
 from .modules.textsearch import TextSearch
 from .modules.twitter import Twitter
-from .modules.enigma import EnigmaDataLoader
 from .modules.uploadfile import UploadFile
 from .modules.googlesheets import GoogleSheets
 from .modules.editcells import EditCells
@@ -46,9 +44,7 @@ module_dispatch_tbl = {
     'pythoncode':   PythonCode,
     'twitter':      Twitter,
     'textsearch':   TextSearch,
-    'countvalues':  CountValues,
     'countbydate':  CountByDate,
-    'enigma':       EnigmaDataLoader,
     'uploadfile':   UploadFile,
     'googlesheets': GoogleSheets,
     'editcells':    EditCells,
