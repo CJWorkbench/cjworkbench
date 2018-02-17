@@ -52,7 +52,7 @@ it('Renders the grid', () => {
   expect(text).toContain('2');
 
   // row number column should not have the same name as any of our cols
-  expect(testData.columns.includes(tree.state().rowNumKey)).toBeFalsy();
+  expect(testData.columns.includes(tree.instance().rowNumKey)).toBeFalsy();
 
   expect(tree).toMatchSnapshot();
 
