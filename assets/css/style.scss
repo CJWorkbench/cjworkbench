@@ -619,14 +619,11 @@ body {
 }
 
 .text-field-readonly {
-  padding:0.25rem 1.5rem 0 0;
-  background: transparent;
-  border:none;
   white-space: nowrap;
-  width:24rem;
+  width:23rem;
   line-height: 1.5rem;
   height: 1.5rem;
-  resize: none;
+  overflow: hidden;
 }
 
 .url-link{
