@@ -27,7 +27,7 @@ export default class ModuleLibraryOpen extends React.Component {
 
           <div className='d-flex align-items-center flex-row mb-4'>
             <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="20"/></a>
-            <a href="/workflows" className='logo-2 ml-3 t-vl-gray '>Workbench</a>
+            <a href="/workflows" className='logo-2 ml-2 t-vl-gray '>Workbench</a>
             <div className='close-open-toggle' onClick={this.props.toggleLibrary}>
               <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
             </div>

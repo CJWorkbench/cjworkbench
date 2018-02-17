@@ -57,7 +57,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
             />
           </a>
           <a
-            className="logo-2 ml-3 t-vl-gray "
+            className="logo-2 ml-2 t-vl-gray "
             href="/workflows"
           >
             Workbench

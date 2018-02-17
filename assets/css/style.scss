@@ -1416,9 +1416,10 @@ img.logo {
 }
 
 .navbar-brand h1, img.logo {
-  width:2.3rem;
+  width:2.2rem;
   display: inline-block;
   vertical-align: middle;
+  margin-right: 0.8rem;
 }
 .navbar-brand h1 a {
   color: white;
@@ -2161,7 +2162,6 @@ svg .svg-background{
 /* standby  */
 .module-output-bar-orange {
   height: 100%;
-  background-color:rgba(251,170,109,0.3);
   border:1px solid rgba(251,170,109,0.7);
   display: flex;
   align-items: center;
@@ -2188,7 +2188,7 @@ svg .svg-background{
 	content: " ";
 	position: absolute;
 	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 26.4rem;
+  margin-left: 26.5rem;
   height: 4rem;
 }
 /* error & selected */
@@ -2203,9 +2203,9 @@ svg .svg-background{
 .module-output-bar-red:after {
   content: " ";
 	position: absolute;
-	border:1px solid rgba(232,114,110,0.3);
-  margin-left: 25.2rem;
-  height: 4.5rem;
+	border:2px solid rgba(232,114,110,0.3);
+  margin-left: 26.5rem;
+  height: 4rem;
 }
 
 /*checkbox-list*/
