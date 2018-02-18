@@ -2,6 +2,99 @@
   display:none;
 }
 
+/*navbar:Workflow list*/
+
+.navbar {
+  flex: 0 0 6rem;
+  height: 6rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #48C8D7;
+  color: #FFFFFF;
+  padding: 0.5rem 4rem 0.5rem 4rem;
+}
+
+.title-metadata-stack {
+  display:block;
+  width:100%;
+  padding: 0.2rem 0;
+}
+
+img.logo {
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+.navbar-brand h1, img.logo {
+  width:2.2rem;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.8rem;
+}
+.navbar-brand h1 a {
+  color: white;
+}
+.navbar-brand h1 a:hover {
+  text-decoration: none;
+}
+
+.navbar-workflows .action-button {
+  margin-right: 4rem;
+}
+
+/*navbar:Workflow page*/
+
+.navbar-workflows {
+  flex: 0 0 6rem;
+  height: 6rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  background-color: #48C8D7;
+  color: #FFFFFF;
+  padding: 0.5rem 4rem 0.5rem 2rem;
+}
+
+.nav-link {
+  cursor: pointer;
+  margin-right: 5rem;
+}
+
+.nav-link:hover{
+  text-decoration: underline;
+  color: #fff;
+}
+
+.editable-name-container{
+  margin-bottom: 0.2rem;
+  margin-right: 3.5rem;
+  min-width: 32rem;
+}
+
+
+.editable-title-field {
+  margin-bottom: 0.2rem;
+  min-width: 100%;
+  border: none;
+  outline: none;
+  padding: 0;
+  resize: none;
+  background: none;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.8rem;
+	line-height: 2.4rem;
+  color: #FFFFFF;
+  padding-right:1.5rem;
+}
+
+
+
+.editable-title-field:hover{
+  background-color: rgba(250,250,250,0.2);
+}
+
+
 .navbar-workflows .context-button {
   cursor: pointer;
   border:0;
@@ -31,4 +124,15 @@
   display: flex;
   justify-content: center;
   color: #fff;
+}
+
+//convert colors to be visible on blue background-color
+
+.navbar-workflows .t-f-blue {
+  color:white;
+  text-decoration: underline;
+}
+
+.navbar-workflows .t-m-gray {
+  color:white;
 }

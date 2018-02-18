@@ -93,7 +93,7 @@ describe('Workflow list page', () => {
     setImmediate(() => {
       expect(api.deleteWorkflow.mock.calls.length).toBe(1);
       expect(api.deleteWorkflow.mock.calls[0][0]).toBe(9);
-      expect(wrapper.find('.workflow-in-list')).toHaveLength(3); // one fewer workflow
+      expect(wrapper.find('.workflow-item')).toHaveLength(3); // one fewer workflow
       done();
     });
   });
@@ -106,7 +106,7 @@ describe('Workflow list page', () => {
 
     // let 4 workflows load
     setImmediate( () => {
-      expect(wrapper.find('.workflow-in-list')).toHaveLength(4);
+      expect(wrapper.find('.workflow-item')).toHaveLength(4);
 
       // Simulate click on New button - should create 'New Workflow' and go to page for new WF
       var newButton = wrapper.find('.new-workflow-button');
@@ -126,7 +126,7 @@ describe('Workflow list page', () => {
 
     // let 4 workflows load
     setImmediate( () => {
-      expect(wrapper.find('.workflow-in-list')).toHaveLength(4);
+      expect(wrapper.find('.workflow-item')).toHaveLength(4);
 
       wrapper.instance().duplicateWorkflow(9);
 
@@ -135,7 +135,7 @@ describe('Workflow list page', () => {
         expect(api.duplicateWorkflow.mock.calls.length).toBe(1);
         expect(api.duplicateWorkflow.mock.calls[0][0]).toBe(9);
 
-        expect(wrapper.find('.workflow-in-list')).toHaveLength(5);
+        expect(wrapper.find('.workflow-item')).toHaveLength(5);
 
         done();
       });

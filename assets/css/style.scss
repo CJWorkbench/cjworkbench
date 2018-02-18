@@ -40,6 +40,9 @@ body {
   opacity: 0.2;
 }
 
+.card-block{
+  position:relative;
+ }
 
 // BUTTONS
 
@@ -363,70 +366,48 @@ select.form-control {
 //////////////////* ---- Workflow list ---- */
 
 
-.workflows-container {
-  margin-top:6rem;
-}
-
 .workflows-list {
   border: 0;
   margin-top: 1.5rem;
   background-color: transparent;
+  width:75%;
+  padding:1.5rem;
 }
 
-.workflows-card-title {
+.new-workflow-button {
+  margin-top: 6rem;
+}
+
+.workflows-list--title {
   margin-left: 2.4rem;
   margin-bottom: 1rem;
 }
 
-.workflows-list .workflows-sub-list {
+.workflows-item--wrap {
   padding:1px 1px 1px 1px;
   background-color: #EDECEC;
 }
 
-.workflow-in-list {
+.workflow-item {
   height: 7rem;
   margin-bottom: 1px;
   border: 0;
   border-radius:0;
   padding: 0 2.5rem;
-  Background:#fff;
+  background:#fff;
   display:flex;
   align-items:center;
   justify-content: space-between;
 }
 
-.workflow-in-list:hover {
+.workflow-item:hover {
   background-color: #fafafa;
-}
-
-.workflows-sub-list:last-child .workflow-in-list:last-child {
-  margin-bottom: 0px;
-}
-
-.workflow-link:hover {
   text-decoration: none;
 }
 
-.wf-list-elmt{
-  margin-top:auto;
-  margin-bottom: auto;
+.workflow-item:last-child {
+  margin-bottom: 0px;
 }
-
-/*workflow in worfklow list*/
-
-.wf-id-name{
-  margin-top: 1.7rem;
-}
-
-.metadataSeparator{
-  margin:0 0.5rem 0 0.5rem;
-  text-align: center;
-}
-
-.list-inline-item:not(:last-child){
-  margin-right: 0px;
-}
-
 
 /******** ---- Workflow page ---- *********/
 
@@ -457,105 +438,27 @@ select.form-control {
 }
 
 // contain iframe
-.data-reactroot{
+.data-reactroot {
   background-color: red;
 }
 
+// Metadata line for workflow list and workflow pages
 
-/***** ---- Navbar ----- *****/
-
-.navbar {
-  flex: 0 0 6rem;
-  height: 6rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: #48C8D7;
-  color: #FFFFFF;
-  padding: 0.5rem 4rem 0.5rem 4rem;
-}
-
-.title-metadata-stack {
-  display:block;
-  width:100%;
-  padding: 0.2rem 0;
-}
-
-img.logo {
-  vertical-align: middle;
-  margin-right: 0.5rem;
-}
-
-.navbar-brand h1, img.logo {
-  width:2.2rem;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 0.8rem;
-}
-.navbar-brand h1 a {
-  color: white;
-}
-.navbar-brand h1 a:hover {
-  text-decoration: none;
-}
-
-.navbar-workflows .action-button {
-  margin-right: 4rem;
-}
-
-/*navbar:Workflow page*/
-
-.navbar-workflows {
-  flex: 0 0 6rem;
-  height: 6rem;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: #48C8D7;
-  color: #FFFFFF;
-  padding: 0.5rem 4rem 0.5rem 2rem;
-}
-
-.nav-link {
-  cursor: pointer;
-  margin-right: 5rem;
-}
-
-.nav-link:hover{
-  text-decoration: underline;
-  color: #fff;
-}
-
-.editable-name-container{
-  margin-bottom: 0.2rem;
-  margin-right: 3.5rem;
-  min-width: 32rem;
-}
-
-
-.editable-title-field {
-  margin-bottom: 0.2rem;
-  min-width: 100%;
-  border: none;
-  outline: none;
-  padding: 0;
-  resize: none;
-  background: none;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1.8rem;
-	line-height: 2.4rem;
-  color: #FFFFFF;
-  padding-right:1.5rem;
-}
-
-
-
-.editable-title-field:hover{
-  background-color: rgba(250,250,250,0.2);
-}
-
-.workflow-meta{
+.WF-meta {
   margin-bottom: 0;
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+}
+
+.WF-meta--item {
+  margin-right: 0px;
+  display: flex;
+}
+
+.metadataSeparator {
+  margin:0 0.5rem 0 0.5rem;
+  text-align: center;
 }
 
 /* Module Stack */
@@ -604,9 +507,6 @@ div into the DOM, since we don't really want another element, we just want this 
   border-color: rgba(118,155,176,0.5);
 }
 
-.card-block{
-  position:relative;
- }
 
 /* --- Module Library --- */
 

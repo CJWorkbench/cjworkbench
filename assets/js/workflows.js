@@ -58,52 +58,36 @@ export default class Workflows extends React.Component {
     return (
       <div className="workflows-page">
         <WorkflowListNavBar/>
-
-        <div className="container workflows-container">
-
-          <div className="row justify-content-md-center">
-            <div className="col col-lg-2"></div>
-            <div className="col-12 col-md-auto">
-              <div className="input-group">
-                <span className="input-group-btn">
-                  <div className='button-blue action-button new-workflow-button' onClick={this.click}>New</div>
-                </span>
-              </div>
-            </div>
-            <div className="col col-lg-2"></div>
+        <div className="container">
+          <div className="d-flex justify-content-center">
+            <div className='button-blue action-button new-workflow-button' onClick={this.click}>New</div>
           </div>
-
-          <div className="w-75 mx-auto workflows-list">
-            <div className="card-block">
-
-              <h3 className="card-title title-3 t-m-gray workflows-card-title">WORKFLOWS</h3>
-
-              <div className="workflows-sub-list">
-                {this.state.workflows.map( workflow => {
-                  return (
-                      <a href={"/workflows/" + workflow.id} className="workflow-link workflow-in-list"key={workflow.id}>
-                          <div className='mt-1'>
-                            <div className='t-d-gray mb-2 title-4'>{workflow.name}</div>
-                            <div className='wf-id-meta' onClick={(e) => e.preventDefault()}>
-                              <WorkflowMetadata
-                                workflow={workflow}
-                                api={this.props.api}
-                                isPublic={workflow.public}
-                                inWorkflowList
-                              />
-                            </div>
-                          </div>
-                          <div onClick={(e) => e.preventDefault()} className='menu-test-class'>
-                            <WfContextMenu
-                              duplicateWorkflow={ () => this.duplicateWorkflow(workflow.id) }
-                              deleteWorkflow={ () => this.deleteWorkflow(workflow.id) }
+          <div className="mx-auto workflows-list">
+            <h3 className="workflows-list--title title-3 t-m-gray">WORKFLOWS</h3>
+            <div className="workflows-item--wrap">
+              {this.state.workflows.map( workflow => {
+                return (
+                    <a href={"/workflows/" + workflow.id} className="workflow-item"key={workflow.id}>
+                        <div className='mt-1'>
+                          <div className='t-d-gray mb-2 title-4'>{workflow.name}</div>
+                          <div className='wf-id-meta' onClick={(e) => e.preventDefault()}>
+                            <WorkflowMetadata
+                              workflow={workflow}
+                              api={this.props.api}
+                              isPublic={workflow.public}
+                              inWorkflowList
                             />
                           </div>
-                      </a>
+                        </div>
+                        <div onClick={(e) => e.preventDefault()} className='menu-test-class'>
+                          <WfContextMenu
+                            duplicateWorkflow={ () => this.duplicateWorkflow(workflow.id) }
+                            deleteWorkflow={ () => this.deleteWorkflow(workflow.id) }
+                          />
+                        </div>
+                    </a>
                   );
                 })}
-              </div>
-
             </div>
           </div>
         </div>

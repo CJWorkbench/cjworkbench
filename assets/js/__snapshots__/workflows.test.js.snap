@@ -116,827 +116,805 @@ exports[`Workflow list page renders correctly 1`] = `
       </div>
     </WorkflowListNavBar>
     <div
-      className="container workflows-container"
+      className="container"
     >
       <div
-        className="row justify-content-md-center"
+        className="d-flex justify-content-center"
       >
         <div
-          className="col col-lg-2"
-        />
-        <div
-          className="col-12 col-md-auto"
+          className="button-blue action-button new-workflow-button"
+          onClick={[Function]}
         >
-          <div
-            className="input-group"
-          >
-            <span
-              className="input-group-btn"
-            >
-              <div
-                className="button-blue action-button new-workflow-button"
-                onClick={[Function]}
-              >
-                New
-              </div>
-            </span>
-          </div>
+          New
         </div>
-        <div
-          className="col col-lg-2"
-        />
       </div>
       <div
-        className="w-75 mx-auto workflows-list"
+        className="mx-auto workflows-list"
       >
-        <div
-          className="card-block"
+        <h3
+          className="workflows-list--title title-3 t-m-gray"
         >
-          <h3
-            className="card-title title-3 t-m-gray workflows-card-title"
+          WORKFLOWS
+        </h3>
+        <div
+          className="workflows-item--wrap"
+        >
+          <a
+            className="workflow-item"
+            href="/workflows/1"
           >
-            WORKFLOWS
-          </h3>
-          <div
-            className="workflows-sub-list"
+            <div
+              className="mt-1"
+            >
+              <div
+                className="t-d-gray mb-2 title-4"
+              >
+                Charting
+              </div>
+              <div
+                className="wf-id-meta"
+                onClick={[Function]}
+              >
+                <WorkflowMetadata
+                  api={
+                    Object {
+                      "deleteWorkflow": [Function],
+                      "duplicateWorkflow": [Function],
+                      "listWorkflows": [Function],
+                      "newWorkflow": [Function],
+                    }
+                  }
+                  inWorkflowList={true}
+                  isPublic={true}
+                  workflow={
+                    Object {
+                      "id": 1,
+                      "name": "Charting",
+                      "owner_name": "Fred Frederson",
+                      "public": true,
+                    }
+                  }
+                >
+                  <div>
+                    <ul
+                      className="WF-meta"
+                    >
+                      <div
+                        className="WF-meta--item"
+                      >
+                        <li
+                          className="content-3 t-m-gray"
+                        >
+                          by 
+                          Fred Frederson
+                        </li>
+                        <span
+                          className="content-3 metadataSeparator t-m-gray"
+                        >
+                          -
+                        </span>
+                      </div>
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
+                      >
+                        Updated 
+                        now
+                      </li>
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
+                      >
+                        <div
+                          className="WF-meta--item test-button"
+                          onClick={[Function]}
+                        >
+                          <div
+                            className="content-3 metadataSeparator t-m-gray"
+                          >
+                            -
+                          </div>
+                          <div
+                            className="t-f-blue"
+                          >
+                            public
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </WorkflowMetadata>
+              </div>
+            </div>
+            <div
+              className="menu-test-class"
+              onClick={[Function]}
+            >
+              <WfContextMenu
+                deleteWorkflow={[Function]}
+                duplicateWorkflow={[Function]}
+              >
+                <UncontrolledDropdown>
+                  <Dropdown
+                    isOpen={false}
+                    tag="div"
+                    toggle={[Function]}
+                  >
+                    <div
+                      className="dropdown"
+                    >
+                      <DropdownToggle
+                        aria-haspopup={true}
+                        className="context-button"
+                        color="secondary"
+                        data-toggle="dropdown"
+                      >
+                        <Button
+                          aria-expanded={false}
+                          aria-haspopup="true"
+                          className="context-button"
+                          color="secondary"
+                          data-toggle="dropdown"
+                          onClick={[Function]}
+                          tag="button"
+                        >
+                          <button
+                            aria-expanded={false}
+                            aria-haspopup="true"
+                            className="context-button btn btn-secondary"
+                            data-toggle="dropdown"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            <div
+                              className="context-button--icon icon-more"
+                            />
+                          </button>
+                        </Button>
+                      </DropdownToggle>
+                      <DropdownMenu
+                        className="dropdown-menu"
+                        right={true}
+                        tag="div"
+                      >
+                        <div
+                          aria-hidden={true}
+                          className="dropdown-menu dropdown-menu dropdown-menu-right"
+                          role="menu"
+                          tabIndex="-1"
+                        >
+                          <DropdownItem
+                            className="dropdown-menu--item test-duplicate-button"
+                            onClick={[Function]}
+                            tag="button"
+                            toggle={true}
+                          >
+                            <button
+                              className="dropdown-menu--item test-duplicate-button dropdown-item"
+                              onClick={[Function]}
+                              tabIndex="0"
+                              type="button"
+                            >
+                              <i
+                                className="icon-duplicate dropdown-menu--icon"
+                              />
+                              <span
+                                className="t-d-gray content-3 ml-3"
+                              >
+                                Duplicate
+                              </span>
+                            </button>
+                          </DropdownItem>
+                          <DropdownItem
+                            className="dropdown-menu--item test-delete-button"
+                            onClick={[Function]}
+                            tag="button"
+                            toggle={true}
+                          >
+                            <button
+                              className="dropdown-menu--item test-delete-button dropdown-item"
+                              onClick={[Function]}
+                              tabIndex="0"
+                              type="button"
+                            >
+                              <i
+                                className="icon-bin dropdown-menu--icon"
+                              />
+                              <span
+                                className="t-d-gray content-3 ml-3"
+                              >
+                                Delete
+                              </span>
+                            </button>
+                          </DropdownItem>
+                        </div>
+                      </DropdownMenu>
+                    </div>
+                  </Dropdown>
+                </UncontrolledDropdown>
+              </WfContextMenu>
+            </div>
+          </a>
+          <a
+            className="workflow-item"
+            href="/workflows/7"
           >
-            <a
-              className="workflow-link workflow-in-list"
-              href="/workflows/1"
+            <div
+              className="mt-1"
             >
               <div
-                className="mt-1"
+                className="t-d-gray mb-2 title-4"
               >
-                <div
-                  className="t-d-gray mb-2 title-4"
-                >
-                  Charting
-                </div>
-                <div
-                  className="wf-id-meta"
-                  onClick={[Function]}
-                >
-                  <WorkflowMetadata
-                    api={
-                      Object {
-                        "deleteWorkflow": [Function],
-                        "duplicateWorkflow": [Function],
-                        "listWorkflows": [Function],
-                        "newWorkflow": [Function],
-                      }
-                    }
-                    inWorkflowList={true}
-                    isPublic={true}
-                    workflow={
-                      Object {
-                        "id": 1,
-                        "name": "Charting",
-                        "owner_name": "Fred Frederson",
-                        "public": true,
-                      }
-                    }
-                  >
-                    <div
-                      className=""
-                    >
-                      <ul
-                        className="list-inline workflow-meta content-3 t-m-gray"
-                      >
-                        <span>
-                          <li
-                            className="list-inline-item content-3"
-                          >
-                            by 
-                            Fred Frederson
-                          </li>
-                          <span
-                            className="metadataSeparator"
-                          >
-                            -
-                          </span>
-                        </span>
-                        <li
-                          className="list-inline-item content-3 t-m-gray"
-                        >
-                          Updated 
-                          now
-                        </li>
-                        <li
-                          className="list-inline-item content-3"
-                        >
-                          <div
-                            className="list-inline-item test-button d-flex content-3 "
-                            onClick={[Function]}
-                          >
-                            <span
-                              className="metadataSeparator"
-                            >
-                              -
-                            </span>
-                            <div
-                              className="t-f-blue"
-                            >
-                              public
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </WorkflowMetadata>
-                </div>
+                Messy data cleanup
               </div>
               <div
-                className="menu-test-class"
+                className="wf-id-meta"
                 onClick={[Function]}
               >
-                <WfContextMenu
-                  deleteWorkflow={[Function]}
-                  duplicateWorkflow={[Function]}
+                <WorkflowMetadata
+                  api={
+                    Object {
+                      "deleteWorkflow": [Function],
+                      "duplicateWorkflow": [Function],
+                      "listWorkflows": [Function],
+                      "newWorkflow": [Function],
+                    }
+                  }
+                  inWorkflowList={true}
+                  isPublic={false}
+                  workflow={
+                    Object {
+                      "id": 7,
+                      "name": "Messy data cleanup",
+                      "owner_name": "John Johnson",
+                      "public": false,
+                    }
+                  }
                 >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      tag="div"
-                      toggle={[Function]}
+                  <div>
+                    <ul
+                      className="WF-meta"
                     >
                       <div
-                        className="dropdown"
+                        className="WF-meta--item"
                       >
-                        <DropdownToggle
-                          aria-haspopup={true}
+                        <li
+                          className="content-3 t-m-gray"
+                        >
+                          by 
+                          John Johnson
+                        </li>
+                        <span
+                          className="content-3 metadataSeparator t-m-gray"
+                        >
+                          -
+                        </span>
+                      </div>
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
+                      >
+                        Updated 
+                        now
+                      </li>
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
+                      >
+                        <div
+                          className="WF-meta--item test-button"
+                          onClick={[Function]}
+                        >
+                          <div
+                            className="content-3 metadataSeparator t-m-gray"
+                          >
+                            -
+                          </div>
+                          <div
+                            className="t-f-blue"
+                          >
+                            private
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </WorkflowMetadata>
+              </div>
+            </div>
+            <div
+              className="menu-test-class"
+              onClick={[Function]}
+            >
+              <WfContextMenu
+                deleteWorkflow={[Function]}
+                duplicateWorkflow={[Function]}
+              >
+                <UncontrolledDropdown>
+                  <Dropdown
+                    isOpen={false}
+                    tag="div"
+                    toggle={[Function]}
+                  >
+                    <div
+                      className="dropdown"
+                    >
+                      <DropdownToggle
+                        aria-haspopup={true}
+                        className="context-button"
+                        color="secondary"
+                        data-toggle="dropdown"
+                      >
+                        <Button
+                          aria-expanded={false}
+                          aria-haspopup="true"
                           className="context-button"
                           color="secondary"
                           data-toggle="dropdown"
+                          onClick={[Function]}
+                          tag="button"
                         >
-                          <Button
+                          <button
                             aria-expanded={false}
                             aria-haspopup="true"
-                            className="context-button"
-                            color="secondary"
+                            className="context-button btn btn-secondary"
                             data-toggle="dropdown"
                             onClick={[Function]}
+                            type="button"
+                          >
+                            <div
+                              className="context-button--icon icon-more"
+                            />
+                          </button>
+                        </Button>
+                      </DropdownToggle>
+                      <DropdownMenu
+                        className="dropdown-menu"
+                        right={true}
+                        tag="div"
+                      >
+                        <div
+                          aria-hidden={true}
+                          className="dropdown-menu dropdown-menu dropdown-menu-right"
+                          role="menu"
+                          tabIndex="-1"
+                        >
+                          <DropdownItem
+                            className="dropdown-menu--item test-duplicate-button"
+                            onClick={[Function]}
                             tag="button"
+                            toggle={true}
                           >
                             <button
-                              aria-expanded={false}
-                              aria-haspopup="true"
-                              className="context-button btn btn-secondary"
-                              data-toggle="dropdown"
+                              className="dropdown-menu--item test-duplicate-button dropdown-item"
                               onClick={[Function]}
+                              tabIndex="0"
                               type="button"
                             >
-                              <div
-                                className="context-button--icon icon-more"
+                              <i
+                                className="icon-duplicate dropdown-menu--icon"
                               />
+                              <span
+                                className="t-d-gray content-3 ml-3"
+                              >
+                                Duplicate
+                              </span>
                             </button>
-                          </Button>
-                        </DropdownToggle>
-                        <DropdownMenu
-                          className="dropdown-menu"
-                          right={true}
-                          tag="div"
-                        >
-                          <div
-                            aria-hidden={true}
-                            className="dropdown-menu dropdown-menu dropdown-menu-right"
-                            role="menu"
-                            tabIndex="-1"
+                          </DropdownItem>
+                          <DropdownItem
+                            className="dropdown-menu--item test-delete-button"
+                            onClick={[Function]}
+                            tag="button"
+                            toggle={true}
                           >
-                            <DropdownItem
-                              className="dropdown-menu--item test-duplicate-button"
+                            <button
+                              className="dropdown-menu--item test-delete-button dropdown-item"
                               onClick={[Function]}
-                              tag="button"
-                              toggle={true}
+                              tabIndex="0"
+                              type="button"
                             >
-                              <button
-                                className="dropdown-menu--item test-duplicate-button dropdown-item"
-                                onClick={[Function]}
-                                tabIndex="0"
-                                type="button"
+                              <i
+                                className="icon-bin dropdown-menu--icon"
+                              />
+                              <span
+                                className="t-d-gray content-3 ml-3"
                               >
-                                <i
-                                  className="icon-duplicate dropdown-menu--icon"
-                                />
-                                <span
-                                  className="t-d-gray content-3 ml-3"
-                                >
-                                  Duplicate
-                                </span>
-                              </button>
-                            </DropdownItem>
-                            <DropdownItem
-                              className="dropdown-menu--item test-delete-button"
-                              onClick={[Function]}
-                              tag="button"
-                              toggle={true}
-                            >
-                              <button
-                                className="dropdown-menu--item test-delete-button dropdown-item"
-                                onClick={[Function]}
-                                tabIndex="0"
-                                type="button"
-                              >
-                                <i
-                                  className="icon-bin dropdown-menu--icon"
-                                />
-                                <span
-                                  className="t-d-gray content-3 ml-3"
-                                >
-                                  Delete
-                                </span>
-                              </button>
-                            </DropdownItem>
-                          </div>
-                        </DropdownMenu>
-                      </div>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WfContextMenu>
-              </div>
-            </a>
-            <a
-              className="workflow-link workflow-in-list"
-              href="/workflows/7"
+                                Delete
+                              </span>
+                            </button>
+                          </DropdownItem>
+                        </div>
+                      </DropdownMenu>
+                    </div>
+                  </Dropdown>
+                </UncontrolledDropdown>
+              </WfContextMenu>
+            </div>
+          </a>
+          <a
+            className="workflow-item"
+            href="/workflows/8"
+          >
+            <div
+              className="mt-1"
             >
               <div
-                className="mt-1"
+                className="t-d-gray mb-2 title-4"
               >
-                <div
-                  className="t-d-gray mb-2 title-4"
-                >
-                  Messy data cleanup
-                </div>
-                <div
-                  className="wf-id-meta"
-                  onClick={[Function]}
-                >
-                  <WorkflowMetadata
-                    api={
-                      Object {
-                        "deleteWorkflow": [Function],
-                        "duplicateWorkflow": [Function],
-                        "listWorkflows": [Function],
-                        "newWorkflow": [Function],
-                      }
-                    }
-                    inWorkflowList={true}
-                    isPublic={false}
-                    workflow={
-                      Object {
-                        "id": 7,
-                        "name": "Messy data cleanup",
-                        "owner_name": "John Johnson",
-                        "public": false,
-                      }
-                    }
-                  >
-                    <div
-                      className=""
-                    >
-                      <ul
-                        className="list-inline workflow-meta content-3 t-m-gray"
-                      >
-                        <span>
-                          <li
-                            className="list-inline-item content-3"
-                          >
-                            by 
-                            John Johnson
-                          </li>
-                          <span
-                            className="metadataSeparator"
-                          >
-                            -
-                          </span>
-                        </span>
-                        <li
-                          className="list-inline-item content-3 t-m-gray"
-                        >
-                          Updated 
-                          now
-                        </li>
-                        <li
-                          className="list-inline-item content-3"
-                        >
-                          <div
-                            className="list-inline-item test-button d-flex content-3 "
-                            onClick={[Function]}
-                          >
-                            <span
-                              className="metadataSeparator"
-                            >
-                              -
-                            </span>
-                            <div
-                              className="t-f-blue"
-                            >
-                              private
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </WorkflowMetadata>
-                </div>
+                Document search
               </div>
               <div
-                className="menu-test-class"
+                className="wf-id-meta"
                 onClick={[Function]}
               >
-                <WfContextMenu
-                  deleteWorkflow={[Function]}
-                  duplicateWorkflow={[Function]}
+                <WorkflowMetadata
+                  api={
+                    Object {
+                      "deleteWorkflow": [Function],
+                      "duplicateWorkflow": [Function],
+                      "listWorkflows": [Function],
+                      "newWorkflow": [Function],
+                    }
+                  }
+                  inWorkflowList={true}
+                  isPublic={true}
+                  workflow={
+                    Object {
+                      "id": 8,
+                      "name": "Document search",
+                      "owner_name": "Sally Sallerson",
+                      "public": true,
+                    }
+                  }
                 >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      tag="div"
-                      toggle={[Function]}
+                  <div>
+                    <ul
+                      className="WF-meta"
                     >
                       <div
-                        className="dropdown"
+                        className="WF-meta--item"
                       >
-                        <DropdownToggle
-                          aria-haspopup={true}
+                        <li
+                          className="content-3 t-m-gray"
+                        >
+                          by 
+                          Sally Sallerson
+                        </li>
+                        <span
+                          className="content-3 metadataSeparator t-m-gray"
+                        >
+                          -
+                        </span>
+                      </div>
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
+                      >
+                        Updated 
+                        now
+                      </li>
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
+                      >
+                        <div
+                          className="WF-meta--item test-button"
+                          onClick={[Function]}
+                        >
+                          <div
+                            className="content-3 metadataSeparator t-m-gray"
+                          >
+                            -
+                          </div>
+                          <div
+                            className="t-f-blue"
+                          >
+                            public
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </WorkflowMetadata>
+              </div>
+            </div>
+            <div
+              className="menu-test-class"
+              onClick={[Function]}
+            >
+              <WfContextMenu
+                deleteWorkflow={[Function]}
+                duplicateWorkflow={[Function]}
+              >
+                <UncontrolledDropdown>
+                  <Dropdown
+                    isOpen={false}
+                    tag="div"
+                    toggle={[Function]}
+                  >
+                    <div
+                      className="dropdown"
+                    >
+                      <DropdownToggle
+                        aria-haspopup={true}
+                        className="context-button"
+                        color="secondary"
+                        data-toggle="dropdown"
+                      >
+                        <Button
+                          aria-expanded={false}
+                          aria-haspopup="true"
                           className="context-button"
                           color="secondary"
                           data-toggle="dropdown"
+                          onClick={[Function]}
+                          tag="button"
                         >
-                          <Button
+                          <button
                             aria-expanded={false}
                             aria-haspopup="true"
-                            className="context-button"
-                            color="secondary"
+                            className="context-button btn btn-secondary"
                             data-toggle="dropdown"
                             onClick={[Function]}
+                            type="button"
+                          >
+                            <div
+                              className="context-button--icon icon-more"
+                            />
+                          </button>
+                        </Button>
+                      </DropdownToggle>
+                      <DropdownMenu
+                        className="dropdown-menu"
+                        right={true}
+                        tag="div"
+                      >
+                        <div
+                          aria-hidden={true}
+                          className="dropdown-menu dropdown-menu dropdown-menu-right"
+                          role="menu"
+                          tabIndex="-1"
+                        >
+                          <DropdownItem
+                            className="dropdown-menu--item test-duplicate-button"
+                            onClick={[Function]}
                             tag="button"
+                            toggle={true}
                           >
                             <button
-                              aria-expanded={false}
-                              aria-haspopup="true"
-                              className="context-button btn btn-secondary"
-                              data-toggle="dropdown"
+                              className="dropdown-menu--item test-duplicate-button dropdown-item"
                               onClick={[Function]}
+                              tabIndex="0"
                               type="button"
                             >
-                              <div
-                                className="context-button--icon icon-more"
+                              <i
+                                className="icon-duplicate dropdown-menu--icon"
                               />
+                              <span
+                                className="t-d-gray content-3 ml-3"
+                              >
+                                Duplicate
+                              </span>
                             </button>
-                          </Button>
-                        </DropdownToggle>
-                        <DropdownMenu
-                          className="dropdown-menu"
-                          right={true}
-                          tag="div"
-                        >
-                          <div
-                            aria-hidden={true}
-                            className="dropdown-menu dropdown-menu dropdown-menu-right"
-                            role="menu"
-                            tabIndex="-1"
+                          </DropdownItem>
+                          <DropdownItem
+                            className="dropdown-menu--item test-delete-button"
+                            onClick={[Function]}
+                            tag="button"
+                            toggle={true}
                           >
-                            <DropdownItem
-                              className="dropdown-menu--item test-duplicate-button"
+                            <button
+                              className="dropdown-menu--item test-delete-button dropdown-item"
                               onClick={[Function]}
-                              tag="button"
-                              toggle={true}
+                              tabIndex="0"
+                              type="button"
                             >
-                              <button
-                                className="dropdown-menu--item test-duplicate-button dropdown-item"
-                                onClick={[Function]}
-                                tabIndex="0"
-                                type="button"
+                              <i
+                                className="icon-bin dropdown-menu--icon"
+                              />
+                              <span
+                                className="t-d-gray content-3 ml-3"
                               >
-                                <i
-                                  className="icon-duplicate dropdown-menu--icon"
-                                />
-                                <span
-                                  className="t-d-gray content-3 ml-3"
-                                >
-                                  Duplicate
-                                </span>
-                              </button>
-                            </DropdownItem>
-                            <DropdownItem
-                              className="dropdown-menu--item test-delete-button"
-                              onClick={[Function]}
-                              tag="button"
-                              toggle={true}
-                            >
-                              <button
-                                className="dropdown-menu--item test-delete-button dropdown-item"
-                                onClick={[Function]}
-                                tabIndex="0"
-                                type="button"
-                              >
-                                <i
-                                  className="icon-bin dropdown-menu--icon"
-                                />
-                                <span
-                                  className="t-d-gray content-3 ml-3"
-                                >
-                                  Delete
-                                </span>
-                              </button>
-                            </DropdownItem>
-                          </div>
-                        </DropdownMenu>
-                      </div>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WfContextMenu>
-              </div>
-            </a>
-            <a
-              className="workflow-link workflow-in-list"
-              href="/workflows/8"
+                                Delete
+                              </span>
+                            </button>
+                          </DropdownItem>
+                        </div>
+                      </DropdownMenu>
+                    </div>
+                  </Dropdown>
+                </UncontrolledDropdown>
+              </WfContextMenu>
+            </div>
+          </a>
+          <a
+            className="workflow-item"
+            href="/workflows/9"
+          >
+            <div
+              className="mt-1"
             >
               <div
-                className="mt-1"
+                className="t-d-gray mb-2 title-4"
               >
-                <div
-                  className="t-d-gray mb-2 title-4"
-                >
-                  Document search
-                </div>
-                <div
-                  className="wf-id-meta"
-                  onClick={[Function]}
-                >
-                  <WorkflowMetadata
-                    api={
-                      Object {
-                        "deleteWorkflow": [Function],
-                        "duplicateWorkflow": [Function],
-                        "listWorkflows": [Function],
-                        "newWorkflow": [Function],
-                      }
-                    }
-                    inWorkflowList={true}
-                    isPublic={true}
-                    workflow={
-                      Object {
-                        "id": 8,
-                        "name": "Document search",
-                        "owner_name": "Sally Sallerson",
-                        "public": true,
-                      }
-                    }
-                  >
-                    <div
-                      className=""
-                    >
-                      <ul
-                        className="list-inline workflow-meta content-3 t-m-gray"
-                      >
-                        <span>
-                          <li
-                            className="list-inline-item content-3"
-                          >
-                            by 
-                            Sally Sallerson
-                          </li>
-                          <span
-                            className="metadataSeparator"
-                          >
-                            -
-                          </span>
-                        </span>
-                        <li
-                          className="list-inline-item content-3 t-m-gray"
-                        >
-                          Updated 
-                          now
-                        </li>
-                        <li
-                          className="list-inline-item content-3"
-                        >
-                          <div
-                            className="list-inline-item test-button d-flex content-3 "
-                            onClick={[Function]}
-                          >
-                            <span
-                              className="metadataSeparator"
-                            >
-                              -
-                            </span>
-                            <div
-                              className="t-f-blue"
-                            >
-                              public
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </WorkflowMetadata>
-                </div>
+                Visualization
               </div>
               <div
-                className="menu-test-class"
+                className="wf-id-meta"
                 onClick={[Function]}
               >
-                <WfContextMenu
-                  deleteWorkflow={[Function]}
-                  duplicateWorkflow={[Function]}
+                <WorkflowMetadata
+                  api={
+                    Object {
+                      "deleteWorkflow": [Function],
+                      "duplicateWorkflow": [Function],
+                      "listWorkflows": [Function],
+                      "newWorkflow": [Function],
+                    }
+                  }
+                  inWorkflowList={true}
+                  isPublic={false}
+                  workflow={
+                    Object {
+                      "id": 9,
+                      "name": "Visualization",
+                      "owner_name": "Mr. Manfrengenson",
+                      "public": false,
+                    }
+                  }
                 >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      tag="div"
-                      toggle={[Function]}
+                  <div>
+                    <ul
+                      className="WF-meta"
                     >
                       <div
-                        className="dropdown"
+                        className="WF-meta--item"
                       >
-                        <DropdownToggle
-                          aria-haspopup={true}
+                        <li
+                          className="content-3 t-m-gray"
+                        >
+                          by 
+                          Mr. Manfrengenson
+                        </li>
+                        <span
+                          className="content-3 metadataSeparator t-m-gray"
+                        >
+                          -
+                        </span>
+                      </div>
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
+                      >
+                        Updated 
+                        now
+                      </li>
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
+                      >
+                        <div
+                          className="WF-meta--item test-button"
+                          onClick={[Function]}
+                        >
+                          <div
+                            className="content-3 metadataSeparator t-m-gray"
+                          >
+                            -
+                          </div>
+                          <div
+                            className="t-f-blue"
+                          >
+                            private
+                          </div>
+                        </div>
+                      </li>
+                    </ul>
+                  </div>
+                </WorkflowMetadata>
+              </div>
+            </div>
+            <div
+              className="menu-test-class"
+              onClick={[Function]}
+            >
+              <WfContextMenu
+                deleteWorkflow={[Function]}
+                duplicateWorkflow={[Function]}
+              >
+                <UncontrolledDropdown>
+                  <Dropdown
+                    isOpen={false}
+                    tag="div"
+                    toggle={[Function]}
+                  >
+                    <div
+                      className="dropdown"
+                    >
+                      <DropdownToggle
+                        aria-haspopup={true}
+                        className="context-button"
+                        color="secondary"
+                        data-toggle="dropdown"
+                      >
+                        <Button
+                          aria-expanded={false}
+                          aria-haspopup="true"
                           className="context-button"
                           color="secondary"
                           data-toggle="dropdown"
+                          onClick={[Function]}
+                          tag="button"
                         >
-                          <Button
+                          <button
                             aria-expanded={false}
                             aria-haspopup="true"
-                            className="context-button"
-                            color="secondary"
+                            className="context-button btn btn-secondary"
                             data-toggle="dropdown"
                             onClick={[Function]}
-                            tag="button"
+                            type="button"
                           >
-                            <button
-                              aria-expanded={false}
-                              aria-haspopup="true"
-                              className="context-button btn btn-secondary"
-                              data-toggle="dropdown"
-                              onClick={[Function]}
-                              type="button"
-                            >
-                              <div
-                                className="context-button--icon icon-more"
-                              />
-                            </button>
-                          </Button>
-                        </DropdownToggle>
-                        <DropdownMenu
-                          className="dropdown-menu"
-                          right={true}
-                          tag="div"
-                        >
-                          <div
-                            aria-hidden={true}
-                            className="dropdown-menu dropdown-menu dropdown-menu-right"
-                            role="menu"
-                            tabIndex="-1"
-                          >
-                            <DropdownItem
-                              className="dropdown-menu--item test-duplicate-button"
-                              onClick={[Function]}
-                              tag="button"
-                              toggle={true}
-                            >
-                              <button
-                                className="dropdown-menu--item test-duplicate-button dropdown-item"
-                                onClick={[Function]}
-                                tabIndex="0"
-                                type="button"
-                              >
-                                <i
-                                  className="icon-duplicate dropdown-menu--icon"
-                                />
-                                <span
-                                  className="t-d-gray content-3 ml-3"
-                                >
-                                  Duplicate
-                                </span>
-                              </button>
-                            </DropdownItem>
-                            <DropdownItem
-                              className="dropdown-menu--item test-delete-button"
-                              onClick={[Function]}
-                              tag="button"
-                              toggle={true}
-                            >
-                              <button
-                                className="dropdown-menu--item test-delete-button dropdown-item"
-                                onClick={[Function]}
-                                tabIndex="0"
-                                type="button"
-                              >
-                                <i
-                                  className="icon-bin dropdown-menu--icon"
-                                />
-                                <span
-                                  className="t-d-gray content-3 ml-3"
-                                >
-                                  Delete
-                                </span>
-                              </button>
-                            </DropdownItem>
-                          </div>
-                        </DropdownMenu>
-                      </div>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WfContextMenu>
-              </div>
-            </a>
-            <a
-              className="workflow-link workflow-in-list"
-              href="/workflows/9"
-            >
-              <div
-                className="mt-1"
-              >
-                <div
-                  className="t-d-gray mb-2 title-4"
-                >
-                  Visualization
-                </div>
-                <div
-                  className="wf-id-meta"
-                  onClick={[Function]}
-                >
-                  <WorkflowMetadata
-                    api={
-                      Object {
-                        "deleteWorkflow": [Function],
-                        "duplicateWorkflow": [Function],
-                        "listWorkflows": [Function],
-                        "newWorkflow": [Function],
-                      }
-                    }
-                    inWorkflowList={true}
-                    isPublic={false}
-                    workflow={
-                      Object {
-                        "id": 9,
-                        "name": "Visualization",
-                        "owner_name": "Mr. Manfrengenson",
-                        "public": false,
-                      }
-                    }
-                  >
-                    <div
-                      className=""
-                    >
-                      <ul
-                        className="list-inline workflow-meta content-3 t-m-gray"
-                      >
-                        <span>
-                          <li
-                            className="list-inline-item content-3"
-                          >
-                            by 
-                            Mr. Manfrengenson
-                          </li>
-                          <span
-                            className="metadataSeparator"
-                          >
-                            -
-                          </span>
-                        </span>
-                        <li
-                          className="list-inline-item content-3 t-m-gray"
-                        >
-                          Updated 
-                          now
-                        </li>
-                        <li
-                          className="list-inline-item content-3"
-                        >
-                          <div
-                            className="list-inline-item test-button d-flex content-3 "
-                            onClick={[Function]}
-                          >
-                            <span
-                              className="metadataSeparator"
-                            >
-                              -
-                            </span>
                             <div
-                              className="t-f-blue"
-                            >
-                              private
-                            </div>
-                          </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </WorkflowMetadata>
-                </div>
-              </div>
-              <div
-                className="menu-test-class"
-                onClick={[Function]}
-              >
-                <WfContextMenu
-                  deleteWorkflow={[Function]}
-                  duplicateWorkflow={[Function]}
-                >
-                  <UncontrolledDropdown>
-                    <Dropdown
-                      isOpen={false}
-                      tag="div"
-                      toggle={[Function]}
-                    >
-                      <div
-                        className="dropdown"
+                              className="context-button--icon icon-more"
+                            />
+                          </button>
+                        </Button>
+                      </DropdownToggle>
+                      <DropdownMenu
+                        className="dropdown-menu"
+                        right={true}
+                        tag="div"
                       >
-                        <DropdownToggle
-                          aria-haspopup={true}
-                          className="context-button"
-                          color="secondary"
-                          data-toggle="dropdown"
+                        <div
+                          aria-hidden={true}
+                          className="dropdown-menu dropdown-menu dropdown-menu-right"
+                          role="menu"
+                          tabIndex="-1"
                         >
-                          <Button
-                            aria-expanded={false}
-                            aria-haspopup="true"
-                            className="context-button"
-                            color="secondary"
-                            data-toggle="dropdown"
+                          <DropdownItem
+                            className="dropdown-menu--item test-duplicate-button"
                             onClick={[Function]}
                             tag="button"
+                            toggle={true}
                           >
                             <button
-                              aria-expanded={false}
-                              aria-haspopup="true"
-                              className="context-button btn btn-secondary"
-                              data-toggle="dropdown"
+                              className="dropdown-menu--item test-duplicate-button dropdown-item"
                               onClick={[Function]}
+                              tabIndex="0"
                               type="button"
                             >
-                              <div
-                                className="context-button--icon icon-more"
+                              <i
+                                className="icon-duplicate dropdown-menu--icon"
                               />
+                              <span
+                                className="t-d-gray content-3 ml-3"
+                              >
+                                Duplicate
+                              </span>
                             </button>
-                          </Button>
-                        </DropdownToggle>
-                        <DropdownMenu
-                          className="dropdown-menu"
-                          right={true}
-                          tag="div"
-                        >
-                          <div
-                            aria-hidden={true}
-                            className="dropdown-menu dropdown-menu dropdown-menu-right"
-                            role="menu"
-                            tabIndex="-1"
+                          </DropdownItem>
+                          <DropdownItem
+                            className="dropdown-menu--item test-delete-button"
+                            onClick={[Function]}
+                            tag="button"
+                            toggle={true}
                           >
-                            <DropdownItem
-                              className="dropdown-menu--item test-duplicate-button"
+                            <button
+                              className="dropdown-menu--item test-delete-button dropdown-item"
                               onClick={[Function]}
-                              tag="button"
-                              toggle={true}
+                              tabIndex="0"
+                              type="button"
                             >
-                              <button
-                                className="dropdown-menu--item test-duplicate-button dropdown-item"
-                                onClick={[Function]}
-                                tabIndex="0"
-                                type="button"
+                              <i
+                                className="icon-bin dropdown-menu--icon"
+                              />
+                              <span
+                                className="t-d-gray content-3 ml-3"
                               >
-                                <i
-                                  className="icon-duplicate dropdown-menu--icon"
-                                />
-                                <span
-                                  className="t-d-gray content-3 ml-3"
-                                >
-                                  Duplicate
-                                </span>
-                              </button>
-                            </DropdownItem>
-                            <DropdownItem
-                              className="dropdown-menu--item test-delete-button"
-                              onClick={[Function]}
-                              tag="button"
-                              toggle={true}
-                            >
-                              <button
-                                className="dropdown-menu--item test-delete-button dropdown-item"
-                                onClick={[Function]}
-                                tabIndex="0"
-                                type="button"
-                              >
-                                <i
-                                  className="icon-bin dropdown-menu--icon"
-                                />
-                                <span
-                                  className="t-d-gray content-3 ml-3"
-                                >
-                                  Delete
-                                </span>
-                              </button>
-                            </DropdownItem>
-                          </div>
-                        </DropdownMenu>
-                      </div>
-                    </Dropdown>
-                  </UncontrolledDropdown>
-                </WfContextMenu>
-              </div>
-            </a>
-          </div>
+                                Delete
+                              </span>
+                            </button>
+                          </DropdownItem>
+                        </div>
+                      </DropdownMenu>
+                    </div>
+                  </Dropdown>
+                </UncontrolledDropdown>
+              </WfContextMenu>
+            </div>
+          </a>
         </div>
       </div>
     </div>

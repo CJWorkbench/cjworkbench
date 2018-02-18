@@ -19,45 +19,45 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
     }
   }
 >
-  <div
-    className=""
-  >
+  <div>
     <ul
-      className="list-inline workflow-meta content-3 t-white"
+      className="WF-meta"
     >
-      <span>
+      <div
+        className="WF-meta--item"
+      >
         <li
-          className="list-inline-item content-3"
+          className="content-3 t-m-gray"
         >
           by 
           Harry Harrison
         </li>
         <span
-          className="metadataSeparator"
+          className="content-3 metadataSeparator t-m-gray"
         >
           -
         </span>
-      </span>
+      </div>
       <li
-        className="list-inline-item content-3 t-white"
+        className="WF-meta--item content-3 t-m-gray"
       >
         Updated 
         now
       </li>
       <li
-        className="list-inline-item content-3"
+        className="WF-meta--item content-3 t-m-gray"
       >
         <div
-          className="list-inline-item test-button d-flex content-3 "
+          className="WF-meta--item test-button"
           onClick={[Function]}
         >
-          <span
-            className="metadataSeparator"
+          <div
+            className="content-3 metadataSeparator t-m-gray"
           >
             -
-          </span>
+          </div>
           <div
-            className="t-white-u"
+            className="t-f-blue"
           >
             private
           </div>
@@ -202,45 +202,45 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
     }
   }
 >
-  <div
-    className=""
-  >
+  <div>
     <ul
-      className="list-inline workflow-meta content-3 t-white"
+      className="WF-meta"
     >
-      <span>
+      <div
+        className="WF-meta--item"
+      >
         <li
-          className="list-inline-item content-3"
+          className="content-3 t-m-gray"
         >
           by 
           Harry Harrison
         </li>
         <span
-          className="metadataSeparator"
+          className="content-3 metadataSeparator t-m-gray"
         >
           -
         </span>
-      </span>
+      </div>
       <li
-        className="list-inline-item content-3 t-white"
+        className="WF-meta--item content-3 t-m-gray"
       >
         Updated 
         now
       </li>
       <li
-        className="list-inline-item content-3"
+        className="WF-meta--item content-3 t-m-gray"
       >
         <div
-          className="list-inline-item test-button d-flex content-3 "
+          className="WF-meta--item test-button"
           onClick={[Function]}
         >
-          <span
-            className="metadataSeparator"
+          <div
+            className="content-3 metadataSeparator t-m-gray"
           >
             -
-          </span>
+          </div>
           <div
-            className="t-white-u"
+            className="t-f-blue"
           >
             public
           </div>
@@ -270,45 +270,45 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
     }
   }
 >
-  <div
-    className=""
-  >
+  <div>
     <ul
-      className="list-inline workflow-meta content-3 t-white"
+      className="WF-meta"
     >
-      <span>
+      <div
+        className="WF-meta--item"
+      >
         <li
-          className="list-inline-item content-3"
+          className="content-3 t-m-gray"
         >
           by 
           Harry Harrison
         </li>
         <span
-          className="metadataSeparator"
+          className="content-3 metadataSeparator t-m-gray"
         >
           -
         </span>
-      </span>
+      </div>
       <li
-        className="list-inline-item content-3 t-white"
+        className="WF-meta--item content-3 t-m-gray"
       >
         Updated 
         now
       </li>
       <li
-        className="list-inline-item content-3"
+        className="WF-meta--item content-3 t-m-gray"
       >
         <div
-          className="list-inline-item test-button d-flex content-3 "
+          className="WF-meta--item test-button"
           onClick={[Function]}
         >
-          <span
-            className="metadataSeparator"
+          <div
+            className="content-3 metadataSeparator t-m-gray"
           >
             -
-          </span>
+          </div>
           <div
-            className="t-white-u"
+            className="t-f-blue"
           >
             private
           </div>
@@ -338,33 +338,33 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
     }
   }
 >
-  <div
-    className=""
-  >
+  <div>
     <ul
-      className="list-inline workflow-meta content-3 t-white"
+      className="WF-meta"
     >
-      <span>
+      <div
+        className="WF-meta--item"
+      >
         <li
-          className="list-inline-item content-3"
+          className="content-3 t-m-gray"
         >
           by 
           Harry Harrison
         </li>
         <span
-          className="metadataSeparator"
+          className="content-3 metadataSeparator t-m-gray"
         >
           -
         </span>
-      </span>
+      </div>
       <li
-        className="list-inline-item content-3 t-white"
+        className="WF-meta--item content-3 t-m-gray"
       >
         Updated 
         now
       </li>
       <li
-        className="list-inline-item content-3"
+        className="WF-meta--item content-3 t-m-gray"
       />
     </ul>
   </div>

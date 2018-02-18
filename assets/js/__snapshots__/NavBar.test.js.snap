@@ -101,45 +101,45 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
             }
           }
         >
-          <div
-            className=""
-          >
+          <div>
             <ul
-              className="list-inline workflow-meta content-3 t-white"
+              className="WF-meta"
             >
-              <span>
+              <div
+                className="WF-meta--item"
+              >
                 <li
-                  className="list-inline-item content-3"
+                  className="content-3 t-m-gray"
                 >
                   by 
                   Fred Frederson
                 </li>
                 <span
-                  className="metadataSeparator"
+                  className="content-3 metadataSeparator t-m-gray"
                 >
                   -
                 </span>
-              </span>
+              </div>
               <li
-                className="list-inline-item content-3 t-white"
+                className="WF-meta--item content-3 t-m-gray"
               >
                 Updated 
                 now
               </li>
               <li
-                className="list-inline-item content-3"
+                className="WF-meta--item content-3 t-m-gray"
               >
                 <div
-                  className="list-inline-item test-button d-flex content-3 "
+                  className="WF-meta--item test-button"
                   onClick={[Function]}
                 >
-                  <span
-                    className="metadataSeparator"
+                  <div
+                    className="content-3 metadataSeparator t-m-gray"
                   >
                     -
-                  </span>
+                  </div>
                   <div
-                    className="t-white-u"
+                    className="t-f-blue"
                   >
                     private
                   </div>
@@ -633,45 +633,45 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
             }
           }
         >
-          <div
-            className=""
-          >
+          <div>
             <ul
-              className="list-inline workflow-meta content-3 t-white"
+              className="WF-meta"
             >
-              <span>
+              <div
+                className="WF-meta--item"
+              >
                 <li
-                  className="list-inline-item content-3"
+                  className="content-3 t-m-gray"
                 >
                   by 
                   Fred Frederson
                 </li>
                 <span
-                  className="metadataSeparator"
+                  className="content-3 metadataSeparator t-m-gray"
                 >
                   -
                 </span>
-              </span>
+              </div>
               <li
-                className="list-inline-item content-3 t-white"
+                className="WF-meta--item content-3 t-m-gray"
               >
                 Updated 
                 now
               </li>
               <li
-                className="list-inline-item content-3"
+                className="WF-meta--item content-3 t-m-gray"
               >
                 <div
-                  className="list-inline-item test-button d-flex content-3 "
+                  className="WF-meta--item test-button"
                   onClick={[Function]}
                 >
-                  <span
-                    className="metadataSeparator"
+                  <div
+                    className="content-3 metadataSeparator t-m-gray"
                   >
                     -
-                  </span>
+                  </div>
                   <div
-                    className="t-white-u"
+                    className="t-f-blue"
                   >
                     public
                   </div>
@@ -1081,45 +1081,45 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
             }
           }
         >
-          <div
-            className=""
-          >
+          <div>
             <ul
-              className="list-inline workflow-meta content-3 t-white"
+              className="WF-meta"
             >
-              <span>
+              <div
+                className="WF-meta--item"
+              >
                 <li
-                  className="list-inline-item content-3"
+                  className="content-3 t-m-gray"
                 >
                   by 
                   Not LogggedIn
                 </li>
                 <span
-                  className="metadataSeparator"
+                  className="content-3 metadataSeparator t-m-gray"
                 >
                   -
                 </span>
-              </span>
+              </div>
               <li
-                className="list-inline-item content-3 t-white"
+                className="WF-meta--item content-3 t-m-gray"
               >
                 Updated 
                 now
               </li>
               <li
-                className="list-inline-item content-3"
+                className="WF-meta--item content-3 t-m-gray"
               >
                 <div
-                  className="list-inline-item test-button d-flex content-3 "
+                  className="WF-meta--item test-button"
                   onClick={[Function]}
                 >
-                  <span
-                    className="metadataSeparator"
+                  <div
+                    className="content-3 metadataSeparator t-m-gray"
                   >
                     -
-                  </span>
+                  </div>
                   <div
-                    className="t-white-u"
+                    className="t-f-blue"
                   >
                     public
                   </div>
@@ -1227,45 +1227,45 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
             }
           }
         >
-          <div
-            className=""
-          >
+          <div>
             <ul
-              className="list-inline workflow-meta content-3 t-white"
+              className="WF-meta"
             >
-              <span>
+              <div
+                className="WF-meta--item"
+              >
                 <li
-                  className="list-inline-item content-3"
+                  className="content-3 t-m-gray"
                 >
                   by 
                   John Johnson
                 </li>
                 <span
-                  className="metadataSeparator"
+                  className="content-3 metadataSeparator t-m-gray"
                 >
                   -
                 </span>
-              </span>
+              </div>
               <li
-                className="list-inline-item content-3 t-white"
+                className="WF-meta--item content-3 t-m-gray"
               >
                 Updated 
                 now
               </li>
               <li
-                className="list-inline-item content-3"
+                className="WF-meta--item content-3 t-m-gray"
               >
                 <div
-                  className="list-inline-item test-button d-flex content-3 "
+                  className="WF-meta--item test-button"
                   onClick={[Function]}
                 >
-                  <span
-                    className="metadataSeparator"
+                  <div
+                    className="content-3 metadataSeparator t-m-gray"
                   >
                     -
-                  </span>
+                  </div>
                   <div
-                    className="t-white-u"
+                    className="t-f-blue"
                   >
                     public
                   </div>

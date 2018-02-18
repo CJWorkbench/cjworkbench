@@ -99,33 +99,30 @@ export default class WorkflowMetadata extends React.Component {
 
     var now = this.props.test_now || new Date();
 
-    //giving a different style to metadata if it's displayed in WF list
-    var publicColor = this.props.inWorkflowList? 't-f-blue': 't-white-u';
-    var metaColor = this.props.inWorkflowList? 't-m-gray': 't-white';
 
     // only list User attribution if one exists & is not just whitespace
     var user = this.props.workflow.owner_name.trim();
     var attribution = user.length
-      ? <span>
-          <li className="list-inline-item content-3">by {user}</li>
-          <span className='metadataSeparator'>-</span>
-        </span>
+      ? <div className="WF-meta--item">
+          <li className="content-3 t-m-gray">by {user}</li>
+          <span className='content-3 metadataSeparator t-m-gray'>-</span>
+        </div>
       : null
     var modalLink = (this.props.workflow.read_only)
       ? null
-      : <div className="list-inline-item test-button d-flex content-3 " onClick={this.togglePrivacyModal}>
-          <span className='metadataSeparator'>-</span>
-          <div className={''+publicColor}>{this.state.isPublic ? 'public' : 'private'}</div>
+      : <div className="WF-meta--item test-button" onClick={this.togglePrivacyModal}>
+          <div className='content-3 metadataSeparator t-m-gray'>-</div>
+          <div className='t-f-blue'>{this.state.isPublic ? 'public' : 'private'}</div>
         </div>
 
     return (
-      <div className=''>
-        <ul className={"list-inline workflow-meta content-3 "+ metaColor}>
+      <div>
+        <ul className="WF-meta">
            {attribution}
-          <li className={"list-inline-item content-3 "+ metaColor}>
+          <li className="WF-meta--item content-3 t-m-gray">
             Updated {timeDifference(this.props.workflow.last_update, now)}
           </li>
-          <li className="list-inline-item content-3">
+          <li className="WF-meta--item content-3 t-m-gray">
           {modalLink}
           </li>
         </ul>
