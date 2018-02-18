@@ -18,3 +18,42 @@
 .wf-card .context-button--icon {
   font-size: 1.2rem;
 }
+
+/*** Module Parameters spacing ***/
+
+.label-margin {
+  margin-bottom: 0.1rem;
+  color:#b2b2b2;
+}
+
+.wf-card .label{
+  margin-bottom: 0px;
+}
+
+
+/* Margin for a group of parameters (can include several lines)*/
+
+.parameter-margin {
+  margin-bottom: 1rem;
+}
+
+/* Margin for a line of 1 parameters, part of a group */
+.param-line-margin{
+  margin-bottom:1rem;
+}
+
+/* Margins for 2 lined parameters, part of a group */
+.param2-line-margin{
+  display: inline-block;
+  width:48.9%;
+  margin-right: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.param2-line-margin:last-child{
+  margin-right:0;
+}
+
+.param2-line-margin:last-child{
+  margin-right: 0;
+}

@@ -93,7 +93,7 @@ describe('FileSelect', () => {
         expect(modal.find('.list-body')).toHaveLength(1);
 
         expect(wrapper.state().files).toEqual(gDriveFiles['files']);
-        let filesListItems = modal.find('.line-item-data');
+        let filesListItems = modal.find('.line-item--data-version');
         expect(filesListItems).toHaveLength(5);
 
         let secondListItem = filesListItems.filterWhere(n => n.key() == 1);

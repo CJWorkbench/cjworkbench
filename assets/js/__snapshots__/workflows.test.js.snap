@@ -315,7 +315,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <i
-                                  className="icon-duplicate context-menu--item-icon"
+                                  className="icon-duplicate dropdown-menu--icon"
                                 />
                                 <span
                                   className="t-d-gray content-3 ml-3"
@@ -337,7 +337,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <i
-                                  className="icon-bin context-menu--item-icon"
+                                  className="icon-bin dropdown-menu--icon"
                                 />
                                 <span
                                   className="t-d-gray content-3 ml-3"
@@ -509,7 +509,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <i
-                                  className="icon-duplicate context-menu--item-icon"
+                                  className="icon-duplicate dropdown-menu--icon"
                                 />
                                 <span
                                   className="t-d-gray content-3 ml-3"
@@ -531,7 +531,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <i
-                                  className="icon-bin context-menu--item-icon"
+                                  className="icon-bin dropdown-menu--icon"
                                 />
                                 <span
                                   className="t-d-gray content-3 ml-3"
@@ -703,7 +703,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <i
-                                  className="icon-duplicate context-menu--item-icon"
+                                  className="icon-duplicate dropdown-menu--icon"
                                 />
                                 <span
                                   className="t-d-gray content-3 ml-3"
@@ -725,7 +725,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <i
-                                  className="icon-bin context-menu--item-icon"
+                                  className="icon-bin dropdown-menu--icon"
                                 />
                                 <span
                                   className="t-d-gray content-3 ml-3"
@@ -897,7 +897,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <i
-                                  className="icon-duplicate context-menu--item-icon"
+                                  className="icon-duplicate dropdown-menu--icon"
                                 />
                                 <span
                                   className="t-d-gray content-3 ml-3"
@@ -919,7 +919,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 type="button"
                               >
                                 <i
-                                  className="icon-bin context-menu--item-icon"
+                                  className="icon-bin dropdown-menu--icon"
                                 />
                                 <span
                                   className="t-d-gray content-3 ml-3"

@@ -24,7 +24,7 @@ exports[`WfContextMenu renders correctly 1`] = `
       toggle={true}
     >
       <i
-        className="icon-duplicate context-menu--item-icon"
+        className="icon-duplicate dropdown-menu--icon"
       />
       <span
         className="t-d-gray content-3 ml-3"
@@ -39,7 +39,7 @@ exports[`WfContextMenu renders correctly 1`] = `
       toggle={true}
     >
       <i
-        className="icon-bin context-menu--item-icon"
+        className="icon-bin dropdown-menu--icon"
       />
       <span
         className="t-d-gray content-3 ml-3"

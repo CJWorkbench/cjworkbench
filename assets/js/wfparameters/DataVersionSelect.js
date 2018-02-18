@@ -160,8 +160,8 @@ export default class DataVersionSelect extends React.Component {
                       key={version[0]}
                       className={
                         (version[0] == this.state.versions.selected)
-                          ? 'line-item-data-selected d-flex justify-content-between list-test-class'
-                          : 'line-item-data d-flex justify-content-between list-test-class'
+                          ? 'line-item--data-version--selected d-flex justify-content-between list-test-class'
+                          : 'line-item--data-version d-flex justify-content-between list-test-class'
                       }
                       onClick={() => this.setSelected(version[0])}
                     >

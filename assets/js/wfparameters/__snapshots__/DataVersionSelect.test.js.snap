@@ -159,7 +159,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
           className=""
         >
           <div
-            className="line-item-data d-flex justify-content-between list-test-class"
+            className="line-item--data-version d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
             <div
@@ -172,7 +172,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             />
           </div>
           <div
-            className="line-item-data d-flex justify-content-between list-test-class"
+            className="line-item--data-version d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
             <div
@@ -182,7 +182,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             </div>
           </div>
           <div
-            className="line-item-data d-flex justify-content-between list-test-class"
+            className="line-item--data-version d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
             <div
@@ -192,7 +192,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             </div>
           </div>
           <div
-            className="line-item-data-selected d-flex justify-content-between list-test-class"
+            className="line-item--data-version--selected d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
             <div
@@ -202,7 +202,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
             </div>
           </div>
           <div
-            className="line-item-data d-flex justify-content-between list-test-class"
+            className="line-item--data-version d-flex justify-content-between list-test-class"
             onClick={[Function]}
           >
             <div

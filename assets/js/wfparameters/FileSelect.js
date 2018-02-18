@@ -74,7 +74,7 @@ export default class FileSelect extends React.Component {
 
         fileList = (this.state.files.map( (file, idx) => {
           return (
-            <div className="line-item-data" key={idx} onClick={() => this.handleClick(file)}>
+            <div className="line-item--data-version" key={idx} onClick={() => this.handleClick(file)}>
               <span className="content-3">{file.name}</span>
             </div>
           );
