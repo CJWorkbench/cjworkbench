@@ -15,14 +15,14 @@ exports[`renders correctly 1`] = `
       >
         <DropdownToggle
           aria-haspopup={true}
-          className="navbar-context-button"
+          className="context-button"
           color="secondary"
           data-toggle="dropdown"
         >
           <Button
             aria-expanded={false}
             aria-haspopup="true"
-            className="navbar-context-button"
+            className="context-button"
             color="secondary"
             data-toggle="dropdown"
             onClick={[Function]}
@@ -31,13 +31,13 @@ exports[`renders correctly 1`] = `
             <button
               aria-expanded={false}
               aria-haspopup="true"
-              className="navbar-context-button btn btn-secondary"
+              className="context-button btn btn-secondary"
               data-toggle="dropdown"
               onClick={[Function]}
               type="button"
             >
               <div
-                className="button-icon icon-more-white"
+                className="context-button--icon icon-more"
               />
             </button>
           </Button>
@@ -94,14 +94,14 @@ exports[`renders correctly for workflows list page 1`] = `
       >
         <DropdownToggle
           aria-haspopup={true}
-          className="navbar-context-button"
+          className="context-button"
           color="secondary"
           data-toggle="dropdown"
         >
           <Button
             aria-expanded={false}
             aria-haspopup="true"
-            className="navbar-context-button"
+            className="context-button"
             color="secondary"
             data-toggle="dropdown"
             onClick={[Function]}
@@ -110,13 +110,13 @@ exports[`renders correctly for workflows list page 1`] = `
             <button
               aria-expanded={false}
               aria-haspopup="true"
-              className="navbar-context-button btn btn-secondary"
+              className="context-button btn btn-secondary"
               data-toggle="dropdown"
               onClick={[Function]}
               type="button"
             >
               <div
-                className="button-icon icon-more-white"
+                className="context-button--icon icon-more"
               />
             </button>
           </Button>

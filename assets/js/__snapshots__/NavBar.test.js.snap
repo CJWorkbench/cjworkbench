@@ -190,14 +190,14 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
               >
                 <DropdownToggle
                   aria-haspopup={true}
-                  className="navbar-context-button"
+                  className="context-button"
                   color="secondary"
                   data-toggle="dropdown"
                 >
                   <Button
                     aria-expanded={false}
                     aria-haspopup="true"
-                    className="navbar-context-button"
+                    className="context-button"
                     color="secondary"
                     data-toggle="dropdown"
                     onClick={[Function]}
@@ -206,13 +206,13 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                     <button
                       aria-expanded={false}
                       aria-haspopup="true"
-                      className="navbar-context-button btn btn-secondary"
+                      className="context-button btn btn-secondary"
                       data-toggle="dropdown"
                       onClick={[Function]}
                       type="button"
                     >
                       <div
-                        className="button-icon icon-more-white"
+                        className="context-button--icon icon-more"
                       />
                     </button>
                   </Button>
@@ -722,14 +722,14 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
               >
                 <DropdownToggle
                   aria-haspopup={true}
-                  className="navbar-context-button"
+                  className="context-button"
                   color="secondary"
                   data-toggle="dropdown"
                 >
                   <Button
                     aria-expanded={false}
                     aria-haspopup="true"
-                    className="navbar-context-button"
+                    className="context-button"
                     color="secondary"
                     data-toggle="dropdown"
                     onClick={[Function]}
@@ -738,13 +738,13 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                     <button
                       aria-expanded={false}
                       aria-haspopup="true"
-                      className="navbar-context-button btn btn-secondary"
+                      className="context-button btn btn-secondary"
                       data-toggle="dropdown"
                       onClick={[Function]}
                       type="button"
                     >
                       <div
-                        className="button-icon icon-more-white"
+                        className="context-button--icon icon-more"
                       />
                     </button>
                   </Button>
@@ -1315,14 +1315,14 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
               >
                 <DropdownToggle
                   aria-haspopup={true}
-                  className="navbar-context-button"
+                  className="context-button"
                   color="secondary"
                   data-toggle="dropdown"
                 >
                   <Button
                     aria-expanded={false}
                     aria-haspopup="true"
-                    className="navbar-context-button"
+                    className="context-button"
                     color="secondary"
                     data-toggle="dropdown"
                     onClick={[Function]}
@@ -1331,13 +1331,13 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
                     <button
                       aria-expanded={false}
                       aria-haspopup="true"
-                      className="navbar-context-button btn btn-secondary"
+                      className="context-button btn btn-secondary"
                       data-toggle="dropdown"
                       onClick={[Function]}
                       type="button"
                     >
                       <div
-                        className="button-icon icon-more-white"
+                        className="context-button--icon icon-more"
                       />
                     </button>
                   </Button>

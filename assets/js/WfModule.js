@@ -365,7 +365,7 @@ class WfModule extends React.Component {
           <div>{contextMenu}</div>
         </div>
 
-    var moduleIcon = 'icon-' + this.module.icon + ' module-icon mr-2';
+    var moduleIcon = 'icon-' + this.module.icon + ' WFmodule-icon mr-2';
 
     // Putting it all together: name, status, parameters, output
     return (

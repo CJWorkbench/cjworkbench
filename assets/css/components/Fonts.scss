@@ -1,0 +1,212 @@
+
+
+/* --- Text Sizing ---  */
+.logo-1 {
+	font-size: 2.4rem;
+	line-height: 2.4rem;
+  font-family: 'lato', sans-serif;
+  letter-spacing: -0.4px;
+}
+
+.logo-2 {
+	font-size: 2rem;
+	line-height: 2rem;
+  font-family: 'lato', sans-serif;
+  letter-spacing: -0.4px;
+}
+.logo-2:hover {
+  text-decoration: none;
+  color:#fff;
+}
+.title-1 {
+	font-size: 2.5rem;
+	font-weight: 300;
+	line-height: 2.5rem;
+}
+.title-2 {
+	font-size: 2.2rem;
+	font-weight: normal;
+	line-height: 2.2rem;
+  letter-spacing:0.8px;
+  font-family: 'nunito', sans-serif;
+
+}
+.title-3 {
+	font-size: 1.8rem;
+	font-weight: 300;
+	line-height: 1.8rem;
+  letter-spacing: 0.2px;
+}
+.title-4 {
+	font-size: 1.3rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+}
+.title-5 {
+	font-size: 1.1rem;
+	font-weight: 900;
+	line-height: 2rem;
+}
+/* for editable workflow title  */
+.title-workflow {
+	font-size: 1.8rem;
+	font-weight: 500;
+  line-height: 2.4rem;
+  color: #686768;
+}
+
+.content-1 {
+	font-size: 1.4rem;
+	font-weight: 900;
+  line-height: 1.4rem;
+  opacity: 0.6;
+}
+.content-2 {
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+}
+.content-3 {
+	font-size: 1.3rem;
+	line-height: 2rem;
+}
+.content-4 {
+	font-size: 1.1rem;
+	font-weight: 300;
+	line-height: 1.1rem;
+}
+.content-5 {
+	font-size: 1.2rem;
+	line-height: 1.4rem;
+  font-weight: 400;
+}
+
+.code-1 {
+  font-family: "PT Mono";
+	font-size: 1.4rem;
+	line-height: 2.4rem;
+}
+
+.info-1 {
+	font-size: 1.2rem;
+	font-weight: 100;
+	line-height: 1.2rem;
+  font-family: 'Nunito Sans', sans-serif;
+}
+.info-2 {
+	font-size: 1.4rem;
+	font-weight: 100;
+	line-height: 2rem;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.info-3{
+  font-size: 1.6rem;
+	font-weight: 100;
+	line-height: 1.2rem;
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.table-1 {
+	font-size: 1.3rem;
+	font-weight: 200;
+	line-height: 1.8rem;
+}
+.table-2 {
+	font-size: 1rem;
+	font-weight: 500;
+	line-height: 1.1rem;
+}
+
+.note {
+  padding: 0.5rem;
+  font-size: 1.6rem;
+	font-weight: 100;
+  line-height: 2.8rem;
+  background: rgba(251,170,109,0.2);
+}
+
+/* --- Colors ---  */
+
+/* Text  */
+.t-white {
+  cursor: default;
+  color: #FFFFFF;
+}
+
+.t-white-u {
+  cursor:pointer;
+  color: #FFFFFF;
+  text-decoration: underline !important;
+}
+
+.t-vl-gray {
+  color: #FFF;
+}
+.t-l-gray {
+  color: #F5F5F5;
+}
+.t-m-gray {
+  color: #B4B4B4;
+}
+
+.t-d-gray {
+  color: #686768;
+}
+.t-d-blue {
+  color: #577485;
+}
+.t-f-blue {
+  cursor: pointer;
+  color: #48C8D7;
+}
+.t-f-blue:hover {
+  cursor: pointer;
+  color: #2D9DAA;
+}
+.t-orange {
+  color: #F8AA6D;
+}
+.t-o-red {
+  color: #e24f4a;
+}
+/* Backgrounds  */
+.b-vl-gray {
+  background-color: #FAFAFA;
+}
+.b-l-gray {
+  background-color: #F2F2F2;
+}
+.b-m-gray {
+  background-color: #B4B4B4;
+}
+.b-d-gray {
+  background-color: #686768;
+}
+.b-d-blue {
+  background-color: #577485;
+}
+.b-f-blue {
+  background-color: #48C8D7;
+}
+.b-orange {
+  background-color: #F8AA6D;
+}
+.b-table-row {
+  background-color: #EDF4F6;
+}
+.b-table-column {
+  background-color: #E1E9EB;
+}
+.b-output-blue-1 {
+  background-color: #DBECF1;
+}
+.b-output-blue-2 {
+  background-color: #BFDDE4;
+}
+.b-output-red-1 {
+  background-color: #F3B9B7;
+}
+.b-output-red-2 {
+  background-color: #E24F4A;
+}

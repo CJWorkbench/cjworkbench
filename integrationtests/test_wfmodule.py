@@ -42,7 +42,7 @@ class TestWfModule(DummyWorkflowIntegrationTest):
         # context menu not open yet
         self.assertFalse(header.find_by_css('.dropdown-menu-item').first.visible)
 
-        header.find_by_css('.module-menu-icon').click()
+        header.find_by_css('.module-context-menu--icon').click()
 
         # check for correct items
         self.assertTrue(header.find_by_css('.dropdown-menu-item').first.visible)
@@ -68,7 +68,7 @@ class TestWfModule(DummyWorkflowIntegrationTest):
     #
     #     self.assertTrue(b.is_element_present_by_css('.wf-card')) # module is there
     #
-    #     b.find_by_css('.module-menu-icon').click()
+    #     b.find_by_css('.module-context-menu--icon').click()
     #     b.find_by_text('Delete').first.click()
     #
     #     self.assertFalse(b.is_element_present_by_css('.wf-card')) # now it's gone
