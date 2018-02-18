@@ -130,7 +130,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
             className="col-sm-3"
           >
             <div
-              className="action-button manual-button button-full-blue"
+              className="action-button manual-button button-blue--fill"
               onClick={[Function]}
             >
               Off
@@ -299,7 +299,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             className="col-sm-3"
           >
             <div
-              className="action-button manual-button button-full-blue"
+              className="action-button manual-button button-blue--fill"
               onClick={[Function]}
             >
               Off
@@ -468,7 +468,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             className="col-sm-3"
           >
             <div
-              className="action-button manual-button button-full-blue"
+              className="action-button manual-button button-blue--fill"
               onClick={[Function]}
             >
               Off
@@ -568,7 +568,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             className="col-sm-3"
           >
             <div
-              className="action-button auto-button button-full-blue"
+              className="action-button auto-button button-blue--fill"
               onClick={[Function]}
             >
               On

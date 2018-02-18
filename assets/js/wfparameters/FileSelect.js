@@ -83,7 +83,7 @@ export default class FileSelect extends React.Component {
         filesModal = (
           <div>
             {!this.state.file &&
-              <div className="button-orange action-button-M mt-0" onClick={this.toggleModal}>Choose</div>}
+              <div className="button-orange action-button mt-0" onClick={this.toggleModal}>Choose</div>}
               <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal}>
                 <ModalHeader toggle={this.toggleModal}>
                   <div className='title-4 t-d-gray'>Choose File</div>

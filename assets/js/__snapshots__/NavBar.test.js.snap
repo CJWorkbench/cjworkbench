@@ -153,7 +153,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
         className="d-flex flex-row align-items-center"
       >
         <div
-          className="button-white-full action-button test-duplicate-button"
+          className="button-white--fill action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
@@ -685,7 +685,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
         className="d-flex flex-row align-items-center"
       >
         <div
-          className="button-white-full action-button test-duplicate-button"
+          className="button-white--fill action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
@@ -1133,7 +1133,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
         className="d-flex flex-row align-items-center"
       >
         <div
-          className="button-white-full action-button test-duplicate-button"
+          className="button-white--fill action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
@@ -1279,7 +1279,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
         className="d-flex flex-row align-items-center"
       >
         <div
-          className="button-white-full action-button test-duplicate-button"
+          className="button-white--fill action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate

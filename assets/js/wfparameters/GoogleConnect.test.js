@@ -11,7 +11,7 @@ describe('GoogleConnect', () => {
       userCreds={[]}
     />)
     expect(wrapper).toMatchSnapshot();
-    var connectButton = wrapper.find('.action-button-M.button-orange');
+    var connectButton = wrapper.find('.action-button.button-orange');
     expect(connectButton).toHaveLength(1);
     done();
   });

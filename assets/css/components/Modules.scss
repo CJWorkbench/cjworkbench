@@ -57,3 +57,57 @@
 .param2-line-margin:last-child{
   margin-right: 0;
 }
+
+/* Context buttons in modules */
+
+.context-collapse-button {
+  cursor: pointer;
+  border: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color:#b4b4b4;
+  border-radius: 5rem;
+  margin-right:0rem;
+  opacity: 1;
+}
+
+.context-collapse-button:hover {
+  border: none;
+  background-color: transparent;
+  color:#8b8b8b;
+  decoration:none;
+}
+
+
+.help-button {
+  cursor: pointer;
+  border-radius:5rem;
+  width:2.5rem;
+  height:2.5rem;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  color:#8b8b8b;
+  opacity: 0.5;
+  margin-right:0;
+}
+
+.help-button:hover {
+  border: none;
+  background-color: transparent;
+  color:#8b8b8b;
+  opacity: 1;
+  decoration:none;
+}
+
+// Action button in Module
+
+.wf-card .action-button {
+	height: 3.5rem;
+}

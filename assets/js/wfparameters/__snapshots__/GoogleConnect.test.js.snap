@@ -35,7 +35,7 @@ exports[`GoogleConnect Mounts correctly without user creds 1`] = `
       className="gdrive-connectAccount"
     >
       <button
-        className="action-button-M button-orange"
+        className="action-button button-orange"
         onClick={[Function]}
       >
         Connect account

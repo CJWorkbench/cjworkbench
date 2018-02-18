@@ -167,7 +167,7 @@ export default class WfParameter extends React.Component {
     } else if (this.props.p.parameter_spec.id_name == 'version_select') {
 
       var button = (!this.props.isReadOnly)
-        ? <div className='button-blue action-button-M mt-0' onClick={this.click}>{this.name}</div>
+        ? <div className='button-blue action-button mt-0' onClick={this.click}>{this.name}</div>
         : null
 
       return (
@@ -315,7 +315,7 @@ export default class WfParameter extends React.Component {
       case 'button':
         return (
           <div className="parameter-margin d-flex justify-content-end">
-            <div className='action-button-M button-blue' onClick={!this.props.readOnly && this.click}>{this.name}</div>
+            <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{this.name}</div>
           </div>
         );
       case 'statictext':

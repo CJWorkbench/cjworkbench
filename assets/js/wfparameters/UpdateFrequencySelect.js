@@ -101,8 +101,8 @@ export default class UpdateFrequencySelect extends React.Component {
   render() {
 
     // button highlights
-    var highlightManual = 'action-button manual-button ' + (this.state.dialogSettings.manual ? 'button-full-blue' : 'button-gray ');
-    var highlightAuto = 'action-button auto-button ' + (!this.state.dialogSettings.manual ? 'button-full-blue' : 'button-gray');
+    var highlightManual = 'action-button manual-button ' + (this.state.dialogSettings.manual ? 'button-blue--fill' : 'button-gray ');
+    var highlightAuto = 'action-button auto-button ' + (!this.state.dialogSettings.manual ? 'button-blue--fill' : 'button-gray');
 
     // info shown on Wf Module card
     var manual = this.state.liveSettings.manual;

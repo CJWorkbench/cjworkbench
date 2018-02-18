@@ -10,6 +10,7 @@
 @import './components/TableView.scss';
 @import './components/CellEditor.scss';
 @import './components/GoogleConnect.scss';
+@import './components/UploadFile.scss';
 
 
 html {
@@ -79,6 +80,23 @@ body {
   font-size: 1.4rem;
   display: flex;
   justify-content: center;
+}
+
+/*overriding React styles for contextual button*/
+
+.btn-secondary:focus, .btn-secondary.focus {
+  box-shadow: 0 0 0 transparent;
+}
+
+.btn-secondary.active{
+  background-color: rgba(255,255,255,0.4);
+  color:transparent;
+}
+
+.show > .btn-secondary.dropdown-toggle {
+  color:#fff;
+  background-color: rgba(255,255,255,0.2);
+  border-color: transparent;
 }
 
 
@@ -216,155 +234,19 @@ select.form-control {
     padding: 0 1.25rem;
 }
 
-/* ---- Buttons ---- */
+////////////* ---- Buttons ---- */
 
-.modal-solo-button {
-  float: right;
-  margin-right: 2rem;
-  width: 15%;
-}
-
-
-/* - Button Colors - */
-.button-white {
-  color: #FFFFFF;
-  border: 1px solid #FFFFFF;
-  text-align: center;
-  background-color: transparent;
-}
-
-.button-gray {
-  color: #A2a2a2;
-  border: 1px solid #a2a2a2;
-  text-align: center;
-  background-color: none;
-}
-.button-gray:active {
-  background-color: #a2a2a2;
-  color: #FFFFFF;
-}
-
-.button-blue {
-  color: #48C8D7;
-  border: 1px solid #48C8D7 ;
-  text-align: center;
-  background-color: transparent;
-}
-
-.button-orange {
-  color: #FBAA6D;
-  border: 1px solid #FBAA6D ;
-  text-align: center;
-  background-color: transparent;
-}
-
-.button-blue:active {
-  background-color: #48C8D7 !important;
-  color: #FFFFFF !important;
-}
-
-.button-full-blue {
-  background-color: #48C8D7;
-  color: #FFFFFF;
-	text-align: center;
-  border:none;
-}
-
-.button-white-full {
-  background-color: #FFF;
-  color: #48C8D7;
-	text-align: center;
-  border:none;
-}
-
-.button-full-orange {
-  background-color:#FBAA6D;
-  color: #FFFFFF;
-	text-align: center;
-  border:1px solid #FBAA6D;
-
-}
-.button-full-orange:hover {
-  background-color: #FFFFFF;
-  color: #FBAA6D;
-}
-
-
-/* Context button in modules */
-
-.context-collapse-button {
-  cursor: pointer;
-  border: 0;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color:#b4b4b4;
-  border-radius: 5rem;
-  margin-right:0rem;
-  opacity: 1;
-}
-
-.context-collapse-button:hover {
-  border: none;
-  background-color: transparent;
-  color:#8b8b8b;
-  decoration:none;
-}
-
-
-.help-button {
-  cursor: pointer;
-  border-radius:5rem;
-  width:2.5rem;
-  height:2.5rem;
-  border: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color:#8b8b8b;
-  opacity: 0.5;
-  margin-right:0;
-}
-
-.help-button:hover {
-  border: none;
-  background-color: transparent;
-  color:#8b8b8b;
-  opacity: 1;
-  decoration:none;
-}
+// Transition
 
 .btn{
-  -webkit-transition:all 0.1s;
+  -webkit-transition:all 0.3s;
 }
 
-.menu-test-class{
-  height:2.5rem;
-}
-
-/*overriding React styles for contextual button*/
-
-.btn-secondary:focus, .btn-secondary.focus {
-  box-shadow: 0 0 0 transparent;
-}
-
-.btn-secondary.active{
-  background-color: rgba(255,255,255,0.4);
-  color:transparent;
-}
-
-.show > .btn-secondary.dropdown-toggle {
-  color:#fff;
-  background-color: rgba(255,255,255,0.2);
-  border-color: transparent;
-}
+/* - Action button - */
 
 .action-button {
   cursor: pointer;
+  text-align: center;
   min-width: 7rem;
 	height: 4rem;
   border-radius: 2.5rem;
@@ -375,61 +257,111 @@ select.form-control {
   line-height: 1.4rem;
   padding: 0 1.8rem 0 1.8rem;
   -webkit-transition: opacity 0.1s;
-    transition: opacity 0.1s;
+  transition: opacity 0.1s;
 }
+
 .action-button:hover {
 	opacity: 0.5;
 }
 
-.action-button-M {
-  cursor: pointer;
-  min-width: 7rem;
-	height: 3.5rem;
-  border-radius: 2.5rem;
+.button-white {
+  color: #FFFFFF;
+  border: 1px solid #FFFFFF;
+  background-color: transparent;
+}
+
+.button-white--fill {
+  background-color: #FFF;
+  color: #48C8D7;
+  border:none;
+}
+
+.button-gray {
+  color: #A2a2a2;
+  border: 1px solid #a2a2a2;
+  background-color: none;
+}
+.button-gray:active {
+  background-color: #a2a2a2;
+  color: #FFFFFF;
+}
+
+.button-blue {
+  color: #48C8D7;
+  border: 1px solid #48C8D7 ;
+  background-color: transparent;
+}
+
+
+.button-blue--fill {
+  background-color: #48C8D7;
+  color: #FFFFFF;
+  border:none;
+}
+
+.button-blue:active {
+  background-color: #48C8D7 !important;
+  color: #FFFFFF !important;
+}
+
+.button-orange {
+  color: #FBAA6D;
+  border: 1px solid #FBAA6D ;
+  background-color: transparent;
+}
+
+.button-orange--fill {
+  background-color:#FBAA6D;
+  color: #FFFFFF;
+  border:1px solid #FBAA6D;
+}
+
+
+/* help button */
+
+.help-container{
+  z-index: 2000;
+  position: absolute;
+  bottom: 15.5rem;
+  left: 4.5rem;
+}
+
+.workflows-page .help-container{
+  z-index: 2000;
+  position: absolute;
+  bottom: 9rem;
+  left: 3.5rem;
+}
+
+.help-shortcut{
+  margin: auto;
+  background-color: #769BB0;
+  height: 3rem;
+  width:3rem;
+  z-index: 1000;
+  border-radius: 50px;
+  border:2px solid #fff;
   display: flex;
-  align-items: center;
   justify-content: center;
-	font-size: 1.4rem;
-  line-height: 1.4rem;
-  padding: 0 1.8rem 0 1.8rem;
+  align-items: center;
+  box-shadow: 0 0 1rem 0 rgba(0,0,0,0.10);
+  cursor:pointer;
   -webkit-transition: opacity 0.1s;
     transition: opacity 0.1s;
-}
-.action-button-L:hover {
-	opacity: 0.5;
+
 }
 
-.react-fine-uploader-file-input-container{
-  display: flex!important;
-  align-items: center;
-  cursor:pointer;
+.help-shortcut:hover{
+  box-shadow: 0.3rem 0.3rem 2.5rem 0 rgba(0,0,0,0.20);
 }
 
-.facebook-share {
-  height: 2rem;
-  width:6.5rem;
-  background-color: #3c5b97;
-  color:#fff;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  border-radius:3px;
-  font-family: 'Nunito Sans', sans-serif;
-  font-weight: 500;
-  font-size: 1.2rem;
-  padding: 0 0.5rem;
-}
-
-.facebook-share:hover{
-  background-color:#2f4e87;
-  color:#fff;
+.help-container a:hover{
   text-decoration: none;
 }
 
-/* ---- Workflow list ---- */
 
-.container{
-}
+//////////////////* ---- Workflow list ---- */
+
 
 .workflows-container {
   margin-top:6rem;
@@ -1113,48 +1045,7 @@ div into the DOM, since we don't really want another element, we just want this 
   cursor: pointer;
 }
 
-/* help button */
 
-
-.help-container{
-  z-index: 2000;
-  position: absolute;
-  bottom: 15.5rem;
-  left: 4.5rem;
-}
-
-.workflows-page .help-container{
-  z-index: 2000;
-  position: absolute;
-  bottom: 9rem;
-  left: 3.5rem;
-}
-
-.help-shortcut{
-  margin: auto;
-  background-color: #769BB0;
-  height: 3rem;
-  width:3rem;
-  z-index: 1000;
-  border-radius: 50px;
-  border:2px solid #fff;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0 0 1rem 0 rgba(0,0,0,0.10);
-  cursor:pointer;
-  -webkit-transition: opacity 0.1s;
-    transition: opacity 0.1s;
-
-}
-
-.help-shortcut:hover{
-  box-shadow: 0.3rem 0.3rem 2.5rem 0 rgba(0,0,0,0.20);
-}
-
-.help-container a:hover{
-  text-decoration: none;
-}
 
 
 
