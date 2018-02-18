@@ -19,7 +19,7 @@ class TestWfModule(DummyWorkflowIntegrationTest):
         self.assertTrue(b.is_element_present_by_text('Has header row'))
 
         # output table with correct values
-        self.assertTrue(b.is_element_present_by_text('Jan')) 
+        self.assertTrue(b.is_element_present_by_text('Jan'))
         self.assertTrue(b.is_element_present_by_text('Feb'))
         self.assertTrue(b.is_element_present_by_text('Alicia Aliciason'))
         self.assertTrue(b.is_element_present_by_text('Fred Frederson'))
@@ -42,7 +42,7 @@ class TestWfModule(DummyWorkflowIntegrationTest):
         # context menu not open yet
         self.assertFalse(header.find_by_css('.dropdown-menu-item').first.visible)
 
-        header.find_by_css('.module-context-menu--icon').click()
+        header.find_by_css('.dropdown-menu--icon').click()
 
         # check for correct items
         self.assertTrue(header.find_by_css('.dropdown-menu-item').first.visible)
