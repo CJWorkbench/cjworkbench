@@ -12,11 +12,11 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
   wfId={808}
 >
   <div
-    className="editable-name-container"
+    className="editable-title--container"
     onClick={[Function]}
   >
     <input
-      className="editable-title-field"
+      className="editable-title--field"
       onBlur={[Function]}
       onChange={[Function]}
       onKeyPress={[Function]}
@@ -29,11 +29,11 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
 
 exports[`EditableWorkflowName Read-only Renders plain title 1`] = `
 <div
-  className="editable-name-container"
+  className="editable-title--container"
   onClick={[Function]}
 >
   <span
-    className="editable-title-field"
+    className="editable-title--field"
   >
     Test Title
   </span>

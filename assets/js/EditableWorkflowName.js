@@ -43,17 +43,17 @@ export default class EditableWorkflowName extends React.Component {
               // Saves a reference to parent to allow targeting of imported component
               ref={(input) => {this.textInput = input;}}
               onClick={this.handleClick}
-              className='editable-name-container'
+              className='editable-title--container'
             >
               {this.props.isReadOnly
-                ? ( <span className='editable-title-field'>{this.props.value}</span> )
+                ? ( <span className='editable-title--field'>{this.props.value}</span> )
                 : (
                     <input type="text"
                       value={this.state.value}
                       onChange={this.handleChange}
                       onBlur={this.saveName}
                       onKeyPress={this.keyPress}
-                      className='editable-title-field'
+                      className='editable-title--field'
                     />
                   )
               }

@@ -17,24 +17,20 @@ exports[`Workflow list page renders correctly 1`] = `
     <WorkflowListNavBar>
       <div>
         <nav
-          className="navbar d-flex align-items-center"
+          className="navbar"
         >
           <div
-            className="navbar-brand d-flex align-items-center"
+            className="d-flex align-items-center"
           >
             <img
               className="logo"
               src="/static/images/logo.svg"
             />
-            <h1
-              className="mb-0 mr-auto logo-1"
+            <div
+              className="logo-1"
             >
-              <a
-                href="/workflows"
-              >
-                Workbench
-              </a>
-            </h1>
+              Workbench
+            </div>
           </div>
           <WfHamburgerMenu>
             <UncontrolledDropdown>

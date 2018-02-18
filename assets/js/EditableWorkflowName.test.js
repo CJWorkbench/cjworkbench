@@ -6,7 +6,7 @@ import { okResponseMock } from './utils'
 
 describe('EditableWorkflowName', () => {
 
-  var wrapper; 
+  var wrapper;
 
   describe('Read-only', () => {
 
@@ -30,7 +30,7 @@ describe('EditableWorkflowName', () => {
     var api = {
       setWfName: okResponseMock()
     };
-    var container; 
+    var container;
     var titleField;
 
     beforeEach(() => wrapper = mount(
@@ -41,27 +41,27 @@ describe('EditableWorkflowName', () => {
         api={api}
       />
     ));
-    beforeEach(() => container = wrapper.find('.editable-name-container'));    
-    beforeEach(() => titleField = wrapper.find('.editable-title-field'));    
+    beforeEach(() => container = wrapper.find('.editable-title--container'));    
+    beforeEach(() => titleField = wrapper.find('.editable-title--field'));
 
-  
+
     it('Renders a title that can be edited and saved', () => {
       expect(wrapper).toMatchSnapshot();
 
       // confirm existence of targets
       expect(container).toHaveLength(1);
       expect(titleField).toHaveLength(1);
-      
+
       // check value of field
       expect(wrapper.state().value).toEqual('Test Title');
 
       // click on container to select text
       container.first().simulate('click');
-      
+
       // change the field value
       titleField.simulate('change', {target: {value: 'New Title'}});
 
-      // Value of field should have changed 
+      // Value of field should have changed
       expect(wrapper.state().value).toEqual('New Title');
     });
 

@@ -3,24 +3,20 @@
 exports[`NavBar WorkflowListNavBar Renders correctly 1`] = `
 <div>
   <nav
-    className="navbar d-flex align-items-center"
+    className="navbar"
   >
     <div
-      className="navbar-brand d-flex align-items-center"
+      className="d-flex align-items-center"
     >
       <img
         className="logo"
         src="/static/images/logo.svg"
       />
-      <h1
-        className="mb-0 mr-auto logo-1"
+      <div
+        className="logo-1"
       >
-        <a
-          href="/workflows"
-        >
-          Workbench
-        </a>
-      </h1>
+        Workbench
+      </div>
     </div>
     <WfHamburgerMenu />
   </nav>
@@ -55,7 +51,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
       className="d-flex justify-content-center"
     />
     <nav
-      className="navbar-workflows"
+      className="navbar"
     >
       <div
         className="title-metadata-stack"
@@ -71,11 +67,11 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
           wfId={808}
         >
           <div
-            className="editable-name-container"
+            className="editable-title--container"
             onClick={[Function]}
           >
             <input
-              className="editable-title-field"
+              className="editable-title--field"
               onBlur={[Function]}
               onChange={[Function]}
               onKeyPress={[Function]}
@@ -587,7 +583,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
       className="d-flex justify-content-center"
     />
     <nav
-      className="navbar-workflows"
+      className="navbar"
     >
       <div
         className="title-metadata-stack"
@@ -603,11 +599,11 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
           wfId={808}
         >
           <div
-            className="editable-name-container"
+            className="editable-title--container"
             onClick={[Function]}
           >
             <input
-              className="editable-title-field"
+              className="editable-title--field"
               onBlur={[Function]}
               onChange={[Function]}
               onKeyPress={[Function]}
@@ -1035,7 +1031,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
       className="d-flex justify-content-center"
     />
     <nav
-      className="navbar-workflows"
+      className="navbar"
     >
       <div
         className="title-metadata-stack"
@@ -1051,11 +1047,11 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
           wfId={303}
         >
           <div
-            className="editable-name-container"
+            className="editable-title--container"
             onClick={[Function]}
           >
             <input
-              className="editable-title-field"
+              className="editable-title--field"
               onBlur={[Function]}
               onChange={[Function]}
               onKeyPress={[Function]}
@@ -1145,7 +1141,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
           Share
         </div>
         <a
-          className="nav-link t-white content-2"
+          className="nav--link t-white content-2"
           href="http://app.cjworkbench.org/account/login"
         >
           Sign in
@@ -1183,7 +1179,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
       className="d-flex justify-content-center"
     />
     <nav
-      className="navbar-workflows"
+      className="navbar"
     >
       <div
         className="title-metadata-stack"
@@ -1198,11 +1194,11 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
           value="Original Version"
         >
           <div
-            className="editable-name-container"
+            className="editable-title--container"
             onClick={[Function]}
           >
             <input
-              className="editable-title-field"
+              className="editable-title--field"
               onBlur={[Function]}
               onChange={[Function]}
               onKeyPress={[Function]}

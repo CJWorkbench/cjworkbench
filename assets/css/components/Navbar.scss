@@ -1,13 +1,17 @@
+
+///// Metadata is in style.scss (also appear in WF list)
+
+//No navbar at login / signup
+
 .navbar-login {
   display:none;
 }
 
-/*navbar:Workflow list*/
-
+//// navbar wf list
 .navbar {
-  flex: 0 0 6rem;
+  display:flex;
+  align-items: center;
   height: 6rem;
-  display: flex;
   flex-direction: row;
   justify-content: space-between;
   background-color: #48C8D7;
@@ -15,65 +19,96 @@
   padding: 0.5rem 4rem 0.5rem 4rem;
 }
 
-.title-metadata-stack {
-  display:block;
-  width:100%;
-  padding: 0.2rem 0;
+//// navbar wf page
+.workflow-container .navbar {
+  padding-left: 2rem;
 }
+
+// Brand logo
 
 img.logo {
   vertical-align: middle;
-  margin-right: 0.5rem;
+  margin-right: 0.7rem;
+  width: 2.2rem;
 }
 
-.navbar-brand h1, img.logo {
-  width:2.2rem;
-  display: inline-block;
-  vertical-align: middle;
-  margin-right: 0.8rem;
-}
-.navbar-brand h1 a {
-  color: white;
-}
-.navbar-brand h1 a:hover {
-  text-decoration: none;
-}
+//// context button for wofklow page and workflow list
 
-.navbar-workflows .action-button {
-  margin-right: 4rem;
-}
-
-/*navbar:Workflow page*/
-
-.navbar-workflows {
-  flex: 0 0 6rem;
-  height: 6rem;
+.navbar .context-button,
+.workflow-container .navbar .context-button
+ {
+  cursor: pointer;
+  border:0;
+  width: 3rem;
+  height: 3rem;
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: #48C8D7;
-  color: #FFFFFF;
-  padding: 0.5rem 4rem 0.5rem 2rem;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  margin-right: 3rem;
+  border-radius: 5rem;
+  opacity:0.8;
 }
 
-.nav-link {
+.navbar .context-button:hover,
+.workflow-container .navbar .context-button:hover {
+  background: rgba(255,255,255,0.1);
+  opacity: 1;
+}
+
+.navbar .context-button.btn-secondary.active
+.workflow-container .navbar .context-button.btn-secondary.active {
+  background: rgba(255,255,255,0.3);
+  opacity: 1;
+}
+
+// convert color of context button for to be white in navbar
+
+.workflow-container .navbar .context-button--icon,
+.workflows-page .context-button--icon {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+//convert colors of metadata line to be visible on blue background-color
+
+.workflow-container .navbar .t-f-blue {
+  color:white;
+  text-decoration: underline;
+}
+
+.workflow-container .navbar .t-m-gray {
+  color:white;
+}
+
+//// Readonly signout navbar
+
+.nav--link {
   cursor: pointer;
   margin-right: 5rem;
 }
 
-.nav-link:hover{
+.nav--link:hover{
   text-decoration: underline;
   color: #fff;
 }
 
-.editable-name-container{
+
+//// Workflow page
+
+.workflow-container .navbar .action-button {
+  margin-right: 4rem;
+}
+
+// Workflow title
+
+.editable-title--container{
   margin-bottom: 0.2rem;
   margin-right: 3.5rem;
   min-width: 32rem;
 }
 
-
-.editable-title-field {
+.editable-title--field {
   margin-bottom: 0.2rem;
   min-width: 100%;
   border: none;
@@ -88,51 +123,6 @@ img.logo {
   padding-right:1.5rem;
 }
 
-
-
-.editable-title-field:hover{
+.editable-title--field:hover{
   background-color: rgba(250,250,250,0.2);
-}
-
-
-.navbar-workflows .context-button {
-  cursor: pointer;
-  border:0;
-  width: 3rem;
-  height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  margin-right: 3rem;
-  border-radius: 5rem;
-  opacity:0.8;
-}
-
-.navbar-workflows .context-button:hover {
-  background: rgba(255,255,255,0.1);
-  opacity: 1;
-}
-
-.navbar-workflows .context-button.btn-secondary.active{
-  background: rgba(255,255,255,0.3);
-  opacity: 1;
-}
-
-.navbar-workflows .context-button--icon {
-  font-size: 1.5rem;
-  display: flex;
-  justify-content: center;
-  color: #fff;
-}
-
-//convert colors to be visible on blue background-color
-
-.navbar-workflows .t-f-blue {
-  color:white;
-  text-decoration: underline;
-}
-
-.navbar-workflows .t-m-gray {
-  color:white;
 }

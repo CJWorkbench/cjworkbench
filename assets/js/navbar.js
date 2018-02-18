@@ -27,10 +27,10 @@ export class WorkflowListNavBar extends React.Component {
 
     return (
       <div>
-        <nav className="navbar d-flex align-items-center">
-          <div className="navbar-brand d-flex align-items-center">
+        <nav className="navbar">
+          <div className="d-flex align-items-center">
             <img src="/static/images/logo.svg" className="logo"/>
-            <h1 className="mb-0 mr-auto logo-1"><a href="/workflows">Workbench</a></h1>
+            <div className="logo-1">Workbench</div>
           </div>
           <WfHamburgerMenu />
         </nav>
@@ -212,7 +212,7 @@ export class WorkflowNavBar extends React.Component {
           user={this.props.loggedInUser}
       />
     } else {
-      contextMenu = <a href="http://app.cjworkbench.org/account/login" className='nav-link t-white content-2'>Sign in</a>
+      contextMenu = <a href="http://app.cjworkbench.org/account/login" className='nav--link t-white content-2'>Sign in</a>
     }
 
     var duplicate = <div onClick={this.handleDuplicate} className='button-white--fill action-button test-duplicate-button'>
@@ -238,7 +238,7 @@ export class WorkflowNavBar extends React.Component {
     return (
       <div>
         <div className="d-flex justify-content-center">{spinner}</div>
-        <nav className="navbar-workflows">
+        <nav className="navbar">
           <div className='title-metadata-stack'>
             <EditableWorkflowName
               value={this.props.workflow.name}
