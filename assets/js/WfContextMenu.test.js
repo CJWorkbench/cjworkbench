@@ -24,7 +24,7 @@ describe('WfContextMenu', () => {
 
   it('renders correctly', () => {
     expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('.dropdown-menu-item')).toHaveLength(2); // delete, duplicate
+    expect(wrapper.find('.dropdown-menu--item')).toHaveLength(2); // delete, duplicate
   });
 
   it('deletes workflow', () => {
@@ -44,8 +44,3 @@ describe('WfContextMenu', () => {
   });
 
 });
-
-
-
-
-

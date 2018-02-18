@@ -92,7 +92,7 @@ body {
   padding:0.5rem 0 0.5rem 0;
 }
 
-.dropdown-menu-item {
+.dropdown-menu--item {
   height: 4rem;
   width: 14rem;
   background-color: #FFFFFF;
@@ -104,8 +104,8 @@ body {
   cursor:pointer;
 }
 
-.dropdown-menu-item:hover {
-  background-color: red;
+.dropdown-menu--item:hover {
+  background-color: #f9f9f9;
   color: rgba(104,103,104,1);
 }
 
@@ -120,11 +120,6 @@ body {
   justify-content: center;
 }
 
-.dropdown-item:focus,
-.dropdown-item:hover {
-  color:#686768;
-  background-color:transparent;
-}
 
 // Parameters input and text Fields
 

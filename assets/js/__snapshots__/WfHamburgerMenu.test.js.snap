@@ -54,13 +54,13 @@ exports[`renders correctly 1`] = `
           >
             <div>
               <DropdownItem
-                className="dropdown-menu-item"
+                className="dropdown-menu--item"
                 href="/account/logout"
                 tag="a"
                 toggle={true}
               >
                 <a
-                  className="dropdown-menu-item dropdown-item"
+                  className="dropdown-menu--item dropdown-item"
                   href="/account/logout"
                   onClick={[Function]}
                   tabIndex="0"
@@ -133,13 +133,13 @@ exports[`renders correctly for workflows list page 1`] = `
           >
             <div>
               <DropdownItem
-                className="dropdown-menu-item"
+                className="dropdown-menu--item"
                 href="/account/logout"
                 tag="a"
                 toggle={true}
               >
                 <a
-                  className="dropdown-menu-item dropdown-item"
+                  className="dropdown-menu--item dropdown-item"
                   href="/account/logout"
                   onClick={[Function]}
                   tabIndex="0"

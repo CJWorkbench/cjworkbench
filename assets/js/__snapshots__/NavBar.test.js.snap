@@ -228,13 +228,13 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                     tabIndex="-1"
                   >
                     <DropdownItem
-                      className="dropdown-menu-item"
+                      className="dropdown-menu--item"
                       href="/workflows"
                       tag="a"
                       toggle={true}
                     >
                       <a
-                        className="dropdown-menu-item dropdown-item"
+                        className="dropdown-menu--item dropdown-item"
                         href="/workflows"
                         onClick={[Function]}
                         tabIndex="0"
@@ -259,13 +259,13 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                         />
                       </DropdownItem>
                       <DropdownItem
-                        className="dropdown-menu-item"
+                        className="dropdown-menu--item"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu-item dropdown-item"
+                          className="dropdown-menu--item dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
@@ -278,13 +278,13 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                         </button>
                       </DropdownItem>
                       <DropdownItem
-                        className="dropdown-menu-item"
+                        className="dropdown-menu--item"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu-item dropdown-item"
+                          className="dropdown-menu--item dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
@@ -310,13 +310,13 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                     </div>
                     <div>
                       <DropdownItem
-                        className="dropdown-menu-item"
+                        className="dropdown-menu--item"
                         href="/account/logout"
                         tag="a"
                         toggle={true}
                       >
                         <a
-                          className="dropdown-menu-item dropdown-item"
+                          className="dropdown-menu--item dropdown-item"
                           href="/account/logout"
                           onClick={[Function]}
                           tabIndex="0"
@@ -760,13 +760,13 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                     tabIndex="-1"
                   >
                     <DropdownItem
-                      className="dropdown-menu-item"
+                      className="dropdown-menu--item"
                       href="/workflows"
                       tag="a"
                       toggle={true}
                     >
                       <a
-                        className="dropdown-menu-item dropdown-item"
+                        className="dropdown-menu--item dropdown-item"
                         href="/workflows"
                         onClick={[Function]}
                         tabIndex="0"
@@ -791,13 +791,13 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                         />
                       </DropdownItem>
                       <DropdownItem
-                        className="dropdown-menu-item"
+                        className="dropdown-menu--item"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu-item dropdown-item"
+                          className="dropdown-menu--item dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
@@ -810,13 +810,13 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                         </button>
                       </DropdownItem>
                       <DropdownItem
-                        className="dropdown-menu-item"
+                        className="dropdown-menu--item"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu-item dropdown-item"
+                          className="dropdown-menu--item dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
@@ -842,13 +842,13 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                     </div>
                     <div>
                       <DropdownItem
-                        className="dropdown-menu-item"
+                        className="dropdown-menu--item"
                         href="/account/logout"
                         tag="a"
                         toggle={true}
                       >
                         <a
-                          className="dropdown-menu-item dropdown-item"
+                          className="dropdown-menu--item dropdown-item"
                           href="/account/logout"
                           onClick={[Function]}
                           tabIndex="0"
@@ -1354,13 +1354,13 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
                   >
                     <div>
                       <DropdownItem
-                        className="dropdown-menu-item"
+                        className="dropdown-menu--item"
                         href="/account/logout"
                         tag="a"
                         toggle={true}
                       >
                         <a
-                          className="dropdown-menu-item dropdown-item"
+                          className="dropdown-menu--item dropdown-item"
                           href="/account/logout"
                           onClick={[Function]}
                           tabIndex="0"

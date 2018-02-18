@@ -87,13 +87,13 @@ exports[`Workflow list page renders correctly 1`] = `
                     >
                       <div>
                         <DropdownItem
-                          className="dropdown-menu-item"
+                          className="dropdown-menu--item"
                           href="/account/logout"
                           tag="a"
                           toggle={true}
                         >
                           <a
-                            className="dropdown-menu-item dropdown-item"
+                            className="dropdown-menu--item dropdown-item"
                             href="/account/logout"
                             onClick={[Function]}
                             tabIndex="0"
@@ -303,13 +303,13 @@ exports[`Workflow list page renders correctly 1`] = `
                             tabIndex="-1"
                           >
                             <DropdownItem
-                              className="dropdown-menu-item test-duplicate-button"
+                              className="dropdown-menu--item test-duplicate-button"
                               onClick={[Function]}
                               tag="button"
                               toggle={true}
                             >
                               <button
-                                className="dropdown-menu-item test-duplicate-button dropdown-item"
+                                className="dropdown-menu--item test-duplicate-button dropdown-item"
                                 onClick={[Function]}
                                 tabIndex="0"
                                 type="button"
@@ -325,13 +325,13 @@ exports[`Workflow list page renders correctly 1`] = `
                               </button>
                             </DropdownItem>
                             <DropdownItem
-                              className="dropdown-menu-item test-delete-button"
+                              className="dropdown-menu--item test-delete-button"
                               onClick={[Function]}
                               tag="button"
                               toggle={true}
                             >
                               <button
-                                className="dropdown-menu-item test-delete-button dropdown-item"
+                                className="dropdown-menu--item test-delete-button dropdown-item"
                                 onClick={[Function]}
                                 tabIndex="0"
                                 type="button"
@@ -497,13 +497,13 @@ exports[`Workflow list page renders correctly 1`] = `
                             tabIndex="-1"
                           >
                             <DropdownItem
-                              className="dropdown-menu-item test-duplicate-button"
+                              className="dropdown-menu--item test-duplicate-button"
                               onClick={[Function]}
                               tag="button"
                               toggle={true}
                             >
                               <button
-                                className="dropdown-menu-item test-duplicate-button dropdown-item"
+                                className="dropdown-menu--item test-duplicate-button dropdown-item"
                                 onClick={[Function]}
                                 tabIndex="0"
                                 type="button"
@@ -519,13 +519,13 @@ exports[`Workflow list page renders correctly 1`] = `
                               </button>
                             </DropdownItem>
                             <DropdownItem
-                              className="dropdown-menu-item test-delete-button"
+                              className="dropdown-menu--item test-delete-button"
                               onClick={[Function]}
                               tag="button"
                               toggle={true}
                             >
                               <button
-                                className="dropdown-menu-item test-delete-button dropdown-item"
+                                className="dropdown-menu--item test-delete-button dropdown-item"
                                 onClick={[Function]}
                                 tabIndex="0"
                                 type="button"
@@ -691,13 +691,13 @@ exports[`Workflow list page renders correctly 1`] = `
                             tabIndex="-1"
                           >
                             <DropdownItem
-                              className="dropdown-menu-item test-duplicate-button"
+                              className="dropdown-menu--item test-duplicate-button"
                               onClick={[Function]}
                               tag="button"
                               toggle={true}
                             >
                               <button
-                                className="dropdown-menu-item test-duplicate-button dropdown-item"
+                                className="dropdown-menu--item test-duplicate-button dropdown-item"
                                 onClick={[Function]}
                                 tabIndex="0"
                                 type="button"
@@ -713,13 +713,13 @@ exports[`Workflow list page renders correctly 1`] = `
                               </button>
                             </DropdownItem>
                             <DropdownItem
-                              className="dropdown-menu-item test-delete-button"
+                              className="dropdown-menu--item test-delete-button"
                               onClick={[Function]}
                               tag="button"
                               toggle={true}
                             >
                               <button
-                                className="dropdown-menu-item test-delete-button dropdown-item"
+                                className="dropdown-menu--item test-delete-button dropdown-item"
                                 onClick={[Function]}
                                 tabIndex="0"
                                 type="button"
@@ -885,13 +885,13 @@ exports[`Workflow list page renders correctly 1`] = `
                             tabIndex="-1"
                           >
                             <DropdownItem
-                              className="dropdown-menu-item test-duplicate-button"
+                              className="dropdown-menu--item test-duplicate-button"
                               onClick={[Function]}
                               tag="button"
                               toggle={true}
                             >
                               <button
-                                className="dropdown-menu-item test-duplicate-button dropdown-item"
+                                className="dropdown-menu--item test-duplicate-button dropdown-item"
                                 onClick={[Function]}
                                 tabIndex="0"
                                 type="button"
@@ -907,13 +907,13 @@ exports[`Workflow list page renders correctly 1`] = `
                               </button>
                             </DropdownItem>
                             <DropdownItem
-                              className="dropdown-menu-item test-delete-button"
+                              className="dropdown-menu--item test-delete-button"
                               onClick={[Function]}
                               tag="button"
                               toggle={true}
                             >
                               <button
-                                className="dropdown-menu-item test-delete-button dropdown-item"
+                                className="dropdown-menu--item test-delete-button dropdown-item"
                                 onClick={[Function]}
                                 tabIndex="0"
                                 type="button"

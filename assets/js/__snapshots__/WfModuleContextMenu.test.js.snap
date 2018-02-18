@@ -237,13 +237,13 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
             tabIndex="-1"
           >
             <DropdownItem
-              className="dropdown-menu-item mb-1 test-export-button"
+              className="dropdown-menu--item mb-1 test-export-button"
               onClick={[Function]}
               tag="button"
               toggle={true}
             >
               <button
-                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
+                className="dropdown-menu--item mb-1 test-export-button dropdown-item"
                 onClick={[Function]}
                 tabIndex="0"
                 type="button"
@@ -259,13 +259,13 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
               </button>
             </DropdownItem>
             <DropdownItem
-              className="dropdown-menu-item test-delete-button"
+              className="dropdown-menu--item test-delete-button"
               onClick={[Function]}
               tag="button"
               toggle={true}
             >
               <button
-                className="dropdown-menu-item test-delete-button dropdown-item"
+                className="dropdown-menu--item test-delete-button dropdown-item"
                 onClick={[Function]}
                 tabIndex="0"
                 type="button"
@@ -349,13 +349,13 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
             tabIndex="-1"
           >
             <DropdownItem
-              className="dropdown-menu-item mb-1 test-export-button"
+              className="dropdown-menu--item mb-1 test-export-button"
               onClick={[Function]}
               tag="button"
               toggle={true}
             >
               <button
-                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
+                className="dropdown-menu--item mb-1 test-export-button dropdown-item"
                 onClick={[Function]}
                 tabIndex="0"
                 type="button"
@@ -371,13 +371,13 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
               </button>
             </DropdownItem>
             <DropdownItem
-              className="dropdown-menu-item test-delete-button"
+              className="dropdown-menu--item test-delete-button"
               onClick={[Function]}
               tag="button"
               toggle={true}
             >
               <button
-                className="dropdown-menu-item test-delete-button dropdown-item"
+                className="dropdown-menu--item test-delete-button dropdown-item"
                 onClick={[Function]}
                 tabIndex="0"
                 type="button"
@@ -461,13 +461,13 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
             tabIndex="-1"
           >
             <DropdownItem
-              className="dropdown-menu-item mb-1 test-export-button"
+              className="dropdown-menu--item mb-1 test-export-button"
               onClick={[Function]}
               tag="button"
               toggle={true}
             >
               <button
-                className="dropdown-menu-item mb-1 test-export-button dropdown-item"
+                className="dropdown-menu--item mb-1 test-export-button dropdown-item"
                 onClick={[Function]}
                 tabIndex="0"
                 type="button"
@@ -483,13 +483,13 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
               </button>
             </DropdownItem>
             <DropdownItem
-              className="dropdown-menu-item test-delete-button"
+              className="dropdown-menu--item test-delete-button"
               onClick={[Function]}
               tag="button"
               toggle={true}
             >
               <button
-                className="dropdown-menu-item test-delete-button dropdown-item"
+                className="dropdown-menu--item test-delete-button dropdown-item"
                 onClick={[Function]}
                 tabIndex="0"
                 type="button"
