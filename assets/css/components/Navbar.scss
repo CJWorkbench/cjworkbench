@@ -32,7 +32,7 @@ img.logo {
   width: 2.2rem;
 }
 
-//// context button for wofklow page and workflow list
+//// context button for workflow page and workflow list
 
 .navbar .context-button,
 .workflow-container .navbar .context-button
@@ -56,7 +56,7 @@ img.logo {
   opacity: 1;
 }
 
-.navbar .context-button.btn-secondary.active
+.navbar .context-button.btn-secondary.active,
 .workflow-container .navbar .context-button.btn-secondary.active {
   background: rgba(255,255,255,0.3);
   opacity: 1;
@@ -64,8 +64,7 @@ img.logo {
 
 // convert color of context button for to be white in navbar
 
-.workflow-container .navbar .context-button--icon,
-.workflows-page .context-button--icon {
+.navbar .context-button--icon {
   font-size: 1.5rem;
   color: #fff;
 }

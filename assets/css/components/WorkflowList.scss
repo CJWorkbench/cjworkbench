@@ -18,7 +18,13 @@
   margin-bottom: 1rem;
 }
 
-// background list 
+// context buttons
+.workflow-item .context-button {
+  width: 3rem;
+  height: 3rem;
+}
+
+// background list
 .workflows-item--wrap {
   padding:1px 1px 1px 1px;
   background-color: #EDECEC;
