@@ -144,7 +144,7 @@ export default class ImportModuleFromGitHub extends React.Component {
       ? <div className='import-module-button content-4 t-vl-gray' onClick={this.toggleModal}>
           <span>IMPORT CUSTOM MODULE</span>
         </div>
-      : <div className='closed-ML-cat' onClick={this.toggleModal}>
+      : <div className='closed-ML--category' onClick={this.toggleModal}>
           <div className='icon-add' title='Import From Github'></div>
         </div>
 

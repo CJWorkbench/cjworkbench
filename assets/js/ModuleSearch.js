@@ -231,7 +231,7 @@ export default class ModuleSearch extends React.Component {
             onSuggestionSelected={this.onSuggestionSelected}
           />
         </div>
-        <div className='search-close'>
+        <div className='ML-search--close'>
           {closeIcon}
         </div>
       </div>

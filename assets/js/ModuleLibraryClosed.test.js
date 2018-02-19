@@ -1,9 +1,9 @@
 /**
  * Testing Stories:
- * -Renders collapsed menu with <ModuleCategories>, <AddNotificationButton>, 
+ * -Renders collapsed menu with <ModuleCategories>, <AddNotificationButton>,
  *    and <ImportModuleFromGitHub> components
  * -Toggle arrow will invoke toggleLibrary() from props
- * 
+ *
  */
 
 import React from 'react'
@@ -15,7 +15,7 @@ import { DragDropContextProvider } from 'react-dnd'
 
 describe('ModuleLibraryClosed', () => {
 
-  var wrapper;  
+  var wrapper;
   var openLibrary = jest.fn();
   var items = [
     {
@@ -43,28 +43,28 @@ describe('ModuleLibraryClosed', () => {
       <ModuleLibraryClosed
         api={{}}
         libraryOpen={true}
-        isReadOnly={false}            
+        isReadOnly={false}
         items={items}
         addModule={() => {}}
         dropModule={() => {}}
         moduleAdded={() => {}}
         openLibrary={openLibrary}
-        openCategory={"Add data"} 
+        openCategory={"Add data"}
         setOpenCategory={() => {}}
       />
     </DragDropContextProvider>
   ));
-  afterEach(() => wrapper.unmount());  
+  afterEach(() => wrapper.unmount());
 
-  it('Renders all subcomponents', () => { 
-    expect(wrapper).toMatchSnapshot(); 
+  it('Renders all subcomponents', () => {
+    expect(wrapper).toMatchSnapshot();
   });
 
-  it('Clicking arrow will invoke Open Library function', () => { 
-    let arrow = wrapper.find('.expand-lib');
+  it('Clicking arrow will invoke Open Library function', () => {
+    let arrow = wrapper.find('.library-closed--toggle');
     expect(arrow).toHaveLength(1);
     arrow.simulate('click');
     expect(openLibrary.mock.calls.length).toBe(1);
   });
-      
+
 });

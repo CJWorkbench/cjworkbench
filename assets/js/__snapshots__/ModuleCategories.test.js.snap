@@ -56,17 +56,17 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
         setOpenCategory={[Function]}
       >
         <div
-          className="card b-l-gray library-card-category-open"
+          className="card module-category--open"
         >
           <div
-            className="ml-cat"
+            className="module-category--wrapper"
           >
             <div
               className="first-level"
               onMouseEnter={[Function]}
             >
               <div
-                className="closed-ML-cat"
+                className="closed-ML--category"
               >
                 <span
                   className="icon-database ml-icon"
@@ -156,17 +156,17 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
         setOpenCategory={[Function]}
       >
         <div
-          className="card b-l-gray library-card-category-closed"
+          className="card module-category--closed"
         >
           <div
-            className="ml-cat"
+            className="module-category--wrapper"
           >
             <div
               className="first-level"
               onMouseEnter={[Function]}
             >
               <div
-                className="closed-ML-cat"
+                className="closed-ML--category"
               >
                 <span
                   className="icon-undefined ml-icon"
@@ -237,25 +237,25 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
         setOpenCategory={[Function]}
       >
         <div
-          className="card b-l-gray library-card-category-open"
+          className="card module-category--open"
         >
           <div
-            className="ml-cat"
+            className="module-category--wrapper"
           >
             <div
               className="first-level"
               onClick={[Function]}
             >
               <div
-                className="cat-container"
+                className="category-container"
               >
                 <span
-                  className="open-ML-cat"
+                  className="category-name"
                 >
                   Add data
                 </span>
                 <div
-                  className="ml-sort icon-sort-up-vl-gray"
+                  className="icon-sort-up-vl-gray"
                 />
               </div>
             </div>
@@ -359,25 +359,25 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
         setOpenCategory={[Function]}
       >
         <div
-          className="card b-l-gray library-card-category-closed"
+          className="card module-category--closed"
         >
           <div
-            className="ml-cat"
+            className="module-category--wrapper"
           >
             <div
               className="first-level"
               onClick={[Function]}
             >
               <div
-                className="cat-container"
+                className="category-container"
               >
                 <span
-                  className="open-ML-cat"
+                  className="category-name"
                 >
                   Filter
                 </span>
                 <div
-                  className="ml-sort icon-sort-down-vl-gray"
+                  className="icon-sort-down-vl-gray"
                 />
               </div>
             </div>

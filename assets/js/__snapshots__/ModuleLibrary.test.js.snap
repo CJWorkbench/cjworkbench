@@ -48,28 +48,27 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
         }
       >
         <div
-          className="module-library-open"
+          className="module-library--open"
         >
           <div
-            className="library-nav-bar"
+            className="library-header"
           >
             <div
-              className="d-flex align-items-center flex-row mb-4"
+              className="d-flex align-items-center"
             >
               <a
-                className="logo"
+                className="brand--ML"
                 href="/workflows"
               >
                 <img
-                  src="/static/images/logo.png"
-                  width="20"
+                  src="/static/images/logo.svg"
+                  width="21"
                 />
-              </a>
-              <a
-                className="logo-2 ml-2 t-vl-gray "
-                href="/workflows"
-              >
-                Workbench
+                <div
+                  className="logo-2 ml-2 t-white"
+                >
+                  Workbench
+                </div>
               </a>
               <div
                 className="close-open-toggle"
@@ -220,7 +219,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                   </Autosuggest>
                 </div>
                 <div
-                  className="search-close"
+                  className="ML-search--close"
                 />
               </div>
             </ModuleSearch>
@@ -416,28 +415,27 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
         }
       >
         <div
-          className="module-library-open"
+          className="module-library--open"
         >
           <div
-            className="library-nav-bar"
+            className="library-header"
           >
             <div
-              className="d-flex align-items-center flex-row mb-4"
+              className="d-flex align-items-center"
             >
               <a
-                className="logo"
+                className="brand--ML"
                 href="/workflows"
               >
                 <img
-                  src="/static/images/logo.png"
-                  width="20"
+                  src="/static/images/logo.svg"
+                  width="21"
                 />
-              </a>
-              <a
-                className="logo-2 ml-2 t-vl-gray "
-                href="/workflows"
-              >
-                Workbench
+                <div
+                  className="logo-2 ml-2 t-white"
+                >
+                  Workbench
+                </div>
               </a>
               <div
                 className="close-open-toggle"
@@ -630,7 +628,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                   </Autosuggest>
                 </div>
                 <div
-                  className="search-close"
+                  className="ML-search--close"
                 />
               </div>
             </ModuleSearch>
@@ -715,25 +713,25 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card b-l-gray library-card-category-open"
+                  className="card module-category--open"
                 >
                   <div
-                    className="ml-cat"
+                    className="module-category--wrapper"
                   >
                     <div
                       className="first-level"
                       onClick={[Function]}
                     >
                       <div
-                        className="cat-container"
+                        className="category-container"
                       >
                         <span
-                          className="open-ML-cat"
+                          className="category-name"
                         >
                           Add data
                         </span>
                         <div
-                          className="ml-sort icon-sort-up-vl-gray"
+                          className="icon-sort-up-vl-gray"
                         />
                       </div>
                     </div>
@@ -893,25 +891,25 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card b-l-gray library-card-category-closed"
+                  className="card module-category--closed"
                 >
                   <div
-                    className="ml-cat"
+                    className="module-category--wrapper"
                   >
                     <div
                       className="first-level"
                       onClick={[Function]}
                     >
                       <div
-                        className="cat-container"
+                        className="category-container"
                       >
                         <span
-                          className="open-ML-cat"
+                          className="category-name"
                         >
                           Visualize
                         </span>
                         <div
-                          className="ml-sort icon-sort-down-vl-gray"
+                          className="icon-sort-down-vl-gray"
                         />
                       </div>
                     </div>
@@ -1022,25 +1020,25 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card b-l-gray library-card-category-closed"
+                  className="card module-category--closed"
                 >
                   <div
-                    className="ml-cat"
+                    className="module-category--wrapper"
                   >
                     <div
                       className="first-level"
                       onClick={[Function]}
                     >
                       <div
-                        className="cat-container"
+                        className="category-container"
                       >
                         <span
-                          className="open-ML-cat"
+                          className="category-name"
                         >
                           other category
                         </span>
                         <div
-                          className="ml-sort icon-sort-down-vl-gray"
+                          className="icon-sort-down-vl-gray"
                         />
                       </div>
                     </div>
@@ -1200,25 +1198,25 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card b-l-gray library-card-category-closed"
+                  className="card module-category--closed"
                 >
                   <div
-                    className="ml-cat"
+                    className="module-category--wrapper"
                   >
                     <div
                       className="first-level"
                       onClick={[Function]}
                     >
                       <div
-                        className="cat-container"
+                        className="category-container"
                       >
                         <span
-                          className="open-ML-cat"
+                          className="category-name"
                         >
                           x category
                         </span>
                         <div
-                          className="ml-sort icon-sort-down-vl-gray"
+                          className="icon-sort-down-vl-gray"
                         />
                       </div>
                     </div>
@@ -1434,10 +1432,10 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
       setOpenCategory={[Function]}
     >
       <div
-        className="module-library-closed"
+        className="module-library--closed"
       >
         <div
-          className="expand-lib"
+          className="library-closed--toggle"
           onClick={[Function]}
           onMouseEnter={[Function]}
           onMouseLeave={[Function]}
@@ -1447,7 +1445,7 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
           >
             <img
               src="/static/images/logo.png"
-              width="20"
+              width="21"
             />
           </div>
         </div>
@@ -1456,7 +1454,7 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
           onClick={[Function]}
         >
           <div
-            className="closed-ML-cat"
+            className="closed-ML--category"
           >
             <div
               className="icon-search-white ml-icon-search"
@@ -1495,7 +1493,7 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
                 className="card"
               >
                 <div
-                  className="closed-ML-cat t-vl-gray"
+                  className="closed-ML--category t-vl-gray"
                 >
                   <div
                     className="ml-icon-container"
@@ -1549,7 +1547,7 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
             className=""
           >
             <div
-              className="closed-ML-cat"
+              className="closed-ML--category"
               onClick={[Function]}
             >
               <div

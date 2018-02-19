@@ -14,12 +14,12 @@
 	font-size: 2rem;
 	line-height: 2rem;
   font-family: 'lato', sans-serif;
-  letter-spacing: -0.4px;
+  letter-spacing: -0.3px;
+	text-decoration: none;
+	margin-bottom: 0.1rem;
 }
-.logo-2:hover {
-  text-decoration: none;
-  color:#fff;
-}
+
+
 .title-1 {
 	font-size: 2.5rem;
 	font-weight: 300;
@@ -132,7 +132,6 @@
 
 /* Text  */
 .t-white {
-  cursor: default;
   color: #FFFFFF;
 }
 

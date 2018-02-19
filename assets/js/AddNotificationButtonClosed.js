@@ -84,7 +84,7 @@ class AddNotificationButtonClosed extends React.Component {
         onClick={this.handleClick}
       >
         <div className='card'>
-          <div className='closed-ML-cat t-vl-gray'>
+          <div className='closed-ML--category t-vl-gray'>
             <div className='ml-icon-container' >
               <div className="icon-notification ml-icon" title='Add Notification'></div>
             </div>

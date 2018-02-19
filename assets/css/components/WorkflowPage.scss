@@ -1,0 +1,65 @@
+/******** ---- Workflow page ---- *********/
+
+/* Contains all of Workflow page */
+
+.workflow-root {
+  display: flex;
+  flex-direction: row;
+  min-height: 100vh;
+  position: fixed;
+  width: 100%;
+}
+
+/* Contains Navbar, Modulestack, and Outputpane */
+.workflow-container {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Contains Modulestack and Outputpane */
+.workflow-columns {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: row;
+  min-height:100vh;
+}
+
+// contain iframe
+.data-reactroot {
+  background-color: red;
+}
+
+/* Create an overlay to absorb click events so we don't change settings or set a different
+active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
+div into the DOM, since we don't really want another element, we just want this behavior. */
+.overlapping .modulestack:not(.focus)::after {
+  content:' ';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+.modulestack-list {
+  min-height:100%;
+  width: 100%;
+  padding-bottom: 30rem;
+  padding-top: 1.5rem;
+}
+.modulestack-list.dragging {
+  background: rgba(118,155,176,0.15);
+}
+.modulestack-empty {
+  cursor: default;
+  width: 26rem;
+  margin-top: 1.5rem;
+  padding: 5rem 0;
+  border: 4px dashed #FBAA6D;
+  opacity: 0.4;
+}
+.modulestack-empty.dragging {
+  border-color: rgba(118,155,176,0.5);
+}

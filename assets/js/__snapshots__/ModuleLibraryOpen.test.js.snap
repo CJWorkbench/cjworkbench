@@ -39,28 +39,27 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
     workflow={Object {}}
   >
     <div
-      className="module-library-open"
+      className="module-library--open"
     >
       <div
-        className="library-nav-bar"
+        className="library-header"
       >
         <div
-          className="d-flex align-items-center flex-row mb-4"
+          className="d-flex align-items-center"
         >
           <a
-            className="logo"
+            className="brand--ML"
             href="/workflows"
           >
             <img
-              src="/static/images/logo.png"
-              width="20"
+              src="/static/images/logo.svg"
+              width="21"
             />
-          </a>
-          <a
-            className="logo-2 ml-2 t-vl-gray "
-            href="/workflows"
-          >
-            Workbench
+            <div
+              className="logo-2 ml-2 t-white"
+            >
+              Workbench
+            </div>
           </a>
           <div
             className="close-open-toggle"
@@ -227,7 +226,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
               </Autosuggest>
             </div>
             <div
-              className="search-close"
+              className="ML-search--close"
             />
           </div>
         </ModuleSearch>
@@ -284,25 +283,25 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
             setOpenCategory={[Function]}
           >
             <div
-              className="card b-l-gray library-card-category-closed"
+              className="card module-category--closed"
             >
               <div
-                className="ml-cat"
+                className="module-category--wrapper"
               >
                 <div
                   className="first-level"
                   onClick={[Function]}
                 >
                   <div
-                    className="cat-container"
+                    className="category-container"
                   >
                     <span
-                      className="open-ML-cat"
+                      className="category-name"
                     >
                       Add data
                     </span>
                     <div
-                      className="ml-sort icon-sort-down-vl-gray"
+                      className="icon-sort-down-vl-gray"
                     />
                   </div>
                 </div>
@@ -406,25 +405,25 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
             setOpenCategory={[Function]}
           >
             <div
-              className="card b-l-gray library-card-category-closed"
+              className="card module-category--closed"
             >
               <div
-                className="ml-cat"
+                className="module-category--wrapper"
               >
                 <div
                   className="first-level"
                   onClick={[Function]}
                 >
                   <div
-                    className="cat-container"
+                    className="category-container"
                   >
                     <span
-                      className="open-ML-cat"
+                      className="category-name"
                     >
                       Filter
                     </span>
                     <div
-                      className="ml-sort icon-sort-down-vl-gray"
+                      className="icon-sort-down-vl-gray"
                     />
                   </div>
                 </div>

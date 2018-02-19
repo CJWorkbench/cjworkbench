@@ -95,7 +95,7 @@ describe('ModuleLibrary', () => {
       expect(wrapper).toMatchSnapshot();
 
       expect(api.getModules.mock.calls.length).toBe(1);   // should have called API for its data on componentDidMount
-      expect(wrapper.find('.module-library-open')).toHaveLength(1);  // check that Library is open
+      expect(wrapper.find('.module-library--open')).toHaveLength(1);  // check that Library is open
 
       // let json promise resolve (wait for modules to load)
       setImmediate( () => {
@@ -115,7 +115,7 @@ describe('ModuleLibrary', () => {
 
         expect(wrapper).toMatchSnapshot();
 
-        expect(wrapper.find('.ml-cat')).toHaveLength(4);                      // module categories
+        expect(wrapper.find('.module-category--wrapper')).toHaveLength(4);                      // module categories
         expect(wrapper.find('.ml-list .ml-icon-container')).toHaveLength(6);  // modules
 
         done();
@@ -164,7 +164,7 @@ describe('ModuleLibrary', () => {
       // should NOT call getModules
       expect(api.getModules.mock.calls.length).toBe(0);
       // check that Library is closed
-      expect(wrapper.find('.module-library-closed')).toHaveLength(1);
+      expect(wrapper.find('.module-library--closed')).toHaveLength(1);
     });
 
   });

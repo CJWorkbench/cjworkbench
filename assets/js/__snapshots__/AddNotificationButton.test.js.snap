@@ -22,7 +22,7 @@ exports[`AddNotificationButtonClosed Renders 1`] = `
           className="card"
         >
           <div
-            className="closed-ML-cat t-vl-gray"
+            className="closed-ML--category t-vl-gray"
           >
             <div
               className="ml-icon-container"

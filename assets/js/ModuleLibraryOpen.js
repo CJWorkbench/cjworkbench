@@ -22,12 +22,13 @@ export default class ModuleLibraryOpen extends React.Component {
   render() {
 
     return (
-        <div className='module-library-open'>
-        <div className='library-nav-bar'>
-
-          <div className='d-flex align-items-center flex-row mb-4'>
-            <a href="/workflows" className="logo"><img src="/static/images/logo.png" width="20"/></a>
-            <a href="/workflows" className='logo-2 ml-2 t-vl-gray '>Workbench</a>
+        <div className='module-library--open'>
+        <div className='library-header'>
+          <div className="d-flex align-items-center">
+            <a href="/workflows" className="brand--ML">
+              <img src="/static/images/logo.svg" width="21"/>
+              <div className='logo-2 ml-2 t-white'>Workbench</div>
+            </a>
             <div className='close-open-toggle' onClick={this.props.toggleLibrary}>
               <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
             </div>

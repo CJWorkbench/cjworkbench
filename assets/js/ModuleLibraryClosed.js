@@ -29,14 +29,14 @@ export default class ModuleLibraryClosed extends React.Component {
     var arrow = (this.state.showArrow)
       ? <div className='icon-sort-right-vl-gray'/>
       : <div className="logo">
-          <img src="/static/images/logo.png" width="20"/>
+          <img src="/static/images/logo.png" width="21"/>
         </div>
 
     return (
-      <div className='module-library-closed'>
+      <div className='module-library--closed'>
 
         <div
-          className="expand-lib"
+          className="library-closed--toggle"
           onMouseEnter={this.toggleArrow}
           onMouseLeave={this.toggleArrow}
           onClick={this.props.openLibrary}
@@ -45,7 +45,7 @@ export default class ModuleLibraryClosed extends React.Component {
         </div>
 
         <div className='card' onClick={this.props.openLibrary}>
-          <div className='closed-ML-cat'>
+          <div className='closed-ML--category'>
             <div className='icon-search-white ml-icon-search'></div>
           </div>
         </div>
@@ -59,7 +59,7 @@ export default class ModuleLibraryClosed extends React.Component {
           dropModule={this.props.dropModule}
           items={this.props.items}
         />;
-          
+
         <AddNotificationButtonClosed setOpenCategory={this.props.setOpenCategory} />
 
         <ImportModuleFromGitHub

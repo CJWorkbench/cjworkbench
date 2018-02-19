@@ -43,7 +43,7 @@ export default class ModuleCategory extends React.Component {
     var isOpen = !this.state.collapsed;
 
     // Provides margins around opened library category
-    var cardClass = isOpen ? 'library-card-category-open' : 'library-card-category-closed';
+    var cardClass = isOpen ? 'module-category--open' : 'module-category--closed';
 
     var sortIcon = isOpen ? 'icon-sort-up-vl-gray' : 'icon-sort-down-vl-gray';
 
@@ -54,6 +54,7 @@ export default class ModuleCategory extends React.Component {
       'Prepare':'wrangle',
       'Visualize': 'chart',
       'Code': 'code',
+      'Edit':'edit'
 
     }
     var categoryIcon = 'icon-' + icons[this.props.name] + ' ml-icon';
@@ -61,14 +62,14 @@ export default class ModuleCategory extends React.Component {
     var categoryHead;
     if (this.props.libraryOpen) {
       categoryHead =  <div className='first-level' onClick={this.toggleCollapse} >
-                        <div className='cat-container' >
-                          <span className='open-ML-cat'>{this.props.name}</span>
-                          <div className={'ml-sort ' + sortIcon} />
+                        <div className='category-container' >
+                          <span className='category-name'>{this.props.name}</span>
+                          <div className={sortIcon} />
                         </div>
                       </div>
     } else {
       categoryHead =  <div className='first-level' onMouseEnter={this.toggleCollapse} >
-                        <div className='closed-ML-cat' >
+                        <div className='closed-ML--category' >
                           <span className={categoryIcon}></span>
                         </div>
                       </div>
@@ -89,8 +90,8 @@ export default class ModuleCategory extends React.Component {
     }
 
     return (
-      <div className={"card b-l-gray " + cardClass}>
-        <div className="ml-cat">
+      <div className={"card " + cardClass}>
+        <div className="module-category--wrapper">
           {categoryHead}
           {moduleList}
         </div>

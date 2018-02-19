@@ -73,7 +73,7 @@ export default class ModuleLibrary extends React.Component {
       this.props.api.getModules()
         .then(json => {
 
-          var categories = ['Add data', 'Prepare', 'Analyze', 'Visualize', 'Code', 'Other'];
+          var categories = ['Add data', 'Prepare', 'Edit', 'Analyze', 'Visualize', 'Code', 'Other'];
           var modules = [];
 
           // Order modules by categories in order above, then alphabetically by name within category

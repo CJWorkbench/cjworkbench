@@ -1,0 +1,448 @@
+/* --- Module Library --- */
+
+
+.module-library--open {
+  height: 100%;
+  width: 200px;
+  flex: 0 0 200px;
+  background-color: #577485;
+}
+
+.module-library--closed {
+  width: 6rem;
+  flex: 0 0 6rem;
+  background-color: #577485;
+}
+
+.library-closed--toggle{
+  height:6rem;
+  border-bottom: 1px solid rgba(255,255,255, .1);
+  display:flex;
+  justify-content: center;
+  align-items: center;
+}
+
+//Contains Brand and Search
+.library-header {
+  position: relative;
+  text-align: left;
+  padding: 2rem 2rem 1rem 2rem;
+  margin-bottom: 1rem;
+}
+
+.library-header a:hover {
+  text-decoration: none;
+}
+
+.brand--ML {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.search-bar {
+  margin-top: 1.5rem;
+  border-radius: 30px;
+  height:3.5rem;
+  background-color: rgba(250,250,250,0.2);
+}
+.search-bar:hover {
+  box-shadow: 0 0 0 1px rgba(250,250,250,0.35);
+}
+
+
+.module-library--open .icon-sort-up-vl-gray,
+.module-library--open .icon-sort-down-vl-gray {
+  font-size: 0.6rem;
+  padding-bottom: 0.1rem;
+  margin-right: 2rem;
+}
+
+/* To conceal the transition animation when selecting from Library in collapsed state */
+.hide-animation {
+  display: none;
+}
+
+/* when categories are closed */
+
+.module-category--closed {
+  margin-left: 0rem;
+  margin-right: 0rem;
+}
+
+.module-category--closed:hover {
+  margin-left: 0rem;
+  margin-right: 0rem;
+  background-color: #4E6878;
+}
+
+/*When Categories are open */
+
+.module-category--open {
+  max-height: calc(100vh - 40rem);
+  box-shadow: 0px -1px 0px #4A6676, 0px 1px 0px #4A6676;
+}
+
+.module-category--wrapper {
+  overflow-y:auto;
+}
+
+.module-category--open .first-level{
+  background-color:#547081;
+  opacity: 1;
+}
+
+.module-category--open .ml-list{
+  background-color:#547081;
+  opacity: 1;
+  cursor:pointer;
+}
+
+// When category is open: category name
+.card .first-level {
+  cursor: pointer;
+  height: 4rem;
+  width: 100%;
+  opacity: 0.7;
+  display: flex;
+  align-items: center;
+}
+
+.card .first-level:hover {
+  background-color: #4E6878;
+  opacity:1;
+}
+
+// When category is open: module name
+.card .second-level {
+  opacity: 0.7;
+  position: relative;
+  height: 4rem;
+  padding-left: 2.5rem;
+  color:#fff;
+}
+
+.card .second-level:hover {
+  background-color: #4E6878;
+  opacity: 1;
+}
+
+// div containing module handle
+.ml-handle{
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  opacity:0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.ml-handle:hover{
+  opacity:0.6;
+}
+
+.module-library--open .card,
+.module-library--closed .card {
+  border: 0;
+  background: transparent;
+  border-radius: 0;
+}
+
+.module-library--closed > .card,
+.module-library--closed > .list {
+  border-bottom: 1px solid rgba(255,255,255, .1);
+}
+
+.category-container {
+  margin-top: 0.2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width:100%;
+}
+
+.category-name {
+  margin-left: 2rem;
+  font-size: 1.3rem;
+  line-height: 1.6rem;
+  color: #FFF;
+}
+
+.closed-ML--category{
+  cursor: pointer;
+  height: 4rem;
+  width: 100%;
+  opacity: 0.7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.closed-ML--category:hover{
+  background-color: #4E6878;
+  opacity:1;
+}
+
+// modules in open categories
+
+.ml-module-card {
+  width: 200px;
+}
+
+.ml-icon{
+  font-size: 1.4rem;
+  color: #ffffff;
+}
+
+.ml-icon-container{
+  width: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ml-module-name{
+  margin-left:0.6rem;
+}
+
+
+// Modules in closed library
+
+.module-category--open .ml-list-mini {
+  background-color:#547081;
+  cursor: pointer;
+  z-index: 100;
+  position: absolute;
+  left: 6rem;
+  top: -0.1rem;
+  overflow-y: scroll;
+  max-height: calc(70vh);
+  border-right: 1px solid #4A6676;
+  border-top: 1px solid #4A6676;
+  border-bottom: 1px solid #4A6676;
+  box-shadow: 0.5rem 0.5rem 2.5rem 0 rgba(0, 0, 0, 0.1);
+}
+
+.module-category--open .ml-list-mini .ml-module-card {
+  width: 17.5rem;
+}
+
+.module-category--open .ml-list-mini .ml-module-card .ml-icon {
+  font-size: 1.2rem;
+  color: #ffffff;
+}
+
+.module-category--open .ml-list-mini .ml-module-card .ml-module-name{
+  margin-left: 0.4rem;
+}
+
+
+.card .ml-list-mini .second-level{
+  padding-left: 1rem;
+}
+
+
+/* --- the Search Modules within the Module Library header - ModuleSearch.js --- */
+
+//Style for search icon
+.ml-icon-search{
+  font-size: 1.4rem;
+  color: #ffffff;
+}
+
+//style for close icon in ML search
+.ML-search--close{
+  opacity: 0.6;
+}
+
+.search-close:hover{
+  opacity: 1;
+}
+
+/*Actual search with autosuggest component*/
+.react-autosuggest__container {
+  padding-left:1rem;
+  width: 100%;
+  background-color:transparent;
+}
+
+.react-autosuggest__container input {
+  border: 0px solid #DDDDDD;
+  color:white;
+  background-color:transparent;
+}
+/* If we want to style the placeholder differently than the typed text */
+ .react-autosuggest__input::placeholder {
+  color: rgba(250,250,250,0.5);
+}
+
+/* does not accept a 'color' parameter  */
+.react-autosuggest__input {
+  width: 100%;
+  height: 100%;
+  padding-left: 0.3rem;
+  font-family: 'Nunito Sans', sans-serif;
+  font-weight: 900;
+  font-size: 1.4rem;
+  line-height: 1.4rem;
+}
+
+.react-autosuggest__input--focused {
+  outline: none;
+}
+
+.react-autosuggest__suggestions-container {
+  display: none;
+}
+
+/*search result*/
+.react-autosuggest__suggestions-container--open {
+  margin-top: 3rem;
+  margin-left: -5.9rem;
+  display: block;
+  position: absolute;
+  border: 0px;
+  background-color: #577485;
+  color:#fff;
+  font-weight: 300;
+  font-size: 1.6rem;
+  width: 100%;
+  z-index: 2;
+  height:100vh;
+}
+
+.react-autosuggest__suggestions-list {
+  border-bottom: 1px solid #4A6676;
+  padding: 0;
+  margin-bottom: 0rem;
+  list-style-type: none;
+}
+
+.react-autosuggest__suggestion {
+  padding: 0;
+  margin: 0;
+}
+
+.react-autosuggest__suggestion-inner {
+  cursor: pointer;
+  height: 4rem;
+  padding: 0.8rem 0  0.5rem 2.5rem;
+  color: #fff;
+  opacity: 0.7;
+  display:flex;
+  align-items: center;
+}
+
+.react-autosuggest__suggestion--highlighted .react-autosuggest__suggestion-inner  {
+  background-color: #4E6878;
+  width:100%;
+  opacity:1;
+}
+
+.suggest-handle{
+  padding: 0 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  opacity: 0;
+  position: absolute;
+  left: 0rem;
+  width: 100%;
+  height: 4rem;
+}
+
+.suggest-handle:hover{
+  opacity: 0.6;
+}
+
+.react-autosuggest__section-container {
+}
+
+.react-autosuggest__section-container--first {
+  border-top: 0;
+}
+
+.react-autosuggest__section-title {
+  display: flex;
+  align-items: center;
+  padding: 0.2rem 0 0 2rem;
+  font-size: 1.3rem;
+  color: #FFF;
+  opacity: 1;
+  height: 3.5rem;
+}
+
+.ml-description {
+  display: none;
+}
+
+.ml-divider {
+  margin-top: 1rem;
+  border-top: 1px solid rgba(255,255,255, .2);
+  margin-left: 2rem;
+  margin-right: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* AddNotificationButtonClosed */
+
+// Absolute position used to make element appear outside of Module Library div
+.alert-closed-ML {
+  background-color: #4E6878 !important;
+  z-index: 100;
+  position: absolute;
+  left: 6rem;
+  top: 31.7rem;
+}
+
+/* ImportModuleFromGitHub */
+
+.import-module {
+  border-bottom: 1px solid rgba(255,255,255, .1);
+}
+
+.import-module-button {
+  cursor: pointer;
+  color: #FAFAFA;
+  padding-top: 2rem;
+  opacity: 0.7;
+  margin-left: 2rem;
+  margin-right: 2rem;
+  text-align:center;
+}
+
+.import-module-button:hover {
+  cursor: pointer;
+  color: #FFFFFF;
+  opacity: 1;
+
+}
+
+.import-github-error {
+  height: 4rem;
+  color: #E24F4A;
+  margin-top:2rem;
+  padding-left:0rem;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.9rem;
+}
+
+.import-github-success {
+  height: 4rem;
+  color: #1CA8B9;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.9rem;
+  margin-top: 2rem;
+  padding-left: 0rem;
+}
+
+.test-button{
+  cursor: pointer;
+}

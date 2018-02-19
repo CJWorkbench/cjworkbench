@@ -1,0 +1,32 @@
+// Metadata line for workflow list and workflow pages
+
+.WF-meta {
+  margin-bottom: 0;
+  display: flex;
+  padding-left: 0;
+  list-style: none;
+  cursor: default;
+}
+
+.WF-meta--item {
+  margin-right: 0px;
+  display: flex;
+}
+
+.metadataSeparator {
+  margin:0 0.5rem 0 0.5rem;
+  text-align: center;
+}
+
+/* Module Stack */
+.modulestack {
+  flex: 0 0 30rem;
+  background-color: #EBEEF1;
+  overflow: scroll;
+  height:100vh;
+  position: relative;
+}
+.overlapping .modulestack.focus {
+  z-index: 2;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}

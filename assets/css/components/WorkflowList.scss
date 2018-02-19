@@ -1,0 +1,46 @@
+//////////////////* ---- Workflow list ---- */
+
+
+.workflows-list {
+  border: 0;
+  margin-top: 1.5rem;
+  background-color: transparent;
+  width:75%;
+  padding:1.5rem;
+}
+
+.new-workflow-button {
+  margin-top: 6rem;
+}
+
+.workflows-list--title {
+  margin-left: 2.4rem;
+  margin-bottom: 1rem;
+}
+
+// background list 
+.workflows-item--wrap {
+  padding:1px 1px 1px 1px;
+  background-color: #EDECEC;
+}
+
+.workflow-item {
+  height: 7rem;
+  margin-bottom: 1px;
+  border: 0;
+  border-radius:0;
+  padding: 0 2.5rem;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+}
+
+.workflow-item:hover {
+  background-color: #fafafa;
+  text-decoration: none;
+}
+
+.workflow-item:last-child {
+  margin-bottom: 0px;
+}
