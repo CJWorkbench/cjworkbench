@@ -1,6 +1,6 @@
-var path = require("path")
-var webpack = require('webpack')
-var BundleTracker = require('webpack-bundle-tracker')
+var path = require("path");
+var webpack = require('webpack');
+var BundleTracker = require('webpack-bundle-tracker');
 
 module.exports = {
   context: __dirname,
@@ -26,8 +26,6 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        // chartbuilder and included modules need their jsx compiled, but most node-modules do not
-        exclude: /node_modules(?!([\\]+|\/)(react-tangle|chartbuilder))/,
         loader: 'babel-loader',
         query: {presets: ['es2015', 'react']}  // to transform JSX into JS
       },
@@ -71,7 +69,7 @@ module.exports = {
   },
 
   resolve: {
-    modules: ['node_modules', 'chartbuilder'],
+    modules: ['node_modules'],
     extensions: ['.js', '.jsx']
   },
 }
