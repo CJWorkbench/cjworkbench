@@ -42,7 +42,7 @@ class TestWfModule(DummyWorkflowIntegrationTest):
         # context menu not open yet
         self.assertFalse(header.find_by_css('.dropdown-menu--icon').first.visible)
 
-        header.find_by_css('.dropdown-menu--icon').click()
+        header.find_by_css('.context-button--icon').click()
 
         # check for correct items
         self.assertTrue(header.find_by_css('.dropdown-menu--item').first.visible)
