@@ -1,4 +1,3 @@
 //setupJest.js
 
-// mock fetch() in all tests
-global.fetch = require('jest-fetch-mock');
+global.localStorage = {}; // stub for Chartbuilder

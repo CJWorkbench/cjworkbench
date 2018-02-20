@@ -36,7 +36,10 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
   api={
     Object {
       "getWfModuleVersions": [Function],
+      "loadWorkflow": [Function],
+      "markDataVersionsRead": [Function],
       "setWfModuleVersion": [Function],
+      "updateWfModule": [Function],
     }
   }
   isReadOnly={false}
@@ -82,7 +85,10 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
   api={
     Object {
       "getWfModuleVersions": [Function],
+      "loadWorkflow": [Function],
+      "markDataVersionsRead": [Function],
       "setWfModuleVersion": [Function],
+      "updateWfModule": [Function],
     }
   }
   isReadOnly={false}
@@ -267,7 +273,10 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
   api={
     Object {
       "getWfModuleVersions": [Function],
+      "loadWorkflow": [Function],
+      "markDataVersionsRead": [Function],
       "setWfModuleVersion": [Function],
+      "updateWfModule": [Function],
     }
   }
   isReadOnly={false}

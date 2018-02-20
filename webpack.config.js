@@ -29,7 +29,7 @@ module.exports = {
         // chartbuilder and included modules need their jsx compiled, but most node-modules do not
         exclude: /node_modules(?!([\\]+|\/)(react-tangle|chartbuilder))/,
         loader: 'babel-loader',
-        query: {presets: ['es2015', 'react']}  // to transform JSX into JS
+        query: {presets: ['env', 'react']}  // to transform JSX into JS
       },
       {
         test: /\.css$/,

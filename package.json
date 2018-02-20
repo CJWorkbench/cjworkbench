@@ -10,6 +10,7 @@
   ],
   "dependencies": {
     "babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
     "babelify": "^7.3.0",
     "bootstrap": "4.0.0-alpha.6",
     "chartbuilder": "git://github.com/CJWorkbench/Chartbuilder.git#library-style",
@@ -97,9 +98,11 @@
     "test:coverage": "jest --coverage"
   },
   "jest": {
-    "automock": false,
     "setupFiles": [
       "./setupJest.js"
+    ],
+    "transformIgnorePatterns": [
+      "<rootDir>/node_modules/(?!chartbuilder|react-tangle)"
     ],
     "snapshotSerializers": [
       "./node_modules/enzyme-to-json/serializer"
@@ -125,7 +128,7 @@
   "babel": {
     "presets": [
       "react",
-      "es2015"
+      "env"
     ]
   }
 }
