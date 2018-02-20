@@ -50,10 +50,10 @@ export default class ModuleCategory extends React.Component {
     // ??? are these the correct icons per category ???
     const icons = {
       'Add data': 'database',
-      'Analyze': 'notepad',
+      'Analyse': 'notepad',
       'Prepare':'wrangle',
       'Visualize': 'chart',
-      'Code': 'code',
+      'Code': 'code',               // not an active icon, needs replacement
       'Edit':'edit'
 
     }

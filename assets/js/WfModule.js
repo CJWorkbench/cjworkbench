@@ -336,6 +336,13 @@ class WfModule extends React.Component {
                 />
               </div>
 
+    var helpIcon = undefined;
+    if (!this.props['data-isReadOnly'])
+      helpIcon =  <a className='btn help-button d-flex align-items-center'
+                      href={this.module.help_url} target="_blank">
+                    <div className='icon-help'></div>
+                  </a>
+
     var notesIcon = undefined;
     if (!this.state.showNotes && !this.props['data-isReadOnly'])
       notesIcon = <div className='context-button btn' onClick={this.showNotes}>
@@ -357,10 +364,7 @@ class WfModule extends React.Component {
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     var contextBtns =
         <div className='d-flex align-items-center' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
-          <a className='btn help-button d-flex align-items-center'
-             href={this.module.help_url} target="_blank">
-            <div className='icon-help'></div>
-          </a>
+          <div>{helpIcon}</div>
           <div>{notesIcon}</div>
           <div>{contextMenu}</div>
         </div>

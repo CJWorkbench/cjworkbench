@@ -26,11 +26,14 @@ export default class ModuleLibraryClosed extends React.Component {
   }
 
   render() {
-    var arrow = (this.state.showArrow)
-      ? <div className='icon-sort-right-vl-gray'/>
-      : <div className="logo">
-          <img src="/static/images/logo.png" width="21"/>
-        </div>
+    let arrow = null;
+    if (this.state.showArrow) {
+      arrow = <div className='icon-sort-right-vl-gray'/>
+    } else {
+      arrow = <div className="logo">
+                <img src="/static/images/logo.png" width="21"/>
+              </div>
+    }
 
     return (
       <div className='module-library--closed'>
@@ -60,12 +63,16 @@ export default class ModuleLibraryClosed extends React.Component {
           items={this.props.items}
         />;
 
-        <AddNotificationButtonClosed setOpenCategory={this.props.setOpenCategory} />
+        <AddNotificationButtonClosed 
+          setOpenCategory={this.props.setOpenCategory} 
+          isReadOnly={this.props.isReadOnly}
+        />
 
         <ImportModuleFromGitHub
           moduleAdded={this.props.moduleAdded}
           libraryOpen={false}
           api={this.props.api}
+          isReadOnly={this.props.isReadOnly}
         />
 
       </div>
