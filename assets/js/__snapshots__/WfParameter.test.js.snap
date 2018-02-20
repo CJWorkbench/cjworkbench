@@ -1,0 +1,8 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WfParameter Renders cell editor 1`] = `
+<CellEditor
+  edits=""
+  onSave={[Function]}
+/>
+`;

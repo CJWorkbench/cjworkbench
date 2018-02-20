@@ -259,6 +259,13 @@ export default class WfParameter extends React.Component {
           onSave={ (val) => { this.paramChanged( val ) } }
           defaultValue={this.props.p.value} />
       )
+    } else if (this.props.p.parameter_spec.id_name == 'celledits') {
+      return (
+        <CellEditor
+          edits={this.props.p.value}
+          onSave={(val) => { this.paramChanged(val) }}
+        />
+      )
     }
   }
 
