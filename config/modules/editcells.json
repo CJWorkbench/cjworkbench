@@ -2,7 +2,7 @@
   "name": "Edit Cells",
   "id_name": "editcells" ,
   "category" : "Edit",
-  "icon" : "url",
+  "icon" : "edit",
   "description" : "Enter values for individual cells",
   "help_url":"modules/edit/editcells",
   "parameters": [
