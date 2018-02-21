@@ -87,11 +87,17 @@ class WfModuleSerializer(serializers.ModelSerializer):
     def get_html_output(self, wfm):
         return wfm.module_version.html_output
 
+    versions = serializers.SerializerMethodField()
+    def get_versions(self, wfm):
+        versions = wfm.list_fetched_data_versions()
+        current_version = wfm.get_fetched_data_version()
+        return {'versions': versions, 'selected': current_version}
+
     class Meta:
         model = WfModule
         fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals', 'is_collapsed',
                   'notes', 'auto_update_data', 'update_interval', 'update_units', 'last_update_check',
-                  'notifications', 'notification_count', 'html_output')
+                  'notifications', 'notification_count', 'html_output', 'versions')
 
 
 class WorkflowSerializer(serializers.ModelSerializer):
