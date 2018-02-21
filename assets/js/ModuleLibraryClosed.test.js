@@ -3,6 +3,10 @@
  * -Renders collapsed menu with <ModuleCategories>, <AddNotificationButton>,
  *    and <ImportModuleFromGitHub> components
  * -Toggle arrow will invoke toggleLibrary() from props
+ * 
+ * TODO:
+ * -Read only state: click below header to open modal
+ *    -modal goes to sign in page
  *
  */
 

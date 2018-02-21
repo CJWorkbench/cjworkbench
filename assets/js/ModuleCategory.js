@@ -52,15 +52,13 @@ export default class ModuleCategory extends React.Component {
 
     var sortIcon = isOpen ? 'icon-sort-up-vl-gray' : 'icon-sort-down-vl-gray';
 
-    // ??? are these the correct icons per category ???
     const icons = {
       'Add data': 'database',
-      'Analyse': 'notepad',
+      'Analyse': 'notepad',         // Inconsistency with 'Analyze' elsewhere
       'Prepare':'wrangle',
       'Visualize': 'chart',
       'Code': 'code',               // not an active icon, needs replacement
       'Edit':'edit'
-
     }
     var categoryIcon = 'icon-' + icons[this.props.name] + ' ml-icon';
 

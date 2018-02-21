@@ -46,8 +46,13 @@ class Module extends React.Component {
 
   itemClick(evt) {
     if (!this.props.isReadOnly) this.props.addModule(this.props.id);
-    // Toggle temporarily disabled
-    // this.workflow.toggleModuleLibrary();
+    // collapse category after click
+    this.props.setOpenCategory(null); 
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.isDragging !== this.props.isDragging && newProps.isDragging) 
+      this.props.setOpenCategory(null);
   }
 
   render() {
@@ -82,13 +87,13 @@ class Module extends React.Component {
 }
 
 Module.propTypes = {
-  id:         PropTypes.number.isRequired,
-  name:       PropTypes.string.isRequired,
-  icon:       PropTypes.string.isRequired,
-  addModule:  PropTypes.func,
-  dropModule: PropTypes.func,
-  isReadOnly: PropTypes.bool.isRequired,
-//  workflow:   PropTypes.object
+  id:               PropTypes.number.isRequired,
+  name:             PropTypes.string.isRequired,
+  icon:             PropTypes.string.isRequired,
+  addModule:        PropTypes.func,
+  dropModule:       PropTypes.func,
+  isReadOnly:       PropTypes.bool.isRequired,
+  setOpenCategory:  PropTypes.func.isRequired,
 };
 
 export default DragSource('module', spec, collect)(Module);

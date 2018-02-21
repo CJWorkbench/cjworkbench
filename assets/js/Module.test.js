@@ -3,6 +3,14 @@
  * -Renders a Module card, with icon received from props
  * -Draggable feature exists
  * 
+ * TODO:
+ * 
+ * -Not-read-only: calls AddModule from API on click
+ * 
+ * -Read-only state:
+ *    -is not draggable
+ *    -does not call AddModule
+ * 
  */
 
 import React from 'react'

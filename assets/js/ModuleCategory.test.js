@@ -4,6 +4,11 @@
  *    -Clicking on category will toggle collapse of module list
  * -Renders library-closed version
  *    -Mouse enter on category will toggle display of module list
+ * 
+ * TODO: 
+ * -update tests for new mouse event behavior
+ *    -Cat head: mouse in opens, out collapses
+ *    -Module List: ", ""
  */
 
 import React from 'react'
