@@ -48,7 +48,8 @@ export default class WorkflowMetadata extends React.Component {
     });
   }
 
-  togglePrivacyModal() {
+  togglePrivacyModal(e) {
+    e.preventDefault()
     this.setState({ privacyModalOpen: !this.state.privacyModalOpen });
   }
 
