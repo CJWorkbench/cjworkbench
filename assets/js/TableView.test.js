@@ -15,14 +15,14 @@ describe('TableView', () => {
       columns: ["a", "b", "c"],
       rows: [
         {
-          "a": "1",
-          "b": "2",
-          "c": "3"
+          "a": 1,
+          "b": 2,
+          "c": 3
         },
         {
-          "a": "4",
-          "b": "5",
-          "c": "6"
+          "a": 4,
+          "b": 5,
+          "c": 6
         }
       ]
     };
@@ -45,10 +45,20 @@ describe('TableView', () => {
 
       expect(tree).toMatchSnapshot();
 
-      // Call onEditCell and make sure the row state updates
-      mockAddCellEdit(jest.fn());
-      expect(tree.state().tableData.rows[1]['b']).toBe('5');
+      // Test calls to EditCells.addCellEdit
+      let addCellEditMock = jest.fn();
+      mockAddCellEdit(addCellEditMock);
+
+      // Don't call addCellEdit if the cell value has not changed
+      expect(tree.state().tableData.rows[0]['c']).toBe(3);
+      tree.instance().onEditCell(0, 'c', '3');            // edited value always string...
+      expect(addCellEditMock.mock.calls.length).toBe(0);  // but should still detect no change
+      expect(tree.state().tableData.rows[0]['c']).toBe(3);
+
+      // Do call addCellEdit if the cell value has changed
+      expect(tree.state().tableData.rows[1]['b']).toBe(5);
       tree.instance().onEditCell(1, 'b', '1000');
+      expect(addCellEditMock.mock.calls.length).toBe(1);
       expect(tree.state().tableData.rows[1]['b']).toBe('1000');
 
       done();

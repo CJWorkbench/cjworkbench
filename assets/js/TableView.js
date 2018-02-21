@@ -133,15 +133,16 @@ export default class TableView extends React.Component {
   onEditCell(row, colName, newVal) {
     if (row<this.state.lastLoadedRow && this.state.tableData) {    // should always be true if user clicked on cell to edit it
 
-      // Change just this one row, keeping as much of the old tableData as possible
-      let newRows = update(this.state.tableData.rows, {[row]: {$merge: {[colName]: newVal}}});
-      let newTableData = update(this.state.tableData, {$merge: { rows: newRows }});
-      this.setState({ tableData: newTableData });
+      // Add an edit if the data has actually changed. Cast everything to string for comparisons.
+      let oldVal = this.state.tableData.rows[row][colName];
+      if (newVal !== String(oldVal)) {
+        // Change just this one row, keeping as much of the old tableData as possible
+        let newRows = update(this.state.tableData.rows, {[row]: {$merge: {[colName]: newVal}}});
+        let newTableData = update(this.state.tableData, {$merge: {rows: newRows}});
+        this.setState({tableData: newTableData});
 
-      EditCells.addCellEdit(this.props.id, {row: row, col: colName, value: newVal})
-
-    } else {
-      console.log('However did you edit a row that wasn\'t loaded?')
+        EditCells.addCellEdit(this.props.id, {row: row, col: colName, value: newVal})
+      }
     }
   }
 
