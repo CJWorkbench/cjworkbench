@@ -24,7 +24,7 @@ exports[`CellEditor Renders correctly 1`] = `
           <div
             className="cell-edits-row-number"
           >
-            3
+            4
           </div>
           <div
             className="cell-edits-new-value"
@@ -38,7 +38,7 @@ exports[`CellEditor Renders correctly 1`] = `
           <div
             className="cell-edits-row-number"
           >
-            5
+            6
           </div>
           <div
             className="cell-edits-new-value"
@@ -61,7 +61,7 @@ exports[`CellEditor Renders correctly 1`] = `
           <div
             className="cell-edits-row-number"
           >
-            6
+            7
           </div>
           <div
             className="cell-edits-new-value"
@@ -75,7 +75,7 @@ exports[`CellEditor Renders correctly 1`] = `
           <div
             className="cell-edits-row-number"
           >
-            17
+            18
           </div>
           <div
             className="cell-edits-new-value"

@@ -64,7 +64,7 @@ export default class CellEditor extends React.Component {
       let rows = colEdits['edits'].map( (row, idx) => {
         return (
           <div className='cell-edits-row' key={idx}>
-            <div className='cell-edits-row-number'>{row['row']}</div>
+            <div className='cell-edits-row-number'>{row['row']+1}</div>
             <div className='cell-edits-new-value'>{row['value']}</div>
           </div>
         );
