@@ -8,6 +8,8 @@ import requests
 import json
 from server.versions import save_fetched_table_if_changed
 from server.utils import sanitize_dataframe
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 
 # ---- LoadURL ----
 
@@ -22,10 +24,17 @@ class LoadURL(ModuleImpl):
     @staticmethod
     def event(wfm, event=None, **kwargs):
         table = None
+        url = wfm.get_param_string('url')
+
+        validate = URLValidator()
+        try:
+            validate(url)
+        except ValidationError:
+            wfm.set_error('That doesn''t seem to be a valid URL')
+            return
 
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()
-        url = wfm.get_param_string('url')
 
         mimetypes = 'application/json, text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         res = requests.get(url, headers = {'accept': mimetypes})

@@ -156,4 +156,11 @@ class LoadFromURLTests(LoggedInTestCase):
             self.wfmodule.refresh_from_db()
             self.assertEqual(self.wfmodule.status, WfModule.ERROR)
 
+    def test_bad_url(self):
+        url = 'not a url'
+        self.url_pval.set_value(url)
+        self.url_pval.save()
 
+        self.press_fetch_button()
+        self.wfmodule.refresh_from_db()
+        self.assertEqual(self.wfmodule.status, WfModule.ERROR)
