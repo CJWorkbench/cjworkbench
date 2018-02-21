@@ -31,7 +31,7 @@ categories = set()
 
 # Categories allowed for modules. If not in this list, will be assigned "Other"
 def get_categories():
-    return ['Add data', 'Prepare', 'Analyze', 'Code', 'Visualize']
+    return ['Add data', 'Prepare', 'Edit', 'Analyze', 'Code', 'Visualize']
 
 # Returns dict of {id_name: url} for existing Module objects
 def get_already_imported_module_urls():
