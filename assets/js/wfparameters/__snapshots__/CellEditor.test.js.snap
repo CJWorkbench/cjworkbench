@@ -12,36 +12,36 @@ exports[`CellEditor Renders correctly 1`] = `
 >
   <div>
     <div
-      className="cell-edits-column"
+      className="cell-edits--column content-3 label-margin"
     >
       foo
       <div
-        className="cell-edits-rows"
+        className="cell-edits--rows t-d-gray content-3 "
       >
         <div
-          className="cell-edits-row"
+          className="cell-edits--row"
         >
           <div
-            className="cell-edits-row-number"
+            className="number-field"
           >
             4
           </div>
           <div
-            className="cell-edits-new-value"
+            className="text-field"
           >
             bar
           </div>
         </div>
         <div
-          className="cell-edits-row"
+          className="cell-edits--row"
         >
           <div
-            className="cell-edits-row-number"
+            className="number-field"
           >
             6
           </div>
           <div
-            className="cell-edits-new-value"
+            className="text-field"
           >
             gak
           </div>
@@ -49,36 +49,36 @@ exports[`CellEditor Renders correctly 1`] = `
       </div>
     </div>
     <div
-      className="cell-edits-column"
+      className="cell-edits--column content-3 label-margin"
     >
       food
       <div
-        className="cell-edits-rows"
+        className="cell-edits--rows t-d-gray content-3 "
       >
         <div
-          className="cell-edits-row"
+          className="cell-edits--row"
         >
           <div
-            className="cell-edits-row-number"
+            className="number-field"
           >
             7
           </div>
           <div
-            className="cell-edits-new-value"
+            className="text-field"
           >
             sandwich
           </div>
         </div>
         <div
-          className="cell-edits-row"
+          className="cell-edits--row"
         >
           <div
-            className="cell-edits-row-number"
+            className="number-field"
           >
             18
           </div>
           <div
-            className="cell-edits-new-value"
+            className="text-field"
           >
             pizza
           </div>

@@ -18,8 +18,8 @@ describe('CellEditor', () => {
         onSave={() => {}}
       />);
 
-    expect(wrapper.find('.cell-edits-column')).toHaveLength(2);
-    expect(wrapper.find('.cell-edits-row')).toHaveLength(4);
+    expect(wrapper.find('.cell-edits--column')).toHaveLength(2);
+    expect(wrapper.find('.cell-edits--row')).toHaveLength(4);
 
     expect(wrapper).toMatchSnapshot();
   });
@@ -31,8 +31,8 @@ describe('CellEditor', () => {
         onSave={() => {}}
       />);
 
-    expect(wrapper.find('.cell-edits-column')).toHaveLength(0);
-    expect(wrapper.find('.cell-edits-row')).toHaveLength(0);
+    expect(wrapper.find('.cell-edits--column')).toHaveLength(0);
+    expect(wrapper.find('.cell-edits--row')).toHaveLength(0);
 
     expect(wrapper).toMatchSnapshot();
   });

@@ -39,9 +39,19 @@
 }
 
 .react-grid-Row--odd .react-grid-Cell{
-  background-color: rgba(237,244,246,0.8);
+  background-color: #EEF7FA;
 }
 
 .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
-  background-color: #C9E8F1;
+  background-color: #D8F0F6;
+}
+
+//Click and edit a cell
+.react-grid-Cell:focus,
+.react-grid-Cell input.editor-main {
+	border: none;
+	border-radius: 0;
+	outline: 1px solid #FBAA6D;
+  outline-offset: -1px;
+	background-color: #fff;
 }

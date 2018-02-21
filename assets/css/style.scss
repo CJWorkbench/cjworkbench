@@ -102,7 +102,6 @@ body {
   padding: 0 1rem;
   white-space: nowrap;
   display: flex;
-  align-items: center;
   line-height: 3.5rem;
   width: 100%;
   resize: none;
@@ -126,6 +125,7 @@ body {
 }
 
 .number-field{
+  align-items: center;
   width: 100%;
   resize: none;
   line-height: 3.5rem;

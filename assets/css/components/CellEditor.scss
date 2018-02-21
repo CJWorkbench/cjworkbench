@@ -1,24 +1,29 @@
 
-.cell-edits-column{
-	font-size: 1.3rem;
-	line-height: 1.3rem;
-	font-weight: 500;
-	margin: 1rem;
+.cell-edits--column {
+	margin-bottom: 1rem;
 }
 
-.cell-edits-rows {
-	margin: 1rem;
+.cell-edits--row {
+	background-color: #fff;
+	width:none;
+	display: flex;
 }
 
-.cell-edits-row {
+.cell-edits--row .text-field {
+	white-space: normal;
+	padding:0;
+	line-height:2rem;
+	width:17rem;
+	padding: 0.7rem;
+
 }
 
-.cell-edits-row-number {
-	display: inline-block;
-	margin: 1rem;
-}
-
-.cell-edits-new-value{
-	display: inline-block;
-	margin: 1rem;
+.cell-edits--row .number-field{
+	display: flex;
+	justify-content: center;
+	align-items: flex-start;
+	padding:0.7rem;
+	line-height:2rem;
+	width: 5rem;
+	color:#b4b4b4;
 }

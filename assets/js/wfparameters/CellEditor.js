@@ -63,18 +63,18 @@ export default class CellEditor extends React.Component {
       // Each row in this list of edits for this column also gets div love
       let rows = colEdits['edits'].map( (row, idx) => {
         return (
-          <div className='cell-edits-row' key={idx}>
-            <div className='cell-edits-row-number'>{row['row']+1}</div>
-            <div className='cell-edits-new-value'>{row['value']}</div>
+          <div className='cell-edits--row' key={idx}>
+            <div className='number-field'>{row['row']+1}</div>
+            <div className='text-field'>{row['value']}</div>
           </div>
         );
       });
 
       let colName = colEdits['col'];
       return (
-        <div className='cell-edits-column' key={colName}>
+        <div className='cell-edits--column content-3 label-margin' key={colName}>
           { colName }
-          <div className='cell-edits-rows'>
+          <div className='cell-edits--rows t-d-gray content-3 '>
             { rows }
           </div>
         </div>
