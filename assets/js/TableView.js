@@ -73,18 +73,20 @@ export default class TableView extends React.Component {
 
   // Completely reload table data -- preserves visibility of old data while we wait
   refreshTable(id) {
-    this.loading = true;
-    this.setBusySpinner(true);
+    if (id) {
+      this.loading = true;
+      this.setBusySpinner(true);
 
-    this.props.api.render(id, 0, this.initialRows)
-      .then(json => {
-        this.loading = false;
-        this.setBusySpinner(false);
-        this.setState({
-          tableData: json,
-          lastLoadedRow: json.end_row,
-        });
-      })
+      this.props.api.render(id, 0, this.initialRows)
+        .then(json => {
+          this.loading = false;
+          this.setBusySpinner(false);
+          this.setState({
+            tableData: json,
+            lastLoadedRow: json.end_row,
+          });
+        })
+    }
   }
 
   // Load first 100 rows of table when first rendered
