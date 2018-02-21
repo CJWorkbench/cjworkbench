@@ -7,6 +7,7 @@
 
 import PropTypes from 'prop-types';
 import React from 'react';
+import {Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap'
 import ModuleCategories from './ModuleCategories';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
 import AddNotificationButtonClosed from './AddNotificationButtonClosed';
@@ -16,13 +17,41 @@ export default class ModuleLibraryClosed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showArrow: false
+      showArrow: false,
+      signInModalOpen: false,
     };
     this.toggleArrow = this.toggleArrow.bind(this);
+    this.toggleSignInModal = this.toggleSignInModal.bind(this);
   }
 
   toggleArrow() {
     if (!this.props.isReadOnly) this.setState({showArrow: !this.state.showArrow});
+  }
+
+  toggleSignInModal() {
+    if (this.props.isReadOnly) this.setState({ signInModalOpen: !this.state.signInModalOpen });
+  }
+
+  renderSignInModal() {
+    if (!this.state.signInModalOpen || !this.props.isReadOnly) {
+      return null;
+    }
+
+    return (
+      <Modal isOpen={this.state.signInModalOpen} toggle={this.toggleSignInModal}>
+        <ModalHeader className='dialog-header modal-header d-flex align-items-center' >
+          <div className='t-d-gray title-4'>SIGN IN TO EDIT</div>
+          <div className='icon-close' onClick={this.toggleSignInModal}></div>
+        </ModalHeader>
+        <ModalBody className='dialog-body'>
+          <div>Please sign in to edit this workflow.</div>
+          <a href="/account/login">Click here to sign in.</a>          
+        </ModalBody>
+        <ModalFooter className='dialog-footer'>
+          <div onClick={this.toggleSignInModal} className='button-blue action-button test-done-button'>OK</div>{' '}
+        </ModalFooter>
+      </Modal>
+    );
   }
 
   render() {
@@ -34,6 +63,9 @@ export default class ModuleLibraryClosed extends React.Component {
                 <img src="/static/images/logo.png" width="21"/>
               </div>
     }
+
+    let signInModal = this.renderSignInModal();
+
 
     return (
       <div className='module-library--closed'>
@@ -47,33 +79,40 @@ export default class ModuleLibraryClosed extends React.Component {
             {arrow}
         </div>
 
-        <div className='card' onClick={this.props.openLibrary}>
-          <div className='closed-ML--category'>
-            <div className='icon-search-white ml-icon-search'></div>
+        {/* If in read-only mode, clicking anywhere below header opens modal */}
+        <div onClick={this.toggleSignInModal}>
+
+          <div className='card' onClick={this.props.openLibrary}>
+            <div className='closed-ML--category'>
+              <div className='icon-search-white ml-icon-search'></div>
+            </div>
           </div>
+
+          <ModuleCategories
+            openCategory={this.props.openCategory}
+            setOpenCategory={this.props.setOpenCategory}
+            libraryOpen={false}
+            isReadOnly={this.props.isReadOnly}
+            addModule={this.props.addModule}
+            dropModule={this.props.dropModule}
+            items={this.props.items}
+          />
+
+          <AddNotificationButtonClosed 
+            setOpenCategory={this.props.setOpenCategory} 
+            isReadOnly={this.props.isReadOnly}
+          />
+
+          <ImportModuleFromGitHub
+            moduleAdded={this.props.moduleAdded}
+            libraryOpen={false}
+            api={this.props.api}
+            isReadOnly={this.props.isReadOnly}
+          />
+
+          {signInModal}
+
         </div>
-
-        <ModuleCategories
-          openCategory={this.props.openCategory}
-          setOpenCategory={this.props.setOpenCategory}
-          libraryOpen={false}
-          isReadOnly={this.props.isReadOnly}
-          addModule={this.props.addModule}
-          dropModule={this.props.dropModule}
-          items={this.props.items}
-        />;
-
-        <AddNotificationButtonClosed 
-          setOpenCategory={this.props.setOpenCategory} 
-          isReadOnly={this.props.isReadOnly}
-        />
-
-        <ImportModuleFromGitHub
-          moduleAdded={this.props.moduleAdded}
-          libraryOpen={false}
-          api={this.props.api}
-          isReadOnly={this.props.isReadOnly}
-        />
 
       </div>
     )
