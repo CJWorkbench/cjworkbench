@@ -68,7 +68,7 @@ export default class WorkflowMetadata extends React.Component {
             <div className="col-sm-3">
               <div
                 className={"action-button " + (this.state.isPublic ? "button-full-blue" : "button-gray test-button-gray") }
-                onClick={() => {this.setPublic(true); this.togglePrivacyModal()}}>
+                onClick={(e) => {this.setPublic(true); this.togglePrivacyModal(e)}}>
                   Public
               </div>
             </div>
@@ -80,7 +80,7 @@ export default class WorkflowMetadata extends React.Component {
             <div className="col-sm-3">
               <div
                 className={"action-button " + (!this.state.isPublic ? "button-full-blue" : "button-gray test-button-gray")}
-                onClick={() => {this.setPublic(false); this.togglePrivacyModal()}}>
+                onClick={(e) => {this.setPublic(false); this.togglePrivacyModal(e)}}>
                   Private
               </div>
             </div>

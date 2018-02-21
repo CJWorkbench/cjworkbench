@@ -75,7 +75,7 @@ describe('Workflow list page', () => {
       expect(menus).toHaveLength(4);
 
       // Make sure there is a metadata line for each workflow in the list
-      menus = wrapper.find('.wf-id-meta');
+      menus = wrapper.find('.wf-meta--id');
       expect(menus).toHaveLength(4);
 
       done();

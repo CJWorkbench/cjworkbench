@@ -70,7 +70,7 @@ export default class Workflows extends React.Component {
                     <a href={"/workflows/" + workflow.id} className="workflow-item"key={workflow.id}>
                         <div className='mt-1'>
                           <div className='t-d-gray mb-2 title-4'>{workflow.name}</div>
-
+                          <div className='wf-meta--id'>
                             <WorkflowMetadata
                               workflow={workflow}
                               api={this.props.api}
@@ -78,7 +78,7 @@ export default class Workflows extends React.Component {
                               inWorkflowList
                             />
                           </div>
-                        
+                        </div>
                         <div onClick={(e) => e.preventDefault()} className='menu-test-class'>
                           <WfContextMenu
                             duplicateWorkflow={ () => this.duplicateWorkflow(workflow.id) }

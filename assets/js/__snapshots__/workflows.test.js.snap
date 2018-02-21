@@ -148,8 +148,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 Charting
               </div>
               <div
-                className="wf-id-meta"
-                onClick={[Function]}
+                className="wf-meta--id"
               >
                 <WorkflowMetadata
                   api={
@@ -342,8 +341,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 Messy data cleanup
               </div>
               <div
-                className="wf-id-meta"
-                onClick={[Function]}
+                className="wf-meta--id"
               >
                 <WorkflowMetadata
                   api={
@@ -536,8 +534,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 Document search
               </div>
               <div
-                className="wf-id-meta"
-                onClick={[Function]}
+                className="wf-meta--id"
               >
                 <WorkflowMetadata
                   api={
@@ -730,8 +727,7 @@ exports[`Workflow list page renders correctly 1`] = `
                 Visualization
               </div>
               <div
-                className="wf-id-meta"
-                onClick={[Function]}
+                className="wf-meta--id"
               >
                 <WorkflowMetadata
                   api={
