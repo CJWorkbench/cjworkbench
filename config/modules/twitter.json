@@ -28,7 +28,7 @@
       "type": "custom"
     },
     {
-      "name": "Concatenate",
+      "name": "Aggregate versions",
       "id_name": "accumulate",
       "type": "checkbox",
       "default": "True"
