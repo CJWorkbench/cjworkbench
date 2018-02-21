@@ -25,7 +25,7 @@ RowNumberFormatter.propTypes = {
 };
 
 // Add row number col and make all cols resizeable
-function makeFormattedCols(cols, rowNumKey) {
+function makeFormattedCols(cols, rowNumKey, editable) {
 
   // Add a row number column, which has its own formatting
   var formattedCols = [{
@@ -41,7 +41,7 @@ function makeFormattedCols(cols, rowNumKey) {
       key: cols[idx],
       name: cols[idx],
       resizable: true,
-      editable: true
+      editable: editable
     };
     formattedCols.push(d)
   }
@@ -131,7 +131,7 @@ export default class DataGrid extends React.Component {
     if (this.props.totalRows > 0) {
 
       this.updateRowNumKey(this.props);
-      var columns = makeFormattedCols(this.props.columns, this.rowNumKey);
+      var columns = makeFormattedCols(this.props.columns, this.rowNumKey, this.props.onEditCell !== undefined);
 
       return <ReactDataGrid
         columns={columns}

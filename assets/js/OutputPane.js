@@ -160,7 +160,7 @@ export default class OutputPane extends React.Component {
 
   render() {
 
-    // Make a table component even if no module ID (should still show an empty table header)
+    // Make a table component even if no module ID (should still show an empty table)
     var tableView =
       <TableView
         id={this.props.id}
@@ -181,9 +181,11 @@ export default class OutputPane extends React.Component {
     }
 
     // Spinner is always rendered, but we toggle 'display: none' in setBusySpinner()
+    // Start hidden. TableView will turn it on when needed.
     var spinner =
       <div
         id="spinner-container-transparent"
+        style={{display:'none'}}
         ref={ this.saveSpinnerEl }
       >
         <div id="spinner-l1">

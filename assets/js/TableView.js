@@ -163,6 +163,17 @@ export default class TableView extends React.Component {
         </div>
       nrows = this.state.tableData.total_rows;
       ncols = this.state.tableData.columns.length;
+    } else {
+      // Empty grid, big enough to fill screen.
+      // 50 rows by five blank columns (each with a different number of spaces, for unique names)
+      gridView =
+        <div className="outputpane-data">
+          <DataGrid
+            totalRows={50}
+            columns={['',' ','   ','    ','     ','      ']}
+            getRow={() => {return {}}}
+          />
+      </div>
     }
 
     return (

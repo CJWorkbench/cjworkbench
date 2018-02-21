@@ -56,12 +56,12 @@ describe('TableView', () => {
   });
 
 
-  it('Header only when no module id', () => {
+  it('Blank table when no module id', () => {
     const tree = mount(<TableView id={undefined} revision={1} api={{}}/>)
     tree.update();
 
     expect(tree.find('.outputpane-header')).toHaveLength(1);
-    expect(tree.find('.outputpane-data')).toHaveLength(0);
+    expect(tree.find('.outputpane-data')).toHaveLength(1);
     expect(tree).toMatchSnapshot();
   });
 

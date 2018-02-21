@@ -47,12 +47,10 @@ describe('OutputPane', () => {
   });
 
 
-  it('Header only when no module id', () => {
+  it('Renders when no module id', () => {
     const tree = mount(<OutputPane id={undefined} revision={1} api={{}}/>)
-//    tree.update();
 
     expect(tree.find('.outputpane-header')).toHaveLength(1);
-    expect(tree.find('.outputpane-data')).toHaveLength(0);
     expect(tree).toMatchSnapshot();
   });
 
