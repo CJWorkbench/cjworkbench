@@ -1,4 +1,4 @@
-import {mockAPI, mockStore, removeModuleAction, changeSelectedWfModuleAction} from './workflow-reducer'
+import {mockAPI, mockStore, deleteModuleAction, setSelectedWfModuleAction} from './workflow-reducer'
 
 describe('Reducer actions', () => {
 
@@ -47,7 +47,7 @@ describe('Reducer actions', () => {
   // checks that removeModule() is called and selected module is not changed
   it('Remove non-selected module', (done) => {
 
-    var actionPromise = removeModuleAction(30);
+    var actionPromise = deleteModuleAction(30);
 
     // Remove module should have been called
     expect(api.deleteModule.mock.calls.length).toBe(1);
@@ -65,11 +65,11 @@ describe('Reducer actions', () => {
   // check that removing the selected module selects the one above it
   it('Remove selected module', (done) => {
 
-    var actionPromise = removeModuleAction(20); // 20 is selected module, in middle of stack
+    var actionPromise = deleteModuleAction(20); // 20 is selected module, in middle of stack
 
     // selected module should be set to previous, i.e. 10
     expect(store.dispatch.mock.calls.length).toBe(1);
-    expect(store.dispatch.mock.calls[0][0]).toEqual(changeSelectedWfModuleAction(10));
+    expect(store.dispatch.mock.calls[0][0]).toEqual(setSelectedWfModuleAction(10));
 
     // Remove module should have been called
     expect(api.deleteModule.mock.calls.length).toBe(1);
