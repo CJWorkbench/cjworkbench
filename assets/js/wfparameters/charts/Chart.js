@@ -1,7 +1,7 @@
 // Chart JSX component wraps a ChartBuilder
 
 import React from 'react'
-import { store, wfModuleStatusAction } from '../../workflow-reducer'
+import { store, setWfModuleStatusAction } from '../../workflow-reducer'
 import PropTypes from 'prop-types'
 
 
@@ -51,10 +51,10 @@ export default class ChartParameter extends React.Component {
     var first_err= errors.messages.find(m => m.type=='error');
     if (first_err) {
 //      console.log("Chart errors");
-      store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', first_err.text))
+      store.dispatch(setWfModuleStatusAction(this.props.wf_module_id, 'error', first_err.text))
     } else {
 //      console.log("Chart no errors");
-      store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'ready'))
+      store.dispatch(setWfModuleStatusAction(this.props.wf_module_id, 'ready'))
     }
   }
 

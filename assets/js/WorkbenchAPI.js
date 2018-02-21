@@ -165,16 +165,15 @@ class WorkbenchAPI {
   }
 
 
-  toggleWfModuleCollapsed(wf_module_id, isCollapsed) {
-    return (
-      fetch('/api/wfmodules/' + wf_module_id, {
+  setWfModuleCollapsed(wf_module_id, isCollapsed) {
+    return fetch('/api/wfmodules/' + wf_module_id, {
         method: 'patch',
         credentials: 'include',
         headers: apiHeaders,
         body: JSON.stringify({
           collapsed: isCollapsed
         })
-      }))
+      })
   }
 
   setWfName(wfId, newName) {

@@ -35,7 +35,7 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(Actions.addModuleAction(module_id, insertBefore))
     },
     removeModule: (wf_module_id) => {
-      dispatch(Actions.removeModuleAction(wf_module_id))
+      dispatch(Actions.deleteModuleAction(wf_module_id))
     },
     changeParam: (paramID, newVal) => {
       api.onParamChanged(paramID, newVal)
@@ -62,7 +62,7 @@ socket.onmessage = function(e) {
     switch (data.type) {
 
       case 'wfmodule-status':
-        Actions.store.dispatch(Actions.wfModuleStatusAction(data.id, data.status, data.error_msg ? data.error_msg : ''));
+        Actions.store.dispatch(Actions.setWfModuleStatusAction(data.id, data.status, data.error_msg ? data.error_msg : ''));
         return
 
       case 'reload-workflow':
