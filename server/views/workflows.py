@@ -12,7 +12,11 @@ from rest_framework.renderers import JSONRenderer
 from server.utils import *
 from server.models import Module, ModuleVersion, Workflow
 from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
+<<<<<<< HEAD
 from server.serializers import WorkflowSerializer, WorkflowSerializerLite, WfModuleSerializer, UserSerializer
+=======
+from server.serializers import WorkflowSerializer, WorkflowSerializerLite, UserSerializer, WfModuleSerializer
+>>>>>>> Return the new wfmodule serialization on addmodule
 from server.versions import WorkflowUndo, WorkflowRedo
 from django.db.models import Q
 import json
@@ -174,9 +178,16 @@ def workflow_addmodule(request, pk, format=None):
     log_user_event(request.user, 'Add Module', {'name': module.name, 'id_name':module.id_name})
 
     delta = AddModuleCommand.create(workflow, module_version, insert_before)
+    serializer = WfModuleSerializer(delta.wf_module)
+    wfmodule_data = serializer.data
+    wfmodule_data['insert_before'] = request.data['insertBefore']
 
+<<<<<<< HEAD
     serializer = WfModuleSerializer(delta.wf_module)
     return Response(serializer.data, status.HTTP_201_CREATED)
+=======
+    return Response(wfmodule_data, status.HTTP_201_CREATED)
+>>>>>>> Return the new wfmodule serialization on addmodule
 
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list
