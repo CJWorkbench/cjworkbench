@@ -212,7 +212,12 @@ class WfModule extends React.Component {
 
   // alas, the drawback of the convienence of initFields is we need to call it whenever props change
   componentWillReceiveProps(newProps) {
-    this.initFields(newProps)
+    this.initFields(newProps);
+    if (newProps['data-wfmodule'].is_collapsed !== this.state.isCollapsed) {
+      this.setState({
+        isCollapsed: newProps['data-wfmodule'].is_collapsed
+      })
+    }
   }
 
   // We become the selected module on any click
@@ -243,16 +248,9 @@ class WfModule extends React.Component {
 
   // Optimistically updates the state, and then sends the new state to the server,
   // where it's persisted across sessions and through time.
-  toggleCollapsed() {
-    var newIsCollapsed = !this.state.isCollapsed;
-    this.setState({
-      isCollapsed: newIsCollapsed,
-    });
-
-    // only want to update the server if we're not in read-only mode.
-    if (!this.props['data-isReadOnly']) {
-        this.props['data-api'].toggleWfModuleCollapsed(this.wf_module.id, newIsCollapsed);
-    }
+  toggleCollapsed(e) {
+    e.stopPropagation();
+    store.dispatch( setWfModuleCollapsedAction(this.wf_module.id, !this.state.isCollapsed, this.props['data-isReadOnly']) );
   }
 
   // when Notes icon is clicked, show notes and start in editable state if not read-only
