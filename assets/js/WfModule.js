@@ -5,7 +5,7 @@ import WfParameter from './WfParameter'
 import TableView from './TableView'
 import WfModuleContextMenu from './WfModuleContextMenu'
 import EditableNotes from './EditableNotes'
-import { store, wfModuleStatusAction } from './workflow-reducer'
+import { store, setWfModuleCollapsedAction } from './workflow-reducer'
 import { findDOMNode } from 'react-dom'
 import * as Actions from './workflow-reducer'
 import PropTypes from 'prop-types'
@@ -217,7 +217,7 @@ class WfModule extends React.Component {
 
   // We become the selected module on any click
   click(e) {
-    Actions.store.dispatch(Actions.changeSelectedWfModuleAction(this.wf_module.id));
+    Actions.store.dispatch(Actions.setSelectedWfModuleAction(this.wf_module.id));
   }
 
   // These functions allow parameters to access each others value (text params only)

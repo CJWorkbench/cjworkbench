@@ -1,5 +1,5 @@
 import React from 'react';
-import { store,  updateCurrentUserAction, disconnectCurrentUserAction } from '../workflow-reducer';
+import { store,  getCurrentUserAction, disconnectCurrentUserAction } from '../workflow-reducer';
 
 export default class GoogleConnect extends React.Component {
   constructor(props) {
@@ -24,7 +24,7 @@ export default class GoogleConnect extends React.Component {
       try {
         if (that.state.popup.location.pathname === '/oauth/') {
           that.state.popup.close();
-          store.dispatch(updateCurrentUserAction());
+          store.dispatch(getCurrentUserAction());
           clearInterval(interval);
         }
       } catch(e) {

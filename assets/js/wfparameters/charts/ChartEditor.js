@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import ColumnColorPicker from  './ColumnColorPicker'
 import DateScaleSettings from './DateScaleSettings'
 import { errorText } from './errors'
-import {changeParamAction, wfModuleStatusAction, store} from "../../workflow-reducer";
+import {setParamValueAction, setWfModuleStatusAction, store} from "../../workflow-reducer";
 import debounce from 'lodash/debounce'
 import { OutputIframeCtrl } from '../../OutputIframe'
 
@@ -66,9 +66,9 @@ export default class ChartEditor extends React.Component {
       })
       .join("\n\r");
     if (errorMessage !== '') {
-      store.dispatch(wfModuleStatusAction(this.props.wfModuleId, 'error', errorMessage))
+      store.dispatch(setWfModuleStatusAction(this.props.wfModuleId, 'error', errorMessage))
     } else {
-      store.dispatch(wfModuleStatusAction(this.props.wfModuleId, 'ready'))
+      store.dispatch(setWfModuleStatusAction(this.props.wfModuleId, 'ready'))
     }
   }
 
@@ -138,7 +138,7 @@ export default class ChartEditor extends React.Component {
     let stateCopy = this.deepCopyState(state);
     Object.assign(stateCopy.chartProps, {data: undefined, input: undefined});
     let newStateString = JSON.stringify(state);
-    store.dispatch(changeParamAction(this.props.wfModuleId, 'chart_editor', newStateString));
+    store.dispatch(setParamValueAction(this.props.wfModuleId, 'chart_editor', newStateString));
   }
 
   deepCopyState(state) {
