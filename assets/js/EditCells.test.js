@@ -1,5 +1,5 @@
 import {addCellEdit, mockAPI } from "./EditCells";
-import {mockStore} from './workflow-reducer'
+import {mockStore, mockAPI as mockStoreApi} from './workflow-reducer'
 import { jsonResponseMock } from './utils'
 
 describe('Edit Cell actions', () => {
@@ -79,9 +79,12 @@ describe('Edit Cell actions', () => {
   beforeEach(() => {
     api = {
       onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
-      addModule: jsonResponseMock(addModuleReponse)
+      addModule: jsonResponseMock(addModuleReponse),
+      setSelectedWfModule: jest.fn().mockReturnValue(Promise.resolve())
     };
+    // This is a code smell
     mockAPI(api);
+    mockStoreApi(api);
 
     store = {
       getState: () => initialState,

@@ -1,7 +1,7 @@
 // Code required to add a cell edit.
 // Including creating an Edit Cells module if needed, and syncing to server
 import React from 'react'
-import {store, changeSelectedWfModuleAction} from "./workflow-reducer";
+import {store, setSelectedWfModuleAction} from "./workflow-reducer";
 import {getPageID} from "./utils";
 import WorkbenchAPI from './WorkbenchAPI'
 
@@ -89,7 +89,7 @@ export function addCellEdit(wfModuleId, edit) {
     // Adding edit to existing module
     addEditToEditCellsModule(existingEditCellsWfm, edit);
     if (existingEditCellsWfm.id != wfModuleId) {
-      store.dispatch(changeSelectedWfModuleAction(existingEditCellsWfm.id));
+      store.dispatch(setSelectedWfModuleAction(existingEditCellsWfm.id));
     }
 
   } else {
@@ -100,7 +100,7 @@ export function addCellEdit(wfModuleId, edit) {
       .then((newWfm)=> {
         // add edit to newly created module and select it
         addEditToEditCellsModule(newWfm, edit);
-        store.dispatch(changeSelectedWfModuleAction(newWfm.id));
+        store.dispatch(setSelectedWfModuleAction(newWfm.id));
       });
   }
 }

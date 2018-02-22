@@ -142,7 +142,10 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.data['id'], wfm1.id)
         # we should get a full serialization back, same as /wfmodules/xx call
         serializer = WfModuleSerializer(wfm1)
-        self.assertEqual(response.data, serializer.data)
+        # addmodule serialization should also return insert_before property
+        return_data = serializer.data
+        return_data['insert_before'] = '0'
+        self.assertEqual(response.data, return_data)
 
         # insert before first module
         request = self.factory.put('/api/workflows/%d/addmodule/' % pk_workflow,
