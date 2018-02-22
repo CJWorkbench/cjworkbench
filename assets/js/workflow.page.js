@@ -27,7 +27,7 @@ const mapStateToProps = (state) => {
     // This is the top level dependency injection for all API calls on this page
     api: api
   }
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -37,6 +37,7 @@ const mapDispatchToProps = (dispatch) => {
     removeModule: (wf_module_id) => {
       dispatch(Actions.deleteModuleAction(wf_module_id))
     },
+    //TODO: make this use the redux action
     changeParam: (paramID, newVal) => {
       api.onParamChanged(paramID, newVal)
     }
