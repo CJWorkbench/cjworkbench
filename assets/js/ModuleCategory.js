@@ -54,11 +54,12 @@ export default class ModuleCategory extends React.Component {
 
     const icons = {
       'Add data': 'database',
-      'Analyse': 'notepad',         // Inconsistency with 'Analyze' elsewhere
-      'Prepare':'wrangle',
+      'Prepare': 'wrangle',
+      'Edit': 'edit',
+      'Analyze': 'notepad',         
       'Visualize': 'chart',
-      'Code': 'code',               // not an active icon, needs replacement
-      'Edit':'edit'
+      'Code': 'code',
+      'Other': 'more'               
     }
     var categoryIcon = 'icon-' + icons[this.props.name] + ' ml-icon';
 
