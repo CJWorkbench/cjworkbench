@@ -58,8 +58,8 @@ const registerReducerFunc = (key, func) => {
 const findIdxByProp = (searchArray, searchProp, searchValue) => {
   let returnIdx;
   for (let i = 0; i < searchArray.length; i++) {
-    returnIdx = i;
     if (searchArray[i][searchProp] === searchValue) {
+      returnIdx = i;
       break;
     }
   }
@@ -200,7 +200,7 @@ export function deleteModuleAction(id_to_delete) {
     }));
   }
 }
-registerReducerFunc(DELETE_MODULE + '_FULFILLED', (state, action) => {
+registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
   let wfModuleIdx = findIdxByProp(
     state.workflow.wf_modules,
     'id',
@@ -282,18 +282,31 @@ export function disconnectCurrentUserAction(credentialId) {
   }
 }
 registerReducerFunc(DISCONNECT_CURRENT_USER + '_PENDING', (state, action) => {
-  let credentialIndex = state.loggedInUser.google_credentials.indexOf(action.payload.credential_id);
-  return update(state, {
-    loggedInUser: {
-      google_credentials: { $splice: [[credentialIndex, 1]] }
-    }
-  });
+  let credentialIndex
+
+  if (action.payload.credential_id) {
+    credentialIndex = state.loggedInUser.google_credentials.indexOf(action.payload.credential_id);
+  }
+
+  if (credentialIndex >= 0) {
+    return update(state, {
+      loggedInUser: {
+        google_credentials: { $splice: [[credentialIndex, 1]] }
+      }
+    });
+  }
+
+  return state;
 });
 
 // -- Workflow Module --
 
 // UPDATE_WF_MODULE
 // Patch a workflow module with new data
+
+// TODO: We don't validate which fields or types are on
+// a WfModule here. The backend will reject nonexistent
+// fields, but should we do something on the frontend?
 export function updateWfModuleAction(id, data) {
   return {
     type: UPDATE_WF_MODULE,
@@ -307,20 +320,23 @@ export function updateWfModuleAction(id, data) {
   };
 }
 registerReducerFunc(UPDATE_WF_MODULE + '_PENDING', (state, action) => {
-  let moduleIdx;
+  let moduleIdx = findIdxByProp(
+    state.workflow.wf_modules,
+    'id',
+    action.payload.id
+  );
 
-  state.workflow.wf_modules.find((wfm, idx) => {
-    moduleIdx = idx;
-    return wfm.id === action.payload.id;
-  });
-
-  return update(state, {
-    workflow: {
-      wf_modules: {
-        [moduleIdx]: { $merge: action.payload.data }
+  if (typeof moduleIdx !== 'undefined') {
+    return update(state, {
+      workflow: {
+        wf_modules: {
+          [moduleIdx]: { $merge: action.payload.data }
+        }
       }
-    }
-  });
+    });
+  }
+
+  return state;
 });
 
 
@@ -351,7 +367,7 @@ registerReducerFunc(SET_WF_MODULE_STATUS, (state, action) => {
       (wfModuleRef.status === 'error' && wfModuleRef.error_msg !== action.payload.error_msg)) {
 
       // Create a copy of the wf_module with new status
-      let newWfmProps = {status: action.status, error_msg: action.error_msg};
+      let newWfmProps = {status: action.payload.status, error_msg: action.payload.error_msg};
 
       return update(state, {
         workflow: {
@@ -441,9 +457,9 @@ registerReducerFunc(SET_PARAM_VALUE + '_PENDING', (state, action) => {
   );
 
   if (typeof wfModuleIdx !== 'undefined') {
-    let paramIdx = findIdxByProp(
+    paramIdx = findIdxByProp(
       state.workflow.wf_modules[wfModuleIdx].parameter_vals,
-      'id_name',
+      'id',
       action.payload.paramId
     );
   }
@@ -457,7 +473,9 @@ registerReducerFunc(SET_PARAM_VALUE + '_PENDING', (state, action) => {
         wf_modules: {
           [wfModuleIdx]: {
             parameter_vals: {
-              [paramIdx]: {$merge: {value: action.payload.paramValue}}
+              [paramIdx]: {
+                value: { $set: action.payload.paramValue }
+              }
             }
           }
         }
@@ -491,7 +509,9 @@ registerReducerFunc(SET_DATA_VERSION + '_PENDING', (state, action) => {
     workflow: {
       wf_modules: {
         [wfModuleIdx]: {
-          selected: {$set: action.payload.selectedVersion}
+          versions: {
+            selected: {$set: action.payload.selectedVersion}
+          }
         }
       }
     }
@@ -557,15 +577,18 @@ registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
     'id',
     action.payload.wfModuleId
   );
-  return update(state, {
-    workflow: {
-      wf_modules: {
-        [wfModuleIdx]: {
-          notification_count: {$set: 0}
+  if (typeof wfModuleIdx !== 'undefined') {
+    return update(state, {
+      workflow: {
+        wf_modules: {
+          [wfModuleIdx]: {
+            notification_count: {$set: 0}
+          }
         }
       }
-    }
-  });
+    });
+  }
+  return state;
 });
 
 // ---- Reducer ----
