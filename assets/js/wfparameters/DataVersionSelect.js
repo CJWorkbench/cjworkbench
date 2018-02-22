@@ -12,7 +12,6 @@ class DataVersionSelect extends React.Component {
     this.state = {
       modalOpen: false,
       dropdownOpen: false,
-      //versions: {versions: [], selected: ''},
       dialogSelected: null
     };
     this.toggleModal = this.toggleModal.bind(this);
@@ -53,11 +52,10 @@ class DataVersionSelect extends React.Component {
         // If the selected version is false,
         if (!this.props.versions.versions[idx][1]) {
           // Persist the change to the db
-          Actions.store.dispatch(
-            Actions.markDataVersionsReadAction(
-              this.props.wfModuleId,
-              this.props.versions.versions[idx][0],
-          ));
+          this.props.markDataVersionsReadAction(
+            this.props.wfModuleId,
+            this.props.versions.versions[idx][0],
+          );
         }
       }
 
@@ -75,11 +73,10 @@ class DataVersionSelect extends React.Component {
   }
 
   toggleNotifications() {
-    Actions.store.dispatch(
-      Actions.updateWfModuleAction(
-        this.props.wfModuleId,
-        { notifications: !this.props.notifications }
-    ));
+    this.props.updateWfModuleAction(
+      this.props.wfModuleId,
+      { notifications: !this.props.notifications }
+    );
   }
 
   // Load version list / current version when first created
@@ -111,9 +108,7 @@ class DataVersionSelect extends React.Component {
 
   changeVersions() {
     if (this.props.versions.selected !== this.state.dialogSelected) {
-      Actions.store.dispatch(
-        Actions.setDataVersionAction(this.props.wfModuleId, this.state.dialogSelected)
-      );
+      this.props.setDataVersionAction(this.props.wfModuleId, this.state.dialogSelected);
     }
     this.toggleModal();
   }
@@ -144,7 +139,7 @@ class DataVersionSelect extends React.Component {
                     <div
                       key={version[0]}
                       className={
-                        (version[0] == this.props.versions.selected)
+                        (version[0] == this.state.dialogSelected)
                           ? 'line-item--data-version--selected d-flex justify-content-between list-test-class'
                           : 'line-item--data-version d-flex justify-content-between list-test-class'
                       }
@@ -211,14 +206,22 @@ const mapStateToProps = (state, ownProps) => {
   }
   return {
     notifications: state.workflow.wf_modules[wfModuleIdx].notifications,
-    notificationCount: state.workflow.wf_modules[wfModuleIdx].notification_count,
     versions: state.workflow.wf_modules[wfModuleIdx].versions
   }
 };
 
+const mapDispatchToProps = {
+  markDataVersionsReadAction: Actions.markDataVersionsReadAction,
+  updateWfModuleAction: Actions.updateWfModuleAction,
+  setDataVersionAction: Actions.setDataVersionAction
+};
+
 export default connect(
-  mapStateToProps
-)(DataVersionSelect)
+  mapStateToProps,
+  mapDispatchToProps
+)(DataVersionSelect);
+
+export {DataVersionSelect as DataVersionSelectTest}
 
 
 DataVersionSelect.propTypes = {
