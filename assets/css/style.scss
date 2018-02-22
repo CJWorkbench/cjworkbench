@@ -673,6 +673,22 @@ select {
   display: none;
 }
 
+.drop-alert.active {
+  position: absolute;
+  z-index: 3;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: #FBAA6D;
+  opacity: 0.3;
+  display: block;
+}
+
+.drop-alert.over {
+  opacity: 0.5;
+}
+
 .VersionSelect-UploadFile{
   margin-top: 2.5rem;
   margin-bottom: 1.5rem;
@@ -857,19 +873,4 @@ select {
 .block-picker{
   width: 11rem!important;
   box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0, 0, 0, 0.1)!important;
-}
-
-.drop-alert.active {
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: #FBAA6D;
-  opacity: 0.3;
-}
-
-.drop-alert.over {
-  opacity: 0.5;
 }
