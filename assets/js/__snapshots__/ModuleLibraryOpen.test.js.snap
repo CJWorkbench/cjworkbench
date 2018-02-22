@@ -275,7 +275,9 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                   dropModule={[Function]}
                   icon="url"
                   id={4}
+                  isReadOnly={false}
                   name="Load from Enigma"
+                  setOpenCategory={[Function]}
               />,
               ]
             }
@@ -329,7 +331,9 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                         dropModule={[Function]}
                         icon="url"
                         id={4}
+                        isReadOnly={false}
                         name="Load from Enigma"
+                        setOpenCategory={[Function]}
                       >
                         <Module
                           addModule={[Function]}
@@ -338,43 +342,41 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                           icon="url"
                           id={4}
                           isDragging={false}
+                          isReadOnly={false}
                           name="Load from Enigma"
+                          setOpenCategory={[Function]}
                         >
                           <div
                             className="card ml-module-card"
+                            onClick={[Function]}
                           >
                             <div
-                              className=""
-                              onClick={[Function]}
+                              className="second-level d-flex"
                             >
                               <div
-                                className="second-level d-flex"
+                                className="d-flex flex-row align-items-center"
                               >
                                 <div
-                                  className="d-flex flex-row align-items-center"
+                                  className="ml-icon-container"
                                 >
                                   <div
-                                    className="ml-icon-container"
-                                  >
-                                    <div
-                                      className="icon-url ml-icon"
-                                    />
-                                  </div>
-                                  <div>
-                                    <div
-                                      className="content-5 ml-module-name"
-                                    >
-                                      Load from Enigma
-                                    </div>
-                                  </div>
-                                </div>
-                                <div
-                                  className="ml-handle"
-                                >
-                                  <div
-                                    className="icon-grip"
+                                    className="icon-url ml-icon"
                                   />
                                 </div>
+                                <div>
+                                  <div
+                                    className="content-5 ml-module-name"
+                                  >
+                                    Load from Enigma
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                className="ml-handle"
+                              >
+                                <div
+                                  className="icon-grip"
+                                />
                               </div>
                             </div>
                           </div>
@@ -397,7 +399,9 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                   dropModule={[Function]}
                   icon="filter"
                   id={10}
+                  isReadOnly={false}
                   name="Filter by Text"
+                  setOpenCategory={[Function]}
               />,
               ]
             }
@@ -451,7 +455,9 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                         dropModule={[Function]}
                         icon="filter"
                         id={10}
+                        isReadOnly={false}
                         name="Filter by Text"
+                        setOpenCategory={[Function]}
                       >
                         <Module
                           addModule={[Function]}
@@ -460,43 +466,41 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                           icon="filter"
                           id={10}
                           isDragging={false}
+                          isReadOnly={false}
                           name="Filter by Text"
+                          setOpenCategory={[Function]}
                         >
                           <div
                             className="card ml-module-card"
+                            onClick={[Function]}
                           >
                             <div
-                              className=""
-                              onClick={[Function]}
+                              className="second-level d-flex"
                             >
                               <div
-                                className="second-level d-flex"
+                                className="d-flex flex-row align-items-center"
                               >
                                 <div
-                                  className="d-flex flex-row align-items-center"
+                                  className="ml-icon-container"
                                 >
                                   <div
-                                    className="ml-icon-container"
-                                  >
-                                    <div
-                                      className="icon-filter ml-icon"
-                                    />
-                                  </div>
-                                  <div>
-                                    <div
-                                      className="content-5 ml-module-name"
-                                    >
-                                      Filter by Text
-                                    </div>
-                                  </div>
-                                </div>
-                                <div
-                                  className="ml-handle"
-                                >
-                                  <div
-                                    className="icon-grip"
+                                    className="icon-filter ml-icon"
                                   />
                                 </div>
+                                <div>
+                                  <div
+                                    className="content-5 ml-module-name"
+                                  >
+                                    Filter by Text
+                                  </div>
+                                </div>
+                              </div>
+                              <div
+                                className="ml-handle"
+                              >
+                                <div
+                                  className="icon-grip"
+                                />
                               </div>
                             </div>
                           </div>
@@ -558,6 +562,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
       />
       <ImportModuleFromGitHub
         api={Object {}}
+        isReadOnly={false}
         libraryOpen={true}
         moduleAdded={[Function]}
       >

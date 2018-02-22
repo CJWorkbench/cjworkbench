@@ -3,12 +3,10 @@
  * -Renders library-open version
  *    -Clicking on category will toggle collapse of module list
  * -Renders library-closed version
- *    -Mouse enter on category will toggle display of module list
+ *    -Mouse enter on category will show module list
+ *    -Mouse leave on category will hide module list
+ *    -Mouse leave on module list will hide module list
  * 
- * TODO: 
- * -update tests for new mouse event behavior
- *    -Cat head: mouse in opens, out collapses
- *    -Module List: ", ""
  */
 
 import React from 'react'
@@ -21,41 +19,51 @@ import { DragDropContextProvider } from 'react-dnd'
 describe('ModuleCategory ', () => {
 
   var wrapper;
-  const setOpenCategory = jest.fn();
-  var modules = [
-    <Module
-      key={"First Module"}
-      name={"First Module"}
-      icon={"add"}
-      id={88}
-      addModule={() => {}}
-      dropModule={() => {}}
-    />,
-    <Module
-      key={"Second Module"}
-      name={"Second Module"}
-      icon={"url"}
-      id={101}
-      addModule={() => {}}
-      dropModule={() => {}}
-    />
-  ];
+  var setOpenCategory;
+  var modules;
 
   describe('Library open, category collapsed', () => {
 
-    beforeEach(() => wrapper = mount(
-      <DragDropContextProvider backend={HTML5Backend}>
-        <ModuleCategory
-          name={"Add Data"}
-          modules={modules}
-          isReadOnly={false}
-          collapsed={true}
-          setOpenCategory={setOpenCategory}
-          libraryOpen={true}
+    beforeEach(() => {
+      setOpenCategory = jest.fn();
+      modules = [
+        <Module
+          key={"First Module"}
+          name={"First Module"}
+          icon={"add"}
+          id={88}
+          addModule={() => {}}
+          dropModule={() => {}}
+          isReadOnly={false} 
+          setOpenCategory={setOpenCategory}    
+        />,
+        <Module
+          key={"Second Module"}
+          name={"Second Module"}
+          icon={"url"}
+          id={101}
+          addModule={() => {}}
+          dropModule={() => {}}
+          isReadOnly={false} 
+          setOpenCategory={setOpenCategory}    
         />
-      </DragDropContextProvider>
-    ));
-    afterEach(() => wrapper.unmount());
+      ];
+      wrapper = mount(
+        <DragDropContextProvider backend={HTML5Backend}>
+          <ModuleCategory
+            name={"Add Data"}
+            modules={modules}
+            isReadOnly={false}
+            collapsed={true}
+            setOpenCategory={setOpenCategory}
+            libraryOpen={true}
+          />
+        </DragDropContextProvider>
+      );
+    });
+    afterEach(() => {
+      wrapper.unmount();
+    });
 
     it('Renders with list of Module components', () => {
       expect(wrapper).toMatchSnapshot();
@@ -69,25 +77,52 @@ describe('ModuleCategory ', () => {
       expect(moduleList).toHaveLength(1);
       expect(moduleList.get(0).props.isOpen).toBe(false);
       category.simulate('click');
-      expect(setOpenCategory.mock.calls.length).toBe(1);
+      expect(setOpenCategory.mock.calls.length).toBe(1); 
     });
   });
 
   describe('Library open, category open', () => {
 
-    beforeEach(() => wrapper = mount(
-      <DragDropContextProvider backend={HTML5Backend}>
-        <ModuleCategory
-          name={"Add Data"}
-          modules={modules}
-          isReadOnly={false}
-          collapsed={false}
-          setOpenCategory={setOpenCategory}
-          libraryOpen={true}
+    beforeEach(() => {
+      setOpenCategory = jest.fn();
+      modules = [
+        <Module
+          key={"First Module"}
+          name={"First Module"}
+          icon={"add"}
+          id={88}
+          addModule={() => {}}
+          dropModule={() => {}}
+          isReadOnly={false} 
+          setOpenCategory={setOpenCategory}    
+        />,
+        <Module
+          key={"Second Module"}
+          name={"Second Module"}
+          icon={"url"}
+          id={101}
+          addModule={() => {}}
+          dropModule={() => {}}
+          isReadOnly={false} 
+          setOpenCategory={setOpenCategory}    
         />
-      </DragDropContextProvider>
-    ));
-    afterEach(() => wrapper.unmount());
+      ];
+      wrapper = mount(
+        <DragDropContextProvider backend={HTML5Backend}>
+          <ModuleCategory
+            name={"Add Data"}
+            modules={modules}
+            isReadOnly={false}
+            collapsed={false}
+            setOpenCategory={setOpenCategory}
+            libraryOpen={true}
+          />
+        </DragDropContextProvider>
+      )
+    });
+    afterEach(() => {
+      wrapper.unmount();
+    });
 
     it('Clicking an open category will collapse it', () => {
       // find category card
@@ -101,25 +136,52 @@ describe('ModuleCategory ', () => {
       // simulate a click on category
       category.simulate('click');
       // check: was setOpenCategory() called from props?
-      expect(setOpenCategory.mock.calls.length).toBe(2); // called once before
+      expect(setOpenCategory.mock.calls.length).toBe(1); 
     });
   });
 
   describe('Library closed, category collapsed ', () => {
 
-    beforeEach(() => wrapper = mount(
-      <DragDropContextProvider backend={HTML5Backend}>
-        <ModuleCategory
-          name={"Add data"}
-          modules={modules}
-          isReadOnly={false}
-          collapsed={true}
-          setOpenCategory={setOpenCategory}
-          libraryOpen={false}
+    beforeEach(() => {
+      setOpenCategory = jest.fn();
+      modules = [
+        <Module
+          key={"First Module"}
+          name={"First Module"}
+          icon={"add"}
+          id={88}
+          addModule={() => {}}
+          dropModule={() => {}}
+          isReadOnly={false} 
+          setOpenCategory={setOpenCategory}    
+        />,
+        <Module
+          key={"Second Module"}
+          name={"Second Module"}
+          icon={"url"}
+          id={101}
+          addModule={() => {}}
+          dropModule={() => {}}
+          isReadOnly={false} 
+          setOpenCategory={setOpenCategory}    
         />
-      </DragDropContextProvider>
-    ));
-    afterEach(() => wrapper.unmount());
+      ];
+      wrapper = mount(
+        <DragDropContextProvider backend={HTML5Backend}>
+          <ModuleCategory
+            name={"Add data"}
+            modules={modules}
+            isReadOnly={false}
+            collapsed={true}
+            setOpenCategory={setOpenCategory}
+            libraryOpen={false}
+          />
+        </DragDropContextProvider>
+      )
+    });
+    afterEach(() => {
+      wrapper.unmount();
+    });
 
     it('Renders with category icon, but without list of Module components', () => {
       expect(wrapper).toMatchSnapshot();
@@ -139,25 +201,52 @@ describe('ModuleCategory ', () => {
       // mouse enters category
       category.simulate('mouseEnter');
       // check: setOpenCategory() called from props
-      expect(setOpenCategory.mock.calls.length).toBe(3); // called twice before
+      expect(setOpenCategory.mock.calls.length).toBe(1); 
     });
   });
 
   describe('Library closed, category open', () => {
 
-    beforeEach(() => wrapper = mount(
-      <DragDropContextProvider backend={HTML5Backend}>
-        <ModuleCategory
-          name={"Add Data"}
-          modules={modules}
-          isReadOnly={false}
-          collapsed={false}
-          setOpenCategory={setOpenCategory}
-          libraryOpen={false}
+    beforeEach(() => {
+      setOpenCategory = jest.fn();
+      modules = [
+        <Module
+          key={"First Module"}
+          name={"First Module"}
+          icon={"add"}
+          id={88}
+          addModule={() => {}}
+          dropModule={() => {}}
+          isReadOnly={false} 
+          setOpenCategory={setOpenCategory}    
+        />,
+        <Module
+          key={"Second Module"}
+          name={"Second Module"}
+          icon={"url"}
+          id={101}
+          addModule={() => {}}
+          dropModule={() => {}}
+          isReadOnly={false} 
+          setOpenCategory={setOpenCategory}    
         />
-      </DragDropContextProvider>
-    ));
-    afterEach(() => wrapper.unmount());
+      ];
+      wrapper = mount(
+        <DragDropContextProvider backend={HTML5Backend}>
+          <ModuleCategory
+            name={"Add Data"}
+            modules={modules}
+            isReadOnly={false}
+            collapsed={false}
+            setOpenCategory={setOpenCategory}
+            libraryOpen={false}
+          />
+        </DragDropContextProvider>
+      )
+    });
+    afterEach(() => {
+      wrapper.unmount();
+    });
 
     it('Renders with list of Module components', () => {
       expect(wrapper).toMatchSnapshot();
@@ -165,22 +254,21 @@ describe('ModuleCategory ', () => {
       expect(wrapper.find('.ml-module-card')).toHaveLength(2);
     });
 
-    it('Mouse enter events on a category will close module list', () => {
+    it('Mouse leave events on a category will close module list', () => {
       // find category card
       let category = wrapper.find('.first-level');
       expect(category).toHaveLength(1);
       // ensure presence of module list
       let moduleList = wrapper.find('.ml-list-mini');
       expect(moduleList).toHaveLength(1);
-      category.simulate('mouseEnter');
-      expect(setOpenCategory.mock.calls.length).toBe(4);
+      category.simulate('mouseLeave');
+      expect(setOpenCategory.mock.calls.length).toBe(1); 
     });
 
     it('Mouse leave events on module list will close list display', () => {
-      let category = wrapper.find('.first-level');
       let moduleList = wrapper.find('.ml-list-mini');
       moduleList.simulate('mouseLeave');
-      expect(setOpenCategory.mock.calls.length).toBe(5);
+      expect(setOpenCategory.mock.calls.length).toBe(1);
     });
   });
 });

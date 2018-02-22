@@ -38,7 +38,7 @@ export default class ModuleLibraryClosed extends React.Component {
     }
 
     return (
-      <Modal isOpen={this.state.signInModalOpen} toggle={this.toggleSignInModal}>
+      <Modal isOpen={this.state.signInModalOpen} toggle={this.toggleSignInModal} className='test-signin-modal'>
         <ModalHeader className='dialog-header modal-header d-flex align-items-center' >
           <div className='t-d-gray title-4'>SIGN IN TO EDIT</div>
           <div className='icon-close' onClick={this.toggleSignInModal}></div>

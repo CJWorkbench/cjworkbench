@@ -60,6 +60,7 @@ export default class ModuleLibraryOpen extends React.Component {
           moduleAdded={this.props.moduleAdded}
           libraryOpen={true}
           api={this.props.api}
+          isReadOnly={this.props.isReadOnly}
         />
       </div>
     )

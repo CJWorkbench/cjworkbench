@@ -59,20 +59,18 @@ class Module extends React.Component {
     var moduleName = this.props.name;
     var icon = 'icon-' + this.props.icon + ' ml-icon';
 
-    var moduleCard =  <div className='card ml-module-card'>
-                        <div className='' onClick={this.itemClick} >
-                          <div className='second-level d-flex'>
-                            <div className='d-flex flex-row align-items-center'>
-                              <div className='ml-icon-container'>
-                                <div className={icon}></div>
-                              </div>
-                              <div>
-                                <div className='content-5 ml-module-name'>{moduleName}</div>
-                              </div>
+    var moduleCard =  <div className='card ml-module-card' onClick={this.itemClick}>
+                        <div className='second-level d-flex'>
+                          <div className='d-flex flex-row align-items-center'>
+                            <div className='ml-icon-container'>
+                              <div className={icon}></div>
                             </div>
-                            <div className='ml-handle'>
-                              <div className='icon-grip'></div>
+                            <div>
+                              <div className='content-5 ml-module-name'>{moduleName}</div>
                             </div>
+                          </div>
+                          <div className='ml-handle'>
+                            <div className='icon-grip'></div>
                           </div>
                         </div>
                       </div>
