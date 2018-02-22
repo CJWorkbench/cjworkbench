@@ -309,8 +309,7 @@ class WfModule extends React.Component {
         />)
       });
 
-    var inside = undefined;
-
+    var inside;
     if (!this.state.isCollapsed)
       inside =  <div className='module-card-params'>
                   <div className='module-description'>
@@ -319,7 +318,7 @@ class WfModule extends React.Component {
                   {paramdivs}
                 </div>;
 
-    var notes = undefined;
+    var notes;
     var value = ( this.wf_module.notes && (this.wf_module.notes != "") )
       ? this.wf_module.notes
       : "Write notes here"
@@ -336,13 +335,20 @@ class WfModule extends React.Component {
                 />
               </div>
 
-    var notesIcon = undefined;
+    var helpIcon;
+    if (!this.props['data-isReadOnly'])
+      helpIcon =  <a className='btn help-button d-flex align-items-center'
+                      href={this.module.help_url} target="_blank">
+                    <div className='icon-help'></div>
+                  </a>
+
+    var notesIcon;
     if (!this.state.showNotes && !this.props['data-isReadOnly'])
       notesIcon = <div className='context-button btn' onClick={this.showNotes}>
                     <div className='icon-note btn icon-l-gray '></div>
                   </div>
 
-    var contextMenu = undefined;
+    var contextMenu;
     if(!this.props['data-isReadOnly'])
       contextMenu = <WfModuleContextMenu
           removeModule={ () => this.removeModule() }
@@ -357,10 +363,7 @@ class WfModule extends React.Component {
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     var contextBtns =
         <div className='d-flex align-items-center' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
-          <a className='btn help-button d-flex align-items-center'
-             href={this.module.help_url} target="_blank">
-            <div className='icon-help'></div>
-          </a>
+          <div>{helpIcon}</div>
           <div>{notesIcon}</div>
           <div>{contextMenu}</div>
         </div>

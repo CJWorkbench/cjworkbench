@@ -290,6 +290,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                 "setWfLibraryCollapse": [Function],
               }
             }
+            isReadOnly={false}
             libraryOpen={true}
             moduleAdded={[Function]}
           >
@@ -698,14 +699,18 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       dropModule={[Function]}
                       icon="url"
                       id={3}
+                      isReadOnly={false}
                       name="Load from Enigma"
+                      setOpenCategory={[Function]}
                   />,
                     <DragSource(Module)
                       addModule={[Function]}
                       dropModule={[Function]}
                       icon="url"
                       id={2}
+                      isReadOnly={false}
                       name="Load from Facebork"
+                      setOpenCategory={[Function]}
                   />,
                   ]
                 }
@@ -759,7 +764,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             dropModule={[Function]}
                             icon="url"
                             id={3}
+                            isReadOnly={false}
                             name="Load from Enigma"
+                            setOpenCategory={[Function]}
                           >
                             <Module
                               addModule={[Function]}
@@ -768,43 +775,41 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               icon="url"
                               id={3}
                               isDragging={false}
+                              isReadOnly={false}
                               name="Load from Enigma"
+                              setOpenCategory={[Function]}
                             >
                               <div
                                 className="card ml-module-card"
+                                onClick={[Function]}
                               >
                                 <div
-                                  className=""
-                                  onClick={[Function]}
+                                  className="second-level d-flex"
                                 >
                                   <div
-                                    className="second-level d-flex"
+                                    className="d-flex flex-row align-items-center"
                                   >
                                     <div
-                                      className="d-flex flex-row align-items-center"
+                                      className="ml-icon-container"
                                     >
                                       <div
-                                        className="ml-icon-container"
-                                      >
-                                        <div
-                                          className="icon-url ml-icon"
-                                        />
-                                      </div>
-                                      <div>
-                                        <div
-                                          className="content-5 ml-module-name"
-                                        >
-                                          Load from Enigma
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ml-handle"
-                                    >
-                                      <div
-                                        className="icon-grip"
+                                        className="icon-url ml-icon"
                                       />
                                     </div>
+                                    <div>
+                                      <div
+                                        className="content-5 ml-module-name"
+                                      >
+                                        Load from Enigma
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="ml-handle"
+                                  >
+                                    <div
+                                      className="icon-grip"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -815,7 +820,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             dropModule={[Function]}
                             icon="url"
                             id={2}
+                            isReadOnly={false}
                             name="Load from Facebork"
+                            setOpenCategory={[Function]}
                           >
                             <Module
                               addModule={[Function]}
@@ -824,43 +831,41 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               icon="url"
                               id={2}
                               isDragging={false}
+                              isReadOnly={false}
                               name="Load from Facebork"
+                              setOpenCategory={[Function]}
                             >
                               <div
                                 className="card ml-module-card"
+                                onClick={[Function]}
                               >
                                 <div
-                                  className=""
-                                  onClick={[Function]}
+                                  className="second-level d-flex"
                                 >
                                   <div
-                                    className="second-level d-flex"
+                                    className="d-flex flex-row align-items-center"
                                   >
                                     <div
-                                      className="d-flex flex-row align-items-center"
+                                      className="ml-icon-container"
                                     >
                                       <div
-                                        className="ml-icon-container"
-                                      >
-                                        <div
-                                          className="icon-url ml-icon"
-                                        />
-                                      </div>
-                                      <div>
-                                        <div
-                                          className="content-5 ml-module-name"
-                                        >
-                                          Load from Facebork
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ml-handle"
-                                    >
-                                      <div
-                                        className="icon-grip"
+                                        className="icon-url ml-icon"
                                       />
                                     </div>
+                                    <div>
+                                      <div
+                                        className="content-5 ml-module-name"
+                                      >
+                                        Load from Facebork
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="ml-handle"
+                                  >
+                                    <div
+                                      className="icon-grip"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -883,7 +888,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       dropModule={[Function]}
                       icon="chart"
                       id={1}
+                      isReadOnly={false}
                       name="Chartbuilder"
+                      setOpenCategory={[Function]}
                   />,
                   ]
                 }
@@ -937,7 +944,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             dropModule={[Function]}
                             icon="chart"
                             id={1}
+                            isReadOnly={false}
                             name="Chartbuilder"
+                            setOpenCategory={[Function]}
                           >
                             <Module
                               addModule={[Function]}
@@ -946,43 +955,41 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               icon="chart"
                               id={1}
                               isDragging={false}
+                              isReadOnly={false}
                               name="Chartbuilder"
+                              setOpenCategory={[Function]}
                             >
                               <div
                                 className="card ml-module-card"
+                                onClick={[Function]}
                               >
                                 <div
-                                  className=""
-                                  onClick={[Function]}
+                                  className="second-level d-flex"
                                 >
                                   <div
-                                    className="second-level d-flex"
+                                    className="d-flex flex-row align-items-center"
                                   >
                                     <div
-                                      className="d-flex flex-row align-items-center"
+                                      className="ml-icon-container"
                                     >
                                       <div
-                                        className="ml-icon-container"
-                                      >
-                                        <div
-                                          className="icon-chart ml-icon"
-                                        />
-                                      </div>
-                                      <div>
-                                        <div
-                                          className="content-5 ml-module-name"
-                                        >
-                                          Chartbuilder
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ml-handle"
-                                    >
-                                      <div
-                                        className="icon-grip"
+                                        className="icon-chart ml-icon"
                                       />
                                     </div>
+                                    <div>
+                                      <div
+                                        className="content-5 ml-module-name"
+                                      >
+                                        Chartbuilder
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="ml-handle"
+                                  >
+                                    <div
+                                      className="icon-grip"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -1005,14 +1012,18 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       dropModule={[Function]}
                       icon="url"
                       id={4}
+                      isReadOnly={false}
                       name="Other Module 1"
+                      setOpenCategory={[Function]}
                   />,
                     <DragSource(Module)
                       addModule={[Function]}
                       dropModule={[Function]}
                       icon="url"
                       id={6}
+                      isReadOnly={false}
                       name="Other Module 3"
+                      setOpenCategory={[Function]}
                   />,
                   ]
                 }
@@ -1066,7 +1077,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             dropModule={[Function]}
                             icon="url"
                             id={4}
+                            isReadOnly={false}
                             name="Other Module 1"
+                            setOpenCategory={[Function]}
                           >
                             <Module
                               addModule={[Function]}
@@ -1075,43 +1088,41 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               icon="url"
                               id={4}
                               isDragging={false}
+                              isReadOnly={false}
                               name="Other Module 1"
+                              setOpenCategory={[Function]}
                             >
                               <div
                                 className="card ml-module-card"
+                                onClick={[Function]}
                               >
                                 <div
-                                  className=""
-                                  onClick={[Function]}
+                                  className="second-level d-flex"
                                 >
                                   <div
-                                    className="second-level d-flex"
+                                    className="d-flex flex-row align-items-center"
                                   >
                                     <div
-                                      className="d-flex flex-row align-items-center"
+                                      className="ml-icon-container"
                                     >
                                       <div
-                                        className="ml-icon-container"
-                                      >
-                                        <div
-                                          className="icon-url ml-icon"
-                                        />
-                                      </div>
-                                      <div>
-                                        <div
-                                          className="content-5 ml-module-name"
-                                        >
-                                          Other Module 1
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ml-handle"
-                                    >
-                                      <div
-                                        className="icon-grip"
+                                        className="icon-url ml-icon"
                                       />
                                     </div>
+                                    <div>
+                                      <div
+                                        className="content-5 ml-module-name"
+                                      >
+                                        Other Module 1
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="ml-handle"
+                                  >
+                                    <div
+                                      className="icon-grip"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -1122,7 +1133,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             dropModule={[Function]}
                             icon="url"
                             id={6}
+                            isReadOnly={false}
                             name="Other Module 3"
+                            setOpenCategory={[Function]}
                           >
                             <Module
                               addModule={[Function]}
@@ -1131,43 +1144,41 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               icon="url"
                               id={6}
                               isDragging={false}
+                              isReadOnly={false}
                               name="Other Module 3"
+                              setOpenCategory={[Function]}
                             >
                               <div
                                 className="card ml-module-card"
+                                onClick={[Function]}
                               >
                                 <div
-                                  className=""
-                                  onClick={[Function]}
+                                  className="second-level d-flex"
                                 >
                                   <div
-                                    className="second-level d-flex"
+                                    className="d-flex flex-row align-items-center"
                                   >
                                     <div
-                                      className="d-flex flex-row align-items-center"
+                                      className="ml-icon-container"
                                     >
                                       <div
-                                        className="ml-icon-container"
-                                      >
-                                        <div
-                                          className="icon-url ml-icon"
-                                        />
-                                      </div>
-                                      <div>
-                                        <div
-                                          className="content-5 ml-module-name"
-                                        >
-                                          Other Module 3
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ml-handle"
-                                    >
-                                      <div
-                                        className="icon-grip"
+                                        className="icon-url ml-icon"
                                       />
                                     </div>
+                                    <div>
+                                      <div
+                                        className="content-5 ml-module-name"
+                                      >
+                                        Other Module 3
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="ml-handle"
+                                  >
+                                    <div
+                                      className="icon-grip"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -1190,7 +1201,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       dropModule={[Function]}
                       icon="url"
                       id={5}
+                      isReadOnly={false}
                       name="Other Module 2"
+                      setOpenCategory={[Function]}
                   />,
                   ]
                 }
@@ -1244,7 +1257,9 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             dropModule={[Function]}
                             icon="url"
                             id={5}
+                            isReadOnly={false}
                             name="Other Module 2"
+                            setOpenCategory={[Function]}
                           >
                             <Module
                               addModule={[Function]}
@@ -1253,43 +1268,41 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               icon="url"
                               id={5}
                               isDragging={false}
+                              isReadOnly={false}
                               name="Other Module 2"
+                              setOpenCategory={[Function]}
                             >
                               <div
                                 className="card ml-module-card"
+                                onClick={[Function]}
                               >
                                 <div
-                                  className=""
-                                  onClick={[Function]}
+                                  className="second-level d-flex"
                                 >
                                   <div
-                                    className="second-level d-flex"
+                                    className="d-flex flex-row align-items-center"
                                   >
                                     <div
-                                      className="d-flex flex-row align-items-center"
+                                      className="ml-icon-container"
                                     >
                                       <div
-                                        className="ml-icon-container"
-                                      >
-                                        <div
-                                          className="icon-url ml-icon"
-                                        />
-                                      </div>
-                                      <div>
-                                        <div
-                                          className="content-5 ml-module-name"
-                                        >
-                                          Other Module 2
-                                        </div>
-                                      </div>
-                                    </div>
-                                    <div
-                                      className="ml-handle"
-                                    >
-                                      <div
-                                        className="icon-grip"
+                                        className="icon-url ml-icon"
                                       />
                                     </div>
+                                    <div>
+                                      <div
+                                        className="content-5 ml-module-name"
+                                      >
+                                        Other Module 2
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div
+                                    className="ml-handle"
+                                  >
+                                    <div
+                                      className="icon-grip"
+                                    />
                                   </div>
                                 </div>
                               </div>
@@ -1356,6 +1369,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                 "setWfLibraryCollapse": [Function],
               }
             }
+            isReadOnly={false}
             libraryOpen={true}
             moduleAdded={[Function]}
           >
@@ -1450,125 +1464,131 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
           </div>
         </div>
         <div
-          className="card"
           onClick={[Function]}
         >
           <div
-            className="closed-ML--category"
-          >
-            <div
-              className="icon-search-white ml-icon-search"
-            />
-          </div>
-        </div>
-        <ModuleCategories
-          addModule={[Function]}
-          dropModule={[Function]}
-          isReadOnly={true}
-          items={Array []}
-          libraryOpen={false}
-          openCategory="Add data"
-          setOpenCategory={[Function]}
-        >
-          <div
-            className="list"
-          />
-        </ModuleCategories>
-        ;
-        <DragSource(AddNotificationButtonClosed)
-          setOpenCategory={[Function]}
-        >
-          <AddNotificationButtonClosed
-            connectDragSource={[Function]}
-            isDragging={false}
-            setOpenCategory={[Function]}
-          >
-            <div
-              className="notification-button-closed"
-              onClick={[Function]}
-              onMouseEnter={[Function]}
-              onMouseLeave={[Function]}
-            >
-              <div
-                className="card"
-              >
-                <div
-                  className="closed-ML--category t-vl-gray"
-                >
-                  <div
-                    className="ml-icon-container"
-                  >
-                    <div
-                      className="icon-notification ml-icon"
-                      title="Add Notification"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div
-                className="card alert-closed-ML"
-                style={
-                  Object {
-                    "display": "none",
-                  }
-                }
-              >
-                <div
-                  className="second-level d-flex "
-                >
-                  <div
-                    className="content-5  my-auto mr-5"
-                  >
-                    Add data alert
-                  </div>
-                  <div
-                    className="ml-handle"
-                  >
-                    <div
-                      className="icon-grip"
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </AddNotificationButtonClosed>
-        </DragSource(AddNotificationButtonClosed)>
-        <ImportModuleFromGitHub
-          api={
-            Object {
-              "getModules": [Function],
-              "setWfLibraryCollapse": [Function],
-            }
-          }
-          libraryOpen={false}
-          moduleAdded={[Function]}
-        >
-          <div
-            className=""
+            className="card"
+            onClick={[Function]}
           >
             <div
               className="closed-ML--category"
-              onClick={[Function]}
             >
               <div
-                className="icon-add"
-                title="Import From Github"
+                className="icon-search-white ml-icon-search"
               />
             </div>
-            <Modal
-              autoFocus={true}
-              backdrop={true}
-              backdropTransitionTimeout={150}
-              className="modal-dialog"
-              fade={true}
-              isOpen={false}
-              keyboard={true}
-              modalTransitionTimeout={300}
-              toggle={[Function]}
-              zIndex={1050}
-            />
           </div>
-        </ImportModuleFromGitHub>
+          <ModuleCategories
+            addModule={[Function]}
+            dropModule={[Function]}
+            isReadOnly={true}
+            items={Array []}
+            libraryOpen={false}
+            openCategory="Add data"
+            setOpenCategory={[Function]}
+          >
+            <div
+              className="list"
+            />
+          </ModuleCategories>
+          <DragSource(AddNotificationButtonClosed)
+            isReadOnly={true}
+            setOpenCategory={[Function]}
+          >
+            <AddNotificationButtonClosed
+              connectDragSource={[Function]}
+              isDragging={false}
+              isReadOnly={true}
+              setOpenCategory={[Function]}
+            >
+              <div
+                className="notification-button-closed"
+                onClick={[Function]}
+                onMouseEnter={[Function]}
+                onMouseLeave={[Function]}
+              >
+                <div
+                  className="card"
+                >
+                  <div
+                    className="closed-ML--category t-vl-gray"
+                  >
+                    <div
+                      className="ml-icon-container"
+                    >
+                      <div
+                        className="icon-notification ml-icon"
+                        title="Add Notification"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="card alert-closed-ML"
+                  style={
+                    Object {
+                      "display": "none",
+                    }
+                  }
+                >
+                  <div
+                    className="second-level d-flex "
+                  >
+                    <div
+                      className="content-5  my-auto mr-5"
+                    >
+                      Add data alert
+                    </div>
+                    <div
+                      className="ml-handle"
+                    >
+                      <div
+                        className="icon-grip"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </AddNotificationButtonClosed>
+          </DragSource(AddNotificationButtonClosed)>
+          <ImportModuleFromGitHub
+            api={
+              Object {
+                "getModules": [Function],
+                "setWfLibraryCollapse": [Function],
+              }
+            }
+            isReadOnly={true}
+            libraryOpen={false}
+            moduleAdded={[Function]}
+          >
+            <div
+              className=""
+            >
+              <div
+                className="closed-ML--category"
+                onClick={[Function]}
+              >
+                <div
+                  className="icon-add"
+                  title="Import From Github"
+                />
+              </div>
+              <Modal
+                autoFocus={true}
+                backdrop={true}
+                backdropTransitionTimeout={150}
+                className="modal-dialog"
+                fade={true}
+                isOpen={false}
+                keyboard={true}
+                modalTransitionTimeout={300}
+                toggle={[Function]}
+                zIndex={1050}
+              />
+            </div>
+          </ImportModuleFromGitHub>
+        </div>
       </div>
     </ModuleLibraryClosed>
   </ModuleLibrary>

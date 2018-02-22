@@ -25,8 +25,6 @@ export default class ModuleCategories extends React.Component {
     this.renderCategories();
   }
 
-  // props.items is empty on initial render, necessary to show items on initial load
-  // ??? Should this check for difference in Props, like in ModuleSearch.js?
   componentWillReceiveProps(newProps) {
     this.renderCategories(newProps);
   }
@@ -48,6 +46,8 @@ export default class ModuleCategories extends React.Component {
         id={item.id}
         addModule={properties.addModule}
         dropModule={properties.dropModule}
+        isReadOnly={properties.isReadOnly} 
+        setOpenCategory={properties.setOpenCategory}                
       />;
 
       if (currentCategory  === null) {

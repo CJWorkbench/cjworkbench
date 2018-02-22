@@ -69,29 +69,27 @@ export default class ModuleLibrary extends React.Component {
    * - version
    */
   componentWillMount() {
-    if (!this.props.isReadOnly) { // don't load modules if we can't open library
-      this.props.api.getModules()
-        .then(json => {
+    this.props.api.getModules()
+      .then(json => {
 
-          var categories = ['Add data', 'Prepare', 'Edit', 'Analyze', 'Visualize', 'Code', 'Other'];
-          var modules = [];
+        var categories = ['Add data', 'Prepare', 'Edit', 'Analyze', 'Visualize', 'Code', 'Other'];
+        var modules = [];
 
-          // Order modules by categories in order above, then alphabetically by name within category
-          for (var cat of categories) {
-            let catModules = json.filter( (m) => { return m.category == cat; } );
-            catModules.sort(compareCategoryName);
-            modules = modules.concat(catModules)
-          }
+        // Order modules by categories in order above, then alphabetically by name within category
+        for (var cat of categories) {
+          let catModules = json.filter( (m) => { return m.category == cat; } );
+          catModules.sort(compareCategoryName);
+          modules = modules.concat(catModules)
+        }
 
-          // See if there are any remanining modules, and if there are, add them under Other
-          var remainingModules = json.filter( (item) =>
-            { return modules.indexOf(item) === -1; });
-          remainingModules.sort(compareCategoryName);
-          modules = modules.concat(remainingModules);
+        // See if there are any remanining modules, and if there are, add them under Other
+        var remainingModules = json.filter( (item) =>
+          { return modules.indexOf(item) === -1; });
+        remainingModules.sort(compareCategoryName);
+        modules = modules.concat(remainingModules);
 
-          this.setState({ items: modules });
-        })
-    }
+        this.setState({ items: modules });
+      })
   }
 
   // Categories call this to indicate that they've been opened, so we can close all the rest
@@ -125,7 +123,7 @@ export default class ModuleLibrary extends React.Component {
   // Main render.
   render() {
 
-    if (this.props.libraryOpen) {
+    if (this.props.libraryOpen && !this.props.isReadOnly) {
       // Outermost div seems necessary to set background color below ImportFromGithub
       return (
         <div>

@@ -397,7 +397,7 @@ WfParameter.propTypes = {
   p:                PropTypes.object.isRequired,  // the actual parameter json
   wf_module_id:     PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,
-  loggedInUser:     PropTypes.object.isRequired,
+  loggedInUser:     PropTypes.object,             // in read-only there is no user logged in
   api:              PropTypes.object.isRequired,
   updateSettings:   PropTypes.object,             // only for modules that load data
   changeParam:      PropTypes.func.isRequired,

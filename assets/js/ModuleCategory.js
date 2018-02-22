@@ -22,6 +22,7 @@ export default class ModuleCategory extends React.Component {
       collapsed: props.collapsed
     };
     this.toggleCollapse = this.toggleCollapse.bind(this);
+    this.openCategory = this.openCategory.bind(this);    
     this.collapseAll = this.collapseAll.bind(this);
   }
 
@@ -33,6 +34,10 @@ export default class ModuleCategory extends React.Component {
   toggleCollapse() {
     var newCollapsed = !this.state.collapsed;
     this.props.setOpenCategory(newCollapsed ? null : this.props.name); // tell parent, so it can close other cats
+  }
+
+  openCategory() {
+    this.props.setOpenCategory(this.props.name); // tell parent to close all
   }
 
   collapseAll() {
@@ -47,15 +52,14 @@ export default class ModuleCategory extends React.Component {
 
     var sortIcon = isOpen ? 'icon-sort-up-vl-gray' : 'icon-sort-down-vl-gray';
 
-    // ??? are these the correct icons per category ???
     const icons = {
       'Add data': 'database',
-      'Analyze': 'notepad',
-      'Prepare':'wrangle',
+      'Prepare': 'wrangle',
+      'Edit': 'edit',
+      'Analyze': 'notepad',         
       'Visualize': 'chart',
       'Code': 'code',
-      'Edit':'edit'
-
+      'Other': 'more'               
     }
     var categoryIcon = 'icon-' + icons[this.props.name] + ' ml-icon';
 
@@ -68,7 +72,11 @@ export default class ModuleCategory extends React.Component {
                         </div>
                       </div>
     } else {
-      categoryHead =  <div className='first-level' onMouseEnter={this.toggleCollapse} >
+      categoryHead =  <div 
+                        className='first-level' 
+                        onMouseEnter={this.openCategory} 
+                        onMouseLeave={this.collapseAll} 
+                      >
                         <div className='closed-ML--category' >
                           <span className={categoryIcon}></span>
                         </div>
@@ -82,7 +90,11 @@ export default class ModuleCategory extends React.Component {
                       <div className="ml-list">{this.props.modules}</div>
                     </Collapse>
     } else if (isOpen) {
-      moduleList =  <div className="ml-list-mini" onMouseLeave={this.collapseAll}>
+      moduleList =  <div 
+                      className="ml-list-mini" 
+                      onMouseEnter={this.openCategory} 
+                      onMouseLeave={this.collapseAll}
+                    >
                       {this.props.modules}
                     </div>
     } else {

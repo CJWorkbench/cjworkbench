@@ -161,8 +161,8 @@ describe('ModuleLibrary', () => {
 
     it('Renders in closed state, without modules', () => {
       expect(wrapper).toMatchSnapshot();
-      // should NOT call getModules
-      expect(api.getModules.mock.calls.length).toBe(0);
+      // does call getModules
+      expect(api.getModules.mock.calls.length).toBe(1);
       // check that Library is closed
       expect(wrapper.find('.module-library--closed')).toHaveLength(1);
     });

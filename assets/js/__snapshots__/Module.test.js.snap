@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Module  Renders a card, with icon received from props 1`] = `
+exports[`Module NOT Read-only Renders a card, with icon received from props 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
@@ -9,7 +9,9 @@ exports[`Module  Renders a card, with icon received from props 1`] = `
     dropModule={[Function]}
     icon="add"
     id={88}
+    isReadOnly={false}
     name="Sweet Module"
+    setOpenCategory={[Function]}
   >
     <Module
       addModule={[Function]}
@@ -18,43 +20,104 @@ exports[`Module  Renders a card, with icon received from props 1`] = `
       icon="add"
       id={88}
       isDragging={false}
+      isReadOnly={false}
       name="Sweet Module"
+      setOpenCategory={[Function]}
     >
       <div
         className="card ml-module-card"
+        onClick={[Function]}
       >
         <div
-          className=""
-          onClick={[Function]}
+          className="second-level d-flex"
         >
           <div
-            className="second-level d-flex"
+            className="d-flex flex-row align-items-center"
           >
             <div
-              className="d-flex flex-row align-items-center"
+              className="ml-icon-container"
             >
               <div
-                className="ml-icon-container"
-              >
-                <div
-                  className="icon-add ml-icon"
-                />
-              </div>
-              <div>
-                <div
-                  className="content-5 ml-module-name"
-                >
-                  Sweet Module
-                </div>
-              </div>
-            </div>
-            <div
-              className="ml-handle"
-            >
-              <div
-                className="icon-grip"
+                className="icon-add ml-icon"
               />
             </div>
+            <div>
+              <div
+                className="content-5 ml-module-name"
+              >
+                Sweet Module
+              </div>
+            </div>
+          </div>
+          <div
+            className="ml-handle"
+          >
+            <div
+              className="icon-grip"
+            />
+          </div>
+        </div>
+      </div>
+    </Module>
+  </DragSource(Module)>
+</DragDropContextProvider>
+`;
+
+exports[`Module Read-only Renders a card, with icon received from props 1`] = `
+<DragDropContextProvider
+  backend={[Function]}
+>
+  <DragSource(Module)
+    addModule={[Function]}
+    dropModule={[Function]}
+    icon="add"
+    id={88}
+    isReadOnly={true}
+    name="Sweet Module"
+    setOpenCategory={[Function]}
+  >
+    <Module
+      addModule={[Function]}
+      connectDragSource={[Function]}
+      dropModule={[Function]}
+      icon="add"
+      id={88}
+      isDragging={false}
+      isReadOnly={true}
+      name="Sweet Module"
+      setOpenCategory={[Function]}
+    >
+      <div
+        className="card ml-module-card"
+        onClick={[Function]}
+      >
+        <div
+          className="second-level d-flex"
+        >
+          <div
+            className="d-flex flex-row align-items-center"
+          >
+            <div
+              className="ml-icon-container"
+            >
+              <div
+                className="icon-add ml-icon"
+              />
+            </div>
+            <div>
+              <div
+                className="content-5 ml-module-name"
+              >
+                Sweet Module
+              </div>
+            </div>
+          </div>
+          <div
+            className="ml-handle"
+          >
+            <div
+              className="icon-grip"
+            />
           </div>
         </div>
       </div>

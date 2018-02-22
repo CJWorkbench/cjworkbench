@@ -45,44 +45,53 @@ class Module extends React.Component {
   }
 
   itemClick(evt) {
-    this.props.addModule(this.props.id);
-    // Toggle temporarily disabled
-    // this.workflow.toggleModuleLibrary();
+    if (!this.props.isReadOnly) this.props.addModule(this.props.id);
+    // collapse category after click
+    this.props.setOpenCategory(null); 
+  }
+
+  componentWillReceiveProps(newProps) {
+    if (newProps.isDragging !== this.props.isDragging && newProps.isDragging) 
+      this.props.setOpenCategory(null);
   }
 
   render() {
     var moduleName = this.props.name;
     var icon = 'icon-' + this.props.icon + ' ml-icon';
 
-    return this.props.connectDragSource(
-      <div className='card ml-module-card'>
-        <div className='' onClick={this.itemClick} >
-          <div className='second-level d-flex'>
-            <div className='d-flex flex-row align-items-center'>
-              <div className='ml-icon-container'>
-                <div className={icon}></div>
-              </div>
-              <div>
-                <div className='content-5 ml-module-name'>{moduleName}</div>
-              </div>
-            </div>
-            <div className='ml-handle'>
-              <div className='icon-grip'></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
+    var moduleCard =  <div className='card ml-module-card' onClick={this.itemClick}>
+                        <div className='second-level d-flex'>
+                          <div className='d-flex flex-row align-items-center'>
+                            <div className='ml-icon-container'>
+                              <div className={icon}></div>
+                            </div>
+                            <div>
+                              <div className='content-5 ml-module-name'>{moduleName}</div>
+                            </div>
+                          </div>
+                          <div className='ml-handle'>
+                            <div className='icon-grip'></div>
+                          </div>
+                        </div>
+                      </div>
+
+    // Do not allow dragging if in Read-Only
+    if (this.props.isReadOnly) {
+      return moduleCard;
+    } else {
+      return this.props.connectDragSource(moduleCard);
+    }
   }
 }
 
 Module.propTypes = {
-  id:         PropTypes.number.isRequired,
-  name:       PropTypes.string.isRequired,
-  icon:       PropTypes.string.isRequired,
-  addModule:  PropTypes.func,
-  dropModule: PropTypes.func,
-//  workflow:   PropTypes.object
+  id:               PropTypes.number.isRequired,
+  name:             PropTypes.string.isRequired,
+  icon:             PropTypes.string.isRequired,
+  addModule:        PropTypes.func,
+  dropModule:       PropTypes.func,
+  isReadOnly:       PropTypes.bool.isRequired,
+  setOpenCategory:  PropTypes.func.isRequired,
 };
 
 export default DragSource('module', spec, collect)(Module);

@@ -7,6 +7,7 @@ exports[`ImportModuleFromGitHub Library closed Renders a link, which will open m
       "importFromGithub": [Function],
     }
   }
+  isReadOnly={false}
   libraryOpen={true}
   moduleAdded={[Function]}
 >
@@ -144,6 +145,7 @@ exports[`ImportModuleFromGitHub Library open Renders a link, which will open mod
       "importFromGithub": [Function],
     }
   }
+  isReadOnly={false}
   libraryOpen={true}
   moduleAdded={[Function]}
 >

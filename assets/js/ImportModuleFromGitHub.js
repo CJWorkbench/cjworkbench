@@ -183,5 +183,6 @@ export default class ImportModuleFromGitHub extends React.Component {
 ImportModuleFromGitHub.propTypes = {
   moduleAdded: PropTypes.func.isRequired,
   libraryOpen: PropTypes.bool.isRequired,
-  api:         PropTypes.object.isRequired
+  api:         PropTypes.object.isRequired,
+  isReadOnly:  PropTypes.bool.isRequired
 };

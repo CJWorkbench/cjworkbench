@@ -53,8 +53,7 @@ export default class WfModuleContextMenu extends React.Component {
     if (window.location.href == 'about:blank') {
       return path;
     } else {
-      var url = new URL(path, window.location.href).href;
-      return url;
+      return new URL(path, window.location.href).href;
     }
   }
 
@@ -64,8 +63,7 @@ export default class WfModuleContextMenu extends React.Component {
     if (window.location.href == 'about:blank') {
       return path;
     } else {
-      var url = new URL(path, window.location.href).href;
-      return url;
+      return new URL(path, window.location.href).href;
     }
   }
 
@@ -133,7 +131,7 @@ export default class WfModuleContextMenu extends React.Component {
 
     return (
       <Modal isOpen={this.state.exportModalOpen} toggle={this.toggleExportModal} className={this.props.className}>
-        <ModalHeader toggle={this.toggleModal} className='dialog-header modal-header d-flex align-items-center' >
+        <ModalHeader className='dialog-header modal-header d-flex align-items-center' >
           <div className='t-d-gray title-4'>EXPORT DATA</div>
           <div className='icon-close' onClick={this.toggleExportModal}></div>
         </ModalHeader>

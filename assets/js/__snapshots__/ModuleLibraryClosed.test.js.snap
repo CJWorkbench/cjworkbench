@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
+exports[`ModuleLibraryClosed NOT Read-Only Renders 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
@@ -56,111 +56,119 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
         </div>
       </div>
       <div
-        className="card"
         onClick={[Function]}
       >
         <div
-          className="closed-ML--category"
+          className="card"
+          onClick={[Function]}
         >
           <div
-            className="icon-search-white ml-icon-search"
-          />
-        </div>
-      </div>
-      <ModuleCategories
-        addModule={[Function]}
-        dropModule={[Function]}
-        isReadOnly={false}
-        items={
-          Array [
-            Object {
-              "author": "Workbench",
-              "category": "Add data",
-              "description": "Connect a dataset from Enigma's collection via URL.",
-              "icon": "url",
-              "id": 4,
-              "link": "",
-              "name": "Load from Enigma",
-            },
-            Object {
-              "author": "Workbench",
-              "category": "Filter",
-              "description": "Filter rows by matching text in specific columns.",
-              "icon": "filter",
-              "id": 10,
-              "link": "",
-              "name": "Filter by Text",
-            },
-          ]
-        }
-        libraryOpen={false}
-        openCategory="Add data"
-        setOpenCategory={[Function]}
-      >
-        <div
-          className="list"
-        >
-          <ModuleCategory
-            collapsed={false}
-            isReadOnly={false}
-            libraryOpen={false}
-            modules={
-              Array [
-                <DragSource(Module)
-                  addModule={[Function]}
-                  dropModule={[Function]}
-                  icon="url"
-                  id={4}
-                  name="Load from Enigma"
-              />,
-              ]
-            }
-            name="Add data"
-            setOpenCategory={[Function]}
+            className="closed-ML--category"
           >
             <div
-              className="card module-category--open"
-            >
-              <div
-                className="module-category--wrapper"
-              >
-                <div
-                  className="first-level"
-                  onMouseEnter={[Function]}
-                >
-                  <div
-                    className="closed-ML--category"
-                  >
-                    <span
-                      className="icon-database ml-icon"
-                    />
-                  </div>
-                </div>
-                <div
-                  className="ml-list-mini"
-                  onMouseLeave={[Function]}
-                >
+              className="icon-search-white ml-icon-search"
+            />
+          </div>
+        </div>
+        <ModuleCategories
+          addModule={[Function]}
+          dropModule={[Function]}
+          isReadOnly={false}
+          items={
+            Array [
+              Object {
+                "author": "Workbench",
+                "category": "Add data",
+                "description": "Connect a dataset from Enigma's collection via URL.",
+                "icon": "url",
+                "id": 4,
+                "link": "",
+                "name": "Load from Enigma",
+              },
+              Object {
+                "author": "Workbench",
+                "category": "Filter",
+                "description": "Filter rows by matching text in specific columns.",
+                "icon": "filter",
+                "id": 10,
+                "link": "",
+                "name": "Filter by Text",
+              },
+            ]
+          }
+          libraryOpen={false}
+          openCategory="Add data"
+          setOpenCategory={[Function]}
+        >
+          <div
+            className="list"
+          >
+            <ModuleCategory
+              collapsed={false}
+              isReadOnly={false}
+              libraryOpen={false}
+              modules={
+                Array [
                   <DragSource(Module)
                     addModule={[Function]}
                     dropModule={[Function]}
                     icon="url"
                     id={4}
+                    isReadOnly={false}
                     name="Load from Enigma"
+                    setOpenCategory={[Function]}
+                />,
+                ]
+              }
+              name="Add data"
+              setOpenCategory={[Function]}
+            >
+              <div
+                className="card module-category--open"
+              >
+                <div
+                  className="module-category--wrapper"
+                >
+                  <div
+                    className="first-level"
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
                   >
-                    <Module
+                    <div
+                      className="closed-ML--category"
+                    >
+                      <span
+                        className="icon-database ml-icon"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="ml-list-mini"
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                  >
+                    <DragSource(Module)
                       addModule={[Function]}
-                      connectDragSource={[Function]}
                       dropModule={[Function]}
                       icon="url"
                       id={4}
-                      isDragging={false}
+                      isReadOnly={false}
                       name="Load from Enigma"
+                      setOpenCategory={[Function]}
                     >
-                      <div
-                        className="card ml-module-card"
+                      <Module
+                        addModule={[Function]}
+                        connectDragSource={[Function]}
+                        dropModule={[Function]}
+                        icon="url"
+                        id={4}
+                        isDragging={false}
+                        isReadOnly={false}
+                        name="Load from Enigma"
+                        setOpenCategory={[Function]}
                       >
                         <div
-                          className=""
+                          className="card ml-module-card"
                           onClick={[Function]}
                         >
                           <div
@@ -193,144 +201,498 @@ exports[`ModuleLibraryClosed Renders all subcomponents 1`] = `
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </Module>
-                  </DragSource(Module)>
+                      </Module>
+                    </DragSource(Module)>
+                  </div>
                 </div>
               </div>
-            </div>
-          </ModuleCategory>
-          <ModuleCategory
-            collapsed={true}
+            </ModuleCategory>
+            <ModuleCategory
+              collapsed={true}
+              isReadOnly={false}
+              libraryOpen={false}
+              modules={
+                Array [
+                  <DragSource(Module)
+                    addModule={[Function]}
+                    dropModule={[Function]}
+                    icon="filter"
+                    id={10}
+                    isReadOnly={false}
+                    name="Filter by Text"
+                    setOpenCategory={[Function]}
+                />,
+                ]
+              }
+              name="Filter"
+              setOpenCategory={[Function]}
+            >
+              <div
+                className="card module-category--closed"
+              >
+                <div
+                  className="module-category--wrapper"
+                >
+                  <div
+                    className="first-level"
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                  >
+                    <div
+                      className="closed-ML--category"
+                    >
+                      <span
+                        className="icon-undefined ml-icon"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ModuleCategory>
+          </div>
+        </ModuleCategories>
+        <DragSource(AddNotificationButtonClosed)
+          isReadOnly={false}
+          setOpenCategory={[Function]}
+        >
+          <AddNotificationButtonClosed
+            connectDragSource={[Function]}
+            isDragging={false}
             isReadOnly={false}
-            libraryOpen={false}
-            modules={
-              Array [
-                <DragSource(Module)
-                  addModule={[Function]}
-                  dropModule={[Function]}
-                  icon="filter"
-                  id={10}
-                  name="Filter by Text"
-              />,
-              ]
-            }
-            name="Filter"
             setOpenCategory={[Function]}
           >
             <div
-              className="card module-category--closed"
+              className="notification-button-closed"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
             >
               <div
-                className="module-category--wrapper"
+                className="card"
               >
                 <div
-                  className="first-level"
-                  onMouseEnter={[Function]}
+                  className="closed-ML--category t-vl-gray"
                 >
                   <div
-                    className="closed-ML--category"
+                    className="ml-icon-container"
                   >
-                    <span
-                      className="icon-undefined ml-icon"
+                    <div
+                      className="icon-notification ml-icon"
+                      title="Add Notification"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                className="card alert-closed-ML"
+                style={
+                  Object {
+                    "display": "none",
+                  }
+                }
+              >
+                <div
+                  className="second-level d-flex "
+                >
+                  <div
+                    className="content-5  my-auto mr-5"
+                  >
+                    Add data alert
+                  </div>
+                  <div
+                    className="ml-handle"
+                  >
+                    <div
+                      className="icon-grip"
                     />
                   </div>
                 </div>
               </div>
             </div>
-          </ModuleCategory>
-        </div>
-      </ModuleCategories>
-      ;
-      <DragSource(AddNotificationButtonClosed)
-        setOpenCategory={[Function]}
-      >
-        <AddNotificationButtonClosed
-          connectDragSource={[Function]}
-          isDragging={false}
-          setOpenCategory={[Function]}
+          </AddNotificationButtonClosed>
+        </DragSource(AddNotificationButtonClosed)>
+        <ImportModuleFromGitHub
+          api={Object {}}
+          isReadOnly={false}
+          libraryOpen={false}
+          moduleAdded={[Function]}
         >
           <div
-            className="notification-button-closed"
-            onClick={[Function]}
-            onMouseEnter={[Function]}
-            onMouseLeave={[Function]}
+            className=""
           >
             <div
-              className="card"
+              className="closed-ML--category"
+              onClick={[Function]}
             >
               <div
-                className="closed-ML--category t-vl-gray"
-              >
-                <div
-                  className="ml-icon-container"
-                >
-                  <div
-                    className="icon-notification ml-icon"
-                    title="Add Notification"
-                  />
-                </div>
-              </div>
+                className="icon-add"
+                title="Import From Github"
+              />
             </div>
-            <div
-              className="card alert-closed-ML"
-              style={
-                Object {
-                  "display": "none",
-                }
-              }
-            >
-              <div
-                className="second-level d-flex "
-              >
-                <div
-                  className="content-5  my-auto mr-5"
-                >
-                  Add data alert
-                </div>
-                <div
-                  className="ml-handle"
-                >
-                  <div
-                    className="icon-grip"
-                  />
-                </div>
-              </div>
-            </div>
+            <Modal
+              autoFocus={true}
+              backdrop={true}
+              backdropTransitionTimeout={150}
+              className="modal-dialog"
+              fade={true}
+              isOpen={false}
+              keyboard={true}
+              modalTransitionTimeout={300}
+              toggle={[Function]}
+              zIndex={1050}
+            />
           </div>
-        </AddNotificationButtonClosed>
-      </DragSource(AddNotificationButtonClosed)>
-      <ImportModuleFromGitHub
-        api={Object {}}
-        libraryOpen={false}
-        moduleAdded={[Function]}
+        </ImportModuleFromGitHub>
+      </div>
+    </div>
+  </ModuleLibraryClosed>
+</DragDropContextProvider>
+`;
+
+exports[`ModuleLibraryClosed Read-Only Renders 1`] = `
+<DragDropContextProvider
+  backend={[Function]}
+>
+  <ModuleLibraryClosed
+    addModule={[Function]}
+    api={Object {}}
+    dropModule={[Function]}
+    isReadOnly={true}
+    items={
+      Array [
+        Object {
+          "author": "Workbench",
+          "category": "Add data",
+          "description": "Connect a dataset from Enigma's collection via URL.",
+          "icon": "url",
+          "id": 4,
+          "link": "",
+          "name": "Load from Enigma",
+        },
+        Object {
+          "author": "Workbench",
+          "category": "Filter",
+          "description": "Filter rows by matching text in specific columns.",
+          "icon": "filter",
+          "id": 10,
+          "link": "",
+          "name": "Filter by Text",
+        },
+      ]
+    }
+    libraryOpen={true}
+    moduleAdded={[Function]}
+    openCategory="Add data"
+    openLibrary={[Function]}
+    setOpenCategory={[Function]}
+  >
+    <div
+      className="module-library--closed"
+    >
+      <div
+        className="library-closed--toggle"
+        onClick={[Function]}
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
       >
         <div
-          className=""
+          className="logo"
+        >
+          <img
+            src="/static/images/logo.png"
+            width="21"
+          />
+        </div>
+      </div>
+      <div
+        onClick={[Function]}
+      >
+        <div
+          className="card"
+          onClick={[Function]}
         >
           <div
             className="closed-ML--category"
-            onClick={[Function]}
           >
             <div
-              className="icon-add"
-              title="Import From Github"
+              className="icon-search-white ml-icon-search"
             />
           </div>
-          <Modal
-            autoFocus={true}
-            backdrop={true}
-            backdropTransitionTimeout={150}
-            className="modal-dialog"
-            fade={true}
-            isOpen={false}
-            keyboard={true}
-            modalTransitionTimeout={300}
-            toggle={[Function]}
-            zIndex={1050}
-          />
         </div>
-      </ImportModuleFromGitHub>
+        <ModuleCategories
+          addModule={[Function]}
+          dropModule={[Function]}
+          isReadOnly={true}
+          items={
+            Array [
+              Object {
+                "author": "Workbench",
+                "category": "Add data",
+                "description": "Connect a dataset from Enigma's collection via URL.",
+                "icon": "url",
+                "id": 4,
+                "link": "",
+                "name": "Load from Enigma",
+              },
+              Object {
+                "author": "Workbench",
+                "category": "Filter",
+                "description": "Filter rows by matching text in specific columns.",
+                "icon": "filter",
+                "id": 10,
+                "link": "",
+                "name": "Filter by Text",
+              },
+            ]
+          }
+          libraryOpen={false}
+          openCategory="Add data"
+          setOpenCategory={[Function]}
+        >
+          <div
+            className="list"
+          >
+            <ModuleCategory
+              collapsed={false}
+              isReadOnly={true}
+              libraryOpen={false}
+              modules={
+                Array [
+                  <DragSource(Module)
+                    addModule={[Function]}
+                    dropModule={[Function]}
+                    icon="url"
+                    id={4}
+                    isReadOnly={true}
+                    name="Load from Enigma"
+                    setOpenCategory={[Function]}
+                />,
+                ]
+              }
+              name="Add data"
+              setOpenCategory={[Function]}
+            >
+              <div
+                className="card module-category--open"
+              >
+                <div
+                  className="module-category--wrapper"
+                >
+                  <div
+                    className="first-level"
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                  >
+                    <div
+                      className="closed-ML--category"
+                    >
+                      <span
+                        className="icon-database ml-icon"
+                      />
+                    </div>
+                  </div>
+                  <div
+                    className="ml-list-mini"
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                  >
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={4}
+                      isReadOnly={true}
+                      name="Load from Enigma"
+                      setOpenCategory={[Function]}
+                    >
+                      <Module
+                        addModule={[Function]}
+                        connectDragSource={[Function]}
+                        dropModule={[Function]}
+                        icon="url"
+                        id={4}
+                        isDragging={false}
+                        isReadOnly={true}
+                        name="Load from Enigma"
+                        setOpenCategory={[Function]}
+                      >
+                        <div
+                          className="card ml-module-card"
+                          onClick={[Function]}
+                        >
+                          <div
+                            className="second-level d-flex"
+                          >
+                            <div
+                              className="d-flex flex-row align-items-center"
+                            >
+                              <div
+                                className="ml-icon-container"
+                              >
+                                <div
+                                  className="icon-url ml-icon"
+                                />
+                              </div>
+                              <div>
+                                <div
+                                  className="content-5 ml-module-name"
+                                >
+                                  Load from Enigma
+                                </div>
+                              </div>
+                            </div>
+                            <div
+                              className="ml-handle"
+                            >
+                              <div
+                                className="icon-grip"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </Module>
+                    </DragSource(Module)>
+                  </div>
+                </div>
+              </div>
+            </ModuleCategory>
+            <ModuleCategory
+              collapsed={true}
+              isReadOnly={true}
+              libraryOpen={false}
+              modules={
+                Array [
+                  <DragSource(Module)
+                    addModule={[Function]}
+                    dropModule={[Function]}
+                    icon="filter"
+                    id={10}
+                    isReadOnly={true}
+                    name="Filter by Text"
+                    setOpenCategory={[Function]}
+                />,
+                ]
+              }
+              name="Filter"
+              setOpenCategory={[Function]}
+            >
+              <div
+                className="card module-category--closed"
+              >
+                <div
+                  className="module-category--wrapper"
+                >
+                  <div
+                    className="first-level"
+                    onMouseEnter={[Function]}
+                    onMouseLeave={[Function]}
+                  >
+                    <div
+                      className="closed-ML--category"
+                    >
+                      <span
+                        className="icon-undefined ml-icon"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </ModuleCategory>
+          </div>
+        </ModuleCategories>
+        <DragSource(AddNotificationButtonClosed)
+          isReadOnly={true}
+          setOpenCategory={[Function]}
+        >
+          <AddNotificationButtonClosed
+            connectDragSource={[Function]}
+            isDragging={false}
+            isReadOnly={true}
+            setOpenCategory={[Function]}
+          >
+            <div
+              className="notification-button-closed"
+              onClick={[Function]}
+              onMouseEnter={[Function]}
+              onMouseLeave={[Function]}
+            >
+              <div
+                className="card"
+              >
+                <div
+                  className="closed-ML--category t-vl-gray"
+                >
+                  <div
+                    className="ml-icon-container"
+                  >
+                    <div
+                      className="icon-notification ml-icon"
+                      title="Add Notification"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div
+                className="card alert-closed-ML"
+                style={
+                  Object {
+                    "display": "none",
+                  }
+                }
+              >
+                <div
+                  className="second-level d-flex "
+                >
+                  <div
+                    className="content-5  my-auto mr-5"
+                  >
+                    Add data alert
+                  </div>
+                  <div
+                    className="ml-handle"
+                  >
+                    <div
+                      className="icon-grip"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </AddNotificationButtonClosed>
+        </DragSource(AddNotificationButtonClosed)>
+        <ImportModuleFromGitHub
+          api={Object {}}
+          isReadOnly={true}
+          libraryOpen={false}
+          moduleAdded={[Function]}
+        >
+          <div
+            className=""
+          >
+            <div
+              className="closed-ML--category"
+              onClick={[Function]}
+            >
+              <div
+                className="icon-add"
+                title="Import From Github"
+              />
+            </div>
+            <Modal
+              autoFocus={true}
+              backdrop={true}
+              backdropTransitionTimeout={150}
+              className="modal-dialog"
+              fade={true}
+              isOpen={false}
+              keyboard={true}
+              modalTransitionTimeout={300}
+              toggle={[Function]}
+              zIndex={1050}
+            />
+          </div>
+        </ImportModuleFromGitHub>
+      </div>
     </div>
   </ModuleLibraryClosed>
 </DragDropContextProvider>

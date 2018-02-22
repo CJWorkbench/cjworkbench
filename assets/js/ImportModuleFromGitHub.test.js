@@ -27,6 +27,7 @@ describe('ImportModuleFromGitHub', () => {
         libraryOpen={true}
         moduleAdded={moduleAdded}
         api={api}
+        isReadOnly={false}
       />
     ));
     beforeEach(() => modalLink = wrapper.find('.import-module-button'));    
@@ -71,7 +72,8 @@ describe('ImportModuleFromGitHub', () => {
       <ImportModuleFromGitHub
         libraryOpen={true}
         moduleAdded={moduleAdded}
-        api={api}        
+        api={api}     
+        isReadOnly={false}
       />
     ));
     beforeEach(() => modalLink = wrapper.find('.import-module-button'));    
