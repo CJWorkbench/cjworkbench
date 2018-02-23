@@ -18,6 +18,7 @@ from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
 from .dynamicdispatch import DynamicDispatch
 from .importmodulefromgithub import original_module_lineno
+from .utils import sanitize_dataframe
 import os, sys, traceback, types, inspect
 
 # ---- Test Support ----
@@ -140,9 +141,10 @@ def module_dispatch_render(wf_module, table):
     if error:
         wf_module.set_error(error, notify=True)
         return table  # NOP if error
-    else:
-        wf_module.set_ready(notify=False)
-        return tableout
+
+    sanitize_dataframe(tableout)        # ensure correct types etc.
+    wf_module.set_ready(notify=False)
+    return tableout
 
 
 def module_dispatch_event(wf_module, **kwargs):
