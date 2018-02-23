@@ -33,3 +33,8 @@ class UtilsTestCase(TestCase):
         sanitize_dataframe(mv_table)
         numempty = sum(mv_table['recording_date'].apply(lambda x: x==''))
         self.assertTrue(numempty > 0)
+
+        # check that duplicate cols are renamed, and that non-string names are converted to string
+        t = pd.DataFrame([[1, 2, 3],[4,5,6]], columns=['a',20.0,'a'])
+        sanitize_dataframe(t)
+        self.assertEqual(list(t.columns), ['a','20','a_1'])
