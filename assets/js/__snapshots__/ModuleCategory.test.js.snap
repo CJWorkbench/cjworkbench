@@ -16,6 +16,7 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with catego
           icon="add"
           id={88}
           isReadOnly={false}
+          libraryOpen={false}
           name="First Module"
           setOpenCategory={[Function]}
       />,
@@ -25,6 +26,7 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with catego
           icon="url"
           id={101}
           isReadOnly={false}
+          libraryOpen={false}
           name="Second Module"
           setOpenCategory={[Function]}
       />,
@@ -74,6 +76,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
           icon="add"
           id={88}
           isReadOnly={false}
+          libraryOpen={false}
           name="First Module"
           setOpenCategory={[Function]}
       />,
@@ -83,6 +86,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
           icon="url"
           id={101}
           isReadOnly={false}
+          libraryOpen={false}
           name="Second Module"
           setOpenCategory={[Function]}
       />,
@@ -121,6 +125,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
             icon="add"
             id={88}
             isReadOnly={false}
+            libraryOpen={false}
             name="First Module"
             setOpenCategory={[Function]}
           >
@@ -132,6 +137,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
               id={88}
               isDragging={false}
               isReadOnly={false}
+              libraryOpen={false}
               name="First Module"
               setOpenCategory={[Function]}
             >
@@ -177,6 +183,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
             icon="url"
             id={101}
             isReadOnly={false}
+            libraryOpen={false}
             name="Second Module"
             setOpenCategory={[Function]}
           >
@@ -188,6 +195,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
               id={101}
               isDragging={false}
               isReadOnly={false}
+              libraryOpen={false}
               name="Second Module"
               setOpenCategory={[Function]}
             >
@@ -250,6 +258,7 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
           icon="add"
           id={88}
           isReadOnly={false}
+          libraryOpen={true}
           name="First Module"
           setOpenCategory={[Function]}
       />,
@@ -259,6 +268,7 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
           icon="url"
           id={101}
           isReadOnly={false}
+          libraryOpen={true}
           name="Second Module"
           setOpenCategory={[Function]}
       />,
@@ -315,6 +325,7 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
                 icon="add"
                 id={88}
                 isReadOnly={false}
+                libraryOpen={true}
                 name="First Module"
                 setOpenCategory={[Function]}
               >
@@ -326,6 +337,7 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
                   id={88}
                   isDragging={false}
                   isReadOnly={false}
+                  libraryOpen={true}
                   name="First Module"
                   setOpenCategory={[Function]}
                 >
@@ -371,6 +383,7 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
                 icon="url"
                 id={101}
                 isReadOnly={false}
+                libraryOpen={true}
                 name="Second Module"
                 setOpenCategory={[Function]}
               >
@@ -382,6 +395,7 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
                   id={101}
                   isDragging={false}
                   isReadOnly={false}
+                  libraryOpen={true}
                   name="Second Module"
                   setOpenCategory={[Function]}
                 >

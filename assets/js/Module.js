@@ -45,13 +45,18 @@ class Module extends React.Component {
   }
 
   itemClick(evt) {
-    if (!this.props.isReadOnly) this.props.addModule(this.props.id);
-    // collapse category after click
-    this.props.setOpenCategory(null); 
+    if (!this.props.isReadOnly) 
+      this.props.addModule(this.props.id);
+    // collapse category after click when library is closed
+    if (!this.props.libraryOpen)     
+      this.props.setOpenCategory(null); 
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.isDragging !== this.props.isDragging && newProps.isDragging) 
+    if (newProps.isDragging !== this.props.isDragging 
+        && newProps.isDragging
+        && !this.props.libraryOpen
+      ) 
       this.props.setOpenCategory(null);
   }
 
@@ -92,6 +97,7 @@ Module.propTypes = {
   dropModule:       PropTypes.func,
   isReadOnly:       PropTypes.bool.isRequired,
   setOpenCategory:  PropTypes.func.isRequired,
+  libraryOpen:      PropTypes.bool.isRequired,  
 };
 
 export default DragSource('module', spec, collect)(Module);

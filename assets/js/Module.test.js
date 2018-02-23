@@ -34,7 +34,8 @@ describe('Module', () => {
             addModule={addModule}
             dropModule={() => {}}
             isReadOnly={false} 
-            setOpenCategory={setOpenCategory}           
+            setOpenCategory={setOpenCategory}   
+            libraryOpen={true}        
           />
         </DragDropContextProvider>
       )
@@ -76,7 +77,8 @@ describe('Module', () => {
             addModule={addModule}
             dropModule={() => {}}
             isReadOnly={true} 
-            setOpenCategory={setOpenCategory}           
+            setOpenCategory={setOpenCategory}   
+            libraryOpen={false}                            
           />
         </DragDropContextProvider>
       )

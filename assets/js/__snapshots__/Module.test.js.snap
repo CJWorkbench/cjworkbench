@@ -10,6 +10,7 @@ exports[`Module NOT Read-only Renders a card, with icon received from props 1`] 
     icon="add"
     id={88}
     isReadOnly={false}
+    libraryOpen={true}
     name="Sweet Module"
     setOpenCategory={[Function]}
   >
@@ -21,6 +22,7 @@ exports[`Module NOT Read-only Renders a card, with icon received from props 1`] 
       id={88}
       isDragging={false}
       isReadOnly={false}
+      libraryOpen={true}
       name="Sweet Module"
       setOpenCategory={[Function]}
     >
@@ -73,6 +75,7 @@ exports[`Module Read-only Renders a card, with icon received from props 1`] = `
     icon="add"
     id={88}
     isReadOnly={true}
+    libraryOpen={false}
     name="Sweet Module"
     setOpenCategory={[Function]}
   >
@@ -84,6 +87,7 @@ exports[`Module Read-only Renders a card, with icon received from props 1`] = `
       id={88}
       isDragging={false}
       isReadOnly={true}
+      libraryOpen={false}
       name="Sweet Module"
       setOpenCategory={[Function]}
     >

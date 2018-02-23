@@ -36,6 +36,7 @@ describe('ModuleCategory ', () => {
           dropModule={() => {}}
           isReadOnly={false} 
           setOpenCategory={setOpenCategory}    
+          libraryOpen={true}                  
         />,
         <Module
           key={"Second Module"}
@@ -46,6 +47,7 @@ describe('ModuleCategory ', () => {
           dropModule={() => {}}
           isReadOnly={false} 
           setOpenCategory={setOpenCategory}    
+          libraryOpen={true}                  
         />
       ];
       wrapper = mount(
@@ -94,7 +96,8 @@ describe('ModuleCategory ', () => {
           addModule={() => {}}
           dropModule={() => {}}
           isReadOnly={false} 
-          setOpenCategory={setOpenCategory}    
+          setOpenCategory={setOpenCategory}  
+          libraryOpen={true}                    
         />,
         <Module
           key={"Second Module"}
@@ -104,7 +107,8 @@ describe('ModuleCategory ', () => {
           addModule={() => {}}
           dropModule={() => {}}
           isReadOnly={false} 
-          setOpenCategory={setOpenCategory}    
+          setOpenCategory={setOpenCategory}   
+          libraryOpen={true}                   
         />
       ];
       wrapper = mount(
@@ -154,6 +158,7 @@ describe('ModuleCategory ', () => {
           dropModule={() => {}}
           isReadOnly={false} 
           setOpenCategory={setOpenCategory}    
+          libraryOpen={false}                  
         />,
         <Module
           key={"Second Module"}
@@ -163,7 +168,8 @@ describe('ModuleCategory ', () => {
           addModule={() => {}}
           dropModule={() => {}}
           isReadOnly={false} 
-          setOpenCategory={setOpenCategory}    
+          setOpenCategory={setOpenCategory}   
+          libraryOpen={false}                             
         />
       ];
       wrapper = mount(
@@ -219,6 +225,7 @@ describe('ModuleCategory ', () => {
           dropModule={() => {}}
           isReadOnly={false} 
           setOpenCategory={setOpenCategory}    
+          libraryOpen={false}                            
         />,
         <Module
           key={"Second Module"}
@@ -229,6 +236,7 @@ describe('ModuleCategory ', () => {
           dropModule={() => {}}
           isReadOnly={false} 
           setOpenCategory={setOpenCategory}    
+          libraryOpen={false}                            
         />
       ];
       wrapper = mount(

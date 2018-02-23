@@ -276,6 +276,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                   icon="url"
                   id={4}
                   isReadOnly={false}
+                  libraryOpen={true}
                   name="Load from Enigma"
                   setOpenCategory={[Function]}
               />,
@@ -332,6 +333,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                         icon="url"
                         id={4}
                         isReadOnly={false}
+                        libraryOpen={true}
                         name="Load from Enigma"
                         setOpenCategory={[Function]}
                       >
@@ -343,6 +345,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                           id={4}
                           isDragging={false}
                           isReadOnly={false}
+                          libraryOpen={true}
                           name="Load from Enigma"
                           setOpenCategory={[Function]}
                         >
@@ -400,6 +403,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                   icon="filter"
                   id={10}
                   isReadOnly={false}
+                  libraryOpen={true}
                   name="Filter by Text"
                   setOpenCategory={[Function]}
               />,
@@ -456,6 +460,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                         icon="filter"
                         id={10}
                         isReadOnly={false}
+                        libraryOpen={true}
                         name="Filter by Text"
                         setOpenCategory={[Function]}
                       >
@@ -467,6 +472,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                           id={10}
                           isDragging={false}
                           isReadOnly={false}
+                          libraryOpen={true}
                           name="Filter by Text"
                           setOpenCategory={[Function]}
                         >
