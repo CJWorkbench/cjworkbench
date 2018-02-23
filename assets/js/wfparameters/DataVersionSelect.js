@@ -79,7 +79,7 @@ class DataVersionSelect extends React.Component {
     );
   }
 
-  // Load version list / current version when first created
+  // Set action to take when a user clicks on the notification icon
   componentDidMount() {
     this.props.setClickNotification(this.toggleModal);
   }
@@ -114,6 +114,16 @@ class DataVersionSelect extends React.Component {
   }
 
   render() {
+    // This is here to fix a subtle bug that has to do with nested connected components that use the wrapped component's
+    // own props to derive state, as this one does. (https://github.com/reactjs/react-redux/pull/99)
+    // If mapStateToProps returns undefined, we don't want to try to render, because it means the module has already
+    // been removed from state, but moduleStack hasn't re-rendered yet. This is the simple solution, but we may be able
+    // to come up with a better, more general one.
+
+    if (typeof this.props.versions === 'undefined') {
+      return null;
+    }
+
     var versionText;
     var modalLink;
 
@@ -199,11 +209,12 @@ class DataVersionSelect extends React.Component {
 const mapStateToProps = (state, ownProps) => {
   let wfModuleIdx;
   for (let i = 0; i < state.workflow.wf_modules.length; i++) {
-    wfModuleIdx = i;
     if (state.workflow.wf_modules[i].id === ownProps.wfModuleId) {
+      wfModuleIdx = i;
       break;
     }
   }
+  if (typeof wfModuleIdx === 'undefined') return;
   return {
     notifications: state.workflow.wf_modules[wfModuleIdx].notifications,
     versions: state.workflow.wf_modules[wfModuleIdx].versions

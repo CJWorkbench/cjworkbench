@@ -77,7 +77,7 @@ const findIdxByProp = (searchArray, searchProp, searchValue) => {
 export function initialLoadWorkflowAction() {
   return {
     type: INITIAL_LOAD_WORKFLOW,
-    payload: api.loadWorkflow(getPageID()).then((json) => {return json})
+    payload: api.loadWorkflow(getPageID())
   }
 }
 registerReducerFunc(INITIAL_LOAD_WORKFLOW + '_FULFILLED', (state, action) => {
@@ -222,11 +222,7 @@ export function setSelectedWfModuleAction(wfModuleID) {
   return {
     type : SET_SELECTED_MODULE,
     payload : {
-      promise: api.setSelectedWfModule(workflowID, wfModuleID).then((response) => {
-        return {
-          wf_module_id: response.selected_wf_module
-        }
-      }),
+      promise: api.setSelectedWfModule(workflowID, wfModuleID),
       data: {
         wf_module_id: wfModuleID
       }

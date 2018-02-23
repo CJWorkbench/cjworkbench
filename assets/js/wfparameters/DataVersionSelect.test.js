@@ -65,14 +65,12 @@ describe('DataVersionSelect', () => {
     expect(wrapper).toMatchSnapshot();  // 1
 
     // Start with dialog closed
-    //expect(wrapper.state().modalOpen).toBe(false);
+    expect(wrapper.state().modalOpen).toBe(false);
 
     // give versions a chance to load
     setImmediate( () => {
       var modalLink = wrapper.find('div.open-modal');
       expect(modalLink).toHaveLength(1);
-      //expect(modalLink.text()).toEqual("Apr 10 2017 - 05:57PM");
-
       expect(wrapper.find('.t-f-blue').text()).toEqual("2 of 5");
 
       modalLink.simulate('click');
@@ -89,7 +87,6 @@ describe('DataVersionSelect', () => {
       expect(modal.find('.list-body')).toHaveLength(1);
 
       // check that the versions have loaded and are displayed in list
-      //expect(wrapper.state().versions).toEqual(mockVersions);
       let versionsList = modal.find('.list-test-class');
       expect(versionsList).toHaveLength(5);
 

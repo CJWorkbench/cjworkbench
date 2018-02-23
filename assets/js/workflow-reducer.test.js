@@ -94,7 +94,7 @@ describe('Reducer actions', () => {
       email: "example@example.org",
       google_credentials: [1],
       id: 1
-    }
+    };
     let state = workflowReducer(test_state, {
       type: 'GET_CURRENT_USER_FULFILLED',
       payload: user
