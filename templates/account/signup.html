@@ -32,12 +32,26 @@
   </head>
   <body>
     <div class="login-fullscreen-container">
-      <div class="container d-flex">
-        <div class="col-6 signup-card-left">
-          <div class="d-flex justify-content-center">
-            <div class="login-bigbrand d-flex align-items-center">
-              <img src="/static/images/logo.svg" class="logo"/>
-              <h1 class="title-2 login-bigbrand"><a href="http://cjworkbench.org">Workbench</a></h1>
+      <div class="container">
+        <div class="row">
+          <div class="col-6 signup-card-left drop-shadow">
+            <div class="d-flex justify-content-center">
+              <div class="login-bigbrand mb-5 d-flex flex-row align-items-center">
+                <img src="/static/images/logo.svg" class="logo"/>
+                <h1 className="title-2 login-bigbrand"><a href="http://cjworkbench.org">Workbench</a></h1>
+              </div>
+            </div>
+            <div class="title-1 t-white text-center mb-3">
+              Build data pipelines with simple tools
+            </div>
+            <div class="d-flex justify-content-center">
+              <div class>
+                <img class="demosignup mb-5"src="/static/images/demotwitter.gif"/>
+                <div class="title-1 t-white text-center mb-3">
+                  Clean, explore and visualize in a few steps
+                </div>
+                <img class="demosignup"src="/static/images/topdown.gif"/>
+              </div>
             </div>
           </div>
           <div class="col-5 signup-card-right drop-shadow">
@@ -63,6 +77,7 @@
               </form>
           </div>
       </div>
+    </div>
 
     <!-- JavaScript scripts -->
     {% render_bundle 'login' 'js' %}

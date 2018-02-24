@@ -1,1 +1,0 @@
-{% load i18n %}{% blocktrans with name=current_site.name %}Create an account on {{ name }}{% endblocktrans %}

@@ -84,12 +84,11 @@ if DEBUG==False:
 
     EMAIL_BACKEND = 'sgbackend.SendGridBackend'
     SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
-    ACCOUNT_HOOKSET = "cjworkbench.views.sendgrid_email.SendgridEmails"
+    ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
     SENDGRID_TEMPLATE_IDS = {
-        'invitation': os.environ['CJW_SENDGRID_INVITATION_ID'],
-        'confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'password_change': os.environ['CJW_SENDGRID_PASSWORD_CHANGE_ID'],
-        'password_reset': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
+        'account/email/email_confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+        'acount/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+        'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
     }
     SESSION_ENGINE='django.contrib.sessions.backends.db'
 
