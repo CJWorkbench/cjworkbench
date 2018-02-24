@@ -1,70 +1,50 @@
-from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from account.hooks import AccountDefaultHookSet
+from django.template.exceptions import TemplateDoesNotExist
 from cjworkbench import settings
-import os
+from allauth.account.adapter import DefaultAccountAdapter
 
-class SendgridEmails(AccountDefaultHookSet):
-    def ctx_to_subs(self, ctx):
+class WorkbenchAccountAdapter(DefaultAccountAdapter):
+    def context_to_subs(self, ctx):
         return {'-%s-' % key: value for key, value in ctx.items()}
 
-    def send_invitation_email(self, to, ctx):
-        subject = render_to_string("account/email/invite_user_subject.txt", ctx)
-        subject = "".join(subject.splitlines())
-        message = render_to_string("account/email/invite_user.txt", ctx)
-        mail = EmailMultiAlternatives(
-            subject=subject,
-            body=message,
-            from_email=settings.DEFAULT_FROM_EMAIL,
-            to=to
-        )
-        mail.attach_alternative(message, "text/html")
-        mail.substitutions = self.ctx_to_subs(ctx)
-        mail.template_id = settings.SENDGRID_TEMPLATE_IDS['invitation']
-        mail.send()
+    def render_mail(self, template_prefix, email, context):
+        """
+        Renders an e-mail to `email`.  `template_prefix` identifies the
+        e-mail that is to be sent, e.g. "password_reset_key/email_confirmation"
+        """
+        subject = render_to_string('{0}_subject.txt'.format(template_prefix),
+                                   context)
+        # remove superfluous line breaks
+        subject = " ".join(subject.splitlines()).strip()
+        subject = self.format_email_subject(subject)
 
-    def send_confirmation_email(self, to, ctx):
-        subject = render_to_string("account/email/email_confirmation_subject.txt", ctx)
-        subject = "".join(subject.splitlines())  # remove superfluous line breaks
-        message = render_to_string("account/email/email_confirmation_message.txt", ctx)
-        mail = EmailMultiAlternatives(
-          subject=subject,
-          body=message,
-          from_email=settings.DEFAULT_FROM_EMAIL,
-          to=to
-        )
-        mail.attach_alternative(message, "text/html")
-        mail.substitutions = self.ctx_to_subs(ctx)
-        mail.template_id = settings.SENDGRID_TEMPLATE_IDS['confirmation']
-        mail.send()
+        from_email = self.get_from_email()
 
-    def send_password_change_email(self, to, ctx):
-        subject = render_to_string("account/email/password_change_subject.txt", ctx)
-        subject = "".join(subject.splitlines())
-        message = render_to_string("account/email/password_change.txt", ctx)
-        mail = EmailMultiAlternatives(
-          subject=subject,
-          body=message,
-          from_email=settings.DEFAULT_FROM_EMAIL,
-          to=to
-        )
-        mail.attach_alternative(message, "text/html")
-        mail.substitutions = self.ctx_to_subs(ctx)
-        mail.template_id = settings.SENDGRID_TEMPLATE_IDS['password_change']
-        mail.send()
+        bodies = {}
+        for ext in ['html', 'txt']:
+            try:
+                template_name = '{0}_message.{1}'.format(template_prefix, ext)
+                bodies[ext] = render_to_string(template_name,
+                                               context).strip()
+            except TemplateDoesNotExist:
+                if ext == 'txt' and not bodies:
+                    # We need at least one body
+                    raise
+        if 'txt' in bodies:
+            msg = EmailMultiAlternatives(subject,
+                                         bodies['txt'],
+                                         from_email,
+                                         [email])
+            if 'html' in bodies:
+                msg.attach_alternative(bodies['html'], 'text/html')
+        else:
+            msg = EmailMessage(subject,
+                               bodies['html'],
+                               from_email,
+                               [email])
+            msg.content_subtype = 'html'  # Main content is now text/html
 
-    def send_password_reset_email(self, to, ctx):
-        subject = render_to_string("account/email/password_reset_subject.txt", ctx)
-        subject = "".join(subject.splitlines())
-        message = render_to_string("account/email/password_reset.txt", ctx)
-        mail = EmailMultiAlternatives(
-          subject=subject,
-          body=message,
-          from_email=settings.DEFAULT_FROM_EMAIL,
-          to=to
-        )
-        mail.attach_alternative(message, "text/html")
-        mail.substitutions = self.ctx_to_subs(ctx)
-        settings.SENDGRID_TEMPLATE_IDS['password_reset']
-        mail.send()
+        msg.template_id = settings.SENDGRID_TEMPLATE_IDS[template_prefix]
+        msg.substitutions = self.context_to_subs(context)
+        return msg
