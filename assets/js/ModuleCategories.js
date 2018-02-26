@@ -47,7 +47,8 @@ export default class ModuleCategories extends React.Component {
         addModule={properties.addModule}
         dropModule={properties.dropModule}
         isReadOnly={properties.isReadOnly} 
-        setOpenCategory={properties.setOpenCategory}                
+        setOpenCategory={properties.setOpenCategory}
+        libraryOpen={properties.libraryOpen}                                
       />;
 
       if (currentCategory  === null) {

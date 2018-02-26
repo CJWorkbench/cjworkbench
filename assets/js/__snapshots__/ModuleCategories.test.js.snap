@@ -49,6 +49,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
               icon="url"
               id={4}
               isReadOnly={false}
+              libraryOpen={false}
               name="Load from Enigma"
               setOpenCategory={[Function]}
           />,
@@ -87,6 +88,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
                 icon="url"
                 id={4}
                 isReadOnly={false}
+                libraryOpen={false}
                 name="Load from Enigma"
                 setOpenCategory={[Function]}
               >
@@ -98,6 +100,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
                   id={4}
                   isDragging={false}
                   isReadOnly={false}
+                  libraryOpen={false}
                   name="Load from Enigma"
                   setOpenCategory={[Function]}
                 >
@@ -153,6 +156,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
               icon="filter"
               id={10}
               isReadOnly={false}
+              libraryOpen={false}
               name="Filter by Text"
               setOpenCategory={[Function]}
           />,
@@ -237,6 +241,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
               icon="url"
               id={4}
               isReadOnly={false}
+              libraryOpen={true}
               name="Load from Enigma"
               setOpenCategory={[Function]}
           />,
@@ -293,6 +298,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                     icon="url"
                     id={4}
                     isReadOnly={false}
+                    libraryOpen={true}
                     name="Load from Enigma"
                     setOpenCategory={[Function]}
                   >
@@ -304,6 +310,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                       id={4}
                       isDragging={false}
                       isReadOnly={false}
+                      libraryOpen={true}
                       name="Load from Enigma"
                       setOpenCategory={[Function]}
                     >
@@ -361,6 +368,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
               icon="filter"
               id={10}
               isReadOnly={false}
+              libraryOpen={true}
               name="Filter by Text"
               setOpenCategory={[Function]}
           />,
@@ -417,6 +425,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                     icon="filter"
                     id={10}
                     isReadOnly={false}
+                    libraryOpen={true}
                     name="Filter by Text"
                     setOpenCategory={[Function]}
                   >
@@ -428,6 +437,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                       id={10}
                       isDragging={false}
                       isReadOnly={false}
+                      libraryOpen={true}
                       name="Filter by Text"
                       setOpenCategory={[Function]}
                     >

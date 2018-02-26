@@ -43,13 +43,10 @@ export default class ModuleLibraryClosed extends React.Component {
           <div className='t-d-gray title-4'>SIGN IN TO EDIT</div>
           <div className='icon-close' onClick={this.toggleSignInModal}></div>
         </ModalHeader>
-        <ModalBody className='dialog-body'>
-          <div>Please sign in to edit this workflow.</div>
-          <a href="/account/login">Click here to sign in.</a>          
+        <ModalBody className='dialog-body mt-4 mb-4 d-flex align-items-center'>
+          <a href="/account/login" className="button-blue col-sm-3 action-button">Sign in</a>
+          <div className="info-2 col-sm-9 ml-4">Log in to your account to duplicate and edit this workflow.</div>
         </ModalBody>
-        <ModalFooter className='dialog-footer'>
-          <div onClick={this.toggleSignInModal} className='button-blue action-button test-done-button'>OK</div>{' '}
-        </ModalFooter>
       </Modal>
     );
   }
@@ -98,8 +95,8 @@ export default class ModuleLibraryClosed extends React.Component {
             items={this.props.items}
           />
 
-          <AddNotificationButtonClosed 
-            setOpenCategory={this.props.setOpenCategory} 
+          <AddNotificationButtonClosed
+            setOpenCategory={this.props.setOpenCategory}
             isReadOnly={this.props.isReadOnly}
           />
 

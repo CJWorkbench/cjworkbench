@@ -700,6 +700,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       icon="url"
                       id={3}
                       isReadOnly={false}
+                      libraryOpen={true}
                       name="Load from Enigma"
                       setOpenCategory={[Function]}
                   />,
@@ -709,6 +710,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       icon="url"
                       id={2}
                       isReadOnly={false}
+                      libraryOpen={true}
                       name="Load from Facebork"
                       setOpenCategory={[Function]}
                   />,
@@ -765,6 +767,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             icon="url"
                             id={3}
                             isReadOnly={false}
+                            libraryOpen={true}
                             name="Load from Enigma"
                             setOpenCategory={[Function]}
                           >
@@ -776,6 +779,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               id={3}
                               isDragging={false}
                               isReadOnly={false}
+                              libraryOpen={true}
                               name="Load from Enigma"
                               setOpenCategory={[Function]}
                             >
@@ -821,6 +825,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             icon="url"
                             id={2}
                             isReadOnly={false}
+                            libraryOpen={true}
                             name="Load from Facebork"
                             setOpenCategory={[Function]}
                           >
@@ -832,6 +837,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               id={2}
                               isDragging={false}
                               isReadOnly={false}
+                              libraryOpen={true}
                               name="Load from Facebork"
                               setOpenCategory={[Function]}
                             >
@@ -889,6 +895,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       icon="chart"
                       id={1}
                       isReadOnly={false}
+                      libraryOpen={true}
                       name="Chartbuilder"
                       setOpenCategory={[Function]}
                   />,
@@ -945,6 +952,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             icon="chart"
                             id={1}
                             isReadOnly={false}
+                            libraryOpen={true}
                             name="Chartbuilder"
                             setOpenCategory={[Function]}
                           >
@@ -956,6 +964,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               id={1}
                               isDragging={false}
                               isReadOnly={false}
+                              libraryOpen={true}
                               name="Chartbuilder"
                               setOpenCategory={[Function]}
                             >
@@ -1013,6 +1022,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       icon="url"
                       id={4}
                       isReadOnly={false}
+                      libraryOpen={true}
                       name="Other Module 1"
                       setOpenCategory={[Function]}
                   />,
@@ -1022,6 +1032,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       icon="url"
                       id={6}
                       isReadOnly={false}
+                      libraryOpen={true}
                       name="Other Module 3"
                       setOpenCategory={[Function]}
                   />,
@@ -1078,6 +1089,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             icon="url"
                             id={4}
                             isReadOnly={false}
+                            libraryOpen={true}
                             name="Other Module 1"
                             setOpenCategory={[Function]}
                           >
@@ -1089,6 +1101,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               id={4}
                               isDragging={false}
                               isReadOnly={false}
+                              libraryOpen={true}
                               name="Other Module 1"
                               setOpenCategory={[Function]}
                             >
@@ -1134,6 +1147,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             icon="url"
                             id={6}
                             isReadOnly={false}
+                            libraryOpen={true}
                             name="Other Module 3"
                             setOpenCategory={[Function]}
                           >
@@ -1145,6 +1159,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               id={6}
                               isDragging={false}
                               isReadOnly={false}
+                              libraryOpen={true}
                               name="Other Module 3"
                               setOpenCategory={[Function]}
                             >
@@ -1202,6 +1217,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                       icon="url"
                       id={5}
                       isReadOnly={false}
+                      libraryOpen={true}
                       name="Other Module 2"
                       setOpenCategory={[Function]}
                   />,
@@ -1258,6 +1274,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             icon="url"
                             id={5}
                             isReadOnly={false}
+                            libraryOpen={true}
                             name="Other Module 2"
                             setOpenCategory={[Function]}
                           >
@@ -1269,6 +1286,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               id={5}
                               isDragging={false}
                               isReadOnly={false}
+                              libraryOpen={true}
                               name="Other Module 2"
                               setOpenCategory={[Function]}
                             >

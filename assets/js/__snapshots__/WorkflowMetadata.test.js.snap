@@ -152,7 +152,7 @@ exports[`WorkflowMetadata - private mode modal operates 2`] = `
           className="col-sm-3"
         >
           <div
-            className="action-button button-full-blue"
+            className="action-button button-blue--fill"
             onClick={[Function]}
           >
             Private
