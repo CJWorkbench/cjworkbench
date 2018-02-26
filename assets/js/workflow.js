@@ -31,7 +31,7 @@ class Workflow extends React.Component {
 
     this.setState({
       isPublic: nextProps.workflow.public,
-      libraryOpen: (!nextProps.isReadOnly && !nextProps.workflow.module_library_collapsed)
+      // libraryOpen: (!nextProps.isReadOnly && !nextProps.workflow.module_library_collapsed)
     });
   }
 
