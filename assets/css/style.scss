@@ -161,7 +161,7 @@ body {
 
 .form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
   border-radius: 0px;
-  border: 5px solid red;
+  border: 0px;
   height: 3.5rem;
 }
 
@@ -480,8 +480,6 @@ input[type=checkbox]:checked:after {
   margin:auto;
   top: 0; left: 0; bottom: 0; right: 0;
 }
-
-
 
 .modal-content{
   border:0;
