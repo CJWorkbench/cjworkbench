@@ -101,7 +101,7 @@ def workflow_detail(request, pk, format=None):
 
     if request.method == 'GET':
         if workflow.name.startswith('Demo'):
-            log_user_event(request.user, workflow.name, {})
+            log_user_event(request.user, 'Opened Demo Workflow', {'name': workflow.name})
         serializer = WorkflowSerializer(workflow, context={'user' : request.user})
         return Response(serializer.data)
 
@@ -178,7 +178,7 @@ def workflow_addmodule(request, pk, format=None):
     watch_list = ['columnchart', 'linechart', 'loadurl', 'twitter', 'googlesheets']
 
     if module.id_name in watch_list:
-        log_user_event(request.user, module.id_name, {'name': module.name, 'id_name':module.id_name})
+        log_user_event(request.user, 'Add ' + module.name, {'name': module.name, 'id_name':module.id_name})
 
     delta = AddModuleCommand.create(workflow, module_version, insert_before)
     serializer = WfModuleSerializer(delta.wf_module)
