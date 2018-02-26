@@ -18,8 +18,8 @@ export default class Refine extends React.Component {
             histogram_loaded: false,
             histogram: [],
             histogram_columns: [],
-            current_column: 'colplaceholder',
-            columns_loaded: false,
+            current_column: props.selectedColumn,
+            columns_loaded: props.selectedColumn == 'colplaceholder',
             columns: []
         }
         this.handleColumnChange = this.handleColumnChange.bind(this);
@@ -33,12 +33,13 @@ export default class Refine extends React.Component {
                 nxt_state.columns = input_data.columns.map((cname, i) => ({key: 'col' + i.toString(), name: cname}));
                 nxt_state.columns_loaded = true;
                 this.setState(nxt_state);
+                if(this.state.columns_loaded) {
+                    this.loadHistogram(this.state.current_column);
+                }
             })
     }
 
-    handleColumnChange(event) {
-        console.log(event.target.value);
-        var target_col = event.target.value;
+    loadHistogram(target_col) {
         api.histogram(this.props.wfModuleId, target_col)
             .then(histogram => {
                 var nxt_state = Object.assign({}, this.state);
@@ -47,9 +48,14 @@ export default class Refine extends React.Component {
                 nxt_state.histogram_columns = histogram.columns.map(cname => ({key: cname, name: cname, editable: !(cname == 'count')}));
                 nxt_state.current_column = target_col;
                 this.setState(nxt_state);
+                this.props.saveCurrentColumn(target_col);
             });
-        //this.saveStateToDatabase(this.state);
-        this.props.paramChanged({selected_column: this.state.current_column});
+    }
+
+    handleColumnChange(event) {
+        console.log(event.target.value);
+        var target_col = event.target.value;
+        this.loadHistogram(target_col);
     }
 
     rowGetter(i) {

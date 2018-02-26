@@ -268,13 +268,14 @@ export default class WfParameter extends React.Component {
         />
       )
     } else if (this.props.p.parameter_spec.id_name == 'histogram') {
-        var loadState = ( () => this.props.getParamText('selected_column') );
-        var saveState = ( state => this.props.setParamText('selected_column', state) );
-        console.log(loadState());
+        var selectedColumn = this.props.getParamText('selected_column');
+        var saveCurrentColumn = (colName => {this.props.setParamText('selected_column', colName)} );
+        console.log(selectedColumn);
         return (
             <Refine
                 wfModuleId={this.props.wf_module_id}
-                onSave={(val) => { this.paramChanged(val) }}
+                selectedColumn={selectedColumn}
+                saveCurrentColumn={saveCurrentColumn}
             />
         )
     }
