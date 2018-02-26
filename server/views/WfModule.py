@@ -195,6 +195,21 @@ def wfmodule_output(request, pk, format=None):
         return HttpResponse(content=modified_html)
 
 
+def wfmodule_histogram(request, pk, col, format=None):
+    if request.method == 'GET':
+        try:
+            wf_module = WfModule.objects.get(pk=pk)
+        except WfModule.DoesNotExist:
+            return HttpResponseNotFound()
+
+        if not wf_module.workflow.user_authorized_read(request.user):
+            return HttpResponseForbidden()
+
+        table = execute_wfmodule(wf_module)
+        hist_table = table.groupby(col).count().reset_index()
+        hist_table.columns = [col, 'count']
+
+        return HttpResponse(make_render_json(hist_table), content_type="application/json")
 
 
 # /input is just /render on the previous wfmodule
