@@ -3,7 +3,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
 from server.serializers import WfModuleSerializer
 from server.tests.utils import *
-from account.utils import user_display
+from allauth.account.utils import user_display
 from unittest.mock import patch
 
 class WorkflowViewTests(LoggedInTestCase):
