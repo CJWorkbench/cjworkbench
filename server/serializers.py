@@ -68,7 +68,20 @@ class UserSerializer(serializers.ModelSerializer):
 
 class WfModuleSerializer(serializers.ModelSerializer):
     parameter_vals = ParameterValSerializer(many=True, read_only=True)
-    module_version = ModuleVersionSerializer(many=False, read_only=True)
+
+    module_version = serializers.SerializerMethodField()
+    def get_module_version(self, wfm):
+        if wfm.module_version is not None:
+            s = ModuleVersionSerializer(wfm.module_version)
+            return s.data
+        else:
+            # Minimal fields so front end won't crash
+            return {
+                'module': {
+                    'name':'Missing module',
+                    'loads_data' : False
+                }
+            }
 
     # update interval handling is a little tricky as we need to convert seconds to count+units
     update_interval = serializers.SerializerMethodField()
@@ -85,7 +98,10 @@ class WfModuleSerializer(serializers.ModelSerializer):
 
     html_output = serializers.SerializerMethodField()
     def get_html_output(self, wfm):
-        return wfm.module_version.html_output
+        if wfm.module_version is not None:
+            return wfm.module_version.html_output
+        else:
+            return False
 
     versions = serializers.SerializerMethodField()
     def get_versions(self, wfm):

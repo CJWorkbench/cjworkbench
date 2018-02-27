@@ -104,6 +104,9 @@ def load_dynamically(wf_module):
     return dynamic_dispatch.load_module(wf_module=wf_module)
 
 def module_dispatch_render(wf_module, table):
+    if wf_module.module_version is None:
+        return None  # happens if module deleted
+
     dispatch = wf_module.module_version.module.dispatch
     error = None
     tableout = None

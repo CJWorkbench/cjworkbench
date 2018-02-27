@@ -118,7 +118,7 @@ class DeleteModuleCommand(Delta):
 
     @staticmethod
     def create(wf_module):
-        description = 'Deleted \'' + wf_module.module_version.module.name + '\' module'
+        description = 'Deleted \'' + wf_module.get_module_name() + '\' module'
 
         workflow = wf_module.workflow                                   # about to be set to null, so save it
         delta = DeleteModuleCommand.objects.create(
@@ -205,7 +205,7 @@ class ChangeDataVersionCommand(Delta):
     @staticmethod
     def create(wf_module, version):
         description = \
-            'Changed \'' + wf_module.module_version.module.name + '\' module data version to ' + str(version)
+            'Changed \'' + wf_module.get_module_name() + '\' module data version to ' + str(version)
 
         delta = ChangeDataVersionCommand.objects.create(
             wf_module=wf_module,
@@ -249,7 +249,7 @@ class ChangeParameterCommand(Delta):
 
         # Not derived data, we're doing this.
         description = \
-            'Changed parameter \'' + pspec.name + '\' of \'' + parameter_val.wf_module.module_version.module.name + '\' module'
+            'Changed parameter \'' + pspec.name + '\' of \'' + parameter_val.wf_module.get_module_name() + '\' module'
 
         delta =  ChangeParameterCommand.objects.create(
             parameter_val=parameter_val,
