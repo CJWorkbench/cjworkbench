@@ -41,7 +41,7 @@ export default class ModuleLibrary extends React.Component {
     var workflowEmpty = (!props.workflow.wf_modules || !props.workflow.wf_modules.length);
 
     this.state = {
-      openCategory: workflowEmpty ? "Add data" : null,
+      openCategory: (workflowEmpty && this.props.libraryOpen) ? "Add data" : null,
       items: [],
     };
     this.addModule = this.props.addModule.bind(this);
