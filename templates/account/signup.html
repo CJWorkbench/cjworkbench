@@ -32,52 +32,40 @@
   </head>
   <body>
     <div class="login-fullscreen-container">
-      <div class="container">
-        <div class="row">
-          <div class="col-6 signup-card-left drop-shadow">
-            <div class="d-flex justify-content-center">
-              <div class="login-bigbrand mb-5 d-flex flex-row align-items-center">
-                <img src="/static/images/logo.svg" class="logo"/>
-                <h1 className="title-2 login-bigbrand"><a href="http://cjworkbench.org">Workbench</a></h1>
-              </div>
+      <div class="container d-flex">
+        <div class="col-6 signup-card-left">
+          <div class="d-flex justify-content-center">
+            <div class="login-bigbrand d-flex align-items-center">
+              <img src="/static/images/logo.svg" class="logo"/>
+              <h1 class="title-2 login-bigbrand"><a href="http://cjworkbench.org">Workbench</a></h1>
             </div>
-            <div class="title-1 t-white text-center mb-3">
-              Build data pipelines with simple tools
-            </div>
-            <div class="d-flex justify-content-center">
-              <div class>
-                <img class="demosignup mb-5"src="/static/images/demotwitter.gif"/>
-                <div class="title-1 t-white text-center mb-3">
-                  Clean, explore and visualize in a few steps
+          </div>
+          <div class="title-1 t-white text-center mt-5 mb-5">
+            Clean, explore and visualize data in a few steps
+          </div>
+          <img class="demoSignup"src="/static/images/demoSignup.gif"/>
+        </div>
+        <div class="col-5 signup-card-right drop-shadow">
+          <form method="post" class="account_form" action=''>
+            <div class="mt-3 mb-5">
+                <div class='title-1 t-d-gray text-center'>Create account</div>
+                <div class='switch mt-1 mr-3 text-center'>
+                    <a href="/account/login" class='t-f-blue'>Log in</a>
                 </div>
-                <img class="demosignup"src="/static/images/topdown.gif"/>
-              </div>
-            </div>
-          </div>
-          <div class="col-5 signup-card-right drop-shadow">
-            <div class="col">
-            </div>
-              <form method="post" class="account_form" action=''>
-                <div class="mt-3 mb-5">
-                    <div class='title-1 t-d-gray text-center'>Create account</div>
-                    <div class='switch mt-1 mr-3 text-center'>
-                        <a href="/account/login" class='t-f-blue'>Log in</a>
-                    </div>
-                    </div>
-                    {% csrf_token %}
-                    {{ form.as_p }}
-                    {% if redirect_field_value %}
-                        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
-                    {% endif %}
-                    <div class='mx-auto content-3 mt-3 text-center'>
-                      <span>Read our </span>
-                        <a href="http://intercom.help/cjworkbench/privacy-policy/privacy-policy" class='t-f-blue'>Privacy policy</a>
-                    </div>
-                <button type="submit" class="button-blue action-button mx-auto mb-3">Register</button>
-              </form>
-          </div>
+                </div>
+                {% csrf_token %}
+                {{ form.as_p }}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
+                <div class='mx-auto content-3 mt-3 text-center'>
+                  <span>Read our </span>
+                    <a href="http://intercom.help/cjworkbench/privacy-policy/privacy-policy" class='t-f-blue'>Privacy policy</a>
+                </div>
+            <button type="submit" class="button-blue action-button mx-auto mb-3">Register</button>
+          </form>
+        </div>
       </div>
-    </div>
 
     <!-- JavaScript scripts -->
     {% render_bundle 'login' 'js' %}
