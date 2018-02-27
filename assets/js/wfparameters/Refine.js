@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types'
 import WorkbenchAPI from '../WorkbenchAPI'
 import ReactDataGrid from 'react-data-grid'
+import ColumnSelector from "./ColumnSelector";
 
 
 var api = WorkbenchAPI();
@@ -52,7 +53,7 @@ export default class Refine extends React.Component {
         var nextColumn = nextProps.selectedColumn;
         var nextRevision = nextProps.revision;
         if(nextRevision != this.props.revision) {
-            console.log('Revision bumped.');
+            //console.log('Revision bumped.');
             this.setState({
                 histogramLoaded: false,
                 histogramData: [],
@@ -80,7 +81,7 @@ export default class Refine extends React.Component {
                 nextState.histogramLoaded = true;
                 nextState.histogramColumns = histogram.columns.map(cname => ({key: cname, name: cname, editable: !(cname == 'count')}));
                 this.setState(nextState);
-                console.log(nextState.histogramData);
+                //console.log(nextState.histogramData);
             });
     }
 
@@ -199,4 +200,12 @@ export default class Refine extends React.Component {
             </div>
         )
     }
+};
+
+Refine.propTypes = {
+  wfModuleId: PropTypes.number.isRequired,
+  selectedColumn: PropTypes.string.isRequired,
+  existingEdits: PropTypes.string.isRequired,
+  saveEdits: PropTypes.func.isRequired,
+  revision: PropTypes.number.isRequired
 };
