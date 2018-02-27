@@ -17,13 +17,7 @@
       "type": "custom"
     },
     {
-      "name": "selected_column",
-      "id_name": "selected_column",
-      "type": "string",
-      "visible": false
-    },
-    {
-      "name": "edits",
+      "name": "Edits",
       "id_name": "edits",
       "type": "string",
       "visible": false

@@ -268,10 +268,11 @@ export default class WfParameter extends React.Component {
         />
       )
     } else if (this.props.p.parameter_spec.id_name == 'histogram') {
-        //var selectedColumn = this.props.getParamText('selected_column');
-        //var saveCurrentColumn = (colName => {this.props.setParamText('selected_column', colName)} );
         var selectedColumn = this.props.getParamText('column');
-        console.log(selectedColumn);
+        //console.log(selectedColumn);
+        var existingEdits = this.props.getParamText('edits');
+        var saveEdits = (editsJson => this.props.setParamText('edits', editsJson));
+        //console.log(existingEdits);
         if(selectedColumn.length < 1) {
             return (<div>Please select a column.</div>)
         }
@@ -279,7 +280,8 @@ export default class WfParameter extends React.Component {
             <Refine
                 wfModuleId={this.props.wf_module_id}
                 selectedColumn={selectedColumn}
-                //saveCurrentColumn={saveCurrentColumn}
+                existingEdits={existingEdits}
+                saveEdits={saveEdits}
             />
         )
     }
