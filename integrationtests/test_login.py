@@ -39,9 +39,12 @@ class TestLogin(StaticLiveServerTestCase):
     def test_login(self):
         b = self.browser
         b.visit(self.live_server_url + '/account/login')
+
+        social_buttons = b.find_by_css('.socialLoginButton')
+        self.assertEqual(len(social_buttons), 2)
+
         b.fill('login', self.user.email)
         b.fill('password', self.password)
-
         b.find_by_tag('button').click()
         time.sleep(2)
         # if we logged in sucessfully, we should be at an empty Workflows screen
