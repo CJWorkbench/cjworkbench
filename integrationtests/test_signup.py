@@ -51,8 +51,8 @@ class TestSignup(StaticLiveServerTestCase):
         self.assertEqual(len(mail.outbox), 1)
         email_text = mail.outbox[0].message().get_payload()
         url = url_regex.search(email_text)
-        self.assertTrue(url[0])
-        b.visit(url[0])
+        self.assertTrue(url.string)
+        b.visit(url.string)
         b.find_by_tag('button').click()
         self.assertTrue(b.url.endswith('/login/'))
 
