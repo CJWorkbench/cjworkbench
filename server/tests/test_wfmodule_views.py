@@ -25,6 +25,10 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         module_id = Module.objects.get(name='Module 1').id
         module_version = ModuleVersion.objects.get(module=Module.objects.get(name='Module 1'))
         wf_module = WfModule.objects.get(workflow_id=workflow.id, module_version=module_version)
+        wf_module_versions = {
+            'versions': wf_module.list_fetched_data_versions(),
+            'selected': wf_module.get_fetched_data_version()
+        }
 
         response = self.client.get('/api/wfmodules/%d/' % wf_module.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
@@ -41,6 +45,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertEqual(response.data['update_units'], 'days')
         self.assertEqual(response.data['notifications'], wf_module.notifications)
         self.assertEqual(response.data['notification_count'], wf_module.notification_set.count())
+        self.assertEqual(response.data['versions'], wf_module_versions)
         self.assertEqual(response.data['html_output'], wf_module.module_version.html_output)
 
         response = self.client.get('/api/wfmodules/%d/' % 10000)

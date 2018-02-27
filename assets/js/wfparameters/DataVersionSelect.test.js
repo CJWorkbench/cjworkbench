@@ -1,5 +1,5 @@
 import React from 'react'
-import DataVersionSelect  from './DataVersionSelect'
+import { DataVersionSelectTest as DataVersionSelect }  from './DataVersionSelect'
 import { mount, ReactWrapper } from 'enzyme'
 import { okResponseMock, jsonResponseMock } from '../utils'
 import * as workflowReducer from '../workflow-reducer'
@@ -24,7 +24,6 @@ describe('DataVersionSelect', () => {
   beforeEach(() => {
     api = {
       // Called by DataVersionSelect
-      getWfModuleVersions: jsonResponseMock(mockVersions),
       setWfModuleVersion: okResponseMock(),
 
       // Called by reducer actions
@@ -44,8 +43,12 @@ describe('DataVersionSelect', () => {
         api={api}
         setClickNotification={()=>{return false}}
         testing={true}
-      />
-    );
+        versions={mockVersions}
+        notifications={true}
+        markDataVersionsRead={jest.fn()}
+        updateWfModuleAction={jest.fn()}
+        setDataVersionAction={jest.fn()}
+      />);
   });
 
   // modal is a portal component, does not get cleaned up by enzyme between tests. So manually clear the DOM here
@@ -59,9 +62,6 @@ describe('DataVersionSelect', () => {
 
   it('Renders correctly when in Private mode, and selection is confirmed when user hits OK', (done) => {
 
-    // should call API for its data on componentDidMount
-    expect(api.getWfModuleVersions.mock.calls.length).toBe(1);
-
     expect(wrapper).toMatchSnapshot();  // 1
 
     // Start with dialog closed
@@ -71,8 +71,6 @@ describe('DataVersionSelect', () => {
     setImmediate( () => {
       var modalLink = wrapper.find('div.open-modal');
       expect(modalLink).toHaveLength(1);
-      //expect(modalLink.text()).toEqual("Apr 10 2017 - 05:57PM");
-
       expect(wrapper.find('.t-f-blue').text()).toEqual("2 of 5");
 
       modalLink.simulate('click');
@@ -89,7 +87,6 @@ describe('DataVersionSelect', () => {
       expect(modal.find('.list-body')).toHaveLength(1);
 
       // check that the versions have loaded and are displayed in list
-      expect(wrapper.state().versions).toEqual(mockVersions);
       let versionsList = modal.find('.list-test-class');
       expect(versionsList).toHaveLength(5);
 
@@ -98,8 +95,8 @@ describe('DataVersionSelect', () => {
       expect(firstVersion).toHaveLength(1);
       firstVersion.simulate('click');
 
-      expect(wrapper.state().versions.selected).toEqual('2017-07-10 17:57:58.324Z');
-      expect(wrapper.state().originalSelected).toEqual('2017-04-10 17:57:58.324Z');
+      expect(wrapper.state().dialogSelected).toEqual('2017-07-10 17:57:58.324Z');
+      //expect(wrapper.state().originalSelected).toEqual('2017-04-10 17:57:58.324Z');
 
       let okButton = modal.find('.test-ok-button');
       expect(okButton).toHaveLength(1);
@@ -109,9 +106,7 @@ describe('DataVersionSelect', () => {
       setImmediate( () => {
         expect(wrapper).toMatchSnapshot(); // 3
         expect(wrapper.state().modalOpen).toBe(false);
-        expect(wrapper.state().originalSelected).toEqual('2017-07-10 17:57:58.324Z');
-        expect(api.getWfModuleVersions.mock.calls.length).toBe(1);
-        expect(api.setWfModuleVersion.mock.calls.length).toBe(1);
+        expect(wrapper.props().setDataVersionAction.mock.calls.length).toBe(1);
         done();
       });
     });
@@ -119,8 +114,6 @@ describe('DataVersionSelect', () => {
 
   // Pared-down version of first test
   it('Does not save selection when user hits Cancel', (done) => {
-
-    expect(api.getWfModuleVersions.mock.calls.length).toBe(1);
 
     setImmediate( () => {
       var modalLink = wrapper.find('div.open-modal');
@@ -134,14 +127,12 @@ describe('DataVersionSelect', () => {
       let modal = new ReactWrapper(modal_element[0], true);
 
       // check that the versions have loaded and are displayed in list
-      expect(wrapper.state().versions).toEqual(mockVersions);
       let versionsList = modal.find('.list-test-class');
       expect(versionsList).toHaveLength(5);
       let lastVersion = versionsList.filterWhere(n => n.key() == '2017-03-10 17:57:58.324Z');
       lastVersion.simulate('click');
 
-      expect(wrapper.state().versions.selected).toEqual('2017-03-10 17:57:58.324Z');
-      expect(wrapper.state().originalSelected).toEqual('2017-04-10 17:57:58.324Z');
+      expect(wrapper.state().dialogSelected).toEqual('2017-03-10 17:57:58.324Z');
 
       let cancelButton = modal.find('.test-cancel-button');
       cancelButton.first().simulate('click');
@@ -150,8 +141,8 @@ describe('DataVersionSelect', () => {
       setImmediate( () => {
         expect(wrapper).toMatchSnapshot();              // 4
         expect(wrapper.state().modalOpen).toBe(false);
-        expect(wrapper.state().originalSelected).toEqual('2017-04-10 17:57:58.324Z');
-        expect(api.setWfModuleVersion.mock.calls.length).toBe(0); // never called because user cancelled
+        expect(wrapper.state().dialogSelected).toEqual('2017-04-10 17:57:58.324Z');
+        expect(wrapper.props().setDataVersionAction.mock.calls.length).toBe(0); // never called because user cancelled
         done();
       });
     });
@@ -165,9 +156,12 @@ describe('DataVersionSelect', () => {
       api={api}
       testing={true}
       setClickNotification={()=>{return false;}}
+      versions={mockVersions}
+      notifications={true}
+      markDataVersionsRead={jest.fn()}
+      updateWfModuleAction={jest.fn()}
+      setDataVersionAction={jest.fn()}
     />);
-
-    expect(api.getWfModuleVersions.mock.calls.length).toBe(2); // 2 not 1 because beforeEach mounted "wrapper" already
 
     setImmediate(() => {
       let readOnlyModalLink = readOnlywrapper.find('div.open-modal');
@@ -193,11 +187,14 @@ describe('DataVersionSelect', () => {
       api={emptyApi}
       testing={true}
       setClickNotification={()=>{return false;}}
+      versions={{versions: [], selected: null}}
+      notifications={true}
+      markDataVersionsRead={jest.fn()}
+      updateWfModuleAction={jest.fn()}
+      setDataVersionAction={jest.fn()}
     />);
 
     setImmediate( () => {
-      expect(emptyApi.getWfModuleVersions.mock.calls.length).toBe(1);
-
       var modalLink2 = wrapper2.find('div.open-modal');
       expect(modalLink2).toHaveLength(1);
       expect(modalLink2.text()).toBe('-');

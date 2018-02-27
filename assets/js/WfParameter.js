@@ -16,7 +16,7 @@ import FileSelect from './wfparameters/FileSelect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
 import { csrfToken } from './utils'
-import { store, wfModuleStatusAction } from './workflow-reducer'
+import { store, setWfModuleStatusAction } from './workflow-reducer'
 
 
 export default class WfParameter extends React.Component {
@@ -72,7 +72,7 @@ export default class WfParameter extends React.Component {
         body: JSON.stringify(eventData)
       }).then(response => {
         if (!response.ok) {
-          store.dispatch(wfModuleStatusAction(this.props.wf_module_id, 'error', response.statusText))
+          store.dispatch(setWfModuleStatusAction(this.props.wf_module_id, 'error', response.statusText))
         }
       });
     }

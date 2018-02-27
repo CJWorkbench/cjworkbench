@@ -3,16 +3,16 @@ import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import dateFormat from 'dateformat'
 import * as Actions from '../workflow-reducer'
 import PropTypes from 'prop-types'
+import {connect} from 'react-redux';
 
 
-export default class DataVersionSelect extends React.Component {
+class DataVersionSelect extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       modalOpen: false,
       dropdownOpen: false,
-      versions: {versions: [], selected: ''},
-      originalSelected: null
+      dialogSelected: null
     };
     this.toggleModal = this.toggleModal.bind(this);
     this.toggleDropdown = this.toggleDropdown.bind(this);
@@ -39,36 +39,30 @@ export default class DataVersionSelect extends React.Component {
 
   toggleModal() {
     if (!this.props.isReadOnly) {
-      // If we're closing the modal we need to set the current data version
-      // to 'read'.
-      var nextState = {
-        modalOpen: !this.state.modalOpen
-      }
-
       if (!this.state.modalOpen === false) {
-        var idx = this.state.versions.versions.map((vers) => {
-          return vers[0]
-        }).indexOf(this.state.versions.selected);
-
+        // TODO: this.props.versions.selected should be a tuple of (<Date>, <Boolean>)
+        // TODO: Don't do Array.find, it's slow
+        let idx;
+        for (let i = 0; i < this.props.versions.versions.length; i++) {
+          idx = i;
+          if (this.props.versions.selected === this.props.versions.versions[i][0]) {
+            break;
+          }
+        }
         // If the selected version is false,
-        if (!this.state.versions.versions[idx][1]) {
-          // Copy the versions
-          var nextVersions = JSON.parse(JSON.stringify(this.state.versions));
-          // Set the read bit on the copy of the selected state to 'true'
-          nextVersions.versions[idx][1] = true;
-
-          // Add to the state we're changing
-          nextState.versions = nextVersions;
-
+        if (!this.props.versions.versions[idx][1]) {
           // Persist the change to the db
-          Actions.store.dispatch(
-            Actions.markDataVersionsReadAction(
-              this.props.wfModuleId,
-              nextVersions.versions[idx][0],
-          ));
-        };
+          this.props.markDataVersionsReadAction(
+            this.props.wfModuleId,
+            this.props.versions.versions[idx][0],
+          );
+        }
       }
-      this.setState(Object.assign({}, this.state, nextState));
+
+      this.setState({
+        modalOpen: !this.state.modalOpen,
+        dialogSelected: this.props.versions.selected
+      });
     }
   }
 
@@ -79,32 +73,24 @@ export default class DataVersionSelect extends React.Component {
   }
 
   toggleNotifications() {
-    Actions.store.dispatch(
-      Actions.updateWfModuleAction(
-        this.props.wfModuleId,
-        { notifications: !this.props.notifications }
-    ));
+    this.props.updateWfModuleAction(
+      this.props.wfModuleId,
+      { notifications: !this.props.notifications }
+    );
   }
 
-  loadVersions() {
-    this.props.api.getWfModuleVersions(this.props.wfModuleId)
-      .then(json => {
-        this.setState(
-          Object.assign({}, this.state, {versions: json, originalSelected: json.selected})
-        );
-      })
-  }
-
-  // Load version list / current version when first created
+  // Set action to take when a user clicks on the notification icon
   componentDidMount() {
-    this.loadVersions();
     this.props.setClickNotification(this.toggleModal);
   }
 
   // If the workflow revision changes, reload the versions in case they've changed too
+  // TODO: Is this still necessary?
   componentWillReceiveProps(nextProps) {
-    if (this.props.revision != nextProps.revision) {
-      this.loadVersions();
+    if (this.state.dialogSelected === null && nextProps.versions.selected) {
+      this.setState({
+        dialogSelected: nextProps.versions.selected
+      });
     }
   }
 
@@ -114,33 +100,37 @@ export default class DataVersionSelect extends React.Component {
         Object.assign(
           {},
           this.state,
-          {versions: {'versions': this.state.versions.versions, 'selected': date}}
+          {dialogSelected: date}
         )
       );
     }
   }
 
   changeVersions() {
-    if (this.state.versions.selected !== this.state.originalSelected) {
-      this.props.api.setWfModuleVersion(this.props.wfModuleId, this.state.versions.selected)
-      .then(() => {
-        this.setState(
-          Object.assign({}, this.state, {originalSelected: this.state.versions.selected})
-        )
-      })
+    if (this.props.versions.selected !== this.state.dialogSelected) {
+      this.props.setDataVersionAction(this.props.wfModuleId, this.state.dialogSelected);
     }
-
     this.toggleModal();
   }
 
   render() {
+    // This is here to fix a subtle bug that has to do with nested connected components that use the wrapped component's
+    // own props to derive state, as this one does. (https://github.com/reactjs/react-redux/pull/99)
+    // If mapStateToProps returns undefined, we don't want to try to render, because it means the module has already
+    // been removed from state, but moduleStack hasn't re-rendered yet. This is the simple solution, but we may be able
+    // to come up with a better, more general one.
+
+    if (typeof this.props.versions === 'undefined') {
+      return null;
+    }
+
     var versionText;
     var modalLink;
 
-    var totalVers = this.state.versions.versions.length;
+    var totalVers = this.props.versions.versions ? this.props.versions.versions.length : 0;
 
     if (totalVers > 0) {
-      var curVers = totalVers - this.state.versions.versions.map((version) => version[0]).indexOf(this.state.versions.selected);
+      var curVers = totalVers - this.props.versions.versions.map((version) => version[0]).indexOf(this.props.versions.selected);
       versionText = curVers + " of " + totalVers;
 
       modalLink =
@@ -154,12 +144,12 @@ export default class DataVersionSelect extends React.Component {
             </ModalHeader>
             <ModalBody className='list-body'>
               <div className=''>
-                {this.state.versions.versions.map( version => {
+                {this.props.versions.versions.map( version => {
                   return (
                     <div
                       key={version[0]}
                       className={
-                        (version[0] == this.state.versions.selected)
+                        (version[0] == this.state.dialogSelected)
                           ? 'line-item--data-version--selected d-flex justify-content-between list-test-class'
                           : 'line-item--data-version d-flex justify-content-between list-test-class'
                       }
@@ -215,6 +205,35 @@ export default class DataVersionSelect extends React.Component {
     );
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  let wfModuleIdx;
+  for (let i = 0; i < state.workflow.wf_modules.length; i++) {
+    if (state.workflow.wf_modules[i].id === ownProps.wfModuleId) {
+      wfModuleIdx = i;
+      break;
+    }
+  }
+  if (typeof wfModuleIdx === 'undefined') return;
+  return {
+    notifications: state.workflow.wf_modules[wfModuleIdx].notifications,
+    versions: state.workflow.wf_modules[wfModuleIdx].versions
+  }
+};
+
+const mapDispatchToProps = {
+  markDataVersionsReadAction: Actions.markDataVersionsReadAction,
+  updateWfModuleAction: Actions.updateWfModuleAction,
+  setDataVersionAction: Actions.setDataVersionAction
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(DataVersionSelect);
+
+export {DataVersionSelect as DataVersionSelectTest}
+
 
 DataVersionSelect.propTypes = {
   wfModuleId:           PropTypes.number.isRequired,

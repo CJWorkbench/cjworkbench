@@ -2,7 +2,7 @@ import React from 'react'
 import GoogleConnect  from './GoogleConnect'
 import { mount, ReactWrapper } from 'enzyme'
 import { jsonResponseMock } from '../utils'
-import { store,  updateCurrentUserAction, disconnectCurrentUserAction } from '../workflow-reducer';
+import { store,  getCurrentUserAction, disconnectCurrentUserAction } from '../workflow-reducer';
 jest.mock('../workflow-reducer');
 
 describe('GoogleConnect', () => {

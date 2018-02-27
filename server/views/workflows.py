@@ -100,6 +100,8 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
+        if workflow.name.startswith('Demo'):
+            log_user_event(request.user, 'Opened Demo Workflow', {'name': workflow.name})
         serializer = WorkflowSerializer(workflow, context={'user' : request.user})
         return Response(serializer.data)
 
@@ -173,10 +175,17 @@ def workflow_addmodule(request, pk, format=None):
 
     log_user_event(request.user, 'Add Module', {'name': module.name, 'id_name':module.id_name})
 
-    delta = AddModuleCommand.create(workflow, module_version, insert_before)
+    watch_list = ['columnchart', 'linechart', 'loadurl', 'twitter', 'googlesheets']
 
+    if module.id_name in watch_list:
+        log_user_event(request.user, 'Add ' + module.name, {'name': module.name, 'id_name':module.id_name})
+
+    delta = AddModuleCommand.create(workflow, module_version, insert_before)
     serializer = WfModuleSerializer(delta.wf_module)
-    return Response(serializer.data, status.HTTP_201_CREATED)
+    wfmodule_data = serializer.data
+    wfmodule_data['insert_before'] = request.data['insertBefore']
+
+    return Response(wfmodule_data, status.HTTP_201_CREATED)
 
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list

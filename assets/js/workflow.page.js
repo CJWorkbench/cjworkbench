@@ -27,7 +27,7 @@ const mapStateToProps = (state) => {
     // This is the top level dependency injection for all API calls on this page
     api: api
   }
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
   return {
@@ -35,8 +35,9 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(Actions.addModuleAction(module_id, insertBefore))
     },
     removeModule: (wf_module_id) => {
-      dispatch(Actions.removeModuleAction(wf_module_id))
+      dispatch(Actions.deleteModuleAction(wf_module_id))
     },
+    //TODO: make this use the redux action
     changeParam: (paramID, newVal) => {
       api.onParamChanged(paramID, newVal)
     }
@@ -62,7 +63,7 @@ socket.onmessage = function(e) {
     switch (data.type) {
 
       case 'wfmodule-status':
-        Actions.store.dispatch(Actions.wfModuleStatusAction(data.id, data.status, data.error_msg ? data.error_msg : ''));
+        Actions.store.dispatch(Actions.setWfModuleStatusAction(data.id, data.status, data.error_msg ? data.error_msg : ''));
         return
 
       case 'reload-workflow':
