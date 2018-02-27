@@ -12,6 +12,9 @@ class TestSignup(StaticLiveServerTestCase):
         super().setUpClass()
 
         cls.current_site = Site.objects.get_current()
+        cls.current_site.name = 'Example Site'
+        cls.current_site.save()
+
         cls.SocialApp1 = cls.current_site.socialapp_set.create(
             provider="facebook",
             name="Facebook",
@@ -33,7 +36,7 @@ class TestSignup(StaticLiveServerTestCase):
         super().tearDownClass()
 
     def test_signup(self):
-        url_regex = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+        url_regex = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+confirm-email(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
 
         b = self.browser
         # This will break when signup is open to the public
@@ -51,8 +54,8 @@ class TestSignup(StaticLiveServerTestCase):
         self.assertEqual(len(mail.outbox), 1)
         email_text = mail.outbox[0].message().get_payload()
         url = url_regex.search(email_text)
-        self.assertTrue(url.string)
-        b.visit(url.string)
+        self.assertTrue(url.group(0))
+        b.visit(url.group(0))
         b.find_by_tag('button').click()
         self.assertTrue(b.url.endswith('/login/'))
 
