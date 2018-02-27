@@ -205,7 +205,10 @@ def wfmodule_histogram(request, pk, col, format=None):
         if not wf_module.workflow.user_authorized_read(request.user):
             return HttpResponseForbidden()
 
-        table = execute_wfmodule(wf_module)
+        prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
+        if not prev_modules:
+            return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
+        table = execute_wfmodule(prev_modules.last())
         hist_table = table.groupby(col).count().reset_index()
         hist_table.columns = [col, 'count']
 

@@ -50,7 +50,16 @@ export default class Refine extends React.Component {
 
     componentWillReceiveProps(nextProps) {
         var nextColumn = nextProps.selectedColumn;
-        if(nextColumn != this.props.selectedColumn) {
+        var nextRevision = nextProps.revision;
+        if(nextRevision != this.props.revision) {
+            console.log('Revision bumped.');
+            this.setState({
+                histogramLoaded: false,
+                histogramData: [],
+                histogramNumRows: 0,
+                histogramColumns: [],
+                edits: JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]'),
+            });
             this.loadHistogram(nextColumn);
         }
     }
@@ -62,8 +71,8 @@ export default class Refine extends React.Component {
                 var editedHistogram = histogram.rows.slice();
                 // Apply all relevant edits we have to the original histogram
                 for(var i = 0; i < this.state.edits.length; i ++) {
-                    if(this.state.edits[this.state.edits.length - 1 - i].column == this.props.selectedColumn) {
-                        editedHistogram = this.applySingleEdit(editedHistogram, this.state.edits[this.state.edits.length - 1 - i]);
+                    if(this.state.edits[i].column == this.props.selectedColumn) {
+                        editedHistogram = this.applySingleEdit(editedHistogram, this.state.edits[i]);
                     }
                 }
                 nextState.histogramData = editedHistogram;
@@ -72,7 +81,6 @@ export default class Refine extends React.Component {
                 nextState.histogramColumns = histogram.columns.map(cname => ({key: cname, name: cname, editable: !(cname == 'count')}));
                 this.setState(nextState);
                 console.log(nextState.histogramData);
-                //this.props.saveCurrentColumn(target_col);
             });
     }
 
@@ -131,17 +139,14 @@ export default class Refine extends React.Component {
         if(fromVal == toVal) {
             return;
         }
-        var nextState = Object.assign({}, this.state);
-        nextState.edits.push({
+        var nextEdits = this.state.edits.slice()
+        nextEdits.push({
             column: changeCol,
             fromVal: fromVal,
             toVal: toVal,
             timestamp: Date.now()
         });
-        nextState.histogramData = this.applySingleEdit(nextState.histogramData, nextState.edits[nextState.edits.length - 1]);
-        nextState.histogramNumRows = nextState.histogramData.length;
-        this.props.saveEdits(JSON.stringify(nextState.edits));
-        this.setState(nextState);
+        this.props.saveEdits(JSON.stringify(nextEdits));
     }
 
     renderHistogram() {

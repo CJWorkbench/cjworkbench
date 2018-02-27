@@ -282,6 +282,7 @@ export default class WfParameter extends React.Component {
                 selectedColumn={selectedColumn}
                 existingEdits={existingEdits}
                 saveEdits={saveEdits}
+                revision={this.props.revision}
             />
         )
     }
