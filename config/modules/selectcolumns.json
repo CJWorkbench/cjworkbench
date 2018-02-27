@@ -4,7 +4,7 @@
   "category" : "Prepare",
   "icon" : "transform",
   "description" : "",
-  "help_url":"modules/analyse/column-selector",
+  "help_url":"modules/prepare/column-selector",
   "parameters": [
     {
       "name" : "",
