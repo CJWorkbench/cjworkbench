@@ -35,7 +35,7 @@
 
     {% get_providers as socialaccount_providers %}
 
-    {% if socialaccount_providers %}
+    {% if socialaccount_providers|length > 0 %}
 
     <div class="socialaccount_ballot">
 
