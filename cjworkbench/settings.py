@@ -288,6 +288,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USER_DISPLAY = workbench_user_display
+ACCOUNT_SIGNUP_FORM_CLASS = 'cjworkbench.forms.signup.WorkbenchSignupForm'
 
 AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
