@@ -17,7 +17,7 @@ class Workflow extends React.Component {
         isPublic: false,
         focus: false,
         overlapping: false, // Does the right pane overlap the left pane? Used to set focus, draw shadows, etc
-        libraryOpen: false //(this.props.workflow && !this.props.workflow.module_library_collapsed)
+        libraryOpen: false 
     };
     this.setOverlapping = this.setOverlapping.bind(this);
     this.setLibraryOpen = this.setLibraryOpen.bind(this);
