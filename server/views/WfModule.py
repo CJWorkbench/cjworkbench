@@ -213,7 +213,7 @@ def wfmodule_histogram(request, pk, col, format=None):
         hist_table = table.groupby(col).size().reset_index()
         print(hist_table.columns)
         hist_table.columns = [col, 'count']
-        hist_table.sort_values(by=['count', col], ascending=[False, True]);
+        hist_table = hist_table.sort_values(by=['count', col], ascending=[False, True])
 
         return HttpResponse(make_render_json(hist_table), content_type="application/json")
 
