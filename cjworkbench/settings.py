@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import sys
+import json
 from os.path import abspath, basename, dirname, join, normpath
 from server.settingsutils import *
 
@@ -131,7 +132,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'cjworkbench',
+    'cjworkbench.apps.WorkbenchConfig',
     'server',
     'webpack_loader',
     'rest_framework',
@@ -140,8 +141,6 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.facebook',
 ]
 
 MIDDLEWARE = [
@@ -291,8 +290,11 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-CJW_GOOGLE_CLIENT_SECRETS_PATH = os.environ.get('CJW_GOOGLE_CLIENT_SECRETS', False)
+# Third party services
 
+# Google, for Google Drive. Eventually hook into django-allauth's auth token and replace our own implementation.
+
+CJW_GOOGLE_CLIENT_SECRETS_PATH = os.environ.get('CJW_GOOGLE_CLIENT_SECRETS', False)
 if not CJW_GOOGLE_CLIENT_SECRETS_PATH:
     CJW_GOOGLE_CLIENT_SECRETS_PATH = 'client_secret.json'
 
@@ -300,6 +302,25 @@ CJW_GOOGLE_CLIENT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_GOOGLE_CLIENT_SECRET
 
 if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
     GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = CJW_GOOGLE_CLIENT_SECRETS_PATH
+
+# Various services for django-allauth
+
+CJW_SOCIALACCOUNT_SECRETS_PATH = os.environ.get('CJW_SOCIALACCOUNT_SECRETS', False)
+if not CJW_SOCIALACCOUNT_SECRETS_PATH:
+    CJW_SOCIALACCOUNT_SECRETS_PATH = 'socialaccounts_secrets.json'
+
+CJW_SOCIALACCOUNT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_SOCIALACCOUNT_SECRETS_PATH)
+
+if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
+    CJW_SOCIALACCOUNT_SECRETS = json.loads(open(CJW_SOCIALACCOUNT_SECRETS_PATH, 'r').read())
+
+    for provider in CJW_SOCIALACCOUNT_SECRETS:
+        INSTALLED_APPS.append('allauth.socialaccount.providers.' + provider['provider'])
+
+else:
+
+    CJW_SOCIALACCOUNT_SECRETS = []
+
 
 # Knowledge base root url, used as a default for missing help links
 KB_ROOT_URL = 'http://help.cjworkbench.org/'
