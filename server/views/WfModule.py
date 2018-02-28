@@ -209,7 +209,9 @@ def wfmodule_histogram(request, pk, col, format=None):
         if not prev_modules:
             return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
         table = execute_wfmodule(prev_modules.last())
-        hist_table = table.groupby(col).count().reset_index()
+        print(col)
+        hist_table = table.groupby(col).size().reset_index()
+        print(hist_table.columns)
         hist_table.columns = [col, 'count']
         hist_table.sort_values(by=['count', col], ascending=[False, True]);
 
