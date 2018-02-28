@@ -489,7 +489,8 @@ input[type=checkbox]:checked:after {
 .modal-header {
   height: 6rem;
   padding: 2rem;
-  background-color: #FAFAFA;
+  background-color: #F5F7F8;
+  border-bottom: 1px solid #eceeef;
 }
 
 .modal-header .modal-title {
@@ -555,11 +556,11 @@ input[type=checkbox]:checked:after {
 
 /* new style for dialog..footer */
 .dialog-footer {
-  background-color: #FAFAFA;
-  padding: 2rem;
+  padding: 1.5rem 2rem;
   display: flex;
   justify-content: flex-end;
   border-top: 1px solid #eceeef;
+  background-color: #F5F7F8;
 }
 
 /* Data version modal */
