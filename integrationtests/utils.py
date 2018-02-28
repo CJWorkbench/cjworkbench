@@ -1,7 +1,6 @@
 # Utilities for integration tests
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from django.contrib.auth.models import User
 from splinter import Browser
 from server.initmodules import init_modules
 from server.tests.utils import *
@@ -9,15 +8,11 @@ from server.models import ModuleVersion
 from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
 
-# Derive from this to perform all tests logged in
-class LoggedInIntegrationTest(StaticLiveServerTestCase):
+class WorkbenchBase(StaticLiveServerTestCase):
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-
-        init_modules() # the server should run with a least core modules loaded
-
         cls.current_site = Site.objects.get_current()
         cls.SocialApp1 = cls.current_site.socialapp_set.create(
             provider="facebook",
@@ -31,6 +26,15 @@ class LoggedInIntegrationTest(StaticLiveServerTestCase):
             client_id="1234567890",
             secret="0987654321",
         )
+
+# Derive from this to perform all tests logged in
+class LoggedInIntegrationTest(WorkbenchBase):
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        init_modules() # the server should run with a least core modules loaded
 
         cls.password = 'password'
         cls.user = User.objects.create_user(username='username', email='user@users.com', password=cls.password)
@@ -53,7 +57,7 @@ class LoggedInIntegrationTest(StaticLiveServerTestCase):
 
 
 # Integration test starting from a simple workflow with dummy data
-class DummyWorkflowIntegrationTest(StaticLiveServerTestCase):
+class DummyWorkflowIntegrationTest(WorkbenchBase):
 
     @classmethod
     def create_test_workflow(cls):
@@ -67,20 +71,6 @@ class DummyWorkflowIntegrationTest(StaticLiveServerTestCase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-
-        cls.current_site = Site.objects.get_current()
-        cls.SocialApp1 = cls.current_site.socialapp_set.create(
-            provider="facebook",
-            name="Facebook",
-            client_id="1234567890",
-            secret="0987654321",
-        )
-        cls.SocialApp2 = cls.current_site.socialapp_set.create(
-            provider="google",
-            name="Google",
-            client_id="1234567890",
-            secret="0987654321",
-        )
 
         init_modules() # the server should run with a least core modules loaded
 

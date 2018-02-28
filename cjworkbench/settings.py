@@ -132,7 +132,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.sites',
-    'cjworkbench.apps.WorkbenchConfig',
+    'cjworkbench',
     'server',
     'webpack_loader',
     'rest_framework',

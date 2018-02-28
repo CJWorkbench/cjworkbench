@@ -1,33 +1,14 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from splinter import Browser
-from django.contrib.sites.models import Site
+from integrationtests.utils import WorkbenchBase
 from django.core import mail
 import time
 import re
+from splinter import Browser
 
 
-class TestSignup(StaticLiveServerTestCase):
+class TestSignup(WorkbenchBase):
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
-
-        cls.current_site = Site.objects.get_current()
-        cls.current_site.name = 'Example Site'
-        cls.current_site.save()
-
-        cls.SocialApp1 = cls.current_site.socialapp_set.create(
-            provider="facebook",
-            name="Facebook",
-            client_id="1234567890",
-            secret="0987654321",
-        )
-        cls.SocialApp2 = cls.current_site.socialapp_set.create(
-            provider="google",
-            name="Google",
-            client_id="1234567890",
-            secret="0987654321",
-        )
-
         cls.browser = Browser()
 
     @classmethod
@@ -63,4 +44,5 @@ class TestSignup(StaticLiveServerTestCase):
         b.fill('login', 'user@user.org')
         b.fill('password', '?P455W0rd!')
         b.find_by_tag('button').click()
+        time.sleep(2)
         self.assertTrue(b.url.endswith('/workflows/'))
