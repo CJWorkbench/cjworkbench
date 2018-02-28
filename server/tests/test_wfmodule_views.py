@@ -51,6 +51,22 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         response = self.client.get('/api/wfmodules/%d/' % 10000)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+
+    def test_missing_module(self):
+        # If the WfModule references a Module that does not exist, we should get a placeholder
+        workflow = add_new_workflow('Missing module')
+        wfm = add_new_wf_module(workflow, None, 0)
+        response = self.client.get('/api/wfmodules/%d/' % wfm.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['module_version']['module']['name'], 'Missing module')
+        self.assertEqual(response.data['module_version']['module']['loads_data'], False)
+
+        response = self.client.get('/api/wfmodules/%d/render' % wfm.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        empty_table = make_render_json(pd.DataFrame())
+        self.assertEqual(response.content.decode('utf-8'), empty_table)
+
+
     # this constrains the output API format, detects changes that would break client code
     def test_make_render_json(self):
         # test our basic test data
@@ -82,6 +98,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         # When no header row, Pandas uses int64s as column names, and json.dumps(list(table)) throws ValueError
         int64table = pd.read_csv(io.StringIO(int64csv), header=None)
         output = make_render_json(int64table)
+
 
     def test_wf_module_render_get(self):
         # First module: creates test data
@@ -129,6 +146,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         response = self.client.get('/api/wfmodules/%d/render?startrow=0&endrow=frog' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+
     # can we take one out?
     def test_wf_module_delete(self):
         # add a new one to delete; don't mess with other tests
@@ -138,6 +156,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         with self.assertRaises(WfModule.DoesNotExist):
             WfModule.objects.get(pk=wfmodule4.id, workflow=self.workflow1)  # must really be gone
+
 
     # /input is just a /render on the previous module
     def test_wf_module_input(self):
@@ -157,6 +176,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule3.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode('utf-8'), test_data_json)
+
 
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):

@@ -86,12 +86,20 @@ class WfModule(models.Model):
     )
     error_msg = models.CharField('error_msg', max_length=200, blank=True)
 
+    # ---- Utilities ----
+
     # navigate through a stack
     def previous_in_stack(self):
         if self.order == 0:
             return None
         else:
             return WfModule.objects.get(workflow=self.workflow, order=self.order-1)
+
+    def get_module_name(self):
+        if self.module_version is not None:
+            return self.module_version.module.name
+        else:
+            return 'Missing module'  # deleted from server
 
     # ---- Authorization ----
     # User can access wf_module if they can access workflow

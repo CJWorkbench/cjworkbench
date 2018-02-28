@@ -4,16 +4,17 @@ from rest_framework.decorators import api_view, renderer_classes, permission_cla
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from server.models import WfModule, StoredObject
 from server.serializers import WfModuleSerializer
 from server.execute import execute_wfmodule
-from django.utils import timezone
 from server.models import DeleteModuleCommand, ChangeDataVersionCommand, ChangeWfModuleNotesCommand, ChangeWfModuleUpdateSettingsCommand
 from server.dispatch import module_dispatch_output
 from datetime import timedelta
 from server.utils import units_to_seconds
-import pandas as pd
 import json, datetime, pytz, re
+import pandas as pd
 
 
 # The guts of patch commands for various WfModule fields
@@ -146,10 +147,7 @@ def table_result(request, wf_module):
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_render(request, pk, format=None):
     if request.method == 'GET':
-        try:
-            wf_module = WfModule.objects.get(pk=pk)
-        except WfModule.DoesNotExist:
-            return HttpResponseNotFound()
+        wf_module = get_object_or_404(WfModule, pk=pk)
 
         if not wf_module.workflow.user_authorized_read(request.user):
             return HttpResponseForbidden()
