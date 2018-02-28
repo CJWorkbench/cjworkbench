@@ -20,21 +20,18 @@ from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.views.defaults import page_not_found
 from django.http import Http404
-from cjworkbench.views.signup import SignupView
-from cjworkbench.views.login import LoginView
+#from cjworkbench.views.signup import SignupView
 from cjworkbench.views.user import current_user, delete_google_creds
 from cjworkbench.google_oauth import authorize, get_creds
+from allauth.account.views import SignupView
 
 urlpatterns = [
     url(r'^admin/?', admin.site.urls),
     url(r'^xyzzy/signup/$', SignupView.as_view(), name='account_signup'),
     url(r'^account/signup/$', page_not_found,  {'exception': Http404()}),
-    url(r'^account/login/$', LoginView.as_view(), name='account_login'),
     url(r'^authorize/$', authorize),
     url(r'^oauth/$', get_creds),
-    #url(r'^spreadsheets/$', get_spreadsheets),
-    #url(r'^spreadsheets/(?P<id>[a-zA-Z0-9-_]+)$', get_spreadsheet),
-    url(r'^account/', include('account.urls')),
+    url(r'^account/', include('allauth.urls')),
     url(r'^', include('server.urls')),
     url(r'^api/user/$', current_user),
     url(r'^api/user/google_credentials$', delete_google_creds),

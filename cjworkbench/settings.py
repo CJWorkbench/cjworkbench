@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 
 import os
 import sys
+import json
 from os.path import abspath, basename, dirname, join, normpath
 from server.settingsutils import *
 
@@ -84,12 +85,11 @@ if DEBUG==False:
 
     EMAIL_BACKEND = 'sgbackend.SendGridBackend'
     SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
-    ACCOUNT_HOOKSET = "cjworkbench.views.sendgrid_email.SendgridEmails"
+    ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
     SENDGRID_TEMPLATE_IDS = {
-        'invitation': os.environ['CJW_SENDGRID_INVITATION_ID'],
-        'confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'password_change': os.environ['CJW_SENDGRID_PASSWORD_CHANGE_ID'],
-        'password_reset': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
+        'account/email/email_confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+        'acount/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+        'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
     }
     SESSION_ENGINE='django.contrib.sessions.backends.db'
 
@@ -137,8 +137,10 @@ INSTALLED_APPS = [
     'webpack_loader',
     'rest_framework',
     'channels',
-    'account',
     'polymorphic',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
 
 MIDDLEWARE = [
@@ -148,9 +150,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'account.middleware.LocaleMiddleware',
-    'account.middleware.TimezoneMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
 
 ROOT_URLCONF = 'cjworkbench.urls'
@@ -166,8 +166,7 @@ TEMPLATES = [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
-                'account.context_processors.account',
+                'django.contrib.messages.context_processors.messages'
             ],
         },
     },
@@ -279,16 +278,23 @@ LOGGING = {
 
 # User accounts
 
-ACCOUNT_EMAIL_UNIQUE = True
-ACCOUNT_EMAIL_CONFIRMATION_REQUIRED = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_USER_DISPLAY = workbench_user_display
+ACCOUNT_SIGNUP_FORM_CLASS = 'cjworkbench.forms.signup.WorkbenchSignupForm'
 
 AUTHENTICATION_BACKENDS = [
-    'account.auth_backends.EmailAuthenticationBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-CJW_GOOGLE_CLIENT_SECRETS_PATH = os.environ.get('CJW_GOOGLE_CLIENT_SECRETS', False)
+# Third party services
 
+# Google, for Google Drive. Eventually hook into django-allauth's auth token and replace our own implementation.
+
+CJW_GOOGLE_CLIENT_SECRETS_PATH = os.environ.get('CJW_GOOGLE_CLIENT_SECRETS', False)
 if not CJW_GOOGLE_CLIENT_SECRETS_PATH:
     CJW_GOOGLE_CLIENT_SECRETS_PATH = 'client_secret.json'
 
@@ -296,6 +302,25 @@ CJW_GOOGLE_CLIENT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_GOOGLE_CLIENT_SECRET
 
 if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
     GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = CJW_GOOGLE_CLIENT_SECRETS_PATH
+
+# Various services for django-allauth
+
+CJW_SOCIALACCOUNT_SECRETS_PATH = os.environ.get('CJW_SOCIALACCOUNT_SECRETS', False)
+if not CJW_SOCIALACCOUNT_SECRETS_PATH:
+    CJW_SOCIALACCOUNT_SECRETS_PATH = 'socialaccounts_secrets.json'
+
+CJW_SOCIALACCOUNT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_SOCIALACCOUNT_SECRETS_PATH)
+
+if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
+    CJW_SOCIALACCOUNT_SECRETS = json.loads(open(CJW_SOCIALACCOUNT_SECRETS_PATH, 'r').read())
+
+    for provider in CJW_SOCIALACCOUNT_SECRETS:
+        INSTALLED_APPS.append('allauth.socialaccount.providers.' + provider['provider'])
+
+else:
+
+    CJW_SOCIALACCOUNT_SECRETS = []
+
 
 # Knowledge base root url, used as a default for missing help links
 KB_ROOT_URL = 'http://help.cjworkbench.org/'
