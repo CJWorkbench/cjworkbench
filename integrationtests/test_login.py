@@ -1,14 +1,21 @@
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.contrib.auth.models import User
+from allauth.account.models import EmailAddress
 from splinter import Browser
+from integrationtests.utils import WorkbenchBase
 
-class TestLogin(StaticLiveServerTestCase):
+import time
+
+
+class TestLogin(WorkbenchBase):
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
+
         cls.password = 'password' # cannot be retrieved from User object, save it here
         cls.user = User.objects.create_user(username='username', email='user@users.com', password=cls.password)
+        cls.email = EmailAddress.objects.create(user=cls.user, email='user@users.com', primary=True, verified=True)
+
         cls.browser = Browser()
 
     @classmethod
@@ -19,11 +26,13 @@ class TestLogin(StaticLiveServerTestCase):
     def test_login(self):
         b = self.browser
         b.visit(self.live_server_url + '/account/login')
-        b.fill('email', self.user.email)
+        b.fill('login', self.user.email)
         b.fill('password', self.password)
 
-        b.find_by_tag('button').click()
 
+
+        b.find_by_tag('button').click()
+        time.sleep(2)
         # if we logged in sucessfully, we should be at an empty Workflows screen
         self.assertTrue(b.url.endswith('/workflows/'))
         self.assertTrue(b.find_by_css('.new-workflow-button'))

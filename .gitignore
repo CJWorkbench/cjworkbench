@@ -31,6 +31,7 @@ tmp/
 importedmodules/
 
 client_secret.json
+socialaccounts_secrets.json
 .DS_Store
 
 .idea

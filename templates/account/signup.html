@@ -54,31 +54,10 @@
                 </div>
                 </div>
                 {% csrf_token %}
-                {{ form.non_field_errors }}
-                {# fields are broken out here so we can change the field order #}
-                {{ form.first_name.errors }}
-                {{ form.first_name.label_tag }}
-                {{ form.first_name }}
-
-                {{ form.last_name.errors }}
-                {{ form.last_name.label_tag }}
-                {{ form.last_name }}
-
-                {{ form.email.errors }}
-                {{ form.email.label_tag }}
-                {{ form.email }}
-
-                {{ form.password.errors }}
-                {{ form.password.label_tag }}
-                {{ form.password }}
-
-                {{ form.password_confirm.errors }}
-                {{ form.password_confirm.label_tag }}
-                {{ form.password_confirm }}
-
-                {{ form.get_newsletter.errors }}
-                {{ form.get_newsletter }}
-                {{ form.get_newsletter.label_tag }}
+                {{ form.as_p }}
+                {% if redirect_field_value %}
+                    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+                {% endif %}
                 <div class='mx-auto content-3 mt-3 text-center'>
                   <span>Read our </span>
                     <a href="http://intercom.help/cjworkbench/privacy-policy/privacy-policy" class='t-f-blue'>Privacy policy</a>

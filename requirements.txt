@@ -40,3 +40,4 @@ httplib2==0.10.3
 google-api-python-client==1.6.4
 jsonpickle==0.9.5
 python-intercom==3.1.0
+django-allauth==0.35.0

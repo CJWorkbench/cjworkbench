@@ -1,13 +1,20 @@
 from django import forms
-import account.forms
+from django.contrib.auth import get_user_model
+from cjworkbench.models.Profile import UserProfile
 
-class SignupForm(account.forms.SignupForm):
+class WorkbenchSignupForm(forms.ModelForm):
     get_newsletter = forms.BooleanField(required=False)
-    first_name = forms.CharField(required=False)
-    last_name = forms.CharField(required=False)
+    field_order = ['email', 'first_name', 'last_name', 'password1', 'password2', 'get_newsletter']
 
-    def __init__(self, *args, **kwargs):
-        super(SignupForm, self).__init__(*args, **kwargs)
-        del self.fields['username']
-        for field in self.fields:
-            self.fields[field].label_suffix = ""
+    class Meta:
+        model = get_user_model()
+        fields = ['first_name', 'last_name']
+
+    def signup(self, request, user):
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        user.save()
+        # User profile
+        profile, created = UserProfile.objects.get_or_create(user=user)
+        profile.get_newsletter = self.cleaned_data['get_newsletter']
+        profile.save()

@@ -2,7 +2,6 @@ from django.core.mail import send_mail
 from django.core.mail import EmailMultiAlternatives
 from cjworkbench import settings
 from django.template.loader import render_to_string
-from account.utils import user_display
 from server.utils import get_absolute_url
 
 def email_notification(user, wfm):
