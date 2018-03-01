@@ -15,5 +15,5 @@ export PYTHONUNBUFFERED=0
 cron
 
 python manage.py migrate
-python manage.py load_socialaccount
+python manage.py load_socialaccounts
 python manage.py runserver --insecure 0.0.0.0:8000
