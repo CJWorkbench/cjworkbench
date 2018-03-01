@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import sys
 import json
+from json.decoder import JSONDecodeError
 from os.path import abspath, basename, dirname, join, normpath
 from server.settingsutils import *
 
@@ -312,7 +313,10 @@ if not CJW_SOCIALACCOUNT_SECRETS_PATH:
 CJW_SOCIALACCOUNT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_SOCIALACCOUNT_SECRETS_PATH)
 
 if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
-    CJW_SOCIALACCOUNT_SECRETS = json.loads(open(CJW_SOCIALACCOUNT_SECRETS_PATH, 'r').read())
+    try:
+        CJW_SOCIALACCOUNT_SECRETS = json.loads(open(CJW_SOCIALACCOUNT_SECRETS_PATH, 'r').read())
+    except JSONDecodeError:
+        CJW_SOCIALACCOUNT_SECRETS = []
 
     for provider in CJW_SOCIALACCOUNT_SECRETS:
         INSTALLED_APPS.append('allauth.socialaccount.providers.' + provider['provider'])
