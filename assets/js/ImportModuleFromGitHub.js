@@ -157,7 +157,7 @@ export default class ImportModuleFromGitHub extends React.Component {
           </ModalHeader>
           <ModalBody className='dialog-body'>
             <form onSubmit={this.handleSubmit}>
-              <div className="label-margin t-d-gray content-3">Git Url</div>
+              <div className="label-margin t-d-gray content-3">GIT URL</div>
               <div className="import-url-field">
                 <input type="text"
                       className="text-field mb-3 mt-2 content-3"
@@ -166,7 +166,7 @@ export default class ImportModuleFromGitHub extends React.Component {
                       onChange={this.handleChange}
                       onKeyPress={this.handleChange}
                       />
-              <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a target="_blank" href="https://intercom.help/cjworkbench/build-a-custom-module" className=' t-f-blue'>here</a></div>
+              <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a target="_blank" href=" http://help.cjworkbench.org/build-a-custom-module/build-a-custom-module" className=' t-f-blue'>here</a></div>
               </div>
               {formContent}
             </form>
