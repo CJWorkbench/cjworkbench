@@ -17,6 +17,13 @@ export default class ModuleLibraryOpen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.handleClick = this.handleClick.bind(this);    
+  }
+
+  // Clicking on left arrow in header will collapse all categories and switch to closed library
+  handleClick() {
+    this.props.setOpenCategory(null);
+    this.props.toggleLibrary();
   }
 
   render() {
@@ -29,7 +36,7 @@ export default class ModuleLibraryOpen extends React.Component {
               <img src="/static/images/logo.svg" width="21"/>
               <div className='logo-2 ml-2 t-white'>Workbench</div>
             </a>
-            <div className='close-open-toggle' onClick={this.props.toggleLibrary}>
+            <div className='close-open-toggle' onClick={this.handleClick}>
               <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
             </div>
           </div>
