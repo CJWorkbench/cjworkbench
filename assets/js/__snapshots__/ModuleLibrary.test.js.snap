@@ -1459,7 +1459,7 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
       items={Array []}
       libraryOpen={false}
       moduleAdded={[Function]}
-      openCategory="Add data"
+      openCategory={null}
       openLibrary={[Function]}
       setOpenCategory={[Function]}
     >
@@ -1502,7 +1502,7 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
             isReadOnly={true}
             items={Array []}
             libraryOpen={false}
-            openCategory="Add data"
+            openCategory={null}
             setOpenCategory={[Function]}
           >
             <div
