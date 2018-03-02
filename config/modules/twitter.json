@@ -28,7 +28,7 @@
       "type": "custom"
     },
     {
-      "name": "Aggregate versions",
+      "name": "Accumulate tweets",
       "id_name": "accumulate",
       "type": "checkbox",
       "default": "True"
