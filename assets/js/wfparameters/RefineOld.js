@@ -1,9 +1,8 @@
-import React from 'react'
+import React from 'react';
 import PropTypes from 'prop-types'
 import WorkbenchAPI from '../WorkbenchAPI'
 import ReactDataGrid from 'react-data-grid'
-import ColumnSelector from "./ColumnSelector"
-//import {Form, FormGroup, Label, Input, FormText, Col, Table} from 'reactstrap'
+import ColumnSelector from "./ColumnSelector";
 
 
 var api = WorkbenchAPI();
@@ -29,76 +28,6 @@ const editColumns = [
     }
 ];
 
-class EditRow extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            initValue: this.props.dataValue,
-            dataValue: this.props.dataValue,
-            dataCount: this.props.dataCount
-        }
-        this.handleValueChange = this.handleValueChange.bind(this);
-        this.handleBlur = this.handleBlur(this);
-        this.handleFocus = this.handleFocus.bind(this);
-        this.handleKeyPress = this.handleKeyPress.bind(this);
-    }
-
-    handleValueChange(event) {
-        console.log('From <' + this.state.dataValue + '> to <' + event.target.value + '>');
-        var fromValue = this.state.dataValue;
-        var toValue = event.target.value;
-        var nextState = Object.assign({}, this.state);
-        nextState.dataValue = event.target.value;
-        this.setState(nextState);
-        /*
-        this.props.onValueChange({
-            fromValue: fromValue,
-            toValue: toValue
-        })
-        */
-    }
-
-    handleKeyPress(event) {
-        if(event.key == 'Enter') {
-            event.preventDefault();
-            this.props.onValueChange({
-                fromVal: this.state.initValue,
-                toVal: this.state.dataValue
-            });
-        }
-    }
-
-    handleBlur() {
-        console.log('focus lost');
-    }
-
-    handleFocus(event) {
-        console.log('focused');
-        event.target.select();
-    }
-
-    render() {
-        return (
-            <div className='checkbox-container' style={{'whiteSpace': 'nowrap'}}>
-                <input type='checkbox'></input>
-                <span className='ml-3 t-d-gray checkbox-content content-3'>
-                    <input
-                        type='text'
-                        value={this.state.dataValue}
-                        onChange={this.handleValueChange}
-                        onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
-                        onClick={this.handleClick}
-                        onKeyPress={this.handleKeyPress}
-                        style={{'width': '130px'}}
-                    />
-                </span>
-                <span className='ml-3 t-d-gray checkbox-content content-3'>{this.state.dataCount}</span>
-            </div>
-        )
-    }
-};
-
 export default class Refine extends React.Component {
 
     constructor(props) {
@@ -114,10 +43,6 @@ export default class Refine extends React.Component {
         this.handleGridRowsUpdated = this.handleGridRowsUpdated.bind(this);
 
         this.editsRowGetter = this.editsRowGetter.bind(this);
-
-        this.handleValueChange = this.handleValueChange.bind(this);
-
-        console.log(this.state.edits);
     }
 
     componentDidMount() {
@@ -156,7 +81,7 @@ export default class Refine extends React.Component {
                 nextState.histogramLoaded = true;
                 nextState.histogramColumns = histogram.columns.map(cname => ({key: cname, name: cname, editable: !(cname == 'count')}));
                 this.setState(nextState);
-                console.log(nextState.histogramData);
+                //console.log(nextState.histogramData);
             });
     }
 
@@ -225,20 +150,6 @@ export default class Refine extends React.Component {
         this.props.saveEdits(JSON.stringify(nextEdits));
     }
 
-    handleValueChange(changeData) {
-        console.log('Value changed');
-        console.log(changeData);
-        var nextEdits = this.state.edits.slice();
-        nextEdits.push({
-            column: this.props.selectedColumn,
-            fromVal: changeData.fromVal,
-            toVal: changeData.toVal,
-            timestamp: Date.now()
-        });
-        console.log(nextEdits);
-        this.props.saveEdits(JSON.stringify(nextEdits));
-    }
-
     renderHistogram() {
         if(this.state.histogramLoaded) {
             return (
@@ -257,34 +168,6 @@ export default class Refine extends React.Component {
             )
         }
         return (<div>Loading data...</div>);
-    }
-
-    renderHistogramNew() {
-        if(this.state.histogramLoaded) {
-            const checkboxes = this.state.histogramData.map(item => {
-                return (
-                    <EditRow
-                        dataValue={item[this.props.selectedColumn]}
-                        dataCount={item.count}
-                        key={item[this.props.selectedColumn]}
-                        onValueChange={this.handleValueChange}
-                    />
-                );
-            });
-
-            //console.log(checkboxes);
-
-            return (
-                <div>
-                    <div className='t-d-gray content-3 label-margin'>Histogram</div>
-                    <div className='container list-wrapper' style={{'height': '400px'}}>
-                        <div className='row list-scroll'>
-                            { checkboxes }
-                        </div>
-                    </div>
-                </div>
-            )
-        }
     }
 
     renderEdits() {
@@ -306,12 +189,14 @@ export default class Refine extends React.Component {
     }
 
     render() {
-        const histogramDatagrid = this.renderHistogramNew();
+        const histogramDatagrid = this.renderHistogram();
         const editsDatagrid = this.renderEdits();
         return (
             <div>
                 {histogramDatagrid}
                 <br />
+                {editsDatagrid}
+                <br/>
             </div>
         )
     }
