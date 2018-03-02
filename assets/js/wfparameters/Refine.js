@@ -35,41 +35,39 @@ class EditRow extends React.Component {
         this.state = {
             initValue: this.props.dataValue,
             dataValue: this.props.dataValue,
-            dataCount: this.props.dataCount
+            dataCount: this.props.dataCount,
+            selected: this.props.valueSelected,
         }
         this.handleValueChange = this.handleValueChange.bind(this);
-        this.handleBlur = this.handleBlur(this);
+        this.handleBlur = this.handleBlur.bind(this);
         this.handleFocus = this.handleFocus.bind(this);
         this.handleKeyPress = this.handleKeyPress.bind(this);
+
+        this.handleSelectionChange = this.handleSelectionChange.bind(this);
     }
 
     handleValueChange(event) {
-        console.log('From <' + this.state.dataValue + '> to <' + event.target.value + '>');
-        var fromValue = this.state.dataValue;
-        var toValue = event.target.value;
         var nextState = Object.assign({}, this.state);
         nextState.dataValue = event.target.value;
         this.setState(nextState);
-        /*
-        this.props.onValueChange({
-            fromValue: fromValue,
-            toValue: toValue
-        })
-        */
     }
 
     handleKeyPress(event) {
         if(event.key == 'Enter') {
             event.preventDefault();
-            this.props.onValueChange({
-                fromVal: this.state.initValue,
-                toVal: this.state.dataValue
-            });
+            this.sendValueChange();
         }
     }
 
     handleBlur() {
-        console.log('focus lost');
+        this.sendValueChange();
+    }
+
+    sendValueChange() {
+        this.props.onValueChange({
+            fromVal: this.state.initValue,
+            toVal: this.state.dataValue
+        });
     }
 
     handleFocus(event) {
@@ -77,10 +75,23 @@ class EditRow extends React.Component {
         event.target.select();
     }
 
+    handleSelectionChange(event) {
+        var nextState = Object.assign({}, this.state);
+        nextState.selected = (!nextState.selected);
+        this.setState(nextState);
+        this.props.onSelectionChange({
+            value: this.state.initValue
+        });
+    }
+
     render() {
         return (
             <div className='checkbox-container' style={{'whiteSpace': 'nowrap'}}>
-                <input type='checkbox'></input>
+                <input
+                    type='checkbox'
+                    onChange={this.handleSelectionChange}
+                    checked={this.state.selected}
+                />
                 <span className='ml-3 t-d-gray checkbox-content content-3'>
                     <input
                         type='text'
@@ -101,6 +112,20 @@ class EditRow extends React.Component {
 
 export default class Refine extends React.Component {
 
+    /*
+    Format of edits:
+    {
+        type: 'select' or 'change',
+        column: target column
+        content: {
+            fromVal: ...(for 'change')
+            toVal: ...(for 'change')
+            value: ...(for 'select')
+        },
+        timestamp: ...
+    }
+     */
+
     constructor(props) {
         super(props);
         this.state = {
@@ -116,6 +141,7 @@ export default class Refine extends React.Component {
         this.editsRowGetter = this.editsRowGetter.bind(this);
 
         this.handleValueChange = this.handleValueChange.bind(this);
+        this.handleSelectionChange = this.handleSelectionChange.bind(this);
 
         console.log(this.state.edits);
     }
@@ -144,7 +170,12 @@ export default class Refine extends React.Component {
         api.histogram(this.props.wfModuleId, targetCol)
             .then(histogram => {
                 var nextState = Object.assign({}, this.state);
-                var editedHistogram = histogram.rows.slice();
+                var editedHistogram = histogram.rows.map(function(entry) {
+                    var newEntry = Object.assign({}, entry);
+                    newEntry.selected = true;
+                    return newEntry;
+                });
+                console.log(editedHistogram);
                 // Apply all relevant edits we have to the original histogram
                 for(var i = 0; i < this.state.edits.length; i ++) {
                     if(this.state.edits[i].column == this.props.selectedColumn) {
@@ -163,35 +194,33 @@ export default class Refine extends React.Component {
     applySingleEdit(hist, edit) {
         console.log(edit);
         var newHist = hist.slice();
-        var fromIdx = -1;
-        for(var i = 0; i < newHist.length; i ++) {
-            if(newHist[i][edit.column] == edit.fromVal) {
-                fromIdx = i;
-                break;
+        if(edit.type == 'change') {
+            var fromIdx = newHist.findIndex(function(element) {
+               return (element[edit.column] == edit.content.fromVal);
+            });
+            var fromEntry = Object.assign({}, newHist[fromIdx]);
+            newHist.splice(fromIdx, 1);
+            var toIdx = newHist.findIndex(function(element) {
+                return (element[edit.column] == edit.content.toVal);
+            });
+            if (toIdx == -1) {
+                // If no "to" entry was found, create a new entry
+                var newEntry = Object.assign({}, fromEntry);
+                newEntry[edit.column] = edit.content.toVal;
+                newHist.unshift(newEntry);
+            } else {
+                // Otherwise, we merge the "from" entry to the "to" entry
+                // The new cluster always appears on top
+                var toEntry = Object.assign({}, newHist[toIdx]);
+                newHist.splice(toIdx, 1);
+                toEntry['count'] += fromEntry['count'];
+                newHist.unshift(toEntry);
             }
-        }
-        var fromEntry = Object.assign({}, newHist[fromIdx]);
-        newHist.splice(fromIdx, 1);
-        var toIdx = -1;
-        for(var i = 0; i < newHist.length; i ++) {
-            if(newHist[i][edit.column] == edit.toVal) {
-                toIdx = i;
-                break;
-            }
-        }
-        if(toIdx == -1) {
-            // If no "to" entry was found, create a new entry
-            var newEntry = {};
-            newEntry[edit.column] = edit.toVal;
-            newEntry['count'] = fromEntry.count;
-            newHist.unshift(newEntry);
-        } else {
-            // Otherwise, we merge the "from" entry to the "to" entry
-            // The delete -> unshift approach is used to deal with a bug in DataGrid's refreshing
-            var toEntry = Object.assign({}, newHist[toIdx]);
-            newHist.splice(toIdx, 1);
-            toEntry['count'] += fromEntry['count'];
-            newHist.unshift(toEntry);
+        } else if(edit.type == 'select') {
+            var targetIdx = newHist.findIndex(function(element) {
+               return (element[edit.column] == edit.content.value);
+            });
+            newHist[targetIdx].selected = (!newHist[targetIdx].selected);
         }
         return newHist;
     }
@@ -230,9 +259,27 @@ export default class Refine extends React.Component {
         console.log(changeData);
         var nextEdits = this.state.edits.slice();
         nextEdits.push({
+            type: 'change',
             column: this.props.selectedColumn,
-            fromVal: changeData.fromVal,
-            toVal: changeData.toVal,
+            content: {
+                fromVal: changeData.fromVal,
+                toVal: changeData.toVal
+            },
+            timestamp: Date.now()
+        });
+        console.log(nextEdits);
+        this.props.saveEdits(JSON.stringify(nextEdits));
+    }
+
+    handleSelectionChange(changeData) {
+        console.log(changeData);
+        var nextEdits = this.state.edits.slice();
+        nextEdits.push({
+            type: 'select',
+            column: this.props.selectedColumn,
+            content: {
+                value: changeData.value,
+            },
             timestamp: Date.now()
         });
         console.log(nextEdits);
@@ -268,6 +315,8 @@ export default class Refine extends React.Component {
                         dataCount={item.count}
                         key={item[this.props.selectedColumn]}
                         onValueChange={this.handleValueChange}
+                        onSelectionChange={this.handleSelectionChange}
+                        valueSelected={item.selected}
                     />
                 );
             });
