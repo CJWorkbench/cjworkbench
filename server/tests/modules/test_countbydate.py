@@ -11,8 +11,8 @@ class CountValuesTests(LoggedInTestCase):
 
         # test data designed to give different output if sorted by freq vs value
         self.count_csv = 'Date,Amount,Foo\nJan 10 2011,10,Foo\nJul 25 2016,5,Goo\nJan 10 2011 01:00:00,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:01:00,1,Hoo\nJan 15 2011,1,Too\n'
-        self.count_csv_time = 'Date,Amount,Foo\n11:00,10,Foo\n12:00,5,Goo\n01:00:00,1,Hoo\n00:00:01,1,Hoo\n00:00:01,1,Hoo\n00:01:00,1,Hoo\n11:05,1,Too\n'
-        self.count_csv_dates = 'Date,Amount,Foo\nJan 10 2011,10,Foo\nJul 25 2016,5,Goo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 15 2011,1,Too\n'
+        self.count_csv_time = 'Date,Amount,Foo\n11:00,10,Foo\n12:00,5,Goo\n01:00:00,1,Hoo\n00:00:01,1,Hoo\n00:00:01,1,Hoo\n00:01:00,1,Hoo\nDecember 15 2017 11:05,1,Too\n'
+        self.count_csv_dates = 'Date,Amount,Foo\nJan 10 2011,10,Foo\nJul 25 2016,5,Goo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 15 2011 6:00pm,1,Too\n'
 
         workflow = create_testdata_workflow(self.count_csv)
 
