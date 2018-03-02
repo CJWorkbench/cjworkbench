@@ -10,16 +10,21 @@ class CountValuesTests(LoggedInTestCase):
         super(CountValuesTests, self).setUp()  # log in
 
         # test data designed to give different output if sorted by freq vs value
-        count_csv = 'Date,Amount,Foo\nJan 10 2011,10,Foo\nJul 25 2016,5,Goo\nJan 10 2011 01:00:00,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:01:00,1,Hoo\nJan 15 2011,1,Too\n'
-        workflow = create_testdata_workflow(count_csv)
+        self.count_csv = 'Date,Amount,Foo\nJan 10 2011,10,Foo\nJul 25 2016,5,Goo\nJan 10 2011 01:00:00,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:01:00,1,Hoo\nJan 15 2011,1,Too\n'
+        self.count_csv_time = 'Date,Amount,Foo\n11:00,10,Foo\n12:00,5,Goo\n01:00:00,1,Hoo\n00:00:01,1,Hoo\n00:00:01,1,Hoo\n00:01:00,1,Hoo\n11:05,1,Too\n'
+        self.count_csv_dates = 'Date,Amount,Foo\nJan 10 2011,10,Foo\nJul 25 2016,5,Goo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 15 2011,1,Too\n'
+
+        workflow = create_testdata_workflow(self.count_csv)
 
         self.wf_module = load_and_add_module('countbydate', workflow=workflow)
         self.col_pval = get_param_by_id_name('column')
         self.sort_pval = get_param_by_id_name('sortby')
         self.group_pval = get_param_by_id_name('groupby')
+        self.operation_pval = get_param_by_id_name('operation')
+        self.target_pval = get_param_by_id_name('targetcolumn')
         self.csv_data = get_param_by_id_name('csv')
 
-    def test_render(self):
+    def test_count(self):
         # sort by value.
         # Use out.to_csv() instead of str(out) to ensure rows are output in index order (otherwise variable)
         set_string(self.col_pval, 'Date')
@@ -92,3 +97,35 @@ class CountValuesTests(LoggedInTestCase):
         out = execute_wfmodule(self.wf_module)
         self.wf_module.refresh_from_db()
         self.assertEqual(self.wf_module.status, WfModule.ERROR)
+
+    def test_time_only(self):
+        set_string(self.csv_data, self.count_csv_time)
+        set_string(self.col_pval, 'Date')
+
+        execute_wfmodule(self.wf_module)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(self.wf_module.status, 'error')
+        self.assertEqual(self.wf_module.error_msg, 'Column Date only contains time values. Group by Hour, Minute or Second.')
+
+        # Set to hours
+        set_integer(self.group_pval, 2)
+        out = execute_wfmodule(self.wf_module)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(out.to_csv(index=False), 'date,count\n00:00,3\n01:00,1\n11:00,2\n12:00,1\n')
+
+        # Set to sort by value
+        set_integer(self.sort_pval, 1)
+        out = execute_wfmodule(self.wf_module)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(out.to_csv(index=False), 'date,count\n01:00,1\n12:00,1\n11:00,2\n00:00,3\n')
+
+    def test_date_only(self):
+        set_string(self.csv_data, self.count_csv_dates)
+        set_string(self.col_pval, 'Date')
+        set_integer(self.group_pval, 2)
+
+        execute_wfmodule(self.wf_module)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(self.wf_module.status, 'error')
+        self.assertEqual(self.wf_module.error_msg, 'Column Date only contains date values. Group by Day, Month, Quarter or Year.')
+

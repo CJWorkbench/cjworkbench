@@ -38,21 +38,6 @@ class CountByDate(ModuleImpl):
     SORT_BY_VALUE = 0
     SORT_BY_FREQ = 1
 
-    SECOND = 0
-    MINUTE = 1
-    HOUR = 2
-    DAY = 3
-    MONTH = 4
-    QUARTER = 5
-    YEAR = 6
-
-    COUNT = 0
-    AVERAGE = 1
-    SUM = 2
-    MIN = 3
-    MAX = 4
-
-
     TIME_ONLY_COUNT = 0
     DATE_ONLY_COUNT = 0
     TIME_ONLY = False
@@ -138,11 +123,11 @@ class CountByDate(ModuleImpl):
         elif CountByDate.DATE_ONLY == True and groupby in [0,1,2]:
             return 'Column %s only contains date values. Group by Day, Month, Quarter or Year.' % col
 
-        elif groupby is CountByDate.QUARTER:
+        elif groupby == 5:  # quarter
             return_table['date'] = return_table['date'].apply(group_options[groupby])
 
         else:
-            return_table['dates'] = return_table['date'].dt.strftime(group_options[groupby])
+            return_table['date'] = return_table['date'].dt.strftime(group_options[groupby])
 
         # We now have correctly formatted dates for our groupby operation in our new table.
         # If we're just counting rows, we don't need any more columns.
