@@ -31,6 +31,9 @@ const editColumns = [
 ];
 
 class EditRow extends React.Component {
+
+    // Component for each row in the histogram
+
     constructor(props) {
         super(props);
         this.state = {
@@ -101,7 +104,6 @@ class EditRow extends React.Component {
                         onChange={this.handleValueChange}
                         onFocus={this.handleFocus}
                         onBlur={this.handleBlur}
-                        onClick={this.handleClick}
                         onKeyPress={this.handleKeyPress}
                         style={{'width': '130px'}}
                     />
@@ -111,6 +113,14 @@ class EditRow extends React.Component {
         )
     }
 };
+
+EditRow.propTypes = {
+    dataValue: PropTypes.string.isRequired,
+    dataCount: PropTypes.number.isRequired,
+    onValueChange: PropTypes.func.isRequired,
+    onSelectionChange: PropTypes.func.isRequired,
+    valueSelected: PropTypes.bool.isRequired
+}
 
 export default class Refine extends React.Component {
 
@@ -137,10 +147,6 @@ export default class Refine extends React.Component {
             histogramColumns: [],
             edits: JSON.parse(props.existingEdits.length > 0 ? props.existingEdits : '[]'),
         }
-        this.rowGetter = this.rowGetter.bind(this);
-        this.handleGridRowsUpdated = this.handleGridRowsUpdated.bind(this);
-
-        this.editsRowGetter = this.editsRowGetter.bind(this);
 
         this.handleValueChange = this.handleValueChange.bind(this);
         this.handleSelectionChange = this.handleSelectionChange.bind(this);
@@ -153,12 +159,16 @@ export default class Refine extends React.Component {
     }
 
     componentWillReceiveProps(nextProps) {
+        // Handles revision changes and column changes
+
         var nextColumn = nextProps.selectedColumn;
         var nextRevision = nextProps.revision;
         if(nextRevision != this.props.revision) {
             console.log(nextRevision, this.props.revision);
             //console.log('Revision bumped.');
             if(nextColumn != this.props.selectedColumn) {
+                // If the column changes, check if this is a cancel; if not, clear the edits
+                // The empty edits will be saved to the server on the next edit
                 this.setState({
                     histogramLoaded: false,
                     histogramData: [],
@@ -167,7 +177,7 @@ export default class Refine extends React.Component {
                     showWarning: nextRevision > this.props.revision,
                     edits: (nextRevision > this.props.revision) ? [] : JSON.parse(nextProps.existingEdits),
                 });
-                this.loadHistogram(nextColumn, false);
+                this.loadHistogram(nextColumn);
             } else {
                 this.setState({
                     histogramLoaded: false,
@@ -183,6 +193,10 @@ export default class Refine extends React.Component {
     }
 
     loadHistogram(targetCol, clearEdits=false) {
+        // Loads a histogram from the server and sets the state with the result
+
+        // clearEdits controls whether we clear the edit on the server immediately upon load
+        // This is unused for now.
         api.histogram(this.props.wfModuleId, targetCol)
             .then(histogram => {
                 var nextState = Object.assign({}, this.state);
@@ -213,6 +227,8 @@ export default class Refine extends React.Component {
     }
 
     applySingleEdit(hist, edit) {
+        // Applies edits on the client side
+
         //console.log(edit);
         var newHist = hist.slice();
         if(edit.type == 'change') {
@@ -246,36 +262,9 @@ export default class Refine extends React.Component {
         return newHist;
     }
 
-    rowGetter(i) {
-        return this.state.histogramData[i];
-    };
-
-    editsRowGetter(i) {
-        return this.state.edits[this.state.edits.length - i - 1];
-    }
-
-    handleGridRowsUpdated(data) {
-        console.log(data);
-        var changeCol = data.cellKey;
-        if(changeCol == 'count') {
-            return;
-        }
-        var fromVal = data.fromRowData[changeCol];
-        var toVal = data.updated[changeCol];
-        if(fromVal == toVal) {
-            return;
-        }
-        var nextEdits = this.state.edits.slice()
-        nextEdits.push({
-            column: changeCol,
-            fromVal: fromVal,
-            toVal: toVal,
-            timestamp: Date.now()
-        });
-        this.props.saveEdits(JSON.stringify(nextEdits));
-    }
-
     handleValueChange(changeData) {
+        // Handles edits to values; pushes changes to the server by setting the parameter
+
         console.log('Value changed');
         console.log(changeData);
         var nextEdits = this.state.edits.slice();
@@ -293,6 +282,8 @@ export default class Refine extends React.Component {
     }
 
     handleSelectionChange(changeData) {
+        // Handles selection/deselection of facets; pushes changes to server
+
         console.log(changeData);
         var nextEdits = this.state.edits.slice();
         nextEdits.push({
@@ -308,26 +299,6 @@ export default class Refine extends React.Component {
     }
 
     renderHistogram() {
-        if(this.state.histogramLoaded) {
-            return (
-                <div>
-                    <div className='t-d-gray content-3 label-margin'>Histogram</div>
-                    <ReactDataGrid
-                        enableCellSelect={true}
-                        columns={this.state.histogramColumns}
-                        rowGetter={this.rowGetter}
-                        rowsCount={this.state.histogramNumRows}
-                        minHeight={350}
-                        rowHeight={35}
-                        onGridRowsUpdated={this.handleGridRowsUpdated}
-                    />
-                </div>
-            )
-        }
-        return (<div>Loading data...</div>);
-    }
-
-    renderHistogramNew() {
         if(this.state.histogramLoaded) {
             const checkboxes = this.state.histogramData.map(item => {
                 return (
@@ -381,11 +352,11 @@ export default class Refine extends React.Component {
     }
 
     render() {
-        const histogramDatagrid = this.renderHistogramNew();
-        const editsDatagrid = this.renderEdits();
+        const histogramComponent = this.renderHistogram();
+        //const editsDatagrid = this.renderEdits();
         return (
             <div>
-                {histogramDatagrid}
+                {histogramComponent}
                 <br />
             </div>
         )
@@ -393,9 +364,9 @@ export default class Refine extends React.Component {
 };
 
 Refine.propTypes = {
-  wfModuleId: PropTypes.number.isRequired,
-  selectedColumn: PropTypes.string.isRequired,
-  existingEdits: PropTypes.string.isRequired,
-  saveEdits: PropTypes.func.isRequired,
-  revision: PropTypes.number.isRequired
+    wfModuleId: PropTypes.number.isRequired,
+    selectedColumn: PropTypes.string.isRequired,
+    existingEdits: PropTypes.string.isRequired,
+    saveEdits: PropTypes.func.isRequired,
+    revision: PropTypes.number.isRequired
 };
