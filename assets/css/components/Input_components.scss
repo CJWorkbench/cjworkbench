@@ -1,0 +1,168 @@
+// Dropdown menus
+
+.dropdown-menu {
+  margin-top: 0.5rem;
+  border:1px solid rgba(118,155,176,0.2);
+  border-radius: 5px;
+  box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.10);
+  padding:0.5rem 0 0.5rem 0;
+}
+
+.dropdown-menu--item {
+  height: 4rem;
+  width: 14rem;
+  background-color: #FFFFFF;
+  color: rgba(104,103,104,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 1rem;
+  cursor:pointer;
+}
+
+.dropdown-menu--item:hover {
+  background-color: #f9f9f9;
+  color: rgba(104,103,104,1);
+}
+
+.dropdown-divider{
+  opacity: 0.5;
+}
+
+.dropdown-menu--icon {
+  width: 1.5rem;
+  font-size: 1.5rem;
+  display: flex;
+  justify-content: center;
+}
+
+
+// Parameters input and text Fields
+
+.parameter-base {
+  height:3.5rem;
+  border-radius: 0;
+  border: 1px solid #e9e9e9;
+  background-color: #FFFFFF !important;
+}
+
+.text-field {
+  padding: 0 1rem;
+  white-space: nowrap;
+  display: flex;
+  line-height: 3.5rem;
+  width: 100%;
+  resize: none;
+  overflow:hidden;
+}
+
+.text-field-large {
+  height: 12rem;
+  width: 100%;
+  padding: 1rem;
+  resize: vertical;
+  overflow:hidden;
+}
+
+.text-field-readonly {
+  white-space: nowrap;
+  width:23rem;
+  line-height: 1.5rem;
+  height: 1.5rem;
+  overflow: hidden;
+}
+
+.number-field{
+  align-items: center;
+  width: 100%;
+  resize: none;
+  line-height: 3.5rem;
+  padding: 0 0 0 1rem;
+  border-radius:0px;
+  border-color:#e9e9e9;
+}
+
+.dropdown-selector {
+  width: 15rem;
+  font-size: 1.3rem;
+  color:#686768;
+  border-radius:0;
+}
+
+// placeholder text
+
+::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+  color:#d3d3d3;
+}
+::-moz-placeholder { /* Firefox 19+ */
+  color: #d3d3d3;
+}
+:-ms-input-placeholder { /* IE 10+ */
+  color:#d3d3d3;
+}
+:-moz-placeholder { /* Firefox 18- */
+  color:#d3d3d3;
+}
+
+
+/*Style form controls */
+
+.form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
+  border-radius: 0px;
+  border: 0px;
+  height: 3.5rem;
+}
+
+.form-control:focus{
+  border-color: #48C8D7;
+}
+
+.form-control{
+  height:3.5rem!important;
+  border-radius: 0px;
+  border: 1px solid #e9e9e9;
+}
+
+select.form-control {
+    -webkit-appearance: none;
+    -webkit-border-radius: 0px;
+    background-image: url("data:image/svg+xml;utf8,<svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' width='24' height='24' viewBox='0 0 24 24'><path fill='#444' d='M7.406 7.828l4.594 4.594 4.594-4.594 1.406 1.406-6 6-6-6z'></path></svg>");
+    background-position: 100% 50%;
+    background-repeat: no-repeat;
+    padding: 0 1.25rem;
+}
+
+/* --- Editable text fields --- */
+
+.module-title {
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.8rem;
+	line-height: 1.8rem;
+  color: #FFFFFF;
+  width: 100%;
+  background: none;
+}
+
+.module-notes {
+  padding: 0.5rem 0 0.5rem 0;
+}
+
+.editable-notes-field {
+  border: none;
+  outline: none;
+  width: 25rem;
+  min-height: 3rem;
+  resize: none;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 100;
+	line-height: 2.2rem;
+  color: #686768;
+  background-color:transparent;
+  display: table;
+  margin:auto;
+}
+
+.editable-text {
+  background-color: red;
+}
