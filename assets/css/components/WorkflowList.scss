@@ -23,6 +23,12 @@
   width: 3rem;
   height: 3rem;
 }
+.workflow-item .context-button:hover {
+  background-color: #E7EAEB;
+}
+.context-button.btn-secondary.active{
+  background-color: #E7EAEB;
+}
 
 // background list
 .workflows-item--wrap {
@@ -44,7 +50,7 @@
 }
 
 .workflow-item:hover {
-  background-color: #fafafa;
+  background-color: #F5F7F8;
   text-decoration: none;
 }
 
