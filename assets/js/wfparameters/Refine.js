@@ -40,7 +40,6 @@ class EditRow extends React.Component {
             initValue: this.props.dataValue,
             dataValue: this.props.dataValue,
             dataCount: this.props.dataCount,
-            showWarnning: false,
             selected: this.props.valueSelected,
         }
         this.handleValueChange = this.handleValueChange.bind(this);
@@ -60,12 +59,16 @@ class EditRow extends React.Component {
     handleKeyPress(event) {
         if(event.key == 'Enter') {
             event.preventDefault();
-            this.sendValueChange();
+            if(this.state.initValue != this.state.dataValue) {
+                this.sendValueChange();
+            }
         }
     }
 
     handleBlur() {
-        this.sendValueChange();
+        if(this.state.initValue != this.state.dataValue) {
+            this.sendValueChange();
+        }
     }
 
     sendValueChange() {
@@ -76,11 +79,11 @@ class EditRow extends React.Component {
     }
 
     handleFocus(event) {
-        console.log('focused');
         event.target.select();
     }
 
     handleSelectionChange(event) {
+        //console.log('checkbox', event);
         var nextState = Object.assign({}, this.state);
         nextState.selected = (!nextState.selected);
         this.setState(nextState);
@@ -144,14 +147,14 @@ export default class Refine extends React.Component {
             histogramLoaded: false,
             histogramData: [],
             histogramNumRows: 0,
-            histogramColumns: [],
+            showWarning: false,
             edits: JSON.parse(props.existingEdits.length > 0 ? props.existingEdits : '[]'),
         }
 
         this.handleValueChange = this.handleValueChange.bind(this);
         this.handleSelectionChange = this.handleSelectionChange.bind(this);
 
-        console.log(this.state.edits);
+        //console.log(this.state.edits);
     }
 
     componentDidMount() {
@@ -161,10 +164,11 @@ export default class Refine extends React.Component {
     componentWillReceiveProps(nextProps) {
         // Handles revision changes and column changes
 
+        //console.log(nextProps);
         var nextColumn = nextProps.selectedColumn;
         var nextRevision = nextProps.revision;
         if(nextRevision != this.props.revision) {
-            console.log(nextRevision, this.props.revision);
+            //console.log(nextRevision, this.props.revision);
             //console.log('Revision bumped.');
             if(nextColumn != this.props.selectedColumn) {
                 // If the column changes, check if this is a cancel; if not, clear the edits
@@ -173,21 +177,20 @@ export default class Refine extends React.Component {
                     histogramLoaded: false,
                     histogramData: [],
                     histogramNumRows: 0,
-                    histogramColumns: [],
                     showWarning: nextRevision > this.props.revision,
                     edits: (nextRevision > this.props.revision) ? [] : JSON.parse(nextProps.existingEdits),
-                });
-                this.loadHistogram(nextColumn);
+                }, () => {this.loadHistogram(nextColumn)});
             } else {
                 this.setState({
                     histogramLoaded: false,
                     histogramData: [],
                     histogramNumRows: 0,
-                    histogramColumns: [],
                     showWarning: false,
                     edits: JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]'),
+                }, () => {
+                    //console.log(this.state.edits);
+                    this.loadHistogram(nextColumn);
                 });
-                this.loadHistogram(nextColumn);
             }
         }
     }
@@ -199,25 +202,29 @@ export default class Refine extends React.Component {
         // This is unused for now.
         api.histogram(this.props.wfModuleId, targetCol)
             .then(histogram => {
+                //console.log(histogram);
                 var nextState = Object.assign({}, this.state);
                 var editedHistogram = histogram.rows.map(function(entry) {
                     var newEntry = Object.assign({}, entry);
                     newEntry.selected = true;
                     return newEntry;
                 });
-                console.log(editedHistogram);
+                //console.log(this.state.edits);
+                //console.log(editedHistogram);
                 // Apply all relevant edits we have to the original histogram
                 for(var i = 0; i < this.state.edits.length; i ++) {
+                    //console.log('applying edit');
                     if(this.state.edits[i].column == this.props.selectedColumn) {
+                        //console.log('applying edit');
                         editedHistogram = this.applySingleEdit(editedHistogram, this.state.edits[i]);
                     }
                 }
+                //console.log(editedHistogram);
                 nextState.histogramData = editedHistogram;
                 nextState.histogramNumRows = editedHistogram.length;
                 nextState.histogramLoaded = true;
-                nextState.histogramColumns = histogram.columns.map(cname => ({key: cname, name: cname, editable: !(cname == 'count')}));
                 this.setState(nextState);
-                console.log(nextState.histogramData);
+                //console.log(nextState.histogramData);
             })
             .then(() => {
                 if(clearEdits) {
@@ -265,8 +272,8 @@ export default class Refine extends React.Component {
     handleValueChange(changeData) {
         // Handles edits to values; pushes changes to the server by setting the parameter
 
-        console.log('Value changed');
-        console.log(changeData);
+        //console.log('Value changed');
+        //console.log(changeData);
         var nextEdits = this.state.edits.slice();
         nextEdits.push({
             type: 'change',
@@ -277,14 +284,14 @@ export default class Refine extends React.Component {
             },
             timestamp: Date.now()
         });
-        console.log(nextEdits);
+        //console.log(nextEdits);
         this.props.saveEdits(JSON.stringify(nextEdits));
     }
 
     handleSelectionChange(changeData) {
         // Handles selection/deselection of facets; pushes changes to server
 
-        console.log(changeData);
+        //console.log(changeData);
         var nextEdits = this.state.edits.slice();
         nextEdits.push({
             type: 'select',
@@ -294,7 +301,7 @@ export default class Refine extends React.Component {
             },
             timestamp: Date.now()
         });
-        console.log(nextEdits);
+        //console.log(nextEdits);
         this.props.saveEdits(JSON.stringify(nextEdits));
     }
 
