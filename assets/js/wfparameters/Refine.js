@@ -4,6 +4,7 @@ import WorkbenchAPI from '../WorkbenchAPI'
 import ReactDataGrid from 'react-data-grid'
 import ColumnSelector from "./ColumnSelector"
 //import {Form, FormGroup, Label, Input, FormText, Col, Table} from 'reactstrap'
+import {Alert} from 'reactstrap'
 
 
 var api = WorkbenchAPI();
@@ -36,6 +37,7 @@ class EditRow extends React.Component {
             initValue: this.props.dataValue,
             dataValue: this.props.dataValue,
             dataCount: this.props.dataCount,
+            showWarnning: false,
             selected: this.props.valueSelected,
         }
         this.handleValueChange = this.handleValueChange.bind(this);
@@ -154,19 +156,33 @@ export default class Refine extends React.Component {
         var nextColumn = nextProps.selectedColumn;
         var nextRevision = nextProps.revision;
         if(nextRevision != this.props.revision) {
+            console.log(nextRevision, this.props.revision);
             //console.log('Revision bumped.');
-            this.setState({
-                histogramLoaded: false,
-                histogramData: [],
-                histogramNumRows: 0,
-                histogramColumns: [],
-                edits: JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]'),
-            });
-            this.loadHistogram(nextColumn);
+            if(nextColumn != this.props.selectedColumn) {
+                this.setState({
+                    histogramLoaded: false,
+                    histogramData: [],
+                    histogramNumRows: 0,
+                    histogramColumns: [],
+                    showWarning: nextRevision > this.props.revision,
+                    edits: (nextRevision > this.props.revision) ? [] : JSON.parse(nextProps.existingEdits),
+                });
+                this.loadHistogram(nextColumn, false);
+            } else {
+                this.setState({
+                    histogramLoaded: false,
+                    histogramData: [],
+                    histogramNumRows: 0,
+                    histogramColumns: [],
+                    showWarning: false,
+                    edits: JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]'),
+                });
+                this.loadHistogram(nextColumn);
+            }
         }
     }
 
-    loadHistogram(targetCol) {
+    loadHistogram(targetCol, clearEdits=false) {
         api.histogram(this.props.wfModuleId, targetCol)
             .then(histogram => {
                 var nextState = Object.assign({}, this.state);
@@ -188,11 +204,16 @@ export default class Refine extends React.Component {
                 nextState.histogramColumns = histogram.columns.map(cname => ({key: cname, name: cname, editable: !(cname == 'count')}));
                 this.setState(nextState);
                 console.log(nextState.histogramData);
+            })
+            .then(() => {
+                if(clearEdits) {
+                    this.props.saveEdits([]);
+                }
             });
     }
 
     applySingleEdit(hist, edit) {
-        console.log(edit);
+        //console.log(edit);
         var newHist = hist.slice();
         if(edit.type == 'change') {
             var fromIdx = newHist.findIndex(function(element) {
@@ -325,6 +346,11 @@ export default class Refine extends React.Component {
 
             return (
                 <div>
+                    {this.state.showWarning ?
+                        (<Alert color={'warning'}>
+                            Switching columns will clear your previous work. If you did it by accident, use "undo" from the top-right menu to go back,
+                        </Alert>) : ''
+                    }
                     <div className='t-d-gray content-3 label-margin'>Histogram</div>
                     <div className='container list-wrapper' style={{'height': '400px'}}>
                         <div className='row list-scroll'>

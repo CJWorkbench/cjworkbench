@@ -12,6 +12,8 @@ class Refine(ModuleImpl):
     def render(wf_module, table):
 
         edits_json = wf_module.get_param_raw('edits', 'string')
+        if edits_json == '':
+            return table
 
         try:
             edits = json.loads(edits_json)
