@@ -193,6 +193,25 @@ def wfmodule_output(request, pk, format=None):
         return HttpResponse(content=modified_html)
 
 
+def wfmodule_histogram(request, pk, col, format=None):
+    if request.method == 'GET':
+        try:
+            wf_module = WfModule.objects.get(pk=pk)
+        except WfModule.DoesNotExist:
+            return HttpResponseNotFound()
+
+        if not wf_module.workflow.user_authorized_read(request.user):
+            return HttpResponseForbidden()
+
+        prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
+        if not prev_modules:
+            return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
+        table = execute_wfmodule(prev_modules.last())
+        hist_table = table.groupby(col).size().reset_index()
+        hist_table.columns = [col, 'count']
+        hist_table = hist_table.sort_values(by=['count', col], ascending=[False, True])
+
+        return HttpResponse(make_render_json(hist_table), content_type="application/json")
 
 
 # /input is just /render on the previous wfmodule
