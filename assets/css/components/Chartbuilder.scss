@@ -1,0 +1,111 @@
+/* --- Chartbuilder - override all sorts of styles to integrate --- */
+
+/* TODO this should inherit from content-3 t-d-gray, just cut and paste right now */
+.chartbuilder-main h2 {
+  font-size: 1.3rem;
+	line-height: 1.3rem;
+  color: #686768;
+}
+
+
+/* TODO this should inherit from content-3 t-d-gray, just cut and paste right now */
+.chartbuilder-main .editor-label {
+  font-size: 1.3rem;
+	line-height: 1.3rem;
+  color: #686768;
+}
+
+/* Suppress ChartBuilder step numbers */
+.chartbuilder-main .step-number {
+  display: none;
+}
+
+/* TODO this should inherit from action-button and button-gray */
+.chartbuilder-main .cb-button {
+  cursor: pointer;
+  height: 4rem;
+  border-radius: 2.5rem;
+  align-items: center;
+  justify-content: center;
+	font-size: 1.4rem;
+	font-weight: 900;
+  line-height: 1.4rem;
+  color: #686768;
+  border: 1px solid #686768;
+  text-align: center;
+  background-color: transparent !important;
+  margin: 0 1rem 0 1rem !important;
+  padding: 0 1rem 0 1rem !important;
+}
+
+.chartbuilder-main .active {
+  background-color: #48C8D7 !important;
+  color: #FFFFFF !important;
+	text-align: center;
+  border: 0px !important;
+}
+
+/* TODO copied from text-field t-d-gray content-2... but stripped down  */
+.chartbuilder-main .cb-text-input input {
+  height: 4rem;
+  width: 100%;
+  padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+  color: #686768;
+}
+
+
+/* TODO height (but not width) copied from dropdown-selector */
+.chartbuilder-main .cb-dropdown-select {
+  height: 4rem;
+}
+
+/* Hiden canvas element used for image export;
+   https://quartz.github.io/Chartbuilder/ has display: none so we do too  */
+.chartbuilder-canvas {
+  display: none;
+}
+
+/* color picker */
+.color-picker.color {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-picker.pop-over {
+  position: absolute;
+  z-index: 1060;
+  top:100%;
+  left:-75%;
+}
+
+.color-picker.cover {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
+
+.input-group-btn > .color-picker.button {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.color-picker.button-icon {
+  font-size: 0.6rem;
+}
+
+.color-picker .block-picker input {
+  display: none;
+}
+
+.block-picker{
+  width: 11rem!important;
+  box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0, 0, 0, 0.1)!important;
+}

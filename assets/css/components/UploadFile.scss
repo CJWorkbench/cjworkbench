@@ -3,3 +3,45 @@
   align-items: center;
   cursor:pointer;
 }
+
+.dropzone{
+  height:8rem;
+  border: 3px dashed #FBAA6D;
+  cursor:pointer;
+  opacity: 0.5;
+  color:#FBAA6D;
+  margin-bottom: 1.5rem;
+}
+
+.dropzone:hover{
+  opacity: 1;
+}
+
+.upload-box{
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #e9e9e9;
+}
+
+.versionSelect--uploadFile{
+  margin-top: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+/*Progress bar*/
+
+// positioning when module is empty or loaded with at least a file
+.loader-empty{
+  top:11.2rem;
+  display:none;
+}
+.loader-replace{
+  top:9.1rem;
+  display: none;
+}
+
+/*dropzone button gets set up within the version box when file is loaded*/
+
+.dropzone-button{
+  position:absolute!important;
+  right:1.5rem;
+  bottom:1rem;
+}
