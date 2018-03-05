@@ -24,6 +24,9 @@ if sys.version_info[0] < 3:
 # How much StoredObject space can each module take up?
 MAX_STORAGE_PER_MODULE = 1024*1024*1024
 
+# configuration for urlscraper
+SCRAPER_NUM_CONNECTIONS = 8
+SCRAPER_TIMEOUT = 30 # seconds
 
 # ----- App Boilerplate -----
 

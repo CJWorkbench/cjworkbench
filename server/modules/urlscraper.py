@@ -1,19 +1,11 @@
 from .moduleimpl import ModuleImpl
-from collections import OrderedDict
 import pandas as pd
-from pandas.io.common import CParserError
-from xlrd import XLRDError
-import io
-import requests
-import json
 from server.versions import save_fetched_table_if_changed
-from server.utils import sanitize_dataframe
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
-
+from django.conf import settings
 import aiohttp
 import asyncio
-import async_timeout
 
 event_loop = asyncio.get_event_loop()
 
@@ -25,41 +17,58 @@ def is_valid_url(url):
     except ValidationError:
         return False
 
-async def async_get_url(url, rownum):
+async def async_get_url(url):
+    with aiohttp.Timeout(settings.SCRAPER_TIMEOUT):
         session = aiohttp.ClientSession()
-        response = await session.get(url)
-        return {'rownum':rownum, 'response':response}
+        return await session.get(url)
 
 # Parses the HTTP response object and stores it as a row in our table
 def add_result_to_table(table, i, response):
-    table.loc[i,'status'] = response['status']
+    table.loc[i,'status'] = str(response['status'])
     table.loc[i,'html'] = response['text']
 
-async def scrapeurls(urls, result_table):
-    max_fetchers = 8
-    running_fetchers = []
+
+# Server didn't get back to us in time
+def add_timeout_to_table(table, i):
+    table.loc[i,'status'] = 'No response'
+    table.loc[i,'html'] = ''
+
+# Asynchronously scrape many urls, and store the results in the table
+async def scrape_urls(urls, result_table):
+    max_fetchers = settings.SCRAPER_NUM_CONNECTIONS
+
+    running_tasks = []
+    task_to_rownum = {}
     num_urls = len(urls)
     started_urls = 0
     finished_urls = 0
 
     while finished_urls < num_urls:
 
-        while ( len(running_fetchers) < max_fetchers ) and ( started_urls<num_urls ):
-            running_fetchers.append(
-                event_loop.create_task(async_get_url(urls[started_urls], started_urls)))
+        # start tasks until we max out connections, or run out of urls
+        while ( len(running_tasks) < max_fetchers ) and ( started_urls<num_urls ):
+            newtask = event_loop.create_task(async_get_url(urls[started_urls]))
+            task_to_rownum[newtask] = started_urls
+            running_tasks.append(newtask)
             started_urls += 1
 
         # Wait for any of the fetches to finish
-        finished, pending = await asyncio.wait(running_fetchers, return_when=asyncio.FIRST_COMPLETED)
+        finished, pending = await asyncio.wait(running_tasks, return_when=asyncio.FIRST_COMPLETED)
 
         # process any results we got
         for task in finished:
-            result = task.result()
-            add_result_to_table(result_table, result['rownum'], result['response'])
+            try:
+                response = task.result()
+                add_result_to_table(result_table, task_to_rownum[task], response)
+            except asyncio.TimeoutError:
+                add_timeout_to_table(result_table, task_to_rownum[task])
+
+            del task_to_rownum[task]  # delete unused keys. Just a nicety, really, saves marginal memory
 
         # keep waiting on unfinished tasks
         finished_urls += len(finished)
-        running_fetchers = list(pending)
+        running_tasks = list(pending)
+
 
 
 
@@ -86,8 +95,7 @@ class URLScraper(ModuleImpl):
 
         urls = render_urls(urlcol)
 
-        # status=0 so NaNs don't turn this into a float cal
-        out_table = pd.DataFrame({'urls': self.urls_small, 'status': 0}, columns=['urls', 'status', 'html'])
+        out_table = pd.DataFrame({'urls': self.urls_small, 'status': ''}, columns=['urls', 'status', 'html'])
 
         event_loop.run_until_complete(scrapeurls(urls, out_table))
 

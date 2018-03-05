@@ -1,5 +1,6 @@
 from server.tests.utils import *
-from server.modules.urlscraper import scrapeurls
+from server.modules.urlscraper import scrape_urls
+from django.test import override_settings
 import pandas as pd
 import asyncio
 import random
@@ -17,7 +18,7 @@ def make_response(status, html):
 
 # turn a test urls/results list into a set of mock tasks, as well as other useful bits
 def make_test_tasks(results):
-    results_status = [x[1]['status'] for x in results]
+    results_status = [str(x[1]['status']) for x in results]  # scrape_urls() should return string statuses
     results_content = [x[1]['text'] for x in results]
     results_tasks = [mock_async_get(x[0], x[1]) for x in results]
     return results_tasks, results_status, results_content
@@ -27,6 +28,7 @@ class ScrapeUrlsTest(TestCase):
         pass
 
     # does the hard work for a set of urls/timings/results
+    @override_settings(SCRAPER_TIMEOUT=1.1)  # all our test data has 1 second lag max
     def scraper_result_test(self, urls, results):
         with mock.patch('aiohttp.ClientSession') as session:
             results_tasks, results_status, results_content = make_test_tasks(results)
@@ -34,11 +36,11 @@ class ScrapeUrlsTest(TestCase):
             session_mock = session.return_value  # mock obj returned by aoihttp.ClientSession()
             session_mock.get.side_effect = results_tasks
 
-            # mock the output table format it expects. Status=0 so NaNs don't turn this into a float cal
-            out_table = pd.DataFrame({'urls': urls, 'status': 0}, columns=['urls', 'status', 'html'])
+            # mock the output table format it expects
+            out_table = pd.DataFrame({'urls': urls, 'status': ''}, columns=['urls', 'status', 'html'])
 
             event_loop = asyncio.get_event_loop()
-            event_loop.run_until_complete(scrapeurls(urls, out_table))
+            event_loop.run_until_complete(scrape_urls(urls, out_table))
 
             # ensure that aiohttp.get()_was called with the right sequence of urls
             call_urls = []
@@ -79,11 +81,14 @@ class ScrapeUrlsTest(TestCase):
         self.scraper_result_test(urls_big, results_big)
 
         # now get fiendish and make some of the urls time out
-        # for foo in range(20):
-        #     i = random.randint(0, num_big)
-        #     response_times[i] = 1000 # nope
-        # results_timeout = list( zip(response_times,
-        #                         [make_response(response_status[i], response_content[i]) for i in range(num_big)]))
-        #
-        # self.scraper_result_test(urls_big, results_timeout)
+        for foo in range(20):
+            i = random.randint(0, num_big)
+            response_times[i] = 1000 # nope
+            response_status[i] = 'No response'
+            response_content[i] = ''
+
+        results_timeout = list( zip(response_times,
+                                [make_response(response_status[i], response_content[i]) for i in range(num_big)]))
+
+        self.scraper_result_test(urls_big, results_timeout)
 
