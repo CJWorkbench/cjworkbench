@@ -37,8 +37,7 @@ def add_timeout_to_table(table, i):
 async def scrape_urls(urls, result_table):
     max_fetchers = settings.SCRAPER_NUM_CONNECTIONS
 
-    running_tasks = []
-    task_to_rownum = {}
+    tasks_to_rows = {}  # double as our list of currently active tasks
     num_urls = len(urls)
     started_urls = 0
     finished_urls = 0
@@ -46,28 +45,25 @@ async def scrape_urls(urls, result_table):
     while finished_urls < num_urls:
 
         # start tasks until we max out connections, or run out of urls
-        while ( len(running_tasks) < max_fetchers ) and ( started_urls<num_urls ):
+        while ( len(tasks_to_rows) < max_fetchers ) and ( started_urls < num_urls ):
             newtask = event_loop.create_task(async_get_url(urls[started_urls]))
-            task_to_rownum[newtask] = started_urls
-            running_tasks.append(newtask)
+            tasks_to_rows[newtask] = started_urls
             started_urls += 1
 
         # Wait for any of the fetches to finish
-        finished, pending = await asyncio.wait(running_tasks, return_when=asyncio.FIRST_COMPLETED)
+        finished, pending = await asyncio.wait(tasks_to_rows.keys(), return_when=asyncio.FIRST_COMPLETED)
 
         # process any results we got
         for task in finished:
             try:
                 response = task.result()
-                add_result_to_table(result_table, task_to_rownum[task], response)
+                add_result_to_table(result_table, tasks_to_rows[task], response)
             except asyncio.TimeoutError:
-                add_timeout_to_table(result_table, task_to_rownum[task])
+                add_timeout_to_table(result_table, tasks_to_rows[task])
 
-            del task_to_rownum[task]  # delete unused keys. Just a nicety, really, saves marginal memory
+            del tasks_to_rows[task]
 
-        # keep waiting on unfinished tasks
         finished_urls += len(finished)
-        running_tasks = list(pending)
 
 
 
