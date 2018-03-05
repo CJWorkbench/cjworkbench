@@ -86,12 +86,13 @@ class CountByDate(ModuleImpl):
         # convert the date column to actual datetimes
         try:
             def inner_func(val):
-                date_only, time_only = _guess_time_or_date(val)
+                str_val = str(val)
+                date_only, time_only = _guess_time_or_date(str_val)
                 if date_only:
                     CountByDate.DATE_ONLY_COUNT += 1
                 if time_only:
                     CountByDate.TIME_ONLY_COUNT += 1
-                return pd.to_datetime(val)
+                return pd.to_datetime(str_val)
 
             return_table['date'] = table[col].apply(inner_func)
 
@@ -102,7 +103,7 @@ class CountByDate(ModuleImpl):
                 CountByDate.TIME_ONLY = True
 
         except (ValueError, TypeError):
-            return('Column %s does not seem to be dates' % col)
+            return('Error converting column %s to dates' % col)
 
         # Figure out our groupby options and groupby
         # behavior based on the input format.
