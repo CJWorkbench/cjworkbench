@@ -13,6 +13,7 @@ class CountValuesTests(LoggedInTestCase):
         self.count_csv = 'Date,Amount,Foo\nJan 10 2011,10,Foo\nJul 25 2016,5,Goo\nJan 10 2011 01:00:00,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:00:01,1,Hoo\nJan 10 2011 00:01:00,1,Hoo\nJan 15 2011,1,Too\n'
         self.count_csv_time = 'Date,Amount,Foo\n11:00,10,Foo\n12:00,5,Goo\n01:00:00,1,Hoo\n00:00:01,1,Hoo\n00:00:01,1,Hoo\n00:01:00,1,Hoo\nDecember 15 2017 11:05,1,Too\n'
         self.count_csv_dates = 'Date,Amount,Foo\nJan 10 2011,10,Foo\nJul 25 2016,5,Goo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 10 2011,1,Hoo\nJan 15 2011 6:00pm,1,Too\n'
+        self.count_timestamps = 'Date,Amount,Foo\n1294617600,10,Foo\n1469404800,5,Goo\n1294621200,1,Hoo\n1294617601,1,Hoo\n1294617601,1,Hoo\n1294617661,1,Hoo\n1295071201,1,Too\n'
 
         workflow = create_testdata_workflow(self.count_csv)
 
@@ -129,3 +130,10 @@ class CountValuesTests(LoggedInTestCase):
         self.assertEqual(self.wf_module.status, 'error')
         self.assertEqual(self.wf_module.error_msg, 'Column Date only contains date values. Group by Day, Month, Quarter or Year.')
 
+    def test_timestamps(self):
+        set_string(self.csv_data, self.count_csv_dates)
+        set_string(self.col_pval, 'Date')
+        set_integer(self.sort_pval, 1)
+        out = execute_wfmodule(self.wf_module)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(out.to_csv(index=False), 'date,count\n2011-01-15,1\n2016-07-25,1\n2011-01-10,5\n')

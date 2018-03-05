@@ -83,10 +83,6 @@ class CountByDate(ModuleImpl):
         if col not in table.columns:
             return('There is no column named %s' % col)
 
-        # integer columns, just... no. Never really want to interpret as seconds since 1970
-        if table[col].dtype == 'int64':
-            return('Column %s does not seem to be dates' % col)
-
         # convert the date column to actual datetimes
         try:
             def inner_func(val):
