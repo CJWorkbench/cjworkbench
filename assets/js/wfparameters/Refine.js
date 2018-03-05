@@ -1,8 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WorkbenchAPI from '../WorkbenchAPI'
-import ReactDataGrid from 'react-data-grid'
-import ColumnSelector from "./ColumnSelector"
 //import {Form, FormGroup, Label, Input, FormText, Col, Table} from 'reactstrap'
 import {Alert} from 'reactstrap'
 
@@ -48,6 +46,15 @@ class EditRow extends React.Component {
         this.handleKeyPress = this.handleKeyPress.bind(this);
 
         this.handleSelectionChange = this.handleSelectionChange.bind(this);
+    }
+
+    componentWillReceiveProps(nextProps) {
+        var nextState = Object.assign({}, this.state);
+        nextState.initValue = nextProps.dataValue;
+        nextState.dataValue = nextProps.dataValue;
+        nextState.dataCount = nextProps.dataCount;
+        nextState.selected = nextProps.valueSelected;
+        this.setState(nextState);
     }
 
     handleValueChange(event) {
@@ -158,7 +165,7 @@ export default class Refine extends React.Component {
     }
 
     componentDidMount() {
-        this.loadHistogram(this.props.selectedColumn);
+        this.loadHistogram(this.props.selectedColumn, this.state);
     }
 
     componentWillReceiveProps(nextProps) {
@@ -179,8 +186,9 @@ export default class Refine extends React.Component {
                     histogramNumRows: 0,
                     showWarning: nextRevision > this.props.revision,
                     edits: (nextRevision > this.props.revision) ? [] : JSON.parse(nextProps.existingEdits),
-                }, () => {this.loadHistogram(nextColumn)});
+                }, () => {this.loadHistogram(nextColumn, this.state)});
             } else {
+                /*
                 this.setState({
                     histogramLoaded: false,
                     histogramData: [],
@@ -191,11 +199,16 @@ export default class Refine extends React.Component {
                     //console.log(this.state.edits);
                     this.loadHistogram(nextColumn);
                 });
+                */
+                var nextState = Object.assign({}, this.state);
+                nextState.edits = JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]');
+                console.log(nextState.edits);
+                this.loadHistogram(nextColumn, nextState);
             }
         }
     }
 
-    loadHistogram(targetCol, clearEdits=false) {
+    loadHistogram(targetCol, baseState, clearEdits=false) {
         // Loads a histogram from the server and sets the state with the result
 
         // clearEdits controls whether we clear the edit on the server immediately upon load
@@ -203,7 +216,7 @@ export default class Refine extends React.Component {
         api.histogram(this.props.wfModuleId, targetCol)
             .then(histogram => {
                 //console.log(histogram);
-                var nextState = Object.assign({}, this.state);
+                var nextState = Object.assign({}, baseState);
                 var editedHistogram = histogram.rows.map(function(entry) {
                     var newEntry = Object.assign({}, entry);
                     newEntry.selected = true;
@@ -212,14 +225,18 @@ export default class Refine extends React.Component {
                 //console.log(this.state.edits);
                 //console.log(editedHistogram);
                 // Apply all relevant edits we have to the original histogram
-                for(var i = 0; i < this.state.edits.length; i ++) {
+                console.log(nextState.edits);
+                for(var i = 0; i < nextState.edits.length; i ++) {
                     //console.log('applying edit');
-                    if(this.state.edits[i].column == this.props.selectedColumn) {
+                    if(nextState.edits[i].column == this.props.selectedColumn) {
                         //console.log('applying edit');
-                        editedHistogram = this.applySingleEdit(editedHistogram, this.state.edits[i]);
+                        editedHistogram = this.applySingleEdit(editedHistogram, nextState.edits[i]);
                     }
                 }
                 //console.log(editedHistogram);
+                editedHistogram.sort((item1, item2) => {
+                    return item1.count < item2.count ? 1 : -1;
+                })
                 nextState.histogramData = editedHistogram;
                 nextState.histogramNumRows = editedHistogram.length;
                 nextState.histogramLoaded = true;
@@ -340,27 +357,8 @@ export default class Refine extends React.Component {
         }
     }
 
-    renderEdits() {
-        if(this.state.edits.length > 0) {
-            return (
-                <div>
-                    <div className='t-d-gray content-3 label-margin'>Edits</div>
-                    <ReactDataGrid
-                        columns={editColumns}
-                        rowGetter={this.editsRowGetter}
-                        rowsCount={this.state.edits.length}
-                        minHeight={350}
-                        rowHeight={35}
-                    />
-                </div>
-            )
-        }
-        return (<div>No edits yet.</div>)
-    }
-
     render() {
         const histogramComponent = this.renderHistogram();
-        //const editsDatagrid = this.renderEdits();
         return (
             <div>
                 {histogramComponent}

@@ -68,6 +68,8 @@ describe('Refine', () => {
                     var newEntry = Object.assign({}, entry);
                     newEntry.selected = true;
                     return newEntry;
+                }).sort((item1, item2) => {
+                    return (item1.count < item2.count ? 1 : -1);
                 }),
                 showWarning: false,
                 edits: []
