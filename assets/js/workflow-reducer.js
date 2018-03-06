@@ -13,6 +13,7 @@ const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
 const ADD_MODULE = 'ADD_MODULE';
 const DELETE_MODULE = 'DELETE_MODULE';
 const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE';
+const SET_WF_LIBRARY_COLLAPSE = 'SET_WF_LIBRARY_COLLAPSE'
 
 // User
 const GET_CURRENT_USER = 'GET_CURRENT_USER';
@@ -237,6 +238,29 @@ registerReducerFunc(SET_SELECTED_MODULE + '_PENDING', (state, action) => {
   } else {
     return state;
   }
+});
+
+
+// SET_WF_LIBRARY_COLLAPSE
+// Toggle collapse of Module Library
+export function setWfLibraryCollapseAction(workflow_id, isCollapsed, isReadOnly) {
+  let payload = {
+    data : { id: workflow_id, module_library_collapsed: isCollapsed }
+  };
+
+  if (!isReadOnly) {
+    payload.promise = api.setWfLibraryCollapse(workflow_id, isCollapsed);
+  }
+  return {
+    type : SET_WF_LIBRARY_COLLAPSE,
+    payload
+  }
+}
+registerReducerFunc(SET_WF_LIBRARY_COLLAPSE + '_PENDING', (state, action) => {
+  return update(state, {
+    workflow: 
+      {module_library_collapsed: {$set: action.payload.module_library_collapsed}
+  }});
 });
 
 
