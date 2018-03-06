@@ -11,8 +11,8 @@
 }
 
 .wf-card .context-button {
-  width: 2rem;
-  height: 2rem;
+  width: 2.2rem;
+  height: 2.2rem;
 }
 
 .wf-card .context-button--icon {
@@ -28,6 +28,95 @@
 
 .wf-card .label{
   margin-bottom: 0px;
+}
+
+.wf-card{
+  width: 26rem;
+  margin-bottom: 0.5rem;
+  background-color: #fcfcfc;
+  position: relative;
+  transition: all 0.1s ease-out;
+}
+
+.wf-card:hover{
+  background:#F5F7F8;
+}
+
+.wf-card.placeholder {
+  height: 0.5rem;
+  background-color: #7A9BB0;
+  opacity:0.5;
+  padding-bottom:0;
+}
+
+.module-card-info {
+  width:100%;
+}
+.module-card-header {
+  clear:left;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-block{
+  position:relative;
+ }
+
+.module-header-content{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin:0 1rem 0 1.5rem;
+  height:4rem;
+}
+
+.module-header-buttons{
+  display:none;
+}
+
+.module-header-buttons:hover{
+  display:flex;
+}
+
+.notification-badge{
+  display: flex;
+}
+
+.notification-badge-icon{
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.module-card-params {
+  padding: 0 1.5rem 0.01rem 1.5rem;
+}
+
+.module-description {
+  margin-bottom: 2rem;
+  font-family: 'Nunito Light', sans-serif;
+  font-size: 1.3rem;
+	font-weight: 300;
+  line-height: 2.1rem;
+  color: #A2A2A2;
+  display:none;
+}
+
+.wf-module-error-msg {
+  border: 0px;
+  padding: 1rem 1.5rem;
+  margin:0 1.5rem;
+  border-radius: 0px;
+  background-color: rgba(232,114,110,0.6);
+  color: #fff;
+  font-size: 1.2rem;
+  font-family: 'Nunito Light', sans-serif;
+  text-align: left;
+}
+
+.wfmoduleButton{
+  width: 20%;
 }
 
 
@@ -110,4 +199,113 @@
 
 .wf-card .action-button {
 	height: 3.5rem;
+}
+
+/*Charts module using Chartbuilder*/
+
+.module-card-params a{
+  display: none;
+}
+
+.svg-credit-data {
+  display:none;
+}
+
+.grid-lines{
+  opacity: 0.5;
+}
+
+.zero{
+  opacity: 0.3;
+}
+
+.chartbuilder-svg{
+  border:1px #f1f1f1 solid;
+}
+
+svg .svg-background{
+  opacity: 1;
+  fill:#fff;
+  border: 1px red;
+}
+
+.chart-label{
+  width: 100%;
+  margin-left: 0.5rem;
+}
+
+/* ---- Wf Module status bars ---- */
+
+/* a dummy div around output status bar, for positioning purposes  */
+.output-bar-container {
+  position: absolute;
+  height: 100%;
+  width:100%;
+}
+
+/* all good & selected */
+.module-output-bar-blue {
+  height: 100%;
+  background-color:#F5F7F8;
+  border: 1px solid rgba(118,155,176,0.3);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.module-output-bar-blue:after {
+	border: solid transparent;
+	content: " ";
+	border-left-color: rgba(118,155,176,0.3);
+	border-width: 2rem 0 2.25rem 1rem;
+  margin-left: 26.3rem
+}
+
+/* standby  */
+.module-output-bar-orange {
+  height: 100%;
+  border:1px solid rgba(251,170,109,0.7);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.module-output-bar-orange:after {
+  border: solid transparent;
+	content: " ";
+	border-left-color: rgba(251,170,109,0);
+	border-width: 2rem 0 2.25rem 1rem;
+  margin-left: 26.3rem
+}
+/* error  */
+.module-output-bar-pink {
+  height: 100%;
+  background-color: transparent;
+  border:1px solid rgba(0,114,110,0);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.module-output-bar-pink:after {
+	content: " ";
+	position: absolute;
+	border:2px solid rgba(232,114,110,0.3);
+  margin-left: 26.5rem;
+  height: 4rem;
+}
+/* error & selected */
+.module-output-bar-red {
+  height: 100%;
+  background-color: transparent;
+  border:1px solid rgba(232,114,110,0.5);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.module-output-bar-red:after {
+  content: " ";
+	position: absolute;
+	border:2px solid rgba(232,114,110,0.3);
+  margin-left: 26.5rem;
+  height: 4rem;
 }

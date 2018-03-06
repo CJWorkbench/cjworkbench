@@ -19,11 +19,16 @@
       "default": "3"
     },
     {
-      "name": "Sort by",
-      "id_name" : "sortby",
+      "name": "Operation",
+      "id_name" : "operation",
       "type" : "menu",
-      "menu_items" : "Value|Frequency",
+      "menu_items" : "Count|Average|Sum|Min|Max",
       "default": "0"
+    },
+    {
+      "name": "",
+      "id_name" : "targetcolumn",
+      "type": "column"
     }
   ]
 }

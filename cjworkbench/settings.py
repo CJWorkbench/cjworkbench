@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 import os
 import sys
 import json
+from json.decoder import JSONDecodeError
 from os.path import abspath, basename, dirname, join, normpath
 from server.settingsutils import *
 
@@ -91,7 +92,7 @@ if DEBUG==False:
     ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
     SENDGRID_TEMPLATE_IDS = {
         'account/email/email_confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'acount/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+        'account/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
         'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
     }
     SESSION_ENGINE='django.contrib.sessions.backends.db'
@@ -315,7 +316,10 @@ if not CJW_SOCIALACCOUNT_SECRETS_PATH:
 CJW_SOCIALACCOUNT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_SOCIALACCOUNT_SECRETS_PATH)
 
 if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
-    CJW_SOCIALACCOUNT_SECRETS = json.loads(open(CJW_SOCIALACCOUNT_SECRETS_PATH, 'r').read())
+    try:
+        CJW_SOCIALACCOUNT_SECRETS = json.loads(open(CJW_SOCIALACCOUNT_SECRETS_PATH, 'r').read())
+    except JSONDecodeError:
+        CJW_SOCIALACCOUNT_SECRETS = []
 
     for provider in CJW_SOCIALACCOUNT_SECRETS:
         INSTALLED_APPS.append('allauth.socialaccount.providers.' + provider['provider'])

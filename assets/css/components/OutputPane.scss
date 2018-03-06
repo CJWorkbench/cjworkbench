@@ -9,6 +9,7 @@
   width:100%;
   height: calc(50% - 3rem);
   margin-bottom: -0.5rem;
+  background:#fff;
 }
 
 /* This div may be superfluous wrt .outputpane */
@@ -17,7 +18,7 @@ iframe + .outputpane-table {
   height: calc(50% - 3rem);
 }
 .outputpane-table {
-  height:100%;
+  height:calc(100% - 5.5rem);
   position:relative;
 }
 

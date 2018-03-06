@@ -3,6 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 from cjworkbench import settings
 from django.template.loader import render_to_string
 from server.utils import get_absolute_url
+from allauth.account.utils import user_display
 
 def email_notification(user, wfm):
     ctx = {

@@ -196,7 +196,7 @@ export default class WfParameter extends React.Component {
     } else if (this.props.p.parameter_spec.id_name == 'version_select_simpler') {
 
       return (
-        <div className='VersionSelect-UploadFile'>
+        <div className='versionSelect--uploadFile'>
           <DataVersionSelect
             isReadOnly={this.props.isReadOnly}
             wfModuleId={this.props.wf_module_id}
