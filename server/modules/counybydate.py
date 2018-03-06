@@ -55,7 +55,6 @@ class CountByDate(ModuleImpl):
         return_table = pd.DataFrame()
         col = wf_module.get_param_column('column')
         target = wf_module.get_param_column('targetcolumn')
-        sortby = wf_module.get_param_menu_idx('sortby')
         groupby = wf_module.get_param_menu_idx('groupby')
         operation = wf_module.get_param_menu_idx('operation')
         group_options = [
