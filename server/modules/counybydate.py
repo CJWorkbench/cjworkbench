@@ -55,7 +55,6 @@ class CountByDate(ModuleImpl):
         return_table = pd.DataFrame()
         col = wf_module.get_param_column('column')
         target = wf_module.get_param_column('targetcolumn')
-        sortby = wf_module.get_param_menu_idx('sortby')
         groupby = wf_module.get_param_menu_idx('groupby')
         operation = wf_module.get_param_menu_idx('operation')
         group_options = [
@@ -81,12 +80,14 @@ class CountByDate(ModuleImpl):
             return None
 
         if col not in table.columns:
-            return('There is no column named %s' % col)
+            return('There is no column named \'%s\'' % col)
 
         # convert the date column to actual datetimes
         try:
             def inner_func(val):
                 str_val = str(val)
+                if str_val == '':
+                    return 'no date'
                 date_only, time_only = _guess_time_or_date(str_val)
                 if date_only:
                     CountByDate.DATE_ONLY_COUNT += 1
@@ -103,7 +104,7 @@ class CountByDate(ModuleImpl):
                 CountByDate.TIME_ONLY = True
 
         except (ValueError, TypeError):
-            return('Error converting column %s to dates' % col)
+            return('The column \'%s\' does not appear to be dates or time.' % col)
 
         # Figure out our groupby options and groupby
         # behavior based on the input format.
@@ -113,18 +114,18 @@ class CountByDate(ModuleImpl):
 
         if CountByDate.TIME_ONLY == True:
             try:
-                return_table['date'] = return_table['date'].dt.strftime(time_only_options[groupby])
+                return_table['date'] = return_table['date'].apply(lambda x: x.strftime(time_only_options[groupby]) if x != 'no date' else x)
             except IndexError:
-                return 'Column %s only contains time values. Group by Hour, Minute or Second.' % col
+                return 'The column \'%s\' only contains time values. Please group by Hour, Minute or Second.' % col
 
         elif CountByDate.DATE_ONLY == True and groupby in [0,1,2]:
-            return 'Column %s only contains date values. Group by Day, Month, Quarter or Year.' % col
+            return 'The column \'%s\' only contains date values. Please group by Day, Month, Quarter or Year.' % col
 
         elif groupby == 5:  # quarter
-            return_table['date'] = return_table['date'].apply(group_options[groupby])
+            return_table['date'] = return_table['date'].apply(lambda x: group_options[groupby](x) if x != 'no date' else x)
 
         else:
-            return_table['date'] = return_table['date'].dt.strftime(group_options[groupby])
+            return_table['date'] = return_table['date'].apply(lambda x: x.strftime(group_options[groupby]) if x != 'no date' else x)
 
         # We now have correctly formatted dates for our groupby operation in our new table.
         # If we're just counting rows, we don't need any more columns.
@@ -163,9 +164,6 @@ class CountByDate(ModuleImpl):
         return_table.reset_index(level=0, inplace=True)  # turn index into a column, or we can't see the column names
         return_table.columns = ['date', result_column_name]
 
-        if sortby != CountByDate.SORT_BY_FREQ:
-            return_table = return_table.sort_values('date')
-        else:
-            return_table = return_table.sort_values(result_column_name)
+        return_table = return_table.sort_values('date')
 
         return return_table
