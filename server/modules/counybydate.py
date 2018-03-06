@@ -81,7 +81,7 @@ class CountByDate(ModuleImpl):
             return None
 
         if col not in table.columns:
-            return('There is no column named %s' % col)
+            return('There is no column named \'%s\'' % col)
 
         # convert the date column to actual datetimes
         try:
@@ -103,7 +103,7 @@ class CountByDate(ModuleImpl):
                 CountByDate.TIME_ONLY = True
 
         except (ValueError, TypeError):
-            return('Error converting column %s to dates' % col)
+            return('The column \'%s\' does not appear to be dates or time.' % col)
 
         # Figure out our groupby options and groupby
         # behavior based on the input format.
@@ -115,10 +115,10 @@ class CountByDate(ModuleImpl):
             try:
                 return_table['date'] = return_table['date'].dt.strftime(time_only_options[groupby])
             except IndexError:
-                return 'Column %s only contains time values. Group by Hour, Minute or Second.' % col
+                return 'The column \'%s\' only contains time values. Please group by Hour, Minute or Second.' % col
 
         elif CountByDate.DATE_ONLY == True and groupby in [0,1,2]:
-            return 'Column %s only contains date values. Group by Day, Month, Quarter or Year.' % col
+            return 'The Column \'%s\' only contains date values. Please group by Day, Month, Quarter or Year.' % col
 
         elif groupby == 5:  # quarter
             return_table['date'] = return_table['date'].apply(group_options[groupby])
