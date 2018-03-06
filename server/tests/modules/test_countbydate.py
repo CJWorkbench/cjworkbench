@@ -19,7 +19,6 @@ class CountValuesTests(LoggedInTestCase):
 
         self.wf_module = load_and_add_module('countbydate', workflow=workflow)
         self.col_pval = get_param_by_id_name('column')
-        self.sort_pval = get_param_by_id_name('sortby')
         self.group_pval = get_param_by_id_name('groupby')
         self.operation_pval = get_param_by_id_name('operation')
         self.target_pval = get_param_by_id_name('targetcolumn')
@@ -30,12 +29,6 @@ class CountValuesTests(LoggedInTestCase):
         # Use out.to_csv() instead of str(out) to ensure rows are output in index order (otherwise variable)
         set_string(self.col_pval, 'Date')
 
-        # sort by freq
-        # set_integer(self.sort_pval, 1)  # 1 = sort by freq
-        # out = execute_wfmodule(self.wf_module)
-        # self.assertEqual(out.to_csv(index=False), 'date,count\n2011-01-15,1\n2016-07-25,1\n2011-01-10,5\n')
-
-        set_integer(self.sort_pval, 0)  # 0 = sort by value
         out = execute_wfmodule(self.wf_module)
         self.assertEqual(out.to_csv(index=False), 'date,count\n2011-01-10,5\n2011-01-15,1\n2016-07-25,1\n')
 
