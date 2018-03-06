@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import WorkbenchAPI from '../WorkbenchAPI'
 //import {Form, FormGroup, Label, Input, FormText, Col, Table} from 'reactstrap'
-import {Alert} from 'reactstrap'
+import {UncontrolledAlert} from 'reactstrap'
 
 
 var api = WorkbenchAPI();
@@ -101,24 +101,25 @@ class EditRow extends React.Component {
 
     render() {
         return (
-            <div className='checkbox-container' style={{'whiteSpace': 'nowrap'}}>
+            <div
+                className={'checkbox-container refine-checkbox-container ' + (this.props.valueEdited ? 'refine-edited' : '')}
+                style={{'whiteSpace': 'nowrap'}}>
                 <input
                     type='checkbox'
                     onChange={this.handleSelectionChange}
                     checked={this.state.selected}
+                    className={'refine-checkbox'}
                 />
-                <span className='ml-3 t-d-gray checkbox-content content-3'>
-                    <input
-                        type='text'
-                        value={this.state.dataValue}
-                        onChange={this.handleValueChange}
-                        onFocus={this.handleFocus}
-                        onBlur={this.handleBlur}
-                        onKeyPress={this.handleKeyPress}
-                        style={{'width': '130px'}}
-                    />
-                </span>
-                <span className='ml-3 t-d-gray checkbox-content content-3'>{this.state.dataCount}</span>
+                <input
+                    type='text'
+                    value={this.state.dataValue}
+                    onChange={this.handleValueChange}
+                    onFocus={this.handleFocus}
+                    onBlur={this.handleBlur}
+                    onKeyPress={this.handleKeyPress}
+                    className={'refine-value'}
+                />
+                <span className='refine-count'>{this.state.dataCount}</span>
             </div>
         )
     }
@@ -129,7 +130,8 @@ EditRow.propTypes = {
     dataCount: PropTypes.number.isRequired,
     onValueChange: PropTypes.func.isRequired,
     onSelectionChange: PropTypes.func.isRequired,
-    valueSelected: PropTypes.bool.isRequired
+    valueSelected: PropTypes.bool.isRequired,
+    valueEdited: PropTypes.bool.isRequired
 }
 
 export default class Refine extends React.Component {
@@ -220,6 +222,7 @@ export default class Refine extends React.Component {
                 var editedHistogram = histogram.rows.map(function(entry) {
                     var newEntry = Object.assign({}, entry);
                     newEntry.selected = true;
+                    newEntry.edited = false;
                     return newEntry;
                 });
                 //console.log(this.state.edits);
@@ -268,6 +271,7 @@ export default class Refine extends React.Component {
                 // If no "to" entry was found, create a new entry
                 var newEntry = Object.assign({}, fromEntry);
                 newEntry[edit.column] = edit.content.toVal;
+                newEntry.edited = true;
                 newHist.unshift(newEntry);
             } else {
                 // Otherwise, we merge the "from" entry to the "to" entry
@@ -275,6 +279,7 @@ export default class Refine extends React.Component {
                 var toEntry = Object.assign({}, newHist[toIdx]);
                 newHist.splice(toIdx, 1);
                 toEntry['count'] += fromEntry['count'];
+                toEntry.edited = true;
                 newHist.unshift(toEntry);
             }
         } else if(edit.type == 'select') {
@@ -333,6 +338,7 @@ export default class Refine extends React.Component {
                         onValueChange={this.handleValueChange}
                         onSelectionChange={this.handleSelectionChange}
                         valueSelected={item.selected}
+                        valueEdited={item.edited}
                     />
                 );
             });
@@ -342,9 +348,9 @@ export default class Refine extends React.Component {
             return (
                 <div>
                     {this.state.showWarning ?
-                        (<Alert color={'warning'}>
+                        (<UncontrolledAlert color={'warning'}>
                             Switching columns will clear your previous work. If you did it by accident, use "undo" from the top-right menu to go back,
-                        </Alert>) : ''
+                        </UncontrolledAlert>) : ''
                     }
                     <div className='t-d-gray content-3 label-margin'>Histogram</div>
                     <div className='container list-wrapper' style={{'height': '400px'}}>
