@@ -111,6 +111,10 @@ def module_dispatch_render(wf_module, table):
     error = None
     tableout = None
 
+    # never give None table as input to module
+    if table is None:
+        table = pd.DataFrame()
+
     # External module -- gets only a parameter dictionary
     if dispatch not in module_dispatch_tbl.keys():
 
