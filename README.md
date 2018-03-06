@@ -9,4 +9,3 @@ Welcome to the Workbench! (CJ for Computational Journalism.) You may be interest
 It is early days for the Workbench! This is our [development roadmap]
 
 Would you like to contribute? Contact us ([Twitter](https://twitter.com/cjworkbench), [email](mailto:hello@cjworkbench.org)). We also accept Pull Requests :)
-
