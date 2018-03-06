@@ -118,7 +118,7 @@ class CountByDate(ModuleImpl):
                 return 'The column \'%s\' only contains time values. Please group by Hour, Minute or Second.' % col
 
         elif CountByDate.DATE_ONLY == True and groupby in [0,1,2]:
-            return 'The Column \'%s\' only contains date values. Please group by Day, Month, Quarter or Year.' % col
+            return 'The column \'%s\' only contains date values. Please group by Day, Month, Quarter or Year.' % col
 
         elif groupby == 5:  # quarter
             return_table['date'] = return_table['date'].apply(group_options[groupby])

@@ -106,7 +106,7 @@ class CountValuesTests(LoggedInTestCase):
         execute_wfmodule(self.wf_module)
         self.wf_module.refresh_from_db()
         self.assertEqual(self.wf_module.status, 'error')
-        self.assertEqual(self.wf_module.error_msg, 'Column Date only contains time values. Group by Hour, Minute or Second.')
+        self.assertEqual(self.wf_module.error_msg, 'The column \'Date\' only contains time values. Please group by Hour, Minute or Second.')
 
         # Set to hours
         set_integer(self.group_pval, 2)
@@ -128,7 +128,7 @@ class CountValuesTests(LoggedInTestCase):
         execute_wfmodule(self.wf_module)
         self.wf_module.refresh_from_db()
         self.assertEqual(self.wf_module.status, 'error')
-        self.assertEqual(self.wf_module.error_msg, 'Column Date only contains date values. Group by Day, Month, Quarter or Year.')
+        self.assertEqual(self.wf_module.error_msg, 'The column \'Date\' only contains date values. Please group by Day, Month, Quarter or Year.')
 
     def test_timestamps(self):
         set_string(self.csv_data, self.count_csv_dates)
