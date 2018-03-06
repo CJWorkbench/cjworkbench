@@ -25,11 +25,13 @@ export default class ModuleLibraryClosed extends React.Component {
   }
 
   toggleArrow() {
-    if (!this.props.isReadOnly) this.setState({showArrow: !this.state.showArrow});
+    if (!this.props.isReadOnly) 
+      this.setState({showArrow: !this.state.showArrow});
   }
 
   toggleSignInModal() {
-    if (this.props.isReadOnly) this.setState({ signInModalOpen: !this.state.signInModalOpen });
+    if (this.props.isReadOnly) 
+      this.setState({ signInModalOpen: !this.state.signInModalOpen });
   }
 
   renderSignInModal() {
@@ -73,7 +75,7 @@ export default class ModuleLibraryClosed extends React.Component {
           onMouseLeave={this.toggleArrow}
           onClick={this.props.openLibrary}
         >
-            {arrow}
+          {arrow}
         </div>
 
         {/* If in read-only mode, clicking anywhere below header opens modal */}
