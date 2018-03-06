@@ -6,6 +6,9 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 import aiohttp
 import asyncio
+from server.execute import execute_wfmodule
+
+# --- Asynchornous URL scraping ---
 
 event_loop = asyncio.get_event_loop()
 
@@ -67,12 +70,7 @@ async def scrape_urls(urls, result_table):
 
 
 
-
-
-def render_urls(urlcol):
-    pass
-
-
+# --- URLScraper module ---
 
 class URLScraper(ModuleImpl):
 
@@ -87,15 +85,23 @@ class URLScraper(ModuleImpl):
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()
 
+        # get our list of URLs from a column in the input table
         urlcol = wfm.get_param_column('url')
+        prev_table = execute_wfmodule(wfm.previous_in_stack())
 
-        urls = render_urls(urlcol)
+        # column parameters are not sanitized here, could be missing this col
+        if urlcol in prev_table.columns():
+            urls = prev_table[urlcol]
 
-        out_table = pd.DataFrame({'urls': self.urls_small, 'status': ''}, columns=['urls', 'status', 'html'])
+            table = pd.DataFrame({'urls': urls, 'status': ''}, columns=['urls', 'status', 'html'])
+            event_loop.run_until_complete(scrapeurls(urls, table))
 
-        event_loop.run_until_complete(scrapeurls(urls, out_table))
+        else:
+            table = pd.DataFrame()
 
+        wfm.set_ready(notify=False)
         save_fetched_table_if_changed(wfm, table, auto_change_version=auto)
+
 
 
 

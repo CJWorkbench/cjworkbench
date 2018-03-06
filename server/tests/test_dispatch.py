@@ -43,12 +43,17 @@ class DispatchTests(TestCase):
         out = module_dispatch_render(self.wfm, mock_csv_table) # no M,F cols
         self.assertTrue(out.empty)
 
+    # should return empty table if module is missing (not, for example, None)
+    def test_missing_module(self):
+        workflow = add_new_workflow('Missing module')
+        wfm = add_new_wf_module(workflow, None, 0)
+        out = module_dispatch_render(wfm, mock_csv_table)
+        self.assertTrue(out.empty)
 
     # None input table should be silently replaced with empty df
     def test_none_table_render(self):
         out = module_dispatch_render(self.wfm, pd.DataFrame())
         self.assertTrue(out.empty)
-
 
     def test_error_render(self):
         # Force an error, ensure that it's returned and the output is a NOP

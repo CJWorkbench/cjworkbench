@@ -51,6 +51,18 @@ class StoredObjectTests(TestCase):
         table2 = so1.get_table()
         self.assertTrue(table2.equals(self.test_table))
 
+    def store_empty_table(self):
+        so1 = StoredObject.create_table(self.wfm1,
+                                        StoredObject.CACHED_TABLE,
+                                        None,
+                                        metadata=self.metadata)
+        self.assertEqual(so1.type, StoredObject.CACHED_TABLE)
+        self.assertEqual(so1.metadata, self.metadata )
+        self.assertEqual(so1.size, 0)
+        table2 = so1.get_table()
+        self.assertTrue(table2.empty)
+
+
     def test_nan_storage(self):
         # have previously run into problems serializing / deserializing NaN values
         test_csv = 'Class,M,F\n' \
