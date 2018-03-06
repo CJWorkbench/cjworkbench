@@ -108,23 +108,10 @@ export default class ModuleLibrary extends React.Component {
   }
 
   toggleLibrary() {
-    // if (!this.props.isReadOnly) {
-      // this.props.setLibraryOpen(!this.props.libraryOpen);
-      // this.props.api.setWfLibraryCollapse(this.props.workflow.id, this.props.libraryOpen)
-      // instead: make Redux call to invoke API
-      // e.stopPropagation();
-      store.dispatch( setWfLibraryCollapseAction(this.props.workflow.id, !this.state.isCollapsed, this.props.isReadOnly) );
-    // }
+    store.dispatch( setWfLibraryCollapseAction(this.props.workflow.id, !this.state.isCollapsed, this.props.isReadOnly) );
   }
 
   openLibrary() {
-    // if (!this.props.isReadOnly) {
-      // this.props.setLibraryOpen(true);
-    //   // make API call to set
-    //   this.props.api.setWfLibraryCollapse(this.props.workflow.id, false)
-    //   // instead: make Redux call to invoke API      
-    // }
-    // e.stopPropagation();
     store.dispatch( setWfLibraryCollapseAction(this.props.workflow.id, false, this.props.isReadOnly) );
   }
 
