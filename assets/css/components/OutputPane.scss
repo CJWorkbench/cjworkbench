@@ -17,7 +17,7 @@ iframe + .outputpane-table {
   height: calc(50% - 3rem);
 }
 .outputpane-table {
-  height:100%;
+  height:calc(100% - 5.5rem);
   position:relative;
 }
 

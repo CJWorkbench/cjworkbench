@@ -29,13 +29,6 @@
       "name": "",
       "id_name" : "targetcolumn",
       "type": "column"
-    },
-    {
-      "name": "Sort by",
-      "id_name" : "sortby",
-      "type" : "menu",
-      "menu_items" : "Value|Frequency",
-      "default": "0"
     }
   ]
 }
