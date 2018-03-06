@@ -89,7 +89,7 @@ if DEBUG==False:
     ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
     SENDGRID_TEMPLATE_IDS = {
         'account/email/email_confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'acount/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+        'account/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
         'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
     }
     SESSION_ENGINE='django.contrib.sessions.backends.db'
