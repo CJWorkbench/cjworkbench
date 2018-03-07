@@ -154,6 +154,7 @@ class WfModule(models.Model):
 
     # Like all mutators, this should usually be wrapped in a Command so it is undoable
     # In this case, a ChangeDataVersionCommand
+    # NB: Can set not just FETCHED_TABLE but UPLOADED_FILE
     def set_fetched_data_version(self, version):
         if version is None or not \
             StoredObject.objects.filter(wf_module=self, stored_at=version).exists():
@@ -163,8 +164,11 @@ class WfModule(models.Model):
         self.save()
 
     def list_fetched_data_versions(self):
-        # sort newest first, get both file and table types
-        return list(StoredObject.objects.filter(wf_module=self).order_by('-stored_at').values_list('stored_at', 'read'))
+        # sort newest first, get both fetch and file types (but not cached tables)
+        return list(StoredObject.objects.filter(wf_module=self)
+                                        .exclude(type=StoredObject.CACHED_TABLE)
+                                        .order_by('-stored_at')
+                                        .values_list('stored_at', 'read'))
 
     # --- Parameter acessors ----
     # Hydrates ParameterVal objects from ParameterSpec objects

@@ -17,7 +17,14 @@ urlscraper_execute_callbacks = URLScraperExecuteCallbacks()
 
 # --- Asynchornous URL scraping ---
 
-event_loop = asyncio.get_event_loop()
+# get or create an event loop for the current thread.
+def get_thread_event_loop():
+    try:
+        loop = asyncio.get_event_loop()  # gets previously set event loop, if possible
+    except RuntimeError:
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+    return loop
 
 def is_valid_url(url):
     validate = URLValidator()
@@ -44,6 +51,8 @@ def add_error_to_table(table, i, errmsg):
 
 # Asynchronously scrape many urls, and store the results in the table
 async def scrape_urls(urls, result_table):
+    event_loop = get_thread_event_loop()
+
     max_fetchers = settings.SCRAPER_NUM_CONNECTIONS
 
     tasks_to_rows = {}  # double as our list of currently active tasks
@@ -60,7 +69,7 @@ async def scrape_urls(urls, result_table):
                 newtask = event_loop.create_task(async_get_url(url))
                 tasks_to_rows[newtask] = started_urls
             else:
-                add_error_to_table(result_table, started_urls, 'Invalid URL')
+                add_error_to_table(result_table, started_urls, URLScraper.STATUS_INVALID_URL)
                 finished_urls += 1
             started_urls += 1
 
@@ -74,7 +83,9 @@ async def scrape_urls(urls, result_table):
                     response = task.result()
                     add_result_to_table(result_table, tasks_to_rows[task], response)
                 except asyncio.TimeoutError:
-                    add_error_to_table(result_table, tasks_to_rows[task], 'No response')
+                    add_error_to_table(result_table, tasks_to_rows[task], URLScraper.STATUS_TIMEOUT)
+                except aiohttp.client_exceptions.ClientConnectionError:
+                    add_error_to_table(result_table, tasks_to_rows[task], URLScraper.STATUS_NO_CONNECTION)
 
                 del tasks_to_rows[task]
 
@@ -85,6 +96,9 @@ async def scrape_urls(urls, result_table):
 # --- URLScraper module ---
 
 class URLScraper(ModuleImpl):
+    STATUS_INVALID_URL = "Invalid URL"
+    STATUS_TIMEOUT = "No response"
+    STATUS_NO_CONNECTION = "Can't connect"
 
     @staticmethod
     def render(wf_module, table):
@@ -111,8 +125,9 @@ class URLScraper(ModuleImpl):
         if urlcol in prev_table.columns:
             urls = prev_table[urlcol]
 
-            table = pd.DataFrame({'urls': urls, 'status': ''}, columns=['urls', 'status', 'html'])
+            table = pd.DataFrame({'url': urls, 'status': ''}, columns=['url', 'status', 'html'])
 
+            event_loop = get_thread_event_loop()
             event_loop.run_until_complete(scrape_urls(urls, table))
 
         else:

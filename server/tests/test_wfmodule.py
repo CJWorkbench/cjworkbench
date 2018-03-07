@@ -1,8 +1,4 @@
-from django.test import TestCase
-import json
-import pandas as pd
-import io
-from server.models import Module, ModuleVersion, WfModule, Workflow, ParameterSpec, ParameterVal
+from server.models import StoredObject
 from django.core.exceptions import ValidationError
 from server.tests.utils import *
 
@@ -109,10 +105,17 @@ class WfModuleTests(WfModuleTestsBase):
 
         # list versions
         verlist = self.wfmodule1.list_fetched_data_versions()
-        self.assertListEqual([ver[0] for ver in verlist], [secondver, firstver])  # sorted by creation date, latest first
+        correct_verlist = [secondver, firstver] # sorted by creation date, latest first
+        self.assertListEqual([ver[0] for ver in verlist], correct_verlist)
+
+        # Cached tables should not appear in listed data versions.
+        StoredObject.create_table(self.wfmodule1, StoredObject.CACHED_TABLE, table1)
+        verlist = self.wfmodule1.list_fetched_data_versions()
+        self.assertListEqual([ver[0] for ver in verlist], correct_verlist)
 
         # but like, none of this should have created versions on any other wfmodule
         self.assertEqual(self.wfmodule2.list_fetched_data_versions(), [])
+
 
 
     def test_wf_module_store_table_if_different(self):

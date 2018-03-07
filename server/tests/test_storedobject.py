@@ -4,10 +4,14 @@ from server.tests.utils import *
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 from django.utils import timezone
+from django.test import override_settings
+import tempfile
 import pandas as pd
 import os
 import json
 
+# don't clutter media directory with our tests (and don't accidentally succeed because of files there)
+@override_settings(MEDIA_ROOT=tempfile.gettempdir())
 class StoredObjectTests(TestCase):
 
     def setUp(self):
@@ -51,7 +55,7 @@ class StoredObjectTests(TestCase):
         table2 = so1.get_table()
         self.assertTrue(table2.equals(self.test_table))
 
-    def store_empty_table(self):
+    def test_store_empty_table(self):
         so1 = StoredObject.create_table(self.wfm1,
                                         StoredObject.CACHED_TABLE,
                                         None,

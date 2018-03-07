@@ -113,7 +113,7 @@ class StoredObject(models.Model):
         if not self.is_table():
             raise TypeError("Cannot load uploaded file StoredObject into a table")
 
-        if self.file is None:
+        if self.size==0:
             return pd.DataFrame() # empty table
 
         path = StoredObject._storage_filename(self.wf_module.id, self.hash)

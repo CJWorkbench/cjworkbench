@@ -28,7 +28,11 @@ def execute_wfmodule(wfmodule, nocache=False):
         cache = None
         if not nocache:
             try:
-                cache = StoredObject.objects.get(wf_module=wfm, type=StoredObject.CACHED_TABLE, metadata=target_rev)
+                # There can be more than one cached table for the same rev, if we did simultaneous renders
+                # on two different threads. This is inefficient, but not harmful. So filter().first() not get()
+                cache = StoredObject.objects.filter(wf_module=wfm,
+                                                    type=StoredObject.CACHED_TABLE,
+                                                    metadata=target_rev).first()
             except StoredObject.DoesNotExist:
                 pass
 
