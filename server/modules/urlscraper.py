@@ -6,7 +6,14 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 import aiohttp
 import asyncio
-from server.execute import execute_wfmodule
+
+
+# Resolve circular import: execute -> dispatch -> urlscraper -> execute
+class URLScraperExecuteCallbacks:
+    execute_wfmodule = None
+
+urlscraper_execute_callbacks = URLScraperExecuteCallbacks()
+
 
 # --- Asynchornous URL scraping ---
 
@@ -81,7 +88,11 @@ class URLScraper(ModuleImpl):
 
     @staticmethod
     def render(wf_module, table):
-        return wf_module.retrieve_fetched_table()
+        urlcol = wf_module.get_param_column('urlcol')
+        if urlcol != '':
+            return wf_module.retrieve_fetched_table()
+        else:
+            return table # nop if column not set
 
     # Scrapy scrapy scrapy
     @staticmethod
@@ -91,21 +102,24 @@ class URLScraper(ModuleImpl):
         wfm.set_busy()
 
         # get our list of URLs from a column in the input table
-        urlcol = wfm.get_param_column('url')
-        prev_table = execute_wfmodule(wfm.previous_in_stack())
+        urlcol = wfm.get_param_column('urlcol')
+        if urlcol == '':
+            return
+        prev_table = urlscraper_execute_callbacks.execute_wfmodule(wfm.previous_in_stack())
 
         # column parameters are not sanitized here, could be missing this col
-        if urlcol in prev_table.columns():
+        if urlcol in prev_table.columns:
             urls = prev_table[urlcol]
 
             table = pd.DataFrame({'urls': urls, 'status': ''}, columns=['urls', 'status', 'html'])
-            event_loop.run_until_complete(scrapeurls(urls, table))
+
+            event_loop.run_until_complete(scrape_urls(urls, table))
 
         else:
             table = pd.DataFrame()
 
         wfm.set_ready(notify=False)
-        save_fetched_table_if_changed(wfm, table, auto_change_version=auto)
+        save_fetched_table_if_changed(wfm, table, auto_change_version=True)
 
 
 

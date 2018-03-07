@@ -1,11 +1,15 @@
 from server.tests.utils import *
 from server.modules.urlscraper import scrape_urls, is_valid_url
+from server.execute import execute_nocache
 from django.test import override_settings
 import pandas as pd
 import asyncio
 import random
 import mock
+import tempfile
 
+
+# --- Test our async multiple url scraper ---
 
 # this replaces aiohttp.get with a lag then a test response
 async def mock_async_get(lag, response):
@@ -17,11 +21,18 @@ def make_response(status, html):
     return {'status': status, 'text': html}
 
 # turn a test urls/results list into a set of mock tasks, as well as other useful bits
-def make_test_tasks(results):
-    results_status = [str(x[1]['status']) for x in results]  # scrape_urls() should return string statuses
+def make_test_tasks(urls, results):
+    results_status = [str(x[1]['status']) for x in results]  # we use string statuses even for 200, 404 etc.
     results_content = [x[1]['text'] for x in results]
-    results_tasks = [mock_async_get(x[0], x[1]) for x in results]
+
+    # don't create tasks for invalid urls
+    results_tasks = []
+    for i in range(len(results)):
+        if is_valid_url(urls[i]):
+            results_tasks.append(mock_async_get(results[i][0], results[i][1]))
+
     return results_tasks, results_status, results_content
+
 
 class ScrapeUrlsTest(TestCase):
     def setUp(self):
@@ -31,10 +42,10 @@ class ScrapeUrlsTest(TestCase):
     @override_settings(SCRAPER_TIMEOUT=1.1)  # all our test data has 1 second lag max
     def scraper_result_test(self, urls, results):
         with mock.patch('aiohttp.ClientSession') as session:
-            results_tasks, results_status, results_content = make_test_tasks(results)
+            results_tasks, results_status, results_content = make_test_tasks(urls, results)
 
             session_mock = session.return_value  # get the mock obj returned by aoihttp.ClientSession()
-            session_mock.get.side_effect = [results_tasks[i] for i in range(len(urls)) if is_valid_url(urls[i])]
+            session_mock.get.side_effect = results_tasks
 
             # mock the output table format it expects
             out_table = pd.DataFrame({'urls': urls, 'status': ''}, columns=['urls', 'status', 'html'])
@@ -72,7 +83,6 @@ class ScrapeUrlsTest(TestCase):
         self.scraper_result_test(urls_small, results_small)
 
 
-
     # Case where number of urls much greater than max simultaneous connections. Also, timeouts
     def test_many_urls(self):
         num_big = 100
@@ -98,4 +108,52 @@ class ScrapeUrlsTest(TestCase):
                                 [make_response(response_status[i], response_content[i]) for i in range(num_big)]))
 
         self.scraper_result_test(urls_big, results_timeout)
+
+
+# --- Test the URLScraper module ---
+
+# override b/c we depend on StoredObject to transmit data between event() and render(), so make sure not leave files around
+@override_settings(MEDIA_ROOT=tempfile.gettempdir())
+class URLScraperTests(LoggedInTestCase):
+    def setUp(self):
+        super(URLScraperTests, self).setUp()  # log in
+
+        self.scraped_table = pd.DataFrame([
+            [ 'http://a.com/file',      '200', '<div>all good</div>' ],
+            [ 'https://b.com/file2',    '404',  ''],
+            [ 'http://c.com/file/dir',  '200',  '<h1>What a page!</h1>']],
+            columns=['url','status','html'])
+        self.urls = list(self.scraped_table['url'])
+
+        # create a workflow that feeds our urls via PasteCSV into a URLScraper
+        self.url_table = pd.DataFrame(self.urls, columns=['url'])
+        url_csv = 'url\n' + '\n'.join(self.urls)
+        workflow = create_testdata_workflow(url_csv)
+        self.wfmodule = load_and_add_module('urlscraper', workflow=workflow)
+
+
+    # send fetch event to button to load data
+    def press_fetch_button(self):
+        self.client.post('/api/parameters/%d/event' % get_param_by_id_name('version_select').id, {'type': 'click'})
+
+    def test_initial_nop(self):
+        out = execute_nocache(self.wfmodule)
+        self.assertTrue(out.equals(self.url_table))
+
+    def test_scrape(self):
+
+        get_param_by_id_name('urlcol').set_value('url')
+
+        async def mock_scrapeurls(urls, table):
+            table['status'] = self.scraped_table['status']
+            table['html'] = self.scraped_table['html']
+            return
+
+        with mock.patch('server.modules.urlscraper.scrape_urls') as scraper:
+
+            scraper.side_effect = mock_scrapeurls # call the mock function instead, the real fn is tested above
+
+            self.press_fetch_button()
+            out = execute_nocache(self.wfmodule)
+            self.assertTrue(out.equals(self.scraped_table))
 

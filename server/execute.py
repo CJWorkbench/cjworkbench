@@ -1,12 +1,10 @@
 # Run the workflow, generating table output
 
-from server.models import Workflow, Module, WfModule, ParameterVal
 from server.models.StoredObject import *
 from server.dispatch import module_dispatch_render
-from django.db import transaction
 from server.websockets import *
+from server.modules.urlscraper import urlscraper_execute_callbacks
 import pandas as pd
-import numpy as np
 
 
 # Tell client to reload (we've finished rendering)
@@ -54,3 +52,7 @@ def execute_wfmodule(wfmodule, nocache=False):
 def execute_nocache(wfm):
     return execute_wfmodule(wfm, nocache=True)
 
+
+# Resolve circular import: execute -> dispatch -> urlscraper -> execute
+# So we create an object with callbacks in urlscraper, which we then fill out here
+urlscraper_execute_callbacks.execute_wfmodule = execute_wfmodule

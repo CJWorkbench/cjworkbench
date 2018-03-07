@@ -11,6 +11,11 @@
       "name": "Column containing URLs",
       "id_name" : "urlcol",
       "type": "column"
+    },
+    {
+      "name": "Scrape",
+      "id_name" : "version_select",
+      "type": "custom"
     }
   ]
 }
