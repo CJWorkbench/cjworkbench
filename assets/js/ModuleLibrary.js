@@ -17,6 +17,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleLibraryClosed from './ModuleLibraryClosed';
 import ModuleLibraryOpen from './ModuleLibraryOpen';
+import { store, setWfLibraryCollapseAction } from './workflow-reducer'
+
 
 // Helper to sort modules by category, then name
 function compareCategoryName(a,b) {
@@ -106,18 +108,11 @@ export default class ModuleLibrary extends React.Component {
   }
 
   toggleLibrary() {
-    if (!this.props.isReadOnly) {
-      this.props.setLibraryOpen(!this.props.libraryOpen);
-      this.props.api.setWfLibraryCollapse(this.props.workflow.id, this.props.libraryOpen)
-    }
+    store.dispatch( setWfLibraryCollapseAction(this.props.workflow.id, !this.state.isCollapsed, this.props.isReadOnly) );
   }
 
   openLibrary() {
-    if (!this.props.isReadOnly) {
-      this.props.setLibraryOpen(true);
-      // make API call to set
-      this.props.api.setWfLibraryCollapse(this.props.workflow.id, false)
-    }
+    store.dispatch( setWfLibraryCollapseAction(this.props.workflow.id, false, this.props.isReadOnly) );
   }
 
   // Main render.

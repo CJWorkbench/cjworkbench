@@ -13,6 +13,7 @@ from .modules.twitter import Twitter
 from .modules.uploadfile import UploadFile
 from .modules.googlesheets import GoogleSheets
 from .modules.editcells import EditCells
+from .modules.refine import Refine
 
 from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
@@ -49,6 +50,7 @@ module_dispatch_tbl = {
     'uploadfile':   UploadFile,
     'googlesheets': GoogleSheets,
     'editcells':    EditCells,
+    'refine':       Refine,
 
     # For testing
     'NOP':          NOP,
