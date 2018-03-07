@@ -67,6 +67,7 @@ describe('Refine', () => {
                 histogramData: histogramResponse.rows.map(function(entry) {
                     var newEntry = Object.assign({}, entry);
                     newEntry.selected = true;
+                    newEntry.edited = false;
                     return newEntry;
                 }).sort((item1, item2) => {
                     return (item1.count < item2.count ? 1 : -1);
@@ -106,8 +107,8 @@ describe('Refine', () => {
                     //console.log(wrapper.state().histogramData);
                     expect(wrapper.state().histogramData).toEqual(
                         [
-                            {foo: 'bar2', count: 3, selected: true},
-                            {foo: 'bar3', count: 3, selected: true}
+                            {foo: 'bar2', count: 3, selected: true, edited: true},
+                            {foo: 'bar3', count: 3, selected: true, edited: false}
                         ]
                     );
                     expect(wrapper.find('EditRow')).toHaveLength(2);
