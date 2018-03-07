@@ -1,0 +1,26 @@
+{
+  "name": "Refine",
+  "id_name": "refine",
+  "category": "Edit",
+  "icon": "edit",
+  "description": "Histogram-based data cleaning",
+  "help_url":"modules/edit/editcells",
+  "parameters": [
+    {
+      "name": "Column",
+      "id_name": "column",
+      "type": "column"
+    },
+    {
+      "name": "Histogram",
+      "id_name": "histogram",
+      "type": "custom"
+    },
+    {
+      "name": "Edits",
+      "id_name": "edits",
+      "type": "string",
+      "visible": false
+    }
+  ]
+}

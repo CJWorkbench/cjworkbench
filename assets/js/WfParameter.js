@@ -15,6 +15,7 @@ import GoogleConnect from './wfparameters/GoogleConnect'
 import FileSelect from './wfparameters/FileSelect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
+import Refine from './wfparameters/Refine'
 import { csrfToken } from './utils'
 import { store, setWfModuleStatusAction } from './workflow-reducer'
 
@@ -266,6 +267,24 @@ export default class WfParameter extends React.Component {
           onSave={(val) => { this.paramChanged(val) }}
         />
       )
+    } else if (this.props.p.parameter_spec.id_name == 'histogram') {
+        var selectedColumn = this.props.getParamText('column');
+        //console.log(selectedColumn);
+        var existingEdits = this.props.getParamText('edits');
+        var saveEdits = (editsJson => this.props.setParamText('edits', editsJson));
+        //console.log(existingEdits);
+        if(selectedColumn.length < 1) {
+            return (<div>Please select a column.</div>)
+        }
+        return (
+            <Refine
+                wfModuleId={this.props.wf_module_id}
+                selectedColumn={selectedColumn}
+                existingEdits={existingEdits}
+                saveEdits={saveEdits}
+                revision={this.props.revision}
+            />
+        )
     }
   }
 

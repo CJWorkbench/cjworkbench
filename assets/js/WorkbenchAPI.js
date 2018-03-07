@@ -124,6 +124,20 @@ class WorkbenchAPI {
     )
   }
 
+  output(wf_module_id) {
+      return (
+          fetch('/api/wfmodules/' + wf_module_id + '/output', {credentials: 'include'})
+              .then(response => response.json())
+      )
+  }
+
+  histogram(wf_module_id, column) {
+      return (
+          fetch('/api/wfmodules/' + wf_module_id + '/histogram/' + column, {credentials: 'include'})
+              .then(response => response.json())
+      )
+  }
+
   // All available modules in the system
   getModules() {
     return (
