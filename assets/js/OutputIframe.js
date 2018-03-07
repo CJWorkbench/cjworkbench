@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import IframeCtrl from './IframeCtrl'
 import {Modal, ModalBody, ModalHeader} from 'reactstrap'
 import {store, setWorkflowPublicAction} from "./workflow-reducer";
@@ -116,6 +117,15 @@ class OutputIframe extends React.Component {
       </div>
     );
   }
+}
+
+OutputIframe.propTypes = {
+  id: PropTypes.number.isRequired,
+  revision: PropTypes.number,
+  api: PropTypes.object.isRequired,
+  selectedWfModuleId: PropTypes.number.isRequired,
+  workflow: PropTypes.object.isRequired,
+
 }
 
 export {OutputIframe, OutputIframeCtrl}

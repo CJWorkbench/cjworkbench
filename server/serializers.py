@@ -130,13 +130,15 @@ class WorkflowSerializer(serializers.ModelSerializer):
     owner_name = serializers.SerializerMethodField()
 
     def get_read_only(self, obj):
+        # Use 'get' in case we have a request with no user.
         return obj.read_only(self.context.get('user', False))
 
     def get_last_update(self, obj):
         return obj.last_update()
 
     def get_owner_name(self, obj):
-        # don't leak user info (e.g. email) if viewer is not owner
+        # don't leak user info (e.g. email) if viewer is not owner.
+        # Use 'get' in case we have a request with no user.
         if (self.context.get('user', False) == obj.owner):
             return workbench_user_display(obj.owner)
         else:
