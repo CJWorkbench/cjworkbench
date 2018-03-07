@@ -175,7 +175,9 @@ export default class OutputPane extends React.Component {
     if (this.props.htmlOutput) {
       outputIFrame = <OutputIframe
           id="output_iframe"
+          api={this.props.api}
           selectedWfModuleId={this.props.selectedWfModuleId}
+          workflow={this.props.workflow}
           revision={this.props.revision}
       />
     }

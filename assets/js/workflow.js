@@ -101,6 +101,7 @@ class Workflow extends React.Component {
                 api={this.props.api}
                 htmlOutput={(selectedWorkflowModuleRef && selectedWorkflowModuleRef.html_output)}
                 selectedWfModuleId={this.props.selected_wf_module}
+                workflow={this.props.workflow}
                 focus={!this.state.focus}
                 setFocus={(e) => { this.setState({ focus: false }) }}
                 libraryOpen={this.state.libraryOpen}

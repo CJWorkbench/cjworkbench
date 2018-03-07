@@ -4,17 +4,30 @@
   position: relative;
 }
 
-.outputpane iframe {
-  border:none;
+.outputpane-iframe {
   width:100%;
   height: calc(50% - 3rem);
   margin-bottom: -0.5rem;
   background:#fff;
+  position:relative;
+  iframe {
+    border:none;
+    height: 100%;
+    width: 100%;
+  }
+  .outputpane-iframe-control-overlay {
+    position: absolute;
+    top:0;
+    left:0;
+    bottom:0;
+    width: 5rem;
+    background: red;
+  }
 }
 
 /* This div may be superfluous wrt .outputpane */
 
-iframe + .outputpane-table {
+.outputpane-iframe + .outputpane-table {
   height: calc(50% - 3rem);
 }
 .outputpane-table {
