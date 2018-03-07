@@ -3,15 +3,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider, connect } from 'react-redux'
-import * as Actions from './workflow-reducer'
-import { getPageID, csrfToken } from './utils'
-import Workflow from './workflow'
-import workbenchAPI from './WorkbenchAPI'
+import * as Actions from '../workflow-reducer'
+import { getPageID, csrfToken } from '../utils'
+import Workflow from '../workflow'
+import workbenchAPI from '../WorkbenchAPI'
 import { DragDropContextProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 
 require('bootstrap/dist/css/bootstrap.css');
-require('../css/style.scss');
+require('../../css/style.scss');
 
 // Global API object, encapsulates all calls to the server
 const api = workbenchAPI();
