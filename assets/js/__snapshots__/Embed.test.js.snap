@@ -1,0 +1,132 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Embed Available workflow Renders the embed widget with the correct information 1`] = `
+<div
+  className="embed-wrapper"
+>
+  <iframe
+    src="/api/wfmodules/1/output"
+  />
+  <div
+    className="embed-info"
+  >
+    <div
+      className="embed-info-logo"
+    >
+      <img
+        src="/static/images/logo.png"
+        width="21"
+      />
+    </div>
+    <div
+      className="embed-info-meta"
+    >
+      <div
+        className="t-d-gray mb-2 title-4"
+      >
+        Workflow Title
+      </div>
+      <div
+        className="wf-meta--id"
+      >
+        <ul
+          className="WF-meta"
+        >
+          <li
+            className="WF-meta--item content-3 t-m-gray"
+          >
+            by 
+            Workflow Owner Name
+          </li>
+          <li
+            className="content-3 metadataSeparator t-m-gray"
+          >
+            -
+          </li>
+          <li
+            className="WF-meta--item content-3 t-m-gray"
+          >
+            Updated
+          </li>
+          <li
+            className="WF-meta--item content-3 t-m-gray"
+          />
+        </ul>
+      </div>
+    </div>
+    <div
+      className="embed-info-button"
+      onClick={[Function]}
+    >
+      <i
+        className="icon icon-share"
+      />
+    </div>
+  </div>
+  <div
+    className="embed-overlay"
+    onClick={[Function]}
+  >
+    <div
+      className="embed-share-links"
+    >
+      <h3>
+        Share
+      </h3>
+      <ul
+        className="embed-share-links--list"
+      >
+        <li>
+          Facebook
+        </li>
+        <li>
+          Twitter
+        </li>
+        <li>
+          Link
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Embed Unavailable workflow Renders the embed widget with the correct information 1`] = `
+<div
+  className="embed-wrapper"
+>
+  <div
+    className="embed-not-available"
+  >
+    <h1>
+      This workflow is not available
+    </h1>
+  </div>
+  <div
+    className="embed-info"
+  >
+    <div
+      className="embed-info-logo"
+    >
+      <img
+        src="/static/images/logo.png"
+        width="21"
+      />
+    </div>
+    <div
+      className="embed-info-meta"
+    >
+      <h1>
+        WORKBENCH
+      </h1>
+    </div>
+    <div
+      className="embed-info-button"
+    >
+      <i
+        className="icon icon-share"
+      />
+    </div>
+  </div>
+</div>
+`;

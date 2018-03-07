@@ -110,7 +110,7 @@ class OutputIframe extends React.Component {
         {this.renderSetPublicModal()}
         {this.renderEmbedCodeModal()}
         <div className="outputpane-iframe-control-overlay">
-          <h1 onClick={this.toggleModal}>🤡</h1>
+          <div className="btn icon icon-code" onClick={this.toggleModal} />
         </div>
         <iframe ref={this.setRef} src={this.state.src} />
       </div>
