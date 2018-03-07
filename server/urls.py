@@ -58,6 +58,9 @@ urlpatterns = [
 
     url(r'^public/paramdata/live/(?P<pk>[0-9]+).png$', views.parameterval_png),
 
+    # Embeds
+    url(r'^embed/(?P<wfmodule_id>[0-9]+)/?$', views.embed),
+
     # URL endpoint to trigger internal cron jobs
     url(r'^runcron$', views.runcron),
 
