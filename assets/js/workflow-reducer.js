@@ -13,6 +13,7 @@ const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
 const ADD_MODULE = 'ADD_MODULE';
 const DELETE_MODULE = 'DELETE_MODULE';
 const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE';
+const SET_WORKFLOW_PUBLIC = 'SET_WORKFLOW_PUBLIC';
 const SET_WF_LIBRARY_COLLAPSE = 'SET_WF_LIBRARY_COLLAPSE'
 
 // User
@@ -121,6 +122,26 @@ registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
     workflow: {$merge: action.payload}
   });
 });
+
+// SET_WORKFLOW_PUBLIC
+// Set the workflow to public or private
+export function setWorkflowPublicAction(workflowId, isPublic) {
+  return function (dispatch) {
+    return (
+
+      dispatch({
+        type: SET_WORKFLOW_PUBLIC,
+        payload: api.setWorkflowPublic(workflowId, isPublic)
+      }).then( () => {
+
+      dispatch(
+        reloadWorkflowAction()
+      )
+
+    }));
+
+  }
+}
 
 
 // ADD_MODULE

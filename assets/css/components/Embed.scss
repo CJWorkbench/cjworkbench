@@ -1,0 +1,50 @@
+.embed_container, .embed_container body {
+  height: 100%;
+}
+
+.embed_container body {
+  position: relative;
+}
+
+.embed_container iframe {
+  height: calc(100% - 5.5rem);
+  width: 100%;
+  position: absolute;
+}
+
+.embed_container .embed-info {
+  height: 5.5rem;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
+
+.embed-info-logo, .embed-info-meta {
+  float:left;
+}
+.embed-info-button {
+  float: right;
+}
+.embed-overlay {
+  display:none;
+  position:absolute;
+  top:0;
+  right:0;
+  bottom:0;
+  left:0;
+  background:rgba(0,0,0,.6);
+  &.open {
+    display:block;
+  }
+}
+.embed-share-links {
+  color: white;
+  text-align: center;
+  .embed-share-links--list {
+    padding:0;
+    margin:0;
+    li {
+      display: inline-block;
+    }
+  }
+}

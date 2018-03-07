@@ -1,7 +1,7 @@
 {% load analytics_tags %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" {% block html_tag_attrs %}{% endblock %}>
 
   <head>
 
@@ -45,7 +45,7 @@
 
   </head>
 
-  <body>
+  <body {% block body_tag_attrs %}{% endblock %}>
 
     {% block body %}{% endblock %}
 
