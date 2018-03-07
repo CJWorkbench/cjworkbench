@@ -30,10 +30,9 @@ def add_result_to_table(table, i, response):
     table.loc[i,'status'] = str(response['status'])
     table.loc[i,'html'] = response['text']
 
-
 # Server didn't get back to us in time
-def add_timeout_to_table(table, i):
-    table.loc[i,'status'] = 'No response'
+def add_error_to_table(table, i, errmsg):
+    table.loc[i,'status'] = errmsg
     table.loc[i,'html'] = ''
 
 # Asynchronously scrape many urls, and store the results in the table
@@ -49,24 +48,30 @@ async def scrape_urls(urls, result_table):
 
         # start tasks until we max out connections, or run out of urls
         while ( len(tasks_to_rows) < max_fetchers ) and ( started_urls < num_urls ):
-            newtask = event_loop.create_task(async_get_url(urls[started_urls]))
-            tasks_to_rows[newtask] = started_urls
+            url = urls[started_urls]
+            if is_valid_url(url):
+                newtask = event_loop.create_task(async_get_url(url))
+                tasks_to_rows[newtask] = started_urls
+            else:
+                add_error_to_table(result_table, started_urls, 'Invalid URL')
+                finished_urls += 1
             started_urls += 1
 
-        # Wait for any of the fetches to finish
-        finished, pending = await asyncio.wait(tasks_to_rows.keys(), return_when=asyncio.FIRST_COMPLETED)
+        # Wait for any of the fetches to finish (if there are any)
+        if len(tasks_to_rows) > 0:
+            finished, pending = await asyncio.wait(tasks_to_rows.keys(), return_when=asyncio.FIRST_COMPLETED)
 
-        # process any results we got
-        for task in finished:
-            try:
-                response = task.result()
-                add_result_to_table(result_table, tasks_to_rows[task], response)
-            except asyncio.TimeoutError:
-                add_timeout_to_table(result_table, tasks_to_rows[task])
+            # process any results we got
+            for task in finished:
+                try:
+                    response = task.result()
+                    add_result_to_table(result_table, tasks_to_rows[task], response)
+                except asyncio.TimeoutError:
+                    add_error_to_table(result_table, tasks_to_rows[task], 'No response')
 
-            del tasks_to_rows[task]
+                del tasks_to_rows[task]
 
-        finished_urls += len(finished)
+            finished_urls += len(finished)
 
 
 

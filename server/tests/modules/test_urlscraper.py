@@ -1,5 +1,5 @@
 from server.tests.utils import *
-from server.modules.urlscraper import scrape_urls
+from server.modules.urlscraper import scrape_urls, is_valid_url
 from django.test import override_settings
 import pandas as pd
 import asyncio
@@ -33,8 +33,8 @@ class ScrapeUrlsTest(TestCase):
         with mock.patch('aiohttp.ClientSession') as session:
             results_tasks, results_status, results_content = make_test_tasks(results)
 
-            session_mock = session.return_value  # mock obj returned by aoihttp.ClientSession()
-            session_mock.get.side_effect = results_tasks
+            session_mock = session.return_value  # get the mock obj returned by aoihttp.ClientSession()
+            session_mock.get.side_effect = [results_tasks[i] for i in range(len(urls)) if is_valid_url(urls[i])]
 
             # mock the output table format it expects
             out_table = pd.DataFrame({'urls': urls, 'status': ''}, columns=['urls', 'status', 'html'])
@@ -43,11 +43,12 @@ class ScrapeUrlsTest(TestCase):
             event_loop.run_until_complete(scrape_urls(urls, out_table))
 
             # ensure that aiohttp.get()_was called with the right sequence of urls
+            valid_urls = [x for x in urls if is_valid_url(x)]
             call_urls = []
             for call in session_mock.get.mock_calls:
                 name, args, kwargs = call
                 call_urls.append(args[0])
-            self.assertEqual(urls, call_urls)
+            self.assertEqual(call_urls, valid_urls)
 
             # ensure we saved the right results
             self.assertTrue(out_table['status'].equals(pd.Series(results_status)))
@@ -64,6 +65,12 @@ class ScrapeUrlsTest(TestCase):
         ]
 
         self.scraper_result_test(urls_small, results_small)
+
+        # make one of the URLs invalid
+        urls_small[1] = 'just not a url'
+        results_small[1] = (0.1, make_response('Invalid URL', ''))
+        self.scraper_result_test(urls_small, results_small)
+
 
 
     # Case where number of urls much greater than max simultaneous connections. Also, timeouts
