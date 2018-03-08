@@ -2,7 +2,8 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import IframeCtrl from './IframeCtrl'
 import {Modal, ModalBody, ModalHeader} from 'reactstrap'
-import {store, setWorkflowPublicAction} from "./workflow-reducer";
+import {store, setWorkflowPublicAction} from "./workflow-reducer"
+import {escapeHtml} from "./utils";
 let OutputIframeCtrl;
 
 class OutputIframe extends React.Component {
@@ -78,13 +79,7 @@ class OutputIframe extends React.Component {
   }
 
   renderEmbedCodeModal() {
-    let iframeCode = '<iframe src="' + window.location.host + '/embed/' + this.props.selectedWfModuleId + '" />';
-    iframeCode
-     .replace(/&/g, "&amp;")
-     .replace(/</g, "&lt;")
-     .replace(/>/g, "&gt;")
-     .replace(/"/g, "&quot;")
-     .replace(/'/g, "&#039;");
+    let iframeCode = escapeHtml('<iframe src="' + window.location.host + '/embed/' + this.props.selectedWfModuleId + '" />');
 
     return (
       <Modal isOpen={this.state.embedIframeModalOpen} toggle={this.toggleModals} className='test-setpublic-modal'>
