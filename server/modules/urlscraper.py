@@ -1,9 +1,10 @@
 from .moduleimpl import ModuleImpl
-import pandas as pd
 from server.versions import save_fetched_table_if_changed
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from django.conf import settings
+import pandas as pd
+import datetime
 import aiohttp
 import asyncio
 
@@ -127,13 +128,15 @@ class URLScraper(ModuleImpl):
         if urlcol in prev_table.columns:
             urls = prev_table[urlcol]
 
-            table = pd.DataFrame({'url': urls, 'status': ''}, columns=['url', 'status', 'html'])
+            table = pd.DataFrame({'url': urls, 'status': ''}, columns=['url', 'date', 'status', 'html'])
 
             event_loop = get_thread_event_loop()
             event_loop.run_until_complete(scrape_urls(urls, table))
 
         else:
             table = pd.DataFrame()
+
+        table['date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
         wfm.set_ready(notify=False)
         save_fetched_table_if_changed(wfm, table, auto_change_version=True)
