@@ -273,9 +273,6 @@ export default class WfParameter extends React.Component {
         var existingEdits = this.props.getParamText('edits');
         var saveEdits = (editsJson => this.props.setParamText('edits', editsJson));
         //console.log(existingEdits);
-        if(selectedColumn.length < 1) {
-            return (<div>Please select a column.</div>)
-        }
         return (
             <Refine
                 wfModuleId={this.props.wf_module_id}
