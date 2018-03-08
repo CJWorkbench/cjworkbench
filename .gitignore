@@ -22,7 +22,9 @@ client_secret.json
 
 #pycharm
 .idea/
+.idea
 tmp/
+.cache/
 
 #atom-ide
 .ropeproject/
@@ -32,6 +34,5 @@ importedmodules/
 
 client_secret.json
 socialaccounts_secrets.json
-.DS_Store
 
-.idea
+.DS_Store

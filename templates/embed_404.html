@@ -1,0 +1,16 @@
+{%  extends 'base.html' %}
+{% load render_bundle from webpack_loader %}
+{% load account %}
+
+{% block html_tag_attrs %}
+    class="embed_container"
+{% endblock %}
+
+{% block head %}
+  {% render_bundle 'login' 'css' %}
+{% endblock %}
+
+{% block body %}
+    <h1>This workflow is not available :(</h1>
+    {% render_bundle 'login' 'js' %}
+{% endblock %}

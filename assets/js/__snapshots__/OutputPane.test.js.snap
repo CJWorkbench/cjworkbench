@@ -1355,12 +1355,47 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
           </div>
         </div>
         <OutputIframe
+          api={Object {}}
           id="output_iframe"
           revision={1}
         >
-          <iframe
-            src="/api/wfmodules/undefined/output?rev=1"
-          />
+          <div
+            className="outputpane-iframe"
+          >
+            <Modal
+              autoFocus={true}
+              backdrop={true}
+              backdropTransitionTimeout={150}
+              className="test-setpublic-modal"
+              fade={true}
+              isOpen={false}
+              keyboard={true}
+              modalTransitionTimeout={300}
+              zIndex={1050}
+            />
+            <Modal
+              autoFocus={true}
+              backdrop={true}
+              backdropTransitionTimeout={150}
+              className="test-setpublic-modal"
+              fade={true}
+              isOpen={false}
+              keyboard={true}
+              modalTransitionTimeout={300}
+              zIndex={1050}
+            />
+            <div
+              className="outputpane-iframe-control-overlay"
+            >
+              <div
+                className="btn icon icon-code"
+                onClick={[Function]}
+              />
+            </div>
+            <iframe
+              src="/api/wfmodules/undefined/output?rev=1"
+            />
+          </div>
         </OutputIframe>
         <TableView
           api={Object {}}

@@ -58,6 +58,14 @@ export class WorkflowNavBar extends React.Component {
     this.logShare =  this.logShare.bind(this);
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.workflow.public !== this.props.workflow.public) {
+      this.setState({
+        isPublic: nextProps.workflow.public
+      })
+    }
+  }
+
   handleDuplicate() {
     if (!this.props.loggedInUser) {
       // user is NOT logged in, so navigate to sign in
@@ -75,18 +83,18 @@ export class WorkflowNavBar extends React.Component {
 
   setPublic() {
     this.props.api.setWorkflowPublic(this.props.workflow.id, true)
-    .then(() => {
-      this.setState({isPublic: true});
-      // close current modal
-      this.toggleModals();
-      // ensure that child components are updated
-      this.forceUpdate();
-      // open new modal with sharing feature
-      this.toggleModals();
-    })
-    .catch((error) => {
-      console.log('Request failed', error);
-    });
+      .then(() => {
+        this.setState({isPublic: true});
+        // close current modal
+        this.toggleModals();
+        // ensure that child components are updated
+        this.forceUpdate();
+        // open new modal with sharing feature
+        this.toggleModals();
+      })
+      .catch((error) => {
+        console.log('Request failed', error);
+      });
   }
 
   // this does not provide the correct link string yet

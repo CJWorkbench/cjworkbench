@@ -1,4 +1,4 @@
-from server.views import workflow_list, workflow_addmodule, workflow_detail
+from server.views import workflow_list, workflow_addmodule, workflow_detail, embed
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
 from server.serializers import WfModuleSerializer

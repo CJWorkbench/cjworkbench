@@ -3,6 +3,7 @@ from server.models.Commands import ChangeParameterCommand
 from server.execute import *
 import pandas as pd
 import io
+import mock
 
 class ExecuteTests(LoggedInTestCase):
 
@@ -26,35 +27,38 @@ class ExecuteTests(LoggedInTestCase):
         self.cols_pval = get_param_by_id_name('colnames')
 
 
-    # seriously, don't crash on a new workflow
-    def test_execute_empty(self):
-        empty_workflow = add_new_workflow('srsly?')
-        execute_render(empty_workflow, None)
-
+    # seriously, don't crash on a new workflow (rev=0, no caches)
+    def test_execute_first_revision(self):
+        execute_wfmodule(self.wfm2)
 
     def test_execute(self):
         # create a rev that selects a column, so revision is not empty and workflow is not NOP
         ChangeParameterCommand.create(self.cols_pval, 'M')
         rev1 = str(self.workflow.revision())
 
-        execute_render(self.workflow, render_from=None)  # None = render all
+        table = execute_wfmodule(self.wfm2)
+        self.assertTrue(table.equals(self.test_table_M))
 
+        # should have created two cached objects
         self.assertEqual(StoredObject.objects.count(), 2)
         so1 = StoredObject.objects.get(wf_module=self.wfm1)
         self.assertTrue(self.test_table.equals(so1.get_table()))
+        self.assertEqual(so1.type, StoredObject.CACHED_TABLE)
         self.assertEqual(so1.metadata, rev1)
 
         so2 = StoredObject.objects.get(wf_module=self.wfm2)
         self.assertTrue(self.test_table_M.equals(so2.get_table()))
+        self.assertEqual(so2.type, StoredObject.CACHED_TABLE)
         self.assertEqual(so2.metadata, rev1)
 
-        # Change second module and render from there. Should still bump revs.
+        # Change second module and render from there. Should bump revs.
         ChangeParameterCommand.create(self.cols_pval, 'M,F')
         self.workflow.refresh_from_db()
         rev2 = str(self.workflow.revision())
         self.assertNotEqual(rev1, rev2)
 
-        execute_render(self.workflow, render_from=self.wfm2)
+        table = execute_wfmodule(self.wfm2)
+        self.assertTrue(table.equals(self.test_table_MF))
 
         self.assertEqual(StoredObject.objects.count(), 2)
         so1 = StoredObject.objects.get(wf_module=self.wfm1)
@@ -62,11 +66,16 @@ class ExecuteTests(LoggedInTestCase):
         self.assertEqual(so1.metadata, rev2)
 
         so2 = StoredObject.objects.get(wf_module=self.wfm2)
-        so2t = so2.get_table()
         self.assertTrue(self.test_table_MF.equals(so2.get_table()))
         self.assertEqual(so2.metadata, rev2)
 
-    # TODO cache hit / cache miss test cases
+        # try rendering again with no revision changes, check that we hit the cache
+        # that is, module_dispatch_render is never called
+        with mock.patch('server.dispatch.module_dispatch_render') as mdr:
+            table = execute_wfmodule(self.wfm2)
+            self.assertTrue(table.equals(self.test_table_MF))
+            self.assertEqual(len(mdr.return_value.mock_calls), 0)
+
 
     # interesting case because duplicated workflow has no revisions/cached tables
     def test_duplicate_and_execute(self):
@@ -74,7 +83,7 @@ class ExecuteTests(LoggedInTestCase):
         wfmd1 = WfModule.objects.get(workflow=workflow2, order=0)
         wfmd2 = WfModule.objects.get(workflow=workflow2, order=1)
 
-        execute_render(workflow2)
+        execute_wfmodule(wfmd2)
 
         self.assertEqual(StoredObject.objects.count(), 2)
         so1 = StoredObject.objects.get(wf_module=wfmd1)

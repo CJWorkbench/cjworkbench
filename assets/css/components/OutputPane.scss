@@ -4,17 +4,48 @@
   position: relative;
 }
 
-.outputpane iframe {
-  border:none;
+.outputpane-iframe {
   width:100%;
   height: calc(50% - 3rem);
   margin-bottom: -0.5rem;
   background:#fff;
+  position:relative;
+  iframe {
+    border:none;
+    height: 100%;
+    width: 100%;
+  }
+  .outputpane-iframe-control-overlay {
+    position: absolute;
+    top:1.5rem;
+    right:6rem;
+    width: 4rem;
+    height: 4rem;
+    background-color: transparent;
+  }
+  .outputpane-iframe-control-overlay .btn {
+    position: absolute;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #E7E7E7;
+    font-size: 1.6rem;
+  }
+  .outputpane-iframe-control-overlay .btn:hover{
+    background-color: #48C8D7;
+    border: 0px;
+    color: #fff;
+  }
 }
+
+.btn icon icon-code
 
 /* This div may be superfluous wrt .outputpane */
 
-iframe + .outputpane-table {
+.outputpane-iframe + .outputpane-table {
   height: calc(50% - 3rem);
 }
 .outputpane-table {

@@ -273,9 +273,6 @@ export default class WfParameter extends React.Component {
         var existingEdits = this.props.getParamText('edits');
         var saveEdits = (editsJson => this.props.setParamText('edits', editsJson));
         //console.log(existingEdits);
-        if(selectedColumn.length < 1) {
-            return (<div>Please select a column.</div>)
-        }
         return (
             <Refine
                 wfModuleId={this.props.wf_module_id}
@@ -308,7 +305,10 @@ export default class WfParameter extends React.Component {
         return (
           <div className='parameter-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
+            {/* need to disable dragsource on this */}
             <textarea
+              onMouseEnter={() => this.props.toggleDrag() }
+              onMouseLeave={() => this.props.toggleDrag() }
               readOnly={this.props.isReadOnly}
               className={sclass}
               rows={srows}
@@ -317,7 +317,6 @@ export default class WfParameter extends React.Component {
               onKeyPress={this.keyPress}
               placeholder={this.props.p.parameter_spec.placeholder || ''}
               ref={ el => this.stringRef = el}/>
-
           </div>
         );
 
@@ -421,5 +420,6 @@ WfParameter.propTypes = {
   updateSettings:   PropTypes.object,             // only for modules that load data
   changeParam:      PropTypes.func.isRequired,
 	getParamText:     PropTypes.func.isRequired,
-	setParamText:     PropTypes.func.isRequired
+  setParamText:     PropTypes.func.isRequired,
+	toggleDrag:       PropTypes.func.isRequired  
 };

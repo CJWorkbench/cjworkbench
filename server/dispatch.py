@@ -14,6 +14,7 @@ from .modules.uploadfile import UploadFile
 from .modules.googlesheets import GoogleSheets
 from .modules.editcells import EditCells
 from .modules.refine import Refine
+from .modules.urlscraper import URLScraper
 
 from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
@@ -51,6 +52,7 @@ module_dispatch_tbl = {
     'googlesheets': GoogleSheets,
     'editcells':    EditCells,
     'refine':       Refine,
+    'urlscraper':   URLScraper,
 
     # For testing
     'NOP':          NOP,
@@ -107,7 +109,7 @@ def load_dynamically(wf_module):
 
 def module_dispatch_render(wf_module, table):
     if wf_module.module_version is None:
-        return None  # happens if module deleted
+        return pd.DataFrame()  # happens if module deleted
 
     dispatch = wf_module.module_version.module.dispatch
     error = None
@@ -147,7 +149,7 @@ def module_dispatch_render(wf_module, table):
         wf_module.set_error(error, notify=True)
         return table  # NOP if error
 
-    sanitize_dataframe(tableout)        # ensure correct types etc.
+    tableout = sanitize_dataframe(tableout)  # Ensure correct column types etc. also turn None to empty dataframe
     wf_module.set_ready(notify=False)
     return tableout
 

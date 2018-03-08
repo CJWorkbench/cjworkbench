@@ -1,5 +1,5 @@
 from server.tests.utils import *
-from server.execute import execute_wfmodule
+from server.execute import execute_nocache
 import pandas as pd
 import io
 
@@ -19,15 +19,15 @@ class PasteCSVTests(LoggedInTestCase):
 
     def test_empty(self):
         set_string(self.csv_pval, '')
-        out = execute_wfmodule(self.wf_module)
+        out = execute_nocache(self.wf_module)
         self.assertTrue(out.equals(pd.DataFrame()))  # No input, no output
 
     def test_csv(self):
         set_string(self.csv_pval, self.count_csv)
-        out = execute_wfmodule(self.wf_module)
+        out = execute_nocache(self.wf_module)
         self.assertTrue(out.equals(self.table))
 
     def test_tsv(self):
         set_string(self.csv_pval, self.count_tsv)
-        out = execute_wfmodule(self.wf_module)
+        out = execute_nocache(self.wf_module)
         self.assertTrue(out.equals(self.table))

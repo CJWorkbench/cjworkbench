@@ -109,12 +109,6 @@ class WfModuleSerializer(serializers.ModelSerializer):
         current_version = wfm.get_fetched_data_version()
         return {'versions': versions, 'selected': current_version}
 
-    versions = serializers.SerializerMethodField()
-    def get_versions(self, wfm):
-        versions = wfm.list_fetched_data_versions()
-        current_version = wfm.get_fetched_data_version()
-        return {'versions': versions, 'selected': current_version}
-
     class Meta:
         model = WfModule
         fields = ('id', 'module_version', 'workflow', 'status', 'error_msg', 'parameter_vals', 'is_collapsed',
@@ -130,14 +124,16 @@ class WorkflowSerializer(serializers.ModelSerializer):
     owner_name = serializers.SerializerMethodField()
 
     def get_read_only(self, obj):
-        return obj.read_only(self.context['user'])
+        # Use 'get' in case we have a request with no user.
+        return obj.read_only(self.context.get('user', False))
 
     def get_last_update(self, obj):
         return obj.last_update()
 
     def get_owner_name(self, obj):
-        # don't leak user info (e.g. email) if viewer is not owner
-        if (self.context['user'] == obj.owner):
+        # don't leak user info (e.g. email) if viewer is not owner.
+        # Use 'get' in case we have a request with no user.
+        if (self.context.get('user', False) == obj.owner):
             return workbench_user_display(obj.owner)
         else:
             return workbench_user_display_public(obj.owner)

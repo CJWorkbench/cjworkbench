@@ -17,7 +17,8 @@ describe('WfParameter', () => {
         api={nullApi}
         changeParam={nullFn}
 	      getParamText={nullFn}
-	      setParamText={nullFn}
+        setParamText={nullFn}
+        toggleDrag={nullFn}
       />);
   }
 

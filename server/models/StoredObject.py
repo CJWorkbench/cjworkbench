@@ -47,8 +47,15 @@ class StoredObject(models.Model):
     # filename combines wf module id and our object id
     # (self.id is sufficient but putting wfm.id in the filename helps debugging)
     @staticmethod
-    def _storage_filename(id, hash):
-        fname = str(id) + '-' + str(hash) + '.dat'
+    def _storage_filename(id, hash, type):
+
+        # prevent name collisions between the same table stored as a cache and a fetch
+        if type == StoredObject.CACHED_TABLE:
+            typestr = "-cache"
+        else:
+            typestr = ''  # for backwards compatibility with existing StoredObjects
+
+        fname = str(id) + '-' + str(hash) + typestr + '.dat'
         return default_storage.path(fname)
 
     @staticmethod
@@ -60,8 +67,11 @@ class StoredObject(models.Model):
     # Built in serialization of Pandas dataframes
     @staticmethod
     def create_table(wf_module, type, table, metadata=None):
-        hash = StoredObject._hash_table(table)
-        return StoredObject.__create_table_internal(wf_module, type, table, metadata, hash)
+        if table is None or table.empty:
+            return StoredObject.__create_empty_table(wf_module, type, metadata)
+        else:
+            hash = StoredObject._hash_table(table)
+            return StoredObject.__create_table_internal(wf_module, type, table, metadata, hash)
 
     # Create a new StoredObject if it's going to store different data than the previous one. Otherwise null
     # Fast; checks hash without loading file contents
@@ -81,7 +91,7 @@ class StoredObject(models.Model):
 
     @staticmethod
     def __create_table_internal(wf_module, type, table, metadata, hash):
-        path = StoredObject._storage_filename(wf_module.id, hash)
+        path = StoredObject._storage_filename(wf_module.id, hash, type)
         table.to_parquet(path)
         return StoredObject.objects.create(
             wf_module=wf_module,
@@ -93,10 +103,27 @@ class StoredObject(models.Model):
             hash=hash
         )
 
+    # why store an empty table? so we dont't have to re-render to know that the output was none
+    @staticmethod
+    def __create_empty_table(wf_module, type, metadata):
+        return StoredObject.objects.create(
+            wf_module=wf_module,
+            type=type,
+            metadata=metadata,
+            file=None,
+            size=0,
+            stored_at=timezone.now(),
+            hash=0
+        )
+
     def get_table(self):
         if not self.is_table():
             raise TypeError("Cannot load uploaded file StoredObject into a table")
-        path = StoredObject._storage_filename(self.wf_module.id, self.hash)
+
+        if self.size==0:
+            return pd.DataFrame() # empty table
+
+        path = StoredObject._storage_filename(self.wf_module.id, self.hash, self.type)
         table = pd.read_parquet(path)
         return table
 
@@ -107,7 +134,7 @@ class StoredObject(models.Model):
             raise ValueError("Cannot duplicate a StoredObject to same WfModule")
 
         srcname = default_storage.path(self.file.name)
-        new_path = StoredObject._storage_filename(to_wf_module.id, self.hash)
+        new_path = StoredObject._storage_filename(to_wf_module.id, self.hash, self.type)
         copyfile(srcname, new_path)
         new_so = StoredObject.objects.create(wf_module=to_wf_module,
                                              stored_at=self.stored_at,

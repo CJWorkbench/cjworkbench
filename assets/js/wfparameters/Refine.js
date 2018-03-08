@@ -102,24 +102,26 @@ class EditRow extends React.Component {
     render() {
         return (
             <div
-                className={'checkbox-container refine-checkbox-container ' + (this.props.valueEdited ? 'refine-edited' : '')}
+                className={'checkbox-container facet-checkbox-container ' + (this.props.valueEdited ? 'facet-edited' : '')}
                 style={{'whiteSpace': 'nowrap'}}>
-                <input
-                    type='checkbox'
-                    onChange={this.handleSelectionChange}
-                    checked={this.state.selected}
-                    className={'refine-checkbox'}
-                />
-                <input
-                    type='text'
-                    value={this.state.dataValue}
-                    onChange={this.handleValueChange}
-                    onFocus={this.handleFocus}
-                    onBlur={this.handleBlur}
-                    onKeyPress={this.handleKeyPress}
-                    className={'refine-value'}
-                />
-                <span className='refine-count'>{this.state.dataCount}</span>
+                <div className="d-flex align-items-center">
+                  <input
+                      type='checkbox'
+                      onChange={this.handleSelectionChange}
+                      checked={this.state.selected}
+                      className={'facet-checkbox'}
+                  />
+                  <input
+                      type='text'
+                      value={this.state.dataValue}
+                      onChange={this.handleValueChange}
+                      onFocus={this.handleFocus}
+                      onBlur={this.handleBlur}
+                      onKeyPress={this.handleKeyPress}
+                      className={'facet-value t-d-gray content-3' + (this.props.valueEdited ? ' facet-value--edited' : '')}
+                  />
+                </div>
+                <div className='facet-count t-m-gray content-4'>{this.state.dataCount}</div>
             </div>
         )
     }
@@ -134,7 +136,7 @@ EditRow.propTypes = {
     valueEdited: PropTypes.bool.isRequired
 }
 
-export default class Refine extends React.Component {
+export default class facet extends React.Component {
 
     /*
     Format of edits:
@@ -353,7 +355,7 @@ export default class Refine extends React.Component {
                         </UncontrolledAlert>) : ''
                     }
                     <div className='t-d-gray content-3 label-margin'>Histogram</div>
-                    <div className='container list-wrapper' style={{'height': '400px'}}>
+                    <div className='container list-wrapper'>
                         <div className='row list-scroll'>
                             { checkboxes }
                         </div>
@@ -374,7 +376,7 @@ export default class Refine extends React.Component {
     }
 };
 
-Refine.propTypes = {
+facet.propTypes = {
     wfModuleId: PropTypes.number.isRequired,
     selectedColumn: PropTypes.string.isRequired,
     existingEdits: PropTypes.string.isRequired,

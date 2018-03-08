@@ -1,0 +1,24 @@
+.facet-checkbox-container{
+  justify-content: space-between;
+}
+
+.facet-value {
+  border: none;
+  margin-left: 1rem;
+  background-color: transparent;
+}
+
+.facet-value:hover{
+  background-color: #f9f9f9;
+}
+
+.facet-value--edited{
+  font-weight: bold;
+}
+
+.facet-count {
+  border: none;
+  text-align: right;
+  overflow: hidden;
+  margin:0 0.01rem;
+}
