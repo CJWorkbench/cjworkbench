@@ -39,7 +39,9 @@ class ModuleStack extends React.Component {
     this.dragNew = this.dragNew.bind(this);
     this.dropNew = this.dropNew.bind(this);
     this.drop = this.drop.bind(this);
+    this.toggleDrag = this.toggleDrag.bind(this);        
     this.state = {
+      canDrag: true,
       justDropped: false,
       wf_modules: this.props.workflow.wf_modules // This is dumb, modifying state modifes the original
     }
@@ -81,6 +83,10 @@ class ModuleStack extends React.Component {
       },
       body: JSON.stringify(newOrder) })
     .catch( (error) => { console.log('Request failed', error); });
+  }
+
+  toggleDrag() {
+    this.setState({ canDrag: !this.state.canDrag });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -141,6 +147,8 @@ class ModuleStack extends React.Component {
         drop: this.drop,
         dropNew: this.dropNew,
         key: item.id,
+        canDrag: this.state.canDrag,  // governs drag-ability of WfModule - how do we change this from events in <WfParameter>?
+        toggleDrag: this.toggleDrag
       }
 
       if (item.insert) {

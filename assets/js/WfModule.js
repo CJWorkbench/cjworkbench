@@ -141,6 +141,10 @@ const sourceSpec = {
       const {source, target} = monitor.getDropResult();
       props.drop();
     }
+  },
+  // when False, drag is disabled
+  canDrag: function(props, monitor) {
+    return props.canDrag;
   }
 }
 
@@ -190,7 +194,7 @@ class WfModule extends React.Component {
                   ),  // only show on load if a note exists & not default text
       showEditableNotes: false,             // do not display in edit state on initial load
       notifications: this.wf_module.notifications,
-      notification_count: this.wf_module.notification_count
+      notification_count: this.wf_module.notification_count,
     });
   }
 
@@ -304,6 +308,7 @@ class WfModule extends React.Component {
           setClickNotification={this.setClickNotification}
           notifications={this.props['data-wfmodule'].notifications}
           loggedInUser={this.props['data-user']}
+          toggleDrag={this.props.toggleDrag}
         />)
       });
 
