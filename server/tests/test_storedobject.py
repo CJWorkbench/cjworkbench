@@ -28,11 +28,13 @@ class StoredObjectTests(TestCase):
         self.test_table = pd.DataFrame(sfpd)
         sanitize_dataframe(self.test_table)
 
+
     def file_contents(self, file_obj):
         file_obj.open(mode='rb')
         data = file_obj.read()
         file_obj.close()
         return data
+
 
     def test_store_fetched_table(self):
         so1 = StoredObject.create_table(self.wfm1,
@@ -44,6 +46,7 @@ class StoredObjectTests(TestCase):
         table2 = so1.get_table()
         self.assertTrue(table2.equals(self.test_table))
 
+
     def test_store_cached_table(self):
         so1 = StoredObject.create_table(self.wfm1,
                                         StoredObject.CACHED_TABLE,
@@ -54,6 +57,22 @@ class StoredObjectTests(TestCase):
         self.assertEqual(so1.size, os.stat(so1.file.name).st_size)
         table2 = so1.get_table()
         self.assertTrue(table2.equals(self.test_table))
+
+
+    def test_type_interference(self):
+        # if different types use the same filename -- perhaps because they have the same conent -- we have problems
+        # actually happened during development (module fetch and module cache can be the same for add data module)
+        so1 = StoredObject.create_table(self.wfm1,
+                                        StoredObject.CACHED_TABLE,
+                                        self.test_table)
+        so2 = StoredObject.create_table(self.wfm1,
+                                        StoredObject.FETCHED_TABLE,
+                                        self.test_table)
+
+        self.assertNotEqual(so1.file.path, so2.file.path)
+        so1.delete()
+        so2.get_table()
+
 
     def test_store_empty_table(self):
         so1 = StoredObject.create_table(self.wfm1,
@@ -93,6 +112,7 @@ class StoredObjectTests(TestCase):
         table3 = so3.get_table()
         self.assertTrue(table3.equals(mock_csv_table2))
 
+
     # Duplicate from one wfm to another, tests the typical WfModule duplication case
     def test_duplicate_table(self):
         so1 = StoredObject.create_table(self.wfm1, StoredObject.FETCHED_TABLE, mock_csv_table)
@@ -106,6 +126,7 @@ class StoredObjectTests(TestCase):
 
         self.assertEqual(self.file_contents(so1.file), self.file_contents(so2.file))
         self.assertTrue(so1.get_table().equals(so2.get_table()))
+
 
     def test_duplicate_file(self):
         fname = 'myfile.dat'

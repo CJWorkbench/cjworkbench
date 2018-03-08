@@ -173,22 +173,23 @@ class URLScraperTests(LoggedInTestCase):
 
     # Simple test that .event() calls scrape_urls() in the right way
     # We don't test all the scrape error cases (invalid urls etc.) as they are tested above
-    # def test_scrape(self):
-    #
-    #     get_param_by_id_name('urlcol').set_value('url')
-    #
-    #     # modifies the table in place to add results, just like the real thing
-    #     async def mock_scrapeurls(urls, table):
-    #         table['status'] = self.scraped_table['status']
-    #         table['html'] = self.scraped_table['html']
-    #         return
-    #
-    #     with mock.patch('server.modules.urlscraper.scrape_urls') as scraper:
-    #         with mock.patch('datetime.datetime') as mockdt:
-    #             mockdt.return_value.now.return_value = testnow
-    #             scraper.side_effect = mock_scrapeurls # call the mock function instead, the real fn is tested above
-    #
-    #             self.press_fetch_button()
-    #             out = execute_nocache(self.wfmodule)
-    #             self.assertTrue(out.equals(self.scraped_table))
+    def test_scrape(self):
+
+        get_param_by_id_name('urlcol').set_value('url')
+
+        # modifies the table in place to add results, just like the real thing
+        async def mock_scrapeurls(urls, table):
+            table['status'] = self.scraped_table['status']
+            table['html'] = self.scraped_table['html']
+            return
+
+        # can't mock datetime.datetime.now with a patch because it's builtin or something, sigh
+        URLScraper._mynow = lambda: testnow
+
+        with mock.patch('server.modules.urlscraper.scrape_urls') as scraper:
+            scraper.side_effect = mock_scrapeurls # call the mock function instead, the real fn is tested above
+
+            self.press_fetch_button()
+            out = execute_nocache(self.wfmodule)
+            self.assertTrue(out.equals(self.scraped_table))
 

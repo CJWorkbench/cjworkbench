@@ -1,14 +1,14 @@
 {
-  "name": "Scrape URLs",
+  "name": "URL scraper",
   "id_name": "urlscraper" ,
   "category" : "Add data",
-  "icon" : "url",
-  "description" : "Connect a dataset via its URL and keep it updated with its source.",
+  "icon" : "scraper",
+  "description" : "",
   "loads_data": true,
-  "help_url":"modules/add-data/scrape-urls",
+  "help_url":"modules/add-data/url-scraper",
   "parameters": [
     {
-      "name": "Column containing URLs",
+      "name": "URL column",
       "id_name" : "urlcol",
       "type": "column"
     },

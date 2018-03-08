@@ -50,6 +50,14 @@ export function okResponseMock () {
 }
 
 
+
+// Log to Intercom, if installed
+export function logUserEvent(name, metadata) {
+  if (window.APP_ID) {
+    window.Intercom("trackEvent", name, metadata);
+  }
+}
+
 export function timeDifference (start, end) {
   var diff = timediff(start,end);
 
@@ -86,9 +94,13 @@ export function timeDifference (start, end) {
   }
 }
 
-// Log to Intercom, if installed
-export function logUserEvent(name, metadata) {
-  if (window.APP_ID) {
-    window.Intercom("trackEvent", name, metadata);
-  }
+export function escapeHtml(str) {
+  str
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+  return str;
 }

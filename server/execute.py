@@ -11,12 +11,31 @@ import pandas as pd
 def notify_client_workflow_version_changed(workflow):
     ws_client_rerender_workflow(workflow)
 
+def get_render_cache(wfm, revision):
+    # There can be more than one cached table for the same rev, if we did simultaneous renders
+    # on two different threads. This is inefficient, but not harmful. So filter().first() not get()
+    try:
+        return StoredObject.objects.filter(wf_module=wfm,
+                                            type=StoredObject.CACHED_TABLE,
+                                            metadata=revision).first()
+    except StoredObject.DoesNotExist:
+        return None
+
 
 # Return the output of a particular module. Gets from cache if possible
 def execute_wfmodule(wfmodule, nocache=False):
-    table = pd.DataFrame()
     workflow = wfmodule.workflow
     target_rev = workflow.revision()
+
+    # Do we already have what we need?
+    cache = None
+    if not nocache:
+        cache = get_render_cache(wfmodule, target_rev)
+    if cache:
+        return cache.get_table()
+
+    # No, let's render from the top, shortcutting with cache whenever possible
+    table = pd.DataFrame()
 
     # Start from the top, re-rendering any modules which do not have a cache at the current revision
     # Assumes not possible to have later revision cache after a module which has an earlier revision cache
@@ -27,14 +46,7 @@ def execute_wfmodule(wfmodule, nocache=False):
         # Get module output from cache, if available and desired
         cache = None
         if not nocache:
-            try:
-                # There can be more than one cached table for the same rev, if we did simultaneous renders
-                # on two different threads. This is inefficient, but not harmful. So filter().first() not get()
-                cache = StoredObject.objects.filter(wf_module=wfm,
-                                                    type=StoredObject.CACHED_TABLE,
-                                                    metadata=target_rev).first()
-            except StoredObject.DoesNotExist:
-                pass
+            cache = get_render_cache(wfm, target_rev)
 
         # if we did not find an available cache, render
         if cache is None:

@@ -87,6 +87,9 @@ class DataVersionSelect extends React.Component {
   // If the workflow revision changes, reload the versions in case they've changed too
   // TODO: Is this still necessary?
   componentWillReceiveProps(nextProps) {
+    if (typeof nextProps.versions === 'undefined') {
+      return;
+    }
     if (this.state.dialogSelected === null && nextProps.versions.selected) {
       this.setState({
         dialogSelected: nextProps.versions.selected

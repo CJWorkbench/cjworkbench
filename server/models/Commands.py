@@ -100,12 +100,16 @@ def addmodulecommand_delete_callback(sender, instance, **kwargs):
 class DeleteModuleCommand(Delta):
     # must not have cascade on WfModule because we may delete it first when we are deleted
     wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
+    selected_wf_module = models.IntegerField(null=True, blank=True)
     applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
 
     def forward(self):
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
+        if self.workflow.selected_wf_module == self.wf_module.id:
+            self.workflow.selected_wf_module = None                     # deselect if we're deleting selected
+            self.workflow.save()
         self.applied = True
         self.save()
 
@@ -113,6 +117,9 @@ class DeleteModuleCommand(Delta):
         insert_wf_module(self.wf_module, self.workflow, self.wf_module.order)
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
+        if self.selected_wf_module == self.wf_module.id:
+            self.workflow.selected_wf_module = self.selected_wf_module  # reselect if we're restoring selected
+            self.workflow.save()
         self.applied = False
         self.save()
 
@@ -124,6 +131,7 @@ class DeleteModuleCommand(Delta):
         delta = DeleteModuleCommand.objects.create(
             workflow=workflow,
             wf_module=wf_module,
+            selected_wf_module=workflow.selected_wf_module,
             command_description=description)
         delta.forward()
         notify_client_workflow_version_changed(workflow)
