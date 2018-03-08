@@ -15,6 +15,7 @@ from datetime import timedelta
 from server.utils import units_to_seconds
 import json, datetime, pytz, re
 import pandas as pd
+from django.views.decorators.clickjacking import xframe_options_exempt
 
 
 # The guts of patch commands for various WfModule fields
@@ -154,7 +155,7 @@ def wfmodule_render(request, pk, format=None):
 
         return table_result(request, wf_module)
 
-
+@xframe_options_exempt
 def wfmodule_output(request, pk, format=None):
     if request.method == 'GET':
         try:
