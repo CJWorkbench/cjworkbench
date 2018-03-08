@@ -79,7 +79,7 @@ class OutputIframe extends React.Component {
   }
 
   renderEmbedCodeModal() {
-    let iframeCode = escapeHtml('<iframe src="' + window.location.host + '/embed/' + this.props.selectedWfModuleId + '" />');
+    let iframeCode = escapeHtml('<iframe src="' + window.location.protocol + '//' + window.location.host + '/embed/' + this.props.selectedWfModuleId + '" />');
 
     return (
       <Modal isOpen={this.state.embedIframeModalOpen} toggle={this.toggleModals} className='test-setpublic-modal'>
