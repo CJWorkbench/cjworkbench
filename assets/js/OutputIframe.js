@@ -93,7 +93,7 @@ class OutputIframe extends React.Component {
         </ModalHeader>
         <ModalBody className='dialog-body'>
           <pre>
-            <code>
+            <code className="content-3 t-d-gray">
               {iframeCode}
             </code>
           </pre>
