@@ -5,6 +5,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
   className="embed-wrapper"
 >
   <iframe
+    frameborder="0"
     src="/api/wfmodules/1/output"
   />
   <div
@@ -99,7 +100,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
         <code
           className="embed--share-code"
         >
-          &lt;iframe src="about:///embed/1" width="560" height="315" /&gt;
+          &lt;iframe src="about:///embed/1" width="560" height="315" frameborder="0" /&gt;
         </code>
       </pre>
     </div>
