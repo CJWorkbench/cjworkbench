@@ -37,7 +37,9 @@ def is_valid_url(url):
 async def async_get_url(url):
     with aiohttp.Timeout(settings.SCRAPER_TIMEOUT):
         session = aiohttp.ClientSession()
-        return await session.get(url)
+        response = await session.get(url)   # returns when we have the HTTP header
+        text = await response.text()        # so wait until we have the content
+        return {'status': response.status, 'text': text}
 
 # Parses the HTTP response object and stores it as a row in our table
 def add_result_to_table(table, i, response):

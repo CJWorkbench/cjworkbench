@@ -39,7 +39,16 @@ async def mock_async_get(status, text, lag):
     elif status == URLScraper.STATUS_NO_CONNECTION:
         raise aiohttp.client_exceptions.ClientConnectionError
 
-    return {'status':status, 'text':text}
+    # mock for aiohttp.ClientResponse. Note async text()
+    class MockResponse:
+        def __init__(self, status, text):
+            self.status = status
+            self._text = text
+
+        async def text(self):
+            return self._text
+
+    return MockResponse(status, text)
 
 
 # Table of urls and correct responses to a set of tasks
