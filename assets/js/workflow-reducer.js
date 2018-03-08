@@ -231,6 +231,10 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
     action.payload.wf_module_id
   );
 
+  if (typeof wfModuleIdx === 'undefined') {
+    return state;
+  }
+
   return update(state, {
     workflow: {
       wf_modules: {$splice: [[wfModuleIdx, 1]] }
