@@ -103,6 +103,9 @@ class URLScraper(ModuleImpl):
     STATUS_TIMEOUT = "No response"
     STATUS_NO_CONNECTION = "Can't connect"
 
+    # class method, so we can mock this out for tests
+    _mynow = datetime.datetime.now
+
     @staticmethod
     def render(wf_module, table):
         urlcol = wf_module.get_param_column('urlcol')
@@ -136,7 +139,7 @@ class URLScraper(ModuleImpl):
         else:
             table = pd.DataFrame()
 
-        table['date'] = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        table['date'] = URLScraper._mynow().strftime('%Y-%m-%d %H:%M:%S')
 
         wfm.set_ready(notify=False)
         save_fetched_table_if_changed(wfm, table, auto_change_version=True)
