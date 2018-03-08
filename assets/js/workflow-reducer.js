@@ -470,13 +470,14 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
 export function setParamValueAction(wfModuleId, paramIdName, paramValue) {
     let state = store.getState();
     let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleId);
-    let paramIdx = findIdxByProp(
-      state.workflow.wf_modules[wfModuleIdx].parameter_vals,
-      'id_name',
-      paramIdName
-    );
+    let paramIdx;
+    for(let i = 0; i < state.workflow.wf_modules[wfModuleIdx].parameter_vals.length; i++) {
+      if (state.workflow.wf_modules[wfModuleIdx].parameter_vals[i].parameter_spec.id_name === paramIdName) {
+        paramIdx = i;
+        break;
+      }
+    }
     let paramRef = state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx];
-
     return {
       type: SET_PARAM_VALUE,
       payload: {
