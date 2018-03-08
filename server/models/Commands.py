@@ -141,7 +141,8 @@ class DeleteModuleCommand(Delta):
 @receiver(pre_delete, sender=DeleteModuleCommand, dispatch_uid='deletemodulecommand')
 def deletemodulecommand_delete_callback(sender, instance, **kwargs):
     if instance.applied == True:
-        instance.wf_module.delete()
+        if WfModule.objects.filter(id=instance.wf_module.id).exists():  # should never happen that we double-delete -- bug?
+            instance.wf_module.delete()
 
 
 class ReorderModulesCommand(Delta):
