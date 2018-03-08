@@ -11,64 +11,68 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
     className="embed-info"
   >
     <div
-      className="embed-info-logo"
-    >
-      <a
-        href="/"
-      >
-        <img
-          src="/static/images/logo.png"
-          width="21"
-        />
-      </a>
-    </div>
-    <div
-      className="embed-info-meta"
+      className="d-flex align-items-center"
     >
       <div
-        className="t-d-gray mb-2 title-4"
+        className="embed-info-logo"
       >
         <a
-          href="/workflows/1"
+          href="/"
         >
-          Workflow Title
+          <img
+            src="/static/images/logo.png"
+            width="35"
+          />
         </a>
       </div>
       <div
-        className="wf-meta--id"
+        className="embed-info-meta"
       >
-        <ul
-          className="WF-meta"
+        <div
+          className="t-d-gray mb-1 title-4"
         >
-          <li
-            className="WF-meta--item content-3 t-m-gray"
+          <a
+            href="/workflows/1"
           >
-            <a
-              href="/workflows/1"
+            Workflow Title
+          </a>
+        </div>
+        <div
+          className="wf-meta--id"
+        >
+          <ul
+            className="WF-meta"
+          >
+            <div
+              className="WF-meta--item content-3 t-m-gray"
             >
-              by 
-              Workflow Owner Name
-            </a>
-          </li>
-          <li
-            className="content-3 metadataSeparator t-m-gray"
-          >
-            -
-          </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          >
-            <a
-              href="/workflows/1"
+              <a
+                href="/workflows/1"
+              >
+                by 
+                Workflow Owner Name
+              </a>
+            </div>
+            <li
+              className="content-3 metadataSeparator t-m-gray"
             >
-              Updated 
-              now
-            </a>
-          </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          />
-        </ul>
+              -
+            </li>
+            <li
+              className="WF-meta--item content-3 t-m-gray"
+            >
+              <a
+                href="/workflows/1"
+              >
+                Updated 
+                now
+              </a>
+            </li>
+            <li
+              className="WF-meta--item content-3 t-m-gray"
+            />
+          </ul>
+        </div>
       </div>
     </div>
     <div
@@ -88,12 +92,14 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       className="embed-share-links"
       onClick={[Function]}
     >
-      <h3>
-        Share
-      </h3>
+      <h1>
+        Embed live chart using this code:
+      </h1>
       <pre>
-        <code>
-          &lt;iframe src="/embed/1" /&gt;
+        <code
+          className="embed--share-code"
+        >
+          &lt;iframe src="about:///embed/1" width="560" height="315" /&gt;
         </code>
       </pre>
     </div>
