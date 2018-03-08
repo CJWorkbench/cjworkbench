@@ -193,13 +193,15 @@ export function deleteModuleAction(id_to_delete) {
     }
 
     // if we are deleting first module, set to new first module if any
-    if (newSelectedId === null && wf_modules.length > 1) {
-      newSelectedId = wf_modules[1].id;
+    if (newSelectedId === null) {
+      if (wf_modules.length > 1) {
+        newSelectedId = wf_modules[1].id;
+      } else {
+        newSelectedId = null; // deleting last module
+      }
     }
-  }
-
-  // If the selected module isn't changing, set it to the current selected module.
-  if (newSelectedId === null) {
+  } else {
+    // If we are not deleting the selected module, don't change selection
     newSelectedId = state.selected_wf_module;
   }
 

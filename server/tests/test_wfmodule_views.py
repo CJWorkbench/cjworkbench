@@ -151,12 +151,15 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
     def test_wf_module_delete(self):
         # add a new one to delete; don't mess with other tests
         wfmodule4 = add_new_wf_module(self.workflow1, self.module2_version, 3)
+        self.workflow1.selected_wf_module = wfmodule4.id
 
         response = self.client.delete('/api/wfmodules/%d' % wfmodule4.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        with self.assertRaises(WfModule.DoesNotExist):
-            WfModule.objects.get(pk=wfmodule4.id, workflow=self.workflow1)  # must really be gone
+        self.assertFalse(WfModule.objects.filter(workflow=self.workflow1, pk=wfmodule4.id).exists())  # must really be gone
 
+        # also check that deleting the selected module nullifies workflow.selected_wf_module
+        self.workflow1.refresh_from_db()
+        self.assertEqual(self.workflow1.selected_wf_module, None)
 
     # /input is just a /render on the previous module
     def test_wf_module_input(self):
