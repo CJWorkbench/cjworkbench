@@ -1,6 +1,6 @@
 from django.test import TestCase
 from server.tests.utils import *
-from server.execute import execute_wfmodule
+from server.execute import execute_nocache
 
 # ---- Python Code  ----
 
@@ -18,6 +18,6 @@ class PythonCodeTest(LoggedInTestCase):
         self.code_pval.value = code
         self.code_pval.save()
 
-        out = execute_wfmodule(self.wf_module)
+        out = execute_nocache(self.wf_module)
         self.assertEqual(str(out), "   A  B  C\n0  0  0  0\n1  1  1  1\n2  2  2  2\n3  3  3  3\n4  4  4  4")
 
