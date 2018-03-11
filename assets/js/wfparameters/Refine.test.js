@@ -60,7 +60,7 @@ describe('Refine', () => {
     it('loads the histogram', (done) => {
         //expect(wrapper).toMatchSnapshot();
 
-        setTimeout(() => {
+        setImmediate(() => {
             expect(wrapper.state()).toEqual({
                 histogramLoaded: true,
                 histogramNumRows: histogramResponse.total_rows,
@@ -76,14 +76,13 @@ describe('Refine', () => {
                 edits: []
             });
             done();
-        }, 200);
+        });
     });
 
     it('updates the histogram upon value edit', (done) => {
-        setTimeout(() => {
+        setImmediate(() => {
             var bar1Input = wrapper.find('input[value="bar1"]');
             expect(bar1Input).toHaveLength(1);
-            console.log(bar1Input);
 
             bar1Input.simulate('focus');
             bar1Input.simulate('change', {
@@ -94,16 +93,15 @@ describe('Refine', () => {
             bar1Input.simulate('keyPress', {
                 key: 'Enter'
             });
-            console.log('simulated');
 
-            setTimeout(() => {
+            setImmediate(() => {
 
                 wrapper.setProps({
                     existingEdits: existingEdits,
                     revision: 1
                 })
 
-                setTimeout(() => {
+                setImmediate(() => {
                     //console.log(wrapper.state().histogramData);
                     expect(wrapper.state().histogramData).toEqual(
                         [
@@ -114,10 +112,10 @@ describe('Refine', () => {
                     expect(wrapper.find('EditRow')).toHaveLength(2);
 
                     done();
-                }, 200);
+                });
 
-            }, 200);
+            });
 
-        }, 200);
+        });
     });
 });

@@ -206,7 +206,7 @@ export default class facet extends React.Component {
                 */
                 var nextState = Object.assign({}, this.state);
                 nextState.edits = JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]');
-                console.log(nextState.edits);
+                //console.log(nextState.edits);
                 this.loadHistogram(nextColumn, nextState);
             }
         }
@@ -230,7 +230,7 @@ export default class facet extends React.Component {
                 //console.log(this.state.edits);
                 //console.log(editedHistogram);
                 // Apply all relevant edits we have to the original histogram
-                console.log(nextState.edits);
+                //console.log(nextState.edits);
                 for(var i = 0; i < nextState.edits.length; i ++) {
                     //console.log('applying edit');
                     if(nextState.edits[i].column == this.props.selectedColumn) {
