@@ -10,23 +10,7 @@ export function mockAPI(mock_api) {
     api = mock_api;
 }
 
-const editColumns = [
-    {
-        key: 'column',
-        name: 'Column',
-        editable: false
-    },
-    {
-        key: 'fromVal',
-        name: 'From',
-        editable: false
-    },
-    {
-        key: 'toVal',
-        name: 'To',
-        editable: false
-    }
-];
+const INTERNAL_COUNT_COLNAME = '__internal_count_column__'
 
 class EditRow extends React.Component {
 
@@ -152,6 +136,8 @@ export default class facet extends React.Component {
     }
      */
 
+
+
     constructor(props) {
         super(props);
         this.state = {
@@ -169,7 +155,9 @@ export default class facet extends React.Component {
     }
 
     componentDidMount() {
-        this.loadHistogram(this.props.selectedColumn, this.state);
+        if(this.props.selectedColumn.length > 0) {
+            this.loadHistogram(this.props.selectedColumn, this.state);
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -188,7 +176,7 @@ export default class facet extends React.Component {
                     histogramLoaded: false,
                     histogramData: [],
                     histogramNumRows: 0,
-                    showWarning: nextRevision > this.props.revision,
+                    showWarning: (nextRevision > this.props.revision) && (this.props.selectedColumn.length > 0),
                     edits: (nextRevision > this.props.revision) ? [] : JSON.parse(nextProps.existingEdits),
                 }, () => {this.loadHistogram(nextColumn, this.state)});
             } else {
@@ -206,6 +194,7 @@ export default class facet extends React.Component {
                 */
                 var nextState = Object.assign({}, this.state);
                 nextState.edits = JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]');
+                nextState.showWarning = false;
                 //console.log(nextState.edits);
                 this.loadHistogram(nextColumn, nextState);
             }
@@ -240,7 +229,7 @@ export default class facet extends React.Component {
                 }
                 //console.log(editedHistogram);
                 editedHistogram.sort((item1, item2) => {
-                    return item1.count < item2.count ? 1 : -1;
+                    return item1[INTERNAL_COUNT_COLNAME] < item2[INTERNAL_COUNT_COLNAME] ? 1 : -1;
                 })
                 nextState.histogramData = editedHistogram;
                 nextState.histogramNumRows = editedHistogram.length;
@@ -280,7 +269,7 @@ export default class facet extends React.Component {
                 // The new cluster always appears on top
                 var toEntry = Object.assign({}, newHist[toIdx]);
                 newHist.splice(toIdx, 1);
-                toEntry['count'] += fromEntry['count'];
+                toEntry[INTERNAL_COUNT_COLNAME] += fromEntry[INTERNAL_COUNT_COLNAME];
                 toEntry.edited = true;
                 newHist.unshift(toEntry);
             }
@@ -334,8 +323,8 @@ export default class facet extends React.Component {
             const checkboxes = this.state.histogramData.map(item => {
                 return (
                     <EditRow
-                        dataValue={item[this.props.selectedColumn]}
-                        dataCount={item.count}
+                        dataValue={item[this.props.selectedColumn].toString()}
+                        dataCount={item[INTERNAL_COUNT_COLNAME]}
                         key={item[this.props.selectedColumn]}
                         onValueChange={this.handleValueChange}
                         onSelectionChange={this.handleSelectionChange}
