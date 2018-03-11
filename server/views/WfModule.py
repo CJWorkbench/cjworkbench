@@ -204,13 +204,15 @@ def wfmodule_histogram(request, pk, col, format=None):
         if not wf_module.workflow.user_authorized_read(request.user):
             return HttpResponseForbidden()
 
+        INTERNAL_COUNT_COLNAME = '__internal_count_column__'
+
         prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
         if not prev_modules:
             return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
         table = execute_wfmodule(prev_modules.last())
         hist_table = table.groupby(col).size().reset_index()
-        hist_table.columns = [col, 'count']
-        hist_table = hist_table.sort_values(by=['count', col], ascending=[False, True])
+        hist_table.columns = [col, INTERNAL_COUNT_COLNAME]
+        hist_table = hist_table.sort_values(by=[INTERNAL_COUNT_COLNAME, col], ascending=[False, True])
 
         return HttpResponse(make_render_json(hist_table), content_type="application/json")
 

@@ -6,6 +6,8 @@ import {mount} from 'enzyme'
 
 describe('Refine', () => {
 
+    const INTERNAL_COUNT_COLNAME = '__internal_count_column__'
+
     var store, api;
     var wrapper;
 
@@ -16,9 +18,9 @@ describe('Refine', () => {
         end_row: 3,
         total_rows: 3,
         rows: [
-            {foo: 'bar1', count: 1},
-            {foo: 'bar2', count: 2},
-            {foo: 'bar3', count: 3}
+            {foo: 'bar1', '__internal_count_column__': 1},
+            {foo: 'bar2', '__internal_count_column__': 2},
+            {foo: 'bar3', '__internal_count_column__': 3}
         ]
     };
 
@@ -70,7 +72,7 @@ describe('Refine', () => {
                     newEntry.edited = false;
                     return newEntry;
                 }).sort((item1, item2) => {
-                    return (item1.count < item2.count ? 1 : -1);
+                    return (item1[INTERNAL_COUNT_COLNAME] < item2[INTERNAL_COUNT_COLNAME] ? 1 : -1);
                 }),
                 showWarning: false,
                 edits: []
@@ -105,8 +107,8 @@ describe('Refine', () => {
                     //console.log(wrapper.state().histogramData);
                     expect(wrapper.state().histogramData).toEqual(
                         [
-                            {foo: 'bar2', count: 3, selected: true, edited: true},
-                            {foo: 'bar3', count: 3, selected: true, edited: false}
+                            {foo: 'bar2', '__internal_count_column__': 3, selected: true, edited: true},
+                            {foo: 'bar3', '__internal_count_column__': 3, selected: true, edited: false}
                         ]
                     );
                     expect(wrapper.find('EditRow')).toHaveLength(2);
@@ -164,7 +166,7 @@ describe('Refine', () => {
                             bar1Checkbox = bar1Group.find('input[type="checkbox"]');
                             expect(bar1Checkbox).toHaveLength(1);
 
-                            console.log(bar1Checkbox.props().checked);
+                            //console.log(bar1Checkbox.props().checked);
 
                             expect(bar1Checkbox.props().checked).toEqual(true);
 
