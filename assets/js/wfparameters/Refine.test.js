@@ -99,7 +99,7 @@ describe('Refine', () => {
                 wrapper.setProps({
                     existingEdits: existingEdits,
                     revision: 1
-                })
+                });
 
                 setImmediate(() => {
                     //console.log(wrapper.state().histogramData);
@@ -118,4 +118,61 @@ describe('Refine', () => {
 
         });
     });
+
+    it('updates the checkboxes upon value (de)selection', (done) => {
+        setImmediate(() => {
+            // Click the checkbox for value 'bar1'
+
+            var bar1Group = wrapper.find('input[value="bar1"]').parent();
+            var bar1Checkbox = bar1Group.find('input[type="checkbox"]');
+            expect(bar1Checkbox).toHaveLength(1);
+
+            bar1Checkbox.simulate('change');
+
+            setImmediate(() => {
+                // Update the component
+
+                wrapper.setProps({
+                    existingEdits: existingEdits,
+                    revision: 1
+                });
+
+                setImmediate(() => {
+                    // And check that the checkbox should not be checked
+                    // After that, click the checkbox again
+
+                    bar1Group = wrapper.find('input[value="bar1"]').parent();
+                    bar1Checkbox = bar1Group.find('input[type="checkbox"]');
+                    expect(bar1Checkbox).toHaveLength(1);
+
+                    expect(bar1Checkbox.props().checked).toEqual(false);
+
+                    bar1Checkbox.simulate('change');
+
+                    setImmediate(() => {
+                        // Update the component
+
+                        wrapper.setProps({
+                            existingEdits: existingEdits,
+                            revision: 2
+                        });
+
+                        setImmediate(() => {
+                            // And check that the checkbox should be checked now
+
+                            bar1Group = wrapper.find('input[value="bar1"]').parent();
+                            bar1Checkbox = bar1Group.find('input[type="checkbox"]');
+                            expect(bar1Checkbox).toHaveLength(1);
+
+                            console.log(bar1Checkbox.props().checked);
+
+                            expect(bar1Checkbox.props().checked).toEqual(true);
+
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    })
 });
