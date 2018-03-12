@@ -136,8 +136,6 @@ export default class facet extends React.Component {
     }
      */
 
-
-
     constructor(props) {
         super(props);
         this.state = {
@@ -201,6 +199,13 @@ export default class facet extends React.Component {
 
         // clearEdits controls whether we clear the edit on the server immediately upon load
         // This is unused for now.
+        if(targetCol.length == 0) {
+            var nextState = Object.assign(baseState);
+            nextState.histogramLoaded = false;
+            nextState.histogramData = []
+            this.setState(nextState);
+            return;
+        }
         api.histogram(this.props.wfModuleId, targetCol)
             .then(histogram => {
                 //console.log(histogram);
@@ -353,7 +358,7 @@ export default class facet extends React.Component {
         const histogramComponent = this.renderHistogram();
         return (
             <div>
-                {histogramComponent}
+                {this.state.histogramLoaded ? histogramComponent : ''}
                 <br />
             </div>
         )
