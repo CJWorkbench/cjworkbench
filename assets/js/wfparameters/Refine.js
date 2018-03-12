@@ -170,28 +170,15 @@ export default class facet extends React.Component {
             //console.log(nextRevision, this.props.revision);
             //console.log('Revision bumped.');
             if(nextColumn != this.props.selectedColumn) {
-                // If the column changes, check if this is a cancel; if not, clear the edits
+                // If the column changes, check if this is a undo; if not, clear the edits
                 // The empty edits will be saved to the server on the next edit
-                this.setState({
-                    histogramLoaded: false,
-                    histogramData: [],
-                    histogramNumRows: 0,
-                    showWarning: (nextRevision > this.props.revision) && (this.props.selectedColumn.length > 0),
-                    edits: (nextRevision > this.props.revision) ? [] : JSON.parse(nextProps.existingEdits),
-                }, () => {this.loadHistogram(nextColumn, this.state)});
+                var nextState = Object.assign({}, this.state);
+                nextState.showWarning = (nextRevision > this.props.revision) && (this.props.selectedColumn.length > 0);
+                nextState.edits = (nextRevision > this.props.revision) ? [] : JSON.parse(nextProps.existingEdits);
+                this.loadHistogram(nextColumn, nextState);
+
             } else {
-                /*
-                this.setState({
-                    histogramLoaded: false,
-                    histogramData: [],
-                    histogramNumRows: 0,
-                    showWarning: false,
-                    edits: JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]'),
-                }, () => {
-                    //console.log(this.state.edits);
-                    this.loadHistogram(nextColumn);
-                });
-                */
+                // Otherwise, load everything as usual
                 var nextState = Object.assign({}, this.state);
                 nextState.edits = JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]');
                 nextState.showWarning = false;
@@ -199,6 +186,14 @@ export default class facet extends React.Component {
                 this.loadHistogram(nextColumn, nextState);
             }
         }
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+        // Prevents an extra rendering during a column change
+        if((nextProps.selectedColumn != this.props.selectedColumn)) {
+            return false;
+        }
+        return true;
     }
 
     loadHistogram(targetCol, baseState, clearEdits=false) {
@@ -239,7 +234,7 @@ export default class facet extends React.Component {
             })
             .then(() => {
                 if(clearEdits) {
-                    this.props.saveEdits([]);
+                    this.props.saveEdits('[]');
                 }
             });
     }
