@@ -1,0 +1,119 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WfModule, NOT read-only mode - DUMMY TEST ONLY Renders - dummy test only 1`] = `
+<div
+  onClick={[Function]}
+>
+  <div
+    className="wf-card mx-auto"
+  >
+    <div>
+      <div
+        className="output-bar-container"
+      >
+        <StatusBar
+          isSelected={false}
+        />
+      </div>
+      <div
+        className="card-block p-0"
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+      >
+        <div
+          className="module-card-info"
+        >
+          <div
+            className="module-card-header"
+          >
+            <div
+              className="module-header-content"
+            >
+              <div
+                className="d-flex justify-content-start align-items-center"
+              >
+                <div
+                  className="icon-undefined WFmodule-icon mr-2"
+                />
+                <div
+                  className="t-d-gray WFmodule-name"
+                />
+                <div
+                  className="icon-sort-up btn context-collapse-button"
+                  onClick={[Function]}
+                  style={
+                    Object {
+                      "opacity": "0",
+                    }
+                  }
+                />
+              </div>
+              <div
+                className="d-flex align-items-center"
+                style={
+                  Object {
+                    "opacity": "0",
+                  }
+                }
+              >
+                <div>
+                  <a
+                    className="btn help-button d-flex align-items-center"
+                    target="_blank"
+                  >
+                    <div
+                      className="icon-help"
+                    />
+                  </a>
+                </div>
+                <div>
+                  <div
+                    className="context-button btn"
+                    onClick={[Function]}
+                  >
+                    <div
+                      className="icon-note btn icon-l-gray "
+                    />
+                  </div>
+                </div>
+                <div>
+                  <WfModuleContextMenu
+                    className=""
+                    removeModule={[Function]}
+                    stopProp={[Function]}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <Collapse
+            className=""
+            delay={
+              Object {
+                "hide": 350,
+                "show": 350,
+              }
+            }
+            isOpen={true}
+            onClosed={[Function]}
+            onOpened={[Function]}
+            tag="div"
+          >
+            <StatusLine />
+            <div
+              className="module-card-params"
+            >
+              <div
+                className="module-description"
+              />
+            </div>
+          </Collapse>
+        </div>
+      </div>
+      <div
+        className="drop-alert "
+      />
+    </div>
+  </div>
+</div>
+`;

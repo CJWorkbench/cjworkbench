@@ -464,6 +464,7 @@ WfModule.propTypes = {
   'data-changeParam':   PropTypes.func,
   'data-removeModule':  PropTypes.func,
   'data-api':           PropTypes.object.isRequired,
+  'connectDragSource':  PropTypes.func,
   'connectDropTarget':  PropTypes.func,
   'focusModule':        PropTypes.func
 };
@@ -485,5 +486,6 @@ const sortableComponent = flow(
   DragSource('module', sourceSpec, sourceCollect)
 );
 
+export { WfModule };
 export const SortableWfModule = sortableComponent(WfModule);
 export const SortableWfModulePlaceholder = sortableComponent(WfModulePlaceholder);
