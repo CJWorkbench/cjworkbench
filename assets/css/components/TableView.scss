@@ -30,8 +30,14 @@
   padding-right: 1rem;
 }
 
-.react-grid-HeaderCell__draggable {
-  width: 10px!important;
+
+.react-grid-HeaderCell:active {
+  background-color: #FBAA6D;
+}
+
+.react-grid-HeaderCell__draggable:hover,
+.react-grid-HeaderCell__draggable:active {
+  background-color: #FBAA6D;
 }
 
 .react-grid-Cell--locked:last-of-type{
