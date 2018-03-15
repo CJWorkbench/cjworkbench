@@ -1,35 +1,10 @@
 import React from 'react'
-import { getPageID, csrfToken } from './utils'
+import { getPageID, csrfToken, scrollTo } from './utils'
 import { DropTarget } from 'react-dnd'
 import FlipMove from 'react-flip-move'
 import PropTypes from 'prop-types'
 import { SortableWfModule, SortableWfModulePlaceholder } from './WfModule'
-
-
-// ---- Sortable WfModules within the workflow ----
-const targetSpec = {
-  drop (props, monitor, component) {
-    const source = monitor.getItem();
-    const target = props.index;
-    // Replace this with optimistic updates via redux
-    component.setState({
-      justDropped:true
-    });
-    return {
-      source,
-      target
-    }
-  }
-}
-
-function targetCollect(connect, monitor) {
-  return {
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-    canDrop: monitor.canDrop(),
-    dragItem: monitor.getItem()
-  }
-}
+import debounce from 'lodash/debounce'
 
 class ModuleStack extends React.Component {
 
@@ -39,7 +14,12 @@ class ModuleStack extends React.Component {
     this.dragNew = this.dragNew.bind(this);
     this.dropNew = this.dropNew.bind(this);
     this.drop = this.drop.bind(this);
-    this.toggleDrag = this.toggleDrag.bind(this);        
+    this.toggleDrag = this.toggleDrag.bind(this);
+    this.scrollRef = null;
+    this.setScrollRef = this.setScrollRef.bind(this);
+    // Debounced so that execution is cancelled if we start
+    // another animation. See note on focusModule definition.
+    this.focusModule = debounce(this.focusModule.bind(this), 200);
     this.state = {
       canDrag: true,
       justDropped: false,
@@ -117,6 +97,23 @@ class ModuleStack extends React.Component {
     }
   }
 
+  setScrollRef(ref) {
+    this.scrollRef = ref;
+  }
+
+  focusModule(module) {
+    // Wait for the next two browser repaints before animating, because
+    // two repaints gets it about right.
+    // This is a bad hack that's here because JavaScript doesn't have
+    // a global animation queue. We should either find or build one
+    // and use it for all of our animations.
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        scrollTo(module, 300, this.scrollRef, this.scrollRef.getBoundingClientRect().height / 3);
+      });
+    });
+  }
+
   render() {
     if (!this.state.wf_modules || this.state.wf_modules.length === 0) {
       return (
@@ -148,8 +145,10 @@ class ModuleStack extends React.Component {
         dropNew: this.dropNew,
         key: item.id,
         canDrag: this.state.canDrag,  // governs drag-ability of WfModule - how do we change this from events in <WfParameter>?
-        toggleDrag: this.toggleDrag
-      }
+        toggleDrag: this.toggleDrag,
+        focusModule: this.focusModule,
+        setSelectedModuleRef: this.setSelectedModuleRef,
+      };
 
       if (item.insert) {
         return <SortableWfModulePlaceholder {...childProps} />
@@ -164,13 +163,15 @@ class ModuleStack extends React.Component {
     }, this);
 
     return (
-      this.props.connectDropTarget(
+      <div className={ "modulestack" + (this.props.focus ? " focus": "") }
+           onClick={ this.props.setFocus } ref={ this.setScrollRef }>
+        {this.props.connectDropTarget(
         <div className={"modulestack-list mx-auto " + ((this.props.dragItem && this.props.canDrop) ? 'dragging' : '')}>
           <FlipMove duration={100} easing="ease-out">
             {listItems}
           </FlipMove>
-        </div>
-      )
+        </div>)}
+      </div>
     )
   }
 }
@@ -184,5 +185,30 @@ ModuleStack.propTypes = {
   removeModule:       PropTypes.func.isRequired,
   loggedInUser:       PropTypes.object             // undefined if no one logged in (viewing public wf)
 };
+
+// ---- Sortable WfModules within the workflow ----
+const targetSpec = {
+  drop (props, monitor, component) {
+    const source = monitor.getItem();
+    const target = props.index;
+    // Replace this with optimistic updates via redux
+    component.setState({
+      justDropped:true
+    });
+    return {
+      source,
+      target
+    }
+  }
+};
+
+function targetCollect(connect, monitor) {
+  return {
+    connectDropTarget: connect.dropTarget(),
+    isOver: monitor.isOver(),
+    canDrop: monitor.canDrop(),
+    dragItem: monitor.getItem()
+  }
+}
 
 export default DropTarget('module', targetSpec, targetCollect)(ModuleStack);

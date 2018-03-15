@@ -7,13 +7,14 @@ describe('WfModule, NOT read-only mode - DUMMY TEST ONLY', () => {
 
   var wrapper;
   var props = {
-        'data-isReadOnly': false, 
+        'data-isReadOnly': false,
         'data-wfmodule': {},
         'data-changeParam': () => {} ,
         'data-removeModule':  () => {} ,
         'data-revision': 707,
         'data-selected': false,
-        'data-api': {}
+        'data-api': {},
+        'focusModule': () => {}
       };
 
   // beforeEach(() => {
@@ -23,13 +24,13 @@ describe('WfModule, NOT read-only mode - DUMMY TEST ONLY', () => {
   //   />)
   // });
 
-  it('Renders - dummy test only', () => { 
+  it('Renders - dummy test only', () => {
 
     expect(true).toBe(true);
-    
+
     // expect(wrapper).toMatchSnapshot();
 
-    
+
   });
 
   // it('Renders next thing', () => {
@@ -38,8 +39,3 @@ describe('WfModule, NOT read-only mode - DUMMY TEST ONLY', () => {
   // });
 
 });
-
-
-
-
-
