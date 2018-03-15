@@ -1,9 +1,9 @@
 /**
  * A component that holds a single module that is then contained within the
  * Module Library.
- * 
+ *
  * Rendered by ModuleCategories.
- * 
+ *
  * The render function here will drive the "card" of each module within
  * the library.
  */
@@ -12,6 +12,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { CardBlock, Card } from 'reactstrap';
 import { DragSource } from 'react-dnd';
+import debounce from 'lodash/debounce';
 
 // TODO: gather all functions for dragging into one utility file
 const spec = {
@@ -41,7 +42,11 @@ function collect(connect, monitor) {
 class Module extends React.Component {
   constructor(props) {
     super(props);
-    this.itemClick = this.itemClick.bind(this);
+    this.itemClick = debounce(this.itemClick.bind(this), 1000, {
+      // Call the callback immediately, supress subsequent calls
+      leading: true,
+      trailing: false
+    });
   }
 
   itemClick(evt) {
