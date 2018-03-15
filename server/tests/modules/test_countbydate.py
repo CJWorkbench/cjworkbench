@@ -30,40 +30,40 @@ class CountValuesTests(LoggedInTestCase):
         set_string(self.col_pval, 'Date')
 
         out = execute_nocache(self.wf_module)
-        self.assertEqual(out.to_csv(index=False), 'date,count\n2011-01-10,5\n2011-01-15,1\n2016-07-25,1\n')
+        self.assertEqual(out.to_csv(index=False), 'Date,count\n2011-01-10,5\n2011-01-15,1\n2016-07-25,1\n')
 
         # sort by date & set groupby to 'seconds'
         set_integer(self.group_pval, 0)  # 0 = group by seconds
         out = execute_nocache(self.wf_module)
         self.assertEqual(out.to_csv(index=False),
-                         'date,count\n2011-01-10 00:00:00,1\n2011-01-10 00:00:01,2\n2011-01-10 00:01:00,1\n2011-01-10 01:00:00,1\n2011-01-15 00:00:00,1\n2016-07-25 00:00:00,1\n')
+                         'Date,count\n2011-01-10 00:00:00,1\n2011-01-10 00:00:01,2\n2011-01-10 00:01:00,1\n2011-01-10 01:00:00,1\n2011-01-15 00:00:00,1\n2016-07-25 00:00:00,1\n')
 
         # sort by date & set groupby to 'minutes'
         set_integer(self.group_pval, 1)  # 0 = group by minutes
         out = execute_nocache(self.wf_module)
         self.assertEqual(out.to_csv(index=False),
-                         'date,count\n2011-01-10 00:00,3\n2011-01-10 00:01,1\n2011-01-10 01:00,1\n2011-01-15 00:00,1\n2016-07-25 00:00,1\n')
+                         'Date,count\n2011-01-10 00:00,3\n2011-01-10 00:01,1\n2011-01-10 01:00,1\n2011-01-15 00:00,1\n2016-07-25 00:00,1\n')
 
         # sort by date & set groupby to 'hours'
         set_integer(self.group_pval, 2)  # 0 = group by minutes
         out = execute_nocache(self.wf_module)
         self.assertEqual(out.to_csv(index=False),
-                         'date,count\n2011-01-10 00:00,4\n2011-01-10 01:00,1\n2011-01-15 00:00,1\n2016-07-25 00:00,1\n')
+                         'Date,count\n2011-01-10 00:00,4\n2011-01-10 01:00,1\n2011-01-15 00:00,1\n2016-07-25 00:00,1\n')
 
         # sort by date & set groupby to 'months'
         set_integer(self.group_pval, 4)  # 4 = group by months
         out = execute_nocache(self.wf_module)
-        self.assertEqual(out.to_csv(index=False), 'date,count\n2011-01,6\n2016-07,1\n')
+        self.assertEqual(out.to_csv(index=False), 'Date,count\n2011-01,6\n2016-07,1\n')
 
         # sort by date & set groupby to 'quarters'
         set_integer(self.group_pval, 5)  # 4 = group by quarters
         out = execute_nocache(self.wf_module)
-        self.assertEqual(out.to_csv(index=False), 'date,count\n2011 Q1,6\n2016 Q3,1\n')
+        self.assertEqual(out.to_csv(index=False), 'Date,count\n2011 Q1,6\n2016 Q3,1\n')
 
         # sort by date & set groupby to 'years'
         set_integer(self.group_pval, 6)  # 6 = group by years
         out = execute_nocache(self.wf_module)
-        self.assertEqual(out.to_csv(index=False), 'date,count\n2011,6\n2016,1\n')
+        self.assertEqual(out.to_csv(index=False), 'Date,count\n2011,6\n2016,1\n')
 
     def test_bad_colname(self):
         # NOP if no column given
@@ -105,7 +105,7 @@ class CountValuesTests(LoggedInTestCase):
         set_integer(self.group_pval, 2)
         out = execute_nocache(self.wf_module)
         self.wf_module.refresh_from_db()
-        self.assertEqual(out.to_csv(index=False), 'date,count\n00:00,3\n01:00,1\n11:00,2\n12:00,1\n')
+        self.assertEqual(out.to_csv(index=False), 'Date,count\n00:00,3\n01:00,1\n11:00,2\n12:00,1\n')
 
     def test_date_only(self):
         set_string(self.csv_data, self.count_csv_dates)
@@ -122,4 +122,4 @@ class CountValuesTests(LoggedInTestCase):
         set_string(self.col_pval, 'Date')
         out = execute_nocache(self.wf_module)
         self.wf_module.refresh_from_db()
-        self.assertEqual(out.to_csv(index=False), 'date,count\n2011-01-10,5\n2011-01-15,1\n2016-07-25,1\n')
+        self.assertEqual(out.to_csv(index=False), 'Date,count\n2011-01-10,5\n2011-01-15,1\n2016-07-25,1\n')
