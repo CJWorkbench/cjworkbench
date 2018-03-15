@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WfModule, NOT read-only mode - DUMMY TEST ONLY Renders and calls functions on componentDidMount and render 1`] = `
+<WfModule
+  connectDragSource={[Function]}
+  connectDropTarget={[Function]}
+  data-api={Object {}}
+  data-changeParam={[Function]}
+  data-isReadOnly={false}
+  data-removeModule={[Function]}
+  data-revision={707}
+  data-selected={true}
+  data-wfmodule={
+    Object {
+      "module_version": Object {
+        "module": Object {},
+      },
+      "notes": Array [],
+      "parameter_vals": Array [],
+    }
+  }
+  focusModule={[Function]}
+>
+  <div
+    onClick={[Function]}
+  >
+    <div
+      className="wf-card mx-auto"
+    />
+  </div>
+</WfModule>
+`;

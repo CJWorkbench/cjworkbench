@@ -57,7 +57,6 @@ class Workflow extends React.Component {
       return wf.id === this.props.selected_wf_module;
     });
 
-
     return (
         <div className="workflow-root">
 
@@ -81,20 +80,19 @@ class Workflow extends React.Component {
             />
 
             <div className={"workflow-columns" + (this.state.overlapping ? " overlapping" : "")}>
-              <div className={"modulestack" + (this.state.focus ? " focus": "")}
-           onClick={() => { this.setState({ focus: true }) }}>
-                <ModuleStack
-                  workflow={this.props.workflow}
-                  selected_wf_module={this.props.selected_wf_module}
-                  changeParam={this.props.changeParam}
-                  removeModule={this.props.removeModule}
-                  addModule={this.props.addModule}
-                  api={this.props.api}
-                  loggedInUser={this.props.loggedInUser}
-                  isOver={this.props.isOver}
-                  dragItem={this.props.dragItem}
-                />
-              </div>
+              <ModuleStack
+                workflow={this.props.workflow}
+                selected_wf_module={this.props.selected_wf_module}
+                changeParam={this.props.changeParam}
+                removeModule={this.props.removeModule}
+                addModule={this.props.addModule}
+                api={this.props.api}
+                loggedInUser={this.props.loggedInUser}
+                isOver={this.props.isOver}
+                dragItem={this.props.dragItem}
+                focus={this.state.focus}
+                setFocus={(e) => { this.setState({ focus: true }) }}
+              />
               <OutputPane
                 id={this.props.selected_wf_module}
                 revision={this.props.workflow.revision}

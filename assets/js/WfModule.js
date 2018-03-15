@@ -171,6 +171,8 @@ class WfModule extends React.Component {
     this.setNotifications = this.setNotifications.bind(this);
     this.setClickNotification = this.setClickNotification.bind(this);
     this.onClickNotification = this.onClickNotification.bind(this);
+    this.setModuleRef = this.setModuleRef.bind(this);
+    this.moduleRef = null;
   }
 
   // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
@@ -221,6 +223,13 @@ class WfModule extends React.Component {
       this.setState({
         isCollapsed: newProps['data-wfmodule'].is_collapsed
       })
+    }
+  }
+
+  // Scroll when we create a new wfmodule
+  componentDidMount() {
+    if (this.props['data-selected']) {
+      this.props.focusModule(this.moduleRef);
     }
   }
 
@@ -283,8 +292,11 @@ class WfModule extends React.Component {
     ));
   }
 
-  render() {
+  setModuleRef(ref) {
+    this.moduleRef = ref;
+  }
 
+  render() {
     var updateSettings = {
       lastUpdateCheck:  this.wf_module.last_update_check,
       autoUpdateData:   this.wf_module.auto_update_data,
@@ -376,17 +388,17 @@ class WfModule extends React.Component {
     // Putting it all together: name, status, parameters, output
     return (
       // Removing this outer div breaks the drag and drop animation for reasons
-      // that aren't clear right now. It doen't hurt anything but it shouldn't
+      // that aren't clear right now. It doesn't hurt anything but it shouldn't
       // be necessary either.
       <div onClick={this.click}>
         {notes}
-        <div className='wf-card mx-auto'>
+        <div className='wf-card mx-auto' ref={this.setModuleRef}>
         {this.props.connectDropTarget(this.props.connectDragSource(
           <div>
             <div className='output-bar-container'>
               <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
             </div>
-            <div className='card-block p-0'onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
+            <div className='card-block p-0' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
               <div className='module-card-info'>
                 <div className='module-card-header'>
                   <div className='module-header-content'>
@@ -447,7 +459,9 @@ WfModule.propTypes = {
   'data-changeParam':   PropTypes.func,
   'data-removeModule':  PropTypes.func,
   'data-api':           PropTypes.object.isRequired,
+  'connectDragSource':  PropTypes.func,
   'connectDropTarget':  PropTypes.func,
+  'focusModule':        PropTypes.func
 };
 
 class WfModulePlaceholder extends React.Component {
@@ -467,5 +481,6 @@ const sortableComponent = flow(
   DragSource('module', sourceSpec, sourceCollect)
 );
 
+export { WfModule };
 export const SortableWfModule = sortableComponent(WfModule);
 export const SortableWfModulePlaceholder = sortableComponent(WfModulePlaceholder);
