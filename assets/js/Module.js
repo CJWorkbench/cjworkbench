@@ -10,7 +10,6 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { CardBlock, Card } from 'reactstrap';
 import { DragSource } from 'react-dnd';
 import debounce from 'lodash/debounce';
 
@@ -42,8 +41,12 @@ function collect(connect, monitor) {
 class Module extends React.Component {
   constructor(props) {
     super(props);
+    // debounce itemClick, because people have a tendency to double-click
+    // the module names to add them.
+    // We can't just capture the doubleClick event because the onClick handler
+    // prevents us from doing so: https://stackoverflow.com/questions/25777826/onclick-works-but-ondoubleclick-is-ignored-on-react-component#25780754
     this.itemClick = debounce(this.itemClick.bind(this), 1000, {
-      // Call the callback immediately, supress subsequent calls
+      // Call the callback immediately, suppress subsequent calls
       leading: true,
       trailing: false
     });
