@@ -233,13 +233,6 @@ class WfModule extends React.Component {
     }
   }
 
-  // Scroll when an existing wfmodule gets focus
-  componentDidUpdate(prevProps) {
-    if (this.props['data-selected'] && !prevProps['data-selected']) {
-      this.props.focusModule(this.moduleRef);
-    }
-  }
-
   // We become the selected module on any click
   click(e) {
     Actions.store.dispatch(Actions.setSelectedWfModuleAction(this.wf_module.id));
