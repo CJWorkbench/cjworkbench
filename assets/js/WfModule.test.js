@@ -1,6 +1,6 @@
 import React from 'react'
 import { WfModule } from './WfModule'
-import { shallow } from 'enzyme'
+import { mount } from 'enzyme'
 
 describe('WfModule, NOT read-only mode - DUMMY TEST ONLY', () => {
 
@@ -17,23 +17,26 @@ describe('WfModule, NOT read-only mode - DUMMY TEST ONLY', () => {
         'data-changeParam': () => {} ,
         'data-removeModule':  () => {} ,
         'data-revision': 707,
-        'data-selected': false,
+        'data-selected': true,
         'data-api': {},
-        'connectDragSource': (component) => {return component},
-        'connectDropTarget': (component) => {return component},
-        'focusModule': () => {}
+        'connectDragSource': jest.fn(),
+        'connectDropTarget': jest.fn(),
+        'focusModule': jest.fn(),
       };
 
   beforeEach(() => {
-    wrapper = shallow(
+    wrapper = mount(
       <WfModule
         {...props}
       />
     )
   });
 
-  it('Renders - dummy test only', () => {
+  it('Renders and calls functions on componentDidMount and render', () => {
     expect(wrapper).toMatchSnapshot();
+    expect(wrapper.props().connectDragSource.mock.calls.length).toBe(1);
+    expect(wrapper.props().connectDropTarget.mock.calls.length).toBe(1);
+    expect(wrapper.props().focusModule.mock.calls.length).toBe(1);
   });
 
 });
