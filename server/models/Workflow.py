@@ -58,4 +58,4 @@ class Workflow(models.Model):
         return reverse('workflow', args=[str(self.pk)])
 
     def __str__(self):
-        return self.name
+        return self.name + ' - id: ' + str(self.id)

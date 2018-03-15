@@ -30,7 +30,11 @@ class WfModule(models.Model):
         ordering = ['order']
 
     def __str__(self):
-        return self.workflow.__str__() + ' - order: ' + str(self.order) + ' - ' + self.module_version.__str__()
+        if self.workflow is not None:
+            wfstr = ' - workflow: ' + self.workflow.__str__() + ' - id: ' + str(self.workflow.id)
+        else:
+            wfstr = ' - deleted from workflow'
+        return self.get_module_name() + ' - id: ' + str(self.id) + wfstr
 
     # --- Fields ----
     workflow = models.ForeignKey(
