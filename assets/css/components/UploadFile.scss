@@ -1,47 +1,72 @@
-.react-fine-uploader-file-input-container{
-  display: flex!important;
-  align-items: center;
-  cursor:pointer;
-}
+
 
 .dropzone{
   height:8rem;
   border: 3px dashed #FBAA6D;
-  cursor:pointer;
-  opacity: 0.5;
+  opacity: 0.6;
   color:#FBAA6D;
   margin-bottom: 1.5rem;
 }
 
-.dropzone:hover{
-  opacity: 1;
-}
 
-.upload-box{
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e9e9e9;
-}
+// Version box, before and after loading
 
 .versionSelect--uploadFile{
-  margin-top: 2.5rem;
+  border-top: 1px solid #e9e9e9;
+  padding-top: 2rem;
   margin-bottom: 1.5rem;
 }
-/*Progress bar*/
 
-// positioning when module is empty or loaded with at least a file
-.loader-empty{
-  top:11.2rem;
-  display:none;
-}
-.loader-replace{
-  top:9.1rem;
-  display: none;
+// Button 'browse' after loading and 'replace' after loading
+
+.react-fine-uploader-file-input-container{
+  display: flex!important;
+  align-items: center;
+  cursor: pointer;
 }
 
-/*dropzone button gets set up within the version box when file is loaded*/
+/*positioning of 'replace button after loading'*/
 
 .dropzone-button{
   position:absolute!important;
   right:1.5rem;
   bottom:1rem;
+}
+
+// File name, after loading
+
+.upload-box{
+  padding-bottom: 0.5rem;
+}
+
+/*Progress bar*/
+
+////////Containers
+.react-fine-uploader-gallery-total-progress-bar-container,
+.react-fine-uploader-gallery-progress-bar-container{
+  background-color:transparent;
+  box-shadow: none;
+  width: 23rem;
+  height:1px;
+}
+
+///placing container before and after loading
+//Empty -->loading
+.loader-empty{
+  top:12.7rem;
+  left:0rem;
+}
+//Loaded -->Replace
+.loader-replace{
+  top:8.7rem;
+  left:12rem;
+}
+
+//Upload bar
+.react-fine-uploader-gallery-total-progress-bar{
+ height:1px;
+ opacity:1;
+ width: 23rem;
+ background: #FBAA6D;
+ box-shadow: none;
 }
