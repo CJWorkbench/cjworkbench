@@ -26,6 +26,7 @@ def update_next_update_time(wfm, now):
 def check_for_wfm_data_update(wfm, request):
     now = timezone.now()
     if now > wfm.next_update:
+        logger.info('updating wfm ' + str(wfm) + ' - interval ' +  str(wfm.update_interval))
         try:
             module_dispatch_event(wfm, request=request)
         except Exception as e:
