@@ -34,6 +34,15 @@ def parameterval_detail(request, pk, format=None):
         if not param.user_authorized_write(request.user):
             return HttpResponseForbidden
         ChangeParameterCommand.create(param, request.data['value'])
+
+        # If someone pressed enter on the primary field of a module that fetches data, e.g. like url for LoadURL
+        # then also "press" the fetch button. Totes hardcoded for now, but this is probably where this feature goes
+        # (can't put it in the front end b/c race conditions between setting parameter val and triggering fetch)
+        if request.data.get('pressed_enter', False):
+            if param.parameter_spec.id_name == 'url' and param.wf_module.module_version.module.id_name == 'loadurl':
+                fake_click = {'type':'click'}
+                module_dispatch_event(param.wf_module, parameter=param, event=fake_click)
+
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 

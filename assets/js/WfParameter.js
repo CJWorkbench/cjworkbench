@@ -41,9 +41,8 @@ export default class WfParameter extends React.Component {
   }
 
   paramChanged(newVal, pressedEnter) {
-    this.props.changeParam(this.props.p.id, {value: newVal}, pressedEnter);
+    this.props.changeParam(this.props.p.id, {value: newVal, pressed_enter: pressedEnter});
   }
-
 
   // Save value (and re-render) when user presses enter (but not on multiline fields)
   // Applies only to non-multiline fields

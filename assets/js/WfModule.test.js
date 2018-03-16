@@ -9,7 +9,7 @@ describe('WfModule, not read-only mode', () => {
   let props;
   let mockApi;
 
-  // A basic mock module, set up to test the slightly gnarly press enter on URL field = press URL fetch button logic
+  // A mock module that looks like LoadURL
   var wf_module = {
     'id' : 999,
     'notes': [],
@@ -70,29 +70,6 @@ describe('WfModule, not read-only mode', () => {
     expect(props.connectDragSource.mock.calls.length).toBe(1);
     expect(props.connectDropTarget.mock.calls.length).toBe(1);
     expect(props.focusModule.mock.calls.length).toBe(1);
-  });
-
-  // Hardcoded logic where the url parameter communicates with the version select parameter
-  it('pressing enter on a URL field fetches', (done) => {
-
-    expect(wf_module.module_version.module.id_name).toBe('loadurl');
-    let id = wf_module.parameter_vals[0].id;
-    let paramIdName = wf_module.parameter_vals[0].parameter_spec.id_name;
-    expect(paramIdName).toBe('url');
-    let payload = { 'value' : 'foo' };
-
-    let pressedEnter = false;
-    wrapper.instance().changeParam(id, paramIdName, payload, pressedEnter);
-    expect(mockApi.postParamEvent.mock.calls.length).toBe(0); // didn't press enter, no click event
-
-    pressedEnter = true;
-    wrapper.instance().changeParam(id, paramIdName, payload, pressedEnter);
-
-    // setImmediate b/c changeParam waits for onParamChanged to complete before postParamEvent -- hence a promise
-    setImmediate( () => {
-      expect(mockApi.postParamEvent.mock.calls.length).toBe(1); // enter on url field, fetch data
-      done();
-    });
   });
 
 });

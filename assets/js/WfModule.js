@@ -239,23 +239,8 @@ class WfModule extends React.Component {
     Actions.store.dispatch(Actions.setSelectedWfModuleAction(this.wf_module.id));
   }
 
-  changeParam(id, paramIdName, payload, pressedEnter) {
-    // paramChanged is called first, then fetch, to prevent backend race condition. Does cost a roundtrip before fetch tho
-    this.props['data-changeParam'](id, payload).then( () => {
-
-    // If the user pressed enter on the key parameter of a load data module, press the check button
-    // This is gross place for this logic to go. Better to have custom subclasses of WfModule
-    // for particular modules
-    if (pressedEnter &&
-        this.props['data-wfmodule'].module_version.module.id_name === 'loadurl'
-        && paramIdName === 'url') {
-
-        let idx = findParamIdxByIdName(this.props['data-wfmodule'], 'version_select');
-
-        var eventData = {'type': 'click'};
-        this.props['data-api'].postParamEvent(this.props['data-wfmodule'].parameter_vals[idx].id, eventData)
-      }
-    });
+  changeParam(id, payload) {
+    this.props['data-changeParam'](id, payload)
   }
 
   // These functions allow parameters to access each others value (text params only)
@@ -331,7 +316,7 @@ class WfModule extends React.Component {
           isReadOnly={this.props['data-isReadOnly']}
           key={i}
           p={ps}
-          changeParam={(id, payload, enter) => {this.changeParam(id, ps.parameter_spec.id_name, payload, enter)}}
+          changeParam={this.changeParam}
           wf_module_id={this.wf_module.id}
           revision={this.revision}
           updateSettings={updateSettings}

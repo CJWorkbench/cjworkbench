@@ -3,7 +3,8 @@ from server.models import ParameterVal, ParameterSpec, Module, WfModule
 from server.views import parameterval_detail, workflow_detail
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
-from server.tests.utils import LoggedInTestCase
+from server.tests.utils import LoggedInTestCase, add_new_workflow, load_and_add_module, get_param_by_id_name
+import mock
 
 # Test views that ultimately get/set ParameterVal
 class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
@@ -83,15 +84,29 @@ class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
         # see that we get the new value back
-        request = self.factory.get('/api/parameters/%d/' % self.floatID)
-        force_authenticate(request, user=self.user)
-        response = parameterval_detail(request, pk=self.floatID)
+        response = self.client.get('/api/parameters/%d/' % self.floatID)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['value'], 50.456)
 
         # changing a parameter should change the version
         self.workflow.refresh_from_db()
         self.assertNotEqual(old_rev, self.workflow.revision())
+
+    # if we press enter on the url field of loadurl, also "press" the check button
+    def test_parameterval_detail_patch_fetch(self):
+        wfm = load_and_add_module('loadurl')  # creates new workflow too
+        url_param = get_param_by_id_name('url')
+
+        with mock.patch('server.modules.loadurl.LoadURL.event') as event_call:
+
+            request = self.factory.patch('/api/parameters/%d/' % url_param.id, {'value': '50.456', 'pressed_enter':True })
+            force_authenticate(request, user=self.user)
+            response = parameterval_detail(request, pk=url_param.id)
+            self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
+
+            # should have made an call to the LoadURL event handler
+            self.assertIs(event_call.call_count, 1)
+
 
 
 
