@@ -20,6 +20,9 @@ import { csrfToken } from './utils'
 import { store, setWfModuleStatusAction } from './workflow-reducer'
 
 
+const PRESSED_ENTER = true;
+const DIDNT_PRESS_ENTER = false;
+
 export default class WfParameter extends React.Component {
 
   constructor(props) {
@@ -37,8 +40,8 @@ export default class WfParameter extends React.Component {
     this.getNumericInputColNames = this.getNumericInputColNames.bind(this);
   }
 
-  paramChanged(newVal) {
-    this.props.changeParam(this.props.p.id, {value: newVal});
+  paramChanged(newVal, pressedEnter) {
+    this.props.changeParam(this.props.p.id, {value: newVal}, pressedEnter);
   }
 
 
@@ -46,13 +49,13 @@ export default class WfParameter extends React.Component {
   // Applies only to non-multiline fields
   keyPress(e) {
     if (e.key == 'Enter' && (this.type != 'string' || !this.props.p.parameter_spec.multiline)) {
-        this.paramChanged(e.target.value);
+        this.paramChanged(e.target.value, PRESSED_ENTER);
         e.preventDefault();       // eat the Enter so it doesn't get in our input field
     }
   }
 
   blur(e) {
-    this.paramChanged(e.target.value);
+    this.paramChanged(e.target.value, DIDNT_PRESS_ENTER); // false = did not press enter
   }
 
   // Send event to server for button click
@@ -60,26 +63,12 @@ export default class WfParameter extends React.Component {
 
     // type==custom a hack for version_select type
     if (this.type == 'button' || this.type == 'custom') {
-      var url = '/api/parameters/' + this.props.p.id + '/event';
       var eventData = {'type': 'click'};
-      fetch(url, {
-        method: 'post',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify(eventData)
-      }).then(response => {
-        if (!response.ok) {
-          store.dispatch(setWfModuleStatusAction(this.props.wf_module_id, 'error', response.statusText))
-        }
-      });
+      this.props.api.postParamEvent(this.props.p.id, eventData)
     }
 
     if (this.type == 'checkbox') {
-      this.paramChanged(e.target.checked)
+      this.paramChanged(e.target.checked, DIDNT_PRESS_ENTER)
     }
   }
 

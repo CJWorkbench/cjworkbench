@@ -39,7 +39,7 @@ const mapDispatchToProps = (dispatch) => {
     },
     //TODO: make this use the redux action
     changeParam: (paramID, newVal) => {
-      api.onParamChanged(paramID, newVal)
+      return api.onParamChanged(paramID, newVal)
     }
   }
 }

@@ -57,7 +57,7 @@ const registerReducerFunc = (key, func) => {
 
 // ---- Utilities ----
 
-const findIdxByProp = (searchArray, searchProp, searchValue) => {
+export function findIdxByProp(searchArray, searchProp, searchValue) {
   let returnIdx;
   for (let i = 0; i < searchArray.length; i++) {
     if (searchArray[i][searchProp] === searchValue) {
@@ -66,8 +66,21 @@ const findIdxByProp = (searchArray, searchProp, searchValue) => {
     }
   }
   return returnIdx;
-};
+}
 
+export function findParamIdxByIdName(wf_module, paramIdName) {
+  let paramIdx;
+  let len = wf_module.parameter_vals.length;
+  for(let i = 0; i < len; i++) {
+    if (wf_module.parameter_vals[i].parameter_spec.id_name === paramIdName) {
+      paramIdx = i;
+      break;
+    }
+  }
+  if (paramIdx === len)
+    return undefined;  // not found
+  return paramIdx;
+}
 
 // ---- Actions ----
 
@@ -470,13 +483,7 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
 export function setParamValueAction(wfModuleId, paramIdName, paramValue) {
     let state = store.getState();
     let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleId);
-    let paramIdx;
-    for(let i = 0; i < state.workflow.wf_modules[wfModuleIdx].parameter_vals.length; i++) {
-      if (state.workflow.wf_modules[wfModuleIdx].parameter_vals[i].parameter_spec.id_name === paramIdName) {
-        paramIdx = i;
-        break;
-      }
-    }
+    let paramIdx = findParamIdxByIdName(state.workflow.wf_modules[wfModuleIdx], paramIdName);
     let paramRef = state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx];
     return {
       type: SET_PARAM_VALUE,

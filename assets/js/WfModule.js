@@ -5,7 +5,7 @@ import WfParameter from './WfParameter'
 import TableView from './TableView'
 import WfModuleContextMenu from './WfModuleContextMenu'
 import EditableNotes from './EditableNotes'
-import { store, setWfModuleCollapsedAction } from './workflow-reducer'
+import { store, setWfModuleCollapsedAction, findParamIdxByIdName } from './workflow-reducer'
 import { findDOMNode } from 'react-dom'
 import * as Actions from './workflow-reducer'
 import PropTypes from 'prop-types'
@@ -160,6 +160,7 @@ class WfModule extends React.Component {
     super(props);
     this.initFields(props);
     this.click = this.click.bind(this);
+    this.changeParam = this.changeParam.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
     this.removeModule = this.removeModule.bind(this);
@@ -238,18 +239,37 @@ class WfModule extends React.Component {
     Actions.store.dispatch(Actions.setSelectedWfModuleAction(this.wf_module.id));
   }
 
+  changeParam(id, paramIdName, payload, pressedEnter) {
+    // paramChanged is called first, then fetch, to prevent backend race condition. Does cost a roundtrip before fetch tho
+    this.props['data-changeParam'](id, payload).then( () => {
+
+    // If the user pressed enter on the key parameter of a load data module, press the check button
+    // This is gross place for this logic to go. Better to have custom subclasses of WfModule
+    // for particular modules
+    if (pressedEnter &&
+        this.props['data-wfmodule'].module_version.module.id_name === 'loadurl'
+        && paramIdName === 'url') {
+
+        let idx = findParamIdxByIdName(this.props['data-wfmodule'], 'version_select');
+
+        var eventData = {'type': 'click'};
+        this.props['data-api'].postParamEvent(this.props['data-wfmodule'].parameter_vals[idx].id, eventData)
+      }
+    });
+  }
+
   // These functions allow parameters to access each others value (text params only)
   // Used e.g. for custom UI elements to save/restore their state from hidden parameters
   // Suppresses reassignment of the same text, which can be important to avoid endless notification loops
-  setParamText(id_name, text) {
-    var p = this.params.find( p => p.parameter_spec.id_name == id_name );
+  setParamText(paramIdName, text) {
+    var p = this.params.find( p => p.parameter_spec.id_name == paramIdName );
     if (p && text != p.string) {
       this.props['data-changeParam'](p.id, { value: text })
     }
   }
 
-  getParamText(id_name) {
-    var p = this.params.find( p => p.parameter_spec.id_name == id_name );
+  getParamText(paramIdName) {
+    var p = this.params.find( p => p.parameter_spec.id_name == paramIdName );
     if (p) {
       return p.value;
     }
@@ -311,7 +331,7 @@ class WfModule extends React.Component {
           isReadOnly={this.props['data-isReadOnly']}
           key={i}
           p={ps}
-          changeParam={this.props['data-changeParam']}
+          changeParam={(id, payload, enter) => {this.changeParam(id, ps.parameter_spec.id_name, payload, enter)}}
           wf_module_id={this.wf_module.id}
           revision={this.revision}
           updateSettings={updateSettings}
