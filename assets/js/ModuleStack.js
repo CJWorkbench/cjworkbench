@@ -118,7 +118,7 @@ class ModuleStack extends React.Component {
     if (!this.state.wf_modules || this.state.wf_modules.length === 0) {
       return (
         this.props.connectDropTarget(
-          <div className={'modulestack-empty mx-auto d-flex align-items-center justify-content-center ' + (this.props.dragItem ? 'dragging' : '')}>
+          <div className={'modulestack-empty d-flex align-items-center justify-content-center ' + (this.props.dragItem ? 'dragging' : '')}>
             <span className={'title-3 ml-4 ' + (this.props.dragItem ? 't-d-blue' : 't-orange')}>
               DROP MODULE HERE
             </span>
