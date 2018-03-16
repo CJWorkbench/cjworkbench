@@ -1,17 +1,17 @@
 /**
  * A component that holds a single module that is then contained within the
  * Module Library.
- * 
+ *
  * Rendered by ModuleCategories.
- * 
+ *
  * The render function here will drive the "card" of each module within
  * the library.
  */
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { CardBlock, Card } from 'reactstrap';
 import { DragSource } from 'react-dnd';
+import debounce from 'lodash/debounce';
 
 // TODO: gather all functions for dragging into one utility file
 const spec = {
@@ -41,7 +41,15 @@ function collect(connect, monitor) {
 class Module extends React.Component {
   constructor(props) {
     super(props);
-    this.itemClick = this.itemClick.bind(this);
+    // debounce itemClick, because people have a tendency to double-click
+    // the module names to add them.
+    // We can't just capture the doubleClick event because the onClick handler
+    // prevents us from doing so: https://stackoverflow.com/questions/25777826/onclick-works-but-ondoubleclick-is-ignored-on-react-component#25780754
+    this.itemClick = debounce(this.itemClick.bind(this), 1000, {
+      // Call the callback immediately, suppress subsequent calls
+      leading: true,
+      trailing: false
+    });
   }
 
   itemClick(evt) {
