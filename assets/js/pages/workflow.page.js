@@ -31,18 +31,17 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addModule: (module_id, insertBefore) => {
-      dispatch(Actions.addModuleAction(module_id, insertBefore))
+    addModule: (moduleId, insertBefore) => {
+      dispatch(Actions.addModuleAction(moduleId, insertBefore))
     },
-    removeModule: (wf_module_id) => {
-      dispatch(Actions.deleteModuleAction(wf_module_id))
+    removeModule: (wfModuleId) => {
+      dispatch(Actions.deleteModuleAction(wfModuleId))
     },
-    //TODO: make this use the redux action
-    changeParam: (paramID, newVal) => {
-      return api.onParamChanged(paramID, newVal)
+    changeParam: (paramId, newVal) => {
+      dispatch(Actions.setParamValueAction(paramId, newVal))
     }
   }
-}
+};
 
 const WorkflowContainer = connect(
   mapStateToProps,

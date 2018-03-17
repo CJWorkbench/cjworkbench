@@ -1,10 +1,8 @@
-import {
-  workflowReducer
-} from './workflow-reducer'
+import * as wfr from './workflow-reducer'
+
+const workflowReducer = wfr.workflowReducer;
 
 describe('Reducer actions', () => {
-
-  let api, store;
 
   // Stripped down workflow object, only what we need for testing actions
   const test_workflow = {
@@ -15,7 +13,9 @@ describe('Reducer actions', () => {
         parameter_vals: [
           {
             id: 1,
-            id_name: 'load_data',
+            parameter_spec : {
+              id_name: 'data',
+            },
             value: 'Some Data'
           }
         ],
@@ -43,6 +43,11 @@ describe('Reducer actions', () => {
     workflow: test_workflow,
     selected_wf_module: 20
   };
+
+  // many action creators reference the current store
+  wfr.mockStore({
+    getState : () => test_state
+  });
 
   // Stub result to be returned by our stub loadWorkflow
   //const mock_load_workflow_result = { id: 1001 };
@@ -209,11 +214,40 @@ describe('Reducer actions', () => {
     expect(state.workflow.wf_modules[1].is_collapsed).toBe(true);
   });
 
+  it('setParamValueAction', () => {
+    let api = {
+      onParamChanged : jest.fn()
+    };
+    wfr.mockAPI(api);
+
+    let paramId = test_workflow.wf_modules[0].parameter_vals[0].id;
+    let action = wfr.setParamValueAction(paramId, {value:'foo'});
+    expect(action.payload.data.paramId).toBe(paramId);
+    expect(action.payload.data.paramValue).toBe('foo');
+    expect(api.onParamChanged.mock.calls.length).toBe(1);  // should have called the api
+
+    // If we create an action to set the parameter to the existing value, nothing should happen...
+    api.onParamChanged = jest.fn();
+    let curParamVal = test_workflow.wf_modules[0].parameter_vals[0].value;
+    action = wfr.setParamValueAction(paramId, {value:curParamVal});
+    expect(action.type).toBe(wfr.NOP_ACTION);
+    expect(api.onParamChanged.mock.calls.length).toBe(0);
+
+    // Version that takes moduleId and id_name
+    api.onParamChanged = jest.fn();
+    let moduleId = test_workflow.wf_modules[0].id;
+    let idName = test_workflow.wf_modules[0].parameter_vals[0].parameter_spec.id_name;
+    action = wfr.setParamValueActionByIdName(moduleId, idName, {value:'foo'});
+    expect(action.payload.data.paramId).toBe(paramId);
+    expect(action.payload.data.paramValue).toBe('foo');
+    expect(api.onParamChanged.mock.calls.length).toBe(1);  // should have called the api
+  });
+
+
   it('Sets the param value', () => {
     let state = workflowReducer(test_state, {
       type: 'SET_PARAM_VALUE_PENDING',
       payload: {
-        wfModuleId: 10,
         paramId: 1,
         paramValue: "Other data",
       }
