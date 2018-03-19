@@ -8,7 +8,7 @@ import sys
 import threading
 
 def setup_custom_logger():
-    formatter = logging.Formatter(fmt='[%(asctime)s.%(msecs)03d %(thread)X] %(message)s',
+    formatter = logging.Formatter(fmt='[%(asctime)s.%(msecs)03d %(process)d-%(thread)X] %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
     screen_handler = logging.StreamHandler(stream=sys.stdout)
     screen_handler.setFormatter(formatter)
