@@ -2,11 +2,11 @@ FROM cjworkbench/cjworkbench-requirements
 EXPOSE 8000
 
 # start from the repo. print last commit to docker build log
-RUN git clone https://github.com/jstray/cjworkbench.git
+RUN git clone https://github.com/CJWorkbench/cjworkbench.git
+WORKDIR cjworkbench
 RUN git log -1
 
 # python deps already installed, but get node deps
-WORKDIR cjworkbench
 RUN npm install
 
 # build assets
