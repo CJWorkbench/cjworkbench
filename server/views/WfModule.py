@@ -62,8 +62,11 @@ def wfmodule_detail(request, pk, format=None):
         return Response(serializer.data)
 
     elif request.method == 'DELETE':
-        DeleteModuleCommand.create(wf_module)
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        delta = DeleteModuleCommand.create(wf_module)
+        if delta:
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        else:
+            return HttpResponseNotFound()  # missing wf_module; can happen if two DELETE requests race.
 
     elif request.method == 'PATCH':
         # For patch, we check which fields are set in data, and process all of them
