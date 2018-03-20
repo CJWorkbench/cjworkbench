@@ -1,6 +1,14 @@
 # Module dispatch table and implementations
 import pandas as pd
 from django.conf import settings
+from server.models.ParameterSpec import ParameterSpec
+from server.models.ParameterVal import ParameterVal
+from .dynamicdispatch import DynamicDispatch
+from .importmodulefromgithub import original_module_lineno
+from .utils import sanitize_dataframe
+import os, sys, traceback, types, inspect
+from django.utils.translation import gettext as _
+
 from .modules.counybydate import CountByDate
 from .modules.formula import Formula
 from .modules.loadurl import LoadURL
@@ -15,13 +23,6 @@ from .modules.googlesheets import GoogleSheets
 from .modules.editcells import EditCells
 from .modules.refine import Refine
 from .modules.urlscraper import URLScraper
-
-from server.models.ParameterSpec import ParameterSpec
-from server.models.ParameterVal import ParameterVal
-from .dynamicdispatch import DynamicDispatch
-from .importmodulefromgithub import original_module_lineno
-from .utils import sanitize_dataframe
-import os, sys, traceback, types, inspect
 
 # ---- Test Support ----
 
@@ -149,8 +150,19 @@ def module_dispatch_render(wf_module, table):
         wf_module.set_error(error, notify=True)
         return table  # NOP if error
 
-    tableout = sanitize_dataframe(tableout)  # Ensure correct column types etc. also turn None to empty dataframe
-    wf_module.set_ready(notify=False)
+    if tableout is None:
+        tableout = pd.DataFrame()
+
+    # Restrict to row limit. We set an error, but still return the output table
+    nrows = len(tableout)
+    if nrows > settings.MAX_ROWS_PER_TABLE:
+        tableout.drop(range(settings.MAX_ROWS_PER_TABLE, nrows), inplace=True)
+        error = _('Output has %d rows, truncated to %d' % (nrows, settings.MAX_ROWS_PER_TABLE))
+        wf_module.set_error(error, notify=False)
+    else:
+        wf_module.set_ready(notify=False)
+
+    tableout = sanitize_dataframe(tableout)  # Ensure correct column types etc.
     return tableout
 
 
