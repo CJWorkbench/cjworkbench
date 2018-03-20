@@ -4,6 +4,8 @@ EXPOSE 8000
 # start from the repo. print last commit to docker build log
 RUN git clone https://github.com/CJWorkbench/cjworkbench.git
 WORKDIR cjworkbench
+RUN git checkout stable
+RUN git status
 RUN git log -1
 
 # python deps already installed, but get node deps
@@ -11,6 +13,9 @@ RUN npm install
 
 # build assets
 RUN ./node_modules/.bin/webpack -p --config webpack.config.js
+
+# seriously, get an editor in there for debugging
+RUN apt-get install nano
 
 # setup db, apply migrations.
 # Need sites migration to create django_sites table, so later (normal) migration can set site URL
