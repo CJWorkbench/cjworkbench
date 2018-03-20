@@ -1,8 +1,9 @@
 FROM cjworkbench/cjworkbench-requirements
 EXPOSE 8000
 
-# start from the repo
-RUN git clone --recursive https://github.com/jstray/cjworkbench.git
+# start from the repo. print last commit to docker build log
+RUN git clone https://github.com/jstray/cjworkbench.git
+RUN git log -1
 
 # python deps already installed, but get node deps
 WORKDIR cjworkbench
