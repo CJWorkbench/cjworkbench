@@ -325,7 +325,8 @@ class WfModule extends React.Component {
           setClickNotification={this.setClickNotification}
           notifications={this.props['data-wfmodule'].notifications}
           loggedInUser={this.props['data-user']}
-          toggleDrag={this.props.toggleDrag}
+          startDrag={this.props.startDrag}
+          stopDrag={this.props.stopDrag}          
         />)
       });
 

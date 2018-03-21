@@ -14,7 +14,8 @@ class ModuleStack extends React.Component {
     this.dragNew = this.dragNew.bind(this);
     this.dropNew = this.dropNew.bind(this);
     this.drop = this.drop.bind(this);
-    this.toggleDrag = this.toggleDrag.bind(this);
+    this.startDrag = this.startDrag.bind(this);
+    this.stopDrag = this.stopDrag.bind(this);    
     this.scrollRef = null;
     this.setScrollRef = this.setScrollRef.bind(this);
     // Debounced so that execution is cancelled if we start
@@ -65,8 +66,12 @@ class ModuleStack extends React.Component {
     .catch( (error) => { console.log('Request failed', error); });
   }
 
-  toggleDrag() {
-    this.setState({ canDrag: !this.state.canDrag });
+  startDrag() {
+    this.setState({ canDrag: true });
+  }
+
+  stopDrag() {
+    this.setState({ canDrag: false });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -145,7 +150,8 @@ class ModuleStack extends React.Component {
         dropNew: this.dropNew,
         key: item.id,
         canDrag: this.state.canDrag,  // governs drag-ability of WfModule - how do we change this from events in <WfParameter>?
-        toggleDrag: this.toggleDrag,
+        startDrag: this.startDrag,
+        stopDrag: this.stopDrag,        
         focusModule: this.focusModule,
         setSelectedModuleRef: this.setSelectedModuleRef,
       };
