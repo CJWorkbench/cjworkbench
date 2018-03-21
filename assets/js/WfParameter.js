@@ -293,10 +293,9 @@ export default class WfParameter extends React.Component {
         return (
           <div className='parameter-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
-            {/* need to disable dragsource on this */}
             <textarea
-              onMouseEnter={() => this.props.toggleDrag() }
-              onMouseLeave={() => this.props.toggleDrag() }
+              onMouseEnter={() => this.props.stopDrag() }
+              onMouseLeave={() => this.props.startDrag() }
               readOnly={this.props.isReadOnly}
               className={sclass}
               rows={srows}
@@ -409,5 +408,6 @@ WfParameter.propTypes = {
   changeParam:      PropTypes.func.isRequired,
 	getParamText:     PropTypes.func.isRequired,
   setParamText:     PropTypes.func.isRequired,
-	toggleDrag:       PropTypes.func.isRequired  
+  startDrag:        PropTypes.func.isRequired,
+  stopDrag:         PropTypes.func.isRequired,
 };

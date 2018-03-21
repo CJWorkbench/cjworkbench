@@ -18,7 +18,8 @@ describe('WfParameter', () => {
         changeParam={nullFn}
 	      getParamText={nullFn}
         setParamText={nullFn}
-        toggleDrag={nullFn}
+        startDrag={nullFn}
+        stopDrag={nullFn}        
       />);
   }
 
