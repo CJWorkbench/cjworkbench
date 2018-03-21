@@ -22,9 +22,6 @@ class Workflow(models.Model):
                                    default=None,
                                    on_delete=models.SET_DEFAULT)
 
-    # prevent Django admin from trying to load every delta ever on the workflow object page
-    raw_id_fields = ("last_delta",)
-
     def user_authorized_read(self, user):
         return user == self.owner or self.public == True
 

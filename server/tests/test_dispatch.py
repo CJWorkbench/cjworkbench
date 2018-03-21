@@ -1,7 +1,9 @@
 from django.test import TestCase
+from django.conf import settings
 from server.tests.utils import *
 from server.dispatch import module_dispatch_render
 import pandas as pd
+import numpy as np
 import io
 
 class DispatchTests(TestCase):
@@ -66,3 +68,10 @@ class DispatchTests(TestCase):
         self.assertTrue(wfm.status == WfModule.ERROR)
         self.assertTrue(out.equals(self.test_table))
 
+    def test_table_truncation(self):
+        nrows = settings.MAX_ROWS_PER_TABLE * 2
+        bigtable = pd.DataFrame(np.random.randint(0,100,size=(nrows, 4)), columns=list('ABCD'))
+        wfm = load_and_add_module('editcells')  # because it never changes row count
+        out = module_dispatch_render(wfm, bigtable)
+        self.assertTrue(len(out) == settings.MAX_ROWS_PER_TABLE)
+        self.assertEqual(wfm.status, WfModule.ERROR)

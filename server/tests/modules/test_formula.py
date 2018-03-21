@@ -44,3 +44,24 @@ class FormulaTests(LoggedInTestCase):
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
         self.assertTrue(out.equals(mock_csv_table))  # NOP on error
+
+    def test_spaces_to_underscores(self):
+        # column names with spaces should be referenced with underscores in the formula
+        underscore_csv = 'Month,The Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
+        underscore_table = pd.read_csv(io.StringIO(underscore_csv))
+
+        workflow = create_testdata_workflow(underscore_csv)
+        wfm = load_and_add_module('formula', workflow=workflow)
+        pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='formula'), wf_module=wfm)
+        pval.set_value('The_Amount*2')
+
+        out = execute_nocache(wfm)
+
+        table = underscore_table.copy()
+        table['formula output'] = table['The Amount']*2.0  # need the .0 as output is going to be floating point
+        self.assertTrue(out.equals(table))
+
+
+
+
+
