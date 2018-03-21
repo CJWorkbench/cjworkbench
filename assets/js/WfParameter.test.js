@@ -29,5 +29,11 @@ describe('WfParameter', () => {
     expect(wrapper).toMatchSnapshot();
   });
 
+  it('Renders string input field', () => {
+    var wrapper = shallowParameter({visible: true, value: 'data.sfgov.org', parameter_spec: {type:'string'}});
+    expect(wrapper.find('textarea')).toHaveLength(1);
+    expect(wrapper).toMatchSnapshot();
+  });
+
 });
 
