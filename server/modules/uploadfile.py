@@ -33,7 +33,6 @@ class UploadFile(ModuleImpl):
         else:
             return('Unknown file type ' + file_ext)
 
-        sanitize_dataframe(table_aux)
         wf_module.set_ready(notify=True)
         return table_aux
 
