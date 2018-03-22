@@ -260,6 +260,8 @@ export default class WfParameter extends React.Component {
   }
 
   render() {
+    console.log(this.props);
+
     if (!this.props.p.visible) {
       return false; // nothing to see here
     }
