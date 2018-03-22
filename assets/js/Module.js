@@ -10,23 +10,32 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import { CardBlock, Card } from 'reactstrap';
 import { DragSource } from 'react-dnd';
+import { getEmptyImage } from 'react-dnd-html5-backend'
 
 // TODO: gather all functions for dragging into one utility file
 const spec = {
-  beginDrag(props, monitor, component) {
+  beginDrag(props) {
     return {
       type: 'module',
       index: false,
       id: props.id,
+      name: props.name,
+      icon: props.icon,
       insert: true,
     }
   },
-  endDrag(props, monitor, component) {
+  endDrag(props, monitor) {
     if (monitor.didDrop()) {
       const result = monitor.getDropResult();
-      props.dropModule(result.source.id, result.source.index);
+      props.dropModule(
+        result.source.id,
+        result.source.index,
+        {
+          name: result.source.name,
+          icon: result.source.icon
+        }
+      );
     }
   }
 }
@@ -34,6 +43,7 @@ const spec = {
 function collect(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
     isDragging: monitor.isDragging()
   }
 }
@@ -46,10 +56,21 @@ class Module extends React.Component {
 
   itemClick(evt) {
     if (!this.props.isReadOnly) 
-      this.props.addModule(this.props.id);
+      this.props.addModule(this.props.id, {
+        name: this.props.name,
+        icon: this.props.icon
+      });
     // collapse category after click when library is closed
     if (!this.props.libraryOpen)     
       this.props.setOpenCategory(null); 
+  }
+
+  componentDidMount() {
+    this.props.connectDragPreview(getEmptyImage(), {
+			// IE fallback: specify that we'd rather screenshot the node
+			// when it already knows it's being dragged so we can hide it with CSS.
+			captureDraggingState: true,
+		})
   }
 
   componentWillReceiveProps(newProps) {
@@ -68,17 +89,17 @@ class Module extends React.Component {
                         <div className='second-level d-flex'>
                           <div className='d-flex flex-row align-items-center'>
                             <div className='ml-icon-container'>
-                              <div className={icon}></div>
+                              <div className={icon} />
                             </div>
                             <div>
                               <div className='content-5 ml-module-name'>{moduleName}</div>
                             </div>
                           </div>
                           <div className='ml-handle'>
-                            <div className='icon-grip'></div>
+                            <div className='icon-grip' />
                           </div>
                         </div>
-                      </div>
+                      </div>;
 
     // Do not allow dragging if in Read-Only
     if (this.props.isReadOnly) {

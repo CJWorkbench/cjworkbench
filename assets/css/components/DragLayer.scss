@@ -1,0 +1,12 @@
+.drag-layer {
+  position: fixed;
+  height: 100%;
+  width: 100%;
+  left:0;
+  right:0;
+  z-index:100;
+  pointer-events: none;
+  > div {
+    display:inline-block;
+  }
+}

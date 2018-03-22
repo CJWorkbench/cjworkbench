@@ -6,6 +6,7 @@ import { WorkflowNavBar } from './navbar'
 import OutputPane from './OutputPane'
 import PropTypes from 'prop-types'
 import ModuleStack from './ModuleStack'
+import CustomDragLayer from './CustomDragLayer'
 
 // ---- WorkflowMain ----
 
@@ -36,15 +37,15 @@ class Workflow extends React.Component {
   }
 
   setOverlapping(overlapping) {
-      this.setState({
-          overlapping
-      });
+    this.setState({
+      overlapping
+    });
   }
 
   setLibraryOpen(libraryOpen, cb) {
-      this.setState({
-          libraryOpen
-      }, cb);
+    this.setState({
+      libraryOpen
+    }, cb);
   }
 
   render() {
@@ -56,13 +57,12 @@ class Workflow extends React.Component {
     let selectedWorkflowModuleRef = this.props.workflow.wf_modules.find((wf) => {
       return wf.id === this.props.selected_wf_module;
     });
-
     return (
         <div className="workflow-root">
-
+          <CustomDragLayer />
           <ModuleLibrary
-            addModule={module_id => this.props.addModule(module_id, this.props.workflow.wf_modules.length)}
-            dropModule={(module_id, insert_before) => this.props.addModule(module_id, (insert_before === false) ? this.props.workflow.wf_modules.length : insert_before)}
+            addModule={(module_id, placeholder) => this.props.addModule(module_id, this.props.workflow.wf_modules.length, placeholder)}
+            dropModule={(module_id, insert_before, placeholder) => this.props.addModule(module_id, ((insert_before === false) ? this.props.workflow.wf_modules.length : insert_before), placeholder)}
             api={this.props.api}
             isReadOnly={this.props.workflow.read_only}
             workflow={this.props.workflow} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
@@ -115,6 +115,7 @@ class Workflow extends React.Component {
               </div>
             </a>
           </div>
+
         </div>
     );
   }

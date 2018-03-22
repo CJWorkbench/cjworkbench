@@ -38,6 +38,30 @@
   transition: all 0.1s ease-out;
 }
 
+/*.wf-card:before {
+  content: ' ';
+  position:relative;
+  display:block;
+  top: -0.5rem;
+  height: 0.5rem;
+  background-color: #7A9BB0;
+  opacity:0.5;
+  padding-bottom:0;
+}
+
+.modulestack-list:after {
+  width: 26rem;
+  margin: 0 auto;
+  content: ' ';
+  position:relative;
+  display:block;
+  top: -0.5rem;
+  height: 0.5rem;
+  background-color: #7A9BB0;
+  opacity:0.5;
+  padding-bottom:0;
+}*/
+
 .wf-card:hover{
   background:#F5F7F8;
 }

@@ -1,11 +1,11 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
-import { getPageID, csrfToken } from './utils'
+import { getPageID, nonce } from './utils'
 import WorkbenchAPI from './WorkbenchAPI'
 import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
 import thunk from 'redux-thunk'
-import update from 'immutability-helper'
+import { newContext } from 'immutability-helper'
 
 // Workflow
 const INITIAL_LOAD_WORKFLOW = 'INITIAL_LOAD_WORKFLOW';
@@ -14,7 +14,10 @@ const ADD_MODULE = 'ADD_MODULE';
 const DELETE_MODULE = 'DELETE_MODULE';
 const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE';
 const SET_WORKFLOW_PUBLIC = 'SET_WORKFLOW_PUBLIC';
-const SET_WF_LIBRARY_COLLAPSE = 'SET_WF_LIBRARY_COLLAPSE'
+const SET_WF_LIBRARY_COLLAPSE = 'SET_WF_LIBRARY_COLLAPSE';
+const REORDER_WFMODULES = 'REORDER_WFMODULES';
+const INSERT_PLACEHOLDER = 'INSERT_PLACEHOLDER';
+const REORDER_PLACEHOLDER = 'REORDER_PLACEHOLDER';
 
 // User
 const GET_CURRENT_USER = 'GET_CURRENT_USER';
@@ -34,7 +37,7 @@ const SET_DATA_VERSION = 'SET_DATA_VERSION';
 const MARK_DATA_VERSIONS_READ = 'MARK_DATA_VERSIONS_READ';
 const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS';
 
-var api = WorkbenchAPI(); // var so it can be mocked for testing
+let api = WorkbenchAPI(); // var so it can be mocked for testing
 
 export function mockAPI(mock_api) {
   api = mock_api;
@@ -55,9 +58,42 @@ const registerReducerFunc = (key, func) => {
   reducerFunc[key] = func;
 };
 
+const nonces = [];
+const generateNonce = (prefix) => {
+  // Generate a nonce with some prefix from
+  // the object we're creating the nonce for
+  let returnNonce = nonce(prefix);
+  // If it's not in the list,
+  if (nonces.indexOf(returnNonce) === -1) {
+    // Add it (since we know it's unique)
+    nonces.push(returnNonce);
+    // And return it
+    return returnNonce;
+  // Otherwise,
+  } else {
+    // try again
+    return generateNonce(prefix);
+  }
+};
+const removeNonce = (nonce) => {
+  let nonceIndex = nonces.indexOf(nonce);
+  if (nonceIndex !== -1) {
+    nonces.splice(nonceIndex, 1);
+  }
+};
+
+const update = newContext();
+update.extend('$swap', function(value, original) {
+  let oldIndex, newIndex;
+  [oldIndex, newIndex] = value;
+  let newArray = original.slice();
+  newArray.splice(newIndex, 0, newArray.splice(oldIndex, 1)[0]);
+  return newArray;
+});
+
 // ---- Utilities ----
 
-const findIdxByProp = (searchArray, searchProp, searchValue) => {
+export function findIdxByProp(searchArray, searchProp, searchValue) {
   let returnIdx;
   for (let i = 0; i < searchArray.length; i++) {
     if (searchArray[i][searchProp] === searchValue) {
@@ -143,17 +179,107 @@ export function setWorkflowPublicAction(workflowId, isPublic) {
   }
 }
 
+// REORDER_WFMODULES
+// Re-order the modules in the module stack
+export function reorderWfModulesAction(wfModuleID, newIndex) {
+  let state = store.getState();
+  let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleID);
+
+  newIndex = (wfModuleIdx < newIndex) ? newIndex - 1 : newIndex;
+
+  let newState = update(state, {
+    workflow: {
+      wf_modules: {$swap: [wfModuleIdx, newIndex]}
+    }
+  });
+
+  let newOrder = newState.workflow.wf_modules.map( (item, i) => ({ id: item.id, order: i }) );
+
+  return {
+    type: REORDER_WFMODULES,
+    payload: {
+      promise: api.reorderWfModules(getPageID(), newOrder),
+      data: newState.workflow.wf_modules
+    }
+  }
+}
+registerReducerFunc(REORDER_WFMODULES + '_PENDING', (state, action) => {
+  return update(state, {
+    workflow: {
+      wf_modules: {$set: action.payload}
+    }
+  });
+});
+
+// INSERT_PLACEHOLDER
+export function insertPlaceholderAction(placeholder, insertBefore) {
+  return {
+    type: INSERT_PLACEHOLDER,
+    payload: {
+      item: placeholder,
+      insertBefore: insertBefore
+    }
+  }
+}
+registerReducerFunc(INSERT_PLACEHOLDER, (state, action) => {
+  return update(state, {
+    workflow: {
+      wf_modules: {$splice: [[action.payload.insertBefore, 0, action.payload.item]]}
+    }
+  })
+});
+
+// REORDER_PLACEHOLDER
+export function reorderPlaceholderAction(sourceIndex, targetIndex) {
+  return {
+    type: REORDER_PLACEHOLDER,
+    payload: {
+      sourceIndex,
+      targetIndex
+    }
+  }
+}
+registerReducerFunc(REORDER_PLACEHOLDER, (state, action) => {
+  return update(state, {
+    workflow: {
+      wf_modules: {$swap: [action.payload.sourceIndex, action.payload.targetIndex]}
+    }
+  });
+});
+
 
 // ADD_MODULE
 // Add a module, then save the new module as the selected workflow
-export function addModuleAction(moduleId, insertBefore) {
+export function addModuleAction(moduleId, insertBefore, placeholder) {
   return function (dispatch) {
+    // Generate a nonce so we can replace the correct placeholder on
+    // the other end
+    let nonce = generateNonce(moduleId);
+
+    let payload = {
+      promise: api.addModule(getPageID(), moduleId, insertBefore)
+        .then((response) => {
+          response.pendingId = nonce;
+          return response;
+        }),
+    };
+
+    if (typeof placeholder !== 'undefined') {
+      payload.data = placeholder;
+    } else {
+      payload.data = {}
+    }
+
+    payload.data.placeholder = true;
+    payload.data.insert_before = insertBefore;
+    payload.data.pendingId = nonce;
+
     return (
 
       dispatch({
         type: ADD_MODULE,
-        payload: api.addModule(getPageID(), moduleId, insertBefore)
-      }).then( ({value, action}) => {
+        payload: payload
+      }).then( ({value}) => {
 
       dispatch(
         setSelectedWfModuleAction(value.id)
@@ -162,15 +288,42 @@ export function addModuleAction(moduleId, insertBefore) {
     }));
   }
 }
-registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
+registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
   let insertBefore = action.payload.insert_before;
+
+  if (insertBefore === null) {
+    insertBefore = state.workflow.wf_modules.length - 1;
+  }
+
+  delete action.payload.insert_before;
+
+  return update(state, {
+    workflow: {
+      wf_modules: { $splice:[ [insertBefore, , action.payload] ] }
+    }
+  });
+});
+registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
+  let insertBefore,
+      overwrite = 1;
+
+  insertBefore = findIdxByProp(state.workflow.wf_modules, 'pendingId', action.payload.pendingId);
+
+  if (typeof insertBefore === 'undefined') {
+    // There's no placeholder. Maybe one of our collaborators added this module
+    // on a different client
+    overwrite = 0;
+    insertBefore = action.payload.insert_before;
+  } else {
+    removeNonce(action.payload.pendingId);
+  }
 
   delete action.payload.insert_before;
 
   return update(state, {
     selected_wf_module: {$set: action.payload.id},
     workflow: {
-      wf_modules: { $splice:[ [insertBefore, 0, action.payload] ] }
+      wf_modules: { $splice:[ [insertBefore, overwrite, action.payload] ] }
     }
   });
 });

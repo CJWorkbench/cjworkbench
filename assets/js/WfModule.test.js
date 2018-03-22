@@ -1,5 +1,5 @@
 import React from 'react'
-import { WfModule } from './WfModule'
+import { WfModule } from './wfmodule/WfModule'
 import { mount } from 'enzyme'
 
 describe('WfModule, NOT read-only mode - DUMMY TEST ONLY', () => {
