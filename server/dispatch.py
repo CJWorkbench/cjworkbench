@@ -158,7 +158,7 @@ def module_dispatch_render(wf_module, table):
     if nrows > settings.MAX_ROWS_PER_TABLE:
         tableout.drop(range(settings.MAX_ROWS_PER_TABLE, nrows), inplace=True)
         error = _('Output has %d rows, truncated to %d' % (nrows, settings.MAX_ROWS_PER_TABLE))
-        wf_module.set_error(error, notify=False)
+        wf_module.set_error(error, notify=True)
     else:
         wf_module.set_ready(notify=False)
 

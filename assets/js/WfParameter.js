@@ -69,6 +69,10 @@ export default class WfParameter extends React.Component {
     if (this.type == 'checkbox') {
       this.paramChanged(e.target.checked, DIDNT_PRESS_ENTER)
     }
+
+    if (this.type == 'string' && !this.props.isReadOnly) {
+      this.stringRef.select();
+    }
   }
 
   // Return array of column names available to us, as a promise
@@ -293,16 +297,16 @@ export default class WfParameter extends React.Component {
         return (
           <div className='parameter-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
-            {/* need to disable dragsource on this */}
             <textarea
-              onMouseEnter={() => this.props.toggleDrag() }
-              onMouseLeave={() => this.props.toggleDrag() }
+              onMouseEnter={() => this.props.stopDrag() }
+              onMouseLeave={() => this.props.startDrag() }
+              onBlur={this.blur}
+              onKeyPress={this.keyPress}
+              onClick={this.click}
               readOnly={this.props.isReadOnly}
               className={sclass}
               rows={srows}
               defaultValue={this.props.p.value}
-              onBlur={this.blur}
-              onKeyPress={this.keyPress}
               placeholder={this.props.p.parameter_spec.placeholder || ''}
               ref={ el => this.stringRef = el}/>
           </div>
@@ -409,5 +413,6 @@ WfParameter.propTypes = {
   changeParam:      PropTypes.func.isRequired,
 	getParamText:     PropTypes.func.isRequired,
   setParamText:     PropTypes.func.isRequired,
-	toggleDrag:       PropTypes.func.isRequired  
+  startDrag:        PropTypes.func.isRequired,
+  stopDrag:         PropTypes.func.isRequired,
 };

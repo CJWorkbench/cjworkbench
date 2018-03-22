@@ -55,7 +55,8 @@ describe('WfModule, not read-only mode', () => {
         'connectDragSource': jest.fn(),
         'connectDropTarget': jest.fn(),
         'focusModule': jest.fn(),
-        'toggleDrag' : jest.fn()
+        'startDrag' : jest.fn(),
+        'stopDrag' : jest.fn()      
       };
 
     wrapper = mount(

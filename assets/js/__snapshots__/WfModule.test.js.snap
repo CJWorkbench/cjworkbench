@@ -43,7 +43,8 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
     }
   }
   focusModule={[Function]}
-  toggleDrag={[Function]}
+  startDrag={[Function]}
+  stopDrag={[Function]}
 >
   <div
     onClick={[Function]}
