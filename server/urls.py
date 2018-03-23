@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views.StoredObject import StoredObjectView
+from .views.UploadedFile import UploadedFileView
 from rest_framework import routers
 from django.conf.urls import include
 
@@ -15,8 +15,8 @@ urlpatterns = [
 
     url(r'^$', RedirectView.as_view(url='/workflows')),
 
-    url(r'^api/uploadfile/?$', StoredObjectView.as_view()),
-    url(r'^api/uploadfile/(?P<qquuid>\S+)?$', StoredObjectView.as_view()),
+    url(r'^api/uploadfile/?$', UploadedFileView.as_view()),
+    url(r'^api/uploadfile/(?P<qquuid>\S+)?$', UploadedFileView.as_view()),
 
     # list all workflows
     url(r'^workflows/$', views.render_workflows),

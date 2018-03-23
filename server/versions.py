@@ -1,6 +1,5 @@
 # Undo, redo, and other version related things
 from server.models import Delta, Workflow
-from server.websockets import *
 from server.models import ChangeDataVersionCommand, Notification, StoredObject
 from server.triggerrender import notify_client_workflow_version_changed
 from django.utils import timezone
@@ -43,6 +42,7 @@ def WorkflowRedo(workflow):
 
 # Store retrieved data (in text form here, as csv) if it isn't different from currently stored data
 # If it is and auto_change_verssion, switch to new data using a ChangeDataVersion command
+# Returns creation time of newly created StoredObject, if any
 def save_fetched_table_if_changed(wfm, new_table, auto_change_version=True):
 
     wfm.last_update_check = timezone.now()
@@ -62,6 +62,8 @@ def save_fetched_table_if_changed(wfm, new_table, auto_change_version=True):
     else:
         # no new data version, but we still want client to update WfModule status and last update check time
         notify_client_workflow_version_changed(wfm.workflow)
+
+    return version_added
 
 
 # Ensures that no one WfModule can suck up too much disk space, by deleting old versions

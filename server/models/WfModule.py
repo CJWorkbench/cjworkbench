@@ -31,7 +31,7 @@ class WfModule(models.Model):
 
     def __str__(self):
         if self.workflow is not None:
-            wfstr = ' - workflow: ' + self.workflow.__str__() + ' - id: ' + str(self.workflow.id)
+            wfstr = ' - workflow: ' + self.workflow.__str__()
         else:
             wfstr = ' - deleted from workflow'
         return self.get_module_name() + ' - id: ' + str(self.id) + wfstr
@@ -140,15 +140,6 @@ class WfModule(models.Model):
                 type=StoredObject.FETCHED_TABLE,
                 stored_at=self.stored_data_version
             ).get_table()
-        else:
-            return None
-
-    def retrieve_fetched_file_so(self):
-        if self.stored_data_version:
-            return StoredObject.objects.get(
-                wf_module=self,
-                type=StoredObject.UPLOADED_FILE,
-                stored_at=self.stored_data_version)
         else:
             return None
 

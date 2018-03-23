@@ -60,8 +60,8 @@ class StoredObjectTests(TestCase):
 
 
     def test_type_interference(self):
-        # if different types use the same filename -- perhaps because they have the same conent -- we have problems
-        # actually happened during development (module fetch and module cache can be the same for add data module)
+        # if different types use the same filename -- perhaps because they have the same content -- we have problems
+        # actually happened during development (module fetch and module cache can be the same data for add data module)
         so1 = StoredObject.create_table(self.wfm1,
                                         StoredObject.CACHED_TABLE,
                                         self.test_table)
@@ -127,35 +127,3 @@ class StoredObjectTests(TestCase):
         self.assertEqual(self.file_contents(so1.file), self.file_contents(so2.file))
         self.assertTrue(so1.get_table().equals(so2.get_table()))
 
-
-    def test_duplicate_file(self):
-        fname = 'myfile.dat'
-        content = b'This is everything we are going to store in this file'
-        file = default_storage.save(fname, ContentFile(content))
-        so1 = StoredObject.objects.create(
-            wf_module=self.wfm1,
-            type=StoredObject.UPLOADED_FILE,
-            stored_at = timezone.now(),
-            metadata=self.metadata,
-            name=fname,
-            size=len(content),
-            uuid='XXXXUUID',
-            file=file)
-
-        # If it didn't crash, we're good. Not really worth testing Django models here.
-
-        so2 = so1.duplicate(self.wfm2)
-        so2.refresh_from_db()
-
-        # new StoredObject should have same time, same type, same metadata, different file with same contents
-        self.assertEqual(so1.stored_at, so2.stored_at)
-        self.assertEqual(so1.type, so2.type)
-        self.assertEqual(so1.metadata, so2.metadata)
-        self.assertEqual(so1.name, so2.name)
-        self.assertEqual(so1.size, so2.size)
-        self.assertEqual(so1.uuid, so2.uuid)
-        self.assertNotEqual(so1.file, so2.file)
-
-        data2 = self.file_contents(so2.file)
-        self.assertEqual(data2, content)
-        self.assertEqual(self.file_contents(so1.file), self.file_contents(so2.file))

@@ -15,7 +15,7 @@ mock_json_table = pd.DataFrame(json.loads(mock_json_text))
 mock_json_path = 'data.series[1]'
 mock_json_path_text = '{"data": {"junk":"aaa", "series": [ {"key":"value"}, [ {"Month" : "Jan", "Amount": 10},\n {"Month" : "Feb", "Amount": 20} ] ] } }'
 
-mock_xslx_path = os.path.join(settings.BASE_DIR, 'server/tests/modules/test.xlsx')
+mock_xslx_path = os.path.join(settings.BASE_DIR, 'server/tests/test_data/test.xlsx')
 
 # ---- LoadURL ----
 @override_settings(MEDIA_ROOT=tempfile.gettempdir())
