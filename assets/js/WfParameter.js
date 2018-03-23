@@ -283,7 +283,7 @@ export default class WfParameter extends React.Component {
     if(('id_name' in condition) && ('value' in condition)) {
       var condValues = condition['value'].split('|').map(cond => cond.trim());
       var selectionIdx = parseInt(this.props.getParamText(condition['id_name']));
-      if(selectionIdx) {
+      if(selectionIdx != NaN) {
         var menuItemsStr = this.props.getParamMenuItems(condition['id_name']);
         if(menuItemsStr) {
           var menuItems = menuItemsStr.split('|').map(cond => cond.trim());
@@ -304,8 +304,6 @@ export default class WfParameter extends React.Component {
     if (!this.props.p.visible) {
       return false; // nothing to see here
     }
-
-    // Conditional UI part
 
     if(this.props.p.parameter_spec.visible_if) {
       var condition = JSON.parse(this.props.p.parameter_spec.visible_if);
