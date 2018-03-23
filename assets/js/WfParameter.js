@@ -259,11 +259,48 @@ export default class WfParameter extends React.Component {
     }
   }
 
-  render() {
-    console.log(this.props);
+  displayConditionalUI(condition, type) {
+    // Checks if conditional UI should be displayed
+    // type is either 'visible_if' or 'visible_if_not'
+    if(('id_name' in condition) && ('value' in condition)) {
+      var condValues = condition['value'].split('|').map(cond => cond.trim());
+      var selectionIdx = parseInt(this.props.getParamText(condition['id_name']));
+      if(selectionIdx) {
+        var menuItemsStr = this.props.getParamMenuItems(condition['id_name']);
+        if(menuItemsStr) {
+          var menuItems = menuItemsStr.split('|').map(cond => cond.trim());
+          var selection = menuItems[selectionIdx];
+          var selectionInCondition = (condValues.indexOf(selection) >= 0);
+          if(type == 'visible_if') {
+            return selectionInCondition;
+          } else {
+            return !selectionInCondition;
+          }
+        }
+      }
+    }
+    return true;
+  }
 
+  render() {
     if (!this.props.p.visible) {
       return false; // nothing to see here
+    }
+
+    // Conditional UI part
+
+    if(this.props.p.parameter_spec.visible_if) {
+      var condition = JSON.parse(this.props.p.parameter_spec.visible_if);
+      if(!this.displayConditionalUI(condition, 'visible_if')) {
+        return false;
+      }
+    }
+
+    if (this.props.p.parameter_spec.visible_if_not) {
+      var condition = JSON.parse(this.props.p.parameter_spec.visible_if_not);
+      if(!this.displayConditionalUI(condition, 'visible_if_not')) {
+        return false;
+      }
     }
 
     switch (this.type) {
