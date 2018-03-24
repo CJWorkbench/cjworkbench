@@ -1,7 +1,8 @@
 # --- Time unit conversion to/from seconds ---
-import pandas as pd
+from django.conf import settings
 from django.contrib.sites.models import Site
 from intercom.client import Client
+import pandas as pd
 import os
 import time
 
@@ -71,6 +72,16 @@ def sanitize_dataframe(table):
     table.columns = newcols
 
     return table
+
+
+# Limit table to maximum allowable number of rows. Returns true if we clipped it down
+def truncate_table_if_too_big(df):
+    nrows = len(df)
+    if nrows > settings.MAX_ROWS_PER_TABLE:
+        df.drop(range(settings.MAX_ROWS_PER_TABLE, nrows), inplace=True)
+        return True
+    else:
+        return False
 
 
 # It is unbelievable that Django is 10+ years old and doesn't already do this for you

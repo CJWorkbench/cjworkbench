@@ -1,8 +1,8 @@
 from django.forms import ModelForm
-from server.models import StoredObject
+from server.models.UploadedFile import UploadedFile
 
 #  Processes submitted file upload
-class StoredObjectForm(ModelForm):
+class UploadedFileForm(ModelForm):
     class Meta:
-        model = StoredObject
+        model = UploadedFile
         fields = ['wf_module', 'file', 'name', 'size', 'uuid']

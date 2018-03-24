@@ -5,7 +5,7 @@ from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
 from .dynamicdispatch import DynamicDispatch
 from .importmodulefromgithub import original_module_lineno
-from .utils import sanitize_dataframe
+from .utils import sanitize_dataframe, truncate_table_if_too_big
 import os, sys, traceback, types, inspect
 from django.utils.translation import gettext as _
 
@@ -108,6 +108,7 @@ def load_dynamically(wf_module):
     # check if this module is loadable dynamically; if so, load it.
     return dynamic_dispatch.load_module(wf_module=wf_module)
 
+# Main render entrypoint.
 def module_dispatch_render(wf_module, table):
     if wf_module.module_version is None:
         return pd.DataFrame()  # happens if module deleted
@@ -139,28 +140,34 @@ def module_dispatch_render(wf_module, table):
     else:
         tableout = module_dispatch_tbl[dispatch].render(wf_module, table)
 
+    error = None
     if isinstance(tableout, str):
-        # If the module returns a string, it's an error message.
+        # If the module returns a string, it's an error message. Return the input table (NOP)
         error = tableout
-    elif (not isinstance(tableout, pd.DataFrame)) and (tableout is not None):
-        # if it's not a string it needs to be a table
-        error = 'Module did not return a table or None'
+        tableout = table # NOP
 
-    if error:
-        wf_module.set_error(error, notify=True)
-        return table  # NOP if error
+    elif isinstance(tableout, tuple) and isinstance(tableout[0], pd.DataFrame) and isinstance(tableout[1], str):
+        # tuple with a table and a warning message
+        error = tableout[1]
+        tableout = tableout[0]
+
+    elif (tableout is not None) and (not isinstance(tableout, pd.DataFrame)):
+        # if it's not a string or a tuple it needs to be a table
+        error = _('Module did not return a table or an error message')
+        tableout = None
 
     if tableout is None:
         tableout = pd.DataFrame()
 
     # Restrict to row limit. We set an error, but still return the output table
     nrows = len(tableout)
-    if nrows > settings.MAX_ROWS_PER_TABLE:
-        tableout.drop(range(settings.MAX_ROWS_PER_TABLE, nrows), inplace=True)
+    if truncate_table_if_too_big(tableout):
         error = _('Output has %d rows, truncated to %d' % (nrows, settings.MAX_ROWS_PER_TABLE))
+
+    if error:
         wf_module.set_error(error, notify=True)
     else:
-        wf_module.set_ready(notify=False)
+        wf_module.set_ready(notify=False)  # don't notify, module is (probably?) already in ready state
 
     tableout = sanitize_dataframe(tableout)  # Ensure correct column types etc.
     return tableout
