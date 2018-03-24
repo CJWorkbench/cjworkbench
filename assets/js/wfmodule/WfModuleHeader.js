@@ -17,6 +17,10 @@ export default class WfModuleHeader extends React.Component {
     this.moduleRef = ref;
   }
 
+  shouldComponentUpdate(nextProps) {
+    return nextProps.moduleName !== this.props.moduleName;
+  }
+
   render() {
     return (
       <div className='wf-card mx-auto' ref={this.setModuleRef}>
