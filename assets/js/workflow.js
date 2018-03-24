@@ -59,7 +59,6 @@ class Workflow extends React.Component {
     });
     return (
         <div className="workflow-root">
-          <CustomDragLayer />
           <ModuleLibrary
             addModule={(module_id, placeholder) => this.props.addModule(module_id, this.props.workflow.wf_modules.length, placeholder)}
             dropModule={(module_id, insert_before, placeholder) => this.props.addModule(module_id, ((insert_before === false) ? this.props.workflow.wf_modules.length : insert_before), placeholder)}
