@@ -224,7 +224,7 @@ export function reorderWfModulesAction(wfModuleID, newIndex) {
   let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleID);
   if (wfModuleIdx === newIndex) {
     return {
-      type: 'NOOP'
+      type: NOP_ACTION
     };
   }
   if (wfModuleIdx < newIndex) {
