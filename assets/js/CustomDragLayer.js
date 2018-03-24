@@ -13,26 +13,30 @@ class CustomDragLayer extends React.Component {
 
     if (!getSourceClientOffset) {
       return {
-        display: 'none'
+        willChange: 'transform',
+        display: 'none',
       };
     }
 
     const { x, y } = getSourceClientOffset;
-    const transform = `translate(${x}px, ${y}px)`;
+    const transform = `translate3d(${x}px, ${y}px, 0)`;
     return {
+      willChange: 'transform',
       transform: transform,
       WebkitTransform: transform
     };
   }
 
   render() {
-    if (this.props.item === null) {
-      return null;
-    }
     return (
-      <div className="drag-layer">
+      <div style={{
+        position: 'fixed',
+        zIndex: 10000,
+        pointerEvents: 'none'
+      }}>
         <div style={this.getItemStyles(this.props)}>
-          <WfModuleHeader moduleName={this.props.item.name} moduleIcon={this.props.item.icon} />
+          {this.props.item &&
+          <WfModuleHeader moduleName={this.props.item.name} moduleIcon={this.props.item.icon} />}
         </div>
       </div>
     )
@@ -44,9 +48,10 @@ function collect(monitor) {
     isDragging: monitor.isDragging(),
     itemType: monitor.getItemType(),
     item: monitor.getItem(),
-    clientOffset: monitor.getClientOffset(),
     getSourceClientOffset: monitor.getSourceClientOffset(),
   }
 }
+
+//TODO: needs proptypes
 
 export default DragLayer(collect)(CustomDragLayer);

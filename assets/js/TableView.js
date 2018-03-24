@@ -155,7 +155,7 @@ export default class TableView extends React.Component {
     var gridView = null;
     if (this.props.id && this.state.tableData && this.state.tableData.total_rows>0) {
       gridView =
-        <div className="outputpane-data">
+        <div className="outputpane-data" style={{transform:'translate3d(0, 0, 0)'}}>
           <DataGrid
             totalRows={this.state.tableData.total_rows}
             columns={this.state.tableData.columns}
