@@ -2,7 +2,7 @@ from django.conf.urls import url
 from django.views.generic import TemplateView
 from django.views.generic.base import RedirectView
 from . import views
-from .views.UploadedFile import UploadedFileView
+from .views.UploadedFileView import UploadedFileView
 from rest_framework import routers
 from django.conf.urls import include
 

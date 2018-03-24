@@ -18,14 +18,21 @@ import json
 # Read an UploadedFile, parse it, store it as the WfModule's "fetched table"
 # Public entrypoint, called by the view
 def upload_to_table(wf_module, uploaded_file):
-    table = __parse_uploaded_file(uploaded_file)
-
-    if isinstance(table, str):
-        return table  # return error message if we could not parse
+    try:
+        table = __parse_uploaded_file(uploaded_file)
+    except Exception as e:
+        wf_module.set_error(str(e), notify=True)
+        uploaded_file.delete()  # delete uploaded file, we probably can't ever use it
+        return
 
     # Cut this file down to size to prevent reading in the hugest data on every render
     nrows = len(table)
-    truncated = truncate_table_if_too_big(table)
+    if truncate_table_if_too_big(table):
+        error = _('File has %d rows, truncated to %d' % (nrows, settings.MAX_ROWS_PER_TABLE))
+        wf_module.set_error(error, notify=False)
+    else:
+        # start of file upload sets module busy status on client side; undo this.
+        wf_module.set_ready(notify=False)
 
     sanitize_dataframe(table)
 
@@ -41,15 +48,8 @@ def upload_to_table(wf_module, uploaded_file):
 
     ChangeDataVersionCommand.create(wf_module, version_added)  # also notifies client
 
-    # if we made it this far we have stored the table corresponding to the file, so we can delete the file
-    uploaded_file.delete()
-
-    if not truncated:
-        # start of file upload set module busy status on client side; undo this. Need a better notification system.
-        wf_module.set_ready(notify=True)
-    else:
-        error = _('File has %d rows, truncated to %d' % (nrows, settings.MAX_ROWS_PER_TABLE))
-        wf_module.set_error(error, notify=True)
+    # don't delete UploadedFile, so that we can reparse later or allow higher row limit or download origina, etc.
+    return
 
 
 # private
@@ -58,19 +58,13 @@ def __parse_uploaded_file(ufile):
     file_ext = file_ext.lower()
 
     if file_ext == '.xlsx' or file_ext == '.xls':
-        try:
-            table = pd.read_excel(ufile.file)
-        except XLRDError as e:
-            return (str(e))
+        table = pd.read_excel(ufile.file)
 
     elif file_ext == '.csv':
-        try:
-            table = pd.read_csv(ufile.file)
-        except ParserError as e:
-            return (str(e))
+        table = pd.read_csv(ufile.file)
 
     else:
-        return (_('Unknown file type %s' % file_ext))
+        raise Exception(_('Unknown file type %s' % file_ext))
 
     return table
 

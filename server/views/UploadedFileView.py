@@ -12,20 +12,22 @@ class UploadedFileView(APIView):
     renderer_classes = [renderers.JSONRenderer]
     parser_classes = (MultiPartParser,)
 
-    def post(self, request, format=None):
+    @staticmethod
+    def post(request):
         form = UploadedFileForm(request.POST, request.FILES)
 
         if form.is_valid():
             uploaded_file = form.save()
             upload_to_table(uploaded_file.wf_module, uploaded_file)
-            return HttpResponse('{"success":true}', content_type="application/json")
+            return HttpResponse('{"success":true}', content_type="application/json", status=status.HTTP_204_NO_CONTENT)
         else:
             err = json.dumps({'success': False, 'error': '%s' % repr(form.errors)})
             return HttpResponse(err, content_type="application/json", status=status.HTTP_400_BAD_REQUEST)
 
 
     # Called by the client to get the uuid and filename of a previously uploaded file
-    def get(self, request, *args, **kwargs):
+    @staticmethod
+    def get(request):
         wf_module_id = request.GET.get('wf_module', '')
         if wf_module_id == '':
             return Response({'success': False, 'error': 'Missing wf_module query parameter'},
