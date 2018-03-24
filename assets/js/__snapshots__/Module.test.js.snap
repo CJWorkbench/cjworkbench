@@ -16,6 +16,7 @@ exports[`Module NOT Read-only Renders a card, with icon received from props 1`] 
   >
     <Module
       addModule={[Function]}
+      connectDragPreview={[Function]}
       connectDragSource={[Function]}
       dropModule={[Function]}
       icon="add"
@@ -81,6 +82,7 @@ exports[`Module Read-only Renders a card, with icon received from props 1`] = `
   >
     <Module
       addModule={[Function]}
+      connectDragPreview={[Function]}
       connectDragSource={[Function]}
       dropModule={[Function]}
       icon="add"

@@ -312,14 +312,13 @@ registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
   let insertBefore,
       overwrite = 1;
 
-  insertBefore = findIdxByProp(state.workflow.wf_modules, 'pendingId', action.payload.pendingId);
-
-  if (typeof insertBefore === 'undefined') {
+  if (typeof action.payload.pendingId === 'undefined') {
     // There's no placeholder. Maybe one of our collaborators added this module
     // on a different client
     overwrite = 0;
     insertBefore = action.payload.insert_before;
   } else {
+    insertBefore = findIdxByProp(state.workflow.wf_modules, 'pendingId', action.payload.pendingId);
     removeNonce(action.payload.pendingId);
   }
 

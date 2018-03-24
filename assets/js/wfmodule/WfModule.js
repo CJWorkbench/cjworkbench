@@ -105,7 +105,9 @@ class WfModule extends React.Component {
 
   // Scroll when we create a new wfmodule
   componentDidMount() {
+    console.log('componentdidmount fired');
     if (this.props['data-selected']) {
+      console.log('focusmodule shouldve been called');
       this.props.focusModule(this.moduleRef);
     }
 
@@ -274,6 +276,8 @@ class WfModule extends React.Component {
     var moduleIcon = 'icon-' + this.module.icon + ' WFmodule-icon mr-2';
 
     // Putting it all together: name, status, parameters, output
+    // For testing: connectDropTarget and connectDragSource will return null because they're provided as mock functions,
+    // so if this outputs 'undefined' we return null
     return this.props.connectDropTarget(this.props.connectDragSource(
       // Removing this outer div breaks the drag and drop animation for reasons
       // that aren't clear right now. It doesn't hurt anything but it shouldn't
@@ -334,7 +338,7 @@ class WfModule extends React.Component {
           </div>
         </div>
       </div>
-    ));
+    )) || null;
   }
 }
 
@@ -348,7 +352,9 @@ WfModule.propTypes = {
   'data-api':           PropTypes.object.isRequired,
   'connectDragSource':  PropTypes.func,
   'connectDropTarget':  PropTypes.func,
+  'connectDragPreview':  PropTypes.func,
   'focusModule':        PropTypes.func
 };
 
+export { WfModule };
 export default sortableWfModule(WfModule);

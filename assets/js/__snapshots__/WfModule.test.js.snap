@@ -2,6 +2,7 @@
 
 exports[`WfModule, not read-only mode Renders and calls functions on componentDidMount and render 1`] = `
 <WfModule
+  connectDragPreview={[Function]}
   connectDragSource={[Function]}
   connectDropTarget={[Function]}
   data-api={
@@ -45,13 +46,5 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
   focusModule={[Function]}
   startDrag={[Function]}
   stopDrag={[Function]}
->
-  <div
-    onClick={[Function]}
-  >
-    <div
-      className="wf-card mx-auto"
-    />
-  </div>
-</WfModule>
+/>
 `;

@@ -54,6 +54,7 @@ describe('WfModule, not read-only mode', () => {
         'data-api': mockApi,
         'connectDragSource': jest.fn(),
         'connectDropTarget': jest.fn(),
+        'connectDragPreview': jest.fn(),
         'focusModule': jest.fn(),
         'startDrag' : jest.fn(),
         'stopDrag' : jest.fn()
