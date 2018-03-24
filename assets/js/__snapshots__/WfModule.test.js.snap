@@ -1,10 +1,15 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WfModule, NOT read-only mode - DUMMY TEST ONLY Renders and calls functions on componentDidMount and render 1`] = `
+exports[`WfModule, not read-only mode Renders and calls functions on componentDidMount and render 1`] = `
 <WfModule
   connectDragSource={[Function]}
   connectDropTarget={[Function]}
-  data-api={Object {}}
+  data-api={
+    Object {
+      "onParamChanged": [Function],
+      "postParamEvent": [Function],
+    }
+  }
   data-changeParam={[Function]}
   data-isReadOnly={false}
   data-removeModule={[Function]}
@@ -12,14 +17,34 @@ exports[`WfModule, NOT read-only mode - DUMMY TEST ONLY Renders and calls functi
   data-selected={true}
   data-wfmodule={
     Object {
+      "id": 999,
       "module_version": Object {
-        "module": Object {},
+        "module": Object {
+          "id_name": "loadurl",
+        },
       },
       "notes": Array [],
-      "parameter_vals": Array [],
+      "parameter_vals": Array [
+        Object {
+          "id": 100,
+          "parameter_spec": Object {
+            "id_name": "url",
+            "type": "string",
+          },
+        },
+        Object {
+          "id": 101,
+          "parameter_spec": Object {
+            "id_name": "version_select",
+            "type": "custom",
+          },
+        },
+      ],
     }
   }
   focusModule={[Function]}
+  startDrag={[Function]}
+  stopDrag={[Function]}
 >
   <div
     onClick={[Function]}

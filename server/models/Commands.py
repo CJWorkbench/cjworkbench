@@ -6,6 +6,10 @@ from django.dispatch import receiver
 from server.models import Workflow, WfModule, ParameterVal, Delta, ModuleVersion
 from server.triggerrender import notify_client_workflow_version_changed
 import json
+import logging
+import threading
+
+logger = logging.getLogger(__name__)
 
 # --- Utilities ---
 
@@ -96,6 +100,8 @@ def addmodulecommand_delete_callback(sender, instance, **kwargs):
         instance.wf_module.delete()
 
 
+delete_lock = threading.Lock()
+
 # Deletion works by simply "orphaning" the wf_module, setting its workflow reference to null
 class DeleteModuleCommand(Delta):
     # must not have cascade on WfModule because we may delete it first when we are deleted
@@ -125,24 +131,33 @@ class DeleteModuleCommand(Delta):
 
     @staticmethod
     def create(wf_module):
-        description = 'Deleted \'' + wf_module.get_module_name() + '\' module'
 
-        workflow = wf_module.workflow                                   # about to be set to null, so save it
-        delta = DeleteModuleCommand.objects.create(
-            workflow=workflow,
-            wf_module=wf_module,
-            selected_wf_module=workflow.selected_wf_module,
-            command_description=description)
-        delta.forward()
-        notify_client_workflow_version_changed(workflow)
-        return delta
+        # critical section to make double delete check work correctly
+        with delete_lock:
+            workflow = wf_module.workflow
+            if workflow is None:
+                return None     # this wfm was already deleted, do nothing
 
-# When we are deleted, delete the module if it's not in use by the Workflow (if we are currently applied)
+            description = 'Deleted \'' + wf_module.get_module_name() + '\' module'
+            delta = DeleteModuleCommand.objects.create(
+                workflow=workflow,
+                wf_module=wf_module,
+                selected_wf_module=workflow.selected_wf_module,
+                command_description=description)
+            delta.forward()
+            notify_client_workflow_version_changed(workflow)
+            return delta
+
+# When we are deleted, delete the module if it's not in use by the Workflow (i.e. if we are currently applied)
 @receiver(pre_delete, sender=DeleteModuleCommand, dispatch_uid='deletemodulecommand')
 def deletemodulecommand_delete_callback(sender, instance, **kwargs):
     if instance.applied == True:
-        if WfModule.objects.filter(id=instance.wf_module.id).exists():  # should never happen that we double-delete -- bug?
+        try:
+            # We've had cases where two DeleteModuleCommands pointed to the same wf, due to race conditions
+            # (now fixed via delete_lock). To prevent future similar fails, wrap the delete in a try
             instance.wf_module.delete()
+        except Exception as e:
+            logger.exception("Error deleting wf_module for DeleteModuleCommand " + str(instance))
 
 
 class ReorderModulesCommand(Delta):

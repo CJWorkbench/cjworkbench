@@ -13,6 +13,7 @@ import {
   clearNotificationsAction,
   setSelectedWfModuleAction
 } from '../workflow-reducer'
+import { findDOMNode } from 'react-dom'
 import PropTypes from 'prop-types'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 import { sortableWfModule } from "./WfModuleDragDropConfig";
@@ -29,6 +30,7 @@ class WfModule extends React.Component {
     super(props);
     this.initFields(props);
     this.click = this.click.bind(this);
+    this.changeParam = this.changeParam.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
     this.removeModule = this.removeModule.bind(this);
@@ -119,18 +121,22 @@ class WfModule extends React.Component {
     store.dispatch(setSelectedWfModuleAction(this.wf_module.id));
   }
 
+  changeParam(id, payload) {
+    this.props['data-changeParam'](id, payload)
+  }
+
   // These functions allow parameters to access each others value (text params only)
   // Used e.g. for custom UI elements to save/restore their state from hidden parameters
   // Suppresses reassignment of the same text, which can be important to avoid endless notification loops
-  setParamText(id_name, text) {
-    var p = this.params.find( p => p.parameter_spec.id_name == id_name );
+  setParamText(paramIdName, text) {
+    var p = this.params.find( p => p.parameter_spec.id_name == paramIdName );
     if (p && text != p.string) {
       this.props['data-changeParam'](p.id, { value: text })
     }
   }
 
-  getParamText(id_name) {
-    var p = this.params.find( p => p.parameter_spec.id_name == id_name );
+  getParamText(paramIdName) {
+    var p = this.params.find( p => p.parameter_spec.id_name == paramIdName );
     if (p) {
       return p.value;
     }
@@ -192,7 +198,7 @@ class WfModule extends React.Component {
           isReadOnly={this.props['data-isReadOnly']}
           key={i}
           p={ps}
-          changeParam={this.props['data-changeParam']}
+          changeParam={this.changeParam}
           wf_module_id={this.wf_module.id}
           revision={this.revision}
           updateSettings={updateSettings}
@@ -201,7 +207,8 @@ class WfModule extends React.Component {
           setClickNotification={this.setClickNotification}
           notifications={this.props['data-wfmodule'].notifications}
           loggedInUser={this.props['data-user']}
-          toggleDrag={this.props.toggleDrag}
+          startDrag={this.props.startDrag}
+          stopDrag={this.props.stopDrag}
         />)
       });
 

@@ -1,0 +1,17 @@
+{%  extends 'base_no_intercom.html' %}
+{% load render_bundle from webpack_loader %}
+{% load account %}
+
+{% block title %}
+    404 Page not found
+{% endblock %}
+
+
+{% block head %}
+  {% render_bundle 'login' 'css' %}
+{% endblock %}
+
+{% block body %}
+    <h1>Page not found</h1>
+    {% render_bundle 'login' 'js' %}
+{% endblock %}

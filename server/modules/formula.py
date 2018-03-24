@@ -14,7 +14,7 @@ class Formula(ModuleImpl):
         if formula == '':
             return table    # nop if no formula
 
-        colnames = list(table.columns)
+        colnames = [x.replace(" ", "_") for x in table.columns]  # spaces to underscores in column names
         newcol = pd.Series(np.zeros(len(table)))
 
         # Catch errors with the formula and display to user

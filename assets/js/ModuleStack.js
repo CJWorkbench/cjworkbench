@@ -15,7 +15,8 @@ class ModuleStack extends React.Component {
 
   constructor(props) {
     super(props);
-    this.toggleDrag = this.toggleDrag.bind(this);
+    this.startDrag = this.startDrag.bind(this);
+    this.stopDrag = this.stopDrag.bind(this);
     this.scrollRef = null;
     this.setScrollRef = this.setScrollRef.bind(this);
     // Debounced so that execution is cancelled if we start
@@ -26,8 +27,12 @@ class ModuleStack extends React.Component {
     }
   }
 
-  toggleDrag() {
-    this.setState({ canDrag: !this.state.canDrag });
+  startDrag() {
+    this.setState({ canDrag: true });
+  }
+
+  stopDrag() {
+    this.setState({ canDrag: false });
   }
 
   setScrollRef(ref) {
@@ -51,7 +56,7 @@ class ModuleStack extends React.Component {
     if (!this.props.wf_modules || this.props.wf_modules.length === 0) {
       return (
         this.props.connectDropTarget(
-          <div className={'modulestack-empty mx-auto d-flex align-items-center justify-content-center ' + (this.props.dragItem ? 'dragging' : '')}>
+          <div className={'modulestack-empty d-flex align-items-center justify-content-center ' + (this.props.dragItem ? 'dragging' : '')}>
             <span className={'title-3 ml-4 ' + (this.props.dragItem ? 't-d-blue' : 't-orange')}>
               DROP MODULE HERE
             </span>
@@ -77,8 +82,7 @@ class ModuleStack extends React.Component {
           moduleName={item.name}
           moduleIcon={item.icon}
           focusModule={this.focusModule}
-          isSelected={true}
-        />;
+          isSelected={true} />;
       }
       let childProps = {
         'data-isReadOnly': this.props.workflow.read_only,
@@ -96,7 +100,8 @@ class ModuleStack extends React.Component {
         drop: this.drop,
         key: item.id,
         canDrag: this.state.canDrag,  // governs drag-ability of WfModule - how do we change this from events in <WfParameter>?
-        toggleDrag: this.toggleDrag,
+        startDrag: this.startDrag,
+        stopDrag: this.stopDrag,
         focusModule: this.focusModule,
         setSelectedModuleRef: this.setSelectedModuleRef,
       };
@@ -172,4 +177,3 @@ export default flow(
   ),
   DropTarget('module', targetSpec, targetCollect)
 )(ModuleStack);
-

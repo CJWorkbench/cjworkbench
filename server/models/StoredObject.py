@@ -14,11 +14,9 @@ class StoredObject(models.Model):
     wf_module = models.ForeignKey('WfModule', related_name='stored_objects', on_delete=models.CASCADE)
 
     # What format is this data in? Byte stream (used for uploaded file) or a Pandas table serialization?
-    UPLOADED_FILE = 'UPLOADED_FILE'
     FETCHED_TABLE = 'FETCHED_TABLE'
     CACHED_TABLE = 'CACHED_TABLE'
     TYPE_CHOICES = (
-        (UPLOADED_FILE, 'UPLOADED_FILE'),
         (FETCHED_TABLE, 'FETCHED_TABLE'),
         (CACHED_TABLE, 'CACHED_TABLE')
     )
@@ -31,11 +29,7 @@ class StoredObject(models.Model):
     # used only for stored tables
     hash = models.CharField(max_length=32)
     metadata = models.CharField(default=None, max_length=255, null=True)
-
-    # these fields only used for uploaded files
-    name = models.CharField(default=None, max_length=255, null=True)
-    size = models.IntegerField(default=0)
-    uuid = models.CharField(default=None, max_length=255, null=True)
+    size = models.IntegerField(default=0) # file size
 
     # keeping track of whether this version of the data has ever been loaded
     # and delivered to the frontend
@@ -64,7 +58,6 @@ class StoredObject(models.Model):
         h = h if h>0 else -h              # stay positive (sum often overflows)
         return str(h)
 
-    # Built in serialization of Pandas dataframes
     @staticmethod
     def create_table(wf_module, type, table, metadata=None):
         if table is None or table.empty:
@@ -103,7 +96,7 @@ class StoredObject(models.Model):
             hash=hash
         )
 
-    # why store an empty table? so we dont't have to re-render to know that the output was none
+    # why store an empty table? so we don't have to re-render to know that the output was empty
     @staticmethod
     def __create_empty_table(wf_module, type, metadata):
         return StoredObject.objects.create(
@@ -139,12 +132,10 @@ class StoredObject(models.Model):
         new_so = StoredObject.objects.create(wf_module=to_wf_module,
                                              stored_at=self.stored_at,
                                              type=self.type,
-                                             name=self.name,
                                              hash=self.hash,
                                              metadata=self.metadata,
                                              file = new_path,
-                                             size = self.size,
-                                             uuid = self.uuid)
+                                             size = self.size)
         return new_so
 
 

@@ -35,7 +35,10 @@ const SET_DATA_VERSION = 'SET_DATA_VERSION';
 const MARK_DATA_VERSIONS_READ = 'MARK_DATA_VERSIONS_READ';
 const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS';
 
-let api = WorkbenchAPI(); // var so it can be mocked for testing
+// Sometimes, do nothing
+export const NOP_ACTION = 'NOP_ACTION';
+
+var api = WorkbenchAPI(); // var so it can be mocked for testing
 
 export function mockAPI(mock_api) {
   api = mock_api;
@@ -100,8 +103,45 @@ export function findIdxByProp(searchArray, searchProp, searchValue) {
     }
   }
   return returnIdx;
-};
+}
 
+export function findParamIdxByIdName(wf_module, paramIdName) {
+  let paramIdx;
+  let len = wf_module.parameter_vals.length;
+  for(let i = 0; i < len; i++) {
+    if (wf_module.parameter_vals[i].parameter_spec.id_name === paramIdName) {
+      paramIdx = i;
+      break;
+    }
+  }
+  if (paramIdx === len)
+    return undefined;  // not found
+  return paramIdx;
+}
+
+// find module that contains parameter
+export function paramIdToIndices(workflow, paramId) {
+
+  let modules = workflow.wf_modules;
+  for(let wfModuleIdx = 0; wfModuleIdx < modules.length; wfModuleIdx ++) {
+
+    let params = modules[wfModuleIdx ].parameter_vals;
+    for(let paramIdx = 0; paramIdx < params.length; paramIdx++) {
+
+      if (params[paramIdx].id === paramId) {
+        return {
+          wfModuleIdx,
+          paramIdx
+        }
+      }
+    }
+  }
+
+  return {
+    wfModuleIdx : undefined,
+    paramIdx : undefined
+  }
+}
 
 // ---- Actions ----
 
@@ -403,7 +443,7 @@ export function setWfLibraryCollapseAction(workflow_id, isCollapsed, isReadOnly)
 }
 registerReducerFunc(SET_WF_LIBRARY_COLLAPSE + '_PENDING', (state, action) => {
   return update(state, {
-    workflow: 
+    workflow:
       {module_library_collapsed: {$set: action.payload.module_library_collapsed}
   }});
 });
@@ -585,55 +625,54 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
 // -- Parameters --
 
 // SET_PARAM_VALUE
-export function setParamValueAction(wfModuleId, paramIdName, paramValue) {
-    let state = store.getState();
-    let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleId);
-    let paramIdx;
-    for(let i = 0; i < state.workflow.wf_modules[wfModuleIdx].parameter_vals.length; i++) {
-      if (state.workflow.wf_modules[wfModuleIdx].parameter_vals[i].parameter_spec.id_name === paramIdName) {
-        paramIdx = i;
-        break;
-      }
-    }
-    let paramRef = state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx];
+
+// Internal API, requires all indices
+function setParamValueAction_base(state, wfModuleIdx, paramIdx, paramId, newValue) {
+
+  // Suppress changing to the same value (don't trigger expensive HTTP request)
+  let oldValue = state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx].value;
+  if (newValue.value === oldValue)
     return {
-      type: SET_PARAM_VALUE,
-      payload: {
-        promise: api.onParamChanged(paramRef.id, {value: paramValue}),
-        data: {
-          wfModuleId,
-          paramId: paramRef.id,
-          paramValue
-        }
+      type : NOP_ACTION,
+      payload : {}
+    };
+
+  return {
+    type: SET_PARAM_VALUE,
+    payload: {
+      promise: api.onParamChanged(paramId, newValue),
+      data: {
+        paramId,
+        paramValue: newValue.value
       }
     }
-}
-registerReducerFunc(SET_PARAM_VALUE + '_PENDING', (state, action) => {
-  let wfModuleIdx, paramIdx;
-
-  // TODO: We're finding these values twice because we don't want to depend on the
-  // indexes of the wfmodule or paramaterval we got in the action creator.
-  // One way to fix this would be to pass the parameter ID to the action creator
-  // directly instead of module ID and parameter ID name.
-
-  wfModuleIdx = findIdxByProp(
-    state.workflow.wf_modules,
-    'id',
-    action.payload.wfModuleId
-  );
-
-  if (typeof wfModuleIdx !== 'undefined') {
-    paramIdx = findIdxByProp(
-      state.workflow.wf_modules[wfModuleIdx].parameter_vals,
-      'id',
-      action.payload.paramId
-    );
   }
+}
 
-  if (typeof paramIdx !== 'undefined' &&
-    action.payload.paramValue !== state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx].value) {
-    // TODO: This is better than before, but I wonder if there's a way to store something like "indexes"
-    // or "facets" on the store so we could lookup or change different kinds of objects by ID quickly
+// Most common form
+export function setParamValueAction(paramId, paramValue) {
+  let state = store.getState();
+  let { wfModuleIdx, paramIdx } = paramIdToIndices(state.workflow, paramId);
+  return setParamValueAction_base(state, wfModuleIdx, paramIdx, paramId, paramValue);
+}
+
+// This action creator is used when we don't have a parameter id
+export function setParamValueActionByIdName(wfModuleId, paramIdName, paramValue) {
+  let state = store.getState();
+  let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleId);
+  let paramIdx = findParamIdxByIdName(state.workflow.wf_modules[wfModuleIdx], paramIdName);
+  let paramId = state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx].id;
+  return setParamValueAction_base(state, wfModuleIdx, paramIdx, paramId, paramValue)
+}
+
+registerReducerFunc(SET_PARAM_VALUE + '_PENDING', (state, action) => {
+
+  // Find the index of the module in the stack and the parameter in the module
+  // We may have done this in the action creator, but don't want to rely on stable indices
+  let { wfModuleIdx, paramIdx } = paramIdToIndices(state.workflow, action.payload.paramId);
+
+  if (typeof paramIdx !== 'undefined' ) {
+
     return update(state, {
       workflow: {
         wf_modules: {

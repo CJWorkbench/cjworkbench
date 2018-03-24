@@ -1,9 +1,9 @@
 /**
  * A component that holds a single module that is then contained within the
  * Module Library.
- * 
+ *
  * Rendered by ModuleCategories.
- * 
+ *
  * The render function here will drive the "card" of each module within
  * the library.
  */
@@ -11,7 +11,8 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
-import { getEmptyImage } from 'react-dnd-html5-backend'
+import { getEmptyImage } from 'react-dnd-html5-backend';
+import debounce from 'lodash/debounce';
 
 // TODO: gather all functions for dragging into one utility file
 const spec = {
@@ -51,18 +52,26 @@ function collect(connect, monitor) {
 class Module extends React.Component {
   constructor(props) {
     super(props);
-    this.itemClick = this.itemClick.bind(this);
+    // debounce itemClick, because people have a tendency to double-click
+    // the module names to add them.
+    // We can't just capture the doubleClick event because the onClick handler
+    // prevents us from doing so: https://stackoverflow.com/questions/25777826/onclick-works-but-ondoubleclick-is-ignored-on-react-component#25780754
+    this.itemClick = debounce(this.itemClick.bind(this), 1000, {
+      // Call the callback immediately, suppress subsequent calls
+      leading: true,
+      trailing: false
+    });
   }
 
   itemClick(evt) {
-    if (!this.props.isReadOnly) 
+    if (!this.props.isReadOnly)
       this.props.addModule(this.props.id, {
         name: this.props.name,
         icon: this.props.icon
       });
     // collapse category after click when library is closed
-    if (!this.props.libraryOpen)     
-      this.props.setOpenCategory(null); 
+    if (!this.props.libraryOpen)
+      this.props.setOpenCategory(null);
   }
 
   componentDidMount() {
@@ -74,10 +83,10 @@ class Module extends React.Component {
   }
 
   componentWillReceiveProps(newProps) {
-    if (newProps.isDragging !== this.props.isDragging 
+    if (newProps.isDragging !== this.props.isDragging
         && newProps.isDragging
         && !this.props.libraryOpen
-      ) 
+      )
       this.props.setOpenCategory(null);
   }
 
@@ -118,7 +127,7 @@ Module.propTypes = {
   dropModule:       PropTypes.func,
   isReadOnly:       PropTypes.bool.isRequired,
   setOpenCategory:  PropTypes.func.isRequired,
-  libraryOpen:      PropTypes.bool.isRequired,  
+  libraryOpen:      PropTypes.bool.isRequired,
 };
 
 export default DragSource('module', spec, collect)(Module);
