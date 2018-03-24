@@ -105,9 +105,7 @@ class WfModule extends React.Component {
 
   // Scroll when we create a new wfmodule
   componentDidMount() {
-    console.log('componentdidmount fired');
     if (this.props['data-selected']) {
-      console.log('focusmodule shouldve been called');
       this.props.focusModule(this.moduleRef);
     }
 
