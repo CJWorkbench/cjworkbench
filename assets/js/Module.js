@@ -30,10 +30,10 @@ const spec = {
       const result = monitor.getDropResult();
       props.dropModule(
         result.source.id,
-        result.source.index,
+        result.source.target,
         {
           name: result.source.name,
-          icon: result.source.icon
+          icon: result.source.icon,
         }
       );
     }

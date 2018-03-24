@@ -38,29 +38,33 @@
   transition: all 0.1s ease-out;
 }
 
-/*.wf-card:before {
-  content: ' ';
-  position:relative;
-  display:block;
-  top: -0.5rem;
-  height: 0.5rem;
-  background-color: #7A9BB0;
-  opacity:0.5;
-  padding-bottom:0;
+.over {
+  position: relative;
 }
 
-.modulestack-list:after {
-  width: 26rem;
-  margin: 0 auto;
+.over.top:before, .over.bottom:after {
   content: ' ';
-  position:relative;
   display:block;
+  width: 26rem;
+  margin:0 auto;
+  height:0;
+  padding-bottom:0.5rem;
+  border-bottom:0.5rem solid #7A9BB0;
+  position:relative;
   top: -0.5rem;
-  height: 0.5rem;
-  background-color: #7A9BB0;
-  opacity:0.5;
-  padding-bottom:0;
-}*/
+}
+
+.modulestack.over .modulestack-list:after {
+  content: ' ';
+  display:block;
+  width: 26rem;
+  margin:0 auto;
+  height:0;
+  padding-bottom:0.5rem;
+  border-bottom:0.5rem solid #7A9BB0;
+  position:relative;
+  top: -0.5rem;
+}
 
 .wf-card:hover{
   background:#F5F7F8;

@@ -93,6 +93,12 @@ class WfModule extends React.Component {
         isCollapsed: newProps['data-wfmodule'].is_collapsed
       })
     }
+
+    if(!newProps.isDragging && this.state.dragPosition) {
+      this.setState({
+        dragPosition: null
+      })
+    }
   }
 
   // Scroll when we create a new wfmodule
@@ -105,7 +111,7 @@ class WfModule extends React.Component {
 			// IE fallback: specify that we'd rather screenshot the node
 			// when it already knows it's being dragged so we can hide it with CSS.
 			captureDraggingState: true,
-		})
+		});
   }
 
   // We become the selected module on any click
@@ -261,14 +267,14 @@ class WfModule extends React.Component {
     var moduleIcon = 'icon-' + this.module.icon + ' WFmodule-icon mr-2';
 
     // Putting it all together: name, status, parameters, output
-    return (
+    return this.props.connectDropTarget(this.props.connectDragSource(
       // Removing this outer div breaks the drag and drop animation for reasons
       // that aren't clear right now. It doesn't hurt anything but it shouldn't
       // be necessary either.
-      <div onClick={this.click}>
+      <div onClick={this.click} className={(this.props.isOver ? ('over ' + this.state.dragPosition) : '')}>
         {notes}
         <div className='wf-card mx-auto' ref={this.setModuleRef}>
-        {this.props.connectDropTarget(this.props.connectDragSource(
+
           <div>
             <div className='output-bar-container'>
               <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
@@ -319,10 +325,9 @@ class WfModule extends React.Component {
               } />
 
           </div>
-        ))}
         </div>
       </div>
-    );
+    ));
   }
 }
 

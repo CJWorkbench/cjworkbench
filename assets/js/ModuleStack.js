@@ -22,8 +22,7 @@ class ModuleStack extends React.Component {
     // another animation. See note on focusModule definition.
     this.focusModule = debounce(this.focusModule.bind(this), 200);
     this.state = {
-      canDrag: true,
-      justDropped: false
+      canDrag: true
     }
   }
 
@@ -114,12 +113,14 @@ class ModuleStack extends React.Component {
 
     }, this);
     return (
-      <div className={ "modulestack" + (this.props.focus ? " focus": "") }
-           onClick={ this.props.setFocus } ref={ this.setScrollRef }>
+      <div className={ "modulestack" + (this.props.focus ? " focus": "") + (this.props.isOver ? " over": "") }
+           onClick={ this.props.setFocus }
+           ref={ this.setScrollRef }>
         {this.props.connectDropTarget(
         <div className={"modulestack-list mx-auto " + ((this.props.dragItem && this.props.canDrop) ? 'dragging' : '')}>
-          {listItems}
-
+          <FlipMove duration={100} easing="ease-out" enterAnimation={enterAnimation} leaveAnimation={exitAnimation}>
+            {listItems}
+          </FlipMove>
         </div>)}
       </div>
     )
@@ -139,34 +140,21 @@ ModuleStack.propTypes = {
 // ---- Sortable WfModules within the workflow ----
 const targetSpec = {
   drop (props, monitor, component) {
-    const source = monitor.getItem();
-    const target = props.index;
-    // Replace this with optimistic updates via redux
-    component.setState({
-      justDropped:true
-    });
-    return {
-      source,
-      target
-    }
-  },
-
-  hover (props, monitor, component) {
     if (monitor.isOver({shallow: true})) {
-      let item = monitor.getItem();
-      if (item.index === false) {
-        let targetIndex = component.props.workflow.wf_modules.length;
-        store.dispatch(insertPlaceholderAction(monitor.getItem(), targetIndex));
-        monitor.getItem().index = targetIndex;
+      const source = monitor.getItem();
+      source.target = component.props.workflow.wf_modules.length;
+      return {
+        source
       }
     }
   }
+  //TODO: Implement a hover function that lets us know if we're at the top of the module stack
 };
 
 function targetCollect(connect, monitor) {
   return {
     connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
+    isOver: monitor.isOver({shallow:true}),
     canDrop: monitor.canDrop(),
     dragItem: monitor.getItem()
   }
@@ -178,14 +166,9 @@ const mapStateToProps = (state) => {
   }
 };
 
-const mapDispatchToProps = {
-  insertPlaceholderAction,
-};
-
 export default flow(
   connect(
     mapStateToProps,
-    mapDispatchToProps
   ),
   DropTarget('module', targetSpec, targetCollect)
 )(ModuleStack);

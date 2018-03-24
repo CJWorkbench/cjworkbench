@@ -16,8 +16,6 @@ const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE';
 const SET_WORKFLOW_PUBLIC = 'SET_WORKFLOW_PUBLIC';
 const SET_WF_LIBRARY_COLLAPSE = 'SET_WF_LIBRARY_COLLAPSE';
 const REORDER_WFMODULES = 'REORDER_WFMODULES';
-const INSERT_PLACEHOLDER = 'INSERT_PLACEHOLDER';
-const REORDER_PLACEHOLDER = 'REORDER_PLACEHOLDER';
 
 // User
 const GET_CURRENT_USER = 'GET_CURRENT_USER';
@@ -184,16 +182,20 @@ export function setWorkflowPublicAction(workflowId, isPublic) {
 export function reorderWfModulesAction(wfModuleID, newIndex) {
   let state = store.getState();
   let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleID);
-
-  newIndex = (wfModuleIdx < newIndex) ? newIndex - 1 : newIndex;
-
+  if (wfModuleIdx === newIndex) {
+    return {
+      type: 'NOOP'
+    };
+  }
+  if (wfModuleIdx < newIndex) {
+    newIndex -= 1;
+  }
   let newState = update(state, {
     workflow: {
       wf_modules: {$swap: [wfModuleIdx, newIndex]}
     }
   });
-
-  let newOrder = newState.workflow.wf_modules.map( (item, i) => ({ id: item.id, order: i }) );
+  let newOrder = newState.workflow.wf_modules.map( (item, i) => {return { id: item.id, order: i } } );
 
   return {
     type: REORDER_WFMODULES,
@@ -210,43 +212,6 @@ registerReducerFunc(REORDER_WFMODULES + '_PENDING', (state, action) => {
     }
   });
 });
-
-// INSERT_PLACEHOLDER
-export function insertPlaceholderAction(placeholder, insertBefore) {
-  return {
-    type: INSERT_PLACEHOLDER,
-    payload: {
-      item: placeholder,
-      insertBefore: insertBefore
-    }
-  }
-}
-registerReducerFunc(INSERT_PLACEHOLDER, (state, action) => {
-  return update(state, {
-    workflow: {
-      wf_modules: {$splice: [[action.payload.insertBefore, 0, action.payload.item]]}
-    }
-  })
-});
-
-// REORDER_PLACEHOLDER
-export function reorderPlaceholderAction(sourceIndex, targetIndex) {
-  return {
-    type: REORDER_PLACEHOLDER,
-    payload: {
-      sourceIndex,
-      targetIndex
-    }
-  }
-}
-registerReducerFunc(REORDER_PLACEHOLDER, (state, action) => {
-  return update(state, {
-    workflow: {
-      wf_modules: {$swap: [action.payload.sourceIndex, action.payload.targetIndex]}
-    }
-  });
-});
-
 
 // ADD_MODULE
 // Add a module, then save the new module as the selected workflow
@@ -299,7 +264,7 @@ registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
 
   return update(state, {
     workflow: {
-      wf_modules: { $splice:[ [insertBefore, , action.payload] ] }
+      wf_modules: { $splice:[ [insertBefore, 0, action.payload] ] }
     }
   });
 });

@@ -13,10 +13,14 @@ export const targetSpec = {
   drop(props, monitor, component) {
     if (monitor.getItemType() === 'module') {
       const source = monitor.getItem();
-      const target = props.index;
+      source.target = props.index;
+      // If we're dragging up and we're dropping on the bottom half of the target:
+      if (component.state.dragPosition === 'bottom') {
+        source.target += 1;
+      }
+      source.position = component.state.dragPosition;
       return {
-        source,
-        target
+        source
       }
     }
 
@@ -30,33 +34,21 @@ export const targetSpec = {
 
   hover(props, monitor, component) {
     if (monitor.getItemType() === 'module') {
-      const sourceIndex = monitor.getItem().index;
-      const targetIndex = props.index;
-      if (sourceIndex === targetIndex) {
-        return;
-      }
-      const targetBoundingRect = findDOMNode(component).getBoundingClientRect();
+      const targetBoundingRect = component.moduleRef.getBoundingClientRect();
       const targetMiddleY = (targetBoundingRect.bottom - targetBoundingRect.top) / 2;
       const mouseY = monitor.getClientOffset();
       const targetClientY = mouseY.y - targetBoundingRect.top;
 
-      if (sourceIndex === false) {
-        store.dispatch(insertPlaceholderAction(monitor.getItem(), targetIndex));
-        monitor.getItem().index = targetIndex;
-      } else {
+      if (targetClientY > targetMiddleY && component.state.dragPosition !== 'bottom') {
+        component.setState({
+          dragPosition: 'bottom'
+        });
+      }
 
-        // dragging down
-        if (sourceIndex < targetIndex && targetClientY < targetMiddleY) {
-          return;
-        }
-
-        // dragging up
-        if (sourceIndex > targetIndex && targetClientY > targetMiddleY) {
-          return;
-        }
-
-        store.dispatch(reorderPlaceholderAction(sourceIndex, targetIndex));
-        monitor.getItem().index = targetIndex;
+      if (targetClientY < targetMiddleY && component.state.dragPosition !== 'top') {
+        component.setState({
+          dragPosition: 'top'
+        });
       }
     }
   }
@@ -76,7 +68,7 @@ export const sourceSpec = {
   beginDrag(props) {
     return {
       type: 'module',
-      index: false,
+      index: props.index,
       id: props['data-wfmodule'].module_version.module.id,
       name: props['data-wfmodule'].module_version.module.name,
       icon: props['data-wfmodule'].module_version.module.icon,
@@ -86,8 +78,8 @@ export const sourceSpec = {
   },
   endDrag(props, monitor) {
     if (monitor.didDrop()) {
-      const {source} = monitor.getDropResult();
-      store.dispatch(reorderWfModulesAction(source.wfModuleId, source.index));
+      const { source } = monitor.getDropResult();
+      store.dispatch(reorderWfModulesAction(source.wfModuleId, source.target, source.position));
     }
   },
   // when False, drag is disabled
