@@ -3,6 +3,7 @@
 // Display error message, if any
 // BUG - Tying this to Props will ensure that error message stays displayed, even after resolution
 import React from "react";
+import PropTypes from "prop-types";
 
 export default class StatusLine extends React.Component {
   render() {
@@ -14,4 +15,9 @@ export default class StatusLine extends React.Component {
       return false
     }
   }
+}
+
+StatusLine.PropTypes = {
+  status: PropTypes.string,
+  error_msg: PropTypes.string
 }

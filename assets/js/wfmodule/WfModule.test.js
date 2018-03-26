@@ -1,6 +1,6 @@
 import React from 'react'
-import { WfModule } from './wfmodule/WfModule'
-import { okResponseMock } from './utils'
+import { WfModule } from './WfModule'
+import { okResponseMock } from '../utils'
 import { mount } from 'enzyme'
 
 describe('WfModule, not read-only mode', () => {
