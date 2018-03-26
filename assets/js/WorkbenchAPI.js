@@ -1,7 +1,7 @@
 // Wraps all API calls. Useful both to centralize and abstract these calls,
 // also for dependency injection for testing
 
-import { csrfToken } from './utils'
+import {csrfToken, getPageID} from './utils'
 
 const apiHeaders = {
   'Accept': 'application/json',
@@ -49,6 +49,21 @@ class WorkbenchAPI {
             'X-CSRFToken': csrfToken
           }
         }
+      )
+    )
+  }
+
+  reorderWfModules(workflowId, newOrder) {
+    return (
+      fetch('/api/workflows/' + workflowId, {
+        method: 'patch',
+        credentials: 'include',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify(newOrder) }
       )
     )
   }

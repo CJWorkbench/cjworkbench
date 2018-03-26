@@ -154,8 +154,13 @@ export default class TableView extends React.Component {
     var ncols = 0;
     var gridView = null;
     if (this.props.id && this.state.tableData && this.state.tableData.total_rows>0) {
+      // DataGrid is the heaviest DOM tree we have, and it effects the
+      // performance of the custom drag layer (and probably everything else). By
+      // putting a no-op translate3d property on it, we coerce browsers into
+      // rendering it and all of its children in a seperate compositing layer,
+      // improving the rendering of everything else in the app.
       gridView =
-        <div className="outputpane-data">
+        <div className="outputpane-data" style={{transform:'translate3d(0, 0, 0)'}}>
           <DataGrid
             totalRows={this.state.tableData.total_rows}
             columns={this.state.tableData.columns}

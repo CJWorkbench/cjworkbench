@@ -8,12 +8,15 @@
 import React from 'react';
 import { DragSource } from 'react-dnd';
 import { store, updateWfModuleAction } from "./workflow-reducer";
+import {getEmptyImage} from "react-dnd-html5-backend";
 
 // TODO: gather all functions for dragging into one utility file
 const spec = {
   beginDrag(props, monitor, component) {
     return {
-      type: 'notification'
+      type: 'notification',
+      name: 'Add Data Alert',
+      icon: 'notification'
     }
   }
 }
@@ -21,6 +24,7 @@ const spec = {
 function collect(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
     isDragging: monitor.isDragging()
   }
 }
@@ -29,6 +33,14 @@ class AddNotificationButtonOpen extends React.Component {
   constructor(props) {
     super(props);
     this.handleClick = this.handleClick.bind(this);
+  }
+
+  componentDidMount() {
+    this.props.connectDragPreview(getEmptyImage(), {
+			// IE fallback: specify that we'd rather screenshot the node
+			// when it already knows it's being dragged so we can hide it with CSS.
+			captureDraggingState: true,
+		})
   }
 
   handleClick() {

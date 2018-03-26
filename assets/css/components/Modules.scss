@@ -306,3 +306,34 @@ svg .svg-background{
   margin-left: 26.5rem;
   height: 4rem;
 }
+
+/* CSS-based drag-and-drop placeholder */
+/* We use :before and :after pseudoelements to avoid DOM manipulation and
+outsource performance optimization to the browser. The .over class is set by
+monitoring the isDragging prop set by the react-dnd higher-order components. */
+.over {
+  position: relative;
+}
+
+.over.top::before, .over.bottom:after {
+  content: ' ';
+  display:block;
+  width: 26rem;
+  margin:0 auto;
+  height:0;
+  padding-bottom:0.5rem;
+  border-bottom:0.5rem solid #7A9BB0;
+  position:relative;
+  top: -0.5rem;
+}
+.modulestack.over .modulestack-list::after {
+  content: ' ';
+  display:block;
+  width: 26rem;
+  margin:0 auto;
+  height:0;
+  padding-bottom:0.5rem;
+  border-bottom:0.5rem solid #7A9BB0;
+  position:relative;
+  top: -0.5rem;
+}

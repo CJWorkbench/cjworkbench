@@ -243,6 +243,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
           />
           <DragSource(AddNotificationButtonOpen)>
             <AddNotificationButtonOpen
+              connectDragPreview={[Function]}
               connectDragSource={[Function]}
               isDragging={false}
             >
@@ -773,6 +774,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           >
                             <Module
                               addModule={[Function]}
+                              connectDragPreview={[Function]}
                               connectDragSource={[Function]}
                               dropModule={[Function]}
                               icon="url"
@@ -831,6 +833,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           >
                             <Module
                               addModule={[Function]}
+                              connectDragPreview={[Function]}
                               connectDragSource={[Function]}
                               dropModule={[Function]}
                               icon="url"
@@ -958,6 +961,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           >
                             <Module
                               addModule={[Function]}
+                              connectDragPreview={[Function]}
                               connectDragSource={[Function]}
                               dropModule={[Function]}
                               icon="chart"
@@ -1095,6 +1099,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           >
                             <Module
                               addModule={[Function]}
+                              connectDragPreview={[Function]}
                               connectDragSource={[Function]}
                               dropModule={[Function]}
                               icon="url"
@@ -1153,6 +1158,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           >
                             <Module
                               addModule={[Function]}
+                              connectDragPreview={[Function]}
                               connectDragSource={[Function]}
                               dropModule={[Function]}
                               icon="url"
@@ -1280,6 +1286,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                           >
                             <Module
                               addModule={[Function]}
+                              connectDragPreview={[Function]}
                               connectDragSource={[Function]}
                               dropModule={[Function]}
                               icon="url"
@@ -1340,6 +1347,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
           />
           <DragSource(AddNotificationButtonOpen)>
             <AddNotificationButtonOpen
+              connectDragPreview={[Function]}
               connectDragSource={[Function]}
               isDragging={false}
             >

@@ -94,6 +94,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
               >
                 <Module
                   addModule={[Function]}
+                  connectDragPreview={[Function]}
                   connectDragSource={[Function]}
                   dropModule={[Function]}
                   icon="url"
@@ -304,6 +305,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                   >
                     <Module
                       addModule={[Function]}
+                      connectDragPreview={[Function]}
                       connectDragSource={[Function]}
                       dropModule={[Function]}
                       icon="url"
@@ -431,6 +433,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                   >
                     <Module
                       addModule={[Function]}
+                      connectDragPreview={[Function]}
                       connectDragSource={[Function]}
                       dropModule={[Function]}
                       icon="filter"

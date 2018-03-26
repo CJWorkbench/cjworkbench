@@ -71,6 +71,7 @@ exports[`AddNotificationButtonOpen Renders 1`] = `
 >
   <DragSource(AddNotificationButtonOpen)>
     <AddNotificationButtonOpen
+      connectDragPreview={[Function]}
       connectDragSource={[Function]}
       isDragging={false}
     >

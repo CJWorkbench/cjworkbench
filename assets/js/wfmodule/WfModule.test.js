@@ -1,6 +1,6 @@
 import React from 'react'
 import { WfModule } from './WfModule'
-import { okResponseMock } from './utils'
+import { okResponseMock } from '../utils'
 import { mount } from 'enzyme'
 
 describe('WfModule, not read-only mode', () => {
@@ -54,9 +54,10 @@ describe('WfModule, not read-only mode', () => {
         'data-api': mockApi,
         'connectDragSource': jest.fn(),
         'connectDropTarget': jest.fn(),
+        'connectDragPreview': jest.fn(),
         'focusModule': jest.fn(),
         'startDrag' : jest.fn(),
-        'stopDrag' : jest.fn()      
+        'stopDrag' : jest.fn()
       };
 
     wrapper = mount(

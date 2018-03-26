@@ -1,0 +1,37 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Status bar Renders the busy color 1`] = `
+<div
+  className="module-output-bar-orange"
+/>
+`;
+
+exports[`Status bar Renders the default color 1`] = `
+<div
+  className="module-output-bar-white"
+/>
+`;
+
+exports[`Status bar Renders the error color 1`] = `
+<div
+  className="module-output-bar-red"
+/>
+`;
+
+exports[`Status bar Renders the selected ready color 1`] = `
+<div
+  className="module-output-bar-blue"
+/>
+`;
+
+exports[`Status bar Renders the unselected error color 1`] = `
+<div
+  className="module-output-bar-pink"
+/>
+`;
+
+exports[`Status bar Renders the unselected ready color 1`] = `
+<div
+  className="module-output-bar-white"
+/>
+`;
