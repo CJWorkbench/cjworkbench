@@ -1,6 +1,7 @@
 // ---- StatusBar ----
 
 import React from "react";
+import PropTypes from "prop-types";
 
 export default class StatusBar extends React.Component {
   render() {
@@ -25,3 +26,8 @@ export default class StatusBar extends React.Component {
     return <div className={barColor} />
   }
 }
+
+StatusBar.PropTypes = {
+  isSelected: PropTypes.bool,
+  status: PropTypes.string
+};
