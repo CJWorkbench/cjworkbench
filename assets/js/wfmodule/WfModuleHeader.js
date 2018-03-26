@@ -19,7 +19,10 @@ export default class WfModuleHeader extends React.Component {
   }
 
   shouldComponentUpdate(nextProps) {
-    return nextProps.moduleName !== this.props.moduleName;
+    // There's almost certainly a better way to do this. This gets the
+    // job done but I'm sure there's a standard practice around this.
+    return nextProps.moduleName !== this.props.moduleName &&
+      nextProps.isSelected !== this.props.isSelected;
   }
 
   render() {
