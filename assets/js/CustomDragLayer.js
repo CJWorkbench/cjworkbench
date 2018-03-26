@@ -52,6 +52,18 @@ function collect(monitor) {
   }
 }
 
-//TODO: needs proptypes
+CustomDragLayer.PropTypes = {
+  isDragging: PropTypes.bool,
+  itemType: PropTypes.string,
+  item: PropTypes.shape({
+    name: PropTypes.string,
+    icon: PropTypes.string
+  }),
+  getSourceClientOffset: PropTypes.shape({
+    x: PropTypes.number,
+    y: PropTypes.number
+  })
+};
 
+export { CustomDragLayer }; // Export un-decorated component for testing
 export default DragLayer(collect)(CustomDragLayer);
