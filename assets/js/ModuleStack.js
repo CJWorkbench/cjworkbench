@@ -5,7 +5,6 @@ import FlipMove from 'react-flip-move'
 import PropTypes from 'prop-types'
 import SortableWfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
-import WfModulePlaceholder from './wfmodule/WfModulePlaceholder'
 import debounce from 'lodash/debounce'
 import { store, insertPlaceholderAction } from "./workflow-reducer";
 import flow from 'lodash.flow'
@@ -105,10 +104,6 @@ class ModuleStack extends React.Component {
         focusModule: this.focusModule,
         setSelectedModuleRef: this.setSelectedModuleRef,
       };
-
-      if (item.insert) {
-        return <WfModulePlaceholder {...childProps} />
-      }
 
       return (
         <SortableWfModule
