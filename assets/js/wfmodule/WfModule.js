@@ -13,7 +13,6 @@ import {
   clearNotificationsAction,
   setSelectedWfModuleAction
 } from '../workflow-reducer'
-import { findDOMNode } from 'react-dom'
 import PropTypes from 'prop-types'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 import { sortableWfModule } from "./WfModuleDragDropConfig";

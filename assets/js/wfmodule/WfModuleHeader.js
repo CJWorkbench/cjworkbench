@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import StatusBar from './StatusBar';
 
 export default class WfModuleHeader extends React.Component {
@@ -27,7 +28,7 @@ export default class WfModuleHeader extends React.Component {
         <div className='output-bar-container'>
           <StatusBar status="busy" isSelected={this.props.isSelected}/>
         </div>
-        <div className='card-block p-0' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
+        <div className='card-block p-0'>
           <div className='module-card-info'>
             <div className='module-card-header'>
               <div className='module-header-content'>
@@ -43,3 +44,10 @@ export default class WfModuleHeader extends React.Component {
     );
   }
 }
+
+WfModuleHeader.PropTypes = {
+  isSelected: PropTypes.bool,
+  moduleIcon: PropTypes.string,
+  moduleName: PropTypes.string,
+  focusModule: PropTypes.func
+};
