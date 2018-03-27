@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from cjworkbench.models.Profile import UserProfile
 
 class WorkbenchSignupForm(forms.ModelForm):
-    get_newsletter = forms.BooleanField(required=False)
+    get_newsletter = forms.BooleanField(required=False, initial=True)
     field_order = ['email', 'first_name', 'last_name', 'password1', 'password2', 'get_newsletter']
 
     class Meta:
