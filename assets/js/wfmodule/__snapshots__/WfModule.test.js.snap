@@ -2,21 +2,24 @@
 
 exports[`WfModule, not read-only mode Renders and calls functions on componentDidMount and render 1`] = `
 <WfModule
-  connectDragPreview={[Function]}
-  connectDragSource={[Function]}
-  connectDropTarget={[Function]}
-  data-api={
+  api={
     Object {
       "onParamChanged": [Function],
       "postParamEvent": [Function],
     }
   }
-  data-changeParam={[Function]}
-  data-isReadOnly={false}
-  data-removeModule={[Function]}
-  data-revision={707}
-  data-selected={true}
-  data-wfmodule={
+  changeParam={[Function]}
+  connectDragPreview={[Function]}
+  connectDragSource={[Function]}
+  connectDropTarget={[Function]}
+  focusModule={[Function]}
+  isReadOnly={false}
+  removeModule={[Function]}
+  revision={707}
+  selected={true}
+  startDrag={[Function]}
+  stopDrag={[Function]}
+  wfModule={
     Object {
       "id": 999,
       "module_version": Object {
@@ -43,8 +46,5 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
       ],
     }
   }
-  focusModule={[Function]}
-  startDrag={[Function]}
-  stopDrag={[Function]}
 />
 `;

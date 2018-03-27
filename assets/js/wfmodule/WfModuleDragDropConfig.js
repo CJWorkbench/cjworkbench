@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce'
 export const targetSpec = {
   canDrop(props, monitor) {
     return monitor.getItemType() === 'module' ||
-      (monitor.getItemType() === 'notification' && props.loads_data && !props['data-wfmodule'].notifications);
+      (monitor.getItemType() === 'notification' && props.loads_data && !props.wfModule.notifications);
   },
 
   drop(props, monitor, component) {
@@ -69,11 +69,11 @@ export const sourceSpec = {
     return {
       type: 'module',
       index: props.index,
-      id: props['data-wfmodule'].module_version.module.id,
-      name: props['data-wfmodule'].module_version.module.name,
-      icon: props['data-wfmodule'].module_version.module.icon,
+      id: props.wfModule.module_version.module.id,
+      name: props.wfModule.module_version.module.name,
+      icon: props.wfModule.module_version.module.icon,
       insert: true,
-      wfModuleId: props['data-wfmodule'].id,
+      wfModuleId: props.wfModule.id
     }
   },
   endDrag(props, monitor) {

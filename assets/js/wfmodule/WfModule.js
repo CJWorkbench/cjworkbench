@@ -27,7 +27,6 @@ class WfModule extends React.Component {
 
   constructor(props) {
     super(props);
-    this.initFields(props);
     this.click = this.click.bind(this);
     this.changeParam = this.changeParam.bind(this);
     this.setParamText = this.setParamText.bind(this);
@@ -45,28 +44,17 @@ class WfModule extends React.Component {
     this.moduleRef = null;
   }
 
-  // our props are annoying (we use data- because Sortable puts all these props om the DOM object)
-  // so save them into this
-
-  // TODO: We're not using Sortable anymore, remove this.
-  initFields(props) {
-    this.wf_module = props['data-wfmodule'];
-    this.module = this.wf_module.module_version.module;
-    this.params = this.wf_module.parameter_vals;
-    this.revision = props['data-revision'];
-  }
-
   componentWillMount() {
     this.setState({
-      isCollapsed: this.wf_module.is_collapsed,
+      isCollapsed: this.props.wfModule.is_collapsed,
       showButtons: false,
-      showNotes:  ( this.wf_module.notes
-                    && (this.wf_module.notes != "")
-                    && (this.wf_module.notes != "Write notes here")
+      showNotes:  ( this.props.wfModule.notes
+                    && (this.props.wfModule.notes != "")
+                    && (this.props.wfModule.notes != "Write notes here")
                   ),  // only show on load if a note exists & not default text
       showEditableNotes: false,             // do not display in edit state on initial load
-      notifications: this.wf_module.notifications,
-      notification_count: this.wf_module.notification_count,
+      notifications: this.props.wfModule.notifications,
+      notification_count: this.props.wfModule.notification_count,
     });
   }
 
@@ -82,16 +70,14 @@ class WfModule extends React.Component {
   }
 
   onClickNotification() {
-    store.dispatch(clearNotificationsAction(this.wf_module.id));
+    store.dispatch(clearNotificationsAction(this.props.wfModule.id));
     this.clickNotification();
   }
 
-  // alas, the drawback of the convienence of initFields is we need to call it whenever props change
   componentWillReceiveProps(newProps) {
-    this.initFields(newProps);
-    if (newProps['data-wfmodule'].is_collapsed !== this.state.isCollapsed) {
+    if (newProps.wfModule.is_collapsed !== this.state.isCollapsed) {
       this.setState({
-        isCollapsed: newProps['data-wfmodule'].is_collapsed
+        isCollapsed: newProps.wfModule.is_collapsed
       })
     }
 
@@ -104,7 +90,7 @@ class WfModule extends React.Component {
 
   // Scroll when we create a new wfmodule
   componentDidMount() {
-    if (this.props['data-selected']) {
+    if (this.props.selected) {
       this.props.focusModule(this.moduleRef);
     }
 
@@ -117,45 +103,45 @@ class WfModule extends React.Component {
 
   // We become the selected module on any click
   click(e) {
-    store.dispatch(setSelectedWfModuleAction(this.wf_module.id));
+    store.dispatch(setSelectedWfModuleAction(this.props.wfModule.id));
   }
 
   changeParam(id, payload) {
-    this.props['data-changeParam'](id, payload)
+    this.props.changeParam(id, payload)
   }
 
   // These functions allow parameters to access each others value (text params only)
   // Used e.g. for custom UI elements to save/restore their state from hidden parameters
   // Suppresses reassignment of the same text, which can be important to avoid endless notification loops
   setParamText(paramIdName, text) {
-    var p = this.params.find( p => p.parameter_spec.id_name == paramIdName );
+    var p = this.props.wfModule.parameter_vals.find( p => p.parameter_spec.id_name == paramIdName );
     if (p && text != p.string) {
-      this.props['data-changeParam'](p.id, { value: text })
+      this.props.changeParam(p.id, { value: text })
     }
   }
 
   getParamText(paramIdName) {
-    var p = this.params.find( p => p.parameter_spec.id_name == paramIdName );
+    var p = this.props.wfModule.parameter_vals.find( p => p.parameter_spec.id_name == paramIdName );
     if (p) {
       return p.value;
     }
   }
 
   removeModule(e) {
-    this.props['data-removeModule'](this.wf_module.id);
+    this.props.removeModule(this.props.wfModule.id);
   }
 
   // Optimistically updates the state, and then sends the new state to the server,
   // where it's persisted across sessions and through time.
   toggleCollapsed(e) {
     e.stopPropagation();
-    store.dispatch( setWfModuleCollapsedAction(this.wf_module.id, !this.state.isCollapsed, this.props['data-isReadOnly']) );
+    store.dispatch( setWfModuleCollapsedAction(this.props.wfModule.id, !this.state.isCollapsed, this.props.isReadOnly) );
   }
 
   // when Notes icon is clicked, show notes and start in editable state if not read-only
   showNotes(e) {
     e.stopPropagation();
-    this.setState({ showNotes: true,  showEditableNotes: !this.props['data-isReadOnly'] });
+    this.setState({ showNotes: true,  showEditableNotes: !this.props.isReadOnly });
   }
 
   hideNotes() {
@@ -173,8 +159,8 @@ class WfModule extends React.Component {
   setNotifications() {
     store.dispatch(
       updateWfModuleAction(
-        this.wf_module.id,
-        { notifications: !this.wf_module.notifications }
+        this.props.wfModule.id,
+        { notifications: !this.props.wfModule.notifications }
     ));
   }
 
@@ -183,29 +169,32 @@ class WfModule extends React.Component {
   }
 
   render() {
+    let wfModule = this.props.wfModule;
+    let module = wfModule.module_version.module;
+
     var updateSettings = {
-      lastUpdateCheck:  this.wf_module.last_update_check,
-      autoUpdateData:   this.wf_module.auto_update_data,
-      updateInterval:   this.wf_module.update_interval,
-      updateUnits:      this.wf_module.update_units
+      lastUpdateCheck:  wfModule.last_update_check,
+      autoUpdateData:   wfModule.auto_update_data,
+      updateInterval:   wfModule.update_interval,
+      updateUnits:      wfModule.update_units
     };
 
     // Each parameter gets a WfParameter
-    var paramdivs = this.params.map((ps, i) => {
+    var paramdivs = wfModule.parameter_vals.map((ps, i) => {
         return (<WfParameter
-          api={this.props['data-api']}
-          isReadOnly={this.props['data-isReadOnly']}
+          api={this.props.api}
+          isReadOnly={this.props.isReadOnly}
           key={i}
           p={ps}
           changeParam={this.changeParam}
-          wf_module_id={this.wf_module.id}
-          revision={this.revision}
+          wf_module_id={wfModule.id}
+          revision={this.props.revision}
           updateSettings={updateSettings}
           getParamText={this.getParamText}
           setParamText={this.setParamText}
           setClickNotification={this.setClickNotification}
-          notifications={this.props['data-wfmodule'].notifications}
-          loggedInUser={this.props['data-user']}
+          notifications={wfModule.notifications}
+          loggedInUser={this.props.user}
           startDrag={this.props.startDrag}
           stopDrag={this.props.stopDrag}
         />)
@@ -215,47 +204,47 @@ class WfModule extends React.Component {
     if (!this.state.isCollapsed)
       inside =  <div className='module-card-params'>
                   <div className='module-description'>
-                    {this.wf_module.module_version.module.description}
+                    {module.description}
                   </div>
                   {paramdivs}
                 </div>;
 
     var notes;
-    var value = ( this.wf_module.notes && (this.wf_module.notes != "") )
-      ? this.wf_module.notes
-      : "Write notes here"
+    var value = ( wfModule.notes && (wfModule.notes != "") )
+      ? wfModule.notes
+      : "Write notes here";
 
     if (this.state.showNotes)
       notes = <div className='module-notes'>
                 <EditableNotes
-                  api={this.props['data-api']}
-                  isReadOnly={this.props['data-isReadOnly']}
+                  api={this.props.api}
+                  isReadOnly={this.props.isReadOnly}
                   value={value}
                   hideNotes={ () => this.hideNotes() }
-                  wfModuleId={this.wf_module.id}
+                  wfModuleId={wfModule.id}
                   startFocused={this.state.showEditableNotes}
                 />
               </div>;
 
     var helpIcon;
-    if (!this.props['data-isReadOnly'])
+    if (!this.props.isReadOnly)
       helpIcon =  <a className='btn help-button d-flex align-items-center'
-                      href={this.module.help_url} target="_blank">
+                      href={module.help_url} target="_blank">
                     <div className='icon-help' />
                   </a>;
 
     var notesIcon;
-    if (!this.state.showNotes && !this.props['data-isReadOnly'])
+    if (!this.state.showNotes && !this.props.isReadOnly)
       notesIcon = <div className='context-button btn' onClick={this.showNotes}>
                     <div className='icon-note btn icon-l-gray ' />
                   </div>;
 
     var contextMenu;
-    if(!this.props['data-isReadOnly'])
+    if(!this.props.isReadOnly)
       contextMenu = <WfModuleContextMenu
           removeModule={ () => this.removeModule() }
           stopProp={(e) => e.stopPropagation()}
-          id={this.wf_module.id}
+          id={wfModule.id}
           className=''
         />;
 
@@ -270,7 +259,7 @@ class WfModule extends React.Component {
           <div>{contextMenu}</div>
         </div>
 
-    var moduleIcon = 'icon-' + this.module.icon + ' WFmodule-icon mr-2';
+    var moduleIcon = 'icon-' + module.icon + ' WFmodule-icon mr-2';
 
     // Putting it all together: name, status, parameters, output
     // For testing: connectDropTarget and connectDragSource will return null because they're provided as mock functions,
@@ -285,7 +274,7 @@ class WfModule extends React.Component {
 
           <div>
             <div className='output-bar-container'>
-              <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
+              <StatusBar status={wfModule.status} isSelected={this.props.selected}/>
             </div>
             <div className='card-block p-0' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
               <div className='module-card-info'>
@@ -293,14 +282,14 @@ class WfModule extends React.Component {
                   <div className='module-header-content'>
                     <div className='d-flex justify-content-start align-items-center'>
                       <div className={moduleIcon} />
-                      <div className='t-d-gray WFmodule-name'>{this.module.name}</div>
-                      {this.props['data-wfmodule'].notifications &&
-                      <div className={'notification-badge' + (this.props['data-wfmodule'].notification_count > 0 ? ' active t-f-blue' : '' )}>
+                      <div className='t-d-gray WFmodule-name'>{module.name}</div>
+                      {wfModule.notifications &&
+                      <div className={'notification-badge' + (wfModule.notification_count > 0 ? ' active t-f-blue' : '' )}>
                         <div
                           className="icon-notification notification-badge-icon ml-3 mr-1"
                           onClick={this.onClickNotification} />
-                        {this.props['data-wfmodule'].notification_count > 0 &&
-                        <div>{this.props['data-wfmodule'].notification_count}</div>
+                        {wfModule.notification_count > 0 &&
+                        <div>{wfModule.notification_count}</div>
                         }
                       </div>
                       }
@@ -319,7 +308,7 @@ class WfModule extends React.Component {
                 {/* --- Module content when expanded --- */}
                 <Collapse className='' isOpen={!this.state.isCollapsed} >
                   {/* --- Error message --- */}
-                  <StatusLine status={this.wf_module.status} error_msg={this.wf_module.error_msg} />
+                  <StatusLine status={wfModule.status} error_msg={wfModule.error_msg} />
 
                   {inside}
                 </Collapse>
@@ -340,17 +329,17 @@ class WfModule extends React.Component {
 }
 
 WfModule.propTypes = {
-  'data-isReadOnly':    PropTypes.bool.isRequired,
-  'data-wfmodule':      PropTypes.object,
-  'data-revison':       PropTypes.number,
-  'data-selected':      PropTypes.bool,
-  'data-changeParam':   PropTypes.func,
-  'data-removeModule':  PropTypes.func,
-  'data-api':           PropTypes.object.isRequired,
-  'connectDragSource':  PropTypes.func,
-  'connectDropTarget':  PropTypes.func,
-  'connectDragPreview':  PropTypes.func,
-  'focusModule':        PropTypes.func
+  isReadOnly:         PropTypes.bool.isRequired,
+  wfModule:           PropTypes.object,
+  revison:            PropTypes.number,
+  selected:           PropTypes.bool,
+  changeParam:        PropTypes.func,
+  removeModule:       PropTypes.func,
+  api:                PropTypes.object.isRequired,
+  connectDragSource:  PropTypes.func,
+  connectDropTarget:  PropTypes.func,
+  connectDragPreview: PropTypes.func,
+  focusModule:        PropTypes.func
 };
 
 export { WfModule };

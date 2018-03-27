@@ -19,7 +19,8 @@ describe('WfModule, not read-only mode', () => {
         'parameter_spec': {
           'id_name': 'url',
           'type': 'string'
-        }
+        },
+        'value': 'http://some.URL.me'
       },
       {
         'id': 101,
@@ -45,19 +46,19 @@ describe('WfModule, not read-only mode', () => {
     };
 
     props = {
-        'data-isReadOnly': false,
-        'data-wfmodule': wf_module,
-        'data-changeParam': mockApi.onParamChanged,
-        'data-removeModule':  () => {} ,
-        'data-revision': 707,
-        'data-selected': true,
-        'data-api': mockApi,
-        'connectDragSource': jest.fn(),
-        'connectDropTarget': jest.fn(),
-        'connectDragPreview': jest.fn(),
-        'focusModule': jest.fn(),
-        'startDrag' : jest.fn(),
-        'stopDrag' : jest.fn()
+        isReadOnly: false,
+        wfModule: wf_module,
+        changeParam: mockApi.onParamChanged,
+        removeModule:  () => {} ,
+        revision: 707,
+        selected: true,
+        api: mockApi,
+        connectDragSource:  jest.fn(),
+        connectDropTarget:  jest.fn(),
+        connectDragPreview: jest.fn(),
+        focusModule:        jest.fn(),
+        startDrag :         jest.fn(),
+        stopDrag :          jest.fn()
       };
 
     wrapper = mount(
@@ -73,5 +74,14 @@ describe('WfModule, not read-only mode', () => {
     expect(props.connectDropTarget.mock.calls.length).toBe(1);
     expect(props.focusModule.mock.calls.length).toBe(1);
   });
+
+  it('getParamText and setParamText', () => {
+    expect(wrapper.instance().getParamText('url')).toBe(wf_module.parameter_vals[0].value);
+
+    wrapper.instance().setParamText('url','http://foocastle.ai');
+    expect(props.changeParam.mock.calls.length).toBe(1);
+    expect(props.changeParam.mock.calls[0][0]).toEqual(wf_module.parameter_vals[0].id);  // should translate id_name to id
+    expect(props.changeParam.mock.calls[0][1]).toEqual({'value' : 'http://foocastle.ai'});
+  })
 
 });

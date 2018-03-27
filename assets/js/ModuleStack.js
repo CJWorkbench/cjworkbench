@@ -88,14 +88,14 @@ class ModuleStack extends React.Component {
             isSelected={true}/>;
         }
         let childProps = {
-          'data-isReadOnly': this.props.workflow.read_only,
-          'data-wfmodule': item,
-          'data-changeParam': this.props.changeParam,
-          'data-removeModule': this.props.removeModule,
-          'data-revision': this.props.workflow.revision,
-          'data-selected': (item.id === this.props.selected_wf_module),
-          'data-api': this.props.api,
-          'data-user': this.props.loggedInUser,
+          isReadOnly: this.props.workflow.read_only,
+          wfModule: item,
+          changeParam: this.props.changeParam,
+          removeModule: this.props.removeModule,
+          revision: this.props.workflow.revision,
+          selected: (item.id === this.props.selected_wf_module),
+          api: this.props.api,
+          user: this.props.loggedInUser,
           loads_data: item.module_version ? item.module_version.module.loads_data : false,
           index: i,
           drag: this.drag,
