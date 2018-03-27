@@ -1,7 +1,7 @@
 {
   "name": "Concatenate columns",
   "id_name": "concatenatecolumns",
-  "category" : "Analyse",
+  "category" : "Analyze",
   "description": "Concatenates specific columns and creates a new column with the result.",
   "icon": "transform",
   "parameters": [

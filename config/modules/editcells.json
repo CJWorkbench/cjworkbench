@@ -1,10 +1,10 @@
 {
   "name": "Edit Cells",
   "id_name": "editcells" ,
-  "category" : "Edit",
+  "category" : "Clean",
   "icon" : "edit",
   "description" : "Enter values for individual cells",
-  "help_url":"modules/edit/edit-cells",
+  "help_url":"modules/clean/edit-cells",
   "parameters": [
     {
       "name": "Cell Editor",

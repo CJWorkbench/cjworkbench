@@ -1,10 +1,10 @@
 {
   "name": "Facets",
   "id_name": "refine",
-  "category": "Edit",
+  "category": "Clean",
   "icon": "filter",
   "description": "Histogram-based data cleaning",
-  "help_url":"modules/edit/editcells",
+  "help_url":"modules/clean/editcells",
   "parameters": [
     {
       "name": "Column",
