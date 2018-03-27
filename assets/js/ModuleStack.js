@@ -52,72 +52,77 @@ class ModuleStack extends React.Component {
   }
 
   render() {
-    if (!this.props.wf_modules || this.props.wf_modules.length === 0) {
-      return (
-        this.props.connectDropTarget(
-          <div className={'modulestack-empty d-flex align-items-center justify-content-center ' + (this.props.dragItem ? 'dragging' : '')}>
-            <span className={'title-3 ml-4 ' + (this.props.dragItem ? 't-d-blue' : 't-orange')}>
-              DROP MODULE HERE
-            </span>
-          </div>
-        )
-      )
-    }
-
     let enterAnimation = true;
     let exitAnimation = true;
-    let listItems = this.props.wf_modules.map(function(item, i) {
+    let listItems;
+    let className;
+    if (!this.props.wf_modules || this.props.wf_modules.length === 0) {
+      className = 'modulestack-empty ' + (this.props.dragItem ? 'dragging' : '');
+      listItems = [
+        <div key="empty" className="d-flex align-items-center justify-content-center">
+          <span className={'title-3 ml-4 ' + (this.props.dragItem ? 't-d-blue' : 't-orange')}>
+            DROP MODULE HERE
+          </span>
+        </div>
+      ];
+    } else {
+      className = "modulestack" +
+        (this.props.focus ? " focus": "") +
+        (this.props.isOver ? " over": "") +
+        ((this.props.dragItem && this.props.canDrop) ? " dragging" : "");
+      listItems = this.props.wf_modules.map(function (item, i) {
 
-      if (item.placeholder) {
-        exitAnimation = false;
-      }
-      if (!item.placeholder && typeof item.pendingId !== 'undefined') {
-        enterAnimation = false;
-      }
+        if (item.placeholder) {
+          exitAnimation = false;
+        }
+        if (!item.placeholder && typeof item.pendingId !== 'undefined') {
+          enterAnimation = false;
+        }
 
-      if (item.placeholder) {
-        return <WfModuleHeader
-          key={i}
-          moduleName={item.name}
-          moduleIcon={item.icon}
-          focusModule={this.focusModule}
-          isSelected={true} />;
-      }
-      let childProps = {
-        'data-isReadOnly': this.props.workflow.read_only,
-        'data-wfmodule': item,
-        'data-changeParam': this.props.changeParam,
-        'data-removeModule': this.props.removeModule,
-        'data-revision': this.props.workflow.revision,
-        'data-selected': (item.id === this.props.selected_wf_module),
-        'data-api': this.props.api,
-        'data-user': this.props.loggedInUser,
-        loads_data: item.module_version ? item.module_version.module.loads_data : false,
-        index: i,
-        drag: this.drag,
-        dragNew: this.dragNew,
-        drop: this.drop,
-        key: item.id,
-        canDrag: this.state.canDrag,  // governs drag-ability of WfModule - how do we change this from events in <WfParameter>?
-        startDrag: this.startDrag,
-        stopDrag: this.stopDrag,
-        focusModule: this.focusModule,
-        setSelectedModuleRef: this.setSelectedModuleRef,
-      };
+        if (item.placeholder) {
+          return <WfModuleHeader
+            key={i}
+            moduleName={item.name}
+            moduleIcon={item.icon}
+            focusModule={this.focusModule}
+            isSelected={true}/>;
+        }
+        let childProps = {
+          'data-isReadOnly': this.props.workflow.read_only,
+          'data-wfmodule': item,
+          'data-changeParam': this.props.changeParam,
+          'data-removeModule': this.props.removeModule,
+          'data-revision': this.props.workflow.revision,
+          'data-selected': (item.id === this.props.selected_wf_module),
+          'data-api': this.props.api,
+          'data-user': this.props.loggedInUser,
+          loads_data: item.module_version ? item.module_version.module.loads_data : false,
+          index: i,
+          drag: this.drag,
+          dragNew: this.dragNew,
+          drop: this.drop,
+          key: item.id,
+          canDrag: this.state.canDrag,  // governs drag-ability of WfModule - how do we change this from events in <WfParameter>?
+          startDrag: this.startDrag,
+          stopDrag: this.stopDrag,
+          focusModule: this.focusModule,
+          setSelectedModuleRef: this.setSelectedModuleRef,
+        };
 
-      return (
-        <SortableWfModule
-          {...childProps}
-        />
-      );
+        return (
+          <SortableWfModule
+            {...childProps}
+          />
+        );
 
-    }, this);
+      }, this);
+    }
     return (
-      <div className={ "modulestack" + (this.props.focus ? " focus": "") + (this.props.isOver ? " over": "") }
+      <div className={ className }
            onClick={ this.props.setFocus }
            ref={ this.setScrollRef }>
         {this.props.connectDropTarget(
-        <div className={"modulestack-list mx-auto " + ((this.props.dragItem && this.props.canDrop) ? 'dragging' : '')}>
+        <div className="modulestack-list mx-auto">
           <FlipMove duration={100} easing="ease-out" enterAnimation={enterAnimation} leaveAnimation={exitAnimation}>
             {listItems}
           </FlipMove>
