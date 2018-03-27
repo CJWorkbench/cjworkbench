@@ -4,8 +4,8 @@
 FROM python:3
 EXPOSE 8000
 
-RUN curl https://raw.githubusercontent.com/cjworkbench/cjworkbench/master/requirements.txt > requirements.txt
-RUN curl https://raw.githubusercontent.com/cjworkbench/cjworkbench/master/requirements-dev.txt > requirements-dev.txt
+RUN curl https://raw.githubusercontent.com/cjworkbench/cjworkbench/stable/requirements.txt > requirements.txt
+RUN curl https://raw.githubusercontent.com/cjworkbench/cjworkbench/stable/requirements-dev.txt > requirements-dev.txt
 
 RUN pip install -r requirements.txt && \
     pip install -r requirements-dev.txt
