@@ -1,7 +1,7 @@
 {
   "name": "Drop empty rows",
   "id_name": "dropna",
-  "category" : "Analyse",
+  "category" : "Analyze",
   "description": "Drop row if values in specific columns are null.",
   "icon": "filter",
   "parameters": [

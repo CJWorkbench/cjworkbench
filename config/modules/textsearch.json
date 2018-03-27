@@ -4,7 +4,7 @@
   "category" : "Analyze",
   "icon" : "filter",
   "description" : "Filter rows by matching text in specific columns.",
-  "help_url": "modules/analyse/filter-by-text",
+  "help_url": "modules/analyze/filter-by-text",
   "parameters": [
     {
       "name": "Search for",

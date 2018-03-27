@@ -22,7 +22,7 @@ export default class ModuleCategory extends React.Component {
       collapsed: props.collapsed
     };
     this.toggleCollapse = this.toggleCollapse.bind(this);
-    this.openCategory = this.openCategory.bind(this);    
+    this.openCategory = this.openCategory.bind(this);
     this.collapseAll = this.collapseAll.bind(this);
   }
 
@@ -54,12 +54,11 @@ export default class ModuleCategory extends React.Component {
 
     const icons = {
       'Add data': 'database',
-      'Prepare': 'wrangle',
-      'Edit': 'edit',
-      'Analyze': 'notepad',         
+      'Clean': 'wrangle',
+      'Analyze': 'notepad',
       'Visualize': 'chart',
       'Code': 'code',
-      'Other': 'more'               
+      'Other': 'more'
     }
     var categoryIcon = 'icon-' + icons[this.props.name] + ' ml-icon';
 
@@ -72,10 +71,10 @@ export default class ModuleCategory extends React.Component {
                         </div>
                       </div>
     } else {
-      categoryHead =  <div 
-                        className='first-level' 
-                        onMouseEnter={this.openCategory} 
-                        onMouseLeave={this.collapseAll} 
+      categoryHead =  <div
+                        className='first-level'
+                        onMouseEnter={this.openCategory}
+                        onMouseLeave={this.collapseAll}
                       >
                         <div className='closed-ML--category' >
                           <span className={categoryIcon}></span>
@@ -90,9 +89,9 @@ export default class ModuleCategory extends React.Component {
                       <div className="ml-list">{this.props.modules}</div>
                     </Collapse>
     } else if (isOpen) {
-      moduleList =  <div 
-                      className="ml-list-mini" 
-                      onMouseEnter={this.openCategory} 
+      moduleList =  <div
+                      className="ml-list-mini"
+                      onMouseEnter={this.openCategory}
                       onMouseLeave={this.collapseAll}
                     >
                       {this.props.modules}

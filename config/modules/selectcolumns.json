@@ -1,10 +1,10 @@
 {
   "name": "Select columns",
   "id_name": "selectcolumns",
-  "category" : "Prepare",
+  "category" : "Clean",
   "icon" : "transform",
   "description" : "",
-  "help_url":"modules/prepare/column-selector",
+  "help_url":"modules/clean/column-selector",
   "parameters": [
     {
       "name" : "",

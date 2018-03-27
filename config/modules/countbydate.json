@@ -4,7 +4,7 @@
   "category" : "Analyze",
   "icon" : "group",
   "description": "Group and count rows by dates.",
-  "help_url":"modules/analyse/count-by-date",
+  "help_url":"modules/analyze/count-by-date",
   "parameters": [
     {
       "name": "Date column",
