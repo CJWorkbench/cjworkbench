@@ -9,6 +9,7 @@ import Workflow from '../workflow'
 import workbenchAPI from '../WorkbenchAPI'
 import { DragDropContextProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
+import CustomDragLayer from '../CustomDragLayer'
 
 require('bootstrap/dist/css/bootstrap.css');
 require('../../css/style.scss');
@@ -31,8 +32,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addModule: (moduleId, insertBefore) => {
-      dispatch(Actions.addModuleAction(moduleId, insertBefore))
+    addModule: (module_id, insertBefore, placeholder) => {
+      dispatch(Actions.addModuleAction(module_id, insertBefore, placeholder))
     },
     removeModule: (wfModuleId) => {
       dispatch(Actions.deleteModuleAction(wfModuleId))
@@ -79,7 +80,10 @@ socket.onmessage = function(e) {
 ReactDOM.render(
     <Provider store={Actions.store}>
       <DragDropContextProvider backend={HTML5Backend}>
-        <WorkflowContainer/>
+        <div>
+          <CustomDragLayer />
+          <WorkflowContainer />
+        </div>
       </DragDropContextProvider>
     </Provider>,
     document.getElementById('root')

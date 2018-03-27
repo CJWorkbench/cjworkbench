@@ -1,159 +1,28 @@
 // UI for a single module within a workflow
 
 import React from 'react'
-import WfParameter from './WfParameter'
-import TableView from './TableView'
-import WfModuleContextMenu from './WfModuleContextMenu'
-import EditableNotes from './EditableNotes'
-import { store, setWfModuleCollapsedAction, findParamIdxByIdName } from './workflow-reducer'
-import { findDOMNode } from 'react-dom'
-import * as Actions from './workflow-reducer'
+import WfParameter from '../WfParameter'
+import WfModuleContextMenu from '../WfModuleContextMenu'
+import EditableNotes from '../EditableNotes'
+import StatusBar from './StatusBar'
+import StatusLine from './StatusLine'
+import {
+  store,
+  setWfModuleCollapsedAction,
+  updateWfModuleAction,
+  clearNotificationsAction,
+  setSelectedWfModuleAction
+} from '../workflow-reducer'
 import PropTypes from 'prop-types'
-import { DropTarget, DragSource } from 'react-dnd'
-import flow from 'lodash.flow'
+import { getEmptyImage } from 'react-dnd-html5-backend'
+import { sortableWfModule } from "./WfModuleDragDropConfig";
 
-// Libraries to provide a collapsable table view
-import { Collapse, Button, CardBlock, Card } from 'reactstrap';
 
-// ---- StatusBar ----
+// Libraries to provide a collapsible table view
+import { Collapse } from 'reactstrap';
 
-class StatusBar extends React.Component {
-  render() {
-
-    var barColor = undefined;
-
-    switch (this.props.status) {
-      case 'ready':
-        barColor = (this.props.isSelected) ? 'module-output-bar-blue' : 'module-output-bar-white'
-        break;
-      case 'busy':
-        barColor = 'module-output-bar-orange';
-        break;
-      case 'error':
-        barColor = (this.props.isSelected) ? 'module-output-bar-red' : 'module-output-bar-pink'
-        break;
-      default:
-        barColor = 'module-output-bar-white';
-        break;
-    }
-
-    return <div className={barColor}></div>
-  }
-}
-
-// ---- StatusLine ----
-
-// Display error message, if any
-// BUG - Tying this to Props will ensure that error message stays displayed, even after resolution
-class StatusLine extends React.Component {
-  render() {
-    if (this.props.status == 'error') {
-      return <div className='wf-module-error-msg mb-3'>{this.props.error_msg}</div>
-    // } else if (this.props.status == 'busy') {
-    //   return <div className='wf-module-error-msg mb-3'>Working...</div>
-    } else {
-      return false
-    }
-  }
-}
 
 // ---- WfModule ----
-
-const targetSpec = {
-  canDrop(props, monitor) {
-    return monitor.getItemType() === 'module' ||
-      (monitor.getItemType() === 'notification' && props.loads_data && !props['data-wfmodule'].notifications);
-  },
-
-  drop(props, monitor, component) {
-    if (monitor.getItemType() === 'module') {
-      const source = monitor.getItem();
-      const target = props.index;
-      return {
-        source,
-        target
-      }
-    }
-
-    if (monitor.getItemType() === 'notification') {
-      component.setNotifications();
-      return {
-        notifications: true
-      }
-    }
-  },
-
-  hover(props, monitor, component) {
-    if (monitor.getItemType() === 'module') {
-      const sourceIndex = monitor.getItem().index;
-      const targetIndex = props.index;
-      if (sourceIndex === targetIndex) {
-        return;
-      }
-      // getBoundingClientRect almost certainly doesn't
-      // work consistently in all browsers. Replace!
-      const targetBoundingRect = findDOMNode(component).getBoundingClientRect();
-      const targetMiddleY = (targetBoundingRect.bottom - targetBoundingRect.top) / 2;
-      const mouseY = monitor.getClientOffset();
-      const targetClientY = mouseY.y - targetBoundingRect.top;
-
-      if (sourceIndex === false) {
-        props.dragNew(targetIndex, monitor.getItem());
-        monitor.getItem().index = targetIndex;
-        return;
-      } else {
-
-        // dragging down
-        if (sourceIndex < targetIndex && targetClientY < targetMiddleY) {
-          return;
-        }
-
-        // dragging up
-        if (sourceIndex > targetIndex && targetClientY > targetMiddleY) {
-          return;
-        }
-
-        props.drag(sourceIndex, targetIndex);
-        monitor.getItem().index = targetIndex;
-      }
-    }
-  }
-}
-
-function targetCollect(connect, monitor) {
-  return {
-    connectDropTarget: connect.dropTarget(),
-    isOver: monitor.isOver(),
-    canDrop: monitor.canDrop(),
-    dragItem: monitor.getItem(),
-    dragItemType: monitor.getItemType()
-  }
-}
-
-const sourceSpec = {
-  beginDrag(props, monitor, component) {
-    return {
-      index: props.index
-    }
-  },
-  endDrag(props, monitor, component) {
-    if (monitor.didDrop()) {
-      const {source, target} = monitor.getDropResult();
-      props.drop();
-    }
-  },
-  // when False, drag is disabled
-  canDrag: function(props, monitor) {
-    return props.canDrag;
-  }
-}
-
-function sourceCollect(connect, monitor) {
-  return {
-    connectDragSource: connect.dragSource()
-  }
-}
-
 class WfModule extends React.Component {
 
   constructor(props) {
@@ -213,7 +82,7 @@ class WfModule extends React.Component {
   }
 
   onClickNotification() {
-    Actions.store.dispatch(Actions.clearNotificationsAction(this.wf_module.id));
+    store.dispatch(clearNotificationsAction(this.wf_module.id));
     this.clickNotification();
   }
 
@@ -225,6 +94,12 @@ class WfModule extends React.Component {
         isCollapsed: newProps['data-wfmodule'].is_collapsed
       })
     }
+
+    if(!newProps.isDragging && this.state.dragPosition) {
+      this.setState({
+        dragPosition: null
+      })
+    }
   }
 
   // Scroll when we create a new wfmodule
@@ -232,11 +107,17 @@ class WfModule extends React.Component {
     if (this.props['data-selected']) {
       this.props.focusModule(this.moduleRef);
     }
+
+		this.props.connectDragPreview(getEmptyImage(), {
+			// IE fallback: specify that we'd rather screenshot the node
+			// when it already knows it's being dragged so we can hide it with CSS.
+			captureDraggingState: true,
+		});
   }
 
   // We become the selected module on any click
   click(e) {
-    Actions.store.dispatch(Actions.setSelectedWfModuleAction(this.wf_module.id));
+    store.dispatch(setSelectedWfModuleAction(this.wf_module.id));
   }
 
   changeParam(id, payload) {
@@ -290,8 +171,8 @@ class WfModule extends React.Component {
   }
 
   setNotifications() {
-    Actions.store.dispatch(
-      Actions.updateWfModuleAction(
+    store.dispatch(
+      updateWfModuleAction(
         this.wf_module.id,
         { notifications: !this.wf_module.notifications }
     ));
@@ -326,7 +207,7 @@ class WfModule extends React.Component {
           notifications={this.props['data-wfmodule'].notifications}
           loggedInUser={this.props['data-user']}
           startDrag={this.props.startDrag}
-          stopDrag={this.props.stopDrag}          
+          stopDrag={this.props.stopDrag}
         />)
       });
 
@@ -354,20 +235,20 @@ class WfModule extends React.Component {
                   wfModuleId={this.wf_module.id}
                   startFocused={this.state.showEditableNotes}
                 />
-              </div>
+              </div>;
 
     var helpIcon;
     if (!this.props['data-isReadOnly'])
       helpIcon =  <a className='btn help-button d-flex align-items-center'
                       href={this.module.help_url} target="_blank">
-                    <div className='icon-help'></div>
-                  </a>
+                    <div className='icon-help' />
+                  </a>;
 
     var notesIcon;
     if (!this.state.showNotes && !this.props['data-isReadOnly'])
       notesIcon = <div className='context-button btn' onClick={this.showNotes}>
-                    <div className='icon-note btn icon-l-gray '></div>
-                  </div>
+                    <div className='icon-note btn icon-l-gray ' />
+                  </div>;
 
     var contextMenu;
     if(!this.props['data-isReadOnly'])
@@ -376,7 +257,7 @@ class WfModule extends React.Component {
           stopProp={(e) => e.stopPropagation()}
           id={this.wf_module.id}
           className=''
-        />
+        />;
 
 
     // Set opacity to 0/1 instead of just not rendering these elements, so that any children that these
@@ -392,30 +273,32 @@ class WfModule extends React.Component {
     var moduleIcon = 'icon-' + this.module.icon + ' WFmodule-icon mr-2';
 
     // Putting it all together: name, status, parameters, output
-    return (
+    // For testing: connectDropTarget and connectDragSource will return null because they're provided as mock functions,
+    // so if this outputs 'undefined' we return null
+    return this.props.connectDropTarget(this.props.connectDragSource(
       // Removing this outer div breaks the drag and drop animation for reasons
       // that aren't clear right now. It doesn't hurt anything but it shouldn't
       // be necessary either.
-      <div onClick={this.click}>
+      <div onClick={this.click} className={(this.props.isOver ? ('over ' + this.state.dragPosition) : '')}>
         {notes}
         <div className='wf-card mx-auto' ref={this.setModuleRef}>
-        {this.props.connectDropTarget(this.props.connectDragSource(
+
           <div>
             <div className='output-bar-container'>
               <StatusBar status={this.wf_module.status} isSelected={this.props['data-selected']}/>
             </div>
             <div className='card-block p-0' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
               <div className='module-card-info'>
-                <div className='module-card-header'>
+                <div className={'module-card-header' + (this.props.isDragging ? ' dragging' : '')}>
                   <div className='module-header-content'>
                     <div className='d-flex justify-content-start align-items-center'>
-                      <div className={moduleIcon}></div>
+                      <div className={moduleIcon} />
                       <div className='t-d-gray WFmodule-name'>{this.module.name}</div>
                       {this.props['data-wfmodule'].notifications &&
                       <div className={'notification-badge' + (this.props['data-wfmodule'].notification_count > 0 ? ' active t-f-blue' : '' )}>
                         <div
                           className="icon-notification notification-badge-icon ml-3 mr-1"
-                          onClick={this.onClickNotification}></div>
+                          onClick={this.onClickNotification} />
                         {this.props['data-wfmodule'].notification_count > 0 &&
                         <div>{this.props['data-wfmodule'].notification_count}</div>
                         }
@@ -447,13 +330,12 @@ class WfModule extends React.Component {
               'drop-alert ' +
               ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.dragItem) ? 'active ' : '' ) +
               ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.isOver) ? 'over ' : '')
-              } ></div>
+              } />
 
           </div>
-        ))}
         </div>
       </div>
-    );
+    )) || null;
   }
 }
 
@@ -467,26 +349,9 @@ WfModule.propTypes = {
   'data-api':           PropTypes.object.isRequired,
   'connectDragSource':  PropTypes.func,
   'connectDropTarget':  PropTypes.func,
+  'connectDragPreview':  PropTypes.func,
   'focusModule':        PropTypes.func
 };
 
-class WfModulePlaceholder extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  render() {
-    return this.props.connectDropTarget(this.props.connectDragSource(
-      <div className="wf-card placeholder mx-auto"></div>
-    ));
-  }
-}
-
-const sortableComponent = flow(
-  DropTarget(['module', 'notification'], targetSpec, targetCollect),
-  DragSource('module', sourceSpec, sourceCollect)
-);
-
 export { WfModule };
-export const SortableWfModule = sortableComponent(WfModule);
-export const SortableWfModulePlaceholder = sortableComponent(WfModulePlaceholder);
+export default sortableWfModule(WfModule);

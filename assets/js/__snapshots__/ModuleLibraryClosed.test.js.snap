@@ -160,6 +160,7 @@ exports[`ModuleLibraryClosed NOT Read-Only Renders 1`] = `
                     >
                       <Module
                         addModule={[Function]}
+                        connectDragPreview={[Function]}
                         connectDragSource={[Function]}
                         dropModule={[Function]}
                         icon="url"
@@ -513,6 +514,7 @@ exports[`ModuleLibraryClosed Read-Only Renders 1`] = `
                     >
                       <Module
                         addModule={[Function]}
+                        connectDragPreview={[Function]}
                         connectDragSource={[Function]}
                         dropModule={[Function]}
                         icon="url"

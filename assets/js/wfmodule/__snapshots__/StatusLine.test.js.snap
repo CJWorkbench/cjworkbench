@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Status line Renders an error message 1`] = `
+<div
+  className="wf-module-error-msg mb-3"
+>
+  There's an error
+</div>
+`;

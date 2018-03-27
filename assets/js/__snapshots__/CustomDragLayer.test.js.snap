@@ -1,0 +1,49 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Custom drag layer (not rendered) Renders the drag layer 1`] = `
+<div
+  style={
+    Object {
+      "pointerEvents": "none",
+      "position": "fixed",
+      "zIndex": 10000,
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "display": "none",
+        "willChange": "transform",
+      }
+    }
+  />
+</div>
+`;
+
+exports[`Custom drag layer (rendered) Renders the drag layer 1`] = `
+<div
+  style={
+    Object {
+      "pointerEvents": "none",
+      "position": "fixed",
+      "zIndex": 10000,
+    }
+  }
+>
+  <div
+    style={
+      Object {
+        "WebkitTransform": "translate3d(10px, 10px, 0)",
+        "transform": "translate3d(10px, 10px, 0)",
+        "willChange": "transform",
+      }
+    }
+  >
+    <WfModuleHeader
+      moduleIcon="some-icon"
+      moduleName="Some Module"
+    />
+  </div>
+</div>
+`;

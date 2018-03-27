@@ -176,6 +176,15 @@ export function scrollTo(scrollTo, scrollDuration, scroller, offset) {
 
 }
 
+export function nonce(prefix) {
+  let text = "";
+  let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  for(let i = 0; i < 20; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return prefix + text;
+}
+
 //
 // Performance.now() polyfill from:
 // https://gist.github.com/paulirish/5438650

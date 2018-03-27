@@ -339,6 +339,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                       >
                         <Module
                           addModule={[Function]}
+                          connectDragPreview={[Function]}
                           connectDragSource={[Function]}
                           dropModule={[Function]}
                           icon="url"
@@ -466,6 +467,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                       >
                         <Module
                           addModule={[Function]}
+                          connectDragPreview={[Function]}
                           connectDragSource={[Function]}
                           dropModule={[Function]}
                           icon="filter"
@@ -526,6 +528,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
       />
       <DragSource(AddNotificationButtonOpen)>
         <AddNotificationButtonOpen
+          connectDragPreview={[Function]}
           connectDragSource={[Function]}
           isDragging={false}
         >

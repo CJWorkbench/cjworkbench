@@ -131,6 +131,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
           >
             <Module
               addModule={[Function]}
+              connectDragPreview={[Function]}
               connectDragSource={[Function]}
               dropModule={[Function]}
               icon="add"
@@ -189,6 +190,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
           >
             <Module
               addModule={[Function]}
+              connectDragPreview={[Function]}
               connectDragSource={[Function]}
               dropModule={[Function]}
               icon="url"
@@ -331,6 +333,7 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
               >
                 <Module
                   addModule={[Function]}
+                  connectDragPreview={[Function]}
                   connectDragSource={[Function]}
                   dropModule={[Function]}
                   icon="add"
@@ -389,6 +392,7 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
               >
                 <Module
                   addModule={[Function]}
+                  connectDragPreview={[Function]}
                   connectDragSource={[Function]}
                   dropModule={[Function]}
                   icon="url"
