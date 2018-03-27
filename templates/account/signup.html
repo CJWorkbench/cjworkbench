@@ -1,4 +1,4 @@
-{% load analytics_tags %}
+{% load analytics_tags socialaccount i18n %}
 {% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
@@ -64,6 +64,24 @@
                 </div>
             <button type="submit" class="button-blue action-button mx-auto mb-3">Register</button>
           </form>
+            {% get_providers as socialaccount_providers %}
+
+            {% if socialaccount_providers|length > 0 %}
+
+            <div class="socialaccount_ballot">
+
+                <div>
+                    {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+                </div>
+
+            </div>
+
+            {% include "socialaccount/snippets/login_extra.html" %}
+
+            {% else %}
+            <p>{% blocktrans %}If you have not created an account yet, then please
+            <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
+            {% endif %}
         </div>
       </div>
 
