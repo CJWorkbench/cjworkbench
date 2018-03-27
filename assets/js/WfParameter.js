@@ -37,7 +37,6 @@ export default class WfParameter extends React.Component {
     this.blur = this.blur.bind(this);
     this.click = this.click.bind(this);
     this.getInputColNames = this.getInputColNames.bind(this);
-    this.getNumericInputColNames = this.getNumericInputColNames.bind(this);
   }
 
   paramChanged(newVal, pressedEnter) {
@@ -77,24 +76,6 @@ export default class WfParameter extends React.Component {
 
   // Return array of column names available to us, as a promise
   getInputColNames() {
-    return (
-      this.props.api.inputColumns(this.props.wf_module_id)
-        .then( (json) => {console.log(json); return json.columns;} )
-    )
-  }
-
-  // Return array of all columns which contain numeric data. Should be provided by back end.
-  getNumericInputColNames() {
-    return (
-      this.props.api.input(this.props.wf_module_id)
-        .then( json => {
-            var first_row = json.rows[0];
-            var cols = json.columns.filter(column => {
-              return isFinite(String(first_row[column]));
-            });
-            return cols;
-        })
-    )
     return this.props.api.inputColumns(this.props.wf_module_id);
   }
 
