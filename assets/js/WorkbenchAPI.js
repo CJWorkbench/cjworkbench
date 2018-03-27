@@ -139,6 +139,14 @@ class WorkbenchAPI {
     )
   }
 
+  inputColumns(wf_module_id) {
+    return (
+      fetch('/api/wfmodules/' + wf_module_id + '/input?startrow=0&endrow=0', {credentials: 'include'})
+      .then(response => response.json()).then(returnJson => returnJson.columns)
+
+    )
+  }
+
   output(wf_module_id) {
       return (
           fetch('/api/wfmodules/' + wf_module_id + '/output', {credentials: 'include'})

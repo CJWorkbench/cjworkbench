@@ -78,8 +78,8 @@ export default class WfParameter extends React.Component {
   // Return array of column names available to us, as a promise
   getInputColNames() {
     return (
-      this.props.api.input(this.props.wf_module_id)
-        .then( json => json.columns )
+      this.props.api.inputColumns(this.props.wf_module_id)
+        .then( (json) => {console.log(json); return json.columns;} )
     )
   }
 
@@ -95,6 +95,7 @@ export default class WfParameter extends React.Component {
             return cols;
         })
     )
+    return this.props.api.inputColumns(this.props.wf_module_id);
   }
 
   // set contents of HTML input field corresponding to our type
