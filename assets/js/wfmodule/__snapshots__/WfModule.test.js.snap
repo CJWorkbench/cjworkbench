@@ -35,6 +35,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
             "id_name": "url",
             "type": "string",
           },
+          "value": "http://some.URL.me",
         },
         Object {
           "id": 101,
