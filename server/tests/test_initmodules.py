@@ -254,7 +254,7 @@ class InitmoduleTests(LoggedInTestCase):
         cond_spec_visibility = json.loads(cond_spec.visible_if)
         self.assertEqual(cond_spec_visibility, self.cond_ui_valid['parameters'][1]['visible_if'])
 
-        new_cond_ui = copy.deepcopy(self.cond_ui_valid)
+        new_cond_ui = copy.copy(self.cond_ui_valid)
         del new_cond_ui['parameters'][1]['visible_if']['value']
         with self.assertRaises(ValueError):
             load_module_from_dict(new_cond_ui)
