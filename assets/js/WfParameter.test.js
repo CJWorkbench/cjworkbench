@@ -8,7 +8,7 @@ describe('WfParameter', () => {
   var nullFn = () => {};
 
   // For testing conditional UI
-  var mockGetParamMenuItems = (param_id) => {return 'Sugar|Butter||Flour'}
+  var mockGetParamMenuItems = (param_id) => {return 'Sugar|Butter||Flour'.split('|').map(s => s.trim())}
   var mockGetParamText = (param_id) => {return '3'}
   var visibilityCond1 = JSON.stringify({
     'id_name': 'whatever',
