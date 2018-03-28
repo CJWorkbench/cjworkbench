@@ -115,12 +115,10 @@ class OutputIframe extends React.Component {
 }
 
 OutputIframe.propTypes = {
-  id: PropTypes.number.isRequired,
   revision: PropTypes.number,
   api: PropTypes.object.isRequired,
   selectedWfModuleId: PropTypes.number.isRequired,
   workflow: PropTypes.object.isRequired,
-
-}
+};
 
 export {OutputIframe, OutputIframeCtrl}
