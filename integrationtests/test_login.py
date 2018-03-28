@@ -26,10 +26,11 @@ class TestLogin(WorkbenchBase):
     def test_login(self):
         b = self.browser
         b.visit(self.live_server_url + '/account/login')
-        print(self.SocialApp1)
-        print(self.SocialApp2)
+
+        time.sleep(2)
         self.assertTrue(b.is_element_present_by_text('Use Facebook account', wait_time=5))
         self.assertTrue(b.is_element_present_by_text('Use Google account', wait_time=5))
+
         b.fill('login', self.user.email)
         b.fill('password', self.password)
         b.find_by_tag('button').click()
