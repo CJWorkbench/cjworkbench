@@ -23,9 +23,13 @@ class TestSignup(WorkbenchBase):
         # This will break when signup is open to the public
         b.visit(self.live_server_url + '/xyzzy/signup/')
 
-        time.sleep(2)
-        self.assertTrue(b.is_element_present_by_text('Use Facebook account', wait_time=5))
-        self.assertTrue(b.is_element_present_by_text('Use Google account', wait_time=5))
+        time.sleep(5)
+
+        print(b.find_by_text('Use Facebook account'))
+        print(b.find_by_text('Use Google account'))
+
+        self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
+        self.assertTrue(b.is_element_present_by_text('Use Google account'))
 
         b.fill('email', 'user@user.org')
         b.fill('first_name', 'Jane')
