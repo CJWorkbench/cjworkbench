@@ -37,7 +37,6 @@ export default class WfParameter extends React.Component {
     this.blur = this.blur.bind(this);
     this.click = this.click.bind(this);
     this.getInputColNames = this.getInputColNames.bind(this);
-    this.getNumericInputColNames = this.getNumericInputColNames.bind(this);
   }
 
   paramChanged(newVal, pressedEnter) {
@@ -77,24 +76,7 @@ export default class WfParameter extends React.Component {
 
   // Return array of column names available to us, as a promise
   getInputColNames() {
-    return (
-      this.props.api.input(this.props.wf_module_id)
-        .then( json => json.columns )
-    )
-  }
-
-  // Return array of all columns which contain numeric data. Should be provided by back end.
-  getNumericInputColNames() {
-    return (
-      this.props.api.input(this.props.wf_module_id)
-        .then( json => {
-            var first_row = json.rows[0];
-            var cols = json.columns.filter(column => {
-              return isFinite(String(first_row[column]));
-            });
-            return cols;
-        })
-    )
+    return this.props.api.inputColumns(this.props.wf_module_id);
   }
 
   // set contents of HTML input field corresponding to our type
@@ -277,9 +259,50 @@ export default class WfParameter extends React.Component {
     }
   }
 
+  displayConditionalUI(condition) {
+    // Checks if a menu item in the visibility condition is selected
+    // If yes, display or hide the item depending on whether we have inverted the visibility condition
+    // type is either 'visible_if' or 'visible_if_not'
+    if(('id_name' in condition) && ('value' in condition)) {
+      var condValues = condition['value'].split('|').map(cond => cond.trim());
+      var selectionIdx = parseInt(this.props.getParamText(condition['id_name']));
+      if(selectionIdx != NaN) {
+        var menuItems = this.props.getParamMenuItems(condition['id_name']);
+        if(menuItems.length > 0) {
+          var selection = menuItems[selectionIdx];
+          var selectionInCondition = (condValues.indexOf(selection) >= 0);
+          // No 'invert' means do not invert
+          if(!('invert' in condition)) {
+            return selectionInCondition;
+          } else if(!condition['invert']) {
+            return selectionInCondition;
+          } else {
+            return !selectionInCondition;
+          }
+        }
+      }
+    }
+    // If the visibility condition is empty or invalid, default to showing the parameter
+    return true;
+  }
+
   render() {
     if (!this.props.p.visible) {
       return false; // nothing to see here
+    }
+
+    if(this.props.p.parameter_spec.visible_if) {
+      var condition = JSON.parse(this.props.p.parameter_spec.visible_if);
+      if(!this.displayConditionalUI(condition, 'visible_if')) {
+        return false;
+      }
+    }
+
+    if (this.props.p.parameter_spec.visible_if_not) {
+      var condition = JSON.parse(this.props.p.parameter_spec.visible_if_not);
+      if(!this.displayConditionalUI(condition, 'visible_if_not')) {
+        return false;
+      }
     }
 
     switch (this.type) {

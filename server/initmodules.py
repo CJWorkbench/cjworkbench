@@ -158,6 +158,13 @@ def load_parameter_spec(d, module_version, order):
     pspec.derived_data = d.get('derived-data', False)
     pspec.placeholder = d.get('placeholder', '')
 
+    # For inversion, use the 'invert' attribute here
+    if 'visible_if' in d:
+        if 'id_name' in d['visible_if'] and 'value' in d['visible_if']:
+            pspec.visible_if = json.dumps(d.get('visible_if', {}))
+        else:
+            raise ValueError('visible_if must have "id_name" and "value" attributes')
+
     pspec.order = order
     pspec.save()
 

@@ -57,5 +57,8 @@ class ParameterSpec(models.Model):
     derived_data = models.BooleanField(default=False)       # Don't save in the undo stack, it comes from other params
     placeholder = models.TextField(blank=True, default='')  # Placeholder/help text. Different from default in that it's not actually a value.
 
+    # Conditional UI
+    visible_if = models.TextField('visible_if', default='')
+
     def __str__(self):
         return self.module_version.module.name + ' - ' + self.name
