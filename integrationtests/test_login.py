@@ -26,11 +26,10 @@ class TestLogin(WorkbenchBase):
     def test_login(self):
         b = self.browser
         b.visit(self.live_server_url + '/account/login')
+        self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
+        self.assertTrue(b.is_element_present_by_text('Use Google account'))
         b.fill('login', self.user.email)
         b.fill('password', self.password)
-
-
-
         b.find_by_tag('button').click()
         time.sleep(2)
         # if we logged in sucessfully, we should be at an empty Workflows screen
