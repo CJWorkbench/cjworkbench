@@ -6258,7 +6258,7 @@ exports[`TableView Blank table when no module id 1`] = `
 </TableView>
 `;
 
-exports[`TableView Fetches and renders 1`] = `
+exports[`TableView Fetches, renders, and edits cells 1`] = `
 <TableView
   api={
     Object {

@@ -12,6 +12,10 @@ export function mockAddCellEdit(fn) {
   EditCells.addCellEdit = fn;
 }
 
+// Constants to control loading behaviour. Exported so they are accessible to tests
+export const initialRows = 120;   // because react-data-grid seems to preload to 100
+export const deltaRows = 100;     // get this many rows over the last row we've actually been asked for
+
 export default class TableView extends React.Component {
 
   constructor(props) {
@@ -29,11 +33,8 @@ export default class TableView extends React.Component {
     this.onEditCell = this.onEditCell.bind(this);
 
     this.loading = false;
+    this.highestRowRequested = 0;
 
-    // constants to control loading behaviour
-    this.initialRows = 120;   // because react-data-grid seems to preload to 100
-    this.preloadRows = 20;    // get new rows when we are this close to the end
-    this.deltaRows = 100;     // get this many new rows at a time
   }
 
   // safe wrapper as setBusySpinner prop is optional
@@ -75,9 +76,10 @@ export default class TableView extends React.Component {
   refreshTable(id) {
     if (id) {
       this.loading = true;
+      this.highestRowRequested = 0;
       this.setBusySpinner(true);
 
-      this.props.api.render(id, 0, this.initialRows)
+      this.props.api.render(id, 0, initialRows)
         .then(json => {
           this.loading = false;
           this.setBusySpinner(false);
@@ -91,7 +93,7 @@ export default class TableView extends React.Component {
 
   // Load first 100 rows of table when first rendered
   componentDidMount() {
-    this.loadTable(this.props.id, this.initialRows);
+    this.loadTable(this.props.id, initialRows);
   }
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
@@ -108,11 +110,16 @@ export default class TableView extends React.Component {
   getRow(i) {
     if (this.state.tableData) {
 
+      // Don't load rows only 100 at a time, if the user scrolls down fast
+      this.highestRowRequested = Math.max(this.highestRowRequested, i);
+
       // Time to load more rows?
       if (!this.loading) {
-        var target = Math.min(i + this.preloadRows, this.state.tableData.total_rows);  // don't try to load past end of data
+        let target = Math.max(i, this.highestRowRequested);
+        target += deltaRows;
+        target = Math.min(target, this.state.tableData.total_rows);  // don't try to load past end of data
         if (target > this.state.lastLoadedRow) {
-          this.loadTable(this.props.id, this.state.lastLoadedRow + this.deltaRows);
+          this.loadTable(this.props.id, target);
         }
       }
 
