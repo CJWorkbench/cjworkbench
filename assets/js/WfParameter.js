@@ -259,8 +259,9 @@ export default class WfParameter extends React.Component {
     }
   }
 
-  displayConditionalUI(condition, type) {
-    // Checks if conditional UI should be displayed
+  displayConditionalUI(condition) {
+    // Checks if a menu item in the visibility condition is selected
+    // If yes, display or hide the item depending on whether we have inverted the visibility condition
     // type is either 'visible_if' or 'visible_if_not'
     if(('id_name' in condition) && ('value' in condition)) {
       var condValues = condition['value'].split('|').map(cond => cond.trim());
@@ -270,7 +271,10 @@ export default class WfParameter extends React.Component {
         if(menuItems.length > 0) {
           var selection = menuItems[selectionIdx];
           var selectionInCondition = (condValues.indexOf(selection) >= 0);
-          if(type == 'visible_if') {
+          // No 'invert' means do not invert
+          if(!('invert' in condition)) {
+            return selectionInCondition;
+          } else if(!condition['invert']) {
             return selectionInCondition;
           } else {
             return !selectionInCondition;
@@ -278,6 +282,7 @@ export default class WfParameter extends React.Component {
         }
       }
     }
+    // If the visibility condition is empty or invalid, default to showing the parameter
     return true;
   }
 

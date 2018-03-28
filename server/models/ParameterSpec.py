@@ -59,8 +59,6 @@ class ParameterSpec(models.Model):
 
     # Conditional UI
     visible_if = models.TextField('visible_if', default='')
-    visible_if_not = models.TextField('visible_if_not', default='')
-
 
     def __str__(self):
         return self.module_version.module.name + ' - ' + self.name

@@ -10,14 +10,14 @@ describe('WfParameter', () => {
   // For testing conditional UI
   var mockGetParamMenuItems = (param_id) => {return 'Sugar|Butter||Flour'.split('|').map(s => s.trim())}
   var mockGetParamText = (param_id) => {return '3'}
-  var visibilityCond1 = JSON.stringify({
+  var visibilityCond1 = {
     'id_name': 'whatever',
     'value': 'Butter|Flour'
-  });
-  var visibilityCond2 = JSON.stringify({
+  };
+  var visibilityCond2 = {
     'id_name': 'whatever',
-    'value': 'Sugar'
-  });
+    'value': 'Sugar',
+  };
 
   function shallowParameter(p) {
     return shallow(
@@ -56,8 +56,7 @@ describe('WfParameter', () => {
         value: 'data.sfgov.org',
         parameter_spec: {
           type: 'string',
-          visible_if: visibilityCond1,
-          visible_if_not: '{}'
+          visible_if: JSON.stringify(visibilityCond1),
         }
     });
     expect(wrapper.find('textarea')).toHaveLength(1);
@@ -69,34 +68,35 @@ describe('WfParameter', () => {
         value: 'data.sfgov.org',
         parameter_spec: {
           type: 'string',
-          visible_if: visibilityCond2,
-          visible_if_not: '{}'
+          visible_if: JSON.stringify(visibilityCond2),
         }
     });
     expect(wrapper.find('textarea')).toHaveLength(0);
   });
 
-  it('Does not render a parameter when visible_if_not conditions are met', () => {
-    var wrapper = shallowParameter({
+  it('Does not render a parameter when visible_if conditions are met but visible_if is inverted', () => {
+      var newVisibilityCond = Object.assign(visibilityCond1, {});
+      newVisibilityCond['invert'] = true;
+      var wrapper = shallowParameter({
         visible: true,
         value: 'data.sfgov.org',
         parameter_spec: {
           type: 'string',
-          visible_if: '{}',
-          visible_if_not: visibilityCond1
+          visible_if: JSON.stringify(newVisibilityCond),
         }
     });
     expect(wrapper.find('textarea')).toHaveLength(0);
   });
 
-  it('Renders a parameter when visible_if_not conditions are not met', () => {
-    var wrapper = shallowParameter({
+  it('Renders a parameter when visible_if conditions are not met but visible_if is inverted', () => {
+      var newVisibilityCond = Object.assign(visibilityCond2, {});
+      newVisibilityCond['invert'] = true;
+      var wrapper = shallowParameter({
         visible: true,
         value: 'data.sfgov.org',
         parameter_spec: {
           type: 'string',
-          visible_if: '{}',
-          visible_if_not: visibilityCond2
+          visible_if: JSON.stringify(newVisibilityCond),
         }
     });
     expect(wrapper.find('textarea')).toHaveLength(1);
