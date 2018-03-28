@@ -74,6 +74,30 @@ class InitmoduleTests(LoggedInTestCase):
               ]
             }
 
+        # A very barebones module to test conditional UI loading
+        self.cond_ui_valid = {
+            'name': 'CondUI1',
+            'id_name': 'condui1',
+            'category': 'Analyze',
+            'parameters': [
+                {
+                    'name': 'cond_menu',
+                    'id_name': 'cond_menu',
+                    'type': 'menu',
+                    'menu_items': 'cond1|cond2|cond3'
+                },
+                {
+                    'name': 'cond_test',
+                    'id_name': 'cond_test',
+                    'type': 'checkbox',
+                    'visible_if': {
+                        'id_name': 'cond_menu',
+                        'value': 'cond1|cond3'
+                    }
+                }
+            ]
+        }
+
         # create versions of loadcsv that have missing required elements
         self.missing_name = copy.deepcopy(self.loadcsv)
         del self.missing_name['name']
@@ -222,6 +246,24 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(menu_pval2.value, '1')
         self.assertEqual(menu_pval1.order, 0)
 
+    # A brief check of conditional UI, in that the JSON can be stored and retrieved correctly.
+    def test_condui(self):
+        self.assertEqual(len(Module.objects.all()), 0)
+        load_module_from_dict(self.cond_ui_valid)
+        cond_spec = ParameterSpec.objects.get(id_name='cond_test')
+        cond_spec_visibility = json.loads(cond_spec.visible_if)
+        self.assertEqual(cond_spec_visibility, self.cond_ui_valid['parameters'][1]['visible_if'])
+
+        new_cond_ui = copy.copy(self.cond_ui_valid)
+        del new_cond_ui['parameters'][1]['visible_if']['value']
+        with self.assertRaises(ValueError):
+            load_module_from_dict(new_cond_ui)
+
+        new_cond_ui['parameters'][1]['visible_if']['value'] = 'cond1|cond2'
+        load_module_from_dict(new_cond_ui)
+        cond_spec_new = ParameterSpec.objects.get(id_name='cond_test')
+        cond_spec_visibility_new = json.loads(cond_spec_new.visible_if)
+        self.assertEqual(cond_spec_visibility_new, new_cond_ui['parameters'][1]['visible_if'])
 
 
 

@@ -259,9 +259,50 @@ export default class WfParameter extends React.Component {
     }
   }
 
+  displayConditionalUI(condition) {
+    // Checks if a menu item in the visibility condition is selected
+    // If yes, display or hide the item depending on whether we have inverted the visibility condition
+    // type is either 'visible_if' or 'visible_if_not'
+    if(('id_name' in condition) && ('value' in condition)) {
+      var condValues = condition['value'].split('|').map(cond => cond.trim());
+      var selectionIdx = parseInt(this.props.getParamText(condition['id_name']));
+      if(selectionIdx != NaN) {
+        var menuItems = this.props.getParamMenuItems(condition['id_name']);
+        if(menuItems.length > 0) {
+          var selection = menuItems[selectionIdx];
+          var selectionInCondition = (condValues.indexOf(selection) >= 0);
+          // No 'invert' means do not invert
+          if(!('invert' in condition)) {
+            return selectionInCondition;
+          } else if(!condition['invert']) {
+            return selectionInCondition;
+          } else {
+            return !selectionInCondition;
+          }
+        }
+      }
+    }
+    // If the visibility condition is empty or invalid, default to showing the parameter
+    return true;
+  }
+
   render() {
     if (!this.props.p.visible) {
       return false; // nothing to see here
+    }
+
+    if(this.props.p.parameter_spec.visible_if) {
+      var condition = JSON.parse(this.props.p.parameter_spec.visible_if);
+      if(!this.displayConditionalUI(condition, 'visible_if')) {
+        return false;
+      }
+    }
+
+    if (this.props.p.parameter_spec.visible_if_not) {
+      var condition = JSON.parse(this.props.p.parameter_spec.visible_if_not);
+      if(!this.displayConditionalUI(condition, 'visible_if_not')) {
+        return false;
+      }
     }
 
     switch (this.type) {

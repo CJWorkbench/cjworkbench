@@ -31,6 +31,7 @@ class WfModule extends React.Component {
     this.changeParam = this.changeParam.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
+    this.getParamMenuItems = this.getParamMenuItems.bind(this);
     this.removeModule = this.removeModule.bind(this);
     this.showNotes = this.showNotes.bind(this);
     this.hideNotes = this.hideNotes.bind(this);
@@ -127,6 +128,16 @@ class WfModule extends React.Component {
     }
   }
 
+  getParamMenuItems(paramIdName) {
+    var p = this.props.wfModule.parameter_vals.find(p => p.parameter_spec.id_name == paramIdName);
+    if(p) {
+      if(p.menu_items) {
+        return p.menu_items.split('|').map(s => s.trim());
+      }
+    }
+    return [];
+  }
+
   removeModule(e) {
     this.props.removeModule(this.props.wfModule.id);
   }
@@ -191,6 +202,7 @@ class WfModule extends React.Component {
           revision={this.props.revision}
           updateSettings={updateSettings}
           getParamText={this.getParamText}
+          getParamMenuItems={this.getParamMenuItems}
           setParamText={this.setParamText}
           setClickNotification={this.setClickNotification}
           notifications={wfModule.notifications}
