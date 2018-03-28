@@ -325,6 +325,8 @@ if os.path.isfile(CJW_SOCIALACCOUNT_SECRETS_PATH):
         CJW_SOCIALACCOUNT_SECRETS = []
 
     for provider in CJW_SOCIALACCOUNT_SECRETS:
+
+
         INSTALLED_APPS.append('allauth.socialaccount.providers.' + provider['provider'])
 
 else:
