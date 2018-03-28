@@ -341,3 +341,9 @@ try:
     from cjworkbench.local_settings import *
 except ImportError:
     pass
+
+if 'test' in sys.argv:
+    for provider in ['allauth.socialaccount.providers.facebook',
+                     'allauth.socialaccount.providers.google']:
+        if provider not in INSTALLED_APPS:
+            INSTALLED_APPS.append(provider)
