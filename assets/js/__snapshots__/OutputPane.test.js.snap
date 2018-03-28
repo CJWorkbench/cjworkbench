@@ -1275,6 +1275,13 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
   api={Object {}}
   htmlOutput={true}
   revision={1}
+  selectedWfModuleId={999}
+  workflow={
+    Object {
+      "id": 777,
+      "public": true,
+    }
+  }
 >
   <div
     className="outputpane"
@@ -1361,8 +1368,14 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
         </div>
         <OutputIframe
           api={Object {}}
-          id="output_iframe"
           revision={1}
+          selectedWfModuleId={999}
+          workflow={
+            Object {
+              "id": 777,
+              "public": true,
+            }
+          }
         >
           <div
             className="outputpane-iframe"
@@ -1398,7 +1411,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
               />
             </div>
             <iframe
-              src="/api/wfmodules/undefined/output?rev=1"
+              src="/api/wfmodules/999/output?rev=1"
             />
           </div>
         </OutputIframe>

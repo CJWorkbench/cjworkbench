@@ -3,7 +3,6 @@ from django.core import mail
 import time
 import re
 from splinter import Browser
-from django.conf import settings
 
 
 class TestSignup(WorkbenchBase):
