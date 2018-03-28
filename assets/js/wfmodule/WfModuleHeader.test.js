@@ -16,7 +16,7 @@ describe('WfModuleHeader', () => {
     expect(wrapper).toMatchSnapshot();
     expect(wrapper.props().focusModule.mock.calls.length).toEqual(1);
     expect(wrapper.find('.WFmodule-name').text()).toEqual("Some module name");
-    expect(wrapper.find('.WFmodule-icon').props().className).toEqual('icon-some-icon WFmodule-icon mr-2');
+    expect(wrapper.find('.WFmodule-icon').props().className).toEqual('icon-some-icon WFmodule-icon t-vl-gray mr-2');
   });
 
   it('Mounts and does not focus', () => {
@@ -32,6 +32,6 @@ describe('WfModuleHeader', () => {
     expect(wrapper).toMatchSnapshot();
     expect(wrapper.props().focusModule.mock.calls.length).toEqual(0);
     expect(wrapper.find('.WFmodule-name').text()).toEqual("Some module name");
-    expect(wrapper.find('.WFmodule-icon').props().className).toEqual('icon-some-icon WFmodule-icon mr-2');
+    expect(wrapper.find('.WFmodule-icon').props().className).toEqual('icon-some-icon WFmodule-icon t-vl-gray mr-2');
   });
 });

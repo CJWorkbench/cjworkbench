@@ -14,7 +14,7 @@
       "default": "1"
     },
     {
-      "name": "Columns",
+      "name": "",
       "id_name": "colselect",
       "type": "multicolumn",
       "ui-only": true

@@ -5,9 +5,10 @@ from django.utils import timezone
 from datetime import timedelta
 import logging
 import sys
+import threading
 
 def setup_custom_logger():
-    formatter = logging.Formatter(fmt='[%(asctime)s.%(msecs)03d %(thread)X] %(message)s',
+    formatter = logging.Formatter(fmt='[%(asctime)s.%(msecs)03d %(process)d-%(thread)X] %(message)s',
                                   datefmt='%Y-%m-%d %H:%M:%S')
     screen_handler = logging.StreamHandler(stream=sys.stdout)
     screen_handler.setFormatter(formatter)
@@ -18,15 +19,23 @@ def setup_custom_logger():
 
 logger = setup_custom_logger()
 
+lock = threading.Lock()
 
-# update all modules' data
+# update all modules' data. But only ever one at a time,
+# or we can use up all threads if one request doesn't finish before the next one
 def update_wfm_data_scan(request):
-    logger.debug('Scanning for updating modules')
-    # Loop through every workflow module attached to a workflow
-    for wfm in WfModule.objects.filter(workflow__isnull=False):
-        # only check if an interval has been set (i.e. this module can load data)
-        if wfm.auto_update_data and wfm.update_interval>0:
-            check_for_wfm_data_update(wfm, request)
+
+    # if we can't get the lock, another thread is already updating, so we won't
+    if lock.acquire(blocking=False):
+        try:
+            logger.debug('Scanning for updating modules')
+            # Loop through every workflow module attached to a workflow
+            for wfm in WfModule.objects.filter(workflow__isnull=False):
+                # only check if an interval has been set (i.e. this module can load data)
+                if wfm.auto_update_data and wfm.update_interval>0:
+                    check_for_wfm_data_update(wfm, request)
+        finally:
+            lock.release()
 
 
 # schedule next update, skipping missed updates if any

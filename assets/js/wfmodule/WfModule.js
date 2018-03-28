@@ -282,15 +282,15 @@ class WfModule extends React.Component {
       // be necessary either.
       <div onClick={this.click} className={(this.props.isOver ? ('over ' + this.state.dragPosition) : '')}>
         {notes}
-        <div className='wf-card mx-auto' ref={this.setModuleRef}>
+        <div className={'wf-card mx-auto '+ (this.props.isDragging ? 'wf-module--dragging ' : '')} ref={this.setModuleRef}>
 
           <div>
             <div className='output-bar-container'>
-              <StatusBar status={wfModule.status} isSelected={this.props.selected}/>
+              <StatusBar status={wfModule.status} isSelected={this.props.selected} isDragging={this.props.isDragging}/>
             </div>
             <div className='card-block p-0' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
               <div className='module-card-info'>
-                <div className={'module-card-header' + (this.props.isDragging ? ' dragging' : '')}>
+                <div className='module-card-header'>
                   <div className='module-header-content'>
                     <div className='d-flex justify-content-start align-items-center'>
                       <div className={moduleIcon} />

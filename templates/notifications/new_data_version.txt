@@ -1,5 +1,2 @@
 Hi {{ user_name }},
 Your workflow <a href="{{ workflow_url }}">{{ workflow_name }}</a> has been updated with new data on {{ date }}.
-
-Thank you,
-The Workbench team

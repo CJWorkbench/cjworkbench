@@ -23,11 +23,12 @@ export default class StatusBar extends React.Component {
         break;
     }
 
-    return <div className={barColor} />
+    return <div className={barColor + (this.props.isDragging ? ' wf-module--dragging ' : '')} />
   }
 }
 
 StatusBar.PropTypes = {
+  isDragging: PropTypes.bool,
   isSelected: PropTypes.bool,
   status: PropTypes.string
 };

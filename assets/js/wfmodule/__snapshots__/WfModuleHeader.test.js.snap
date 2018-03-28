@@ -9,20 +9,8 @@ exports[`WfModuleHeader Mounts and does not focus 1`] = `
   status="busy"
 >
   <div
-    className="wf-card mx-auto"
+    className="wf-module--placeholder mx-auto"
   >
-    <div
-      className="output-bar-container"
-    >
-      <StatusBar
-        isSelected={false}
-        status="busy"
-      >
-        <div
-          className="module-output-bar-orange"
-        />
-      </StatusBar>
-    </div>
     <div
       className="card-block p-0"
     >
@@ -39,10 +27,10 @@ exports[`WfModuleHeader Mounts and does not focus 1`] = `
               className="d-flex justify-content-start align-items-center"
             >
               <div
-                className="icon-some-icon WFmodule-icon mr-2"
+                className="icon-some-icon WFmodule-icon t-vl-gray mr-2"
               />
               <div
-                className="t-d-gray WFmodule-name"
+                className="t-vl-gray WFmodule-name"
               >
                 Some module name
               </div>
@@ -64,20 +52,8 @@ exports[`WfModuleHeader Mounts and focuses 1`] = `
   status="busy"
 >
   <div
-    className="wf-card mx-auto"
+    className="wf-module--placeholder mx-auto"
   >
-    <div
-      className="output-bar-container"
-    >
-      <StatusBar
-        isSelected={true}
-        status="busy"
-      >
-        <div
-          className="module-output-bar-orange"
-        />
-      </StatusBar>
-    </div>
     <div
       className="card-block p-0"
     >
@@ -94,10 +70,10 @@ exports[`WfModuleHeader Mounts and focuses 1`] = `
               className="d-flex justify-content-start align-items-center"
             >
               <div
-                className="icon-some-icon WFmodule-icon mr-2"
+                className="icon-some-icon WFmodule-icon t-vl-gray mr-2"
               />
               <div
-                className="t-d-gray WFmodule-name"
+                className="t-vl-gray WFmodule-name"
               >
                 Some module name
               </div>
