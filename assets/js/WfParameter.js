@@ -266,9 +266,8 @@ export default class WfParameter extends React.Component {
       var condValues = condition['value'].split('|').map(cond => cond.trim());
       var selectionIdx = parseInt(this.props.getParamText(condition['id_name']));
       if(selectionIdx != NaN) {
-        var menuItemsStr = this.props.getParamMenuItems(condition['id_name']);
-        if(menuItemsStr) {
-          var menuItems = menuItemsStr.split('|').map(cond => cond.trim());
+        var menuItems = this.props.getParamMenuItems(condition['id_name']);
+        if(menuItems.length > 0) {
           var selection = menuItems[selectionIdx];
           var selectionInCondition = (condValues.indexOf(selection) >= 0);
           if(type == 'visible_if') {
