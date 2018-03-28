@@ -48,7 +48,7 @@ function collect(monitor) {
     isDragging: monitor.isDragging(),
     itemType: monitor.getItemType(),
     item: monitor.getItem(),
-    getSourceClientOffset: monitor.getSourceClientOffset(),
+    getSourceClientOffset: monitor.getClientOffset(),
   }
 }
 

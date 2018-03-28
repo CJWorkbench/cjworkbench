@@ -19,17 +19,6 @@
   font-size: 1.2rem;
 }
 
-/*** Module Parameters spacing ***/
-
-.label-margin {
-  margin-bottom: 0.1rem;
-  color:#b2b2b2;
-}
-
-.wf-card .label{
-  margin-bottom: 0px;
-}
-
 .wf-card{
   width: 26rem;
   margin-bottom: 0.5rem;
@@ -117,6 +106,117 @@
 
 .wfmoduleButton{
   width: 20%;
+}
+
+/* ---- Wf Module status bars ---- */
+
+/* a dummy div around output status bar, for positioning purposes  */
+.output-bar-container {
+  position: absolute;
+  height: 100%;
+  width:100%;
+}
+
+/* all good & selected */
+.module-output-bar-blue {
+  height: 100%;
+  background-color:#F5F7F8;
+  border: 1px solid rgba(118,155,176,0.3);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.module-output-bar-blue:after {
+	border: solid transparent;
+	content: " ";
+	border-left-color: rgba(118,155,176,0.3);
+	border-width: 2rem 0 2.25rem 1rem;
+  margin-left: 26.3rem
+}
+
+/* standby  */
+.module-output-bar-orange {
+  height: 100%;
+  border:1px solid rgba(251,170,109,0.7);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.module-output-bar-orange:after {
+  border: solid transparent;
+	content: " ";
+	border-left-color: rgba(251,170,109,0);
+	border-width: 2rem 0 2.25rem 1rem;
+  margin-left: 26.3rem
+}
+/* error  */
+.module-output-bar-pink {
+  height: 100%;
+  background-color: transparent;
+  border:1px solid rgba(0,114,110,0);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+
+.module-output-bar-pink:after {
+	content: " ";
+	position: absolute;
+	border:2px solid rgba(232,114,110,0.3);
+  margin-left: 26.5rem;
+  height: 4rem;
+}
+/* error & selected */
+.module-output-bar-red {
+  height: 100%;
+  background-color: transparent;
+  border:1px solid rgba(232,114,110,0.5);
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+}
+.module-output-bar-red:after {
+  content: " ";
+	position: absolute;
+	border:2px solid rgba(232,114,110,0.3);
+  margin-left: 26.5rem;
+  height: 4rem;
+}
+
+
+// Module placeholder: either DND or placeholder while module is being rendered.
+
+.wf-module--placeholder{
+  width: 18rem;
+  margin-bottom: 0.5rem;
+  background-color: #7A9BB0;
+  position: relative;
+  
+  box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
+}
+
+// Module being dragged
+.wf-module--dragging{
+  background-color: #FFE6D2;
+}
+.wf-card.wf-module--dragging:hover{
+  background-color: #FFE6D2;
+  border:1px solid #F9C399;
+}
+.module-output-bar-blue.wf-module--dragging{
+  border:none;
+}
+
+/*** Module Parameters spacing ***/
+
+.label-margin {
+  margin-bottom: 0.1rem;
+  color:#b2b2b2;
+}
+
+.wf-card .label{
+  margin-bottom: 0px;
 }
 
 
@@ -231,81 +331,6 @@ svg .svg-background{
   margin-left: 0.5rem;
 }
 
-/* ---- Wf Module status bars ---- */
-
-/* a dummy div around output status bar, for positioning purposes  */
-.output-bar-container {
-  position: absolute;
-  height: 100%;
-  width:100%;
-}
-
-/* all good & selected */
-.module-output-bar-blue {
-  height: 100%;
-  background-color:#F5F7F8;
-  border: 1px solid rgba(118,155,176,0.3);
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-
-.module-output-bar-blue:after {
-	border: solid transparent;
-	content: " ";
-	border-left-color: rgba(118,155,176,0.3);
-	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 26.3rem
-}
-
-/* standby  */
-.module-output-bar-orange {
-  height: 100%;
-  border:1px solid rgba(251,170,109,0.7);
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-.module-output-bar-orange:after {
-  border: solid transparent;
-	content: " ";
-	border-left-color: rgba(251,170,109,0);
-	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 26.3rem
-}
-/* error  */
-.module-output-bar-pink {
-  height: 100%;
-  background-color: transparent;
-  border:1px solid rgba(0,114,110,0);
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-
-.module-output-bar-pink:after {
-	content: " ";
-	position: absolute;
-	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 26.5rem;
-  height: 4rem;
-}
-/* error & selected */
-.module-output-bar-red {
-  height: 100%;
-  background-color: transparent;
-  border:1px solid rgba(232,114,110,0.5);
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-.module-output-bar-red:after {
-  content: " ";
-	position: absolute;
-	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 26.5rem;
-  height: 4rem;
-}
 
 /* CSS-based drag-and-drop placeholder */
 /* We use :before and :after pseudoelements to avoid DOM manipulation and
