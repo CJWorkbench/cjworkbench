@@ -27,9 +27,8 @@ class TestLogin(WorkbenchBase):
         b = self.browser
         b.visit(self.live_server_url + '/account/login')
 
-        time.sleep(2)
-        self.assertTrue(b.is_element_present_by_text('Use Facebook account', wait_time=5))
-        self.assertTrue(b.is_element_present_by_text('Use Google account', wait_time=5))
+        self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
+        self.assertTrue(b.is_element_present_by_text('Use Google account'))
 
         b.fill('login', self.user.email)
         b.fill('password', self.password)

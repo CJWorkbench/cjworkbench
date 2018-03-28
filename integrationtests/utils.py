@@ -7,13 +7,8 @@ from server.tests.utils import *
 from server.models import ModuleVersion
 from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
-from django.test import modify_settings
 
 
-@modify_settings(INSTALLED_APPS={
-    'append': 'allauth.socialaccount.providers.facebook',
-    'append': 'allauth.socialaccount.providers.twitter',
-})
 class WorkbenchBase(StaticLiveServerTestCase):
 
     @classmethod

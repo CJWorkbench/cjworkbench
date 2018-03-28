@@ -3,6 +3,7 @@ from django.core import mail
 import time
 import re
 from splinter import Browser
+from django.conf import settings
 
 
 class TestSignup(WorkbenchBase):
@@ -23,13 +24,8 @@ class TestSignup(WorkbenchBase):
         # This will break when signup is open to the public
         b.visit(self.live_server_url + '/xyzzy/signup/')
 
-        time.sleep(10)
-
-        print(b.find_by_text('Use Facebook account'))
-        print(b.find_by_text('Use Google account'))
-
-        self.assertTrue(b.is_element_present_by_text('Use Facebook account', wait_time=20))
-        self.assertTrue(b.is_element_present_by_text('Use Google account', wait_time=20))
+        self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
+        self.assertTrue(b.is_element_present_by_text('Use Google account'))
 
         b.fill('email', 'user@user.org')
         b.fill('first_name', 'Jane')
