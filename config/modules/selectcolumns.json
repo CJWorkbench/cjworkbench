@@ -7,17 +7,17 @@
   "help_url":"modules/clean/column-selector",
   "parameters": [
     {
+      "name": "",
+      "id_name": "colselect",
+      "type": "multicolumn",
+      "ui-only": true
+    },
+    {
       "name" : "",
       "id_name" : "drop_or_keep",
       "type" : "menu",
       "menu_items" : "Drop|Keep",
       "default": "1"
-    },
-    {
-      "name": "",
-      "id_name": "colselect",
-      "type": "multicolumn",
-      "ui-only": true
     },
     {
         "name": "Column Names",
