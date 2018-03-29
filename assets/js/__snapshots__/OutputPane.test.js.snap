@@ -4763,7 +4763,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
                                                           value={1}
                                                         >
                                                           <div
-                                                            className="rowNumber"
+                                                            className="row-number"
                                                           >
                                                             1
                                                           </div>
@@ -5699,7 +5699,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
                                                           value={2}
                                                         >
                                                           <div
-                                                            className="rowNumber"
+                                                            className="row-number"
                                                           >
                                                             2
                                                           </div>
@@ -6635,7 +6635,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
                                                           value={3}
                                                         >
                                                           <div
-                                                            className="rowNumber"
+                                                            className="row-number"
                                                           >
                                                             3
                                                           </div>
@@ -7571,7 +7571,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
                                                           value={4}
                                                         >
                                                           <div
-                                                            className="rowNumber"
+                                                            className="row-number"
                                                           >
                                                             4
                                                           </div>
@@ -11137,7 +11137,7 @@ exports[`OutputPane Renders when no module id 1`] = `
                                                           value={1}
                                                         >
                                                           <div
-                                                            className="rowNumber"
+                                                            className="row-number"
                                                           >
                                                             1
                                                           </div>
@@ -12073,7 +12073,7 @@ exports[`OutputPane Renders when no module id 1`] = `
                                                           value={2}
                                                         >
                                                           <div
-                                                            className="rowNumber"
+                                                            className="row-number"
                                                           >
                                                             2
                                                           </div>
@@ -13009,7 +13009,7 @@ exports[`OutputPane Renders when no module id 1`] = `
                                                           value={3}
                                                         >
                                                           <div
-                                                            className="rowNumber"
+                                                            className="row-number"
                                                           >
                                                             3
                                                           </div>
@@ -13945,7 +13945,7 @@ exports[`OutputPane Renders when no module id 1`] = `
                                                           value={4}
                                                         >
                                                           <div
-                                                            className="rowNumber"
+                                                            className="row-number"
                                                           >
                                                             4
                                                           </div>

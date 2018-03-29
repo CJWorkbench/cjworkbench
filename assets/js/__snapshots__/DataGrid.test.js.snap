@@ -2281,7 +2281,7 @@ exports[`Renders the grid 1`] = `
                                             value={1}
                                           >
                                             <div
-                                              className="rowNumber"
+                                              className="row-number"
                                             >
                                               1
                                             </div>
@@ -3055,7 +3055,7 @@ exports[`Renders the grid 1`] = `
                                             value={2}
                                           >
                                             <div
-                                              className="rowNumber"
+                                              className="row-number"
                                             >
                                               2
                                             </div>
