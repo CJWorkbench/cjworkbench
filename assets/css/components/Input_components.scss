@@ -2,7 +2,7 @@
 
 .dropdown-menu {
   margin-top: 0.5rem;
-  border:1px solid rgba(118,155,176,0.2);
+  border:2px solid rgba(118,155,176,0.2);
   border-radius: 5px;
   box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.10);
   padding:0.5rem 0 0.5rem 0;
@@ -111,19 +111,19 @@ textarea:focus, input:focus{
   border: 1px solid #FBAA6D;
 }
 
-// placeholder text
+// placeholder text within text fields
 
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-  color:#d3d3d3;
+  color:#c8c8c8;
 }
 ::-moz-placeholder { /* Firefox 19+ */
-  color: #d3d3d3;
+  color: #c8c8c8;
 }
 :-ms-input-placeholder { /* IE 10+ */
-  color:#d3d3d3;
+  color:#c8c8c8;
 }
 :-moz-placeholder { /* Firefox 18- */
-  color:#d3d3d3;
+  color:#c8c8c8;
 }
 
 

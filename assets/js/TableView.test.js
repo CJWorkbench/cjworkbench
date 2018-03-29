@@ -122,29 +122,52 @@ describe('TableView', () => {
         api.render = makeRenderResponse(lastLoadedRow, lastLoadedRow2, totalRows);
         row = tableView.getRow(requestRow2);
         expect(row).toEqual(tableView.emptyRow());
-        expect(api.render.mock.calls.length).toBe(1);
         expect(tableView.loading).toBe(true);
+        expect(api.render.mock.calls.length).toBe(1);
+        expect(api.render.mock.calls[0][1]).toBe(lastLoadedRow);
+        expect(api.render.mock.calls[0][2]).toBe(lastLoadedRow2);
 
         let requestRow3 = Math.floor(totalRows / 2);  // thousands of rows later
         row = tableView.getRow(requestRow3);
         expect(row).toEqual(tableView.emptyRow());
         expect(api.render.mock.calls.length).toBe(1);   // already loading, should not have started a new load
-        expect(api.render.mock.calls[0][1]).toBe(lastLoadedRow);
-        expect(api.render.mock.calls[0][2]).toBe(lastLoadedRow2);
 
-        // let rows load
         setImmediate(() => {
           expect(tableView.loading).toBe(false);
 
           // Now start yet another load, for something much smaller that requestRow3
           let requestRow4 = lastLoadedRow2 + 1;                         // ask for very next unloaded row...
           let lastLoadedRow3 = requestRow3 + deltaRows + preloadRows;  // ...but should end up loading much more
+          api.render = makeRenderResponse(lastLoadedRow2, lastLoadedRow3, totalRows);
           tableView.getRow(requestRow4);
-          expect(api.render.mock.calls.length).toBe(2);
-          expect(api.render.mock.calls[1][1]).toBe(lastLoadedRow2);
-          expect(api.render.mock.calls[1][2]).toBe(lastLoadedRow3);
+          expect(api.render.mock.calls.length).toBe(1);
+          expect(api.render.mock.calls[0][1]).toBe(lastLoadedRow2);
+          expect(api.render.mock.calls[0][2]).toBe(lastLoadedRow3);
 
-          done();
+          setImmediate( ()=> {
+            expect(tableView.loading).toBe(false);
+
+            // Load to end
+            let requestRow5 = totalRows-1;
+            api.render = makeRenderResponse(lastLoadedRow3, totalRows, totalRows);
+            row = tableView.getRow(requestRow5);
+            expect(row).toEqual(tableView.emptyRow());
+            expect(api.render.mock.calls.length).toBe(1);
+            expect(api.render.mock.calls[0][1]).toBe(lastLoadedRow3);
+            expect(api.render.mock.calls[0][2]).toBeGreaterThanOrEqual(totalRows);
+
+            setImmediate(() =>{
+              expect(tableView.loading).toBe(false);
+
+              // Now that we've loaded the whole table, asking for the last row should not trigger a render
+              api.render = jsonResponseMock({});
+              row = tableView.getRow(totalRows-1);
+              expect(row.a).toBe(1); // not empty
+              expect(api.render.mock.calls.length).toBe(0); // no new calls
+
+              done();
+            })
+          })
         })
       })
     })

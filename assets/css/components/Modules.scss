@@ -31,12 +31,13 @@
   background:#F5F7F8;
 }
 
-.wf-card.placeholder {
-  height: 0.5rem;
-  background-color: #7A9BB0;
-  opacity:0.5;
-  padding-bottom:0;
-}
+// not sure what this is for -- Pierre
+// .wf-card.placeholder {
+//   height: 0.5rem;
+//   background-color: #7A9BB0;
+//   opacity:0.5;
+//   padding-bottom:0;
+// }
 
 .module-card-info {
   width:100%;
@@ -138,7 +139,7 @@
 /* standby  */
 .module-output-bar-orange {
   height: 100%;
-  border:1px solid rgba(251,170,109,0.7);
+  border:2px solid rgba(251,170,109,0.7);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -154,7 +155,7 @@
 .module-output-bar-pink {
   height: 100%;
   background-color: transparent;
-  border:1px solid rgba(0,114,110,0);
+  border:2px solid rgba(0,114,110,0);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -171,7 +172,7 @@
 .module-output-bar-red {
   height: 100%;
   background-color: transparent;
-  border:1px solid rgba(232,114,110,0.5);
+  border:2px solid rgba(232,114,110,0.5);
   display: flex;
   align-items: center;
   flex-direction: row;
