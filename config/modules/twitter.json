@@ -20,7 +20,22 @@
       "id_name" : "query",
       "type": "string",
       "default": "",
-      "placeholder":"@UserName or keywords"
+      "placeholder":"Keywords to match",
+      "visible_if": {
+        "id_name": "querytype",
+        "value": "Any tweet"
+      }
+    },
+    {
+      "name": "",
+      "id_name" : "username",
+      "type": "string",
+      "default": "",
+      "placeholder":"@UserName",
+      "visible_if": {
+        "id_name": "querytype",
+        "value": "User tweets"
+      }
     },
     {
       "name": "Check",

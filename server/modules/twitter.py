@@ -70,7 +70,10 @@ class Twitter(ModuleImpl):
 
         try:
             querytype = wfm.get_param_menu_idx("querytype")
-            query = wfm.get_param_string('query')
+            if querytype==Twitter.QUERY_TYPE_USER:
+                query = wfm.get_param_string('username')
+            else:
+                query = wfm.get_param_string('query')
 
             if query.strip() == '':
                 wfm.set_error('Please enter a query')

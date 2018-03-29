@@ -20,7 +20,7 @@
       "default": "False"
     },
     {
-      "name": "Regular expression",
+      "name": "Regex",
       "id_name": "regex",
       "type": "checkbox",
       "default": "False"

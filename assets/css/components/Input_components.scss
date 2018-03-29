@@ -40,6 +40,7 @@
 // Parameters input and text Fields
 
 .parameter-base {
+  width:100%;
   height:3.5rem;
   border-radius: 0;
   border: 1px solid #e9e9e9;
@@ -50,10 +51,14 @@
   padding: 0 1rem;
   white-space: nowrap;
   display: flex;
-  line-height: 3.5rem;
+  line-height: 3.3rem;
   width: 100%;
   resize: none;
   overflow:hidden;
+}
+
+.wf-card .text-field {
+  margin-top: -0.1rem;
 }
 
 .text-field-large {
@@ -83,7 +88,6 @@
 }
 
 .dropdown-selector {
-  width: 15rem;
   font-size: 1.3rem;
   color:#686768;
   border-radius:0;

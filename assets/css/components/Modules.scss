@@ -79,7 +79,7 @@
 }
 
 .module-card-params {
-  padding: 0 1.5rem 0.01rem 1.5rem;
+  padding: 0 1.5rem 1rem 1.5rem;
 }
 
 .module-description {
@@ -210,8 +210,8 @@
 
 /*** Module Parameters spacing ***/
 
-.label-margin {
-  margin-bottom: 0.1rem;
+.label-margin{
+  margin-top:0.8rem;
   color:#b2b2b2;
 }
 
@@ -223,24 +223,12 @@
 /* Margin for a group of parameters (can include several lines)*/
 
 .parameter-margin {
-  margin-bottom: 1rem;
+  margin-top: 1rem;
 }
 
 /* Margin for a line of 1 parameters, part of a group */
 .param-line-margin{
   margin-bottom:1rem;
-}
-
-/* Margins for 2 lined parameters, part of a group */
-.param2-line-margin{
-  display: inline-block;
-  width:48.9%;
-  margin-right: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.param2-line-margin:last-child{
-  margin-right:0;
 }
 
 

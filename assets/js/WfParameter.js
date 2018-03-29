@@ -23,6 +23,16 @@ import { store, setWfModuleStatusAction } from './workflow-reducer'
 const PRESSED_ENTER = true;
 const DIDNT_PRESS_ENTER = false;
 
+class TextOrNothing extends React.Component {
+  render() {
+    if (this.props.text.length > 0) {
+      return <div>{this.props.text}</div>;
+    } else {
+      return null;
+    }
+  }
+}
+
 export default class WfParameter extends React.Component {
 
   constructor(props) {
@@ -318,8 +328,9 @@ export default class WfParameter extends React.Component {
         }
 
         return (
-          <div className='parameter-margin'>
+          <div className=''>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
+            {/* <TextOrNothing text={this.name} className='label-margin t-d-gray content-3'/> */}
             <textarea
               onMouseEnter={() => this.props.stopDrag() }
               onMouseLeave={() => this.props.startDrag() }
@@ -338,7 +349,7 @@ export default class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className='param2-line-margin'>
+          <div className=''>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
@@ -360,12 +371,12 @@ export default class WfParameter extends React.Component {
         );
       case 'statictext':
         return (
-          <div className='parameter-margin t-m-gray info-2'>{this.name}</div>
+          <div className='t-m-gray info-2'>{this.name}</div>
         );
 
       case 'checkbox':
         return (
-            <div className='checkbox-wrapper parameter-margin'>
+            <div className='checkbox-wrapper'>
                 <div className='d-flex align-items-center'>
                   <input
                     disabled={this.props.isReadOnly}
@@ -373,14 +384,14 @@ export default class WfParameter extends React.Component {
                     checked={this.props.p.value}
                     onChange={this.click}
                     ref={ el => this.checkboxRef = el}/>
-                  <div className='t-d-gray content-3 ml-2'>{this.name}</div>
+                  <div className='t-d-gray content-3 ml-1'>{this.name}</div>
                 </div>
             </div>
         );
 
       case 'menu':
         return (
-          <div className='param2-line-margin'>
+          <div className=''>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <MenuParam
               name={this.name}
@@ -393,8 +404,8 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className='param2-line-margin'>
-            <div className='t-d-gray content-3 label-margin'>{this.name}</div>
+          <div className=''>
+            <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
               getColNames={this.getInputColNames}
