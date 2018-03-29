@@ -123,9 +123,9 @@ export default class TableView extends React.Component {
       if (!this.loading) {
         let target = Math.max(i, this.highestRowRequested);
         target += preloadRows;
+        target = Math.min(target, this.state.tableData.total_rows-1);  // don't try to load past end of data
         if (target >= this.state.lastLoadedRow) {
           target += deltaRows;
-          target = Math.min(target, this.state.tableData.total_rows);  // don't try to load past end of data
           this.loadTable(this.props.id, target);
         }
       }
