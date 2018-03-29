@@ -10,7 +10,7 @@ import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
 // Custom Formatter component, to render row number in a different style
-class RowNumberFormatter extends React.Component {
+export class RowNumberFormatter extends React.Component {
 
   render() {
  
