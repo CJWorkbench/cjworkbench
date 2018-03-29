@@ -10,12 +10,22 @@ import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
 // Custom Formatter component, to render row number in a different style
-class RowNumberFormatter extends React.Component {
+export class RowNumberFormatter extends React.Component {
 
   render() {
+ 
+    var rowNumber = this.props.value; 
+    var rowNumberDigits = rowNumber.toString().length;
+    var numberClass = 'row-number';
+    if (rowNumberDigits > 2 && rowNumberDigits < 7 ) {
+      numberClass = 'row-number-' + rowNumberDigits;
+    } else if (rowNumberDigits >= 7) {
+      numberClass = 'row-number-6'
+    }
+
     return (
-      <div className='rowNumber'>
-          {this.props.value}
+      <div className={numberClass}>
+        {rowNumber}
       </div>)
   }
 }

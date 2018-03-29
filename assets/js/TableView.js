@@ -176,7 +176,8 @@ export default class TableView extends React.Component {
             onEditCell={this.onEditCell}
           />
         </div>
-      nrows = this.state.tableData.total_rows;
+      // adds commas to row count
+      nrows = new Intl.NumberFormat('en-US').format(this.state.tableData.total_rows);
       ncols = this.state.tableData.columns.length;
     } else {
       // Empty grid, big enough to fill screen.

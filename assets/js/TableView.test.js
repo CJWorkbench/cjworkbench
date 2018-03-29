@@ -26,7 +26,7 @@ describe('TableView', () => {
   it('Fetches, renders, and edits cells', (done) => {
 
     var api = {
-      render: makeRenderResponse(0, 2, 2)
+      render: makeRenderResponse(0, 2, 1000)
     };
 
     const tree = mount(<TableView id={100} revision={1} api={api}/>)
@@ -43,6 +43,10 @@ describe('TableView', () => {
       expect(tree.find('.outputpane-data')).toHaveLength(1);
 
       expect(tree).toMatchSnapshot();
+
+      // Row count should have a comma
+      let headerText = tree.find('.outputpane-header').text();
+      expect(headerText).toContain('1,000');  
 
       // Test calls to EditCells.addCellEdit
       let addCellEditMock = jest.fn();

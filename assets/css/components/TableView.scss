@@ -1,9 +1,31 @@
 /* Table */
 
-.rowNumber {
+.row-number {
   color:#b4b4b4;
   text-align: center;
   font-size: 1.1rem!important;
+}
+// Shrinking font sizes based on number of digits
+// TODO: Can we make the font size a variable?
+.row-number-3 {
+  color:#b4b4b4;
+  text-align: center;
+  font-size: 1.0rem!important;
+}
+.row-number-4 {
+  color:#b4b4b4;
+  text-align: center;
+  font-size: 0.9rem!important;
+}
+.row-number-5 {
+  color:#b4b4b4;
+  text-align: center;
+  font-size: 0.8rem!important;
+}
+.row-number-6 {
+  color:#b4b4b4;
+  text-align: center;
+  font-size: 0.7rem!important;
 }
 
 // This is the only way to disable a react-data-grid editing feature we don't want
