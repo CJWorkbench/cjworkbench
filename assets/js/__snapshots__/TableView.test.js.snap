@@ -6285,7 +6285,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
         <div
           className="content-2 t-d-gray"
         >
-          2
+          1,000
         </div>
       </div>
       <div
@@ -6321,7 +6321,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
         }
         getRow={[Function]}
         onEditCell={[Function]}
-        totalRows={2}
+        totalRows={1000}
       >
         <ReactDataGrid
           cellNavigationMode="none"
@@ -6376,7 +6376,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
           rowHeight={35}
           rowKey="id"
           rowScrollTimeout={0}
-          rowsCount={2}
+          rowsCount={1000}
           scrollToRowIndex={0}
           tabIndex={-1}
         >
@@ -6539,7 +6539,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 rowOffsetHeight={35}
                 rowScrollTimeout={0}
                 rowSelection={null}
-                rowsCount={2}
+                rowsCount={1000}
                 scrollToRowIndex={0}
                 selectedRows={Array []}
                 sortColumn={null}
@@ -7129,7 +7129,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       rowOffsetHeight={35}
                       rowScrollTimeout={0}
                       rowSelection={null}
-                      rowsCount={2}
+                      rowsCount={1000}
                       scrollToRowIndex={0}
                       selectedRows={Array []}
                       totalWidth={-2}
@@ -7237,7 +7237,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                           rowRenderer={[Function]}
                           rowScrollTimeout={0}
                           rowSelection={null}
-                          rowsCount={2}
+                          rowsCount={1000}
                           scrollToRowIndex={0}
                           selectedRows={Array []}
                           totalWidth={-2}
@@ -7268,7 +7268,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   <div
                                     style={
                                         Object {
-                                            "height": 210,
+                                            "height": 35140,
                                           }
                                     }
                                 >
@@ -7313,7 +7313,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                     <div
                                       style={
                                           Object {
-                                              "height": 210,
+                                              "height": 35140,
                                             }
                                       }
                                   >
@@ -7354,7 +7354,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   <div
                                     style={
                                       Object {
-                                        "height": 210,
+                                        "height": 35140,
                                       }
                                     }
                                   >
