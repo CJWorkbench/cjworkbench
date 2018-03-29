@@ -9,7 +9,7 @@ exports[`WfParameter Renders cell editor 1`] = `
 
 exports[`WfParameter Renders string input field 1`] = `
 <div
-  className="parameter-margin"
+  className=""
 >
   <div
     className="label-margin t-d-gray content-3"
