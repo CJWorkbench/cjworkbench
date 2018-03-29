@@ -39,12 +39,21 @@
 
 // Parameters input and text Fields
 
+textarea:focus, input:focus{
+    outline: none;
+}
+
 .parameter-base {
   width:100%;
   height:3.5rem;
-  border-radius: 0;
-  border: 1px solid #e9e9e9;
-  background-color: #FFFFFF !important;
+  border-radius: 3px;
+  border: 1px solid #EDEDED;
+  background-color: #EDEDED !important;
+}
+
+.parameter-base:hover {
+  border: 1px solid #EFEFEF;
+  background-color: #EFEFEF !important;
 }
 
 .text-field {
@@ -90,7 +99,16 @@
 .dropdown-selector {
   font-size: 1.3rem;
   color:#686768;
-  border-radius:0;
+}
+
+// focus states
+
+.custom-select:focus{
+  border: 1px solid #FBAA6D;
+}
+
+.parameter-base:focus{
+  border: 1px solid #FBAA6D;
 }
 
 // placeholder text
