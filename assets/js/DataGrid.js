@@ -13,12 +13,19 @@ import debounce from 'lodash/debounce'
 class RowNumberFormatter extends React.Component {
 
   render() {
-    // adds commas to number
-    var numberFormat = new Intl.NumberFormat('en-US');
+ 
+    var rowNumber = this.props.value; 
+    var rowNumberDigits = rowNumber.toString().length;
+    var numberClass = 'row-number';
+    if (rowNumberDigits > 2 && rowNumberDigits < 7 ) {
+      numberClass = 'row-number-' + rowNumberDigits;
+    } else if (rowNumberDigits >= 7) {
+      numberClass = 'row-number-6'
+    }
 
     return (
-      <div className='rowNumber'>
-        {numberFormat.format(this.props.value)}
+      <div className={numberClass}>
+        {rowNumber}
       </div>)
   }
 }
