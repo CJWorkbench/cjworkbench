@@ -215,10 +215,10 @@ class WfModule extends React.Component {
     var inside;
     if (!this.state.isCollapsed)
       inside =  <div className='module-card-params'>
+                  {paramdivs}
                   <div className='module-description'>
                     {module.description}
                   </div>
-                  {paramdivs}
                 </div>;
 
     var notes;
