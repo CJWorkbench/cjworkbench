@@ -359,7 +359,6 @@ export default class facet extends React.Component {
         return (
             <div>
                 {this.state.histogramLoaded ? histogramComponent : ''}
-                <br />
             </div>
         )
     }

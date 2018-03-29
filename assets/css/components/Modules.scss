@@ -211,7 +211,6 @@
 /*** Module Parameters spacing ***/
 
 .label-margin{
-  margin-top:0.8rem;
   color:#b2b2b2;
 }
 
@@ -222,8 +221,8 @@
 
 /* Margin for a group of parameters (can include several lines)*/
 
-.parameter-margin {
-  margin-top: 1rem;
+.parameter-margin:not(:first-child) {
+  margin-top: 0.8rem;
 }
 
 /* Margin for a line of 1 parameters, part of a group */

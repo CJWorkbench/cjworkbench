@@ -328,7 +328,7 @@ export default class WfParameter extends React.Component {
         }
 
         return (
-          <div className=''>
+          <div className='parameter-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             {/* <TextOrNothing text={this.name} className='label-margin t-d-gray content-3'/> */}
             <textarea
@@ -391,7 +391,7 @@ export default class WfParameter extends React.Component {
 
       case 'menu':
         return (
-          <div className=''>
+          <div className='parameter-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <MenuParam
               name={this.name}
@@ -404,7 +404,7 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className=''>
+          <div className='parameter-margin'>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
