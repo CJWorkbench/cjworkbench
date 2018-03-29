@@ -13,8 +13,9 @@ export function mockAddCellEdit(fn) {
 }
 
 // Constants to control loading behaviour. Exported so they are accessible to tests
-export const initialRows = 120;   // because react-data-grid seems to preload to 100
-export const deltaRows = 100;     // get this many rows over the last row we've actually been asked for
+export const initialRows = 200;   // because react-data-grid seems to preload to 100
+export const preloadRows = 100;    // load when we have less then this many rows ahead
+export const deltaRows = 200;     // get this many rows at a time (must be > preloadRows)
 
 export default class TableView extends React.Component {
 
@@ -34,7 +35,7 @@ export default class TableView extends React.Component {
 
     this.loading = false;
     this.highestRowRequested = 0;
-
+    this.emptyRowCache = null;
   }
 
   // safe wrapper as setBusySpinner prop is optional
@@ -43,40 +44,13 @@ export default class TableView extends React.Component {
       this.props.setBusySpinner(visible);
   }
 
-  // Load table data from render API
-  loadTable(id, toRow) {
-    if (id) {
-      // console.log("Asked to load to " + toRow );
 
-      this.loading = true;
-      this.setBusySpinner(true);
-
-      this.props.api.render(id, this.state.lastLoadedRow, toRow)
-        .then(json => {
-
-          // console.log("Got data to " + json.end_row);
-          // Add just retrieved rows to current data, if any
-          if (this.state.tableData) {
-            json.rows = this.state.tableData.rows.concat(json.rows);
-            json.start_row = 0;  // no one looks at this currently, but they might
-          }
-
-          // triggers re-render
-          this.loading = false;
-          this.setBusySpinner(false);
-          this.setState({
-            tableData: json,
-            lastLoadedRow : json.end_row,
-          });
-        });
-    }
-  }
-
-  // Completely reload table data -- preserves visibility of old data while we wait
+  // Completely reload table data -- puts up spinner, preserves visibility of old data while we wait
   refreshTable(id) {
     if (id) {
       this.loading = true;
       this.highestRowRequested = 0;
+      this.emptyRowCache = null;
       this.setBusySpinner(true);
 
       this.props.api.render(id, 0, initialRows)
@@ -91,9 +65,39 @@ export default class TableView extends React.Component {
     }
   }
 
-  // Load first 100 rows of table when first rendered
+
+  // Load more table data from render API. Spinner if we're going to see blanks.
+  loadTable(id, toRow) {
+    if (id) {
+      this.loading = true;
+
+      // Spinner if we've used up all our preloaded rows (we're now seeing blanks)
+      if (toRow >= this.state.lastLoadedRow + preloadRows + deltaRows) {
+        this.setBusySpinner(true);
+      }
+
+      this.props.api.render(id, this.state.lastLoadedRow, toRow)
+        .then(json => {
+
+          // Add just retrieved rows to current data, if any
+          if (this.state.tableData) {
+            json.rows = this.state.tableData.rows.concat(json.rows);
+            json.start_row = 0;  // no one looks at this currently, but they might
+          }
+
+          this.loading = false;
+          this.setBusySpinner(false);
+          this.setState({
+            tableData: json,
+            lastLoadedRow : json.end_row,
+          });
+        });
+    }
+  }
+
+
   componentDidMount() {
-    this.loadTable(this.props.id, initialRows);
+    this.refreshTable(this.props.id);  // refresh, not load, so we get the spinner
   }
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
@@ -104,7 +108,9 @@ export default class TableView extends React.Component {
   }
 
   emptyRow() {
-    return this.state.tableData.columns.reduce( (obj,col) => { obj[col]=null; return obj; }, {} );
+    if (!this.emptyRowCache)
+      this.emptyRowCache = this.state.tableData.columns.reduce( (obj,col) => { obj[col]=null; return obj; }, {} );
+    return this.emptyRowCache;
   }
 
   getRow(i) {
@@ -116,9 +122,10 @@ export default class TableView extends React.Component {
       // Time to load more rows?
       if (!this.loading) {
         let target = Math.max(i, this.highestRowRequested);
-        target += deltaRows;
-        target = Math.min(target, this.state.tableData.total_rows);  // don't try to load past end of data
-        if (target > this.state.lastLoadedRow) {
+        target += preloadRows;
+        if (target >= this.state.lastLoadedRow) {
+          target += deltaRows;
+          target = Math.min(target, this.state.tableData.total_rows);  // don't try to load past end of data
           this.loadTable(this.props.id, target);
         }
       }
