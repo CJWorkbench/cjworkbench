@@ -7,7 +7,7 @@
   "help_url":"modules/analyze/formula",
   "parameters": [
     {
-      "name": "Type in formula, using column names",
+      "name": "Python syntax",
       "id_name" : "formula",
       "type": "string",
       "default": "",

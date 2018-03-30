@@ -356,6 +356,7 @@ export default class facet extends React.Component {
         if(this.state.showColError) {
             return (
                 <div>
+                    <br />
                     <UncontrolledAlert color={'danger'}>
                         Previously selected column was deleted. Please select another column.
                     </UncontrolledAlert>
@@ -370,7 +371,6 @@ export default class facet extends React.Component {
         return (
             <div>
                 {componentContent}
-                <br />
             </div>
         )
     }

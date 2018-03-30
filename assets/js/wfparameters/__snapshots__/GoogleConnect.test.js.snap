@@ -9,7 +9,7 @@ exports[`GoogleConnect Mounts correctly with user creds and fires call to delete
   }
 >
   <div
-    className="parameter-margin connected-account"
+    className="connected-account"
   >
     <p>
       <span
@@ -29,7 +29,7 @@ exports[`GoogleConnect Mounts correctly without user creds 1`] = `
   userCreds={Array []}
 >
   <div
-    className="parameter-margin connected-account"
+    className="connected-account"
   >
     <div
       className="gdrive-connectAccount"

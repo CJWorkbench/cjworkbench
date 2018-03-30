@@ -215,7 +215,7 @@ export default class ChartEditor extends React.Component {
           </div>
           <div className="">
 
-            <div className="param2-line-margin">
+            <div className="">
               <div className="label-margin t-d-gray content-3">
                 Prefix
               </div>
@@ -226,7 +226,7 @@ export default class ChartEditor extends React.Component {
                 onChange={this.onChangePrefix} />
             </div>
 
-            <div className="param2-line-margin">
+            <div className="">
               <div className="label-margin t-d-gray content-3">
                 Suffix
               </div>

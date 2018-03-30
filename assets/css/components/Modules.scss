@@ -31,12 +31,13 @@
   background:#F5F7F8;
 }
 
-.wf-card.placeholder {
-  height: 0.5rem;
-  background-color: #7A9BB0;
-  opacity:0.5;
-  padding-bottom:0;
-}
+// not sure what this is for -- Pierre
+// .wf-card.placeholder {
+//   height: 0.5rem;
+//   background-color: #7A9BB0;
+//   opacity:0.5;
+//   padding-bottom:0;
+// }
 
 .module-card-info {
   width:100%;
@@ -79,7 +80,7 @@
 }
 
 .module-card-params {
-  padding: 0 1.5rem 0.01rem 1.5rem;
+  padding: 0 1.5rem 1rem 1.5rem;
 }
 
 .module-description {
@@ -121,7 +122,7 @@
 .module-output-bar-blue {
   height: 100%;
   background-color:#F5F7F8;
-  border: 1px solid rgba(118,155,176,0.3);
+  border: 2px solid rgba(118,155,176,0.3);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -138,7 +139,7 @@
 /* standby  */
 .module-output-bar-orange {
   height: 100%;
-  border:1px solid rgba(251,170,109,0.7);
+  border:2px solid rgba(251,170,109,0.7);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -154,7 +155,7 @@
 .module-output-bar-pink {
   height: 100%;
   background-color: transparent;
-  border:1px solid rgba(0,114,110,0);
+  border:2px solid rgba(0,114,110,0);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -171,7 +172,7 @@
 .module-output-bar-red {
   height: 100%;
   background-color: transparent;
-  border:1px solid rgba(232,114,110,0.5);
+  border:2px solid rgba(232,114,110,0.5);
   display: flex;
   align-items: center;
   flex-direction: row;
@@ -210,8 +211,7 @@
 
 /*** Module Parameters spacing ***/
 
-.label-margin {
-  margin-bottom: 0.1rem;
+.label-margin{
   color:#b2b2b2;
 }
 
@@ -222,25 +222,13 @@
 
 /* Margin for a group of parameters (can include several lines)*/
 
-.parameter-margin {
-  margin-bottom: 1rem;
+.parameter-margin:not(:first-child) {
+  margin-top: 0.8rem;
 }
 
 /* Margin for a line of 1 parameters, part of a group */
 .param-line-margin{
   margin-bottom:1rem;
-}
-
-/* Margins for 2 lined parameters, part of a group */
-.param2-line-margin{
-  display: inline-block;
-  width:48.9%;
-  margin-right: 0.5rem;
-  margin-bottom: 1rem;
-}
-
-.param2-line-margin:last-child{
-  margin-right:0;
 }
 
 

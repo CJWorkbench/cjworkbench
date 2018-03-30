@@ -121,7 +121,7 @@ def make_render_json(table, startrow=None, endrow=None):
     # fields we want around that string. Like savages.
 
     rowstr = table.to_json(orient="records")
-    colnames = list(table.columns.astype(str)) # Don't want int64 column names. Can get that from CSV with no header row
+    colnames = table.columns.values.tolist()
     colstr = json.dumps(colnames, ensure_ascii=False)
     outfmt = '{"total_rows": %d, "start_row" :%d, "end_row": %d, "columns": %s, "rows": %s}'
     outstr = outfmt % (nrows, startrow, endrow, colstr, rowstr)

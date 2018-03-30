@@ -47,6 +47,7 @@ class TwitterTests(LoggedInTestCase):
         super(TwitterTests, self).setUp()  # log in
         self.wf_module = load_and_add_module('twitter')
         self.query_pval = get_param_by_id_name('query')
+        self.username_pval = get_param_by_id_name('username')
         self.type_pval = get_param_by_id_name('querytype')
 
         self.env_patch = { 'CJW_TWITTER_CONSUMER_KEY':'mykey',
@@ -68,8 +69,8 @@ class TwitterTests(LoggedInTestCase):
         self.assertEqual(self.wf_module.status, WfModule.ERROR)
 
     def test_user_timeline(self):
-        self.query_pval.set_value('foouser')
-        self.query_pval.save()
+        self.username_pval.set_value('foouser')
+        self.username_pval.save()
         self.type_pval.set_value(0)  # user timeline, as opposed to search
         self.type_pval.save()
 
