@@ -16,7 +16,6 @@ from .modules.moduleimpl import ModuleImpl
 from .modules.pastecsv import PasteCSV
 from .modules.pythoncode import PythonCode
 from .modules.selectcolumns import SelectColumns
-from .modules.textsearch import TextSearch
 from .modules.twitter import Twitter
 from .modules.uploadfile import UploadFile
 from .modules.googlesheets import GoogleSheets
@@ -47,7 +46,6 @@ module_dispatch_tbl = {
     'selectcolumns':SelectColumns,
     'pythoncode':   PythonCode,
     'twitter':      Twitter,
-    'textsearch':   TextSearch,
     'countbydate':  CountByDate,
     'uploadfile':   UploadFile,
     'googlesheets': GoogleSheets,
