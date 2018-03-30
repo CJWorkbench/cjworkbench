@@ -71,14 +71,10 @@ class ModuleStack extends React.Component {
         (this.props.isOver ? " over": "") +
         ((this.props.dragItem && this.props.canDrop) ? " dragging" : "");
       listItems = this.props.wf_modules.map(function (item, i) {
-
-        if (item.placeholder) {
-          exitAnimation = false;
-        }
+        // If this item is replacing a placeholder, disable the enter animations
         if (!item.placeholder && typeof item.pendingId !== 'undefined') {
           enterAnimation = false;
         }
-
         if (item.placeholder) {
           return <WfModuleHeader
             key={i}
