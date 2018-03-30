@@ -197,6 +197,9 @@ def wfmodule_output(request, pk, format=None):
         return HttpResponse(content=modified_html)
 
 
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_histogram(request, pk, col, format=None):
     if request.method == 'GET':
         try:
@@ -213,6 +216,8 @@ def wfmodule_histogram(request, pk, col, format=None):
         if not prev_modules:
             return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
         table = execute_wfmodule(prev_modules.last())
+        if col not in table.columns:
+            return Response({'message': 'Column does not exist in module input', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
         hist_table = table.groupby(col).size().reset_index()
         hist_table.columns = [col, INTERNAL_COUNT_COLNAME]
         hist_table = hist_table.sort_values(by=[INTERNAL_COUNT_COLNAME, col], ascending=[False, True])

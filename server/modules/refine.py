@@ -12,6 +12,8 @@ class Refine(ModuleImpl):
     def render(wf_module, table):
 
         edits_json = wf_module.get_param_raw('edits', 'string')
+        column_param = wf_module.get_param_column('column')
+        print(column_param)
         if edits_json == '':
             return table
 
@@ -21,6 +23,8 @@ class Refine(ModuleImpl):
             select_colname = 'temp_backend_selected'
             table[select_colname] = [True for _ in range(len(table.index))]
             for edit in edits:
+                if edit['column'] != column_param:
+                    continue
                 if edit['type'] == 'change':
                     colname = edit['column']
                     ctype = table[colname].dtype
