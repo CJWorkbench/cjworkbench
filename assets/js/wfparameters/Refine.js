@@ -74,7 +74,6 @@ class EditRow extends React.Component {
     }
 
     handleSelectionChange(event) {
-        //console.log('checkbox', event);
         var nextState = Object.assign({}, this.state);
         nextState.selected = (!nextState.selected);
         this.setState(nextState);
@@ -139,59 +138,62 @@ export default class facet extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            selectedColumn: this.props.selectedColumn,
             histogramLoaded: false,
             histogramData: [],
             histogramNumRows: 0,
             showWarning: false,
+            showColError: false,
             edits: JSON.parse(props.existingEdits.length > 0 ? props.existingEdits : '[]'),
         }
 
         this.handleValueChange = this.handleValueChange.bind(this);
         this.handleSelectionChange = this.handleSelectionChange.bind(this);
-
-        //console.log(this.state.edits);
     }
 
     componentDidMount() {
-        if(this.props.selectedColumn.length > 0) {
-            this.loadHistogram(this.props.selectedColumn, this.state);
+        if(this.state.selectedColumn.length > 0) {
+            this.loadHistogram(this.state.selectedColumn, this.state);
         }
     }
 
     componentWillReceiveProps(nextProps) {
+        //console.log('componentWillReceiveProps called at revisions ' + this.props.revision + ' -> ' + nextProps.revision);
+        //console.log(this.props);
+        //console.log(nextProps);
         // Handles revision changes and column changes
 
-        //console.log(nextProps);
         var nextColumn = nextProps.selectedColumn;
         var nextRevision = nextProps.revision;
-        if(nextRevision != this.props.revision) {
-            //console.log(nextRevision, this.props.revision);
-            //console.log('Revision bumped.');
-            if(nextColumn != this.props.selectedColumn) {
+        if(nextProps.revision != this.props.revision) {
+            if(nextColumn != this.state.selectedColumn) {
                 // If the column changes, check if this is a undo; if not, clear the edits
                 // The empty edits will be saved to the server on the next edit
                 var nextState = Object.assign({}, this.state);
-                nextState.showWarning = (nextRevision > this.props.revision) && (this.props.selectedColumn.length > 0);
-                nextState.edits = (nextRevision > this.props.revision) ? [] : JSON.parse(nextProps.existingEdits);
+                // Warning is shown if previous column has edits,
+                // previous column isn't empty and action is not an undo.
+                nextState.showWarning = (this.state.selectedColumn.length > 0) && (this.state.edits.length > 0) && (nextRevision > this.props.revision);
+                nextState.edits = (nextRevision >= this.props.revision) ? [] : JSON.parse(nextProps.existingEdits);
+                nextState.selectedColumn = nextColumn;
+                //console.log(nextState.edits);
                 this.loadHistogram(nextColumn, nextState);
-
             } else {
                 // Otherwise, load everything as usual
                 var nextState = Object.assign({}, this.state);
                 nextState.edits = JSON.parse(nextProps.existingEdits.length > 0 ? nextProps.existingEdits : '[]');
-                nextState.showWarning = false;
-                //console.log(nextState.edits);
+                if(this.state.edits.length != nextState.edits.length) {
+                    // The column switching warning should be hidden if new edits are added
+                    nextState.showWarning = (nextState.edits.length == 0);
+                }
                 this.loadHistogram(nextColumn, nextState);
             }
         }
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        // Prevents an extra rendering during a column change
-        if((nextProps.selectedColumn != this.props.selectedColumn)) {
-            return false;
-        }
-        return true;
+        // Delay rendering until loadHistogram() finishes.
+        // loadHistogram() will use forceUpdate() to trigger a render.
+        return false;
     }
 
     loadHistogram(targetCol, baseState, clearEdits=false) {
@@ -202,40 +204,46 @@ export default class facet extends React.Component {
         if(targetCol.length == 0) {
             var nextState = Object.assign(baseState);
             nextState.histogramLoaded = false;
-            nextState.histogramData = []
+            nextState.histogramData = [];
             this.setState(nextState);
+            this.forceUpdate();
             return;
         }
         api.histogram(this.props.wfModuleId, targetCol)
             .then(histogram => {
-                //console.log(histogram);
-                var nextState = Object.assign({}, baseState);
-                var editedHistogram = histogram.rows.map(function(entry) {
-                    var newEntry = Object.assign({}, entry);
-                    newEntry.selected = true;
-                    newEntry.edited = false;
-                    return newEntry;
-                });
-                //console.log(this.state.edits);
-                //console.log(editedHistogram);
-                // Apply all relevant edits we have to the original histogram
-                //console.log(nextState.edits);
-                for(var i = 0; i < nextState.edits.length; i ++) {
-                    //console.log('applying edit');
-                    if(nextState.edits[i].column == this.props.selectedColumn) {
+                if(histogram != 'request error') {
+                    //console.log(histogram);
+                    var nextState = Object.assign({}, baseState);
+                    var editedHistogram = histogram.rows.map(function (entry) {
+                        var newEntry = Object.assign({}, entry);
+                        newEntry.selected = true;
+                        newEntry.edited = false;
+                        return newEntry;
+                    });
+                    // Apply all relevant edits we have to the original histogram
+                    for (var i = 0; i < nextState.edits.length; i++) {
                         //console.log('applying edit');
-                        editedHistogram = this.applySingleEdit(editedHistogram, nextState.edits[i]);
+                        if (nextState.edits[i].column == nextState.selectedColumn) {
+                            editedHistogram = this.applySingleEdit(editedHistogram, nextState.edits[i]);
+                        }
                     }
+                    editedHistogram.sort((item1, item2) => {
+                        return item1[INTERNAL_COUNT_COLNAME] < item2[INTERNAL_COUNT_COLNAME] ? 1 : -1;
+                    })
+                    nextState.histogramData = editedHistogram;
+                    nextState.histogramNumRows = editedHistogram.length;
+                    nextState.histogramLoaded = true;
+                    nextState.showColError = false;
+                    this.setState(nextState);
+                } else {
+                    var nextState = Object.assign({}, baseState);
+                    nextState.histogramLoaded = false;
+                    nextState.histogramData = [];
+                    nextState.histogramNumRows = nextState.histogramData.length;
+                    nextState.showColError = true;
+                    this.setState(nextState);
                 }
-                //console.log(editedHistogram);
-                editedHistogram.sort((item1, item2) => {
-                    return item1[INTERNAL_COUNT_COLNAME] < item2[INTERNAL_COUNT_COLNAME] ? 1 : -1;
-                })
-                nextState.histogramData = editedHistogram;
-                nextState.histogramNumRows = editedHistogram.length;
-                nextState.histogramLoaded = true;
-                this.setState(nextState);
-                //console.log(nextState.histogramData);
+                this.forceUpdate();
             })
             .then(() => {
                 if(clearEdits) {
@@ -247,7 +255,6 @@ export default class facet extends React.Component {
     applySingleEdit(hist, edit) {
         // Applies edits on the client side
 
-        //console.log(edit);
         var newHist = hist.slice();
         if(edit.type == 'change') {
             var fromIdx = newHist.findIndex(function(element) {
@@ -285,36 +292,32 @@ export default class facet extends React.Component {
     handleValueChange(changeData) {
         // Handles edits to values; pushes changes to the server by setting the parameter
 
-        //console.log('Value changed');
-        //console.log(changeData);
         var nextEdits = this.state.edits.slice();
         nextEdits.push({
             type: 'change',
-            column: this.props.selectedColumn,
+            column: this.state.selectedColumn,
             content: {
                 fromVal: changeData.fromVal,
                 toVal: changeData.toVal
             },
             timestamp: Date.now()
         });
-        //console.log(nextEdits);
         this.props.saveEdits(JSON.stringify(nextEdits));
     }
 
     handleSelectionChange(changeData) {
         // Handles selection/deselection of facets; pushes changes to server
 
-        //console.log(changeData);
         var nextEdits = this.state.edits.slice();
         nextEdits.push({
             type: 'select',
-            column: this.props.selectedColumn,
+            column: this.state.selectedColumn,
             content: {
                 value: changeData.value,
             },
-            timestamp: Date.now()
+            timestamp: Date.now(),
+            revision: this.props.revision,
         });
-        //console.log(nextEdits);
         this.props.saveEdits(JSON.stringify(nextEdits));
     }
 
@@ -323,9 +326,9 @@ export default class facet extends React.Component {
             const checkboxes = this.state.histogramData.map(item => {
                 return (
                     <EditRow
-                        dataValue={item[this.props.selectedColumn].toString()}
+                        dataValue={item[this.state.selectedColumn].toString()}
                         dataCount={item[INTERNAL_COUNT_COLNAME]}
-                        key={item[this.props.selectedColumn]}
+                        key={item[this.state.selectedColumn]}
                         onValueChange={this.handleValueChange}
                         onSelectionChange={this.handleSelectionChange}
                         valueSelected={item.selected}
@@ -333,8 +336,6 @@ export default class facet extends React.Component {
                     />
                 );
             });
-
-            //console.log(checkboxes);
 
             return (
                 <div>
@@ -352,13 +353,24 @@ export default class facet extends React.Component {
                 </div>
             )
         }
+        if(this.state.showColError) {
+            return (
+                <div>
+                    <br />
+                    <UncontrolledAlert color={'danger'}>
+                        Previously selected column was deleted. Please select another column.
+                    </UncontrolledAlert>
+                </div>
+            )
+        }
     }
 
     render() {
-        const histogramComponent = this.renderHistogram();
+        //console.log('Render called - revision ' + this.props.revision);
+        const componentContent = this.renderHistogram();
         return (
             <div>
-                {this.state.histogramLoaded ? histogramComponent : ''}
+                {componentContent}
             </div>
         )
     }

@@ -180,6 +180,30 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.content.decode('utf-8'), test_data_json)
 
+    # tests for the /histogram API
+    def test_wf_module_histogram(self):
+        # The column name for histogram counts, to prevent name conflicts
+        INTERNAL_COUNT_COLNAME = '__internal_count_column__'
+
+        # First module: no prior input, should be empty result
+        response = self.client.get('/api/wfmodules/%d/histogram/Class' % self.wfmodule1.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        test_data_json = make_render_json(pd.DataFrame())
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+
+        # Second module: histogram should be count 1 for each column
+        response = self.client.get('/api/wfmodules/%d/histogram/Class' % self.wfmodule2.id)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        test_data = self.test_table.groupby('Class').size().reset_index()
+        test_data.columns = ['Class', INTERNAL_COUNT_COLNAME]
+        test_data = test_data.sort_values(by=[INTERNAL_COUNT_COLNAME, 'Class'], ascending=[False, True])
+        test_data_json = make_render_json(test_data)
+        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+
+        # Test for non-existent column; should return a 204 code
+        response = self.client.get('/api/wfmodules/%d/histogram/O' % self.wfmodule2.id)
+        self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
+
 
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):

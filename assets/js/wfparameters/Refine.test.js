@@ -41,13 +41,6 @@ describe('Refine', () => {
            histogram: jsonResponseMock(histogramResponse)
         };
         mockAPI(api);
-        /*
-        store = {
-           getState: () => initialState,
-           dispatch: jest.fn()
-        };
-        mockStore(store);
-        */
         wrapper = mount(
             <Refine
                wfModuleId={101}
@@ -64,6 +57,7 @@ describe('Refine', () => {
 
         setImmediate(() => {
             expect(wrapper.state()).toEqual({
+                selectedColumn: 'foo',
                 histogramLoaded: true,
                 histogramNumRows: histogramResponse.total_rows,
                 histogramData: histogramResponse.rows.map(function(entry) {
@@ -75,7 +69,8 @@ describe('Refine', () => {
                     return (item1[INTERNAL_COUNT_COLNAME] < item2[INTERNAL_COUNT_COLNAME] ? 1 : -1);
                 }),
                 showWarning: false,
-                edits: []
+                showColError: false,
+                edits: [],
             });
             done();
         });

@@ -157,7 +157,13 @@ class WorkbenchAPI {
   histogram(wf_module_id, column) {
       return (
           fetch('/api/wfmodules/' + wf_module_id + '/histogram/' + column, {credentials: 'include'})
-              .then(response => response.json())
+              .then(response => {
+                  if(response.ok) {
+                    return response.json();
+                  }
+                  console.log(response.body);
+                  return 'request error';
+              })
       )
   }
 
