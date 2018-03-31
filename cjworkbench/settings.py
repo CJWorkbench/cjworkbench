@@ -23,7 +23,7 @@ if sys.version_info[0] < 3:
 # ----- Configurable Parameters -----
 
 # How many rows in one table?
-MAX_ROWS_PER_TABLE = 100000
+MAX_ROWS_PER_TABLE = 1000000
 
 # How much StoredObject space can each module take up?
 MAX_STORAGE_PER_MODULE = 1024*1024*1024
