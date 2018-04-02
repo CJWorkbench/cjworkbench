@@ -221,6 +221,7 @@ def wfmodule_histogram(request, pk, col, format=None):
         hist_table = table.groupby(col).size().reset_index()
         hist_table.columns = [col, INTERNAL_COUNT_COLNAME]
         hist_table = hist_table.sort_values(by=[INTERNAL_COUNT_COLNAME, col], ascending=[False, True])
+        hist_table[col] = hist_table[col].astype(str)
 
         return HttpResponse(make_render_json(hist_table), content_type="application/json")
 

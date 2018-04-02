@@ -7,13 +7,19 @@ from server.utils import safe_column_to_string
 import logging
 
 
+def to_timestamp(val):
+    try:
+        return pd.Timestamp(val)
+    except:
+        return None
+
+
 class Refine(ModuleImpl):
 
     def render(wf_module, table):
 
         edits_json = wf_module.get_param_raw('edits', 'string')
         column_param = wf_module.get_param_column('column')
-        print(column_param)
         if edits_json == '':
             return table
 
@@ -48,6 +54,20 @@ class Refine(ModuleImpl):
                                 to_val_selected = table.loc[table[colname] == to_val_raw, select_colname].tolist()[0]
                                 table.loc[table[colname] == from_val_raw, select_colname] = to_val_selected
                             table.loc[table[colname] == from_val_raw, colname] = to_val_raw
+                    elif ctype == 'datetime64[ns]':
+                        from_val = to_timestamp(from_val_raw)
+                        to_val = to_timestamp(to_val_raw)
+                        if (from_val is not None) and (to_val is not None):
+                            if to_val in table[colname].tolist():
+                                to_val_selected = table.loc[table[colname] == to_val, select_colname].tolist()[0]
+                                table.loc[table[colname] == from_val, select_colname] = to_val_selected
+                            table.loc[table[colname] == from_val, colname] = to_val
+                        else:
+                            table[colname] = safe_column_to_string(table[colname])
+                            if to_val_raw in table[colname].tolist():
+                                to_val_selected = table.loc[table[colname] == to_val_raw, select_colname].tolist()[0]
+                                table.loc[table[colname] == from_val_raw, select_colname] = to_val_selected
+                            table.loc[table[colname] == from_val_raw, colname] = to_val_raw
                     else:
                         # If the "to" facet exists, update the selection status of the "from" facet
                         # to that of the "to" facet.
@@ -72,7 +92,7 @@ class Refine(ModuleImpl):
             table = table[table[select_colname]]
             # Drop the hidden column
             table = table.drop(select_colname, 1)
-        except:
+        except Exception as e:
             raise
 
         return table
