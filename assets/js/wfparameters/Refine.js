@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WorkbenchAPI from '../WorkbenchAPI'
-//import {Form, FormGroup, Label, Input, FormText, Col, Table} from 'reactstrap'
 import {UncontrolledAlert} from 'reactstrap'
 
 
@@ -157,10 +156,17 @@ export default class facet extends React.Component {
         }
     }
 
+    propsAreEqual(props1, props2) {
+        if(props1.revision != props2.revision)
+            return false;
+        if(props1.selectedColumn != props2.selectedColumn)
+            return false;
+        if(props1.existingEdits != props2.existingEdits)
+            return false;
+        return true;
+    }
+
     componentWillReceiveProps(nextProps) {
-        //console.log('componentWillReceiveProps called at revisions ' + this.props.revision + ' -> ' + nextProps.revision);
-        //console.log(this.props);
-        //console.log(nextProps);
         // Handles revision changes and column changes
 
         var nextColumn = nextProps.selectedColumn;
@@ -184,6 +190,7 @@ export default class facet extends React.Component {
                 if(this.state.edits.length != nextState.edits.length) {
                     // The column switching warning should be hidden if new edits are added
                     nextState.showWarning = (nextState.edits.length == 0);
+                    // The histogram should be reloaded only if edits are added/removed
                 }
                 this.loadHistogram(nextColumn, nextState);
             }
@@ -191,9 +198,11 @@ export default class facet extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        // Delay rendering until loadHistogram() finishes.
-        // loadHistogram() will use forceUpdate() to trigger a render.
-        return false;
+        // Prevent extra renders when props are the same
+        if(this.propsAreEqual(this.props, nextProps)) {
+            return this.state != nextState;
+        }
+        return true;
     }
 
     loadHistogram(targetCol, baseState, clearEdits=false) {
@@ -206,7 +215,6 @@ export default class facet extends React.Component {
             nextState.histogramLoaded = false;
             nextState.histogramData = [];
             this.setState(nextState);
-            this.forceUpdate();
             return;
         }
         api.histogram(this.props.wfModuleId, targetCol)
@@ -243,7 +251,7 @@ export default class facet extends React.Component {
                     nextState.showColError = true;
                     this.setState(nextState);
                 }
-                this.forceUpdate();
+                //this.forceUpdate();
             })
             .then(() => {
                 if(clearEdits) {
@@ -316,7 +324,6 @@ export default class facet extends React.Component {
                 value: changeData.value,
             },
             timestamp: Date.now(),
-            revision: this.props.revision,
         });
         this.props.saveEdits(JSON.stringify(nextEdits));
     }
@@ -340,9 +347,14 @@ export default class facet extends React.Component {
             return (
                 <div>
                     {this.state.showWarning ?
-                        (<UncontrolledAlert color={'warning'}>
-                            Switching columns will clear your previous work. If you did it by accident, use "undo" from the top-right menu to go back,
-                        </UncontrolledAlert>) : ''
+                        (
+                            <div>
+                                <br />
+                                <UncontrolledAlert color={'warning'}>
+                                    Switching columns will clear your previous work. If you did it by accident, use "undo" from the top-right menu to go back,
+                                </UncontrolledAlert>
+                            </div>
+                        ) : ''
                     }
                     <div className='t-d-gray content-3 label-margin'>Histogram</div>
                     <div className='container list-wrapper'>
@@ -366,7 +378,6 @@ export default class facet extends React.Component {
     }
 
     render() {
-        //console.log('Render called - revision ' + this.props.revision);
         const componentContent = this.renderHistogram();
         return (
             <div>

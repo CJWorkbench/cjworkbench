@@ -36,7 +36,7 @@ class RefineTests(LoggedInTestCase):
         self.table = pd.read_csv(io.StringIO(self.test_csv))
         self.workflow = create_testdata_workflow(csv_text=self.test_csv)
         self.wf_module = load_and_add_module('refine', workflow=self.workflow)
-        self.edits_pval = get_param_by_id_name('edits')
+        self.edits_pval = get_param_by_id_name('refine')
         self.column_pval = get_param_by_id_name('column')
         self.edits = []
 
@@ -114,7 +114,6 @@ class RefineTests(LoggedInTestCase):
         # we will directly test Refine's render() function here.
         dates_table = pd.read_csv(io.StringIO(self.test_csv))
         dates_table['date'] = pd.to_datetime(dates_table['date'], unit='ms')
-        print(dates_table.dtypes)
 
         # Perform a single edit on a date
         self.edits = [{
@@ -127,9 +126,12 @@ class RefineTests(LoggedInTestCase):
         }]
         mock_refine = MockModule({
             'column': 'date',
-            'edits': json.dumps(self.edits)
+            'refine': json.dumps(self.edits)
         })
         out = Refine.render(mock_refine, dates_table.copy())
+        ref = dates_table.copy()
+        ref.loc[ref['date'] == pd.Timestamp('2016-10-02 00:00:00'), 'date'] = pd.Timestamp('2016-12-04 00:00:00')
+        self.assertTrue(out.equals(ref))
 
         # Perform a single selection on a date
         self.edits = [{
@@ -141,6 +143,8 @@ class RefineTests(LoggedInTestCase):
         }]
         mock_refine = MockModule({
             'column': 'date',
-            'edits': json.dumps(self.edits)
+            'refine': json.dumps(self.edits)
         })
         out = Refine.render(mock_refine, dates_table.copy())
+        ref = dates_table[[True, True, False, False]]
+        self.assertTrue(out.equals(ref))

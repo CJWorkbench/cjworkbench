@@ -13,14 +13,8 @@
     },
     {
       "name": "Histogram",
-      "id_name": "histogram",
+      "id_name": "refine",
       "type": "custom"
-    },
-    {
-      "name": "Edits",
-      "id_name": "edits",
-      "type": "string",
-      "visible": false
     }
   ]
 }

@@ -251,18 +251,13 @@ export default class WfParameter extends React.Component {
           onSave={(val) => { this.paramChanged(val) }}
         />
       )
-    } else if (this.props.p.parameter_spec.id_name == 'histogram') {
-        var selectedColumn = this.props.getParamText('column');
-        //console.log(selectedColumn);
-        var existingEdits = this.props.getParamText('edits');
-        var saveEdits = (editsJson => this.props.setParamText('edits', editsJson));
-        //console.log(existingEdits);
+    } else if (this.props.p.parameter_spec.id_name == 'refine') {
         return (
             <Refine
                 wfModuleId={this.props.wf_module_id}
-                selectedColumn={selectedColumn}
-                existingEdits={existingEdits}
-                saveEdits={saveEdits}
+                selectedColumn={this.props.getParamText('column')}
+                existingEdits={this.props.p.value}
+                saveEdits={(val) => this.paramChanged(val)}
                 revision={this.props.revision}
             />
         )
