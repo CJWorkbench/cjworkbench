@@ -170,6 +170,13 @@ class URLScraperTests(LoggedInTestCase):
         out = execute_nocache(self.wfmodule)
         self.assertTrue(out.equals(self.url_table))
 
+    def test_nop_with_initial_col_selection(self):
+        # When a column is first selected and no scraping is performed, the initial table should be returned
+        column_pval = get_param_by_id_name('urlcol')
+        column_pval.value = 'url'
+        column_pval.save()
+        out = execute_nocache(self.wfmodule)
+        self.assertTrue(out.equals(self.url_table))
 
     # Simple test that .event() calls scrape_urls() in the right way
     # We don't test all the scrape error cases (invalid urls etc.) as they are tested above
