@@ -110,7 +110,11 @@ class URLScraper(ModuleImpl):
     def render(wf_module, table):
         urlcol = wf_module.get_param_column('urlcol')
         if urlcol != '':
-            return wf_module.retrieve_fetched_table()
+            # Check if we have a fetched table; if not, return the table itself.
+            fetched_table = wf_module.retrieve_fetched_table()
+            if fetched_table is not None:
+                return fetched_table
+            return table
         else:
             return table # nop if column not set
 
