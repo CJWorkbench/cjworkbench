@@ -188,3 +188,38 @@ select.form-control {
 .editable-text {
   background-color: red;
 }
+
+.checkbox-wrapper.addremove {
+  margin-right:0;
+}
+
+.addremove .checkbox {
+  display: none;
+}
+
+.addremove label {
+  @extend .icon;
+  background: transparent;
+  width:2rem;
+  height:2rem;
+  font-size:2rem;
+  display:block;
+}
+
+.addremove .checkbox + label {
+  @extend .icon-addc;
+  position: relative;
+  left: 20.75rem;
+}
+
+.addremove .checkbox:checked + label {
+  @extend .icon-bin;
+}
+
+.addremove .checkbox:checked + label, .addremove + .addremove label {
+  left: 18.75rem;
+}
+
+.addremove.last .checkbox:checked + label {
+  left: 20.75rem;
+}
