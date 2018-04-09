@@ -1,3 +1,8 @@
+
+
+
+//custom alerts and data notifications
+
 .drop-alert{
   display: none;
 }
@@ -16,4 +21,12 @@
 
 .drop-alert.over {
   opacity: 0.5;
+}
+
+
+// Promtp: notify user of unexpected event
+
+.alert {
+  margin-bottom:0;
+  padding:0.75rem 1rem;
 }
