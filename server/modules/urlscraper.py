@@ -7,6 +7,7 @@ import pandas as pd
 import datetime
 import aiohttp
 import asyncio
+import re
 
 
 # Resolve circular import: execute -> dispatch -> urlscraper -> execute
@@ -108,15 +109,23 @@ class URLScraper(ModuleImpl):
 
     @staticmethod
     def render(wf_module, table):
-        urlcol = wf_module.get_param_column('urlcol')
-        if urlcol != '':
-            # Check if we have a fetched table; if not, return the table itself.
+        urlsource = wf_module.get_param_menu_string('urlsource')
+        if urlsource == 'Load from column':
+            urlcol = wf_module.get_param_column('urlcol')
+            if urlcol != '':
+                # Check if we have a fetched table; if not, return the table itself.
+                fetched_table = wf_module.retrieve_fetched_table()
+                if fetched_table is not None:
+                    return fetched_table
+                return table
+            else:
+                return table # nop if column not set
+        elif urlsource == 'List of URLs':
             fetched_table = wf_module.retrieve_fetched_table()
             if fetched_table is not None:
                 return fetched_table
-            return table
-        else:
-            return table # nop if column not set
+            else:
+                return table
 
     # Scrapy scrapy scrapy
     @staticmethod
@@ -125,16 +134,33 @@ class URLScraper(ModuleImpl):
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()
 
-        # get our list of URLs from a column in the input table
-        urlcol = wfm.get_param_column('urlcol')
-        if urlcol == '':
-            return
-        prev_table = urlscraper_execute_callbacks.execute_wfmodule(wfm.previous_in_stack())
+        urls = []
+        urlsource = wfm.get_param_menu_string('urlsource')
+
+        if urlsource == 'List of URLs':
+            urllist_text = wfm.get_param_string('urllist')
+            urllist_raw = urllist_text.split('\n')
+            for url in urllist_raw:
+                s_url = url.strip()
+                if len(s_url) == 0:
+                    continue
+                # Attempt to fix an URL in case user adds an URL without http(s) prefix
+                if not re.match('^https?://.*', s_url):
+                    urls.append('http://{}'.format(s_url))
+                else:
+                    urls.append(s_url)
+        elif urlsource == 'Load from column':
+            # get our list of URLs from a column in the input table
+            urlcol = wfm.get_param_column('urlcol')
+            if urlcol == '':
+                return
+            prev_table = urlscraper_execute_callbacks.execute_wfmodule(wfm.previous_in_stack())
 
         # column parameters are not sanitized here, could be missing this col
-        if urlcol in prev_table.columns:
-            urls = prev_table[urlcol]
+            if urlcol in prev_table.columns:
+                urls = prev_table[urlcol].tolist()
 
+        if len(urls) > 0:
             table = pd.DataFrame({'url': urls, 'status': ''}, columns=['url', 'date', 'status', 'html'])
 
             event_loop = get_thread_event_loop()

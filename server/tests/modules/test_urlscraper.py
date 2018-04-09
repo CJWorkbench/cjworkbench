@@ -165,13 +165,16 @@ class URLScraperTests(LoggedInTestCase):
     def press_fetch_button(self):
         self.client.post('/api/parameters/%d/event' % get_param_by_id_name('version_select').id, {'type': 'click'})
 
-
     def test_initial_nop(self):
         out = execute_nocache(self.wfmodule)
         self.assertTrue(out.equals(self.url_table))
 
     def test_nop_with_initial_col_selection(self):
         # When a column is first selected and no scraping is performed, the initial table should be returned
+        source_options = "List of URLs|Load from column".split('|')
+        source_pval = get_param_by_id_name('urlsource')
+        source_pval.value = source_options.index('Load from column')
+        source_pval.save()
         column_pval = get_param_by_id_name('urlcol')
         column_pval.value = 'url'
         column_pval.save()
@@ -180,7 +183,11 @@ class URLScraperTests(LoggedInTestCase):
 
     # Simple test that .event() calls scrape_urls() in the right way
     # We don't test all the scrape error cases (invalid urls etc.) as they are tested above
-    def test_scrape(self):
+    def test_scrape_column(self):
+        source_options = "List of URLs|Load from column".split('|')
+        source_pval = get_param_by_id_name('urlsource')
+        source_pval.value = source_options.index('Load from column')
+        source_pval.save()
 
         get_param_by_id_name('urlcol').set_value('url')
 
@@ -200,3 +207,30 @@ class URLScraperTests(LoggedInTestCase):
             out = execute_nocache(self.wfmodule)
             self.assertTrue(out.equals(self.scraped_table))
 
+    # Tests scraping from a list of URLs
+    def test_scrape_list(self):
+        source_options = "List of URLs|Load from column".split('|')
+        source_pval = get_param_by_id_name('urlsource')
+        source_pval.value = source_options.index('List of URLs')
+        source_pval.save()
+
+        get_param_by_id_name('urllist').set_value('\n'.join([
+            'http://a.com/file',
+            'https://b.com/file2',
+            'c.com/file/dir' # Removed 'http://' to test the URL-fixing part
+        ]))
+
+        # Code below mostly lifted from the column test
+        async def mock_scrapeurls(urls, table):
+            table['status'] = self.scraped_table['status']
+            table['html'] = self.scraped_table['html']
+            return
+
+        URLScraper._mynow = lambda: testnow
+
+        with mock.patch('server.modules.urlscraper.scrape_urls') as scraper:
+            scraper.side_effect = mock_scrapeurls # call the mock function instead, the real fn is tested above
+
+            self.press_fetch_button()
+            out = execute_nocache(self.wfmodule)
+            self.assertTrue(out.equals(self.scraped_table))
