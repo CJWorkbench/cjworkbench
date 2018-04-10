@@ -223,3 +223,21 @@ select.form-control {
 .addremove.last .checkbox:checked + label {
   left: 20.75rem;
 }
+
+/* This is here until we create actual grouped parameters. When the
+next group down has its 'active' checkbox checked, we insert an element
+before the previous checkbox, then hide both that checkbox and its
+sibling. This is a terrible hack and also the most lightweight way
+to do this until we make larger architectural changes. */
+.cheat, .cheat + .addremove {
+  display:none;
+}
+
+.hide-with-sibling {
+  display:none;
+}
+
+.show-sibling + .hide-with-sibling {
+  display: block;
+}
+
