@@ -26,6 +26,7 @@
   height: 100vh;
   display: flex;
   align-items: center;
+  justify-content: center;
   background-image: radial-gradient(#31D9ED 25%, #068CB9); /*fallback*/
   background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #068CB9);
   background-size: cover;
