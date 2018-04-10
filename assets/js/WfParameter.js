@@ -40,6 +40,13 @@ export default class WfParameter extends React.Component {
 
     this.type = this.props.p.parameter_spec.type;
     this.name = this.props.p.parameter_spec.name;
+    this.paramClassName = '';
+
+    let nameParts = this.props.p.parameter_spec.id_name.split('|')[0].split('.');
+
+    if (nameParts.length > 1) {
+      this.paramClassName = nameParts.slice(1).join(' ');
+    }
 
     this.firstProps = true;
 
@@ -269,13 +276,21 @@ export default class WfParameter extends React.Component {
     // If yes, display or hide the item depending on whether we have inverted the visibility condition
     // type is either 'visible_if' or 'visible_if_not'
     if(('id_name' in condition) && ('value' in condition)) {
-      var condValues = condition['value'].split('|').map(cond => cond.trim());
-      var selectionIdx = parseInt(this.props.getParamText(condition['id_name']));
-      if(selectionIdx != NaN) {
-        var menuItems = this.props.getParamMenuItems(condition['id_name']);
+      // If the condition value is a boolean:
+      if (typeof condition['value'] === typeof true) {
+        // Just return if it matches or not
+        return condition['value'] === this.props.getParamText(condition['id_name']);
+        // TODO: Does this also work with strings? Do we want it to?
+      }
+
+      // Otherwise, if it's a menu item:
+      let condValues = condition['value'].split('|').map(cond => cond.trim());
+      let selectionIdx = parseInt(this.props.getParamText(condition['id_name']));
+      if(!isNaN(selectionIdx)) {
+        let menuItems = this.props.getParamMenuItems(condition['id_name']);
         if(menuItems.length > 0) {
-          var selection = menuItems[selectionIdx];
-          var selectionInCondition = (condValues.indexOf(selection) >= 0);
+          let selection = menuItems[selectionIdx];
+          let selectionInCondition = (condValues.indexOf(selection) >= 0);
           // No 'invert' means do not invert
           if(!('invert' in condition)) {
             return selectionInCondition;
@@ -323,7 +338,7 @@ export default class WfParameter extends React.Component {
         }
 
         return (
-          <div className='parameter-margin'>
+          <div className={'parameter-margin ' + this.paramClassName}>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             {/* <TextOrNothing text={this.name} className='label-margin t-d-gray content-3'/> */}
             <textarea
@@ -344,7 +359,7 @@ export default class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className=''>
+          <div className={this.paramClassName}>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
@@ -360,33 +375,34 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          <div className="parameter-margin d-flex justify-content-end">
+          <div className={'parameter-margin d-flex justify-content-end ' + this.paramClassName}>
             <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{this.name}</div>
           </div>
         );
       case 'statictext':
         return (
-          <div className='t-m-gray info-2'>{this.name}</div>
+          <div className={'t-m-gray info-2 ' + this.paramClassName}>{this.name}</div>
         );
 
       case 'checkbox':
         return (
-            <div className='checkbox-wrapper'>
+            <div className={'checkbox-wrapper ' + this.paramClassName}>
                 <div className='d-flex align-items-center'>
                   <input
                     disabled={this.props.isReadOnly}
                     type="checkbox" className="checkbox"
                     checked={this.props.p.value}
                     onChange={this.click}
-                    ref={ el => this.checkboxRef = el}/>
-                  <div className='t-d-gray content-3 ml-1'>{this.name}</div>
+                    ref={ el => this.checkboxRef = el}
+                    id={this.props.p.id} />
+                  <label htmlFor={this.props.p.id} className='t-d-gray content-3 ml-1'>{this.name}</label>
                 </div>
             </div>
         );
 
       case 'menu':
         return (
-          <div className='parameter-margin'>
+          <div className={'parameter-margin ' + this.paramClassName}>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <MenuParam
               name={this.name}
@@ -399,7 +415,7 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className='parameter-margin'>
+          <div className={'parameter-margin ' + this.paramClassName}>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
@@ -412,7 +428,7 @@ export default class WfParameter extends React.Component {
 
       case 'multicolumn':
         return (
-          <div className='parameter-margin'>
+          <div className={'parameter-margin ' + this.paramClassName}>
             <div className='t-d-gray content-3 label-margin'>{this.name}</div>
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}
