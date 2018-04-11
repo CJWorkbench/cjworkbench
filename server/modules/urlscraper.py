@@ -110,7 +110,7 @@ class URLScraper(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
         urlsource = wf_module.get_param_menu_string('urlsource')
-        if urlsource == 'Load from column':
+        if urlsource == 'Input column':
             urlcol = wf_module.get_param_column('urlcol')
             if urlcol != '':
                 # Check if we have a fetched table; if not, return the table itself.
@@ -120,7 +120,7 @@ class URLScraper(ModuleImpl):
                 return table
             else:
                 return table # nop if column not set
-        elif urlsource == 'List of URLs':
+        elif urlsource == 'List':
             fetched_table = wf_module.retrieve_fetched_table()
             if fetched_table is not None:
                 return fetched_table
@@ -137,7 +137,7 @@ class URLScraper(ModuleImpl):
         urls = []
         urlsource = wfm.get_param_menu_string('urlsource')
 
-        if urlsource == 'List of URLs':
+        if urlsource == 'List':
             urllist_text = wfm.get_param_string('urllist')
             urllist_raw = urllist_text.split('\n')
             for url in urllist_raw:
@@ -149,7 +149,7 @@ class URLScraper(ModuleImpl):
                     urls.append('http://{}'.format(s_url))
                 else:
                     urls.append(s_url)
-        elif urlsource == 'Load from column':
+        elif urlsource == 'Input column':
             # get our list of URLs from a column in the input table
             urlcol = wfm.get_param_column('urlcol')
             if urlcol == '':
