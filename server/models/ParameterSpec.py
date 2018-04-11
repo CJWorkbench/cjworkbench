@@ -38,7 +38,7 @@ class ParameterSpec(models.Model):
     type = models.CharField(max_length=16, choices=TYPE_CHOICES, default=STRING)
 
     name = models.CharField('name', max_length=256)          # user-visible
-    id_name = models.CharField('id_name', max_length=32)    # unique to this Module
+    id_name = models.CharField('id_name', max_length=200)    # unique to this Module
 
     module_version = models.ForeignKey(ModuleVersion, related_name='parameter_specs',
                                on_delete=models.CASCADE, null=True)  # delete spec if Module deleted
