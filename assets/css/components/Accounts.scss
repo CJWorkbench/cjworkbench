@@ -1,8 +1,11 @@
 /* ---- Login ---- */
 
-
 .login-bigbrand .logo{
   width: 4.5rem;
+}
+
+.login-bigbrand{
+  margin-bottom: 1rem;
 }
 
 .login-bigbrand h1 a {
@@ -23,21 +26,20 @@
   height: 100vh;
   display: flex;
   align-items: center;
-  background-image: radial-gradient(#31D9ED 25%, #0C93C0); /*fallback*/
-  background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #0C93C0);
+  justify-content: center;
+  background-image: radial-gradient(#31D9ED 25%, #068CB9); /*fallback*/
+  background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #068CB9);
   background-size: cover;
 }
 
 .login-card {
+  background: rgba(250,250,250,0.3);
   height: auto;
   width: 40rem;
-  padding: 3rem 3rem 3rem 3rem;
+  padding: 3rem 5rem;
   border: none;
   border-radius: 0px;
-  box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
 }
-
-
 
 .img.logo
 
@@ -53,12 +55,6 @@
   padding-bottom: 2rem;
 }
 
-.account_form .switch a {
-  font-size: 1.5rem;
-  margin-left:3rem;
-  margin-top:1rem
-}
-
 
 // Signup page
 
@@ -72,13 +68,12 @@
 }
 
 .signup-card-right{
-  background: #fff;
+  background: rgba(250,250,250,0.3);
   height: auto;
-  width: 20%;
-  padding: 3rem 3rem 5rem 3rem;
+  padding: 3rem 5rem;
   border: none;
   border-radius: 0px;
-  box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
+  // box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
   margin:auto;
 }
 
@@ -109,13 +104,42 @@
 
 /* Registration form */
 
-.account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"] {
+// Social logins //
+
+.socialLoginWrap{
+  width:100%;
+  display: flex;
+  justify-content: center;
+}
+
+.socialLoginWrap a{
+  text-decoration:none;
+}
+
+.socialLoginButton{
+  background-color: #fff;
+  border-radius: 10rem;
+  margin-bottom: 1rem;
+  padding:0 1.5rem;
+  height: 4rem;
+  width:22rem;
+  font-size: 1.4rem;
+}
+
+.socialLoginButton:hover{
+  background-color:#f9f9f9;
+}
+
+
+.account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"], .code-field {
   width: 100%;
   height:4rem;
   padding-left:1rem;
-  margin-bottom:1.5rem;
+  margin-bottom:1rem;
   font-size: 1.5rem;
   background-color: #fff;
+  border:0px;
+  border-radius:3px;
 }
 
 .account_form label{

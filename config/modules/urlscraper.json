@@ -11,26 +11,26 @@
       "name": "URLs",
       "id_name": "urlsource",
       "type": "menu",
-      "menu_items": "List of URLs|Load from column"
+      "menu_items": "List|Input column"
     },
     {
-      "name": "URL column",
+      "name": "",
       "id_name" : "urlcol",
       "type": "column",
       "visible_if": {
         "id_name": "urlsource",
-        "value": "Load from column"
+        "value": "Input column"
       }
     },
     {
-      "name": "List of URLs",
+      "name": "",
       "id_name": "urllist",
       "type": "string",
       "multiline": "True",
-      "placeholder": "Paste URLs here, one line for each.",
+      "placeholder": "Paste URLs here, each on one line.",
       "visible_if": {
         "id_name": "urlsource",
-        "value": "List of URLs"
+        "value": "List"
       }
     },
     {

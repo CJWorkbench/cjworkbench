@@ -188,3 +188,56 @@ select.form-control {
 .editable-text {
   background-color: red;
 }
+
+.checkbox-wrapper.addremove {
+  margin-right:0;
+}
+
+.addremove .checkbox {
+  display: none;
+}
+
+.addremove label {
+  @extend .icon;
+  background: transparent;
+  width:2rem;
+  height:2rem;
+  font-size:2rem;
+  display:block;
+}
+
+.addremove .checkbox + label {
+  @extend .icon-addc;
+  position: relative;
+  left: 20.75rem;
+}
+
+.addremove .checkbox:checked + label {
+  @extend .icon-bin;
+}
+
+.addremove .checkbox:checked + label, .addremove + .addremove label {
+  left: 18.75rem;
+}
+
+.addremove.last .checkbox:checked + label {
+  left: 20.75rem;
+}
+
+/* This is here until we create actual grouped parameters. When the
+next group down has its 'active' checkbox checked, we insert an element
+before the previous checkbox, then hide both that checkbox and its
+sibling. This is a terrible hack and also the most lightweight way
+to do this until we make larger architectural changes. */
+.cheat, .cheat + .addremove {
+  display:none;
+}
+
+.hide-with-sibling {
+  display:none;
+}
+
+.show-sibling + .hide-with-sibling {
+  display: block;
+}
+

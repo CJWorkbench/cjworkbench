@@ -9,7 +9,6 @@ describe('WfParameter', () => {
 
   // For testing conditional UI
   var mockGetParamMenuItems = (param_id) => {return 'Sugar|Butter||Flour'.split('|').map(s => s.trim())}
-  var mockGetParamText = (param_id) => {return '3'}
   var visibilityCond1 = {
     'id_name': 'whatever',
     'value': 'Butter|Flour'
@@ -18,8 +17,12 @@ describe('WfParameter', () => {
     'id_name': 'whatever',
     'value': 'Sugar',
   };
+  var visibilityCond3 = {
+    'id_name': 'whatever',
+    'value': true,
+  };
 
-  function shallowParameter(p) {
+  function shallowParameter(p, paramtextReturnValue) {
     return shallow(
       <WfParameter
         p={p}
@@ -28,7 +31,7 @@ describe('WfParameter', () => {
         loggedInUser={{}}
         api={nullApi}
         changeParam={nullFn}
-        getParamText={mockGetParamText}
+        getParamText={(id) => paramtextReturnValue}
         setParamText={nullFn}
         getParamMenuItems={mockGetParamMenuItems}
         startDrag={nullFn}
@@ -43,7 +46,7 @@ describe('WfParameter', () => {
   });
 
   it('Renders string input field', () => {
-    var wrapper = shallowParameter({visible: true, value: 'data.sfgov.org', parameter_spec: {type:'string'}});
+    var wrapper = shallowParameter({visible: true, value: 'data.sfgov.org', parameter_spec: {type:'string', id_name:'url'}});
     expect(wrapper.find('textarea')).toHaveLength(1);
     expect(wrapper).toMatchSnapshot();
   });
@@ -55,10 +58,11 @@ describe('WfParameter', () => {
         visible: true,
         value: 'data.sfgov.org',
         parameter_spec: {
+          id_name: 'url',
           type: 'string',
           visible_if: JSON.stringify(visibilityCond1),
         }
-    });
+    }, 3);
     expect(wrapper.find('textarea')).toHaveLength(1);
   });
 
@@ -67,10 +71,11 @@ describe('WfParameter', () => {
         visible: true,
         value: 'data.sfgov.org',
         parameter_spec: {
+          id_name: 'url',
           type: 'string',
           visible_if: JSON.stringify(visibilityCond2),
         }
-    });
+    }, 3);
     expect(wrapper.find('textarea')).toHaveLength(0);
   });
 
@@ -81,10 +86,11 @@ describe('WfParameter', () => {
         visible: true,
         value: 'data.sfgov.org',
         parameter_spec: {
+          id_name: 'url',
           type: 'string',
           visible_if: JSON.stringify(newVisibilityCond),
         }
-    });
+    }, 3);
     expect(wrapper.find('textarea')).toHaveLength(0);
   });
 
@@ -95,11 +101,39 @@ describe('WfParameter', () => {
         visible: true,
         value: 'data.sfgov.org',
         parameter_spec: {
+          id_name: 'url',
           type: 'string',
           visible_if: JSON.stringify(newVisibilityCond),
         }
-    });
+    }, 3);
     expect(wrapper.find('textarea')).toHaveLength(1);
   });
+
+  it('Renders a parameter when boolean visible_if conditions are met', () => {
+      var wrapper = shallowParameter({
+        visible: true,
+        value: 'data.sfgov.org',
+        parameter_spec: {
+          id_name: 'url',
+          type: 'string',
+          visible_if: JSON.stringify(visibilityCond3),
+        }
+    }, true);
+    expect(wrapper.find('textarea')).toHaveLength(1);
+  });
+
+  it('It does not render a parameter when boolean visible_if conditions are not met', () => {
+      var wrapper = shallowParameter({
+        visible: true,
+        value: 'data.sfgov.org',
+        parameter_spec: {
+          id_name: 'url',
+          type: 'string',
+          visible_if: JSON.stringify(visibilityCond3),
+        }
+    }, false);
+    expect(wrapper.find('textarea')).toHaveLength(0);
+  });
+
 });
 
