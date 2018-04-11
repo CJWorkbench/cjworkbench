@@ -30,9 +30,8 @@ export default class OutputPane extends React.Component {
     this.resizePaneEnd = this.resizePaneEnd.bind(this);
     this.setResizePaneRelativeDimensions = this.setResizePaneRelativeDimensions.bind(this);
 
-    // loading flag (controls spinner) cannot be in state, see below
-    this.loading = false;
     this.spinnerEl = null;
+    this.spinning = false;
   }
 
   // Spinner state did not work as part of component state, conditionally visible in render()
@@ -40,8 +39,9 @@ export default class OutputPane extends React.Component {
   // the spinner on and spinner off updates are combined and we never see it when the table re-render is long.
   // So, now we turn the spinner on and off immediately through direct DOM styling
   setBusySpinner(visible) {
-    if (this.spinnerEl) {
+    if (this.spinnerEl && visible != this.spinning) {
       this.spinnerEl.style.display = visible ? 'flex' : 'none';
+      this.spinning = visible;
     }
   }
 
@@ -160,6 +160,7 @@ export default class OutputPane extends React.Component {
 
   render() {
 
+    console.log('OutputPane render');
     // Make a table component even if no module ID (should still show an empty table)
     var tableView =
       <TableView
