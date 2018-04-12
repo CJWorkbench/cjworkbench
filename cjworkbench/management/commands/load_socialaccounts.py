@@ -1,7 +1,7 @@
-# Startup code
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from django.contrib.sites.models import Site
 from cjworkbench import settings
+
 
 class Command(BaseCommand):
     help = 'Loads the social accounts (with secrets) from the config file'
