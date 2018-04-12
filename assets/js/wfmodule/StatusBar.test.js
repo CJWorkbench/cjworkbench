@@ -44,7 +44,7 @@ describe('Status bar', () => {
       />
     );
     expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output-bar-blue");
+    expect(wrapper.find('div').first().props().className).toEqual("module-output--live");
   });
 
   it('Renders the unselected ready color', () => {

@@ -115,15 +115,23 @@ textarea:focus, input:focus{
 
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color:#c8c8c8;
+  font-size: 1.3rem;
+
 }
 ::-moz-placeholder { /* Firefox 19+ */
   color: #c8c8c8;
+  font-size: 1.3rem;
+
 }
 :-ms-input-placeholder { /* IE 10+ */
   color:#c8c8c8;
+
+
 }
 :-moz-placeholder { /* Firefox 18- */
   color:#c8c8c8;
+  font-size: 1.3rem;
+
 }
 
 
@@ -195,6 +203,10 @@ select.form-control {
 
 .addremove .checkbox {
   display: none;
+}
+
+.checkbox-wrapper label {
+  margin-bottom: 0;
 }
 
 .addremove label {

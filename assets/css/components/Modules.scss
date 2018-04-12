@@ -1,3 +1,16 @@
+/* Module Stack */
+.modulestack {
+  flex: 0 0 30rem;
+  background-color: #E9ECF0;
+  overflow: scroll;
+  height:100vh;
+  position: relative;
+}
+.overlapping .modulestack.focus {
+  z-index: 2;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
 // Module in workflow
 
 .WFmodule-name{
@@ -22,22 +35,14 @@
 .wf-card{
   width: 26rem;
   margin-bottom: 0.5rem;
-  background-color: #fcfcfc;
+  background-color: #f8f8f8;
   position: relative;
   transition: all 0.1s ease-out;
 }
 
 .wf-card:hover{
-  background:#F5F7F8;
+  background:#fcfcfc;
 }
-
-// not sure what this is for -- Pierre
-// .wf-card.placeholder {
-//   height: 0.5rem;
-//   background-color: #7A9BB0;
-//   opacity:0.5;
-//   padding-bottom:0;
-// }
 
 .module-card-info {
   width:100%;
@@ -119,16 +124,16 @@
 }
 
 /* all good & selected */
-.module-output-bar-blue {
+.module-output--live {
   height: 100%;
-  background-color:#F5F7F8;
-  border: 2px solid rgba(118,155,176,0.3);
+  background-color:#fff;
+  border: 2px solid #C7D6DF;
   display: flex;
   align-items: center;
   flex-direction: row;
 }
 
-.module-output-bar-blue:after {
+.module-output--live:after {
 	border: solid transparent;
 	content: " ";
 	border-left-color: rgba(118,155,176,0.3);
@@ -199,13 +204,13 @@
 
 // Module being dragged
 .wf-module--dragging{
-  background-color: #FFE6D2;
+  //background-color: #FFE6D2;
 }
 .wf-card.wf-module--dragging:hover{
-  background-color: #FFE6D2;
-  border:1px solid #F9C399;
+  //background-color: #FFE6D2;
+  border:2px solid #F9C399;
 }
-.module-output-bar-blue.wf-module--dragging{
+.module-output--live.wf-module--dragging{
   border:none;
 }
 
