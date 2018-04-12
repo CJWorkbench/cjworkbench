@@ -1,6 +1,7 @@
 from django.test import TestCase
 from server.execute import execute_nocache
 from server.tests.utils import *
+from server.modules.formula import letter_ref_to_number
 
 # ---- Formula ----
 
@@ -60,6 +61,12 @@ class FormulaTests(LoggedInTestCase):
         table = underscore_table.copy()
         table['formula output'] = table['The Amount']*2.0  # need the .0 as output is going to be floating point
         self.assertTrue(out.equals(table))
+
+    def test_ref_to_number(self):
+        self.assertTrue(letter_ref_to_number('A') == 0)
+        self.assertTrue(letter_ref_to_number('AA') == 26)
+        self.assertTrue(letter_ref_to_number('AZ') == 51)
+        self.assertTrue(letter_ref_to_number('BA') == 52)
 
 
 

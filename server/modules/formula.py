@@ -4,7 +4,16 @@ import pandas as pd
 
 # ---- Formula ----
 
+def letter_ref_to_number(letter_ref):
+    return_number = 0
+
+    for idx, letter in enumerate(reversed(letter_ref)):
+        return_number += (ord(letter.upper()) - 64) * (26**idx)
+
+    return return_number - 1  # 0-indexed
+
 class Formula(ModuleImpl):
+
     def render(wf_module, table):
 
         if table is None:
