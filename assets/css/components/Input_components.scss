@@ -197,6 +197,10 @@ select.form-control {
   display: none;
 }
 
+.checkbox-wrapper label {
+  margin-bottom: 0;
+}
+
 .addremove label {
   @extend .icon;
   background: transparent;
