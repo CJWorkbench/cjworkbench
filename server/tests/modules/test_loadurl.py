@@ -31,6 +31,7 @@ class LoadFromURLTests(LoggedInTestCase):
         self.client.post('/api/parameters/%d/event' % self.fetch_pval.id, {'type': 'click'})
 
     # get rendered result
+    # TODO this should be replaced with calls to execute_nocache, getting render through the view is deprecated
     def get_render(self):
         return self.client.get('/api/wfmodules/%d/render' % self.wfmodule.id)
 

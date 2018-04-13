@@ -22,6 +22,7 @@ from .modules.googlesheets import GoogleSheets
 from .modules.editcells import EditCells
 from .modules.refine import Refine
 from .modules.urlscraper import URLScraper
+from .modules.scrapetable import ScrapeTable
 
 # ---- Test Support ----
 
@@ -52,6 +53,7 @@ module_dispatch_tbl = {
     'editcells':    EditCells,
     'refine':       Refine,
     'urlscraper':   URLScraper,
+    'scrapetable':  ScrapeTable,
 
     # For testing
     'NOP':          NOP,
@@ -174,7 +176,7 @@ def module_dispatch_render(wf_module, table):
 def module_dispatch_event(wf_module, **kwargs):
     dispatch = wf_module.module_version.module.dispatch
     if dispatch not in module_dispatch_tbl.keys():
-        raise ValueError("Unknown dispatch id '%s' while handling event for parameter '%s'" % (dispatch, parameter.parameter_spec.name))
+        raise ValueError("Unknown dispatch id '%s' while handling event for module '%s'" % (dispatch, str(wf_module)))
 
     # Clear errors on every new event. (The other place they are cleared is on parameter change)
     wf_module.set_ready(notify=False)
