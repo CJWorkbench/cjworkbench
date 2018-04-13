@@ -7,17 +7,24 @@
   "help_url":"modules/analyze/formula",
   "parameters": [
     {
-      "name": "Python syntax",
-      "id_name" : "formula",
-      "type": "string",
-      "default": "",
-      "placeholder": "e.g. col1 * (col2 + colu3)"
-    },
-    {
       "name": "Output column",
       "id_name" : "out_column",
       "type": "string",
       "default": "formula output"
+    },
+    {
+      "name": "Syntax",
+      "id_name" : "syntax",
+      "type" : "menu",
+      "menu_items" : "Python|Excel",
+      "default": "0"
+    },
+    {
+      "name": "Formula",
+      "id_name" : "formula",
+      "type": "string",
+      "default": "",
+      "placeholder": "e.g. col1 * (col2 + colu3)"
     }
   ]
 }
