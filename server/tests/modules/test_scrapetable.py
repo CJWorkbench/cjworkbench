@@ -36,7 +36,7 @@ class ScrapeTableTest(LoggedInTestCase):
             readmock.return_value = [mock_csv_table]
             self.press_fetch_button()
             out = execute_nocache(self.wfmodule)
-            self.assertEqual(readmock.call_args, mock.call(url) )
+            self.assertEqual(readmock.call_args, mock.call(url, flavor='html5lib') )
 
         self.assertTrue(out.equals(mock_csv_table))
 
