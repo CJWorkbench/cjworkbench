@@ -24,11 +24,12 @@ class Formula(ModuleImpl):
         if formula == '':
             return table    # nop if no formula
 
+        newcol = pd.Series(np.zeros(len(table)))
+
         syntax = wf_module.get_param_menu_idx('syntax')
 
         if syntax == 0: # Python
             colnames = [x.replace(" ", "_") for x in table.columns]  # spaces to underscores in column names
-            newcol = pd.Series(np.zeros(len(table)))
 
             # Catch errors with the formula and display to user
             try:
@@ -41,25 +42,42 @@ class Formula(ModuleImpl):
             except Exception as e:
                 return(str(e))
 
-            # if no output column supplied, use result0, result1, etc.
-            out_column = wf_module.get_param_string('out_column')
-            if out_column == '':
-                if 'result' not in colnames:
-                    out_column='result'
-                else:
-                    n=0
-                    while 'result' + str(n) in colnames:
-                        n+=1
-                    out_column = 'result' + str(n)
-            table[out_column] = newcol
-
-        if syntax == 1:
+        if syntax == 1: # Excel
             try:
                 code = Parser().ast(formula)[1].compile()
             except Exception as e:
                 return "Couldn't parse formula: %s" % str(e)
-            
-            import pdb; pdb.set_trace()
+
+            col_idx = []
+
+            for func_input in code.inputs:
+                idx = letter_ref_to_number(func_input[0])
+                col_idx.append(idx)
+
+            for i, row in enumerate(table.values):
+                args_to_excel = [row[idx] for idx in col_idx]
+                try:
+                    newcol[i] = code(*args_to_excel)
+                except Exception as e:
+                    return str(e)
+
+        # if no output column supplied, use result0, result1, etc.
+        out_column = wf_module.get_param_string('out_column')
+        if out_column == '':
+            if 'result' not in colnames:
+                out_column = 'result'
+            else:
+                n = 0
+                while 'result' + str(n) in colnames:
+                    n += 1
+                out_column = 'result' + str(n)
+        table[out_column] = newcol
+
+
+
+
+
+
 
 
         wf_module.set_ready(notify=False)
