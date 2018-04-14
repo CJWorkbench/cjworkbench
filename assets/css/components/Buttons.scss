@@ -197,8 +197,10 @@ a:focus, a:hover{
 }
 
 .list-wrapper{
+  background-color: #ededed;
   resize: vertical;
   height: 12rem;
+  border-radius: 3px;
   min-height: 6rem;
   overflow: auto;
   border: 1px solid #e9e9e9;
