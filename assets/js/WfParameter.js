@@ -359,7 +359,7 @@ export default class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className={this.paramClassName}>
+          <div className={'parameter-margin ' + this.paramClassName}>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}

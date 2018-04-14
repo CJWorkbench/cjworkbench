@@ -39,24 +39,28 @@ exports[`Renders the grid 1`] = `
           "key": "aaa",
           "name": "aaa",
           "resizable": true,
+          "width": 160,
         },
         Object {
           "editable": true,
           "key": "bbbb",
           "name": "bbbb",
           "resizable": true,
+          "width": 160,
         },
         Object {
           "editable": true,
           "key": "ccccc",
           "name": "ccccc",
           "resizable": true,
+          "width": 160,
         },
         Object {
           "editable": true,
           "key": "rn_",
           "name": "rn_",
           "resizable": true,
+          "width": 160,
         },
       ]
     }
@@ -150,36 +154,36 @@ exports[`Renders the grid 1`] = `
                   "left": 40,
                   "name": "aaa",
                   "resizable": true,
-                  "width": 80,
+                  "width": 160,
                 },
                 Object {
                   "editable": true,
                   "key": "bbbb",
-                  "left": 120,
+                  "left": 200,
                   "name": "bbbb",
                   "resizable": true,
-                  "width": 80,
+                  "width": 160,
                 },
                 Object {
                   "editable": true,
                   "key": "ccccc",
-                  "left": 200,
+                  "left": 360,
                   "name": "ccccc",
                   "resizable": true,
-                  "width": 80,
+                  "width": 160,
                 },
                 Object {
                   "editable": true,
                   "key": "rn_",
-                  "left": 280,
+                  "left": 520,
                   "name": "rn_",
                   "resizable": true,
-                  "width": 80,
+                  "width": 160,
                 },
               ],
               "minColumnWidth": 80,
               "totalWidth": -2,
-              "width": 40,
+              "width": 680,
             }
           }
           columns={
@@ -196,24 +200,28 @@ exports[`Renders the grid 1`] = `
                 "key": "aaa",
                 "name": "aaa",
                 "resizable": true,
+                "width": 160,
               },
               Object {
                 "editable": true,
                 "key": "bbbb",
                 "name": "bbbb",
                 "resizable": true,
+                "width": 160,
               },
               Object {
                 "editable": true,
                 "key": "ccccc",
                 "name": "ccccc",
                 "resizable": true,
+                "width": 160,
               },
               Object {
                 "editable": true,
                 "key": "rn_",
                 "name": "rn_",
                 "resizable": true,
+                "width": 160,
               },
             ]
           }
@@ -329,36 +337,36 @@ exports[`Renders the grid 1`] = `
                       "left": 40,
                       "name": "aaa",
                       "resizable": true,
-                      "width": 80,
+                      "width": 160,
                     },
                     Object {
                       "editable": true,
                       "key": "bbbb",
-                      "left": 120,
+                      "left": 200,
                       "name": "bbbb",
                       "resizable": true,
-                      "width": 80,
+                      "width": 160,
                     },
                     Object {
                       "editable": true,
                       "key": "ccccc",
-                      "left": 200,
+                      "left": 360,
                       "name": "ccccc",
                       "resizable": true,
-                      "width": 80,
+                      "width": 160,
                     },
                     Object {
                       "editable": true,
                       "key": "rn_",
-                      "left": 280,
+                      "left": 520,
                       "name": "rn_",
                       "resizable": true,
-                      "width": 80,
+                      "width": 160,
                     },
                   ],
                   "minColumnWidth": 80,
                   "totalWidth": -2,
-                  "width": 40,
+                  "width": 680,
                 }
               }
               headerRows={
@@ -407,31 +415,31 @@ exports[`Renders the grid 1`] = `
                         "left": 40,
                         "name": "aaa",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": true,
                         "key": "bbbb",
-                        "left": 120,
+                        "left": 200,
                         "name": "bbbb",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": true,
                         "key": "ccccc",
-                        "left": 200,
+                        "left": 360,
                         "name": "ccccc",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": true,
                         "key": "rn_",
-                        "left": 280,
+                        "left": 520,
                         "name": "rn_",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                     ]
                   }
@@ -453,7 +461,7 @@ exports[`Renders the grid 1`] = `
                       "width": -2,
                     }
                   }
-                  width={40}
+                  width={680}
                 >
                   <div
                     className="react-grid-HeaderRow"
@@ -469,7 +477,7 @@ exports[`Renders the grid 1`] = `
                         "width": -2,
                       }
                     }
-                    width={40}
+                    width={680}
                   >
                     <div
                       style={
@@ -478,7 +486,7 @@ exports[`Renders the grid 1`] = `
                           "overflowX": "hidden",
                           "overflowY": "hidden",
                           "whiteSpace": "nowrap",
-                          "width": 40,
+                          "width": 680,
                         }
                       }
                     >
@@ -491,7 +499,7 @@ exports[`Renders the grid 1`] = `
                             "name": "aaa",
                             "resizable": true,
                             "rowType": "header",
-                            "width": 80,
+                            "width": 160,
                           }
                         }
                         height={35}
@@ -511,7 +519,7 @@ exports[`Renders the grid 1`] = `
                               "position": "absolute",
                               "textOverflow": "ellipsis",
                               "whiteSpace": "nowrap",
-                              "width": 80,
+                              "width": 160,
                             }
                           }
                         >
@@ -566,11 +574,11 @@ exports[`Renders the grid 1`] = `
                           Object {
                             "editable": true,
                             "key": "bbbb",
-                            "left": 120,
+                            "left": 200,
                             "name": "bbbb",
                             "resizable": true,
                             "rowType": "header",
-                            "width": 80,
+                            "width": 160,
                           }
                         }
                         height={35}
@@ -585,12 +593,12 @@ exports[`Renders the grid 1`] = `
                             Object {
                               "display": "inline-block",
                               "height": 35,
-                              "left": 120,
+                              "left": 200,
                               "margin": 0,
                               "position": "absolute",
                               "textOverflow": "ellipsis",
                               "whiteSpace": "nowrap",
-                              "width": 80,
+                              "width": 160,
                             }
                           }
                         >
@@ -645,11 +653,11 @@ exports[`Renders the grid 1`] = `
                           Object {
                             "editable": true,
                             "key": "ccccc",
-                            "left": 200,
+                            "left": 360,
                             "name": "ccccc",
                             "resizable": true,
                             "rowType": "header",
-                            "width": 80,
+                            "width": 160,
                           }
                         }
                         height={35}
@@ -664,12 +672,12 @@ exports[`Renders the grid 1`] = `
                             Object {
                               "display": "inline-block",
                               "height": 35,
-                              "left": 200,
+                              "left": 360,
                               "margin": 0,
                               "position": "absolute",
                               "textOverflow": "ellipsis",
                               "whiteSpace": "nowrap",
-                              "width": 80,
+                              "width": 160,
                             }
                           }
                         >
@@ -724,11 +732,11 @@ exports[`Renders the grid 1`] = `
                           Object {
                             "editable": true,
                             "key": "rn_",
-                            "left": 280,
+                            "left": 520,
                             "name": "rn_",
                             "resizable": true,
                             "rowType": "header",
-                            "width": 80,
+                            "width": 160,
                           }
                         }
                         height={35}
@@ -743,12 +751,12 @@ exports[`Renders the grid 1`] = `
                             Object {
                               "display": "inline-block",
                               "height": 35,
-                              "left": 280,
+                              "left": 520,
                               "margin": 0,
                               "position": "absolute",
                               "textOverflow": "ellipsis",
                               "whiteSpace": "nowrap",
-                              "width": 80,
+                              "width": 160,
                             }
                           }
                         >
@@ -902,36 +910,36 @@ exports[`Renders the grid 1`] = `
                         "left": 40,
                         "name": "aaa",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": true,
                         "key": "bbbb",
-                        "left": 120,
+                        "left": 200,
                         "name": "bbbb",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": true,
                         "key": "ccccc",
-                        "left": 200,
+                        "left": 360,
                         "name": "ccccc",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": true,
                         "key": "rn_",
-                        "left": 280,
+                        "left": 520,
                         "name": "rn_",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                     ],
                     "minColumnWidth": 80,
                     "totalWidth": -2,
-                    "width": 40,
+                    "width": 680,
                   }
                 }
                 expandedRows={Array []}
@@ -955,7 +963,7 @@ exports[`Renders the grid 1`] = `
                 scrollToRowIndex={0}
                 selectedRows={Array []}
                 totalWidth={-2}
-                width={40}
+                width={680}
               >
                 <div
                   className="react-grid-Viewport"
@@ -1008,7 +1016,7 @@ exports[`Renders the grid 1`] = `
                     }
                     colDisplayEnd={5}
                     colDisplayStart={0}
-                    colVisibleEnd={5}
+                    colVisibleEnd={4}
                     colVisibleStart={0}
                     columns={
                       Array [
@@ -1026,31 +1034,31 @@ exports[`Renders the grid 1`] = `
                           "left": 40,
                           "name": "aaa",
                           "resizable": true,
-                          "width": 80,
+                          "width": 160,
                         },
                         Object {
                           "editable": true,
                           "key": "bbbb",
-                          "left": 120,
+                          "left": 200,
                           "name": "bbbb",
                           "resizable": true,
-                          "width": 80,
+                          "width": 160,
                         },
                         Object {
                           "editable": true,
                           "key": "ccccc",
-                          "left": 200,
+                          "left": 360,
                           "name": "ccccc",
                           "resizable": true,
-                          "width": 80,
+                          "width": 160,
                         },
                         Object {
                           "editable": true,
                           "key": "rn_",
-                          "left": 280,
+                          "left": 520,
                           "name": "rn_",
                           "resizable": true,
-                          "width": 80,
+                          "width": 160,
                         },
                       ]
                     }
@@ -1073,7 +1081,7 @@ exports[`Renders the grid 1`] = `
                     totalWidth={-2}
                     visibleEnd={-1}
                     visibleStart={0}
-                    width={40}
+                    width={680}
                   >
                     <div
                       className="react-grid-Canvas"
@@ -1133,7 +1141,7 @@ exports[`Renders the grid 1`] = `
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
                               colDisplayStart={0}
-                              colVisibleEnd={5}
+                              colVisibleEnd={4}
                               colVisibleStart={0}
                               columns={
                                   Array [
@@ -1151,31 +1159,31 @@ exports[`Renders the grid 1`] = `
                                         "left": 40,
                                         "name": "aaa",
                                         "resizable": true,
-                                        "width": 80,
+                                        "width": 160,
                                       },
                                       Object {
                                         "editable": true,
                                         "key": "bbbb",
-                                        "left": 120,
+                                        "left": 200,
                                         "name": "bbbb",
                                         "resizable": true,
-                                        "width": 80,
+                                        "width": 160,
                                       },
                                       Object {
                                         "editable": true,
                                         "key": "ccccc",
-                                        "left": 200,
+                                        "left": 360,
                                         "name": "ccccc",
                                         "resizable": true,
-                                        "width": 80,
+                                        "width": 160,
                                       },
                                       Object {
                                         "editable": true,
                                         "key": "rn_",
-                                        "left": 280,
+                                        "left": 520,
                                         "name": "rn_",
                                         "resizable": true,
-                                        "width": 80,
+                                        "width": 160,
                                       },
                                     ]
                               }
@@ -1236,7 +1244,7 @@ exports[`Renders the grid 1`] = `
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
                               colDisplayStart={0}
-                              colVisibleEnd={5}
+                              colVisibleEnd={4}
                               colVisibleStart={0}
                               columns={
                                   Array [
@@ -1254,31 +1262,31 @@ exports[`Renders the grid 1`] = `
                                         "left": 40,
                                         "name": "aaa",
                                         "resizable": true,
-                                        "width": 80,
+                                        "width": 160,
                                       },
                                       Object {
                                         "editable": true,
                                         "key": "bbbb",
-                                        "left": 120,
+                                        "left": 200,
                                         "name": "bbbb",
                                         "resizable": true,
-                                        "width": 80,
+                                        "width": 160,
                                       },
                                       Object {
                                         "editable": true,
                                         "key": "ccccc",
-                                        "left": 200,
+                                        "left": 360,
                                         "name": "ccccc",
                                         "resizable": true,
-                                        "width": 80,
+                                        "width": 160,
                                       },
                                       Object {
                                         "editable": true,
                                         "key": "rn_",
-                                        "left": 280,
+                                        "left": 520,
                                         "name": "rn_",
                                         "resizable": true,
-                                        "width": 80,
+                                        "width": 160,
                                       },
                                     ]
                               }
@@ -1303,7 +1311,7 @@ exports[`Renders the grid 1`] = `
                           />,
                           ]
                         }
-                        width={40}
+                        width={680}
                       >
                         <SimpleRowsContainer
                           idx={0}
@@ -1348,7 +1356,7 @@ exports[`Renders the grid 1`] = `
                                 cellRenderer={[Function]}
                                 colDisplayEnd={5}
                                 colDisplayStart={0}
-                                colVisibleEnd={5}
+                                colVisibleEnd={4}
                                 colVisibleStart={0}
                                 columns={
                                     Array [
@@ -1366,31 +1374,31 @@ exports[`Renders the grid 1`] = `
                                           "left": 40,
                                           "name": "aaa",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": true,
                                           "key": "bbbb",
-                                          "left": 120,
+                                          "left": 200,
                                           "name": "bbbb",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": true,
                                           "key": "ccccc",
-                                          "left": 200,
+                                          "left": 360,
                                           "name": "ccccc",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": true,
                                           "key": "rn_",
-                                          "left": 280,
+                                          "left": 520,
                                           "name": "rn_",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                       ]
                                 }
@@ -1451,7 +1459,7 @@ exports[`Renders the grid 1`] = `
                                 cellRenderer={[Function]}
                                 colDisplayEnd={5}
                                 colDisplayStart={0}
-                                colVisibleEnd={5}
+                                colVisibleEnd={4}
                                 colVisibleStart={0}
                                 columns={
                                     Array [
@@ -1469,31 +1477,31 @@ exports[`Renders the grid 1`] = `
                                           "left": 40,
                                           "name": "aaa",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": true,
                                           "key": "bbbb",
-                                          "left": 120,
+                                          "left": 200,
                                           "name": "bbbb",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": true,
                                           "key": "ccccc",
-                                          "left": 200,
+                                          "left": 360,
                                           "name": "ccccc",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": true,
                                           "key": "rn_",
-                                          "left": 280,
+                                          "left": 520,
                                           "name": "rn_",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                       ]
                                 }
@@ -1518,7 +1526,7 @@ exports[`Renders the grid 1`] = `
                             />,
                             ]
                           }
-                          width={40}
+                          width={680}
                         >
                           <div>
                             <Row
@@ -1559,7 +1567,7 @@ exports[`Renders the grid 1`] = `
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
                               colDisplayStart={0}
-                              colVisibleEnd={5}
+                              colVisibleEnd={4}
                               colVisibleStart={0}
                               columns={
                                 Array [
@@ -1577,31 +1585,31 @@ exports[`Renders the grid 1`] = `
                                     "left": 40,
                                     "name": "aaa",
                                     "resizable": true,
-                                    "width": 80,
+                                    "width": 160,
                                   },
                                   Object {
                                     "editable": true,
                                     "key": "bbbb",
-                                    "left": 120,
+                                    "left": 200,
                                     "name": "bbbb",
                                     "resizable": true,
-                                    "width": 80,
+                                    "width": 160,
                                   },
                                   Object {
                                     "editable": true,
                                     "key": "ccccc",
-                                    "left": 200,
+                                    "left": 360,
                                     "name": "ccccc",
                                     "resizable": true,
-                                    "width": 80,
+                                    "width": 160,
                                   },
                                   Object {
                                     "editable": true,
                                     "key": "rn_",
-                                    "left": 280,
+                                    "left": 520,
                                     "name": "rn_",
                                     "resizable": true,
-                                    "width": 80,
+                                    "width": 160,
                                   },
                                 ]
                               }
@@ -1677,7 +1685,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 40,
                                       "name": "aaa",
                                       "resizable": true,
-                                      "width": 80,
+                                      "width": 160,
                                     }
                                   }
                                   expandableOptions={
@@ -1723,7 +1731,7 @@ exports[`Renders the grid 1`] = `
                                         "height": 35,
                                         "left": 40,
                                         "position": "absolute",
-                                        "width": 80,
+                                        "width": 160,
                                       }
                                     }
                                     tabIndex={0}
@@ -1808,10 +1816,10 @@ exports[`Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "key": "bbbb",
-                                      "left": 120,
+                                      "left": 200,
                                       "name": "bbbb",
                                       "resizable": true,
-                                      "width": 80,
+                                      "width": 160,
                                     }
                                   }
                                   expandableOptions={
@@ -1855,9 +1863,9 @@ exports[`Renders the grid 1`] = `
                                       Object {
                                         "contain": "layout",
                                         "height": 35,
-                                        "left": 120,
+                                        "left": 200,
                                         "position": "absolute",
-                                        "width": 80,
+                                        "width": 160,
                                       }
                                     }
                                     tabIndex={0}
@@ -1942,10 +1950,10 @@ exports[`Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "key": "ccccc",
-                                      "left": 200,
+                                      "left": 360,
                                       "name": "ccccc",
                                       "resizable": true,
-                                      "width": 80,
+                                      "width": 160,
                                     }
                                   }
                                   expandableOptions={
@@ -1989,9 +1997,9 @@ exports[`Renders the grid 1`] = `
                                       Object {
                                         "contain": "layout",
                                         "height": 35,
-                                        "left": 200,
+                                        "left": 360,
                                         "position": "absolute",
-                                        "width": 80,
+                                        "width": 160,
                                       }
                                     }
                                     tabIndex={0}
@@ -2076,10 +2084,10 @@ exports[`Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "key": "rn_",
-                                      "left": 280,
+                                      "left": 520,
                                       "name": "rn_",
                                       "resizable": true,
-                                      "width": 80,
+                                      "width": 160,
                                     }
                                   }
                                   expandableOptions={
@@ -2123,9 +2131,9 @@ exports[`Renders the grid 1`] = `
                                       Object {
                                         "contain": "layout",
                                         "height": 35,
-                                        "left": 280,
+                                        "left": 520,
                                         "position": "absolute",
-                                        "width": 80,
+                                        "width": 160,
                                       }
                                     }
                                     tabIndex={0}
@@ -2333,7 +2341,7 @@ exports[`Renders the grid 1`] = `
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
                               colDisplayStart={0}
-                              colVisibleEnd={5}
+                              colVisibleEnd={4}
                               colVisibleStart={0}
                               columns={
                                 Array [
@@ -2351,31 +2359,31 @@ exports[`Renders the grid 1`] = `
                                     "left": 40,
                                     "name": "aaa",
                                     "resizable": true,
-                                    "width": 80,
+                                    "width": 160,
                                   },
                                   Object {
                                     "editable": true,
                                     "key": "bbbb",
-                                    "left": 120,
+                                    "left": 200,
                                     "name": "bbbb",
                                     "resizable": true,
-                                    "width": 80,
+                                    "width": 160,
                                   },
                                   Object {
                                     "editable": true,
                                     "key": "ccccc",
-                                    "left": 200,
+                                    "left": 360,
                                     "name": "ccccc",
                                     "resizable": true,
-                                    "width": 80,
+                                    "width": 160,
                                   },
                                   Object {
                                     "editable": true,
                                     "key": "rn_",
-                                    "left": 280,
+                                    "left": 520,
                                     "name": "rn_",
                                     "resizable": true,
-                                    "width": 80,
+                                    "width": 160,
                                   },
                                 ]
                               }
@@ -2451,7 +2459,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 40,
                                       "name": "aaa",
                                       "resizable": true,
-                                      "width": 80,
+                                      "width": 160,
                                     }
                                   }
                                   expandableOptions={
@@ -2497,7 +2505,7 @@ exports[`Renders the grid 1`] = `
                                         "height": 35,
                                         "left": 40,
                                         "position": "absolute",
-                                        "width": 80,
+                                        "width": 160,
                                       }
                                     }
                                     tabIndex={0}
@@ -2582,10 +2590,10 @@ exports[`Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "key": "bbbb",
-                                      "left": 120,
+                                      "left": 200,
                                       "name": "bbbb",
                                       "resizable": true,
-                                      "width": 80,
+                                      "width": 160,
                                     }
                                   }
                                   expandableOptions={
@@ -2629,9 +2637,9 @@ exports[`Renders the grid 1`] = `
                                       Object {
                                         "contain": "layout",
                                         "height": 35,
-                                        "left": 120,
+                                        "left": 200,
                                         "position": "absolute",
-                                        "width": 80,
+                                        "width": 160,
                                       }
                                     }
                                     tabIndex={0}
@@ -2716,10 +2724,10 @@ exports[`Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "key": "ccccc",
-                                      "left": 200,
+                                      "left": 360,
                                       "name": "ccccc",
                                       "resizable": true,
-                                      "width": 80,
+                                      "width": 160,
                                     }
                                   }
                                   expandableOptions={
@@ -2763,9 +2771,9 @@ exports[`Renders the grid 1`] = `
                                       Object {
                                         "contain": "layout",
                                         "height": 35,
-                                        "left": 200,
+                                        "left": 360,
                                         "position": "absolute",
-                                        "width": 80,
+                                        "width": 160,
                                       }
                                     }
                                     tabIndex={0}
@@ -2850,10 +2858,10 @@ exports[`Renders the grid 1`] = `
                                     Object {
                                       "editable": true,
                                       "key": "rn_",
-                                      "left": 280,
+                                      "left": 520,
                                       "name": "rn_",
                                       "resizable": true,
-                                      "width": 80,
+                                      "width": 160,
                                     }
                                   }
                                   expandableOptions={
@@ -2897,9 +2905,9 @@ exports[`Renders the grid 1`] = `
                                       Object {
                                         "contain": "layout",
                                         "height": 35,
-                                        "left": 280,
+                                        "left": 520,
                                         "position": "absolute",
-                                        "width": 80,
+                                        "width": 160,
                                       }
                                     }
                                     tabIndex={0}
