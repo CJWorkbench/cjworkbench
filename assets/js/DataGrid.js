@@ -13,8 +13,8 @@ import debounce from 'lodash/debounce'
 export class RowNumberFormatter extends React.Component {
 
   render() {
- 
-    var rowNumber = this.props.value; 
+
+    var rowNumber = this.props.value;
     var rowNumberDigits = rowNumber.toString().length;
     var numberClass = 'row-number';
     if (rowNumberDigits > 2 && rowNumberDigits < 7 ) {
@@ -43,7 +43,7 @@ function makeFormattedCols(cols, rowNumKey, editable) {
     name: '',
     formatter: RowNumberFormatter,
     width: 40,
-    locked: true
+    locked: true,
   }];
 
   for (let idx in cols) {
@@ -51,7 +51,9 @@ function makeFormattedCols(cols, rowNumKey, editable) {
       key: cols[idx],
       name: cols[idx],
       resizable: true,
-      editable: editable
+      editable: editable,
+      width: 160
+
     };
     formattedCols.push(d)
   }

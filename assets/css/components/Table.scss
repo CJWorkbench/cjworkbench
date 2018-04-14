@@ -1,0 +1,200 @@
+/* Table */
+
+.row-number {
+  color:#b4b4b4;
+  text-align: center;
+  font-size: 1.1rem!important;
+}
+// Shrinking font sizes based on number of digits
+// TODO: Can we make the font size a variable?
+.row-number-3 {
+  color:#b4b4b4;
+  text-align: center;
+  font-size: 1.0rem!important;
+}
+.row-number-4 {
+  color:#b4b4b4;
+  text-align: center;
+  font-size: 0.9rem!important;
+}
+.row-number-5 {
+  color:#b4b4b4;
+  text-align: center;
+  font-size: 0.8rem!important;
+}
+.row-number-6 {
+  color:#b4b4b4;
+  text-align: center;
+  font-size: 0.7rem!important;
+}
+
+// This is the only way to disable a react-data-grid editing feature we don't want
+// https://github.com/adazzle/react-data-grid/issues/822
+.drag-handle { display: none; }
+
+.react-grid-Canvas{
+  background-color: #f4f4f4;
+}
+
+.react-grid-HeaderRow{
+  background-color: #f4f4f4;
+}
+
+.react-grid-HeaderCell{
+  background-color: #7A9BB0;
+  overflow:hidden;
+  color:white;
+  border-right:1px solid #95B5C9;
+  border-bottom:0px;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.2rem;
+  height: 4rem;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+
+.react-grid-HeaderCell:active {
+  background-color: #95B5C9;
+}
+
+.react-grid-HeaderCell__draggable{
+  width:8px!important;
+}
+
+.react-grid-HeaderCell__draggable:hover,
+.react-grid-HeaderCell__draggable:active {
+  background-color: #95B5C9;
+}
+
+.react-grid-Cell--locked:last-of-type{
+  border-right: 1px solid #DCDFE2;
+}
+
+.react-grid-Grid{
+  border-top:1px solid #E7EAED;
+  border-right:none;
+  border-bottom:none;
+  border-left:none;
+}
+
+.react-grid-Cell{
+  border-color:rgba(237,237,237,1);
+  padding-right:1rem;
+  padding-left:1rem;
+  border-right: 1px solid #E7EAED;
+  border-bottom: 1px solid #E7EAED;
+}
+
+.react-grid-Cell:not(.editing) .react-grid-Cell__value{
+  font-size: 1.2rem;
+}
+
+.react-grid-Row--odd .react-grid-Cell{
+  background-color: #EDF4F6;
+}
+
+.react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
+  background-color: #DBEBF3;
+}
+
+//Click and edit a cell
+.react-grid-Cell:focus,
+.react-grid-Cell input.editor-main {
+	border: none;
+	border-radius: 0;
+	outline: 2px solid #FBAA6D;
+	background-color: #fff;
+}
+
+/* Output Pane */
+.outputpane {
+  flex: 1 1 auto;
+  position: relative;
+}
+
+.outputpane-iframe {
+  width:100%;
+  height: calc(50% - 3rem);
+  margin-bottom: -0.5rem;
+  position:relative;
+  iframe {
+    border:none;
+    height: 100%;
+    width: 100%;
+    padding-bottom: 0.5rem;
+  }
+  .outputpane-iframe-control-overlay {
+    position: absolute;
+    top:1.5rem;
+    right:6rem;
+    width: 4rem;
+    height: 4rem;
+    background-color: transparent;
+  }
+  .outputpane-iframe-control-overlay .btn {
+    position: absolute;
+    width: 4rem;
+    height: 4rem;
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid #E7E7E7;
+    font-size: 1.6rem;
+  }
+  .outputpane-iframe-control-overlay .btn:hover{
+    background-color: #48C8D7;
+    border: 0px;
+    color: #fff;
+  }
+}
+
+.btn icon icon-code
+
+/* This div may be superfluous wrt .outputpane */
+
+.outputpane-iframe + .outputpane-table {
+  height: calc(50% - 3rem);
+}
+.outputpane-table {
+  height:calc(100% - 5.5rem);
+  position:relative;
+  border-left:1px solid #E7EAED
+}
+
+.outputpane-header {
+  height: 5.5rem;
+  background-color: #FFFFFF;
+  padding: 2rem 3rem 2rem 3rem;
+}
+
+.outputpane-data {
+  overflow: hidden;
+  position: absolute;
+  top:5.5rem;
+  left:0;
+  right:0;
+  bottom:0;
+}
+
+
+
+.overlapping .outputpane.focus .outputpane-box {
+  z-index: 2;
+  box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
+}
+
+/* Create an overlay to absorb click events so we don't change settings or set a different
+active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
+div into the DOM, since we don't really want another element, we just want this behavior. */
+
+.overlapping .outputpane:not(.focus)::after {
+  content:' ';
+  display: block;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  position:absolute;
+}

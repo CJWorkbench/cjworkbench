@@ -24,26 +24,18 @@
   display: flex;
   flex-direction: row;
   min-height:100vh;
-  background-color: #EBEEF1;
+  background-color: #E9EBEE;
 }
 
-// contain iframe
-.data-reactroot {
-  background-color: red;
+/* Module Stack */
+.modulestack {
+  flex: 0 0 30rem;
+  background-color: #E9EBEE;
+  overflow: scroll;
+  height:100vh;
+  position: relative;
 }
 
-/* Create an overlay to absorb click events so we don't change settings or set a different
-active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
-div into the DOM, since we don't really want another element, we just want this behavior. */
-.overlapping .modulestack:not(.focus)::after {
-  content:' ';
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
 .modulestack-list {
   min-height:100%;
   width: 100%;
@@ -62,6 +54,30 @@ div into the DOM, since we don't really want another element, we just want this 
   opacity: 0.6;
   height:20rem;
 }
+
+.overlapping .modulestack.focus {
+  z-index: 2;
+  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+}
+
+// contain iframe
+.data-reactroot {
+  background-color: red;
+}
+
+/* Create an overlay to absorb click events so we don't change settings or set a different
+active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
+div into the DOM, since we don't really want another element, we just want this behavior. */
 .modulestack-empty.dragging {
   border-color: rgba(118,155,176,0.5);
+}
+
+.overlapping .modulestack:not(.focus)::after {
+  content:' ';
+  display: block;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
