@@ -185,15 +185,10 @@ export function reloadWorkflowAction() {
 registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
   console.log("RELOAD_WORKFLOW");
   console.log("new workflow revision " + action.payload.revision);
-  /*var selectedWfModule = null;
-  if (action.payload.selected_wf_module) {
-    selectedWfModule = action.payload.selected_wf_module;
-  } else if (action.payload.wf_modules && action.payload.wf_modules.length) {
-    selectedWfModule = action.payload.wf_modules[0].id;
-  };*/
+
   return update(state, {
-    //selected_wf_module: {$set: selectedWfModule},
-    workflow: {$merge: action.payload}
+    workflow: {$merge: action.payload},
+    selected_wf_module: {$set: action.payload.selected_wf_module},
   });
 });
 
@@ -254,45 +249,33 @@ registerReducerFunc(REORDER_WFMODULES + '_PENDING', (state, action) => {
 });
 
 // ADD_MODULE
-// Add a module, then save the new module as the selected workflow
 export function addModuleAction(moduleId, insertBefore, placeholder) {
-  return function (dispatch) {
-    // Generate a nonce so we can replace the correct placeholder on
-    // the other end
-    let nonce = generateNonce(moduleId);
+  let nonce = generateNonce(moduleId);
 
-    let payload = {
-      promise: api.addModule(getPageID(), moduleId, insertBefore)
-        .then((response) => {
-          response.pendingId = nonce;
-          return response;
-        }),
-    };
+  let payload = {
+    promise: api.addModule(getPageID(), moduleId, insertBefore)
+      .then((response) => {
+        response.pendingId = nonce;
+        return response;
+      }),
+  };
 
-    if (typeof placeholder !== 'undefined') {
-      payload.data = placeholder;
-    } else {
-      payload.data = {}
-    }
-
-    payload.data.placeholder = true;
-    payload.data.insert_before = insertBefore;
-    payload.data.pendingId = nonce;
-
-    return (
-
-      dispatch({
-        type: ADD_MODULE,
-        payload: payload
-      }).then( ({value}) => {
-
-      dispatch(
-        setSelectedWfModuleAction(value.id)
-      );
-
-    }));
+  if (typeof placeholder !== 'undefined') {
+    payload.data = placeholder;
+  } else {
+    payload.data = {}
   }
+
+  payload.data.placeholder = true;
+  payload.data.insert_before = insertBefore;
+  payload.data.pendingId = nonce;
+
+  return {
+      type: ADD_MODULE,
+      payload: payload
+    }
 }
+
 registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
   let insertBefore = action.payload.insert_before;
 
@@ -325,7 +308,7 @@ registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
   delete action.payload.insert_before;
 
   return update(state, {
-    selected_wf_module: {$set: action.payload.id},
+    selected_wf_module: {$set: action.payload.id},  // set selected to just-added module
     workflow: {
       wf_modules: { $splice:[ [insertBefore, overwrite, action.payload] ] }
     }

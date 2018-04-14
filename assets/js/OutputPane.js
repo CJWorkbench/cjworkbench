@@ -160,7 +160,6 @@ export default class OutputPane extends React.Component {
 
   render() {
 
-    console.log('OutputPane render');
     // Make a table component even if no module ID (should still show an empty table)
     var tableView =
       <TableView

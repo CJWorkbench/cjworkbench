@@ -56,17 +56,21 @@ class AddModuleCommand(Delta):
     wf_module = models.ForeignKey(WfModule, null=True, default=None, blank=True, on_delete=models.SET_DEFAULT)
     order = models.IntegerField()
     applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
+    selected_wf_module = models.IntegerField(null=True, blank=True)     # what was selected before we were added?
 
     def forward(self):
         insert_wf_module(self.wf_module, self.workflow, self.order)     # may alter wf_module.order without saving
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
+        self.selected_wf_module = self.workflow.selected_wf_module
         self.applied = True
         self.save()
 
     def backward(self):
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
+        self.workflow.selected_wf_module = self.selected_wf_module      # go back to old selection when deleted
+        self.workflow.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
         self.applied = False
         self.save()
@@ -89,7 +93,6 @@ class AddModuleCommand(Delta):
             command_description=description)
         delta.forward()
 
-        notify_client_workflow_version_changed(workflow)
         return delta
 
 

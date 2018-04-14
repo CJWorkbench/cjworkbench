@@ -139,6 +139,7 @@ class AddDeleteModuleCommandTests(TestCase):
         cmd.delete()
         self.assertFalse(WfModule.objects.filter(pk=existing_module.id).exists())  # should be gone
 
+
     # ensure that deleting the selected module sets the selected module to null, and is undoable
     def test_delete_selected(self):
         # beginning state: one WfModule
@@ -157,6 +158,24 @@ class AddDeleteModuleCommandTests(TestCase):
         cmd.backward()
         self.workflow.refresh_from_db()
         self.assertEqual(self.workflow.selected_wf_module, existing_module.id)
+
+
+    # ensure that adding a module, selecting it, then undo add, prevents dangling selected_wf_module
+    # (basically the AddModule equivalent of test_delete_selected)
+    def test_add_undo_selected(self):
+        # beginning state: one WfModule
+        all_modules = WfModule.objects.filter(workflow=self.workflow)
+        self.assertEqual(all_modules.count(), 1)
+
+        cmd = AddModuleCommand.create(self.workflow, module_version=self.module_version, insert_before=1)
+
+        self.workflow.selected_wf_module = cmd.wf_module.id
+        self.workflow.save()
+
+        cmd.backward()
+
+        self.workflow.refresh_from_db()
+        self.assertEqual(self.workflow.selected_wf_module, None)
 
 
     # We had a bug where add then delete caused an error when deleting workflow,
