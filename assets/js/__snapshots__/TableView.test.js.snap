@@ -50,12 +50,10 @@ exports[`TableView Blank table when no module id 1`] = `
             " ",
             "   ",
             "    ",
-            "     ",
-            "      ",
           ]
         }
         getRow={[Function]}
-        totalRows={50}
+        totalRows={10}
       >
         <ReactDataGrid
           cellNavigationMode="none"
@@ -74,36 +72,28 @@ exports[`TableView Blank table when no module id 1`] = `
                 "key": "",
                 "name": "",
                 "resizable": true,
+                "width": 160,
               },
               Object {
                 "editable": false,
                 "key": " ",
                 "name": " ",
                 "resizable": true,
+                "width": 160,
               },
               Object {
                 "editable": false,
                 "key": "   ",
                 "name": "   ",
                 "resizable": true,
+                "width": 160,
               },
               Object {
                 "editable": false,
                 "key": "    ",
                 "name": "    ",
                 "resizable": true,
-              },
-              Object {
-                "editable": false,
-                "key": "     ",
-                "name": "     ",
-                "resizable": true,
-              },
-              Object {
-                "editable": false,
-                "key": "      ",
-                "name": "      ",
-                "resizable": true,
+                "width": 160,
               },
             ]
           }
@@ -128,7 +118,7 @@ exports[`TableView Blank table when no module id 1`] = `
           rowHeight={35}
           rowKey="id"
           rowScrollTimeout={0}
-          rowsCount={50}
+          rowsCount={10}
           scrollToRowIndex={0}
           tabIndex={-1}
         >
@@ -197,52 +187,36 @@ exports[`TableView Blank table when no module id 1`] = `
                         "left": 40,
                         "name": "",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": false,
                         "key": " ",
-                        "left": 120,
+                        "left": 200,
                         "name": " ",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": false,
                         "key": "   ",
-                        "left": 200,
+                        "left": 360,
                         "name": "   ",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": false,
                         "key": "    ",
-                        "left": 280,
+                        "left": 520,
                         "name": "    ",
                         "resizable": true,
-                        "width": 80,
-                      },
-                      Object {
-                        "editable": false,
-                        "key": "     ",
-                        "left": 360,
-                        "name": "     ",
-                        "resizable": true,
-                        "width": 80,
-                      },
-                      Object {
-                        "editable": false,
-                        "key": "      ",
-                        "left": 440,
-                        "name": "      ",
-                        "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                     ],
                     "minColumnWidth": 80,
                     "totalWidth": -2,
-                    "width": 40,
+                    "width": 680,
                   }
                 }
                 columns={
@@ -259,36 +233,28 @@ exports[`TableView Blank table when no module id 1`] = `
                       "key": "",
                       "name": "",
                       "resizable": true,
+                      "width": 160,
                     },
                     Object {
                       "editable": false,
                       "key": " ",
                       "name": " ",
                       "resizable": true,
+                      "width": 160,
                     },
                     Object {
                       "editable": false,
                       "key": "   ",
                       "name": "   ",
                       "resizable": true,
+                      "width": 160,
                     },
                     Object {
                       "editable": false,
                       "key": "    ",
                       "name": "    ",
                       "resizable": true,
-                    },
-                    Object {
-                      "editable": false,
-                      "key": "     ",
-                      "name": "     ",
-                      "resizable": true,
-                    },
-                    Object {
-                      "editable": false,
-                      "key": "      ",
-                      "name": "      ",
-                      "resizable": true,
+                      "width": 160,
                     },
                   ]
                 }
@@ -333,7 +299,7 @@ exports[`TableView Blank table when no module id 1`] = `
                 rowOffsetHeight={35}
                 rowScrollTimeout={0}
                 rowSelection={null}
-                rowsCount={50}
+                rowsCount={10}
                 scrollToRowIndex={0}
                 selectedRows={Array []}
                 sortColumn={null}
@@ -404,52 +370,36 @@ exports[`TableView Blank table when no module id 1`] = `
                             "left": 40,
                             "name": "",
                             "resizable": true,
-                            "width": 80,
+                            "width": 160,
                           },
                           Object {
                             "editable": false,
                             "key": " ",
-                            "left": 120,
+                            "left": 200,
                             "name": " ",
                             "resizable": true,
-                            "width": 80,
+                            "width": 160,
                           },
                           Object {
                             "editable": false,
                             "key": "   ",
-                            "left": 200,
+                            "left": 360,
                             "name": "   ",
                             "resizable": true,
-                            "width": 80,
+                            "width": 160,
                           },
                           Object {
                             "editable": false,
                             "key": "    ",
-                            "left": 280,
+                            "left": 520,
                             "name": "    ",
                             "resizable": true,
-                            "width": 80,
-                          },
-                          Object {
-                            "editable": false,
-                            "key": "     ",
-                            "left": 360,
-                            "name": "     ",
-                            "resizable": true,
-                            "width": 80,
-                          },
-                          Object {
-                            "editable": false,
-                            "key": "      ",
-                            "left": 440,
-                            "name": "      ",
-                            "resizable": true,
-                            "width": 80,
+                            "width": 160,
                           },
                         ],
                         "minColumnWidth": 80,
                         "totalWidth": -2,
-                        "width": 40,
+                        "width": 680,
                       }
                     }
                     headerRows={
@@ -498,47 +448,31 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 40,
                               "name": "",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": false,
                               "key": " ",
-                              "left": 120,
+                              "left": 200,
                               "name": " ",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": false,
                               "key": "   ",
-                              "left": 200,
+                              "left": 360,
                               "name": "   ",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": false,
                               "key": "    ",
-                              "left": 280,
+                              "left": 520,
                               "name": "    ",
                               "resizable": true,
-                              "width": 80,
-                            },
-                            Object {
-                              "editable": false,
-                              "key": "     ",
-                              "left": 360,
-                              "name": "     ",
-                              "resizable": true,
-                              "width": 80,
-                            },
-                            Object {
-                              "editable": false,
-                              "key": "      ",
-                              "left": 440,
-                              "name": "      ",
-                              "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                           ]
                         }
@@ -560,7 +494,7 @@ exports[`TableView Blank table when no module id 1`] = `
                             "width": -2,
                           }
                         }
-                        width={40}
+                        width={680}
                       >
                         <div
                           className="react-grid-HeaderRow"
@@ -576,7 +510,7 @@ exports[`TableView Blank table when no module id 1`] = `
                               "width": -2,
                             }
                           }
-                          width={40}
+                          width={680}
                         >
                           <div
                             style={
@@ -585,7 +519,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 "overflowX": "hidden",
                                 "overflowY": "hidden",
                                 "whiteSpace": "nowrap",
-                                "width": 40,
+                                "width": 680,
                               }
                             }
                           >
@@ -598,7 +532,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                   "name": "",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "width": 80,
+                                  "width": 160,
                                 }
                               }
                               height={35}
@@ -618,7 +552,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                     "position": "absolute",
                                     "textOverflow": "ellipsis",
                                     "whiteSpace": "nowrap",
-                                    "width": 80,
+                                    "width": 160,
                                   }
                                 }
                               >
@@ -671,11 +605,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                 Object {
                                   "editable": false,
                                   "key": " ",
-                                  "left": 120,
+                                  "left": 200,
                                   "name": " ",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "width": 80,
+                                  "width": 160,
                                 }
                               }
                               height={35}
@@ -690,12 +624,12 @@ exports[`TableView Blank table when no module id 1`] = `
                                   Object {
                                     "display": "inline-block",
                                     "height": 35,
-                                    "left": 120,
+                                    "left": 200,
                                     "margin": 0,
                                     "position": "absolute",
                                     "textOverflow": "ellipsis",
                                     "whiteSpace": "nowrap",
-                                    "width": 80,
+                                    "width": 160,
                                   }
                                 }
                               >
@@ -750,11 +684,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                 Object {
                                   "editable": false,
                                   "key": "   ",
-                                  "left": 200,
+                                  "left": 360,
                                   "name": "   ",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "width": 80,
+                                  "width": 160,
                                 }
                               }
                               height={35}
@@ -769,12 +703,12 @@ exports[`TableView Blank table when no module id 1`] = `
                                   Object {
                                     "display": "inline-block",
                                     "height": 35,
-                                    "left": 200,
+                                    "left": 360,
                                     "margin": 0,
                                     "position": "absolute",
                                     "textOverflow": "ellipsis",
                                     "whiteSpace": "nowrap",
-                                    "width": 80,
+                                    "width": 160,
                                   }
                                 }
                               >
@@ -829,11 +763,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                 Object {
                                   "editable": false,
                                   "key": "    ",
-                                  "left": 280,
+                                  "left": 520,
                                   "name": "    ",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "width": 80,
+                                  "width": 160,
                                 }
                               }
                               height={35}
@@ -848,12 +782,12 @@ exports[`TableView Blank table when no module id 1`] = `
                                   Object {
                                     "display": "inline-block",
                                     "height": 35,
-                                    "left": 280,
+                                    "left": 520,
                                     "margin": 0,
                                     "position": "absolute",
                                     "textOverflow": "ellipsis",
                                     "whiteSpace": "nowrap",
-                                    "width": 80,
+                                    "width": 160,
                                   }
                                 }
                               >
@@ -861,164 +795,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                   className="widget-HeaderCell__value"
                                 >
                                       
-                                </div>
-                                <ResizeHandle
-                                  onDrag={[Function]}
-                                  onDragEnd={[Function]}
-                                  onDragStart={[Function]}
-                                >
-                                  <Draggable
-                                    className="react-grid-HeaderCell__resizeHandle"
-                                    onDrag={[Function]}
-                                    onDragEnd={[Function]}
-                                    onDragStart={[Function]}
-                                    style={
-                                      Object {
-                                        "height": "100%",
-                                        "position": "absolute",
-                                        "right": 0,
-                                        "top": 0,
-                                        "width": 6,
-                                      }
-                                    }
-                                  >
-                                    <div
-                                      className="react-grid-HeaderCell__draggable"
-                                      onDrag={[Function]}
-                                      onDragEnd={[Function]}
-                                      onDragStart={[Function]}
-                                      onMouseDown={[Function]}
-                                      onTouchStart={[Function]}
-                                      style={
-                                        Object {
-                                          "height": "100%",
-                                          "position": "absolute",
-                                          "right": 0,
-                                          "top": 0,
-                                          "width": 6,
-                                        }
-                                      }
-                                    />
-                                  </Draggable>
-                                </ResizeHandle>
-                              </div>
-                            </HeaderCell>
-                            <HeaderCell
-                              column={
-                                Object {
-                                  "editable": false,
-                                  "key": "     ",
-                                  "left": 360,
-                                  "name": "     ",
-                                  "resizable": true,
-                                  "rowType": "header",
-                                  "width": 80,
-                                }
-                              }
-                              height={35}
-                              onResize={[Function]}
-                              onResizeEnd={[Function]}
-                              renderer={[Function]}
-                              resizing={false}
-                            >
-                              <div
-                                className="react-grid-HeaderCell"
-                                style={
-                                  Object {
-                                    "display": "inline-block",
-                                    "height": 35,
-                                    "left": 360,
-                                    "margin": 0,
-                                    "position": "absolute",
-                                    "textOverflow": "ellipsis",
-                                    "whiteSpace": "nowrap",
-                                    "width": 80,
-                                  }
-                                }
-                              >
-                                <div
-                                  className="widget-HeaderCell__value"
-                                >
-                                       
-                                </div>
-                                <ResizeHandle
-                                  onDrag={[Function]}
-                                  onDragEnd={[Function]}
-                                  onDragStart={[Function]}
-                                >
-                                  <Draggable
-                                    className="react-grid-HeaderCell__resizeHandle"
-                                    onDrag={[Function]}
-                                    onDragEnd={[Function]}
-                                    onDragStart={[Function]}
-                                    style={
-                                      Object {
-                                        "height": "100%",
-                                        "position": "absolute",
-                                        "right": 0,
-                                        "top": 0,
-                                        "width": 6,
-                                      }
-                                    }
-                                  >
-                                    <div
-                                      className="react-grid-HeaderCell__draggable"
-                                      onDrag={[Function]}
-                                      onDragEnd={[Function]}
-                                      onDragStart={[Function]}
-                                      onMouseDown={[Function]}
-                                      onTouchStart={[Function]}
-                                      style={
-                                        Object {
-                                          "height": "100%",
-                                          "position": "absolute",
-                                          "right": 0,
-                                          "top": 0,
-                                          "width": 6,
-                                        }
-                                      }
-                                    />
-                                  </Draggable>
-                                </ResizeHandle>
-                              </div>
-                            </HeaderCell>
-                            <HeaderCell
-                              column={
-                                Object {
-                                  "editable": false,
-                                  "key": "      ",
-                                  "left": 440,
-                                  "name": "      ",
-                                  "resizable": true,
-                                  "rowType": "header",
-                                  "width": 80,
-                                }
-                              }
-                              height={35}
-                              onResize={[Function]}
-                              onResizeEnd={[Function]}
-                              renderer={[Function]}
-                              resizing={false}
-                            >
-                              <div
-                                className="react-grid-HeaderCell"
-                                style={
-                                  Object {
-                                    "display": "inline-block",
-                                    "height": 35,
-                                    "left": 440,
-                                    "margin": 0,
-                                    "position": "absolute",
-                                    "textOverflow": "ellipsis",
-                                    "whiteSpace": "nowrap",
-                                    "width": 80,
-                                  }
-                                }
-                              >
-                                <div
-                                  className="widget-HeaderCell__value"
-                                >
-                                        
                                 </div>
                                 <ResizeHandle
                                   onDrag={[Function]}
@@ -1165,52 +941,36 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 40,
                               "name": "",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": false,
                               "key": " ",
-                              "left": 120,
+                              "left": 200,
                               "name": " ",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": false,
                               "key": "   ",
-                              "left": 200,
+                              "left": 360,
                               "name": "   ",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": false,
                               "key": "    ",
-                              "left": 280,
+                              "left": 520,
                               "name": "    ",
                               "resizable": true,
-                              "width": 80,
-                            },
-                            Object {
-                              "editable": false,
-                              "key": "     ",
-                              "left": 360,
-                              "name": "     ",
-                              "resizable": true,
-                              "width": 80,
-                            },
-                            Object {
-                              "editable": false,
-                              "key": "      ",
-                              "left": 440,
-                              "name": "      ",
-                              "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                           ],
                           "minColumnWidth": 80,
                           "totalWidth": -2,
-                          "width": 40,
+                          "width": 680,
                         }
                       }
                       expandedRows={Array []}
@@ -1230,11 +990,11 @@ exports[`TableView Blank table when no module id 1`] = `
                       rowOffsetHeight={35}
                       rowScrollTimeout={0}
                       rowSelection={null}
-                      rowsCount={50}
+                      rowsCount={10}
                       scrollToRowIndex={0}
                       selectedRows={Array []}
                       totalWidth={-2}
-                      width={40}
+                      width={680}
                     >
                       <div
                         className="react-grid-Viewport"
@@ -1285,9 +1045,9 @@ exports[`TableView Blank table when no module id 1`] = `
                               },
                             }
                           }
-                          colDisplayEnd={7}
+                          colDisplayEnd={5}
                           colDisplayStart={0}
-                          colVisibleEnd={7}
+                          colVisibleEnd={4}
                           colVisibleStart={0}
                           columns={
                             Array [
@@ -1305,47 +1065,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                 "left": 40,
                                 "name": "",
                                 "resizable": true,
-                                "width": 80,
+                                "width": 160,
                               },
                               Object {
                                 "editable": false,
                                 "key": " ",
-                                "left": 120,
+                                "left": 200,
                                 "name": " ",
                                 "resizable": true,
-                                "width": 80,
+                                "width": 160,
                               },
                               Object {
                                 "editable": false,
                                 "key": "   ",
-                                "left": 200,
+                                "left": 360,
                                 "name": "   ",
                                 "resizable": true,
-                                "width": 80,
+                                "width": 160,
                               },
                               Object {
                                 "editable": false,
                                 "key": "    ",
-                                "left": 280,
+                                "left": 520,
                                 "name": "    ",
                                 "resizable": true,
-                                "width": 80,
-                              },
-                              Object {
-                                "editable": false,
-                                "key": "     ",
-                                "left": 360,
-                                "name": "     ",
-                                "resizable": true,
-                                "width": 80,
-                              },
-                              Object {
-                                "editable": false,
-                                "key": "      ",
-                                "left": 440,
-                                "name": "      ",
-                                "resizable": true,
-                                "width": 80,
+                                "width": 160,
                               },
                             ]
                           }
@@ -1362,13 +1106,13 @@ exports[`TableView Blank table when no module id 1`] = `
                           rowRenderer={[Function]}
                           rowScrollTimeout={0}
                           rowSelection={null}
-                          rowsCount={50}
+                          rowsCount={10}
                           scrollToRowIndex={0}
                           selectedRows={Array []}
                           totalWidth={-2}
                           visibleEnd={-1}
                           visibleStart={0}
-                          width={40}
+                          width={680}
                         >
                           <div
                             className="react-grid-Canvas"
@@ -1426,9 +1170,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                           }
                                     }
                                     cellRenderer={[Function]}
-                                    colDisplayEnd={7}
+                                    colDisplayEnd={5}
                                     colDisplayStart={0}
-                                    colVisibleEnd={7}
+                                    colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
                                         Array [
@@ -1446,47 +1190,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": " ",
-                                              "left": 120,
+                                              "left": 200,
                                               "name": " ",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": "   ",
-                                              "left": 200,
+                                              "left": 360,
                                               "name": "   ",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": "    ",
-                                              "left": 280,
+                                              "left": 520,
                                               "name": "    ",
                                               "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "     ",
-                                              "left": 360,
-                                              "name": "     ",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "      ",
-                                              "left": 440,
-                                              "name": "      ",
-                                              "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                           ]
                                     }
@@ -1541,9 +1269,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                           }
                                     }
                                     cellRenderer={[Function]}
-                                    colDisplayEnd={7}
+                                    colDisplayEnd={5}
                                     colDisplayStart={0}
-                                    colVisibleEnd={7}
+                                    colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
                                         Array [
@@ -1561,47 +1289,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": " ",
-                                              "left": 120,
+                                              "left": 200,
                                               "name": " ",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": "   ",
-                                              "left": 200,
+                                              "left": 360,
                                               "name": "   ",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": "    ",
-                                              "left": 280,
+                                              "left": 520,
                                               "name": "    ",
                                               "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "     ",
-                                              "left": 360,
-                                              "name": "     ",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "      ",
-                                              "left": 440,
-                                              "name": "      ",
-                                              "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                           ]
                                     }
@@ -1656,9 +1368,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                           }
                                     }
                                     cellRenderer={[Function]}
-                                    colDisplayEnd={7}
+                                    colDisplayEnd={5}
                                     colDisplayStart={0}
-                                    colVisibleEnd={7}
+                                    colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
                                         Array [
@@ -1676,47 +1388,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": " ",
-                                              "left": 120,
+                                              "left": 200,
                                               "name": " ",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": "   ",
-                                              "left": 200,
+                                              "left": 360,
                                               "name": "   ",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": "    ",
-                                              "left": 280,
+                                              "left": 520,
                                               "name": "    ",
                                               "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "     ",
-                                              "left": 360,
-                                              "name": "     ",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "      ",
-                                              "left": 440,
-                                              "name": "      ",
-                                              "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                           ]
                                     }
@@ -1771,9 +1467,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                           }
                                     }
                                     cellRenderer={[Function]}
-                                    colDisplayEnd={7}
+                                    colDisplayEnd={5}
                                     colDisplayStart={0}
-                                    colVisibleEnd={7}
+                                    colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
                                         Array [
@@ -1791,47 +1487,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": " ",
-                                              "left": 120,
+                                              "left": 200,
                                               "name": " ",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": "   ",
-                                              "left": 200,
+                                              "left": 360,
                                               "name": "   ",
                                               "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                             Object {
                                               "editable": false,
                                               "key": "    ",
-                                              "left": 280,
+                                              "left": 520,
                                               "name": "    ",
                                               "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "     ",
-                                              "left": 360,
-                                              "name": "     ",
-                                              "resizable": true,
-                                              "width": 80,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "      ",
-                                              "left": 440,
-                                              "name": "      ",
-                                              "resizable": true,
-                                              "width": 80,
+                                              "width": 160,
                                             },
                                           ]
                                     }
@@ -1853,7 +1533,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                   <div
                                     style={
                                         Object {
-                                            "height": 1610,
+                                            "height": 210,
                                           }
                                     }
                                 >
@@ -1867,49 +1547,35 @@ exports[`TableView Blank table when no module id 1`] = `
                                     <div
                                         style={
                                             Object {
-                                                "width": 80,
+                                                "width": 160,
                                               }
                                         }
                                     />
                                     <div
                                         style={
                                             Object {
-                                                "width": 80,
+                                                "width": 160,
                                               }
                                         }
                                     />
                                     <div
                                         style={
                                             Object {
-                                                "width": 80,
+                                                "width": 160,
                                               }
                                         }
                                     />
                                     <div
                                         style={
                                             Object {
-                                                "width": 80,
-                                              }
-                                        }
-                                    />
-                                    <div
-                                        style={
-                                            Object {
-                                                "width": 80,
-                                              }
-                                        }
-                                    />
-                                    <div
-                                        style={
-                                            Object {
-                                                "width": 80,
+                                                "width": 160,
                                               }
                                         }
                                     />
                                 </div>,
                                 ]
                               }
-                              width={40}
+                              width={680}
                             >
                               <SimpleRowsContainer
                                 idx={0}
@@ -1952,9 +1618,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             }
                                       }
                                       cellRenderer={[Function]}
-                                      colDisplayEnd={7}
+                                      colDisplayEnd={5}
                                       colDisplayStart={0}
-                                      colVisibleEnd={7}
+                                      colVisibleEnd={4}
                                       colVisibleStart={0}
                                       columns={
                                           Array [
@@ -1972,47 +1638,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": " ",
-                                                "left": 120,
+                                                "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": "   ",
-                                                "left": 200,
+                                                "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": "    ",
-                                                "left": 280,
+                                                "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "     ",
-                                                "left": 360,
-                                                "name": "     ",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "      ",
-                                                "left": 440,
-                                                "name": "      ",
-                                                "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                             ]
                                       }
@@ -2067,9 +1717,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             }
                                       }
                                       cellRenderer={[Function]}
-                                      colDisplayEnd={7}
+                                      colDisplayEnd={5}
                                       colDisplayStart={0}
-                                      colVisibleEnd={7}
+                                      colVisibleEnd={4}
                                       colVisibleStart={0}
                                       columns={
                                           Array [
@@ -2087,47 +1737,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": " ",
-                                                "left": 120,
+                                                "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": "   ",
-                                                "left": 200,
+                                                "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": "    ",
-                                                "left": 280,
+                                                "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "     ",
-                                                "left": 360,
-                                                "name": "     ",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "      ",
-                                                "left": 440,
-                                                "name": "      ",
-                                                "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                             ]
                                       }
@@ -2182,9 +1816,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             }
                                       }
                                       cellRenderer={[Function]}
-                                      colDisplayEnd={7}
+                                      colDisplayEnd={5}
                                       colDisplayStart={0}
-                                      colVisibleEnd={7}
+                                      colVisibleEnd={4}
                                       colVisibleStart={0}
                                       columns={
                                           Array [
@@ -2202,47 +1836,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": " ",
-                                                "left": 120,
+                                                "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": "   ",
-                                                "left": 200,
+                                                "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": "    ",
-                                                "left": 280,
+                                                "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "     ",
-                                                "left": 360,
-                                                "name": "     ",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "      ",
-                                                "left": 440,
-                                                "name": "      ",
-                                                "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                             ]
                                       }
@@ -2297,9 +1915,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             }
                                       }
                                       cellRenderer={[Function]}
-                                      colDisplayEnd={7}
+                                      colDisplayEnd={5}
                                       colDisplayStart={0}
-                                      colVisibleEnd={7}
+                                      colVisibleEnd={4}
                                       colVisibleStart={0}
                                       columns={
                                           Array [
@@ -2317,47 +1935,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": " ",
-                                                "left": 120,
+                                                "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": "   ",
-                                                "left": 200,
+                                                "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
                                                 "key": "    ",
-                                                "left": 280,
+                                                "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "     ",
-                                                "left": 360,
-                                                "name": "     ",
-                                                "resizable": true,
-                                                "width": 80,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "      ",
-                                                "left": 440,
-                                                "name": "      ",
-                                                "resizable": true,
-                                                "width": 80,
+                                                "width": 160,
                                               },
                                             ]
                                       }
@@ -2379,7 +1981,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                     <div
                                       style={
                                           Object {
-                                              "height": 1610,
+                                              "height": 210,
                                             }
                                       }
                                   >
@@ -2393,49 +1995,35 @@ exports[`TableView Blank table when no module id 1`] = `
                                       <div
                                           style={
                                               Object {
-                                                  "width": 80,
+                                                  "width": 160,
                                                 }
                                           }
                                       />
                                       <div
                                           style={
                                               Object {
-                                                  "width": 80,
+                                                  "width": 160,
                                                 }
                                           }
                                       />
                                       <div
                                           style={
                                               Object {
-                                                  "width": 80,
+                                                  "width": 160,
                                                 }
                                           }
                                       />
                                       <div
                                           style={
                                               Object {
-                                                  "width": 80,
-                                                }
-                                          }
-                                      />
-                                      <div
-                                          style={
-                                              Object {
-                                                  "width": 80,
-                                                }
-                                          }
-                                      />
-                                      <div
-                                          style={
-                                              Object {
-                                                  "width": 80,
+                                                  "width": 160,
                                                 }
                                           }
                                       />
                                   </div>,
                                   ]
                                 }
-                                width={40}
+                                width={680}
                               >
                                 <div>
                                   <Row
@@ -2474,9 +2062,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                       }
                                     }
                                     cellRenderer={[Function]}
-                                    colDisplayEnd={7}
+                                    colDisplayEnd={5}
                                     colDisplayStart={0}
-                                    colVisibleEnd={7}
+                                    colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
                                       Array [
@@ -2494,47 +2082,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": " ",
-                                          "left": 120,
+                                          "left": 200,
                                           "name": " ",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": "   ",
-                                          "left": 200,
+                                          "left": 360,
                                           "name": "   ",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": "    ",
-                                          "left": 280,
+                                          "left": 520,
                                           "name": "    ",
                                           "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "editable": false,
-                                          "key": "     ",
-                                          "left": 360,
-                                          "name": "     ",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "editable": false,
-                                          "key": "      ",
-                                          "left": 440,
-                                          "name": "      ",
-                                          "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                       ]
                                     }
@@ -2606,7 +2178,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -2648,7 +2220,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "height": 35,
                                               "left": 40,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -2718,10 +2290,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": " ",
-                                            "left": 120,
+                                            "left": 200,
                                             "name": " ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -2761,9 +2333,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 120,
+                                              "left": 200,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -2833,10 +2405,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": "   ",
-                                            "left": 200,
+                                            "left": 360,
                                             "name": "   ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -2876,9 +2448,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 200,
+                                              "left": 360,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -2948,10 +2520,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": "    ",
-                                            "left": 280,
+                                            "left": 520,
                                             "name": "    ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -2991,239 +2563,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 280,
+                                              "left": 520,
                                               "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={0}
-                                          value=""
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value=""
-                                                >
-                                                  <div
-                                                    title=""
-                                                  />
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "editable": false,
-                                            "key": "     ",
-                                            "left": 360,
-                                            "name": "     ",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={5}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={true}
-                                        rowData={
-                                          Object {
-                                            "rn_": 1,
-                                          }
-                                        }
-                                        rowIdx={0}
-                                        tabIndex={0}
-                                        value=""
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          onFocus={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 360,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={0}
-                                          value=""
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value=""
-                                                >
-                                                  <div
-                                                    title=""
-                                                  />
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "editable": false,
-                                            "key": "      ",
-                                            "left": 440,
-                                            "name": "      ",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={6}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={true}
-                                        rowData={
-                                          Object {
-                                            "rn_": 1,
-                                          }
-                                        }
-                                        rowIdx={0}
-                                        tabIndex={0}
-                                        value=""
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          onFocus={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 440,
-                                              "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -3410,9 +2752,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                       }
                                     }
                                     cellRenderer={[Function]}
-                                    colDisplayEnd={7}
+                                    colDisplayEnd={5}
                                     colDisplayStart={0}
-                                    colVisibleEnd={7}
+                                    colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
                                       Array [
@@ -3430,47 +2772,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": " ",
-                                          "left": 120,
+                                          "left": 200,
                                           "name": " ",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": "   ",
-                                          "left": 200,
+                                          "left": 360,
                                           "name": "   ",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": "    ",
-                                          "left": 280,
+                                          "left": 520,
                                           "name": "    ",
                                           "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "editable": false,
-                                          "key": "     ",
-                                          "left": 360,
-                                          "name": "     ",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "editable": false,
-                                          "key": "      ",
-                                          "left": 440,
-                                          "name": "      ",
-                                          "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                       ]
                                     }
@@ -3542,7 +2868,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -3584,7 +2910,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "height": 35,
                                               "left": 40,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -3654,10 +2980,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": " ",
-                                            "left": 120,
+                                            "left": 200,
                                             "name": " ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -3697,9 +3023,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 120,
+                                              "left": 200,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -3769,10 +3095,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": "   ",
-                                            "left": 200,
+                                            "left": 360,
                                             "name": "   ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -3812,9 +3138,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 200,
+                                              "left": 360,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -3884,10 +3210,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": "    ",
-                                            "left": 280,
+                                            "left": 520,
                                             "name": "    ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -3927,239 +3253,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 280,
+                                              "left": 520,
                                               "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={0}
-                                          value=""
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value=""
-                                                >
-                                                  <div
-                                                    title=""
-                                                  />
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "editable": false,
-                                            "key": "     ",
-                                            "left": 360,
-                                            "name": "     ",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={5}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={true}
-                                        rowData={
-                                          Object {
-                                            "rn_": 2,
-                                          }
-                                        }
-                                        rowIdx={1}
-                                        tabIndex={0}
-                                        value=""
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          onFocus={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 360,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={0}
-                                          value=""
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value=""
-                                                >
-                                                  <div
-                                                    title=""
-                                                  />
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "editable": false,
-                                            "key": "      ",
-                                            "left": 440,
-                                            "name": "      ",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={6}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={true}
-                                        rowData={
-                                          Object {
-                                            "rn_": 2,
-                                          }
-                                        }
-                                        rowIdx={1}
-                                        tabIndex={0}
-                                        value=""
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          onFocus={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 440,
-                                              "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -4346,9 +3442,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                       }
                                     }
                                     cellRenderer={[Function]}
-                                    colDisplayEnd={7}
+                                    colDisplayEnd={5}
                                     colDisplayStart={0}
-                                    colVisibleEnd={7}
+                                    colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
                                       Array [
@@ -4366,47 +3462,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": " ",
-                                          "left": 120,
+                                          "left": 200,
                                           "name": " ",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": "   ",
-                                          "left": 200,
+                                          "left": 360,
                                           "name": "   ",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": "    ",
-                                          "left": 280,
+                                          "left": 520,
                                           "name": "    ",
                                           "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "editable": false,
-                                          "key": "     ",
-                                          "left": 360,
-                                          "name": "     ",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "editable": false,
-                                          "key": "      ",
-                                          "left": 440,
-                                          "name": "      ",
-                                          "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                       ]
                                     }
@@ -4478,7 +3558,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -4520,7 +3600,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "height": 35,
                                               "left": 40,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -4590,10 +3670,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": " ",
-                                            "left": 120,
+                                            "left": 200,
                                             "name": " ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -4633,9 +3713,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 120,
+                                              "left": 200,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -4705,10 +3785,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": "   ",
-                                            "left": 200,
+                                            "left": 360,
                                             "name": "   ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -4748,9 +3828,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 200,
+                                              "left": 360,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -4820,10 +3900,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": "    ",
-                                            "left": 280,
+                                            "left": 520,
                                             "name": "    ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -4863,239 +3943,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 280,
+                                              "left": 520,
                                               "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={0}
-                                          value=""
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value=""
-                                                >
-                                                  <div
-                                                    title=""
-                                                  />
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "editable": false,
-                                            "key": "     ",
-                                            "left": 360,
-                                            "name": "     ",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={5}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={true}
-                                        rowData={
-                                          Object {
-                                            "rn_": 3,
-                                          }
-                                        }
-                                        rowIdx={2}
-                                        tabIndex={0}
-                                        value=""
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          onFocus={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 360,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={0}
-                                          value=""
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value=""
-                                                >
-                                                  <div
-                                                    title=""
-                                                  />
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "editable": false,
-                                            "key": "      ",
-                                            "left": 440,
-                                            "name": "      ",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={6}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={true}
-                                        rowData={
-                                          Object {
-                                            "rn_": 3,
-                                          }
-                                        }
-                                        rowIdx={2}
-                                        tabIndex={0}
-                                        value=""
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          onFocus={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 440,
-                                              "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -5282,9 +4132,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                       }
                                     }
                                     cellRenderer={[Function]}
-                                    colDisplayEnd={7}
+                                    colDisplayEnd={5}
                                     colDisplayStart={0}
-                                    colVisibleEnd={7}
+                                    colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
                                       Array [
@@ -5302,47 +4152,31 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": " ",
-                                          "left": 120,
+                                          "left": 200,
                                           "name": " ",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": "   ",
-                                          "left": 200,
+                                          "left": 360,
                                           "name": "   ",
                                           "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                         Object {
                                           "editable": false,
                                           "key": "    ",
-                                          "left": 280,
+                                          "left": 520,
                                           "name": "    ",
                                           "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "editable": false,
-                                          "key": "     ",
-                                          "left": 360,
-                                          "name": "     ",
-                                          "resizable": true,
-                                          "width": 80,
-                                        },
-                                        Object {
-                                          "editable": false,
-                                          "key": "      ",
-                                          "left": 440,
-                                          "name": "      ",
-                                          "resizable": true,
-                                          "width": 80,
+                                          "width": 160,
                                         },
                                       ]
                                     }
@@ -5414,7 +4248,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -5456,7 +4290,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "height": 35,
                                               "left": 40,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -5526,10 +4360,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": " ",
-                                            "left": 120,
+                                            "left": 200,
                                             "name": " ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -5569,9 +4403,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 120,
+                                              "left": 200,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -5641,10 +4475,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": "   ",
-                                            "left": 200,
+                                            "left": 360,
                                             "name": "   ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -5684,9 +4518,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 200,
+                                              "left": 360,
                                               "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -5756,10 +4590,10 @@ exports[`TableView Blank table when no module id 1`] = `
                                           Object {
                                             "editable": false,
                                             "key": "    ",
-                                            "left": 280,
+                                            "left": 520,
                                             "name": "    ",
                                             "resizable": true,
-                                            "width": 80,
+                                            "width": 160,
                                           }
                                         }
                                         expandableOptions={
@@ -5799,239 +4633,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                             Object {
                                               "contain": "layout",
                                               "height": 35,
-                                              "left": 280,
+                                              "left": 520,
                                               "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={0}
-                                          value=""
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value=""
-                                                >
-                                                  <div
-                                                    title=""
-                                                  />
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "editable": false,
-                                            "key": "     ",
-                                            "left": 360,
-                                            "name": "     ",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={5}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={true}
-                                        rowData={
-                                          Object {
-                                            "rn_": 4,
-                                          }
-                                        }
-                                        rowIdx={3}
-                                        tabIndex={0}
-                                        value=""
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          onFocus={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 360,
-                                              "position": "absolute",
-                                              "width": 80,
-                                            }
-                                          }
-                                          tabIndex={0}
-                                          value=""
-                                        >
-                                          <div
-                                            className="react-grid-Cell__value"
-                                          >
-                                            <div
-                                              style={
-                                                Object {
-                                                  "marginLeft": 0,
-                                                }
-                                              }
-                                            >
-                                              <span>
-                                                <SimpleCellFormatter
-                                                  value=""
-                                                >
-                                                  <div
-                                                    title=""
-                                                  />
-                                                </SimpleCellFormatter>
-                                              </span>
-                                               
-                                               
-                                            </div>
-                                          </div>
-                                        </div>
-                                      </Cell>
-                                      <Cell
-                                        cellMetaData={
-                                          Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
-                                        }
-                                        column={
-                                          Object {
-                                            "editable": false,
-                                            "key": "      ",
-                                            "left": 440,
-                                            "name": "      ",
-                                            "resizable": true,
-                                            "width": 80,
-                                          }
-                                        }
-                                        expandableOptions={
-                                          Object {
-                                            "canExpand": false,
-                                            "children": undefined,
-                                            "expanded": undefined,
-                                            "field": undefined,
-                                            "subRowDetails": Object {},
-                                            "treeDepth": undefined,
-                                          }
-                                        }
-                                        height={35}
-                                        idx={6}
-                                        isCellValueChanging={[Function]}
-                                        isExpanded={false}
-                                        isRowSelected={false}
-                                        isScrolling={true}
-                                        rowData={
-                                          Object {
-                                            "rn_": 4,
-                                          }
-                                        }
-                                        rowIdx={3}
-                                        tabIndex={0}
-                                        value=""
-                                      >
-                                        <div
-                                          className="react-grid-Cell"
-                                          height={35}
-                                          onClick={[Function]}
-                                          onContextMenu={[Function]}
-                                          onDoubleClick={[Function]}
-                                          onDragOver={[Function]}
-                                          onFocus={[Function]}
-                                          style={
-                                            Object {
-                                              "contain": "layout",
-                                              "height": 35,
-                                              "left": 440,
-                                              "position": "absolute",
-                                              "width": 80,
+                                              "width": 160,
                                             }
                                           }
                                           tabIndex={0}
@@ -6185,7 +4789,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                   <div
                                     style={
                                       Object {
-                                        "height": 1610,
+                                        "height": 210,
                                       }
                                     }
                                   >
@@ -6199,42 +4803,28 @@ exports[`TableView Blank table when no module id 1`] = `
                                     <div
                                       style={
                                         Object {
-                                          "width": 80,
+                                          "width": 160,
                                         }
                                       }
                                     />
                                     <div
                                       style={
                                         Object {
-                                          "width": 80,
+                                          "width": 160,
                                         }
                                       }
                                     />
                                     <div
                                       style={
                                         Object {
-                                          "width": 80,
+                                          "width": 160,
                                         }
                                       }
                                     />
                                     <div
                                       style={
                                         Object {
-                                          "width": 80,
-                                        }
-                                      }
-                                    />
-                                    <div
-                                      style={
-                                        Object {
-                                          "width": 80,
-                                        }
-                                      }
-                                    />
-                                    <div
-                                      style={
-                                        Object {
-                                          "width": 80,
+                                          "width": 160,
                                         }
                                       }
                                     />
@@ -6340,18 +4930,21 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 "key": "a",
                 "name": "a",
                 "resizable": true,
+                "width": 160,
               },
               Object {
                 "editable": true,
                 "key": "b",
                 "name": "b",
                 "resizable": true,
+                "width": 160,
               },
               Object {
                 "editable": true,
                 "key": "c",
                 "name": "c",
                 "resizable": true,
+                "width": 160,
               },
             ]
           }
@@ -6445,28 +5038,28 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                         "left": 40,
                         "name": "a",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": true,
                         "key": "b",
-                        "left": 120,
+                        "left": 200,
                         "name": "b",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                       Object {
                         "editable": true,
                         "key": "c",
-                        "left": 200,
+                        "left": 360,
                         "name": "c",
                         "resizable": true,
-                        "width": 80,
+                        "width": 160,
                       },
                     ],
                     "minColumnWidth": 80,
                     "totalWidth": -2,
-                    "width": 40,
+                    "width": 520,
                   }
                 }
                 columns={
@@ -6483,18 +5076,21 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       "key": "a",
                       "name": "a",
                       "resizable": true,
+                      "width": 160,
                     },
                     Object {
                       "editable": true,
                       "key": "b",
                       "name": "b",
                       "resizable": true,
+                      "width": 160,
                     },
                     Object {
                       "editable": true,
                       "key": "c",
                       "name": "c",
                       "resizable": true,
+                      "width": 160,
                     },
                   ]
                 }
@@ -6610,28 +5206,28 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                             "left": 40,
                             "name": "a",
                             "resizable": true,
-                            "width": 80,
+                            "width": 160,
                           },
                           Object {
                             "editable": true,
                             "key": "b",
-                            "left": 120,
+                            "left": 200,
                             "name": "b",
                             "resizable": true,
-                            "width": 80,
+                            "width": 160,
                           },
                           Object {
                             "editable": true,
                             "key": "c",
-                            "left": 200,
+                            "left": 360,
                             "name": "c",
                             "resizable": true,
-                            "width": 80,
+                            "width": 160,
                           },
                         ],
                         "minColumnWidth": 80,
                         "totalWidth": -2,
-                        "width": 40,
+                        "width": 520,
                       }
                     }
                     headerRows={
@@ -6680,23 +5276,23 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               "left": 40,
                               "name": "a",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": true,
                               "key": "b",
-                              "left": 120,
+                              "left": 200,
                               "name": "b",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": true,
                               "key": "c",
-                              "left": 200,
+                              "left": 360,
                               "name": "c",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                           ]
                         }
@@ -6718,7 +5314,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                             "width": -2,
                           }
                         }
-                        width={40}
+                        width={520}
                       >
                         <div
                           className="react-grid-HeaderRow"
@@ -6734,7 +5330,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               "width": -2,
                             }
                           }
-                          width={40}
+                          width={520}
                         >
                           <div
                             style={
@@ -6743,7 +5339,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 "overflowX": "hidden",
                                 "overflowY": "hidden",
                                 "whiteSpace": "nowrap",
-                                "width": 40,
+                                "width": 520,
                               }
                             }
                           >
@@ -6756,7 +5352,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   "name": "a",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "width": 80,
+                                  "width": 160,
                                 }
                               }
                               height={35}
@@ -6776,7 +5372,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                     "position": "absolute",
                                     "textOverflow": "ellipsis",
                                     "whiteSpace": "nowrap",
-                                    "width": 80,
+                                    "width": 160,
                                   }
                                 }
                               >
@@ -6831,11 +5427,11 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 Object {
                                   "editable": true,
                                   "key": "b",
-                                  "left": 120,
+                                  "left": 200,
                                   "name": "b",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "width": 80,
+                                  "width": 160,
                                 }
                               }
                               height={35}
@@ -6850,12 +5446,12 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   Object {
                                     "display": "inline-block",
                                     "height": 35,
-                                    "left": 120,
+                                    "left": 200,
                                     "margin": 0,
                                     "position": "absolute",
                                     "textOverflow": "ellipsis",
                                     "whiteSpace": "nowrap",
-                                    "width": 80,
+                                    "width": 160,
                                   }
                                 }
                               >
@@ -6910,11 +5506,11 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 Object {
                                   "editable": true,
                                   "key": "c",
-                                  "left": 200,
+                                  "left": 360,
                                   "name": "c",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "width": 80,
+                                  "width": 160,
                                 }
                               }
                               height={35}
@@ -6929,12 +5525,12 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   Object {
                                     "display": "inline-block",
                                     "height": 35,
-                                    "left": 200,
+                                    "left": 360,
                                     "margin": 0,
                                     "position": "absolute",
                                     "textOverflow": "ellipsis",
                                     "whiteSpace": "nowrap",
-                                    "width": 80,
+                                    "width": 160,
                                   }
                                 }
                               >
@@ -7088,28 +5684,28 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               "left": 40,
                               "name": "a",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": true,
                               "key": "b",
-                              "left": 120,
+                              "left": 200,
                               "name": "b",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                             Object {
                               "editable": true,
                               "key": "c",
-                              "left": 200,
+                              "left": 360,
                               "name": "c",
                               "resizable": true,
-                              "width": 80,
+                              "width": 160,
                             },
                           ],
                           "minColumnWidth": 80,
                           "totalWidth": -2,
-                          "width": 40,
+                          "width": 520,
                         }
                       }
                       expandedRows={Array []}
@@ -7133,7 +5729,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       scrollToRowIndex={0}
                       selectedRows={Array []}
                       totalWidth={-2}
-                      width={40}
+                      width={520}
                     >
                       <div
                         className="react-grid-Viewport"
@@ -7204,23 +5800,23 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 "left": 40,
                                 "name": "a",
                                 "resizable": true,
-                                "width": 80,
+                                "width": 160,
                               },
                               Object {
                                 "editable": true,
                                 "key": "b",
-                                "left": 120,
+                                "left": 200,
                                 "name": "b",
                                 "resizable": true,
-                                "width": 80,
+                                "width": 160,
                               },
                               Object {
                                 "editable": true,
                                 "key": "c",
-                                "left": 200,
+                                "left": 360,
                                 "name": "c",
                                 "resizable": true,
-                                "width": 80,
+                                "width": 160,
                               },
                             ]
                           }
@@ -7243,7 +5839,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                           totalWidth={-2}
                           visibleEnd={-4}
                           visibleStart={0}
-                          width={40}
+                          width={520}
                         >
                           <div
                             className="react-grid-Canvas"
@@ -7282,28 +5878,28 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                     <div
                                         style={
                                             Object {
-                                                "width": 80,
+                                                "width": 160,
                                               }
                                         }
                                     />
                                     <div
                                         style={
                                             Object {
-                                                "width": 80,
+                                                "width": 160,
                                               }
                                         }
                                     />
                                     <div
                                         style={
                                             Object {
-                                                "width": 80,
+                                                "width": 160,
                                               }
                                         }
                                     />
                                 </div>,
                                 ]
                               }
-                              width={40}
+                              width={520}
                             >
                               <SimpleRowsContainer
                                 idx={0}
@@ -7327,28 +5923,28 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                       <div
                                           style={
                                               Object {
-                                                  "width": 80,
+                                                  "width": 160,
                                                 }
                                           }
                                       />
                                       <div
                                           style={
                                               Object {
-                                                  "width": 80,
+                                                  "width": 160,
                                                 }
                                           }
                                       />
                                       <div
                                           style={
                                               Object {
-                                                  "width": 80,
+                                                  "width": 160,
                                                 }
                                           }
                                       />
                                   </div>,
                                   ]
                                 }
-                                width={40}
+                                width={520}
                               >
                                 <div>
                                   <div
@@ -7368,21 +5964,21 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                     <div
                                       style={
                                         Object {
-                                          "width": 80,
+                                          "width": 160,
                                         }
                                       }
                                     />
                                     <div
                                       style={
                                         Object {
-                                          "width": 80,
+                                          "width": 160,
                                         }
                                       }
                                     />
                                     <div
                                       style={
                                         Object {
-                                          "width": 80,
+                                          "width": 160,
                                         }
                                       }
                                     />
