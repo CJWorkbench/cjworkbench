@@ -71,7 +71,7 @@ export default class ColumnSelector extends React.Component {
               onChange={this.clicked}
               data-name={n}
             ></input>
-            <span className='ml-3 t-d-gray checkbox-content content-3'>{n}</span>
+            <span className='t-d-gray checkbox-content content-3'>{n}</span>
         </div>);
       });
 
