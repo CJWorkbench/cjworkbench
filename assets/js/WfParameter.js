@@ -395,7 +395,7 @@ export default class WfParameter extends React.Component {
                     onChange={this.click}
                     ref={ el => this.checkboxRef = el}
                     id={this.props.p.id} />
-                  <label htmlFor={this.props.p.id} className='t-d-gray content-3 ml-1'>{this.name}</label>
+                  <label htmlFor={this.props.p.id} className='t-d-gray content-3'>{this.name}</label>
                 </div>
             </div>
         );
