@@ -2,6 +2,7 @@ from .moduleimpl import ModuleImpl
 from .utils import *
 import pandas as pd
 from formulas import Parser
+import re
 
 # ---- Formula ----
 
@@ -50,12 +51,35 @@ class Formula(ModuleImpl):
 
             col_idx = []
 
-            for func_input in code.inputs:
-                idx = letter_ref_to_number(func_input[0])
-                col_idx.append(idx)
+            for token, obj in code.inputs.items():
+                # If the formula is valid but no object comes
+                # back it means we should have an uppercase string
+                # with only A-Z. But just in case:
+                if obj is None:
+                    to_index = re.sub(r"[0-9]+", '', token)
+                    to_index = [letter_ref_to_number(to_index)]
+                else:
+                    ranges = obj.ranges
+                    to_index = []
+                    for rng in ranges:
+                        col_first = rng['n1']
+                        col_last = rng['n2']
+                        if col_first != col_last:
+                            to_index.append([n for n in range((col_first-1), col_last)])
+                        else:
+                            to_index.append(col_first - 1)
+                if len(to_index) == 1:
+                    col_idx.append(to_index[0])
+                else:
+                    col_idx.append(to_index)
 
             for i, row in enumerate(table.values):
-                args_to_excel = [row[idx] for idx in col_idx]
+                args_to_excel = []
+                for col in col_idx:
+                    if isinstance(col, list):
+                        args_to_excel.append([row[idx] for idx in col])
+                    else:
+                        args_to_excel.append(row[col])
                 try:
                     newcol[i] = code(*args_to_excel)
                 except Exception as e:
