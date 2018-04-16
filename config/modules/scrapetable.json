@@ -2,7 +2,7 @@
   "name": "Scrape Table",
   "id_name": "scrapetable" ,
   "category" : "Add data",
-  "icon" : "url",
+  "icon" : "scraper",
   "description" : "Scrape an HTML table on a web page",
   "loads_data": true,
   "help_url":"modules/add-data/scrape-table",
