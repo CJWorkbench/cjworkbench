@@ -25,11 +25,11 @@ class Formula(ModuleImpl):
         if formula == '':
             return table    # nop if no formula
 
-        newcol = pd.Series(np.zeros(len(table)))
-
         syntax = wf_module.get_param_menu_idx('syntax')
 
-        if syntax == 0: # Python
+        newcol = pd.Series(np.zeros(len(table)), dtype=np.dtype(object))
+
+        if syntax == 0:  # Python
             colnames = [x.replace(" ", "_") for x in table.columns]  # spaces to underscores in column names
 
             # Catch errors with the formula and display to user
@@ -43,7 +43,7 @@ class Formula(ModuleImpl):
             except Exception as e:
                 return(str(e))
 
-        if syntax == 1: # Excel
+        if syntax == 1:  # Excel
             try:
                 code = Parser().ast(formula)[1].compile()
             except Exception as e:
@@ -62,8 +62,15 @@ class Formula(ModuleImpl):
                     ranges = obj.ranges
                     to_index = []
                     for rng in ranges:
+                        # r1 and r2 refer to which rows are referenced by the range.
+                        # cr shows up in the range object whenever the reference is to
+                        # an entire row.
+                        if (rng['r1'] != '1' and rng['r2'] != '1') and rng['cr'] != '1':
+                            return "Currently only references to entire columns or the first row of a column are supported for excel formulas"
+
                         col_first = rng['n1']
                         col_last = rng['n2']
+
                         if col_first != col_last:
                             to_index.append([n for n in range((col_first-1), col_last)])
                         else:
@@ -76,10 +83,13 @@ class Formula(ModuleImpl):
             for i, row in enumerate(table.values):
                 args_to_excel = []
                 for col in col_idx:
-                    if isinstance(col, list):
-                        args_to_excel.append([row[idx] for idx in col])
-                    else:
-                        args_to_excel.append(row[col])
+                    try:
+                        if isinstance(col, list):
+                            args_to_excel.append([row[idx] for idx in col])
+                        else:
+                            args_to_excel.append(row[col])
+                    except IndexError as e:
+                        return str(e)
                 try:
                     newcol[i] = code(*args_to_excel)
                 except Exception as e:
@@ -88,7 +98,7 @@ class Formula(ModuleImpl):
         # if no output column supplied, use result0, result1, etc.
         out_column = wf_module.get_param_string('out_column')
         if out_column == '':
-            if 'result' not in colnames:
+            if 'result' not in table.columns:
                 out_column = 'result'
             else:
                 n = 0
@@ -96,13 +106,6 @@ class Formula(ModuleImpl):
                     n += 1
                 out_column = 'result' + str(n)
         table[out_column] = newcol
-
-
-
-
-
-
-
 
         wf_module.set_ready(notify=False)
         return table
