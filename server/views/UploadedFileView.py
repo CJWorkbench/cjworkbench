@@ -2,6 +2,7 @@ from rest_framework import renderers, status
 from rest_framework.views import APIView
 from rest_framework.parsers import MultiPartParser
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from server.forms import UploadedFileForm
 from server.modules.uploadfile import upload_to_table
 from django.http import HttpResponse
@@ -11,6 +12,7 @@ import json
 class UploadedFileView(APIView):
     renderer_classes = [renderers.JSONRenderer]
     parser_classes = (MultiPartParser,)
+    permission_classes = (IsAuthenticatedOrReadOnly,)
 
     @staticmethod
     def post(request):
