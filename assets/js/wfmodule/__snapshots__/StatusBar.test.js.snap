@@ -20,7 +20,7 @@ exports[`Status bar Renders the error color 1`] = `
 
 exports[`Status bar Renders the selected ready color 1`] = `
 <div
-  className="module-output-bar-blue"
+  className="module-output--live"
 />
 `;
 

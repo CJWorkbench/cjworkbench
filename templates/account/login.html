@@ -27,6 +27,7 @@
         <div class="d-flex justify-content-center mb-4">
           <div class="content-4">or</div>
         </div>
+        {% endif %}
 
         {% csrf_token %}
         {{form.login}}
@@ -44,19 +45,4 @@
         <button class="button-white--fill action-button mx-auto mt-2 mb-3" type="submit">{% trans "Sign In" %}</button>
 
     </form>
-
-
-
-
-    {% else %}
-    <p>{% blocktrans %}If you have not created an account yet, then please
-    <a href="{{ signup_url }}">sign up</a> first.{% endblocktrans %}</p>
-    {% endif %}
-
-
-    {% if ACCOUNT_OPEN_SIGNUP %}
-       <!--  <p class="login-footer content-3 t-d-gray text-center">
-            {% trans "Don't have an account?" %}
-        </p> -->
-    {% endif %}
 {% endblock %}

@@ -92,8 +92,6 @@ textarea:focus, input:focus{
   resize: none;
   line-height: 3.5rem;
   padding: 0 0 0 1rem;
-  border-radius:0px;
-  border-color:#e9e9e9;
 }
 
 .dropdown-selector {
@@ -115,15 +113,23 @@ textarea:focus, input:focus{
 
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
   color:#c8c8c8;
+  font-size: 1.3rem;
+
 }
 ::-moz-placeholder { /* Firefox 19+ */
   color: #c8c8c8;
+  font-size: 1.3rem;
+
 }
 :-ms-input-placeholder { /* IE 10+ */
   color:#c8c8c8;
+
+
 }
 :-moz-placeholder { /* Firefox 18- */
   color:#c8c8c8;
+  font-size: 1.3rem;
+
 }
 
 
@@ -197,31 +203,51 @@ select.form-control {
   display: none;
 }
 
+.checkbox-wrapper label {
+  margin-bottom: 0;
+}
+
 .addremove label {
   @extend .icon;
   background: transparent;
-  width:2rem;
-  height:2rem;
-  font-size:2rem;
+  width:1.3rem;
+  height:1.3rem;
+  font-size:1.3rem;
   display:block;
+  color: #B4B4B4;
+  cursor: pointer;
+}
+
+.addremove label:hover{
+  color: #686768;
 }
 
 .addremove .checkbox + label {
   @extend .icon-addc;
   position: relative;
-  left: 20.75rem;
+  padding:0 0.5rem;
+  left: 21.2rem;
+  top:0.2rem;
 }
 
 .addremove .checkbox:checked + label {
-  @extend .icon-bin;
+  @extend .icon-addm;
+  margin-right: 0.5rem;
 }
 
 .addremove .checkbox:checked + label, .addremove + .addremove label {
-  left: 18.75rem;
+  padding:0 0.5rem;
+  left: 19.25rem;
+  top:0.2rem;
+
+
 }
 
 .addremove.last .checkbox:checked + label {
-  left: 20.75rem;
+  padding:0 0.5rem;
+  left: 21.2rem;
+  top:0.2rem;
+
 }
 
 /* This is here until we create actual grouped parameters. When the
@@ -240,4 +266,3 @@ to do this until we make larger architectural changes. */
 .show-sibling + .hide-with-sibling {
   display: block;
 }
-

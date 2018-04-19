@@ -30,7 +30,7 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           foo
         </span>
@@ -51,7 +51,7 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           bar
         </span>
@@ -72,7 +72,7 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           baz
         </span>
@@ -93,7 +93,7 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           wow
         </span>
@@ -114,7 +114,7 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           word wrap
         </span>
@@ -135,7 +135,7 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           ok then
         </span>
@@ -175,7 +175,7 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           foo
         </span>
@@ -196,7 +196,7 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           bar
         </span>
@@ -217,7 +217,7 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           baz
         </span>
@@ -238,7 +238,7 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           wow
         </span>
@@ -259,7 +259,7 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           word wrap
         </span>
@@ -280,7 +280,7 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
           type="checkbox"
         />
         <span
-          className="ml-3 t-d-gray checkbox-content content-3"
+          className="t-d-gray checkbox-content content-3"
         >
           ok then
         </span>

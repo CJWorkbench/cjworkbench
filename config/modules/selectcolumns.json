@@ -20,10 +20,10 @@
       "default": "1"
     },
     {
-        "name": "Column Names",
-        "id_name": "colnames",
-        "type": "string",
-        "visible": false
-      }
+      "name": "Column Names",
+      "id_name": "colnames",
+      "type": "string",
+      "visible": false
+    }
   ]
 }

@@ -1,0 +1,30 @@
+{
+  "name": "Scrape table",
+  "id_name": "scrapetable" ,
+  "category" : "Add data",
+  "icon" : "scraper",
+  "description" : "Scrape an HTML table on a web page",
+  "loads_data": true,
+  "help_url":"modules/add-data/scrape-table",
+  "parameters": [
+    {
+      "name": "",
+      "id_name" : "url",
+      "type": "string",
+      "default": "",
+      "placeholder":"http://"
+    },
+    {
+      "name": "Which table on this page?",
+      "id_name" : "tablenum",
+      "type": "integer",
+      "default": "1",
+      "placeholder":"1"
+    },
+    {
+      "name": "Scrape",
+      "id_name" : "version_select",
+      "type": "custom"
+    }
+  ]
+}

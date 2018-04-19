@@ -13,7 +13,7 @@ describe('FileSelect', () => {
   });
 
   var gDriveFiles = {
-    "kind": "drive#fileList",
+    "kind": "drive#fileList", 
     "incompleteSearch": false,
     "files": [
       {

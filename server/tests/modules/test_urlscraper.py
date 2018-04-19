@@ -184,9 +184,9 @@ class URLScraperTests(LoggedInTestCase):
     # Simple test that .event() calls scrape_urls() in the right way
     # We don't test all the scrape error cases (invalid urls etc.) as they are tested above
     def test_scrape_column(self):
-        source_options = "List of URLs|Load from column".split('|')
+        source_options = "List|Input column".split('|')
         source_pval = get_param_by_id_name('urlsource')
-        source_pval.value = source_options.index('Load from column')
+        source_pval.value = source_options.index('Input column')
         source_pval.save()
 
         get_param_by_id_name('urlcol').set_value('url')
@@ -209,9 +209,9 @@ class URLScraperTests(LoggedInTestCase):
 
     # Tests scraping from a list of URLs
     def test_scrape_list(self):
-        source_options = "List of URLs|Load from column".split('|')
+        source_options = "List|Input column".split('|')
         source_pval = get_param_by_id_name('urlsource')
-        source_pval.value = source_options.index('List of URLs')
+        source_pval.value = source_options.index('List')
         source_pval.save()
 
         get_param_by_id_name('urllist').set_value('\n'.join([

@@ -192,8 +192,8 @@ export default class TableView extends React.Component {
       gridView =
         <div className="outputpane-data">
           <DataGrid
-            totalRows={50}
-            columns={['',' ','   ','    ','     ','      ']}
+            totalRows={10}
+            columns={['',' ','   ','    ']}
             getRow={() => {return {}}}
           />
       </div>

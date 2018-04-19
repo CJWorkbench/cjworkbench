@@ -1,6 +1,6 @@
 {%  extends 'base_no_intercom.html' %}
 {% load render_bundle from webpack_loader %}
-{% load account %}
+{% load account i18n %}
 
 {% block title %}
     404 Page not found
@@ -13,9 +13,10 @@
 
 {% block body %}
   <div class="login-fullscreen-container">
-    <div class="title-2 mb-4 t-white">Page not found found</div>
-    <div class='text-center'>
-        <a href="{% url "account_login" %}" class="content-3 t-white-u ">{% trans "Back to my workspace" %}</a>
+    <div class="login-card">
+      <div class="font404 text-center mt-3 t-white mb-5">404<div>
+      <div class="title-1 text-center mb-5 t-white">Not the number you're looking for</div>
+      <a href="{% url "account_login" %}" style="width:200px" class="title-3 d-flex action-button mx-auto button-white--fill">{% trans "Go back to my workspace" %}</a>
     </div>
   <div>
     {% render_bundle 'login' 'js' %}

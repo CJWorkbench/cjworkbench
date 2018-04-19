@@ -7,6 +7,7 @@ describe('Reducer actions', () => {
   // Stripped down workflow object, only what we need for testing actions
   const test_workflow = {
     id: 999,
+    selected_wf_module: 30,  // different than test_state.selected_wf_module so we can test setting state.selected_wf_module
     wf_modules: [
       {
         id: 10,
@@ -61,6 +62,16 @@ describe('Reducer actions', () => {
       }
     });
     expect(state).toBe(test_state);
+  });
+
+  // RELOAD_WORKFLOW
+   it('Reloads the workflow', () => {
+    let state = workflowReducer(test_state, {
+      type: 'RELOAD_WORKFLOW_FULFILLED',
+      payload: test_workflow,
+    });
+    expect(state.workflow).toEqual(test_workflow);
+    expect(state.selected_wf_module).toEqual(test_workflow.selected_wf_module);
   });
 
   // ADD_MODULE
