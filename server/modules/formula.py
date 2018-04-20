@@ -2,12 +2,16 @@ from .moduleimpl import ModuleImpl
 from .utils import *
 import pandas as pd
 from formulas import Parser
+from formulas.errors import FormulaError
 import re
 from django.utils.translation import gettext as _
 
 # ---- Formula ----
 
 def letter_ref_to_number(letter_ref):
+    if re.search(r"[^a-zA-Z]+", letter_ref):
+        raise FormulaError(_("%s is not a valid reference" % letter_ref))
+
     return_number = 0
 
     for idx, letter in enumerate(reversed(letter_ref)):
@@ -47,8 +51,12 @@ def excel_formula(table, formula, newcol):
         # back it means we should have an uppercase string
         # with only A-Z. But just in case:
         if obj is None:
-            to_index = re.sub(r"[0-9]+", '', token)
-            to_index = [letter_ref_to_number(to_index)]
+            try:
+                to_index = [letter_ref_to_number(token)]
+            except FormulaError as e:
+                # args[1] is the 1st argument to the FormulaError constructor, which is the
+                # thing the parser choked on
+                return e.msg % (e.args[1] or '')
         else:
             ranges = obj.ranges
             to_index = []
