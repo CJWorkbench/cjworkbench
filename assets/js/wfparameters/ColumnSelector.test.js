@@ -31,6 +31,10 @@ describe('ColumnSelector', () => {
         let checkboxList = wrapper.find('input[disabled=true]');
         expect(checkboxList).toHaveLength(6);
 
+        // check that select all/none buttons are disabled
+        let buttonList = wrapper.find('button[disabled=true]');
+        expect(buttonList).toHaveLength(2);
+
         expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
         done();
@@ -92,6 +96,34 @@ describe('ColumnSelector', () => {
 
         done();
       });
+
+      it('selects all columns when "select all" is clicked', (done) => {
+        setImmediate(() => {
+          expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
+
+          let selectAllButton = wrapper.find('button[name="mc-select-all"');
+          expect(selectAllButton).toHaveLength(1);
+          selectAllButton.simulate('click');
+          setImmediate(() => {
+            expect(wrapper.state().selected).toEqual(testcols);
+            done();
+          });
+        })
+      });
+
+      it('deselects all columns when "select none" is clicked', (done) => {
+        setImmediate(() => {
+          expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
+
+          let selectNoneButton = wrapper.find('button[name="mc-select-none"');
+          expect(selectNoneButton).toHaveLength(1);
+          selectAllButton.simulate('click');
+          setImmediate(() => {
+            expect(wrapper.state().selected).toEqual([]);
+            done();
+          });
+        })
+      })
     });
 
   });

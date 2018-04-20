@@ -8,6 +8,8 @@ export default class ColumnSelector extends React.Component {
     super(props);
     this.state = { colNames: [], selected: this.parseSelectedCols(props.selectedCols) };
     this.clicked = this.clicked.bind(this);
+    this.selectAllClicked = this.selectAllClicked.bind(this);
+    this.selectNoneClicked = this.selectNoneClicked.bind(this);
   }
 
   // selected columns string -> array of column names
@@ -59,27 +61,53 @@ export default class ColumnSelector extends React.Component {
     }
   }
 
+  selectAllClicked() {
+      var newSelected = this.state.colNames.slice();
+      this.setState({colNames: this.state.colNames, selected: newSelected});
+      this.props.saveState(newSelected.join());
+  }
+
+  selectNoneClicked() {
+      var newSelected = [];
+      this.setState({colNames: this.state.colNames, selected: newSelected});
+      this.props.saveState(newSelected.join());
+  }
+
   render() {
     // use nowrap style to ensure checkbox label is always on same line as checkbox
     const checkboxes = this.state.colNames.map( n => {
       return (
-        <div className='checkbox-container' style={{'whiteSpace': 'nowrap'}} key={n}>
-            <input
-              type='checkbox'
-              disabled={this.props.isReadOnly}
-              checked={this.state.selected.includes(n)}
-              onChange={this.clicked}
-              data-name={n}
-            ></input>
-            <span className='t-d-gray checkbox-content content-3'>{n}</span>
-        </div>);
+          <div className='checkbox-container' style={{'whiteSpace': 'nowrap'}} key={n}>
+              <input
+                  type='checkbox'
+                  disabled={this.props.isReadOnly}
+                  checked={this.state.selected.includes(n)}
+                  onChange={this.clicked}
+                  data-name={n}
+              ></input>
+              <span className='t-d-gray checkbox-content content-3'>{n}</span>
+          </div>
+        );
       });
 
     return (
+      // The name attributes in the buttons are used for selection in tests. Do not change them.
       <div className='container list-wrapper'>
-        <div className='row list-scroll'>
-          { checkboxes }
-        </div>
+          <button
+              disabled={this.props.isReadOnly}
+              onClick={this.selectAllClicked}
+              name={'mc-select-all'} >
+              Select all
+          </button>
+          <button
+              disabled={this.props.isReadOnly}
+              onClick={this.selectNoneClicked}
+              name={'mc-select-none'} >
+              Select none
+          </button>
+          <div className='row list-scroll'>
+              { checkboxes }
+          </div>
       </div>
     );
   }

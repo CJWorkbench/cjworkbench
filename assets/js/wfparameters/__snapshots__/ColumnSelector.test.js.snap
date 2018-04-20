@@ -11,6 +11,20 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
   <div
     className="container list-wrapper"
   >
+    <button
+      disabled={false}
+      name="mc-select-all"
+      onClick={[Function]}
+    >
+      Select all
+    </button>
+    <button
+      disabled={false}
+      name="mc-select-none"
+      onClick={[Function]}
+    >
+      Select none
+    </button>
     <div
       className="row list-scroll"
     >
@@ -156,6 +170,20 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
   <div
     className="container list-wrapper"
   >
+    <button
+      disabled={true}
+      name="mc-select-all"
+      onClick={[Function]}
+    >
+      Select all
+    </button>
+    <button
+      disabled={true}
+      name="mc-select-none"
+      onClick={[Function]}
+    >
+      Select none
+    </button>
     <div
       className="row list-scroll"
     >
