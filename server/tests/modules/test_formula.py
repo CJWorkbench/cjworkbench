@@ -123,15 +123,6 @@ class FormulaTests(LoggedInTestCase):
         self.assertEqual(self.wfmodule.status, WfModule.READY)
         self.assertTrue(out.equals(table))
 
-        # 'B0' doesn't get interpreted as a range and should be stripped to B before conversion
-        self.fpval.value = '=B0*2'
-        self.fpval.save()
-        out = execute_nocache(self.wfmodule)
-        self.wfmodule.refresh_from_db()
-        self.assertEqual(self.wfmodule.status, WfModule.READY)
-        self.assertTrue(out.equals(table))
-
-
         # formula with range should grab the right values and compute them
         self.fpval.value = '=SUM(B:C)'
         self.fpval.save()
@@ -158,14 +149,6 @@ class FormulaTests(LoggedInTestCase):
         self.assertEqual(self.wfmodule.status, WfModule.READY)
         self.assertTrue(out.equals(table))
 
-        # same formula with B0 and C0 should still work
-        self.fpval.value = '=SUM(B0:C0)'
-        self.fpval.save()
-        out = execute_nocache(self.wfmodule)
-        self.wfmodule.refresh_from_db()
-        self.assertEqual(self.wfmodule.status, WfModule.READY)
-        self.assertTrue(out.equals(table))
-
         # text formula
         self.fpval.value = '=LEFT(D,5)'
         self.fpval.save()
@@ -186,6 +169,14 @@ class FormulaTests(LoggedInTestCase):
 
         # out of range selector should produce error
         self.fpval.value = '=SUM(B:ZZ)'
+        self.fpval.save()
+        out = execute_nocache(self.wfmodule)
+        self.wfmodule.refresh_from_db()
+        self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+        self.assertTrue(out.equals(mock_csv_table))  # NOP on error
+
+        # selector with a 0 should produce an error
+        self.fpval.value = '=SUM(B0)'
         self.fpval.save()
         out = execute_nocache(self.wfmodule)
         self.wfmodule.refresh_from_db()
