@@ -71,6 +71,10 @@
   border-right: 1px solid rgba(113,155,176,.2);
 }
 
+.react-grid-Cell.react-grid-Cell--locked:focus{
+  outline: 0px;
+}
+
 .react-grid-Grid{
   border-top:1px solid #E7EAED;
   border-right:none;
@@ -101,10 +105,8 @@
 //Click and edit a cell
 .react-grid-Cell:focus,
 .react-grid-Cell input.editor-main {
-	border: none;
 	border-radius: 0;
 	outline: 2px solid #FBAA6D;
-	background-color: #fff;
 }
 
 /* Output Pane */
