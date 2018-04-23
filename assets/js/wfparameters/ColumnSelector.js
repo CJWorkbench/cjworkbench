@@ -92,22 +92,26 @@ export default class ColumnSelector extends React.Component {
 
     return (
       // The name attributes in the buttons are used for selection in tests. Do not change them.
-      <div className='container list-wrapper'>
+      <div>
+        <div className="d-flex mb-2">
           <button
               disabled={this.props.isReadOnly}
               onClick={this.selectAllClicked}
-              name={'mc-select-all'} >
-              Select all
+              className='mc-select-all content-4 t-d-gray'>
+              All
           </button>
           <button
               disabled={this.props.isReadOnly}
               onClick={this.selectNoneClicked}
-              name={'mc-select-none'} >
-              Select none
+              className='mc-select-none content-4 t-d-gray'>
+              None
           </button>
-          <div className='row list-scroll'>
-              { checkboxes }
-          </div>
+        </div>
+        <div className='container list-wrapper'>
+            <div className='row list-scroll'>
+                { checkboxes }
+            </div>
+        </div>
       </div>
     );
   }

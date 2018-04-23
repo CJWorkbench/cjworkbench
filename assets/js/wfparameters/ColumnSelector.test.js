@@ -4,7 +4,7 @@ import { mount } from 'enzyme'
 
 describe('ColumnSelector', () => {
 
-  var wrapper; 
+  var wrapper;
   const testcols = ['foo','bar','baz','wow','word wrap','ok then'];
 
   describe('Read-only', () => {
@@ -14,11 +14,11 @@ describe('ColumnSelector', () => {
         selectedCols='foo,bar,baz'
         getColNames={ () => { return Promise.resolve(testcols) } }
         saveState={ () => {} }
-        revision={101} 
+        revision={101}
         isReadOnly={true}
       />
     ));
-  
+
     it('Loads and renders disabled column names', (done) => {
       expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
@@ -46,18 +46,18 @@ describe('ColumnSelector', () => {
 
   describe('NOT Read-only', () => {
 
-    var wrapper; 
+    var wrapper;
 
     beforeEach(() => wrapper = mount(
       <ColumnSelector
         selectedCols='foo,bar,baz'
         getColNames={ () => { return Promise.resolve(testcols) } }
         saveState={ () => {} }
-        revision={101} 
+        revision={101}
         isReadOnly={false}
       />
     ));
-  
+
     it('Loads and renders column names', (done) => {
       setImmediate( () => {
         expect(wrapper).toMatchSnapshot();
@@ -67,7 +67,7 @@ describe('ColumnSelector', () => {
         let checkboxList = wrapper.find('input');
         expect(checkboxList).toHaveLength(6);
 
-        expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);   
+        expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
         done();
       });

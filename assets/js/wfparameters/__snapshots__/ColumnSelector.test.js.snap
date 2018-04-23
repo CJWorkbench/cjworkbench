@@ -8,151 +8,157 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
   saveState={[Function]}
   selectedCols="foo,bar,baz"
 >
-  <div
-    className="container list-wrapper"
-  >
-    <button
-      disabled={false}
-      name="mc-select-all"
-      onClick={[Function]}
-    >
-      Select all
-    </button>
-    <button
-      disabled={false}
-      name="mc-select-none"
-      onClick={[Function]}
-    >
-      Select none
-    </button>
+  <div>
     <div
-      className="row list-scroll"
+      className="d-flex mb-2"
+    >
+      <button
+        className="mc-select-all content-4 t-d-gray"
+        disabled={false}
+        onClick={[Function]}
+      >
+        All
+      </button>
+      <button
+        className="mc-select-none content-4 t-d-gray"
+        disabled={false}
+        onClick={[Function]}
+      >
+        None
+      </button>
+    </div>
+    <div
+      className="container list-wrapper"
     >
       <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
-          }
-        }
+        className="row list-scroll"
       >
-        <input
-          checked={true}
-          data-name="foo"
-          disabled={false}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
-        >
-          foo
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={true}
-          data-name="bar"
-          disabled={false}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          bar
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+          <input
+            checked={true}
+            data-name="foo"
+            disabled={false}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            foo
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={true}
-          data-name="baz"
-          disabled={false}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          baz
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+          <input
+            checked={true}
+            data-name="bar"
+            disabled={false}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            bar
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={false}
-          data-name="wow"
-          disabled={false}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          wow
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+          <input
+            checked={true}
+            data-name="baz"
+            disabled={false}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            baz
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={false}
-          data-name="word wrap"
-          disabled={false}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          word wrap
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+          <input
+            checked={false}
+            data-name="wow"
+            disabled={false}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            wow
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={false}
-          data-name="ok then"
-          disabled={false}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          ok then
-        </span>
+          <input
+            checked={false}
+            data-name="word wrap"
+            disabled={false}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            word wrap
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
+          }
+        >
+          <input
+            checked={false}
+            data-name="ok then"
+            disabled={false}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            ok then
+          </span>
+        </div>
       </div>
     </div>
   </div>
@@ -167,151 +173,157 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
   saveState={[Function]}
   selectedCols="foo,bar,baz"
 >
-  <div
-    className="container list-wrapper"
-  >
-    <button
-      disabled={true}
-      name="mc-select-all"
-      onClick={[Function]}
-    >
-      Select all
-    </button>
-    <button
-      disabled={true}
-      name="mc-select-none"
-      onClick={[Function]}
-    >
-      Select none
-    </button>
+  <div>
     <div
-      className="row list-scroll"
+      className="d-flex mb-2"
+    >
+      <button
+        className="mc-select-all content-4 t-d-gray"
+        disabled={true}
+        onClick={[Function]}
+      >
+        All
+      </button>
+      <button
+        className="mc-select-none content-4 t-d-gray"
+        disabled={true}
+        onClick={[Function]}
+      >
+        None
+      </button>
+    </div>
+    <div
+      className="container list-wrapper"
     >
       <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
-          }
-        }
+        className="row list-scroll"
       >
-        <input
-          checked={true}
-          data-name="foo"
-          disabled={true}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
-        >
-          foo
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={true}
-          data-name="bar"
-          disabled={true}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          bar
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+          <input
+            checked={true}
+            data-name="foo"
+            disabled={true}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            foo
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={true}
-          data-name="baz"
-          disabled={true}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          baz
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+          <input
+            checked={true}
+            data-name="bar"
+            disabled={true}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            bar
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={false}
-          data-name="wow"
-          disabled={true}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          wow
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+          <input
+            checked={true}
+            data-name="baz"
+            disabled={true}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            baz
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={false}
-          data-name="word wrap"
-          disabled={true}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          word wrap
-        </span>
-      </div>
-      <div
-        className="checkbox-container"
-        style={
-          Object {
-            "whiteSpace": "nowrap",
+          <input
+            checked={false}
+            data-name="wow"
+            disabled={true}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            wow
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
           }
-        }
-      >
-        <input
-          checked={false}
-          data-name="ok then"
-          disabled={true}
-          onChange={[Function]}
-          type="checkbox"
-        />
-        <span
-          className="t-d-gray checkbox-content content-3"
         >
-          ok then
-        </span>
+          <input
+            checked={false}
+            data-name="word wrap"
+            disabled={true}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            word wrap
+          </span>
+        </div>
+        <div
+          className="checkbox-container"
+          style={
+            Object {
+              "whiteSpace": "nowrap",
+            }
+          }
+        >
+          <input
+            checked={false}
+            data-name="ok then"
+            disabled={true}
+            onChange={[Function]}
+            type="checkbox"
+          />
+          <span
+            className="t-d-gray checkbox-content content-3"
+          >
+            ok then
+          </span>
+        </div>
       </div>
     </div>
   </div>
