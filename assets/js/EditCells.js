@@ -9,14 +9,15 @@ export function mockAPI(mock_api) {
   api = mock_api;
 }
 
-function findParamValByIdName(wfm, paramValIdName) {
+// Export this for use in SortFromTable
+export function findParamValByIdName(wfm, paramValIdName) {
   return wfm.parameter_vals.find((parameterVal) => {
         return parameterVal.parameter_spec.id_name === paramValIdName;
     });
 }
 
 // Returns wfm object index in stack,  given its global ID
-function getWfModuleIndexfromId(state, id) {
+export function getWfModuleIndexfromId(state, id) {
   var wfModuleIdx = null;
   state.workflow.wf_modules.find((wfm, idx) => {
     wfModuleIdx = idx;
@@ -25,7 +26,7 @@ function getWfModuleIndexfromId(state, id) {
 
   return wfModuleIdx;
 }
-
+/*
 // Look for an existing Edit Cells module at or after the edited module
 // Returns module index, null if none
 function findEditCellsModule(state, wfModuleId) {
@@ -42,6 +43,29 @@ function findEditCellsModule(state, wfModuleId) {
   if (nextIdx === wfModules.length) {
     return null;   // end of stack
   } else if (wfModules[nextIdx].module_version.module.id_name === 'editcells' ) {
+    return wfModules[nextIdx];
+  }
+
+  // Nope, no Edit Cells where we need it
+  return null;
+}
+*/
+
+// A generalized version of the original findEditCellsModule for use in other modules
+export function findModuleWithIdAndIdName(state, wfModuleId, moduleIdName) {
+  var wfModules = state.workflow.wf_modules;
+  var idx = getWfModuleIndexfromId(state, wfModuleId);
+
+  // Is this an existing Edit Cells module?
+  if (wfModules[idx].module_version.module.id_name === moduleIdName ) {
+    return wfModules[idx];
+  }
+
+  // Is the next module Edit Cells? If so, we can merge this edit in
+  var nextIdx = idx + 1;
+  if (nextIdx === wfModules.length) {
+    return null;   // end of stack
+  } else if (wfModules[nextIdx].module_version.module.id_name === moduleIdName ) {
     return wfModules[nextIdx];
   }
 
@@ -84,7 +108,8 @@ function addEditToEditCellsModule(wfm, edit) {
 export function addCellEdit(wfModuleId, edit) {
   var state = store.getState();
 
-  var existingEditCellsWfm = findEditCellsModule(state, wfModuleId);
+  //var existingEditCellsWfm = findEditCellsModule(state, wfModuleId);
+  var existingEditCellsWfm = findModuleWithIdAndIdName(state, wfModuleId, 'editcells');
   if (existingEditCellsWfm) {
     // Adding edit to existing module
     addEditToEditCellsModule(existingEditCellsWfm, edit);

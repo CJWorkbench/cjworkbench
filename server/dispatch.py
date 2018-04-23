@@ -24,6 +24,7 @@ from .modules.editcells import EditCells
 from .modules.refine import Refine
 from .modules.urlscraper import URLScraper
 from .modules.scrapetable import ScrapeTable
+from .modules.sortfromtable import SortFromTable
 
 # ---- Test Support ----
 
@@ -42,19 +43,20 @@ class DoubleMColumn(ModuleImpl):
 # ---- Interal modules Dispatch Table ----
 
 module_dispatch_tbl = {
-    'loadurl':      LoadURL,
-    'pastecsv':     PasteCSV,
-    'formula':      Formula,
-    'selectcolumns':SelectColumns,
-    'pythoncode':   PythonCode,
-    'twitter':      Twitter,
-    'countbydate':  CountByDate,
-    'uploadfile':   UploadFile,
-    'googlesheets': GoogleSheets,
-    'editcells':    EditCells,
-    'refine':       Refine,
-    'urlscraper':   URLScraper,
-    'scrapetable':  ScrapeTable,
+    'loadurl':          LoadURL,
+    'pastecsv':         PasteCSV,
+    'formula':          Formula,
+    'selectcolumns':    SelectColumns,
+    'pythoncode':       PythonCode,
+    'twitter':          Twitter,
+    'countbydate':      CountByDate,
+    'uploadfile':       UploadFile,
+    'googlesheets':     GoogleSheets,
+    'editcells':        EditCells,
+    'refine':           Refine,
+    'urlscraper':       URLScraper,
+    'scrapetable':      ScrapeTable,
+    'sort-from-table':  SortFromTable,
 
     # For testing
     'NOP':          NOP,

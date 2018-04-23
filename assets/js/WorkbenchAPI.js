@@ -161,7 +161,6 @@ class WorkbenchAPI {
                   if(response.ok) {
                     return response.json();
                   }
-                  console.log(response.body);
                   return 'request error';
               })
       )
