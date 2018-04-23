@@ -6,6 +6,10 @@
   -webkit-transition:all 0.2s;
 }
 
+//getting rid of Blue Focus
+
+button:focus { outline:0 !important; }
+
 // Context buttons - three dots buttons with menu
 
 .context-button {
@@ -190,12 +194,14 @@ a:focus, a:hover{
 
 .mc-select-all{
   border: 0px;
+  background-color: transparent;
   border-right:1px solid #b4b4b4;
   padding: 0 1rem 0 0;
   cursor: pointer;
 }
 
 .mc-select-none {
+  background-color: transparent;
   border: 0px;
   padding: 0 0 0 1rem;
   cursor: pointer;
