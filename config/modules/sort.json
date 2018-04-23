@@ -1,0 +1,28 @@
+{
+  "name": "Sort",
+  "id_name": "sort-from-table",
+  "category" : "Analyze",
+  "icon" : "transform-v",
+  "description": "Sort by a column from the table or from the module",
+  "help_url":"modules/analyze/sort-from-table",
+  "parameters": [
+    {
+      "name": "By column",
+      "id_name": "column",
+      "type": "column"
+    },
+    {
+      "name": "Sort as",
+      "id_name" : "dtype",
+      "type": "menu",
+      "menu_items": "String|Number|Date"
+    },
+    {
+      "name": "Direction",
+      "id_name" : "direction",
+      "type" : "menu",
+      "menu_items" : "Select|Ascending|Descending",
+      "default": "0"
+    }
+  ]
+}

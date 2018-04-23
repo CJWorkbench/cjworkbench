@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import DataGrid from "./DataGrid";
 import update from 'immutability-helper'
 import * as EditCells from './EditCells'
+import * as SortFromTable from './SortFromTable'
 
 export function mockAddCellEdit(fn) {
   EditCells.addCellEdit = fn;
@@ -32,6 +33,7 @@ export default class TableView extends React.Component {
 
     this.getRow = this.getRow.bind(this);
     this.onEditCell = this.onEditCell.bind(this);
+    this.onSort = this.onSort.bind(this);
 
     this.loading = false;
     this.highestRowRequested = 0;
@@ -160,6 +162,16 @@ export default class TableView extends React.Component {
     }
   }
 
+  onSort(sortCol, sortDir) {
+      console.log("Sort clicked on " + sortCol);
+
+      SortFromTable.updateSort(this.props.id, {
+          column: sortCol,
+          direction: sortDir
+      });
+
+  }
+
   render() {
     var tableData = this.props.tableData;
 
@@ -181,6 +193,7 @@ export default class TableView extends React.Component {
             getRow={this.getRow}
             resizing={this.props.resizing}
             onEditCell={this.onEditCell}
+            onSort={this.onSort}
           />
         </div>
       // adds commas to row count

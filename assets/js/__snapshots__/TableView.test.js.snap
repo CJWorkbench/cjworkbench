@@ -72,6 +72,7 @@ exports[`TableView Blank table when no module id 1`] = `
                 "key": "",
                 "name": "",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
               Object {
@@ -79,6 +80,7 @@ exports[`TableView Blank table when no module id 1`] = `
                 "key": " ",
                 "name": " ",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
               Object {
@@ -86,6 +88,7 @@ exports[`TableView Blank table when no module id 1`] = `
                 "key": "   ",
                 "name": "   ",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
               Object {
@@ -93,6 +96,7 @@ exports[`TableView Blank table when no module id 1`] = `
                 "key": "    ",
                 "name": "    ",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
             ]
@@ -106,6 +110,7 @@ exports[`TableView Blank table when no module id 1`] = `
           minWidth={-2}
           onBeforeEdit={[Function]}
           onGridRowsUpdated={[Function]}
+          onGridSort={[Function]}
           overScan={
             Object {
               "colsEnd": 5,
@@ -187,6 +192,7 @@ exports[`TableView Blank table when no module id 1`] = `
                         "left": 40,
                         "name": "",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -195,6 +201,7 @@ exports[`TableView Blank table when no module id 1`] = `
                         "left": 200,
                         "name": " ",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -203,6 +210,7 @@ exports[`TableView Blank table when no module id 1`] = `
                         "left": 360,
                         "name": "   ",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -211,6 +219,7 @@ exports[`TableView Blank table when no module id 1`] = `
                         "left": 520,
                         "name": "    ",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                     ],
@@ -233,6 +242,7 @@ exports[`TableView Blank table when no module id 1`] = `
                       "key": "",
                       "name": "",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                     Object {
@@ -240,6 +250,7 @@ exports[`TableView Blank table when no module id 1`] = `
                       "key": " ",
                       "name": " ",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                     Object {
@@ -247,6 +258,7 @@ exports[`TableView Blank table when no module id 1`] = `
                       "key": "   ",
                       "name": "   ",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                     Object {
@@ -254,6 +266,7 @@ exports[`TableView Blank table when no module id 1`] = `
                       "key": "    ",
                       "name": "    ",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                   ]
@@ -278,6 +291,7 @@ exports[`TableView Blank table when no module id 1`] = `
                 onBeforeEdit={[Function]}
                 onColumnResize={[Function]}
                 onGridRowsUpdated={[Function]}
+                onGridSort={[Function]}
                 onSort={[Function]}
                 onViewportClick={[Function]}
                 onViewportDoubleClick={[Function]}
@@ -370,6 +384,7 @@ exports[`TableView Blank table when no module id 1`] = `
                             "left": 40,
                             "name": "",
                             "resizable": true,
+                            "sortable": true,
                             "width": 160,
                           },
                           Object {
@@ -378,6 +393,7 @@ exports[`TableView Blank table when no module id 1`] = `
                             "left": 200,
                             "name": " ",
                             "resizable": true,
+                            "sortable": true,
                             "width": 160,
                           },
                           Object {
@@ -386,6 +402,7 @@ exports[`TableView Blank table when no module id 1`] = `
                             "left": 360,
                             "name": "   ",
                             "resizable": true,
+                            "sortable": true,
                             "width": 160,
                           },
                           Object {
@@ -394,6 +411,7 @@ exports[`TableView Blank table when no module id 1`] = `
                             "left": 520,
                             "name": "    ",
                             "resizable": true,
+                            "sortable": true,
                             "width": 160,
                           },
                         ],
@@ -448,6 +466,7 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 40,
                               "name": "",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -456,6 +475,7 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 200,
                               "name": " ",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -464,6 +484,7 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 360,
                               "name": "   ",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -472,6 +493,7 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 520,
                               "name": "    ",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                           ]
@@ -532,13 +554,21 @@ exports[`TableView Blank table when no module id 1`] = `
                                   "name": "",
                                   "resizable": true,
                                   "rowType": "header",
+                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
                               height={35}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
-                              renderer={[Function]}
+                              renderer={
+                                <SortableHeaderCell
+                                  columnKey=""
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
+                                />
+                              }
                               resizing={false}
                             >
                               <div
@@ -556,9 +586,39 @@ exports[`TableView Blank table when no module id 1`] = `
                                   }
                                 }
                               >
-                                <div
-                                  className="widget-HeaderCell__value"
-                                />
+                                <SortableHeaderCell
+                                  column={
+                                    Object {
+                                      "editable": false,
+                                      "key": "",
+                                      "left": 40,
+                                      "name": "",
+                                      "resizable": true,
+                                      "rowType": "header",
+                                      "sortable": true,
+                                      "width": 160,
+                                    }
+                                  }
+                                  columnKey=""
+                                  height={35}
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
+                                >
+                                  <div
+                                    className="react-grid-HeaderCell-sortable"
+                                    onClick={[Function]}
+                                    style={
+                                      Object {
+                                        "cursor": "pointer",
+                                      }
+                                    }
+                                  >
+                                    <span
+                                      className="pull-right"
+                                    />
+                                  </div>
+                                </SortableHeaderCell>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -609,13 +669,21 @@ exports[`TableView Blank table when no module id 1`] = `
                                   "name": " ",
                                   "resizable": true,
                                   "rowType": "header",
+                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
                               height={35}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
-                              renderer={[Function]}
+                              renderer={
+                                <SortableHeaderCell
+                                  columnKey=" "
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
+                                />
+                              }
                               resizing={false}
                             >
                               <div
@@ -633,11 +701,40 @@ exports[`TableView Blank table when no module id 1`] = `
                                   }
                                 }
                               >
-                                <div
-                                  className="widget-HeaderCell__value"
+                                <SortableHeaderCell
+                                  column={
+                                    Object {
+                                      "editable": false,
+                                      "key": " ",
+                                      "left": 200,
+                                      "name": " ",
+                                      "resizable": true,
+                                      "rowType": "header",
+                                      "sortable": true,
+                                      "width": 160,
+                                    }
+                                  }
+                                  columnKey=" "
+                                  height={35}
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
                                 >
-                                   
-                                </div>
+                                  <div
+                                    className="react-grid-HeaderCell-sortable"
+                                    onClick={[Function]}
+                                    style={
+                                      Object {
+                                        "cursor": "pointer",
+                                      }
+                                    }
+                                  >
+                                    <span
+                                      className="pull-right"
+                                    />
+                                     
+                                  </div>
+                                </SortableHeaderCell>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -688,13 +785,21 @@ exports[`TableView Blank table when no module id 1`] = `
                                   "name": "   ",
                                   "resizable": true,
                                   "rowType": "header",
+                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
                               height={35}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
-                              renderer={[Function]}
+                              renderer={
+                                <SortableHeaderCell
+                                  columnKey="   "
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
+                                />
+                              }
                               resizing={false}
                             >
                               <div
@@ -712,11 +817,40 @@ exports[`TableView Blank table when no module id 1`] = `
                                   }
                                 }
                               >
-                                <div
-                                  className="widget-HeaderCell__value"
+                                <SortableHeaderCell
+                                  column={
+                                    Object {
+                                      "editable": false,
+                                      "key": "   ",
+                                      "left": 360,
+                                      "name": "   ",
+                                      "resizable": true,
+                                      "rowType": "header",
+                                      "sortable": true,
+                                      "width": 160,
+                                    }
+                                  }
+                                  columnKey="   "
+                                  height={35}
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
                                 >
-                                     
-                                </div>
+                                  <div
+                                    className="react-grid-HeaderCell-sortable"
+                                    onClick={[Function]}
+                                    style={
+                                      Object {
+                                        "cursor": "pointer",
+                                      }
+                                    }
+                                  >
+                                    <span
+                                      className="pull-right"
+                                    />
+                                       
+                                  </div>
+                                </SortableHeaderCell>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -767,13 +901,21 @@ exports[`TableView Blank table when no module id 1`] = `
                                   "name": "    ",
                                   "resizable": true,
                                   "rowType": "header",
+                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
                               height={35}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
-                              renderer={[Function]}
+                              renderer={
+                                <SortableHeaderCell
+                                  columnKey="    "
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
+                                />
+                              }
                               resizing={false}
                             >
                               <div
@@ -791,11 +933,40 @@ exports[`TableView Blank table when no module id 1`] = `
                                   }
                                 }
                               >
-                                <div
-                                  className="widget-HeaderCell__value"
+                                <SortableHeaderCell
+                                  column={
+                                    Object {
+                                      "editable": false,
+                                      "key": "    ",
+                                      "left": 520,
+                                      "name": "    ",
+                                      "resizable": true,
+                                      "rowType": "header",
+                                      "sortable": true,
+                                      "width": 160,
+                                    }
+                                  }
+                                  columnKey="    "
+                                  height={35}
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
                                 >
-                                      
-                                </div>
+                                  <div
+                                    className="react-grid-HeaderCell-sortable"
+                                    onClick={[Function]}
+                                    style={
+                                      Object {
+                                        "cursor": "pointer",
+                                      }
+                                    }
+                                  >
+                                    <span
+                                      className="pull-right"
+                                    />
+                                        
+                                  </div>
+                                </SortableHeaderCell>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -941,6 +1112,7 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 40,
                               "name": "",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -949,6 +1121,7 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 200,
                               "name": " ",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -957,6 +1130,7 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 360,
                               "name": "   ",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -965,6 +1139,7 @@ exports[`TableView Blank table when no module id 1`] = `
                               "left": 520,
                               "name": "    ",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                           ],
@@ -1065,6 +1240,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 "left": 40,
                                 "name": "",
                                 "resizable": true,
+                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
@@ -1073,6 +1249,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 "left": 200,
                                 "name": " ",
                                 "resizable": true,
+                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
@@ -1081,6 +1258,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 "left": 360,
                                 "name": "   ",
                                 "resizable": true,
+                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
@@ -1089,6 +1267,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 "left": 520,
                                 "name": "    ",
                                 "resizable": true,
+                                "sortable": true,
                                 "width": 160,
                               },
                             ]
@@ -1190,6 +1369,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1198,6 +1378,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 200,
                                               "name": " ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1206,6 +1387,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 360,
                                               "name": "   ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1214,6 +1396,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 520,
                                               "name": "    ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                           ]
@@ -1289,6 +1472,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1297,6 +1481,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 200,
                                               "name": " ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1305,6 +1490,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 360,
                                               "name": "   ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1313,6 +1499,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 520,
                                               "name": "    ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                           ]
@@ -1388,6 +1575,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1396,6 +1584,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 200,
                                               "name": " ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1404,6 +1593,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 360,
                                               "name": "   ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1412,6 +1602,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 520,
                                               "name": "    ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                           ]
@@ -1487,6 +1678,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1495,6 +1687,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 200,
                                               "name": " ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1503,6 +1696,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 360,
                                               "name": "   ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
@@ -1511,6 +1705,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                               "left": 520,
                                               "name": "    ",
                                               "resizable": true,
+                                              "sortable": true,
                                               "width": 160,
                                             },
                                           ]
@@ -1638,6 +1833,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1646,6 +1842,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1654,6 +1851,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1662,6 +1860,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                             ]
@@ -1737,6 +1936,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1745,6 +1945,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1753,6 +1954,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1761,6 +1963,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                             ]
@@ -1836,6 +2039,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1844,6 +2048,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1852,6 +2057,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1860,6 +2066,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                             ]
@@ -1935,6 +2142,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1943,6 +2151,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1951,6 +2160,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
@@ -1959,6 +2169,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                 "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
+                                                "sortable": true,
                                                 "width": 160,
                                               },
                                             ]
@@ -2082,6 +2293,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -2090,6 +2302,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 200,
                                           "name": " ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -2098,6 +2311,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 360,
                                           "name": "   ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -2106,6 +2320,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 520,
                                           "name": "    ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -2178,6 +2393,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -2293,6 +2509,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 200,
                                             "name": " ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -2408,6 +2625,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 360,
                                             "name": "   ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -2523,6 +2741,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 520,
                                             "name": "    ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -2772,6 +2991,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -2780,6 +3000,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 200,
                                           "name": " ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -2788,6 +3009,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 360,
                                           "name": "   ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -2796,6 +3018,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 520,
                                           "name": "    ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -2868,6 +3091,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -2983,6 +3207,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 200,
                                             "name": " ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3098,6 +3323,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 360,
                                             "name": "   ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3213,6 +3439,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 520,
                                             "name": "    ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3462,6 +3689,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -3470,6 +3698,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 200,
                                           "name": " ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -3478,6 +3707,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 360,
                                           "name": "   ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -3486,6 +3716,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 520,
                                           "name": "    ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -3558,6 +3789,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3673,6 +3905,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 200,
                                             "name": " ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3788,6 +4021,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 360,
                                             "name": "   ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3903,6 +4137,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 520,
                                             "name": "    ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4152,6 +4387,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -4160,6 +4396,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 200,
                                           "name": " ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -4168,6 +4405,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 360,
                                           "name": "   ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -4176,6 +4414,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                           "left": 520,
                                           "name": "    ",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -4248,6 +4487,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4363,6 +4603,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 200,
                                             "name": " ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4478,6 +4719,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 360,
                                             "name": "   ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4593,6 +4835,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                             "left": 520,
                                             "name": "    ",
                                             "resizable": true,
+                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4911,6 +5154,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
         }
         getRow={[Function]}
         onEditCell={[Function]}
+        onSort={[Function]}
         totalRows={1000}
       >
         <ReactDataGrid
@@ -4930,6 +5174,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 "key": "a",
                 "name": "a",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
               Object {
@@ -4937,6 +5182,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 "key": "b",
                 "name": "b",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
               Object {
@@ -4944,6 +5190,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 "key": "c",
                 "name": "c",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
             ]
@@ -4957,6 +5204,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
           minWidth={-2}
           onBeforeEdit={[Function]}
           onGridRowsUpdated={[Function]}
+          onGridSort={[Function]}
           overScan={
             Object {
               "colsEnd": 5,
@@ -5038,6 +5286,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                         "left": 40,
                         "name": "a",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -5046,6 +5295,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                         "left": 200,
                         "name": "b",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -5054,6 +5304,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                         "left": 360,
                         "name": "c",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                     ],
@@ -5076,6 +5327,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       "key": "a",
                       "name": "a",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                     Object {
@@ -5083,6 +5335,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       "key": "b",
                       "name": "b",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                     Object {
@@ -5090,6 +5343,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       "key": "c",
                       "name": "c",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                   ]
@@ -5114,6 +5368,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 onBeforeEdit={[Function]}
                 onColumnResize={[Function]}
                 onGridRowsUpdated={[Function]}
+                onGridSort={[Function]}
                 onSort={[Function]}
                 onViewportClick={[Function]}
                 onViewportDoubleClick={[Function]}
@@ -5206,6 +5461,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                             "left": 40,
                             "name": "a",
                             "resizable": true,
+                            "sortable": true,
                             "width": 160,
                           },
                           Object {
@@ -5214,6 +5470,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                             "left": 200,
                             "name": "b",
                             "resizable": true,
+                            "sortable": true,
                             "width": 160,
                           },
                           Object {
@@ -5222,6 +5479,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                             "left": 360,
                             "name": "c",
                             "resizable": true,
+                            "sortable": true,
                             "width": 160,
                           },
                         ],
@@ -5276,6 +5534,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               "left": 40,
                               "name": "a",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -5284,6 +5543,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               "left": 200,
                               "name": "b",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -5292,6 +5552,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               "left": 360,
                               "name": "c",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                           ]
@@ -5352,13 +5613,21 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   "name": "a",
                                   "resizable": true,
                                   "rowType": "header",
+                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
                               height={35}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
-                              renderer={[Function]}
+                              renderer={
+                                <SortableHeaderCell
+                                  columnKey="a"
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
+                                />
+                              }
                               resizing={false}
                             >
                               <div
@@ -5376,11 +5645,40 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   }
                                 }
                               >
-                                <div
-                                  className="widget-HeaderCell__value"
+                                <SortableHeaderCell
+                                  column={
+                                    Object {
+                                      "editable": true,
+                                      "key": "a",
+                                      "left": 40,
+                                      "name": "a",
+                                      "resizable": true,
+                                      "rowType": "header",
+                                      "sortable": true,
+                                      "width": 160,
+                                    }
+                                  }
+                                  columnKey="a"
+                                  height={35}
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
                                 >
-                                  a
-                                </div>
+                                  <div
+                                    className="react-grid-HeaderCell-sortable"
+                                    onClick={[Function]}
+                                    style={
+                                      Object {
+                                        "cursor": "pointer",
+                                      }
+                                    }
+                                  >
+                                    <span
+                                      className="pull-right"
+                                    />
+                                    a
+                                  </div>
+                                </SortableHeaderCell>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -5431,13 +5729,21 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   "name": "b",
                                   "resizable": true,
                                   "rowType": "header",
+                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
                               height={35}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
-                              renderer={[Function]}
+                              renderer={
+                                <SortableHeaderCell
+                                  columnKey="b"
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
+                                />
+                              }
                               resizing={false}
                             >
                               <div
@@ -5455,11 +5761,40 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   }
                                 }
                               >
-                                <div
-                                  className="widget-HeaderCell__value"
+                                <SortableHeaderCell
+                                  column={
+                                    Object {
+                                      "editable": true,
+                                      "key": "b",
+                                      "left": 200,
+                                      "name": "b",
+                                      "resizable": true,
+                                      "rowType": "header",
+                                      "sortable": true,
+                                      "width": 160,
+                                    }
+                                  }
+                                  columnKey="b"
+                                  height={35}
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
                                 >
-                                  b
-                                </div>
+                                  <div
+                                    className="react-grid-HeaderCell-sortable"
+                                    onClick={[Function]}
+                                    style={
+                                      Object {
+                                        "cursor": "pointer",
+                                      }
+                                    }
+                                  >
+                                    <span
+                                      className="pull-right"
+                                    />
+                                    b
+                                  </div>
+                                </SortableHeaderCell>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -5510,13 +5845,21 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   "name": "c",
                                   "resizable": true,
                                   "rowType": "header",
+                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
                               height={35}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
-                              renderer={[Function]}
+                              renderer={
+                                <SortableHeaderCell
+                                  columnKey="c"
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
+                                />
+                              }
                               resizing={false}
                             >
                               <div
@@ -5534,11 +5877,40 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   }
                                 }
                               >
-                                <div
-                                  className="widget-HeaderCell__value"
+                                <SortableHeaderCell
+                                  column={
+                                    Object {
+                                      "editable": true,
+                                      "key": "c",
+                                      "left": 360,
+                                      "name": "c",
+                                      "resizable": true,
+                                      "rowType": "header",
+                                      "sortable": true,
+                                      "width": 160,
+                                    }
+                                  }
+                                  columnKey="c"
+                                  height={35}
+                                  onSort={[Function]}
+                                  sortDescendingFirst={false}
+                                  sortDirection="NONE"
                                 >
-                                  c
-                                </div>
+                                  <div
+                                    className="react-grid-HeaderCell-sortable"
+                                    onClick={[Function]}
+                                    style={
+                                      Object {
+                                        "cursor": "pointer",
+                                      }
+                                    }
+                                  >
+                                    <span
+                                      className="pull-right"
+                                    />
+                                    c
+                                  </div>
+                                </SortableHeaderCell>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -5684,6 +6056,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               "left": 40,
                               "name": "a",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -5692,6 +6065,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               "left": 200,
                               "name": "b",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                             Object {
@@ -5700,6 +6074,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               "left": 360,
                               "name": "c",
                               "resizable": true,
+                              "sortable": true,
                               "width": 160,
                             },
                           ],
@@ -5800,6 +6175,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 "left": 40,
                                 "name": "a",
                                 "resizable": true,
+                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
@@ -5808,6 +6184,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 "left": 200,
                                 "name": "b",
                                 "resizable": true,
+                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
@@ -5816,6 +6193,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 "left": 360,
                                 "name": "c",
                                 "resizable": true,
+                                "sortable": true,
                                 "width": 160,
                               },
                             ]
