@@ -145,7 +145,9 @@ export default class DataGrid extends React.Component {
     var tableData = this.props.tableData;
 
     // Generate the table if there's any data
+      console.log("Current DataGrid props")
       console.log(this.props)
+      //console.log(this)
     if (this.props.totalRows > 0) {
 
       this.updateRowNumKey(this.props);
@@ -162,6 +164,14 @@ export default class DataGrid extends React.Component {
         onGridSort={this.onGridSort}
         sortColumn={this.props.sortColumn}
         sortDirection={this.props.sortDirection}
+        ref={(component) => {
+            if(component) {
+                component.setState({
+                    sortColumn: this.props.sortColumn,
+                    sortDirection: this.props.sortDirection,
+                });
+            }
+        }}
       />
 
     }  else {
