@@ -10,7 +10,7 @@ exports[`ColumnSelector NOT Read-only Loads and renders column names 1`] = `
 >
   <div>
     <div
-      className="d-flex mb-2"
+      className="d-flex mb-2 mt-2 parameter-margin"
     >
       <button
         className="mc-select-all content-4 t-d-gray"
@@ -175,7 +175,7 @@ exports[`ColumnSelector Read-only Loads and renders disabled column names 1`] = 
 >
   <div>
     <div
-      className="d-flex mb-2"
+      className="d-flex mb-2 mt-2 parameter-margin"
     >
       <button
         className="mc-select-all content-4 t-d-gray"
