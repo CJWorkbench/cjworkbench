@@ -2,7 +2,7 @@ import React from 'react'
 import {store, setSelectedWfModuleAction} from "./workflow-reducer";
 import {getPageID} from "./utils";
 import WorkbenchAPI from './WorkbenchAPI'
-import {findModuleWithIdAndIdName, findParamValByIdName} from './EditCells'
+import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId} from './EditCells'
 
 var api = WorkbenchAPI();
 export function mockAPI(mock_api) {
@@ -24,7 +24,7 @@ function updateSortDirection(wfm, sortInfo) {
     }
 }
 
-function updateSortModule(wfm, sortInfo) {
+function updateSortModule(wfm, sortInfo, callback=null) {
     //console.log(sortInfo);
     var column = sortInfo.column;
     var columnParam = findParamValByIdName(wfm, "column")
@@ -42,14 +42,23 @@ function updateSortModule(wfm, sortInfo) {
 export function updateSort(wfModuleId, sortInfo) {
     var state = store.getState();
     console.log(sortInfo);
+    console.log(state);
 
     var existingSortModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
     if(existingSortModule) {
         //console.log("Sort module exists.");
         updateSortModule(existingSortModule, sortInfo);
+        if(existingSortModule.id != wfModuleId) {
+            store.dispatch(setSelectedWfModuleAction(existingSortModule.id));
+        }
     } else {
+        let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
         //console.log("New sort module should be created");
-
+        api.addModule(getPageID(), state.sortModuleId, wfModuleIdx + 1)
+            .then((newWfm) => {
+                store.dispatch(setSelectedWfModuleAction(newWfm.id))
+                    .then(() => {updateSortModule(newWfm, sortInfo);});
+            })
     }
 
     //console.log(state);
