@@ -104,8 +104,8 @@ export default class TableView extends React.Component {
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
-      console.log("Table props:");
-      console.log(nextProps);
+      //console.log("Table props:");
+      //console.log(nextProps);
     if (this.props.revision !== nextProps.revision || this.props.id !== nextProps.id) {
         this.refreshTable(nextProps.id);
     }
@@ -165,8 +165,6 @@ export default class TableView extends React.Component {
   }
 
   onSort(sortCol, sortDir) {
-      console.log("Sort clicked on " + sortCol);
-
       SortFromTable.updateSort(this.props.id, {
           column: sortCol,
           direction: sortDir

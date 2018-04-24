@@ -57,8 +57,8 @@ export default class OutputPane extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-      console.log("OutputPane props");
-      console.log(nextProps);
+      //console.log("OutputPane props");
+      //console.log(nextProps);
     if (nextProps.libraryOpen !== this.props.libraryOpen) {
         this.setResizePaneRelativeDimensions(nextProps.libraryOpen, true);
     }
@@ -161,9 +161,7 @@ export default class OutputPane extends React.Component {
   }
 
   findCurrentModuleInWorkflow(wf) {
-      console.log(wf);
       var modulesFound = wf.wf_modules.filter((wfm) => {return wfm.id == this.props.selectedWfModuleId});
-      console.log(modulesFound);
       return modulesFound.length > 0 ? modulesFound[0] : null;
   }
 
@@ -173,15 +171,13 @@ export default class OutputPane extends React.Component {
 
     var moduleIsSort = false;
     let currentModule = this.findCurrentModuleInWorkflow(this.props.workflow);
-    console.log("OutputPane data:")
-      console.log(this.props.workflow);
-    console.log(currentModule)
+    //console.log("OutputPane data:")
+    //  console.log(this.props.workflow);
     if(currentModule) {
         if(currentModule.module_version.module) {
             moduleIsSort = (currentModule.module_version.module.id_name == "sort-from-table")
         }
     }
-    console.log(moduleIsSort)
 
     // Maps sort direction to ReactDataGrid direction names
     let sortDirectionTranslator = ["NONE", "ASC", "DESC"]
