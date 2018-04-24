@@ -105,16 +105,13 @@ class Formula(ModuleImpl):
         if table is None:
             return None     # no rows to process
 
-        formulatype = wf_module.get_param_menu_idx('syntax')
-        if formulatype== 'Excel':
+        syntax = wf_module.get_param_menu_idx('syntax')
+        if syntax== 0:
             formula = wf_module.get_param_string('formula_excel').strip()
         else:
             formula = wf_module.get_param_string('formula_python').strip()
-
         if formula == '':
             return table    # nop if no formula
-
-        syntax = wf_module.get_param_menu_idx('syntax')
 
         newcol = pd.Series(np.zeros(len(table)), dtype=np.dtype(object))
 

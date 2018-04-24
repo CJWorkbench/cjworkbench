@@ -12,8 +12,8 @@ class FormulaTests(LoggedInTestCase):
         super(FormulaTests, self).setUp()  # log in
         self.wfmodule = load_and_add_module('formula', workflow=create_testdata_workflow(csv_text=mock_csv_text))
 
-        formula_pspec = ParameterSpec.objects.get(id_name='formula')
-        self.fpval = ParameterVal.objects.get(parameter_spec=formula_pspec)
+        formula_excel_pspec = ParameterSpec.objects.get(id_name='formula_excel')
+        self.fpval = ParameterVal.objects.get(parameter_spec=formula_excel_pspec)
 
         syntax_pspec = ParameterSpec.objects.get(id_name='syntax')
         self.syntax_pval = ParameterVal.objects.get(parameter_spec=syntax_pspec)
@@ -64,7 +64,7 @@ class FormulaTests(LoggedInTestCase):
 
         workflow = create_testdata_workflow(underscore_csv)
         wfm = load_and_add_module('formula', workflow=workflow)
-        pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='formula'), wf_module=wfm)
+        pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='formula_python'), wf_module=wfm)
         pval.set_value('The_Amount*2')
 
         out = execute_nocache(wfm)
@@ -182,8 +182,3 @@ class FormulaTests(LoggedInTestCase):
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
         self.assertTrue(out.equals(mock_csv_table))  # NOP on error
-
-
-
-
-
