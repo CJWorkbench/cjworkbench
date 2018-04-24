@@ -9,6 +9,9 @@ class SortFromTable(ModuleImpl):
         # NOP if column is not selected
         if sort_col == '':
             return table
+        if sort_col not in table.columns:
+            wf_module.set_error("Sort column no longer exists. Please select a new column.")
+            return table
 
         # Current options: "String|Number|Date"
         sort_type_idx = wf_module.get_param_menu_idx('dtype')
@@ -38,7 +41,7 @@ class SortFromTable(ModuleImpl):
             table[tmp_sort_col] = pd.to_numeric(table[sort_col], errors='coerce')
         elif sort_type_idx == 2:
             # Sort as datetime
-            table[tmp_sort_col] = pd.to_numeric(table[sort_col], errors='coerce')
+            table[tmp_sort_col] = pd.to_datetime(table[sort_col], errors='coerce')
 
         table.sort_values(
             by=tmp_sort_col,
