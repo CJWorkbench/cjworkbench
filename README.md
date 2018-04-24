@@ -3,7 +3,6 @@
 </div>
 
 -----------------
-https://github.com/CJWorkbench/cjworkbench/blob/master/assets/images/app-icons/android-chrome-192x192.png
 
 #  Collaborative data workflow for journalists
 
