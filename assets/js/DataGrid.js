@@ -144,10 +144,6 @@ export default class DataGrid extends React.Component {
   render() {
     var tableData = this.props.tableData;
 
-    // Generate the table if there's any data
-      console.log("Current DataGrid props")
-      console.log(this.props)
-      //console.log(this)
     if (this.props.totalRows > 0) {
 
       this.updateRowNumKey(this.props);
@@ -162,8 +158,7 @@ export default class DataGrid extends React.Component {
         enableCellSelect={true}
         onGridRowsUpdated={this.onGridRowsUpdated}
         onGridSort={this.onGridSort}
-        sortColumn={this.props.sortColumn}
-        sortDirection={this.props.sortDirection}
+        // Ref sets the sort direction on the datagrid
         ref={(component) => {
             if(component) {
                 component.setState({

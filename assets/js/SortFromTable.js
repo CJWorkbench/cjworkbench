@@ -9,19 +9,62 @@ export function mockAPI(mock_api) {
   api = mock_api;
 }
 
+function getNextSortDirection(current, sortType) {
+    // Determines what the next sort direction is based on current direction
+    // and data type
+    // Sort directions: 0 -> NOP, 1 -> Ascending, 2 -> Descending
+    // Sort types: 0 -> String, 1 -> Number, 2 -> Date
+    var next = 0;
+    if(current == 0) {
+        if(sortType == 0) {
+            // String uses ascending by default
+            next = 1;
+        } else {
+            // Numbers and dates use descending by default
+            next = 2;
+        }
+    } else if(current == 1) {
+        if(sortType == 0) {
+            // For string
+            next = 2;
+        } else {
+            // For numbers and dates
+            next = 0;
+        }
+    } else {
+        if(sortType == 0) {
+            next = 0;
+        } else {
+            next = 1;
+        }
+    }
+    return next;
+}
+
 // Wrapper function for changing sort direction, since it needs to be used twice.
-function updateSortDirection(wfm, sortInfo, sortType) {
+function updateSortDirection(wfm, sortInfo, sortType, reset=false) {
     var direction = 0; // Corresponds to "select"
+
+    // I left this code in because the implementation below can
+    // cause the UI to show the wrong arrow for a second before
+    // the database fully updates. We can talk about which behavior
+    // is preferable later.
+    /*
     if(sortInfo.direction == 'ASC') {
         direction = 1;
     } else if(sortInfo.direction == 'DESC') {
         direction = 2
     }
+    */
+
+    // Sort directions: 0 -> NOP, 1 -> Ascending, 2 -> Descending
     var directionParam = findParamValByIdName(wfm, "direction");
-    console.log(directionParam)
-    if(directionParam.value != direction) {
-        api.onParamChanged(directionParam.id, {value: direction});
-    }
+    let currentDirection = reset ? 0 : parseInt(directionParam.value);
+    var nextDirection = getNextSortDirection(currentDirection, sortType)
+
+    //console.log(directionParam)
+    api.onParamChanged(directionParam.id, {value: nextDirection});
+    console.log("SortDirection patched.");
 }
 
 function updateSortModule(wfm, sortInfo, sortType) {
@@ -29,18 +72,23 @@ function updateSortModule(wfm, sortInfo, sortType) {
     var column = sortInfo.column;
     var columnParam = findParamValByIdName(wfm, "column");
     var typeParam = findParamValByIdName(wfm, "dtype");
-    console.log(typeParam);
+    //console.log(typeParam);
     //console.log(columnParam)
     // If column changes then we need to change both sort column and type
     if(columnParam.value != column) {
         api.onParamChanged(columnParam.id, {value: column})
             .then(() => {
+                console.log("Column patched.")
                 api.onParamChanged(typeParam.id, {value: sortType}).then(() => {
-                   updateSortDirection(wfm, sortInfo);
+                    console.log("SortType patched.");
+                    // Timeout to prevent database locked 500 errors.
+                    setTimeout(() => {
+                        updateSortDirection(wfm, sortInfo, sortType, true);
+                    }, 200);
                 });
             });
     } else {
-        updateSortDirection(wfm, sortInfo);
+        updateSortDirection(wfm, sortInfo, sortType);
     }
 }
 
@@ -60,17 +108,15 @@ export function updateSort(wfModuleId, sortInfo) {
             let sortTypes = "String|Number|Date".split("|")
             let sortType = columnInfo[0].type;
             let sortTypeIdx = sortTypes.indexOf(sortType);
-            console.log(sortTypes, sortType);
+            //console.log(sortTypes, sortType);
             var existingSortModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
             if(existingSortModule) {
-                //console.log("Sort module exists.");
                 updateSortModule(existingSortModule, sortInfo, sortTypeIdx);
                 if(existingSortModule.id != wfModuleId) {
                     store.dispatch(setSelectedWfModuleAction(existingSortModule.id));
                 }
             } else {
                 let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
-                //console.log("New sort module should be created");
                 api.addModule(getPageID(), state.sortModuleId, wfModuleIdx + 1)
                     .then((newWfm) => {
                         store.dispatch(setSelectedWfModuleAction(newWfm.id))
