@@ -7,24 +7,41 @@
   "help_url":"modules/analyze/formula",
   "parameters": [
     {
+      "name": "",
+      "id_name" : "syntax",
+      "type" : "menu",
+      "menu_items" : "Excel|Python",
+      "default": "0"
+    },
+    {
       "name": "Output column",
       "id_name" : "out_column",
       "type": "string",
       "default": "formula output"
     },
     {
-      "name": "Syntax",
-      "id_name" : "syntax",
-      "type" : "menu",
-      "menu_items" : "Python|Excel",
-      "default": "0"
+      "name": "",
+      "id_name" : "formula_excel",
+      "type": "string",
+      "multiline": "True",
+      "default": "",
+      "placeholder": "e.g. = A + B",
+      "visible_if": {
+        "id_name": "syntax",
+        "value": "Excel"
+      }
     },
     {
-      "name": "Formula",
-      "id_name" : "formula",
+      "name": "",
+      "id_name" : "formula_python",
       "type": "string",
+      "multiline": "True",
       "default": "",
-      "placeholder": "e.g. col1 * (col2 + colu3)"
+      "placeholder": "e.g. col1 * (col2 + colu3)",
+      "visible_if": {
+        "id_name": "syntax",
+        "value": "Python"
+      }
     }
   ]
 }

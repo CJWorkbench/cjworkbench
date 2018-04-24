@@ -105,7 +105,12 @@ class Formula(ModuleImpl):
         if table is None:
             return None     # no rows to process
 
-        formula = wf_module.get_param_string('formula').strip()
+        formulatype = wf_module.get_param_menu_idx('syntax')
+        if formulatype== 'Excel':
+            formula = wf_module.get_param_string('formula_excel').strip()
+        else:
+            formula = wf_module.get_param_string('formula_python').strip()
+
         if formula == '':
             return table    # nop if no formula
 
@@ -113,11 +118,11 @@ class Formula(ModuleImpl):
 
         newcol = pd.Series(np.zeros(len(table)), dtype=np.dtype(object))
 
-        if syntax == 0:  # Python
-            newcol = python_formula(table, formula, newcol)
-
-        if syntax == 1:  # Excel
+        if syntax == 0:  # Excel
             newcol = excel_formula(table, formula, newcol)
+
+        if syntax == 1:  # Python
+            newcol = python_formula(table, formula, newcol)
 
         if isinstance(newcol, str):
             return newcol
