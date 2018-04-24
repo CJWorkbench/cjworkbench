@@ -177,7 +177,9 @@ export default class OutputPane extends React.Component {
       console.log(this.props.workflow);
     console.log(currentModule)
     if(currentModule) {
-        moduleIsSort = (currentModule.module_version.module.id_name == "sort-from-table")
+        if(currentModule.module_version.module) {
+            moduleIsSort = (currentModule.module_version.module.id_name == "sort-from-table")
+        }
     }
     console.log(moduleIsSort)
 

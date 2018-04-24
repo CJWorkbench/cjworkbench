@@ -247,6 +247,43 @@ def wfmodule_input(request, pk, format=None):
         else:
             return table_result(request, prev_modules.last())
 
+
+# returns a list of columns and their simplified types
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
+@permission_classes((IsAuthenticatedOrReadOnly, ))
+def wfmodule_columns(request, pk, format=None):
+    if request.method == 'GET':
+        try:
+            wf_module = WfModule.objects.get(pk=pk)
+        except WfModule.DoesNotExist:
+            return HttpResponseNotFound()
+
+        if not wf_module.workflow.user_authorized_read(request.user):
+            return HttpResponseForbidden()
+
+        #prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
+        #if not prev_modules:
+        #    return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
+        table = execute_wfmodule(wf_module)
+        dtypes = table.dtypes.to_dict()
+        ret_types = []
+        for col in dtypes:
+            # We are simplifying the data types here.
+            # More stuff can be added to these lists if we run into anything new.
+            stype = "String"
+            if str(dtypes[col]) in ['int64', 'float64', 'bool']:
+                stype = "Number"
+            elif str(dtypes[col]) in ['datetime64[ns]']:
+                ret_types.append((col, "Date"))
+                stype = "Date"
+            ret_types.append({
+                "name": col,
+                "type": stype
+            })
+        return HttpResponse(json.dumps(ret_types), content_type="application/json")
+
+
 # Public access to wfmodule output. Basically just /render with different auth and output format
 # NOTE: does not support startrow/endrow at the moment
 @api_view(['GET'])

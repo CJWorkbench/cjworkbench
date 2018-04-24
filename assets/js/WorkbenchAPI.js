@@ -166,6 +166,13 @@ class WorkbenchAPI {
       )
   }
 
+  getColumns(wf_module_id) {
+      return (
+          fetch('/api/wfmodules/' + wf_module_id + '/columns', {credentials: 'include'})
+              .then(response => response.json())
+      )
+  }
+
   // All available modules in the system
   getModules() {
     return (
