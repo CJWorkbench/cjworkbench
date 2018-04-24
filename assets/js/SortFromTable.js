@@ -57,7 +57,7 @@ export function updateSort(wfModuleId, sortInfo) {
         api.addModule(getPageID(), state.sortModuleId, wfModuleIdx + 1)
             .then((newWfm) => {
                 store.dispatch(setSelectedWfModuleAction(newWfm.id))
-                    .then(() => {updateSortModule(newWfm, sortInfo);});
+                    .then(() => {setTimeout(() => {updateSortModule(newWfm, sortInfo);}, 200);});
             })
     }
 

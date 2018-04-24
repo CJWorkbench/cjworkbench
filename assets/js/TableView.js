@@ -171,7 +171,6 @@ export default class TableView extends React.Component {
           column: sortCol,
           direction: sortDir
       });
-
   }
 
   render() {
