@@ -57,6 +57,8 @@ export default class OutputPane extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
+      console.log("OutputPane props");
+      console.log(nextProps);
     if (nextProps.libraryOpen !== this.props.libraryOpen) {
         this.setResizePaneRelativeDimensions(nextProps.libraryOpen, true);
     }
@@ -158,7 +160,25 @@ export default class OutputPane extends React.Component {
       });
   }
 
+  findCurrentModuleInWorkflow(wf) {
+      console.log(wf);
+      var modulesFound = wf.wf_modules.filter((wfm) => {return wfm.id == wf.selected_wf_module});
+      return modulesFound.length > 0 ? modulesFound[0] : null;
+  }
+
   render() {
+    // We figure out whether we need to indicate sort status here so that we don't have to
+    // pass a ton of data to the TableView
+
+    var moduleIsSort = false;
+    let currentModule = this.findCurrentModuleInWorkflow(this.props.workflow);
+    console.log(currentModule)
+    if(currentModule) {
+        moduleIsSort = (currentModule.module_version.module.id_name == "sort-from-table")
+    }
+
+    // Maps sort direction to ReactDataGrid direction names
+    let sortDirectionTranslator = ["NONE", "ASC", "DESC"]
 
     // Make a table component even if no module ID (should still show an empty table)
     var tableView =
@@ -168,6 +188,8 @@ export default class OutputPane extends React.Component {
         resizing={this.state.resizing}
         api={this.props.api}
         setBusySpinner={this.setBusySpinner}
+        sortColumn={moduleIsSort ? currentModule.parameter_vals[0].value : undefined}
+        sortDirection={moduleIsSort ? sortDirectionTranslator[currentModule.parameter_vals[2].value] : undefined}
       />
 
     // This iframe holds the module HTML output, e.g. a visualization

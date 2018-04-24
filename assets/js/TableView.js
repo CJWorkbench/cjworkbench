@@ -104,6 +104,8 @@ export default class TableView extends React.Component {
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
+      console.log("Table props:");
+      console.log(nextProps);
     if (this.props.revision !== nextProps.revision || this.props.id !== nextProps.id) {
         this.refreshTable(nextProps.id);
     }
@@ -194,6 +196,8 @@ export default class TableView extends React.Component {
             resizing={this.props.resizing}
             onEditCell={this.onEditCell}
             onSort={this.onSort}
+            sortColumn={this.props.sortColumn}
+            sortDirection={this.props.sortDirection}
           />
         </div>
       // adds commas to row count
