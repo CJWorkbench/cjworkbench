@@ -204,6 +204,18 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         response = self.client.get('/api/wfmodules/%d/histogram/O' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    # tests for the /columns API
+    def test_wf_module_columns(self):
+        # We only need to check for one module since the output is pretty much the same
+        # Dates are not tested here because the test WF cannot be fed date data
+        response = self.client.get('/api/wfmodules/%d/columns' % self.wfmodule1.id)
+        ref_columns = [
+            {"name": "Class", "type": "String"},
+            {"name": "M", "type": "Number"},
+            {"name": "F", "type": "Number"}
+        ]
+        self.assertTrue(ref_columns == json.loads(response.content.decode('utf-8')))
+
 
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):

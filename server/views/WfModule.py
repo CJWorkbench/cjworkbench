@@ -262,9 +262,6 @@ def wfmodule_columns(request, pk, format=None):
         if not wf_module.workflow.user_authorized_read(request.user):
             return HttpResponseForbidden()
 
-        #prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
-        #if not prev_modules:
-        #    return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
         table = execute_wfmodule(wf_module)
         dtypes = table.dtypes.to_dict()
         ret_types = []
