@@ -14,10 +14,10 @@ class SortFromTable(ModuleImpl):
             return table
 
         # Current options: "String|Number|Date"
-        sort_type_idx = wf_module.get_param_menu_idx('dtype')
+        sort_type_idx = int(wf_module.get_param_menu_idx('dtype'))
 
         # Current options: "Ascending|Descending"
-        sort_dir_idx = wf_module.get_param_menu_idx('direction')
+        sort_dir_idx = int(wf_module.get_param_menu_idx('direction'))
         # NOP if we are not sorting at all
         if sort_dir_idx == 0:
             return table
@@ -47,5 +47,6 @@ class SortFromTable(ModuleImpl):
             na_position=NA_POS)
 
         table.drop(columns=[tmp_sort_col], inplace=True)
+        table.reset_index(inplace=True)
 
         return table
