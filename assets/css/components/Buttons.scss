@@ -223,13 +223,15 @@ a:focus, a:hover{
   display:flex;
   align-items: center;
 }
+.checkbox-container:last-child{
+  margin-bottom: 0px;
+}
 
 .list-wrapper{
   background-color: #ededed;
   resize: vertical;
-  height: 12rem;
   border-radius: 3px;
-  min-height: 6rem;
+  max-height: 26rem;
   overflow: auto;
   border: 1px solid #e9e9e9;
 }
