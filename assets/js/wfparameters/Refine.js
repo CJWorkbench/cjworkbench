@@ -356,7 +356,7 @@ export default class facet extends React.Component {
                             </div>
                         ) : ''
                     }
-                    <div className='t-d-gray content-3 label-margin'>Histogram</div>
+                    <div className='t-d-gray content-3 label-margin'>Select and edit values</div>
                     <div className='container list-wrapper'>
                         <div className='row list-scroll'>
                             { checkboxes }
@@ -379,7 +379,7 @@ export default class facet extends React.Component {
     render() {
         const componentContent = this.renderHistogram();
         return (
-            <div>
+            <div className="parameter-margin">
                 {componentContent}
             </div>
         )
