@@ -316,8 +316,6 @@ exports[`TableView Blank table when no module id 1`] = `
                 rowsCount={10}
                 scrollToRowIndex={0}
                 selectedRows={Array []}
-                sortColumn={null}
-                sortDirection={null}
                 tabIndex={-1}
                 totalWidth={-2}
               >
@@ -433,8 +431,6 @@ exports[`TableView Blank table when no module id 1`] = `
                     onColumnResize={[Function]}
                     onScroll={[Function]}
                     onSort={[Function]}
-                    sortColumn={null}
-                    sortDirection={null}
                     totalWidth={-2}
                   >
                     <div
@@ -504,8 +500,6 @@ exports[`TableView Blank table when no module id 1`] = `
                         onScroll={[Function]}
                         onSort={[Function]}
                         rowType="header"
-                        sortColumn={null}
-                        sortDirection={null}
                         style={
                           Object {
                             "left": 0,
@@ -5393,8 +5387,6 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 rowsCount={1000}
                 scrollToRowIndex={0}
                 selectedRows={Array []}
-                sortColumn={null}
-                sortDirection={null}
                 tabIndex={-1}
                 totalWidth={-2}
               >
@@ -5501,8 +5493,6 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                     onColumnResize={[Function]}
                     onScroll={[Function]}
                     onSort={[Function]}
-                    sortColumn={null}
-                    sortDirection={null}
                     totalWidth={-2}
                   >
                     <div
@@ -5563,8 +5553,6 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                         onScroll={[Function]}
                         onSort={[Function]}
                         rowType="header"
-                        sortColumn={null}
-                        sortDirection={null}
                         style={
                           Object {
                             "left": 0,

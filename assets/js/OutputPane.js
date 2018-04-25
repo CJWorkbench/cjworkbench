@@ -161,6 +161,12 @@ export default class OutputPane extends React.Component {
   }
 
   findCurrentModuleInWorkflow(wf) {
+      if(!wf) {
+          return null;
+      }
+      if(!wf.wf_modules) {
+          return null;
+      }
       var modulesFound = wf.wf_modules.filter((wfm) => {return wfm.id == this.props.selectedWfModuleId});
       return modulesFound.length > 0 ? modulesFound[0] : null;
   }
@@ -171,8 +177,6 @@ export default class OutputPane extends React.Component {
 
     var moduleIsSort = false;
     let currentModule = this.findCurrentModuleInWorkflow(this.props.workflow);
-    //console.log("OutputPane data:")
-    //  console.log(this.props.workflow);
     if(currentModule) {
         if(currentModule.module_version.module) {
             moduleIsSort = (currentModule.module_version.module.id_name == "sort-from-table")

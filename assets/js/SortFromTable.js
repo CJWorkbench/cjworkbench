@@ -62,9 +62,7 @@ function updateSortDirection(wfm, sortInfo, sortType, reset=false) {
     let currentDirection = reset ? 0 : parseInt(directionParam.value);
     var nextDirection = getNextSortDirection(currentDirection, sortType)
 
-    //console.log(directionParam)
     api.onParamChanged(directionParam.id, {value: nextDirection});
-    console.log("SortDirection patched.");
 }
 
 function updateSortModule(wfm, sortInfo, sortType) {
@@ -78,9 +76,7 @@ function updateSortModule(wfm, sortInfo, sortType) {
     if(columnParam.value != column) {
         api.onParamChanged(columnParam.id, {value: column})
             .then(() => {
-                console.log("Column patched.")
                 api.onParamChanged(typeParam.id, {value: sortType}).then(() => {
-                    console.log("SortType patched.");
                     // Timeout to prevent database locked 500 errors.
                     setTimeout(() => {
                         updateSortDirection(wfm, sortInfo, sortType, true);

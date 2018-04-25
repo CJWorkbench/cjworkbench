@@ -23,9 +23,6 @@ class SortFromTable(ModuleImpl):
             return table
         sort_ascending = (sort_dir_idx == 1)
 
-        #col_dtype = str(table[sort_col].dtype)
-        #print(col_dtype)
-
         # A "constant" for our policy on where "NA" should go
         NA_POS = 'last'
 
