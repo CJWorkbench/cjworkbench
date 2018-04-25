@@ -7,12 +7,12 @@
   "help_url":"modules/clean/editcells",
   "parameters": [
     {
-      "name": "Column",
+      "name": "",
       "id_name": "column",
       "type": "column"
     },
     {
-      "name": "Histogram",
+      "name": "",
       "id_name": "refine",
       "type": "custom"
     }
