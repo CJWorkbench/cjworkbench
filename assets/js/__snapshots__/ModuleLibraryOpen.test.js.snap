@@ -203,7 +203,6 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                       aria-activedescendant={null}
                       aria-autocomplete="list"
                       aria-expanded={false}
-                      aria-haspopup={false}
                       aria-owns="react-autowhatever-1"
                       autoComplete="off"
                       autoFocus={true}

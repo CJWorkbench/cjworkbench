@@ -283,8 +283,6 @@ exports[`Renders the grid 1`] = `
           rowsCount={2}
           scrollToRowIndex={0}
           selectedRows={Array []}
-          sortColumn={null}
-          sortDirection={null}
           tabIndex={-1}
           totalWidth={-2}
         >
@@ -400,8 +398,6 @@ exports[`Renders the grid 1`] = `
               onColumnResize={[Function]}
               onScroll={[Function]}
               onSort={[Function]}
-              sortColumn={null}
-              sortDirection={null}
               totalWidth={-2}
             >
               <div
@@ -471,8 +467,6 @@ exports[`Renders the grid 1`] = `
                   onScroll={[Function]}
                   onSort={[Function]}
                   rowType="header"
-                  sortColumn={null}
-                  sortDirection={null}
                   style={
                     Object {
                       "left": 0,
