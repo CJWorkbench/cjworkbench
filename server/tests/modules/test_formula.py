@@ -25,7 +25,7 @@ class FormulaTests(LoggedInTestCase):
         # set up a formula to double the Amount column
         self.fpval.value= 'Amount*2'
         self.fpval.save()
-        self.syntax_pval.value= 0
+        self.syntax_pval.value= 1
         self.syntax_pval.save()
         self.rpval.value= 'output'
         self.rpval.save()
@@ -82,7 +82,7 @@ class FormulaTests(LoggedInTestCase):
 
     def test_excel_formula(self):
         # set up a formula to double the Amount column
-        self.syntax_pval.value = 1
+        self.syntax_pval.value = 0
         self.syntax_pval.save()
         table = mock_csv_table.copy()
 
