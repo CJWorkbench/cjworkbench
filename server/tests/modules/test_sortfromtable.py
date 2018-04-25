@@ -16,7 +16,7 @@ def reorder_table(table, order):
         ret_table = ret_table.append(table.iloc[[o]])
     for col in table.columns:
         ret_table[col] = ret_table[col].astype(table[col].dtype)
-    return ret_table.reset_index()
+    return ret_table.reset_index(drop=True)
 
 
 class SortFromTableTests(LoggedInTestCase):

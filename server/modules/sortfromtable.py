@@ -47,6 +47,6 @@ class SortFromTable(ModuleImpl):
             na_position=NA_POS)
 
         table.drop(columns=[tmp_sort_col], inplace=True)
-        table.reset_index(inplace=True)
+        table.reset_index(inplace=True, drop=True)
 
         return table
