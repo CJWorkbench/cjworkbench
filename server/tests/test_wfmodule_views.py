@@ -214,6 +214,8 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
             {"name": "M", "type": "Number"},
             {"name": "F", "type": "Number"}
         ]
+        print(ref_columns)
+        print(json.loads(response.content.decode('utf-8')))
         self.assertTrue(ref_columns == json.loads(response.content.decode('utf-8')))
 
 
