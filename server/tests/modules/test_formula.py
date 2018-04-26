@@ -12,20 +12,16 @@ class FormulaTests(LoggedInTestCase):
         super(FormulaTests, self).setUp()  # log in
         self.wfmodule = load_and_add_module('formula', workflow=create_testdata_workflow(csv_text=mock_csv_text))
 
-        formula_excel_pspec = ParameterSpec.objects.get(id_name='formula_excel')
-        self.fpval = ParameterVal.objects.get(parameter_spec=formula_excel_pspec)
-
-        syntax_pspec = ParameterSpec.objects.get(id_name='syntax')
-        self.syntax_pval = ParameterVal.objects.get(parameter_spec=syntax_pspec)
-
-        output_pspec = ParameterSpec.objects.get(id_name='out_column')
-        self.rpval = ParameterVal.objects.get(parameter_spec=output_pspec)
+        self.syntax_pval = get_param_by_id_name('syntax')
+        self.excel_pval = get_param_by_id_name('formula_excel')
+        self.python_pval = get_param_by_id_name('formula_python')
+        self.rpval = get_param_by_id_name('out_column')
 
     def test_python_formula(self):
         # set up a formula to double the Amount column
-        self.fpval.value= 'Amount*2'
-        self.fpval.save()
-        self.syntax_pval.value= 1
+        self.python_pval.set_value('Amount*2')
+        self.python_pval.save()
+        self.syntax_pval.set_value(1)
         self.syntax_pval.save()
         self.rpval.value= 'output'
         self.rpval.save()
@@ -39,7 +35,7 @@ class FormulaTests(LoggedInTestCase):
         self.assertTrue(out.equals(table))
 
         # empty result parameter should produce 'result'
-        self.rpval.value = ''
+        self.rpval.set_value('')
         self.rpval.save()
         table = mock_csv_table.copy()
         table['result'] = table['Amount']*2
@@ -50,8 +46,8 @@ class FormulaTests(LoggedInTestCase):
         self.assertTrue(out.equals(table))
 
         # formula with missing column name should error
-        self.fpval.value = 'xxx*2'
-        self.fpval.save()
+        self.python_pval.set_value('xxx*2')
+        self.python_pval.save()
         out = execute_nocache(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
@@ -64,8 +60,10 @@ class FormulaTests(LoggedInTestCase):
 
         workflow = create_testdata_workflow(underscore_csv)
         wfm = load_and_add_module('formula', workflow=workflow)
-        pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='formula_python'), wf_module=wfm)
+        pval = get_param_by_id_name('formula_python', wf_module=wfm)
         pval.set_value('The_Amount*2')
+        sval = get_param_by_id_name('syntax', wf_module=wfm)
+        sval.set_value(1)
 
         out = execute_nocache(wfm)
 
@@ -80,15 +78,16 @@ class FormulaTests(LoggedInTestCase):
         self.assertTrue(letter_ref_to_number('AZ') == 51)
         self.assertTrue(letter_ref_to_number('BA') == 52)
 
+
     def test_excel_formula(self):
-        # set up a formula to double the Amount column
-        self.syntax_pval.value = 0
+        # We have custom range handling logic and syntax, so this test exercises many types of ranges
+        self.syntax_pval.set_value(0)
         self.syntax_pval.save()
         table = mock_csv_table.copy()
 
         # simple single-column reference
-        self.fpval.value = '=B*2'
-        self.fpval.save()
+        self.excel_pval.set_value('=B*2')
+        self.excel_pval.save()
 
         # empty result parameter should produce 'result'
         self.rpval.value = ''
@@ -101,8 +100,8 @@ class FormulaTests(LoggedInTestCase):
         self.assertTrue(out.equals(table))
 
         # simple single-column reference
-        self.fpval.value = '=B*2'
-        self.fpval.save()
+        self.excel_pval.set_value('=B*2')
+        self.excel_pval.save()
 
         table = mock_csv_table.copy()
         self.rpval.value = 'output'
@@ -116,16 +115,16 @@ class FormulaTests(LoggedInTestCase):
         self.assertTrue(out.equals(table))
 
         # simple single-column reference
-        self.fpval.value = '=B1*2'
-        self.fpval.save()
+        self.excel_pval.set_value('=B1*2')
+        self.excel_pval.save()
         out = execute_nocache(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.READY)
         self.assertTrue(out.equals(table))
 
         # formula with range should grab the right values and compute them
-        self.fpval.value = '=SUM(B:C)'
-        self.fpval.save()
+        self.excel_pval.set_value('=SUM(B:C)')
+        self.excel_pval.save()
         table['output'] = table['Amount'] + table['Amount2']
         table['output'] = table['output'].astype(object)
         out = execute_nocache(self.wfmodule)
@@ -134,24 +133,24 @@ class FormulaTests(LoggedInTestCase):
         self.assertTrue(out.equals(table))
 
         # same formula with B1 and C1 should still work
-        self.fpval.value = '=SUM(B1:C1)'
-        self.fpval.save()
+        self.excel_pval.set_value('=SUM(B1:C1)')
+        self.excel_pval.save()
         out = execute_nocache(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.READY)
         self.assertTrue(out.equals(table))
 
         # same formula with B and C1 should still work
-        self.fpval.value = '=SUM(B:C1)'
-        self.fpval.save()
+        self.excel_pval.set_value('=SUM(B:C1)')
+        self.excel_pval.save()
         out = execute_nocache(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.READY)
         self.assertTrue(out.equals(table))
 
         # text formula
-        self.fpval.value = '=LEFT(D,5)'
-        self.fpval.save()
+        self.excel_pval.set_value('=LEFT(D,5)')
+        self.excel_pval.save()
         table['output'] = table['Name'].apply(lambda x: x[:5])
         table['output'] = table['output'].astype(object)
         out = execute_nocache(self.wfmodule)
@@ -160,24 +159,24 @@ class FormulaTests(LoggedInTestCase):
         self.assertTrue(out.equals(table))
 
         # bad formula should produce error
-        self.fpval.value = '=SUM B:C'
-        self.fpval.save()
+        self.excel_pval.set_value('=SUM B:C')
+        self.excel_pval.save()
         out = execute_nocache(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
         self.assertTrue(out.equals(mock_csv_table))  # NOP on error
 
         # out of range selector should produce error
-        self.fpval.value = '=SUM(B:ZZ)'
-        self.fpval.save()
+        self.excel_pval.set_value('=SUM(B:ZZ)')
+        self.excel_pval.save()
         out = execute_nocache(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
         self.assertTrue(out.equals(mock_csv_table))  # NOP on error
 
         # selector with a 0 should produce an error
-        self.fpval.value = '=SUM(B0)'
-        self.fpval.save()
+        self.excel_pval.set_value('=SUM(B0)')
+        self.excel_pval.save()
         out = execute_nocache(self.wfmodule)
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
