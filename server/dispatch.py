@@ -135,6 +135,7 @@ def module_dispatch_render(wf_module, table):
             fname = os.path.split(tb[0])[1]
             lineno = original_module_lineno(tb[1])
             error = ('{}: {} at line {} of {}'.format(exc_name, str(e), lineno, fname))
+            tableout = error
 
     # Internal module -- has access to internal data structures
     else:
