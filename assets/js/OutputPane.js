@@ -175,6 +175,7 @@ export default class OutputPane extends React.Component {
     // We figure out whether we need to indicate sort status here so that we don't have to
     // pass a ton of data to the TableView
 
+    // Checks if the current module is a sort module. If yes, set sortColumn and sortDirection in props
     var moduleIsSort = false;
     let currentModule = this.findCurrentModuleInWorkflow(this.props.workflow);
     if(currentModule) {

@@ -43,13 +43,13 @@ function getNextSortDirection(current, sortType) {
 
 // Wrapper function for changing sort direction, since it needs to be used twice.
 function updateSortDirection(wfm, sortInfo, sortType, reset=false) {
-    var direction = 0; // Corresponds to "select"
 
     // I left this code in because the implementation below can
     // cause the UI to show the wrong arrow for a second before
     // the database fully updates. We can talk about which behavior
     // is preferable later.
     /*
+    var direction = 0; // Corresponds to "select"
     if(sortInfo.direction == 'ASC') {
         direction = 1;
     } else if(sortInfo.direction == 'DESC') {
@@ -123,6 +123,4 @@ export function updateSort(wfModuleId, sortInfo) {
                     });
             }
         });
-
-    //console.log(state);
 }
