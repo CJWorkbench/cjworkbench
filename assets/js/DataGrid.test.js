@@ -2,7 +2,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 import DataGrid from "./DataGrid"
 
-it('Renders the grid', (done) => {
+it('Renders the grid', () => {
 
   var testData = {
     totalRows : 2,
