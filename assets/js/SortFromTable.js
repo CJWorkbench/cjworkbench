@@ -66,12 +66,9 @@ function updateSortDirection(wfm, sortInfo, sortType, reset=false) {
 }
 
 function updateSortModule(wfm, sortInfo, sortType) {
-    //console.log(sortInfo);
     var column = sortInfo.column;
     var columnParam = findParamValByIdName(wfm, "column");
     var typeParam = findParamValByIdName(wfm, "dtype");
-    //console.log(typeParam);
-    //console.log(columnParam)
     // If column changes then we need to change both sort column and type
     if(columnParam.value != column) {
         api.onParamChanged(columnParam.id, {value: column})
@@ -90,8 +87,6 @@ function updateSortModule(wfm, sortInfo, sortType) {
 
 export function updateSort(wfModuleId, sortInfo) {
     var state = store.getState();
-    //console.log(sortInfo);
-    //console.log(state);
 
     api.getColumns(wfModuleId)
         .then((columns) => {
@@ -104,7 +99,6 @@ export function updateSort(wfModuleId, sortInfo) {
             let sortTypes = "String|Number|Date".split("|")
             let sortType = columnInfo[0].type;
             let sortTypeIdx = sortTypes.indexOf(sortType);
-            //console.log(sortTypes, sortType);
             var existingSortModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
             if(existingSortModule) {
                 updateSortModule(existingSortModule, sortInfo, sortTypeIdx);

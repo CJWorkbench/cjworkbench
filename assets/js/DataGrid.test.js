@@ -2,7 +2,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 import DataGrid from "./DataGrid"
 
-it('Renders the grid', () => {
+it('Renders the grid', (done) => {
 
   var testData = {
     totalRows : 2,
@@ -28,12 +28,14 @@ it('Renders the grid', () => {
   }
 
   var editCellMock = jest.fn();
+  var sortMock = jest.fn();
 
   const tree = mount( <DataGrid
     totalRows={testData.totalRows}
     columns={testData.columns}
     getRow={getRow}
     onEditCell={editCellMock}
+    onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
   />);
 
   // Check that we ended up with five columns (first is row number), with the right names

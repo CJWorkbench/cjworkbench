@@ -20,6 +20,7 @@ exports[`Renders the grid 1`] = `
   }
   getRow={[Function]}
   onEditCell={[Function]}
+  onGridSort={[Function]}
   totalRows={2}
 >
   <ReactDataGrid

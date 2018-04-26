@@ -9,6 +9,7 @@ from server.models import Module, ModuleVersion, WfModule, Workflow, ParameterSp
 from rest_framework.test import force_authenticate
 from server.tests.utils import *
 from server.tests.test_wfmodule import WfModuleTestsBase
+from operator import itemgetter
 
 class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
 
@@ -209,14 +210,13 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         # We only need to check for one module since the output is pretty much the same
         # Dates are not tested here because the test WF cannot be fed date data
         response = self.client.get('/api/wfmodules/%d/columns' % self.wfmodule1.id)
-        ref_columns = [
+        ref_columns = sorted([
             {"name": "Class", "type": "String"},
             {"name": "M", "type": "Number"},
             {"name": "F", "type": "Number"}
-        ]
-        print(ref_columns)
-        print(json.loads(response.content.decode('utf-8')))
-        self.assertTrue(ref_columns == json.loads(response.content.decode('utf-8')))
+        ], key=itemgetter("name"))
+        returned_columns = sorted(json.loads(response.content.decode('utf-8')), key=itemgetter("name"))
+        self.assertEqual(returned_columns, ref_columns)
 
 
     # test stored versions of data: create, retrieve, set, list, and views
