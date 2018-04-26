@@ -83,9 +83,9 @@ def create_testdata_workflow(csv_text=mock_csv_text):
 # Eerror if more than one ParameterVal matches
 def get_param_by_id_name(id_name, wf_module=None):
     if wf_module is None:
-        return ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name=id_name))
+        return ParameterVal.objects.get(parameter_spec__id_name=id_name)
     else:
-        return ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name=id_name), wf_module=wf_module)
+        return ParameterVal.objects.get(parameter_spec__id_name=id_name, wf_module=wf_module)
 
 # --- set parameters ---
 def set_string(pval, str):

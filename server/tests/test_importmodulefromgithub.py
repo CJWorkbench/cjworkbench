@@ -245,7 +245,38 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.assertTrue(type(imported_class[1]) == type, "The module must be importable, and be of type 'type'.")
 
 
-    # Load a module and test that we can render it correctly
+    # syntax errors in module source files should be detected
+    def test_load_invalid_code(self):
+        test_dir = self.fake_github_clone('test_data/bad_json_module')
+        with self.assertRaises(ValidationError):
+            import_module_from_directory("https://test_url_of_test_module", "bad_json_module", "123456", test_dir)
+
+        test_dir = self.fake_github_clone('test_data/bad_py_module')
+        with self.assertRaises(ValidationError):
+            import_module_from_directory("https://test_url_of_test_module", "bad_py_module", "123456", test_dir)
+
+
+    # loading the same version of the same module twice should fail
+    def test_load_twice(self):
+        test_dir = self.fake_github_clone()
+        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+
+        test_dir = self.fake_github_clone() # import moves files, so get same files again
+        with self.assertRaises(ValidationError):
+            import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+
+
+    # don't allow loading the same id_name from a different URL. Prevents module replacement attacks, and user confusion
+    def test_already_imported(self):
+        test_dir = self.fake_github_clone()
+        import_module_from_directory("https://github.com/account/importable1", "importable1", "123456", test_dir)
+
+        test_dir = self.fake_github_clone() # import moves files, so get same files again
+        with self.assertRaises(ValidationError):
+            import_module_from_directory("https://github.com/account/importable2", "importable2", "123456", test_dir)
+
+
+    # THE BIG TEST. Load a module and test that we can render it correctly
     # This is really an integration test, runs both load and dispatch code
     def test_load_and_dispatch(self):
         test_dir = self.fake_github_clone()
@@ -261,8 +292,9 @@ class ImportFromGitHubTest(LoggedInTestCase):
         wfm = add_new_wf_module(workflow, module_version, order=1)
 
         # These will fail if we haven't correctly loaded the json describing the parameters
-        colparam = ParameterVal.objects.get(wf_module=wfm, parameter_spec__id_name='test_column')
-        multicolparam = ParameterVal.objects.get(wf_module=wfm, parameter_spec__id_name='test_multicolumn')
+        stringparam = get_param_by_id_name('test', wf_module=wfm)
+        colparam = get_param_by_id_name('test_column', wf_module=wfm)
+        multicolparam = get_param_by_id_name('test_multicolumn', wf_module=wfm)
 
         # Does it render right?
         test_csv = 'Class,M,F,Other\n' \
@@ -286,36 +318,13 @@ class ImportFromGitHubTest(LoggedInTestCase):
         multicolparam.set_value('Other,junk_column_name')
         test_table_out = test_table.copy()
         test_table_out[['Other']] *= 3   # multicolumn parameter has only one valid col
-
         out = module_dispatch_render(wfm, test_table)
         self.assertEqual(wfm.status, WfModule.READY)
         self.assertTrue(out.equals(test_table_out))
 
-    # syntax errors in module source files should be detected
-    def test_load_invalid_code(self):
-        test_dir = self.fake_github_clone('test_data/bad_json_module')
-        with self.assertRaises(ValidationError):
-            import_module_from_directory("https://test_url_of_test_module", "bad_json_module", "123456", test_dir)
-
-        test_dir = self.fake_github_clone('test_data/bad_py_module')
-        with self.assertRaises(ValidationError):
-            import_module_from_directory("https://test_url_of_test_module", "bad_py_module", "123456", test_dir)
-
-    # loading the same version of the same module twice should fail
-    def test_load_twice(self):
-        test_dir = self.fake_github_clone()
-        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
-
-        test_dir = self.fake_github_clone() # import moves files, so get same files again
-        with self.assertRaises(ValidationError):
-            import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+        # if the module crashes, we should get an error with a line number
+        stringparam.set_value('crashme')
+        out = module_dispatch_render(wfm, test_table)
+        self.assertEqual(wfm.status, WfModule.ERROR)
 
 
-    # don't allow loading the same id_name from a different URL. Prevents module replacement attacks, and user confusion
-    def test_already_imported(self):
-        test_dir = self.fake_github_clone()
-        import_module_from_directory("https://github.com/account/importable1", "importable1", "123456", test_dir)
-
-        test_dir = self.fake_github_clone() # import moves files, so get same files again
-        with self.assertRaises(ValidationError):
-            import_module_from_directory("https://github.com/account/importable2", "importable2", "123456", test_dir)
