@@ -10,12 +10,12 @@ export default class MenuParam extends React.Component {
       selectedIdx: this.props.selectedIdx
     };
   }
-/*
+
   componentWillReceiveProps(newProps) {
     if (this.state.selectedIdx != newProps.selectedIdx)
       this.setState({selectedIdx :  newProps.selectedIdx})
   }
-*/
+
   onChange(evt) {
     var idx =  evt.target.value;
     this.setState({selectedIdx: idx });

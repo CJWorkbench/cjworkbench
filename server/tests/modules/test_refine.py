@@ -21,8 +21,13 @@ class MockModule:
         return ''
 
     def get_param_column(self, name):
-        if 'column' in self.params:
-            return self.params['column']
+        if name in self.params:
+            return self.params[name]
+        return ''
+
+    def get_param_menu_idx(self, name):
+        if name in self.params:
+            return self.params[name]
         return ''
 
 

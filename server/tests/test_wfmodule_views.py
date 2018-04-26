@@ -9,6 +9,7 @@ from server.models import Module, ModuleVersion, WfModule, Workflow, ParameterSp
 from rest_framework.test import force_authenticate
 from server.tests.utils import *
 from server.tests.test_wfmodule import WfModuleTestsBase
+from operator import itemgetter
 
 class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
 
@@ -203,6 +204,19 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         # Test for non-existent column; should return a 204 code
         response = self.client.get('/api/wfmodules/%d/histogram/O' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    # tests for the /columns API
+    def test_wf_module_columns(self):
+        # We only need to check for one module since the output is pretty much the same
+        # Dates are not tested here because the test WF cannot be fed date data
+        response = self.client.get('/api/wfmodules/%d/columns' % self.wfmodule1.id)
+        ref_columns = sorted([
+            {"name": "Class", "type": "String"},
+            {"name": "M", "type": "Number"},
+            {"name": "F", "type": "Number"}
+        ], key=itemgetter("name"))
+        returned_columns = sorted(json.loads(response.content.decode('utf-8')), key=itemgetter("name"))
+        self.assertEqual(returned_columns, ref_columns)
 
 
     # test stored versions of data: create, retrieve, set, list, and views

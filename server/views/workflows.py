@@ -27,16 +27,34 @@ def edit_cells_module_id():
 
     return edit_cells_module_id.id
 
+
 edit_cells_module_id.id = None
+
+
+# Deal with sort from table the same way we deal with EditCells
+def sort_module_id():
+    if sort_module_id.id is None:
+        try:
+            sort_module_id.id = Module.objects.get(id_name='sort-from-table').id
+        except Module.DoesNotExist:
+            return None
+
+    return sort_module_id.id
+
+
+sort_module_id.id = None
+
 
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
 def make_init_state(request):
     if request.user.is_authenticated():
         user = UserSerializer(request.user)
         edit_cells_module = edit_cells_module_id()
+        sort_module = sort_module_id()
         init_state = {
             'loggedInUser': user.data,
-            'editCellsModuleId' : edit_cells_module
+            'editCellsModuleId' : edit_cells_module,
+            'sortModuleId': sort_module
         }
         return json.dumps(init_state)
     else:

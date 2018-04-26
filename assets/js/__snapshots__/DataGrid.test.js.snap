@@ -20,6 +20,7 @@ exports[`Renders the grid 1`] = `
   }
   getRow={[Function]}
   onEditCell={[Function]}
+  onGridSort={[Function]}
   totalRows={2}
 >
   <ReactDataGrid
@@ -39,6 +40,7 @@ exports[`Renders the grid 1`] = `
           "key": "aaa",
           "name": "aaa",
           "resizable": true,
+          "sortable": true,
           "width": 160,
         },
         Object {
@@ -46,6 +48,7 @@ exports[`Renders the grid 1`] = `
           "key": "bbbb",
           "name": "bbbb",
           "resizable": true,
+          "sortable": true,
           "width": 160,
         },
         Object {
@@ -53,6 +56,7 @@ exports[`Renders the grid 1`] = `
           "key": "ccccc",
           "name": "ccccc",
           "resizable": true,
+          "sortable": true,
           "width": 160,
         },
         Object {
@@ -60,6 +64,7 @@ exports[`Renders the grid 1`] = `
           "key": "rn_",
           "name": "rn_",
           "resizable": true,
+          "sortable": true,
           "width": 160,
         },
       ]
@@ -73,6 +78,7 @@ exports[`Renders the grid 1`] = `
     minWidth={-2}
     onBeforeEdit={[Function]}
     onGridRowsUpdated={[Function]}
+    onGridSort={[Function]}
     overScan={
       Object {
         "colsEnd": 5,
@@ -154,6 +160,7 @@ exports[`Renders the grid 1`] = `
                   "left": 40,
                   "name": "aaa",
                   "resizable": true,
+                  "sortable": true,
                   "width": 160,
                 },
                 Object {
@@ -162,6 +169,7 @@ exports[`Renders the grid 1`] = `
                   "left": 200,
                   "name": "bbbb",
                   "resizable": true,
+                  "sortable": true,
                   "width": 160,
                 },
                 Object {
@@ -170,6 +178,7 @@ exports[`Renders the grid 1`] = `
                   "left": 360,
                   "name": "ccccc",
                   "resizable": true,
+                  "sortable": true,
                   "width": 160,
                 },
                 Object {
@@ -178,6 +187,7 @@ exports[`Renders the grid 1`] = `
                   "left": 520,
                   "name": "rn_",
                   "resizable": true,
+                  "sortable": true,
                   "width": 160,
                 },
               ],
@@ -200,6 +210,7 @@ exports[`Renders the grid 1`] = `
                 "key": "aaa",
                 "name": "aaa",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
               Object {
@@ -207,6 +218,7 @@ exports[`Renders the grid 1`] = `
                 "key": "bbbb",
                 "name": "bbbb",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
               Object {
@@ -214,6 +226,7 @@ exports[`Renders the grid 1`] = `
                 "key": "ccccc",
                 "name": "ccccc",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
               Object {
@@ -221,6 +234,7 @@ exports[`Renders the grid 1`] = `
                 "key": "rn_",
                 "name": "rn_",
                 "resizable": true,
+                "sortable": true,
                 "width": 160,
               },
             ]
@@ -245,6 +259,7 @@ exports[`Renders the grid 1`] = `
           onBeforeEdit={[Function]}
           onColumnResize={[Function]}
           onGridRowsUpdated={[Function]}
+          onGridSort={[Function]}
           onSort={[Function]}
           onViewportClick={[Function]}
           onViewportDoubleClick={[Function]}
@@ -269,8 +284,6 @@ exports[`Renders the grid 1`] = `
           rowsCount={2}
           scrollToRowIndex={0}
           selectedRows={Array []}
-          sortColumn={null}
-          sortDirection={null}
           tabIndex={-1}
           totalWidth={-2}
         >
@@ -337,6 +350,7 @@ exports[`Renders the grid 1`] = `
                       "left": 40,
                       "name": "aaa",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                     Object {
@@ -345,6 +359,7 @@ exports[`Renders the grid 1`] = `
                       "left": 200,
                       "name": "bbbb",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                     Object {
@@ -353,6 +368,7 @@ exports[`Renders the grid 1`] = `
                       "left": 360,
                       "name": "ccccc",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                     Object {
@@ -361,6 +377,7 @@ exports[`Renders the grid 1`] = `
                       "left": 520,
                       "name": "rn_",
                       "resizable": true,
+                      "sortable": true,
                       "width": 160,
                     },
                   ],
@@ -382,8 +399,6 @@ exports[`Renders the grid 1`] = `
               onColumnResize={[Function]}
               onScroll={[Function]}
               onSort={[Function]}
-              sortColumn={null}
-              sortDirection={null}
               totalWidth={-2}
             >
               <div
@@ -415,6 +430,7 @@ exports[`Renders the grid 1`] = `
                         "left": 40,
                         "name": "aaa",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -423,6 +439,7 @@ exports[`Renders the grid 1`] = `
                         "left": 200,
                         "name": "bbbb",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -431,6 +448,7 @@ exports[`Renders the grid 1`] = `
                         "left": 360,
                         "name": "ccccc",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -439,6 +457,7 @@ exports[`Renders the grid 1`] = `
                         "left": 520,
                         "name": "rn_",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                     ]
@@ -449,8 +468,6 @@ exports[`Renders the grid 1`] = `
                   onScroll={[Function]}
                   onSort={[Function]}
                   rowType="header"
-                  sortColumn={null}
-                  sortDirection={null}
                   style={
                     Object {
                       "left": 0,
@@ -499,13 +516,21 @@ exports[`Renders the grid 1`] = `
                             "name": "aaa",
                             "resizable": true,
                             "rowType": "header",
+                            "sortable": true,
                             "width": 160,
                           }
                         }
                         height={35}
                         onResize={[Function]}
                         onResizeEnd={[Function]}
-                        renderer={[Function]}
+                        renderer={
+                          <SortableHeaderCell
+                            columnKey="aaa"
+                            onSort={[Function]}
+                            sortDescendingFirst={false}
+                            sortDirection="NONE"
+                          />
+                        }
                         resizing={false}
                       >
                         <div
@@ -523,11 +548,40 @@ exports[`Renders the grid 1`] = `
                             }
                           }
                         >
-                          <div
-                            className="widget-HeaderCell__value"
+                          <SortableHeaderCell
+                            column={
+                              Object {
+                                "editable": true,
+                                "key": "aaa",
+                                "left": 40,
+                                "name": "aaa",
+                                "resizable": true,
+                                "rowType": "header",
+                                "sortable": true,
+                                "width": 160,
+                              }
+                            }
+                            columnKey="aaa"
+                            height={35}
+                            onSort={[Function]}
+                            sortDescendingFirst={false}
+                            sortDirection="NONE"
                           >
-                            aaa
-                          </div>
+                            <div
+                              className="react-grid-HeaderCell-sortable"
+                              onClick={[Function]}
+                              style={
+                                Object {
+                                  "cursor": "pointer",
+                                }
+                              }
+                            >
+                              <span
+                                className="pull-right"
+                              />
+                              aaa
+                            </div>
+                          </SortableHeaderCell>
                           <ResizeHandle
                             onDrag={[Function]}
                             onDragEnd={[Function]}
@@ -578,13 +632,21 @@ exports[`Renders the grid 1`] = `
                             "name": "bbbb",
                             "resizable": true,
                             "rowType": "header",
+                            "sortable": true,
                             "width": 160,
                           }
                         }
                         height={35}
                         onResize={[Function]}
                         onResizeEnd={[Function]}
-                        renderer={[Function]}
+                        renderer={
+                          <SortableHeaderCell
+                            columnKey="bbbb"
+                            onSort={[Function]}
+                            sortDescendingFirst={false}
+                            sortDirection="NONE"
+                          />
+                        }
                         resizing={false}
                       >
                         <div
@@ -602,11 +664,40 @@ exports[`Renders the grid 1`] = `
                             }
                           }
                         >
-                          <div
-                            className="widget-HeaderCell__value"
+                          <SortableHeaderCell
+                            column={
+                              Object {
+                                "editable": true,
+                                "key": "bbbb",
+                                "left": 200,
+                                "name": "bbbb",
+                                "resizable": true,
+                                "rowType": "header",
+                                "sortable": true,
+                                "width": 160,
+                              }
+                            }
+                            columnKey="bbbb"
+                            height={35}
+                            onSort={[Function]}
+                            sortDescendingFirst={false}
+                            sortDirection="NONE"
                           >
-                            bbbb
-                          </div>
+                            <div
+                              className="react-grid-HeaderCell-sortable"
+                              onClick={[Function]}
+                              style={
+                                Object {
+                                  "cursor": "pointer",
+                                }
+                              }
+                            >
+                              <span
+                                className="pull-right"
+                              />
+                              bbbb
+                            </div>
+                          </SortableHeaderCell>
                           <ResizeHandle
                             onDrag={[Function]}
                             onDragEnd={[Function]}
@@ -657,13 +748,21 @@ exports[`Renders the grid 1`] = `
                             "name": "ccccc",
                             "resizable": true,
                             "rowType": "header",
+                            "sortable": true,
                             "width": 160,
                           }
                         }
                         height={35}
                         onResize={[Function]}
                         onResizeEnd={[Function]}
-                        renderer={[Function]}
+                        renderer={
+                          <SortableHeaderCell
+                            columnKey="ccccc"
+                            onSort={[Function]}
+                            sortDescendingFirst={false}
+                            sortDirection="NONE"
+                          />
+                        }
                         resizing={false}
                       >
                         <div
@@ -681,11 +780,40 @@ exports[`Renders the grid 1`] = `
                             }
                           }
                         >
-                          <div
-                            className="widget-HeaderCell__value"
+                          <SortableHeaderCell
+                            column={
+                              Object {
+                                "editable": true,
+                                "key": "ccccc",
+                                "left": 360,
+                                "name": "ccccc",
+                                "resizable": true,
+                                "rowType": "header",
+                                "sortable": true,
+                                "width": 160,
+                              }
+                            }
+                            columnKey="ccccc"
+                            height={35}
+                            onSort={[Function]}
+                            sortDescendingFirst={false}
+                            sortDirection="NONE"
                           >
-                            ccccc
-                          </div>
+                            <div
+                              className="react-grid-HeaderCell-sortable"
+                              onClick={[Function]}
+                              style={
+                                Object {
+                                  "cursor": "pointer",
+                                }
+                              }
+                            >
+                              <span
+                                className="pull-right"
+                              />
+                              ccccc
+                            </div>
+                          </SortableHeaderCell>
                           <ResizeHandle
                             onDrag={[Function]}
                             onDragEnd={[Function]}
@@ -736,13 +864,21 @@ exports[`Renders the grid 1`] = `
                             "name": "rn_",
                             "resizable": true,
                             "rowType": "header",
+                            "sortable": true,
                             "width": 160,
                           }
                         }
                         height={35}
                         onResize={[Function]}
                         onResizeEnd={[Function]}
-                        renderer={[Function]}
+                        renderer={
+                          <SortableHeaderCell
+                            columnKey="rn_"
+                            onSort={[Function]}
+                            sortDescendingFirst={false}
+                            sortDirection="NONE"
+                          />
+                        }
                         resizing={false}
                       >
                         <div
@@ -760,11 +896,40 @@ exports[`Renders the grid 1`] = `
                             }
                           }
                         >
-                          <div
-                            className="widget-HeaderCell__value"
+                          <SortableHeaderCell
+                            column={
+                              Object {
+                                "editable": true,
+                                "key": "rn_",
+                                "left": 520,
+                                "name": "rn_",
+                                "resizable": true,
+                                "rowType": "header",
+                                "sortable": true,
+                                "width": 160,
+                              }
+                            }
+                            columnKey="rn_"
+                            height={35}
+                            onSort={[Function]}
+                            sortDescendingFirst={false}
+                            sortDirection="NONE"
                           >
-                            rn_
-                          </div>
+                            <div
+                              className="react-grid-HeaderCell-sortable"
+                              onClick={[Function]}
+                              style={
+                                Object {
+                                  "cursor": "pointer",
+                                }
+                              }
+                            >
+                              <span
+                                className="pull-right"
+                              />
+                              rn_
+                            </div>
+                          </SortableHeaderCell>
                           <ResizeHandle
                             onDrag={[Function]}
                             onDragEnd={[Function]}
@@ -910,6 +1075,7 @@ exports[`Renders the grid 1`] = `
                         "left": 40,
                         "name": "aaa",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -918,6 +1084,7 @@ exports[`Renders the grid 1`] = `
                         "left": 200,
                         "name": "bbbb",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -926,6 +1093,7 @@ exports[`Renders the grid 1`] = `
                         "left": 360,
                         "name": "ccccc",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                       Object {
@@ -934,6 +1102,7 @@ exports[`Renders the grid 1`] = `
                         "left": 520,
                         "name": "rn_",
                         "resizable": true,
+                        "sortable": true,
                         "width": 160,
                       },
                     ],
@@ -1034,6 +1203,7 @@ exports[`Renders the grid 1`] = `
                           "left": 40,
                           "name": "aaa",
                           "resizable": true,
+                          "sortable": true,
                           "width": 160,
                         },
                         Object {
@@ -1042,6 +1212,7 @@ exports[`Renders the grid 1`] = `
                           "left": 200,
                           "name": "bbbb",
                           "resizable": true,
+                          "sortable": true,
                           "width": 160,
                         },
                         Object {
@@ -1050,6 +1221,7 @@ exports[`Renders the grid 1`] = `
                           "left": 360,
                           "name": "ccccc",
                           "resizable": true,
+                          "sortable": true,
                           "width": 160,
                         },
                         Object {
@@ -1058,6 +1230,7 @@ exports[`Renders the grid 1`] = `
                           "left": 520,
                           "name": "rn_",
                           "resizable": true,
+                          "sortable": true,
                           "width": 160,
                         },
                       ]
@@ -1159,6 +1332,7 @@ exports[`Renders the grid 1`] = `
                                         "left": 40,
                                         "name": "aaa",
                                         "resizable": true,
+                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
@@ -1167,6 +1341,7 @@ exports[`Renders the grid 1`] = `
                                         "left": 200,
                                         "name": "bbbb",
                                         "resizable": true,
+                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
@@ -1175,6 +1350,7 @@ exports[`Renders the grid 1`] = `
                                         "left": 360,
                                         "name": "ccccc",
                                         "resizable": true,
+                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
@@ -1183,6 +1359,7 @@ exports[`Renders the grid 1`] = `
                                         "left": 520,
                                         "name": "rn_",
                                         "resizable": true,
+                                        "sortable": true,
                                         "width": 160,
                                       },
                                     ]
@@ -1262,6 +1439,7 @@ exports[`Renders the grid 1`] = `
                                         "left": 40,
                                         "name": "aaa",
                                         "resizable": true,
+                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
@@ -1270,6 +1448,7 @@ exports[`Renders the grid 1`] = `
                                         "left": 200,
                                         "name": "bbbb",
                                         "resizable": true,
+                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
@@ -1278,6 +1457,7 @@ exports[`Renders the grid 1`] = `
                                         "left": 360,
                                         "name": "ccccc",
                                         "resizable": true,
+                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
@@ -1286,6 +1466,7 @@ exports[`Renders the grid 1`] = `
                                         "left": 520,
                                         "name": "rn_",
                                         "resizable": true,
+                                        "sortable": true,
                                         "width": 160,
                                       },
                                     ]
@@ -1374,6 +1555,7 @@ exports[`Renders the grid 1`] = `
                                           "left": 40,
                                           "name": "aaa",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -1382,6 +1564,7 @@ exports[`Renders the grid 1`] = `
                                           "left": 200,
                                           "name": "bbbb",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -1390,6 +1573,7 @@ exports[`Renders the grid 1`] = `
                                           "left": 360,
                                           "name": "ccccc",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -1398,6 +1582,7 @@ exports[`Renders the grid 1`] = `
                                           "left": 520,
                                           "name": "rn_",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -1477,6 +1662,7 @@ exports[`Renders the grid 1`] = `
                                           "left": 40,
                                           "name": "aaa",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -1485,6 +1671,7 @@ exports[`Renders the grid 1`] = `
                                           "left": 200,
                                           "name": "bbbb",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -1493,6 +1680,7 @@ exports[`Renders the grid 1`] = `
                                           "left": 360,
                                           "name": "ccccc",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
@@ -1501,6 +1689,7 @@ exports[`Renders the grid 1`] = `
                                           "left": 520,
                                           "name": "rn_",
                                           "resizable": true,
+                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -1585,6 +1774,7 @@ exports[`Renders the grid 1`] = `
                                     "left": 40,
                                     "name": "aaa",
                                     "resizable": true,
+                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
@@ -1593,6 +1783,7 @@ exports[`Renders the grid 1`] = `
                                     "left": 200,
                                     "name": "bbbb",
                                     "resizable": true,
+                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
@@ -1601,6 +1792,7 @@ exports[`Renders the grid 1`] = `
                                     "left": 360,
                                     "name": "ccccc",
                                     "resizable": true,
+                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
@@ -1609,6 +1801,7 @@ exports[`Renders the grid 1`] = `
                                     "left": 520,
                                     "name": "rn_",
                                     "resizable": true,
+                                    "sortable": true,
                                     "width": 160,
                                   },
                                 ]
@@ -1685,6 +1878,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 40,
                                       "name": "aaa",
                                       "resizable": true,
+                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -1819,6 +2013,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 200,
                                       "name": "bbbb",
                                       "resizable": true,
+                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -1953,6 +2148,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 360,
                                       "name": "ccccc",
                                       "resizable": true,
+                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2087,6 +2283,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 520,
                                       "name": "rn_",
                                       "resizable": true,
+                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2359,6 +2556,7 @@ exports[`Renders the grid 1`] = `
                                     "left": 40,
                                     "name": "aaa",
                                     "resizable": true,
+                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
@@ -2367,6 +2565,7 @@ exports[`Renders the grid 1`] = `
                                     "left": 200,
                                     "name": "bbbb",
                                     "resizable": true,
+                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
@@ -2375,6 +2574,7 @@ exports[`Renders the grid 1`] = `
                                     "left": 360,
                                     "name": "ccccc",
                                     "resizable": true,
+                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
@@ -2383,6 +2583,7 @@ exports[`Renders the grid 1`] = `
                                     "left": 520,
                                     "name": "rn_",
                                     "resizable": true,
+                                    "sortable": true,
                                     "width": 160,
                                   },
                                 ]
@@ -2459,6 +2660,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 40,
                                       "name": "aaa",
                                       "resizable": true,
+                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2593,6 +2795,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 200,
                                       "name": "bbbb",
                                       "resizable": true,
+                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2727,6 +2930,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 360,
                                       "name": "ccccc",
                                       "resizable": true,
+                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2861,6 +3065,7 @@ exports[`Renders the grid 1`] = `
                                       "left": 520,
                                       "name": "rn_",
                                       "resizable": true,
+                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }

@@ -161,9 +161,15 @@ class WorkbenchAPI {
                   if(response.ok) {
                     return response.json();
                   }
-                  console.log(response.body);
                   return 'request error';
               })
+      )
+  }
+
+  getColumns(wf_module_id) {
+      return (
+          fetch('/api/wfmodules/' + wf_module_id + '/columns', {credentials: 'include'})
+              .then(response => response.json())
       )
   }
 

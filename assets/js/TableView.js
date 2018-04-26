@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import DataGrid from "./DataGrid";
 import update from 'immutability-helper'
 import * as EditCells from './EditCells'
+import * as SortFromTable from './SortFromTable'
 
 export function mockAddCellEdit(fn) {
   EditCells.addCellEdit = fn;
@@ -32,6 +33,7 @@ export default class TableView extends React.Component {
 
     this.getRow = this.getRow.bind(this);
     this.onEditCell = this.onEditCell.bind(this);
+    this.onSort = this.onSort.bind(this);
 
     this.loading = false;
     this.highestRowRequested = 0;
@@ -102,6 +104,8 @@ export default class TableView extends React.Component {
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
   componentWillReceiveProps(nextProps) {
+      //console.log("Table props:");
+      //console.log(nextProps);
     if (this.props.revision !== nextProps.revision || this.props.id !== nextProps.id) {
         this.refreshTable(nextProps.id);
     }
@@ -160,6 +164,13 @@ export default class TableView extends React.Component {
     }
   }
 
+  onSort(sortCol, sortDir) {
+      SortFromTable.updateSort(this.props.id, {
+          column: sortCol,
+          direction: sortDir
+      });
+  }
+
   render() {
     var tableData = this.props.tableData;
 
@@ -181,6 +192,9 @@ export default class TableView extends React.Component {
             getRow={this.getRow}
             resizing={this.props.resizing}
             onEditCell={this.onEditCell}
+            onSort={this.onSort}
+            sortColumn={this.props.sortColumn}
+            sortDirection={this.props.sortDirection}
           />
         </div>
       // adds commas to row count

@@ -52,8 +52,8 @@ function makeFormattedCols(cols, rowNumKey, editable) {
       name: cols[idx],
       resizable: true,
       editable: editable,
-      width: 160
-
+      width: 160,
+      sortable: true
     };
     formattedCols.push(d)
   }
@@ -75,6 +75,7 @@ export default class DataGrid extends React.Component {
     // this.updateRowNumKey= this.updateRowNumKey.bind(this);
     this.getRow = this.getRow.bind(this);
     this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
+    this.onGridSort = this.onGridSort.bind(this);
   }
 
   // After the component mounts, and on any change, set the height to parent div height
@@ -136,10 +137,13 @@ export default class DataGrid extends React.Component {
       this.props.onEditCell(fromRow, colKey, newVal)  // column key is also column name
   }
 
+  onGridSort(sortCol, sortDir) {
+    this.props.onSort(sortCol, sortDir);
+  }
+
   render() {
     var tableData = this.props.tableData;
 
-    // Generate the table if there's any data
     if (this.props.totalRows > 0) {
 
       this.updateRowNumKey(this.props);
@@ -152,7 +156,18 @@ export default class DataGrid extends React.Component {
         minWidth={this.state.gridWidth -2}
         minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
         enableCellSelect={true}
-        onGridRowsUpdated={this.onGridRowsUpdated} />
+        onGridRowsUpdated={this.onGridRowsUpdated}
+        onGridSort={this.onGridSort}
+        // Ref sets the sort direction on the datagrid
+        ref={(component) => {
+            if(component) {
+                component.setState({
+                    sortColumn: this.props.sortColumn,
+                    sortDirection: this.props.sortDirection,
+                });
+            }
+        }}
+      />
 
     }  else {
       return null;
