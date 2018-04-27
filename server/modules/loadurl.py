@@ -24,7 +24,7 @@ class LoadURL(ModuleImpl):
     @staticmethod
     def event(wfm, event=None, **kwargs):
         table = None
-        url = wfm.get_param_string('url')
+        url = wfm.get_param_string('url').strip()
 
         validate = URLValidator()
         try:

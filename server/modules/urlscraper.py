@@ -68,7 +68,7 @@ async def scrape_urls(urls, result_table):
 
         # start tasks until we max out connections, or run out of urls
         while ( len(tasks_to_rows) < max_fetchers ) and ( started_urls < num_urls ):
-            url = urls[started_urls]
+            url = urls[started_urls].strip()
             if is_valid_url(url):
                 newtask = event_loop.create_task(async_get_url(url))
                 tasks_to_rows[newtask] = started_urls
