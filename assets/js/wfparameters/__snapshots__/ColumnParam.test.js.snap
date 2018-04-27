@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ColumnParam renders noSelectionText 1`] = `
+exports[`ColumnParam renders with noSelectionText 1`] = `
 <ColumnParam
   getColNames={[Function]}
   isReadOnly={true}
@@ -61,7 +61,7 @@ exports[`ColumnParam renders noSelectionText 1`] = `
 </ColumnParam>
 `;
 
-exports[`ColumnParam renders with noSelectionText 1`] = `
+exports[`ColumnParam renders without noSelectionText 1`] = `
 <ColumnParam
   getColNames={[Function]}
   isReadOnly={true}
