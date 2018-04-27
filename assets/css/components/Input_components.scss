@@ -2,7 +2,7 @@
 
 .dropdown-menu {
   margin-top: 0.5rem;
-  border:2px solid rgba(118,155,176,0.5);
+  border:2px solid rgba(118,155,176,0.3);
   border-radius: 5px;
   box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.10);
   padding:0.5rem 0 0.5rem 0;
@@ -26,8 +26,8 @@
 }
 
 .dropdown-menu--item:active {
-  background-color: #48C8D7;
-  color: #fff;
+  background-color: #e5e5e5;
+  color: rgba(104,103,104,1);
 }
 
 .dropdown-divider{

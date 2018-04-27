@@ -76,11 +76,18 @@ button:focus { outline:0 !important; }
   border: 1px solid #FFFFFF;
   background-color: transparent;
 }
+.button-white:active {
+  background-color: rgba(250,250,250,0.4)
+}
 
 .button-white--fill {
   background-color: #FFF;
   color: #48C8D7;
-  border:none;
+  border:1px solid #fff;
+}
+.button-white--fill:active {
+  background-color: rgba(250,250,250,0.4);
+  border:1px solid #fff;
 }
 
 .button-gray {
@@ -98,6 +105,10 @@ button:focus { outline:0 !important; }
   border: 1px solid #48C8D7 ;
   background-color: transparent;
 }
+.button-blue:active {
+  background-color: #48C8D7 !important;
+  color: #FFFFFF !important;
+}
 
 
 .button-blue--fill {
@@ -106,10 +117,7 @@ button:focus { outline:0 !important; }
   border:none;
 }
 
-.button-blue:active {
-  background-color: #48C8D7 !important;
-  color: #FFFFFF !important;
-}
+
 
 .button-orange {
   color: #FBAA6D;
