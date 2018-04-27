@@ -1,6 +1,6 @@
 from .initmodules import load_module_from_dict
 from server.models import Module, ModuleVersion
-
+from server.utils import log_message
 from django.forms import URLField
 from django.core.exceptions import ValidationError
 
@@ -11,7 +11,6 @@ import inspect
 import json
 import os
 import re
-import py_compile
 import shutil
 import sys
 
@@ -19,10 +18,8 @@ import time
 import git
 from git.exc import GitCommandError
 
-#OK, this feels wrong (and probably is wrong), but there's nowhere else that I can see we have all the module names and
-#their corresponding classes. We need this to ensure that there are no clashes, and consequently, to ensure that we
-#don't inadvertently override a valid, existing class with the import.
 
+# add /server to path -- needed?
 cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
 parent_directory = os.path.dirname(cwd)
 sys.path.insert(0, parent_directory)
@@ -43,7 +40,6 @@ def get_already_imported_module_urls():
 
 def refresh_module_from_github(url):
     #we should check if this is a refreshable module: does the module exist, and if it does,
-
     #...and if it is, we should import it.
     import_module_from_github(url)
 
@@ -264,11 +260,12 @@ MODULE_DIRECTORY = os.path.join(ROOT_DIRECTORY, "importedmodules")
 
 
 # Load a module after cloning from github
-# This is the guts of our module import, also a good place to hook into tests (bypassing github access)
+# This is the guts of our module import, also a good place to hook into for tests (bypassing github access)
+# Returns a dictionary of info to display to user (category, repo name, author, id_name)
 def import_module_from_directory(url, reponame, version, importdir):
 
     destination_directory = None
-    message = {}
+    ui_info = {}
 
     try:
         # check that right files exist
@@ -285,9 +282,11 @@ def import_module_from_directory(url, reponame, version, importdir):
             raise ValidationError('Version {} of module {} has already been imported'.format(version, url))
 
         # Don't allow loading a module with the same id_name from a different repo.
-        modules = get_already_imported_module_urls()
-        if module_config["id_name"] in modules and url != modules[module_config["id_name"]]:
-            source = modules[module_config["id_name"]] if modules[module_config["id_name"]] != '' else "Internal"
+        module_urls = get_already_imported_module_urls()
+        if module_config["id_name"] in module_urls and url != module_urls[module_config["id_name"]]:
+            source = module_urls[module_config["id_name"]]
+            if source == '':
+                source = "Internal"
             raise ValidationError(
                 "Module {} has already been loaded, and its source is {}.".format(module_config["id_name"], source))
 
@@ -318,12 +317,13 @@ def import_module_from_directory(url, reponame, version, importdir):
         shutil.rmtree(importdir)
 
         # data that we probably want displayed in the UI.
-        message["category"] = module_config["category"]
-        message["project"] = reponame
-        message["author"] = module_config["author"]
-        message["name"] = module_config["name"]
+        ui_info["category"] = module_config["category"]
+        ui_info["project"] = reponame
+        ui_info["author"] = module_config["author"]
+        ui_info["name"] = module_config["name"]
 
     except Exception as e:
+        log_message('Error importing module %s: %s' % (url, str(e)))
         if destination_directory is not None:
             try:
                 shutil.rmtree(destination_directory)
@@ -331,7 +331,7 @@ def import_module_from_directory(url, reponame, version, importdir):
                 pass
         raise
 
-    return message
+    return ui_info
 
 
 # Top level import, clones from github
@@ -363,7 +363,7 @@ def import_module_from_github(url):
         # retrieve Git hash to use as the version number.
         version = extract_version(importdir)
 
-        message = import_module_from_directory(url, reponame, version, importdir)
+        ui_info = import_module_from_directory(url, reponame, version, importdir)
 
 
     except Exception as e:
@@ -372,4 +372,5 @@ def import_module_from_github(url):
             shutil.rmtree(importdir)
         raise
 
-    return message
+    log_message('Successfully imported module %s' % url)
+    return ui_info

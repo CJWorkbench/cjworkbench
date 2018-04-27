@@ -1,24 +1,12 @@
 # Check for updated data
 from server.models import WfModule
 from server.dispatch import module_dispatch_event
+from server.utils import get_console_logger
 from django.utils import timezone
 from datetime import timedelta
-import logging
-import sys
 import threading
 
-def setup_custom_logger():
-    formatter = logging.Formatter(fmt='[%(asctime)s.%(msecs)03d %(process)d-%(thread)X] %(message)s',
-                                  datefmt='%Y-%m-%d %H:%M:%S')
-    screen_handler = logging.StreamHandler(stream=sys.stdout)
-    screen_handler.setFormatter(formatter)
-    logger = logging.getLogger(__name__)
-    logger.setLevel(logging.DEBUG)
-    logger.addHandler(screen_handler)
-    return logger
-
-logger = setup_custom_logger()
-
+logger = get_console_logger()
 lock = threading.Lock()
 
 # update all modules' data. But only ever one at a time,

@@ -22,6 +22,10 @@ class UpdatesTests(LoggedInTestCase):
         # fake out the current time so we can run the test just-so
         self.nowtime = parser.parse('Aug 28 1999 2:35PM UTC')
 
+        # several tests log exceptions or print status, but don't print that every test
+        logging.disable(logging.CRITICAL)
+
+
     @patch('server.updates.module_dispatch_event')
     @patch('server.updates.timezone.now')
     def test_update_scan(self, mock_now, mock_dispatch):
@@ -68,9 +72,6 @@ class UpdatesTests(LoggedInTestCase):
 
         # When a module throws an exception, it should get updated to the correct time
         # and all others should still be called
-
-        # this test is supposed to log an exception, but don't print that every test
-        logging.disable(logging.CRITICAL)
 
         # Mocked return values. First call raises exception.
         mock_dispatch.side_effect = [Exception('Totes crashed'), None]

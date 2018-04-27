@@ -5,7 +5,7 @@ from pathlib import Path
 import pandas as pd
 import io
 import mock
-import json, os, shutil
+import logging, os, shutil
 
 # Patch get_already_imported from importmodulefromgithub
 def overriden_get_already_imported():
@@ -22,6 +22,9 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.importable_id_name ='importable_not_repo_name'  # must match importable.json test data file
 
         self.cleanup()
+
+        #  several tests are supposed to log an exception, but don't print that every test
+        logging.disable(logging.CRITICAL)
 
     def tearDown(self):
         super(ImportFromGitHubTest, self).tearDown()
