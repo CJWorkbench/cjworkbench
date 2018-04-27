@@ -40,7 +40,12 @@ class LoadURL(ModuleImpl):
         csv_types = ['text/csv']
         json_types = ['application/json']
         mimetypes = ','.join(excel_types + csv_types + json_types)
-        res = requests.get(url, headers = {'accept': mimetypes})
+
+        try:
+            res = requests.get(url, headers = {'accept': mimetypes})
+        except requests.exceptions.ConnectionError:
+            wfm.set_error('Could not connect to server')
+            return
 
         if res.status_code != requests.codes.ok:
             wfm.set_error('Error %s fetching url' % str(res.status_code))
