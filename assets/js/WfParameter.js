@@ -420,6 +420,7 @@ export default class WfParameter extends React.Component {
             <ColumnParam
               selectedCol={this.props.p.value}
               getColNames={this.getInputColNames}
+              noSelectionText={this.props.p.parameter_spec.placeholder}
               isReadOnly={this.props.isReadOnly}
               revision={this.props.revision}
               onChange={ col => { this.paramChanged(col) }}

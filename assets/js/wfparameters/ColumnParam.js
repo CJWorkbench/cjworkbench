@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 export default class ColumnParam extends React.Component {
   constructor(props) {
     super(props);
+    this.selectRef = null;
     this.state = { colNames: [], selectedCol: props.selectedCol };
     this.onChange = this.onChange.bind(this);
   }
@@ -15,7 +16,8 @@ export default class ColumnParam extends React.Component {
       .then(cols => {
 
         // Always make it possible to select (or show) "(None)"
-        var colsPlusNone = ['Select'].concat(cols);
+        let select_string = this.props.noSelectionText || 'Select';
+        var colsPlusNone = [select_string].concat(cols);
         this.setState({colNames: colsPlusNone});
       });
   }
@@ -25,20 +27,23 @@ export default class ColumnParam extends React.Component {
     this.loadColNames();
   }
 
-  // Update our checkboxes when we get new props = new selected column
+  // Update when we get new props = new selected column
   // And also column names when workflow revision bumps
   componentWillReceiveProps(nextProps) {
     this.setState({selectedCol: nextProps.selectedCol});
-    if (this.props.revision != nextProps.revision) {
+    if (this.props.revision !== nextProps.revision) {
       this.loadColNames();
     }
   }
 
   onChange(evt) {
-    var colName = this.state.colNames[evt.target.value];
-    if (colName == "Select") {
-      colName = "";
+    let colName;
+    if (this.selectRef.selectedIndex === 0) {
+      colName = "";  // no selection
+    } else {
+      colName = this.state.colNames[evt.target.value];
     }
+
     this.setState({selectedCol: colName});
     this.props.onChange(colName);
   }
@@ -47,7 +52,7 @@ export default class ColumnParam extends React.Component {
 
     // Select the current column name if any, otherwise (None)
     var idx = this.state.colNames.indexOf(this.state.selectedCol);
-    if (idx == -1) {
+    if (idx === -1) {
       idx = 0;
     }
 
@@ -61,6 +66,7 @@ export default class ColumnParam extends React.Component {
           value={idx}
           onChange={this.onChange}
           disabled={this.props.isReadOnly}
+          ref={(ref) => this.selectRef= ref}
         >
           {itemDivs}
         </select>
@@ -71,6 +77,7 @@ export default class ColumnParam extends React.Component {
 ColumnParam.propTypes = {
   selectedCol:    PropTypes.string.isRequired,
   getColNames:    PropTypes.func.isRequired,
+  noSelectionText:PropTypes.string,
   isReadOnly:     PropTypes.bool.isRequired,
   revision:       PropTypes.number.isRequired,
   onChange:       PropTypes.func.isRequired
