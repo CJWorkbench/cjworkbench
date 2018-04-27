@@ -2,7 +2,7 @@
 
 .dropdown-menu {
   margin-top: 0.5rem;
-  border:2px solid rgba(118,155,176,0.2);
+  border:2px solid rgba(118,155,176,0.5);
   border-radius: 5px;
   box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.10);
   padding:0.5rem 0 0.5rem 0;
@@ -12,7 +12,7 @@
   height: 4rem;
   width: 14rem;
   background-color: #FFFFFF;
-  color: rgba(104,103,104,0.6);
+  color: rgba(104,103,104,0.8);
   display: flex;
   align-items: center;
   justify-content: flex-start;
@@ -21,8 +21,13 @@
 }
 
 .dropdown-menu--item:hover {
-  background-color: #f9f9f9;
+  background-color: #f4f4f4;
   color: rgba(104,103,104,1);
+}
+
+.dropdown-menu--item:active {
+  background-color: #48C8D7;
+  color: #fff;
 }
 
 .dropdown-divider{

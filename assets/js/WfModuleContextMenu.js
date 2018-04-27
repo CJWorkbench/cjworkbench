@@ -178,13 +178,13 @@ export default class WfModuleContextMenu extends React.Component {
           {/* Opens Modal window for downloading files */}
           <DropdownItem key={1} onClick={this.toggleExportModal} className='dropdown-menu--item mb-1 test-export-button'>
             <span className='icon-download dropdown-menu--icon'></span>
-            <span className='t-d-gray content-3 ml-3'>Export</span>
+            <span className='content-3 ml-3'>Export</span>
             {exportModal}
           </DropdownItem>
           {/* Will delete the parent WF Module from the list */}
           <DropdownItem key={3} onClick={this.deleteOption} className='dropdown-menu--item test-delete-button'>
             <span className='icon-bin dropdown-menu--icon'></span>
-            <span className='t-d-gray content-3 ml-3'>Delete</span>
+            <span className='content-3 ml-3'>Delete</span>
           </DropdownItem>
         </DropdownMenu>
        </UncontrolledDropdown>

@@ -252,7 +252,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                   className="icon-download dropdown-menu--icon"
                 />
                 <span
-                  className="t-d-gray content-3 ml-3"
+                  className="content-3 ml-3"
                 >
                   Export
                 </span>
@@ -274,7 +274,7 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
                   className="icon-bin dropdown-menu--icon"
                 />
                 <span
-                  className="t-d-gray content-3 ml-3"
+                  className="content-3 ml-3"
                 >
                   Delete
                 </span>
@@ -364,7 +364,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
                   className="icon-download dropdown-menu--icon"
                 />
                 <span
-                  className="t-d-gray content-3 ml-3"
+                  className="content-3 ml-3"
                 >
                   Export
                 </span>
@@ -386,7 +386,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
                   className="icon-bin dropdown-menu--icon"
                 />
                 <span
-                  className="t-d-gray content-3 ml-3"
+                  className="content-3 ml-3"
                 >
                   Delete
                 </span>
@@ -476,7 +476,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
                   className="icon-download dropdown-menu--icon"
                 />
                 <span
-                  className="t-d-gray content-3 ml-3"
+                  className="content-3 ml-3"
                 >
                   Export
                 </span>
@@ -498,7 +498,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
                   className="icon-bin dropdown-menu--icon"
                 />
                 <span
-                  className="t-d-gray content-3 ml-3"
+                  className="content-3 ml-3"
                 >
                   Delete
                 </span>

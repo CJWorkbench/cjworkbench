@@ -236,7 +236,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                         tabIndex="0"
                       >
                         <span
-                          className="t-d-gray content-3 ml-3"
+                          className="content-3 ml-3"
                         >
                           My Workflows
                         </span>
@@ -267,7 +267,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                           type="button"
                         >
                           <span
-                            className="t-d-gray content-3 ml-3"
+                            className="content-3 ml-3"
                           >
                             Undo
                           </span>
@@ -286,7 +286,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                           type="button"
                         >
                           <span
-                            className="t-d-gray content-3 ml-3"
+                            className="content-3 ml-3"
                           >
                             Redo
                           </span>
@@ -318,7 +318,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
                           tabIndex="0"
                         >
                           <span
-                            className="t-d-gray content-3 ml-3"
+                            className="content-3 ml-3"
                           >
                             Logout
                           </span>
@@ -768,7 +768,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                         tabIndex="0"
                       >
                         <span
-                          className="t-d-gray content-3 ml-3"
+                          className="content-3 ml-3"
                         >
                           My Workflows
                         </span>
@@ -799,7 +799,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                           type="button"
                         >
                           <span
-                            className="t-d-gray content-3 ml-3"
+                            className="content-3 ml-3"
                           >
                             Undo
                           </span>
@@ -818,7 +818,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                           type="button"
                         >
                           <span
-                            className="t-d-gray content-3 ml-3"
+                            className="content-3 ml-3"
                           >
                             Redo
                           </span>
@@ -850,7 +850,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
                           tabIndex="0"
                         >
                           <span
-                            className="t-d-gray content-3 ml-3"
+                            className="content-3 ml-3"
                           >
                             Logout
                           </span>
@@ -1362,7 +1362,7 @@ exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user 
                           tabIndex="0"
                         >
                           <span
-                            className="t-d-gray content-3 ml-3"
+                            className="content-3 ml-3"
                           >
                             Logout
                           </span>

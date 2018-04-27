@@ -95,7 +95,7 @@ exports[`Workflow list page renders correctly 1`] = `
                             tabIndex="0"
                           >
                             <span
-                              className="t-d-gray content-3 ml-3"
+                              className="content-3 ml-3"
                             >
                               Logout
                             </span>
@@ -292,7 +292,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 className="icon-duplicate dropdown-menu--icon"
                               />
                               <span
-                                className="t-d-gray content-3 ml-3"
+                                className="content-3 ml-3"
                               >
                                 Duplicate
                               </span>
@@ -314,7 +314,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 className="icon-bin dropdown-menu--icon"
                               />
                               <span
-                                className="t-d-gray content-3 ml-3"
+                                className="content-3 ml-3"
                               >
                                 Delete
                               </span>
@@ -485,7 +485,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 className="icon-duplicate dropdown-menu--icon"
                               />
                               <span
-                                className="t-d-gray content-3 ml-3"
+                                className="content-3 ml-3"
                               >
                                 Duplicate
                               </span>
@@ -507,7 +507,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 className="icon-bin dropdown-menu--icon"
                               />
                               <span
-                                className="t-d-gray content-3 ml-3"
+                                className="content-3 ml-3"
                               >
                                 Delete
                               </span>
@@ -678,7 +678,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 className="icon-duplicate dropdown-menu--icon"
                               />
                               <span
-                                className="t-d-gray content-3 ml-3"
+                                className="content-3 ml-3"
                               >
                                 Duplicate
                               </span>
@@ -700,7 +700,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 className="icon-bin dropdown-menu--icon"
                               />
                               <span
-                                className="t-d-gray content-3 ml-3"
+                                className="content-3 ml-3"
                               >
                                 Delete
                               </span>
@@ -871,7 +871,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 className="icon-duplicate dropdown-menu--icon"
                               />
                               <span
-                                className="t-d-gray content-3 ml-3"
+                                className="content-3 ml-3"
                               >
                                 Duplicate
                               </span>
@@ -893,7 +893,7 @@ exports[`Workflow list page renders correctly 1`] = `
                                 className="icon-bin dropdown-menu--icon"
                               />
                               <span
-                                className="t-d-gray content-3 ml-3"
+                                className="content-3 ml-3"
                               >
                                 Delete
                               </span>

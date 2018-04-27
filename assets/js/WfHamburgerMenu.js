@@ -18,7 +18,7 @@ export default class WfHamburgerMenu extends React.Component {
           href="/workflows"
           className='dropdown-menu--item'
         >
-          <span className='t-d-gray content-3 ml-3'>My Workflows</span>
+          <span className='content-3 ml-3'>My Workflows</span>
         </DropdownItem>;
       undoRedo =
         <div>
@@ -28,14 +28,14 @@ export default class WfHamburgerMenu extends React.Component {
             onClick={ () => { this.props.api.undo(this.props.wfId)} }
             className='dropdown-menu--item'
           >
-            <span className='t-d-gray content-3 ml-3'>Undo</span>
+            <span className='content-3 ml-3'>Undo</span>
           </DropdownItem>
           <DropdownItem
             key={3}
             onClick={ () => { this.props.api.redo(this.props.wfId)} }
             className='dropdown-menu--item'
           >
-            <span className='t-d-gray content-3 ml-3'>Redo</span>
+            <span className='content-3 ml-3'>Redo</span>
           </DropdownItem>
           <DropdownItem divider key={200} />
         </div>;
@@ -53,7 +53,7 @@ export default class WfHamburgerMenu extends React.Component {
             href="http://cjworkbench.org"
             className='dropdown-menu--item'
           >
-            <span className='t-d-gray content-3 ml-3'>Home</span>
+            <span className='content-3 ml-3'>Home</span>
           </DropdownItem>
           <DropdownItem
             key={2}
@@ -61,7 +61,7 @@ export default class WfHamburgerMenu extends React.Component {
             href="/account/login"
             className='dropdown-menu--item'
           >
-            <span className='t-d-gray content-3 ml-3'>Log In</span>
+            <span className='content-3 ml-3'>Log In</span>
           </DropdownItem>
         </div>
       )
@@ -74,7 +74,7 @@ export default class WfHamburgerMenu extends React.Component {
           href="/account/logout"
           className='dropdown-menu--item'
         >
-           <span className='t-d-gray content-3 ml-3'>Logout</span>
+           <span className='content-3 ml-3'>Logout</span>
         </DropdownItem>
       </div>
       )

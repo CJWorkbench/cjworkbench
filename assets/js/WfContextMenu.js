@@ -25,11 +25,11 @@ export default class WfContextMenu extends React.Component {
         <DropdownMenu right className='dropdown-menu'>
           <DropdownItem key={2} onClick={this.props.duplicateWorkflow} className='dropdown-menu--item test-duplicate-button'>
             <i className="icon-duplicate dropdown-menu--icon"></i>
-            <span className='t-d-gray content-3 ml-3'>Duplicate</span>
+            <span className='content-3 ml-3'>Duplicate</span>
           </DropdownItem>
           <DropdownItem key={3} onClick={this.props.deleteWorkflow} className='dropdown-menu--item test-delete-button'>
             <i className="icon-bin dropdown-menu--icon"></i>
-            <span className='t-d-gray content-3 ml-3'>Delete</span>
+            <span className='content-3 ml-3'>Delete</span>
           </DropdownItem>
         </DropdownMenu>
        </UncontrolledDropdown>
