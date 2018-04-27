@@ -7,7 +7,7 @@ describe('ColumnParam', () => {
   const testcols = ['foo', 'bar', 'baz', 'wow', 'word wrap', 'ok then'];
   const noSelectionText = 'Just pick something, user';
 
-  it('renders noSelectionText', (done) => {
+  it('renders with noSelectionText', (done) => {
     let wrapper = mount(
         <ColumnParam
           selectedCol='baz'
@@ -30,7 +30,7 @@ describe('ColumnParam', () => {
     });
   });
 
-  it('renders with noSelectionText', (done) => {
+  it('renders without noSelectionText', (done) => {
     let wrapper = mount(
         <ColumnParam
           selectedCol='baz'
@@ -50,4 +50,5 @@ describe('ColumnParam', () => {
 
       done();
     });
-  });});
+  });
+});
