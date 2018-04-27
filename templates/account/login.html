@@ -1,14 +1,14 @@
 {% extends "account/base.html" %}
 {% load account socialaccount i18n %}
 
-{% block title %}{% trans "Log in" %}{% endblock %}
+{% block title %}{% trans "Sign in" %}{% endblock %}
 
 {% block content %}
 
     <form class="account_form login" autocapitalize="off" method="POST" action="{% url 'account_login' %}">
 
         <div class="mt-3 mb-5">
-            <div class='title-1 t-d-gray text-center'>Log in</div>
+            <div class='title-1 t-d-gray text-center'>Sign in</div>
               <div class='switch mt-1 d-flex justify-content-center'>
                   <a href="/signup_closed_test" class='t-white-u mb-1 content-2'>Sign up</a>
               </div>

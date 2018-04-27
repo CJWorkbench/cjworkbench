@@ -25,12 +25,12 @@ export default class ModuleLibraryClosed extends React.Component {
   }
 
   toggleArrow() {
-    if (!this.props.isReadOnly) 
+    if (!this.props.isReadOnly)
       this.setState({showArrow: !this.state.showArrow});
   }
 
   toggleSignInModal() {
-    if (this.props.isReadOnly) 
+    if (this.props.isReadOnly)
       this.setState({ signInModalOpen: !this.state.signInModalOpen });
   }
 
@@ -47,7 +47,7 @@ export default class ModuleLibraryClosed extends React.Component {
         </ModalHeader>
         <ModalBody className='dialog-body mt-4 mb-4 d-flex align-items-center'>
           <a href="/account/login" className="button-blue col-sm-3 action-button">Sign in</a>
-          <div className="info-2 col-sm-9 ml-4">Log in to your account to duplicate and edit this workflow.</div>
+          <div className="info-2 col-sm-9 ml-4">Sign in to your account to duplicate and edit this workflow.</div>
         </ModalBody>
       </Modal>
     );
