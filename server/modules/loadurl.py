@@ -36,7 +36,10 @@ class LoadURL(ModuleImpl):
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()
 
-        mimetypes = 'application/json, text/csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        excel_types = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+        csv_types = ['text/csv']
+        json_types = ['application/json']
+        mimetypes = ','.join(excel_types + csv_types + json_types)
         res = requests.get(url, headers = {'accept': mimetypes})
 
         if res.status_code != requests.codes.ok:
@@ -46,21 +49,21 @@ class LoadURL(ModuleImpl):
         # get content type, ignoring charset for now
         content_type = res.headers.get('content-type').split(';')[0]
 
-        if content_type == 'text/csv':
+        if content_type in csv_types:
             try:
                 table = pd.read_csv(io.StringIO(res.text))
             except CParserError as e:
                 wfm.set_error(str(e))
                 table = pd.DataFrame([{'result':res.text}])
 
-        elif content_type == 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet':
+        elif content_type in excel_types:
             try:
                 table = pd.read_excel(io.BytesIO(res.content))
             except XLRDError as e:
                 wfm.set_error(str(e))
                 return
 
-        elif content_type == 'application/json':
+        elif content_type in json_types:
             try:
                 json_string = res.text
 
