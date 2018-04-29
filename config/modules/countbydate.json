@@ -7,9 +7,10 @@
   "help_url":"modules/analyze/count-by-date",
   "parameters": [
     {
-      "name": "Date column",
+      "name": "",
       "id_name" : "column",
-      "type": "column"
+      "type": "column",
+      "placeholder": "Select date column"
     },
     {
       "name": "Group by",

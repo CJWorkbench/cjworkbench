@@ -9,7 +9,8 @@
     {
       "name": "",
       "id_name": "column",
-      "type": "column"
+      "type": "column",
+      "placeholder": "Select column"
     },
     {
       "name": "",

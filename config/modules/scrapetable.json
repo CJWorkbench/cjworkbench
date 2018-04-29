@@ -15,7 +15,7 @@
       "placeholder":"http://"
     },
     {
-      "name": "Which table on this page?",
+      "name": "Table's position on the page",
       "id_name" : "tablenum",
       "type": "integer",
       "default": "1",

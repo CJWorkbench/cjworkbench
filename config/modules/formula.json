@@ -17,7 +17,7 @@
       "name": "Output column",
       "id_name" : "out_column",
       "type": "string",
-      "default": "formula output"
+      "default": "formula name"
     },
     {
       "name": "",
