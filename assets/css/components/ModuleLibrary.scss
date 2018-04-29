@@ -8,6 +8,8 @@
   background-color: #577485;
 }
 
+
+
 .module-library--closed {
   width: 6rem;
   flex: 0 0 6rem;
@@ -41,16 +43,20 @@
   cursor: pointer;
 }
 
+//Search bar
+
 .search-bar {
   margin-top: 1.5rem;
   border-radius: 30px;
   height:3.5rem;
+  border: 2px solid transparent;
   background-color: rgba(250,250,250,0.2);
 }
-.search-bar:hover {
-  box-shadow: 0 0 0 1px rgba(250,250,250,0.35);
-}
 
+// Outline when hover on top of ML
+.module-library--open:hover .search-bar{
+  border:2px solid #48C8D7;
+}
 
 .module-library--open .icon-sort-up-vl-gray,
 .module-library--open .icon-sort-down-vl-gray {
