@@ -1,6 +1,7 @@
 # Module dispatch table and implementations
 import pandas as pd
 from django.conf import settings
+from server.models import WfModule
 from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
 from .dynamicdispatch import DynamicDispatch
@@ -168,7 +169,14 @@ def module_dispatch_render(wf_module, table):
     if error:
         wf_module.set_error(error, notify=True)
     else:
-        wf_module.set_ready(notify=False)  # don't notify, module is (probably?) already in ready state
+        if wf_module.status != WfModule.READY:
+            # set notify=True to fix #157160567 if bad input is fixed, then
+            # user can click module to refresh it, which notifies, which
+            # clears error message in UI.
+            #
+            # Unresolved ickiness: if we change a parameter to fix an error, we
+            # get two refreshes (the other is from ChangeParameterCommand)
+            wf_module.set_ready(notify=True)
 
     tableout = sanitize_dataframe(tableout)  # Ensure correct column types etc.
     return tableout
