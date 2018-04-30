@@ -21,7 +21,7 @@ class UploadedFileView(APIView):
         if form.is_valid():
             uploaded_file = form.save()
             upload_to_table(uploaded_file.wf_module, uploaded_file)
-            return HttpResponse('{"success":true}', content_type="application/json", status=status.HTTP_204_NO_CONTENT)
+            return HttpResponse('{"success":true}', content_type="application/json", status=status.HTTP_201_CREATED)
         else:
             err = json.dumps({'success': False, 'error': '%s' % repr(form.errors)})
             return HttpResponse(err, content_type="application/json", status=status.HTTP_400_BAD_REQUEST)
