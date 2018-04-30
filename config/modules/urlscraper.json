@@ -8,19 +8,18 @@
   "help_url":"modules/add-data/url-scraper",
   "parameters": [
     {
-      "name": "",
+      "name": "URLs",
       "id_name": "urlsource",
       "type": "menu",
-      "menu_items": "Type list of URLs|Load URLs from column"
+      "menu_items": "List|Input column"
     },
     {
       "name": "",
       "id_name" : "urlcol",
-      "placeholder": "Select URLs column",
       "type": "column",
       "visible_if": {
         "id_name": "urlsource",
-        "value": "Load URLs from column"
+        "value": "Input column"
       }
     },
     {
@@ -31,7 +30,7 @@
       "placeholder": "Paste URLs here, each on one line.",
       "visible_if": {
         "id_name": "urlsource",
-        "value": "Type list of URLs"
+        "value": "List"
       }
     },
     {
