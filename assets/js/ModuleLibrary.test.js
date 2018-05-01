@@ -138,8 +138,8 @@ describe('ModuleLibrary', () => {
 
   describe('Read-only', () => {
 
-    beforeEach(() => {
-      api = {
+    it('Renders in closed state', (done) => {
+       api = {
         getModules: jsonResponseMock(modules),
         setWfLibraryCollapse: jest.fn()
       };
@@ -155,17 +155,17 @@ describe('ModuleLibrary', () => {
             libraryOpen={libraryOpen}
             setLibraryOpen={setLibraryOpen}
           />
-        </DragDropContextProvider>
-      );
-    });
-    afterEach(() => wrapper.unmount());
+        </DragDropContextProvider>);
 
-    it('Renders in closed state, without modules', () => {
-      expect(wrapper).toMatchSnapshot();
-      // does call getModules
-      expect(api.getModules.mock.calls.length).toBe(1);
-      // check that Library is closed
-      expect(wrapper.find('.module-library--closed')).toHaveLength(1);
+      // Let modules load
+      setImmediate(() => {
+        expect(wrapper).toMatchSnapshot();
+        expect(api.getModules.mock.calls.length).toBe(1);
+
+        // check that Library is closed
+        expect(wrapper.find('.module-library--closed')).toHaveLength(1);
+        done();
+      });
     });
 
   });

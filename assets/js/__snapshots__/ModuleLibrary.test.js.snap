@@ -1343,7 +1343,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
 </DragDropContextProvider>
 `;
 
-exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = `
+exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
@@ -1376,7 +1376,49 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
       }
       dropModule={[Function]}
       isReadOnly={true}
-      items={Array []}
+      items={
+        Array [
+          Object {
+            "category": "Add data",
+            "description": "Connect a dataset from Enigma's collection via URL.",
+            "icon": "url",
+            "id": 3,
+            "name": "Load from Enigma",
+          },
+          Object {
+            "category": "Add data",
+            "description": "Import from your favorite snowshall media",
+            "icon": "url",
+            "id": 2,
+            "name": "Load from Facebork",
+          },
+          Object {
+            "category": "Visualize",
+            "description": "Create line, column and scatter plot charts.",
+            "icon": "chart",
+            "id": 1,
+            "name": "Chartbuilder",
+          },
+          Object {
+            "category": "other category",
+            "icon": "url",
+            "id": 4,
+            "name": "Other Module 1",
+          },
+          Object {
+            "category": "other category",
+            "icon": "url",
+            "id": 6,
+            "name": "Other Module 3",
+          },
+          Object {
+            "category": "x category",
+            "icon": "url",
+            "id": 5,
+            "name": "Other Module 2",
+          },
+        ]
+      }
       libraryOpen={false}
       moduleAdded={[Function]}
       openCategory={null}
@@ -1420,14 +1462,249 @@ exports[`ModuleLibrary Read-only Renders in closed state, without modules 1`] = 
             addModule={[Function]}
             dropModule={[Function]}
             isReadOnly={true}
-            items={Array []}
+            items={
+              Array [
+                Object {
+                  "category": "Add data",
+                  "description": "Connect a dataset from Enigma's collection via URL.",
+                  "icon": "url",
+                  "id": 3,
+                  "name": "Load from Enigma",
+                },
+                Object {
+                  "category": "Add data",
+                  "description": "Import from your favorite snowshall media",
+                  "icon": "url",
+                  "id": 2,
+                  "name": "Load from Facebork",
+                },
+                Object {
+                  "category": "Visualize",
+                  "description": "Create line, column and scatter plot charts.",
+                  "icon": "chart",
+                  "id": 1,
+                  "name": "Chartbuilder",
+                },
+                Object {
+                  "category": "other category",
+                  "icon": "url",
+                  "id": 4,
+                  "name": "Other Module 1",
+                },
+                Object {
+                  "category": "other category",
+                  "icon": "url",
+                  "id": 6,
+                  "name": "Other Module 3",
+                },
+                Object {
+                  "category": "x category",
+                  "icon": "url",
+                  "id": 5,
+                  "name": "Other Module 2",
+                },
+              ]
+            }
             libraryOpen={false}
             openCategory={null}
             setOpenCategory={[Function]}
           >
             <div
               className="list"
-            />
+            >
+              <ModuleCategory
+                collapsed={true}
+                isReadOnly={true}
+                libraryOpen={false}
+                modules={
+                  Array [
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={3}
+                      isReadOnly={true}
+                      libraryOpen={false}
+                      name="Load from Enigma"
+                      setOpenCategory={[Function]}
+                  />,
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={2}
+                      isReadOnly={true}
+                      libraryOpen={false}
+                      name="Load from Facebork"
+                      setOpenCategory={[Function]}
+                  />,
+                  ]
+                }
+                name="Add data"
+                setOpenCategory={[Function]}
+              >
+                <div
+                  className="card module-category--closed"
+                >
+                  <div
+                    className="module-category--wrapper"
+                  >
+                    <div
+                      className="first-level"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                    >
+                      <div
+                        className="closed-ML--category"
+                      >
+                        <span
+                          className="icon-database ml-icon"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ModuleCategory>
+              <ModuleCategory
+                collapsed={true}
+                isReadOnly={true}
+                libraryOpen={false}
+                modules={
+                  Array [
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="chart"
+                      id={1}
+                      isReadOnly={true}
+                      libraryOpen={false}
+                      name="Chartbuilder"
+                      setOpenCategory={[Function]}
+                  />,
+                  ]
+                }
+                name="Visualize"
+                setOpenCategory={[Function]}
+              >
+                <div
+                  className="card module-category--closed"
+                >
+                  <div
+                    className="module-category--wrapper"
+                  >
+                    <div
+                      className="first-level"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                    >
+                      <div
+                        className="closed-ML--category"
+                      >
+                        <span
+                          className="icon-chart ml-icon"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ModuleCategory>
+              <ModuleCategory
+                collapsed={true}
+                isReadOnly={true}
+                libraryOpen={false}
+                modules={
+                  Array [
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={4}
+                      isReadOnly={true}
+                      libraryOpen={false}
+                      name="Other Module 1"
+                      setOpenCategory={[Function]}
+                  />,
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={6}
+                      isReadOnly={true}
+                      libraryOpen={false}
+                      name="Other Module 3"
+                      setOpenCategory={[Function]}
+                  />,
+                  ]
+                }
+                name="other category"
+                setOpenCategory={[Function]}
+              >
+                <div
+                  className="card module-category--closed"
+                >
+                  <div
+                    className="module-category--wrapper"
+                  >
+                    <div
+                      className="first-level"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                    >
+                      <div
+                        className="closed-ML--category"
+                      >
+                        <span
+                          className="icon-undefined ml-icon"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ModuleCategory>
+              <ModuleCategory
+                collapsed={true}
+                isReadOnly={true}
+                libraryOpen={false}
+                modules={
+                  Array [
+                    <DragSource(Module)
+                      addModule={[Function]}
+                      dropModule={[Function]}
+                      icon="url"
+                      id={5}
+                      isReadOnly={true}
+                      libraryOpen={false}
+                      name="Other Module 2"
+                      setOpenCategory={[Function]}
+                  />,
+                  ]
+                }
+                name="x category"
+                setOpenCategory={[Function]}
+              >
+                <div
+                  className="card module-category--closed"
+                >
+                  <div
+                    className="module-category--wrapper"
+                  >
+                    <div
+                      className="first-level"
+                      onMouseEnter={[Function]}
+                      onMouseLeave={[Function]}
+                    >
+                      <div
+                        className="closed-ML--category"
+                      >
+                        <span
+                          className="icon-undefined ml-icon"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </ModuleCategory>
+            </div>
           </ModuleCategories>
           <DragSource(AddNotificationButtonClosed)
             isReadOnly={true}
