@@ -1,11 +1,6 @@
 <!-- Can be viewd and tested @ /preloader/ -->
 
 {% extends 'base.html' %}
-{% load render_bundle from webpack_loader %}
-
-{% block head %}
-  {% render_bundle 'login' 'js' %}
-{% endblock %}
 
 {% block body %}
   <div id="spinner-container">

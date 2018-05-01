@@ -7,9 +7,6 @@ import workbenchAPI from '../WorkbenchAPI'
 // Global API object, encapsulates all calls to the server
 const api = workbenchAPI();
 
-require('bootstrap/dist/css/bootstrap.css');
-require('../../css/style.scss');
-
 ReactDOM.render(
     <Workflows api={api}/>,
     document.getElementById('root')

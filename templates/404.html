@@ -1,14 +1,8 @@
 {%  extends 'base_no_intercom.html' %}
-{% load render_bundle from webpack_loader %}
 {% load account i18n %}
 
 {% block title %}
     404 Page not found
-{% endblock %}
-
-
-{% block head %}
-  {% render_bundle 'login' 'css' %}
 {% endblock %}
 
 {% block body %}
@@ -19,5 +13,4 @@
       <a href="{% url "account_login" %}" style="width:200px" class="title-3 d-flex action-button mx-auto button-white--fill">{% trans "Go back to my workspace" %}</a>
     </div>
   <div>
-    {% render_bundle 'login' 'js' %}
 {% endblock %}
