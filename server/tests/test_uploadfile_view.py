@@ -33,7 +33,7 @@ class UploadFileViewTests(LoggedInTestCase):
         request = self.factory.post('/api/uploadfile', put_content)
         force_authenticate(request, user=self.user)
         response = UploadedFileView.post(request=request)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # should have parsed UploadedFile into a fetched table
         self.wfm.refresh_from_db()
@@ -77,7 +77,7 @@ class UploadFileViewTests(LoggedInTestCase):
         request = self.factory.post('/api/uploadfile', content)
         force_authenticate(request, user=self.user)
         response = UploadedFileView.post(request=request)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # should set error, no new version created
         self.wfm.refresh_from_db()
