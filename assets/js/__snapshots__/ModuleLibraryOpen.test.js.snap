@@ -35,7 +35,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
     moduleAdded={[Function]}
     openCategory="Add Data"
     setOpenCategory={[Function]}
-    toggleLibrary={[Function]}
+    toggleLibrary={[MockFunction]}
     workflow={Object {}}
   >
     <div
@@ -279,7 +279,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                   libraryOpen={true}
                   name="Load from Enigma"
                   setOpenCategory={[Function]}
-              />,
+                />,
               ]
             }
             name="Add data"
@@ -385,7 +385,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                   libraryOpen={true}
                   name="Filter by Text"
                   setOpenCategory={[Function]}
-              />,
+                />,
               ]
             }
             name="Filter"

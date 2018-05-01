@@ -4,7 +4,7 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
 <WorkflowMetadata
   api={
     Object {
-      "setWorkflowPublic": [Function],
+      "setWorkflowPublic": [MockFunction],
     }
   }
   isPublic={false}
@@ -187,7 +187,14 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
 <WorkflowMetadata
   api={
     Object {
-      "setWorkflowPublic": [Function],
+      "setWorkflowPublic": [MockFunction] {
+        "calls": Array [
+          Array [
+            100,
+            true,
+          ],
+        ],
+      },
     }
   }
   isPublic={false}
@@ -255,7 +262,7 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
 <WorkflowMetadata
   api={
     Object {
-      "setWorkflowPublic": [Function],
+      "setWorkflowPublic": [MockFunction],
     }
   }
   isPublic={false}
@@ -323,7 +330,7 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
 <WorkflowMetadata
   api={
     Object {
-      "setWorkflowPublic": [Function],
+      "setWorkflowPublic": [MockFunction],
     }
   }
   isPublic={true}

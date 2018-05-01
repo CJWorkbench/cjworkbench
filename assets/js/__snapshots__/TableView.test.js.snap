@@ -1136,38 +1136,38 @@ exports[`TableView Blank table when no module id 1`] = `
                                 Array [
                                   <Row
                                     cellMetaData={
-                                        Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
+                                      Object {
+                                        "copied": null,
+                                        "dragged": null,
+                                        "enableCellAutoFocus": true,
+                                        "enableCellSelect": true,
+                                        "getCellActions": undefined,
+                                        "getDataGridDOMNode": [Function],
+                                        "handleDragEnterRow": [Function],
+                                        "handleTerminateDrag": [Function],
+                                        "hoveredRowIdx": undefined,
+                                        "isScrollingHorizontallyWithKeyboard": false,
+                                        "isScrollingVerticallyWithKeyboard": false,
+                                        "onAddSubRow": undefined,
+                                        "onCellClick": [Function],
+                                        "onCellContextMenu": [Function],
+                                        "onCellDoubleClick": [Function],
+                                        "onCellExpand": [Function],
+                                        "onCellFocus": [Function],
+                                        "onColumnEvent": [Function],
+                                        "onCommit": [Function],
+                                        "onCommitCancel": [Function],
+                                        "onDeleteSubRow": undefined,
+                                        "onDragHandleDoubleClick": [Function],
+                                        "onRowExpandToggle": [Function],
+                                        "onRowHover": undefined,
+                                        "openCellEditor": [Function],
+                                        "rowKey": "id",
+                                        "selected": Object {
+                                          "idx": 0,
+                                          "rowIdx": 0,
+                                        },
+                                      }
                                     }
                                     cellRenderer={[Function]}
                                     colDisplayEnd={5}
@@ -1175,48 +1175,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                     colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
-                                        Array [
-                                            Object {
-                                              "formatter": [Function],
-                                              "key": "rn_",
-                                              "left": 0,
-                                              "locked": true,
-                                              "name": "",
-                                              "width": 40,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "",
-                                              "left": 40,
-                                              "name": "",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": " ",
-                                              "left": 200,
-                                              "name": " ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "   ",
-                                              "left": 360,
-                                              "name": "   ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "    ",
-                                              "left": 520,
-                                              "name": "    ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                          ]
+                                      Array [
+                                        Object {
+                                          "formatter": [Function],
+                                          "key": "rn_",
+                                          "left": 0,
+                                          "locked": true,
+                                          "name": "",
+                                          "width": 40,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "",
+                                          "left": 40,
+                                          "name": "",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": " ",
+                                          "left": 200,
+                                          "name": " ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "   ",
+                                          "left": 360,
+                                          "name": "   ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "    ",
+                                          "left": 520,
+                                          "name": "    ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                      ]
                                     }
                                     expandedRows={Array []}
                                     height={35}
@@ -1225,48 +1225,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                     isSelected={false}
                                     onMouseOver={undefined}
                                     row={
-                                        Object {
-                                            "rn_": 1,
-                                          }
+                                      Object {
+                                        "rn_": 1,
+                                      }
                                     }
                                     subRowDetails={Object {}}
                                     visibleEnd={-1}
                                     visibleStart={0}
-                                />,
+                                  />,
                                   <Row
                                     cellMetaData={
-                                        Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
+                                      Object {
+                                        "copied": null,
+                                        "dragged": null,
+                                        "enableCellAutoFocus": true,
+                                        "enableCellSelect": true,
+                                        "getCellActions": undefined,
+                                        "getDataGridDOMNode": [Function],
+                                        "handleDragEnterRow": [Function],
+                                        "handleTerminateDrag": [Function],
+                                        "hoveredRowIdx": undefined,
+                                        "isScrollingHorizontallyWithKeyboard": false,
+                                        "isScrollingVerticallyWithKeyboard": false,
+                                        "onAddSubRow": undefined,
+                                        "onCellClick": [Function],
+                                        "onCellContextMenu": [Function],
+                                        "onCellDoubleClick": [Function],
+                                        "onCellExpand": [Function],
+                                        "onCellFocus": [Function],
+                                        "onColumnEvent": [Function],
+                                        "onCommit": [Function],
+                                        "onCommitCancel": [Function],
+                                        "onDeleteSubRow": undefined,
+                                        "onDragHandleDoubleClick": [Function],
+                                        "onRowExpandToggle": [Function],
+                                        "onRowHover": undefined,
+                                        "openCellEditor": [Function],
+                                        "rowKey": "id",
+                                        "selected": Object {
+                                          "idx": 0,
+                                          "rowIdx": 0,
+                                        },
+                                      }
                                     }
                                     cellRenderer={[Function]}
                                     colDisplayEnd={5}
@@ -1274,48 +1274,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                     colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
-                                        Array [
-                                            Object {
-                                              "formatter": [Function],
-                                              "key": "rn_",
-                                              "left": 0,
-                                              "locked": true,
-                                              "name": "",
-                                              "width": 40,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "",
-                                              "left": 40,
-                                              "name": "",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": " ",
-                                              "left": 200,
-                                              "name": " ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "   ",
-                                              "left": 360,
-                                              "name": "   ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "    ",
-                                              "left": 520,
-                                              "name": "    ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                          ]
+                                      Array [
+                                        Object {
+                                          "formatter": [Function],
+                                          "key": "rn_",
+                                          "left": 0,
+                                          "locked": true,
+                                          "name": "",
+                                          "width": 40,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "",
+                                          "left": 40,
+                                          "name": "",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": " ",
+                                          "left": 200,
+                                          "name": " ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "   ",
+                                          "left": 360,
+                                          "name": "   ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "    ",
+                                          "left": 520,
+                                          "name": "    ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                      ]
                                     }
                                     expandedRows={Array []}
                                     height={35}
@@ -1324,48 +1324,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                     isSelected={false}
                                     onMouseOver={undefined}
                                     row={
-                                        Object {
-                                            "rn_": 2,
-                                          }
+                                      Object {
+                                        "rn_": 2,
+                                      }
                                     }
                                     subRowDetails={Object {}}
                                     visibleEnd={-1}
                                     visibleStart={0}
-                                />,
+                                  />,
                                   <Row
                                     cellMetaData={
-                                        Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
+                                      Object {
+                                        "copied": null,
+                                        "dragged": null,
+                                        "enableCellAutoFocus": true,
+                                        "enableCellSelect": true,
+                                        "getCellActions": undefined,
+                                        "getDataGridDOMNode": [Function],
+                                        "handleDragEnterRow": [Function],
+                                        "handleTerminateDrag": [Function],
+                                        "hoveredRowIdx": undefined,
+                                        "isScrollingHorizontallyWithKeyboard": false,
+                                        "isScrollingVerticallyWithKeyboard": false,
+                                        "onAddSubRow": undefined,
+                                        "onCellClick": [Function],
+                                        "onCellContextMenu": [Function],
+                                        "onCellDoubleClick": [Function],
+                                        "onCellExpand": [Function],
+                                        "onCellFocus": [Function],
+                                        "onColumnEvent": [Function],
+                                        "onCommit": [Function],
+                                        "onCommitCancel": [Function],
+                                        "onDeleteSubRow": undefined,
+                                        "onDragHandleDoubleClick": [Function],
+                                        "onRowExpandToggle": [Function],
+                                        "onRowHover": undefined,
+                                        "openCellEditor": [Function],
+                                        "rowKey": "id",
+                                        "selected": Object {
+                                          "idx": 0,
+                                          "rowIdx": 0,
+                                        },
+                                      }
                                     }
                                     cellRenderer={[Function]}
                                     colDisplayEnd={5}
@@ -1373,48 +1373,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                     colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
-                                        Array [
-                                            Object {
-                                              "formatter": [Function],
-                                              "key": "rn_",
-                                              "left": 0,
-                                              "locked": true,
-                                              "name": "",
-                                              "width": 40,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "",
-                                              "left": 40,
-                                              "name": "",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": " ",
-                                              "left": 200,
-                                              "name": " ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "   ",
-                                              "left": 360,
-                                              "name": "   ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "    ",
-                                              "left": 520,
-                                              "name": "    ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                          ]
+                                      Array [
+                                        Object {
+                                          "formatter": [Function],
+                                          "key": "rn_",
+                                          "left": 0,
+                                          "locked": true,
+                                          "name": "",
+                                          "width": 40,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "",
+                                          "left": 40,
+                                          "name": "",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": " ",
+                                          "left": 200,
+                                          "name": " ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "   ",
+                                          "left": 360,
+                                          "name": "   ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "    ",
+                                          "left": 520,
+                                          "name": "    ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                      ]
                                     }
                                     expandedRows={Array []}
                                     height={35}
@@ -1423,48 +1423,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                     isSelected={false}
                                     onMouseOver={undefined}
                                     row={
-                                        Object {
-                                            "rn_": 3,
-                                          }
+                                      Object {
+                                        "rn_": 3,
+                                      }
                                     }
                                     subRowDetails={Object {}}
                                     visibleEnd={-1}
                                     visibleStart={0}
-                                />,
+                                  />,
                                   <Row
                                     cellMetaData={
-                                        Object {
-                                            "copied": null,
-                                            "dragged": null,
-                                            "enableCellAutoFocus": true,
-                                            "enableCellSelect": true,
-                                            "getCellActions": undefined,
-                                            "getDataGridDOMNode": [Function],
-                                            "handleDragEnterRow": [Function],
-                                            "handleTerminateDrag": [Function],
-                                            "hoveredRowIdx": undefined,
-                                            "isScrollingHorizontallyWithKeyboard": false,
-                                            "isScrollingVerticallyWithKeyboard": false,
-                                            "onAddSubRow": undefined,
-                                            "onCellClick": [Function],
-                                            "onCellContextMenu": [Function],
-                                            "onCellDoubleClick": [Function],
-                                            "onCellExpand": [Function],
-                                            "onCellFocus": [Function],
-                                            "onColumnEvent": [Function],
-                                            "onCommit": [Function],
-                                            "onCommitCancel": [Function],
-                                            "onDeleteSubRow": undefined,
-                                            "onDragHandleDoubleClick": [Function],
-                                            "onRowExpandToggle": [Function],
-                                            "onRowHover": undefined,
-                                            "openCellEditor": [Function],
-                                            "rowKey": "id",
-                                            "selected": Object {
-                                              "idx": 0,
-                                              "rowIdx": 0,
-                                            },
-                                          }
+                                      Object {
+                                        "copied": null,
+                                        "dragged": null,
+                                        "enableCellAutoFocus": true,
+                                        "enableCellSelect": true,
+                                        "getCellActions": undefined,
+                                        "getDataGridDOMNode": [Function],
+                                        "handleDragEnterRow": [Function],
+                                        "handleTerminateDrag": [Function],
+                                        "hoveredRowIdx": undefined,
+                                        "isScrollingHorizontallyWithKeyboard": false,
+                                        "isScrollingVerticallyWithKeyboard": false,
+                                        "onAddSubRow": undefined,
+                                        "onCellClick": [Function],
+                                        "onCellContextMenu": [Function],
+                                        "onCellDoubleClick": [Function],
+                                        "onCellExpand": [Function],
+                                        "onCellFocus": [Function],
+                                        "onColumnEvent": [Function],
+                                        "onCommit": [Function],
+                                        "onCommitCancel": [Function],
+                                        "onDeleteSubRow": undefined,
+                                        "onDragHandleDoubleClick": [Function],
+                                        "onRowExpandToggle": [Function],
+                                        "onRowHover": undefined,
+                                        "openCellEditor": [Function],
+                                        "rowKey": "id",
+                                        "selected": Object {
+                                          "idx": 0,
+                                          "rowIdx": 0,
+                                        },
+                                      }
                                     }
                                     cellRenderer={[Function]}
                                     colDisplayEnd={5}
@@ -1472,48 +1472,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                     colVisibleEnd={4}
                                     colVisibleStart={0}
                                     columns={
-                                        Array [
-                                            Object {
-                                              "formatter": [Function],
-                                              "key": "rn_",
-                                              "left": 0,
-                                              "locked": true,
-                                              "name": "",
-                                              "width": 40,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "",
-                                              "left": 40,
-                                              "name": "",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": " ",
-                                              "left": 200,
-                                              "name": " ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "   ",
-                                              "left": 360,
-                                              "name": "   ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                            Object {
-                                              "editable": false,
-                                              "key": "    ",
-                                              "left": 520,
-                                              "name": "    ",
-                                              "resizable": true,
-                                              "width": 160,
-                                            },
-                                          ]
+                                      Array [
+                                        Object {
+                                          "formatter": [Function],
+                                          "key": "rn_",
+                                          "left": 0,
+                                          "locked": true,
+                                          "name": "",
+                                          "width": 40,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "",
+                                          "left": 40,
+                                          "name": "",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": " ",
+                                          "left": 200,
+                                          "name": " ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "   ",
+                                          "left": 360,
+                                          "name": "   ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                        Object {
+                                          "editable": false,
+                                          "key": "    ",
+                                          "left": 520,
+                                          "name": "    ",
+                                          "resizable": true,
+                                          "width": 160,
+                                        },
+                                      ]
                                     }
                                     expandedRows={Array []}
                                     height={35}
@@ -1522,57 +1522,57 @@ exports[`TableView Blank table when no module id 1`] = `
                                     isSelected={false}
                                     onMouseOver={undefined}
                                     row={
-                                        Object {
-                                            "rn_": 4,
-                                          }
+                                      Object {
+                                        "rn_": 4,
+                                      }
                                     }
                                     subRowDetails={Object {}}
                                     visibleEnd={-1}
                                     visibleStart={0}
-                                />,
+                                  />,
                                   <div
                                     style={
-                                        Object {
-                                            "height": 210,
-                                          }
+                                      Object {
+                                        "height": 210,
+                                      }
                                     }
-                                >
+                                  >
                                     <div
-                                        style={
-                                            Object {
-                                                "width": 40,
-                                              }
+                                      style={
+                                        Object {
+                                          "width": 40,
                                         }
+                                      }
                                     />
                                     <div
-                                        style={
-                                            Object {
-                                                "width": 160,
-                                              }
+                                      style={
+                                        Object {
+                                          "width": 160,
                                         }
+                                      }
                                     />
                                     <div
-                                        style={
-                                            Object {
-                                                "width": 160,
-                                              }
+                                      style={
+                                        Object {
+                                          "width": 160,
                                         }
+                                      }
                                     />
                                     <div
-                                        style={
-                                            Object {
-                                                "width": 160,
-                                              }
+                                      style={
+                                        Object {
+                                          "width": 160,
                                         }
+                                      }
                                     />
                                     <div
-                                        style={
-                                            Object {
-                                                "width": 160,
-                                              }
+                                      style={
+                                        Object {
+                                          "width": 160,
                                         }
+                                      }
                                     />
-                                </div>,
+                                  </div>,
                                 ]
                               }
                               width={680}
@@ -1584,38 +1584,38 @@ exports[`TableView Blank table when no module id 1`] = `
                                   Array [
                                     <Row
                                       cellMetaData={
-                                          Object {
-                                              "copied": null,
-                                              "dragged": null,
-                                              "enableCellAutoFocus": true,
-                                              "enableCellSelect": true,
-                                              "getCellActions": undefined,
-                                              "getDataGridDOMNode": [Function],
-                                              "handleDragEnterRow": [Function],
-                                              "handleTerminateDrag": [Function],
-                                              "hoveredRowIdx": undefined,
-                                              "isScrollingHorizontallyWithKeyboard": false,
-                                              "isScrollingVerticallyWithKeyboard": false,
-                                              "onAddSubRow": undefined,
-                                              "onCellClick": [Function],
-                                              "onCellContextMenu": [Function],
-                                              "onCellDoubleClick": [Function],
-                                              "onCellExpand": [Function],
-                                              "onCellFocus": [Function],
-                                              "onColumnEvent": [Function],
-                                              "onCommit": [Function],
-                                              "onCommitCancel": [Function],
-                                              "onDeleteSubRow": undefined,
-                                              "onDragHandleDoubleClick": [Function],
-                                              "onRowExpandToggle": [Function],
-                                              "onRowHover": undefined,
-                                              "openCellEditor": [Function],
-                                              "rowKey": "id",
-                                              "selected": Object {
-                                                "idx": 0,
-                                                "rowIdx": 0,
-                                              },
-                                            }
+                                        Object {
+                                          "copied": null,
+                                          "dragged": null,
+                                          "enableCellAutoFocus": true,
+                                          "enableCellSelect": true,
+                                          "getCellActions": undefined,
+                                          "getDataGridDOMNode": [Function],
+                                          "handleDragEnterRow": [Function],
+                                          "handleTerminateDrag": [Function],
+                                          "hoveredRowIdx": undefined,
+                                          "isScrollingHorizontallyWithKeyboard": false,
+                                          "isScrollingVerticallyWithKeyboard": false,
+                                          "onAddSubRow": undefined,
+                                          "onCellClick": [Function],
+                                          "onCellContextMenu": [Function],
+                                          "onCellDoubleClick": [Function],
+                                          "onCellExpand": [Function],
+                                          "onCellFocus": [Function],
+                                          "onColumnEvent": [Function],
+                                          "onCommit": [Function],
+                                          "onCommitCancel": [Function],
+                                          "onDeleteSubRow": undefined,
+                                          "onDragHandleDoubleClick": [Function],
+                                          "onRowExpandToggle": [Function],
+                                          "onRowHover": undefined,
+                                          "openCellEditor": [Function],
+                                          "rowKey": "id",
+                                          "selected": Object {
+                                            "idx": 0,
+                                            "rowIdx": 0,
+                                          },
+                                        }
                                       }
                                       cellRenderer={[Function]}
                                       colDisplayEnd={5}
@@ -1623,48 +1623,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                       colVisibleEnd={4}
                                       colVisibleStart={0}
                                       columns={
-                                          Array [
-                                              Object {
-                                                "formatter": [Function],
-                                                "key": "rn_",
-                                                "left": 0,
-                                                "locked": true,
-                                                "name": "",
-                                                "width": 40,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "",
-                                                "left": 40,
-                                                "name": "",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": " ",
-                                                "left": 200,
-                                                "name": " ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "   ",
-                                                "left": 360,
-                                                "name": "   ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "    ",
-                                                "left": 520,
-                                                "name": "    ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                            ]
+                                        Array [
+                                          Object {
+                                            "formatter": [Function],
+                                            "key": "rn_",
+                                            "left": 0,
+                                            "locked": true,
+                                            "name": "",
+                                            "width": 40,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "",
+                                            "left": 40,
+                                            "name": "",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": " ",
+                                            "left": 200,
+                                            "name": " ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "   ",
+                                            "left": 360,
+                                            "name": "   ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "    ",
+                                            "left": 520,
+                                            "name": "    ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                        ]
                                       }
                                       expandedRows={Array []}
                                       height={35}
@@ -1673,48 +1673,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                       isSelected={false}
                                       onMouseOver={undefined}
                                       row={
-                                          Object {
-                                              "rn_": 1,
-                                            }
+                                        Object {
+                                          "rn_": 1,
+                                        }
                                       }
                                       subRowDetails={Object {}}
                                       visibleEnd={-1}
                                       visibleStart={0}
-                                  />,
+                                    />,
                                     <Row
                                       cellMetaData={
-                                          Object {
-                                              "copied": null,
-                                              "dragged": null,
-                                              "enableCellAutoFocus": true,
-                                              "enableCellSelect": true,
-                                              "getCellActions": undefined,
-                                              "getDataGridDOMNode": [Function],
-                                              "handleDragEnterRow": [Function],
-                                              "handleTerminateDrag": [Function],
-                                              "hoveredRowIdx": undefined,
-                                              "isScrollingHorizontallyWithKeyboard": false,
-                                              "isScrollingVerticallyWithKeyboard": false,
-                                              "onAddSubRow": undefined,
-                                              "onCellClick": [Function],
-                                              "onCellContextMenu": [Function],
-                                              "onCellDoubleClick": [Function],
-                                              "onCellExpand": [Function],
-                                              "onCellFocus": [Function],
-                                              "onColumnEvent": [Function],
-                                              "onCommit": [Function],
-                                              "onCommitCancel": [Function],
-                                              "onDeleteSubRow": undefined,
-                                              "onDragHandleDoubleClick": [Function],
-                                              "onRowExpandToggle": [Function],
-                                              "onRowHover": undefined,
-                                              "openCellEditor": [Function],
-                                              "rowKey": "id",
-                                              "selected": Object {
-                                                "idx": 0,
-                                                "rowIdx": 0,
-                                              },
-                                            }
+                                        Object {
+                                          "copied": null,
+                                          "dragged": null,
+                                          "enableCellAutoFocus": true,
+                                          "enableCellSelect": true,
+                                          "getCellActions": undefined,
+                                          "getDataGridDOMNode": [Function],
+                                          "handleDragEnterRow": [Function],
+                                          "handleTerminateDrag": [Function],
+                                          "hoveredRowIdx": undefined,
+                                          "isScrollingHorizontallyWithKeyboard": false,
+                                          "isScrollingVerticallyWithKeyboard": false,
+                                          "onAddSubRow": undefined,
+                                          "onCellClick": [Function],
+                                          "onCellContextMenu": [Function],
+                                          "onCellDoubleClick": [Function],
+                                          "onCellExpand": [Function],
+                                          "onCellFocus": [Function],
+                                          "onColumnEvent": [Function],
+                                          "onCommit": [Function],
+                                          "onCommitCancel": [Function],
+                                          "onDeleteSubRow": undefined,
+                                          "onDragHandleDoubleClick": [Function],
+                                          "onRowExpandToggle": [Function],
+                                          "onRowHover": undefined,
+                                          "openCellEditor": [Function],
+                                          "rowKey": "id",
+                                          "selected": Object {
+                                            "idx": 0,
+                                            "rowIdx": 0,
+                                          },
+                                        }
                                       }
                                       cellRenderer={[Function]}
                                       colDisplayEnd={5}
@@ -1722,48 +1722,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                       colVisibleEnd={4}
                                       colVisibleStart={0}
                                       columns={
-                                          Array [
-                                              Object {
-                                                "formatter": [Function],
-                                                "key": "rn_",
-                                                "left": 0,
-                                                "locked": true,
-                                                "name": "",
-                                                "width": 40,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "",
-                                                "left": 40,
-                                                "name": "",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": " ",
-                                                "left": 200,
-                                                "name": " ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "   ",
-                                                "left": 360,
-                                                "name": "   ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "    ",
-                                                "left": 520,
-                                                "name": "    ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                            ]
+                                        Array [
+                                          Object {
+                                            "formatter": [Function],
+                                            "key": "rn_",
+                                            "left": 0,
+                                            "locked": true,
+                                            "name": "",
+                                            "width": 40,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "",
+                                            "left": 40,
+                                            "name": "",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": " ",
+                                            "left": 200,
+                                            "name": " ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "   ",
+                                            "left": 360,
+                                            "name": "   ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "    ",
+                                            "left": 520,
+                                            "name": "    ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                        ]
                                       }
                                       expandedRows={Array []}
                                       height={35}
@@ -1772,48 +1772,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                       isSelected={false}
                                       onMouseOver={undefined}
                                       row={
-                                          Object {
-                                              "rn_": 2,
-                                            }
+                                        Object {
+                                          "rn_": 2,
+                                        }
                                       }
                                       subRowDetails={Object {}}
                                       visibleEnd={-1}
                                       visibleStart={0}
-                                  />,
+                                    />,
                                     <Row
                                       cellMetaData={
-                                          Object {
-                                              "copied": null,
-                                              "dragged": null,
-                                              "enableCellAutoFocus": true,
-                                              "enableCellSelect": true,
-                                              "getCellActions": undefined,
-                                              "getDataGridDOMNode": [Function],
-                                              "handleDragEnterRow": [Function],
-                                              "handleTerminateDrag": [Function],
-                                              "hoveredRowIdx": undefined,
-                                              "isScrollingHorizontallyWithKeyboard": false,
-                                              "isScrollingVerticallyWithKeyboard": false,
-                                              "onAddSubRow": undefined,
-                                              "onCellClick": [Function],
-                                              "onCellContextMenu": [Function],
-                                              "onCellDoubleClick": [Function],
-                                              "onCellExpand": [Function],
-                                              "onCellFocus": [Function],
-                                              "onColumnEvent": [Function],
-                                              "onCommit": [Function],
-                                              "onCommitCancel": [Function],
-                                              "onDeleteSubRow": undefined,
-                                              "onDragHandleDoubleClick": [Function],
-                                              "onRowExpandToggle": [Function],
-                                              "onRowHover": undefined,
-                                              "openCellEditor": [Function],
-                                              "rowKey": "id",
-                                              "selected": Object {
-                                                "idx": 0,
-                                                "rowIdx": 0,
-                                              },
-                                            }
+                                        Object {
+                                          "copied": null,
+                                          "dragged": null,
+                                          "enableCellAutoFocus": true,
+                                          "enableCellSelect": true,
+                                          "getCellActions": undefined,
+                                          "getDataGridDOMNode": [Function],
+                                          "handleDragEnterRow": [Function],
+                                          "handleTerminateDrag": [Function],
+                                          "hoveredRowIdx": undefined,
+                                          "isScrollingHorizontallyWithKeyboard": false,
+                                          "isScrollingVerticallyWithKeyboard": false,
+                                          "onAddSubRow": undefined,
+                                          "onCellClick": [Function],
+                                          "onCellContextMenu": [Function],
+                                          "onCellDoubleClick": [Function],
+                                          "onCellExpand": [Function],
+                                          "onCellFocus": [Function],
+                                          "onColumnEvent": [Function],
+                                          "onCommit": [Function],
+                                          "onCommitCancel": [Function],
+                                          "onDeleteSubRow": undefined,
+                                          "onDragHandleDoubleClick": [Function],
+                                          "onRowExpandToggle": [Function],
+                                          "onRowHover": undefined,
+                                          "openCellEditor": [Function],
+                                          "rowKey": "id",
+                                          "selected": Object {
+                                            "idx": 0,
+                                            "rowIdx": 0,
+                                          },
+                                        }
                                       }
                                       cellRenderer={[Function]}
                                       colDisplayEnd={5}
@@ -1821,48 +1821,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                       colVisibleEnd={4}
                                       colVisibleStart={0}
                                       columns={
-                                          Array [
-                                              Object {
-                                                "formatter": [Function],
-                                                "key": "rn_",
-                                                "left": 0,
-                                                "locked": true,
-                                                "name": "",
-                                                "width": 40,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "",
-                                                "left": 40,
-                                                "name": "",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": " ",
-                                                "left": 200,
-                                                "name": " ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "   ",
-                                                "left": 360,
-                                                "name": "   ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "    ",
-                                                "left": 520,
-                                                "name": "    ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                            ]
+                                        Array [
+                                          Object {
+                                            "formatter": [Function],
+                                            "key": "rn_",
+                                            "left": 0,
+                                            "locked": true,
+                                            "name": "",
+                                            "width": 40,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "",
+                                            "left": 40,
+                                            "name": "",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": " ",
+                                            "left": 200,
+                                            "name": " ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "   ",
+                                            "left": 360,
+                                            "name": "   ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "    ",
+                                            "left": 520,
+                                            "name": "    ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                        ]
                                       }
                                       expandedRows={Array []}
                                       height={35}
@@ -1871,48 +1871,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                       isSelected={false}
                                       onMouseOver={undefined}
                                       row={
-                                          Object {
-                                              "rn_": 3,
-                                            }
+                                        Object {
+                                          "rn_": 3,
+                                        }
                                       }
                                       subRowDetails={Object {}}
                                       visibleEnd={-1}
                                       visibleStart={0}
-                                  />,
+                                    />,
                                     <Row
                                       cellMetaData={
-                                          Object {
-                                              "copied": null,
-                                              "dragged": null,
-                                              "enableCellAutoFocus": true,
-                                              "enableCellSelect": true,
-                                              "getCellActions": undefined,
-                                              "getDataGridDOMNode": [Function],
-                                              "handleDragEnterRow": [Function],
-                                              "handleTerminateDrag": [Function],
-                                              "hoveredRowIdx": undefined,
-                                              "isScrollingHorizontallyWithKeyboard": false,
-                                              "isScrollingVerticallyWithKeyboard": false,
-                                              "onAddSubRow": undefined,
-                                              "onCellClick": [Function],
-                                              "onCellContextMenu": [Function],
-                                              "onCellDoubleClick": [Function],
-                                              "onCellExpand": [Function],
-                                              "onCellFocus": [Function],
-                                              "onColumnEvent": [Function],
-                                              "onCommit": [Function],
-                                              "onCommitCancel": [Function],
-                                              "onDeleteSubRow": undefined,
-                                              "onDragHandleDoubleClick": [Function],
-                                              "onRowExpandToggle": [Function],
-                                              "onRowHover": undefined,
-                                              "openCellEditor": [Function],
-                                              "rowKey": "id",
-                                              "selected": Object {
-                                                "idx": 0,
-                                                "rowIdx": 0,
-                                              },
-                                            }
+                                        Object {
+                                          "copied": null,
+                                          "dragged": null,
+                                          "enableCellAutoFocus": true,
+                                          "enableCellSelect": true,
+                                          "getCellActions": undefined,
+                                          "getDataGridDOMNode": [Function],
+                                          "handleDragEnterRow": [Function],
+                                          "handleTerminateDrag": [Function],
+                                          "hoveredRowIdx": undefined,
+                                          "isScrollingHorizontallyWithKeyboard": false,
+                                          "isScrollingVerticallyWithKeyboard": false,
+                                          "onAddSubRow": undefined,
+                                          "onCellClick": [Function],
+                                          "onCellContextMenu": [Function],
+                                          "onCellDoubleClick": [Function],
+                                          "onCellExpand": [Function],
+                                          "onCellFocus": [Function],
+                                          "onColumnEvent": [Function],
+                                          "onCommit": [Function],
+                                          "onCommitCancel": [Function],
+                                          "onDeleteSubRow": undefined,
+                                          "onDragHandleDoubleClick": [Function],
+                                          "onRowExpandToggle": [Function],
+                                          "onRowHover": undefined,
+                                          "openCellEditor": [Function],
+                                          "rowKey": "id",
+                                          "selected": Object {
+                                            "idx": 0,
+                                            "rowIdx": 0,
+                                          },
+                                        }
                                       }
                                       cellRenderer={[Function]}
                                       colDisplayEnd={5}
@@ -1920,48 +1920,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                       colVisibleEnd={4}
                                       colVisibleStart={0}
                                       columns={
-                                          Array [
-                                              Object {
-                                                "formatter": [Function],
-                                                "key": "rn_",
-                                                "left": 0,
-                                                "locked": true,
-                                                "name": "",
-                                                "width": 40,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "",
-                                                "left": 40,
-                                                "name": "",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": " ",
-                                                "left": 200,
-                                                "name": " ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "   ",
-                                                "left": 360,
-                                                "name": "   ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                              Object {
-                                                "editable": false,
-                                                "key": "    ",
-                                                "left": 520,
-                                                "name": "    ",
-                                                "resizable": true,
-                                                "width": 160,
-                                              },
-                                            ]
+                                        Array [
+                                          Object {
+                                            "formatter": [Function],
+                                            "key": "rn_",
+                                            "left": 0,
+                                            "locked": true,
+                                            "name": "",
+                                            "width": 40,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "",
+                                            "left": 40,
+                                            "name": "",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": " ",
+                                            "left": 200,
+                                            "name": " ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "   ",
+                                            "left": 360,
+                                            "name": "   ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                          Object {
+                                            "editable": false,
+                                            "key": "    ",
+                                            "left": 520,
+                                            "name": "    ",
+                                            "resizable": true,
+                                            "width": 160,
+                                          },
+                                        ]
                                       }
                                       expandedRows={Array []}
                                       height={35}
@@ -1970,57 +1970,57 @@ exports[`TableView Blank table when no module id 1`] = `
                                       isSelected={false}
                                       onMouseOver={undefined}
                                       row={
-                                          Object {
-                                              "rn_": 4,
-                                            }
+                                        Object {
+                                          "rn_": 4,
+                                        }
                                       }
                                       subRowDetails={Object {}}
                                       visibleEnd={-1}
                                       visibleStart={0}
-                                  />,
+                                    />,
                                     <div
                                       style={
-                                          Object {
-                                              "height": 210,
-                                            }
+                                        Object {
+                                          "height": 210,
+                                        }
                                       }
-                                  >
+                                    >
                                       <div
-                                          style={
-                                              Object {
-                                                  "width": 40,
-                                                }
+                                        style={
+                                          Object {
+                                            "width": 40,
                                           }
+                                        }
                                       />
                                       <div
-                                          style={
-                                              Object {
-                                                  "width": 160,
-                                                }
+                                        style={
+                                          Object {
+                                            "width": 160,
                                           }
+                                        }
                                       />
                                       <div
-                                          style={
-                                              Object {
-                                                  "width": 160,
-                                                }
+                                        style={
+                                          Object {
+                                            "width": 160,
                                           }
+                                        }
                                       />
                                       <div
-                                          style={
-                                              Object {
-                                                  "width": 160,
-                                                }
+                                        style={
+                                          Object {
+                                            "width": 160,
                                           }
+                                        }
                                       />
                                       <div
-                                          style={
-                                              Object {
-                                                  "width": 160,
-                                                }
+                                        style={
+                                          Object {
+                                            "width": 160,
                                           }
+                                        }
                                       />
-                                  </div>,
+                                    </div>,
                                   ]
                                 }
                                 width={680}
@@ -4852,7 +4852,15 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
 <TableView
   api={
     Object {
-      "render": [Function],
+      "render": [MockFunction] {
+        "calls": Array [
+          Array [
+            100,
+            0,
+            200,
+          ],
+        ],
+      },
     }
   }
   id={100}
@@ -5863,40 +5871,40 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 Array [
                                   <div
                                     style={
-                                        Object {
-                                            "height": 35140,
-                                          }
+                                      Object {
+                                        "height": 35140,
+                                      }
                                     }
-                                >
+                                  >
                                     <div
-                                        style={
-                                            Object {
-                                                "width": 40,
-                                              }
+                                      style={
+                                        Object {
+                                          "width": 40,
                                         }
+                                      }
                                     />
                                     <div
-                                        style={
-                                            Object {
-                                                "width": 160,
-                                              }
+                                      style={
+                                        Object {
+                                          "width": 160,
                                         }
+                                      }
                                     />
                                     <div
-                                        style={
-                                            Object {
-                                                "width": 160,
-                                              }
+                                      style={
+                                        Object {
+                                          "width": 160,
                                         }
+                                      }
                                     />
                                     <div
-                                        style={
-                                            Object {
-                                                "width": 160,
-                                              }
+                                      style={
+                                        Object {
+                                          "width": 160,
                                         }
+                                      }
                                     />
-                                </div>,
+                                  </div>,
                                 ]
                               }
                               width={520}
@@ -5908,40 +5916,40 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   Array [
                                     <div
                                       style={
-                                          Object {
-                                              "height": 35140,
-                                            }
+                                        Object {
+                                          "height": 35140,
+                                        }
                                       }
-                                  >
+                                    >
                                       <div
-                                          style={
-                                              Object {
-                                                  "width": 40,
-                                                }
+                                        style={
+                                          Object {
+                                            "width": 40,
                                           }
+                                        }
                                       />
                                       <div
-                                          style={
-                                              Object {
-                                                  "width": 160,
-                                                }
+                                        style={
+                                          Object {
+                                            "width": 160,
                                           }
+                                        }
                                       />
                                       <div
-                                          style={
-                                              Object {
-                                                  "width": 160,
-                                                }
+                                        style={
+                                          Object {
+                                            "width": 160,
                                           }
+                                        }
                                       />
                                       <div
-                                          style={
-                                              Object {
-                                                  "width": 160,
-                                                }
+                                        style={
+                                          Object {
+                                            "width": 160,
                                           }
+                                        }
                                       />
-                                  </div>,
+                                    </div>,
                                   ]
                                 }
                                 width={520}

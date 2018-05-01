@@ -18,8 +18,8 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with catego
           isReadOnly={false}
           libraryOpen={false}
           name="First Module"
-          setOpenCategory={[Function]}
-      />,
+          setOpenCategory={[MockFunction]}
+        />,
         <DragSource(Module)
           addModule={[Function]}
           dropModule={[Function]}
@@ -28,12 +28,12 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with catego
           isReadOnly={false}
           libraryOpen={false}
           name="Second Module"
-          setOpenCategory={[Function]}
-      />,
+          setOpenCategory={[MockFunction]}
+        />,
       ]
     }
     name="Add data"
-    setOpenCategory={[Function]}
+    setOpenCategory={[MockFunction]}
   >
     <div
       className="card module-category--closed"
@@ -78,8 +78,8 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
           isReadOnly={false}
           libraryOpen={false}
           name="First Module"
-          setOpenCategory={[Function]}
-      />,
+          setOpenCategory={[MockFunction]}
+        />,
         <DragSource(Module)
           addModule={[Function]}
           dropModule={[Function]}
@@ -88,12 +88,12 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
           isReadOnly={false}
           libraryOpen={false}
           name="Second Module"
-          setOpenCategory={[Function]}
-      />,
+          setOpenCategory={[MockFunction]}
+        />,
       ]
     }
     name="Add Data"
-    setOpenCategory={[Function]}
+    setOpenCategory={[MockFunction]}
   >
     <div
       className="card module-category--open"
@@ -127,7 +127,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
             isReadOnly={false}
             libraryOpen={false}
             name="First Module"
-            setOpenCategory={[Function]}
+            setOpenCategory={[MockFunction]}
           >
             <Module
               addModule={[Function]}
@@ -140,7 +140,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
               isReadOnly={false}
               libraryOpen={false}
               name="First Module"
-              setOpenCategory={[Function]}
+              setOpenCategory={[MockFunction]}
             >
               <div
                 className="card ml-module-card"
@@ -186,7 +186,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
             isReadOnly={false}
             libraryOpen={false}
             name="Second Module"
-            setOpenCategory={[Function]}
+            setOpenCategory={[MockFunction]}
           >
             <Module
               addModule={[Function]}
@@ -199,7 +199,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
               isReadOnly={false}
               libraryOpen={false}
               name="Second Module"
-              setOpenCategory={[Function]}
+              setOpenCategory={[MockFunction]}
             >
               <div
                 className="card ml-module-card"
@@ -262,8 +262,8 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
           isReadOnly={false}
           libraryOpen={true}
           name="First Module"
-          setOpenCategory={[Function]}
-      />,
+          setOpenCategory={[MockFunction]}
+        />,
         <DragSource(Module)
           addModule={[Function]}
           dropModule={[Function]}
@@ -272,12 +272,12 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
           isReadOnly={false}
           libraryOpen={true}
           name="Second Module"
-          setOpenCategory={[Function]}
-      />,
+          setOpenCategory={[MockFunction]}
+        />,
       ]
     }
     name="Add Data"
-    setOpenCategory={[Function]}
+    setOpenCategory={[MockFunction]}
   >
     <div
       className="card module-category--open"
@@ -309,7 +309,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
             isReadOnly={false}
             libraryOpen={true}
             name="First Module"
-            setOpenCategory={[Function]}
+            setOpenCategory={[MockFunction]}
           >
             <Module
               addModule={[Function]}
@@ -322,7 +322,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
               isReadOnly={false}
               libraryOpen={true}
               name="First Module"
-              setOpenCategory={[Function]}
+              setOpenCategory={[MockFunction]}
             >
               <div
                 className="card ml-module-card"
@@ -368,7 +368,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
             isReadOnly={false}
             libraryOpen={true}
             name="Second Module"
-            setOpenCategory={[Function]}
+            setOpenCategory={[MockFunction]}
           >
             <Module
               addModule={[Function]}
@@ -381,7 +381,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
               isReadOnly={false}
               libraryOpen={true}
               name="Second Module"
-              setOpenCategory={[Function]}
+              setOpenCategory={[MockFunction]}
             >
               <div
                 className="card ml-module-card"

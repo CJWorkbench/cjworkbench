@@ -4,18 +4,18 @@ exports[`DataVersionSelect Displays empty when no versions available 1`] = `
 <DataVersionSelect
   api={
     Object {
-      "getWfModuleVersions": [Function],
-      "setWfModuleVersion": [Function],
+      "getWfModuleVersions": [MockFunction],
+      "setWfModuleVersion": [MockFunction],
     }
   }
   isReadOnly={true}
-  markDataVersionsRead={[Function]}
+  markDataVersionsRead={[MockFunction]}
   notifications={true}
   revision={202}
   setClickNotification={[Function]}
-  setDataVersionAction={[Function]}
+  setDataVersionAction={[MockFunction]}
   testing={true}
-  updateWfModuleAction={[Function]}
+  updateWfModuleAction={[MockFunction]}
   versions={
     Object {
       "selected": null,
@@ -46,19 +46,30 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
   api={
     Object {
       "loadWorkflow": [Function],
-      "markDataVersionsRead": [Function],
-      "setWfModuleVersion": [Function],
-      "updateWfModule": [Function],
+      "markDataVersionsRead": [MockFunction],
+      "setWfModuleVersion": [MockFunction],
+      "updateWfModule": [MockFunction],
     }
   }
   isReadOnly={false}
-  markDataVersionsRead={[Function]}
+  markDataVersionsRead={[MockFunction]}
   notifications={true}
   revision={202}
   setClickNotification={[Function]}
-  setDataVersionAction={[Function]}
+  setDataVersionAction={[MockFunction]}
   testing={true}
-  updateWfModuleAction={[Function]}
+  updateWfModuleAction={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          808,
+          Object {
+            "notifications": false,
+          },
+        ],
+      ],
+    }
+  }
   versions={
     Object {
       "selected": "2017-04-10 17:57:58.324Z",
@@ -125,19 +136,19 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
   api={
     Object {
       "loadWorkflow": [Function],
-      "markDataVersionsRead": [Function],
-      "setWfModuleVersion": [Function],
-      "updateWfModule": [Function],
+      "markDataVersionsRead": [MockFunction],
+      "setWfModuleVersion": [MockFunction],
+      "updateWfModule": [MockFunction],
     }
   }
   isReadOnly={false}
-  markDataVersionsRead={[Function]}
+  markDataVersionsRead={[MockFunction]}
   notifications={true}
   revision={202}
   setClickNotification={[Function]}
-  setDataVersionAction={[Function]}
+  setDataVersionAction={[MockFunction]}
   testing={true}
-  updateWfModuleAction={[Function]}
+  updateWfModuleAction={[MockFunction]}
   versions={
     Object {
       "selected": "2017-04-10 17:57:58.324Z",
@@ -358,19 +369,28 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
   api={
     Object {
       "loadWorkflow": [Function],
-      "markDataVersionsRead": [Function],
-      "setWfModuleVersion": [Function],
-      "updateWfModule": [Function],
+      "markDataVersionsRead": [MockFunction],
+      "setWfModuleVersion": [MockFunction],
+      "updateWfModule": [MockFunction],
     }
   }
   isReadOnly={false}
-  markDataVersionsRead={[Function]}
+  markDataVersionsRead={[MockFunction]}
   notifications={true}
   revision={202}
   setClickNotification={[Function]}
-  setDataVersionAction={[Function]}
+  setDataVersionAction={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          808,
+          "2017-07-10 17:57:58.324Z",
+        ],
+      ],
+    }
+  }
   testing={true}
-  updateWfModuleAction={[Function]}
+  updateWfModuleAction={[MockFunction]}
   versions={
     Object {
       "selected": "2017-04-10 17:57:58.324Z",

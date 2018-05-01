@@ -19,7 +19,7 @@ exports[`Renders the grid 1`] = `
     ]
   }
   getRow={[Function]}
-  onEditCell={[Function]}
+  onEditCell={[MockFunction]}
   totalRows={2}
 >
   <ReactDataGrid
@@ -1105,38 +1105,38 @@ exports[`Renders the grid 1`] = `
                           Array [
                             <Row
                               cellMetaData={
-                                  Object {
-                                      "copied": null,
-                                      "dragged": null,
-                                      "enableCellAutoFocus": true,
-                                      "enableCellSelect": true,
-                                      "getCellActions": undefined,
-                                      "getDataGridDOMNode": [Function],
-                                      "handleDragEnterRow": [Function],
-                                      "handleTerminateDrag": [Function],
-                                      "hoveredRowIdx": undefined,
-                                      "isScrollingHorizontallyWithKeyboard": false,
-                                      "isScrollingVerticallyWithKeyboard": false,
-                                      "onAddSubRow": undefined,
-                                      "onCellClick": [Function],
-                                      "onCellContextMenu": [Function],
-                                      "onCellDoubleClick": [Function],
-                                      "onCellExpand": [Function],
-                                      "onCellFocus": [Function],
-                                      "onColumnEvent": [Function],
-                                      "onCommit": [Function],
-                                      "onCommitCancel": [Function],
-                                      "onDeleteSubRow": undefined,
-                                      "onDragHandleDoubleClick": [Function],
-                                      "onRowExpandToggle": [Function],
-                                      "onRowHover": undefined,
-                                      "openCellEditor": [Function],
-                                      "rowKey": "id",
-                                      "selected": Object {
-                                        "idx": 0,
-                                        "rowIdx": 0,
-                                      },
-                                    }
+                                Object {
+                                  "copied": null,
+                                  "dragged": null,
+                                  "enableCellAutoFocus": true,
+                                  "enableCellSelect": true,
+                                  "getCellActions": undefined,
+                                  "getDataGridDOMNode": [Function],
+                                  "handleDragEnterRow": [Function],
+                                  "handleTerminateDrag": [Function],
+                                  "hoveredRowIdx": undefined,
+                                  "isScrollingHorizontallyWithKeyboard": false,
+                                  "isScrollingVerticallyWithKeyboard": false,
+                                  "onAddSubRow": undefined,
+                                  "onCellClick": [Function],
+                                  "onCellContextMenu": [Function],
+                                  "onCellDoubleClick": [Function],
+                                  "onCellExpand": [Function],
+                                  "onCellFocus": [Function],
+                                  "onColumnEvent": [Function],
+                                  "onCommit": [Function],
+                                  "onCommitCancel": [Function],
+                                  "onDeleteSubRow": undefined,
+                                  "onDragHandleDoubleClick": [Function],
+                                  "onRowExpandToggle": [Function],
+                                  "onRowHover": undefined,
+                                  "openCellEditor": [Function],
+                                  "rowKey": "id",
+                                  "selected": Object {
+                                    "idx": 0,
+                                    "rowIdx": 0,
+                                  },
+                                }
                               }
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
@@ -1144,48 +1144,48 @@ exports[`Renders the grid 1`] = `
                               colVisibleEnd={4}
                               colVisibleStart={0}
                               columns={
-                                  Array [
-                                      Object {
-                                        "formatter": [Function],
-                                        "key": "rn__",
-                                        "left": 0,
-                                        "locked": true,
-                                        "name": "",
-                                        "width": 40,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "key": "aaa",
-                                        "left": 40,
-                                        "name": "aaa",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "key": "bbbb",
-                                        "left": 200,
-                                        "name": "bbbb",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "key": "ccccc",
-                                        "left": 360,
-                                        "name": "ccccc",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "key": "rn_",
-                                        "left": 520,
-                                        "name": "rn_",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                    ]
+                                Array [
+                                  Object {
+                                    "formatter": [Function],
+                                    "key": "rn__",
+                                    "left": 0,
+                                    "locked": true,
+                                    "name": "",
+                                    "width": 40,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "key": "aaa",
+                                    "left": 40,
+                                    "name": "aaa",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "key": "bbbb",
+                                    "left": 200,
+                                    "name": "bbbb",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "key": "ccccc",
+                                    "left": 360,
+                                    "name": "ccccc",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "key": "rn_",
+                                    "left": 520,
+                                    "name": "rn_",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                ]
                               }
                               expandedRows={Array []}
                               height={35}
@@ -1194,52 +1194,52 @@ exports[`Renders the grid 1`] = `
                               isSelected={false}
                               onMouseOver={undefined}
                               row={
-                                  Object {
-                                      "aaa": "9",
-                                      "bbbb": "foo",
-                                      "ccccc": "9",
-                                      "rn_": "someval",
-                                      "rn__": 1,
-                                    }
+                                Object {
+                                  "aaa": "9",
+                                  "bbbb": "foo",
+                                  "ccccc": "9",
+                                  "rn_": "someval",
+                                  "rn__": 1,
+                                }
                               }
                               subRowDetails={Object {}}
                               visibleEnd={-1}
                               visibleStart={0}
-                          />,
+                            />,
                             <Row
                               cellMetaData={
-                                  Object {
-                                      "copied": null,
-                                      "dragged": null,
-                                      "enableCellAutoFocus": true,
-                                      "enableCellSelect": true,
-                                      "getCellActions": undefined,
-                                      "getDataGridDOMNode": [Function],
-                                      "handleDragEnterRow": [Function],
-                                      "handleTerminateDrag": [Function],
-                                      "hoveredRowIdx": undefined,
-                                      "isScrollingHorizontallyWithKeyboard": false,
-                                      "isScrollingVerticallyWithKeyboard": false,
-                                      "onAddSubRow": undefined,
-                                      "onCellClick": [Function],
-                                      "onCellContextMenu": [Function],
-                                      "onCellDoubleClick": [Function],
-                                      "onCellExpand": [Function],
-                                      "onCellFocus": [Function],
-                                      "onColumnEvent": [Function],
-                                      "onCommit": [Function],
-                                      "onCommitCancel": [Function],
-                                      "onDeleteSubRow": undefined,
-                                      "onDragHandleDoubleClick": [Function],
-                                      "onRowExpandToggle": [Function],
-                                      "onRowHover": undefined,
-                                      "openCellEditor": [Function],
-                                      "rowKey": "id",
-                                      "selected": Object {
-                                        "idx": 0,
-                                        "rowIdx": 0,
-                                      },
-                                    }
+                                Object {
+                                  "copied": null,
+                                  "dragged": null,
+                                  "enableCellAutoFocus": true,
+                                  "enableCellSelect": true,
+                                  "getCellActions": undefined,
+                                  "getDataGridDOMNode": [Function],
+                                  "handleDragEnterRow": [Function],
+                                  "handleTerminateDrag": [Function],
+                                  "hoveredRowIdx": undefined,
+                                  "isScrollingHorizontallyWithKeyboard": false,
+                                  "isScrollingVerticallyWithKeyboard": false,
+                                  "onAddSubRow": undefined,
+                                  "onCellClick": [Function],
+                                  "onCellContextMenu": [Function],
+                                  "onCellDoubleClick": [Function],
+                                  "onCellExpand": [Function],
+                                  "onCellFocus": [Function],
+                                  "onColumnEvent": [Function],
+                                  "onCommit": [Function],
+                                  "onCommitCancel": [Function],
+                                  "onDeleteSubRow": undefined,
+                                  "onDragHandleDoubleClick": [Function],
+                                  "onRowExpandToggle": [Function],
+                                  "onRowHover": undefined,
+                                  "openCellEditor": [Function],
+                                  "rowKey": "id",
+                                  "selected": Object {
+                                    "idx": 0,
+                                    "rowIdx": 0,
+                                  },
+                                }
                               }
                               cellRenderer={[Function]}
                               colDisplayEnd={5}
@@ -1247,48 +1247,48 @@ exports[`Renders the grid 1`] = `
                               colVisibleEnd={4}
                               colVisibleStart={0}
                               columns={
-                                  Array [
-                                      Object {
-                                        "formatter": [Function],
-                                        "key": "rn__",
-                                        "left": 0,
-                                        "locked": true,
-                                        "name": "",
-                                        "width": 40,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "key": "aaa",
-                                        "left": 40,
-                                        "name": "aaa",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "key": "bbbb",
-                                        "left": 200,
-                                        "name": "bbbb",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "key": "ccccc",
-                                        "left": 360,
-                                        "name": "ccccc",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "key": "rn_",
-                                        "left": 520,
-                                        "name": "rn_",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                    ]
+                                Array [
+                                  Object {
+                                    "formatter": [Function],
+                                    "key": "rn__",
+                                    "left": 0,
+                                    "locked": true,
+                                    "name": "",
+                                    "width": 40,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "key": "aaa",
+                                    "left": 40,
+                                    "name": "aaa",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "key": "bbbb",
+                                    "left": 200,
+                                    "name": "bbbb",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "key": "ccccc",
+                                    "left": 360,
+                                    "name": "ccccc",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "key": "rn_",
+                                    "left": 520,
+                                    "name": "rn_",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                ]
                               }
                               expandedRows={Array []}
                               height={35}
@@ -1297,18 +1297,18 @@ exports[`Renders the grid 1`] = `
                               isSelected={false}
                               onMouseOver={undefined}
                               row={
-                                  Object {
-                                      "aaa": "9",
-                                      "bbbb": "9",
-                                      "ccccc": "baz",
-                                      "rn_": "someotherval",
-                                      "rn__": 2,
-                                    }
+                                Object {
+                                  "aaa": "9",
+                                  "bbbb": "9",
+                                  "ccccc": "baz",
+                                  "rn_": "someotherval",
+                                  "rn__": 2,
+                                }
                               }
                               subRowDetails={Object {}}
                               visibleEnd={-1}
                               visibleStart={0}
-                          />,
+                            />,
                           ]
                         }
                         width={680}
@@ -1320,38 +1320,38 @@ exports[`Renders the grid 1`] = `
                             Array [
                               <Row
                                 cellMetaData={
-                                    Object {
-                                        "copied": null,
-                                        "dragged": null,
-                                        "enableCellAutoFocus": true,
-                                        "enableCellSelect": true,
-                                        "getCellActions": undefined,
-                                        "getDataGridDOMNode": [Function],
-                                        "handleDragEnterRow": [Function],
-                                        "handleTerminateDrag": [Function],
-                                        "hoveredRowIdx": undefined,
-                                        "isScrollingHorizontallyWithKeyboard": false,
-                                        "isScrollingVerticallyWithKeyboard": false,
-                                        "onAddSubRow": undefined,
-                                        "onCellClick": [Function],
-                                        "onCellContextMenu": [Function],
-                                        "onCellDoubleClick": [Function],
-                                        "onCellExpand": [Function],
-                                        "onCellFocus": [Function],
-                                        "onColumnEvent": [Function],
-                                        "onCommit": [Function],
-                                        "onCommitCancel": [Function],
-                                        "onDeleteSubRow": undefined,
-                                        "onDragHandleDoubleClick": [Function],
-                                        "onRowExpandToggle": [Function],
-                                        "onRowHover": undefined,
-                                        "openCellEditor": [Function],
-                                        "rowKey": "id",
-                                        "selected": Object {
-                                          "idx": 0,
-                                          "rowIdx": 0,
-                                        },
-                                      }
+                                  Object {
+                                    "copied": null,
+                                    "dragged": null,
+                                    "enableCellAutoFocus": true,
+                                    "enableCellSelect": true,
+                                    "getCellActions": undefined,
+                                    "getDataGridDOMNode": [Function],
+                                    "handleDragEnterRow": [Function],
+                                    "handleTerminateDrag": [Function],
+                                    "hoveredRowIdx": undefined,
+                                    "isScrollingHorizontallyWithKeyboard": false,
+                                    "isScrollingVerticallyWithKeyboard": false,
+                                    "onAddSubRow": undefined,
+                                    "onCellClick": [Function],
+                                    "onCellContextMenu": [Function],
+                                    "onCellDoubleClick": [Function],
+                                    "onCellExpand": [Function],
+                                    "onCellFocus": [Function],
+                                    "onColumnEvent": [Function],
+                                    "onCommit": [Function],
+                                    "onCommitCancel": [Function],
+                                    "onDeleteSubRow": undefined,
+                                    "onDragHandleDoubleClick": [Function],
+                                    "onRowExpandToggle": [Function],
+                                    "onRowHover": undefined,
+                                    "openCellEditor": [Function],
+                                    "rowKey": "id",
+                                    "selected": Object {
+                                      "idx": 0,
+                                      "rowIdx": 0,
+                                    },
+                                  }
                                 }
                                 cellRenderer={[Function]}
                                 colDisplayEnd={5}
@@ -1359,48 +1359,48 @@ exports[`Renders the grid 1`] = `
                                 colVisibleEnd={4}
                                 colVisibleStart={0}
                                 columns={
-                                    Array [
-                                        Object {
-                                          "formatter": [Function],
-                                          "key": "rn__",
-                                          "left": 0,
-                                          "locked": true,
-                                          "name": "",
-                                          "width": 40,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "key": "aaa",
-                                          "left": 40,
-                                          "name": "aaa",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "key": "bbbb",
-                                          "left": 200,
-                                          "name": "bbbb",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "key": "ccccc",
-                                          "left": 360,
-                                          "name": "ccccc",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "key": "rn_",
-                                          "left": 520,
-                                          "name": "rn_",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                      ]
+                                  Array [
+                                    Object {
+                                      "formatter": [Function],
+                                      "key": "rn__",
+                                      "left": 0,
+                                      "locked": true,
+                                      "name": "",
+                                      "width": 40,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "key": "aaa",
+                                      "left": 40,
+                                      "name": "aaa",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "key": "bbbb",
+                                      "left": 200,
+                                      "name": "bbbb",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "key": "ccccc",
+                                      "left": 360,
+                                      "name": "ccccc",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "key": "rn_",
+                                      "left": 520,
+                                      "name": "rn_",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                  ]
                                 }
                                 expandedRows={Array []}
                                 height={35}
@@ -1409,52 +1409,52 @@ exports[`Renders the grid 1`] = `
                                 isSelected={false}
                                 onMouseOver={undefined}
                                 row={
-                                    Object {
-                                        "aaa": "9",
-                                        "bbbb": "foo",
-                                        "ccccc": "9",
-                                        "rn_": "someval",
-                                        "rn__": 1,
-                                      }
+                                  Object {
+                                    "aaa": "9",
+                                    "bbbb": "foo",
+                                    "ccccc": "9",
+                                    "rn_": "someval",
+                                    "rn__": 1,
+                                  }
                                 }
                                 subRowDetails={Object {}}
                                 visibleEnd={-1}
                                 visibleStart={0}
-                            />,
+                              />,
                               <Row
                                 cellMetaData={
-                                    Object {
-                                        "copied": null,
-                                        "dragged": null,
-                                        "enableCellAutoFocus": true,
-                                        "enableCellSelect": true,
-                                        "getCellActions": undefined,
-                                        "getDataGridDOMNode": [Function],
-                                        "handleDragEnterRow": [Function],
-                                        "handleTerminateDrag": [Function],
-                                        "hoveredRowIdx": undefined,
-                                        "isScrollingHorizontallyWithKeyboard": false,
-                                        "isScrollingVerticallyWithKeyboard": false,
-                                        "onAddSubRow": undefined,
-                                        "onCellClick": [Function],
-                                        "onCellContextMenu": [Function],
-                                        "onCellDoubleClick": [Function],
-                                        "onCellExpand": [Function],
-                                        "onCellFocus": [Function],
-                                        "onColumnEvent": [Function],
-                                        "onCommit": [Function],
-                                        "onCommitCancel": [Function],
-                                        "onDeleteSubRow": undefined,
-                                        "onDragHandleDoubleClick": [Function],
-                                        "onRowExpandToggle": [Function],
-                                        "onRowHover": undefined,
-                                        "openCellEditor": [Function],
-                                        "rowKey": "id",
-                                        "selected": Object {
-                                          "idx": 0,
-                                          "rowIdx": 0,
-                                        },
-                                      }
+                                  Object {
+                                    "copied": null,
+                                    "dragged": null,
+                                    "enableCellAutoFocus": true,
+                                    "enableCellSelect": true,
+                                    "getCellActions": undefined,
+                                    "getDataGridDOMNode": [Function],
+                                    "handleDragEnterRow": [Function],
+                                    "handleTerminateDrag": [Function],
+                                    "hoveredRowIdx": undefined,
+                                    "isScrollingHorizontallyWithKeyboard": false,
+                                    "isScrollingVerticallyWithKeyboard": false,
+                                    "onAddSubRow": undefined,
+                                    "onCellClick": [Function],
+                                    "onCellContextMenu": [Function],
+                                    "onCellDoubleClick": [Function],
+                                    "onCellExpand": [Function],
+                                    "onCellFocus": [Function],
+                                    "onColumnEvent": [Function],
+                                    "onCommit": [Function],
+                                    "onCommitCancel": [Function],
+                                    "onDeleteSubRow": undefined,
+                                    "onDragHandleDoubleClick": [Function],
+                                    "onRowExpandToggle": [Function],
+                                    "onRowHover": undefined,
+                                    "openCellEditor": [Function],
+                                    "rowKey": "id",
+                                    "selected": Object {
+                                      "idx": 0,
+                                      "rowIdx": 0,
+                                    },
+                                  }
                                 }
                                 cellRenderer={[Function]}
                                 colDisplayEnd={5}
@@ -1462,48 +1462,48 @@ exports[`Renders the grid 1`] = `
                                 colVisibleEnd={4}
                                 colVisibleStart={0}
                                 columns={
-                                    Array [
-                                        Object {
-                                          "formatter": [Function],
-                                          "key": "rn__",
-                                          "left": 0,
-                                          "locked": true,
-                                          "name": "",
-                                          "width": 40,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "key": "aaa",
-                                          "left": 40,
-                                          "name": "aaa",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "key": "bbbb",
-                                          "left": 200,
-                                          "name": "bbbb",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "key": "ccccc",
-                                          "left": 360,
-                                          "name": "ccccc",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "key": "rn_",
-                                          "left": 520,
-                                          "name": "rn_",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                      ]
+                                  Array [
+                                    Object {
+                                      "formatter": [Function],
+                                      "key": "rn__",
+                                      "left": 0,
+                                      "locked": true,
+                                      "name": "",
+                                      "width": 40,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "key": "aaa",
+                                      "left": 40,
+                                      "name": "aaa",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "key": "bbbb",
+                                      "left": 200,
+                                      "name": "bbbb",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "key": "ccccc",
+                                      "left": 360,
+                                      "name": "ccccc",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "key": "rn_",
+                                      "left": 520,
+                                      "name": "rn_",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                  ]
                                 }
                                 expandedRows={Array []}
                                 height={35}
@@ -1512,18 +1512,18 @@ exports[`Renders the grid 1`] = `
                                 isSelected={false}
                                 onMouseOver={undefined}
                                 row={
-                                    Object {
-                                        "aaa": "9",
-                                        "bbbb": "9",
-                                        "ccccc": "baz",
-                                        "rn_": "someotherval",
-                                        "rn__": 2,
-                                      }
+                                  Object {
+                                    "aaa": "9",
+                                    "bbbb": "9",
+                                    "ccccc": "baz",
+                                    "rn_": "someotherval",
+                                    "rn__": 2,
+                                  }
                                 }
                                 subRowDetails={Object {}}
                                 visibleEnd={-1}
                                 visibleStart={0}
-                            />,
+                              />,
                             ]
                           }
                           width={680}

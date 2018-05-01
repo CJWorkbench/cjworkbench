@@ -4,7 +4,7 @@ exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state 
 <EditableNotes
   api={
     Object {
-      "setWfModuleNotes": [Function],
+      "setWfModuleNotes": [MockFunction],
     }
   }
   hideNotes={[Function]}

@@ -2,7 +2,7 @@
 
 exports[`WfModuleHeader Mounts and does not focus 1`] = `
 <WfModuleHeader
-  focusModule={[Function]}
+  focusModule={[MockFunction]}
   isSelected={false}
   moduleIcon="some-icon"
   moduleName="Some module name"
@@ -45,7 +45,47 @@ exports[`WfModuleHeader Mounts and does not focus 1`] = `
 
 exports[`WfModuleHeader Mounts and focuses 1`] = `
 <WfModuleHeader
-  focusModule={[Function]}
+  focusModule={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          <div
+            class="wf-module--placeholder mx-auto"
+            data-reactroot=""
+          >
+            <div
+              class="card-block p-0"
+            >
+              <div
+                class="module-card-info"
+              >
+                <div
+                  class="module-card-header"
+                >
+                  <div
+                    class="module-header-content"
+                  >
+                    <div
+                      class="d-flex justify-content-start align-items-center"
+                    >
+                      <div
+                        class="icon-some-icon WFmodule-icon t-vl-gray mr-2"
+                      />
+                      <div
+                        class="t-vl-gray WFmodule-name"
+                      >
+                        Some module name
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>,
+        ],
+      ],
+    }
+  }
   isSelected={true}
   moduleIcon="some-icon"
   moduleName="Some module name"
