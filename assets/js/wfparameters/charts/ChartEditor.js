@@ -137,8 +137,8 @@ export default class ChartEditor extends React.Component {
     // Make a copy so we can remove the inpit data
     let stateCopy = this.deepCopyState(state);
     Object.assign(stateCopy.chartProps, {data: undefined, input: undefined});
-    let newStateString = JSON.stringify(state);
-    store.dispatch(setParamValueActionByIdName(this.props.wfModuleId, 'chart_editor', newStateString));
+    let newState = {value: JSON.stringify(state)};
+    store.dispatch(setParamValueActionByIdName(this.props.wfModuleId, 'chart_editor', newState));
   }
 
   deepCopyState(state) {
