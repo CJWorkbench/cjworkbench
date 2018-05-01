@@ -21,7 +21,6 @@
     "d3-shape": "^1.0.4",
     "d3-time-format": "^2.0.3",
     "dateformat": "^2.0.0",
-    "file-loader": "^1.1.11",
     "fine-uploader": "^5.16.2",
     "fixed-data-table": "^0.6.3",
     "flux": "^3.1.2",
@@ -67,8 +66,7 @@
     "sugar-date": "^1.5.1",
     "superagent": "^3.8.3",
     "svg-react": "^1.0.9",
-    "timediff": "^1.1.1",
-    "url-loader": "^1.0.1"
+    "timediff": "^1.1.1"
   },
   "devDependencies": {
     "babel": "^6.23.0",
@@ -81,6 +79,7 @@
     "empty-module": "0.0.2",
     "enzyme": "^2.8.2",
     "enzyme-to-json": "^1.5.1",
+    "file-loader": "^1.1.11",
     "jest": "^19.0.2",
     "jest-fetch-mock": "^1.5.0",
     "mini-css-extract-plugin": "^0.4.0",
@@ -92,7 +91,8 @@
     "svg-react-loader": "^0.4.5",
     "webpack": "^4.6.0",
     "webpack-bundle-tracker": "^0.3.0",
-    "webpack-cli": "^2.1.2"
+    "webpack-cli": "^2.1.2",
+    "url-loader": "^1.0.1"
   },
   "scripts": {
     "test": "jest",
