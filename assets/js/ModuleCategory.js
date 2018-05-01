@@ -19,9 +19,8 @@ export default class ModuleCategory extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      collapsed: props.collapsed
+      collapsed: props.collapsed   // relevant only when !this.props.libraryOpen
     };
-    this.toggleCollapse = this.toggleCollapse.bind(this);
     this.openCategory = this.openCategory.bind(this);
     this.collapseAll = this.collapseAll.bind(this);
   }
@@ -31,10 +30,6 @@ export default class ModuleCategory extends React.Component {
     this.setState({collapsed: newProps.collapsed})
   }
 
-  toggleCollapse() {
-    var newCollapsed = !this.state.collapsed;
-    this.props.setOpenCategory(newCollapsed ? null : this.props.name); // tell parent, so it can close other cats
-  }
 
   openCategory() {
     this.props.setOpenCategory(this.props.name); // tell parent to close all
@@ -50,8 +45,6 @@ export default class ModuleCategory extends React.Component {
     // Provides margins around opened library category
     var cardClass = isOpen ? 'module-category--open' : 'module-category--closed';
 
-    var sortIcon = isOpen ? 'icon-sort-up-vl-gray' : 'icon-sort-down-vl-gray';
-
     const icons = {
       'Add data': 'database',
       'Clean': 'wrangle',
@@ -59,15 +52,14 @@ export default class ModuleCategory extends React.Component {
       'Visualize': 'chart',
       'Code': 'code',
       'Other': 'more'
-    }
+    };
     var categoryIcon = 'icon-' + icons[this.props.name] + ' ml-icon';
 
     var categoryHead;
     if (this.props.libraryOpen) {
-      categoryHead =  <div className='first-level' onClick={this.toggleCollapse} >
+      categoryHead =  <div className='first-level'>
                         <div className='category-container' >
                           <span className='category-name'>{this.props.name}</span>
-                          <div className={sortIcon} />
                         </div>
                       </div>
     } else {
@@ -85,9 +77,8 @@ export default class ModuleCategory extends React.Component {
     // do not render list of modules if both library and category are closed
     var moduleList;
     if (this.props.libraryOpen) {
-      moduleList =  <Collapse isOpen={isOpen}>
-                      <div className="ml-list">{this.props.modules}</div>
-                    </Collapse>
+      moduleList =  <div className="ml-list">{this.props.modules}</div>
+
     } else if (isOpen) {
       moduleList =  <div
                       className="ml-list-mini"

@@ -22,7 +22,7 @@ describe('ModuleCategory ', () => {
   var setOpenCategory;
   var modules;
 
-  describe('Library open, category collapsed', () => {
+  describe('Library open', () => {
 
     beforeEach(() => {
       setOpenCategory = jest.fn();
@@ -34,9 +34,9 @@ describe('ModuleCategory ', () => {
           id={88}
           addModule={() => {}}
           dropModule={() => {}}
-          isReadOnly={false} 
-          setOpenCategory={setOpenCategory}    
-          libraryOpen={true}                  
+          isReadOnly={false}
+          setOpenCategory={setOpenCategory}
+          libraryOpen={true}
         />,
         <Module
           key={"Second Module"}
@@ -45,9 +45,9 @@ describe('ModuleCategory ', () => {
           id={101}
           addModule={() => {}}
           dropModule={() => {}}
-          isReadOnly={false} 
-          setOpenCategory={setOpenCategory}    
-          libraryOpen={true}                  
+          isReadOnly={false}
+          setOpenCategory={setOpenCategory}
+          libraryOpen={true}
         />
       ];
       wrapper = mount(
@@ -56,9 +56,9 @@ describe('ModuleCategory ', () => {
             name={"Add Data"}
             modules={modules}
             isReadOnly={false}
-            collapsed={true}
             setOpenCategory={setOpenCategory}
             libraryOpen={true}
+            collapsed={false}
           />
         </DragDropContextProvider>
       );
@@ -72,77 +72,8 @@ describe('ModuleCategory ', () => {
       expect(wrapper.find('.ml-module-card')).toHaveLength(2);
     });
 
-    it('Clicking an collapsed category will expand it', () => {
-      let category = wrapper.find('.first-level');
-      expect(category).toHaveLength(1);
-      let moduleList = wrapper.find('Collapse');
-      expect(moduleList).toHaveLength(1);
-      expect(moduleList.get(0).props.isOpen).toBe(false);
-      category.simulate('click');
-      expect(setOpenCategory.mock.calls.length).toBe(1); 
-    });
   });
 
-  describe('Library open, category open', () => {
-
-    beforeEach(() => {
-      setOpenCategory = jest.fn();
-      modules = [
-        <Module
-          key={"First Module"}
-          name={"First Module"}
-          icon={"add"}
-          id={88}
-          addModule={() => {}}
-          dropModule={() => {}}
-          isReadOnly={false} 
-          setOpenCategory={setOpenCategory}  
-          libraryOpen={true}                    
-        />,
-        <Module
-          key={"Second Module"}
-          name={"Second Module"}
-          icon={"url"}
-          id={101}
-          addModule={() => {}}
-          dropModule={() => {}}
-          isReadOnly={false} 
-          setOpenCategory={setOpenCategory}   
-          libraryOpen={true}                   
-        />
-      ];
-      wrapper = mount(
-        <DragDropContextProvider backend={HTML5Backend}>
-          <ModuleCategory
-            name={"Add Data"}
-            modules={modules}
-            isReadOnly={false}
-            collapsed={false}
-            setOpenCategory={setOpenCategory}
-            libraryOpen={true}
-          />
-        </DragDropContextProvider>
-      )
-    });
-    afterEach(() => {
-      wrapper.unmount();
-    });
-
-    it('Clicking an open category will collapse it', () => {
-      // find category card
-      let category = wrapper.find('.first-level');
-      expect(category).toHaveLength(1);
-      // find Collapse component
-      let moduleList = wrapper.find('Collapse');
-      expect(moduleList).toHaveLength(1);
-      // access isOpen property of Collapse, check that it is closed
-      expect(moduleList.get(0).props.isOpen).toBe(true);
-      // simulate a click on category
-      category.simulate('click');
-      // check: was setOpenCategory() called from props?
-      expect(setOpenCategory.mock.calls.length).toBe(1); 
-    });
-  });
 
   describe('Library closed, category collapsed ', () => {
 
@@ -156,9 +87,9 @@ describe('ModuleCategory ', () => {
           id={88}
           addModule={() => {}}
           dropModule={() => {}}
-          isReadOnly={false} 
-          setOpenCategory={setOpenCategory}    
-          libraryOpen={false}                  
+          isReadOnly={false}
+          setOpenCategory={setOpenCategory}
+          libraryOpen={false}
         />,
         <Module
           key={"Second Module"}
@@ -167,9 +98,9 @@ describe('ModuleCategory ', () => {
           id={101}
           addModule={() => {}}
           dropModule={() => {}}
-          isReadOnly={false} 
-          setOpenCategory={setOpenCategory}   
-          libraryOpen={false}                             
+          isReadOnly={false}
+          setOpenCategory={setOpenCategory}
+          libraryOpen={false}
         />
       ];
       wrapper = mount(
@@ -207,7 +138,7 @@ describe('ModuleCategory ', () => {
       // mouse enters category
       category.simulate('mouseEnter');
       // check: setOpenCategory() called from props
-      expect(setOpenCategory.mock.calls.length).toBe(1); 
+      expect(setOpenCategory.mock.calls.length).toBe(1);
     });
   });
 
@@ -223,9 +154,9 @@ describe('ModuleCategory ', () => {
           id={88}
           addModule={() => {}}
           dropModule={() => {}}
-          isReadOnly={false} 
-          setOpenCategory={setOpenCategory}    
-          libraryOpen={false}                            
+          isReadOnly={false}
+          setOpenCategory={setOpenCategory}
+          libraryOpen={false}
         />,
         <Module
           key={"Second Module"}
@@ -234,9 +165,9 @@ describe('ModuleCategory ', () => {
           id={101}
           addModule={() => {}}
           dropModule={() => {}}
-          isReadOnly={false} 
-          setOpenCategory={setOpenCategory}    
-          libraryOpen={false}                            
+          isReadOnly={false}
+          setOpenCategory={setOpenCategory}
+          libraryOpen={false}
         />
       ];
       wrapper = mount(
@@ -270,7 +201,7 @@ describe('ModuleCategory ', () => {
       let moduleList = wrapper.find('.ml-list-mini');
       expect(moduleList).toHaveLength(1);
       category.simulate('mouseLeave');
-      expect(setOpenCategory.mock.calls.length).toBe(1); 
+      expect(setOpenCategory.mock.calls.length).toBe(1);
     });
 
     it('Mouse leave events on module list will close list display', () => {

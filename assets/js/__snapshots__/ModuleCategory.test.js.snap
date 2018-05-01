@@ -244,12 +244,12 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
 </DragDropContextProvider>
 `;
 
-exports[`ModuleCategory  Library open, category collapsed Renders with list of Module components 1`] = `
+exports[`ModuleCategory  Library open Renders with list of Module components 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
   <ModuleCategory
-    collapsed={true}
+    collapsed={false}
     isReadOnly={false}
     libraryOpen={true}
     modules={
@@ -280,14 +280,13 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
     setOpenCategory={[Function]}
   >
     <div
-      className="card module-category--closed"
+      className="card module-category--open"
     >
       <div
         className="module-category--wrapper"
       >
         <div
           className="first-level"
-          onClick={[Function]}
         >
           <div
             className="category-container"
@@ -297,151 +296,130 @@ exports[`ModuleCategory  Library open, category collapsed Renders with list of M
             >
               Add Data
             </span>
-            <div
-              className="icon-sort-down-vl-gray"
-            />
           </div>
         </div>
-        <Collapse
-          delay={
-            Object {
-              "hide": 350,
-              "show": 350,
-            }
-          }
-          isOpen={false}
-          onClosed={[Function]}
-          onOpened={[Function]}
-          tag="div"
+        <div
+          className="ml-list"
         >
-          <div
-            className="collapse"
-            style={Object {}}
+          <DragSource(Module)
+            addModule={[Function]}
+            dropModule={[Function]}
+            icon="add"
+            id={88}
+            isReadOnly={false}
+            libraryOpen={true}
+            name="First Module"
+            setOpenCategory={[Function]}
           >
-            <div
-              className="ml-list"
+            <Module
+              addModule={[Function]}
+              connectDragPreview={[Function]}
+              connectDragSource={[Function]}
+              dropModule={[Function]}
+              icon="add"
+              id={88}
+              isDragging={false}
+              isReadOnly={false}
+              libraryOpen={true}
+              name="First Module"
+              setOpenCategory={[Function]}
             >
-              <DragSource(Module)
-                addModule={[Function]}
-                dropModule={[Function]}
-                icon="add"
-                id={88}
-                isReadOnly={false}
-                libraryOpen={true}
-                name="First Module"
-                setOpenCategory={[Function]}
+              <div
+                className="card ml-module-card"
+                onClick={[Function]}
               >
-                <Module
-                  addModule={[Function]}
-                  connectDragPreview={[Function]}
-                  connectDragSource={[Function]}
-                  dropModule={[Function]}
-                  icon="add"
-                  id={88}
-                  isDragging={false}
-                  isReadOnly={false}
-                  libraryOpen={true}
-                  name="First Module"
-                  setOpenCategory={[Function]}
+                <div
+                  className="second-level d-flex"
                 >
                   <div
-                    className="card ml-module-card"
-                    onClick={[Function]}
+                    className="d-flex flex-row align-items-center"
                   >
                     <div
-                      className="second-level d-flex"
+                      className="ml-icon-container"
                     >
                       <div
-                        className="d-flex flex-row align-items-center"
-                      >
-                        <div
-                          className="ml-icon-container"
-                        >
-                          <div
-                            className="icon-add ml-icon"
-                          />
-                        </div>
-                        <div>
-                          <div
-                            className="content-5 ml-module-name"
-                          >
-                            First Module
-                          </div>
-                        </div>
-                      </div>
+                        className="icon-add ml-icon"
+                      />
+                    </div>
+                    <div>
                       <div
-                        className="ml-handle"
+                        className="content-5 ml-module-name"
                       >
-                        <div
-                          className="icon-grip"
-                        />
+                        First Module
                       </div>
                     </div>
                   </div>
-                </Module>
-              </DragSource(Module)>
-              <DragSource(Module)
-                addModule={[Function]}
-                dropModule={[Function]}
-                icon="url"
-                id={101}
-                isReadOnly={false}
-                libraryOpen={true}
-                name="Second Module"
-                setOpenCategory={[Function]}
-              >
-                <Module
-                  addModule={[Function]}
-                  connectDragPreview={[Function]}
-                  connectDragSource={[Function]}
-                  dropModule={[Function]}
-                  icon="url"
-                  id={101}
-                  isDragging={false}
-                  isReadOnly={false}
-                  libraryOpen={true}
-                  name="Second Module"
-                  setOpenCategory={[Function]}
-                >
                   <div
-                    className="card ml-module-card"
-                    onClick={[Function]}
+                    className="ml-handle"
                   >
                     <div
-                      className="second-level d-flex"
+                      className="icon-grip"
+                    />
+                  </div>
+                </div>
+              </div>
+            </Module>
+          </DragSource(Module)>
+          <DragSource(Module)
+            addModule={[Function]}
+            dropModule={[Function]}
+            icon="url"
+            id={101}
+            isReadOnly={false}
+            libraryOpen={true}
+            name="Second Module"
+            setOpenCategory={[Function]}
+          >
+            <Module
+              addModule={[Function]}
+              connectDragPreview={[Function]}
+              connectDragSource={[Function]}
+              dropModule={[Function]}
+              icon="url"
+              id={101}
+              isDragging={false}
+              isReadOnly={false}
+              libraryOpen={true}
+              name="Second Module"
+              setOpenCategory={[Function]}
+            >
+              <div
+                className="card ml-module-card"
+                onClick={[Function]}
+              >
+                <div
+                  className="second-level d-flex"
+                >
+                  <div
+                    className="d-flex flex-row align-items-center"
+                  >
+                    <div
+                      className="ml-icon-container"
                     >
                       <div
-                        className="d-flex flex-row align-items-center"
-                      >
-                        <div
-                          className="ml-icon-container"
-                        >
-                          <div
-                            className="icon-url ml-icon"
-                          />
-                        </div>
-                        <div>
-                          <div
-                            className="content-5 ml-module-name"
-                          >
-                            Second Module
-                          </div>
-                        </div>
-                      </div>
+                        className="icon-url ml-icon"
+                      />
+                    </div>
+                    <div>
                       <div
-                        className="ml-handle"
+                        className="content-5 ml-module-name"
                       >
-                        <div
-                          className="icon-grip"
-                        />
+                        Second Module
                       </div>
                     </div>
                   </div>
-                </Module>
-              </DragSource(Module)>
-            </div>
-          </div>
-        </Collapse>
+                  <div
+                    className="ml-handle"
+                  >
+                    <div
+                      className="icon-grip"
+                    />
+                  </div>
+                </div>
+              </div>
+            </Module>
+          </DragSource(Module)>
+        </div>
       </div>
     </div>
   </ModuleCategory>
