@@ -1,8 +1,8 @@
 from django.template.response import TemplateResponse
-from rest_framework.renderers import JSONRenderer
+from django.views.decorators.clickjacking import xframe_options_exempt
+import json
 from server.models import WfModule
 from server.serializers import WorkflowSerializerLite, WfModuleSerializer
-from django.views.decorators.clickjacking import xframe_options_exempt
 
 
 @xframe_options_exempt
@@ -18,15 +18,15 @@ def embed(request, wfmodule_id):
     if wf_module:
         workflow_module_serializer = WfModuleSerializer(wf_module)
         workflow_serializer = WorkflowSerializerLite(wf_module.workflow)
-        init_state = JSONRenderer().render({
+        init_state = {
             'workflow': workflow_serializer.data,
             'wf_module': workflow_module_serializer.data
-        })
+        }
     else:
-        init_state = JSONRenderer().render({
+        init_state = {
             'workflow': None,
             'wf_module': None
-        })
+        }
 
-    response = TemplateResponse(request, 'embed.html', {'initState': init_state})
+    response = TemplateResponse(request, 'embed.html', {'initState': json.dumps(init_state)})
     return response

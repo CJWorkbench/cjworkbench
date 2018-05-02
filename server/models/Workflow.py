@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from server.models.WfModule import WfModule
 from django.urls import reverse
+from server.models.Lesson import Lesson
 
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
@@ -11,6 +12,7 @@ class Workflow(models.Model):
 
     public = models.BooleanField(default=False)
     example = models.BooleanField(default=False)    # if set, will be duplicated for new users
+    lesson_stub = models.CharField('lesson_stub', max_length=100, null=True)
 
     module_library_collapsed = models.BooleanField(default=False)
     selected_wf_module = models.IntegerField(default=None, null=True, blank=True)
@@ -59,3 +61,13 @@ class Workflow(models.Model):
 
     def __str__(self):
         return self.name + ' - id: ' + str(self.id)
+
+    @property
+    def lesson(self):
+        if self.lesson_stub is None:
+            return None
+        else:
+            try:
+                return Lesson.objects.get(self.lesson_stub)
+            except Lesson.DoesNotExist:
+                return None

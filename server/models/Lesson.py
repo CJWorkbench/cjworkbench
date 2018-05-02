@@ -71,6 +71,13 @@ class Lesson:
     def __repr__(self):
         return 'Lesson' + repr((self.stub, self.header, self.sections))
 
+    def get_absolute_url(self):
+        return '/lessons/%s/' % self.stub
+
+    @property
+    def title(self):
+        return self.header.title
+
     @staticmethod
     def parse(stub, html):
         parser = html5lib.HTMLParser(strict=False, namespaceHTMLElements=False)
@@ -85,7 +92,6 @@ class Lesson:
         header_el = root.find('./header')
         if header_el is None:
             raise LessonParseError('Lesson HTML needs a top-level <header>')
-
         lesson_header = LessonHeader._from_etree(header_el)
 
         section_els = root.findall('./section')
@@ -152,7 +158,7 @@ class LessonSection:
         el.remove(steps_el) # hacky mutation
         html = _build_inner_html(el)
 
-        return LessonHeader(title, html)
+        return LessonSection(title, html, steps)
 
 class LessonSectionStep:
     def __init__(self, html):
@@ -162,12 +168,12 @@ class LessonSectionStep:
         return (self.html,) == (other.html,)
 
     def __repr__(self):
-        return 'LessonSectionStep' + repr((self.title, self.html))
+        return 'LessonSectionStep' + repr((self.html,))
 
     @staticmethod
     def _from_etree(el):
         html = _build_inner_html(el)
-        LessonSectionStep(html)
+        return LessonSectionStep(html)
 
 class LessonParseError(Exception):
     def __init__(self, message):

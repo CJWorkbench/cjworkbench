@@ -25,10 +25,12 @@ mock_xlsx_path = os.path.join(settings.BASE_DIR, 'server/tests/test_data/test.xl
 # Derive from this to perform all tests logged in
 class LoggedInTestCase(TestCase):
     def setUp(self):
-        user = User.objects.create_user(username='username', email='user@users.com', password='password')
-        user.save()
-        self.client.login(username='user@users.com', password='password')
-        self.user = User.objects.first()
+        self.user = create_test_user()
+        self.client.force_login(self.user)
+
+
+def create_test_user(username='username', email='user@example.org', password='password'):
+    return User.objects.create(username=username, email=email, password=password)
 
 
 # ---- Setting up workflows ----

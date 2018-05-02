@@ -52,11 +52,11 @@ class WorkflowViewTests(LoggedInTestCase):
             response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
             self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-            self.assertContains(response, '"loggedInUser":')
+            self.assertContains(response, '\\u0022loggedInUser\\u0022')
             self.assertContains(response, user_display(self.user))
             self.assertContains(response, self.user.email)
 
-            self.assertContains(response, '"editCellsModuleId": ' + str(edit_cells_module_id))
+            self.assertContains(response, '\\u0022editCellsModuleId\\u0022: ' + str(edit_cells_module_id))
 
             self.assertContains(response, 'myIntercomId')
             self.assertContains(response, 'myGaId')

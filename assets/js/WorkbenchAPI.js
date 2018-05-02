@@ -1,7 +1,7 @@
 // Wraps all API calls. Useful both to centralize and abstract these calls,
 // also for dependency injection for testing
 
-import {csrfToken, getPageID} from './utils'
+import {csrfToken} from './utils'
 
 const apiHeaders = {
   'Accept': 'application/json',
