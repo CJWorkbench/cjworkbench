@@ -1,5 +1,6 @@
+import os.path
 from django.test import SimpleTestCase
-from server.models.Lesson import Lesson, LessonHeader, LessonSection, LessonSectionStep, LessonParseError
+from server.models.Lesson import Lesson, LessonHeader, LessonSection, LessonSectionStep, LessonParseError, LessonManager
 
 class LessonTests(SimpleTestCase):
     def test_parse_header_in_html_body(self):
@@ -31,3 +32,60 @@ class LessonTests(SimpleTestCase):
     def test_parse_no_section_steps(self):
         with self.assertRaisesMessage(LessonParseError, 'Lesson <section> needs a non-empty <ol class="steps">'):
             Lesson.parse('a-stub', '<header><h1>x</h1><p>y</p></header><section><h2>title</h2><ol class="not-steps"><li>foo</li></ol></section>')
+
+class LessonManagerTests(SimpleTestCase):
+    def build_manager(self, path=None):
+        if path is None:
+            path = os.path.join(os.path.dirname(__file__), 'lessons')
+
+        return LessonManager(path)
+
+    def test_get(self):
+        out = self.build_manager().get('stub-1')
+        self.assertEquals(out,
+            Lesson(
+                'stub-1',
+                LessonHeader('Lesson', '<p>Contents</p>'),
+                [
+                    LessonSection('Foo', '<p>bar</p>', [
+                        LessonSectionStep('Step One'),
+                        LessonSectionStep('Step Two'),
+                    ])
+                ]
+            )
+        )
+
+    def test_get_parse_error(self):
+        manager = self.build_manager(path=os.path.join(os.path.dirname(__file__), 'broken-lesson'))
+        with self.assertRaisesMessage(LessonParseError, 'Lesson HTML needs a top-level <header>'):
+            manager.get('stub-1')
+
+    def test_all(self):
+        out = self.build_manager().all()
+        self.assertEquals(out, [
+            Lesson(
+                'stub-2',
+                LessonHeader('Earlier Lesson (alphabetically)', '<p>Contents</p>'),
+                [
+                    LessonSection('Foo', '<p>bar</p>', [
+                        LessonSectionStep('Step One'),
+                        LessonSectionStep('Step Two'),
+                    ])
+                ]
+            ),
+            Lesson(
+                'stub-1',
+                LessonHeader('Lesson', '<p>Contents</p>'),
+                [
+                    LessonSection('Foo', '<p>bar</p>', [
+                        LessonSectionStep('Step One'),
+                        LessonSectionStep('Step Two'),
+                    ])
+                ]
+            )
+        ])
+
+    def test_all_parse_error(self):
+        manager = self.build_manager(path=os.path.join(os.path.dirname(__file__), 'broken-lesson'))
+        with self.assertRaisesMessage(LessonParseError, 'Lesson HTML needs a top-level <header>'):
+            manager.all()

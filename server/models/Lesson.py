@@ -1,7 +1,10 @@
+from django.conf import settings
 from enum import Enum
 from io import StringIO
+import pathlib
 from xml.etree import ElementTree
 import html5lib
+import os.path
 
 def _build_inner_html(el):
     """
@@ -13,6 +16,41 @@ def _build_inner_html(el):
     inner_html = outer_html[open_tag_end+1 : close_tag_begin]
 
     return inner_html
+
+# a fake django.db.models.Manager that reads from the filesystem
+class LessonManager:
+    def __init__(self, path):
+        self.path = path
+        self._cache = {}
+        self._all_cache = None # cached self.all() response
+
+    def get(self, stub):
+        if stub not in self._cache:
+            self._cache[stub] = self._load(stub)
+        return self._cache[stub]
+
+    def _load(self, stub):
+        path = os.path.join(self.path, stub + '.html')
+        with open(path, 'r', encoding='utf-8') as f:
+            return Lesson.parse(stub, f.read())
+
+    def all(self):
+        """
+        The list (not a QuerySet!) of all lessons, ordered alphabetically.
+        """
+        if not self._all_cache:
+            ret = []
+
+            for html_path in pathlib.Path(self.path).glob('*.html'):
+                stub = html_path.stem
+                ret.append(self.get(stub)) # self.get() so we fill cache
+
+            ret.sort(key=lambda lesson: lesson.header.title)
+
+            self._all_cache = ret
+
+        return self._all_cache
+
 
 # A Lesson is a guide that helps the user build a Workflow we recommend.
 #
@@ -51,6 +89,9 @@ class Lesson:
         lesson_sections = list(LessonSection._from_etree(el) for el in section_els)
 
         return Lesson(stub, lesson_header, lesson_sections)
+
+    # fake django.db.models.Manager
+    objects = LessonManager(os.path.join(settings.BASE_DIR, 'server', 'lessons'))
 
 class LessonHeader:
     def __init__(self, title, html):
