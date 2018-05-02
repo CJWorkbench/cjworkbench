@@ -76,9 +76,10 @@
 
 // Entire module list
 
-.ML--module-list{
+.ML--module-list {
   overflow-y: scroll;
   height:calc(100vh - 40rem);
+  box-shadow: 0 -1px 0 #4a6676, 0 1px 0 #4a6676;
 }
 
 
@@ -86,7 +87,7 @@
 .card .first-level {
   height: 4rem;
   width: 100%;
-  opacity: 0.7;
+  opacity: 0.4;
   display: flex;
   align-items: center;
 }
@@ -139,6 +140,7 @@
   cursor:default;
   margin-left: 2rem;
   font-size: 1.3rem;
+  font-weight: 100;
   line-height: 1.6rem;
   color: #FFF;
 }
@@ -273,7 +275,7 @@
 
 /*search result*/
 .react-autosuggest__suggestions-container--open {
-  margin-top: 2.5rem;
+  margin-top: 2.7rem;
   margin-left: -6.2rem;
   display: block;
   position: absolute;
@@ -284,7 +286,9 @@
   font-size: 1.6rem;
   width: 100%;
   z-index: 2;
-  height:100vh;
+  overflow-y: scroll;
+  height:calc(100vh - 40rem);
+  box-shadow: 0 -1px 0 #4a6676, 0 1px 0 #4a6676;
 }
 
 .react-autosuggest__suggestions-list {
