@@ -34,6 +34,7 @@ export default class ImportModuleFromGitHub extends React.Component {
       handleSubmit(event);
     }
   }
+  
 
   /**
    * Keep the state updated with the latest value of the textfield.
