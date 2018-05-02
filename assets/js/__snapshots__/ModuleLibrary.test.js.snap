@@ -1552,7 +1552,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card module-category--closed"
+                  className="card module-category--open"
                 >
                   <div
                     className="module-category--wrapper"
@@ -1595,7 +1595,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card module-category--closed"
+                  className="card module-category--open"
                 >
                   <div
                     className="module-category--wrapper"
@@ -1648,7 +1648,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card module-category--closed"
+                  className="card module-category--open"
                 >
                   <div
                     className="module-category--wrapper"
@@ -1691,7 +1691,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card module-category--closed"
+                  className="card module-category--open"
                 >
                   <div
                     className="module-category--wrapper"
