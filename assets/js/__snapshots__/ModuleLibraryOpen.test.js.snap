@@ -484,7 +484,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
         ;
       </div>
       <div
-        className="ml-divider"
+        className="mb-3"
       />
       <DragSource(AddNotificationButtonOpen)>
         <AddNotificationButtonOpen

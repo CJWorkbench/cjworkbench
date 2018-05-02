@@ -243,7 +243,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
             ;
           </div>
           <div
-            className="ml-divider"
+            className="mb-3"
           />
           <DragSource(AddNotificationButtonOpen)>
             <AddNotificationButtonOpen
@@ -1263,7 +1263,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
             ;
           </div>
           <div
-            className="ml-divider"
+            className="mb-3"
           />
           <DragSource(AddNotificationButtonOpen)>
             <AddNotificationButtonOpen
