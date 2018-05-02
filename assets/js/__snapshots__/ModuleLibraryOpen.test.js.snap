@@ -231,82 +231,48 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
           </div>
         </ModuleSearch>
       </div>
-      <ModuleCategories
-        addModule={[Function]}
-        dropModule={[Function]}
-        isReadOnly={false}
-        items={
-          Array [
-            Object {
-              "author": "Workbench",
-              "category": "Add data",
-              "description": "Connect a dataset from Enigma's collection via URL.",
-              "icon": "url",
-              "id": 4,
-              "link": "",
-              "name": "Load from Enigma",
-            },
-            Object {
-              "author": "Workbench",
-              "category": "Filter",
-              "description": "Filter rows by matching text in specific columns.",
-              "icon": "filter",
-              "id": 10,
-              "link": "",
-              "name": "Filter by Text",
-            },
-          ]
-        }
-        libraryOpen={true}
-        openCategory="Add Data"
-        setOpenCategory={[Function]}
+      <div
+        className="ML--module-list"
       >
-        <div
-          className="list"
+        <ModuleCategories
+          addModule={[Function]}
+          dropModule={[Function]}
+          isReadOnly={false}
+          items={
+            Array [
+              Object {
+                "author": "Workbench",
+                "category": "Add data",
+                "description": "Connect a dataset from Enigma's collection via URL.",
+                "icon": "url",
+                "id": 4,
+                "link": "",
+                "name": "Load from Enigma",
+              },
+              Object {
+                "author": "Workbench",
+                "category": "Filter",
+                "description": "Filter rows by matching text in specific columns.",
+                "icon": "filter",
+                "id": 10,
+                "link": "",
+                "name": "Filter by Text",
+              },
+            ]
+          }
+          libraryOpen={true}
+          openCategory="Add Data"
+          setOpenCategory={[Function]}
         >
-          <ModuleCategory
-            collapsed={true}
-            isReadOnly={false}
-            libraryOpen={true}
-            modules={
-              Array [
-                <DragSource(Module)
-                  addModule={[Function]}
-                  dropModule={[Function]}
-                  icon="url"
-                  id={4}
-                  isReadOnly={false}
-                  libraryOpen={true}
-                  name="Load from Enigma"
-                  setOpenCategory={[Function]}
-              />,
-              ]
-            }
-            name="Add data"
-            setOpenCategory={[Function]}
+          <div
+            className="list"
           >
-            <div
-              className="card module-category--closed"
-            >
-              <div
-                className="module-category--wrapper"
-              >
-                <div
-                  className="first-level"
-                >
-                  <div
-                    className="category-container"
-                  >
-                    <span
-                      className="category-name"
-                    >
-                      Add data
-                    </span>
-                  </div>
-                </div>
-                <div
-                  className="ml-list"
-                >
+            <ModuleCategory
+              collapsed={true}
+              isReadOnly={false}
+              libraryOpen={true}
+              modules={
+                Array [
                   <DragSource(Module)
                     addModule={[Function]}
                     dropModule={[Function]}
@@ -316,103 +282,103 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                     libraryOpen={true}
                     name="Load from Enigma"
                     setOpenCategory={[Function]}
+                />,
+                ]
+              }
+              name="Add data"
+              setOpenCategory={[Function]}
+            >
+              <div
+                className="card module-category--open"
+              >
+                <div
+                  className="module-category--wrapper"
+                >
+                  <div
+                    className="first-level"
                   >
-                    <Module
+                    <div
+                      className="category-container"
+                    >
+                      <span
+                        className="category-name"
+                      >
+                        Add data
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    className="ml-list"
+                  >
+                    <DragSource(Module)
                       addModule={[Function]}
-                      connectDragPreview={[Function]}
-                      connectDragSource={[Function]}
                       dropModule={[Function]}
                       icon="url"
                       id={4}
-                      isDragging={false}
                       isReadOnly={false}
                       libraryOpen={true}
                       name="Load from Enigma"
                       setOpenCategory={[Function]}
                     >
-                      <div
-                        className="card ml-module-card"
-                        onClick={[Function]}
+                      <Module
+                        addModule={[Function]}
+                        connectDragPreview={[Function]}
+                        connectDragSource={[Function]}
+                        dropModule={[Function]}
+                        icon="url"
+                        id={4}
+                        isDragging={false}
+                        isReadOnly={false}
+                        libraryOpen={true}
+                        name="Load from Enigma"
+                        setOpenCategory={[Function]}
                       >
                         <div
-                          className="second-level d-flex"
+                          className="card ml-module-card"
+                          onClick={[Function]}
                         >
                           <div
-                            className="d-flex flex-row align-items-center"
+                            className="second-level d-flex"
                           >
                             <div
-                              className="ml-icon-container"
+                              className="d-flex flex-row align-items-center"
                             >
                               <div
-                                className="icon-url ml-icon"
-                              />
-                            </div>
-                            <div>
-                              <div
-                                className="content-5 ml-module-name"
+                                className="ml-icon-container"
                               >
-                                Load from Enigma
+                                <div
+                                  className="icon-url ml-icon"
+                                />
+                              </div>
+                              <div>
+                                <div
+                                  className="content-5 ml-module-name"
+                                >
+                                  Load from Enigma
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div
-                            className="ml-handle"
-                          >
                             <div
-                              className="icon-grip"
-                            />
+                              className="ml-handle"
+                            >
+                              <div
+                                className="icon-grip"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Module>
-                  </DragSource(Module)>
-                </div>
-              </div>
-            </div>
-          </ModuleCategory>
-          <ModuleCategory
-            collapsed={true}
-            isReadOnly={false}
-            libraryOpen={true}
-            modules={
-              Array [
-                <DragSource(Module)
-                  addModule={[Function]}
-                  dropModule={[Function]}
-                  icon="filter"
-                  id={10}
-                  isReadOnly={false}
-                  libraryOpen={true}
-                  name="Filter by Text"
-                  setOpenCategory={[Function]}
-              />,
-              ]
-            }
-            name="Filter"
-            setOpenCategory={[Function]}
-          >
-            <div
-              className="card module-category--closed"
-            >
-              <div
-                className="module-category--wrapper"
-              >
-                <div
-                  className="first-level"
-                >
-                  <div
-                    className="category-container"
-                  >
-                    <span
-                      className="category-name"
-                    >
-                      Filter
-                    </span>
+                      </Module>
+                    </DragSource(Module)>
                   </div>
                 </div>
-                <div
-                  className="ml-list"
-                >
+              </div>
+            </ModuleCategory>
+            <ModuleCategory
+              collapsed={true}
+              isReadOnly={false}
+              libraryOpen={true}
+              modules={
+                Array [
                   <DragSource(Module)
                     addModule={[Function]}
                     dropModule={[Function]}
@@ -422,63 +388,101 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                     libraryOpen={true}
                     name="Filter by Text"
                     setOpenCategory={[Function]}
+                />,
+                ]
+              }
+              name="Filter"
+              setOpenCategory={[Function]}
+            >
+              <div
+                className="card module-category--open"
+              >
+                <div
+                  className="module-category--wrapper"
+                >
+                  <div
+                    className="first-level"
                   >
-                    <Module
+                    <div
+                      className="category-container"
+                    >
+                      <span
+                        className="category-name"
+                      >
+                        Filter
+                      </span>
+                    </div>
+                  </div>
+                  <div
+                    className="ml-list"
+                  >
+                    <DragSource(Module)
                       addModule={[Function]}
-                      connectDragPreview={[Function]}
-                      connectDragSource={[Function]}
                       dropModule={[Function]}
                       icon="filter"
                       id={10}
-                      isDragging={false}
                       isReadOnly={false}
                       libraryOpen={true}
                       name="Filter by Text"
                       setOpenCategory={[Function]}
                     >
-                      <div
-                        className="card ml-module-card"
-                        onClick={[Function]}
+                      <Module
+                        addModule={[Function]}
+                        connectDragPreview={[Function]}
+                        connectDragSource={[Function]}
+                        dropModule={[Function]}
+                        icon="filter"
+                        id={10}
+                        isDragging={false}
+                        isReadOnly={false}
+                        libraryOpen={true}
+                        name="Filter by Text"
+                        setOpenCategory={[Function]}
                       >
                         <div
-                          className="second-level d-flex"
+                          className="card ml-module-card"
+                          onClick={[Function]}
                         >
                           <div
-                            className="d-flex flex-row align-items-center"
+                            className="second-level d-flex"
                           >
                             <div
-                              className="ml-icon-container"
+                              className="d-flex flex-row align-items-center"
                             >
                               <div
-                                className="icon-filter ml-icon"
-                              />
-                            </div>
-                            <div>
-                              <div
-                                className="content-5 ml-module-name"
+                                className="ml-icon-container"
                               >
-                                Filter by Text
+                                <div
+                                  className="icon-filter ml-icon"
+                                />
+                              </div>
+                              <div>
+                                <div
+                                  className="content-5 ml-module-name"
+                                >
+                                  Filter by Text
+                                </div>
                               </div>
                             </div>
-                          </div>
-                          <div
-                            className="ml-handle"
-                          >
                             <div
-                              className="icon-grip"
-                            />
+                              className="ml-handle"
+                            >
+                              <div
+                                className="icon-grip"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Module>
-                  </DragSource(Module)>
+                      </Module>
+                    </DragSource(Module)>
+                  </div>
                 </div>
               </div>
-            </div>
-          </ModuleCategory>
-        </div>
-      </ModuleCategories>
-      ;
+            </ModuleCategory>
+          </div>
+        </ModuleCategories>
+        ;
+      </div>
       <div
         className="ml-divider"
       />

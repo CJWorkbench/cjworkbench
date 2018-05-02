@@ -17,7 +17,7 @@ export default class ModuleLibraryOpen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.handleClick = this.handleClick.bind(this);    
+    this.handleClick = this.handleClick.bind(this);
   }
 
   // Clicking on left arrow in header will collapse all categories and switch to closed library
@@ -46,21 +46,19 @@ export default class ModuleLibraryOpen extends React.Component {
                         items={this.props.items}
                         workflow={this.props.workflow} />
         </div>
-
-        <ModuleCategories
-          openCategory={this.props.openCategory}
-          setOpenCategory={this.props.setOpenCategory}
-          libraryOpen={true}
-          isReadOnly={this.props.isReadOnly}
-          addModule={this.props.addModule}
-          dropModule={this.props.dropModule}
-          items={this.props.items}
-        />;
-
+        <div className="ML--module-list">
+          <ModuleCategories
+            openCategory={this.props.openCategory}
+            setOpenCategory={this.props.setOpenCategory}
+            libraryOpen={true}
+            isReadOnly={this.props.isReadOnly}
+            addModule={this.props.addModule}
+            dropModule={this.props.dropModule}
+            items={this.props.items}
+          />;
+        </div>
         <div className="ml-divider"></div>
-
-        <AddNotificationButtonOpen/>
-
+          <AddNotificationButtonOpen/>
         <div className="ml-divider"></div>
 
         <ImportModuleFromGitHub
