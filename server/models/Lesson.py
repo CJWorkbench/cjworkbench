@@ -31,8 +31,11 @@ class LessonManager:
 
     def _load(self, stub):
         path = os.path.join(self.path, stub + '.html')
-        with open(path, 'r', encoding='utf-8') as f:
-            return Lesson.parse(stub, f.read())
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                return Lesson.parse(stub, f.read())
+        except FileNotFoundError:
+            raise Lesson.DoesNotExist()
 
     def all(self):
         """
@@ -89,6 +92,9 @@ class Lesson:
         lesson_sections = list(LessonSection._from_etree(el) for el in section_els)
 
         return Lesson(stub, lesson_header, lesson_sections)
+
+    class DoesNotExist(Exception):
+        pass
 
     # fake django.db.models.Manager
     objects = LessonManager(os.path.join(settings.BASE_DIR, 'server', 'lessons'))

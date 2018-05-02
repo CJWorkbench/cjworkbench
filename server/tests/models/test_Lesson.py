@@ -60,6 +60,10 @@ class LessonManagerTests(SimpleTestCase):
         with self.assertRaisesMessage(LessonParseError, 'Lesson HTML needs a top-level <header>'):
             manager.get('stub-1')
 
+    def test_get_does_not_exist(self):
+        with self.assertRaises(Lesson.DoesNotExist):
+            self.build_manager().get('nonexistent-stub')
+
     def test_all(self):
         out = self.build_manager().all()
         self.assertEquals(out, [
