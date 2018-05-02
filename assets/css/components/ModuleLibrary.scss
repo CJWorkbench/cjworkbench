@@ -365,8 +365,8 @@
 .ml-divider {
   margin-top: 1.5rem;
   border-top: 1px solid rgba(255,255,255, .2);
-  margin-left: 2rem;
-  margin-right: 2rem;
+  margin-left: 3rem;
+  margin-right: 3rem;
   margin-bottom: 1rem;
 }
 
@@ -392,8 +392,8 @@
   color: #FAFAFA;
   padding-top: 2rem;
   opacity: 0.7;
-  margin-left: 2rem;
-  margin-right: 2rem;
+  display:flex;
+  justify-content: center;
 }
 
 .import-module-button:hover {
