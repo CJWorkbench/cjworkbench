@@ -57,7 +57,7 @@ export default class ModuleLibraryOpen extends React.Component {
             items={this.props.items}
           />;
         </div>
-        <div className="ml-divider"></div>
+        <div className="mb-3"></div>
           <AddNotificationButtonOpen/>
         <div className="ml-divider"></div>
 

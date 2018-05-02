@@ -79,7 +79,11 @@
 .ML--module-list {
   overflow-y: scroll;
   height:calc(100vh - 40rem);
-  box-shadow: 0 -1px 0 #4a6676, 0 1px 0 #4a6676;
+  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.ML--module-list .list {
+  margin-top: 0.2rem;
 }
 
 
@@ -288,7 +292,6 @@
   z-index: 2;
   overflow-y: scroll;
   height:calc(100vh - 40rem);
-  box-shadow: 0 -1px 0 #4a6676, 0 1px 0 #4a6676;
 }
 
 .react-autosuggest__suggestions-list {
@@ -347,7 +350,7 @@
   padding-left: 2rem;
   font-size: 1.3rem;
   color: #FFF;
-  opacity: .7;
+  opacity: .4;
   height: 4rem;
 }
 
@@ -360,7 +363,7 @@
 }
 
 .ml-divider {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   border-top: 1px solid rgba(255,255,255, .2);
   margin-left: 2rem;
   margin-right: 2rem;
