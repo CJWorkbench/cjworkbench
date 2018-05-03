@@ -9,4 +9,6 @@ class TestLessons(LoggedInIntegrationTest):
         self.assertTrue(b.url.endswith('/lessons/load-public-data/'))
         self.assertTrue(b.is_text_present('DROP MODULE HERE'))
         self.assertTrue(b.is_text_present('0. Introduction'))
+        self.assertFalse(b.is_text_present('Duplicate'))
+        self.assertFalse(b.is_text_present('Share'))
         self.assertFalse(b.is_text_present('1. Load Public Data by URL'))

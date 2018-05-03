@@ -97,7 +97,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
               className="WF-meta"
             >
               <li
-                className="WF-meta--item content-3 t-m-gray"
+                className="WF-meta--item content-3 t-m-gray attribution"
               >
                 <span
                   className="content-3 t-m-gray"
@@ -674,7 +674,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
               className="WF-meta"
             >
               <li
-                className="WF-meta--item content-3 t-m-gray"
+                className="WF-meta--item content-3 t-m-gray attribution"
               >
                 <span
                   className="content-3 t-m-gray"
@@ -1153,7 +1153,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
               className="WF-meta"
             >
               <li
-                className="WF-meta--item content-3 t-m-gray"
+                className="WF-meta--item content-3 t-m-gray attribution"
               >
                 <span
                   className="content-3 t-m-gray"
@@ -1299,7 +1299,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
               className="WF-meta"
             >
               <li
-                className="WF-meta--item content-3 t-m-gray"
+                className="WF-meta--item content-3 t-m-gray attribution"
               >
                 <span
                   className="content-3 t-m-gray"

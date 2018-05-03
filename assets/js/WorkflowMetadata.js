@@ -104,7 +104,7 @@ export default class WorkflowMetadata extends React.Component {
     // only list User attribution if one exists & is not just whitespace
     var user = this.props.workflow.owner_name.trim();
     var attribution = user.length
-      ? <li className="WF-meta--item content-3 t-m-gray">
+      ? <li className="WF-meta--item content-3 t-m-gray attribution">
           <span className="content-3 t-m-gray">by {user}</span>
           <span className="content-3 metadataSeparator t-m-gray">-</span>
         </li>

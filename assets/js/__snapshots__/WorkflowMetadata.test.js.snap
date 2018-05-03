@@ -24,7 +24,7 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
       className="WF-meta"
     >
       <li
-        className="WF-meta--item content-3 t-m-gray"
+        className="WF-meta--item content-3 t-m-gray attribution"
       >
         <span
           className="content-3 t-m-gray"
@@ -214,7 +214,7 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
       className="WF-meta"
     >
       <li
-        className="WF-meta--item content-3 t-m-gray"
+        className="WF-meta--item content-3 t-m-gray attribution"
       >
         <span
           className="content-3 t-m-gray"
@@ -282,7 +282,7 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
       className="WF-meta"
     >
       <li
-        className="WF-meta--item content-3 t-m-gray"
+        className="WF-meta--item content-3 t-m-gray attribution"
       >
         <span
           className="content-3 t-m-gray"
@@ -350,7 +350,7 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
       className="WF-meta"
     >
       <li
-        className="WF-meta--item content-3 t-m-gray"
+        className="WF-meta--item content-3 t-m-gray attribution"
       >
         <span
           className="content-3 t-m-gray"

@@ -183,7 +183,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       className="WF-meta"
                     >
                       <li
-                        className="WF-meta--item content-3 t-m-gray"
+                        className="WF-meta--item content-3 t-m-gray attribution"
                       >
                         <span
                           className="content-3 t-m-gray"
@@ -380,7 +380,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       className="WF-meta"
                     >
                       <li
-                        className="WF-meta--item content-3 t-m-gray"
+                        className="WF-meta--item content-3 t-m-gray attribution"
                       >
                         <span
                           className="content-3 t-m-gray"
@@ -577,7 +577,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       className="WF-meta"
                     >
                       <li
-                        className="WF-meta--item content-3 t-m-gray"
+                        className="WF-meta--item content-3 t-m-gray attribution"
                       >
                         <span
                           className="content-3 t-m-gray"
@@ -774,7 +774,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       className="WF-meta"
                     >
                       <li
-                        className="WF-meta--item content-3 t-m-gray"
+                        className="WF-meta--item content-3 t-m-gray attribution"
                       >
                         <span
                           className="content-3 t-m-gray"

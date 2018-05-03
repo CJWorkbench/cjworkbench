@@ -129,3 +129,11 @@ img.logo {
 .editable-title--field:hover{
   background-color: rgba(250,250,250,0.2);
 }
+
+.workflow-root.in-lesson .navbar {
+  background-color: $brand-learn;
+
+  .attribution, .test-duplicate-button, .test-share-button {
+    display: none;
+  }
+}
