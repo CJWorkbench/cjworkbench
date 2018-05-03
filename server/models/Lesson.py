@@ -142,12 +142,13 @@ class LessonSection:
 
         steps_el = el.find('./ol[@class="steps"]')
         if steps_el is None or not steps_el:
-            raise LessonParseError('Lesson <section> needs a non-empty <ol class="steps">')
-        steps = list(LessonSectionStep._from_etree(el) for el in steps_el)
+            steps = list()
+        else:
+            steps = list(LessonSectionStep._from_etree(el) for el in steps_el)
 
         # Now get the rest of the HTML, minus the <h1> and <ol>
         el.remove(title_el) # hacky mutation
-        el.remove(steps_el) # hacky mutation
+        if steps_el is not None: el.remove(steps_el) # hacky mutation
         html = _build_inner_html(el)
 
         return LessonSection(title, html, steps)

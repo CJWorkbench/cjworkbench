@@ -30,8 +30,14 @@ class LessonTests(SimpleTestCase):
             Lesson.parse('a-stub', '<header><h1>x</h1><p>y</p></header><section><ol class="steps"><li>foo</li></ol></section>')
 
     def test_parse_no_section_steps(self):
-        with self.assertRaisesMessage(LessonParseError, 'Lesson <section> needs a non-empty <ol class="steps">'):
-            Lesson.parse('a-stub', '<header><h1>x</h1><p>y</p></header><section><h2>title</h2><ol class="not-steps"><li>foo</li></ol></section>')
+        out = Lesson.parse('a-stub', '<header><h1>x</h1><p>y</p></header><section><h2>title</h2><ol class="not-steps"><li>foo</li></ol></section>')
+        self.assertEquals(out,
+            Lesson(
+                'a-stub',
+                LessonHeader('x', '<p>y</p>'),
+                [ LessonSection('title', '<ol class="not-steps"><li>foo</li></ol>', []) ]
+            )
+        )
 
 class LessonManagerTests(SimpleTestCase):
     def build_manager(self, path=None):
