@@ -162,3 +162,26 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
     class Meta:
         model = Workflow
         fields = ('id', 'name', 'public', 'read_only', 'last_update', 'owner_name')
+
+class LessonSerializer(serializers.BaseSerializer):
+    def to_representation(self, obj):
+        return {
+            'stub': obj.stub,
+            'header': {
+                'title': obj.header.title,
+                'html': obj.header.html,
+            },
+            'sections': list(self._section_to_representation(section) for section in obj.sections),
+        }
+
+    def _section_to_representation(self, obj):
+        return {
+            'title': obj.title,
+            'html': obj.html,
+            'steps': list(self._step_to_representation(step) for step in obj.steps),
+        }
+
+    def _step_to_representation(self, obj):
+        return {
+            'html': obj.html,
+        }

@@ -104,10 +104,10 @@ export default class WorkflowMetadata extends React.Component {
     // only list User attribution if one exists & is not just whitespace
     var user = this.props.workflow.owner_name.trim();
     var attribution = user.length
-      ? <div className="WF-meta--item">
-          <li className="content-3 t-m-gray">by {user}</li>
-          <span className='content-3 metadataSeparator t-m-gray'>-</span>
-        </div>
+      ? <li className="WF-meta--item content-3 t-m-gray attribution">
+          <span className="content-3 t-m-gray">by {user}</span>
+          <span className="content-3 metadataSeparator t-m-gray">-</span>
+        </li>
       : null
     var modalLink = (this.props.workflow.read_only)
       ? null
@@ -119,12 +119,12 @@ export default class WorkflowMetadata extends React.Component {
     return (
       <div>
         <ul className="WF-meta">
-           {attribution}
+          {attribution}
           <li className="WF-meta--item content-3 t-m-gray">
             Updated {timeDifference(this.props.workflow.last_update, now)}
           </li>
           <li className="WF-meta--item content-3 t-m-gray">
-          {modalLink}
+            {modalLink}
           </li>
         </ul>
         { this.renderPrivacyModal() }

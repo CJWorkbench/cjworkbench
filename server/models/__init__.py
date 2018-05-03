@@ -1,4 +1,5 @@
 from .Workflow import *
+from .Lesson import *
 from .Module import *
 from .WfModule import *
 from .ParameterSpec import *

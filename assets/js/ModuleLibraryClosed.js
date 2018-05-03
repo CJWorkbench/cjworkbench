@@ -67,7 +67,7 @@ export default class ModuleLibraryClosed extends React.Component {
 
 
     return (
-      <div className='module-library--closed'>
+      <div className='module-library module-library--closed'>
 
         <div
           className="library-closed--toggle"

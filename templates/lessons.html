@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+
+{% block title %}Workbench{% endblock %}
+
+{% block body %}
+  <ul class="lessons">
+    {% for lesson in lessons %}
+      <li>
+        <h2>{{lesson.title}}</h2>
+        <div class="description">{{lesson.header.html|safe}}</div>
+        <form method="post" action="{{lesson.get_absolute_url}}">{% csrf_token %}<button type="submit">Begin</button></form>
+      </li>
+    {% endfor %}
+  </ul>
+{% endblock %}

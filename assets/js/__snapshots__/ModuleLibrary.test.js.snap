@@ -98,7 +98,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
         }
       >
         <div
-          className="module-library--open"
+          className="module-library module-library--open"
         >
           <div
             className="search-container"
@@ -1134,7 +1134,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
         }
       >
         <div
-          className="module-library--open"
+          className="module-library module-library--open"
         >
           <div
             className="search-container"
@@ -2163,7 +2163,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
       setOpenCategory={[Function]}
     >
       <div
-        className="module-library--closed"
+        className="module-library module-library--closed"
       >
         <div
           className="library-closed--toggle"

@@ -1,5 +1,8 @@
 @import url('https://fonts.googleapis.com/css?family=Lato:400,700|Nunito+Sans');
 @import 'bootstrap/scss/bootstrap.scss';
+
+@import './variables';
+
 @import './components/Embed.scss';
 @import './components/Fonts.scss';
 @import './components/Icons.scss';
@@ -9,6 +12,7 @@
 @import './components/Navbar.scss';
 @import './components/WorkflowList.scss';
 @import './components/WorkflowPage.scss';
+@import './components/Lesson.scss';
 @import './components/Metadata.scss';
 @import './components/Modules.scss';
 @import './components/ModaleWindows.scss';
@@ -36,7 +40,7 @@ body {
   height: 100%;
   font-family: 'Nunito Sans', sans-serif;
   background-color:#f6f6f6;
-  color: #686768;
+  color: $brand-text;
 }
 
 /* height 100% needed on all parents so that output pane flexbox can fill available vertical screen space.

@@ -1,6 +1,6 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
-import { getPageID, nonce } from './utils'
+import { nonce } from './utils'
 import WorkbenchAPI from './WorkbenchAPI'
 import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
@@ -37,6 +37,8 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS';
 
 // Sometimes, do nothing
 export const NOP_ACTION = 'NOP_ACTION';
+
+const WorkflowId = window.initState ? window.initState.workflowId : 'MISSING-WORKFLOW-ID';
 
 var api = WorkbenchAPI(); // var so it can be mocked for testing
 
@@ -153,7 +155,7 @@ export function paramIdToIndices(workflow, paramId) {
 export function initialLoadWorkflowAction() {
   return {
     type: INITIAL_LOAD_WORKFLOW,
-    payload: api.loadWorkflow(getPageID())
+    payload: api.loadWorkflow(WorkflowId),
   }
 }
 registerReducerFunc(INITIAL_LOAD_WORKFLOW + '_FULFILLED', (state, action) => {
@@ -179,7 +181,7 @@ registerReducerFunc(INITIAL_LOAD_WORKFLOW + '_FULFILLED', (state, action) => {
 export function reloadWorkflowAction() {
   return {
     type: RELOAD_WORKFLOW,
-    payload: api.loadWorkflow(getPageID()).then((json) => {return json})
+    payload: api.loadWorkflow(WorkflowId).then((json) => {return json})
   }
 }
 registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
@@ -235,7 +237,7 @@ export function reorderWfModulesAction(wfModuleID, newIndex) {
   return {
     type: REORDER_WFMODULES,
     payload: {
-      promise: api.reorderWfModules(getPageID(), newOrder),
+      promise: api.reorderWfModules(WorkflowId, newOrder),
       data: newState.workflow.wf_modules
     }
   }
@@ -253,7 +255,7 @@ export function addModuleAction(moduleId, insertBefore, placeholder) {
   let nonce = generateNonce(moduleId);
 
   let payload = {
-    promise: api.addModule(getPageID(), moduleId, insertBefore)
+    promise: api.addModule(WorkflowId, moduleId, insertBefore)
       .then((response) => {
         response.pendingId = nonce;
         return response;

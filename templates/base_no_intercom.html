@@ -24,8 +24,7 @@
     {% endif %}
 
     <script type="text/javascript">
-
-      window.initState = JSON.parse('{{ initState|safe }}');
+      window.initState = JSON.parse('{{initState|escapejs}}');
 
       {% if google_analytics_id_var %}
         window.dataLayer = window.dataLayer || [];

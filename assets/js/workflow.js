@@ -2,8 +2,9 @@
 
 import React from 'react'
 import ModuleLibrary from './ModuleLibrary'
-import { WorkflowNavBar } from './navbar'
+import WorkflowNavBar from './WorkflowNavBar'
 import OutputPane from './OutputPane'
+import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
 import ModuleStack from './ModuleStack'
 import CustomDragLayer from './CustomDragLayer'
@@ -54,11 +55,19 @@ class Workflow extends React.Component {
       return null;
     }
 
-    let selectedWorkflowModuleRef = this.props.workflow.wf_modules.find((wf) => {
+    const selectedWorkflowModuleRef = this.props.workflow.wf_modules.find((wf) => {
       return wf.id === this.props.selected_wf_module;
     });
+
+    let className = 'workflow-root'
+    if (this.props.lesson) {
+      className += ' in-lesson'
+    }
+
     return (
-        <div className="workflow-root">
+        <div className={className}>
+          { this.props.lesson ? <Lesson {...this.props.lesson} /> : '' }
+
           <ModuleLibrary
             addModule={(module_id, placeholder) => this.props.addModule(module_id, this.props.workflow.wf_modules.length, placeholder)}
             dropModule={(module_id, insert_before, placeholder) => this.props.addModule(module_id, ((insert_before === false) ? this.props.workflow.wf_modules.length : insert_before), placeholder)}

@@ -1,0 +1,31 @@
+article.lesson {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  min-width: 20rem;
+
+  h1 { display: none; }
+  &>.description { display: none; }
+
+  .sections {
+    flex-grow: 1;
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+
+    &.inactive { display: none; }
+
+    &>.description {
+      flex-grow: 1;
+    }
+  }
+
+  footer {
+    display: flex;
+    &>* {
+      width: 33%;
+    }
+  }
+}

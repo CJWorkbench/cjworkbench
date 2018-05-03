@@ -15,6 +15,10 @@ module.exports = {
     embed: './assets/js/pages/embed.page'
   },
 
+  watchOptions: {
+    ignored: /node_modules/,
+  },
+
   output: {
     path: path.resolve('./assets/bundles/'),
     filename: '[name]-[contenthash].js',

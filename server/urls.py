@@ -4,10 +4,6 @@ from django.views.generic.base import RedirectView
 from . import views
 from .views.UploadedFileView import UploadedFileView
 from rest_framework import routers
-from django.conf.urls import include
-
-#external_router = routers.DefaultRouter()
-#external_router.register(r'uploadfile', StoredObjectView)
 
 urlpatterns = [
     # ex: /
@@ -22,6 +18,9 @@ urlpatterns = [
     url(r'^workflows/$', views.render_workflows),
     url(r'^api/workflows/?$', views.workflow_list),
 
+    url(r'^lessons/$', views.render_lesson_list),
+    url(r'^lessons/(?P<stub>[-a-z0-9]+)/?$', views.render_lesson_detail),
+
     # workflows
     #TODO: Name the rest of the urls or implement some kind of naming scheme
     url(r'^workflows/(?P<pk>[0-9]+)/$', views.render_workflow, name="workflow"),
@@ -34,8 +33,6 @@ urlpatterns = [
     # modules
     url(r'^api/modules/?$', views.module_list),
     url(r'^api/modules/(?P<pk>[0-9]+)/?$', views.module_detail),
-
-#    url(r'^api/', include(external_router.urls)),
 
     url(r'^api/initmodules/$', views.init_modules2),
     url(r'^api/importfromgithub/?$', views.import_from_github),
