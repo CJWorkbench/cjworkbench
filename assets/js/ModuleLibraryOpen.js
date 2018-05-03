@@ -17,7 +17,7 @@ export default class ModuleLibraryOpen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
-    this.handleClick = this.handleClick.bind(this);    
+    this.handleClick = this.handleClick.bind(this);
   }
 
   // Clicking on left arrow in header will collapse all categories and switch to closed library
@@ -30,45 +30,45 @@ export default class ModuleLibraryOpen extends React.Component {
 
     return (
         <div className='module-library--open'>
-        <div className='library-header'>
-          <div className="d-flex align-items-center">
-            <a href="/workflows" className="brand--ML">
-              <img src="/static/images/logo.svg" width="21"/>
-              <div className='logo-2 ml-2 t-white'>Workbench</div>
-            </a>
-            <div className='close-open-toggle' onClick={this.handleClick}>
-              <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
+          <div className='search-container'>
+            <div className='library-header'>
+              <div className="d-flex align-items-center">
+                <a href="/workflows" className="brand--ML">
+                  <img src="/static/images/logo.svg" width="21"/>
+                  <div className='logo-2 ml-2 t-white'>Workbench</div>
+                </a>
+                <div className='close-open-toggle' onClick={this.handleClick}>
+                  <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
+                </div>
+              </div>
+
+              <ModuleSearch addModule={this.props.addModule}
+                            dropModule={this.props.dropModule}
+                            items={this.props.items}
+                            workflow={this.props.workflow} />
+            </div>
+            <div className="ML--module-list">
+              <ModuleCategories
+                openCategory={this.props.openCategory}
+                setOpenCategory={this.props.setOpenCategory}
+                libraryOpen={true}
+                isReadOnly={this.props.isReadOnly}
+                addModule={this.props.addModule}
+                dropModule={this.props.dropModule}
+                items={this.props.items}
+              />;
             </div>
           </div>
+          <div className="mb-3"></div>
+            <AddNotificationButtonOpen/>
+          <div className="ml-divider"></div>
 
-          <ModuleSearch addModule={this.props.addModule}
-                        dropModule={this.props.dropModule}
-                        items={this.props.items}
-                        workflow={this.props.workflow} />
-        </div>
-
-        <ModuleCategories
-          openCategory={this.props.openCategory}
-          setOpenCategory={this.props.setOpenCategory}
-          libraryOpen={true}
-          isReadOnly={this.props.isReadOnly}
-          addModule={this.props.addModule}
-          dropModule={this.props.dropModule}
-          items={this.props.items}
-        />;
-
-        <div className="ml-divider"></div>
-
-        <AddNotificationButtonOpen/>
-
-        <div className="ml-divider"></div>
-
-        <ImportModuleFromGitHub
-          moduleAdded={this.props.moduleAdded}
-          libraryOpen={true}
-          api={this.props.api}
-          isReadOnly={this.props.isReadOnly}
-        />
+          <ImportModuleFromGitHub
+            moduleAdded={this.props.moduleAdded}
+            libraryOpen={true}
+            api={this.props.api}
+            isReadOnly={this.props.isReadOnly}
+          />
       </div>
     )
   }

@@ -39,12 +39,12 @@ class ModuleSearchResult extends React.Component {
   render() {
     return this.props.connectDragSource(
       <div className='react-autosuggest__suggestion-inner'>
-      <div className='suggest-handle'>
-        <div className='icon-grip'></div>
-      </div>
+        <div className='suggest-handle'>
+          <div className='icon-grip'></div>
+        </div>
         <div className='d-flex align-items-center'>
           <span className={'ml-icon-search ml-icon-container icon-' + this.props.icon}></span>
-          <span className='content-5 ml-module-name'><strong>{this.props.name}</strong></span>
+          <span className='content-5 ml-module-name'>{this.props.name}</span>
         </div>
       </div>
     )
@@ -134,8 +134,8 @@ export default class ModuleSearch extends React.Component {
 
   renderSectionTitle (section) {
     return (
-      <div>
-        <strong>{section.title}</strong>
+      <div className="d-flex title justfy-content-center">
+        {section.title}
       </div>
     );
   }

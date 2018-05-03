@@ -43,7 +43,6 @@ export default class ModuleCategory extends React.Component {
     var isOpen = !this.state.collapsed;
 
     // Provides margins around opened library category
-    var cardClass = isOpen ? 'module-category--open' : 'module-category--closed';
 
     const icons = {
       'Add data': 'database',
@@ -92,7 +91,7 @@ export default class ModuleCategory extends React.Component {
     }
 
     return (
-      <div className={"card " + cardClass}>
+      <div className="card module-category--open">
         <div className="module-category--wrapper">
           {categoryHead}
           {moduleList}
