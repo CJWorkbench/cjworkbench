@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 export default class LessonStep extends React.Component {
   render() {
@@ -10,4 +11,8 @@ export default class LessonStep extends React.Component {
       </li>
     )
   }
+}
+
+LessonStep.propTypes = {
+  html: PropTypes.string.isRequired,
 }

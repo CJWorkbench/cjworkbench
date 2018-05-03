@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LessonStep from './LessonStep'
 
 export default class LessonSection extends React.Component {
@@ -15,4 +16,13 @@ export default class LessonSection extends React.Component {
       </section>
     )
   }
+}
+
+LessonSection.propTypes = {
+  active: PropTypes.bool.isRequired,
+  title: PropTypes.string.isRequired,
+  html: PropTypes.string.isRequired,
+  steps: PropTypes.arrayOf(PropTypes.shape({
+    html: PropTypes.string.isRequired,
+  })).isRequired,
 }

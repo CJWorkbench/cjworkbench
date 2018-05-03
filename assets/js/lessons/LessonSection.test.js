@@ -4,6 +4,7 @@ import { mount, shallow } from 'enzyme'
 
 describe('LessonSection', () => {
   const section = {
+    active: true,
     title: 'Section One',
     html: '<p>Section One HTML</p>',
     steps: [

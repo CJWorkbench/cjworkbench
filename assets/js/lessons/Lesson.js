@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 import LessonSection from './LessonSection'
 import LessonNav from './LessonNav'
 
@@ -41,4 +42,18 @@ export default class Lesson extends React.Component {
       </article>
     )
   }
+}
+
+Lesson.propTypes = {
+  header: PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    html: PropTypes.string.isRequired,
+  }).isRequired,
+  sections: PropTypes.arrayOf(PropTypes.shape({
+    title: PropTypes.string.isRequired,
+    html: PropTypes.string.isRequired,
+    steps: PropTypes.arrayOf(PropTypes.shape({
+      html: PropTypes.string.isRequired,
+    })).isRequired,
+  })).isRequired,
 }

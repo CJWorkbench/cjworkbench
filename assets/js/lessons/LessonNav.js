@@ -1,4 +1,5 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
 export default class LessonNav extends React.Component {
   constructor(props) {
@@ -36,4 +37,10 @@ export default class LessonNav extends React.Component {
       </footer>
     )
   }
+}
+
+LessonNav.propTypes = {
+  activeSectionIndex: PropTypes.number.isRequired,
+  nSections: PropTypes.number.isRequired,
+  setActiveSectionIndex: PropTypes.func.isRequired,
 }
