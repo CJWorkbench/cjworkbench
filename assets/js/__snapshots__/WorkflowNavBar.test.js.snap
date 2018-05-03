@@ -96,21 +96,21 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
             <ul
               className="WF-meta"
             >
-              <div
-                className="WF-meta--item"
+              <li
+                className="WF-meta--item content-3 t-m-gray"
               >
-                <li
+                <span
                   className="content-3 t-m-gray"
                 >
                   by 
                   Fred Frederson
-                </li>
+                </span>
                 <span
                   className="content-3 metadataSeparator t-m-gray"
                 >
                   -
                 </span>
-              </div>
+              </li>
               <li
                 className="WF-meta--item content-3 t-m-gray"
               >
@@ -673,21 +673,21 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
             <ul
               className="WF-meta"
             >
-              <div
-                className="WF-meta--item"
+              <li
+                className="WF-meta--item content-3 t-m-gray"
               >
-                <li
+                <span
                   className="content-3 t-m-gray"
                 >
                   by 
                   Fred Frederson
-                </li>
+                </span>
                 <span
                   className="content-3 metadataSeparator t-m-gray"
                 >
                   -
                 </span>
-              </div>
+              </li>
               <li
                 className="WF-meta--item content-3 t-m-gray"
               >
@@ -1152,21 +1152,21 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
             <ul
               className="WF-meta"
             >
-              <div
-                className="WF-meta--item"
+              <li
+                className="WF-meta--item content-3 t-m-gray"
               >
-                <li
+                <span
                   className="content-3 t-m-gray"
                 >
                   by 
                   Not LogggedIn
-                </li>
+                </span>
                 <span
                   className="content-3 metadataSeparator t-m-gray"
                 >
                   -
                 </span>
-              </div>
+              </li>
               <li
                 className="WF-meta--item content-3 t-m-gray"
               >
@@ -1298,21 +1298,21 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
             <ul
               className="WF-meta"
             >
-              <div
-                className="WF-meta--item"
+              <li
+                className="WF-meta--item content-3 t-m-gray"
               >
-                <li
+                <span
                   className="content-3 t-m-gray"
                 >
                   by 
                   John Johnson
-                </li>
+                </span>
                 <span
                   className="content-3 metadataSeparator t-m-gray"
                 >
                   -
                 </span>
-              </div>
+              </li>
               <li
                 className="WF-meta--item content-3 t-m-gray"
               >

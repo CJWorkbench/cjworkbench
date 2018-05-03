@@ -182,21 +182,21 @@ exports[`Workflow list page renders correctly 1`] = `
                     <ul
                       className="WF-meta"
                     >
-                      <div
-                        className="WF-meta--item"
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
                       >
-                        <li
+                        <span
                           className="content-3 t-m-gray"
                         >
                           by 
                           Fred Frederson
-                        </li>
+                        </span>
                         <span
                           className="content-3 metadataSeparator t-m-gray"
                         >
                           -
                         </span>
-                      </div>
+                      </li>
                       <li
                         className="WF-meta--item content-3 t-m-gray"
                       >
@@ -379,21 +379,21 @@ exports[`Workflow list page renders correctly 1`] = `
                     <ul
                       className="WF-meta"
                     >
-                      <div
-                        className="WF-meta--item"
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
                       >
-                        <li
+                        <span
                           className="content-3 t-m-gray"
                         >
                           by 
                           John Johnson
-                        </li>
+                        </span>
                         <span
                           className="content-3 metadataSeparator t-m-gray"
                         >
                           -
                         </span>
-                      </div>
+                      </li>
                       <li
                         className="WF-meta--item content-3 t-m-gray"
                       >
@@ -576,21 +576,21 @@ exports[`Workflow list page renders correctly 1`] = `
                     <ul
                       className="WF-meta"
                     >
-                      <div
-                        className="WF-meta--item"
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
                       >
-                        <li
+                        <span
                           className="content-3 t-m-gray"
                         >
                           by 
                           Sally Sallerson
-                        </li>
+                        </span>
                         <span
                           className="content-3 metadataSeparator t-m-gray"
                         >
                           -
                         </span>
-                      </div>
+                      </li>
                       <li
                         className="WF-meta--item content-3 t-m-gray"
                       >
@@ -773,21 +773,21 @@ exports[`Workflow list page renders correctly 1`] = `
                     <ul
                       className="WF-meta"
                     >
-                      <div
-                        className="WF-meta--item"
+                      <li
+                        className="WF-meta--item content-3 t-m-gray"
                       >
-                        <li
+                        <span
                           className="content-3 t-m-gray"
                         >
                           by 
                           Mr. Manfrengenson
-                        </li>
+                        </span>
                         <span
                           className="content-3 metadataSeparator t-m-gray"
                         >
                           -
                         </span>
-                      </div>
+                      </li>
                       <li
                         className="WF-meta--item content-3 t-m-gray"
                       >

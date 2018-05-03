@@ -23,21 +23,21 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
     <ul
       className="WF-meta"
     >
-      <div
-        className="WF-meta--item"
+      <li
+        className="WF-meta--item content-3 t-m-gray"
       >
-        <li
+        <span
           className="content-3 t-m-gray"
         >
           by 
           Harry Harrison
-        </li>
+        </span>
         <span
           className="content-3 metadataSeparator t-m-gray"
         >
           -
         </span>
-      </div>
+      </li>
       <li
         className="WF-meta--item content-3 t-m-gray"
       >
@@ -213,21 +213,21 @@ exports[`WorkflowMetadata - private mode modal operates 3`] = `
     <ul
       className="WF-meta"
     >
-      <div
-        className="WF-meta--item"
+      <li
+        className="WF-meta--item content-3 t-m-gray"
       >
-        <li
+        <span
           className="content-3 t-m-gray"
         >
           by 
           Harry Harrison
-        </li>
+        </span>
         <span
           className="content-3 metadataSeparator t-m-gray"
         >
           -
         </span>
-      </div>
+      </li>
       <li
         className="WF-meta--item content-3 t-m-gray"
       >
@@ -281,21 +281,21 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
     <ul
       className="WF-meta"
     >
-      <div
-        className="WF-meta--item"
+      <li
+        className="WF-meta--item content-3 t-m-gray"
       >
-        <li
+        <span
           className="content-3 t-m-gray"
         >
           by 
           Harry Harrison
-        </li>
+        </span>
         <span
           className="content-3 metadataSeparator t-m-gray"
         >
           -
         </span>
-      </div>
+      </li>
       <li
         className="WF-meta--item content-3 t-m-gray"
       >
@@ -349,21 +349,21 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
     <ul
       className="WF-meta"
     >
-      <div
-        className="WF-meta--item"
+      <li
+        className="WF-meta--item content-3 t-m-gray"
       >
-        <li
+        <span
           className="content-3 t-m-gray"
         >
           by 
           Harry Harrison
-        </li>
+        </span>
         <span
           className="content-3 metadataSeparator t-m-gray"
         >
           -
         </span>
-      </div>
+      </li>
       <li
         className="WF-meta--item content-3 t-m-gray"
       >
