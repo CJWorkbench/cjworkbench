@@ -25,11 +25,6 @@ class LessonManager:
         self._all_cache = None # cached self.all() response
 
     def get(self, stub):
-        if stub not in self._cache:
-            self._cache[stub] = self._load(stub)
-        return self._cache[stub]
-
-    def _load(self, stub):
         path = os.path.join(self.path, stub + '.html')
         try:
             with open(path, 'r', encoding='utf-8') as f:
@@ -41,18 +36,15 @@ class LessonManager:
         """
         The list (not a QuerySet!) of all lessons, ordered alphabetically.
         """
-        if not self._all_cache:
-            ret = []
+        ret = []
 
-            for html_path in pathlib.Path(self.path).glob('*.html'):
-                stub = html_path.stem
-                ret.append(self.get(stub)) # self.get() so we fill cache
+        for html_path in pathlib.Path(self.path).glob('*.html'):
+            stub = html_path.stem
+            ret.append(self.get(stub))
 
-            ret.sort(key=lambda lesson: lesson.header.title)
+        ret.sort(key=lambda lesson: lesson.header.title)
 
-            self._all_cache = ret
-
-        return self._all_cache
+        return ret
 
 
 # A Lesson is a guide that helps the user build a Workflow we recommend.
