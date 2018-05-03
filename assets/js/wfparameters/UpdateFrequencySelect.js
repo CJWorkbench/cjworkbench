@@ -139,7 +139,7 @@ export default class UpdateFrequencySelect extends React.Component {
                 </div>
 
                 <div className="col-sm-9">
-                  <div className='info-2'>Automatically save the current version of the workflow and update it with the newest data.</div>
+                  <div className='info-2'>Automatically update this workflow with the newest data (old versions will be saved).</div>
                   <Label for="updateFreq" className='content-3 t-d-gray mt-4 mb-2'>Check for update every</Label>
                   <div className='update-freq-settings update-freq-test-class mb-5'>
                     <Input

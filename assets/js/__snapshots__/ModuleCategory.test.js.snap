@@ -36,7 +36,7 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with catego
     setOpenCategory={[MockFunction]}
   >
     <div
-      className="card module-category--closed"
+      className="card module-category--open"
     >
       <div
         className="module-category--wrapper"

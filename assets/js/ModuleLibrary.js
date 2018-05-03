@@ -50,7 +50,7 @@ export default class ModuleLibrary extends React.Component {
     this.setOpenCategory = this.setOpenCategory.bind(this);
     this.toggleLibrary = this.toggleLibrary.bind(this);
     this.openLibrary = this.openLibrary.bind(this);
-    this.updated = this.updated.bind(this);
+    this.updateModules = this.updateModules.bind(this);
   }
 
 
@@ -70,7 +70,7 @@ export default class ModuleLibrary extends React.Component {
    * - author
    * - version
    */
-  componentWillMount() {
+  loadModules () {
     this.props.api.getModules()
       .then(json => {
 
@@ -94,6 +94,10 @@ export default class ModuleLibrary extends React.Component {
       })
   }
 
+  componentWillMount() {
+    this.loadModules();
+  }
+
   // Categories call this to indicate that they've been opened, so we can close all the rest
   setOpenCategory(name) {
       this.setState({openCategory: name});
@@ -103,8 +107,8 @@ export default class ModuleLibrary extends React.Component {
     this.props.addModule(event.target.id);
   }
 
-  updated() {
-    this.componentWillMount() // dummy update to force a re-render.
+  updateModules() {
+    this.loadModules()
   }
 
   toggleLibrary() {
@@ -130,7 +134,7 @@ export default class ModuleLibrary extends React.Component {
             items={this.state.items}
             addModule={this.props.addModule}
             dropModule={this.props.dropModule}
-            moduleAdded={this.updated}
+            moduleAdded={this.updateModules}
             toggleLibrary={this.toggleLibrary}
             openCategory={this.state.openCategory}
             setOpenCategory={this.setOpenCategory}
@@ -146,7 +150,7 @@ export default class ModuleLibrary extends React.Component {
           items={this.state.items}
           addModule={this.props.addModule}
           dropModule={this.props.dropModule}
-          moduleAdded={this.updated}
+          moduleAdded={this.updateModules}
           openLibrary={this.openLibrary}
           openCategory={this.state.openCategory}
           setOpenCategory={this.setOpenCategory}

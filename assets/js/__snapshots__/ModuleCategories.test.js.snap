@@ -167,7 +167,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
         setOpenCategory={[Function]}
       >
         <div
-          className="card module-category--closed"
+          className="card module-category--open"
         >
           <div
             className="module-category--wrapper"
@@ -358,7 +358,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
         setOpenCategory={[Function]}
       >
         <div
-          className="card module-category--closed"
+          className="card module-category--open"
         >
           <div
             className="module-category--wrapper"
