@@ -29,7 +29,7 @@ export default class ModuleLibraryOpen extends React.Component {
   render() {
 
     return (
-        <div className='module-library--open'>
+        <div className='module-library module-library--open'>
           <div className='search-container'>
             <div className='library-header'>
               <div className="d-flex align-items-center">

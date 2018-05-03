@@ -1,11 +1,20 @@
 /* --- Module Library --- */
 
+.module-library {
+  height: 100%;
+  background-color: $module-library-background;
+  color: $white;
+}
+
+
+.workflow-root.in-lesson .module-library {
+  background-color: transparent;
+  color: $brand-text;
+}
 
 .module-library--open {
-  height: 100%;
   width: 200px;
   flex: 0 0 200px;
-  background-color: #577485;
 }
 
 
@@ -13,7 +22,6 @@
 .module-library--closed {
   width: 6rem;
   flex: 0 0 6rem;
-  background-color: #577485;
 }
 
 .library-closed--toggle{
@@ -102,7 +110,6 @@
   position: relative;
   height: 4rem;
   padding-left: 2.5rem;
-  color:#fff;
 }
 
 .card .second-level:hover {
@@ -146,7 +153,6 @@
   font-size: 1.3rem;
   font-weight: 100;
   line-height: 1.6rem;
-  color: #FFF;
 }
 
 .closed-ML--category{
@@ -173,7 +179,6 @@
 
 .ml-icon{
   font-size: 1.4rem;
-  color: #ffffff;
 }
 
 .ml-icon-container{
@@ -211,7 +216,6 @@
 
 .module-category--open .ml-list-mini .ml-module-card .ml-icon {
   font-size: 1.2rem;
-  color: #ffffff;
 }
 
 .module-category--open .ml-list-mini .ml-module-card .ml-module-name{
@@ -229,7 +233,6 @@
 //Style for search icon
 .ml-icon-search{
   font-size: 1.4rem;
-  color: #ffffff;
 }
 
 //style for close icon in ML search
