@@ -1,7 +1,12 @@
 from integrationtests.utils import LoggedInIntegrationTest
 
 class TestLessons(LoggedInIntegrationTest):
-    def test_lesson(self):
+    def test_lesson_list(self):
+        b = self.browser
+        b.visit(self.live_server_url + '/lessons/')
+        self.assertTrue(b.is_text_present('Load Public Data and Make a Chart'))
+
+    def test_lesson_detail(self):
         b = self.browser
         b.visit(self.live_server_url + '/lessons/')
         b.find_by_xpath('//button[text()="Begin"]').click()
