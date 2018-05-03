@@ -24,11 +24,11 @@ class LessonManager:
         self._cache = {}
         self._all_cache = None # cached self.all() response
 
-    def get(self, stub):
-        path = os.path.join(self.path, stub + '.html')
+    def get(self, slug):
+        path = os.path.join(self.path, slug + '.html')
         try:
             with open(path, 'r', encoding='utf-8') as f:
-                return Lesson.parse(stub, f.read())
+                return Lesson.parse(slug, f.read())
         except FileNotFoundError:
             raise Lesson.DoesNotExist()
 
@@ -39,8 +39,8 @@ class LessonManager:
         ret = []
 
         for html_path in pathlib.Path(self.path).glob('*.html'):
-            stub = html_path.stem
-            ret.append(self.get(stub))
+            slug = html_path.stem
+            ret.append(self.get(slug))
 
         ret.sort(key=lambda lesson: lesson.header.title)
 
@@ -52,26 +52,26 @@ class LessonManager:
 # We implement Lessons in HTML, so they're stored as code, not in the database.
 # This interface mimics django.db.models.Model.
 class Lesson:
-    def __init__(self, stub, header, sections):
-        self.stub = stub
+    def __init__(self, slug, header, sections):
+        self.slug = slug
         self.header = header
         self.sections = sections
 
     def __eq__(self, other):
-        return (self.stub, self.header, self.sections) == (other.stub, other.header, other.sections)
+        return (self.slug, self.header, self.sections) == (other.slug, other.header, other.sections)
 
     def __repr__(self):
-        return 'Lesson' + repr((self.stub, self.header, self.sections))
+        return 'Lesson' + repr((self.slug, self.header, self.sections))
 
     def get_absolute_url(self):
-        return '/lessons/%s/' % self.stub
+        return '/lessons/%s/' % self.slug
 
     @property
     def title(self):
         return self.header.title
 
     @staticmethod
-    def parse(stub, html):
+    def parse(slug, html):
         parser = html5lib.HTMLParser(strict=False, namespaceHTMLElements=False)
         root = parser.parse(StringIO(html))
 
@@ -89,7 +89,7 @@ class Lesson:
         section_els = root.findall('./section')
         lesson_sections = list(LessonSection._from_etree(el) for el in section_els)
 
-        return Lesson(stub, lesson_header, lesson_sections)
+        return Lesson(slug, lesson_header, lesson_sections)
 
     class DoesNotExist(Exception):
         pass

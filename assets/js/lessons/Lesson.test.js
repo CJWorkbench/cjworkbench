@@ -4,7 +4,7 @@ import { mount, shallow } from 'enzyme'
 
 describe('Lesson', () => {
   const lesson = {
-    stub: 'a-lesson',
+    slug: 'a-lesson',
     header: {
       title: 'Lesson Title',
       html: '<p>Lesson HTML</p>',

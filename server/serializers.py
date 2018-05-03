@@ -166,7 +166,7 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
 class LessonSerializer(serializers.BaseSerializer):
     def to_representation(self, obj):
         return {
-            'stub': obj.stub,
+            'slug': obj.slug,
             'header': {
                 'title': obj.header.title,
                 'html': obj.header.html,

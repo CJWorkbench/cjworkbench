@@ -12,7 +12,7 @@ class Workflow(models.Model):
 
     public = models.BooleanField(default=False)
     example = models.BooleanField(default=False)    # if set, will be duplicated for new users
-    lesson_stub = models.CharField('lesson_stub', max_length=100, null=True)
+    lesson_slug = models.CharField('lesson_slug', max_length=100, null=True)
 
     module_library_collapsed = models.BooleanField(default=False)
     selected_wf_module = models.IntegerField(default=None, null=True, blank=True)
@@ -64,10 +64,10 @@ class Workflow(models.Model):
 
     @property
     def lesson(self):
-        if self.lesson_stub is None:
+        if self.lesson_slug is None:
             return None
         else:
             try:
-                return Lesson.objects.get(self.lesson_stub)
+                return Lesson.objects.get(self.lesson_slug)
             except Lesson.DoesNotExist:
                 return None

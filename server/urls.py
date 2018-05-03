@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^api/workflows/?$', views.workflow_list),
 
     url(r'^lessons/$', views.render_lesson_list),
-    url(r'^lessons/(?P<stub>[-a-z0-9]+)/?$', views.render_lesson_detail),
+    url(r'^lessons/(?P<slug>[-a-z0-9]+)/?$', views.render_lesson_detail),
 
     # workflows
     #TODO: Name the rest of the urls or implement some kind of naming scheme

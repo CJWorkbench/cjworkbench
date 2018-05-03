@@ -27,9 +27,9 @@ class LessonDetailTests(TestCase):
         self.log_in()
 
         # Add non-matching Workflows -- to test we _don't_ load them
-        Workflow.objects.create(owner=self.user, lesson_stub='some-other-lesson')
-        Workflow.objects.create(owner=self.user, lesson_stub=None)
-        Workflow.objects.create(owner=self.other_user, lesson_stub='load-public-data', public=True)
+        Workflow.objects.create(owner=self.user, lesson_slug='some-other-lesson')
+        Workflow.objects.create(owner=self.user, lesson_slug=None)
+        Workflow.objects.create(owner=self.other_user, lesson_slug='load-public-data', public=True)
 
         response = self.client.get('/lessons/load-public-data/')
         self.assertNotEqual(response.status_code, 200)
@@ -38,7 +38,7 @@ class LessonDetailTests(TestCase):
     def test_get_with_workflow(self):
         self.log_in()
 
-        Workflow.objects.create(owner=self.user, lesson_stub='load-public-data')
+        Workflow.objects.create(owner=self.user, lesson_slug='load-public-data')
         response = self.client.get('/lessons/load-public-data/')
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
@@ -50,7 +50,7 @@ class LessonDetailTests(TestCase):
 
     def test_post_with_existing(self):
         self.log_in()
-        Workflow.objects.create(owner=self.user, lesson_stub='load-public-data')
+        Workflow.objects.create(owner=self.user, lesson_slug='load-public-data')
         response = self.client.post('/lessons/load-public-data/')
         self.assertRedirects(response, '/lessons/load-public-data/')
         self.assertEqual(Workflow.objects.count(), 1) # don't create duplicate Workflow
@@ -59,14 +59,14 @@ class LessonDetailTests(TestCase):
         self.log_in()
 
         # Add non-matching Workflows -- to test we ignore them
-        Workflow.objects.create(owner=self.user, lesson_stub='other-lesson')
-        Workflow.objects.create(owner=self.user, lesson_stub=None)
-        Workflow.objects.create(owner=self.other_user, lesson_stub='load-public-data', public=True)
+        Workflow.objects.create(owner=self.user, lesson_slug='other-lesson')
+        Workflow.objects.create(owner=self.user, lesson_slug=None)
+        Workflow.objects.create(owner=self.other_user, lesson_slug='load-public-data', public=True)
 
         response = self.client.post('/lessons/load-public-data/')
         self.assertRedirects(response, '/lessons/load-public-data/')
         self.assertEqual(Workflow.objects.count(), 4) # create Workflow
-        self.assertEqual(Workflow.objects.filter(lesson_stub='load-public-data').count(), 2)
+        self.assertEqual(Workflow.objects.filter(lesson_slug='load-public-data').count(), 2)
 
     # The next three tests are of GET /workflows/:id/. They're here, not there,
     # to keep canonical-URL tests in one file.
@@ -74,27 +74,27 @@ class LessonDetailTests(TestCase):
     # We're testing that the rules are:
     # * GET /workflows/:id/ when there is a lesson: redirect to lesson
     # * GET /workflows/:id/ when there is no lesson: display
-    # * GET /lessons/:stub/ when there is a workflow: display, with 'lesson' param
-    def test_get_workflow_with_lesson_stub(self):
+    # * GET /lessons/:slug/ when there is a workflow: display, with 'lesson' param
+    def test_get_workflow_with_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(owner=self.user, lesson_stub='load-public-data')
+        workflow = Workflow.objects.create(owner=self.user, lesson_slug='load-public-data')
         response = self.client.get(workflow.get_absolute_url())
         self.assertRedirects(response, '/lessons/load-public-data/')
 
-    def test_get_public_workflow_with_lesson_stub(self):
+    def test_get_public_workflow_with_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(owner=self.other_user, lesson_stub='load-public-data', public=True) # not 404
+        workflow = Workflow.objects.create(owner=self.other_user, lesson_slug='load-public-data', public=True) # not 404
         workflow.save()
         response = self.client.get(workflow.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
 
-    def test_get_workflow_with_invalid_lesson_stub(self):
+    def test_get_workflow_with_invalid_lesson_slug(self):
         self.log_in()
 
-        workflow = Workflow.objects.create(owner=self.user, lesson_stub='nonexistent-lesson-stub')
+        workflow = Workflow.objects.create(owner=self.user, lesson_slug='nonexistent-lesson-slug')
         response = self.client.get(workflow.get_absolute_url())
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed('workflow.html')
