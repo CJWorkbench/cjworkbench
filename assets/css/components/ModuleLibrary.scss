@@ -77,9 +77,12 @@
 // Entire module list
 
 .ML--module-list {
-  overflow-y: scroll;
+  max-width: 100%;
   height:calc(100vh - 40rem);
+  overflow-y: scroll;
+  overflow-x: hidden;
   box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+
 }
 
 .ML--module-list .list {
