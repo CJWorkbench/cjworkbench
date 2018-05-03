@@ -2,7 +2,7 @@
 
 import React from 'react'
 import ModuleLibrary from './ModuleLibrary'
-import { WorkflowNavBar } from './navbar'
+import WorkflowNavBar from './WorkflowNavBar'
 import OutputPane from './OutputPane'
 import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
@@ -55,11 +55,17 @@ class Workflow extends React.Component {
       return null;
     }
 
-    let selectedWorkflowModuleRef = this.props.workflow.wf_modules.find((wf) => {
+    const selectedWorkflowModuleRef = this.props.workflow.wf_modules.find((wf) => {
       return wf.id === this.props.selected_wf_module;
     });
+
+    let className = 'workflow-root'
+    if (this.props.lesson) {
+      className += ' in-lesson'
+    }
+
     return (
-        <div className="workflow-root">
+        <div className={className}>
           { this.props.lesson ? <Lesson {...this.props.lesson} /> : '' }
 
           <ModuleLibrary

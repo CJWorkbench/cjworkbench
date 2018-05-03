@@ -1,6 +1,3 @@
-// Navbar at top of all logged-in pages.
-// May have various elements on different pages, including toolbar
-
 import React from 'react'
 import WfHamburgerMenu from './WfHamburgerMenu'
 import EditableWorkflowName from './EditableWorkflowName'
@@ -20,27 +17,8 @@ import {
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { Share } from 'react-twitter-widgets'
 
-
-export class WorkflowListNavBar extends React.Component {
-
-  render() {
-
-    return (
-      <div>
-        <nav className="navbar">
-          <div className="d-flex align-items-center">
-            <img src="/static/images/logo.svg" className="logo"/>
-            <div className="logo-1">Workbench</div>
-          </div>
-          <WfHamburgerMenu />
-        </nav>
-      </div>
-    );
-  }
-}
-
 // Workflow page
-export class WorkflowNavBar extends React.Component {
+export default class WorkflowNavBar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

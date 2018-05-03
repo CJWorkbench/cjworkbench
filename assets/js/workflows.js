@@ -1,11 +1,11 @@
 // Elements of /workflows. Navbar plus a list
 
 import React from 'react'
-import { WorkflowListNavBar } from './navbar'
+import WorkflowListNavBar from './WorkflowListNavBar'
 import WfContextMenu from './WfContextMenu'
 import WorkflowMetadata from './WorkflowMetadata'
 import PropTypes from 'prop-types'
-import { goToUrl, logUserEvent } from "./utils";
+import { goToUrl } from "./utils";
 
 export default class Workflows extends React.Component {
   constructor(props) {

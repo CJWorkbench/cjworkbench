@@ -1,29 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`NavBar WorkflowListNavBar Renders correctly 1`] = `
-<div>
-  <nav
-    className="navbar"
-  >
-    <div
-      className="d-flex align-items-center"
-    >
-      <img
-        className="logo"
-        src="/static/images/logo.svg"
-      />
-      <div
-        className="logo-1"
-      >
-        Workbench
-      </div>
-    </div>
-    <WfHamburgerMenu />
-  </nav>
-</div>
-`;
-
-exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set to Public 1`] = `
+exports[`WorkflowNavBar In Private mode, Share button invites user to set to Public 1`] = `
 <WorkflowNavBar
   api={
     Object {
@@ -361,7 +338,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
 </WorkflowNavBar>
 `;
 
-exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set to Public 2`] = `
+exports[`WorkflowNavBar In Private mode, Share button invites user to set to Public 2`] = `
 <div
   className="modal-dialog test-setpublic-modal"
   role="document"
@@ -440,7 +417,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
 </div>
 `;
 
-exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set to Public 3`] = `
+exports[`WorkflowNavBar In Private mode, Share button invites user to set to Public 3`] = `
 <div
   className="modal-dialog test-share-modal"
   role="document"
@@ -579,7 +556,7 @@ exports[`NavBar WorkflowNavBar In Private mode, Share button invites user to set
 </div>
 `;
 
-exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with links 1`] = `
+exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] = `
 <WorkflowNavBar
   api={
     Object {
@@ -945,7 +922,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
 </WorkflowNavBar>
 `;
 
-exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with links 2`] = `
+exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] = `
 <div
   className="modal-dialog test-share-modal"
   role="document"
@@ -1084,7 +1061,7 @@ exports[`NavBar WorkflowNavBar In Public mode, Share button opens modal with lin
 </div>
 `;
 
-exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends user to sign-in page 1`] = `
+exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to sign-in page 1`] = `
 <WorkflowNavBar
   api={
     Object {
@@ -1246,7 +1223,7 @@ exports[`NavBar WorkflowNavBar With user NOT logged in, Duplicate button sends u
 </WorkflowNavBar>
 `;
 
-exports[`NavBar WorkflowNavBar With user logged in, Duplicate button sends user to new copy 1`] = `
+exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new copy 1`] = `
 <WorkflowNavBar
   api={
     Object {

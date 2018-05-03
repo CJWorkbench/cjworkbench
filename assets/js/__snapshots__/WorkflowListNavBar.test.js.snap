@@ -1,0 +1,24 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`WorkflowListNavBar Renders correctly 1`] = `
+<div>
+  <nav
+    className="navbar"
+  >
+    <div
+      className="d-flex align-items-center"
+    >
+      <img
+        className="logo"
+        src="/static/images/logo.svg"
+      />
+      <div
+        className="logo-1"
+      >
+        Workbench
+      </div>
+    </div>
+    <WfHamburgerMenu />
+  </nav>
+</div>
+`;
