@@ -34,7 +34,7 @@ exports[`ModuleLibraryClosed NOT Read-Only Renders 1`] = `
     libraryOpen={true}
     moduleAdded={[Function]}
     openCategory="Add data"
-    openLibrary={[Function]}
+    openLibrary={[MockFunction]}
     setOpenCategory={[Function]}
   >
     <div
@@ -42,7 +42,7 @@ exports[`ModuleLibraryClosed NOT Read-Only Renders 1`] = `
     >
       <div
         className="library-closed--toggle"
-        onClick={[Function]}
+        onClick={[MockFunction]}
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
       >
@@ -60,7 +60,7 @@ exports[`ModuleLibraryClosed NOT Read-Only Renders 1`] = `
       >
         <div
           className="card"
-          onClick={[Function]}
+          onClick={[MockFunction]}
         >
           <div
             className="closed-ML--category"
@@ -118,7 +118,7 @@ exports[`ModuleLibraryClosed NOT Read-Only Renders 1`] = `
                     libraryOpen={false}
                     name="Load from Enigma"
                     setOpenCategory={[Function]}
-                />,
+                  />,
                 ]
               }
               name="Add data"
@@ -226,7 +226,7 @@ exports[`ModuleLibraryClosed NOT Read-Only Renders 1`] = `
                     libraryOpen={false}
                     name="Filter by Text"
                     setOpenCategory={[Function]}
-                />,
+                  />,
                 ]
               }
               name="Filter"
@@ -388,7 +388,7 @@ exports[`ModuleLibraryClosed Read-Only Renders 1`] = `
     libraryOpen={true}
     moduleAdded={[Function]}
     openCategory="Add data"
-    openLibrary={[Function]}
+    openLibrary={[MockFunction]}
     setOpenCategory={[Function]}
   >
     <div
@@ -396,7 +396,7 @@ exports[`ModuleLibraryClosed Read-Only Renders 1`] = `
     >
       <div
         className="library-closed--toggle"
-        onClick={[Function]}
+        onClick={[MockFunction]}
         onMouseEnter={[Function]}
         onMouseLeave={[Function]}
       >
@@ -414,7 +414,7 @@ exports[`ModuleLibraryClosed Read-Only Renders 1`] = `
       >
         <div
           className="card"
-          onClick={[Function]}
+          onClick={[MockFunction]}
         >
           <div
             className="closed-ML--category"
@@ -472,7 +472,7 @@ exports[`ModuleLibraryClosed Read-Only Renders 1`] = `
                     libraryOpen={false}
                     name="Load from Enigma"
                     setOpenCategory={[Function]}
-                />,
+                  />,
                 ]
               }
               name="Add data"
@@ -580,7 +580,7 @@ exports[`ModuleLibraryClosed Read-Only Renders 1`] = `
                     libraryOpen={false}
                     name="Filter by Text"
                     setOpenCategory={[Function]}
-                />,
+                  />,
                 ]
               }
               name="Filter"

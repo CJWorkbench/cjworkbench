@@ -52,7 +52,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
               libraryOpen={false}
               name="Load from Enigma"
               setOpenCategory={[Function]}
-          />,
+            />,
           ]
         }
         name="Add data"
@@ -160,7 +160,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
               libraryOpen={false}
               name="Filter by Text"
               setOpenCategory={[Function]}
-          />,
+            />,
           ]
         }
         name="Filter"
@@ -245,7 +245,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
               libraryOpen={true}
               name="Load from Enigma"
               setOpenCategory={[Function]}
-          />,
+            />,
           ]
         }
         name="Add data"
@@ -351,7 +351,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
               libraryOpen={true}
               name="Filter by Text"
               setOpenCategory={[Function]}
-          />,
+            />,
           ]
         }
         name="Filter"

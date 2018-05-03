@@ -5,12 +5,12 @@ exports[`AddNotificationButtonClosed Renders 1`] = `
   backend={[Function]}
 >
   <DragSource(AddNotificationButtonClosed)
-    setOpenCategory={[Function]}
+    setOpenCategory={[MockFunction]}
   >
     <AddNotificationButtonClosed
       connectDragSource={[Function]}
       isDragging={false}
-      setOpenCategory={[Function]}
+      setOpenCategory={[MockFunction]}
     >
       <div
         className="notification-button-closed"

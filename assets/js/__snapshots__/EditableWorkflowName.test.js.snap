@@ -4,7 +4,7 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
 <EditableWorkflowName
   api={
     Object {
-      "setWfName": [Function],
+      "setWfName": [MockFunction],
     }
   }
   isReadOnly={false}

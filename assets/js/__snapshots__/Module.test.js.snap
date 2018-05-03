@@ -5,17 +5,17 @@ exports[`Module NOT Read-only Renders a card, with icon received from props 1`] 
   backend={[Function]}
 >
   <DragSource(Module)
-    addModule={[Function]}
+    addModule={[MockFunction]}
     dropModule={[Function]}
     icon="add"
     id={88}
     isReadOnly={false}
     libraryOpen={true}
     name="Sweet Module"
-    setOpenCategory={[Function]}
+    setOpenCategory={[MockFunction]}
   >
     <Module
-      addModule={[Function]}
+      addModule={[MockFunction]}
       connectDragPreview={[Function]}
       connectDragSource={[Function]}
       dropModule={[Function]}
@@ -25,7 +25,7 @@ exports[`Module NOT Read-only Renders a card, with icon received from props 1`] 
       isReadOnly={false}
       libraryOpen={true}
       name="Sweet Module"
-      setOpenCategory={[Function]}
+      setOpenCategory={[MockFunction]}
     >
       <div
         className="card ml-module-card"
@@ -71,17 +71,17 @@ exports[`Module Read-only Renders a card, with icon received from props 1`] = `
   backend={[Function]}
 >
   <DragSource(Module)
-    addModule={[Function]}
+    addModule={[MockFunction]}
     dropModule={[Function]}
     icon="add"
     id={88}
     isReadOnly={true}
     libraryOpen={false}
     name="Sweet Module"
-    setOpenCategory={[Function]}
+    setOpenCategory={[MockFunction]}
   >
     <Module
-      addModule={[Function]}
+      addModule={[MockFunction]}
       connectDragPreview={[Function]}
       connectDragSource={[Function]}
       dropModule={[Function]}
@@ -91,7 +91,7 @@ exports[`Module Read-only Renders a card, with icon received from props 1`] = `
       isReadOnly={true}
       libraryOpen={false}
       name="Sweet Module"
-      setOpenCategory={[Function]}
+      setOpenCategory={[MockFunction]}
     >
       <div
         className="card ml-module-card"

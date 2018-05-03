@@ -1,13 +1,14 @@
-var path = require("path");
-var webpack = require('webpack');
-var BundleTracker = require('webpack-bundle-tracker');
+const path = require('path');
+const webpack = require('webpack');
+const BundleTracker = require('webpack-bundle-tracker');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   context: __dirname,
 
   // Each page gets its own bundle
   entry: {
-    app: './assets/js/pages/app',
+    style: './assets/css/style.scss',
     login: './assets/js/pages/login',
     workflows: './assets/js/pages/workflows.page',
     workflow: './assets/js/pages/workflow.page',
@@ -16,11 +17,16 @@ module.exports = {
 
   output: {
     path: path.resolve('./assets/bundles/'),
-    filename: "[name]-[hash].js",
+    filename: '[name]-[contenthash].js',
   },
+
   devtool: 'source-map',
+
   plugins: [
     new BundleTracker({filename: './webpack-stats.json'}),
+    new MiniCssExtractPlugin({
+      filename: "[name]-[contenthash].css",
+    }),
   ],
 
   module: {
@@ -34,21 +40,17 @@ module.exports = {
       },
       {
         test: /\.css$/,
-        use: [{
-          loader: 'style-loader'
-        }, {
-          loader: 'css-loader'
-        }]
+        use: [
+          'css-loader',
+        ],
       },
       {
         test: /\.scss$/,
-        use: [{
-          loader: 'style-loader'
-        }, {
-          loader: 'css-loader'
-        }, {
-          loader: 'sass-loader'
-        }]
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader',
+        ],
       },
       {
         // image handling
@@ -56,6 +58,7 @@ module.exports = {
         loader: 'url-loader',
         options: {
           limit: 25000,
+          name: '[name]-[contenthash].[ext]',
         },
       },
       {
@@ -65,9 +68,9 @@ module.exports = {
         options: {
           limit: 25000,
           mimetype: 'application/font-woff',
-          name: '../fonts/[name].[ext]'
+          name: '../fonts/[name]-[contenthash].[ext]'
         },
-      }
+      },
     ]
   },
 

@@ -1,4 +1,5 @@
 {% load analytics_tags %}
+{% load render_bundle from webpack_loader %}
 
 <!DOCTYPE html>
 <html lang="en" {% block html_tag_attrs %}{% endblock %}>
@@ -35,8 +36,7 @@
 
     </script>
 
-    {% block head %}{% endblock %}
-
+    {% render_bundle 'style' 'css' %}
   </head>
 
   <body {% block body_tag_attrs %}{% endblock %}>

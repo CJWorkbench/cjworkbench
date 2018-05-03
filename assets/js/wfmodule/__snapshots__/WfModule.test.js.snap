@@ -4,21 +4,255 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
 <WfModule
   api={
     Object {
-      "onParamChanged": [Function],
-      "postParamEvent": [Function],
+      "onParamChanged": [MockFunction],
+      "postParamEvent": [MockFunction],
     }
   }
-  changeParam={[Function]}
-  connectDragPreview={[Function]}
-  connectDragSource={[Function]}
-  connectDropTarget={[Function]}
-  focusModule={[Function]}
+  changeParam={[MockFunction]}
+  connectDragPreview={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          <img
+            src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
+          />,
+          Object {
+            "captureDraggingState": true,
+          },
+        ],
+      ],
+    }
+  }
+  connectDragSource={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          <div
+            className=""
+            onClick={[Function]}
+          >
+            <div
+              className="wf-card mx-auto "
+            >
+              <div>
+                <div
+                  className="output-bar-container"
+                >
+                  <StatusBar
+                    isDragging={undefined}
+                    isSelected={true}
+                    status={undefined}
+                  />
+                </div>
+                <div
+                  className="card-block p-0"
+                  onMouseEnter={[Function]}
+                  onMouseLeave={[Function]}
+                >
+                  <div
+                    className="module-card-info"
+                  >
+                    <div
+                      className="module-card-header"
+                    >
+                      <div
+                        className="module-header-content"
+                      >
+                        <div
+                          className="d-flex justify-content-start align-items-center"
+                        >
+                          <div
+                            className="icon-undefined WFmodule-icon mr-2"
+                          />
+                          <div
+                            className="t-d-gray WFmodule-name"
+                          />
+                          <div
+                            className="icon-sort-up btn context-collapse-button"
+                            onClick={[Function]}
+                            style={
+                              Object {
+                                "opacity": "0",
+                              }
+                            }
+                          />
+                        </div>
+                        <div
+                          className="d-flex align-items-center"
+                          style={
+                            Object {
+                              "opacity": "0",
+                            }
+                          }
+                        >
+                          <div>
+                            <a
+                              className="btn help-button d-flex align-items-center"
+                              href={undefined}
+                              target="_blank"
+                            >
+                              <div
+                                className="icon-help"
+                              />
+                            </a>
+                          </div>
+                          <div>
+                            <div
+                              className="context-button btn"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="icon-note btn icon-l-gray "
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <WfModuleContextMenu
+                              className=""
+                              id={999}
+                              removeModule={[Function]}
+                              stopProp={[Function]}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <Collapse
+                      className=""
+                      delay={
+                        Object {
+                          "hide": 350,
+                          "show": 350,
+                        }
+                      }
+                      isOpen={true}
+                      onClosed={[Function]}
+                      onOpened={[Function]}
+                      tag="div"
+                    >
+                      <StatusLine
+                        error_msg={undefined}
+                        status={undefined}
+                      />
+                      <div
+                        className="module-card-params"
+                      >
+                        <WfParameter
+                          api={
+                            Object {
+                              "onParamChanged": [MockFunction],
+                              "postParamEvent": [MockFunction],
+                            }
+                          }
+                          changeParam={[Function]}
+                          getParamMenuItems={[Function]}
+                          getParamText={[Function]}
+                          isReadOnly={false}
+                          loggedInUser={undefined}
+                          notifications={undefined}
+                          p={
+                            Object {
+                              "id": 100,
+                              "parameter_spec": Object {
+                                "id_name": "url",
+                                "type": "string",
+                              },
+                              "value": "http://some.URL.me",
+                            }
+                          }
+                          revision={707}
+                          setClickNotification={[Function]}
+                          setParamText={[Function]}
+                          startDrag={[MockFunction]}
+                          stopDrag={[MockFunction]}
+                          updateSettings={
+                            Object {
+                              "autoUpdateData": undefined,
+                              "lastUpdateCheck": undefined,
+                              "updateInterval": undefined,
+                              "updateUnits": undefined,
+                            }
+                          }
+                          wf_module_id={999}
+                        />
+                        <WfParameter
+                          api={
+                            Object {
+                              "onParamChanged": [MockFunction],
+                              "postParamEvent": [MockFunction],
+                            }
+                          }
+                          changeParam={[Function]}
+                          getParamMenuItems={[Function]}
+                          getParamText={[Function]}
+                          isReadOnly={false}
+                          loggedInUser={undefined}
+                          notifications={undefined}
+                          p={
+                            Object {
+                              "id": 101,
+                              "parameter_spec": Object {
+                                "id_name": "version_select",
+                                "type": "custom",
+                              },
+                            }
+                          }
+                          revision={707}
+                          setClickNotification={[Function]}
+                          setParamText={[Function]}
+                          startDrag={[MockFunction]}
+                          stopDrag={[MockFunction]}
+                          updateSettings={
+                            Object {
+                              "autoUpdateData": undefined,
+                              "lastUpdateCheck": undefined,
+                              "updateInterval": undefined,
+                              "updateUnits": undefined,
+                            }
+                          }
+                          wf_module_id={999}
+                        />
+                        <div
+                          className="module-description"
+                        />
+                      </div>
+                    </Collapse>
+                  </div>
+                </div>
+                <div
+                  className="drop-alert "
+                />
+              </div>
+            </div>
+          </div>,
+        ],
+      ],
+    }
+  }
+  connectDropTarget={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          undefined,
+        ],
+      ],
+    }
+  }
+  focusModule={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          null,
+        ],
+      ],
+    }
+  }
   isReadOnly={false}
   removeModule={[Function]}
   revision={707}
   selected={true}
-  startDrag={[Function]}
-  stopDrag={[Function]}
+  startDrag={[MockFunction]}
+  stopDrag={[MockFunction]}
   wfModule={
     Object {
       "id": 999,

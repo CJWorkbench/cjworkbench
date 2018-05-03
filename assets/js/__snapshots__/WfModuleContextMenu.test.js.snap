@@ -180,7 +180,13 @@ exports[`WfModuleContextMenu Modal window Modal links render correctly, and Done
 <WfModuleContextMenu
   className="menu-test-class"
   id={415}
-  removeModule={[Function]}
+  removeModule={
+    [MockFunction] {
+      "calls": Array [
+        Array [],
+      ],
+    }
+  }
   stopProp={[Function]}
 >
   <UncontrolledDropdown
@@ -292,7 +298,7 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 1
 <WfModuleContextMenu
   className="menu-test-class"
   id={415}
-  removeModule={[Function]}
+  removeModule={[MockFunction]}
   stopProp={[Function]}
 >
   <UncontrolledDropdown
@@ -404,7 +410,13 @@ exports[`WfModuleContextMenu Renders menu option to Delete with onClick method 2
 <WfModuleContextMenu
   className="menu-test-class"
   id={415}
-  removeModule={[Function]}
+  removeModule={
+    [MockFunction] {
+      "calls": Array [
+        Array [],
+      ],
+    }
+  }
   stopProp={[Function]}
 >
   <UncontrolledDropdown

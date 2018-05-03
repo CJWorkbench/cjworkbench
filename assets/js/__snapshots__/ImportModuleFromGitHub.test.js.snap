@@ -4,12 +4,20 @@ exports[`ImportModuleFromGitHub Library closed Renders a link, which will open m
 <ImportModuleFromGitHub
   api={
     Object {
-      "importFromGithub": [Function],
+      "importFromGithub": [MockFunction] {
+        "calls": Array [
+          Array [
+            Object {
+              "url": "",
+            },
+          ],
+        ],
+      },
     }
   }
   isReadOnly={false}
   libraryOpen={true}
-  moduleAdded={[Function]}
+  moduleAdded={[MockFunction]}
 >
   <div
     className=""
@@ -142,12 +150,12 @@ exports[`ImportModuleFromGitHub Library open Renders a link, which will open mod
 <ImportModuleFromGitHub
   api={
     Object {
-      "importFromGithub": [Function],
+      "importFromGithub": [MockFunction],
     }
   }
   isReadOnly={false}
   libraryOpen={true}
-  moduleAdded={[Function]}
+  moduleAdded={[MockFunction]}
 >
   <div
     className=""

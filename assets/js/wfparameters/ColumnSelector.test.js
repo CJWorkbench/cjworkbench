@@ -48,18 +48,20 @@ describe('ColumnSelector', () => {
 
     var wrapper;
 
-    beforeEach(() => wrapper = mount(
-      <ColumnSelector
-        selectedCols='foo,bar,baz'
-        getColNames={ () => { return Promise.resolve(testcols) } }
-        saveState={ () => {} }
-        revision={101}
-        isReadOnly={false}
-      />
-    ));
+    beforeEach(() => {
+      wrapper = mount(
+        <ColumnSelector
+          selectedCols='foo,bar,baz'
+          getColNames={ () => { return Promise.resolve(testcols) } }
+          saveState={ () => {} }
+          revision={101}
+          isReadOnly={false}
+        />
+      );
+    });
 
     it('Loads and renders column names', (done) => {
-      setImmediate( () => {
+      setImmediate(() => {
         expect(wrapper).toMatchSnapshot();
 
         // check that col names have loaded and turned into checkboxes
@@ -68,14 +70,12 @@ describe('ColumnSelector', () => {
         expect(checkboxList).toHaveLength(6);
 
         expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
-
         done();
       });
     });
 
-    it('Selected columns change on click', (done) => {
-      setImmediate( () => {
-
+    it('Changes selected columns on click', (done) => {
+      setImmediate(() => {
         expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
         // filter list to grab one checkbox, and click on it
@@ -83,49 +83,43 @@ describe('ColumnSelector', () => {
         let wowBox = wrapper.find('input[data-name="wow"]');
         expect(wowBox).toHaveLength(1);
         wowBox.simulate('change', {
-                          target: {
-                            checked: true,
-                            attributes : {
-                              getNamedItem: () => { return { value: 'wow'} }
-                            }
-                          }
-                        });
+          target: {
+            checked: true,
+            attributes : {
+              getNamedItem: () => { return { value: 'wow'} }
+            }
+          }
+        });
 
-        // selected items should be the same
-        expect(wrapper.state().selected).toEqual(["foo", "bar", "baz", 'wow']);
+        setImmediate( () => {
+          // selected items should be the same
+          expect(wrapper.state().selected).toEqual(["foo", "bar", "baz", 'wow']);
 
-        done();
+          done();
+        });
       });
-
-      it('selects all columns when "select all" is clicked', (done) => {
-        setImmediate(() => {
-          expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
-
-          let selectAllButton = wrapper.find('button[name="mc-select-all"');
-          expect(selectAllButton).toHaveLength(1);
-          selectAllButton.simulate('click');
-          setImmediate(() => {
-            expect(wrapper.state().selected).toEqual(testcols);
-            done();
-          });
-        })
-      });
-
-      it('deselects all columns when "select none" is clicked', (done) => {
-        setImmediate(() => {
-          expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
-
-          let selectNoneButton = wrapper.find('button[name="mc-select-none"');
-          expect(selectNoneButton).toHaveLength(1);
-          selectAllButton.simulate('click');
-          setImmediate(() => {
-            expect(wrapper.state().selected).toEqual([]);
-            done();
-          });
-        })
-      })
     });
 
-  });
+    it('selects all columns when "select all" is clicked', (done) => {
+      setImmediate(() => {
+        expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
+        let selectAllButton = wrapper.find('button.mc-select-all');
+        selectAllButton.simulate('click');
+        expect(wrapper.state().selected).toEqual(testcols);
+        done();
+      });
+    });
+
+    it('deselects all columns when "select none" is clicked', (done) => {
+      setImmediate(() => {
+        expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
+
+        let selectNoneButton = wrapper.find('button.mc-select-none');
+        selectNoneButton.simulate('click');
+        expect(wrapper.state().selected).toEqual([]);
+        done();
+      });
+    })
+  });
 });

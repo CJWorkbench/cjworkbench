@@ -4,10 +4,14 @@ exports[`Workflow list page renders correctly 1`] = `
 <Workflows
   api={
     Object {
-      "deleteWorkflow": [Function],
-      "duplicateWorkflow": [Function],
-      "listWorkflows": [Function],
-      "newWorkflow": [Function],
+      "deleteWorkflow": [MockFunction],
+      "duplicateWorkflow": [MockFunction],
+      "listWorkflows": [MockFunction] {
+        "calls": Array [
+          Array [],
+        ],
+      },
+      "newWorkflow": [MockFunction],
     }
   }
 >
@@ -153,10 +157,14 @@ exports[`Workflow list page renders correctly 1`] = `
                 <WorkflowMetadata
                   api={
                     Object {
-                      "deleteWorkflow": [Function],
-                      "duplicateWorkflow": [Function],
-                      "listWorkflows": [Function],
-                      "newWorkflow": [Function],
+                      "deleteWorkflow": [MockFunction],
+                      "duplicateWorkflow": [MockFunction],
+                      "listWorkflows": [MockFunction] {
+                        "calls": Array [
+                          Array [],
+                        ],
+                      },
+                      "newWorkflow": [MockFunction],
                     }
                   }
                   inWorkflowList={true}
@@ -346,10 +354,14 @@ exports[`Workflow list page renders correctly 1`] = `
                 <WorkflowMetadata
                   api={
                     Object {
-                      "deleteWorkflow": [Function],
-                      "duplicateWorkflow": [Function],
-                      "listWorkflows": [Function],
-                      "newWorkflow": [Function],
+                      "deleteWorkflow": [MockFunction],
+                      "duplicateWorkflow": [MockFunction],
+                      "listWorkflows": [MockFunction] {
+                        "calls": Array [
+                          Array [],
+                        ],
+                      },
+                      "newWorkflow": [MockFunction],
                     }
                   }
                   inWorkflowList={true}
@@ -539,10 +551,14 @@ exports[`Workflow list page renders correctly 1`] = `
                 <WorkflowMetadata
                   api={
                     Object {
-                      "deleteWorkflow": [Function],
-                      "duplicateWorkflow": [Function],
-                      "listWorkflows": [Function],
-                      "newWorkflow": [Function],
+                      "deleteWorkflow": [MockFunction],
+                      "duplicateWorkflow": [MockFunction],
+                      "listWorkflows": [MockFunction] {
+                        "calls": Array [
+                          Array [],
+                        ],
+                      },
+                      "newWorkflow": [MockFunction],
                     }
                   }
                   inWorkflowList={true}
@@ -732,10 +748,14 @@ exports[`Workflow list page renders correctly 1`] = `
                 <WorkflowMetadata
                   api={
                     Object {
-                      "deleteWorkflow": [Function],
-                      "duplicateWorkflow": [Function],
-                      "listWorkflows": [Function],
-                      "newWorkflow": [Function],
+                      "deleteWorkflow": [MockFunction],
+                      "duplicateWorkflow": [MockFunction],
+                      "listWorkflows": [MockFunction] {
+                        "calls": Array [
+                          Array [],
+                        ],
+                      },
+                      "newWorkflow": [MockFunction],
                     }
                   }
                   inWorkflowList={true}

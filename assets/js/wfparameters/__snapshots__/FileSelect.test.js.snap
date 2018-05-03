@@ -4,7 +4,7 @@ exports[`FileSelect Does not show anything if neither a user credential nor a fi
 <FileSelect
   api={
     Object {
-      "postParamEvent": [Function],
+      "postParamEvent": [MockFunction],
     }
   }
   getState={[Function]}
@@ -18,7 +18,7 @@ exports[`FileSelect Does not show the modal link if there is no user credential 
 <FileSelect
   api={
     Object {
-      "postParamEvent": [Function],
+      "postParamEvent": [MockFunction],
     }
   }
   getState={[Function]}
@@ -61,7 +61,16 @@ exports[`FileSelect Loads correctly and allows a user to choose a new file 1`] =
 <FileSelect
   api={
     Object {
-      "postParamEvent": [Function],
+      "postParamEvent": [MockFunction] {
+        "calls": Array [
+          Array [
+            1,
+            Object {
+              "type": "fetchFiles",
+            },
+          ],
+        ],
+      },
     }
   }
   getState={[Function]}
@@ -219,7 +228,16 @@ exports[`FileSelect Shows the file count and larger button if there is no file a
 <FileSelect
   api={
     Object {
-      "postParamEvent": [Function],
+      "postParamEvent": [MockFunction] {
+        "calls": Array [
+          Array [
+            1,
+            Object {
+              "type": "fetchFiles",
+            },
+          ],
+        ],
+      },
     }
   }
   getState={[Function]}
