@@ -38,7 +38,7 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS';
 // Sometimes, do nothing
 export const NOP_ACTION = 'NOP_ACTION';
 
-const WorkflowId = window.initState.workflowId;
+const WorkflowId = window.initState ? window.initState.workflowId : 'MISSING-WORKFLOW-ID';
 
 var api = WorkbenchAPI(); // var so it can be mocked for testing
 
