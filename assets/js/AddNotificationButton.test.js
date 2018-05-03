@@ -13,9 +13,9 @@ import AddNotificationButtonOpen  from './AddNotificationButtonOpen'
 import { mount } from 'enzyme'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
-let reducer = require("./workflow-reducer");
+const reducer = require("./workflow-reducer");
 
-let notificationsOffFactory = function() {
+const notificationsOffFactory = function() {
     return jest.fn().mockReturnValue({
          workflow: {
              wf_modules: [
@@ -42,7 +42,7 @@ let notificationsOffFactory = function() {
       });
 };
 
-let notificationsOnFactory = function() {
+const notificationsOnFactory = function() {
     return jest.fn().mockReturnValue({
          workflow: {
              wf_modules: [
@@ -70,7 +70,7 @@ let notificationsOnFactory = function() {
 };
 
 
-let notificationToggleTest = function(el, reducer) {
+const notificationToggleTest = function(el, reducer) {
     el.simulate('click');
     expect(reducer.store.getState.mock.calls.length).toBe(1);
     expect(reducer.updateWfModuleAction.mock.calls[0][0]).toBe(1);
@@ -111,8 +111,8 @@ describe('AddNotificationButtonClosed', () => {
   });
 
   it('Mouse events on icon will show/hide full card', () => {
-    let icon = wrapper.find('.notification-button-closed');
-    let popout = wrapper.find('.alert-closed-ML');
+    const icon = wrapper.find('.notification-button-closed');
+    const popout = wrapper.find('.alert-closed-ML');
     // check that card not displayed initially (governed by 'display' property)
     expect(popout.props().style).toEqual({display:'none'});
     // simulate mouse enter
@@ -127,7 +127,7 @@ describe('AddNotificationButtonClosed', () => {
   });
 
   it('Finds correct wfmodule on click and dispatches change to notifications', () => {
-      let icon = wrapper.find('.notification-button-closed');
+      const icon = wrapper.find('.notification-button-closed');
       notificationToggleTest(icon, reducer);
   });
 
@@ -164,7 +164,7 @@ describe('AddNotificationButtonOpen', () => {
   });
 
   it('Finds correct wfmodule on click and dispatches change to notifications', () => {
-    let button = wrapper.find('.icon-notification');
+    const button = wrapper.find('.icon-notification');
     notificationToggleTest(button, reducer);
   });
 
