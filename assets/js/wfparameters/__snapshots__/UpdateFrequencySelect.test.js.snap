@@ -73,7 +73,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
             <div
               className="info-2"
             >
-              Automatically save the current version of the workflow and update it with the newest data.
+              Automatically update this workflow with the newest data (old versions will be saved).
             </div>
             <Label
               className="content-3 t-d-gray mt-4 mb-2"
@@ -242,7 +242,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             <div
               className="info-2"
             >
-              Automatically save the current version of the workflow and update it with the newest data.
+              Automatically update this workflow with the newest data (old versions will be saved).
             </div>
             <Label
               className="content-3 t-d-gray mt-4 mb-2"
@@ -411,7 +411,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             <div
               className="info-2"
             >
-              Automatically save the current version of the workflow and update it with the newest data.
+              Automatically update this workflow with the newest data (old versions will be saved).
             </div>
             <Label
               className="content-3 t-d-gray mt-4 mb-2"
@@ -580,7 +580,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
             <div
               className="info-2"
             >
-              Automatically save the current version of the workflow and update it with the newest data.
+              Automatically update this workflow with the newest data (old versions will be saved).
             </div>
             <Label
               className="content-3 t-d-gray mt-4 mb-2"
