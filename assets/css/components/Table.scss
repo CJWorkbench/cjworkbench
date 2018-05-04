@@ -1,20 +1,27 @@
 /* Output Pane */
 
 .outputpane {
-    flex: 1 1 auto;
-    position: relative;
+  flex: 1 1 auto;
+  position: relative;
+
+  .outputpane-box {
+    display: flex;
+    flex-direction: column;
+  }
 
   // iframe for charts
   .outputpane-iframe {
+    flex: 0 0 auto;
     width:100%;
     height: calc(50% - 3rem);
-    margin-bottom: -0.5rem;
     position:relative;
     iframe {
       border:none;
+      position: absolute;
+      top: 0;
+      left: 0;
       height: 100%;
       width: 100%;
-      padding-bottom: 0.5rem;
     }
     .outputpane-iframe-control-overlay {
       position: absolute;
@@ -42,9 +49,9 @@
     }
   }
 
-  /* Table */
-
   .outputpane-table {
+    position: relative;
+    flex: 1 1 auto;
 
     .row-number {
       color:#b4b4b4;
@@ -154,8 +161,6 @@
     	border-radius: 0;
     	outline: 2px solid #FBAA6D;
     }
-
-    .btn icon icon-code
 
     /* This div may be superfluous wrt .outputpane */
 
