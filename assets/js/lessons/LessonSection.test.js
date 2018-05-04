@@ -20,7 +20,7 @@ describe('LessonSection', () => {
 
   it('renders the description HTML', () => {
     const wrapper = shallow(<LessonSection {...section} />)
-    expect(wrapper.find('.description').html()).toEqual('<div class="description"><p>Section One HTML</p></div>')
+    expect(wrapper.find('.description').html()).toEqual('<div class="description lesson-content--1"><p>Section One HTML</p></div>')
   })
 
   it('renders steps', () => {
