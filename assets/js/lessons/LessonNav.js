@@ -20,17 +20,17 @@ export default class LessonNav extends React.Component {
     return (
       <footer className="lesson-nav">
         <button
-          name="previous"
+          className="previous action-button button-white"
           disabled={i <= 0}
           onClick={this.onClickPrevious}
           >Previous</button>
-        <span className="active">
+        <div className="active t-white content-2">
           <span className="current">{i + 1}</span>
           <span> of </span>
           <span className="total">{n}</span>
-        </span>
+        </div>
         <button
-          name="next"
+          className="next action-button button-white"
           disabled={i + 1 >= n}
           onClick={this.onClickNext}
           >Next</button>

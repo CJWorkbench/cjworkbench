@@ -1,19 +1,41 @@
 <header>
-  <h1>Load Public Data and Make a Chart</h1>
+  <h1>Load public data and make a column chart</h1>
   <p>Manipulate open data with Workbench.</p>
 </header>
 <section>
-  <h2>0. Introduction</h2>
-  <p>Public data is somewhere. Bring it to Workbench.</p>
-  <p>This other paragraph shows that we can have two paragraphs.</p>
+  <h2>Overview</h2>
+  <p>In this lesson you will analyse open data from the City of San Francisco.</p>
+  <p>You will visualize how many housing projects with more  than 20 affordable units are planned to be built in the sunny Mission district.</p>
 </section>
 <section>
   <h2>1. Load Public Data by URL</h2>
-  <p>Public data is somewhere. Bring it to Workbench.</p>
-  <p>This other paragraph shows that we can have two paragraphs.</p>
+  <p>Through this lesson you will work with the dataset ‘Affordable Housing Pipeline’, publicaly hosted on Workbench. </p>
   <ol class="steps">
-    <li>Add the module</li>
-    <li>Set the URL</li>
-    <li>Click something</li>
+    <li>Add the module ‘Add from URL’.</li>
+    <li>Paste in the URL of the dataset in the module.
+      <div class="copy-txt content-3 t-white">https://data.sfgov.org/resource/e2px-wugd.json</div>
+    </li>
+    <li>Add a note to the module, for example:
+      <div class="copy-txt content-3 t-white">https://data.sfgov.org/resource/e2px-wugd.json</div>
+    </li>
+    <li>Collapse the module.</li>
+  </ol>
+</section>
+<section>
+  <h2>2. Making a column Chart</h2>
+  <p>Let’s add a column chart to visualize this data.</p>
+  <ol class="steps">
+    <li>Add the module ‘Column chart’ using the search in the module library.</li>
+    <li>Add a title to the chart.</li>
+  </ol>
+</section>
+<section>
+  <h2>3. Filtering with a condition</h2>
+  <p>Let’s make our chart more legible by filtering and sorting its data.</p>
+  <ol class="steps">
+    <li>Add the module ‘Filter’ by dragging it between the two already there.</li>
+    <li>Select the column ‘Affordable units’, choose the condition ‘Greater than’ and keep all rows having more than 200 affordable units.</li>
+    <li>Sort the ‘Affordable units’ column in descending order using the toggle in the column header. </li>
+    <li>Select the ‘Column chart’ module to see the chart with revised data.</li>
   </ol>
 </section>

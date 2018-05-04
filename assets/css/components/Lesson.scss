@@ -12,20 +12,60 @@ article.lesson {
   }
 
   section {
+    cursor: default;
     display: flex;
     flex-direction: column;
+    background-color: #719BB0;
+    height: calc(100vh - 8rem);
+    width: 30rem;
+    padding:2rem;
 
     &.inactive { display: none; }
 
+    h2 {
+      color:#fff;
+    }
+
     &>.description {
-      flex-grow: 1;
+      margin-top: 1rem;
+      color:#fff;
+
+      p {
+        color:#fff;
+      }
+    }
+
+    &>.instructions {
+      margin-top: 2rem;
+
+      h3 {
+        margin-bottom: 2rem;
+      }
+
+      li {
+        margin-bottom: 1.5rem;
+
+        .copy-txt {
+          padding:1rem;
+          background-color: rgba(0,0,0,0.1);
+          border-radius: 3px;
+          word-break: break-all;
+          cursor: text;
+        }
+      }
     }
   }
 
   footer {
+    background-color: #719BB0;
+    height: 100%;
     display: flex;
-    &>* {
-      width: 33%;
-    }
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+
+      .action-button {
+        width:9rem;
+      }
   }
 }

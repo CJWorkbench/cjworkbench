@@ -5,14 +5,18 @@ import LessonStep from './LessonStep'
 export default class LessonSection extends React.Component {
   render() {
     const { active, title, html, steps } = this.props
-    const stepComponents = steps.map(s => <LessonStep key={s.html} {...s} />)
+    const stepComponents = steps.length == 0 ? null : (
+      <div className="instructions t-white">
+        <h3 className="instructions">Instructions</h3>
+        <ol className="steps lesson-content--1">{steps.map(s => <LessonStep key={s.html} {...s} />)}</ol>
+      </div>
+    )
 
     return (
       <section className={ active ? 'active' : 'inactive' }>
         <h2>{title}</h2>
-        <div className="description" dangerouslySetInnerHTML={({__html: html})}></div>
-        <h3>Instructions</h3>
-        { stepComponents.length ? <ol className="steps">{stepComponents}</ol> : '' }
+        <div className="description lesson-content--1" dangerouslySetInnerHTML={({__html: html})}></div>
+        { stepComponents }
       </section>
     )
   }
