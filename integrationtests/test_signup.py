@@ -2,20 +2,9 @@ from integrationtests.utils import WorkbenchBase
 from django.core import mail
 import time
 import re
-from splinter import Browser
 
 
 class TestSignup(WorkbenchBase):
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.browser = Browser()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.browser.quit()
-        super().tearDownClass()
-
     def test_signup(self):
         url_regex = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+confirm-email(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
 

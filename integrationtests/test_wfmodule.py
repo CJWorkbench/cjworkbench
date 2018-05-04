@@ -1,13 +1,21 @@
-from integrationtests.utils import DummyWorkflowIntegrationTest
-from server.tests.utils import mock_csv_text2
-import time
+from integrationtests.utils import LoggedInIntegrationTest
+from server.models import ModuleVersion
+from server.tests.utils import mock_csv_text2, add_new_workflow, add_new_wf_module, get_param_by_id_name
 
 # WfModule expand/collapse, notes, context menu, export, delete
-class TestWfModule(DummyWorkflowIntegrationTest):
+class TestWfModule(LoggedInIntegrationTest):
+    def setUp(self):
+        super().setUp()
 
-    # utility to replace broken mouse_out, https://github.com/cobrateam/splinter/issues/579
-    def mouse_to_logo(self):
-        self.browser.find_by_text('Workbench').first.mouse_over()
+        self.wf = add_new_workflow("Integration Test Workflow")
+        csvspec = ModuleVersion.objects.get(module__id_name='pastecsv')
+        self.wfm = add_new_wf_module(self.wf, csvspec)
+        csv_pval = get_param_by_id_name('csv')
+        csv_pval.set_value(mock_csv_text2)
+        csv_pval.save()
+
+        self.browser.visit(self.live_server_url + '/workflows')
+        self.browser.click_link_by_partial_text('Integration Test Workflow')
 
     def test_paste_csv_workflow(self):
         b = self.browser
