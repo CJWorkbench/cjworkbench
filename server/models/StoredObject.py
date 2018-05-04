@@ -5,6 +5,7 @@ from django.utils import timezone
 from pandas.util import hash_pandas_object
 import pandas as pd
 import os
+import uuid
 from shutil import copyfile
 
 # StoredObject is our persistence layer.
@@ -41,15 +42,15 @@ class StoredObject(models.Model):
     # filename combines wf module id and our object id
     # (self.id is sufficient but putting wfm.id in the filename helps debugging)
     @staticmethod
-    def _storage_filename(id, hash, type):
+    def _storage_filename(wfm_id, type):
 
         # prevent name collisions between the same table stored as a cache and a fetch
         if type == StoredObject.CACHED_TABLE:
             typestr = "-cache"
         else:
-            typestr = ''  # for backwards compatibility with existing StoredObjects
+            typestr = '-fetch'
 
-        fname = str(id) + '-' + str(hash) + typestr + '.dat'
+        fname = str(wfm_id) + '-' + str(uuid.uuid1()) + typestr + '.dat'
         return default_storage.path(fname)
 
     @staticmethod
@@ -84,7 +85,7 @@ class StoredObject(models.Model):
 
     @staticmethod
     def __create_table_internal(wf_module, type, table, metadata, hash):
-        path = StoredObject._storage_filename(wf_module.id, hash, type)
+        path = StoredObject._storage_filename(wf_module.id, type)
         table.to_parquet(path)
         return StoredObject.objects.create(
             wf_module=wf_module,
@@ -116,8 +117,7 @@ class StoredObject(models.Model):
         if self.size==0:
             return pd.DataFrame() # empty table
 
-        path = StoredObject._storage_filename(self.wf_module.id, self.hash, self.type)
-        table = pd.read_parquet(path)
+        table = pd.read_parquet(self.file.name)
         return table
 
     # make a deep copy for another WfModule
@@ -127,7 +127,7 @@ class StoredObject(models.Model):
             raise ValueError("Cannot duplicate a StoredObject to same WfModule")
 
         srcname = default_storage.path(self.file.name)
-        new_path = StoredObject._storage_filename(to_wf_module.id, self.hash, self.type)
+        new_path = StoredObject._storage_filename(to_wf_module.id, self.type)
         copyfile(srcname, new_path)
         new_so = StoredObject.objects.create(wf_module=to_wf_module,
                                              stored_at=self.stored_at,
