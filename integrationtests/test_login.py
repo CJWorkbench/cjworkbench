@@ -1,27 +1,17 @@
 from django.contrib.auth.models import User
 from allauth.account.models import EmailAddress
-from splinter import Browser
 from integrationtests.utils import WorkbenchBase
 
 import time
 
 
 class TestLogin(WorkbenchBase):
+    def setUp(self):
+        super().setUp()
 
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-
-        cls.password = 'password' # cannot be retrieved from User object, save it here
-        cls.user = User.objects.create_user(username='username', email='user@users.com', password=cls.password)
-        cls.email = EmailAddress.objects.create(user=cls.user, email='user@users.com', primary=True, verified=True)
-
-        cls.browser = Browser()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.browser.quit()
-        super().tearDownClass()
+        self.password = 'password' # cannot be retrieved from User object, save it here
+        self.user = User.objects.create_user(username='username', email='user@users.com', password=self.password)
+        self.email = EmailAddress.objects.create(user=self.user, email='user@users.com', primary=True, verified=True)
 
     def test_login(self):
         b = self.browser
