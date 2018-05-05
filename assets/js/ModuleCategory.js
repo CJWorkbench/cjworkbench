@@ -56,14 +56,14 @@ export default class ModuleCategory extends React.Component {
 
     var categoryHead;
     if (this.props.libraryOpen) {
-      categoryHead =  <div className='first-level'>
+      categoryHead =  <div className='ML-cat'>
                         <div className='category-container' >
                           <span className='category-name'>{this.props.name}</span>
                         </div>
                       </div>
     } else {
       categoryHead =  <div
-                        className='first-level'
+                        className='ML-cat'
                         onMouseEnter={this.openCategory}
                         onMouseLeave={this.collapseAll}
                       >

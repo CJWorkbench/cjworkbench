@@ -200,7 +200,7 @@ export default class ModuleSearch extends React.Component {
   render () {
     const { value, suggestions } = this.state;
     const inputProps = {
-      placeholder: 'Search modules',
+      placeholder: 'Modules',
       value,
       onChange: this.onChange,
       autoFocus: true

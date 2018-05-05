@@ -130,7 +130,7 @@ describe('ModuleCategory ', () => {
 
     it('Mouse enter events on a category will open module list', () => {
       // find category card
-      let category = wrapper.find('.first-level');
+      let category = wrapper.find('.ML-cat');
       expect(category).toHaveLength(1);
       // ensure absence of module list
       let moduleList = wrapper.find('.ml-list-mini');
@@ -195,7 +195,7 @@ describe('ModuleCategory ', () => {
 
     it('Mouse leave events on a category will close module list', () => {
       // find category card
-      let category = wrapper.find('.first-level');
+      let category = wrapper.find('.ML-cat');
       expect(category).toHaveLength(1);
       // ensure presence of module list
       let moduleList = wrapper.find('.ml-list-mini');

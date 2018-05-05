@@ -243,6 +243,11 @@
   color:rgba(250,250,250,0.5);
 }
 
+.icon-search-gray:before {
+  content: "\e91a";
+  color:$placeholder;
+}
+
 .icon-add-orange:before {
   content: "\e900";
   color:#FBAA6D;
@@ -275,7 +280,7 @@
   color: #FAFAFA;
 }
 
-.close-open-toggle{
+.ML-toggle{
   opacity: 0.6;
   height:2rem;
   width:100%;
@@ -284,7 +289,7 @@
   justify-content:center;
 }
 
-.close-open-toggle:hover{
+.ML-toggle:hover{
   opacity: 1;
   cursor: pointer;
 }

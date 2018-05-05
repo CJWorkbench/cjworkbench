@@ -32,6 +32,10 @@
   background-color: #E9EBEE;
 }
 
+.workflow-root.in-lesson .workflow-columns {
+  border-left: 1px solid $dark-accent;
+}
+
 /* Module Stack */
 .modulestack {
   flex: 0 0 30rem;

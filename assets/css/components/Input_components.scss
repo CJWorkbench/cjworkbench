@@ -107,17 +107,17 @@ textarea:focus, input:focus{
 // focus states
 
 .custom-select:focus{
-  border: 2px solid #48C8D7;
+  border: 2px solid $brand-workspace;
 }
 
 .parameter-base:focus{
-  border: 2px solid #48C8D7;
+  border: 2px solid $brand-workspace;
 }
 
 // placeholder text within text fields
 
 ::-webkit-input-placeholder { /* Chrome/Opera/Safari */
-  color:#c8c8c8;
+  color:$placeholder;
   font-size: 1.3rem;
 
 }
@@ -147,7 +147,7 @@ textarea:focus, input:focus{
 }
 
 .form-control:focus{
-  border-color: #48C8D7;
+  border-color: $brand-workspace;
 }
 
 .form-control{

@@ -126,7 +126,7 @@ describe('ModuleLibrary', () => {
     // it('Clicking on arrow will invoke API to toggle collapse', (done) => {
     //   // let json promise resolve (wait for modules to load)
     //   setImmediate( () => {
-    //     let arrow = wrapper.find('.close-open-toggle');
+    //     let arrow = wrapper.find('.ML-toggle');
     //     expect(arrow).toHaveLength(1);
     //     arrow.simulate('click');
     //     expect(api.setWfLibraryCollapse.mock.calls.length).toBe(1);

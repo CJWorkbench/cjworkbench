@@ -62,7 +62,7 @@ describe('ModuleLibraryOpen ', () => {
   });
 
   it('Clicking arrow will invoke Toggle Library function', () => { 
-    let arrow = wrapper.find('.close-open-toggle');
+    let arrow = wrapper.find('.ML-toggle');
     expect(arrow).toHaveLength(1);
     arrow.simulate('click');
     expect(toggleLibrary.mock.calls.length).toBe(1);

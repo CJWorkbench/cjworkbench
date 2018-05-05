@@ -62,7 +62,7 @@ class AddNotificationButtonOpen extends React.Component {
 
     return this.props.connectDragSource(
       <div className='card' onClick={this.handleClick}>
-        <div className='second-level t-vl-gray d-flex'>
+        <div className='ML-module t-vl-gray d-flex'>
           <div className='d-flex flex-row align-items-center'>
             <div className='ml-icon-container'>
               <div className="icon-notification ml-icon"></div>

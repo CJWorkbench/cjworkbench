@@ -34,7 +34,7 @@
 
 .embed-info-meta a:hover{
   text-decoration: none;
-  color:#48C8D7;
+  color:$brand-workspace;
 }
 
 .embed-info-logo{
@@ -53,7 +53,7 @@
 
 .embed-info-button .icon :hover{
   font-size: 2rem;
-  color:#48C8D7;
+  color:$brand-workspace;
 }
 
 .embed--share-code{

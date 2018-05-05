@@ -107,7 +107,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
               className="library-header"
             >
               <div
-                className="d-flex align-items-center"
+                className="ML-header--top"
               >
                 <a
                   className="brand--ML"
@@ -118,13 +118,13 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                     width="21"
                   />
                   <div
-                    className="logo-2 ml-2 t-white"
+                    className="logo-2 ml-2"
                   >
                     Workbench
                   </div>
                 </a>
                 <div
-                  className="close-open-toggle"
+                  className="ML-toggle"
                   onClick={[Function]}
                 >
                   <div
@@ -132,139 +132,95 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                   />
                 </div>
               </div>
-              <ModuleSearch
-                addModule={[Function]}
-                dropModule={[Function]}
-                items={
-                  Array [
-                    Object {
-                      "category": "Add data",
-                      "description": "Connect a dataset from Enigma's collection via URL.",
-                      "icon": "url",
-                      "id": 3,
-                      "name": "Load from Enigma",
-                    },
-                    Object {
-                      "category": "Add data",
-                      "description": "Import from your favorite snowshall media",
-                      "icon": "url",
-                      "id": 2,
-                      "name": "Load from Facebork",
-                    },
-                    Object {
-                      "category": "Visualize",
-                      "description": "Create line, column and scatter plot charts.",
-                      "icon": "chart",
-                      "id": 1,
-                      "name": "Chartbuilder",
-                    },
-                    Object {
-                      "category": "other category",
-                      "icon": "url",
-                      "id": 4,
-                      "name": "Other Module 1",
-                    },
-                    Object {
-                      "category": "other category",
-                      "icon": "url",
-                      "id": 6,
-                      "name": "Other Module 3",
-                    },
-                    Object {
-                      "category": "x category",
-                      "icon": "url",
-                      "id": 5,
-                      "name": "Other Module 2",
-                    },
-                  ]
-                }
-                workflow={
-                  Object {
-                    "id": 15,
-                    "name": "What a workflow!",
-                  }
-                }
+              <div
+                className="ML-header--bottom"
               >
-                <div
-                  className="d-flex align-items-center search-bar"
+                <ModuleSearch
+                  addModule={[Function]}
+                  dropModule={[Function]}
+                  items={
+                    Array [
+                      Object {
+                        "category": "Add data",
+                        "description": "Connect a dataset from Enigma's collection via URL.",
+                        "icon": "url",
+                        "id": 3,
+                        "name": "Load from Enigma",
+                      },
+                      Object {
+                        "category": "Add data",
+                        "description": "Import from your favorite snowshall media",
+                        "icon": "url",
+                        "id": 2,
+                        "name": "Load from Facebork",
+                      },
+                      Object {
+                        "category": "Visualize",
+                        "description": "Create line, column and scatter plot charts.",
+                        "icon": "chart",
+                        "id": 1,
+                        "name": "Chartbuilder",
+                      },
+                      Object {
+                        "category": "other category",
+                        "icon": "url",
+                        "id": 4,
+                        "name": "Other Module 1",
+                      },
+                      Object {
+                        "category": "other category",
+                        "icon": "url",
+                        "id": 6,
+                        "name": "Other Module 3",
+                      },
+                      Object {
+                        "category": "x category",
+                        "icon": "url",
+                        "id": 5,
+                        "name": "Other Module 2",
+                      },
+                    ]
+                  }
+                  workflow={
+                    Object {
+                      "id": 15,
+                      "name": "What a workflow!",
+                    }
+                  }
                 >
                   <div
-                    className="icon-search-white ml-icon-search ml-4"
-                  />
-                  <div
-                    onBlur={[Function]}
+                    className="d-flex align-items-center search-bar"
                   >
-                    <Autosuggest
-                      alwaysRenderSuggestions={false}
-                      focusInputOnSuggestionClick={true}
-                      getSectionSuggestions={[Function]}
-                      getSuggestionValue={[Function]}
-                      highlightFirstSuggestion={false}
-                      id="1"
-                      inputProps={
-                        Object {
-                          "autoFocus": true,
-                          "onChange": [Function],
-                          "placeholder": "Search modules",
-                          "value": "",
-                        }
-                      }
-                      multiSection={true}
-                      onSuggestionSelected={[Function]}
-                      onSuggestionsClearRequested={[Function]}
-                      onSuggestionsFetchRequested={[Function]}
-                      renderSectionTitle={[Function]}
-                      renderSuggestion={[Function]}
-                      renderSuggestionsContainer={[Function]}
-                      shouldRenderSuggestions={[Function]}
-                      suggestions={Array []}
-                      theme={
-                        Object {
-                          "container": "react-autosuggest__container",
-                          "containerOpen": "react-autosuggest__container--open",
-                          "input": "react-autosuggest__input",
-                          "inputFocused": "react-autosuggest__input--focused",
-                          "inputOpen": "react-autosuggest__input--open",
-                          "sectionContainer": "react-autosuggest__section-container",
-                          "sectionContainerFirst": "react-autosuggest__section-container--first",
-                          "sectionTitle": "react-autosuggest__section-title",
-                          "suggestion": "react-autosuggest__suggestion",
-                          "suggestionFirst": "react-autosuggest__suggestion--first",
-                          "suggestionHighlighted": "react-autosuggest__suggestion--highlighted",
-                          "suggestionsContainer": "react-autosuggest__suggestions-container",
-                          "suggestionsContainerOpen": "react-autosuggest__suggestions-container--open",
-                          "suggestionsList": "react-autosuggest__suggestions-list",
-                        }
-                      }
+                    <div
+                      className="icon-search-white ml-icon-search ml-4"
+                    />
+                    <div
+                      onBlur={[Function]}
                     >
-                      <Autowhatever
-                        getSectionItems={[Function]}
-                        highlightedItemIndex={null}
-                        highlightedSectionIndex={null}
+                      <Autosuggest
+                        alwaysRenderSuggestions={false}
+                        focusInputOnSuggestionClick={true}
+                        getSectionSuggestions={[Function]}
+                        getSuggestionValue={[Function]}
+                        highlightFirstSuggestion={false}
                         id="1"
                         inputProps={
                           Object {
                             "autoFocus": true,
-                            "onBlur": [Function],
                             "onChange": [Function],
-                            "onFocus": [Function],
-                            "onKeyDown": [Function],
-                            "placeholder": "Search modules",
+                            "placeholder": "Modules",
                             "value": "",
                           }
                         }
-                        itemProps={[Function]}
-                        items={Array []}
                         multiSection={true}
-                        renderInputComponent={[Function]}
-                        renderItem={[Function]}
-                        renderItemData={
-                          Object {
-                            "query": "",
-                          }
-                        }
-                        renderItemsContainer={[Function]}
+                        onSuggestionSelected={[Function]}
+                        onSuggestionsClearRequested={[Function]}
+                        onSuggestionsFetchRequested={[Function]}
                         renderSectionTitle={[Function]}
+                        renderSuggestion={[Function]}
+                        renderSuggestionsContainer={[Function]}
+                        shouldRenderSuggestions={[Function]}
+                        suggestions={Array []}
                         theme={
                           Object {
                             "container": "react-autosuggest__container",
@@ -272,52 +228,100 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                             "input": "react-autosuggest__input",
                             "inputFocused": "react-autosuggest__input--focused",
                             "inputOpen": "react-autosuggest__input--open",
-                            "item": "react-autosuggest__suggestion",
-                            "itemFirst": "react-autosuggest__suggestion--first",
-                            "itemHighlighted": "react-autosuggest__suggestion--highlighted",
-                            "itemsContainer": "react-autosuggest__suggestions-container",
-                            "itemsContainerOpen": "react-autosuggest__suggestions-container--open",
-                            "itemsList": "react-autosuggest__suggestions-list",
                             "sectionContainer": "react-autosuggest__section-container",
                             "sectionContainerFirst": "react-autosuggest__section-container--first",
                             "sectionTitle": "react-autosuggest__section-title",
+                            "suggestion": "react-autosuggest__suggestion",
+                            "suggestionFirst": "react-autosuggest__suggestion--first",
+                            "suggestionHighlighted": "react-autosuggest__suggestion--highlighted",
+                            "suggestionsContainer": "react-autosuggest__suggestions-container",
+                            "suggestionsContainerOpen": "react-autosuggest__suggestions-container--open",
+                            "suggestionsList": "react-autosuggest__suggestions-list",
                           }
                         }
                       >
-                        <div
-                          className="react-autosuggest__container"
+                        <Autowhatever
+                          getSectionItems={[Function]}
+                          highlightedItemIndex={null}
+                          highlightedSectionIndex={null}
+                          id="1"
+                          inputProps={
+                            Object {
+                              "autoFocus": true,
+                              "onBlur": [Function],
+                              "onChange": [Function],
+                              "onFocus": [Function],
+                              "onKeyDown": [Function],
+                              "placeholder": "Modules",
+                              "value": "",
+                            }
+                          }
+                          itemProps={[Function]}
+                          items={Array []}
+                          multiSection={true}
+                          renderInputComponent={[Function]}
+                          renderItem={[Function]}
+                          renderItemData={
+                            Object {
+                              "query": "",
+                            }
+                          }
+                          renderItemsContainer={[Function]}
+                          renderSectionTitle={[Function]}
+                          theme={
+                            Object {
+                              "container": "react-autosuggest__container",
+                              "containerOpen": "react-autosuggest__container--open",
+                              "input": "react-autosuggest__input",
+                              "inputFocused": "react-autosuggest__input--focused",
+                              "inputOpen": "react-autosuggest__input--open",
+                              "item": "react-autosuggest__suggestion",
+                              "itemFirst": "react-autosuggest__suggestion--first",
+                              "itemHighlighted": "react-autosuggest__suggestion--highlighted",
+                              "itemsContainer": "react-autosuggest__suggestions-container",
+                              "itemsContainerOpen": "react-autosuggest__suggestions-container--open",
+                              "itemsList": "react-autosuggest__suggestions-list",
+                              "sectionContainer": "react-autosuggest__section-container",
+                              "sectionContainerFirst": "react-autosuggest__section-container--first",
+                              "sectionTitle": "react-autosuggest__section-title",
+                            }
+                          }
                         >
-                          <input
-                            aria-activedescendant={null}
-                            aria-autocomplete="list"
-                            aria-expanded={false}
-                            aria-haspopup={false}
-                            aria-owns="react-autowhatever-1"
-                            autoComplete="off"
-                            autoFocus={true}
-                            className="react-autosuggest__input"
-                            onBlur={[Function]}
-                            onChange={[Function]}
-                            onFocus={[Function]}
-                            onKeyDown={[Function]}
-                            placeholder="Search modules"
-                            role="combobox"
-                            type="text"
-                            value=""
-                          />
                           <div
-                            className="react-autosuggest__suggestions-container"
-                            id="react-autowhatever-1"
-                          />
-                        </div>
-                      </Autowhatever>
-                    </Autosuggest>
+                            className="react-autosuggest__container"
+                          >
+                            <input
+                              aria-activedescendant={null}
+                              aria-autocomplete="list"
+                              aria-expanded={false}
+                              aria-haspopup={false}
+                              aria-owns="react-autowhatever-1"
+                              autoComplete="off"
+                              autoFocus={true}
+                              className="react-autosuggest__input"
+                              onBlur={[Function]}
+                              onChange={[Function]}
+                              onFocus={[Function]}
+                              onKeyDown={[Function]}
+                              placeholder="Modules"
+                              role="combobox"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              className="react-autosuggest__suggestions-container"
+                              id="react-autowhatever-1"
+                            />
+                          </div>
+                        </Autowhatever>
+                      </Autosuggest>
+                    </div>
+                    <div
+                      className="ML-search--close"
+                    />
                   </div>
-                  <div
-                    className="ML-search--close"
-                  />
-                </div>
-              </ModuleSearch>
+                </ModuleSearch>
+              </div>
             </div>
             <div
               className="ML--module-list"
@@ -414,7 +418,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                         className="module-category--wrapper"
                       >
                         <div
-                          className="first-level"
+                          className="ML-cat"
                         >
                           <div
                             className="category-container"
@@ -457,7 +461,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -516,7 +520,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -579,7 +583,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                         className="module-category--wrapper"
                       >
                         <div
-                          className="first-level"
+                          className="ML-cat"
                         >
                           <div
                             className="category-container"
@@ -622,7 +626,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -695,7 +699,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                         className="module-category--wrapper"
                       >
                         <div
-                          className="first-level"
+                          className="ML-cat"
                         >
                           <div
                             className="category-container"
@@ -738,7 +742,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -797,7 +801,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -860,7 +864,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                         className="module-category--wrapper"
                       >
                         <div
-                          className="first-level"
+                          className="ML-cat"
                         >
                           <div
                             className="category-container"
@@ -903,7 +907,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -944,7 +948,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
             </div>
           </div>
           <div
-            className="mb-3"
+            className="mb-3 alert-button"
           />
           <DragSource(AddNotificationButtonOpen)>
             <AddNotificationButtonOpen
@@ -957,7 +961,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                 onClick={[Function]}
               >
                 <div
-                  className="second-level t-vl-gray d-flex"
+                  className="ML-module t-vl-gray d-flex"
                 >
                   <div
                     className="d-flex flex-row align-items-center"
@@ -1143,7 +1147,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
               className="library-header"
             >
               <div
-                className="d-flex align-items-center"
+                className="ML-header--top"
               >
                 <a
                   className="brand--ML"
@@ -1154,13 +1158,13 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     width="21"
                   />
                   <div
-                    className="logo-2 ml-2 t-white"
+                    className="logo-2 ml-2"
                   >
                     Workbench
                   </div>
                 </a>
                 <div
-                  className="close-open-toggle"
+                  className="ML-toggle"
                   onClick={[Function]}
                 >
                   <div
@@ -1168,139 +1172,95 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                   />
                 </div>
               </div>
-              <ModuleSearch
-                addModule={[Function]}
-                dropModule={[Function]}
-                items={
-                  Array [
-                    Object {
-                      "category": "Add data",
-                      "description": "Connect a dataset from Enigma's collection via URL.",
-                      "icon": "url",
-                      "id": 3,
-                      "name": "Load from Enigma",
-                    },
-                    Object {
-                      "category": "Add data",
-                      "description": "Import from your favorite snowshall media",
-                      "icon": "url",
-                      "id": 2,
-                      "name": "Load from Facebork",
-                    },
-                    Object {
-                      "category": "Visualize",
-                      "description": "Create line, column and scatter plot charts.",
-                      "icon": "chart",
-                      "id": 1,
-                      "name": "Chartbuilder",
-                    },
-                    Object {
-                      "category": "other category",
-                      "icon": "url",
-                      "id": 4,
-                      "name": "Other Module 1",
-                    },
-                    Object {
-                      "category": "other category",
-                      "icon": "url",
-                      "id": 6,
-                      "name": "Other Module 3",
-                    },
-                    Object {
-                      "category": "x category",
-                      "icon": "url",
-                      "id": 5,
-                      "name": "Other Module 2",
-                    },
-                  ]
-                }
-                workflow={
-                  Object {
-                    "id": 15,
-                    "name": "What a workflow!",
-                  }
-                }
+              <div
+                className="ML-header--bottom"
               >
-                <div
-                  className="d-flex align-items-center search-bar"
+                <ModuleSearch
+                  addModule={[Function]}
+                  dropModule={[Function]}
+                  items={
+                    Array [
+                      Object {
+                        "category": "Add data",
+                        "description": "Connect a dataset from Enigma's collection via URL.",
+                        "icon": "url",
+                        "id": 3,
+                        "name": "Load from Enigma",
+                      },
+                      Object {
+                        "category": "Add data",
+                        "description": "Import from your favorite snowshall media",
+                        "icon": "url",
+                        "id": 2,
+                        "name": "Load from Facebork",
+                      },
+                      Object {
+                        "category": "Visualize",
+                        "description": "Create line, column and scatter plot charts.",
+                        "icon": "chart",
+                        "id": 1,
+                        "name": "Chartbuilder",
+                      },
+                      Object {
+                        "category": "other category",
+                        "icon": "url",
+                        "id": 4,
+                        "name": "Other Module 1",
+                      },
+                      Object {
+                        "category": "other category",
+                        "icon": "url",
+                        "id": 6,
+                        "name": "Other Module 3",
+                      },
+                      Object {
+                        "category": "x category",
+                        "icon": "url",
+                        "id": 5,
+                        "name": "Other Module 2",
+                      },
+                    ]
+                  }
+                  workflow={
+                    Object {
+                      "id": 15,
+                      "name": "What a workflow!",
+                    }
+                  }
                 >
                   <div
-                    className="icon-search-white ml-icon-search ml-4"
-                  />
-                  <div
-                    onBlur={[Function]}
+                    className="d-flex align-items-center search-bar"
                   >
-                    <Autosuggest
-                      alwaysRenderSuggestions={false}
-                      focusInputOnSuggestionClick={true}
-                      getSectionSuggestions={[Function]}
-                      getSuggestionValue={[Function]}
-                      highlightFirstSuggestion={false}
-                      id="1"
-                      inputProps={
-                        Object {
-                          "autoFocus": true,
-                          "onChange": [Function],
-                          "placeholder": "Search modules",
-                          "value": "",
-                        }
-                      }
-                      multiSection={true}
-                      onSuggestionSelected={[Function]}
-                      onSuggestionsClearRequested={[Function]}
-                      onSuggestionsFetchRequested={[Function]}
-                      renderSectionTitle={[Function]}
-                      renderSuggestion={[Function]}
-                      renderSuggestionsContainer={[Function]}
-                      shouldRenderSuggestions={[Function]}
-                      suggestions={Array []}
-                      theme={
-                        Object {
-                          "container": "react-autosuggest__container",
-                          "containerOpen": "react-autosuggest__container--open",
-                          "input": "react-autosuggest__input",
-                          "inputFocused": "react-autosuggest__input--focused",
-                          "inputOpen": "react-autosuggest__input--open",
-                          "sectionContainer": "react-autosuggest__section-container",
-                          "sectionContainerFirst": "react-autosuggest__section-container--first",
-                          "sectionTitle": "react-autosuggest__section-title",
-                          "suggestion": "react-autosuggest__suggestion",
-                          "suggestionFirst": "react-autosuggest__suggestion--first",
-                          "suggestionHighlighted": "react-autosuggest__suggestion--highlighted",
-                          "suggestionsContainer": "react-autosuggest__suggestions-container",
-                          "suggestionsContainerOpen": "react-autosuggest__suggestions-container--open",
-                          "suggestionsList": "react-autosuggest__suggestions-list",
-                        }
-                      }
+                    <div
+                      className="icon-search-white ml-icon-search ml-4"
+                    />
+                    <div
+                      onBlur={[Function]}
                     >
-                      <Autowhatever
-                        getSectionItems={[Function]}
-                        highlightedItemIndex={null}
-                        highlightedSectionIndex={null}
+                      <Autosuggest
+                        alwaysRenderSuggestions={false}
+                        focusInputOnSuggestionClick={true}
+                        getSectionSuggestions={[Function]}
+                        getSuggestionValue={[Function]}
+                        highlightFirstSuggestion={false}
                         id="1"
                         inputProps={
                           Object {
                             "autoFocus": true,
-                            "onBlur": [Function],
                             "onChange": [Function],
-                            "onFocus": [Function],
-                            "onKeyDown": [Function],
-                            "placeholder": "Search modules",
+                            "placeholder": "Modules",
                             "value": "",
                           }
                         }
-                        itemProps={[Function]}
-                        items={Array []}
                         multiSection={true}
-                        renderInputComponent={[Function]}
-                        renderItem={[Function]}
-                        renderItemData={
-                          Object {
-                            "query": "",
-                          }
-                        }
-                        renderItemsContainer={[Function]}
+                        onSuggestionSelected={[Function]}
+                        onSuggestionsClearRequested={[Function]}
+                        onSuggestionsFetchRequested={[Function]}
                         renderSectionTitle={[Function]}
+                        renderSuggestion={[Function]}
+                        renderSuggestionsContainer={[Function]}
+                        shouldRenderSuggestions={[Function]}
+                        suggestions={Array []}
                         theme={
                           Object {
                             "container": "react-autosuggest__container",
@@ -1308,52 +1268,100 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                             "input": "react-autosuggest__input",
                             "inputFocused": "react-autosuggest__input--focused",
                             "inputOpen": "react-autosuggest__input--open",
-                            "item": "react-autosuggest__suggestion",
-                            "itemFirst": "react-autosuggest__suggestion--first",
-                            "itemHighlighted": "react-autosuggest__suggestion--highlighted",
-                            "itemsContainer": "react-autosuggest__suggestions-container",
-                            "itemsContainerOpen": "react-autosuggest__suggestions-container--open",
-                            "itemsList": "react-autosuggest__suggestions-list",
                             "sectionContainer": "react-autosuggest__section-container",
                             "sectionContainerFirst": "react-autosuggest__section-container--first",
                             "sectionTitle": "react-autosuggest__section-title",
+                            "suggestion": "react-autosuggest__suggestion",
+                            "suggestionFirst": "react-autosuggest__suggestion--first",
+                            "suggestionHighlighted": "react-autosuggest__suggestion--highlighted",
+                            "suggestionsContainer": "react-autosuggest__suggestions-container",
+                            "suggestionsContainerOpen": "react-autosuggest__suggestions-container--open",
+                            "suggestionsList": "react-autosuggest__suggestions-list",
                           }
                         }
                       >
-                        <div
-                          className="react-autosuggest__container"
+                        <Autowhatever
+                          getSectionItems={[Function]}
+                          highlightedItemIndex={null}
+                          highlightedSectionIndex={null}
+                          id="1"
+                          inputProps={
+                            Object {
+                              "autoFocus": true,
+                              "onBlur": [Function],
+                              "onChange": [Function],
+                              "onFocus": [Function],
+                              "onKeyDown": [Function],
+                              "placeholder": "Modules",
+                              "value": "",
+                            }
+                          }
+                          itemProps={[Function]}
+                          items={Array []}
+                          multiSection={true}
+                          renderInputComponent={[Function]}
+                          renderItem={[Function]}
+                          renderItemData={
+                            Object {
+                              "query": "",
+                            }
+                          }
+                          renderItemsContainer={[Function]}
+                          renderSectionTitle={[Function]}
+                          theme={
+                            Object {
+                              "container": "react-autosuggest__container",
+                              "containerOpen": "react-autosuggest__container--open",
+                              "input": "react-autosuggest__input",
+                              "inputFocused": "react-autosuggest__input--focused",
+                              "inputOpen": "react-autosuggest__input--open",
+                              "item": "react-autosuggest__suggestion",
+                              "itemFirst": "react-autosuggest__suggestion--first",
+                              "itemHighlighted": "react-autosuggest__suggestion--highlighted",
+                              "itemsContainer": "react-autosuggest__suggestions-container",
+                              "itemsContainerOpen": "react-autosuggest__suggestions-container--open",
+                              "itemsList": "react-autosuggest__suggestions-list",
+                              "sectionContainer": "react-autosuggest__section-container",
+                              "sectionContainerFirst": "react-autosuggest__section-container--first",
+                              "sectionTitle": "react-autosuggest__section-title",
+                            }
+                          }
                         >
-                          <input
-                            aria-activedescendant={null}
-                            aria-autocomplete="list"
-                            aria-expanded={false}
-                            aria-haspopup={false}
-                            aria-owns="react-autowhatever-1"
-                            autoComplete="off"
-                            autoFocus={true}
-                            className="react-autosuggest__input"
-                            onBlur={[Function]}
-                            onChange={[Function]}
-                            onFocus={[Function]}
-                            onKeyDown={[Function]}
-                            placeholder="Search modules"
-                            role="combobox"
-                            type="text"
-                            value=""
-                          />
                           <div
-                            className="react-autosuggest__suggestions-container"
-                            id="react-autowhatever-1"
-                          />
-                        </div>
-                      </Autowhatever>
-                    </Autosuggest>
+                            className="react-autosuggest__container"
+                          >
+                            <input
+                              aria-activedescendant={null}
+                              aria-autocomplete="list"
+                              aria-expanded={false}
+                              aria-haspopup={false}
+                              aria-owns="react-autowhatever-1"
+                              autoComplete="off"
+                              autoFocus={true}
+                              className="react-autosuggest__input"
+                              onBlur={[Function]}
+                              onChange={[Function]}
+                              onFocus={[Function]}
+                              onKeyDown={[Function]}
+                              placeholder="Modules"
+                              role="combobox"
+                              type="text"
+                              value=""
+                            />
+                            <div
+                              className="react-autosuggest__suggestions-container"
+                              id="react-autowhatever-1"
+                            />
+                          </div>
+                        </Autowhatever>
+                      </Autosuggest>
+                    </div>
+                    <div
+                      className="ML-search--close"
+                    />
                   </div>
-                  <div
-                    className="ML-search--close"
-                  />
-                </div>
-              </ModuleSearch>
+                </ModuleSearch>
+              </div>
             </div>
             <div
               className="ML--module-list"
@@ -1450,7 +1458,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                         className="module-category--wrapper"
                       >
                         <div
-                          className="first-level"
+                          className="ML-cat"
                         >
                           <div
                             className="category-container"
@@ -1493,7 +1501,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -1552,7 +1560,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -1615,7 +1623,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                         className="module-category--wrapper"
                       >
                         <div
-                          className="first-level"
+                          className="ML-cat"
                         >
                           <div
                             className="category-container"
@@ -1658,7 +1666,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -1731,7 +1739,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                         className="module-category--wrapper"
                       >
                         <div
-                          className="first-level"
+                          className="ML-cat"
                         >
                           <div
                             className="category-container"
@@ -1774,7 +1782,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -1833,7 +1841,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -1896,7 +1904,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                         className="module-category--wrapper"
                       >
                         <div
-                          className="first-level"
+                          className="ML-cat"
                         >
                           <div
                             className="category-container"
@@ -1939,7 +1947,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                                 onClick={[Function]}
                               >
                                 <div
-                                  className="second-level d-flex"
+                                  className="ML-module d-flex"
                                 >
                                   <div
                                     className="d-flex flex-row align-items-center"
@@ -1980,7 +1988,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
             </div>
           </div>
           <div
-            className="mb-3"
+            className="mb-3 alert-button"
           />
           <DragSource(AddNotificationButtonOpen)>
             <AddNotificationButtonOpen
@@ -1993,7 +2001,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                 onClick={[Function]}
               >
                 <div
-                  className="second-level t-vl-gray d-flex"
+                  className="ML-module t-vl-gray d-flex"
                 >
                   <div
                     className="d-flex flex-row align-items-center"
@@ -2287,7 +2295,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                     className="module-category--wrapper"
                   >
                     <div
-                      className="first-level"
+                      className="ML-cat"
                       onMouseEnter={[Function]}
                       onMouseLeave={[Function]}
                     >
@@ -2330,7 +2338,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                     className="module-category--wrapper"
                   >
                     <div
-                      className="first-level"
+                      className="ML-cat"
                       onMouseEnter={[Function]}
                       onMouseLeave={[Function]}
                     >
@@ -2383,7 +2391,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                     className="module-category--wrapper"
                   >
                     <div
-                      className="first-level"
+                      className="ML-cat"
                       onMouseEnter={[Function]}
                       onMouseLeave={[Function]}
                     >
@@ -2426,7 +2434,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                     className="module-category--wrapper"
                   >
                     <div
-                      className="first-level"
+                      className="ML-cat"
                       onMouseEnter={[Function]}
                       onMouseLeave={[Function]}
                     >
@@ -2484,7 +2492,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                   }
                 >
                   <div
-                    className="second-level d-flex "
+                    className="ML-module d-flex "
                   >
                     <div
                       className="content-5  my-auto mr-5"

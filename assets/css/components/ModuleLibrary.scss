@@ -8,15 +8,17 @@
 
 
 .workflow-root.in-lesson .module-library {
-  background-color: transparent;
-  color: $brand-text;
+  background-color: $WF-background;
+  border-right: $dark-accent;
 }
 
 .module-library--open {
-  width: 200px;
-  flex: 0 0 200px;
+  width: 20rem;
+  flex: 0 0 20rem;
+  }
+.workflow-root.in-lesson .module-library--open {
+  width: 16rem;
 }
-
 
 
 .module-library--closed {
@@ -33,13 +35,61 @@
   cursor: pointer;
 }
 
-//Contains Brand and Search
+// Library header in WF: Contains Brand and Search
 .library-header {
   position: relative;
   text-align: left;
-  padding: 2rem 2rem 1rem 2rem;
+  padding: 0 2rem 1rem 2rem;
   margin-bottom: 1rem;
+
+  .ML-header--top{
+    height:6rem;
+    display: flex;
+    align-items: center;
+  }
+  .search-bar {
+    margin-top: 0.5rem;
+    border-radius: 30px;
+    height:3.5rem;
+    border: 3px solid transparent;
+    background-color: rgba(250,250,250,0.2);
+  }
 }
+
+
+
+.workflow-root.in-lesson {
+
+  .module-library--open .search-container:hover .search-bar {
+   border:3px solid $brand-learn;
+  }
+
+  .library-header {
+    padding: 0;
+
+    .ML-header--top {
+      padding-left: 1.5rem;
+      background-color: $brand-learn;
+
+      .ML-toggle{
+        visibility: hidden;
+      }
+    }
+    .ML-header--bottom {
+      padding: 1rem 1.5rem;
+      display: flex;
+      justify-content: center;
+
+      //Search bar
+
+      .search-bar {
+        margin-top:1rem;
+        background-color: $white;
+      }
+    }
+  }
+}
+
 
 .library-header a:hover {
   text-decoration: none;
@@ -51,24 +101,15 @@
   cursor: pointer;
 }
 
-//Search bar
 
-.search-bar {
-  margin-top: 1.5rem;
-  border-radius: 30px;
-  height:3.5rem;
-  border: 3px solid transparent;
-  background-color: rgba(250,250,250,0.2);
-}
-
-.search-bar:active{
-  border:2px solid #48C8D7;
-}
 
 // Outline when hover on top of ML
 .search-container:hover .search-bar{
-  border:3px solid #48C8D7;
+  border:3px solid $brand-workspace;
 }
+
+
+
 
 .module-library--open .icon-sort-up-vl-gray,
 .module-library--open .icon-sort-down-vl-gray {
@@ -90,16 +131,19 @@
   overflow-y: scroll;
   overflow-x: hidden;
   box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-
 }
 
 .ML--module-list .list {
   margin-top: 0.2rem;
 }
 
+.workflow-root.in-lesson .ML--module-list {
+  box-shadow: 0 -1px 0 $dark-accent, 0 1px 0 $dark-accent;
+}
+
 
 // When category is open: category name
-.card .first-level {
+.card .ML-cat {
   height: 4rem;
   width: 100%;
   opacity: 0.4;
@@ -107,18 +151,35 @@
   align-items: center;
 }
 
+.workflow-root.in-lesson .ML-cat {
+  color:$brand-text;
+}
+
 // When category is open: module name
-.card .second-level {
+.card .ML-module {
   opacity: 0.7;
   position: relative;
   height: 4rem;
   padding-left: 2.5rem;
 }
 
-.card .second-level:hover {
-  background-color: #4E6878;
+.workflow-root.in-lesson .card .ML-module {
+  padding-left: 1.5rem;
+}
+
+.card .ML-module:hover {
+  background-color: $dark-accent;
   opacity: 1;
 }
+
+.workflow-root.in-lesson .ML-module {
+  color:$brand-text;
+}
+
+.workflow-root.in-lesson .ML-module:hover {
+  background-color: $dark-accent;
+}
+
 
 // div containing module handle
 .ml-handle{
@@ -225,7 +286,7 @@
 }
 
 
-.card .ml-list-mini .second-level{
+.card .ml-list-mini .ML-module{
   padding-left: 1rem;
 }
 
@@ -235,6 +296,10 @@
 //Style for search icon
 .ml-icon-search{
   font-size: 1.4rem;
+}
+
+.workflow-root.in-lesson .ml-icon-search:before {
+  color:$placeholder;
 }
 
 //style for close icon in ML search
@@ -259,11 +324,16 @@
   background-color:transparent;
 }
 /* If we want to style the placeholder differently than the typed text */
+
  .react-autosuggest__input::placeholder {
   color: rgba(250,250,250,0.5);
 }
 
-/* does not accept a 'color' parameter  */
+.workflow-root.in-lesson .react-autosuggest__input::placeholder {
+  color:$placeholder;
+}
+
+/* Search qeury -- does not accept a 'color' parameter  */
 .react-autosuggest__input {
   width: 100%;
   height: 100%;
@@ -272,6 +342,10 @@
   font-weight: 900;
   font-size: 1.4rem;
   line-height: 1.4rem;
+}
+
+.workflow-root.in-lesson .react-autosuggest__input {
+  color: $brand-text;
 }
 
 .react-autosuggest__input--focused {
@@ -375,6 +449,10 @@
   margin-bottom: 1rem;
 }
 
+.workflow-root.in-lesson .ml-divider {
+  visibility: hidden;
+}
+
 /* AddNotificationButtonClosed */
 
 // Absolute position used to make element appear outside of Module Library div
@@ -405,7 +483,10 @@
   cursor: pointer;
   color: #FFFFFF;
   opacity: 1;
+}
 
+.workflow-root.in-lesson .import-module-button {
+  visibility: hidden;
 }
 
 .import-github-error {

@@ -82,7 +82,7 @@ button:focus { outline:0 !important; }
 
 .button-white--fill {
   background-color: #FFF;
-  color: #48C8D7;
+  color: $brand-workspace;
   border:1px solid #fff;
 }
 .button-white--fill:active {
@@ -101,18 +101,18 @@ button:focus { outline:0 !important; }
 }
 
 .button-blue {
-  color: #48C8D7;
-  border: 1px solid #48C8D7 ;
+  color: $brand-workspace;
+  border: 1px solid $brand-workspace ;
   background-color: transparent;
 }
 .button-blue:active {
-  background-color: #48C8D7 !important;
+  background-color: $brand-workspace !important;
   color: #FFFFFF !important;
 }
 
 
 .button-blue--fill {
-  background-color: #48C8D7;
+  background-color: $brand-workspace;
   color: #FFFFFF;
   border:none;
 }

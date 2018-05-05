@@ -32,7 +32,7 @@ exports[`Module NOT Read-only Renders a card, with icon received from props 1`] 
         onClick={[Function]}
       >
         <div
-          className="second-level d-flex"
+          className="ML-module d-flex"
         >
           <div
             className="d-flex flex-row align-items-center"
@@ -98,7 +98,7 @@ exports[`Module Read-only Renders a card, with icon received from props 1`] = `
         onClick={[Function]}
       >
         <div
-          className="second-level d-flex"
+          className="ML-module d-flex"
         >
           <div
             className="d-flex flex-row align-items-center"

@@ -1424,6 +1424,9 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
               modalTransitionTimeout={300}
               zIndex={1050}
             />
+            <iframe
+              src="/api/wfmodules/999/output?rev=1"
+            />
             <div
               className="outputpane-iframe-control-overlay"
             >
@@ -1432,9 +1435,6 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
                 onClick={[Function]}
               />
             </div>
-            <iframe
-              src="/api/wfmodules/999/output?rev=1"
-            />
           </div>
         </OutputIframe>
         <TableView

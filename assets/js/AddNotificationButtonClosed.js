@@ -68,7 +68,7 @@ class AddNotificationButtonClosed extends React.Component {
         className='card alert-closed-ML'
         style={{ display: this.state.showButton ? 'block' : 'none' }}
       >
-        <div className='second-level d-flex '>
+        <div className='ML-module d-flex '>
           <div className='content-5  my-auto mr-5'>Add data alert</div>
           <div className='ml-handle'>
             <div className='icon-grip'></div>

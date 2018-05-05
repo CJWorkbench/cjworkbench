@@ -27,6 +27,7 @@
   letter-spacing: -0.3px;
 	text-decoration: none;
 	margin-bottom: 0.1rem;
+	color:$white;
 }
 
 
@@ -175,7 +176,7 @@
 }
 .t-f-blue {
   cursor: pointer;
-  color: #48C8D7;
+  color: $brand-workspace;
 }
 .t-f-blue:hover {
   cursor: pointer;
@@ -204,7 +205,7 @@
   background-color: #577485;
 }
 .b-f-blue {
-  background-color: #48C8D7;
+  background-color: $brand-workspace;
 }
 .b-orange {
   background-color: #F8AA6D;

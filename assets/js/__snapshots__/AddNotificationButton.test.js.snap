@@ -43,7 +43,7 @@ exports[`AddNotificationButtonClosed Renders 1`] = `
           }
         >
           <div
-            className="second-level d-flex "
+            className="ML-module d-flex "
           >
             <div
               className="content-5  my-auto mr-5"
@@ -80,7 +80,7 @@ exports[`AddNotificationButtonOpen Renders 1`] = `
         onClick={[Function]}
       >
         <div
-          className="second-level t-vl-gray d-flex"
+          className="ML-module t-vl-gray d-flex"
         >
           <div
             className="d-flex flex-row align-items-center"

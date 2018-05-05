@@ -42,7 +42,7 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with catego
         className="module-category--wrapper"
       >
         <div
-          className="first-level"
+          className="ML-cat"
           onMouseEnter={[Function]}
           onMouseLeave={[Function]}
         >
@@ -102,7 +102,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
         className="module-category--wrapper"
       >
         <div
-          className="first-level"
+          className="ML-cat"
           onMouseEnter={[Function]}
           onMouseLeave={[Function]}
         >
@@ -147,7 +147,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
                 onClick={[Function]}
               >
                 <div
-                  className="second-level d-flex"
+                  className="ML-module d-flex"
                 >
                   <div
                     className="d-flex flex-row align-items-center"
@@ -206,7 +206,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
                 onClick={[Function]}
               >
                 <div
-                  className="second-level d-flex"
+                  className="ML-module d-flex"
                 >
                   <div
                     className="d-flex flex-row align-items-center"
@@ -286,7 +286,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
         className="module-category--wrapper"
       >
         <div
-          className="first-level"
+          className="ML-cat"
         >
           <div
             className="category-container"
@@ -329,7 +329,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
                 onClick={[Function]}
               >
                 <div
-                  className="second-level d-flex"
+                  className="ML-module d-flex"
                 >
                   <div
                     className="d-flex flex-row align-items-center"
@@ -388,7 +388,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
                 onClick={[Function]}
               >
                 <div
-                  className="second-level d-flex"
+                  className="ML-module d-flex"
                 >
                   <div
                     className="d-flex flex-row align-items-center"

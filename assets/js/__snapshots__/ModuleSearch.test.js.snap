@@ -52,7 +52,7 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
           Object {
             "autoFocus": true,
             "onChange": [Function],
-            "placeholder": "Search modules",
+            "placeholder": "Modules",
             "value": "wow",
           }
         }
@@ -96,7 +96,7 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
               "onChange": [Function],
               "onFocus": [Function],
               "onKeyDown": [Function],
-              "placeholder": "Search modules",
+              "placeholder": "Modules",
               "value": "wow",
             }
           }
@@ -147,7 +147,7 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
               onChange={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
-              placeholder="Search modules"
+              placeholder="Modules"
               role="combobox"
               type="text"
               value="wow"
@@ -224,7 +224,7 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
           Object {
             "autoFocus": true,
             "onChange": [Function],
-            "placeholder": "Search modules",
+            "placeholder": "Modules",
             "value": "a",
           }
         }
@@ -285,7 +285,7 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
               "onChange": [Function],
               "onFocus": [Function],
               "onKeyDown": [Function],
-              "placeholder": "Search modules",
+              "placeholder": "Modules",
               "value": "a",
             }
           }
@@ -336,7 +336,7 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
               onChange={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
-              placeholder="Search modules"
+              placeholder="Modules"
               role="combobox"
               type="text"
               value="a"
@@ -413,7 +413,7 @@ exports[`ModuleSearch Loads modules from props  1`] = `
           Object {
             "autoFocus": true,
             "onChange": [Function],
-            "placeholder": "Search modules",
+            "placeholder": "Modules",
             "value": "",
           }
         }
@@ -457,7 +457,7 @@ exports[`ModuleSearch Loads modules from props  1`] = `
               "onChange": [Function],
               "onFocus": [Function],
               "onKeyDown": [Function],
-              "placeholder": "Search modules",
+              "placeholder": "Modules",
               "value": "",
             }
           }
@@ -508,7 +508,7 @@ exports[`ModuleSearch Loads modules from props  1`] = `
               onChange={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
-              placeholder="Search modules"
+              placeholder="Modules"
               role="combobox"
               type="text"
               value=""
@@ -580,7 +580,7 @@ exports[`ModuleSearch Renders search bar 1`] = `
           Object {
             "autoFocus": true,
             "onChange": [Function],
-            "placeholder": "Search modules",
+            "placeholder": "Modules",
             "value": "",
           }
         }
@@ -624,7 +624,7 @@ exports[`ModuleSearch Renders search bar 1`] = `
               "onChange": [Function],
               "onFocus": [Function],
               "onKeyDown": [Function],
-              "placeholder": "Search modules",
+              "placeholder": "Modules",
               "value": "",
             }
           }
@@ -675,7 +675,7 @@ exports[`ModuleSearch Renders search bar 1`] = `
               onChange={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
-              placeholder="Search modules"
+              placeholder="Modules"
               role="combobox"
               type="text"
               value=""

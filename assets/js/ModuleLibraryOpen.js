@@ -32,20 +32,21 @@ export default class ModuleLibraryOpen extends React.Component {
         <div className='module-library module-library--open'>
           <div className='search-container'>
             <div className='library-header'>
-              <div className="d-flex align-items-center">
+              <div className="ML-header--top">
                 <a href="/workflows" className="brand--ML">
                   <img src="/static/images/logo.svg" width="21"/>
-                  <div className='logo-2 ml-2 t-white'>Workbench</div>
+                  <div className='logo-2 ml-2'>Workbench</div>
                 </a>
-                <div className='close-open-toggle' onClick={this.handleClick}>
+                <div className='ML-toggle' onClick={this.handleClick}>
                   <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
                 </div>
               </div>
-
-              <ModuleSearch addModule={this.props.addModule}
-                            dropModule={this.props.dropModule}
-                            items={this.props.items}
-                            workflow={this.props.workflow} />
+              <div className='ML-header--bottom'>
+                <ModuleSearch addModule={this.props.addModule}
+                              dropModule={this.props.dropModule}
+                              items={this.props.items}
+                              workflow={this.props.workflow} />
+              </div>
             </div>
             <div className="ML--module-list">
               <ModuleCategories
@@ -59,7 +60,7 @@ export default class ModuleLibraryOpen extends React.Component {
               />;
             </div>
           </div>
-          <div className="mb-3"></div>
+          <div className="mb-3 alert-button"></div>
             <AddNotificationButtonOpen/>
           <div className="ml-divider"></div>
 
