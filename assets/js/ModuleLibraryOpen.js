@@ -30,23 +30,23 @@ export default class ModuleLibraryOpen extends React.Component {
 
     return (
         <div className='module-library module-library--open'>
-          <div className='search-container'>
-            <div className='library-header'>
-              <div className="ML-header--top">
-                <a href="/workflows" className="brand--ML">
-                  <img src="/static/images/logo.svg" width="21"/>
-                  <div className='logo-2 ml-2'>Workbench</div>
-                </a>
-                <div className='ML-toggle' onClick={this.handleClick}>
-                  <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
-                </div>
+          <div className='library-header'>
+            <div className="ML-header">
+              <a href="/workflows" className="brand--ML">
+                <img src="/static/images/logo.svg" width="21"/>
+                <div className='logo-2 ml-2'>Workbench</div>
+              </a>
+              <div className='ML-toggle' onClick={this.handleClick}>
+                <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
               </div>
-              <div className='ML-header--bottom'>
-                <ModuleSearch addModule={this.props.addModule}
-                              dropModule={this.props.dropModule}
-                              items={this.props.items}
-                              workflow={this.props.workflow} />
-              </div>
+            </div>
+          </div>
+          <div className='ML-list'>
+            <div className='ML-search--container'>
+              <ModuleSearch addModule={this.props.addModule}
+                            dropModule={this.props.dropModule}
+                            items={this.props.items}
+                            workflow={this.props.workflow} />
             </div>
             <div className="ML--module-list">
               <ModuleCategories
@@ -60,7 +60,7 @@ export default class ModuleLibraryOpen extends React.Component {
               />;
             </div>
           </div>
-          <div className="mb-3 alert-button"></div>
+          <div className="mb-3"></div>
             <AddNotificationButtonOpen/>
           <div className="ml-divider"></div>
 

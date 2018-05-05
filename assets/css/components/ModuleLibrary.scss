@@ -1,27 +1,19 @@
 /* --- Module Library --- */
 
 .module-library {
-  height: 100%;
+  height: 100vh;
   background-color: $module-library-background;
   color: $white;
-}
-
-
-.workflow-root.in-lesson .module-library {
-  background-color: $WF-background;
-  border-right: $dark-accent;
 }
 
 .module-library--open {
   width: 20rem;
   flex: 0 0 20rem;
   }
-.workflow-root.in-lesson .module-library--open {
-  width: 16rem;
-}
 
 
 .module-library--closed {
+  height:none;
   width: 6rem;
   flex: 0 0 6rem;
 }
@@ -39,52 +31,121 @@
 .library-header {
   position: relative;
   text-align: left;
-  padding: 0 2rem 1rem 2rem;
-  margin-bottom: 1rem;
+  padding: 0 2rem 0 2rem;
 
-  .ML-header--top{
+  .ML-header{
     height:6rem;
     display: flex;
     align-items: center;
   }
-  .search-bar {
-    margin-top: 0.5rem;
-    border-radius: 30px;
-    height:3.5rem;
-    border: 3px solid transparent;
-    background-color: rgba(250,250,250,0.2);
+}
+
+// Search and list of modules
+
+.ML-list{
+
+  .ML-search--container{
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: center;
+
+    .search-bar {
+      border-radius: 30px;
+      height:3.5rem;
+      border: 3px solid transparent;
+      background-color: rgba(250,250,250,0.2);
+    }
+  }
+
+  /*search result*/
+  .react-autosuggest__suggestions-container--open {
+    margin-top: 2.2rem;
+    margin-left: -6.2rem;
+    display: block;
+    position: absolute;
+    border: 0px;
+    background-color: #577485;
+    color:#fff;
+    font-weight: 300;
+    font-size: 1.6rem;
+    width: 20rem;
+    z-index: 2;
+    overflow-y: scroll;
+    height:calc(100vh - 40rem);
   }
 }
 
-
-
 .workflow-root.in-lesson {
 
-  .module-library--open .search-container:hover .search-bar {
-   border:3px solid $brand-learn;
-  }
+  .module-library {
+    width: 16rem;
+    background-color: $WF-background;
+    border-right: $dark-accent;
 
-  .library-header {
-    padding: 0;
+    .ML-list:hover .search-bar {
+      border:3px solid $brand-learn;
+    }
 
-    .ML-header--top {
-      padding-left: 1.5rem;
-      background-color: $brand-learn;
+    .library-header {
+      padding: 0;
 
-      .ML-toggle{
-        visibility: hidden;
+      .ML-header {
+        padding-left: 1.5rem;
+        background-color: $brand-learn;
+
+        .ML-toggle{
+          visibility: hidden;
+        }
       }
     }
-    .ML-header--bottom {
-      padding: 1rem 1.5rem;
-      display: flex;
-      justify-content: center;
 
-      //Search bar
+    // Modules and data alerts
 
-      .search-bar {
-        margin-top:1rem;
-        background-color: $white;
+    .ML-module {
+      padding-left: 1.5rem;
+    }
+
+    .ML-module:hover {
+      background-color: $dark-accent;
+      opacity: 1;
+    }
+
+    .ML-module {
+      color:$brand-text;
+    }
+
+    // Search, modules container and search results
+
+    .ML-list {
+
+      .ML-search--container {
+        padding: 1.5rem 1.5rem;
+        display: flex;
+        justify-content: center;
+
+        .search-bar {
+          background-color: $white;
+        }
+      }
+
+      .react-autosuggest__suggestions-container--open {
+          margin-left: -5.7rem;
+          background-color: $WF-background;
+          color: $brand-text;
+          width:16rem;
+
+        .react-autosuggest__section-title {
+          color: $brand-text;
+        }
+
+        .react-autosuggest__suggestion-inner {
+          padding: 0.8rem 0  0.5rem 1.5rem;
+          color: $brand-text;
+
+          .ml-icon-search:before {
+            color: $brand-text;
+          }
+        }
       }
     }
   }
@@ -104,7 +165,7 @@
 
 
 // Outline when hover on top of ML
-.search-container:hover .search-bar{
+.ML-list:hover .search-bar{
   border:3px solid $brand-workspace;
 }
 
@@ -163,22 +224,7 @@
   padding-left: 2.5rem;
 }
 
-.workflow-root.in-lesson .card .ML-module {
-  padding-left: 1.5rem;
-}
 
-.card .ML-module:hover {
-  background-color: $dark-accent;
-  opacity: 1;
-}
-
-.workflow-root.in-lesson .ML-module {
-  color:$brand-text;
-}
-
-.workflow-root.in-lesson .ML-module:hover {
-  background-color: $dark-accent;
-}
 
 
 // div containing module handle
@@ -356,22 +402,6 @@
   display: none;
 }
 
-/*search result*/
-.react-autosuggest__suggestions-container--open {
-  margin-top: 2.7rem;
-  margin-left: -6.2rem;
-  display: block;
-  position: absolute;
-  border: 0px;
-  background-color: #577485;
-  color:#fff;
-  font-weight: 300;
-  font-size: 1.6rem;
-  width: 100%;
-  z-index: 2;
-  overflow-y: scroll;
-  height:calc(100vh - 40rem);
-}
 
 .react-autosuggest__suggestions-list {
   padding: 0;
@@ -395,7 +425,7 @@
 }
 
 .react-autosuggest__suggestion--highlighted .react-autosuggest__suggestion-inner  {
-  background-color: #4E6878;
+  background-color: $dark-accent;
   width:100%;
   opacity:1;
 }
