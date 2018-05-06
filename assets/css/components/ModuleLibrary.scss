@@ -34,8 +34,11 @@
       display: flex;
       justify-content: center;
 
-      .ml-icon-search{
+      .ml-icon-search {
         font-size: 1.4rem;
+      }
+
+      .icon-search-white:before{
         opacity: 0.5;
       }
 
@@ -258,11 +261,15 @@
     .ML-module {
       padding-left: 1.5rem;
       color:$brand-text--dark;
+      opacity: 0.7;
     }
 
     .ML-module:hover {
-      background-color: $dark-accent--soft;
       opacity: 1;
+
+      .icon-grip {
+        opacity: 0.6;
+      }
     }
 
     // Search, modules container and search results
@@ -275,7 +282,7 @@
         justify-content: center;
 
         .ml-icon-search:before {
-          color:$placeholder;
+          color:$brand-text--dark;
         }
 
         .ML-search-field {
@@ -309,8 +316,18 @@
 
           .ml-icon-search:before {
             color: $brand-text--dark;
+
           }
         }
+
+        .react-autosuggest__suggestion-inner:hover {
+            opacity: 1;
+
+            .icon-grip {
+                opacity: 0.6;
+            }
+        }
+
       }
     }
   }
