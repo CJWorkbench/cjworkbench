@@ -94,7 +94,7 @@ class Module extends React.Component {
     var moduleName = this.props.name;
     var icon = 'icon-' + this.props.icon + ' ml-icon';
 
-    var moduleCard =  <div className='card ml-module-card' onClick={this.itemClick}>
+    var moduleCard =  <div className='card' onClick={this.itemClick}>
                         <div className='ML-module d-flex'>
                           <div className='d-flex flex-row align-items-center'>
                             <div className='ml-icon-container'>

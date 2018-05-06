@@ -175,3 +175,55 @@
 select {
   border-radius: 0px;
 }
+
+
+
+/* ImportModuleFromGitHub */
+
+.import-module {
+  border-bottom: 1px solid rgba(255,255,255, .1);
+}
+
+.import-module-button {
+  cursor: pointer;
+  color: #FAFAFA;
+  padding-top: 2rem;
+  opacity: 0.7;
+  display:flex;
+  justify-content: center;
+}
+
+.import-module-button:hover {
+  cursor: pointer;
+  color: #FFFFFF;
+  opacity: 1;
+}
+
+.workflow-root.in-lesson .import-module-button {
+  visibility: hidden;
+}
+
+.import-github-error {
+  height: 4rem;
+  color: #E24F4A;
+  margin-top:2rem;
+  padding-left:0rem;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.9rem;
+}
+
+.import-github-success {
+  height: 4rem;
+  color: #1CA8B9;
+  font-family: 'Nunito Sans', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  line-height: 1.9rem;
+  margin-top: 2rem;
+  padding-left: 0rem;
+}
+
+.test-button{
+  cursor: pointer;
+}

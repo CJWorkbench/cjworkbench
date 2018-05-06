@@ -211,7 +211,7 @@ export default class ModuleSearch extends React.Component {
     }
 
     return (
-      <div className='d-flex align-items-center search-bar'>
+      <div className='d-flex align-items-center ML-search-field'>
         <div className='icon-search-white ml-icon-search ml-4'></div>
         <div
           onBlur={this.onBlur}

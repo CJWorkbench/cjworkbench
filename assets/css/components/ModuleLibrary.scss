@@ -1,63 +1,168 @@
-/* --- Module Library --- */
 
-.module-library {
+//Module library when open
+.module-library--open {
   height: 100vh;
   background-color: $module-library-background;
   color: $white;
-}
-
-.module-library--open {
   width: 20rem;
   flex: 0 0 20rem;
-  }
 
-
-.module-library--closed {
-  height:none;
-  width: 6rem;
-  flex: 0 0 6rem;
-}
-
-.library-closed--toggle{
-  height:6rem;
-  border-bottom: 1px solid rgba(255,255,255, .1);
-  display:flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-}
-
-// Library header in WF: Contains Brand and Search
-.library-header {
-  position: relative;
-  text-align: left;
-  padding: 0 2rem 0 2rem;
-
-  .ML-header{
+  .ML-header {
     height:6rem;
     display: flex;
     align-items: center;
-  }
-}
+    position: relative;
+    text-align: left;
+    padding: 0 2rem 0 2rem;
 
-// Search and list of modules
+    .brand--ML {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
 
-.ML-list{
-
-  .ML-search--container{
-    padding: 1.5rem 2rem;
-    display: flex;
-    justify-content: center;
-
-    .search-bar {
-      border-radius: 30px;
-      height:3.5rem;
-      border: 3px solid transparent;
-      background-color: rgba(250,250,250,0.2);
+    a:hover {
+      text-decoration: none;
     }
   }
 
+  // Search and list of modules container
+  .ML-list--container {
+
+    .ML-search--container {
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: center;
+
+      .ml-icon-search{
+        font-size: 1.4rem;
+        opacity: 0.5;
+      }
+
+      //button to close the search
+      .ML-search--close{
+        opacity: 0.6;
+      }
+      .ML-search--close:hover{
+        opacity: 1;
+      }
+    }
+  }
+
+  // Search highlight when hover on top of ML
+
+  .ML-search-field {
+    border-radius: 30px;
+    height:3.5rem;
+    border: 3px solid transparent;
+    background-color: rgba(255,255,255,0.2);
+  }
+
+  .ML-list--container:hover .ML-search-field {
+    border:3px solid $brand-workspace;
+  }
+
+  // ENTIRE module list
+  .ML--module-list {
+    max-width: 100%;
+    height:calc(100vh - 40rem);
+    overflow-y: scroll;
+    overflow-x: hidden;
+    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+
+    // Module category
+    .ML-cat {
+      height: 4rem;
+      width: 100%;
+      opacity: 0.4;
+      display: flex;
+      align-items: center;
+
+      .category-name {
+        cursor:default;
+        margin-left: 2rem;
+        font-size: 1.3rem;
+        font-weight: 100;
+        line-height: 1.6rem;
+      }
+    }
+
+    .list {
+      margin-top: 0.2rem;
+    }
+  }
+
+  // Modules IN MODULE LIST + ADD DATA ALERT
+
+  .ml-module-name{
+    margin-left:0.6rem;
+  }
+
+  .ml-icon-container{
+    width: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .card {
+  cursor: pointer;
+  border: 0;
+  background-color: transparent;
+  border-radius: 0;
+  }
+
+  .ML-module {
+    background-color: transparent;
+    opacity: 0.7;
+    position: relative;
+    height: 4rem;
+    padding-left: 2.5rem;
+
+    .ml-icon {
+      font-size: 1.4rem;
+    }
+
+
+
+    // Module handle container
+    .ml-handle {
+      padding: 0 0.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      opacity:0;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    .ml-handle:hover{
+      opacity:0.6;
+    }
+  }
+  .ML-module:hover{
+    background-color: $dark-accent;
+    opacity: 1;
+  }
+
+  .ml-divider {
+    margin-top: 1.5rem;
+    border-top: 1px solid rgba(255,255,255, .2);
+    margin-left: 3rem;
+    margin-right: 3rem;
+    margin-bottom: 1rem;
+  }
+  //Do not display module descriptions
+  .ml-description {
+    display: none;
+  }
+
+
   /*search result*/
+
   .react-autosuggest__suggestions-container--open {
     margin-top: 2.2rem;
     margin-left: -6.2rem;
@@ -72,8 +177,61 @@
     z-index: 2;
     overflow-y: scroll;
     height:calc(100vh - 40rem);
+
+    .react-autosuggest__section-title {
+      display: flex;
+      align-items: center;
+      padding-left: 2rem;
+      font-size: 1.3rem;
+      color: #FFF;
+      opacity: .4;
+      height: 4rem;
+
+      div{
+        padding-top: 0.4rem;
+      }
+    }
+
+    .react-autosuggest__suggestions-list {
+      padding: 0;
+      margin-bottom: 0rem;
+      list-style-type: none;
+
+      .react-autosuggest__suggestion {
+        padding: 0;
+        margin: 0;
+
+        .react-autosuggest__suggestion-inner {
+          cursor: pointer;
+          height: 4rem;
+          padding: 0.8rem 0  0.5rem 2.5rem;
+          color: $white;
+          opacity: 0.7;
+          display:flex;
+          align-items: center;
+
+          .suggest-handle{
+            padding: 0 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            opacity: 0;
+            position: absolute;
+            left: 0rem;
+            width: 100%;
+            height: 4rem;
+          }
+
+          .suggest-handle:hover{
+            opacity: 0.6;
+          }
+        }
+      }
+    }
   }
 }
+
+
 
 .workflow-root.in-lesson {
 
@@ -82,20 +240,16 @@
     background-color: $WF-background;
     border-right: $dark-accent;
 
-    .ML-list:hover .search-bar {
+    .ML-list--container:hover .ML-search-field {
       border:3px solid $brand-learn;
     }
 
-    .library-header {
-      padding: 0;
+    .ML-header {
+      padding-left: 1.5rem;
+      background-color: $brand-learn;
 
-      .ML-header {
-        padding-left: 1.5rem;
-        background-color: $brand-learn;
-
-        .ML-toggle{
-          visibility: hidden;
-        }
+      .ML-toggle{
+        visibility: hidden;
       }
     }
 
@@ -103,6 +257,7 @@
 
     .ML-module {
       padding-left: 1.5rem;
+      color:$brand-text;
     }
 
     .ML-module:hover {
@@ -110,21 +265,31 @@
       opacity: 1;
     }
 
-    .ML-module {
-      color:$brand-text;
-    }
-
     // Search, modules container and search results
 
-    .ML-list {
+    .ML-list--container {
 
       .ML-search--container {
         padding: 1.5rem 1.5rem;
         display: flex;
         justify-content: center;
 
-        .search-bar {
+        .ml-icon-search:before {
+          color:$placeholder;
+        }
+
+        .ML-search-field {
           background-color: $white;
+        }
+      }
+
+      //Entire list of module
+      .ML--module-list {
+        box-shadow: 0 -1px 0 $dark-accent, 0 1px 0 $dark-accent;
+
+        //category name
+        .ML-cat {
+          color:$brand-text;
         }
       }
 
@@ -149,163 +314,62 @@
       }
     }
   }
-}
-
-
-.library-header a:hover {
-  text-decoration: none;
-}
-
-.brand--ML {
-  display: flex;
-  align-items: center;
-  cursor: pointer;
+  .ml-divider {
+    visibility: hidden;
+  }
 }
 
 
 
-// Outline when hover on top of ML
-.ML-list:hover .search-bar{
-  border:3px solid $brand-workspace;
-}
+//// Module library closed
 
 
+.module-library--closed {
+  background-color: $module-library-background;
+  height:none;
+  width: 6rem;
+  flex: 0 0 6rem;
 
+  .library-closed--toggle{
+    height:6rem;
+    border-bottom: 1px solid rgba(255,255,255, .1);
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+  }
+  .ml-icon {
+    font-size: 1.4rem;
+  }
 
-.module-library--open .icon-sort-up-vl-gray,
-.module-library--open .icon-sort-down-vl-gray {
-  font-size: 0.6rem;
-  padding-bottom: 0.1rem;
-  margin-right: 2rem;
-}
-
-/* To conceal the transition animation when selecting from Library in collapsed state */
-.hide-animation {
-  display: none;
-}
-
-// Entire module list
-
-.ML--module-list {
-  max-width: 100%;
-  height:calc(100vh - 40rem);
-  overflow-y: scroll;
-  overflow-x: hidden;
-  box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-.ML--module-list .list {
-  margin-top: 0.2rem;
-}
-
-.workflow-root.in-lesson .ML--module-list {
-  box-shadow: 0 -1px 0 $dark-accent, 0 1px 0 $dark-accent;
-}
-
-
-// When category is open: category name
-.card .ML-cat {
-  height: 4rem;
-  width: 100%;
-  opacity: 0.4;
-  display: flex;
-  align-items: center;
-}
-
-.workflow-root.in-lesson .ML-cat {
-  color:$brand-text;
-}
-
-// When category is open: module name
-.card .ML-module {
-  opacity: 0.7;
-  position: relative;
-  height: 4rem;
-  padding-left: 2.5rem;
-}
-
-
-
-
-// div containing module handle
-.ml-handle{
-  padding: 0 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  opacity:0;
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
-}
-
-.ml-handle:hover{
-  opacity:0.6;
-}
-
-.module-library--open .card,
-.module-library--closed .card {
+  .card {
   border: 0;
   background: transparent;
   border-radius: 0;
-}
 
-.module-library--closed > .card,
-.module-library--closed > .list {
-  border-bottom: 1px solid rgba(255,255,255, .1);
-}
+    .ml-icon-search {
+      font-size: 1.4rem;
+    }
+  }
 
-.category-name {
-  cursor:default;
-  margin-left: 2rem;
-  font-size: 1.3rem;
-  font-weight: 100;
-  line-height: 1.6rem;
-}
+  .closed-ML--category{
+    cursor: pointer;
+    height: 4rem;
+    width: 100%;
+    opacity: 0.7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color:$white;
+  }
+  .closed-ML--category:hover{
+    background-color: $dark-accent;
+    opacity:1;
+  }
 
-.closed-ML--category{
-  cursor: pointer;
-  height: 4rem;
-  width: 100%;
-  opacity: 0.7;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.closed-ML--category:hover{
-  background-color: #4E6878;
-  opacity:1;
-}
-
-// modules in open categories
-
-.ml-module-card {
-  cursor: pointer;
-}
-
-.ml-icon{
-  font-size: 1.4rem;
-}
-
-.ml-icon-container{
-  width: 2rem;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.ml-module-name{
-  margin-left:0.6rem;
-}
-
-
-// Modules in closed library
-
-.module-category--open .ml-list-mini {
-  background-color:#547081;
+  // Modules lists when hover
+  .ml-list-mini {
+  background-color:$module-library-background;
   cursor: pointer;
   z-index: 100;
   position: absolute;
@@ -317,229 +381,94 @@
   border-top: 1px solid #4A6676;
   border-bottom: 1px solid #4A6676;
   box-shadow: 0.5rem 0.5rem 2.5rem 0 rgba(0, 0, 0, 0.1);
+  }
+
+  .ML-module {
+    padding:0 0.5rem 0 1rem;
+    color:$white;
+    width: 15rem;
+    height: 4rem;
+    justify-content: space-between;
+    opacity: 0.7;
+    align-items: center;
+
+    .ml-module-name{
+      margin-left:0.7rem;
+    }
+
+    .ml-icon {
+      font-size: 1.2rem;
+    }
+  }
+
+  .ML-module:hover {
+    opacity: 1;
+    background-color: $dark-accent;
+  }
+
+  /* AddNotificationButtonClosed */
+  .alert-closed-ML {
+    background-color: #4E6878 !important;
+    z-index: 100;
+    position: absolute;
+    left: 6rem;
+    top: 30rem;
+  }
 }
 
-.module-category--open .ml-list-mini .ml-module-card {
-  width: 15rem;
-}
-
-.module-category--open .ml-list-mini .ml-module-card .ml-icon {
-  font-size: 1.2rem;
-}
-
-.module-category--open .ml-list-mini .ml-module-card .ml-module-name{
-  margin-left: 0.4rem;
-}
 
 
-.card .ml-list-mini .ML-module{
-  padding-left: 1rem;
-}
+//ML Search results with autosuggest component*/
 
-
-/* --- the Search Modules within the Module Library header - ModuleSearch.js --- */
-
-//Style for search icon
-.ml-icon-search{
-  font-size: 1.4rem;
-}
-
-.workflow-root.in-lesson .ml-icon-search:before {
-  color:$placeholder;
-}
-
-//style for close icon in ML search
-.ML-search--close{
-  opacity: 0.6;
-}
-
-.search-close:hover{
-  opacity: 1;
-}
-
-/*Actual search with autosuggest component*/
 .react-autosuggest__container {
   padding-left:1rem;
   width: 100%;
   background-color:transparent;
+
+  .react-autosuggest__input {
+    width: 100%;
+    height: 100%;
+    padding-left: 0.3rem;
+    font-family: 'Nunito Sans', sans-serif;
+    font-weight: 100;
+    font-size: 1.4rem;
+    line-height: 1.4rem;
+  }
+
+  .react-autosuggest__input--focused {
+    outline: none;
+  }
+
+  // text when typing in search
+  input {
+    border: 0px;
+    color:$white;
+    background-color:transparent;
+  }
+
+  //Placeholder text in search box
+  .react-autosuggest__input::placeholder {
+   color: rgba(250,250,250,0.5);
+  }
+
+  //Search result list
+  .react-autosuggest__suggestion--highlighted {
+    .react-autosuggest__suggestion-inner  {
+    background-color: $dark-accent;
+    width:100%;
+    opacity:1;
+    }
+  }
 }
 
-.react-autosuggest__container input {
-  border: 0px solid #DDDDDD;
-  color:white;
-  background-color:transparent;
-}
-/* If we want to style the placeholder differently than the typed text */
 
- .react-autosuggest__input::placeholder {
-  color: rgba(250,250,250,0.5);
-}
+// ml search for lesson
 
-.workflow-root.in-lesson .react-autosuggest__input::placeholder {
+.workflow-root.in-lesson {
+  .react-autosuggest__input::placeholder {
   color:$placeholder;
-}
-
-/* Search qeury -- does not accept a 'color' parameter  */
-.react-autosuggest__input {
-  width: 100%;
-  height: 100%;
-  padding-left: 0.3rem;
-  font-family: 'Nunito Sans', sans-serif;
-  font-weight: 900;
-  font-size: 1.4rem;
-  line-height: 1.4rem;
-}
-
-.workflow-root.in-lesson .react-autosuggest__input {
-  color: $brand-text;
-}
-
-.react-autosuggest__input--focused {
-  outline: none;
-}
-
-.react-autosuggest__suggestions-container {
-  display: none;
-}
-
-
-.react-autosuggest__suggestions-list {
-  padding: 0;
-  margin-bottom: 0rem;
-  list-style-type: none;
-}
-
-.react-autosuggest__suggestion {
-  padding: 0;
-  margin: 0;
-}
-
-.react-autosuggest__suggestion-inner {
-  cursor: pointer;
-  height: 4rem;
-  padding: 0.8rem 0  0.5rem 2.5rem;
-  color: #fff;
-  opacity: 0.7;
-  display:flex;
-  align-items: center;
-}
-
-.react-autosuggest__suggestion--highlighted .react-autosuggest__suggestion-inner  {
-  background-color: $dark-accent;
-  width:100%;
-  opacity:1;
-}
-
-.suggest-handle{
-  padding: 0 0.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  opacity: 0;
-  position: absolute;
-  left: 0rem;
-  width: 100%;
-  height: 4rem;
-}
-
-.suggest-handle:hover{
-  opacity: 0.6;
-}
-
-.react-autosuggest__section-container {
-}
-
-.react-autosuggest__section-container--first {
-  border-top: 0;
-}
-
-.react-autosuggest__section-title {
-  display: flex;
-  align-items: center;
-  padding-left: 2rem;
-  font-size: 1.3rem;
-  color: #FFF;
-  opacity: .4;
-  height: 4rem;
-}
-
-.react-autosuggest__section-title div{
-  padding-top: 0.4rem;
-}
-
-.ml-description {
-  display: none;
-}
-
-.ml-divider {
-  margin-top: 1.5rem;
-  border-top: 1px solid rgba(255,255,255, .2);
-  margin-left: 3rem;
-  margin-right: 3rem;
-  margin-bottom: 1rem;
-}
-
-.workflow-root.in-lesson .ml-divider {
-  visibility: hidden;
-}
-
-/* AddNotificationButtonClosed */
-
-// Absolute position used to make element appear outside of Module Library div
-.alert-closed-ML {
-  background-color: #4E6878 !important;
-  z-index: 100;
-  position: absolute;
-  left: 6rem;
-  top: 30rem;             // does not match up with symbol in Module Library
-}
-
-/* ImportModuleFromGitHub */
-
-.import-module {
-  border-bottom: 1px solid rgba(255,255,255, .1);
-}
-
-.import-module-button {
-  cursor: pointer;
-  color: #FAFAFA;
-  padding-top: 2rem;
-  opacity: 0.7;
-  display:flex;
-  justify-content: center;
-}
-
-.import-module-button:hover {
-  cursor: pointer;
-  color: #FFFFFF;
-  opacity: 1;
-}
-
-.workflow-root.in-lesson .import-module-button {
-  visibility: hidden;
-}
-
-.import-github-error {
-  height: 4rem;
-  color: #E24F4A;
-  margin-top:2rem;
-  padding-left:0rem;
-  font-size: 1.3rem;
-  font-weight: 300;
-  line-height: 1.9rem;
-}
-
-.import-github-success {
-  height: 4rem;
-  color: #1CA8B9;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1.3rem;
-  font-weight: 300;
-  line-height: 1.9rem;
-  margin-top: 2rem;
-  padding-left: 0rem;
-}
-
-.test-button{
-  cursor: pointer;
+  }
+  .react-autosuggest__input {
+    color: $brand-text;
+  }
 }

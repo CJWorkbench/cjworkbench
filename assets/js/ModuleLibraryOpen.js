@@ -30,18 +30,16 @@ export default class ModuleLibraryOpen extends React.Component {
 
     return (
         <div className='module-library module-library--open'>
-          <div className='library-header'>
-            <div className="ML-header">
-              <a href="/workflows" className="brand--ML">
-                <img src="/static/images/logo.svg" width="21"/>
-                <div className='logo-2 ml-2'>Workbench</div>
-              </a>
-              <div className='ML-toggle' onClick={this.handleClick}>
-                <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
-              </div>
+          <div className="ML-header">
+            <a href="/workflows" className="brand--ML">
+              <img src="/static/images/logo.svg" width="21"/>
+              <div className='logo-2 ml-2'>Workbench</div>
+            </a>
+            <div className='ML-toggle' onClick={this.handleClick}>
+              <div className='icon-sort-left-vl-gray ml-4 mt-1'></div>
             </div>
           </div>
-          <div className='ML-list'>
+          <div className='ML-list--container'>
             <div className='ML-search--container'>
               <ModuleSearch addModule={this.props.addModule}
                             dropModule={this.props.dropModule}
