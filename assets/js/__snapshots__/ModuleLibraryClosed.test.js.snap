@@ -172,7 +172,7 @@ exports[`ModuleLibraryClosed NOT Read-Only Renders 1`] = `
                         setOpenCategory={[Function]}
                       >
                         <div
-                          className="card ml-module-card"
+                          className="card"
                           onClick={[Function]}
                         >
                           <div
@@ -526,7 +526,7 @@ exports[`ModuleLibraryClosed Read-Only Renders 1`] = `
                         setOpenCategory={[Function]}
                       >
                         <div
-                          className="card ml-module-card"
+                          className="card"
                           onClick={[Function]}
                         >
                           <div

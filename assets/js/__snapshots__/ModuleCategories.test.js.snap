@@ -106,7 +106,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
                   setOpenCategory={[Function]}
                 >
                   <div
-                    className="card ml-module-card"
+                    className="card"
                     onClick={[Function]}
                   >
                     <div
@@ -297,7 +297,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                   setOpenCategory={[Function]}
                 >
                   <div
-                    className="card ml-module-card"
+                    className="card"
                     onClick={[Function]}
                   >
                     <div
@@ -403,7 +403,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                   setOpenCategory={[Function]}
                 >
                   <div
-                    className="card ml-module-card"
+                    className="card"
                     onClick={[Function]}
                   >
                     <div

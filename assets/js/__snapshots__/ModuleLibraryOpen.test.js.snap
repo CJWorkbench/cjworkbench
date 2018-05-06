@@ -42,37 +42,33 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
       className="module-library module-library--open"
     >
       <div
-        className="library-header"
+        className="ML-header"
       >
-        <div
-          className="ML-header"
+        <a
+          className="brand--ML"
+          href="/workflows"
         >
-          <a
-            className="brand--ML"
-            href="/workflows"
-          >
-            <img
-              src="/static/images/logo.svg"
-              width="21"
-            />
-            <div
-              className="logo-2 ml-2"
-            >
-              Workbench
-            </div>
-          </a>
+          <img
+            src="/static/images/logo.svg"
+            width="21"
+          />
           <div
-            className="ML-toggle"
-            onClick={[Function]}
+            className="logo-2 ml-2"
           >
-            <div
-              className="icon-sort-left-vl-gray ml-4 mt-1"
-            />
+            Workbench
           </div>
+        </a>
+        <div
+          className="ML-toggle"
+          onClick={[Function]}
+        >
+          <div
+            className="icon-sort-left-vl-gray ml-4 mt-1"
+          />
         </div>
       </div>
       <div
-        className="ML-list"
+        className="ML-list--container"
       >
         <div
           className="ML-search--container"
@@ -105,7 +101,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
             workflow={Object {}}
           >
             <div
-              className="d-flex align-items-center search-bar"
+              className="d-flex align-items-center ML-search-field"
             >
               <div
                 className="icon-search-white ml-icon-search ml-4"
@@ -341,7 +337,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                           setOpenCategory={[Function]}
                         >
                           <div
-                            className="card ml-module-card"
+                            className="card"
                             onClick={[Function]}
                           >
                             <div
@@ -447,7 +443,7 @@ exports[`ModuleLibraryOpen  Renders all subcomponents 1`] = `
                           setOpenCategory={[Function]}
                         >
                           <div
-                            className="card ml-module-card"
+                            className="card"
                             onClick={[Function]}
                           >
                             <div
