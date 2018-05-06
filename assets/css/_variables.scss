@@ -1,9 +1,24 @@
+
+// Main colors  (*・‿・)ノ⌒*:･ﾟ✧
 $brand-workspace: #48C8D7;
 $brand-learn: #ffaad3;
-$brand-text: #686768;
-$module-library-background: #577485;
+$module-library: #577485;
 $WF-background:#E9EBEE;
 
-$dark-accent: rgba(0,0,0,.05);
+// Text colors ＼(＾O＾)／
+$brand-text--dark: #686768;
+
+
+
+// Accent: transparent light or dark color use on top of backgrounds --> (soft|medium|strong)
+$dark-accent--soft: rgba(0,0,0,.05);
+$dark-accent--medium: rgba(0,0,0,.1);
+
+$light-accent--medium: rgba(255,255,255,.1);
+$light-accent--strong: rgba(255,255,255,.2);
+
+// Input fields
+$search-field--light: rgba(255,255,255,.2);
 
 $placeholder: #c8c8c8;
+$placeholder--light: rgba(255,255,255,.5);

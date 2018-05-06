@@ -2,7 +2,7 @@
 //Module library when open
 .module-library--open {
   height: 100vh;
-  background-color: $module-library-background;
+  background-color: $module-library;
   color: $white;
   width: 20rem;
   flex: 0 0 20rem;
@@ -68,7 +68,7 @@
     height:calc(100vh - 40rem);
     overflow-y: scroll;
     overflow-x: hidden;
-    box-shadow: 0 -1px 0 rgba(255, 255, 255, 0.1), 0 1px 0 rgba(255, 255, 255, 0.1);
+    box-shadow: 0 -1px 0 $light-accent--medium, 0 1px 0 $light-accent--medium;
 
     // Module category
     .ML-cat {
@@ -144,13 +144,13 @@
     }
   }
   .ML-module:hover{
-    background-color: $dark-accent;
+    background-color: $dark-accent--soft;
     opacity: 1;
   }
 
   .ml-divider {
     margin-top: 1.5rem;
-    border-top: 1px solid rgba(255,255,255, .2);
+    border-top: 1px solid $light-accent--strong;
     margin-left: 3rem;
     margin-right: 3rem;
     margin-bottom: 1rem;
@@ -169,8 +169,8 @@
     display: block;
     position: absolute;
     border: 0px;
-    background-color: #577485;
-    color:#fff;
+    background-color: $module-library;
+    color:$white;
     font-weight: 300;
     font-size: 1.6rem;
     width: 20rem;
@@ -183,7 +183,7 @@
       align-items: center;
       padding-left: 2rem;
       font-size: 1.3rem;
-      color: #FFF;
+      color: $white;
       opacity: .4;
       height: 4rem;
 
@@ -238,7 +238,7 @@
   .module-library {
     width: 16rem;
     background-color: $WF-background;
-    border-right: $dark-accent;
+    border-right: $dark-accent--soft;
 
     .ML-list--container:hover .ML-search-field {
       border:3px solid $brand-learn;
@@ -257,11 +257,11 @@
 
     .ML-module {
       padding-left: 1.5rem;
-      color:$brand-text;
+      color:$brand-text--dark;
     }
 
     .ML-module:hover {
-      background-color: $dark-accent;
+      background-color: $dark-accent--soft;
       opacity: 1;
     }
 
@@ -285,30 +285,30 @@
 
       //Entire list of module
       .ML--module-list {
-        box-shadow: 0 -1px 0 $dark-accent, 0 1px 0 $dark-accent;
+        box-shadow: 0 -1px 0 $dark-accent--soft, 0 1px 0 $dark-accent--soft;
 
         //category name
         .ML-cat {
-          color:$brand-text;
+          color:$brand-text--dark;
         }
       }
 
       .react-autosuggest__suggestions-container--open {
           margin-left: -5.7rem;
           background-color: $WF-background;
-          color: $brand-text;
+          color: $brand-text--dark;
           width:16rem;
 
         .react-autosuggest__section-title {
-          color: $brand-text;
+          color: $brand-text--dark;
         }
 
         .react-autosuggest__suggestion-inner {
           padding: 0.8rem 0  0.5rem 1.5rem;
-          color: $brand-text;
+          color: $brand-text--dark;
 
           .ml-icon-search:before {
-            color: $brand-text;
+            color: $brand-text--dark;
           }
         }
       }
@@ -325,14 +325,14 @@
 
 
 .module-library--closed {
-  background-color: $module-library-background;
+  background-color: $module-library;
   height:none;
   width: 6rem;
   flex: 0 0 6rem;
 
   .library-closed--toggle{
     height:6rem;
-    border-bottom: 1px solid rgba(255,255,255, .1);
+    border-bottom: 1px solid $light-accent--medium;
     display:flex;
     justify-content: center;
     align-items: center;
@@ -361,15 +361,19 @@
     justify-content: center;
     align-items: center;
     color:$white;
+
+    .module-category--wrapper{
+      width:100%;
+    }
   }
   .closed-ML--category:hover{
-    background-color: $dark-accent;
+    background-color: $dark-accent--soft;
     opacity:1;
   }
 
   // Modules lists when hover
   .ml-list-mini {
-  background-color:$module-library-background;
+  background-color:$module-library;
   cursor: pointer;
   z-index: 100;
   position: absolute;
@@ -377,10 +381,8 @@
   top: -0.1rem;
   overflow-y: scroll;
   max-height: calc(70vh);
-  border-right: 1px solid #4A6676;
-  border-top: 1px solid #4A6676;
-  border-bottom: 1px solid #4A6676;
-  box-shadow: 0.5rem 0.5rem 2.5rem 0 rgba(0, 0, 0, 0.1);
+  border:0;
+  box-shadow: 0.5rem 0.5rem 2.5rem 0 $dark-accent--medium;
   }
 
   .ML-module {
@@ -396,6 +398,10 @@
       margin-left:0.7rem;
     }
 
+    .ml-handle {
+      opacity: 0;
+    }
+
     .ml-icon {
       font-size: 1.2rem;
     }
@@ -403,12 +409,17 @@
 
   .ML-module:hover {
     opacity: 1;
-    background-color: $dark-accent;
+    background-color: $dark-accent--soft;
+
+  }
+
+  .ML-module:hover .ml-handle {
+    opacity: .6;
   }
 
   /* AddNotificationButtonClosed */
   .alert-closed-ML {
-    background-color: #4E6878 !important;
+    background-color: $module-library;
     z-index: 100;
     position: absolute;
     left: 6rem;
@@ -448,13 +459,13 @@
 
   //Placeholder text in search box
   .react-autosuggest__input::placeholder {
-   color: rgba(250,250,250,0.5);
+   color: $placeholder--light;
   }
 
   //Search result list
   .react-autosuggest__suggestion--highlighted {
     .react-autosuggest__suggestion-inner  {
-    background-color: $dark-accent;
+    background-color: $dark-accent--soft;
     width:100%;
     opacity:1;
     }
@@ -469,6 +480,6 @@
   color:$placeholder;
   }
   .react-autosuggest__input {
-    color: $brand-text;
+    color: $brand-text--dark;
   }
 }

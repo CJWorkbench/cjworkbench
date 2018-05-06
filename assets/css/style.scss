@@ -41,7 +41,7 @@ body {
   height: 100%;
   font-family: 'Nunito Sans', sans-serif;
   background-color:#f6f6f6;
-  color: $brand-text;
+  color: $brand-text--dark;
 }
 
 /* height 100% needed on all parents so that output pane flexbox can fill available vertical screen space.
