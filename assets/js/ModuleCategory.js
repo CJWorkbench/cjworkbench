@@ -91,7 +91,7 @@ export default class ModuleCategory extends React.Component {
     }
 
     return (
-      <div className="card module-category--open">
+      <div className="card closed-ML--category">
         <div className="module-category--wrapper">
           {categoryHead}
           {moduleList}

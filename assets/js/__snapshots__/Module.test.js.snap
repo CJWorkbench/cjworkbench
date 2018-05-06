@@ -28,7 +28,7 @@ exports[`Module NOT Read-only Renders a card, with icon received from props 1`] 
       setOpenCategory={[MockFunction]}
     >
       <div
-        className="card"
+        className="card ml-module-card"
         onClick={[Function]}
       >
         <div
@@ -94,7 +94,7 @@ exports[`Module Read-only Renders a card, with icon received from props 1`] = `
       setOpenCategory={[MockFunction]}
     >
       <div
-        className="card"
+        className="card ml-module-card"
         onClick={[Function]}
       >
         <div

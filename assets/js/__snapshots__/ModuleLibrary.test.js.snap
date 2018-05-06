@@ -408,7 +408,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                     setOpenCategory={[Function]}
                   >
                     <div
-                      className="card module-category--open"
+                      className="card closed-ML--category"
                     >
                       <div
                         className="module-category--wrapper"
@@ -453,7 +453,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -512,7 +512,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -573,7 +573,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                     setOpenCategory={[Function]}
                   >
                     <div
-                      className="card module-category--open"
+                      className="card closed-ML--category"
                     >
                       <div
                         className="module-category--wrapper"
@@ -618,7 +618,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -689,7 +689,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                     setOpenCategory={[Function]}
                   >
                     <div
-                      className="card module-category--open"
+                      className="card closed-ML--category"
                     >
                       <div
                         className="module-category--wrapper"
@@ -734,7 +734,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -793,7 +793,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -854,7 +854,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                     setOpenCategory={[Function]}
                   >
                     <div
-                      className="card module-category--open"
+                      className="card closed-ML--category"
                     >
                       <div
                         className="module-category--wrapper"
@@ -899,7 +899,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -953,7 +953,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 1`]
               isDragging={false}
             >
               <div
-                className="card"
+                className="card ml-module-card"
                 onClick={[Function]}
               >
                 <div
@@ -1444,7 +1444,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     setOpenCategory={[Function]}
                   >
                     <div
-                      className="card module-category--open"
+                      className="card closed-ML--category"
                     >
                       <div
                         className="module-category--wrapper"
@@ -1489,7 +1489,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -1548,7 +1548,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -1609,7 +1609,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     setOpenCategory={[Function]}
                   >
                     <div
-                      className="card module-category--open"
+                      className="card closed-ML--category"
                     >
                       <div
                         className="module-category--wrapper"
@@ -1654,7 +1654,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -1725,7 +1725,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     setOpenCategory={[Function]}
                   >
                     <div
-                      className="card module-category--open"
+                      className="card closed-ML--category"
                     >
                       <div
                         className="module-category--wrapper"
@@ -1770,7 +1770,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -1829,7 +1829,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -1890,7 +1890,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                     setOpenCategory={[Function]}
                   >
                     <div
-                      className="card module-category--open"
+                      className="card closed-ML--category"
                     >
                       <div
                         className="module-category--wrapper"
@@ -1935,7 +1935,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
                               setOpenCategory={[Function]}
                             >
                               <div
-                                className="card"
+                                className="card ml-module-card"
                                 onClick={[Function]}
                               >
                                 <div
@@ -1989,7 +1989,7 @@ exports[`ModuleLibrary Not Read-only Renders in open state and loads modules 2`]
               isDragging={false}
             >
               <div
-                className="card"
+                className="card ml-module-card"
                 onClick={[Function]}
               >
                 <div
@@ -2184,7 +2184,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
           onClick={[Function]}
         >
           <div
-            className="card"
+            className="card ml-module-card"
             onClick={[Function]}
           >
             <div
@@ -2281,7 +2281,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card module-category--open"
+                  className="card closed-ML--category"
                 >
                   <div
                     className="module-category--wrapper"
@@ -2324,7 +2324,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card module-category--open"
+                  className="card closed-ML--category"
                 >
                   <div
                     className="module-category--wrapper"
@@ -2377,7 +2377,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card module-category--open"
+                  className="card closed-ML--category"
                 >
                   <div
                     className="module-category--wrapper"
@@ -2420,7 +2420,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                 setOpenCategory={[Function]}
               >
                 <div
-                  className="card module-category--open"
+                  className="card closed-ML--category"
                 >
                   <div
                     className="module-category--wrapper"
@@ -2460,7 +2460,7 @@ exports[`ModuleLibrary Read-only Renders in closed state 1`] = `
                 onMouseLeave={[Function]}
               >
                 <div
-                  className="card"
+                  className="card ml-module-card"
                 >
                   <div
                     className="closed-ML--category t-vl-gray"

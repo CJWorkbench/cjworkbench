@@ -19,7 +19,7 @@ exports[`AddNotificationButtonClosed Renders 1`] = `
         onMouseLeave={[Function]}
       >
         <div
-          className="card"
+          className="card ml-module-card"
         >
           <div
             className="closed-ML--category t-vl-gray"
@@ -76,7 +76,7 @@ exports[`AddNotificationButtonOpen Renders 1`] = `
       isDragging={false}
     >
       <div
-        className="card"
+        className="card ml-module-card"
         onClick={[Function]}
       >
         <div

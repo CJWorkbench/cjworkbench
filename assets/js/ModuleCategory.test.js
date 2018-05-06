@@ -6,7 +6,7 @@
  *    -Mouse enter on category will show module list
  *    -Mouse leave on category will hide module list
  *    -Mouse leave on module list will hide module list
- * 
+ *
  */
 
 import React from 'react'

@@ -36,7 +36,7 @@ exports[`ModuleCategory  Library closed, category collapsed  Renders with catego
     setOpenCategory={[MockFunction]}
   >
     <div
-      className="card module-category--open"
+      className="card closed-ML--category"
     >
       <div
         className="module-category--wrapper"
@@ -96,7 +96,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
     setOpenCategory={[MockFunction]}
   >
     <div
-      className="card module-category--open"
+      className="card closed-ML--category"
     >
       <div
         className="module-category--wrapper"
@@ -143,7 +143,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
               setOpenCategory={[MockFunction]}
             >
               <div
-                className="card"
+                className="card ml-module-card"
                 onClick={[Function]}
               >
                 <div
@@ -202,7 +202,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
               setOpenCategory={[MockFunction]}
             >
               <div
-                className="card"
+                className="card ml-module-card"
                 onClick={[Function]}
               >
                 <div
@@ -280,7 +280,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
     setOpenCategory={[MockFunction]}
   >
     <div
-      className="card module-category--open"
+      className="card closed-ML--category"
     >
       <div
         className="module-category--wrapper"
@@ -325,7 +325,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
               setOpenCategory={[MockFunction]}
             >
               <div
-                className="card"
+                className="card ml-module-card"
                 onClick={[Function]}
               >
                 <div
@@ -384,7 +384,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
               setOpenCategory={[MockFunction]}
             >
               <div
-                className="card"
+                className="card ml-module-card"
                 onClick={[Function]}
               >
                 <div

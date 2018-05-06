@@ -81,7 +81,7 @@ export default class ModuleLibraryClosed extends React.Component {
         {/* If in read-only mode, clicking anywhere below header opens modal */}
         <div onClick={this.toggleSignInModal}>
 
-          <div className='card' onClick={this.props.openLibrary}>
+          <div className='card ml-module-card' onClick={this.props.openLibrary}>
             <div className='closed-ML--category'>
               <div className='icon-search-white ml-icon-search'></div>
             </div>
