@@ -26,20 +26,24 @@
 
     // each lesson card
     .lesson {
+    cursor: pointer;
     padding:2rem 2.5rem;
     background-color: $white;
     color: $brand-text--dark;
     border-radius: 5px;
     width:50rem;
     height: 24rem;
-    box-shadow: $lesson;
+    box-shadow: $button-area;
 
       .action-button {
         position: absolute;
         left:42rem;
-        bottom:2rem
+        bottom:2rem;
       }
+    }
 
+    .lesson:hover {
+      box-shadow: $button-area--hover;
     }
 
     .description {
