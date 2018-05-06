@@ -13,10 +13,10 @@
           <h3 class="lessons-list--title title-3 t-m-gray">LESSONS</h3>
           <ul class="lessons">
             {% for lesson in lessons %}
-              <li>
+              <li class='lesson'>
                 <h2>{{lesson.title}}</h2>
-                <div class="description">{{lesson.header.html|safe}}</div>
-                <form method="post" action="{{lesson.get_absolute_url}}">{% csrf_token %}<button type="submit">Begin</button></form>
+                <div class="description content-3">{{lesson.header.html|safe}}</div>
+                <form method="post" action="{{lesson.get_absolute_url}}">{% csrf_token %}<button class='action-button button-blue' type="submit">Begin</button></form>
               </li>
             {% endfor %}
           </ul>

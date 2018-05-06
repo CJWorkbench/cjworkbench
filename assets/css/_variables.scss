@@ -3,7 +3,9 @@
 $brand-workspace: #48C8D7;
 $brand-learn: #ffaad3;
 $module-library: #577485;
+
 $WF-background:#E9EBEE;
+$page-background: #EDECEC;
 
 // Text colors ＼(＾O＾)／
 $brand-text--dark: #686768;
@@ -17,8 +19,11 @@ $dark-accent--medium: rgba(0,0,0,.1);
 $light-accent--medium: rgba(255,255,255,.1);
 $light-accent--strong: rgba(255,255,255,.2);
 
-// Input fields
+// Input fields  ᕕ( ᐛ )ᕗ
 $search-field--light: rgba(255,255,255,.2);
 
 $placeholder: #c8c8c8;
 $placeholder--light: rgba(255,255,255,.5);
+
+// box shadows ~~~~ ༼ つ ◕_◕ ༽つ
+$lesson:-2px 2px 15px 0px $dark-accent--soft;
