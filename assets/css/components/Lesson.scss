@@ -42,8 +42,16 @@ article.lesson {
         margin-bottom: 2rem;
       }
 
+      .steps {
+        list-style-position:inside;
+        margin:0;
+        padding:0;
+      }
+
       li {
         margin-bottom: 1.5rem;
+        list-style-type: none;
+        padding-left: 2rem;
 
         .copy-txt {
           padding:1rem;
@@ -53,6 +61,14 @@ article.lesson {
           cursor: text;
         }
       }
+      li:before {
+        content: "\e939";
+        color:$brand-learn;
+        font-size: 0.8rem;
+        font-family: Workbench;
+        position: absolute;
+        margin-left: -2rem;
+}
     }
   }
 
@@ -67,5 +83,10 @@ article.lesson {
       .action-button {
         width:9rem;
       }
+  }
+
+  .action-button:hover {
+    background-color: $light-accent--medium;
+    opacity: 1;
   }
 }
