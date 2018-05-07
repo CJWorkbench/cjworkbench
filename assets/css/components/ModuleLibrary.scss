@@ -2,7 +2,7 @@
 //Module library when open
 .module-library--open {
   height: 100vh;
-  background-color: $module-library;
+  background-color: $dark-blue;
   color: $white;
   width: 20rem;
   flex: 0 0 20rem;
@@ -172,7 +172,7 @@
     display: block;
     position: absolute;
     border: 0px;
-    background-color: $module-library;
+    background-color: $dark-blue;
     color:$white;
     font-weight: 300;
     font-size: 1.6rem;
@@ -342,7 +342,7 @@
 
 
 .module-library--closed {
-  background-color: $module-library;
+  background-color: $dark-blue;
   height:none;
   width: 6rem;
   flex: 0 0 6rem;
@@ -390,7 +390,7 @@
 
   // Modules lists when hover
   .ml-list-mini {
-  background-color:$module-library;
+  background-color:$dark-blue;
   cursor: pointer;
   z-index: 100;
   position: absolute;
@@ -436,7 +436,7 @@
 
   /* AddNotificationButtonClosed */
   .alert-closed-ML {
-    background-color: $module-library;
+    background-color: $dark-blue;
     z-index: 100;
     position: absolute;
     left: 6rem;

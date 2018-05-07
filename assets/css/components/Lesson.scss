@@ -15,7 +15,7 @@ article.lesson {
     cursor: default;
     display: flex;
     flex-direction: column;
-    background-color: #719BB0;
+    background-color: $medium-blue;
     height: calc(100vh - 8rem);
     width: 30rem;
     padding:2rem;
@@ -73,7 +73,7 @@ article.lesson {
   }
 
   footer {
-    background-color: #719BB0;
+    background-color: $medium-blue;
     height: 100%;
     display: flex;
     justify-content: space-between;
