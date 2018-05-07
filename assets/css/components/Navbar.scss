@@ -140,6 +140,10 @@ img.logo {
 .workflow-root.in-lesson .navbar {
   background-color: $brand-learn;
 
+  .WF-meta {
+    display: none;
+  }
+
   .attribution, .test-duplicate-button, .test-share-button {
     display: none;
   }
