@@ -144,6 +144,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
             >
               <div
                 className="card ml-module-card"
+                data-name="First Module"
                 onClick={[Function]}
               >
                 <div
@@ -203,6 +204,7 @@ exports[`ModuleCategory  Library closed, category open Renders with list of Modu
             >
               <div
                 className="card ml-module-card"
+                data-name="Second Module"
                 onClick={[Function]}
               >
                 <div
@@ -326,6 +328,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
             >
               <div
                 className="card ml-module-card"
+                data-name="First Module"
                 onClick={[Function]}
               >
                 <div
@@ -385,6 +388,7 @@ exports[`ModuleCategory  Library open Renders with list of Module components 1`]
             >
               <div
                 className="card ml-module-card"
+                data-name="Second Module"
                 onClick={[Function]}
               >
                 <div

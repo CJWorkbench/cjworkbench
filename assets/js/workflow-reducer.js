@@ -6,6 +6,7 @@ import { createStore, applyMiddleware } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
 import thunk from 'redux-thunk'
 import { newContext } from 'immutability-helper'
+import { validLessonHighlight } from './util/LessonHighlight'
 
 // Workflow
 const INITIAL_LOAD_WORKFLOW = 'INITIAL_LOAD_WORKFLOW';
@@ -16,6 +17,7 @@ const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE';
 const SET_WORKFLOW_PUBLIC = 'SET_WORKFLOW_PUBLIC';
 const SET_WF_LIBRARY_COLLAPSE = 'SET_WF_LIBRARY_COLLAPSE';
 const REORDER_WFMODULES = 'REORDER_WFMODULES';
+const SET_LESSON_HIGHLIGHT = 'SET_LESSON_HIGHLIGHT';
 
 // User
 const GET_CURRENT_USER = 'GET_CURRENT_USER';
@@ -249,6 +251,22 @@ registerReducerFunc(REORDER_WFMODULES + '_PENDING', (state, action) => {
     }
   });
 });
+
+// SET_LESSON_HIGHLIGHT
+// Sets the thing the lesson wants us to highlight
+export function setLessonHighlight(lessonHighlight) {
+  return {
+    type: SET_LESSON_HIGHLIGHT,
+    payload: lessonHighlight,
+  }
+}
+registerReducerFunc(SET_LESSON_HIGHLIGHT, (state, action) => {
+  let lessonHighlight = validLessonHighlight(action.payload || [])
+
+  return update(state, {
+    lesson_highlight: { $set: lessonHighlight },
+  })
+})
 
 // ADD_MODULE
 export function addModuleAction(moduleId, insertBefore, placeholder) {

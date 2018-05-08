@@ -8,6 +8,8 @@ import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
 import {logEvent} from "./utils";
+import { connect } from 'react-redux'
+import { matchLessonHighlight } from './util/LessonHighlight'
 
 const spec = {
   beginDrag(props, monitor, component) {
@@ -33,9 +35,6 @@ function collect(connect, monitor) {
 }
 
 class ModuleSearchResult extends React.Component {
-  constructor(props) {
-    super(props);
-  }
   render() {
     return this.props.connectDragSource(
       <div className='react-autosuggest__suggestion-inner'>
@@ -53,7 +52,7 @@ class ModuleSearchResult extends React.Component {
 
 const DraggableModuleSearchResult = DragSource('module', spec, collect)(ModuleSearchResult)
 
-export default class ModuleSearch extends React.Component {
+export class ModuleSearch extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -156,7 +155,7 @@ export default class ModuleSearch extends React.Component {
           modules: section.modules.filter(module => regex.test(module.name))
         };
       })
-    .filter(section => section.modules.length > 0);
+      .filter(section => section.modules.length > 0);
   }
 
   renderSuggestion (suggestion) {
@@ -210,8 +209,10 @@ export default class ModuleSearch extends React.Component {
       closeIcon = <div className='icon-close-white mr-4' onClick={this.clearSearchField}></div>
     }
 
+    const lessonHighlightClassName = this.props.isLessonHighlight ? ' lesson-highlight' : ''
+
     return (
-      <div className='d-flex align-items-center ML-search-field'>
+      <div className={`module-search d-flex align-items-center ML-search-field${lessonHighlightClassName}`}>
         <div className='icon-search-white ml-icon-search ml-4'></div>
         <div
           onBlur={this.onBlur}
@@ -239,9 +240,20 @@ export default class ModuleSearch extends React.Component {
   }
 }
 
-
 ModuleSearch.propTypes = {
   addModule:  PropTypes.func.isRequired,
   items:      PropTypes.array.isRequired,
-  workflow:   PropTypes.object.isRequired
-};
+  workflow:   PropTypes.object.isRequired,
+  isLessonHighlight: PropTypes.bool.isRequired,
+}
+
+const mapStateToProps = (state) => {
+  return {
+    isLessonHighlight: matchLessonHighlight(state.lesson_highlight || [], { type: 'ModuleSearch' }),
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  null
+)(ModuleSearch)

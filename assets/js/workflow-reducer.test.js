@@ -42,6 +42,7 @@ describe('Reducer actions', () => {
   // test state has second module selected
   const test_state = {
     workflow: test_workflow,
+    lesson_highlight: [],
     selected_wf_module: 20
   };
 
@@ -55,7 +56,7 @@ describe('Reducer actions', () => {
   const mock_add_wf_module_result = { id: 40, insert_before: 2 };
 
   it('Returns the state if we feed garbage to the reducer', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'An ill-advised request',
       payload: {
         blob: 'malware.exe'
@@ -66,7 +67,7 @@ describe('Reducer actions', () => {
 
   // RELOAD_WORKFLOW
    it('Reloads the workflow', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'RELOAD_WORKFLOW_FULFILLED',
       payload: test_workflow,
     });
@@ -76,7 +77,7 @@ describe('Reducer actions', () => {
 
   // ADD_MODULE
   it('Adds a module', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'ADD_MODULE_FULFILLED',
       payload: mock_add_wf_module_result,
     });
@@ -85,7 +86,7 @@ describe('Reducer actions', () => {
   });
 
   it('Deletes a module', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'DELETE_MODULE_PENDING',
       payload: {
         wf_module_id: 20
@@ -95,7 +96,7 @@ describe('Reducer actions', () => {
   });
 
   it('Sets the selected module to a module in state', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
      type: 'SET_SELECTED_MODULE_PENDING',
      payload: {
        wf_module_id: 30
@@ -105,13 +106,13 @@ describe('Reducer actions', () => {
   });
 
   it('Sets the logged in user to the value we specify', () => {
-    let user = {
+    const user = {
       display_name: "Example User",
       email: "example@example.org",
       google_credentials: [1],
       id: 1
     };
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'GET_CURRENT_USER_FULFILLED',
       payload: user
     });
@@ -119,7 +120,7 @@ describe('Reducer actions', () => {
   });
 
   it('Deletes the expected user credential', () => {
-    let user = {
+    const user = {
       display_name: "Example User",
       email: "example@example.org",
       google_credentials: [1],
@@ -142,19 +143,19 @@ describe('Reducer actions', () => {
   });
 
   it('Returns state if given a non-existent user credential', () => {
-    let user = {
+    const user = {
       display_name: "Example User",
       email: "example@example.org",
       google_credentials: [1],
       id: 1
     };
 
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'GET_CURRENT_USER_FULFILLED',
       payload: user
     });
 
-    let state2 = workflowReducer(state, {
+    const state2 = workflowReducer(state, {
       type: 'DISCONNECT_CURRENT_USER_PENDING',
       payload: {
         credential_id: 2
@@ -165,7 +166,7 @@ describe('Reducer actions', () => {
   });
 
   it('Updates the workflow module with the specified data', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'UPDATE_WF_MODULE_PENDING',
       payload: {
         id: 20,
@@ -178,7 +179,7 @@ describe('Reducer actions', () => {
   });
 
   it('Returns the state if we update a nonexistent wfmodule', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'UPDATE_WF_MODULE_PENDING',
       payload: {
         id: 40,
@@ -191,7 +192,7 @@ describe('Reducer actions', () => {
   });
 
   it('Sets the wfModule status', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'SET_WF_MODULE_STATUS',
       payload: {
         id: 20,
@@ -202,7 +203,7 @@ describe('Reducer actions', () => {
 
     expect(state.workflow.wf_modules[1].status).toBe('error');
 
-    let state2 = workflowReducer(state, {
+    const state2 = workflowReducer(state, {
       type: 'SET_WF_MODULE_STATUS',
       payload: {
         id: 20,
@@ -215,7 +216,7 @@ describe('Reducer actions', () => {
   });
 
   it('Sets the module collapse state', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'SET_WF_MODULE_COLLAPSED_PENDING',
       payload: {
         wf_module_id: 20,
@@ -226,12 +227,12 @@ describe('Reducer actions', () => {
   });
 
   it('setParamValueAction', () => {
-    let api = {
+    const api = {
       onParamChanged : jest.fn()
     };
     wfr.mockAPI(api);
 
-    let paramId = test_workflow.wf_modules[0].parameter_vals[0].id;
+    const paramId = test_workflow.wf_modules[0].parameter_vals[0].id;
     let action = wfr.setParamValueAction(paramId, {value:'foo'});
     expect(action.payload.data.paramId).toBe(paramId);
     expect(action.payload.data.paramValue).toBe('foo');
@@ -239,15 +240,15 @@ describe('Reducer actions', () => {
 
     // If we create an action to set the parameter to the existing value, nothing should happen...
     api.onParamChanged = jest.fn();
-    let curParamVal = test_workflow.wf_modules[0].parameter_vals[0].value;
+    const curParamVal = test_workflow.wf_modules[0].parameter_vals[0].value;
     action = wfr.setParamValueAction(paramId, {value:curParamVal});
     expect(action.type).toBe(wfr.NOP_ACTION);
     expect(api.onParamChanged.mock.calls.length).toBe(0);
 
     // Version that takes moduleId and id_name
     api.onParamChanged = jest.fn();
-    let moduleId = test_workflow.wf_modules[0].id;
-    let idName = test_workflow.wf_modules[0].parameter_vals[0].parameter_spec.id_name;
+    const moduleId = test_workflow.wf_modules[0].id;
+    const idName = test_workflow.wf_modules[0].parameter_vals[0].parameter_spec.id_name;
     action = wfr.setParamValueActionByIdName(moduleId, idName, {value:'foo'});
     expect(action.payload.data.paramId).toBe(paramId);
     expect(action.payload.data.paramValue).toBe('foo');
@@ -256,7 +257,7 @@ describe('Reducer actions', () => {
 
 
   it('Sets the param value', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'SET_PARAM_VALUE_PENDING',
       payload: {
         paramId: 1,
@@ -267,7 +268,7 @@ describe('Reducer actions', () => {
   });
 
   it('Sets the data version', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'SET_DATA_VERSION_PENDING',
       payload: {
         wfModuleId: 10,
@@ -278,7 +279,7 @@ describe('Reducer actions', () => {
   });
 
   it('Marks the data versions read', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'MARK_DATA_VERSIONS_READ_PENDING',
       payload: {
         id: 10,
@@ -290,7 +291,7 @@ describe('Reducer actions', () => {
   });
 
   it('Clears the notification count', () => {
-    let state = workflowReducer(test_state, {
+    const state = workflowReducer(test_state, {
       type: 'CLEAR_NOTIFICATIONS_PENDING',
       payload: {
         wfModuleId: 10
@@ -299,7 +300,14 @@ describe('Reducer actions', () => {
     expect(state.workflow.wf_modules[0].notification_count).toBe(0);
   });
 
-
+  it('Sets the lesson_highlight to non-empty', () => {
+    const state = workflowReducer(test_state, {
+      type: 'SET_LESSON_HIGHLIGHT',
+      payload: [ { type: 'WfModule', name: 'Foo' } ],
+    });
+    expect(state.workflow).toBe(test_state.workflow);
+    expect(state.lesson_highlight).toEqual([ { type: 'WfModule', name: 'Foo' } ])
+  });
 });
 
 

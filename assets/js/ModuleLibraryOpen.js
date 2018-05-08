@@ -5,7 +5,7 @@
  *    and <ImportModuleFromGitHub> components, and toggle arrow to Closed version.
  */
 
- import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleCategories from './ModuleCategories';
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';

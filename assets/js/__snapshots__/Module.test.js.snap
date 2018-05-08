@@ -29,6 +29,7 @@ exports[`Module NOT Read-only Renders a card, with icon received from props 1`] 
     >
       <div
         className="card ml-module-card"
+        data-name="Sweet Module"
         onClick={[Function]}
       >
         <div
@@ -95,6 +96,7 @@ exports[`Module Read-only Renders a card, with icon received from props 1`] = `
     >
       <div
         className="card ml-module-card"
+        data-name="Sweet Module"
         onClick={[Function]}
       >
         <div

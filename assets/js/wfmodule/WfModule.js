@@ -194,6 +194,7 @@ class WfModule extends React.Component {
     var paramdivs = wfModule.parameter_vals.map((ps, i) => {
         return (<WfParameter
           api={this.props.api}
+          moduleName={this.props.name}
           isReadOnly={this.props.isReadOnly}
           key={i}
           p={ps}
@@ -247,9 +248,9 @@ class WfModule extends React.Component {
 
     var notesIcon;
     if (!this.state.showNotes && !this.props.isReadOnly)
-      notesIcon = <div className='context-button btn' onClick={this.showNotes}>
+      notesIcon = <button className='context-button btn edit-note' onClick={this.showNotes}>
                     <div className='icon-note btn icon-l-gray ' />
-                  </div>;
+                  </button>;
 
     var contextMenu;
     if(!this.props.isReadOnly)
@@ -264,14 +265,14 @@ class WfModule extends React.Component {
     // Set opacity to 0/1 instead of just not rendering these elements, so that any children that these
     // buttons create (e.g. export dialog) are still visible. Can't use display: none as we need display: flex
     // Fixes https://www.pivotaltracker.com/story/show/154033690
-    var contextBtns =
+    const contextBtns =
         <div className='d-flex align-items-center' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
           <div>{helpIcon}</div>
           <div>{notesIcon}</div>
           <div>{contextMenu}</div>
         </div>
 
-    var moduleIcon = 'icon-' + module.icon + ' WFmodule-icon mr-2';
+    const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon mr-2';
 
     // Putting it all together: name, status, parameters, output
     // For testing: connectDropTarget and connectDragSource will return null because they're provided as mock functions,
@@ -280,7 +281,7 @@ class WfModule extends React.Component {
       // Removing this outer div breaks the drag and drop animation for reasons
       // that aren't clear right now. It doesn't hurt anything but it shouldn't
       // be necessary either.
-      <div onClick={this.click} className={(this.props.isOver ? ('over ' + this.state.dragPosition) : '')}>
+      <div onClick={this.click} className={'wf-module' + (this.props.isOver ? (' over ' + this.state.dragPosition) : '')}>
         {notes}
         <div className={'wf-card mx-auto '+ (this.props.isDragging ? 'wf-module--dragging ' : '')} ref={this.setModuleRef}>
 

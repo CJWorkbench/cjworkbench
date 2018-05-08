@@ -451,6 +451,7 @@ export default class WfParameter extends React.Component {
 
 WfParameter.propTypes = {
   p:                PropTypes.object.isRequired,  // the actual parameter json
+  moduleName:       PropTypes.string.isRequired,
   wf_module_id:     PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,
   loggedInUser:     PropTypes.object,             // in read-only there is no user logged in

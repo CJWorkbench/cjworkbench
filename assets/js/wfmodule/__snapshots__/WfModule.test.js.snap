@@ -28,7 +28,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
       "calls": Array [
         Array [
           <div
-            className=""
+            className="wf-module"
             onClick={[Function]}
           >
             <div
@@ -97,14 +97,14 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                             </a>
                           </div>
                           <div>
-                            <div
-                              className="context-button btn"
+                            <button
+                              className="context-button btn edit-note"
                               onClick={[Function]}
                             >
                               <div
                                 className="icon-note btn icon-l-gray "
                               />
-                            </div>
+                            </button>
                           </div>
                           <div>
                             <WfModuleContextMenu
@@ -149,6 +149,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                           getParamText={[Function]}
                           isReadOnly={false}
                           loggedInUser={undefined}
+                          moduleName="TestModule"
                           notifications={undefined}
                           p={
                             Object {
@@ -187,6 +188,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                           getParamText={[Function]}
                           isReadOnly={false}
                           loggedInUser={undefined}
+                          moduleName="TestModule"
                           notifications={undefined}
                           p={
                             Object {
@@ -248,6 +250,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
     }
   }
   isReadOnly={false}
+  name="TestModule"
   removeModule={[Function]}
   revision={707}
   selected={true}

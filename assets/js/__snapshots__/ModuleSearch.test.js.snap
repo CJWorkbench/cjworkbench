@@ -1,8 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ModuleSearch Close icon will clear text from search field 1`] = `
+exports[`ModuleSearch most tests Close icon will clear text from search field 1`] = `
 <ModuleSearch
   addModule={[Function]}
+  isLessonHighlight={false}
   items={
     Array [
       Object {
@@ -33,7 +34,7 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
   }
 >
   <div
-    className="d-flex align-items-center ML-search-field"
+    className="module-search d-flex align-items-center ML-search-field"
   >
     <div
       className="icon-search-white ml-icon-search ml-4"
@@ -172,9 +173,10 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
 </ModuleSearch>
 `;
 
-exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
+exports[`ModuleSearch most tests Finds a suggestion matching search input 1`] = `
 <ModuleSearch
   addModule={[Function]}
+  isLessonHighlight={false}
   items={
     Array [
       Object {
@@ -205,7 +207,7 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
   }
 >
   <div
-    className="d-flex align-items-center ML-search-field"
+    className="module-search d-flex align-items-center ML-search-field"
   >
     <div
       className="icon-search-white ml-icon-search ml-4"
@@ -361,9 +363,10 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
 </ModuleSearch>
 `;
 
-exports[`ModuleSearch Loads modules from props  1`] = `
+exports[`ModuleSearch most tests Loads modules from props  1`] = `
 <ModuleSearch
   addModule={[Function]}
+  isLessonHighlight={false}
   items={
     Array [
       Object {
@@ -394,7 +397,7 @@ exports[`ModuleSearch Loads modules from props  1`] = `
   }
 >
   <div
-    className="d-flex align-items-center ML-search-field"
+    className="module-search d-flex align-items-center ML-search-field"
   >
     <div
       className="icon-search-white ml-icon-search ml-4"
@@ -528,9 +531,10 @@ exports[`ModuleSearch Loads modules from props  1`] = `
 </ModuleSearch>
 `;
 
-exports[`ModuleSearch Renders search bar 1`] = `
+exports[`ModuleSearch most tests Renders search bar 1`] = `
 <ModuleSearch
   addModule={[Function]}
+  isLessonHighlight={false}
   items={
     Array [
       Object {
@@ -561,7 +565,7 @@ exports[`ModuleSearch Renders search bar 1`] = `
   }
 >
   <div
-    className="d-flex align-items-center ML-search-field"
+    className="module-search d-flex align-items-center ML-search-field"
   >
     <div
       className="icon-search-white ml-icon-search ml-4"
