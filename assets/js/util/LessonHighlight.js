@@ -10,7 +10,7 @@ function Shape(type, propTypes) {
   )).isRequired
 }
 
-export const LessonHighlightType = P.oneOfType([
+const LessonHighlightType = P.oneOfType([
   Shape('MlModule', {
     name: P.string.isRequired,
   }),
@@ -31,33 +31,76 @@ export const LessonHighlightType = P.oneOfType([
   }),
 ])
 
+/**
+ * PropTypes Shape of lesson highlights.
+ *
+ * Use it in your PropTypes like this:
+ *
+ * ```js
+ * MyComponent.PropTypes = {
+ *   lessonHighlights: LessonHighlightsType.isRequired,
+ * }
+ * ```
+ */
 export const LessonHighlightsType = P.arrayOf(LessonHighlightType)
 
-export function validLessonHighlight(obj) {
-  if (!(obj instanceof Array)) {
-    obj = [ obj ]
-  }
-
-  if (process.env.NODE_ENV !== 'production') {
-    const displayName = 'LessonHighlight' + Math.floor(99999999 * Math.random()) // random name => React never hides logs
-    PropTypes.checkPropTypes(
-      { elements: LessonHighlightsType.isRequired },
-      { elements: obj },
-      'element',
-      displayName
-    )
-  }
-
-  return obj
-}
-
+/**
+ * Test that `lessonHighlight` specifies `test` should be highlighted.
+ *
+ * For instance:
+ *
+ * ```js
+ * // What we're saying we want to highlight
+ * // (e.g., from redux store)
+ * const lessonHighlight = [
+ *   { type: 'WfModule', name: 'Add from URL' },
+ *   { type: 'ModuleSearch' },
+ * ]
+ *
+ * // What we're rendering
+ * // (e.g., within ModuleSearch.js)
+ * const test = { type: 'ModuleSearch' }
+ *
+ * matchLessonHighlight(lessonHighlight, test) // true
+ * ```
+ *
+ * @param {Array} lessonHighlight LessonHighlightsType (Array)
+ * @param {Object} test Single element that may or may not be in `lessonHighlight`
+ */
 export const matchLessonHighlight = (lessonHighlight, test) => {
   return lessonHighlight.some(x => deepEqual(x, test))
 }
 
+/**
+ * Curried matchLessonHighlight(): saves a couple lines of code in
+ * parameter-free highlights.
+ *
+ * ```js
+ * const store = {
+ *   lesson_highlight: [
+ *     { type: 'WfModule', name: 'Add from URL' },
+ *     { type: 'ModuleSearch' },
+ *   ],
+ *   // ...
+ * }
+ *
+ * // What we're rendering
+ * // (e.g., within ModuleSearch.js)
+ * const isLessonHighlight = stateHasLessonHighlight({ type: 'ModuleSearch' })
+ * const mapToProps = (state) => {
+ *   isLessonHighlight: isLessonHighlight(state),
+ * }
+ * ```
+ *
+ * @param {Object} test Single element that may or may not be in `lessonHighlight`
+ * @return {Function} function that accepts `state` as input and outputs whether
+ *                    `state` decrees `test` should be highlighted.
+ */
 export const stateHasLessonHighlight = (test) => {
   if (process.env.NODE_ENV !== 'production') {
-    const displayName = 'stateHasLessonHighlight' + Math.floor(99999999 * Math.random()) // random name => React never hides logs
+    // Make displayName unique. Otherwise, React will hide repeated errors
+    // ... which is nondeterministic and breaks unit tests
+    const displayName = 'stateHasLessonHighlight' + Math.floor(99999999 * Math.random())
     PropTypes.checkPropTypes(
       { arg: LessonHighlightType.isRequired },
       { arg: test },

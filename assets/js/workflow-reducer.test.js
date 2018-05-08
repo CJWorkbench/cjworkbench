@@ -309,7 +309,3 @@ describe('Reducer actions', () => {
     expect(state.lesson_highlight).toEqual([ { type: 'WfModule', name: 'Foo' } ])
   });
 });
-
-
-
-

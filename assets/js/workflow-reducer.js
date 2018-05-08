@@ -261,10 +261,8 @@ export function setLessonHighlight(lessonHighlight) {
   }
 }
 registerReducerFunc(SET_LESSON_HIGHLIGHT, (state, action) => {
-  let lessonHighlight = validLessonHighlight(action.payload || [])
-
   return update(state, {
-    lesson_highlight: { $set: lessonHighlight },
+    lesson_highlight: { $set: action.payload },
   })
 })
 
