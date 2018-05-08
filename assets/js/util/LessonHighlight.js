@@ -51,6 +51,23 @@ export function validLessonHighlight(obj) {
   return obj
 }
 
-export function matchLessonHighlight(lessonHighlight, test) {
+export const matchLessonHighlight = (lessonHighlight, test) => {
   return lessonHighlight.some(x => deepEqual(x, test))
+}
+
+export const stateHasLessonHighlight = (test) => {
+  if (process.env.NODE_ENV !== 'production') {
+    const displayName = 'stateHasLessonHighlight' + Math.floor(99999999 * Math.random()) // random name => React never hides logs
+    PropTypes.checkPropTypes(
+      { arg: LessonHighlightType.isRequired },
+      { arg: test },
+      'test',
+      displayName
+    )
+  }
+
+  return (state) => {
+    const lessonHighlight = state.lesson_highlight || []
+    return matchLessonHighlight(lessonHighlight, test)
+  }
 }

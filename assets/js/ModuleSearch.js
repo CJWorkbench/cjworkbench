@@ -9,7 +9,7 @@ import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
 import {logEvent} from "./utils";
 import { connect } from 'react-redux'
-import { matchLessonHighlight } from './util/LessonHighlight'
+import { stateHasLessonHighlight } from './util/LessonHighlight'
 
 const spec = {
   beginDrag(props, monitor, component) {
@@ -247,9 +247,10 @@ ModuleSearch.propTypes = {
   isLessonHighlight: PropTypes.bool.isRequired,
 }
 
+const isLessonHighlight = stateHasLessonHighlight({ type: 'ModuleSearch' })
 const mapStateToProps = (state) => {
   return {
-    isLessonHighlight: matchLessonHighlight(state.lesson_highlight || [], { type: 'ModuleSearch' }),
+    isLessonHighlight: isLessonHighlight(state),
   }
 }
 

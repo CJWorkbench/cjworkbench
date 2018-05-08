@@ -62,7 +62,11 @@
   }
 
   .ML-list--container:hover .ML-search-field {
-    border:3px solid $brand-workspace;
+    border-color: $brand-workspace;
+  }
+
+  .ML-list--container .ML-search-field.lesson-highlight {
+    border-color: $brand-learn;
   }
 
   // ENTIRE module list
