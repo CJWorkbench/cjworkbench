@@ -6,22 +6,24 @@
  */
 
 import React from 'react'
-import ModuleLibrary  from './ModuleLibrary'
+import ModuleLibrary from './ModuleLibrary'
 import { mount, ReactWrapper } from 'enzyme'
 import { jsonResponseMock, emptyAPI } from './utils'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
 
 describe('ModuleLibrary', () => {
 
-  var wrapper;
-  var addModule =  () => {};
-  var dropModule =  () => {};
-  var workflow = {
+  let wrapper;
+  let addModule =  () => {};
+  let dropModule =  () => {};
+  let workflow = {
     "id":15,
     "name":"What a workflow!",
   };
-  var modules = [
+  let modules = [
     {
       "id":1,
       "name":"Chartbuilder",
@@ -63,31 +65,35 @@ describe('ModuleLibrary', () => {
     },
   ];
 
-  var api = {};
-  var libraryOpen = true;
-  var setLibraryOpen = function(libraryOpen) {
+  let api = {};
+  let libraryOpen = true;
+  let setLibraryOpen = function(libraryOpen) {
       libraryOpen = libraryOpen;
   };
 
   describe('Not Read-only', () => {
-
     beforeEach(() => {
+      const store = createStore(() => ({}), {})
+
       api = {
         getModules: jsonResponseMock(modules),
         setWfLibraryCollapse: jest.fn()
       };
       wrapper = mount(
-        <DragDropContextProvider backend={HTML5Backend}>
-          <ModuleLibrary
-            addModule={addModule}
-            dropModule={dropModule}
-            api={api}
-            workflow={workflow}
-            isReadOnly={false}
-            libraryOpen={libraryOpen}
-            setLibraryOpen={setLibraryOpen}
-          />
-        </DragDropContextProvider>);
+        <Provider store={store}>
+          <DragDropContextProvider backend={HTML5Backend}>
+            <ModuleLibrary
+              addModule={addModule}
+              dropModule={dropModule}
+              api={api}
+              workflow={workflow}
+              isReadOnly={false}
+              libraryOpen={libraryOpen}
+              setLibraryOpen={setLibraryOpen}
+              />
+          </DragDropContextProvider>
+        </Provider>
+      )
     });
     afterEach(() => wrapper.unmount());
 
@@ -102,10 +108,10 @@ describe('ModuleLibrary', () => {
 
         // Sadly this does not work: https://github.com/airbnb/enzyme/issues/431
         // // Ensure all modules in each category are contiguous
-        // var modules = wrapper.childAt(0).state('items');
-        // var seenCats = [];
-        // var currentCat = null;
-        // for (var m of modules) {
+        // let modules = wrapper.childAt(0).state('items');
+        // let seenCats = [];
+        // let currentCat = null;
+        // for (let m of modules) {
         //   if (m.category != currentCat) {                       // different cat than last module
         //     expect(seenCats.includes(m.category)).toBeFalsy();  // should not repeat category
         //     seenCats.push(m.category);
@@ -139,23 +145,27 @@ describe('ModuleLibrary', () => {
   describe('Read-only', () => {
 
     it('Renders in closed state', (done) => {
+      const store = createStore(() => ({}), {})
        api = {
         getModules: jsonResponseMock(modules),
         setWfLibraryCollapse: jest.fn()
       };
       libraryOpen = false;
       wrapper = mount(
-        <DragDropContextProvider backend={HTML5Backend}>
-          <ModuleLibrary
-            addModule={addModule}
-            dropModule={dropModule}
-            api={api}
-            workflow={workflow}
-            isReadOnly={true}
-            libraryOpen={libraryOpen}
-            setLibraryOpen={setLibraryOpen}
-          />
-        </DragDropContextProvider>);
+        <Provider store={store}>
+          <DragDropContextProvider backend={HTML5Backend}>
+            <ModuleLibrary
+              addModule={addModule}
+              dropModule={dropModule}
+              api={api}
+              workflow={workflow}
+              isReadOnly={true}
+              libraryOpen={libraryOpen}
+              setLibraryOpen={setLibraryOpen}
+            />
+          </DragDropContextProvider>
+        </Provider>
+      )
 
       // Let modules load
       setImmediate(() => {

@@ -64,6 +64,7 @@ export default class EditableNotes extends React.Component {
                 ? ( <div className='editable-notes-field content-3 t-d-gray'>{this.props.value}</div> )
                 : (
                     <Textarea
+                      name='notes'
                       value={this.state.value}
                       onChange={this.handleChange}
                       onBlur={this.saveNotes}

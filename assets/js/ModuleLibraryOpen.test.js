@@ -11,7 +11,8 @@ import ModuleLibraryOpen  from './ModuleLibraryOpen'
 import { mount } from 'enzyme'
 import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
-
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
 
 describe('ModuleLibraryOpen ', () => {
 
@@ -38,23 +39,28 @@ describe('ModuleLibraryOpen ', () => {
     }
   ];  
 
-  beforeEach(() => wrapper = mount(
-    <DragDropContextProvider backend={HTML5Backend}>
-      <ModuleLibraryOpen
-        api={{}}
-        workflow={{}}
-        libraryOpen={true}
-        isReadOnly={false}            
-        items={items}
-        addModule={() => {}}
-        dropModule={() => {}}
-        moduleAdded={() => {}}
-        toggleLibrary={toggleLibrary}
-        openCategory={"Add Data"} 
-        setOpenCategory={() => {}}
-      />
-    </DragDropContextProvider>
-  ));
+  beforeEach(() => {
+    const store = createStore(() => ({}), { lesson_highlight: [ { type: 'ModuleSearch' } ] })
+    wrapper = mount(
+      <Provider store={store}>
+        <DragDropContextProvider backend={HTML5Backend}>
+          <ModuleLibraryOpen
+            api={{}}
+            workflow={{}}
+            libraryOpen={true}
+            isReadOnly={false}            
+            items={items}
+            addModule={() => {}}
+            dropModule={() => {}}
+            moduleAdded={() => {}}
+            toggleLibrary={toggleLibrary}
+            openCategory={"Add Data"} 
+            setOpenCategory={() => {}}
+          />
+        </DragDropContextProvider>
+      </Provider>
+    )
+  });
   afterEach(() => wrapper.unmount());  
 
   it('Renders all subcomponents', () => { 

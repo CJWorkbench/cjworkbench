@@ -184,4 +184,5 @@ class LessonSerializer(serializers.BaseSerializer):
     def _step_to_representation(self, obj):
         return {
             'html': obj.html,
+            'highlight': obj.highlight,
         }

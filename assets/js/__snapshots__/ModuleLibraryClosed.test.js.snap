@@ -173,6 +173,7 @@ exports[`ModuleLibraryClosed NOT Read-Only Renders 1`] = `
                       >
                         <div
                           className="card ml-module-card"
+                          data-name="Load from Enigma"
                           onClick={[Function]}
                         >
                           <div
@@ -527,6 +528,7 @@ exports[`ModuleLibraryClosed Read-Only Renders 1`] = `
                       >
                         <div
                           className="card ml-module-card"
+                          data-name="Load from Enigma"
                           onClick={[Function]}
                         >
                           <div

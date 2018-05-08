@@ -8,8 +8,8 @@ describe('LessonSection', () => {
     title: 'Section One',
     html: '<p>Section One HTML</p>',
     steps: [
-      { html: 'Step One-Ay' },
-      { html: 'Step One-<strong>Bee</strong>' },
+      { html: 'Step One-Ay', highlight: [] },
+      { html: 'Step One-<strong>Bee</strong>', highlight: [] },
     ],
   }
 

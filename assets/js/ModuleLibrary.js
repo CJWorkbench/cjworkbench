@@ -17,8 +17,8 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleLibraryClosed from './ModuleLibraryClosed';
 import ModuleLibraryOpen from './ModuleLibraryOpen';
-import { store, setWfLibraryCollapseAction } from './workflow-reducer'
-
+import { setWfLibraryCollapseAction } from './workflow-reducer'
+import { connect } from 'react-redux'
 
 // Helper to sort modules by category, then name
 function compareCategoryName(a,b) {
@@ -35,7 +35,7 @@ function compareCategoryName(a,b) {
   }
 }
 
-export default class ModuleLibrary extends React.Component {
+export class ModuleLibrary extends React.Component {
   constructor(props) {
     super(props);
 
@@ -112,11 +112,11 @@ export default class ModuleLibrary extends React.Component {
   }
 
   toggleLibrary() {
-    store.dispatch( setWfLibraryCollapseAction(this.props.workflow.id, !this.state.isCollapsed, this.props.isReadOnly) );
+    this.props.setWfLibraryCollapse(this.props.workflow.id, !this.state.isCollapsed, this.props.isReadOnly)
   }
 
   openLibrary() {
-    store.dispatch( setWfLibraryCollapseAction(this.props.workflow.id, false, this.props.isReadOnly) );
+    this.props.setWfLibraryCollapse(this.props.workflow.id, false, this.props.isReadOnly)
   }
 
   // Main render.
@@ -167,4 +167,13 @@ ModuleLibrary.propTypes = {
   api:          PropTypes.object.isRequired,
   isReadOnly:   PropTypes.bool.isRequired,
   libraryOpen:  PropTypes.bool.isRequired,
-};
+  setWfLibraryCollapse: PropTypes.func.isRequired,
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setWfLibraryCollapse: (...args) => dispatch(setWfLibraryCollapseAction(...args)),
+  }
+}
+
+export default connect(null, mapDispatchToProps)(ModuleLibrary)
