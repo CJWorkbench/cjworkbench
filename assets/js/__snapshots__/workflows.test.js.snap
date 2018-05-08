@@ -935,7 +935,7 @@ exports[`Workflow list page renders correctly 1`] = `
     >
       <a
         className=""
-        href="http://help.cjworkbench.org/getting-started/build-your-first-workflow"
+        href="http://help.workbenchdata.com/getting-started/build-your-first-workflow"
         target="_blank"
       >
         <div

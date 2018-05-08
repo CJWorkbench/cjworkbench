@@ -1213,7 +1213,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
         </div>
         <a
           className="nav--link t-white content-2"
-          href="http://app.cjworkbench.org/account/login"
+          href="http://app.workbenchdata.com/account/login"
         >
           Sign in
         </a>
