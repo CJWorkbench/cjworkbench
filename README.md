@@ -3,6 +3,7 @@
 </div>
 
 -----------------
+[![Build Status](https://travis-ci.org/CJWorkbench/cjworkbench.svg?branch=master)](https://travis-ci.org/CJWorkbench/cjworkbench)
 
 #  The data journalism platform with built-in training
 
