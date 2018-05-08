@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { matchLessonHighlight, stateHasLessonHighlight } from './LessonHighlight'
+import { matchLessonHighlight, stateHasLessonHighlight, LessonHighlightsType } from './LessonHighlight'
 
 const isValid = (obj) => {
   const globalConsole = global.console
