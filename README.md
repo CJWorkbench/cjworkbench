@@ -7,7 +7,7 @@
 
 #  The data journalism platform with built-in training
 
-Welcome to the Workbench! (CJ for Computational Journalism.)
+Welcome to Workbench!
 
 - Our [public server](http://workbenchdata.com), now in beta.
 
