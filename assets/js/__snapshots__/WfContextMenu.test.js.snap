@@ -19,6 +19,7 @@ exports[`WfContextMenu renders correctly 1`] = `
   >
     <DropdownItem
       className="dropdown-menu--item test-duplicate-button"
+      key="2"
       onClick={[MockFunction]}
       tag="button"
       toggle={true}
@@ -34,6 +35,7 @@ exports[`WfContextMenu renders correctly 1`] = `
     </DropdownItem>
     <DropdownItem
       className="dropdown-menu--item test-delete-button"
+      key="3"
       onClick={[MockFunction]}
       tag="button"
       toggle={true}

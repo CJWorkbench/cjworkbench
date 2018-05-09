@@ -1,92 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state at start 1`] = `
-<EditableNotes
-  api={
-    Object {
-      "setWfModuleNotes": [MockFunction],
-    }
-  }
-  hideNotes={[Function]}
-  isReadOnly={false}
-  startFocused={true}
-  value="This is the best module"
-  wfModuleId={808}
+exports[`EditableNotes NOT Read-only matches snapshot 1`] = `
+<span
+  className="note-wrapper"
+  onClick={[Function]}
 >
-  <span
-    className="note-wrapper"
-    onClick={[Function]}
-  >
-    <TextareaAutosize
-      className="editable-notes-field"
-      name="notes"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onHeightChange={[Function]}
-      onKeyPress={[Function]}
-      useCacheForDOMMeasurements={false}
-      value="This is the best module"
-    >
-      <textarea
-        className="editable-notes-field"
-        name="notes"
-        onBlur={[Function]}
-        onChange={[Function]}
-        onKeyPress={[Function]}
-        style={
-          Object {
-            "height": 0,
-          }
-        }
-        value="This is the best module"
-      />
-    </TextareaAutosize>
-  </span>
-</EditableNotes>
+  <TextareaAutosize
+    className="editable-notes-field"
+    name="notes"
+    onBlur={[Function]}
+    onChange={[Function]}
+    onHeightChange={[Function]}
+    onKeyPress={[Function]}
+    useCacheForDOMMeasurements={false}
+    value="This is the best module"
+  />
+</span>
 `;
 
-exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edit state at start 1`] = `
-<EditableNotes
-  api={Object {}}
-  hideNotes={[Function]}
-  isReadOnly={false}
-  startFocused={false}
-  value="This is the best module"
-  wfModuleId={808}
->
-  <span
-    className="note-wrapper"
-    onClick={[Function]}
-  >
-    <TextareaAutosize
-      className="editable-notes-field"
-      name="notes"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onHeightChange={[Function]}
-      onKeyPress={[Function]}
-      useCacheForDOMMeasurements={false}
-      value="This is the best module"
-    >
-      <textarea
-        className="editable-notes-field"
-        name="notes"
-        onBlur={[Function]}
-        onChange={[Function]}
-        onKeyPress={[Function]}
-        style={
-          Object {
-            "height": 0,
-          }
-        }
-        value="This is the best module"
-      />
-    </TextareaAutosize>
-  </span>
-</EditableNotes>
-`;
-
-exports[`EditableNotes Read-only, starts NOT focused Renders plain note 1`] = `
+exports[`EditableNotes Read-only matches snapshot 1`] = `
 <span
   className="note-wrapper"
   onClick={[Function]}

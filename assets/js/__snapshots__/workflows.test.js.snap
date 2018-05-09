@@ -51,6 +51,7 @@ exports[`Workflow list page renders correctly 1`] = `
                     className="context-button"
                     color="secondary"
                     data-toggle="dropdown"
+                    key=".$.0"
                   >
                     <Button
                       aria-expanded={false}
@@ -76,6 +77,7 @@ exports[`Workflow list page renders correctly 1`] = `
                     </Button>
                   </DropdownToggle>
                   <DropdownMenu
+                    key=".$.1"
                     right={true}
                     tag="div"
                   >
@@ -89,6 +91,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         <DropdownItem
                           className="dropdown-menu--item"
                           href="/account/logout"
+                          key="5"
                           tag="a"
                           toggle={true}
                         >
@@ -142,6 +145,7 @@ exports[`Workflow list page renders correctly 1`] = `
           <a
             className="workflow-item"
             href="/workflows/1"
+            key="1"
           >
             <div
               className="mt-1"
@@ -249,6 +253,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         className="context-button"
                         color="secondary"
                         data-toggle="dropdown"
+                        key=".$.0"
                       >
                         <Button
                           aria-expanded={false}
@@ -275,6 +280,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       </DropdownToggle>
                       <DropdownMenu
                         className="dropdown-menu"
+                        key=".$.1"
                         right={true}
                         tag="div"
                       >
@@ -286,6 +292,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           <DropdownItem
                             className="dropdown-menu--item test-duplicate-button"
+                            key="2"
                             onClick={[Function]}
                             tag="button"
                             toggle={true}
@@ -308,6 +315,7 @@ exports[`Workflow list page renders correctly 1`] = `
                           </DropdownItem>
                           <DropdownItem
                             className="dropdown-menu--item test-delete-button"
+                            key="3"
                             onClick={[Function]}
                             tag="button"
                             toggle={true}
@@ -339,6 +347,7 @@ exports[`Workflow list page renders correctly 1`] = `
           <a
             className="workflow-item"
             href="/workflows/7"
+            key="7"
           >
             <div
               className="mt-1"
@@ -446,6 +455,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         className="context-button"
                         color="secondary"
                         data-toggle="dropdown"
+                        key=".$.0"
                       >
                         <Button
                           aria-expanded={false}
@@ -472,6 +482,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       </DropdownToggle>
                       <DropdownMenu
                         className="dropdown-menu"
+                        key=".$.1"
                         right={true}
                         tag="div"
                       >
@@ -483,6 +494,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           <DropdownItem
                             className="dropdown-menu--item test-duplicate-button"
+                            key="2"
                             onClick={[Function]}
                             tag="button"
                             toggle={true}
@@ -505,6 +517,7 @@ exports[`Workflow list page renders correctly 1`] = `
                           </DropdownItem>
                           <DropdownItem
                             className="dropdown-menu--item test-delete-button"
+                            key="3"
                             onClick={[Function]}
                             tag="button"
                             toggle={true}
@@ -536,6 +549,7 @@ exports[`Workflow list page renders correctly 1`] = `
           <a
             className="workflow-item"
             href="/workflows/8"
+            key="8"
           >
             <div
               className="mt-1"
@@ -643,6 +657,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         className="context-button"
                         color="secondary"
                         data-toggle="dropdown"
+                        key=".$.0"
                       >
                         <Button
                           aria-expanded={false}
@@ -669,6 +684,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       </DropdownToggle>
                       <DropdownMenu
                         className="dropdown-menu"
+                        key=".$.1"
                         right={true}
                         tag="div"
                       >
@@ -680,6 +696,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           <DropdownItem
                             className="dropdown-menu--item test-duplicate-button"
+                            key="2"
                             onClick={[Function]}
                             tag="button"
                             toggle={true}
@@ -702,6 +719,7 @@ exports[`Workflow list page renders correctly 1`] = `
                           </DropdownItem>
                           <DropdownItem
                             className="dropdown-menu--item test-delete-button"
+                            key="3"
                             onClick={[Function]}
                             tag="button"
                             toggle={true}
@@ -733,6 +751,7 @@ exports[`Workflow list page renders correctly 1`] = `
           <a
             className="workflow-item"
             href="/workflows/9"
+            key="9"
           >
             <div
               className="mt-1"
@@ -840,6 +859,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         className="context-button"
                         color="secondary"
                         data-toggle="dropdown"
+                        key=".$.0"
                       >
                         <Button
                           aria-expanded={false}
@@ -866,6 +886,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       </DropdownToggle>
                       <DropdownMenu
                         className="dropdown-menu"
+                        key=".$.1"
                         right={true}
                         tag="div"
                       >
@@ -877,6 +898,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         >
                           <DropdownItem
                             className="dropdown-menu--item test-duplicate-button"
+                            key="2"
                             onClick={[Function]}
                             tag="button"
                             toggle={true}
@@ -899,6 +921,7 @@ exports[`Workflow list page renders correctly 1`] = `
                           </DropdownItem>
                           <DropdownItem
                             className="dropdown-menu--item test-delete-button"
+                            key="3"
                             onClick={[Function]}
                             tag="button"
                             toggle={true}

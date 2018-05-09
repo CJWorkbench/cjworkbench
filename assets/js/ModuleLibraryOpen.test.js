@@ -1,77 +1,64 @@
 /**
  * Testing Stories:
- * -Renders full menu with <ModuleSearch>, <ModuleCategories>, <AddNotificationButton>, 
+ * -Renders full menu with <ModuleSearch>, <ModuleCategories>, <AddNotificationButton>,
  *    and <ImportModuleFromGitHub> components
  * -Toggle arrow will invoke toggleLibrary() from props
- * 
+ *
  */
 
 import React from 'react'
 import ModuleLibraryOpen  from './ModuleLibraryOpen'
-import { mount } from 'enzyme'
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContextProvider } from 'react-dnd'
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
+import { shallowWithStubbedStore } from './test-util'
 
 describe('ModuleLibraryOpen ', () => {
+  let wrapper
 
-  var wrapper;  
-  var toggleLibrary = jest.fn();  
-  var items = [
+  let toggleLibrary
+  beforeEach(() => {
+    toggleLibrary = jest.fn()
+  })
+
+  const modules = [
     {
       "id":4,
       "name":"Load from Enigma",
       "category":"Add data",
-      "description":"Connect a dataset from Enigma's collection via URL.",
-      "link":"",
-      "author":"Workbench",
-      "icon":"url"
+      "icon":"url",
     },
     {
       "id":10,
       "name":"Filter by Text",
       "category":"Filter",
-      "description":"Filter rows by matching text in specific columns.",
-      "link":"",
-      "author":"Workbench",
-      "icon":"filter"
-    }
-  ];  
+      "icon":"filter",
+    },
+  ]
 
   beforeEach(() => {
-    const store = createStore(() => ({}), { lesson_highlight: [ { type: 'ModuleSearch' } ] })
-    wrapper = mount(
-      <Provider store={store}>
-        <DragDropContextProvider backend={HTML5Backend}>
-          <ModuleLibraryOpen
-            api={{}}
-            workflow={{}}
-            libraryOpen={true}
-            isReadOnly={false}            
-            items={items}
-            addModule={() => {}}
-            dropModule={() => {}}
-            moduleAdded={() => {}}
-            toggleLibrary={toggleLibrary}
-            openCategory={"Add Data"} 
-            setOpenCategory={() => {}}
-          />
-        </DragDropContextProvider>
-      </Provider>
+    wrapper = shallowWithStubbedStore(
+      <ModuleLibraryOpen
+        api={{}}
+        workflow={{}}
+        libraryOpen={true}
+        isReadOnly={false}
+        modules={modules}
+        addModule={() => {}}
+        dropModule={() => {}}
+        moduleAdded={() => {}}
+        toggleLibrary={toggleLibrary}
+        openCategory={"Add Data"}
+        setOpenCategory={() => {}}
+        />
     )
-  });
-  afterEach(() => wrapper.unmount());  
+  })
 
-  it('Renders all subcomponents', () => { 
-    expect(wrapper).toMatchSnapshot(); 
-  });
+  it('matches snapshot', () => {
+    expect(wrapper).toMatchSnapshot()
+  })
 
-  it('Clicking arrow will invoke Toggle Library function', () => { 
-    let arrow = wrapper.find('.ML-toggle');
-    expect(arrow).toHaveLength(1);
-    arrow.simulate('click');
-    expect(toggleLibrary.mock.calls.length).toBe(1);
-  });
-      
-});
+  it('Clicking arrow will invoke Toggle Library function', () => {
+    const arrow = wrapper.find('.ML-toggle')
+    expect(arrow).toHaveLength(1)
+    arrow.simulate('click')
+    expect(toggleLibrary.mock.calls.length).toBe(1)
+  })
+})

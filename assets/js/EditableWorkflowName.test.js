@@ -43,6 +43,7 @@ describe('EditableWorkflowName', () => {
     ));
     beforeEach(() => container = wrapper.find('.editable-title--container'));    
     beforeEach(() => titleField = wrapper.find('.editable-title--field'));
+    afterEach(() => wrapper.unmount())
 
 
     it('Renders a title that can be edited and saved', () => {

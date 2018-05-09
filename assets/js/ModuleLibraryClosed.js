@@ -94,7 +94,7 @@ export default class ModuleLibraryClosed extends React.Component {
             isReadOnly={this.props.isReadOnly}
             addModule={this.props.addModule}
             dropModule={this.props.dropModule}
-            items={this.props.items}
+            modules={this.props.modules}
           />
 
           <AddNotificationButtonClosed
@@ -123,7 +123,12 @@ ModuleLibraryClosed.propTypes = {
   openCategory:     PropTypes.string,
   addModule:        PropTypes.func.isRequired,
   dropModule:       PropTypes.func.isRequired,
-  items:            PropTypes.array.isRequired,
+  modules:          PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    category: PropTypes.string.isRequired,
+    icon: PropTypes.string.isRequired,
+  })).isRequired,
   setOpenCategory:  PropTypes.func.isRequired,
   libraryOpen:      PropTypes.bool.isRequired,
   isReadOnly:       PropTypes.bool.isRequired,

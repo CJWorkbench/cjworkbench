@@ -6,24 +6,19 @@
  */
 
 import React from 'react'
-import ModuleLibrary from './ModuleLibrary'
-import { mount, ReactWrapper } from 'enzyme'
+import { ModuleLibrary } from './ModuleLibrary'
+import { shallow } from 'enzyme'
 import { jsonResponseMock, emptyAPI } from './utils'
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContextProvider } from 'react-dnd'
-import { Provider } from 'react-redux'
-import { createStore } from 'redux'
 
 describe('ModuleLibrary', () => {
+  let wrapper
+  let api
 
-  let wrapper;
-  let addModule =  () => {};
-  let dropModule =  () => {};
   let workflow = {
     "id":15,
     "name":"What a workflow!",
-  };
-  let modules = [
+  }
+  const modules = [
     {
       "id":1,
       "name":"Chartbuilder",
@@ -63,121 +58,85 @@ describe('ModuleLibrary', () => {
       "category":"other category",
       "icon":"url"
     },
-  ];
+  ]
 
-  let api = {};
-  let libraryOpen = true;
-  let setLibraryOpen = function(libraryOpen) {
-      libraryOpen = libraryOpen;
-  };
+  let stubs
+  beforeEach(() => {
+    stubs = {
+      setLibraryOpen: jest.fn(),
+      addModule: jest.fn(),
+      dropModule: jest.fn(),
+      setWfLibraryCollapse: jest.fn(),
+    }
+  })
 
   describe('Not Read-only', () => {
     beforeEach(() => {
-      const store = createStore(() => ({}), {})
-
       api = {
         getModules: jsonResponseMock(modules),
-        setWfLibraryCollapse: jest.fn()
-      };
-      wrapper = mount(
-        <Provider store={store}>
-          <DragDropContextProvider backend={HTML5Backend}>
-            <ModuleLibrary
-              addModule={addModule}
-              dropModule={dropModule}
-              api={api}
-              workflow={workflow}
-              isReadOnly={false}
-              libraryOpen={libraryOpen}
-              setLibraryOpen={setLibraryOpen}
-              />
-          </DragDropContextProvider>
-        </Provider>
+        setWfLibraryCollapse: jest.fn(),
+      }
+      wrapper = shallow(
+        <ModuleLibrary
+          {...stubs}
+          api={api}
+          workflow={workflow}
+          isReadOnly={false}
+          libraryOpen={true}
+          />
       )
-    });
-    afterEach(() => wrapper.unmount());
+    })
 
-    it('Renders in open state and loads modules', (done) => {
-      expect(wrapper).toMatchSnapshot();
+    it('matches snapshot', () => {
+      expect(wrapper).toMatchSnapshot()
+    })
 
-      expect(api.getModules.mock.calls.length).toBe(1);   // should have called API for its data on componentDidMount
-      expect(wrapper.find('.module-library--open')).toHaveLength(1);  // check that Library is open
+    it('loads modules', (done) => {
+      const moduleLibraryOpen = wrapper.find('ModuleLibraryOpen')
+      expect(moduleLibraryOpen).toHaveLength(1) // is open
+      expect(moduleLibraryOpen.props().modules).toHaveLength(0) // no modules by default
+
+      expect(api.getModules).toHaveBeenCalled()
 
       // let json promise resolve (wait for modules to load)
-      setImmediate( () => {
-
-        // Sadly this does not work: https://github.com/airbnb/enzyme/issues/431
-        // // Ensure all modules in each category are contiguous
-        // let modules = wrapper.childAt(0).state('items');
-        // let seenCats = [];
-        // let currentCat = null;
-        // for (let m of modules) {
-        //   if (m.category != currentCat) {                       // different cat than last module
-        //     expect(seenCats.includes(m.category)).toBeFalsy();  // should not repeat category
-        //     seenCats.push(m.category);
-        //   }
-        //   currentCat = m.category;
-        // }
-
-        expect(wrapper).toMatchSnapshot();
-
-        expect(wrapper.find('.module-category--wrapper')).toHaveLength(4);                      // module categories
-        expect(wrapper.find('.ml-list .ml-icon-container')).toHaveLength(6);  // modules
-
-        done();
-      });
-    });
-
-    // *** Test will not run b/c 'fetch' is not defined ***
-    // it('Clicking on arrow will invoke API to toggle collapse', (done) => {
-    //   // let json promise resolve (wait for modules to load)
-    //   setImmediate( () => {
-    //     let arrow = wrapper.find('.ML-toggle');
-    //     expect(arrow).toHaveLength(1);
-    //     arrow.simulate('click');
-    //     expect(api.setWfLibraryCollapse.mock.calls.length).toBe(1);
-    //     done();
-    //   });
-    // });
-
-  });
+      setImmediate(() => {
+        wrapper.update()
+        expect(wrapper.find('ModuleLibraryOpen').props().modules).toEqual(modules)
+        done()
+      })
+    })
+  })
 
   describe('Read-only', () => {
-
-    it('Renders in closed state', (done) => {
-      const store = createStore(() => ({}), {})
-       api = {
-        getModules: jsonResponseMock(modules),
-        setWfLibraryCollapse: jest.fn()
-      };
-      libraryOpen = false;
-      wrapper = mount(
-        <Provider store={store}>
-          <DragDropContextProvider backend={HTML5Backend}>
-            <ModuleLibrary
-              addModule={addModule}
-              dropModule={dropModule}
-              api={api}
-              workflow={workflow}
-              isReadOnly={true}
-              libraryOpen={libraryOpen}
-              setLibraryOpen={setLibraryOpen}
-            />
-          </DragDropContextProvider>
-        </Provider>
+    beforeEach(() => {
+      wrapper = shallow(
+        <ModuleLibrary
+          {...stubs}
+          api={api}
+          workflow={workflow}
+          isReadOnly={true}
+          libraryOpen={true}
+          />
       )
+    })
 
-      // Let modules load
+    it('matches snapshot', () => {
+      expect(wrapper).toMatchSnapshot()
+    })
+
+    it('loads modules', (done) => {
+      const moduleLibraryClosed = wrapper.find('ModuleLibraryClosed')
+      expect(moduleLibraryClosed).toHaveLength(1) // is open
+      expect(moduleLibraryClosed.props().modules).toHaveLength(0) // no modules by default
+
+      expect(api.getModules).toHaveBeenCalled()
+
+      // let json promise resolve (wait for modules to load)
       setImmediate(() => {
-        expect(wrapper).toMatchSnapshot();
-        expect(api.getModules.mock.calls.length).toBe(1);
-
-        // check that Library is closed
-        expect(wrapper.find('.module-library--closed')).toHaveLength(1);
-        done();
-      });
-    });
-
-  });
-
-});
+        wrapper.update()
+        expect(wrapper.find('ModuleLibraryClosed').props().modules).toEqual(modules)
+        done()
+      })
+    })
+  })
+})

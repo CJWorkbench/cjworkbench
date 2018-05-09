@@ -166,20 +166,21 @@ export default class facet extends React.Component {
         return true;
     }
 
-    componentWillReceiveProps(nextProps) {
+    componentDidUpdate(prevProps) {
+        const nextProps = this.props
         // Handles revision changes and column changes
 
         var nextColumn = nextProps.selectedColumn;
         var nextRevision = nextProps.revision;
-        if(nextProps.revision != this.props.revision) {
+        if(nextProps.revision != prevProps.revision) {
             if(nextColumn != this.state.selectedColumn) {
                 // If the column changes, check if this is a undo; if not, clear the edits
                 // The empty edits will be saved to the server on the next edit
                 var nextState = Object.assign({}, this.state);
                 // Warning is shown if previous column has edits,
                 // previous column isn't empty and action is not an undo.
-                nextState.showWarning = (this.state.selectedColumn.length > 0) && (this.state.edits.length > 0) && (nextRevision > this.props.revision);
-                nextState.edits = (nextRevision >= this.props.revision) ? [] : JSON.parse(nextProps.existingEdits);
+                nextState.showWarning = (this.state.selectedColumn.length > 0) && (this.state.edits.length > 0) && (nextRevision > prevProps.revision);
+                nextState.edits = (nextRevision >= prevProps.revision) ? [] : JSON.parse(nextProps.existingEdits);
                 nextState.selectedColumn = nextColumn;
                 //console.log(nextState.edits);
                 this.loadHistogram(nextColumn, nextState);

@@ -30,19 +30,19 @@ export default class FileSelect extends React.Component {
 
     componentDidMount() {
       if (this.props.userCreds.length > 0) {
-        this.getFiles();
+        this.getFiles()
       }
     }
 
-    componentWillReceiveProps(nextProps) {
-      if (nextProps.userCreds.length > 0 && nextProps.userCreds[0] !== this.props.userCreds[0]) {
-        this.getFiles();
+    componentDidUpdate(prevProps) {
+      if (this.props.userCreds.length > 0 && this.props.userCreds[0] !== prevProps.userCreds[0]) {
+        this.getFiles()
       }
 
-      if (nextProps.userCreds.length === 0) {
+      if (this.props.userCreds.length === 0) {
         this.setState({
           files: []
-        });
+        })
       }
     }
 
@@ -66,9 +66,9 @@ export default class FileSelect extends React.Component {
     }
 
     render() {
-      var fileList = false;
-      var filesModal = false;
-      var fileInfo = false;
+      let fileList = null
+      let filesModal = null
+      let fileInfo = null
 
       if (typeof this.state.files !== 'undefined' && this.state.files.length > 0) {
 
@@ -128,7 +128,7 @@ export default class FileSelect extends React.Component {
           </div>
         );
       } else {
-        return false;
+        return null
       }
 
     }

@@ -13,6 +13,8 @@ import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import debounce from 'lodash/debounce';
+import { connect } from 'react-redux'
+import { matchLessonHighlight } from './util/LessonHighlight'
 
 // TODO: gather all functions for dragging into one utility file
 const spec = {
@@ -49,7 +51,7 @@ function collect(connect, monitor) {
   }
 }
 
-class Module extends React.Component {
+export class Module extends React.Component {
   constructor(props) {
     super(props);
     // debounce itemClick, because people have a tendency to double-click
@@ -91,24 +93,27 @@ class Module extends React.Component {
   }
 
   render() {
-    var moduleName = this.props.name;
-    var icon = 'icon-' + this.props.icon + ' ml-icon';
+    const moduleName = this.props.name;
+    const icon = `icon-${this.props.icon} ml-icon`;
+    const className = `card ml-module-card ${this.props.isLessonHighlight ? 'lesson-highlight' : ''}`
 
-    var moduleCard =  <div data-name={moduleName} className='card ml-module-card' onClick={this.itemClick}>
-                        <div className='ML-module d-flex'>
-                          <div className='d-flex flex-row align-items-center'>
-                            <div className='ml-icon-container'>
-                              <div className={icon} />
-                            </div>
-                            <div>
-                              <div className='content-5 ml-module-name'>{moduleName}</div>
-                            </div>
-                          </div>
-                          <div className='ml-handle'>
-                            <div className='icon-grip' />
-                          </div>
-                        </div>
-                      </div>;
+    const moduleCard = (
+      <div className={className} onClick={this.itemClick}>
+        <div className='ML-module d-flex'>
+          <div className='d-flex flex-row align-items-center'>
+            <div className='ml-icon-container'>
+              <div className={icon} />
+            </div>
+            <div>
+              <div className='content-5 ml-module-name'>{moduleName}</div>
+            </div>
+          </div>
+          <div className='ml-handle'>
+            <div className='icon-grip' />
+          </div>
+        </div>
+      </div>
+    )
 
     // Do not allow dragging if in Read-Only
     if (this.props.isReadOnly) {
@@ -120,14 +125,25 @@ class Module extends React.Component {
 }
 
 Module.propTypes = {
-  id:               PropTypes.number.isRequired,
-  name:             PropTypes.string.isRequired,
-  icon:             PropTypes.string.isRequired,
-  addModule:        PropTypes.func,
-  dropModule:       PropTypes.func,
-  isReadOnly:       PropTypes.bool.isRequired,
-  setOpenCategory:  PropTypes.func.isRequired,
-  libraryOpen:      PropTypes.bool.isRequired,
-};
+  id:                PropTypes.number.isRequired,
+  name:              PropTypes.string.isRequired,
+  icon:              PropTypes.string.isRequired,
+  addModule:         PropTypes.func,
+  dropModule:        PropTypes.func,
+  isReadOnly:        PropTypes.bool.isRequired,
+  setOpenCategory:   PropTypes.func.isRequired,
+  libraryOpen:       PropTypes.bool.isRequired,
+  isLessonHighlight: PropTypes.bool.isRequired,
+}
 
-export default DragSource('module', spec, collect)(Module);
+function mapStateToProps(state, ownProps) {
+  const lessonHighlight = state.lesson_highlight || []
+  const test = { type: 'MlModule', name: ownProps.name }
+  return {
+    isLessonHighlight: false,//matchLessonHighlight(lessonHighlight, test),
+  }
+}
+
+export default connect(
+  mapStateToProps
+)(DragSource('module', spec, collect)(Module))

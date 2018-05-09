@@ -13,26 +13,25 @@
  *
  */
 
-import PropTypes from 'prop-types';
-import React from 'react';
-import ModuleLibraryClosed from './ModuleLibraryClosed';
-import ModuleLibraryOpen from './ModuleLibraryOpen';
+import PropTypes from 'prop-types'
+import React from 'react'
+import ModuleLibraryClosed from './ModuleLibraryClosed'
+import ModuleLibraryOpen from './ModuleLibraryOpen'
 import { setWfLibraryCollapseAction } from './workflow-reducer'
 import { connect } from 'react-redux'
 
 // Helper to sort modules by category, then name
-function compareCategoryName(a,b) {
-  if (a.category > b.category) {
-    return 1;
-  } else if (a.category < b.category) {
-    return -1;
-  } else if (a.name > b.name) {
-    return 1;
-  } else if (a.name < b.name) {
-    return -1;
+const CategoryOrder = ['Add data', 'Clean', 'Analyze', 'Visualize', 'Code', 'Other']
+function moduleCategoryIndex(module) {
+  const index = CategoryOrder.indexOf(module.category)
+  if (index === -1) {
+    return CategoryOrder.length
   } else {
-    return 0;
+    return index
   }
+}
+function compareModules(a, b) {
+  (moduleCategoryIndex(a) - moduleCategoryIndex(b)) || a.name.localeCompare(b.name)
 }
 
 export class ModuleLibrary extends React.Component {
@@ -44,7 +43,7 @@ export class ModuleLibrary extends React.Component {
 
     this.state = {
       openCategory: (workflowEmpty && this.props.libraryOpen) ? "Add data" : null,
-      items: [],
+      modules: [],
     };
     this.addModule = this.props.addModule.bind(this);
     this.setOpenCategory = this.setOpenCategory.bind(this);
@@ -73,29 +72,14 @@ export class ModuleLibrary extends React.Component {
   loadModules () {
     this.props.api.getModules()
       .then(json => {
-
-        var categories = ['Add data','Clean', 'Analyze', 'Visualize', 'Code', 'Other'];
-        var modules = [];
-
-        // Order modules by categories in order above, then alphabetically by name within category
-        for (var cat of categories) {
-          let catModules = json.filter( (m) => { return m.category == cat; } );
-          catModules.sort(compareCategoryName);
-          modules = modules.concat(catModules)
-        }
-
-        // See if there are any remanining modules, and if there are, add them under Other
-        var remainingModules = json.filter( (item) =>
-          { return modules.indexOf(item) === -1; });
-        remainingModules.sort(compareCategoryName);
-        modules = modules.concat(remainingModules);
-
-        this.setState({ items: modules });
+        const modules = json.slice()
+        modules.sort(compareModules)
+        this.setState({ modules: modules })
       })
   }
 
-  componentWillMount() {
-    this.loadModules();
+  componentDidMount() {
+    this.loadModules()
   }
 
   // Categories call this to indicate that they've been opened, so we can close all the rest
@@ -121,7 +105,6 @@ export class ModuleLibrary extends React.Component {
 
   // Main render.
   render() {
-
     if (this.props.libraryOpen && !this.props.isReadOnly) {
       // Outermost div seems necessary to set background color below ImportFromGithub
       return (
@@ -131,7 +114,7 @@ export class ModuleLibrary extends React.Component {
             libraryOpen={true}
             api={this.props.api}
             isReadOnly={this.props.isReadOnly}
-            items={this.state.items}
+            modules={this.state.modules}
             addModule={this.props.addModule}
             dropModule={this.props.dropModule}
             moduleAdded={this.updateModules}
@@ -147,7 +130,7 @@ export class ModuleLibrary extends React.Component {
           libraryOpen={false}
           api={this.props.api}
           isReadOnly={this.props.isReadOnly}
-          items={this.state.items}
+          modules={this.state.modules}
           addModule={this.props.addModule}
           dropModule={this.props.dropModule}
           moduleAdded={this.updateModules}

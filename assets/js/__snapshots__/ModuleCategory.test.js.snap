@@ -1,431 +1,119 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ModuleCategory  Library closed, category collapsed  Renders with category icon, but without list of Module components 1`] = `
-<DragDropContextProvider
-  backend={[Function]}
+exports[`ModuleCategory  Library closed, category collapsed  matches snapshot 1`] = `
+<div
+  className="card closed-ML--category"
 >
-  <ModuleCategory
-    collapsed={true}
-    isReadOnly={false}
-    libraryOpen={false}
-    modules={
-      Array [
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="add"
-          id={88}
-          isReadOnly={false}
-          libraryOpen={false}
-          name="First Module"
-          setOpenCategory={[MockFunction]}
-        />,
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="url"
-          id={101}
-          isReadOnly={false}
-          libraryOpen={false}
-          name="Second Module"
-          setOpenCategory={[MockFunction]}
-        />,
-      ]
-    }
-    name="Add data"
-    setOpenCategory={[MockFunction]}
+  <div
+    className="module-category--wrapper"
   >
     <div
-      className="card closed-ML--category"
+      className="ML-cat"
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
     >
       <div
-        className="module-category--wrapper"
+        className="closed-ML--category"
       >
-        <div
-          className="ML-cat"
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-        >
-          <div
-            className="closed-ML--category"
-          >
-            <span
-              className="icon-database ml-icon"
-            />
-          </div>
-        </div>
+        <span
+          className="icon-database ml-icon"
+        />
       </div>
     </div>
-  </ModuleCategory>
-</DragDropContextProvider>
+  </div>
+</div>
 `;
 
-exports[`ModuleCategory  Library closed, category open Renders with list of Module components 1`] = `
-<DragDropContextProvider
-  backend={[Function]}
+exports[`ModuleCategory  Library closed, category open matches snapshot 1`] = `
+<div
+  className="card closed-ML--category"
 >
-  <ModuleCategory
-    collapsed={false}
-    isReadOnly={false}
-    libraryOpen={false}
-    modules={
-      Array [
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="add"
-          id={88}
-          isReadOnly={false}
-          libraryOpen={false}
-          name="First Module"
-          setOpenCategory={[MockFunction]}
-        />,
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="url"
-          id={101}
-          isReadOnly={false}
-          libraryOpen={false}
-          name="Second Module"
-          setOpenCategory={[MockFunction]}
-        />,
-      ]
-    }
-    name="Add Data"
-    setOpenCategory={[MockFunction]}
+  <div
+    className="module-category--wrapper"
   >
     <div
-      className="card closed-ML--category"
+      className="ML-cat"
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
     >
       <div
-        className="module-category--wrapper"
+        className="closed-ML--category"
       >
-        <div
-          className="ML-cat"
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-        >
-          <div
-            className="closed-ML--category"
-          >
-            <span
-              className="icon-undefined ml-icon"
-            />
-          </div>
-        </div>
-        <div
-          className="ml-list-mini"
-          onMouseEnter={[Function]}
-          onMouseLeave={[Function]}
-        >
-          <DragSource(Module)
-            addModule={[Function]}
-            dropModule={[Function]}
-            icon="add"
-            id={88}
-            isReadOnly={false}
-            libraryOpen={false}
-            name="First Module"
-            setOpenCategory={[MockFunction]}
-          >
-            <Module
-              addModule={[Function]}
-              connectDragPreview={[Function]}
-              connectDragSource={[Function]}
-              dropModule={[Function]}
-              icon="add"
-              id={88}
-              isDragging={false}
-              isReadOnly={false}
-              libraryOpen={false}
-              name="First Module"
-              setOpenCategory={[MockFunction]}
-            >
-              <div
-                className="card ml-module-card"
-                data-name="First Module"
-                onClick={[Function]}
-              >
-                <div
-                  className="ML-module d-flex"
-                >
-                  <div
-                    className="d-flex flex-row align-items-center"
-                  >
-                    <div
-                      className="ml-icon-container"
-                    >
-                      <div
-                        className="icon-add ml-icon"
-                      />
-                    </div>
-                    <div>
-                      <div
-                        className="content-5 ml-module-name"
-                      >
-                        First Module
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="ml-handle"
-                  >
-                    <div
-                      className="icon-grip"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Module>
-          </DragSource(Module)>
-          <DragSource(Module)
-            addModule={[Function]}
-            dropModule={[Function]}
-            icon="url"
-            id={101}
-            isReadOnly={false}
-            libraryOpen={false}
-            name="Second Module"
-            setOpenCategory={[MockFunction]}
-          >
-            <Module
-              addModule={[Function]}
-              connectDragPreview={[Function]}
-              connectDragSource={[Function]}
-              dropModule={[Function]}
-              icon="url"
-              id={101}
-              isDragging={false}
-              isReadOnly={false}
-              libraryOpen={false}
-              name="Second Module"
-              setOpenCategory={[MockFunction]}
-            >
-              <div
-                className="card ml-module-card"
-                data-name="Second Module"
-                onClick={[Function]}
-              >
-                <div
-                  className="ML-module d-flex"
-                >
-                  <div
-                    className="d-flex flex-row align-items-center"
-                  >
-                    <div
-                      className="ml-icon-container"
-                    >
-                      <div
-                        className="icon-url ml-icon"
-                      />
-                    </div>
-                    <div>
-                      <div
-                        className="content-5 ml-module-name"
-                      >
-                        Second Module
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="ml-handle"
-                  >
-                    <div
-                      className="icon-grip"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Module>
-          </DragSource(Module)>
-        </div>
+        <span
+          className="icon-undefined ml-icon"
+        />
       </div>
     </div>
-  </ModuleCategory>
-</DragDropContextProvider>
+    <div
+      className="ml-list-mini"
+      onMouseEnter={[Function]}
+      onMouseLeave={[Function]}
+    >
+      <Connect(DragSource(Module))
+        icon="add"
+        id={88}
+        isReadOnly={false}
+        key="First Module"
+        libraryOpen={false}
+        name="First Module"
+        setOpenCategory={[MockFunction]}
+      />
+      <Connect(DragSource(Module))
+        icon="url"
+        id={101}
+        isReadOnly={false}
+        key="Second Module"
+        libraryOpen={false}
+        name="Second Module"
+        setOpenCategory={[MockFunction]}
+      />
+    </div>
+  </div>
+</div>
 `;
 
-exports[`ModuleCategory  Library open Renders with list of Module components 1`] = `
-<DragDropContextProvider
-  backend={[Function]}
+exports[`ModuleCategory  Library open matches snapshot 1`] = `
+<div
+  className="card closed-ML--category"
 >
-  <ModuleCategory
-    collapsed={false}
-    isReadOnly={false}
-    libraryOpen={true}
-    modules={
-      Array [
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="add"
-          id={88}
-          isReadOnly={false}
-          libraryOpen={true}
-          name="First Module"
-          setOpenCategory={[MockFunction]}
-        />,
-        <DragSource(Module)
-          addModule={[Function]}
-          dropModule={[Function]}
-          icon="url"
-          id={101}
-          isReadOnly={false}
-          libraryOpen={true}
-          name="Second Module"
-          setOpenCategory={[MockFunction]}
-        />,
-      ]
-    }
-    name="Add Data"
-    setOpenCategory={[MockFunction]}
+  <div
+    className="module-category--wrapper"
   >
     <div
-      className="card closed-ML--category"
+      className="ML-cat"
     >
       <div
-        className="module-category--wrapper"
+        className="category-container"
       >
-        <div
-          className="ML-cat"
+        <span
+          className="category-name"
         >
-          <div
-            className="category-container"
-          >
-            <span
-              className="category-name"
-            >
-              Add Data
-            </span>
-          </div>
-        </div>
-        <div
-          className="ml-list"
-        >
-          <DragSource(Module)
-            addModule={[Function]}
-            dropModule={[Function]}
-            icon="add"
-            id={88}
-            isReadOnly={false}
-            libraryOpen={true}
-            name="First Module"
-            setOpenCategory={[MockFunction]}
-          >
-            <Module
-              addModule={[Function]}
-              connectDragPreview={[Function]}
-              connectDragSource={[Function]}
-              dropModule={[Function]}
-              icon="add"
-              id={88}
-              isDragging={false}
-              isReadOnly={false}
-              libraryOpen={true}
-              name="First Module"
-              setOpenCategory={[MockFunction]}
-            >
-              <div
-                className="card ml-module-card"
-                data-name="First Module"
-                onClick={[Function]}
-              >
-                <div
-                  className="ML-module d-flex"
-                >
-                  <div
-                    className="d-flex flex-row align-items-center"
-                  >
-                    <div
-                      className="ml-icon-container"
-                    >
-                      <div
-                        className="icon-add ml-icon"
-                      />
-                    </div>
-                    <div>
-                      <div
-                        className="content-5 ml-module-name"
-                      >
-                        First Module
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="ml-handle"
-                  >
-                    <div
-                      className="icon-grip"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Module>
-          </DragSource(Module)>
-          <DragSource(Module)
-            addModule={[Function]}
-            dropModule={[Function]}
-            icon="url"
-            id={101}
-            isReadOnly={false}
-            libraryOpen={true}
-            name="Second Module"
-            setOpenCategory={[MockFunction]}
-          >
-            <Module
-              addModule={[Function]}
-              connectDragPreview={[Function]}
-              connectDragSource={[Function]}
-              dropModule={[Function]}
-              icon="url"
-              id={101}
-              isDragging={false}
-              isReadOnly={false}
-              libraryOpen={true}
-              name="Second Module"
-              setOpenCategory={[MockFunction]}
-            >
-              <div
-                className="card ml-module-card"
-                data-name="Second Module"
-                onClick={[Function]}
-              >
-                <div
-                  className="ML-module d-flex"
-                >
-                  <div
-                    className="d-flex flex-row align-items-center"
-                  >
-                    <div
-                      className="ml-icon-container"
-                    >
-                      <div
-                        className="icon-url ml-icon"
-                      />
-                    </div>
-                    <div>
-                      <div
-                        className="content-5 ml-module-name"
-                      >
-                        Second Module
-                      </div>
-                    </div>
-                  </div>
-                  <div
-                    className="ml-handle"
-                  >
-                    <div
-                      className="icon-grip"
-                    />
-                  </div>
-                </div>
-              </div>
-            </Module>
-          </DragSource(Module)>
-        </div>
+          Add Data
+        </span>
       </div>
     </div>
-  </ModuleCategory>
-</DragDropContextProvider>
+    <div
+      className="ml-list"
+    >
+      <Connect(DragSource(Module))
+        icon="add"
+        id={88}
+        isReadOnly={false}
+        key="First Module"
+        libraryOpen={true}
+        name="First Module"
+        setOpenCategory={[MockFunction]}
+      />
+      <Connect(DragSource(Module))
+        icon="url"
+        id={101}
+        isReadOnly={false}
+        key="Second Module"
+        libraryOpen={true}
+        name="Second Module"
+        setOpenCategory={[MockFunction]}
+      />
+    </div>
+  </div>
+</div>
 `;

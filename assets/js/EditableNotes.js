@@ -17,17 +17,18 @@ export default class EditableNotes extends React.Component {
   // Enter editing state upon mount
   //    Have to target child through parent b/c TextArea cannot be directly referenced
   componentDidMount() {
-    if (this.props.startFocused)
-      this.textInput.childNodes[0].select();
+    if (this.props.startFocused) {
+      if (this.textInput) this.textInput.childNodes[0].select()
+    }
   }
 
   // Make Enter key save the text in edit field, overriding default newline
   keyPress(e) {
     if (e.key == 'Enter' ) {
-      e.preventDefault();
+      e.preventDefault()
       // blur event will trigger a save
       // Have to target child through parent b/c TextArea cannot be directly referenced
-      this.textInput.childNodes[0].blur();
+      if (this.textInput) this.textInput.childNodes[0].blur()
     }
   }
 
@@ -49,7 +50,9 @@ export default class EditableNotes extends React.Component {
 
   // selects the text for editing on a click
   handleClick(event) {
-    if (!this.props.isReadOnly) this.textInput.childNodes[0].select();
+    if (!this.props.isReadOnly) {
+      if (this.textInput) this.textInput.childNodes[0].select()
+    }
   }
 
   render() {

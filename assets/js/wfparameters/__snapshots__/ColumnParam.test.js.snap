@@ -17,42 +17,49 @@ exports[`ColumnParam renders with noSelectionText 1`] = `
   >
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="0"
       value={0}
     >
       Just pick something, user
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="1"
       value={1}
     >
       foo
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="2"
       value={2}
     >
       bar
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="3"
       value={3}
     >
       baz
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="4"
       value={4}
     >
       wow
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="5"
       value={5}
     >
       word wrap
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="6"
       value={6}
     >
       ok then
@@ -77,42 +84,49 @@ exports[`ColumnParam renders without noSelectionText 1`] = `
   >
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="0"
       value={0}
     >
       Select
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="1"
       value={1}
     >
       foo
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="2"
       value={2}
     >
       bar
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="3"
       value={3}
     >
       baz
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="4"
       value={4}
     >
       wow
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="5"
       value={5}
     >
       word wrap
     </option>
     <option
       className="dropdown-menu-item t-d-gray content-3"
+      key="6"
       value={6}
     >
       ok then

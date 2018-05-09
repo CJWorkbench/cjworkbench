@@ -30,8 +30,8 @@ class AddNotificationButtonClosed extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      showButton: false
-    };
+      showButton: false,
+    }
     this.showButton = this.showButton.bind(this);
     this.hideButton = this.hideButton.bind(this);
     this.handleClick = this.handleClick.bind(this);
@@ -39,8 +39,6 @@ class AddNotificationButtonClosed extends React.Component {
 
   showButton() {
     this.setState({showButton: true});
-    // tell parent to close any open Module Categories
-    this.props.setOpenCategory(null);
   }
 
   hideButton() {
@@ -62,12 +60,8 @@ class AddNotificationButtonClosed extends React.Component {
   }
 
   render() {
-
-    var popout =
-      <div
-        className='card alert-closed-ML'
-        style={{ display: this.state.showButton ? 'block' : 'none' }}
-      >
+    const popout =
+      <div className={`card alert-closed-ML ${this.state.showButton ? '' : 'd-none'}`}>
         <div className='ML-module d-flex '>
           <div className='content-5  my-auto mr-5'>Add data alert</div>
           <div className='ml-handle'>
@@ -97,7 +91,3 @@ class AddNotificationButtonClosed extends React.Component {
 }
 
 export default DragSource('notification', spec, collect)(AddNotificationButtonClosed)
-
-AddNotificationButtonClosed.propTypes = {
-  setOpenCategory:  PropTypes.func.isRequired
-};

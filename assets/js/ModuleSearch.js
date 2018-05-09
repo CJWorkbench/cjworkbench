@@ -78,20 +78,21 @@ export class ModuleSearch extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.items) {
-      this.formatModules(this.props.items);
+    if (this.props.modules) {
+      this.formatModules(this.props.modules);
     }
   }
 
   componentWillReceiveProps(nextProps) {
-    if (this.props.items !== nextProps.items) {
-      this.formatModules(nextProps.items);
+    if (this.props.modules !== nextProps.modules) {
+      this.formatModules(nextProps.modules)
     }
   }
 
   escapeRegexCharacters (str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
+
   formatModules(items) {
     let modules = [];
     let temp = {};
@@ -165,7 +166,7 @@ export class ModuleSearch extends React.Component {
         icon={suggestion.icon}
         name={suggestion.name}
         id={suggestion.id} />
-    );
+    )
   }
 
   getSuggestionValue (suggestion) {
@@ -236,13 +237,13 @@ export class ModuleSearch extends React.Component {
           {closeIcon}
         </div>
       </div>
-    );
+    )
   }
 }
 
 ModuleSearch.propTypes = {
   addModule:  PropTypes.func.isRequired,
-  items:      PropTypes.array.isRequired,
+  modules:    PropTypes.array.isRequired,
   workflow:   PropTypes.object.isRequired,
   isLessonHighlight: PropTypes.bool.isRequired,
 }

@@ -73,28 +73,28 @@ describe('Lesson', () => {
 
     it('shows "Next" and an unclickable "Previous"', () => {
       const w = wrapper()
-      expect(w.find('footer button[name="Previous"]').nodes[0].disabled).toEqual(true)
+      expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(1)
       expect(w.find('footer .active').text()).toEqual('1 of 3')
-      expect(w.find('section').map(n => n.node.className)).toEqual([ 'active', 'inactive', 'inactive' ])
-      expect(w.find('footer button[name="Next"]').nodes[0].disabled).toEqual(false)
+      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'active', 'inactive', 'inactive' ])
+      expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(0)
     })
 
     it('moves to the next section', () => {
       const w = wrapper()
       w.find('footer button[name="Next"]').simulate('click')
-      expect(w.find('footer button[name="Previous"]').nodes[0].disabled).toEqual(false)
+      expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(0)
       expect(w.find('footer .active').text()).toEqual('2 of 3')
-      expect(w.find('section').map(n => n.node.className)).toEqual([ 'inactive', 'active', 'inactive' ])
-      expect(w.find('footer button[name="Next"]').nodes[0].disabled).toEqual(false)
+      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'inactive', 'active', 'inactive' ])
+      expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(0)
     })
 
     it('disables Next on the final section', () => {
       const w = wrapper()
       w.find('footer button[name="Next"]').simulate('click').simulate('click')
-      expect(w.find('footer button[name="Previous"]').nodes[0].disabled).toEqual(false)
+      expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(0)
       expect(w.find('footer .active').text()).toEqual('3 of 3')
-      expect(w.find('section').map(n => n.node.className)).toEqual([ 'inactive', 'inactive', 'active' ])
-      expect(w.find('footer button[name="Next"]').nodes[0].disabled).toEqual(true)
+      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'inactive', 'inactive', 'active' ])
+      expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(1)
     })
 
     it('dispatches store.setLessonHighlight', () => {

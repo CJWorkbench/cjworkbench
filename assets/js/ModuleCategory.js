@@ -14,6 +14,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { Collapse, Button, CardBlock, Card } from 'reactstrap';
+import Module from './Module'
 
 export default class ModuleCategory extends React.Component {
   constructor(props) {
@@ -30,7 +31,6 @@ export default class ModuleCategory extends React.Component {
     this.setState({collapsed: newProps.collapsed})
   }
 
-
   openCategory() {
     this.props.setOpenCategory(this.props.name); // tell parent to close all
   }
@@ -39,9 +39,30 @@ export default class ModuleCategory extends React.Component {
     this.props.setOpenCategory(null); // tell parent to close all
   }
 
-  render() {
-    var isOpen = !this.state.collapsed;
+  _renderModule(module) {
+    const { name, icon, id } = module
+    const { addModule, dropModule, isReadOnly, setOpenCategory, libraryOpen } = this.props
 
+    return (
+      <Module
+        key={name}
+        name={name}
+        icon={icon}
+        id={id}
+        addModule={addModule}
+        dropModule={dropModule}
+        isReadOnly={isReadOnly}
+        setOpenCategory={setOpenCategory}
+        libraryOpen={libraryOpen}
+      />
+    )
+  }
+
+  _renderModules() {
+    return this.props.modules.map(m => this._renderModule(m))
+  }
+
+  render() {
     // Provides margins around opened library category
 
     const icons = {
@@ -50,11 +71,11 @@ export default class ModuleCategory extends React.Component {
       'Analyze': 'notepad',
       'Visualize': 'chart',
       'Code': 'code',
-      'Other': 'more'
-    };
-    var categoryIcon = 'icon-' + icons[this.props.name] + ' ml-icon';
+      'Other': 'more',
+    }
+    const categoryIcon = 'icon-' + icons[this.props.name] + ' ml-icon';
 
-    var categoryHead;
+    let categoryHead
     if (this.props.libraryOpen) {
       categoryHead =  <div className='ML-cat'>
                         <div className='category-container' >
@@ -74,20 +95,20 @@ export default class ModuleCategory extends React.Component {
     }
 
     // do not render list of modules if both library and category are closed
-    var moduleList;
+    let moduleList
     if (this.props.libraryOpen) {
-      moduleList =  <div className="ml-list">{this.props.modules}</div>
-
-    } else if (isOpen) {
-      moduleList =  <div
-                      className="ml-list-mini"
-                      onMouseEnter={this.openCategory}
-                      onMouseLeave={this.collapseAll}
-                    >
-                      {this.props.modules}
-                    </div>
+      moduleList = <div className="ml-list">{this._renderModules()}</div>
+    } else if (!this.state.collapsed) {
+      moduleList = (
+        <div className="ml-list-mini"
+          onMouseEnter={this.openCategory}
+          onMouseLeave={this.collapseAll}
+          >
+          {this._renderModules()}
+        </div>
+      )
     } else {
-      moduleList = null;
+      moduleList = null
     }
 
     return (
@@ -97,16 +118,20 @@ export default class ModuleCategory extends React.Component {
           {moduleList}
         </div>
       </div>
-    );
+    )
   }
 }
 
 
 ModuleCategory.propTypes = {
   name:             PropTypes.string.isRequired,
-  modules:          PropTypes.arrayOf(PropTypes.object).isRequired,
+  modules:          PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    icon: PropTypes.string.isRequired,
+  })).isRequired,
   collapsed:        PropTypes.bool.isRequired,
   setOpenCategory:  PropTypes.func.isRequired,
   isReadOnly:       PropTypes.bool.isRequired,
-  libraryOpen:      PropTypes.bool.isRequired
-};
+  libraryOpen:      PropTypes.bool.isRequired,
+}
