@@ -10,8 +10,16 @@ def load_data(apps, schema_editor):
     # we don't have the django_sites table when testing, so do nothing then
     if not sys.argv[1:2] == ['test']:
         one = Site.objects.all()[0]
+<<<<<<< HEAD
         one.domain = 'workbenchdata.com'
         one.name = 'CJ Workbench'
+||||||| merged common ancestors
+        one.domain = 'cjworkbench.org'
+        one.name = 'CJ Workbench'
+=======
+        one.domain = 'workbenchdata.com'
+        one.name = 'Workbench'
+>>>>>>> master
         one.save()
 
 

@@ -107,6 +107,7 @@ exports[`ModuleCategories  Library closed  Renders with list of ModuleCategory c
                 >
                   <div
                     className="card ml-module-card"
+                    data-name="Load from Enigma"
                     onClick={[Function]}
                   >
                     <div
@@ -298,6 +299,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                 >
                   <div
                     className="card ml-module-card"
+                    data-name="Load from Enigma"
                     onClick={[Function]}
                   >
                     <div
@@ -404,6 +406,7 @@ exports[`ModuleCategories  Library open  Renders with list of ModuleCategory com
                 >
                   <div
                     className="card ml-module-card"
+                    data-name="Filter by Text"
                     onClick={[Function]}
                   >
                     <div

@@ -2,8 +2,11 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import LessonSection from './LessonSection'
 import LessonNav from './LessonNav'
+import { setLessonHighlight } from '../workflow-reducer'
+import { connect } from 'react-redux'
+import { LessonHighlightsType } from '../util/LessonHighlight'
 
-export default class Lesson extends React.Component {
+export class Lesson extends React.Component {
   constructor(props) {
     super(props)
 
@@ -12,10 +15,26 @@ export default class Lesson extends React.Component {
     }
 
     this.setActiveSectionIndex = (wantedIndex) => { // TODO upgrade and use newer JSX syntax 'handle... = () => ...'
+      const activeSectionIndex = Math.max(Math.min(wantedIndex, this.props.sections.length - 1), 0)
       this.setState({
-        activeSectionIndex: Math.max(Math.min(wantedIndex, this.props.sections.length - 1), 0),
+        activeSectionIndex,
       })
     }
+  }
+
+  componentDidMount() {
+    this._resetLessonHighlight(this.state.activeSectionIndex)
+  }
+
+  componentDidUpdate() {
+    this._resetLessonHighlight(this.state.activeSectionIndex)
+  }
+
+  _resetLessonHighlight(sectionIndex) {
+    const section = this.props.sections[sectionIndex]
+    const step = section.steps ? section.steps[0] : null
+    const highlight = step ? step.highlight : []
+    this.props.setLessonHighlight(highlight)
   }
 
   render() {
@@ -54,6 +73,23 @@ Lesson.propTypes = {
     html: PropTypes.string.isRequired,
     steps: PropTypes.arrayOf(PropTypes.shape({
       html: PropTypes.string.isRequired,
+      highlight: LessonHighlightsType.isRequired,
     })).isRequired,
   })).isRequired,
+  setLessonHighlight: PropTypes.func.isRequired,
 }
+
+const mapStateToProps = (state) => {
+  return {}
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setLessonHighlight: (...args) => dispatch(setLessonHighlight(...args)),
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Lesson)

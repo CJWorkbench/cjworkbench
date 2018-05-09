@@ -8,14 +8,19 @@ class LessonTests(SimpleTestCase):
         self.assertEquals(out, Lesson('a-slug', LessonHeader('Lesson', '<p>p1</p><p>p2</p>'), []))
 
     def test_parse_step(self):
-        out = Lesson.parse('a-slug', '<header><h1>Lesson</h1><p>Contents</p></header><section><h2>Foo</h2><p>bar</p><ol class="steps"><li>1</li></ol></section>')
+        out = Lesson.parse('a-slug', '<header><h1>Lesson</h1><p>Contents</p></header><section><h2>Foo</h2><p>bar</p><ol class="steps"><li data-highlight=\'[{"type":"Foo"}]\'>1</li></ol></section>')
         self.assertEquals(out,
             Lesson(
                 'a-slug',
                 LessonHeader('Lesson', '<p>Contents</p>'),
-                [ LessonSection('Foo', '<p>bar</p>', [ LessonSectionStep('1') ]) ]
+                [ LessonSection('Foo', '<p>bar</p>', [ LessonSectionStep('1', [ { 'type': 'Foo' } ]) ]) ]
             )
         )
+
+    def test_parse_invalid_step_highlight_json(self):
+        with self.assertRaisesMessage(LessonParseError, 'data-highlight contains invalid JSON'):
+            Lesson.parse('a-slug', '<header><h1>Lesson</h1><p>Contents</p></header><section><h2>Foo</h2><p>bar</p><ol class="steps"><li data-highlight=\'[{"type":"Foo"]\'>1</li></ol></section>')
+
 
     def test_parse_no_header(self):
         with self.assertRaisesMessage(LessonParseError, 'Lesson HTML needs a top-level <header>'):
@@ -54,8 +59,8 @@ class LessonManagerTests(SimpleTestCase):
                 LessonHeader('Lesson', '<p>Contents</p>'),
                 [
                     LessonSection('Foo', '<p>bar</p>', [
-                        LessonSectionStep('Step One'),
-                        LessonSectionStep('Step Two'),
+                        LessonSectionStep('Step One', []),
+                        LessonSectionStep('Step Two', []),
                     ])
                 ]
             )
@@ -78,8 +83,8 @@ class LessonManagerTests(SimpleTestCase):
                 LessonHeader('Earlier Lesson (alphabetically)', '<p>Contents</p>'),
                 [
                     LessonSection('Foo', '<p>bar</p>', [
-                        LessonSectionStep('Step One'),
-                        LessonSectionStep('Step Two'),
+                        LessonSectionStep('Step One', []),
+                        LessonSectionStep('Step Two', []),
                     ])
                 ]
             ),
@@ -88,8 +93,8 @@ class LessonManagerTests(SimpleTestCase):
                 LessonHeader('Lesson', '<p>Contents</p>'),
                 [
                     LessonSection('Foo', '<p>bar</p>', [
-                        LessonSectionStep('Step One'),
-                        LessonSectionStep('Step Two'),
+                        LessonSectionStep('Step One', []),
+                        LessonSectionStep('Step Two', []),
                     ])
                 ]
             )

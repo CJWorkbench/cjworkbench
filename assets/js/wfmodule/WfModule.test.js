@@ -47,6 +47,7 @@ describe('WfModule, not read-only mode', () => {
 
     props = {
         isReadOnly: false,
+        name: 'TestModule',
         wfModule: wf_module,
         changeParam: mockApi.onParamChanged,
         removeModule:  () => {} ,

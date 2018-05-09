@@ -19,6 +19,7 @@ exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state 
   >
     <TextareaAutosize
       className="editable-notes-field"
+      name="notes"
       onBlur={[Function]}
       onChange={[Function]}
       onHeightChange={[Function]}
@@ -28,6 +29,7 @@ exports[`EditableNotes NOT Read-only, starts focused Renders note in edit state 
     >
       <textarea
         className="editable-notes-field"
+        name="notes"
         onBlur={[Function]}
         onChange={[Function]}
         onKeyPress={[Function]}
@@ -58,6 +60,7 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
   >
     <TextareaAutosize
       className="editable-notes-field"
+      name="notes"
       onBlur={[Function]}
       onChange={[Function]}
       onHeightChange={[Function]}
@@ -67,6 +70,7 @@ exports[`EditableNotes NOT Read-only, starts not focused Renders note in non-edi
     >
       <textarea
         className="editable-notes-field"
+        name="notes"
         onBlur={[Function]}
         onChange={[Function]}
         onKeyPress={[Function]}

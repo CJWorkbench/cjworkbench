@@ -4,6 +4,7 @@ from io import StringIO
 import pathlib
 from xml.etree import ElementTree
 import html5lib
+import json
 import os.path
 
 def _build_inner_html(el):
@@ -154,19 +155,28 @@ class LessonSection:
         return LessonSection(title, html, steps)
 
 class LessonSectionStep:
-    def __init__(self, html):
+    def __init__(self, html, highlight):
         self.html = html
+        self.highlight = highlight
 
     def __eq__(self, other):
-        return (self.html,) == (other.html,)
+        return (self.html, self.highlight) == (other.html, other.highlight)
 
     def __repr__(self):
-        return 'LessonSectionStep' + repr((self.html,))
+        return 'LessonSectionStep' + repr((self.html, self.highlight))
 
     @staticmethod
     def _from_etree(el):
         html = _build_inner_html(el)
-        return LessonSectionStep(html)
+
+        highlight_s = el.get('data-highlight')
+        if not highlight_s: highlight_s = '[]'
+        try:
+            highlight = json.loads(highlight_s)
+        except json.decoder.JSONDecodeError:
+            raise LessonParseError('data-highlight contains invalid JSON')
+
+        return LessonSectionStep(html, highlight)
 
 class LessonParseError(Exception):
     def __init__(self, message):

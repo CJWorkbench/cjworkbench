@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { LessonHighlightsType } from '../util/LessonHighlight'
 
 export default class LessonStep extends React.Component {
   render() {
@@ -15,4 +16,5 @@ export default class LessonStep extends React.Component {
 
 LessonStep.propTypes = {
   html: PropTypes.string.isRequired,
+  highlight: LessonHighlightsType.isRequired,
 }
