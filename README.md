@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/CJWorkbench/cjworkbench/blob/master/assets/images/app-icons/android-chrome-192x192.png"><br>
+  <img src="https://github.com/CJWorkbench/cjworkbench/blob/master/assets/images/banner.jpg"><br>
 </div>
 
 -----------------
