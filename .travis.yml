@@ -15,8 +15,10 @@ install:
 - nvm install stable
 - nvm use stable
 - npm install
-- pip install pipenv
-- pipenv install --dev- ./node_modules/.bin/webpack --config webpack.config.js
+- npm install -g
+- pip install -r requirements.txt
+- pip install -r requirements-dev.txt
+- ./node_modules/.bin/webpack --config webpack.config.js
 # media directory must exist already for StoredObject tests
 - mkdir media
 # Geckodriver needed  for integration tests
@@ -26,9 +28,9 @@ install:
 - export PATH=$PATH:$PWD/geckodriver
 
 script:
-- pipenv run ./manage.py test
+- python manage.py test
 - npm test
-- pipenv run ./manage.py test integrationtests
+- python manage.py test integrationtests
 
 notifications:
   slack:

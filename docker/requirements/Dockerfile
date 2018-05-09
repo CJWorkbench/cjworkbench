@@ -7,9 +7,8 @@ EXPOSE 8000
 RUN curl https://raw.githubusercontent.com/cjworkbench/cjworkbench/stable/requirements.txt > requirements.txt
 RUN curl https://raw.githubusercontent.com/cjworkbench/cjworkbench/stable/requirements-dev.txt > requirements-dev.txt
 
-RUN pip install pipenv
-
-RUN pipenv install --dev --deploy --system
+RUN pip install -r requirements.txt && \
+    pip install -r requirements-dev.txt
 
 # node and npm deps
 RUN curl -sL https://deb.nodesource.com/setup_6.x | bash -
