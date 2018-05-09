@@ -20,6 +20,8 @@ describe('ColumnParam', () => {
 
     // need to give chance for componentdidMount to run
     setImmediate(() => {
+      wrapper.update()
+
       let state=wrapper.state();
       expect(state.selectedCol).toEqual('baz');
       expect(state.colNames).toEqual([noSelectionText].concat(testcols));
@@ -42,6 +44,7 @@ describe('ColumnParam', () => {
 
     // need to give chance for componentdidMount to run
     setImmediate(() => {
+      wrapper.update()
       let state=wrapper.state();
       expect(state.selectedCol).toEqual('baz');
       expect(state.colNames).toEqual(['Select'].concat(testcols));

@@ -444,6 +444,9 @@ exports[`Renders the grid 1`] = `
                     ]
                   }
                   height={35}
+                  key="function ref(node) {
+	        return _this3.row = node;
+	      }"
                   onColumnResize={[Function]}
                   onColumnResizeEnd={[Function]}
                   onScroll={[Function]}
@@ -503,6 +506,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={35}
+                        key="1"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={[Function]}
@@ -582,6 +586,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={35}
+                        key="2"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={[Function]}
@@ -661,6 +666,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={35}
+                        key="3"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={[Function]}
@@ -740,6 +746,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={35}
+                        key="4"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={[Function]}
@@ -819,6 +826,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={35}
+                        key="0"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={[Function]}
@@ -1528,7 +1536,9 @@ exports[`Renders the grid 1`] = `
                           }
                           width={680}
                         >
-                          <div>
+                          <div
+                            key="rows-container"
+                          >
                             <Row
                               cellMetaData={
                                 Object {
@@ -1618,6 +1628,7 @@ exports[`Renders the grid 1`] = `
                               idx={0}
                               isScrolling={true}
                               isSelected={false}
+                              key="row-0"
                               row={
                                 Object {
                                   "aaa": "9",
@@ -1704,6 +1715,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="aaa-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -1838,6 +1850,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="bbbb-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -1972,6 +1985,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="ccccc-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2106,6 +2120,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="rn_-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2241,6 +2256,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="rn__-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2392,6 +2408,7 @@ exports[`Renders the grid 1`] = `
                               idx={1}
                               isScrolling={true}
                               isSelected={false}
+                              key="row-1"
                               row={
                                 Object {
                                   "aaa": "9",
@@ -2478,6 +2495,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="aaa-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2612,6 +2630,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="bbbb-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2746,6 +2765,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="ccccc-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2880,6 +2900,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="rn_-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -3015,6 +3036,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="rn__-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`renders correctly 1`] = `
+exports[`WfHamburgerMenu renders correctly 1`] = `
 <WfHamburgerMenu
   workflowId={1}
 >
@@ -18,6 +18,7 @@ exports[`renders correctly 1`] = `
           className="context-button"
           color="secondary"
           data-toggle="dropdown"
+          key=".$.0"
         >
           <Button
             aria-expanded={false}
@@ -43,6 +44,7 @@ exports[`renders correctly 1`] = `
           </Button>
         </DropdownToggle>
         <DropdownMenu
+          key=".$.1"
           right={true}
           tag="div"
         >
@@ -56,6 +58,7 @@ exports[`renders correctly 1`] = `
               <DropdownItem
                 className="dropdown-menu--item"
                 href="/account/logout"
+                key="5"
                 tag="a"
                 toggle={true}
               >
@@ -81,7 +84,7 @@ exports[`renders correctly 1`] = `
 </WfHamburgerMenu>
 `;
 
-exports[`renders correctly for workflows list page 1`] = `
+exports[`WfHamburgerMenu renders correctly for workflows list page 1`] = `
 <WfHamburgerMenu>
   <UncontrolledDropdown>
     <Dropdown
@@ -97,6 +100,7 @@ exports[`renders correctly for workflows list page 1`] = `
           className="context-button"
           color="secondary"
           data-toggle="dropdown"
+          key=".$.0"
         >
           <Button
             aria-expanded={false}
@@ -122,6 +126,7 @@ exports[`renders correctly for workflows list page 1`] = `
           </Button>
         </DropdownToggle>
         <DropdownMenu
+          key=".$.1"
           right={true}
           tag="div"
         >
@@ -135,6 +140,7 @@ exports[`renders correctly for workflows list page 1`] = `
               <DropdownItem
                 className="dropdown-menu--item"
                 href="/account/logout"
+                key="5"
                 tag="a"
                 toggle={true}
               >

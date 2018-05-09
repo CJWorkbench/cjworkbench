@@ -24,6 +24,7 @@ describe('ColumnSelector', () => {
 
       // need to give chance for componentdidMount to run
       setImmediate( () => {
+        wrapper.update()
         expect(wrapper).toMatchSnapshot();
 
         // check that col names have loaded and turned into disabled checkboxes
@@ -62,6 +63,7 @@ describe('ColumnSelector', () => {
 
     it('Loads and renders column names', (done) => {
       setImmediate(() => {
+        wrapper.update()
         expect(wrapper).toMatchSnapshot();
 
         // check that col names have loaded and turned into checkboxes
@@ -76,6 +78,7 @@ describe('ColumnSelector', () => {
 
     it('Changes selected columns on click', (done) => {
       setImmediate(() => {
+        wrapper.update()
         expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
         // filter list to grab one checkbox, and click on it
@@ -92,6 +95,7 @@ describe('ColumnSelector', () => {
         });
 
         setImmediate( () => {
+          wrapper.update()
           // selected items should be the same
           expect(wrapper.state().selected).toEqual(["foo", "bar", "baz", 'wow']);
 
@@ -102,6 +106,7 @@ describe('ColumnSelector', () => {
 
     it('selects all columns when "select all" is clicked', (done) => {
       setImmediate(() => {
+        wrapper.update()
         expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
         let selectAllButton = wrapper.find('button.mc-select-all');
@@ -113,6 +118,7 @@ describe('ColumnSelector', () => {
 
     it('deselects all columns when "select none" is clicked', (done) => {
       setImmediate(() => {
+        wrapper.update()
         expect(wrapper.state().selected).toEqual(["foo", "bar", "baz"]);
 
         let selectNoneButton = wrapper.find('button.mc-select-none');

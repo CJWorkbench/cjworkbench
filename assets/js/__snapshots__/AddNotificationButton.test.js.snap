@@ -1,16 +1,13 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AddNotificationButtonClosed Renders 1`] = `
+exports[`AddNotificationButtonClosed matches snapshot 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >
-  <DragSource(AddNotificationButtonClosed)
-    setOpenCategory={[MockFunction]}
-  >
+  <DragSource(AddNotificationButtonClosed)>
     <AddNotificationButtonClosed
       connectDragSource={[Function]}
       isDragging={false}
-      setOpenCategory={[MockFunction]}
     >
       <div
         className="notification-button-closed"
@@ -35,12 +32,7 @@ exports[`AddNotificationButtonClosed Renders 1`] = `
           </div>
         </div>
         <div
-          className="card alert-closed-ML"
-          style={
-            Object {
-              "display": "none",
-            }
-          }
+          className="card alert-closed-ML d-none"
         >
           <div
             className="ML-module d-flex "
@@ -65,7 +57,7 @@ exports[`AddNotificationButtonClosed Renders 1`] = `
 </DragDropContextProvider>
 `;
 
-exports[`AddNotificationButtonOpen Renders 1`] = `
+exports[`AddNotificationButtonOpen matches snapshot 1`] = `
 <DragDropContextProvider
   backend={[Function]}
 >

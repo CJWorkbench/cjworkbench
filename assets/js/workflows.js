@@ -9,11 +9,12 @@ import { goToUrl } from "./utils";
 
 export default class Workflows extends React.Component {
   constructor(props) {
-    super(props);
-    this.click = this.click.bind(this);
-    this.deleteWorkflow = this.deleteWorkflow.bind(this);
-    this.duplicateWorkflow = this.duplicateWorkflow.bind(this);
-    this.state = { workflows: []}
+    super(props)
+
+    this.click = this.click.bind(this)
+    this.deleteWorkflow = this.deleteWorkflow.bind(this)
+    this.duplicateWorkflow = this.duplicateWorkflow.bind(this)
+    this.state = { workflows: [] }
   }
 
   // Make a new workflow when button clicked, and navigate to its Module List page
@@ -39,12 +40,12 @@ export default class Workflows extends React.Component {
 
   duplicateWorkflow(id) {
     this.props.api.duplicateWorkflow(id)
-    .then(json => {
-      // Add to beginning of list because wf list is reverse chron
-      var workflowsPlusDup = this.state.workflows.slice();
-      workflowsPlusDup.unshift(json);
-      this.setState({workflows: workflowsPlusDup})
-    })
+      .then(json => {
+        // Add to beginning of list because wf list is reverse chron
+        var workflowsPlusDup = this.state.workflows.slice();
+        workflowsPlusDup.unshift(json)
+        this.setState({workflows: workflowsPlusDup})
+      })
   }
 
   componentDidMount() {

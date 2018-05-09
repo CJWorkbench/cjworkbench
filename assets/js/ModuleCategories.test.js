@@ -1,86 +1,88 @@
 /**
  * Testing Stories:
  * -Renders list of <ModuleCategory> components
- * 
+ *
  */
 
 import React from 'react'
 import ModuleCategories  from './ModuleCategories'
-import { mount } from 'enzyme'
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContextProvider } from 'react-dnd'
+import { shallow } from 'enzyme'
 
 
 describe('ModuleCategories ', () => {
-  
-  var wrapper;  
-  var items = [
+  let wrapper
+  const modules = [
     {
       "id":4,
       "name":"Load from Enigma",
       "category":"Add data",
-      "description":"Connect a dataset from Enigma's collection via URL.",
-      "link":"",
-      "author":"Workbench",
       "icon":"url"
     },
     {
       "id":10,
       "name":"Filter by Text",
       "category":"Filter",
-      "description":"Filter rows by matching text in specific columns.",
-      "link":"",
-      "author":"Workbench",
       "icon":"filter"
-    }
-  ];   
-  
-  describe('Library open ', () => {
+    },
+    {
+      "id":11,
+      "name":"Filter by Something Else",
+      "category":"Filter",
+      "icon":"filter"
+    },
+  ]
 
-    beforeEach(() => wrapper = mount(
-      <DragDropContextProvider backend={HTML5Backend}>
+  describe('Library open ', () => {
+    beforeEach(() => {
+      wrapper = shallow(
         <ModuleCategories
-          openCategory={"Add data"} 
+          openCategory={"Add data"}
           setOpenCategory={() => {}}
           libraryOpen={true}
-          isReadOnly={false}            
+          isReadOnly={false}
           addModule={() => {}}
           dropModule={() => {}}
-          items={items}
+          modules={modules}
         />
-      </DragDropContextProvider>
-    ));
+      )
+    })
 
-    afterEach(() => wrapper.unmount());    
-  
-    it('Renders with list of ModuleCategory components', () => { 
-      expect(wrapper).toMatchSnapshot();
-    });
+    it('matches snapshot', () => {
+      expect(wrapper).toMatchSnapshot()
+    })
 
-  });
+    it('renders ModuleCategory components', () => {
+      function describe(mc) {
+        return {
+          category: mc.name,
+          collapsed: mc.collapsed,
+          names: mc.modules.map(m => m.name),
+        }
+      }
+      expect(wrapper.find('ModuleCategory').map(mc => describe(mc.props()))).toEqual([
+        { category: 'Add data', collapsed: false, names: [ 'Load from Enigma' ] },
+        { category: 'Filter', collapsed: true, names: [ 'Filter by Text', 'Filter by Something Else' ] },
+      ])
+    })
+  })
 
   describe('Library closed ', () => {
-  
-    beforeEach(() => wrapper = mount(
-      <DragDropContextProvider backend={HTML5Backend}>
+    beforeEach(() => {
+      wrapper = shallow(
         <ModuleCategories
-          openCategory={"Add data"} 
+          openCategory={"Add data"}
           setOpenCategory={() => {}}
           libraryOpen={false}
-          isReadOnly={false}            
+          isReadOnly={false}
           addModule={() => {}}
           dropModule={() => {}}
-          items={items}
-        />
-      </DragDropContextProvider>
-    ));
+          modules={modules}
+          />
+      )
+    })
 
-    afterEach(() => wrapper.unmount());    
-  
-    it('Renders with list of ModuleCategory components', () => { 
-      expect(wrapper).toMatchSnapshot();
-    });
-  
-  });
-      
-});
+    it('renders children as closed', () => {
+      expect(wrapper.find('ModuleCategory').map(mc => mc.props().libraryOpen)).toEqual([ false, false ])
+    })
+  })
+})

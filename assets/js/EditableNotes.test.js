@@ -1,21 +1,22 @@
 import React from 'react'
-import { shallow, mount } from 'enzyme'
+import { shallow } from 'enzyme'
 import EditableNotes from './EditableNotes'
 import { okResponseMock } from './utils'
 
 
 describe('EditableNotes', () => {
+  let wrapper
 
-  var wrapper; 
-  var api = {
-    setWfModuleNotes: okResponseMock()
-  };
-  var notesField;
+  let api
+  beforeEach(() => {
+    api = {
+      setWfModuleNotes: okResponseMock(),
+    }
+  })
 
-  // 'Read-only, starts focused' is not necessary, as Focus and ReadOnly do not happen together
+  // Can't test "startsFocused" with shallow(), because there's no DOM element to focus
 
-  describe('Read-only, starts NOT focused', () => {
-
+  describe('Read-only', () => {
     beforeEach(() => wrapper = shallow(
       <EditableNotes
         value={'This is the best module'}
@@ -25,17 +26,19 @@ describe('EditableNotes', () => {
         hideNotes={ () => {} }
         startFocused={false}
       />
-    ));
+    ))
+
+    it('matches snapshot', () => {
+      expect(wrapper).toMatchSnapshot()
+    })
   
-    it('Renders plain note', () => {
-      expect(wrapper).toMatchSnapshot();
-    });
+    it('renders plain note', () => {
+      expect(wrapper.find('div.editable-notes-field').text()).toEqual('This is the best module')
+    })
+  })
 
-  });
-
-  describe('NOT Read-only, starts focused', () => {
-
-    beforeEach(() => wrapper = mount(
+  describe('NOT Read-only', () => {
+    beforeEach(() => wrapper = shallow(
       <EditableNotes
         value={'This is the best module'}
         wfModuleId={808}
@@ -44,59 +47,29 @@ describe('EditableNotes', () => {
         hideNotes={ () => {} }
         startFocused={true}
       />
-    ));
-    beforeEach(() => notesField = wrapper.find('.editable-notes-field'));        
-  
-    it('Renders note in edit state at start', () => {
-      expect(wrapper).toMatchSnapshot();
-    });
+    ))
 
-    it('A new note may be entered and saved', () => {
-      expect(notesField).toHaveLength(1);
-      expect(wrapper.state().value).toEqual('This is the best module');
-      notesField.simulate('change', {target: {value: 'This is a mediocre module'}});
-      // Blur to trigger save
-      notesField.simulate('blur');
+    it('matches snapshot', () => {
+      expect(wrapper).toMatchSnapshot()
+    })
+  
+    it('renders note in edit state at start', () => {
+      expect(wrapper.find('TextareaAutosize').prop('value')).toEqual('This is the best module')
+    })
+
+    it('lets user enter and save a note', () => {
+      expect(wrapper.state().value).toEqual('This is the best module')
+      wrapper.find('TextareaAutosize').prop('onChange')({ target: { value: 'This is a mediocre module' } })
+      wrapper.find('TextareaAutosize').prop('onBlur')() // trigger save
       // Check that the API was called
-      expect(api.setWfModuleNotes.mock.calls.length).toBe(1);
-      // Check that default note is saved instead    
-      expect(api.setWfModuleNotes.mock.calls[0][1]).toBe('This is a mediocre module'); 
-     
-      expect(wrapper.state().value).toEqual('This is a mediocre module');
+      expect(api.setWfModuleNotes).toHaveBeenCalledWith(808, 'This is a mediocre module')
+      expect(wrapper.state().value).toEqual('This is a mediocre module')
+    })
 
-    });
-
-    it('If a new note is blank, will save default text and close', () => {
-
-      expect(wrapper.state().value).toEqual('This is the best module');
-      notesField.simulate('change', {target: {value: ''}});
-      // Blur to trigger save
-      notesField.simulate('blur');
-      // Check that the API was called again
-      expect(api.setWfModuleNotes.mock.calls.length).toBe(2);
-      // Check that default note is saved instead     
-      expect(api.setWfModuleNotes.mock.calls[1][1]).toBe("Write notes here"); 
-    });
-
-  });
-
-  describe('NOT Read-only, starts not focused', () => {
-
-    beforeEach(() => wrapper = mount(
-      <EditableNotes
-        value={'This is the best module'}
-        wfModuleId={808}
-        api={{}}
-        isReadOnly={false}
-        hideNotes={ () => {} }
-        startFocused={false}
-      />
-    ));
-  
-    it('Renders note in non-edit state at start', () => {
-      expect(wrapper).toMatchSnapshot();
-    });
-
-  });
-
-});
+    it('saves default text and closes if user enters blank note', () => {
+      wrapper.find('TextareaAutosize').prop('onChange')({ target: { value: '' }})
+      wrapper.find('TextareaAutosize').prop('onBlur')() // trigger save
+      expect(api.setWfModuleNotes).toHaveBeenCalledWith(808, 'Write notes here')
+    })
+  })
+})

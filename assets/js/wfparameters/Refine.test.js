@@ -8,8 +8,7 @@ describe('Refine', () => {
 
     const INTERNAL_COUNT_COLNAME = '__internal_count_column__'
 
-    var store, api;
-    var wrapper;
+    let store, api, wrapper
 
     // Mocks response to the histogram API call
     const histogramResponse = {
@@ -24,14 +23,12 @@ describe('Refine', () => {
         ]
     };
 
-    var existingEdits = '[]';
+    let existingEdits = '[]';
 
     function mockSaveEdits(edits) {
         //console.log('mockSaveEdits called');
         existingEdits = edits;
     }
-
-    mockSaveEdits = mockSaveEdits.bind(this);
 
     beforeEach(() => {
         existingEdits = '[]';
@@ -50,12 +47,15 @@ describe('Refine', () => {
                revision={0}
             />
         )
-    });
+    })
+
+    afterEach(() => wrapper.unmount())
 
     it('loads the histogram', (done) => {
         //expect(wrapper).toMatchSnapshot();
 
         setImmediate(() => {
+            wrapper.update()
             expect(wrapper.state()).toEqual({
                 selectedColumn: 'foo',
                 histogramLoaded: true,
@@ -78,6 +78,7 @@ describe('Refine', () => {
 
     it('updates the histogram upon value edit', (done) => {
         setImmediate(() => {
+            wrapper.update()
             var bar1Input = wrapper.find('input[value="bar1"]');
             expect(bar1Input).toHaveLength(1);
 
@@ -92,13 +93,14 @@ describe('Refine', () => {
             });
 
             setImmediate(() => {
-
+                wrapper.update()
                 wrapper.setProps({
                     existingEdits: existingEdits,
                     revision: 1
                 });
 
                 setImmediate(() => {
+                    wrapper.update()
                     //console.log(wrapper.state().histogramData);
                     expect(wrapper.state().histogramData).toEqual(
                         [
@@ -117,57 +119,44 @@ describe('Refine', () => {
     });
 
     it('updates the checkboxes upon value (de)selection', (done) => {
+      const findBar1Checkbox = (name) => {
+        return wrapper.find('EditRow').at(0).find('input[type="checkbox"]')
+      }
+
         setImmediate(() => {
+            wrapper.update()
             // Click the checkbox for value 'bar1'
 
-            var bar1Group = wrapper.find('input[value="bar1"]').parent();
-            var bar1Checkbox = bar1Group.find('input[type="checkbox"]');
-            expect(bar1Checkbox).toHaveLength(1);
+            expect(findBar1Checkbox().prop('checked')).toBe(true)
+            findBar1Checkbox().simulate('change')
 
-            bar1Checkbox.simulate('change');
+            // Update the component
+            wrapper.setProps({
+                existingEdits: existingEdits,
+                revision: 1
+            })
 
             setImmediate(() => {
-                // Update the component
+                wrapper.update()
+                // And check that the checkbox should not be checked
+                // After that, click the checkbox again
 
+                expect(findBar1Checkbox().prop('checked')).toBe(false)
+                findBar1Checkbox().simulate('change');
+
+                // Update the component
                 wrapper.setProps({
                     existingEdits: existingEdits,
-                    revision: 1
-                });
+                    revision: 2
+                })
 
                 setImmediate(() => {
-                    // And check that the checkbox should not be checked
-                    // After that, click the checkbox again
+                    wrapper.update()
+                    // And check that the checkbox should be checked now
 
-                    bar1Group = wrapper.find('input[value="bar1"]').parent();
-                    bar1Checkbox = bar1Group.find('input[type="checkbox"]');
-                    expect(bar1Checkbox).toHaveLength(1);
+                    expect(findBar1Checkbox().prop('checked')).toBe(true)
 
-                    expect(bar1Checkbox.props().checked).toEqual(false);
-
-                    bar1Checkbox.simulate('change');
-
-                    setImmediate(() => {
-                        // Update the component
-
-                        wrapper.setProps({
-                            existingEdits: existingEdits,
-                            revision: 2
-                        });
-
-                        setImmediate(() => {
-                            // And check that the checkbox should be checked now
-
-                            bar1Group = wrapper.find('input[value="bar1"]').parent();
-                            bar1Checkbox = bar1Group.find('input[type="checkbox"]');
-                            expect(bar1Checkbox).toHaveLength(1);
-
-                            //console.log(bar1Checkbox.props().checked);
-
-                            expect(bar1Checkbox.props().checked).toEqual(true);
-
-                            done();
-                        });
-                    });
+                    done();
                 });
             });
         });
