@@ -23,7 +23,7 @@
 <tr>
 	<td>Gitter</td>
 	<td>
-		<a href="https://gitter.im/workbenchdata">
+		<a href="https://gitter.im/workbenchdata/Lobby">
 		<img src="https://badges.gitter.im/Join%20Chat.svg"
 	</a>
 	</td>
@@ -59,6 +59,7 @@ To see what Workbench does, try our [public server](http://workbenchdata.org), n
 # Contributing
 
 - How to [set up a development environment](https://github.com/jstray/cjworkbench/wiki/Setting-up-a-development-environment).
+- [Join us on gitter](https://gitter.im/workbenchdata/Lobby)!
 
 # Contact us
 Always happy to hear from you:
