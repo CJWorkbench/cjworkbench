@@ -59,7 +59,7 @@ To see what Workbench does, try our [public server](http://workbenchdata.org), n
 
 - [What workbench can do for data](https://medium.com/@Workbench/what-workbench-can-do-for-data-c8534384c978)
 - [Data journalism made easier, faster, and more collaborative](https://medium.com/@Workbench/data-journalism-made-easier-faster-and-more-collaborative-e33081bf0080)
-- Our [knowledge base](http://help.cjworkbench.org/) has detailed instructions for each module
+- Our [knowledge base](http://help.workbenchdata.com/) has detailed instructions for each module
 
 # Contributing
 
