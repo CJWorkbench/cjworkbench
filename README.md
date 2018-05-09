@@ -7,19 +7,16 @@
 
 #  The data journalism platform with built-in training
 
-Welcome to the Workbench! (CJ for Computational Journalism.) 
+Welcome to the Workbench! (CJ for Computational Journalism.)
 
-<<<<<<< HEAD
 - Our [public server](http://workbenchdata.com), now in beta.
-||||||| merged common ancestors
-- Our [public server](http://cjworkbench.org), now in beta.
-=======
+
 Workbench is a platform that combines data tools and training for journalists. It is a workbook-style data processing system designed around modular tools for data processing -- table in, table out -- with no code required. Features include:
 
 - An integrated data journalism training program
-- Modules to scrape, clean, analyze and visualize data 
+- Modules to scrape, clean, analyze and visualize data
 - Every action is recorded, so all workflows are repeatable and transparent
-- Connect to Google Drive, Twitter, and API endpoints. 
+- Connect to Google Drive, Twitter, and API endpoints.
 - All data is live and versioned, and you can monitor for changes.
 - Write custom modules in Python + Javascript and add them to the module library
 
@@ -33,19 +30,13 @@ To see what Workbench does, try our [public server](http://workbenchdata.org), n
 - [Data journalism made easier, faster, and more collaborative](https://medium.com/@Workbench/data-journalism-made-easier-faster-and-more-collaborative-e33081bf0080)
 - Our [knowledge base](http://help.cjworkbench.org/) has detailed instructions for each module
 
-# Contributing 
->>>>>>> master
+# Contributing
+
 - How to [set up a development environment](https://github.com/jstray/cjworkbench/wiki/Setting-up-a-development-environment).
 
-<<<<<<< HEAD
-Would you like to contribute? Contact us ([Twitter](https://twitter.com/cjworkbench), [email](mailto:hello@workbenchdata.com)). We also accept Pull Requests :)
-||||||| merged common ancestors
-Would you like to contribute? Contact us ([Twitter](https://twitter.com/cjworkbench), [email](mailto:hello@cjworkbench.org)). We also accept Pull Requests :)
-=======
 # Contact us
 Always happy to hear from you:
  - [Twitter](https://twitter.com/workbenchdata)
  - [email](mailto:hello@workbenchdata.org)
- 
+
  We also accept Pull Requests :)
->>>>>>> master
