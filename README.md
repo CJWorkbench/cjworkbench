@@ -2,8 +2,34 @@
   <img src="https://github.com/CJWorkbench/cjworkbench/blob/master/assets/images/banner.jpg"><br>
 </div>
 
------------------
-[![Build Status](https://travis-ci.org/CJWorkbench/cjworkbench.svg?branch=master)](https://travis-ci.org/CJWorkbench/cjworkbench)
+<table>
+
+<tr>
+  <td>Build Status</td>
+  <td>
+    <a href="https://travis-ci.org/CJWorkbench/cjworkbench">
+    <img src="https://travis-ci.org/CJWorkbench/cjworkbench.svg?branch=master" alt="travis build status" />
+    </a>
+  </td>
+</tr>
+<tr>
+  <td>License</td>
+  <td>
+    <a href="https://github.com/cjworkbench/cjworkbench/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/license-AGPL-blue.svg" alt="license" />
+    </a>
+  </td>
+</tr>
+<tr>
+	<td>Gitter</td>
+	<td>
+		<a href="https://gitter.im/workbenchdata">
+		<img src="https://badges.gitter.im/Join%20Chat.svg"
+	</a>
+	</td>
+</tr>
+</table>
+
 
 #  The data journalism platform with built-in training
 
