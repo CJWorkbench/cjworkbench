@@ -198,7 +198,7 @@ export default class WorkflowNavBar extends React.Component {
           user={this.props.loggedInUser}
       />
     } else {
-      contextMenu = <a href="http://app.cjworkbench.org/account/login" className='nav--link t-white content-2'>Sign in</a>
+      contextMenu = <a href="http://app.workbenchdata.com/account/login" className='nav--link t-white content-2'>Sign in</a>
     }
 
     var duplicate = <div onClick={this.handleDuplicate} className='button-white--fill action-button test-duplicate-button'>

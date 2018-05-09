@@ -38,7 +38,7 @@ export default class UpdateFrequencySelect extends React.Component {
       this.toggleModal();
       this.toggleManual();
       this.setState({
-        message: "Choose a frequency to check on new data and click 'Apply'."
+        message: "Choose how often to check for new data and click 'Apply'."
       })
     }
   }

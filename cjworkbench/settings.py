@@ -53,7 +53,7 @@ if 'CJW_PRODUCTION' in os.environ:
 else:
     DEBUG=True
 
-DEFAULT_FROM_EMAIL = 'Workbench <hello@accounts.cjworkbench.org>'
+DEFAULT_FROM_EMAIL = 'Workbench <hello@accounts.workbenchdata.com>'
 
 # Various environment variables must be set in production
 if DEBUG==False:
@@ -335,7 +335,7 @@ else:
 
 
 # Knowledge base root url, used as a default for missing help links
-KB_ROOT_URL = 'http://help.cjworkbench.org/'
+KB_ROOT_URL = 'http://help.workbenchdata.com/'
 
 try:
     from cjworkbench.local_settings import *
