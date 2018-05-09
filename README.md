@@ -50,6 +50,10 @@ Workbench is a platform that combines data tools and training for journalists. I
 
 To see what Workbench does, try our [public server](http://workbenchdata.org), now in beta. Or run your [own server](https://github.com/jstray/cjworkbench/wiki/Deployment).
 
+<div align="center">
+  <img src="https://github.com/CJWorkbench/cjworkbench/blob/master/assets/images/demoSignup.gif"><br>
+</div>
+
 # User Documentation
 
 - [What workbench can do for data](https://medium.com/@Workbench/what-workbench-can-do-for-data-c8534384c978)
