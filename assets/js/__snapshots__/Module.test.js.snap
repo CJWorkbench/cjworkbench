@@ -3,6 +3,7 @@
 exports[`Module NOT Read-only Renders snapshot 1`] = `
 <div
   className="card ml-module-card "
+  data-module-name="Sweet Module"
   onClick={[Function]}
 >
   <div

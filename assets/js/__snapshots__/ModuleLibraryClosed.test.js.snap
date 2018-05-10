@@ -201,6 +201,7 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
                           >
                             <div
                               className="card ml-module-card "
+                              data-module-name="Load from Enigma"
                               onClick={[Function]}
                             >
                               <div
@@ -582,6 +583,7 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
                           >
                             <div
                               className="card ml-module-card "
+                              data-module-name="Load from Enigma"
                               onClick={[Function]}
                             >
                               <div
