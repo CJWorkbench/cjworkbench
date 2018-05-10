@@ -60,15 +60,23 @@ article.lesson {
           word-break: break-all;
           cursor: text;
         }
+
+        &::before {
+          content: "\e938";
+          color: $text-muted;
+          font-size: 0.8rem;
+          font-family: Workbench;
+          position: absolute;
+          margin-left: -2rem;
+        }
+        &.current::before {
+          content: "\e939";
+          color:$brand-learn;
+        }
+        &.done::before {
+          content: "\e904"; // icon-check
+        }
       }
-      li:before {
-        content: "\e939";
-        color:$brand-learn;
-        font-size: 0.8rem;
-        font-family: Workbench;
-        position: absolute;
-        margin-left: -2rem;
-}
     }
   }
 

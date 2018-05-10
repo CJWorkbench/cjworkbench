@@ -155,15 +155,16 @@ class LessonSection:
         return LessonSection(title, html, steps)
 
 class LessonSectionStep:
-    def __init__(self, html, highlight):
+    def __init__(self, html, highlight, test_js):
         self.html = html
         self.highlight = highlight
+        self.test_js = test_js
 
     def __eq__(self, other):
-        return (self.html, self.highlight) == (other.html, other.highlight)
+        return (self.html, self.highlight, self.test_js) == (other.html, other.highlight, other.test_js)
 
     def __repr__(self):
-        return 'LessonSectionStep' + repr((self.html, self.highlight))
+        return 'LessonSectionStep' + repr((self.html, self.highlight, self.test_js))
 
     @staticmethod
     def _from_etree(el):
@@ -176,7 +177,11 @@ class LessonSectionStep:
         except json.decoder.JSONDecodeError:
             raise LessonParseError('data-highlight contains invalid JSON')
 
-        return LessonSectionStep(html, highlight)
+        test_js = el.get('data-test')
+        if not test_js:
+            raise LessonParseError('missing data-test attribute, which must be JavaScript')
+
+        return LessonSectionStep(html, highlight, test_js)
 
 class LessonParseError(Exception):
     def __init__(self, message):

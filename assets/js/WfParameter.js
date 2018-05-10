@@ -307,6 +307,8 @@ export default class WfParameter extends React.Component {
   }
 
   render() {
+    const name = this.props.p.parameter_spec.id_name
+
     if (!this.props.p.visible) {
       return false; // nothing to see here
     }
@@ -341,7 +343,7 @@ export default class WfParameter extends React.Component {
           <div className={'parameter-margin ' + this.paramClassName}>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             {/* <TextOrNothing text={this.name} className='label-margin t-d-gray content-3'/> */}
-            <textarea
+            <input type="text"
               onMouseEnter={() => this.props.stopDrag() }
               onMouseLeave={() => this.props.startDrag() }
               onBlur={this.blur}
@@ -349,6 +351,7 @@ export default class WfParameter extends React.Component {
               onClick={this.click}
               readOnly={this.props.isReadOnly}
               className={sclass}
+              name={name}
               rows={srows}
               defaultValue={this.props.p.value}
               placeholder={this.props.p.parameter_spec.placeholder || ''}
