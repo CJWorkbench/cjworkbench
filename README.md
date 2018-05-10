@@ -9,7 +9,7 @@
   <td>Build Status</td>
   <td>
     <a href="https://travis-ci.org/CJWorkbench/cjworkbench">
-    <img src="https://travis-ci.org/CJWorkbench/cjworkbench.svg?branch=master" alt="travis build status" />
+      <img src="https://travis-ci.org/CJWorkbench/cjworkbench.svg?branch=master" alt="travis build status" />
     </a>
   </td>
 </tr>
@@ -17,17 +17,17 @@
   <td>License</td>
   <td>
     <a href="https://github.com/cjworkbench/cjworkbench/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/license-AGPL-blue.svg" alt="license" />
+      <img src="https://img.shields.io/badge/license-AGPL-blue.svg" alt="license" />
     </a>
   </td>
 </tr>
 <tr>
-	<td>Gitter</td>
-	<td>
-		<a href="https://gitter.im/workbenchdata/Lobby">
-		<img src="https://badges.gitter.im/Join%20Chat.svg"
-	</a>
-	</td>
+  <td>Gitter</td>
+    <td>
+      <a href="https://gitter.im/workbenchdata/Lobby">
+        <img src="https://badges.gitter.im/Join%20Chat.svg" />
+      </a>
+  </td>
 </tr>
 </table>
 
@@ -72,3 +72,6 @@ Always happy to hear from you:
  - [email](mailto:hello@workbenchdata.org)
 
  We also accept Pull Requests :)
+
+# Credits
+Workbench is a project of Columbia Journalism School, made possible through the generous support of Krishna Bharat and the Knight Foundation.
