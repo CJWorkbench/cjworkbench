@@ -1,4 +1,4 @@
-<div align="center">
+<div align="center" class='mb-3'>
   <img src="https://github.com/CJWorkbench/cjworkbench/blob/master/assets/images/banner.jpg"><br>
 </div>
 

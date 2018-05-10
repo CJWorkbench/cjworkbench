@@ -295,7 +295,7 @@ class WfModule extends React.Component {
               <div className='module-card-info'>
                 <div className='module-card-header'>
                   <div className='module-header-content'>
-                    <div className='d-flex justify-content-start align-items-center'>
+                    <div className='d-flex justify-content-start align-items-center' onClick={this.toggleCollapsed}>
                       <div className={moduleIcon} />
                       <div className='t-d-gray WFmodule-name'>{module.name}</div>
                       {wfModule.notifications &&
@@ -310,12 +310,10 @@ class WfModule extends React.Component {
                       }
                       <div style={{ opacity: this.state.showButtons ? '1' : '0' }} className={
                         this.state.isCollapsed ?
-                          'icon-sort-down btn context-collapse-button' :
-                          'icon-sort-up btn context-collapse-button'
-                        }
-                        onClick={this.toggleCollapsed} >
+                          'icon-sort-down context-collapse-button' :
+                          'icon-sort-up context-collapse-button'
+                        }>
                       </div>
-
                     </div>
                     {contextBtns}
                   </div>
