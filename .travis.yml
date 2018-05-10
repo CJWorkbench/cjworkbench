@@ -27,6 +27,7 @@ install:
 #- export PATH=$PATH:$PWD/geckodriver
 
 script:
+- python manage.py test
 - pipenv run ./manage.py test
 - npm test
 - pipenv run ./manage.py test integrationtests
