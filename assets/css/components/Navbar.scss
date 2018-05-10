@@ -126,7 +126,7 @@ img.logo {
   padding: 0;
   resize: none;
   background: none;
-  font-family: 'Nunito Sans', sans-serif;
+  @extend %font-nunito-regular;
   font-size: 1.8rem;
 	line-height: 2.4rem;
   color: #FFFFFF;

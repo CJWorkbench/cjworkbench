@@ -77,9 +77,9 @@
 
 .module-description {
   margin-bottom: 2rem;
-  font-family: 'Nunito Light', sans-serif;
+  font-family: 'Nunito Sans', sans-serif;
   font-size: 1.3rem;
-	font-weight: 300;
+	font-weight: 200;
   line-height: 2.1rem;
   color: #A2A2A2;
   display:none;
@@ -93,7 +93,7 @@
   background-color: rgba(232,114,110,0.6);
   color: #fff;
   font-size: 1.2rem;
-  font-family: 'Nunito Light', sans-serif;
+  @extend %font-nunito-regular;
   text-align: left;
 }
 

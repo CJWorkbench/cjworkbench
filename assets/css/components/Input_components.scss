@@ -168,7 +168,7 @@ select.form-control {
 /* --- Editable text fields --- */
 
 .module-title {
-  font-family: 'Nunito Sans', sans-serif;
+  @extend %font-nunito-regular;
   font-size: 1.8rem;
 	line-height: 1.8rem;
   color: #FFFFFF;
@@ -186,9 +186,8 @@ select.form-control {
   width: 25rem;
   min-height: 3rem;
   resize: none;
-  font-family: 'Nunito Sans', sans-serif;
+  @extend %font-nunito-extra-light;
   font-size: 1.3rem;
-  font-weight: 100;
 	line-height: 2.2rem;
   color: #686768;
   background-color:transparent;
