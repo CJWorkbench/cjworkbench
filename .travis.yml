@@ -16,7 +16,7 @@ install:
 #- nvm use stable
 #- npm install
 - pip install pipenv==11.10.0
-- pipenv install --dev
+- pipenv install --dev --deploy
 # - ./node_modules/.bin/webpack --config webpack.config.js
 # media directory must exist already for StoredObject tests
 #- mkdir media
