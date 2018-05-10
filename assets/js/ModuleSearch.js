@@ -7,7 +7,6 @@ import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
-import {logEvent} from "./utils";
 import { connect } from 'react-redux'
 import { stateHasLessonHighlight } from './util/LessonHighlight'
 
@@ -186,7 +185,6 @@ export class ModuleSearch extends React.Component {
   onBlur() {
     var value = this.state.value;
     if (value !== '' && value != this.lastLoggedQuery) {
-      logEvent('Module search', {'value': value})
       this.lastLoggedQuery = value;
     }
   }
