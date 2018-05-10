@@ -31,6 +31,8 @@ describe('ModuleCategory ', () => {
       wrapper = shallowWithStubbedStore(
         <ModuleCategory
           name={"Add Data"}
+          addModule={jest.fn()}
+          dropModule={jest.fn()}
           modules={modules}
           isReadOnly={false}
           setOpenCategory={setOpenCategory}
@@ -54,6 +56,8 @@ describe('ModuleCategory ', () => {
       wrapper = shallowWithStubbedStore(
         <ModuleCategory
           name={"Add data"}
+          addModule={jest.fn()}
+          dropModule={jest.fn()}
           modules={modules}
           isReadOnly={false}
           collapsed={true}
@@ -93,6 +97,8 @@ describe('ModuleCategory ', () => {
       wrapper = shallowWithStubbedStore(
         <ModuleCategory
           name={"Add Data"}
+          addModule={jest.fn()}
+          dropModule={jest.fn()}
           modules={modules}
           isReadOnly={false}
           collapsed={false}

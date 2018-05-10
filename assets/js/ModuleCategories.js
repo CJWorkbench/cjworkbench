@@ -38,7 +38,7 @@ function modulesToCategories(modules) {
 export default class ModuleCategories extends React.Component {
   _renderCategory(category) {
     const { name, modules } = category
-    const { isReadOnly, libraryOpen, setOpenCategory } = this.props
+    const { isReadOnly, libraryOpen, addModule, dropModule, setOpenCategory } = this.props
     const collapsed = this.props.openCategory !== name
 
     return (
@@ -48,6 +48,8 @@ export default class ModuleCategories extends React.Component {
         modules={modules}
         isReadOnly={isReadOnly}
         collapsed={collapsed}
+        addModule={addModule}
+        dropModule={dropModule}
         setOpenCategory={setOpenCategory}
         libraryOpen={libraryOpen}
         />

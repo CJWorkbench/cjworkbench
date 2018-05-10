@@ -115,7 +115,9 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
               className="list"
             >
               <ModuleCategory
+                addModule={[Function]}
                 collapsed={false}
+                dropModule={[Function]}
                 isReadOnly={false}
                 key="Add data"
                 libraryOpen={false}
@@ -160,6 +162,8 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
                       onMouseLeave={[Function]}
                     >
                       <Connect(DragSource(Module))
+                        addModule={[Function]}
+                        dropModule={[Function]}
                         icon="url"
                         id={4}
                         isReadOnly={false}
@@ -169,7 +173,9 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
                         setOpenCategory={[Function]}
                       >
                         <DragSource(Module)
+                          addModule={[Function]}
                           dispatch={[Function]}
+                          dropModule={[Function]}
                           icon="url"
                           id={4}
                           isLessonHighlight={false}
@@ -179,9 +185,11 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
                           setOpenCategory={[Function]}
                         >
                           <Module
+                            addModule={[Function]}
                             connectDragPreview={[Function]}
                             connectDragSource={[Function]}
                             dispatch={[Function]}
+                            dropModule={[Function]}
                             icon="url"
                             id={4}
                             isDragging={false}
@@ -233,7 +241,9 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
                 </div>
               </ModuleCategory>
               <ModuleCategory
+                addModule={[Function]}
                 collapsed={true}
+                dropModule={[Function]}
                 isReadOnly={false}
                 key="Filter"
                 libraryOpen={false}
@@ -486,7 +496,9 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
               className="list"
             >
               <ModuleCategory
+                addModule={[Function]}
                 collapsed={false}
+                dropModule={[Function]}
                 isReadOnly={true}
                 key="Add data"
                 libraryOpen={false}
@@ -531,6 +543,8 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
                       onMouseLeave={[Function]}
                     >
                       <Connect(DragSource(Module))
+                        addModule={[Function]}
+                        dropModule={[Function]}
                         icon="url"
                         id={4}
                         isReadOnly={true}
@@ -540,7 +554,9 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
                         setOpenCategory={[Function]}
                       >
                         <DragSource(Module)
+                          addModule={[Function]}
                           dispatch={[Function]}
+                          dropModule={[Function]}
                           icon="url"
                           id={4}
                           isLessonHighlight={false}
@@ -550,9 +566,11 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
                           setOpenCategory={[Function]}
                         >
                           <Module
+                            addModule={[Function]}
                             connectDragPreview={[Function]}
                             connectDragSource={[Function]}
                             dispatch={[Function]}
+                            dropModule={[Function]}
                             icon="url"
                             id={4}
                             isDragging={false}
@@ -604,7 +622,9 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
                 </div>
               </ModuleCategory>
               <ModuleCategory
+                addModule={[Function]}
                 collapsed={true}
+                dropModule={[Function]}
                 isReadOnly={true}
                 key="Filter"
                 libraryOpen={false}

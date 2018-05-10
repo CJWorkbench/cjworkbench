@@ -5,7 +5,9 @@ exports[`ModuleCategories  Library open  matches snapshot 1`] = `
   className="list"
 >
   <ModuleCategory
+    addModule={[Function]}
     collapsed={false}
+    dropModule={[Function]}
     isReadOnly={false}
     key="Add data"
     libraryOpen={true}
@@ -23,7 +25,9 @@ exports[`ModuleCategories  Library open  matches snapshot 1`] = `
     setOpenCategory={[Function]}
   />
   <ModuleCategory
+    addModule={[Function]}
     collapsed={true}
+    dropModule={[Function]}
     isReadOnly={false}
     key="Filter"
     libraryOpen={true}
