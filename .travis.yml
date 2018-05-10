@@ -9,23 +9,22 @@ addons:
 env:
   # otherwise we need to start an X-server, see https://docs.travis-ci.com/user/gui-and-headless-browsers/
   - MOZ_HEADLESS=1
-  - PIPENV_IGNORE_VIRTUALENVS=1
 
 install:
-- ". $HOME/.nvm/nvm.sh"
-- nvm install stable
-- nvm use stable
-- npm install
+#- ". $HOME/.nvm/nvm.sh"
+#- nvm install stable
+#- nvm use stable
+#- npm install
 - pip install pipenv==11.10.0
 - pipenv install --dev
-- ./node_modules/.bin/webpack --config webpack.config.js
+# - ./node_modules/.bin/webpack --config webpack.config.js
 # media directory must exist already for StoredObject tests
 - mkdir media
 # Geckodriver needed  for integration tests
-- wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz
-- mkdir geckodriver
-- tar -xzf geckodriver-v0.19.1-linux64.tar.gz -C geckodriver
-- export PATH=$PATH:$PWD/geckodriver
+#- wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz
+#- mkdir geckodriver
+#- tar -xzf geckodriver-v0.19.1-linux64.tar.gz -C geckodriver
+#- export PATH=$PATH:$PWD/geckodriver
 
 script:
 - pipenv run ./manage.py test
