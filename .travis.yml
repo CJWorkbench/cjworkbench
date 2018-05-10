@@ -9,8 +9,6 @@ addons:
 env:
   # otherwise we need to start an X-server, see https://docs.travis-ci.com/user/gui-and-headless-browsers/
   - MOZ_HEADLESS=1
-#  - PIPENV_IGNORE_VIRTUALENVS=1
-  - PIPENV_VENV_IN_PROJECT
 
 install:
 #- ". $HOME/.nvm/nvm.sh"
