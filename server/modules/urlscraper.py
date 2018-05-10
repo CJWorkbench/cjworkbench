@@ -7,6 +7,7 @@ import pandas as pd
 import datetime
 import aiohttp
 import asyncio
+import async_timeout
 import re
 
 
@@ -37,7 +38,7 @@ def is_valid_url(url):
         return False
 
 async def async_get_url(url):
-    with aiohttp.Timeout(settings.SCRAPER_TIMEOUT):
+    with async_timeout.timeout(settings.SCRAPER_TIMEOUT):
         session = aiohttp.ClientSession()
         response = await session.get(url)   # returns when we have the HTTP header
         text = await response.text()        # so wait until we have the content
