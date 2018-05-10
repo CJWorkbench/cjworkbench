@@ -1,3 +1,0 @@
-django-webpack-loader==0.4.1
-selenium==3.8.0
-splinter==0.7.7

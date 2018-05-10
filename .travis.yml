@@ -1,6 +1,6 @@
 language: python
 python:
-- '3.5'
+- '3.6.2'
 node_js:
 - '7.7'
 addons:
@@ -11,16 +11,14 @@ env:
   - MOZ_HEADLESS=1
 
 install:
+- pip install pipenv==11.10.0  # 11.10.x won't run under travis https://github.com/pypa/pipenv/issues/2078
+- pipenv install --dev --deploy
 - ". $HOME/.nvm/nvm.sh"
 - nvm install stable
 - nvm use stable
 - npm install
-- npm install -g
-- pip install -r requirements.txt
-- pip install -r requirements-dev.txt
 - ./node_modules/.bin/webpack --config webpack.config.js
-# media directory must exist already for StoredObject tests
-- mkdir media
+
 # Geckodriver needed  for integration tests
 - wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz
 - mkdir geckodriver
@@ -28,9 +26,9 @@ install:
 - export PATH=$PATH:$PWD/geckodriver
 
 script:
-- python manage.py test
+- pipenv run ./manage.py test
 - npm test
-- python manage.py test integrationtests
+- pipenv run ./manage.py test integrationtests
 
 notifications:
   slack:

@@ -241,10 +241,12 @@ class WfModule extends React.Component {
 
     var helpIcon;
     if (!this.props.isReadOnly)
-      helpIcon =  <a className='btn help-button d-flex align-items-center'
-                      href={module.help_url} target="_blank">
-                    <div className='icon-help' />
-                  </a>;
+      helpIcon =  <button className='context-button btn'>
+                    <a className=' context-button help-button d-flex align-items-center'
+                        href={module.help_url} target="_blank">
+                      <div className='icon-help' />
+                    </a>
+                  </button>
 
     var notesIcon;
     if (!this.state.showNotes && !this.props.isReadOnly)

@@ -42,7 +42,11 @@ DJANGO_ROOT = dirname(dirname(abspath(__file__)))
 SITE_ROOT = dirname(DJANGO_ROOT)
 SITE_NAME = basename(DJANGO_ROOT)
 SITE_ID = 1
+
+# /media is where uploaded files, fetched data, and cached tables are strored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media/')
+if not os.path.isdir(MEDIA_ROOT):
+    os.makedirs(MEDIA_ROOT)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.10/howto/deployment/checklist/
@@ -309,6 +313,10 @@ CJW_GOOGLE_CLIENT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_GOOGLE_CLIENT_SECRET
 
 if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
     GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = CJW_GOOGLE_CLIENT_SECRETS_PATH
+else:
+    # Test environment
+    GOOGLE_OAUTH2_CLIENT_ID = ''
+    GOOGLE_OAUTH2_CLIENT_SECRET = ''
 
 # Various services for django-allauth
 

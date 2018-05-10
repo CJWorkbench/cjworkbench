@@ -7,47 +7,59 @@
 }
 
 //getting rid of Blue Focus
-
 button:focus { outline:0 !important; }
 
-// Context buttons - three dots buttons with menu
+.module-card-header {
 
-.context-button {
-  cursor: pointer;
-  border: 0;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color:#8b8b8b;
-  border-radius: 5rem;
-  opacity: 0.5;
-  margin-right:0;
+  a {
+    text-decoration:none;
+  }
+
+  // Context buttons - three dots buttons with menu
+  .context-button {
+    cursor: pointer;
+    border: 0;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color:#8b8b8b;
+    border-radius: 5rem;
+    opacity: 0.5;
+    margin-right:0;
+
+    //Cheap fix issue with alignment
+    .icon-note {
+      margin-top: -0.8rem;
+    }
+
+    //Fix issue with alignment
+    .help-button {
+      margin-top:-0.6rem;
+      margin-left: -.4rem;
+    }
+
+  }
+  .context-button:hover {
+    border: none;
+    background-color: transparent;
+    color:#8b8b8b;
+    opacity: 1;
+  }
+  .context-button.btn-secondary.active{
+    background-color: #E7EAEB;
+    border:0px;
+    border-radius: 5rem;
+    color:#686768;
+    opacity:1;
+  }
 }
 
-.context-button:hover {
-  border: none;
-  background-color: transparent;
-  color:#8b8b8b;
-  opacity: 1;
-}
 
-.context-button.btn-secondary.active{
-  background-color: #E7EAEB;
-  border:0px;
-  border-radius: 5rem;
-  color:#686768;
-  opacity:1;
-}
 
-.context-button--icon {
-  width: 1.4rem;
-  font-size: 1.4rem;
-  display: flex;
-  justify-content: center;
-}
+
 
 //* - Action button - */
 
