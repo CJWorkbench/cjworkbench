@@ -86,15 +86,19 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                           }
                         >
                           <div>
-                            <a
-                              className="btn help-button d-flex align-items-center"
-                              href={undefined}
-                              target="_blank"
+                            <button
+                              className="context-button btn"
                             >
-                              <div
-                                className="icon-help"
-                              />
-                            </a>
+                              <a
+                                className=" context-button help-button d-flex align-items-center"
+                                href={undefined}
+                                target="_blank"
+                              >
+                                <div
+                                  className="icon-help"
+                                />
+                              </a>
+                            </button>
                           </div>
                           <div>
                             <button
