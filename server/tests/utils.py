@@ -103,7 +103,7 @@ def set_integer(pval, integer):
 
 # Load module spec from same place initmodules gets it, return dict
 def load_module_dict(filename):
-    module_path = os.path.join(settings.BASE_DIR, 'config/modules')
+    module_path = os.path.join(settings.BASE_DIR, 'server/modules')
     fullname = os.path.join(module_path, filename + '.json')
     with open(fullname) as json_data:
         d = json.load(json_data)

@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 # Top level call, (re)load module definitions from files
 # Returns a string indicating status
 def init_modules():
-    module_path = os.path.join(BASE_DIR, 'config/modules')
+    module_path = os.path.join(BASE_DIR, 'server/modules')
 
     # Get all json files in this directory (exclude dirs)
     modfiles = [f for f in os.listdir(module_path) if os.path.isfile(os.path.join(module_path, f)) and f.endswith(".json")]
