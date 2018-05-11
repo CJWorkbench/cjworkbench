@@ -112,11 +112,15 @@
     align-items: center;
   }
 
-  .card {
-  cursor: pointer;
-  border: 0;
-  background-color: transparent;
-  border-radius: 0;
+  .ml-module-card {
+    cursor: pointer;
+    border: 3px solid transparent;
+    background-color: transparent;
+    border-radius: 0;
+
+    &.lesson-highlight {
+      border-color: $brand-learn;
+    }
   }
 
   .ML-module {
@@ -169,6 +173,13 @@
 
 
   /*search result*/
+
+  .module-search-result {
+    border: 3px solid transparent;
+    &.lesson-highlight {
+      border-color: $brand-learn;
+    }
+  }
 
   .react-autosuggest__suggestions-container--open {
     margin-top: 2.2rem;

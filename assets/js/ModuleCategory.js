@@ -125,6 +125,8 @@ export default class ModuleCategory extends React.Component {
 
 ModuleCategory.propTypes = {
   name:             PropTypes.string.isRequired,
+  addModule:        PropTypes.func.isRequired,
+  dropModule:       PropTypes.func.isRequired,
   modules:          PropTypes.arrayOf(PropTypes.shape({
     id: PropTypes.number.isRequired,
     name: PropTypes.string.isRequired,

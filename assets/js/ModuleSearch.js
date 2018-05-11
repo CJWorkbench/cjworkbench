@@ -7,7 +7,6 @@ import React from 'react';
 import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
-import {logEvent} from "./utils";
 import { connect } from 'react-redux'
 import { stateHasLessonHighlight } from './util/LessonHighlight'
 
@@ -34,10 +33,29 @@ function collect(connect, monitor) {
   }
 }
 
+function groupModules(items) {
+  const ret = []
+  const temp = {}
+
+  items.forEach(item => {
+    if (temp[item.category]) {
+      temp[item.category].push(item)
+    } else {
+      const obj = { title: item.category, modules: [ item ] }
+      temp[item.category] = obj.modules
+      ret.push(obj)
+    }
+  })
+
+  return ret
+}
+
 class ModuleSearchResult extends React.Component {
   render() {
+    const className = `module-search-result ${this.props.isLessonHighlight ? 'lesson-highlight' : ''} react-autosuggest__suggestion-inner`
+
     return this.props.connectDragSource(
-      <div className='react-autosuggest__suggestion-inner'>
+      <div className={className}>
         <div className='suggest-handle'>
           <div className='icon-grip'></div>
         </div>
@@ -58,59 +76,20 @@ export class ModuleSearch extends React.Component {
     this.state = {
       value: '',
       suggestions: [],
-      modules: []
-    };
+    }
     this.onChange = this.onChange.bind(this);
-    this.escapeRegexCharacters = this.escapeRegexCharacters.bind(this);
     this.onSuggestionsClearRequested = this.onSuggestionsClearRequested.bind(this);
     this.onSuggestionsFetchRequested = this.onSuggestionsFetchRequested.bind(this);
     this.renderSectionTitle = this.renderSectionTitle.bind(this);
-    this.formatModules = this.formatModules.bind(this);
-    this.getSuggestions = this.getSuggestions.bind(this);
     this.renderSuggestion = this.renderSuggestion.bind(this);
     this.getSuggestionValue = this.getSuggestionValue.bind(this);
     this.getSectionSuggestions = this.getSectionSuggestions.bind(this);
     this.onSuggestionSelected = this.onSuggestionSelected.bind(this);
-    this.onBlur = this.onBlur.bind(this);
     this.clearSearchField = this.clearSearchField.bind(this);
-
-    this.lastLoggedQuery = ''; // debounce query logging
-  }
-
-  componentDidMount() {
-    if (this.props.modules) {
-      this.formatModules(this.props.modules);
-    }
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (this.props.modules !== nextProps.modules) {
-      this.formatModules(nextProps.modules)
-    }
   }
 
   escapeRegexCharacters (str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  }
-
-  formatModules(items) {
-    let modules = [];
-    let temp = {};
-
-    if (items.length) {
-      items.forEach(item => {
-        if (temp[item.category]) {
-          temp[item.category].push(item);
-        } else {
-          temp[item.category] = [item];
-        }
-      });
-
-      for (let item in temp) {
-        modules.push({title: item, modules: temp[item]});
-      }
-    }
-    this.setState({ modules });
   }
 
   onChange (event, { newValue, method }) {
@@ -120,9 +99,8 @@ export class ModuleSearch extends React.Component {
   }
 
   onSuggestionsFetchRequested ({ value }) {
-    this.setState({
-      suggestions: this.getSuggestions(value)
-    });
+    const suggestions = this.getSuggestions(value)
+    this.setState({ suggestions })
   }
 
   // Autosuggest will call this function every time you need to clear suggestions.
@@ -148,47 +126,36 @@ export class ModuleSearch extends React.Component {
     }
 
     const regex = new RegExp(escapedValue, 'i');
+    const foundModules = this.props.modules.filter(m => regex.test(m.name))
 
-    return this.state.modules
-      .map(section => {
-        return {
-          title: section.title,
-          modules: section.modules.filter(module => regex.test(module.name))
-        };
-      })
-      .filter(section => section.modules.length > 0);
+    return groupModules(foundModules)
   }
 
-  renderSuggestion (suggestion) {
+  renderSuggestion(suggestion) {
+    const { id, icon, name } = suggestion
+    const isLessonHighlight = this.props.lessonHighlightModuleNames.includes(name)
     return (
       <DraggableModuleSearchResult
         dropModule={this.props.dropModule}
-        icon={suggestion.icon}
-        name={suggestion.name}
-        id={suggestion.id} />
+        id={id}
+        icon={icon}
+        name={name}
+        isLessonHighlight={isLessonHighlight}
+        />
     )
   }
 
   getSuggestionValue (suggestion) {
-    return suggestion.name;
+    return suggestion.name
   }
 
   getSectionSuggestions (section) {
-    return section.modules;
+    return section.modules
   }
 
   onSuggestionSelected (event, { suggestion }) {
     this.props.addModule(suggestion.id);
     this.setState({value: ''});
-  }
-
-  // When the user moves away from the search box, log the query
-  onBlur() {
-    var value = this.state.value;
-    if (value !== '' && value != this.lastLoggedQuery) {
-      logEvent('Module search', {'value': value})
-      this.lastLoggedQuery = value;
-    }
   }
 
   clearSearchField() {
@@ -211,18 +178,19 @@ export class ModuleSearch extends React.Component {
     }
 
     const lessonHighlightClassName = this.props.isLessonHighlight ? ' lesson-highlight' : ''
+    const className = `module-search d-flex align-items-center ML-search-field${lessonHighlightClassName}`
 
     return (
-      <div className={`module-search d-flex align-items-center ML-search-field${lessonHighlightClassName}`}>
+      <div className={className}>
         <div className='icon-search-white ml-icon-search ml-4'></div>
         <div
-          onBlur={this.onBlur}
           // can not set ref on imported component, so anchoring to parent div
           ref={input => this.textInput = input}
         >
           <Autosuggest
             multiSection={true}
             suggestions={suggestions}
+            alwaysRenderSuggestions={this.props.alwaysRenderSuggestions}
             onSuggestionsFetchRequested={this.onSuggestionsFetchRequested}
             onSuggestionsClearRequested={this.onSuggestionsClearRequested}
             getSuggestionValue={this.getSuggestionValue}
@@ -246,12 +214,21 @@ ModuleSearch.propTypes = {
   modules:    PropTypes.array.isRequired,
   workflow:   PropTypes.object.isRequired,
   isLessonHighlight: PropTypes.bool.isRequired,
+  lessonHighlightModuleNames: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  alwaysRenderSuggestions: PropTypes.bool, // useful in testing
 }
 
 const isLessonHighlight = stateHasLessonHighlight({ type: 'ModuleSearch' })
+function lessonHighlightModuleNames(state) {
+  const lessonHighlight = state.lesson_highlight || []
+  return lessonHighlight
+    .filter(h => h.type === 'MlModule')
+    .map(h => h.name)
+}
 const mapStateToProps = (state) => {
   return {
     isLessonHighlight: isLessonHighlight(state),
+    lessonHighlightModuleNames: lessonHighlightModuleNames(state),
   }
 }
 

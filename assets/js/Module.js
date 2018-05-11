@@ -71,9 +71,6 @@ export class Module extends React.Component {
         name: this.props.name,
         icon: this.props.icon
       });
-    // collapse category after click when library is closed
-    if (!this.props.libraryOpen)
-      this.props.setOpenCategory(null);
   }
 
   componentDidMount() {
@@ -84,21 +81,13 @@ export class Module extends React.Component {
 		})
   }
 
-  componentWillReceiveProps(newProps) {
-    if (newProps.isDragging !== this.props.isDragging
-        && newProps.isDragging
-        && !this.props.libraryOpen
-      )
-      this.props.setOpenCategory(null);
-  }
-
   render() {
     const moduleName = this.props.name;
     const icon = `icon-${this.props.icon} ml-icon`;
     const className = `card ml-module-card ${this.props.isLessonHighlight ? 'lesson-highlight' : ''}`
 
     const moduleCard = (
-      <div className={className} onClick={this.itemClick}>
+      <div data-module-name={moduleName} className={className} onClick={this.itemClick}>
         <div className='ML-module d-flex'>
           <div className='d-flex flex-row align-items-center'>
             <div className='ml-icon-container'>
@@ -125,22 +114,23 @@ export class Module extends React.Component {
 }
 
 Module.propTypes = {
-  id:                PropTypes.number.isRequired,
-  name:              PropTypes.string.isRequired,
-  icon:              PropTypes.string.isRequired,
-  addModule:         PropTypes.func,
-  dropModule:        PropTypes.func,
-  isReadOnly:        PropTypes.bool.isRequired,
-  setOpenCategory:   PropTypes.func.isRequired,
-  libraryOpen:       PropTypes.bool.isRequired,
-  isLessonHighlight: PropTypes.bool.isRequired,
+  id:                 PropTypes.number.isRequired,
+  name:               PropTypes.string.isRequired,
+  icon:               PropTypes.string.isRequired,
+  addModule:          PropTypes.func.isRequired,
+  dropModule:         PropTypes.func.isRequired,
+  isReadOnly:         PropTypes.bool.isRequired,
+  isLessonHighlight:  PropTypes.bool.isRequired,
+  connectDragSource:  PropTypes.func.isRequired,
+  connectDragPreview: PropTypes.func.isRequired,
+  isDragging:         PropTypes.bool.isRequired,
 }
 
 function mapStateToProps(state, ownProps) {
   const lessonHighlight = state.lesson_highlight || []
   const test = { type: 'MlModule', name: ownProps.name }
   return {
-    isLessonHighlight: false,//matchLessonHighlight(lessonHighlight, test),
+    isLessonHighlight: matchLessonHighlight(lessonHighlight, test),
   }
 }
 

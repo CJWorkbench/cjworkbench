@@ -7,40 +7,36 @@
  */
 
 import React from 'react'
-import { Module } from './Module'
-import { shallow } from 'enzyme'
+import ConnectedModule, { Module } from './Module'
+import { mount, shallow } from 'enzyme'
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContextProvider } from 'react-dnd'
+import { Provider } from 'react-redux'
+import { createStore } from 'redux'
 
 describe('Module', () => {
   let wrapper
-  let setOpenCategory
-  let connectDragSource
-  let addModule
+  let commonProps
 
   beforeEach(() => {
-    setOpenCategory = jest.fn()
-    addModule = jest.fn()
-    connectDragSource = jest.fn(x => x)
+    commonProps = {
+      key: 'Sweet Module',
+      name: 'Sweet Module',
+      icon: 'add',
+      id: 88,
+      addModule: jest.fn(),
+      dropModule: () => {},
+      connectDragSource: jest.fn(x => x),
+      connectDragPreview: jest.fn(),
+      isLessonHighlight: false,
+      isDragging: false,
+      isReadOnly: false,
+    }
   })
 
   describe('NOT Read-only', () => {
     beforeEach(() => {
-      wrapper = shallow(
-        <Module
-          key={"Sweet Module"}
-          name={"Sweet Module"}
-          icon={"add"}
-          id={88}
-          addModule={addModule}
-          dropModule={() => {}}
-          isReadOnly={false}
-          setOpenCategory={setOpenCategory}
-          connectDragSource={connectDragSource}
-          connectDragPreview={jest.fn()}
-          isDragging={false}
-          isLessonHighlight={false}
-          libraryOpen={true}
-        />
-      )
+      wrapper = shallow(<Module {...commonProps} isReadOnly={false}/>)
     })
 
     it('Renders snapshot', () => {
@@ -53,47 +49,68 @@ describe('Module', () => {
 
     it('is draggable', () => {
       // find property on the Module component that indicates drag-ability
-      expect(connectDragSource).toHaveBeenCalled()
+      expect(commonProps.connectDragSource).toHaveBeenCalled()
     })
 
     it('adds module on click', () => {
       let card = wrapper.find('.ml-module-card')
       expect(card).toHaveLength(1)
       card.simulate('click')
-      expect(addModule.mock.calls.length).toBe(1)
+      expect(commonProps.addModule).toHaveBeenCalled()
     })
   })
 
   describe('Read-only', () => {
     beforeEach(() => {
-      wrapper = shallow(
-        <Module
-          key={"Sweet Module"}
-          name={"Sweet Module"}
-          icon={"add"}
-          id={88}
-          addModule={addModule}
-          dropModule={() => {}}
-          isReadOnly={true}
-          isLessonHighlight={false}
-          setOpenCategory={setOpenCategory}
-          connectDragSource={connectDragSource}
-          connectDragPreview={jest.fn()}
-          isDragging={false}
-          libraryOpen={false}
-        />
-      )
+      wrapper = shallow(<Module {...commonProps} isReadOnly={true}/>)
     })
 
     it('is not draggable', () => {
-      expect(connectDragSource).not.toHaveBeenCalled()
+      expect(commonProps.connectDragSource).not.toHaveBeenCalled()
     })
+  })
 
-    it('collapses category on click', () => {
-      let card = wrapper.find('.ml-module-card')
-      expect(card).toHaveLength(1)
-      card.simulate('click')
-      expect(setOpenCategory.mock.calls.length).toBe(1)
+  describe('with redux', () => {
+    let store
+
+    function highlight(v) {
+      store.dispatch({ type: 'x', payload: v })
+    }
+
+    beforeEach(() => {
+      store = createStore(
+        // reducer makes every action reset state.lesson_highlight
+        (_, action) => ({ lesson_highlight: action.payload }),
+        { lesson_highlight: [] }
+      )
+
+      wrapper = mount(
+        <Provider store={store}>
+          <DragDropContextProvider backend={HTML5Backend}>
+            <ConnectedModule {...commonProps}/>
+          </DragDropContextProvider>
+        </Provider>
+      )
+    })
+    afterEach(() => wrapper.unmount())
+
+    it('should add lesson-highlight when highlighted', () => {
+      expect(wrapper.find('.lesson-highlight')).toHaveLength(0)
+
+      // Highlight something else
+      highlight([ { type: 'ModuleSearch' } ])
+      wrapper.update()
+      expect(wrapper.find('.lesson-highlight')).toHaveLength(0)
+
+      // Highlight some other Module
+      highlight([ { type: 'MlModule', name: 'Unsweet Module' } ])
+      wrapper.update()
+      expect(wrapper.find('.lesson-highlight')).toHaveLength(0)
+
+      // Highlight this Module
+      highlight([ { type: 'MlModule', name: 'Sweet Module' } ])
+      wrapper.update()
+      expect(wrapper.find('.lesson-highlight')).toHaveLength(1)
     })
   })
 })

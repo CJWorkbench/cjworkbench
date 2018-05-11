@@ -6,8 +6,12 @@
  */
 
 import React from 'react'
-import { ModuleSearch } from './ModuleSearch' // not redux-connected
+import ConnectedModuleSearch, { ModuleSearch } from './ModuleSearch'
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContextProvider } from 'react-dnd'
 import { mount, shallow } from 'enzyme'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
 
 describe('ModuleSearch', () => {
   const modules = [
@@ -39,6 +43,7 @@ describe('ModuleSearch', () => {
     modules,
     workflow,
     isLessonHighlight: false,
+    lessonHighlightModuleNames: [],
   }
 
   describe('most tests', () => {
@@ -53,31 +58,15 @@ describe('ModuleSearch', () => {
       expect(wrapper).toMatchSnapshot(); // 1    
     })
 
-    it('Loads modules from props ', (done) => { 
-      // wait modules to load from props
-      setImmediate(() => {
-        wrapper.update()
-        expect(wrapper).toMatchSnapshot(); 
-        expect(wrapper.state().modules.length).toBe(2)
-        expect(wrapper.state().modules[0].title).toEqual("Add data")
-        expect(wrapper.state().modules[1].title).toEqual("Filter")
-        done();
-      });
-    });
-
-    it('finds a suggestion matching search input', (done) => { 
-      // wait modules to load 
-      setImmediate(() => {
-        // Search field is focused by default, enter value to text field
-        searchField.simulate('change', {target: {value: 'a'}})
-        wrapper.update()
-        expect(wrapper).toMatchSnapshot()
-        // check for presence of suggestion matching input
-        expect(wrapper.state().suggestions.length).toEqual(1)
-        expect(wrapper.state().suggestions[0].modules[0].name).toEqual("Load from Enigma");      
-        done();
-      });
-    });
+    it('finds a suggestion matching search input', () => { 
+      // Search field is focused by default, enter value to text field
+      searchField.simulate('change', {target: {value: 'a'}})
+      wrapper.update()
+      expect(wrapper).toMatchSnapshot()
+      // check for presence of suggestion matching input
+      expect(wrapper.state().suggestions.length).toEqual(1)
+      expect(wrapper.state().suggestions[0].modules[0].name).toEqual("Load from Enigma");      
+    })
 
     it('Close icon will clear text from search field', () => { 
       // search field should be empty at start
@@ -87,7 +76,7 @@ describe('ModuleSearch', () => {
       expect(closeIcon).toHaveLength(0);             
       // enter value to text field
       searchField.simulate('change', {target: {value: 'wow'}});
-      expect(wrapper).toMatchSnapshot();          
+      wrapper.update()
       expect(wrapper.state().value).toEqual('wow'); 
       // find Close icon again, click to clear search field
       closeIcon = wrapper.find('.icon-close-white');
@@ -97,12 +86,50 @@ describe('ModuleSearch', () => {
     });
   })
     
-  it('should highlight based on isLessonHighlight', () => {
+  it('should highlight search box based on isLessonHighlight', () => {
     const noHighlight = shallow(<ModuleSearch {...defaultProps} isLessonHighlight={false} />)
     expect(noHighlight.hasClass('lesson-highlight')).toBe(false)
 
     const yesHighlight = shallow(<ModuleSearch {...defaultProps} isLessonHighlight={true} />)
     expect(yesHighlight.hasClass('lesson-highlight')).toBe(true)
+  })
+
+  describe('with store', () => {
+    let store
+    let wrapper
+
+    function highlight(v) {
+      store.dispatch({ type: 'x', payload: v })
+    }
+
+    beforeEach(() => {
+      store = createStore(
+        // reducer: payload => state.lesson_highlight
+        (_, action) => ({ lesson_highlight: action.payload }),
+        { lesson_highlight: [] }
+      )
+
+      wrapper = mount(
+        <Provider store={store}>
+          <DragDropContextProvider backend={HTML5Backend}>
+            <ConnectedModuleSearch {...defaultProps} alwaysRenderSuggestions={true} />
+          </DragDropContextProvider>
+        </Provider>
+      )
+    })
+    afterEach(() => { wrapper.unmount() })
+
+    it('highlights a suggestion matching search input in a lesson', () => { 
+      highlight([ { type: 'MlModule', name: 'Filter by Text' } ])
+
+      // Find 'Load from Enigma' and 'Filter by Text', in that order
+      // 'r' matches both
+      const searchField = wrapper.find('.react-autosuggest__input')
+      searchField.simulate('change', {target: {value: 'r'}})
+
+      expect(wrapper.find('.module-search-result').at(0).filter('.lesson-highlight')).toHaveLength(0)
+      expect(wrapper.find('.module-search-result').at(1).filter('.lesson-highlight')).toHaveLength(1)
+    })
   })
 });
 
