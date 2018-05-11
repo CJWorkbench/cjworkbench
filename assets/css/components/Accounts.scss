@@ -13,8 +13,7 @@
   color:#fff;
   margin: 1rem;
   padding: 1.3rem 0 1 0;
-  font-family: 'Lato', sans-serif;
-  font-weight: 400;
+  @extend %font-lato-regular;
   letter-spacing: -0.2rem;
 }
 

@@ -1,7 +1,8 @@
-@import url('https://fonts.googleapis.com/css?family=Lato:400,700|Nunito+Sans');
 @import 'bootstrap/scss/bootstrap.scss';
 
 @import './variables';
+@import './mixins';
+@import './fonts';
 
 @import './components/Embed.scss';
 @import './components/Fonts.scss';
@@ -39,7 +40,7 @@ html {
 body {
   margin: 0px;
   height: 100%;
-  font-family: 'Nunito Sans', sans-serif;
+  @extend %font-nunito-regular;
   background-color:#f6f6f6;
   color: $brand-text--dark;
 }

@@ -216,9 +216,8 @@ select {
 .import-github-success {
   height: 4rem;
   color: #1CA8B9;
-  font-family: 'Nunito Sans', sans-serif;
+  @extend %font-nunito-extra-light;
   font-size: 1.3rem;
-  font-weight: 300;
   line-height: 1.9rem;
   margin-top: 2rem;
   padding-left: 0rem;

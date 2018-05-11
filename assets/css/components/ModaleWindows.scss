@@ -48,8 +48,7 @@
   justify-content: space-around;
   align-items: center;
   border-radius:3px;
-  font-family: 'Nunito Sans', sans-serif;
-  font-weight: 500;
+  @extend %font-nunito-regular;
   font-size: 1.2rem;
   padding: 0 0.5rem;
 }

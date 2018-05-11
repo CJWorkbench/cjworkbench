@@ -5,16 +5,15 @@
 .font404{
 	font-size: 14rem;
 	line-height: 14rem;
-  font-family: 'lato', sans-serif;
+  @extend %font-lato-regular;
   letter-spacing: -0.3px;
 	margin-bottom: 0.1rem;
-	font-weight: 800;
 }
 
 .logo-1 {
 	font-size: 2.4rem;
 	line-height: 2.4rem;
-  font-family: 'lato', sans-serif;
+  @extend %font-lato-regular;
   letter-spacing: -0.3px;
 	margin-bottom: 0.1rem;
 	cursor: default;
@@ -23,7 +22,7 @@
 .logo-2 {
 	font-size: 2rem;
 	line-height: 2rem;
-  font-family: 'lato', sans-serif;
+  @extend %font-lato-regular;
   letter-spacing: -0.3px;
 	text-decoration: none;
 	margin-bottom: 0.1rem;
@@ -38,10 +37,9 @@
 }
 .title-2 {
 	font-size: 2.2rem;
-	font-weight: normal;
 	line-height: 2.2rem;
   letter-spacing:0.8px;
-  font-family: 'nunito', sans-serif;
+  @extend %font-nunito-regular;
 
 }
 .title-3 {
@@ -108,22 +106,19 @@
 
 .info-1 {
 	font-size: 1.2rem;
-	font-weight: 100;
 	line-height: 1.2rem;
-  font-family: 'Nunito Sans', sans-serif;
+  @extend %font-nunito-extra-light;
 }
 .info-2 {
 	font-size: 1.4rem;
-	font-weight: 100;
 	line-height: 2rem;
-  font-family: 'Nunito Sans', sans-serif;
+  @extend %font-nunito-extra-light;
 }
 
 .info-3{
   font-size: 1.6rem;
-	font-weight: 100;
 	line-height: 1.2rem;
-  font-family: 'Nunito Sans', sans-serif;
+  @extend %font-nunito-extra-light;
 }
 
 .table-1 {

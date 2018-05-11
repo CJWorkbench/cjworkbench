@@ -472,8 +472,7 @@
     width: 100%;
     height: 100%;
     padding-left: 0.3rem;
-    font-family: 'Nunito Sans', sans-serif;
-    font-weight: 100;
+    @extend %font-nunito-extra-light;
     font-size: 1.4rem;
     line-height: 1.4rem;
   }

@@ -46,6 +46,7 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
+          MiniCssExtractPlugin.loader,
           'css-loader',
         ],
       },
@@ -58,22 +59,12 @@ module.exports = {
         ],
       },
       {
-        // image handling
-        test: /\.(png|jpg|gif)$/,
+        // static files
+        test: /\.(png|jpg|gif|woff2)$/,
         loader: 'url-loader',
         options: {
-          limit: 25000,
+          limit: 40000,
           name: '[name]-[contenthash].[ext]',
-        },
-      },
-      {
-        // font handling
-        test: /\.(woff)$/,
-        loader: 'url-loader',
-        options: {
-          limit: 25000,
-          mimetype: 'application/font-woff',
-          name: '../fonts/[name]-[contenthash].[ext]'
         },
       },
     ]

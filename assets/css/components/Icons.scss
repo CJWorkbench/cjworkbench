@@ -2,14 +2,14 @@
 
 @font-face {
   font-family: 'Workbench';
-  src: url('../fonts/Workbench.woff?4bznb4') format('woff');
+  src: url('../fonts/Workbench.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 }
 
 [class^="icon-"], [class*=" icon-"], .icon {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'workbench' !important;
+  font-family: 'Workbench' !important;
   speak: none;
   font-style: normal;
   font-weight: normal;
