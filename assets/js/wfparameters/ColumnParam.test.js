@@ -11,6 +11,7 @@ describe('ColumnParam', () => {
     let wrapper = mount(
         <ColumnParam
           selectedCol='baz'
+          name="column"
           getColNames={() => {return Promise.resolve(testcols)}}
           noSelectionText={noSelectionText}
           isReadOnly={true}
@@ -35,6 +36,7 @@ describe('ColumnParam', () => {
   it('renders without noSelectionText', (done) => {
     let wrapper = mount(
         <ColumnParam
+          name="column"
           selectedCol='baz'
           getColNames={() => {return Promise.resolve(testcols)}}
           isReadOnly={true}

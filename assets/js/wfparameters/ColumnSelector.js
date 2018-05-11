@@ -81,6 +81,7 @@ export default class ColumnSelector extends React.Component {
               <input
                   type='checkbox'
                   disabled={this.props.isReadOnly}
+                  name={`${this.props.name}[${n}]`}
                   checked={this.state.selected.includes(n)}
                   onChange={this.clicked}
                   data-name={n}
@@ -121,6 +122,7 @@ ColumnSelector.propTypes = {
   selectedCols: PropTypes.string.isRequired,
   saveState:    PropTypes.func.isRequired,
   getColNames:  PropTypes.func.isRequired,
+  name:         PropTypes.string.isRequired,
   isReadOnly:   PropTypes.bool.isRequired,
   revision:     PropTypes.number.isRequired
 };

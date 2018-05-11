@@ -1,5 +1,5 @@
 import React from 'react'
-import LessonSection from './LessonSection'
+import ConnectedLessionSection, { LessonSection } from './LessonSection'
 import { mount, shallow } from 'enzyme'
 
 describe('LessonSection', () => {
@@ -8,8 +8,8 @@ describe('LessonSection', () => {
     title: 'Section One',
     html: '<p>Section One HTML</p>',
     steps: [
-      { html: 'Step One-Ay', highlight: [] },
-      { html: 'Step One-<strong>Bee</strong>', highlight: [] },
+      { html: 'Step One-Ay', highlight: [], testJs: 'return true' },
+      { html: 'Step One-<strong>Bee</strong>', highlight: [], testJs: 'return false' },
     ],
   }
 

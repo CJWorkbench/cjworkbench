@@ -31,6 +31,7 @@ export default class MenuParam extends React.Component {
     return (
         <select
           className='custom-select parameter-base dropdown-selector'
+          name={this.props.name}
           value={this.state.selectedIdx}
           onChange={this.onChange}
           disabled={this.props.isReadOnly}
@@ -42,7 +43,7 @@ export default class MenuParam extends React.Component {
 }
 
 MenuParam.propTypes = {
-  name:         PropTypes.string,
+  name:         PropTypes.string.isRequired,
   items:        PropTypes.string,  // like 'Apple|Banana|Kitten'
   selectedIdx:  PropTypes.number,
   onChange:     PropTypes.func     // called with index of selected item

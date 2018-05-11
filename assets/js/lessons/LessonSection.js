@@ -2,79 +2,19 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import LessonStep from './LessonStep'
 import { LessonHighlightsType } from '../util/LessonHighlight'
+import { StateWithHelpers } from './DoneHelpers'
 import { connect } from 'react-redux'
 
 export class LessonSection extends React.PureComponent {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      activeStepIndex: 0,
-    }
-  }
-
-  componentDidMount() {
-    this.scheduleRefreshActiveStepIndex()
-  }
-
-  componentDidUpdate() {
-    this.scheduleRefreshActiveStepIndex()
-  }
-
-  scheduleRefreshActiveStepIndex() {
-    // What we want to do: update this.state.activeStepIndex by running each
-    // LessonStep's HTML-embedded `data-test`.
-    //
-    // When we want to do it: it's complicated. Our lessons are written to test
-    // the DOM -- using `document` as a global variable. So we want to test
-    // whenever the DOM changes in a substantive way. We assume that only
-    // happens when the store changes. But React "batches" updates, meaning
-    // the store changes happen _before_ the DOM gets updated. So we'll run
-    // our tests on the tick _after_ the DOM gets updated.
-    setTimeout(() => this.refreshActiveStepIndex(), 0)
-  }
-
-  calculateActiveStepIndex() {
-    const steps = this.props.steps
-    for (let index = 0; index < steps.length; index++) {
-      const step = this.props.steps[index]
-
-      // Parse function; use "!!(...)" syntax to accept anything truthy.
-      // Canonical example: `testJs === "document.querySelector('.blah')"`
-      // should return true if ".blah" is in the DOM.
-      const fn = Function('document', `return !!(${step.testJs})`)
-      // Give our function a name: makes it easy to debug crashes
-      Object.defineProperty(fn, 'name', {
-        value: `LessonSection "${this.props.title}" Step ${index}`,
-        writable: false,
-      })
-      if (!fn(document)) {
-        console.log('First unfinished step: ', fn.toString())
-        return index // we have completed all steps up to this one
-      }
-    }
-
-    return null // all steps are complete
-  }
-
-  refreshActiveStepIndex() {
-    const activeStepIndex = this.calculateActiveStepIndex()
-    this.setState({
-      activeStepIndex,
-    })
-  }
-
   renderStep(step, index) {
     let status
-    if (this.state.activeStepIndex !== null && this.state.activeStepIndex < index) {
+    if (this.props.activeStepIndex !== null && this.props.activeStepIndex < index) {
       status = LessonStep.Status.FUTURE
-    } else if (this.state.activeStepIndex === index) {
+    } else if (this.props.activeStepIndex === index) {
       status = LessonStep.Status.CURRENT
     } else {
       status = LessonStep.Status.DONE
     }
-
-    console.log(status, this.state, index)
 
     return (
       <LessonStep key={index} html={step.html} status={status} />
@@ -120,45 +60,42 @@ LessonSection.propTypes = {
   })).isRequired,
 }
 
-function buildMapStateToProps() {
-  // We want our props to change whenever the state changes -- or at least,
-  // whenever _some_ properties in the state change. So we need to remember
-  // prevState.
-  //
-  // And how do we make the props change? By setting a monotonically-increasing
-  // integer.
-  //
-  // Here's what'll happen:
-  //
-  // 1. User clicks
-  // 2. Action dispatched
-  // 3. mapStateToProps() called; it increments version, changing props
-  // 4. LessonSection.render() is called
-  // 5. componentDidUpdate() is called, possibly updating state.activeSectionIndex
-  // 6. if state updates, LessonSection.render() is called again
-  let prevState = {}
-  let version = 0
+function isStepDone(sectionTitle, stepIndex, stateWithHelpers, step) {
+  // Canonical example testJs:
+  // `return workflow.selectedWfModule.moduleName === 'Add from URL'`
+  const fn = new Function('state', 'workflow', step.testJs)
+  // Give our function a name: makes it easy to debug crashes
+  Object.defineProperty(fn, 'name', {
+    value: `LessonSection "${sectionTitle}" Step ${stepIndex + 1}`,
+    writable: false,
+  })
 
-  // Ignore state changes when they're for keys that certainly won't affect
-  // our lesson.
-  const IgnoredKeys = [ 'lesson_highlight' ]
-
-  return function mapStateToProps(nextState) {
-    for (const key of Object.keys(nextState)) {
-      // Ignore keys that certainly don't 
-      if (IgnoredKeys.includes(key)) continue
-
-      if (nextState[key] !== prevState[key]) {
-        version += 1
-        break
-      }
-    }
-
-    prevState = nextState
-    return {
-      stateVersion: version,
-    }
+  try {
+    return fn(stateWithHelpers, stateWithHelpers.workflow)
+  } catch (e) {
+    console.error(e)
+    return false
   }
 }
 
-export default connect(buildMapStateToProps())(LessonSection)
+function calculateActiveStepIndex(state, ownProps) {
+  const stateWithHelpers = new StateWithHelpers(state)
+
+  // Run each testJs function until one returns false
+  for (let stepIndex = 0; stepIndex < ownProps.steps.length; stepIndex++) {
+    const step = ownProps.steps[stepIndex]
+    if (!isStepDone(ownProps.title, stepIndex, stateWithHelpers, step)) {
+      return stepIndex
+    }
+  }
+
+  return null // all steps complete
+}
+
+function mapStateToProps(state, ownProps) {
+  return {
+    activeStepIndex: calculateActiveStepIndex(state, ownProps),
+  }
+}
+
+export default connect(mapStateToProps)(LessonSection)

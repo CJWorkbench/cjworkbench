@@ -29,6 +29,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
         Array [
           <div
             className="wf-module"
+            data-module-name="Load from URL"
             onClick={[Function]}
           >
             <div
@@ -66,7 +67,9 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                           />
                           <div
                             className="t-d-gray WFmodule-name"
-                          />
+                          >
+                            Load from URL
+                          </div>
                           <div
                             className="icon-sort-up btn context-collapse-button"
                             onClick={[Function]}
@@ -153,7 +156,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                           getParamText={[Function]}
                           isReadOnly={false}
                           loggedInUser={undefined}
-                          moduleName="TestModule"
+                          moduleName="Load from URL"
                           notifications={undefined}
                           p={
                             Object {
@@ -192,7 +195,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                           getParamText={[Function]}
                           isReadOnly={false}
                           loggedInUser={undefined}
-                          moduleName="TestModule"
+                          moduleName="Load from URL"
                           notifications={undefined}
                           p={
                             Object {
@@ -266,6 +269,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
       "module_version": Object {
         "module": Object {
           "id_name": "loadurl",
+          "name": "Load from URL",
         },
       },
       "notes": Array [],

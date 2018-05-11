@@ -12,6 +12,7 @@ describe('ColumnSelector', () => {
     beforeEach(() => wrapper = mount(
       <ColumnSelector
         selectedCols='foo,bar,baz'
+        name="column"
         getColNames={ () => { return Promise.resolve(testcols) } }
         saveState={ () => {} }
         revision={101}
@@ -54,6 +55,7 @@ describe('ColumnSelector', () => {
         <ColumnSelector
           selectedCols='foo,bar,baz'
           getColNames={ () => { return Promise.resolve(testcols) } }
+          name="column"
           saveState={ () => {} }
           revision={101}
           isReadOnly={false}
