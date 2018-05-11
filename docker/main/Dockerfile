@@ -19,8 +19,8 @@ RUN apt-get install nano
 
 # setup db, apply migrations.
 # Need sites migration to create django_sites table, so later (normal) migration can set site URL
-RUN python manage.py migrate sites
-RUN python manage.py migrate
+RUN pipenv run ./manage.py migrate sites
+RUN pipenv run ./manage.py migrate
 
 # setup cron job for every minute to do scheduled checks for new data
 RUN echo "* * * * * /usr/bin/curl http://localhost:8000/runcron" | crontab
@@ -29,4 +29,4 @@ RUN echo "* * * * * /usr/bin/curl http://localhost:8000/runcron" | crontab
 # RUN cron
 
 # go! default command runs in debug. docker-compose.yml runs start-prod.sh for the real thing
-CMD python manage.py runserver $(hostname -i):8000
+CMD pipenv run ./manage.py  runserver $(hostname -i):8000
