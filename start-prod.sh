@@ -5,7 +5,7 @@
 
 # Production env vars. Must set CJW_SECRET_KEY externally!
 export CJW_PRODUCTION=True
-export CJW_DB_HOST=cjw-db
+export CJW_DB_HOST=workbench-db
 export CJW_DB_PASSWORD=cjworkbench
 
 # required or we won't get any logs when running in docker container
