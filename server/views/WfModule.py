@@ -22,6 +22,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 def patch_notes(wf_module, data):
     ChangeWfModuleNotesCommand.create(wf_module, data['notes'])
 
+
 def patch_update_settings(wf_module, data):
     auto_update_data = data['auto_update_data']
 
@@ -33,11 +34,29 @@ def patch_update_settings(wf_module, data):
     next_update = timezone.now() + timedelta(seconds=interval)
     ChangeWfModuleUpdateSettingsCommand.create(wf_module, auto_update_data, next_update, interval)
 
+
 def patch_wfmodule(wf_module, data):
     # Just patch it using the built-in Django Rest Framework methods.
     serializer = WfModuleSerializer(wf_module, data, partial=True)
     if serializer.is_valid():
         serializer.save()
+
+
+def get_simple_column_types(table):
+    # Get simplified column types of a table
+    # and return as a list in the order of the columns
+    raw_dtypes = list(table.dtypes)
+    ret_types = []
+    for dt in raw_dtypes:
+        # We are simplifying the data types here.
+        # More stuff can be added to these lists if we run into anything new.
+        stype = "String"
+        if dt in ['int64', 'float64', 'bool']:
+            stype = "Number"
+        elif dt in ['datetime64[ns]']:
+            stype = "Date"
+        ret_types.append(stype)
+    return ret_types
 
 
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on request type
@@ -123,8 +142,9 @@ def make_render_json(table, startrow=None, endrow=None):
     rowstr = table.to_json(orient="records")
     colnames = table.columns.values.tolist()
     colstr = json.dumps(colnames, ensure_ascii=False)
-    outfmt = '{"total_rows": %d, "start_row" :%d, "end_row": %d, "columns": %s, "rows": %s}'
-    outstr = outfmt % (nrows, startrow, endrow, colstr, rowstr)
+    typesstr = json.dumps(get_simple_column_types(table))
+    outfmt = '{"total_rows": %d, "start_row" :%d, "end_row": %d, "columns": %s, "rows": %s, "column_types": %s}'
+    outstr = outfmt % (nrows, startrow, endrow, colstr, rowstr, typesstr)
 
     return outstr
 

@@ -110,6 +110,8 @@ else:
     # We are running in debug
     SECRET_KEY = 'my debug secret key is not a secret'
 
+    #print('Server running in debug.')
+
     # Database
     # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 
@@ -118,7 +120,7 @@ else:
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
             'OPTIONS': {
-                'timeout': 200
+                'timeout': 2000
             }
         }
     }

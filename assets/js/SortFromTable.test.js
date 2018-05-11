@@ -151,11 +151,8 @@ describe("SortFromTable actions", () => {
        mockStore(store)
    });
 
-   // For all the code below: currently sort direction does not matter as it is determined in the backend
-   // It's best understood as a click event that passes the column name
-
    it('Adds new sort module after the given module and sets sort parameters if one does not exist', (done) => {
-      updateSort(19, {column: 'num_col', direction: 'ASC'});
+      updateSort(19, 'num_col', 'Number');
       setImmediate(() => {
           // Checks the module adding part
           expect(api.addModule.mock.calls).toHaveLength(1);
@@ -165,9 +162,7 @@ describe("SortFromTable actions", () => {
           expect(api.addModule.mock.calls[0][2]).toBe(3);
 
           // Checks the parameter setting part
-          // We have a timeout of 500ms here as the function uses two 200ms timeouts
-          // to prevent database lock-up
-          setTimeout(() => {
+          setImmediate(() => {
               // 3 calls as we are setting column, dtype and direction
               expect(api.onParamChanged.mock.calls).toHaveLength(3);
 
@@ -186,15 +181,14 @@ describe("SortFromTable actions", () => {
               expect(api.onParamChanged.mock.calls[2][1].value).toBe(2);
 
               done();
-          }, 500);
+          });
       });
    });
 
    it('Updates the existing sort module after the current non-sort module correctly for a string column', (done) => {
        // Click on 'str_col' once, which should give us ascending order
-       updateSort(17, {column: 'str_col', direction: 'ASC'});
-       // We are using timeouts here as the function uses timeout to prevent database lock-up
-       setTimeout(() => {
+       updateSort(17, 'str_col', 'String');
+       setImmediate(() => {
            // 3 calls as we are setting column, dtype and direction
            expect(api.onParamChanged.mock.calls).toHaveLength(3);
 
@@ -213,14 +207,13 @@ describe("SortFromTable actions", () => {
            expect(api.onParamChanged.mock.calls[2][1].value).toBe(1);
 
            done();
-       }, 300);
+       });
    });
 
    it('Updates the existing sort module after the current non-sort module correctly for a number column', (done) => {
        // Click on 'num_col' once, which should give us descending order
-       updateSort(17, {column: 'num_col', direction: 'ASC'});
-       // We are using timeouts here as the function uses timeout to prevent database lock-up
-       setTimeout(() => {
+       updateSort(17, 'num_col', 'Number');
+       setImmediate(() => {
            // 3 calls as we are setting column, dtype and direction
            expect(api.onParamChanged.mock.calls).toHaveLength(3);
 
@@ -239,14 +232,14 @@ describe("SortFromTable actions", () => {
            expect(api.onParamChanged.mock.calls[2][1].value).toBe(2);
 
            done();
-       }, 300);
+       });
    });
 
    it('Updates the existing sort module after the current non-sort module correctly for a date column', (done) => {
        // Click on 'date_col' once, which should give us descending order
-       updateSort(17, {column: 'date_col', direction: 'ASC'});
+       updateSort(17, 'date_col', 'Date');
        // We are using timeouts here as the function uses timeout to prevent database lock-up
-       setTimeout(() => {
+       setImmediate(() => {
            // 3 calls as we are setting column, dtype and direction
            expect(api.onParamChanged.mock.calls).toHaveLength(3);
 
@@ -265,12 +258,12 @@ describe("SortFromTable actions", () => {
            expect(api.onParamChanged.mock.calls[2][1].value).toBe(2);
 
            done();
-       }, 300);
+       });
    });
 
    it('Updates the current sort module correctly when sorted column header is clicked', (done) => {
        // Click on 'num_col' once, which should give us ascending order since previous is descending
-       updateSort(79, {column: 'num_col', direction: 'ASC'});
+       updateSort(79, 'num_col', 'Number');
        setImmediate(() => {
            // 1 call as we are only updating direction here
            expect(api.onParamChanged.mock.calls).toHaveLength(1);
@@ -286,8 +279,8 @@ describe("SortFromTable actions", () => {
 
    it('Updates the current sort module correctly when an unsorted header is clicked', (done) => {
        // Click on 'str_col' once, which should give us ascending order since previous is descending
-       updateSort(79, {column: 'str_col', direction: 'ASC'});
-       setTimeout(() => {
+       updateSort(79, 'str_col', 'String');
+       setImmediate(() => {
            // 3 calls as we are setting column, dtype and direction
            expect(api.onParamChanged.mock.calls).toHaveLength(3);
 
@@ -306,6 +299,6 @@ describe("SortFromTable actions", () => {
            expect(api.onParamChanged.mock.calls[2][1].value).toBe(1);
 
            done();
-       }, 300);
+       });
    });
 });

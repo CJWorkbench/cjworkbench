@@ -8,6 +8,7 @@ import DataGrid from "./DataGrid";
 import update from 'immutability-helper'
 import * as EditCells from './EditCells'
 import * as SortFromTable from './SortFromTable'
+import {findParamValByIdName} from "./utils";
 
 export function mockAddCellEdit(fn) {
   EditCells.addCellEdit = fn;
@@ -164,11 +165,9 @@ export default class TableView extends React.Component {
     }
   }
 
-  onSort(sortCol, sortDir) {
-      SortFromTable.updateSort(this.props.id, {
-          column: sortCol,
-          direction: sortDir
-      });
+  onSort(sortCol, sortType) {
+      SortFromTable.updateSort(this.props.id, sortCol, sortType);
+      this.refreshTable(this.props.id);
   }
 
   render() {
@@ -184,17 +183,46 @@ export default class TableView extends React.Component {
       // putting a no-op translate3d property on it, we coerce browsers into
       // rendering it and all of its children in a seperate compositing layer,
       // improving the rendering of everything else in the app.
+      // Expand the list of letter-showing modules by changing the array here
+      let showLetterWfModuleIdNames = ['formula'];
+
+      var moduleIsSort = false;
+      var showColumnLetter = false;
+      if(this.props.currentModule) {
+          if(this.props.currentModule.module_version) {
+              if(this.props.currentModule.module_version.module) {
+                  moduleIsSort = (this.props.currentModule.module_version.module.id_name == "sort-from-table");
+                  showColumnLetter = (showLetterWfModuleIdNames.indexOf(this.props.currentModule.module_version.module.id_name) >= 0);
+              }
+          }
+      }
+
+      // Maps sort direction to ReactDataGrid direction names
+      let sortDirectionTranslator = ["NONE", "ASC", "DESC"]
+      var sortColumn = undefined;
+      if(moduleIsSort) {
+        sortColumn = findParamValByIdName(this.props.currentModule, 'column').value;
+      }
+
+      var sortDirection = undefined;
+      if(moduleIsSort) {
+        sortDirection = sortDirectionTranslator[findParamValByIdName(this.props.currentModule, 'direction').value];
+      }
+
       gridView =
         <div className="outputpane-data" style={{transform:'translate3d(0, 0, 0)'}}>
           <DataGrid
             totalRows={this.state.tableData.total_rows}
             columns={this.state.tableData.columns}
+            columnTypes={this.state.tableData.column_types}
+            revision={this.props.revision}
             getRow={this.getRow}
             resizing={this.props.resizing}
             onEditCell={this.onEditCell}
-            onSort={this.onSort}
-            sortColumn={this.props.sortColumn}
-            sortDirection={this.props.sortDirection}
+            onSortColumn={this.onSort}
+            sortColumn={sortColumn}
+            sortDirection={sortDirection}
+            showLetter={showColumnLetter}
           />
         </div>
       // adds commas to row count
