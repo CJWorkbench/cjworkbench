@@ -84,6 +84,11 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
                 { 'Class': 'english', 'F': 7, 'M': None},
                 { 'Class': 'history', 'F': 13, 'M': 11.0},
                 { 'Class': 'economics', 'F': 20, 'M': 20.0}
+            ],
+            'column_types': [
+                'String',
+                'Number',
+                'Number'
             ]
         }
         self.assertEqual(d1, d2)

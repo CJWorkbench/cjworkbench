@@ -49,7 +49,45 @@ export function okResponseMock () {
   return jsonResponseMock(null)
 }
 
+// Find if an module of moduleIdName exists as or is next to module with wfModuleId
+export function findModuleWithIdAndIdName(state, wfModuleId, moduleIdName) {
+  var wfModules = state.workflow.wf_modules;
+  var idx = getWfModuleIndexfromId(state, wfModuleId);
 
+  // Is this an existing module with the wfModuleId we want?
+  if (wfModules[idx].module_version.module.id_name === moduleIdName ) {
+    return wfModules[idx];
+  }
+
+  // Is the next module one with moduleIdName? If so we will return this module to change
+  var nextIdx = idx + 1;
+  if (nextIdx === wfModules.length) {
+    return null;   // end of stack
+  } else if (wfModules[nextIdx].module_version.module.id_name === moduleIdName ) {
+    return wfModules[nextIdx];
+  }
+
+  // Nope, no target module with moduleIdName where we need it
+  return null;
+}
+
+// Find the parameter value by its id name
+export function findParamValByIdName(wfm, paramValIdName) {
+  return wfm.parameter_vals.find((parameterVal) => {
+        return parameterVal.parameter_spec.id_name === paramValIdName;
+    });
+}
+
+// Returns wfm object index in stack,  given its global ID
+export function getWfModuleIndexfromId(state, id) {
+  var wfModuleIdx = null;
+  state.workflow.wf_modules.find((wfm, idx) => {
+    wfModuleIdx = idx;
+    return wfm.id === id;
+  });
+
+  return wfModuleIdx;
+}
 
 // Log to Intercom, if installed
 export function logUserEvent(name, metadata) {

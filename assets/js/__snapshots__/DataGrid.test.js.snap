@@ -37,34 +37,66 @@ exports[`Renders the grid 1`] = `
         },
         Object {
           "editable": true,
+          "headerRenderer": <HeaderRenderer
+            colname="aaa"
+            coltype=""
+            idx="0"
+            isSorted={false}
+            onSort={undefined}
+            showLetter={undefined}
+            sortDirection={undefined}
+      />,
           "key": "aaa",
           "name": "aaa",
           "resizable": true,
-          "sortable": true,
           "width": 160,
         },
         Object {
           "editable": true,
+          "headerRenderer": <HeaderRenderer
+            colname="bbbb"
+            coltype=""
+            idx="1"
+            isSorted={false}
+            onSort={undefined}
+            showLetter={undefined}
+            sortDirection={undefined}
+      />,
           "key": "bbbb",
           "name": "bbbb",
           "resizable": true,
-          "sortable": true,
           "width": 160,
         },
         Object {
           "editable": true,
+          "headerRenderer": <HeaderRenderer
+            colname="ccccc"
+            coltype=""
+            idx="2"
+            isSorted={false}
+            onSort={undefined}
+            showLetter={undefined}
+            sortDirection={undefined}
+      />,
           "key": "ccccc",
           "name": "ccccc",
           "resizable": true,
-          "sortable": true,
           "width": 160,
         },
         Object {
           "editable": true,
+          "headerRenderer": <HeaderRenderer
+            colname="rn_"
+            coltype=""
+            idx="3"
+            isSorted={false}
+            onSort={undefined}
+            showLetter={undefined}
+            sortDirection={undefined}
+      />,
           "key": "rn_",
           "name": "rn_",
           "resizable": true,
-          "sortable": true,
           "width": 160,
         },
       ]
@@ -73,12 +105,12 @@ exports[`Renders the grid 1`] = `
     enableCellSelect={true}
     enableRowSelect={false}
     headerFiltersHeight={45}
+    headerRowHeight={36}
     minColumnWidth={80}
     minHeight={-2}
     minWidth={-2}
     onBeforeEdit={[Function]}
     onGridRowsUpdated={[Function]}
-    onGridSort={[Function]}
     overScan={
       Object {
         "colsEnd": 5,
@@ -156,38 +188,70 @@ exports[`Renders the grid 1`] = `
                 },
                 Object {
                   "editable": true,
+                  "headerRenderer": <HeaderRenderer
+                    colname="aaa"
+                    coltype=""
+                    idx="0"
+                    isSorted={false}
+                    onSort={undefined}
+                    showLetter={undefined}
+                    sortDirection={undefined}
+            />,
                   "key": "aaa",
                   "left": 40,
                   "name": "aaa",
                   "resizable": true,
-                  "sortable": true,
                   "width": 160,
                 },
                 Object {
                   "editable": true,
+                  "headerRenderer": <HeaderRenderer
+                    colname="bbbb"
+                    coltype=""
+                    idx="1"
+                    isSorted={false}
+                    onSort={undefined}
+                    showLetter={undefined}
+                    sortDirection={undefined}
+            />,
                   "key": "bbbb",
                   "left": 200,
                   "name": "bbbb",
                   "resizable": true,
-                  "sortable": true,
                   "width": 160,
                 },
                 Object {
                   "editable": true,
+                  "headerRenderer": <HeaderRenderer
+                    colname="ccccc"
+                    coltype=""
+                    idx="2"
+                    isSorted={false}
+                    onSort={undefined}
+                    showLetter={undefined}
+                    sortDirection={undefined}
+            />,
                   "key": "ccccc",
                   "left": 360,
                   "name": "ccccc",
                   "resizable": true,
-                  "sortable": true,
                   "width": 160,
                 },
                 Object {
                   "editable": true,
+                  "headerRenderer": <HeaderRenderer
+                    colname="rn_"
+                    coltype=""
+                    idx="3"
+                    isSorted={false}
+                    onSort={undefined}
+                    showLetter={undefined}
+                    sortDirection={undefined}
+            />,
                   "key": "rn_",
                   "left": 520,
                   "name": "rn_",
                   "resizable": true,
-                  "sortable": true,
                   "width": 160,
                 },
               ],
@@ -207,34 +271,66 @@ exports[`Renders the grid 1`] = `
               },
               Object {
                 "editable": true,
+                "headerRenderer": <HeaderRenderer
+                  colname="aaa"
+                  coltype=""
+                  idx="0"
+                  isSorted={false}
+                  onSort={undefined}
+                  showLetter={undefined}
+                  sortDirection={undefined}
+            />,
                 "key": "aaa",
                 "name": "aaa",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
               Object {
                 "editable": true,
+                "headerRenderer": <HeaderRenderer
+                  colname="bbbb"
+                  coltype=""
+                  idx="1"
+                  isSorted={false}
+                  onSort={undefined}
+                  showLetter={undefined}
+                  sortDirection={undefined}
+            />,
                 "key": "bbbb",
                 "name": "bbbb",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
               Object {
                 "editable": true,
+                "headerRenderer": <HeaderRenderer
+                  colname="ccccc"
+                  coltype=""
+                  idx="2"
+                  isSorted={false}
+                  onSort={undefined}
+                  showLetter={undefined}
+                  sortDirection={undefined}
+            />,
                 "key": "ccccc",
                 "name": "ccccc",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
               Object {
                 "editable": true,
+                "headerRenderer": <HeaderRenderer
+                  colname="rn_"
+                  coltype=""
+                  idx="3"
+                  isSorted={false}
+                  onSort={undefined}
+                  showLetter={undefined}
+                  sortDirection={undefined}
+            />,
                 "key": "rn_",
                 "name": "rn_",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
             ]
@@ -244,10 +340,11 @@ exports[`Renders the grid 1`] = `
           enableRowSelect={false}
           expandedRows={Array []}
           headerFiltersHeight={45}
+          headerRowHeight={36}
           headerRows={
             Array [
               Object {
-                "height": 35,
+                "height": 36,
                 "ref": [Function],
                 "rowType": "header",
               },
@@ -259,7 +356,6 @@ exports[`Renders the grid 1`] = `
           onBeforeEdit={[Function]}
           onColumnResize={[Function]}
           onGridRowsUpdated={[Function]}
-          onGridSort={[Function]}
           onSort={[Function]}
           onViewportClick={[Function]}
           onViewportDoubleClick={[Function]}
@@ -278,12 +374,14 @@ exports[`Renders the grid 1`] = `
           rowGetter={[Function]}
           rowHeight={35}
           rowKey="id"
-          rowOffsetHeight={35}
+          rowOffsetHeight={36}
           rowScrollTimeout={0}
           rowSelection={null}
           rowsCount={2}
           scrollToRowIndex={0}
           selectedRows={Array []}
+          sortColumn={null}
+          sortDirection={null}
           tabIndex={-1}
           totalWidth={-2}
         >
@@ -346,38 +444,70 @@ exports[`Renders the grid 1`] = `
                     },
                     Object {
                       "editable": true,
+                      "headerRenderer": <HeaderRenderer
+                        colname="aaa"
+                        coltype=""
+                        idx="0"
+                        isSorted={false}
+                        onSort={undefined}
+                        showLetter={undefined}
+                        sortDirection={undefined}
+                />,
                       "key": "aaa",
                       "left": 40,
                       "name": "aaa",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                     Object {
                       "editable": true,
+                      "headerRenderer": <HeaderRenderer
+                        colname="bbbb"
+                        coltype=""
+                        idx="1"
+                        isSorted={false}
+                        onSort={undefined}
+                        showLetter={undefined}
+                        sortDirection={undefined}
+                />,
                       "key": "bbbb",
                       "left": 200,
                       "name": "bbbb",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                     Object {
                       "editable": true,
+                      "headerRenderer": <HeaderRenderer
+                        colname="ccccc"
+                        coltype=""
+                        idx="2"
+                        isSorted={false}
+                        onSort={undefined}
+                        showLetter={undefined}
+                        sortDirection={undefined}
+                />,
                       "key": "ccccc",
                       "left": 360,
                       "name": "ccccc",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                     Object {
                       "editable": true,
+                      "headerRenderer": <HeaderRenderer
+                        colname="rn_"
+                        coltype=""
+                        idx="3"
+                        isSorted={false}
+                        onSort={undefined}
+                        showLetter={undefined}
+                        sortDirection={undefined}
+                />,
                       "key": "rn_",
                       "left": 520,
                       "name": "rn_",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                   ],
@@ -389,7 +519,7 @@ exports[`Renders the grid 1`] = `
               headerRows={
                 Array [
                   Object {
-                    "height": 35,
+                    "height": 36,
                     "ref": [Function],
                     "rowType": "header",
                   },
@@ -399,6 +529,8 @@ exports[`Renders the grid 1`] = `
               onColumnResize={[Function]}
               onScroll={[Function]}
               onSort={[Function]}
+              sortColumn={null}
+              sortDirection={null}
               totalWidth={-2}
             >
               <div
@@ -408,7 +540,7 @@ exports[`Renders the grid 1`] = `
                 onScroll={[Function]}
                 style={
                   Object {
-                    "height": 35,
+                    "height": 36,
                     "position": "relative",
                   }
                 }
@@ -426,48 +558,82 @@ exports[`Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="aaa"
+                          coltype=""
+                          idx="0"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                    />,
                         "key": "aaa",
                         "left": 40,
                         "name": "aaa",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="bbbb"
+                          coltype=""
+                          idx="1"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                    />,
                         "key": "bbbb",
                         "left": 200,
                         "name": "bbbb",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="ccccc"
+                          coltype=""
+                          idx="2"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                    />,
                         "key": "ccccc",
                         "left": 360,
                         "name": "ccccc",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="rn_"
+                          coltype=""
+                          idx="3"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                    />,
                         "key": "rn_",
                         "left": 520,
                         "name": "rn_",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                     ]
                   }
-                  height={35}
+                  height={36}
                   onColumnResize={[Function]}
                   onColumnResizeEnd={[Function]}
                   onScroll={[Function]}
                   onSort={[Function]}
                   rowType="header"
+                  sortColumn={null}
+                  sortDirection={null}
                   style={
                     Object {
                       "left": 0,
@@ -482,7 +648,7 @@ exports[`Renders the grid 1`] = `
                 >
                   <div
                     className="react-grid-HeaderRow"
-                    height={35}
+                    height={36}
                     onScroll={[Function]}
                     style={
                       Object {
@@ -499,7 +665,7 @@ exports[`Renders the grid 1`] = `
                     <div
                       style={
                         Object {
-                          "height": 35,
+                          "height": 36,
                           "overflowX": "hidden",
                           "overflowY": "hidden",
                           "whiteSpace": "nowrap",
@@ -511,24 +677,35 @@ exports[`Renders the grid 1`] = `
                         column={
                           Object {
                             "editable": true,
+                            "headerRenderer": <HeaderRenderer
+                              colname="aaa"
+                              coltype=""
+                              idx="0"
+                              isSorted={false}
+                              onSort={undefined}
+                              showLetter={undefined}
+                              sortDirection={undefined}
+                          />,
                             "key": "aaa",
                             "left": 40,
                             "name": "aaa",
                             "resizable": true,
                             "rowType": "header",
-                            "sortable": true,
                             "width": 160,
                           }
                         }
-                        height={35}
+                        height={36}
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={
-                          <SortableHeaderCell
-                            columnKey="aaa"
-                            onSort={[Function]}
-                            sortDescendingFirst={false}
-                            sortDirection="NONE"
+                          <HeaderRenderer
+                            colname="aaa"
+                            coltype=""
+                            idx="0"
+                            isSorted={false}
+                            onSort={undefined}
+                            showLetter={undefined}
+                            sortDirection={undefined}
                           />
                         }
                         resizing={false}
@@ -538,7 +715,7 @@ exports[`Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 35,
+                              "height": 36,
                               "left": 40,
                               "margin": 0,
                               "position": "absolute",
@@ -548,40 +725,50 @@ exports[`Renders the grid 1`] = `
                             }
                           }
                         >
-                          <SortableHeaderCell
+                          <HeaderRenderer
+                            colname="aaa"
+                            coltype=""
                             column={
                               Object {
                                 "editable": true,
+                                "headerRenderer": <HeaderRenderer
+                                  colname="aaa"
+                                  coltype=""
+                                  idx="0"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
+                              />,
                                 "key": "aaa",
                                 "left": 40,
                                 "name": "aaa",
                                 "resizable": true,
                                 "rowType": "header",
-                                "sortable": true,
                                 "width": 160,
                               }
                             }
-                            columnKey="aaa"
-                            height={35}
-                            onSort={[Function]}
-                            sortDescendingFirst={false}
-                            sortDirection="NONE"
+                            height={36}
+                            idx="0"
+                            isSorted={false}
                           >
                             <div
-                              className="react-grid-HeaderCell-sortable"
                               onClick={[Function]}
-                              style={
-                                Object {
-                                  "cursor": "pointer",
-                                }
-                              }
+                              onMouseEnter={[Function]}
+                              onMouseLeave={[Function]}
                             >
-                              <span
-                                className="pull-right"
-                              />
-                              aaa
+                              <div
+                                style={
+                                  Object {
+                                    "height": "24px",
+                                    "width": "100%",
+                                  }
+                                }
+                              >
+                                aaa
+                              </div>
                             </div>
-                          </SortableHeaderCell>
+                          </HeaderRenderer>
                           <ResizeHandle
                             onDrag={[Function]}
                             onDragEnd={[Function]}
@@ -627,24 +814,35 @@ exports[`Renders the grid 1`] = `
                         column={
                           Object {
                             "editable": true,
+                            "headerRenderer": <HeaderRenderer
+                              colname="bbbb"
+                              coltype=""
+                              idx="1"
+                              isSorted={false}
+                              onSort={undefined}
+                              showLetter={undefined}
+                              sortDirection={undefined}
+                          />,
                             "key": "bbbb",
                             "left": 200,
                             "name": "bbbb",
                             "resizable": true,
                             "rowType": "header",
-                            "sortable": true,
                             "width": 160,
                           }
                         }
-                        height={35}
+                        height={36}
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={
-                          <SortableHeaderCell
-                            columnKey="bbbb"
-                            onSort={[Function]}
-                            sortDescendingFirst={false}
-                            sortDirection="NONE"
+                          <HeaderRenderer
+                            colname="bbbb"
+                            coltype=""
+                            idx="1"
+                            isSorted={false}
+                            onSort={undefined}
+                            showLetter={undefined}
+                            sortDirection={undefined}
                           />
                         }
                         resizing={false}
@@ -654,7 +852,7 @@ exports[`Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 35,
+                              "height": 36,
                               "left": 200,
                               "margin": 0,
                               "position": "absolute",
@@ -664,40 +862,50 @@ exports[`Renders the grid 1`] = `
                             }
                           }
                         >
-                          <SortableHeaderCell
+                          <HeaderRenderer
+                            colname="bbbb"
+                            coltype=""
                             column={
                               Object {
                                 "editable": true,
+                                "headerRenderer": <HeaderRenderer
+                                  colname="bbbb"
+                                  coltype=""
+                                  idx="1"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
+                              />,
                                 "key": "bbbb",
                                 "left": 200,
                                 "name": "bbbb",
                                 "resizable": true,
                                 "rowType": "header",
-                                "sortable": true,
                                 "width": 160,
                               }
                             }
-                            columnKey="bbbb"
-                            height={35}
-                            onSort={[Function]}
-                            sortDescendingFirst={false}
-                            sortDirection="NONE"
+                            height={36}
+                            idx="1"
+                            isSorted={false}
                           >
                             <div
-                              className="react-grid-HeaderCell-sortable"
                               onClick={[Function]}
-                              style={
-                                Object {
-                                  "cursor": "pointer",
-                                }
-                              }
+                              onMouseEnter={[Function]}
+                              onMouseLeave={[Function]}
                             >
-                              <span
-                                className="pull-right"
-                              />
-                              bbbb
+                              <div
+                                style={
+                                  Object {
+                                    "height": "24px",
+                                    "width": "100%",
+                                  }
+                                }
+                              >
+                                bbbb
+                              </div>
                             </div>
-                          </SortableHeaderCell>
+                          </HeaderRenderer>
                           <ResizeHandle
                             onDrag={[Function]}
                             onDragEnd={[Function]}
@@ -743,24 +951,35 @@ exports[`Renders the grid 1`] = `
                         column={
                           Object {
                             "editable": true,
+                            "headerRenderer": <HeaderRenderer
+                              colname="ccccc"
+                              coltype=""
+                              idx="2"
+                              isSorted={false}
+                              onSort={undefined}
+                              showLetter={undefined}
+                              sortDirection={undefined}
+                          />,
                             "key": "ccccc",
                             "left": 360,
                             "name": "ccccc",
                             "resizable": true,
                             "rowType": "header",
-                            "sortable": true,
                             "width": 160,
                           }
                         }
-                        height={35}
+                        height={36}
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={
-                          <SortableHeaderCell
-                            columnKey="ccccc"
-                            onSort={[Function]}
-                            sortDescendingFirst={false}
-                            sortDirection="NONE"
+                          <HeaderRenderer
+                            colname="ccccc"
+                            coltype=""
+                            idx="2"
+                            isSorted={false}
+                            onSort={undefined}
+                            showLetter={undefined}
+                            sortDirection={undefined}
                           />
                         }
                         resizing={false}
@@ -770,7 +989,7 @@ exports[`Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 35,
+                              "height": 36,
                               "left": 360,
                               "margin": 0,
                               "position": "absolute",
@@ -780,40 +999,50 @@ exports[`Renders the grid 1`] = `
                             }
                           }
                         >
-                          <SortableHeaderCell
+                          <HeaderRenderer
+                            colname="ccccc"
+                            coltype=""
                             column={
                               Object {
                                 "editable": true,
+                                "headerRenderer": <HeaderRenderer
+                                  colname="ccccc"
+                                  coltype=""
+                                  idx="2"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
+                              />,
                                 "key": "ccccc",
                                 "left": 360,
                                 "name": "ccccc",
                                 "resizable": true,
                                 "rowType": "header",
-                                "sortable": true,
                                 "width": 160,
                               }
                             }
-                            columnKey="ccccc"
-                            height={35}
-                            onSort={[Function]}
-                            sortDescendingFirst={false}
-                            sortDirection="NONE"
+                            height={36}
+                            idx="2"
+                            isSorted={false}
                           >
                             <div
-                              className="react-grid-HeaderCell-sortable"
                               onClick={[Function]}
-                              style={
-                                Object {
-                                  "cursor": "pointer",
-                                }
-                              }
+                              onMouseEnter={[Function]}
+                              onMouseLeave={[Function]}
                             >
-                              <span
-                                className="pull-right"
-                              />
-                              ccccc
+                              <div
+                                style={
+                                  Object {
+                                    "height": "24px",
+                                    "width": "100%",
+                                  }
+                                }
+                              >
+                                ccccc
+                              </div>
                             </div>
-                          </SortableHeaderCell>
+                          </HeaderRenderer>
                           <ResizeHandle
                             onDrag={[Function]}
                             onDragEnd={[Function]}
@@ -859,24 +1088,35 @@ exports[`Renders the grid 1`] = `
                         column={
                           Object {
                             "editable": true,
+                            "headerRenderer": <HeaderRenderer
+                              colname="rn_"
+                              coltype=""
+                              idx="3"
+                              isSorted={false}
+                              onSort={undefined}
+                              showLetter={undefined}
+                              sortDirection={undefined}
+                          />,
                             "key": "rn_",
                             "left": 520,
                             "name": "rn_",
                             "resizable": true,
                             "rowType": "header",
-                            "sortable": true,
                             "width": 160,
                           }
                         }
-                        height={35}
+                        height={36}
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={
-                          <SortableHeaderCell
-                            columnKey="rn_"
-                            onSort={[Function]}
-                            sortDescendingFirst={false}
-                            sortDirection="NONE"
+                          <HeaderRenderer
+                            colname="rn_"
+                            coltype=""
+                            idx="3"
+                            isSorted={false}
+                            onSort={undefined}
+                            showLetter={undefined}
+                            sortDirection={undefined}
                           />
                         }
                         resizing={false}
@@ -886,7 +1126,7 @@ exports[`Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 35,
+                              "height": 36,
                               "left": 520,
                               "margin": 0,
                               "position": "absolute",
@@ -896,40 +1136,50 @@ exports[`Renders the grid 1`] = `
                             }
                           }
                         >
-                          <SortableHeaderCell
+                          <HeaderRenderer
+                            colname="rn_"
+                            coltype=""
                             column={
                               Object {
                                 "editable": true,
+                                "headerRenderer": <HeaderRenderer
+                                  colname="rn_"
+                                  coltype=""
+                                  idx="3"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
+                              />,
                                 "key": "rn_",
                                 "left": 520,
                                 "name": "rn_",
                                 "resizable": true,
                                 "rowType": "header",
-                                "sortable": true,
                                 "width": 160,
                               }
                             }
-                            columnKey="rn_"
-                            height={35}
-                            onSort={[Function]}
-                            sortDescendingFirst={false}
-                            sortDirection="NONE"
+                            height={36}
+                            idx="3"
+                            isSorted={false}
                           >
                             <div
-                              className="react-grid-HeaderCell-sortable"
                               onClick={[Function]}
-                              style={
-                                Object {
-                                  "cursor": "pointer",
-                                }
-                              }
+                              onMouseEnter={[Function]}
+                              onMouseLeave={[Function]}
                             >
-                              <span
-                                className="pull-right"
-                              />
-                              rn_
+                              <div
+                                style={
+                                  Object {
+                                    "height": "24px",
+                                    "width": "100%",
+                                  }
+                                }
+                              >
+                                rn_
+                              </div>
                             </div>
-                          </SortableHeaderCell>
+                          </HeaderRenderer>
                           <ResizeHandle
                             onDrag={[Function]}
                             onDragEnd={[Function]}
@@ -983,7 +1233,7 @@ exports[`Renders the grid 1`] = `
                             "width": 40,
                           }
                         }
-                        height={35}
+                        height={36}
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={[Function]}
@@ -994,7 +1244,7 @@ exports[`Renders the grid 1`] = `
                           style={
                             Object {
                               "display": "inline-block",
-                              "height": 35,
+                              "height": 36,
                               "left": 0,
                               "margin": 0,
                               "position": "absolute",
@@ -1071,38 +1321,70 @@ exports[`Renders the grid 1`] = `
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="aaa"
+                          coltype=""
+                          idx="0"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                  />,
                         "key": "aaa",
                         "left": 40,
                         "name": "aaa",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="bbbb"
+                          coltype=""
+                          idx="1"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                  />,
                         "key": "bbbb",
                         "left": 200,
                         "name": "bbbb",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="ccccc"
+                          coltype=""
+                          idx="2"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                  />,
                         "key": "ccccc",
                         "left": 360,
                         "name": "ccccc",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="rn_"
+                          coltype=""
+                          idx="3"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                  />,
                         "key": "rn_",
                         "left": 520,
                         "name": "rn_",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                     ],
@@ -1125,7 +1407,7 @@ exports[`Renders the grid 1`] = `
                 rowGetter={[Function]}
                 rowHeight={35}
                 rowKey="id"
-                rowOffsetHeight={35}
+                rowOffsetHeight={36}
                 rowScrollTimeout={0}
                 rowSelection={null}
                 rowsCount={2}
@@ -1144,7 +1426,7 @@ exports[`Renders the grid 1`] = `
                       "padding": 0,
                       "position": "absolute",
                       "right": 0,
-                      "top": 35,
+                      "top": 36,
                     }
                   }
                 >
@@ -1199,38 +1481,70 @@ exports[`Renders the grid 1`] = `
                         },
                         Object {
                           "editable": true,
+                          "headerRenderer": <HeaderRenderer
+                            colname="aaa"
+                            coltype=""
+                            idx="0"
+                            isSorted={false}
+                            onSort={undefined}
+                            showLetter={undefined}
+                            sortDirection={undefined}
+                      />,
                           "key": "aaa",
                           "left": 40,
                           "name": "aaa",
                           "resizable": true,
-                          "sortable": true,
                           "width": 160,
                         },
                         Object {
                           "editable": true,
+                          "headerRenderer": <HeaderRenderer
+                            colname="bbbb"
+                            coltype=""
+                            idx="1"
+                            isSorted={false}
+                            onSort={undefined}
+                            showLetter={undefined}
+                            sortDirection={undefined}
+                      />,
                           "key": "bbbb",
                           "left": 200,
                           "name": "bbbb",
                           "resizable": true,
-                          "sortable": true,
                           "width": 160,
                         },
                         Object {
                           "editable": true,
+                          "headerRenderer": <HeaderRenderer
+                            colname="ccccc"
+                            coltype=""
+                            idx="2"
+                            isSorted={false}
+                            onSort={undefined}
+                            showLetter={undefined}
+                            sortDirection={undefined}
+                      />,
                           "key": "ccccc",
                           "left": 360,
                           "name": "ccccc",
                           "resizable": true,
-                          "sortable": true,
                           "width": 160,
                         },
                         Object {
                           "editable": true,
+                          "headerRenderer": <HeaderRenderer
+                            colname="rn_"
+                            coltype=""
+                            idx="3"
+                            isSorted={false}
+                            onSort={undefined}
+                            showLetter={undefined}
+                            sortDirection={undefined}
+                      />,
                           "key": "rn_",
                           "left": 520,
                           "name": "rn_",
                           "resizable": true,
-                          "sortable": true,
                           "width": 160,
                         },
                       ]
@@ -1238,7 +1552,7 @@ exports[`Renders the grid 1`] = `
                     displayEnd={2}
                     displayStart={0}
                     expandedRows={Array []}
-                    height={-37}
+                    height={-38}
                     isScrolling={true}
                     onRows={[Function]}
                     onScroll={[Function]}
@@ -1261,7 +1575,7 @@ exports[`Renders the grid 1`] = `
                       onScroll={[Function]}
                       style={
                         Object {
-                          "height": -37,
+                          "height": -38,
                           "left": 0,
                           "overflowX": "auto",
                           "overflowY": "scroll",
@@ -1328,38 +1642,70 @@ exports[`Renders the grid 1`] = `
                                       },
                                       Object {
                                         "editable": true,
+                                        "headerRenderer": <HeaderRenderer
+                                          colname="aaa"
+                                          coltype=""
+                                          idx="0"
+                                          isSorted={false}
+                                          onSort={undefined}
+                                          showLetter={undefined}
+                                          sortDirection={undefined}
+                                  />,
                                         "key": "aaa",
                                         "left": 40,
                                         "name": "aaa",
                                         "resizable": true,
-                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
                                         "editable": true,
+                                        "headerRenderer": <HeaderRenderer
+                                          colname="bbbb"
+                                          coltype=""
+                                          idx="1"
+                                          isSorted={false}
+                                          onSort={undefined}
+                                          showLetter={undefined}
+                                          sortDirection={undefined}
+                                  />,
                                         "key": "bbbb",
                                         "left": 200,
                                         "name": "bbbb",
                                         "resizable": true,
-                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
                                         "editable": true,
+                                        "headerRenderer": <HeaderRenderer
+                                          colname="ccccc"
+                                          coltype=""
+                                          idx="2"
+                                          isSorted={false}
+                                          onSort={undefined}
+                                          showLetter={undefined}
+                                          sortDirection={undefined}
+                                  />,
                                         "key": "ccccc",
                                         "left": 360,
                                         "name": "ccccc",
                                         "resizable": true,
-                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
                                         "editable": true,
+                                        "headerRenderer": <HeaderRenderer
+                                          colname="rn_"
+                                          coltype=""
+                                          idx="3"
+                                          isSorted={false}
+                                          onSort={undefined}
+                                          showLetter={undefined}
+                                          sortDirection={undefined}
+                                  />,
                                         "key": "rn_",
                                         "left": 520,
                                         "name": "rn_",
                                         "resizable": true,
-                                        "sortable": true,
                                         "width": 160,
                                       },
                                     ]
@@ -1435,38 +1781,70 @@ exports[`Renders the grid 1`] = `
                                       },
                                       Object {
                                         "editable": true,
+                                        "headerRenderer": <HeaderRenderer
+                                          colname="aaa"
+                                          coltype=""
+                                          idx="0"
+                                          isSorted={false}
+                                          onSort={undefined}
+                                          showLetter={undefined}
+                                          sortDirection={undefined}
+                                  />,
                                         "key": "aaa",
                                         "left": 40,
                                         "name": "aaa",
                                         "resizable": true,
-                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
                                         "editable": true,
+                                        "headerRenderer": <HeaderRenderer
+                                          colname="bbbb"
+                                          coltype=""
+                                          idx="1"
+                                          isSorted={false}
+                                          onSort={undefined}
+                                          showLetter={undefined}
+                                          sortDirection={undefined}
+                                  />,
                                         "key": "bbbb",
                                         "left": 200,
                                         "name": "bbbb",
                                         "resizable": true,
-                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
                                         "editable": true,
+                                        "headerRenderer": <HeaderRenderer
+                                          colname="ccccc"
+                                          coltype=""
+                                          idx="2"
+                                          isSorted={false}
+                                          onSort={undefined}
+                                          showLetter={undefined}
+                                          sortDirection={undefined}
+                                  />,
                                         "key": "ccccc",
                                         "left": 360,
                                         "name": "ccccc",
                                         "resizable": true,
-                                        "sortable": true,
                                         "width": 160,
                                       },
                                       Object {
                                         "editable": true,
+                                        "headerRenderer": <HeaderRenderer
+                                          colname="rn_"
+                                          coltype=""
+                                          idx="3"
+                                          isSorted={false}
+                                          onSort={undefined}
+                                          showLetter={undefined}
+                                          sortDirection={undefined}
+                                  />,
                                         "key": "rn_",
                                         "left": 520,
                                         "name": "rn_",
                                         "resizable": true,
-                                        "sortable": true,
                                         "width": 160,
                                       },
                                     ]
@@ -1551,38 +1929,70 @@ exports[`Renders the grid 1`] = `
                                         },
                                         Object {
                                           "editable": true,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="aaa"
+                                            coltype=""
+                                            idx="0"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                    />,
                                           "key": "aaa",
                                           "left": 40,
                                           "name": "aaa",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": true,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="bbbb"
+                                            coltype=""
+                                            idx="1"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                    />,
                                           "key": "bbbb",
                                           "left": 200,
                                           "name": "bbbb",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": true,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="ccccc"
+                                            coltype=""
+                                            idx="2"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                    />,
                                           "key": "ccccc",
                                           "left": 360,
                                           "name": "ccccc",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": true,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="rn_"
+                                            coltype=""
+                                            idx="3"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                    />,
                                           "key": "rn_",
                                           "left": 520,
                                           "name": "rn_",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -1658,38 +2068,70 @@ exports[`Renders the grid 1`] = `
                                         },
                                         Object {
                                           "editable": true,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="aaa"
+                                            coltype=""
+                                            idx="0"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                    />,
                                           "key": "aaa",
                                           "left": 40,
                                           "name": "aaa",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": true,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="bbbb"
+                                            coltype=""
+                                            idx="1"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                    />,
                                           "key": "bbbb",
                                           "left": 200,
                                           "name": "bbbb",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": true,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="ccccc"
+                                            coltype=""
+                                            idx="2"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                    />,
                                           "key": "ccccc",
                                           "left": 360,
                                           "name": "ccccc",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": true,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="rn_"
+                                            coltype=""
+                                            idx="3"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                    />,
                                           "key": "rn_",
                                           "left": 520,
                                           "name": "rn_",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -1770,38 +2212,70 @@ exports[`Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="aaa"
+                                      coltype=""
+                                      idx="0"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                />,
                                     "key": "aaa",
                                     "left": 40,
                                     "name": "aaa",
                                     "resizable": true,
-                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
                                     "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="bbbb"
+                                      coltype=""
+                                      idx="1"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                />,
                                     "key": "bbbb",
                                     "left": 200,
                                     "name": "bbbb",
                                     "resizable": true,
-                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
                                     "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="ccccc"
+                                      coltype=""
+                                      idx="2"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                />,
                                     "key": "ccccc",
                                     "left": 360,
                                     "name": "ccccc",
                                     "resizable": true,
-                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
                                     "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="rn_"
+                                      coltype=""
+                                      idx="3"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                />,
                                     "key": "rn_",
                                     "left": 520,
                                     "name": "rn_",
                                     "resizable": true,
-                                    "sortable": true,
                                     "width": 160,
                                   },
                                 ]
@@ -1874,11 +2348,19 @@ exports[`Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="aaa"
+                                        coltype=""
+                                        idx="0"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "aaa",
                                       "left": 40,
                                       "name": "aaa",
                                       "resizable": true,
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2009,11 +2491,19 @@ exports[`Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="bbbb"
+                                        coltype=""
+                                        idx="1"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "bbbb",
                                       "left": 200,
                                       "name": "bbbb",
                                       "resizable": true,
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2144,11 +2634,19 @@ exports[`Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="ccccc"
+                                        coltype=""
+                                        idx="2"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "ccccc",
                                       "left": 360,
                                       "name": "ccccc",
                                       "resizable": true,
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2279,11 +2777,19 @@ exports[`Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="rn_"
+                                        coltype=""
+                                        idx="3"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "rn_",
                                       "left": 520,
                                       "name": "rn_",
                                       "resizable": true,
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2552,38 +3058,70 @@ exports[`Renders the grid 1`] = `
                                   },
                                   Object {
                                     "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="aaa"
+                                      coltype=""
+                                      idx="0"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                />,
                                     "key": "aaa",
                                     "left": 40,
                                     "name": "aaa",
                                     "resizable": true,
-                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
                                     "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="bbbb"
+                                      coltype=""
+                                      idx="1"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                />,
                                     "key": "bbbb",
                                     "left": 200,
                                     "name": "bbbb",
                                     "resizable": true,
-                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
                                     "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="ccccc"
+                                      coltype=""
+                                      idx="2"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                />,
                                     "key": "ccccc",
                                     "left": 360,
                                     "name": "ccccc",
                                     "resizable": true,
-                                    "sortable": true,
                                     "width": 160,
                                   },
                                   Object {
                                     "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="rn_"
+                                      coltype=""
+                                      idx="3"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                />,
                                     "key": "rn_",
                                     "left": 520,
                                     "name": "rn_",
                                     "resizable": true,
-                                    "sortable": true,
                                     "width": 160,
                                   },
                                 ]
@@ -2656,11 +3194,19 @@ exports[`Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="aaa"
+                                        coltype=""
+                                        idx="0"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "aaa",
                                       "left": 40,
                                       "name": "aaa",
                                       "resizable": true,
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2791,11 +3337,19 @@ exports[`Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="bbbb"
+                                        coltype=""
+                                        idx="1"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "bbbb",
                                       "left": 200,
                                       "name": "bbbb",
                                       "resizable": true,
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -2926,11 +3480,19 @@ exports[`Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="ccccc"
+                                        coltype=""
+                                        idx="2"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "ccccc",
                                       "left": 360,
                                       "name": "ccccc",
                                       "resizable": true,
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
@@ -3061,11 +3623,19 @@ exports[`Renders the grid 1`] = `
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="rn_"
+                                        coltype=""
+                                        idx="3"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "rn_",
                                       "left": 520,
                                       "name": "rn_",
                                       "resizable": true,
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }

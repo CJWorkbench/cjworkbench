@@ -3,6 +3,7 @@ import { mount } from 'enzyme'
 import { jsonResponseMock } from "./utils";
 import TableView from './TableView'
 import { mockAddCellEdit, initialRows, preloadRows, deltaRows } from "./TableView";
+import DataGrid from "./DataGrid";
 
 describe('TableView', () => {
 
@@ -173,6 +174,198 @@ describe('TableView', () => {
     })
 
   })
+
+  it('Passes the the right sortColumn, sortDirection to DataGrid', (done) => {
+    var testData = {
+      total_rows: 2,
+      start_row: 0,
+      end_row: 2,
+      columns: ["a", "b", "c"],
+      rows: [
+        {
+          "a": "1",
+          "b": "2",
+          "c": "3"
+        },
+        {
+          "a": "4",
+          "b": "5",
+          "c": "6"
+        }
+      ],
+      column_types: ['Number', 'Number', 'Number']
+    };
+
+    var api = {
+      render: jsonResponseMock(testData),
+    };
+
+    const NON_SORT_MODULE_ID = 28;
+    const SORT_MODULE_ID = 135;
+
+    // A barebones workflow for testing the sort stuff
+    var workflow = {
+      wf_modules: [
+          {
+            id: NON_SORT_MODULE_ID,
+            module_version: {
+              module: {
+                id_name: 'loadurl'
+              }
+            }
+          },
+          {
+            id: SORT_MODULE_ID,
+            module_version: {
+              module: {
+                id_name: 'sort-from-table'
+              }
+            },
+            parameter_vals: [
+                {
+                  // column
+                  parameter_spec: {id_name: 'column'},
+                  value: 'b',
+                },
+                {
+                  // dtype
+                  parameter_spec: {id_name: 'dtype'},
+                  value: 1
+                },
+                {
+                  //direction
+                  parameter_spec: {id_name: 'direction'},
+                  value: 2 // Descending
+                }
+            ]
+          },
+      ]
+    }
+
+    // Try a mount with the sort module selected, should have sortColumn and sortDirection
+    var tree = mount(
+        <TableView
+            revision={1}
+            id={100}
+            api={api}
+            setBusySpinner={false}
+            resizing={false}
+            currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SORT_MODULE_ID))}
+        />
+    );
+    setImmediate(() => {
+      var dataGrid = tree.find(DataGrid);
+      expect(dataGrid).toHaveLength(1);
+      console.log(dataGrid.props());
+      expect(dataGrid.prop('sortColumn')).toBe('b');
+      expect(dataGrid.prop('sortDirection')).toBe('DESC');
+
+      // Try a mount with a non-sort module selected, sortColumn and sortDirection should be undefined
+      tree = mount(
+          <TableView
+              revision={1}
+              id={100}
+              api={api}
+              setBusySpinner={false}
+              resizing={false}
+              currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SORT_MODULE_ID))}
+          />
+      );
+      setImmediate(() => {
+        dataGrid = tree.find(DataGrid);
+        expect(dataGrid).toHaveLength(1);
+        expect(dataGrid.prop('sortColumn')).toBeUndefined();
+        expect(dataGrid.prop('sortDirection')).toBeUndefined();
+        done();
+      })
+    });
+  });
+
+  it('Passes the the right showLetter prop to DataGrid', (done) => {
+    var testData = {
+      total_rows: 2,
+      start_row: 0,
+      end_row: 2,
+      columns: ["a", "b", "c"],
+      rows: [
+        {
+          "a": "1",
+          "b": "2",
+          "c": "3"
+        },
+        {
+          "a": "4",
+          "b": "5",
+          "c": "6"
+        }
+      ],
+      column_types: ['Number', 'Number', 'Number']
+    };
+
+    var api = {
+      render: jsonResponseMock(testData),
+    };
+
+    const NON_SHOWLETTER_ID = 28;
+    const SHOWLETTER_ID = 135;
+
+    // A barebones workflow for testing the sort stuff
+    var workflow = {
+      wf_modules: [
+          {
+            id: NON_SHOWLETTER_ID,
+            module_version: {
+              module: {
+                id_name: 'loadurl'
+              }
+            }
+          },
+          {
+            id: SHOWLETTER_ID,
+            module_version: {
+              module: {
+                id_name: 'formula'
+              }
+            },
+          },
+      ]
+    }
+
+    // Try a mount with the formula module selected, should show letter
+    var tree = mount(
+        <TableView
+            revision={1}
+            id={100}
+            api={api}
+            setBusySpinner={false}
+            resizing={false}
+            currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SHOWLETTER_ID))}
+        />
+    );
+    setImmediate(() => {
+      var dataGrid = tree.find(DataGrid);
+      expect(dataGrid).toHaveLength(1);
+      expect(dataGrid.prop('showLetter')).toBe(true);
+
+      // Try a mount with a non-sort module selected, sortColumn and sortDirection should be undefined
+      tree = mount(
+          <TableView
+              revision={1}
+              id={100}
+              api={api}
+              setBusySpinner={false}
+              resizing={false}
+              currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SHOWLETTER_ID))}
+          />
+      );
+      setImmediate(() => {
+        dataGrid = tree.find(DataGrid);
+        expect(dataGrid).toHaveLength(1);
+        expect(dataGrid.prop('showLetter')).toBe(false);
+        done();
+      })
+    });
+  });
 });
 
 

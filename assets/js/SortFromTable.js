@@ -1,8 +1,8 @@
 import React from 'react'
-import {store, setSelectedWfModuleAction} from "./workflow-reducer";
+import {store, setSelectedWfModuleAction, addModuleAction, setParamValueAction} from "./workflow-reducer";
 import {getPageID} from "./utils";
 import WorkbenchAPI from './WorkbenchAPI'
-import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId} from './EditCells'
+import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId} from "./utils";
 
 var api = WorkbenchAPI();
 export function mockAPI(mock_api) {
@@ -14,50 +14,21 @@ function getNextSortDirection(current, sortType) {
     // and data type
     // Sort directions: 0 -> NOP, 1 -> Ascending, 2 -> Descending
     // Sort types: 0 -> String, 1 -> Number, 2 -> Date
-    var next = 0;
-    if(current == 0) {
-        if(sortType == 0) {
-            // String uses ascending by default
-            next = 1;
-        } else {
-            // Numbers and dates use descending by default
-            next = 2;
-        }
-    } else if(current == 1) {
-        if(sortType == 0) {
-            // For string
-            next = 2;
-        } else {
-            // For numbers and dates
-            next = 0;
-        }
-    } else {
-        if(sortType == 0) {
-            next = 0;
-        } else {
-            next = 1;
-        }
+
+    let SORT_TYPE_STRING = 0;
+    let SORT_TYPE_NUMBER = 1;
+    let SORT_TYPE_DATE = 2;
+
+    if(sortType == SORT_TYPE_STRING) {
+        // String: NOP (0) -> ASC (1) -> DESC (2)
+        return (current + 1) % 3;
     }
-    return next;
+    // Number and Date: NOP (0) -> DESC (2) -> ASC (1)
+    return (current + 2) % 3;
 }
 
 // Wrapper function for changing sort direction, since it needs to be used twice.
-function updateSortDirection(wfm, sortInfo, sortType, reset=false) {
-
-    // I left this code in because the implementation below can
-    // cause the UI to show the wrong arrow for a second before
-    // the database fully updates. We can talk about which behavior
-    // is preferable later.
-    /*
-    var direction = 0; // Corresponds to "select"
-    if(sortInfo.direction == 'ASC') {
-        direction = 1;
-    } else if(sortInfo.direction == 'DESC') {
-        direction = 2
-    }
-    */
-
-    // Sort directions: 0 -> NOP, 1 -> Ascending, 2 -> Descending
+function updateSortDirection(wfm, sortColumn, sortType, reset=false) {
     var directionParam = findParamValByIdName(wfm, "direction");
     let currentDirection = reset ? 0 : parseInt(directionParam.value);
     var nextDirection = getNextSortDirection(currentDirection, sortType)
@@ -65,56 +36,45 @@ function updateSortDirection(wfm, sortInfo, sortType, reset=false) {
     api.onParamChanged(directionParam.id, {value: nextDirection});
 }
 
-function updateSortModule(wfm, sortInfo, sortType) {
-    var column = sortInfo.column;
+function updateSortModule(wfm, sortColumn, sortType) {
+    var column = sortColumn;
     var columnParam = findParamValByIdName(wfm, "column");
     var typeParam = findParamValByIdName(wfm, "dtype");
     // If column changes then we need to change both sort column and type
     if(columnParam.value != column) {
         api.onParamChanged(columnParam.id, {value: column})
             .then(() => {
-                api.onParamChanged(typeParam.id, {value: sortType}).then(() => {
-                    // Timeout to prevent database locked 500 errors.
-                    setTimeout(() => {
-                        updateSortDirection(wfm, sortInfo, sortType, true);
-                    }, 200);
-                });
+                api.onParamChanged(typeParam.id, {value: sortType})
+                    .then(() => {
+                        updateSortDirection(wfm, sortColumn, sortType, true);
+                    });
             });
     } else {
-        updateSortDirection(wfm, sortInfo, sortType);
+        updateSortDirection(wfm, sortColumn, sortType, false);
     }
 }
 
-export function updateSort(wfModuleId, sortInfo) {
+export function updateSort(wfModuleId, sortColumn, sortType) {
     var state = store.getState();
 
-    api.getColumns(wfModuleId)
-        .then((columns) => {
-            let columnInfo = columns.filter((col) => (col.name == sortInfo.column));
-            if(columnInfo.length < 1) {
-                return;
-            }
-
-            // Must be kept in sync with sortfromtable.json
-            let sortTypes = "String|Number|Date".split("|")
-            let sortType = columnInfo[0].type;
-            let sortTypeIdx = sortTypes.indexOf(sortType);
-            var existingSortModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
-            if(existingSortModule) {
-                updateSortModule(existingSortModule, sortInfo, sortTypeIdx);
-                if(existingSortModule.id != wfModuleId) {
-                    store.dispatch(setSelectedWfModuleAction(existingSortModule.id));
-                }
-            } else {
-                let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
-                api.addModule(getPageID(), state.sortModuleId, wfModuleIdx + 1)
-                    .then((newWfm) => {
-                        store.dispatch(setSelectedWfModuleAction(newWfm.id))
-                            .then(() => {
-                                // A timeout is set to prevent locking up the database
-                                setTimeout(() => {updateSortModule(newWfm, sortInfo, sortTypeIdx);}, 200);
-                            });
-                    });
-            }
-        });
+    // Must be kept in sync with sortfromtable.json
+    let sortTypes = "String|Number|Date".split("|")
+    let sortTypeIdx = sortTypes.indexOf(sortType);
+    var existingSortModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
+    if(existingSortModule) {
+        if(existingSortModule.id != wfModuleId) {
+            store.dispatch(setSelectedWfModuleAction(existingSortModule.id));
+        }
+        updateSortModule(existingSortModule, sortColumn, sortTypeIdx);
+    } else {
+        let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
+        // I have tried but using the reducer introduces odd bugs
+        // w.r.t selecting the new sort module, it bounces to the new module
+        // and then bounces back
+        api.addModule(getPageID(), state.sortModuleId, wfModuleIdx + 1)
+            .then((newWfm) => {
+                store.dispatch(setSelectedWfModuleAction(newWfm.id));
+                updateSortModule(newWfm, sortColumn, sortTypeIdx);
+            });
+    }
 }

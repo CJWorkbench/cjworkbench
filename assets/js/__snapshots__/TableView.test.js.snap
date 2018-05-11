@@ -69,34 +69,66 @@ exports[`TableView Blank table when no module id 1`] = `
               },
               Object {
                 "editable": false,
+                "headerRenderer": <HeaderRenderer
+                  colname=""
+                  coltype=""
+                  idx="0"
+                  isSorted={false}
+                  onSort={undefined}
+                  showLetter={undefined}
+                  sortDirection={undefined}
+            />,
                 "key": "",
                 "name": "",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
               Object {
                 "editable": false,
+                "headerRenderer": <HeaderRenderer
+                  colname=" "
+                  coltype=""
+                  idx="1"
+                  isSorted={false}
+                  onSort={undefined}
+                  showLetter={undefined}
+                  sortDirection={undefined}
+            />,
                 "key": " ",
                 "name": " ",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
               Object {
                 "editable": false,
+                "headerRenderer": <HeaderRenderer
+                  colname="   "
+                  coltype=""
+                  idx="2"
+                  isSorted={false}
+                  onSort={undefined}
+                  showLetter={undefined}
+                  sortDirection={undefined}
+            />,
                 "key": "   ",
                 "name": "   ",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
               Object {
                 "editable": false,
+                "headerRenderer": <HeaderRenderer
+                  colname="    "
+                  coltype=""
+                  idx="3"
+                  isSorted={false}
+                  onSort={undefined}
+                  showLetter={undefined}
+                  sortDirection={undefined}
+            />,
                 "key": "    ",
                 "name": "    ",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
             ]
@@ -105,12 +137,12 @@ exports[`TableView Blank table when no module id 1`] = `
           enableCellSelect={true}
           enableRowSelect={false}
           headerFiltersHeight={45}
+          headerRowHeight={36}
           minColumnWidth={80}
           minHeight={-2}
           minWidth={-2}
           onBeforeEdit={[Function]}
           onGridRowsUpdated={[Function]}
-          onGridSort={[Function]}
           overScan={
             Object {
               "colsEnd": 5,
@@ -188,38 +220,70 @@ exports[`TableView Blank table when no module id 1`] = `
                       },
                       Object {
                         "editable": false,
+                        "headerRenderer": <HeaderRenderer
+                          colname=""
+                          coltype=""
+                          idx="0"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                  />,
                         "key": "",
                         "left": 40,
                         "name": "",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": false,
+                        "headerRenderer": <HeaderRenderer
+                          colname=" "
+                          coltype=""
+                          idx="1"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                  />,
                         "key": " ",
                         "left": 200,
                         "name": " ",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": false,
+                        "headerRenderer": <HeaderRenderer
+                          colname="   "
+                          coltype=""
+                          idx="2"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                  />,
                         "key": "   ",
                         "left": 360,
                         "name": "   ",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": false,
+                        "headerRenderer": <HeaderRenderer
+                          colname="    "
+                          coltype=""
+                          idx="3"
+                          isSorted={false}
+                          onSort={undefined}
+                          showLetter={undefined}
+                          sortDirection={undefined}
+                  />,
                         "key": "    ",
                         "left": 520,
                         "name": "    ",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                     ],
@@ -239,34 +303,66 @@ exports[`TableView Blank table when no module id 1`] = `
                     },
                     Object {
                       "editable": false,
+                      "headerRenderer": <HeaderRenderer
+                        colname=""
+                        coltype=""
+                        idx="0"
+                        isSorted={false}
+                        onSort={undefined}
+                        showLetter={undefined}
+                        sortDirection={undefined}
+                  />,
                       "key": "",
                       "name": "",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                     Object {
                       "editable": false,
+                      "headerRenderer": <HeaderRenderer
+                        colname=" "
+                        coltype=""
+                        idx="1"
+                        isSorted={false}
+                        onSort={undefined}
+                        showLetter={undefined}
+                        sortDirection={undefined}
+                  />,
                       "key": " ",
                       "name": " ",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                     Object {
                       "editable": false,
+                      "headerRenderer": <HeaderRenderer
+                        colname="   "
+                        coltype=""
+                        idx="2"
+                        isSorted={false}
+                        onSort={undefined}
+                        showLetter={undefined}
+                        sortDirection={undefined}
+                  />,
                       "key": "   ",
                       "name": "   ",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                     Object {
                       "editable": false,
+                      "headerRenderer": <HeaderRenderer
+                        colname="    "
+                        coltype=""
+                        idx="3"
+                        isSorted={false}
+                        onSort={undefined}
+                        showLetter={undefined}
+                        sortDirection={undefined}
+                  />,
                       "key": "    ",
                       "name": "    ",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                   ]
@@ -276,10 +372,11 @@ exports[`TableView Blank table when no module id 1`] = `
                 enableRowSelect={false}
                 expandedRows={Array []}
                 headerFiltersHeight={45}
+                headerRowHeight={36}
                 headerRows={
                   Array [
                     Object {
-                      "height": 35,
+                      "height": 36,
                       "ref": [Function],
                       "rowType": "header",
                     },
@@ -291,7 +388,6 @@ exports[`TableView Blank table when no module id 1`] = `
                 onBeforeEdit={[Function]}
                 onColumnResize={[Function]}
                 onGridRowsUpdated={[Function]}
-                onGridSort={[Function]}
                 onSort={[Function]}
                 onViewportClick={[Function]}
                 onViewportDoubleClick={[Function]}
@@ -310,12 +406,14 @@ exports[`TableView Blank table when no module id 1`] = `
                 rowGetter={[Function]}
                 rowHeight={35}
                 rowKey="id"
-                rowOffsetHeight={35}
+                rowOffsetHeight={36}
                 rowScrollTimeout={0}
                 rowSelection={null}
                 rowsCount={10}
                 scrollToRowIndex={0}
                 selectedRows={Array []}
+                sortColumn={null}
+                sortDirection={null}
                 tabIndex={-1}
                 totalWidth={-2}
               >
@@ -378,38 +476,70 @@ exports[`TableView Blank table when no module id 1`] = `
                           },
                           Object {
                             "editable": false,
+                            "headerRenderer": <HeaderRenderer
+                              colname=""
+                              coltype=""
+                              idx="0"
+                              isSorted={false}
+                              onSort={undefined}
+                              showLetter={undefined}
+                              sortDirection={undefined}
+                      />,
                             "key": "",
                             "left": 40,
                             "name": "",
                             "resizable": true,
-                            "sortable": true,
                             "width": 160,
                           },
                           Object {
                             "editable": false,
+                            "headerRenderer": <HeaderRenderer
+                              colname=" "
+                              coltype=""
+                              idx="1"
+                              isSorted={false}
+                              onSort={undefined}
+                              showLetter={undefined}
+                              sortDirection={undefined}
+                      />,
                             "key": " ",
                             "left": 200,
                             "name": " ",
                             "resizable": true,
-                            "sortable": true,
                             "width": 160,
                           },
                           Object {
                             "editable": false,
+                            "headerRenderer": <HeaderRenderer
+                              colname="   "
+                              coltype=""
+                              idx="2"
+                              isSorted={false}
+                              onSort={undefined}
+                              showLetter={undefined}
+                              sortDirection={undefined}
+                      />,
                             "key": "   ",
                             "left": 360,
                             "name": "   ",
                             "resizable": true,
-                            "sortable": true,
                             "width": 160,
                           },
                           Object {
                             "editable": false,
+                            "headerRenderer": <HeaderRenderer
+                              colname="    "
+                              coltype=""
+                              idx="3"
+                              isSorted={false}
+                              onSort={undefined}
+                              showLetter={undefined}
+                              sortDirection={undefined}
+                      />,
                             "key": "    ",
                             "left": 520,
                             "name": "    ",
                             "resizable": true,
-                            "sortable": true,
                             "width": 160,
                           },
                         ],
@@ -421,7 +551,7 @@ exports[`TableView Blank table when no module id 1`] = `
                     headerRows={
                       Array [
                         Object {
-                          "height": 35,
+                          "height": 36,
                           "ref": [Function],
                           "rowType": "header",
                         },
@@ -431,6 +561,8 @@ exports[`TableView Blank table when no module id 1`] = `
                     onColumnResize={[Function]}
                     onScroll={[Function]}
                     onSort={[Function]}
+                    sortColumn={null}
+                    sortDirection={null}
                     totalWidth={-2}
                   >
                     <div
@@ -440,7 +572,7 @@ exports[`TableView Blank table when no module id 1`] = `
                       onScroll={[Function]}
                       style={
                         Object {
-                          "height": 35,
+                          "height": 36,
                           "position": "relative",
                         }
                       }
@@ -458,48 +590,82 @@ exports[`TableView Blank table when no module id 1`] = `
                             },
                             Object {
                               "editable": false,
+                              "headerRenderer": <HeaderRenderer
+                                colname=""
+                                coltype=""
+                                idx="0"
+                                isSorted={false}
+                                onSort={undefined}
+                                showLetter={undefined}
+                                sortDirection={undefined}
+                          />,
                               "key": "",
                               "left": 40,
                               "name": "",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": false,
+                              "headerRenderer": <HeaderRenderer
+                                colname=" "
+                                coltype=""
+                                idx="1"
+                                isSorted={false}
+                                onSort={undefined}
+                                showLetter={undefined}
+                                sortDirection={undefined}
+                          />,
                               "key": " ",
                               "left": 200,
                               "name": " ",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": false,
+                              "headerRenderer": <HeaderRenderer
+                                colname="   "
+                                coltype=""
+                                idx="2"
+                                isSorted={false}
+                                onSort={undefined}
+                                showLetter={undefined}
+                                sortDirection={undefined}
+                          />,
                               "key": "   ",
                               "left": 360,
                               "name": "   ",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": false,
+                              "headerRenderer": <HeaderRenderer
+                                colname="    "
+                                coltype=""
+                                idx="3"
+                                isSorted={false}
+                                onSort={undefined}
+                                showLetter={undefined}
+                                sortDirection={undefined}
+                          />,
                               "key": "    ",
                               "left": 520,
                               "name": "    ",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                           ]
                         }
-                        height={35}
+                        height={36}
                         onColumnResize={[Function]}
                         onColumnResizeEnd={[Function]}
                         onScroll={[Function]}
                         onSort={[Function]}
                         rowType="header"
+                        sortColumn={null}
+                        sortDirection={null}
                         style={
                           Object {
                             "left": 0,
@@ -514,7 +680,7 @@ exports[`TableView Blank table when no module id 1`] = `
                       >
                         <div
                           className="react-grid-HeaderRow"
-                          height={35}
+                          height={36}
                           onScroll={[Function]}
                           style={
                             Object {
@@ -531,7 +697,7 @@ exports[`TableView Blank table when no module id 1`] = `
                           <div
                             style={
                               Object {
-                                "height": 35,
+                                "height": 36,
                                 "overflowX": "hidden",
                                 "overflowY": "hidden",
                                 "whiteSpace": "nowrap",
@@ -543,24 +709,35 @@ exports[`TableView Blank table when no module id 1`] = `
                               column={
                                 Object {
                                   "editable": false,
+                                  "headerRenderer": <HeaderRenderer
+                                    colname=""
+                                    coltype=""
+                                    idx="0"
+                                    isSorted={false}
+                                    onSort={undefined}
+                                    showLetter={undefined}
+                                    sortDirection={undefined}
+                                />,
                                   "key": "",
                                   "left": 40,
                                   "name": "",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
-                              height={35}
+                              height={36}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
                               renderer={
-                                <SortableHeaderCell
-                                  columnKey=""
-                                  onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                <HeaderRenderer
+                                  colname=""
+                                  coltype=""
+                                  idx="0"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
                                 />
                               }
                               resizing={false}
@@ -570,7 +747,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 style={
                                   Object {
                                     "display": "inline-block",
-                                    "height": 35,
+                                    "height": 36,
                                     "left": 40,
                                     "margin": 0,
                                     "position": "absolute",
@@ -580,39 +757,48 @@ exports[`TableView Blank table when no module id 1`] = `
                                   }
                                 }
                               >
-                                <SortableHeaderCell
+                                <HeaderRenderer
+                                  colname=""
+                                  coltype=""
                                   column={
                                     Object {
                                       "editable": false,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname=""
+                                        coltype=""
+                                        idx="0"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "",
                                       "left": 40,
                                       "name": "",
                                       "resizable": true,
                                       "rowType": "header",
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
-                                  columnKey=""
-                                  height={35}
-                                  onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  height={36}
+                                  idx="0"
+                                  isSorted={false}
                                 >
                                   <div
-                                    className="react-grid-HeaderCell-sortable"
                                     onClick={[Function]}
-                                    style={
-                                      Object {
-                                        "cursor": "pointer",
-                                      }
-                                    }
+                                    onMouseEnter={[Function]}
+                                    onMouseLeave={[Function]}
                                   >
-                                    <span
-                                      className="pull-right"
+                                    <div
+                                      style={
+                                        Object {
+                                          "height": "24px",
+                                          "width": "100%",
+                                        }
+                                      }
                                     />
                                   </div>
-                                </SortableHeaderCell>
+                                </HeaderRenderer>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -658,24 +844,35 @@ exports[`TableView Blank table when no module id 1`] = `
                               column={
                                 Object {
                                   "editable": false,
+                                  "headerRenderer": <HeaderRenderer
+                                    colname=" "
+                                    coltype=""
+                                    idx="1"
+                                    isSorted={false}
+                                    onSort={undefined}
+                                    showLetter={undefined}
+                                    sortDirection={undefined}
+                                />,
                                   "key": " ",
                                   "left": 200,
                                   "name": " ",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
-                              height={35}
+                              height={36}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
                               renderer={
-                                <SortableHeaderCell
-                                  columnKey=" "
-                                  onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                <HeaderRenderer
+                                  colname=" "
+                                  coltype=""
+                                  idx="1"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
                                 />
                               }
                               resizing={false}
@@ -685,7 +882,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 style={
                                   Object {
                                     "display": "inline-block",
-                                    "height": 35,
+                                    "height": 36,
                                     "left": 200,
                                     "margin": 0,
                                     "position": "absolute",
@@ -695,40 +892,50 @@ exports[`TableView Blank table when no module id 1`] = `
                                   }
                                 }
                               >
-                                <SortableHeaderCell
+                                <HeaderRenderer
+                                  colname=" "
+                                  coltype=""
                                   column={
                                     Object {
                                       "editable": false,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname=" "
+                                        coltype=""
+                                        idx="1"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": " ",
                                       "left": 200,
                                       "name": " ",
                                       "resizable": true,
                                       "rowType": "header",
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
-                                  columnKey=" "
-                                  height={35}
-                                  onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  height={36}
+                                  idx="1"
+                                  isSorted={false}
                                 >
                                   <div
-                                    className="react-grid-HeaderCell-sortable"
                                     onClick={[Function]}
-                                    style={
-                                      Object {
-                                        "cursor": "pointer",
-                                      }
-                                    }
+                                    onMouseEnter={[Function]}
+                                    onMouseLeave={[Function]}
                                   >
-                                    <span
-                                      className="pull-right"
-                                    />
-                                     
+                                    <div
+                                      style={
+                                        Object {
+                                          "height": "24px",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    >
+                                       
+                                    </div>
                                   </div>
-                                </SortableHeaderCell>
+                                </HeaderRenderer>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -774,24 +981,35 @@ exports[`TableView Blank table when no module id 1`] = `
                               column={
                                 Object {
                                   "editable": false,
+                                  "headerRenderer": <HeaderRenderer
+                                    colname="   "
+                                    coltype=""
+                                    idx="2"
+                                    isSorted={false}
+                                    onSort={undefined}
+                                    showLetter={undefined}
+                                    sortDirection={undefined}
+                                />,
                                   "key": "   ",
                                   "left": 360,
                                   "name": "   ",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
-                              height={35}
+                              height={36}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
                               renderer={
-                                <SortableHeaderCell
-                                  columnKey="   "
-                                  onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                <HeaderRenderer
+                                  colname="   "
+                                  coltype=""
+                                  idx="2"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
                                 />
                               }
                               resizing={false}
@@ -801,7 +1019,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 style={
                                   Object {
                                     "display": "inline-block",
-                                    "height": 35,
+                                    "height": 36,
                                     "left": 360,
                                     "margin": 0,
                                     "position": "absolute",
@@ -811,40 +1029,50 @@ exports[`TableView Blank table when no module id 1`] = `
                                   }
                                 }
                               >
-                                <SortableHeaderCell
+                                <HeaderRenderer
+                                  colname="   "
+                                  coltype=""
                                   column={
                                     Object {
                                       "editable": false,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="   "
+                                        coltype=""
+                                        idx="2"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "   ",
                                       "left": 360,
                                       "name": "   ",
                                       "resizable": true,
                                       "rowType": "header",
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
-                                  columnKey="   "
-                                  height={35}
-                                  onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  height={36}
+                                  idx="2"
+                                  isSorted={false}
                                 >
                                   <div
-                                    className="react-grid-HeaderCell-sortable"
                                     onClick={[Function]}
-                                    style={
-                                      Object {
-                                        "cursor": "pointer",
-                                      }
-                                    }
+                                    onMouseEnter={[Function]}
+                                    onMouseLeave={[Function]}
                                   >
-                                    <span
-                                      className="pull-right"
-                                    />
-                                       
+                                    <div
+                                      style={
+                                        Object {
+                                          "height": "24px",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    >
+                                         
+                                    </div>
                                   </div>
-                                </SortableHeaderCell>
+                                </HeaderRenderer>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -890,24 +1118,35 @@ exports[`TableView Blank table when no module id 1`] = `
                               column={
                                 Object {
                                   "editable": false,
+                                  "headerRenderer": <HeaderRenderer
+                                    colname="    "
+                                    coltype=""
+                                    idx="3"
+                                    isSorted={false}
+                                    onSort={undefined}
+                                    showLetter={undefined}
+                                    sortDirection={undefined}
+                                />,
                                   "key": "    ",
                                   "left": 520,
                                   "name": "    ",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
-                              height={35}
+                              height={36}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
                               renderer={
-                                <SortableHeaderCell
-                                  columnKey="    "
-                                  onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                <HeaderRenderer
+                                  colname="    "
+                                  coltype=""
+                                  idx="3"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
                                 />
                               }
                               resizing={false}
@@ -917,7 +1156,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 style={
                                   Object {
                                     "display": "inline-block",
-                                    "height": 35,
+                                    "height": 36,
                                     "left": 520,
                                     "margin": 0,
                                     "position": "absolute",
@@ -927,40 +1166,50 @@ exports[`TableView Blank table when no module id 1`] = `
                                   }
                                 }
                               >
-                                <SortableHeaderCell
+                                <HeaderRenderer
+                                  colname="    "
+                                  coltype=""
                                   column={
                                     Object {
                                       "editable": false,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="    "
+                                        coltype=""
+                                        idx="3"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "    ",
                                       "left": 520,
                                       "name": "    ",
                                       "resizable": true,
                                       "rowType": "header",
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
-                                  columnKey="    "
-                                  height={35}
-                                  onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  height={36}
+                                  idx="3"
+                                  isSorted={false}
                                 >
                                   <div
-                                    className="react-grid-HeaderCell-sortable"
                                     onClick={[Function]}
-                                    style={
-                                      Object {
-                                        "cursor": "pointer",
-                                      }
-                                    }
+                                    onMouseEnter={[Function]}
+                                    onMouseLeave={[Function]}
                                   >
-                                    <span
-                                      className="pull-right"
-                                    />
-                                        
+                                    <div
+                                      style={
+                                        Object {
+                                          "height": "24px",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    >
+                                          
+                                    </div>
                                   </div>
-                                </SortableHeaderCell>
+                                </HeaderRenderer>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -1014,7 +1263,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                   "width": 40,
                                 }
                               }
-                              height={35}
+                              height={36}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
                               renderer={[Function]}
@@ -1025,7 +1274,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                 style={
                                   Object {
                                     "display": "inline-block",
-                                    "height": 35,
+                                    "height": 36,
                                     "left": 0,
                                     "margin": 0,
                                     "position": "absolute",
@@ -1102,38 +1351,70 @@ exports[`TableView Blank table when no module id 1`] = `
                             },
                             Object {
                               "editable": false,
+                              "headerRenderer": <HeaderRenderer
+                                colname=""
+                                coltype=""
+                                idx="0"
+                                isSorted={false}
+                                onSort={undefined}
+                                showLetter={undefined}
+                                sortDirection={undefined}
+                        />,
                               "key": "",
                               "left": 40,
                               "name": "",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": false,
+                              "headerRenderer": <HeaderRenderer
+                                colname=" "
+                                coltype=""
+                                idx="1"
+                                isSorted={false}
+                                onSort={undefined}
+                                showLetter={undefined}
+                                sortDirection={undefined}
+                        />,
                               "key": " ",
                               "left": 200,
                               "name": " ",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": false,
+                              "headerRenderer": <HeaderRenderer
+                                colname="   "
+                                coltype=""
+                                idx="2"
+                                isSorted={false}
+                                onSort={undefined}
+                                showLetter={undefined}
+                                sortDirection={undefined}
+                        />,
                               "key": "   ",
                               "left": 360,
                               "name": "   ",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": false,
+                              "headerRenderer": <HeaderRenderer
+                                colname="    "
+                                coltype=""
+                                idx="3"
+                                isSorted={false}
+                                onSort={undefined}
+                                showLetter={undefined}
+                                sortDirection={undefined}
+                        />,
                               "key": "    ",
                               "left": 520,
                               "name": "    ",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                           ],
@@ -1156,7 +1437,7 @@ exports[`TableView Blank table when no module id 1`] = `
                       rowGetter={[Function]}
                       rowHeight={35}
                       rowKey="id"
-                      rowOffsetHeight={35}
+                      rowOffsetHeight={36}
                       rowScrollTimeout={0}
                       rowSelection={null}
                       rowsCount={10}
@@ -1175,7 +1456,7 @@ exports[`TableView Blank table when no module id 1`] = `
                             "padding": 0,
                             "position": "absolute",
                             "right": 0,
-                            "top": 35,
+                            "top": 36,
                           }
                         }
                       >
@@ -1230,38 +1511,70 @@ exports[`TableView Blank table when no module id 1`] = `
                               },
                               Object {
                                 "editable": false,
+                                "headerRenderer": <HeaderRenderer
+                                  colname=""
+                                  coltype=""
+                                  idx="0"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
+                            />,
                                 "key": "",
                                 "left": 40,
                                 "name": "",
                                 "resizable": true,
-                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
                                 "editable": false,
+                                "headerRenderer": <HeaderRenderer
+                                  colname=" "
+                                  coltype=""
+                                  idx="1"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
+                            />,
                                 "key": " ",
                                 "left": 200,
                                 "name": " ",
                                 "resizable": true,
-                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
                                 "editable": false,
+                                "headerRenderer": <HeaderRenderer
+                                  colname="   "
+                                  coltype=""
+                                  idx="2"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
+                            />,
                                 "key": "   ",
                                 "left": 360,
                                 "name": "   ",
                                 "resizable": true,
-                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
                                 "editable": false,
+                                "headerRenderer": <HeaderRenderer
+                                  colname="    "
+                                  coltype=""
+                                  idx="3"
+                                  isSorted={false}
+                                  onSort={undefined}
+                                  showLetter={undefined}
+                                  sortDirection={undefined}
+                            />,
                                 "key": "    ",
                                 "left": 520,
                                 "name": "    ",
                                 "resizable": true,
-                                "sortable": true,
                                 "width": 160,
                               },
                             ]
@@ -1269,7 +1582,7 @@ exports[`TableView Blank table when no module id 1`] = `
                           displayEnd={4}
                           displayStart={0}
                           expandedRows={Array []}
-                          height={-37}
+                          height={-38}
                           isScrolling={true}
                           onRows={[Function]}
                           onScroll={[Function]}
@@ -1292,7 +1605,7 @@ exports[`TableView Blank table when no module id 1`] = `
                             onScroll={[Function]}
                             style={
                               Object {
-                                "height": -37,
+                                "height": -38,
                                 "left": 0,
                                 "overflowX": "auto",
                                 "overflowY": "scroll",
@@ -1359,38 +1672,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname=""
+                                                coltype=""
+                                                idx="0"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "",
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname=" "
+                                                coltype=""
+                                                idx="1"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": " ",
                                               "left": 200,
                                               "name": " ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname="   "
+                                                coltype=""
+                                                idx="2"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "   ",
                                               "left": 360,
                                               "name": "   ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname="    "
+                                                coltype=""
+                                                idx="3"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "    ",
                                               "left": 520,
                                               "name": "    ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                           ]
@@ -1462,38 +1807,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname=""
+                                                coltype=""
+                                                idx="0"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "",
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname=" "
+                                                coltype=""
+                                                idx="1"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": " ",
                                               "left": 200,
                                               "name": " ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname="   "
+                                                coltype=""
+                                                idx="2"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "   ",
                                               "left": 360,
                                               "name": "   ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname="    "
+                                                coltype=""
+                                                idx="3"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "    ",
                                               "left": 520,
                                               "name": "    ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                           ]
@@ -1565,38 +1942,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname=""
+                                                coltype=""
+                                                idx="0"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "",
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname=" "
+                                                coltype=""
+                                                idx="1"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": " ",
                                               "left": 200,
                                               "name": " ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname="   "
+                                                coltype=""
+                                                idx="2"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "   ",
                                               "left": 360,
                                               "name": "   ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname="    "
+                                                coltype=""
+                                                idx="3"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "    ",
                                               "left": 520,
                                               "name": "    ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                           ]
@@ -1668,38 +2077,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname=""
+                                                coltype=""
+                                                idx="0"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "",
                                               "left": 40,
                                               "name": "",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname=" "
+                                                coltype=""
+                                                idx="1"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": " ",
                                               "left": 200,
                                               "name": " ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname="   "
+                                                coltype=""
+                                                idx="2"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "   ",
                                               "left": 360,
                                               "name": "   ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                             Object {
                                               "editable": false,
+                                              "headerRenderer": <HeaderRenderer
+                                                colname="    "
+                                                coltype=""
+                                                idx="3"
+                                                isSorted={false}
+                                                onSort={undefined}
+                                                showLetter={undefined}
+                                                sortDirection={undefined}
+                                        />,
                                               "key": "    ",
                                               "left": 520,
                                               "name": "    ",
                                               "resizable": true,
-                                              "sortable": true,
                                               "width": 160,
                                             },
                                           ]
@@ -1823,38 +2264,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname=""
+                                                  coltype=""
+                                                  idx="0"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "",
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname=" "
+                                                  coltype=""
+                                                  idx="1"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": " ",
                                                 "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname="   "
+                                                  coltype=""
+                                                  idx="2"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "   ",
                                                 "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname="    "
+                                                  coltype=""
+                                                  idx="3"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "    ",
                                                 "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                             ]
@@ -1926,38 +2399,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname=""
+                                                  coltype=""
+                                                  idx="0"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "",
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname=" "
+                                                  coltype=""
+                                                  idx="1"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": " ",
                                                 "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname="   "
+                                                  coltype=""
+                                                  idx="2"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "   ",
                                                 "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname="    "
+                                                  coltype=""
+                                                  idx="3"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "    ",
                                                 "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                             ]
@@ -2029,38 +2534,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname=""
+                                                  coltype=""
+                                                  idx="0"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "",
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname=" "
+                                                  coltype=""
+                                                  idx="1"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": " ",
                                                 "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname="   "
+                                                  coltype=""
+                                                  idx="2"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "   ",
                                                 "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname="    "
+                                                  coltype=""
+                                                  idx="3"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "    ",
                                                 "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                             ]
@@ -2132,38 +2669,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname=""
+                                                  coltype=""
+                                                  idx="0"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "",
                                                 "left": 40,
                                                 "name": "",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname=" "
+                                                  coltype=""
+                                                  idx="1"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": " ",
                                                 "left": 200,
                                                 "name": " ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname="   "
+                                                  coltype=""
+                                                  idx="2"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "   ",
                                                 "left": 360,
                                                 "name": "   ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                               Object {
                                                 "editable": false,
+                                                "headerRenderer": <HeaderRenderer
+                                                  colname="    "
+                                                  coltype=""
+                                                  idx="3"
+                                                  isSorted={false}
+                                                  onSort={undefined}
+                                                  showLetter={undefined}
+                                                  sortDirection={undefined}
+                                          />,
                                                 "key": "    ",
                                                 "left": 520,
                                                 "name": "    ",
                                                 "resizable": true,
-                                                "sortable": true,
                                                 "width": 160,
                                               },
                                             ]
@@ -2283,38 +2852,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname=""
+                                            coltype=""
+                                            idx="0"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "",
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname=" "
+                                            coltype=""
+                                            idx="1"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": " ",
                                           "left": 200,
                                           "name": " ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="   "
+                                            coltype=""
+                                            idx="2"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "   ",
                                           "left": 360,
                                           "name": "   ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="    "
+                                            coltype=""
+                                            idx="3"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "    ",
                                           "left": 520,
                                           "name": "    ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -2383,11 +2984,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname=""
+                                              coltype=""
+                                              idx="0"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "",
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -2499,11 +3108,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname=" "
+                                              coltype=""
+                                              idx="1"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": " ",
                                             "left": 200,
                                             "name": " ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -2615,11 +3232,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname="   "
+                                              coltype=""
+                                              idx="2"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "   ",
                                             "left": 360,
                                             "name": "   ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -2731,11 +3356,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname="    "
+                                              coltype=""
+                                              idx="3"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "    ",
                                             "left": 520,
                                             "name": "    ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -2981,38 +3614,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname=""
+                                            coltype=""
+                                            idx="0"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "",
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname=" "
+                                            coltype=""
+                                            idx="1"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": " ",
                                           "left": 200,
                                           "name": " ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="   "
+                                            coltype=""
+                                            idx="2"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "   ",
                                           "left": 360,
                                           "name": "   ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="    "
+                                            coltype=""
+                                            idx="3"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "    ",
                                           "left": 520,
                                           "name": "    ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -3081,11 +3746,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname=""
+                                              coltype=""
+                                              idx="0"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "",
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3197,11 +3870,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname=" "
+                                              coltype=""
+                                              idx="1"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": " ",
                                             "left": 200,
                                             "name": " ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3313,11 +3994,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname="   "
+                                              coltype=""
+                                              idx="2"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "   ",
                                             "left": 360,
                                             "name": "   ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3429,11 +4118,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname="    "
+                                              coltype=""
+                                              idx="3"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "    ",
                                             "left": 520,
                                             "name": "    ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3679,38 +4376,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname=""
+                                            coltype=""
+                                            idx="0"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "",
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname=" "
+                                            coltype=""
+                                            idx="1"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": " ",
                                           "left": 200,
                                           "name": " ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="   "
+                                            coltype=""
+                                            idx="2"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "   ",
                                           "left": 360,
                                           "name": "   ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="    "
+                                            coltype=""
+                                            idx="3"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "    ",
                                           "left": 520,
                                           "name": "    ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -3779,11 +4508,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname=""
+                                              coltype=""
+                                              idx="0"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "",
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -3895,11 +4632,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname=" "
+                                              coltype=""
+                                              idx="1"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": " ",
                                             "left": 200,
                                             "name": " ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4011,11 +4756,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname="   "
+                                              coltype=""
+                                              idx="2"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "   ",
                                             "left": 360,
                                             "name": "   ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4127,11 +4880,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname="    "
+                                              coltype=""
+                                              idx="3"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "    ",
                                             "left": 520,
                                             "name": "    ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4377,38 +5138,70 @@ exports[`TableView Blank table when no module id 1`] = `
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname=""
+                                            coltype=""
+                                            idx="0"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "",
                                           "left": 40,
                                           "name": "",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname=" "
+                                            coltype=""
+                                            idx="1"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": " ",
                                           "left": 200,
                                           "name": " ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="   "
+                                            coltype=""
+                                            idx="2"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "   ",
                                           "left": 360,
                                           "name": "   ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                         Object {
                                           "editable": false,
+                                          "headerRenderer": <HeaderRenderer
+                                            colname="    "
+                                            coltype=""
+                                            idx="3"
+                                            isSorted={false}
+                                            onSort={undefined}
+                                            showLetter={undefined}
+                                            sortDirection={undefined}
+                                      />,
                                           "key": "    ",
                                           "left": 520,
                                           "name": "    ",
                                           "resizable": true,
-                                          "sortable": true,
                                           "width": 160,
                                         },
                                       ]
@@ -4477,11 +5270,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname=""
+                                              coltype=""
+                                              idx="0"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "",
                                             "left": 40,
                                             "name": "",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4593,11 +5394,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname=" "
+                                              coltype=""
+                                              idx="1"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": " ",
                                             "left": 200,
                                             "name": " ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4709,11 +5518,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname="   "
+                                              coltype=""
+                                              idx="2"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "   ",
                                             "left": 360,
                                             "name": "   ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -4825,11 +5642,19 @@ exports[`TableView Blank table when no module id 1`] = `
                                         column={
                                           Object {
                                             "editable": false,
+                                            "headerRenderer": <HeaderRenderer
+                                              colname="    "
+                                              coltype=""
+                                              idx="3"
+                                              isSorted={false}
+                                              onSort={undefined}
+                                              showLetter={undefined}
+                                              sortDirection={undefined}
+                                          />,
                                             "key": "    ",
                                             "left": 520,
                                             "name": "    ",
                                             "resizable": true,
-                                            "sortable": true,
                                             "width": 160,
                                           }
                                         }
@@ -5148,7 +5973,9 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
         }
         getRow={[Function]}
         onEditCell={[Function]}
-        onSort={[Function]}
+        onSortColumn={[Function]}
+        revision={1}
+        showLetter={false}
         totalRows={1000}
       >
         <ReactDataGrid
@@ -5165,26 +5992,50 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
               },
               Object {
                 "editable": true,
+                "headerRenderer": <HeaderRenderer
+                  colname="a"
+                  coltype=""
+                  idx="0"
+                  isSorted={false}
+                  onSort={[Function]}
+                  showLetter={false}
+                  sortDirection={undefined}
+            />,
                 "key": "a",
                 "name": "a",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
               Object {
                 "editable": true,
+                "headerRenderer": <HeaderRenderer
+                  colname="b"
+                  coltype=""
+                  idx="1"
+                  isSorted={false}
+                  onSort={[Function]}
+                  showLetter={false}
+                  sortDirection={undefined}
+            />,
                 "key": "b",
                 "name": "b",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
               Object {
                 "editable": true,
+                "headerRenderer": <HeaderRenderer
+                  colname="c"
+                  coltype=""
+                  idx="2"
+                  isSorted={false}
+                  onSort={[Function]}
+                  showLetter={false}
+                  sortDirection={undefined}
+            />,
                 "key": "c",
                 "name": "c",
                 "resizable": true,
-                "sortable": true,
                 "width": 160,
               },
             ]
@@ -5193,12 +6044,12 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
           enableCellSelect={true}
           enableRowSelect={false}
           headerFiltersHeight={45}
+          headerRowHeight={36}
           minColumnWidth={80}
           minHeight={-2}
           minWidth={-2}
           onBeforeEdit={[Function]}
           onGridRowsUpdated={[Function]}
-          onGridSort={[Function]}
           overScan={
             Object {
               "colsEnd": 5,
@@ -5276,29 +6127,53 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="a"
+                          coltype=""
+                          idx="0"
+                          isSorted={false}
+                          onSort={[Function]}
+                          showLetter={false}
+                          sortDirection={undefined}
+                  />,
                         "key": "a",
                         "left": 40,
                         "name": "a",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="b"
+                          coltype=""
+                          idx="1"
+                          isSorted={false}
+                          onSort={[Function]}
+                          showLetter={false}
+                          sortDirection={undefined}
+                  />,
                         "key": "b",
                         "left": 200,
                         "name": "b",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                       Object {
                         "editable": true,
+                        "headerRenderer": <HeaderRenderer
+                          colname="c"
+                          coltype=""
+                          idx="2"
+                          isSorted={false}
+                          onSort={[Function]}
+                          showLetter={false}
+                          sortDirection={undefined}
+                  />,
                         "key": "c",
                         "left": 360,
                         "name": "c",
                         "resizable": true,
-                        "sortable": true,
                         "width": 160,
                       },
                     ],
@@ -5318,26 +6193,50 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                     },
                     Object {
                       "editable": true,
+                      "headerRenderer": <HeaderRenderer
+                        colname="a"
+                        coltype=""
+                        idx="0"
+                        isSorted={false}
+                        onSort={[Function]}
+                        showLetter={false}
+                        sortDirection={undefined}
+                  />,
                       "key": "a",
                       "name": "a",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                     Object {
                       "editable": true,
+                      "headerRenderer": <HeaderRenderer
+                        colname="b"
+                        coltype=""
+                        idx="1"
+                        isSorted={false}
+                        onSort={[Function]}
+                        showLetter={false}
+                        sortDirection={undefined}
+                  />,
                       "key": "b",
                       "name": "b",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                     Object {
                       "editable": true,
+                      "headerRenderer": <HeaderRenderer
+                        colname="c"
+                        coltype=""
+                        idx="2"
+                        isSorted={false}
+                        onSort={[Function]}
+                        showLetter={false}
+                        sortDirection={undefined}
+                  />,
                       "key": "c",
                       "name": "c",
                       "resizable": true,
-                      "sortable": true,
                       "width": 160,
                     },
                   ]
@@ -5347,10 +6246,11 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 enableRowSelect={false}
                 expandedRows={Array []}
                 headerFiltersHeight={45}
+                headerRowHeight={36}
                 headerRows={
                   Array [
                     Object {
-                      "height": 35,
+                      "height": 36,
                       "ref": [Function],
                       "rowType": "header",
                     },
@@ -5362,7 +6262,6 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 onBeforeEdit={[Function]}
                 onColumnResize={[Function]}
                 onGridRowsUpdated={[Function]}
-                onGridSort={[Function]}
                 onSort={[Function]}
                 onViewportClick={[Function]}
                 onViewportDoubleClick={[Function]}
@@ -5381,12 +6280,14 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                 rowGetter={[Function]}
                 rowHeight={35}
                 rowKey="id"
-                rowOffsetHeight={35}
+                rowOffsetHeight={36}
                 rowScrollTimeout={0}
                 rowSelection={null}
                 rowsCount={1000}
                 scrollToRowIndex={0}
                 selectedRows={Array []}
+                sortColumn={null}
+                sortDirection={null}
                 tabIndex={-1}
                 totalWidth={-2}
               >
@@ -5449,29 +6350,53 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                           },
                           Object {
                             "editable": true,
+                            "headerRenderer": <HeaderRenderer
+                              colname="a"
+                              coltype=""
+                              idx="0"
+                              isSorted={false}
+                              onSort={[Function]}
+                              showLetter={false}
+                              sortDirection={undefined}
+                      />,
                             "key": "a",
                             "left": 40,
                             "name": "a",
                             "resizable": true,
-                            "sortable": true,
                             "width": 160,
                           },
                           Object {
                             "editable": true,
+                            "headerRenderer": <HeaderRenderer
+                              colname="b"
+                              coltype=""
+                              idx="1"
+                              isSorted={false}
+                              onSort={[Function]}
+                              showLetter={false}
+                              sortDirection={undefined}
+                      />,
                             "key": "b",
                             "left": 200,
                             "name": "b",
                             "resizable": true,
-                            "sortable": true,
                             "width": 160,
                           },
                           Object {
                             "editable": true,
+                            "headerRenderer": <HeaderRenderer
+                              colname="c"
+                              coltype=""
+                              idx="2"
+                              isSorted={false}
+                              onSort={[Function]}
+                              showLetter={false}
+                              sortDirection={undefined}
+                      />,
                             "key": "c",
                             "left": 360,
                             "name": "c",
                             "resizable": true,
-                            "sortable": true,
                             "width": 160,
                           },
                         ],
@@ -5483,7 +6408,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                     headerRows={
                       Array [
                         Object {
-                          "height": 35,
+                          "height": 36,
                           "ref": [Function],
                           "rowType": "header",
                         },
@@ -5493,6 +6418,8 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                     onColumnResize={[Function]}
                     onScroll={[Function]}
                     onSort={[Function]}
+                    sortColumn={null}
+                    sortDirection={null}
                     totalWidth={-2}
                   >
                     <div
@@ -5502,7 +6429,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       onScroll={[Function]}
                       style={
                         Object {
-                          "height": 35,
+                          "height": 36,
                           "position": "relative",
                         }
                       }
@@ -5520,39 +6447,65 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                             },
                             Object {
                               "editable": true,
+                              "headerRenderer": <HeaderRenderer
+                                colname="a"
+                                coltype=""
+                                idx="0"
+                                isSorted={false}
+                                onSort={[Function]}
+                                showLetter={false}
+                                sortDirection={undefined}
+                          />,
                               "key": "a",
                               "left": 40,
                               "name": "a",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": true,
+                              "headerRenderer": <HeaderRenderer
+                                colname="b"
+                                coltype=""
+                                idx="1"
+                                isSorted={false}
+                                onSort={[Function]}
+                                showLetter={false}
+                                sortDirection={undefined}
+                          />,
                               "key": "b",
                               "left": 200,
                               "name": "b",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": true,
+                              "headerRenderer": <HeaderRenderer
+                                colname="c"
+                                coltype=""
+                                idx="2"
+                                isSorted={false}
+                                onSort={[Function]}
+                                showLetter={false}
+                                sortDirection={undefined}
+                          />,
                               "key": "c",
                               "left": 360,
                               "name": "c",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                           ]
                         }
-                        height={35}
+                        height={36}
                         onColumnResize={[Function]}
                         onColumnResizeEnd={[Function]}
                         onScroll={[Function]}
                         onSort={[Function]}
                         rowType="header"
+                        sortColumn={null}
+                        sortDirection={null}
                         style={
                           Object {
                             "left": 0,
@@ -5567,7 +6520,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       >
                         <div
                           className="react-grid-HeaderRow"
-                          height={35}
+                          height={36}
                           onScroll={[Function]}
                           style={
                             Object {
@@ -5584,7 +6537,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                           <div
                             style={
                               Object {
-                                "height": 35,
+                                "height": 36,
                                 "overflowX": "hidden",
                                 "overflowY": "hidden",
                                 "whiteSpace": "nowrap",
@@ -5596,24 +6549,35 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               column={
                                 Object {
                                   "editable": true,
+                                  "headerRenderer": <HeaderRenderer
+                                    colname="a"
+                                    coltype=""
+                                    idx="0"
+                                    isSorted={false}
+                                    onSort={[Function]}
+                                    showLetter={false}
+                                    sortDirection={undefined}
+                                />,
                                   "key": "a",
                                   "left": 40,
                                   "name": "a",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
-                              height={35}
+                              height={36}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
                               renderer={
-                                <SortableHeaderCell
-                                  columnKey="a"
+                                <HeaderRenderer
+                                  colname="a"
+                                  coltype=""
+                                  idx="0"
+                                  isSorted={false}
                                   onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  showLetter={false}
+                                  sortDirection={undefined}
                                 />
                               }
                               resizing={false}
@@ -5623,7 +6587,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 style={
                                   Object {
                                     "display": "inline-block",
-                                    "height": 35,
+                                    "height": 36,
                                     "left": 40,
                                     "margin": 0,
                                     "position": "absolute",
@@ -5633,40 +6597,52 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   }
                                 }
                               >
-                                <SortableHeaderCell
+                                <HeaderRenderer
+                                  colname="a"
+                                  coltype=""
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="a"
+                                        coltype=""
+                                        idx="0"
+                                        isSorted={false}
+                                        onSort={[Function]}
+                                        showLetter={false}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "a",
                                       "left": 40,
                                       "name": "a",
                                       "resizable": true,
                                       "rowType": "header",
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
-                                  columnKey="a"
-                                  height={35}
+                                  height={36}
+                                  idx="0"
+                                  isSorted={false}
                                   onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  showLetter={false}
                                 >
                                   <div
-                                    className="react-grid-HeaderCell-sortable"
                                     onClick={[Function]}
-                                    style={
-                                      Object {
-                                        "cursor": "pointer",
-                                      }
-                                    }
+                                    onMouseEnter={[Function]}
+                                    onMouseLeave={[Function]}
                                   >
-                                    <span
-                                      className="pull-right"
-                                    />
-                                    a
+                                    <div
+                                      style={
+                                        Object {
+                                          "height": "24px",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    >
+                                      a
+                                    </div>
                                   </div>
-                                </SortableHeaderCell>
+                                </HeaderRenderer>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -5712,24 +6688,35 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               column={
                                 Object {
                                   "editable": true,
+                                  "headerRenderer": <HeaderRenderer
+                                    colname="b"
+                                    coltype=""
+                                    idx="1"
+                                    isSorted={false}
+                                    onSort={[Function]}
+                                    showLetter={false}
+                                    sortDirection={undefined}
+                                />,
                                   "key": "b",
                                   "left": 200,
                                   "name": "b",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
-                              height={35}
+                              height={36}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
                               renderer={
-                                <SortableHeaderCell
-                                  columnKey="b"
+                                <HeaderRenderer
+                                  colname="b"
+                                  coltype=""
+                                  idx="1"
+                                  isSorted={false}
                                   onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  showLetter={false}
+                                  sortDirection={undefined}
                                 />
                               }
                               resizing={false}
@@ -5739,7 +6726,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 style={
                                   Object {
                                     "display": "inline-block",
-                                    "height": 35,
+                                    "height": 36,
                                     "left": 200,
                                     "margin": 0,
                                     "position": "absolute",
@@ -5749,40 +6736,52 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   }
                                 }
                               >
-                                <SortableHeaderCell
+                                <HeaderRenderer
+                                  colname="b"
+                                  coltype=""
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="b"
+                                        coltype=""
+                                        idx="1"
+                                        isSorted={false}
+                                        onSort={[Function]}
+                                        showLetter={false}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "b",
                                       "left": 200,
                                       "name": "b",
                                       "resizable": true,
                                       "rowType": "header",
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
-                                  columnKey="b"
-                                  height={35}
+                                  height={36}
+                                  idx="1"
+                                  isSorted={false}
                                   onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  showLetter={false}
                                 >
                                   <div
-                                    className="react-grid-HeaderCell-sortable"
                                     onClick={[Function]}
-                                    style={
-                                      Object {
-                                        "cursor": "pointer",
-                                      }
-                                    }
+                                    onMouseEnter={[Function]}
+                                    onMouseLeave={[Function]}
                                   >
-                                    <span
-                                      className="pull-right"
-                                    />
-                                    b
+                                    <div
+                                      style={
+                                        Object {
+                                          "height": "24px",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    >
+                                      b
+                                    </div>
                                   </div>
-                                </SortableHeaderCell>
+                                </HeaderRenderer>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -5828,24 +6827,35 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               column={
                                 Object {
                                   "editable": true,
+                                  "headerRenderer": <HeaderRenderer
+                                    colname="c"
+                                    coltype=""
+                                    idx="2"
+                                    isSorted={false}
+                                    onSort={[Function]}
+                                    showLetter={false}
+                                    sortDirection={undefined}
+                                />,
                                   "key": "c",
                                   "left": 360,
                                   "name": "c",
                                   "resizable": true,
                                   "rowType": "header",
-                                  "sortable": true,
                                   "width": 160,
                                 }
                               }
-                              height={35}
+                              height={36}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
                               renderer={
-                                <SortableHeaderCell
-                                  columnKey="c"
+                                <HeaderRenderer
+                                  colname="c"
+                                  coltype=""
+                                  idx="2"
+                                  isSorted={false}
                                   onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  showLetter={false}
+                                  sortDirection={undefined}
                                 />
                               }
                               resizing={false}
@@ -5855,7 +6865,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 style={
                                   Object {
                                     "display": "inline-block",
-                                    "height": 35,
+                                    "height": 36,
                                     "left": 360,
                                     "margin": 0,
                                     "position": "absolute",
@@ -5865,40 +6875,52 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   }
                                 }
                               >
-                                <SortableHeaderCell
+                                <HeaderRenderer
+                                  colname="c"
+                                  coltype=""
                                   column={
                                     Object {
                                       "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="c"
+                                        coltype=""
+                                        idx="2"
+                                        isSorted={false}
+                                        onSort={[Function]}
+                                        showLetter={false}
+                                        sortDirection={undefined}
+                                    />,
                                       "key": "c",
                                       "left": 360,
                                       "name": "c",
                                       "resizable": true,
                                       "rowType": "header",
-                                      "sortable": true,
                                       "width": 160,
                                     }
                                   }
-                                  columnKey="c"
-                                  height={35}
+                                  height={36}
+                                  idx="2"
+                                  isSorted={false}
                                   onSort={[Function]}
-                                  sortDescendingFirst={false}
-                                  sortDirection="NONE"
+                                  showLetter={false}
                                 >
                                   <div
-                                    className="react-grid-HeaderCell-sortable"
                                     onClick={[Function]}
-                                    style={
-                                      Object {
-                                        "cursor": "pointer",
-                                      }
-                                    }
+                                    onMouseEnter={[Function]}
+                                    onMouseLeave={[Function]}
                                   >
-                                    <span
-                                      className="pull-right"
-                                    />
-                                    c
+                                    <div
+                                      style={
+                                        Object {
+                                          "height": "24px",
+                                          "width": "100%",
+                                        }
+                                      }
+                                    >
+                                      c
+                                    </div>
                                   </div>
-                                </SortableHeaderCell>
+                                </HeaderRenderer>
                                 <ResizeHandle
                                   onDrag={[Function]}
                                   onDragEnd={[Function]}
@@ -5952,7 +6974,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                   "width": 40,
                                 }
                               }
-                              height={35}
+                              height={36}
                               onResize={[Function]}
                               onResizeEnd={[Function]}
                               renderer={[Function]}
@@ -5963,7 +6985,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                 style={
                                   Object {
                                     "display": "inline-block",
-                                    "height": 35,
+                                    "height": 36,
                                     "left": 0,
                                     "margin": 0,
                                     "position": "absolute",
@@ -6040,29 +7062,53 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                             },
                             Object {
                               "editable": true,
+                              "headerRenderer": <HeaderRenderer
+                                colname="a"
+                                coltype=""
+                                idx="0"
+                                isSorted={false}
+                                onSort={[Function]}
+                                showLetter={false}
+                                sortDirection={undefined}
+                        />,
                               "key": "a",
                               "left": 40,
                               "name": "a",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": true,
+                              "headerRenderer": <HeaderRenderer
+                                colname="b"
+                                coltype=""
+                                idx="1"
+                                isSorted={false}
+                                onSort={[Function]}
+                                showLetter={false}
+                                sortDirection={undefined}
+                        />,
                               "key": "b",
                               "left": 200,
                               "name": "b",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                             Object {
                               "editable": true,
+                              "headerRenderer": <HeaderRenderer
+                                colname="c"
+                                coltype=""
+                                idx="2"
+                                isSorted={false}
+                                onSort={[Function]}
+                                showLetter={false}
+                                sortDirection={undefined}
+                        />,
                               "key": "c",
                               "left": 360,
                               "name": "c",
                               "resizable": true,
-                              "sortable": true,
                               "width": 160,
                             },
                           ],
@@ -6085,7 +7131,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                       rowGetter={[Function]}
                       rowHeight={35}
                       rowKey="id"
-                      rowOffsetHeight={35}
+                      rowOffsetHeight={36}
                       rowScrollTimeout={0}
                       rowSelection={null}
                       rowsCount={1000}
@@ -6104,7 +7150,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                             "padding": 0,
                             "position": "absolute",
                             "right": 0,
-                            "top": 35,
+                            "top": 36,
                           }
                         }
                       >
@@ -6159,29 +7205,53 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                               },
                               Object {
                                 "editable": true,
+                                "headerRenderer": <HeaderRenderer
+                                  colname="a"
+                                  coltype=""
+                                  idx="0"
+                                  isSorted={false}
+                                  onSort={[Function]}
+                                  showLetter={false}
+                                  sortDirection={undefined}
+                            />,
                                 "key": "a",
                                 "left": 40,
                                 "name": "a",
                                 "resizable": true,
-                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
                                 "editable": true,
+                                "headerRenderer": <HeaderRenderer
+                                  colname="b"
+                                  coltype=""
+                                  idx="1"
+                                  isSorted={false}
+                                  onSort={[Function]}
+                                  showLetter={false}
+                                  sortDirection={undefined}
+                            />,
                                 "key": "b",
                                 "left": 200,
                                 "name": "b",
                                 "resizable": true,
-                                "sortable": true,
                                 "width": 160,
                               },
                               Object {
                                 "editable": true,
+                                "headerRenderer": <HeaderRenderer
+                                  colname="c"
+                                  coltype=""
+                                  idx="2"
+                                  isSorted={false}
+                                  onSort={[Function]}
+                                  showLetter={false}
+                                  sortDirection={undefined}
+                            />,
                                 "key": "c",
                                 "left": 360,
                                 "name": "c",
                                 "resizable": true,
-                                "sortable": true,
                                 "width": 160,
                               },
                             ]
@@ -6189,8 +7259,8 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                           displayEnd={-4}
                           displayStart={0}
                           expandedRows={Array []}
-                          height={-37}
-                          isScrolling={true}
+                          height={-38}
+                          isScrolling={false}
                           onRows={[Function]}
                           onScroll={[Function]}
                           rowGetter={[Function]}
@@ -6212,7 +7282,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                             onScroll={[Function]}
                             style={
                               Object {
-                                "height": -37,
+                                "height": -38,
                                 "left": 0,
                                 "overflowX": "auto",
                                 "overflowY": "scroll",

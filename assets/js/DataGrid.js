@@ -34,8 +34,111 @@ RowNumberFormatter.propTypes = {
   value:    PropTypes.node.isRequired
 };
 
+
+export class HeaderRenderer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isHovered: false,
+    }
+    this.handleClick = this.handleClick.bind(this);
+    this.handleHoverEnter = this.handleHoverEnter.bind(this);
+    this.handleHoverLeave = this.handleHoverLeave.bind(this);
+  }
+
+  handleClick() {
+    this.props.onSort(this.props.colname, this.props.coltype);
+  }
+
+  handleHoverEnter() {
+    this.setState({isHovered: true});
+  }
+
+  handleHoverLeave() {
+    this.setState({isHovered: false});
+  }
+
+  idxToLetter(idx) {
+    var letters = '';
+    do {
+      letters = String.fromCharCode(idx % 26 + 65) + letters;
+      idx = Math.floor(idx / 26);
+    } while(idx > 0)
+    return letters;
+  }
+
+  renderSortArrow() {
+    var sortDirectionClass = '';
+
+    // If we change the sort icon, change the class names here.
+    var sortDirectionDict = {
+      'NONE': '',
+      'ASC': 'icon-sort-up-vl-gray',
+      'DESC': 'icon-sort-down-vl-gray'
+    }
+
+    if(this.props.isSorted && (this.props.sortDirection != 'NONE')) {
+      // If column is sorted, set the direction to current sort direction
+      sortDirectionClass = sortDirectionDict[this.props.sortDirection];
+    } else if(this.state.isHovered) {
+      // If there is no sort but column is hovered, set to "default" sort direction
+      if(['Number', 'Date'].indexOf(this.props.coltype) >= 0) {
+        sortDirectionClass = sortDirectionDict['DESC'];
+      } else if(['String'].indexOf(this.props.coltype) >= 0) {
+        sortDirectionClass = sortDirectionDict['ASC'];
+      }
+    }
+
+    if(sortDirectionClass.length > 0) {
+      return (
+          <div className={'column-sort-arrow'} style={{display: 'inline-block', float: 'right'}}>
+            <div className={sortDirectionClass}></div>
+          </div>
+      );
+    }
+    return '';
+  }
+
+  renderLetter() {
+    if(this.props.showLetter) {
+      return (
+          <div
+              className={'column-letter'}
+              style={{height: '24px', width: '100%', textAlign: 'center'}}>
+              {this.idxToLetter(this.props.idx)}
+          </div>
+      );
+    }
+    return '';
+  }
+
+  render() {
+    let sortArrowSection = this.renderSortArrow();
+    let letterSection = this.renderLetter();
+
+    return (
+        <div
+            onClick={this.handleClick}
+            onMouseEnter={this.handleHoverEnter}
+            onMouseLeave={this.handleHoverLeave}
+            style={this.state.isHovered ? {backgroundColor:'#219EE8'} : undefined}
+        >
+            {letterSection}
+            <div style={{height: '24px', width: '100%'}}>
+                {this.props.colname}
+                {sortArrowSection}
+            </div>
+        </div>
+    );
+  }
+}
+
+
 // Add row number col and make all cols resizeable
-function makeFormattedCols(cols, rowNumKey, editable) {
+function makeFormattedCols(props, rowNumKey) {
+  var cols = props.columns;
+  var editable = (props.onEditCell !== undefined);
+  var coltypes = props.columnTypes;
 
   // Add a row number column, which has its own formatting
   var formattedCols = [{
@@ -47,13 +150,24 @@ function makeFormattedCols(cols, rowNumKey, editable) {
   }];
 
   for (let idx in cols) {
+    let currentHeaderRenderer = (
+        <HeaderRenderer
+            colname={cols[idx]}
+            coltype={coltypes ? coltypes[idx] : ''}
+            isSorted={props.sortColumn == cols[idx]}
+            sortDirection={props.sortDirection}
+            idx={idx}
+            onSort={props.onSortColumn}
+            showLetter={props.showLetter}
+        />
+    );
     let d = {
       key: cols[idx],
       name: cols[idx],
       resizable: true,
       editable: editable,
       width: 160,
-      sortable: true
+      headerRenderer: currentHeaderRenderer,
     };
     formattedCols.push(d)
   }
@@ -61,13 +175,13 @@ function makeFormattedCols(cols, rowNumKey, editable) {
   return formattedCols;
 }
 
-
 export default class DataGrid extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      gridHeight : 100  // arbitrary, reset at componentDidMount, but non-zero means we get row elements in testing
+      gridHeight : 100,  // arbitrary, reset at componentDidMount, but non-zero means we get row elements in testing
+      componentKey: 0   // a key for the component; updates if the column header needs
     };
     this.rowNumKey = null;  // can't be in state because we need to update it in render() for getRow() to use
 
@@ -105,8 +219,25 @@ export default class DataGrid extends React.Component {
     this.updateSize();
   }
 
+  shouldKeyUpdate(nextProps) {
+    if(this.props.sortColumn != nextProps.sortColumn) {
+      return true;
+    }
+    if(this.props.sortDirection != nextProps.sortDirection) {
+      return true;
+    }
+    if(this.props.showLetter != nextProps.showLetter) {
+      return true;
+    }
+    return false;
+  }
+
   componentWillReceiveProps(nextProps) {
     this.updateSize();
+
+    if(this.shouldKeyUpdate(nextProps)) {
+      this.setState({componentKey: this.state.componentKey + 1});
+    }
   }
 
   componentWillUnmount() {
@@ -142,12 +273,10 @@ export default class DataGrid extends React.Component {
   }
 
   render() {
-    var tableData = this.props.tableData;
-
     if (this.props.totalRows > 0) {
 
       this.updateRowNumKey(this.props);
-      var columns = makeFormattedCols(this.props.columns, this.rowNumKey, this.props.onEditCell !== undefined);
+      var columns = makeFormattedCols(this.props, this.rowNumKey);
 
       return <ReactDataGrid
         columns={columns}
@@ -155,18 +284,10 @@ export default class DataGrid extends React.Component {
         rowsCount={this.props.totalRows}
         minWidth={this.state.gridWidth -2}
         minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
+        headerRowHeight={this.props.showLetter ? 54 : 36}
         enableCellSelect={true}
         onGridRowsUpdated={this.onGridRowsUpdated}
-        onGridSort={this.onGridSort}
-        // Ref sets the sort direction on the datagrid
-        ref={(component) => {
-            if(component) {
-                component.setState({
-                    sortColumn: this.props.sortColumn,
-                    sortDirection: this.props.sortDirection,
-                });
-            }
-        }}
+        key={this.state.componentKey}
       />
 
     }  else {
