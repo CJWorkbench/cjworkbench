@@ -28,17 +28,13 @@ export default class WfModuleHeader extends React.Component {
   render() {
     return (
       <div className='wf-module--placeholder mx-auto' ref={this.setModuleRef}>
-        <div className='card-block p-0'>
-          <div className='module-card-info'>
+        <div className='module-content'>
             <div className='module-card-header'>
-              <div className='module-header-content'>
-                <div className='d-flex justify-content-start align-items-center'>
-                  <div className={'icon-' + this.props.moduleIcon + ' WFmodule-icon t-vl-gray mr-2'} />
-                  <div className='t-vl-gray WFmodule-name'>{this.props.moduleName}</div>
-                </div>
+              <div className='d-flex justify-content-start align-items-center'>
+                <div className={'icon-' + this.props.moduleIcon + ' WFmodule-icon t-vl-gray mr-2'} />
+                <div className='t-vl-gray WFmodule-name'>{this.props.moduleName}</div>
               </div>
             </div>
-          </div>
         </div>
       </div>
     );

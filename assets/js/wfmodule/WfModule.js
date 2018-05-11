@@ -217,9 +217,6 @@ class WfModule extends React.Component {
     if (!this.state.isCollapsed)
       inside =  <div className='module-card-params'>
                   {paramdivs}
-                  <div className='module-description'>
-                    {module.description}
-                  </div>
                 </div>;
 
     var notes;
@@ -301,22 +298,19 @@ class WfModule extends React.Component {
             <div className='output-bar-container'>
               <StatusBar status={wfModule.status} isSelected={this.props.selected} isDragging={this.props.isDragging}/>
             </div>
-            <div className='card-block p-0' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
-              <div className='module-card-info'>
+            <div className='module-content' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
                 <div className='module-card-header'>
-                  <div className='module-header-content'>
-                    <div className='module-id--group' onClick={this.toggleCollapsed}>
-                      <div className={moduleIcon} />
-                      <div className='t-d-gray WFmodule-name'>{module.name}</div>
-                      <div style={{ opacity: this.state.showButtons ? '0' : '0' }} className={
-                        this.state.isCollapsed ?
-                          'icon-sort-down context-collapse-button' :
-                          'icon-sort-up context-collapse-button'
-                        }>
-                      </div>
+                  <div className='module-id--group' onClick={this.toggleCollapsed}>
+                    <div className={moduleIcon} />
+                    <div className='t-d-gray WFmodule-name'>{module.name}</div>
+                    <div style={{ opacity: this.state.showButtons ? '.5' : '0' }} className={
+                      this.state.isCollapsed ?
+                        'icon-sort-down context-collapse-button' :
+                        'icon-sort-up context-collapse-button'
+                      }>
                     </div>
-                    {contextBtns}
                   </div>
+                  {contextBtns}
                 </div>
                 {/* --- Module content when expanded --- */}
                 <Collapse className='' isOpen={!this.state.isCollapsed} >
@@ -325,9 +319,8 @@ class WfModule extends React.Component {
 
                   {inside}
                 </Collapse>
-              </div>
-            </div>
 
+            </div>
             <div className={
               'drop-alert ' +
               ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.dragItem) ? 'active ' : '' ) +

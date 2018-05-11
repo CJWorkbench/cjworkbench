@@ -11,7 +11,7 @@ describe('Status bar', () => {
       />
     );
     expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output-bar-red");
+    expect(wrapper.find('div').first().props().className).toEqual("module-output--error-selected");
   });
 
   it('Renders the unselected error color', () => {
@@ -22,7 +22,7 @@ describe('Status bar', () => {
       />
     );
     expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output-bar-pink");
+    expect(wrapper.find('div').first().props().className).toEqual("module-output--error");
   });
 
   it('Renders the busy color', () => {
@@ -44,7 +44,7 @@ describe('Status bar', () => {
       />
     );
     expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output--live");
+    expect(wrapper.find('div').first().props().className).toEqual("module-output--selected");
   });
 
   it('Renders the unselected ready color', () => {

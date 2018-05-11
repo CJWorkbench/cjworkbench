@@ -1,96 +1,129 @@
 // Module in workflow
 
-.WFmodule-name{
-  font-size: 1.2rem;
-  line-height: 1.2rem;
-  font-weight: 500;
-}
-
-.WFmodule-icon {
-  font-size: 1.2rem;
-}
-
-.wf-card .context-button {
-  width: 2.2rem;
-  height: 2.2rem;
-}
-
-.wf-card .context-button--icon {
-  font-size: 1.2rem;
-}
-
 .wf-card{
   width: 26rem;
   margin-bottom: 0.5rem;
   background-color: #f8f8f8;
   position: relative;
-  transition: all 0.1s ease-out;
+  &:hover {background:#fcfcfc;}
+
+  // Header of module in stack. Includes everything showm when collapsed.
+  .module-card-header {
+    clear:left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin:0 1rem 0 1.5rem;
+    height:4rem;
+
+    a {
+      text-decoration:none;
+    }
+
+    .module-id--group {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      cursor: pointer;
+      &:hover .context-collapse-button{opacity:1!important;}
+
+      .WFmodule-name{
+        font-size: 1.2rem;
+        line-height: 1.2rem;
+        font-weight: 500;
+      }
+
+      .WFmodule-icon {
+        font-size: 1.2rem;
+      }
+
+      .context-collapse-button {
+        border: 0;
+        width: 2.5rem;
+        height: 2.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: transparent;
+        color:#b4b4b4;
+        border-radius: 5rem;
+        margin-right:0rem;
+      }
+    }
+
+    .context-buttons--container {
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+
+    // Context buttons - three dots buttons with menu
+    .context-button {
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.2rem;
+      height: 2.2rem;
+
+      // Actual icon of context menu in module
+      .context-button--icon {
+        font-size: 1.2rem;
+      }
+
+      // Cheap fix issue for alignment
+      .icon-note {
+        margin-top: -.2rem;
+      }
+
+      .help-button {
+        margin-top:-0.7rem;
+        margin-left: -.4rem;
+        opacity: 1;
+      }
+
+    }
+
+    // Alert icons in modules when notifications are set
+    .notification-badge{
+      display: flex;
+      opacity: 0.6;
+      margin-right: 0.4rem;
+      &:hover {opacity:1;}
+
+      .notification-badge-icon{
+        font-size: 1.3rem;
+        cursor: pointer;
+      }
+    }
+  }
+  .module-content {
+    position:relative;
+    width:100%;
+    padding:0;
+
+    .module-card-params {
+      padding: 0 1.5rem 1rem 1.5rem;
+    }
+
+    // Action button in modules
+    .button-blue:hover {
+      background-color: $brand-blue--light;
+    }
+  }
+  .wf-module-error-msg {
+    border: 0px;
+    padding: 1rem 1.5rem;
+    margin:0 1.5rem;
+    border-radius: 0px;
+    background-color: $error-prompt;
+    color: #fff;
+    font-size: 1.2rem;
+    @extend %font-nunito-regular;
+    text-align: left;
+  }
 }
 
-.wf-card:hover{
-  background:#fcfcfc;
-}
-
-.module-card-info {
-  width:100%;
-}
-.module-card-header {
-  clear:left;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.card-block{
-  position:relative;
- }
-
-.module-header-content{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  margin:0 1rem 0 1.5rem;
-  height:4rem;
-}
-
-.module-header-buttons{
-  display:none;
-}
-
-.module-header-buttons:hover{
-  display:flex;
-}
-
-.module-card-params {
-  padding: 0 1.5rem 1rem 1.5rem;
-}
-
-.module-description {
-  margin-bottom: 2rem;
-  font-family: 'Nunito Sans', sans-serif;
-  font-size: 1.3rem;
-	font-weight: 200;
-  line-height: 2.1rem;
-  color: #A2A2A2;
-  display:none;
-}
-
-.wf-module-error-msg {
-  border: 0px;
-  padding: 1rem 1.5rem;
-  margin:0 1.5rem;
-  border-radius: 0px;
-  background-color: rgba(232,114,110,0.6);
-  color: #fff;
-  font-size: 1.2rem;
-  @extend %font-nunito-regular;
-  text-align: left;
-}
-
-.wfmoduleButton{
-  width: 20%;
-}
 
 /* ---- Wf Module status bars ---- */
 
@@ -99,73 +132,73 @@
   position: absolute;
   height: 100%;
   width:100%;
-}
 
-/* all good & selected */
-.module-output--live {
-  height: 100%;
-  background-color:#fff;
-  border: 2px solid #C7D6DF;
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
+  /* all good & selected */
+  .module-output--selected {
+    height: 100%;
+    background-color:#fff;
+    border: 2px solid #C7D6DF;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    &:after {
+    border: solid transparent;
+    content: " ";
+    border-left-color: rgba(118,155,176,0.3);
+    border-width: 2rem 0 2.25rem 1rem;
+    margin-left: 26.3rem
+    }
+  }
 
-.module-output--live:after {
-	border: solid transparent;
-	content: " ";
-	border-left-color: rgba(118,155,176,0.3);
-	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 26.3rem
-}
+  /* standby  */
+  .module-output-bar-orange {
+    height: 100%;
+    border:2px solid rgba(251,170,109,0.7);
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    :after {
+    border: solid transparent;
+  	content: " ";
+  	border-left-color: rgba(251,170,109,0);
+  	border-width: 2rem 0 2.25rem 1rem;
+    margin-left: 26.3rem
+    }
+  }
 
-/* standby  */
-.module-output-bar-orange {
-  height: 100%;
-  border:2px solid rgba(251,170,109,0.7);
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-.module-output-bar-orange:after {
-  border: solid transparent;
-	content: " ";
-	border-left-color: rgba(251,170,109,0);
-	border-width: 2rem 0 2.25rem 1rem;
-  margin-left: 26.3rem
-}
-/* error  */
-.module-output-bar-pink {
-  height: 100%;
-  background-color: transparent;
-  border:2px solid rgba(0,114,110,0);
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
+  /* error  */
+  .module-output--error {
+    height: 100%;
+    background-color: transparent;
+    border:2px solid rgba(0,114,110,0);
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    &:after {
+    	content: " ";
+    	position: absolute;
+    	border:2px solid rgba(232,114,110,0.3);
+      margin-left: 26.5rem;
+      height: 4rem;
+    }
+  }
 
-.module-output-bar-pink:after {
-	content: " ";
-	position: absolute;
-	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 26.5rem;
-  height: 4rem;
-}
-/* error & selected */
-.module-output-bar-red {
-  height: 100%;
-  background-color: transparent;
-  border:2px solid rgba(232,114,110,0.5);
-  display: flex;
-  align-items: center;
-  flex-direction: row;
-}
-.module-output-bar-red:after {
-  content: " ";
-	position: absolute;
-	border:2px solid rgba(232,114,110,0.3);
-  margin-left: 26.5rem;
-  height: 4rem;
+  /* error & selected */
+  .module-output--error-selected {
+    height: 100%;
+    background-color: transparent;
+    border:2px solid rgba(232,114,110,0.5);
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    &:after {
+      content: " ";
+    	position: absolute;
+    	border:2px solid rgba(232,114,110,0.3);
+      margin-left: 26.5rem;
+      height: 4rem;
+    }
+  }
 }
 
 
@@ -173,11 +206,15 @@
 
 .wf-module--placeholder{
   width: 18rem;
+  display: flex;
+  padding-left:1.5rem;
+  align-items: center;
   margin-bottom: 0.5rem;
-  background-color: #7A9BB0;
+  background-color:$medium-blue;
   position: relative;
-
-  box-shadow: -5px 8px 20px 0px rgba(0,0,0,0.15);
+  height:4rem;
+  box-shadow: $menu-shadow;
+  font-size: 1.2rem;
 }
 
 // Module being dragged
@@ -188,7 +225,7 @@
   //background-color: #FFE6D2;
   border:2px solid #F9C399;
 }
-.module-output--live.wf-module--dragging{
+.module-output--selected.wf-module--dragging{
   border:none;
 }
 

@@ -12,29 +12,21 @@ exports[`WfModuleHeader Mounts and does not focus 1`] = `
     className="wf-module--placeholder mx-auto"
   >
     <div
-      className="card-block p-0"
+      className="module-content"
     >
       <div
-        className="module-card-info"
+        className="module-card-header"
       >
         <div
-          className="module-card-header"
+          className="d-flex justify-content-start align-items-center"
         >
           <div
-            className="module-header-content"
+            className="icon-some-icon WFmodule-icon t-vl-gray mr-2"
+          />
+          <div
+            className="t-vl-gray WFmodule-name"
           >
-            <div
-              className="d-flex justify-content-start align-items-center"
-            >
-              <div
-                className="icon-some-icon WFmodule-icon t-vl-gray mr-2"
-              />
-              <div
-                className="t-vl-gray WFmodule-name"
-              >
-                Some module name
-              </div>
-            </div>
+            Some module name
           </div>
         </div>
       </div>
@@ -54,29 +46,21 @@ exports[`WfModuleHeader Mounts and focuses 1`] = `
             data-reactroot=""
           >
             <div
-              class="card-block p-0"
+              class="module-content"
             >
               <div
-                class="module-card-info"
+                class="module-card-header"
               >
                 <div
-                  class="module-card-header"
+                  class="d-flex justify-content-start align-items-center"
                 >
                   <div
-                    class="module-header-content"
+                    class="icon-some-icon WFmodule-icon t-vl-gray mr-2"
+                  />
+                  <div
+                    class="t-vl-gray WFmodule-name"
                   >
-                    <div
-                      class="d-flex justify-content-start align-items-center"
-                    >
-                      <div
-                        class="icon-some-icon WFmodule-icon t-vl-gray mr-2"
-                      />
-                      <div
-                        class="t-vl-gray WFmodule-name"
-                      >
-                        Some module name
-                      </div>
-                    </div>
+                    Some module name
                   </div>
                 </div>
               </div>
@@ -95,29 +79,21 @@ exports[`WfModuleHeader Mounts and focuses 1`] = `
     className="wf-module--placeholder mx-auto"
   >
     <div
-      className="card-block p-0"
+      className="module-content"
     >
       <div
-        className="module-card-info"
+        className="module-card-header"
       >
         <div
-          className="module-card-header"
+          className="d-flex justify-content-start align-items-center"
         >
           <div
-            className="module-header-content"
+            className="icon-some-icon WFmodule-icon t-vl-gray mr-2"
+          />
+          <div
+            className="t-vl-gray WFmodule-name"
           >
-            <div
-              className="d-flex justify-content-start align-items-center"
-            >
-              <div
-                className="icon-some-icon WFmodule-icon t-vl-gray mr-2"
-              />
-              <div
-                className="t-vl-gray WFmodule-name"
-              >
-                Some module name
-              </div>
-            </div>
+            Some module name
           </div>
         </div>
       </div>

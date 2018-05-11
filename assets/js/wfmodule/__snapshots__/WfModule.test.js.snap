@@ -46,24 +46,69 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                   />
                 </div>
                 <div
-                  className="card-block p-0"
+                  className="module-content"
                   onMouseEnter={[Function]}
                   onMouseLeave={[Function]}
                 >
                   <div
-                    className="module-card-info"
+                    className="module-card-header"
                   >
                     <div
-                      className="module-card-header"
+                      className="module-id--group"
+                      onClick={[Function]}
                     >
                       <div
-                        className="module-header-content"
+                        className="icon-undefined WFmodule-icon mr-2"
+                      />
+                      <div
+                        className="t-d-gray WFmodule-name"
+                      />
+                      <div
+                        className="icon-sort-up context-collapse-button"
+                        style={
+                          Object {
+                            "opacity": "0",
+                          }
+                        }
+                      />
+                    </div>
+                    <div
+                      className="context-buttons--container"
+                    >
+                      <div
+                        style={
+                          Object {
+                            "opacity": "0",
+                          }
+                        }
                       >
-                        <div
-                          className="module-id--group"
+                        <button
+                          className="context-button btn"
+                        >
+                          <a
+                            className="help-button d-flex align-items-center"
+                            href={undefined}
+                            target="_blank"
+                          >
+                            <div
+                              className="icon-help"
+                            />
+                          </a>
+                        </button>
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "opacity": "0",
+                          }
+                        }
+                      >
+                        <button
+                          className="context-button btn edit-note"
                           onClick={[Function]}
                         >
                           <div
+<<<<<<< HEAD
                             className="icon-undefined WFmodule-icon mr-2"
                           />
                           <div
@@ -135,35 +180,125 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                             />
                           </div>
                         </div>
+||||||| merged common ancestors
+                            className="icon-undefined WFmodule-icon mr-2"
+                          />
+                          <div
+                            className="t-d-gray WFmodule-name"
+                          />
+                          <div
+                            className="icon-sort-up context-collapse-button"
+                            style={
+                              Object {
+                                "opacity": "0",
+                              }
+                            }
+                          />
+                        </div>
+                        <div
+                          className="context-buttons--container"
+                        >
+                          <div
+                            style={
+                              Object {
+                                "opacity": "0",
+                              }
+                            }
+                          >
+                            <button
+                              className="context-button btn"
+                            >
+                              <a
+                                className="help-button d-flex align-items-center"
+                                href={undefined}
+                                target="_blank"
+                              >
+                                <div
+                                  className="icon-help"
+                                />
+                              </a>
+                            </button>
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "opacity": "0",
+                              }
+                            }
+                          >
+                            <button
+                              className="context-button btn edit-note"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="icon-note icon-l-gray "
+                              />
+                            </button>
+                          </div>
+                          <div
+                            style={
+                              Object {
+                                "opacity": "0",
+                              }
+                            }
+                          >
+                            <WfModuleContextMenu
+                              className=""
+                              id={999}
+                              removeModule={[Function]}
+                              stopProp={[Function]}
+                            />
+                          </div>
+                        </div>
+=======
+                            className="icon-note icon-l-gray "
+                          />
+                        </button>
+>>>>>>> Refactor modules HTML and css
+                      </div>
+                      <div
+                        style={
+                          Object {
+                            "opacity": "0",
+                          }
+                        }
+                      >
+                        <WfModuleContextMenu
+                          className=""
+                          id={999}
+                          removeModule={[Function]}
+                          stopProp={[Function]}
+                        />
                       </div>
                     </div>
-                    <Collapse
-                      className=""
-                      delay={
-                        Object {
-                          "hide": 350,
-                          "show": 350,
-                        }
+                  </div>
+                  <Collapse
+                    className=""
+                    delay={
+                      Object {
+                        "hide": 350,
+                        "show": 350,
                       }
-                      isOpen={true}
-                      onClosed={[Function]}
-                      onOpened={[Function]}
-                      tag="div"
+                    }
+                    isOpen={true}
+                    onClosed={[Function]}
+                    onOpened={[Function]}
+                    tag="div"
+                  >
+                    <StatusLine
+                      error_msg={undefined}
+                      status={undefined}
+                    />
+                    <div
+                      className="module-card-params"
                     >
-                      <StatusLine
-                        error_msg={undefined}
-                        status={undefined}
-                      />
-                      <div
-                        className="module-card-params"
-                      >
-                        <WfParameter
-                          api={
-                            Object {
-                              "onParamChanged": [MockFunction],
-                              "postParamEvent": [MockFunction],
-                            }
+                      <WfParameter
+                        api={
+                          Object {
+                            "onParamChanged": [MockFunction],
+                            "postParamEvent": [MockFunction],
                           }
+<<<<<<< HEAD
                           changeParam={[Function]}
                           getParamMenuItems={[Function]}
                           getParamText={[Function]}
@@ -180,29 +315,65 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                               },
                               "value": "http://some.URL.me",
                             }
-                          }
-                          revision={707}
-                          setClickNotification={[Function]}
-                          setParamText={[Function]}
-                          startDrag={[MockFunction]}
-                          stopDrag={[MockFunction]}
-                          updateSettings={
+||||||| merged common ancestors
+                          changeParam={[Function]}
+                          getParamMenuItems={[Function]}
+                          getParamText={[Function]}
+                          isReadOnly={false}
+                          loggedInUser={undefined}
+                          moduleName="TestModule"
+                          notifications={undefined}
+                          p={
                             Object {
-                              "autoUpdateData": undefined,
-                              "lastUpdateCheck": undefined,
-                              "updateInterval": undefined,
-                              "updateUnits": undefined,
+                              "id": 100,
+                              "parameter_spec": Object {
+                                "id_name": "url",
+                                "type": "string",
+                              },
+                              "value": "http://some.URL.me",
                             }
+=======
+                        }
+                        changeParam={[Function]}
+                        getParamMenuItems={[Function]}
+                        getParamText={[Function]}
+                        isReadOnly={false}
+                        loggedInUser={undefined}
+                        moduleName="TestModule"
+                        notifications={undefined}
+                        p={
+                          Object {
+                            "id": 100,
+                            "parameter_spec": Object {
+                              "id_name": "url",
+                              "type": "string",
+                            },
+                            "value": "http://some.URL.me",
+>>>>>>> Refactor modules HTML and css
                           }
-                          wf_module_id={999}
-                        />
-                        <WfParameter
-                          api={
-                            Object {
-                              "onParamChanged": [MockFunction],
-                              "postParamEvent": [MockFunction],
-                            }
+                        }
+                        revision={707}
+                        setClickNotification={[Function]}
+                        setParamText={[Function]}
+                        startDrag={[MockFunction]}
+                        stopDrag={[MockFunction]}
+                        updateSettings={
+                          Object {
+                            "autoUpdateData": undefined,
+                            "lastUpdateCheck": undefined,
+                            "updateInterval": undefined,
+                            "updateUnits": undefined,
                           }
+                        }
+                        wf_module_id={999}
+                      />
+                      <WfParameter
+                        api={
+                          Object {
+                            "onParamChanged": [MockFunction],
+                            "postParamEvent": [MockFunction],
+                          }
+<<<<<<< HEAD
                           changeParam={[Function]}
                           getParamMenuItems={[Function]}
                           getParamText={[Function]}
@@ -218,28 +389,58 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                                 "type": "custom",
                               },
                             }
-                          }
-                          revision={707}
-                          setClickNotification={[Function]}
-                          setParamText={[Function]}
-                          startDrag={[MockFunction]}
-                          stopDrag={[MockFunction]}
-                          updateSettings={
+||||||| merged common ancestors
+                          changeParam={[Function]}
+                          getParamMenuItems={[Function]}
+                          getParamText={[Function]}
+                          isReadOnly={false}
+                          loggedInUser={undefined}
+                          moduleName="TestModule"
+                          notifications={undefined}
+                          p={
                             Object {
-                              "autoUpdateData": undefined,
-                              "lastUpdateCheck": undefined,
-                              "updateInterval": undefined,
-                              "updateUnits": undefined,
+                              "id": 101,
+                              "parameter_spec": Object {
+                                "id_name": "version_select",
+                                "type": "custom",
+                              },
                             }
+=======
+                        }
+                        changeParam={[Function]}
+                        getParamMenuItems={[Function]}
+                        getParamText={[Function]}
+                        isReadOnly={false}
+                        loggedInUser={undefined}
+                        moduleName="TestModule"
+                        notifications={undefined}
+                        p={
+                          Object {
+                            "id": 101,
+                            "parameter_spec": Object {
+                              "id_name": "version_select",
+                              "type": "custom",
+                            },
+>>>>>>> Refactor modules HTML and css
                           }
-                          wf_module_id={999}
-                        />
-                        <div
-                          className="module-description"
-                        />
-                      </div>
-                    </Collapse>
-                  </div>
+                        }
+                        revision={707}
+                        setClickNotification={[Function]}
+                        setParamText={[Function]}
+                        startDrag={[MockFunction]}
+                        stopDrag={[MockFunction]}
+                        updateSettings={
+                          Object {
+                            "autoUpdateData": undefined,
+                            "lastUpdateCheck": undefined,
+                            "updateInterval": undefined,
+                            "updateUnits": undefined,
+                          }
+                        }
+                        wf_module_id={999}
+                      />
+                    </div>
+                  </Collapse>
                 </div>
                 <div
                   className="drop-alert "

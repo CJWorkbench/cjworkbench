@@ -14,19 +14,19 @@ exports[`Status bar Renders the default color 1`] = `
 
 exports[`Status bar Renders the error color 1`] = `
 <div
-  className="module-output-bar-red"
+  className="module-output--error-selected"
 />
 `;
 
 exports[`Status bar Renders the selected ready color 1`] = `
 <div
-  className="module-output--live"
+  className="module-output--selected"
 />
 `;
 
 exports[`Status bar Renders the unselected error color 1`] = `
 <div
-  className="module-output-bar-pink"
+  className="module-output--error"
 />
 `;
 

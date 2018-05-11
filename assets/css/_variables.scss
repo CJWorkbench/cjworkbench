@@ -4,6 +4,7 @@ $brand-workspace: #48C8D7;
 $brand-learn: #ffaad3;
 $dark-blue: #577485;
 $medium-blue: #719BB0;
+$error-prompt: rgba(232,114,110,0.6);
 
 $WF-background:#E9EBEE;
 $page-background: #EDECEC;
@@ -30,5 +31,6 @@ $placeholder: #c8c8c8;
 $placeholder--light: rgba(255,255,255,.5);
 
 // box shadows ~~~~ ༼ つ ◕_◕ ༽つ
+$menu-shadow:-5px 8px 20px 0px rgba(0,0,0,0.15);
 $button-area:-2px 2px 15px 0px $dark-accent--soft;
 $button-area--hover:-2px 2px 1px 0px $dark-accent--soft;
