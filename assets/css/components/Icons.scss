@@ -2,7 +2,7 @@
 
 @font-face {
   font-family: 'Workbench';
-  src: url('../fonts/Workbench.woff2') format('woff2');
+  src: url('../fonts/Workbench.woff') format('woff');
   font-weight: normal;
   font-style: normal;
 }
@@ -212,6 +212,13 @@
   content:"\e939";
 }
 
+.icon-merge:before {
+  content:"\e93a";
+}
+
+.icon-split:before {
+  content:"\e93b";
+}
 
 /* Customized icons, not in font sent  */
 
