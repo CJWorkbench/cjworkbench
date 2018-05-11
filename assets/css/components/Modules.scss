@@ -62,15 +62,6 @@
   display:flex;
 }
 
-.notification-badge{
-  display: flex;
-}
-
-.notification-badge-icon{
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
 .module-card-params {
   padding: 0 1.5rem 1rem 1.5rem;
 }
@@ -221,31 +212,6 @@
 /* Margin for a line of 1 parameters, part of a group */
 .param-line-margin{
   margin-bottom:1rem;
-}
-
-
-/* Context buttons in modules */
-
-.context-collapse-button {
-  cursor: pointer;
-  border: 0;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color:#b4b4b4;
-  border-radius: 5rem;
-  margin-right:0rem;
-  opacity: 1;
-}
-
-.context-collapse-button:hover {
-  border: none;
-  background-color: transparent;
-  color:#8b8b8b;
-  decoration:none;
 }
 
 

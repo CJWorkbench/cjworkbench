@@ -7,6 +7,16 @@
   width: 20rem;
   flex: 0 0 20rem;
 
+  .card {
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+
+    .ml-icon-search {
+      font-size: 1.4rem;
+    }
+  }
+
   .ML-header {
     height:6rem;
     display: flex;
@@ -375,9 +385,9 @@
   }
 
   .card {
-  border: 0;
-  background: transparent;
-  border-radius: 0;
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
 
     .ml-icon-search {
       font-size: 1.4rem;

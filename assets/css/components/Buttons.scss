@@ -45,22 +45,66 @@ button:focus { outline:0 !important; }
     text-decoration:none;
   }
 
+  .module-id--group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    cursor: pointer;
+    width:100%;
+    &:hover .context-collapse-button{opacity:1!important;}
+
+    .context-collapse-button {
+      border: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: transparent;
+      color:#b4b4b4;
+      border-radius: 5rem;
+      margin-right:0rem;
+    }
+  }
+
+  .context-buttons--container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+  }
+
   // Context buttons - three dots buttons with menu
   .context-button {
     font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-    //Cheap fix issue with alignment
+    // Cheap fix issue for alignment
     .icon-note {
-      margin-top: -0.8rem;
+      margin-top: -.2rem;
     }
 
-    //Fix issue with alignment
+    // Fix issue with alignment
     .help-button {
-      margin-top:-0.6rem;
+      margin-top:-0.7rem;
       margin-left: -.4rem;
       opacity: 1;
     }
 
+  }
+  // Alert icons in modules when notifications are set
+
+  .notification-badge{
+    display: flex;
+    opacity: 0.6;
+    margin-right: 0.4rem;
+    &:hover {opacity:1;}
+
+    .notification-badge-icon{
+      font-size: 1.3rem;
+      cursor: pointer;
+    }
   }
 }
 

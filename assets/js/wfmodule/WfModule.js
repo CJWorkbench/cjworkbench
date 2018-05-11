@@ -242,7 +242,7 @@ class WfModule extends React.Component {
     var helpIcon;
     if (!this.props.isReadOnly)
       helpIcon =  <button className='context-button btn'>
-                    <a className=' context-button help-button d-flex align-items-center'
+                    <a className='help-button d-flex align-items-center'
                         href={module.help_url} target="_blank">
                       <div className='icon-help' />
                     </a>
@@ -251,7 +251,7 @@ class WfModule extends React.Component {
     var notesIcon;
     if (!this.state.showNotes && !this.props.isReadOnly)
       notesIcon = <button className='context-button btn edit-note' onClick={this.showNotes}>
-                    <div className='icon-note btn icon-l-gray ' />
+                    <div className='icon-note icon-l-gray ' />
                   </button>;
 
     var contextMenu;
@@ -268,10 +268,20 @@ class WfModule extends React.Component {
     // buttons create (e.g. export dialog) are still visible. Can't use display: none as we need display: flex
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     const contextBtns =
-        <div className='d-flex align-items-center' style={{ opacity: this.state.showButtons ? '1' : '0' }} >
-          <div>{helpIcon}</div>
-          <div>{notesIcon}</div>
-          <div>{contextMenu}</div>
+        <div className='context-buttons--container'>
+          {wfModule.notifications &&
+          <div className={'notification-badge' + (wfModule.notification_count > 0 ? ' active t-f-blue' : '' )}>
+            <div
+              className="icon-notification notification-badge-icon ml-3 mr-1"
+              onClick={this.onClickNotification} />
+            {wfModule.notification_count > 0 &&
+            <div>{wfModule.notification_count}</div>
+            }
+          </div>
+          }
+          <div style={{ opacity: this.state.showButtons ? '1' : '0' }}>{helpIcon}</div>
+          <div style={{ opacity: this.state.showButtons ? '1' : '0' }}>{notesIcon}</div>
+          <div style={{ opacity: this.state.showButtons ? '1' : '0' }}>{contextMenu}</div>
         </div>
 
     const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon mr-2';
@@ -295,20 +305,10 @@ class WfModule extends React.Component {
               <div className='module-card-info'>
                 <div className='module-card-header'>
                   <div className='module-header-content'>
-                    <div className='d-flex justify-content-start align-items-center' onClick={this.toggleCollapsed}>
+                    <div className='module-id--group' onClick={this.toggleCollapsed}>
                       <div className={moduleIcon} />
                       <div className='t-d-gray WFmodule-name'>{module.name}</div>
-                      {wfModule.notifications &&
-                      <div className={'notification-badge' + (wfModule.notification_count > 0 ? ' active t-f-blue' : '' )}>
-                        <div
-                          className="icon-notification notification-badge-icon ml-3 mr-1"
-                          onClick={this.onClickNotification} />
-                        {wfModule.notification_count > 0 &&
-                        <div>{wfModule.notification_count}</div>
-                        }
-                      </div>
-                      }
-                      <div style={{ opacity: this.state.showButtons ? '1' : '0' }} className={
+                      <div style={{ opacity: this.state.showButtons ? '0' : '0' }} className={
                         this.state.isCollapsed ?
                           'icon-sort-down context-collapse-button' :
                           'icon-sort-up context-collapse-button'
