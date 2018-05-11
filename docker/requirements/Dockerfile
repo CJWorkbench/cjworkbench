@@ -1,7 +1,7 @@
 # This is the "requirements" container, jonathanstray/cjworkbench-reqs
 # It isolates all of the time-consuming setup of pip requirements (and a few other basics) from app code changes
 
-FROM python:3
+FROM python:3.6
 EXPOSE 8000
 
 RUN curl https://raw.githubusercontent.com/cjworkbench/cjworkbench/stable/requirements.txt > requirements.txt
