@@ -59,7 +59,8 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                         className="module-header-content"
                       >
                         <div
-                          className="d-flex justify-content-start align-items-center"
+                          className="module-id--group"
+                          onClick={[Function]}
                         >
                           <div
                             className="icon-undefined WFmodule-icon mr-2"
@@ -68,8 +69,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                             className="t-d-gray WFmodule-name"
                           />
                           <div
-                            className="icon-sort-up btn context-collapse-button"
-                            onClick={[Function]}
+                            className="icon-sort-up context-collapse-button"
                             style={
                               Object {
                                 "opacity": "0",
@@ -78,19 +78,20 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                           />
                         </div>
                         <div
-                          className="d-flex align-items-center"
-                          style={
-                            Object {
-                              "opacity": "0",
-                            }
-                          }
+                          className="context-buttons--container"
                         >
-                          <div>
+                          <div
+                            style={
+                              Object {
+                                "opacity": "0",
+                              }
+                            }
+                          >
                             <button
                               className="context-button btn"
                             >
                               <a
-                                className=" context-button help-button d-flex align-items-center"
+                                className="help-button d-flex align-items-center"
                                 href={undefined}
                                 target="_blank"
                               >
@@ -100,17 +101,29 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                               </a>
                             </button>
                           </div>
-                          <div>
+                          <div
+                            style={
+                              Object {
+                                "opacity": "0",
+                              }
+                            }
+                          >
                             <button
                               className="context-button btn edit-note"
                               onClick={[Function]}
                             >
                               <div
-                                className="icon-note btn icon-l-gray "
+                                className="icon-note icon-l-gray "
                               />
                             </button>
                           </div>
-                          <div>
+                          <div
+                            style={
+                              Object {
+                                "opacity": "0",
+                              }
+                            }
+                          >
                             <WfModuleContextMenu
                               className=""
                               id={999}
