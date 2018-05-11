@@ -20,6 +20,8 @@ from server.settingsutils import *
 if sys.version_info[0] < 3:
     raise RuntimeError('CJ Workbench requires Python 3')
 
+I_AM_TESTING = 'test' in sys.argv
+
 # ----- Configurable Parameters -----
 
 # How many rows in one table?
@@ -350,7 +352,7 @@ try:
 except ImportError:
     pass
 
-if 'test' in sys.argv:
+if I_AM_TESTING:
     for provider in ['allauth.socialaccount.providers.facebook',
                      'allauth.socialaccount.providers.google']:
         if provider not in INSTALLED_APPS:

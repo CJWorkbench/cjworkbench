@@ -7,14 +7,7 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module
 from server.serializers import ModuleSerializer
-from server.initmodules import init_modules
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-
-
-# Scaffolding: URL endpoint to trigger module reload from config file
-@staff_member_required
-def init_modules2(request):
-    return HttpResponse(init_modules())
 
 
 # List of modules. Used to populate module library

@@ -14,6 +14,6 @@ export PYTHONUNBUFFERED=0
 # for some reason this seems to fail in the Dockerfile, so do it here
 cron
 
-python manage.py migrate
-python manage.py load_socialaccounts
-python manage.py runserver --insecure 0.0.0.0:8000
+pipenv run ./manage.py migrate
+pipenv run ./manage.py load_socialaccounts
+pipenv run ./manage.py runserver --insecure 0.0.0.0:8000
