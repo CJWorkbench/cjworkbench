@@ -1,5 +1,5 @@
 import React from 'react'
-import { getPageID, csrfToken, scrollTo } from './utils'
+import { scrollTo } from './utils'
 import { DropTarget } from 'react-dnd'
 import FlipMove from 'react-flip-move'
 import PropTypes from 'prop-types'

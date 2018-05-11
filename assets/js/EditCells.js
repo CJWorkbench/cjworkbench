@@ -2,7 +2,6 @@
 // Including creating an Edit Cells module if needed, and syncing to server
 import React from 'react'
 import {store, setSelectedWfModuleAction} from "./workflow-reducer";
-import {getPageID} from "./utils";
 import WorkbenchAPI from './WorkbenchAPI'
 
 var api = WorkbenchAPI(); // var so it can be mocked for testing
@@ -55,7 +54,7 @@ function findEditCellsModule(state, wfModuleId) {
 function addEditCellWfModule(state, insertBefore) {
   var moduleId =  state.editCellsModuleId;
   return (
-      api.addModule(getPageID(), moduleId, insertBefore)
+      api.addModule(window.initState.workflowId, moduleId, insertBefore)
   )
 }
 

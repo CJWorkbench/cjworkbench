@@ -4,7 +4,6 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider, connect } from 'react-redux'
 import * as Actions from '../workflow-reducer'
-import { getPageID, csrfToken } from '../utils'
 import Workflow from '../workflow'
 import workbenchAPI from '../WorkbenchAPI'
 import { DragDropContextProvider } from 'react-dnd'
@@ -49,27 +48,27 @@ const WorkflowContainer = connect(
 
 
 // --- Websocket handling ----
+function buildSocket() {
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+  const workflowId = window.initState.workflowId
+  const socket = new WebSocket(`${protocol}//${window.location.host}/workflows/${workflowId}`)
 
-// Start listening for events
-const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-const socket = new WebSocket(protocol + "//" + window.location.host + "/workflows/" + getPageID());
-
-socket.onmessage = function(e) {
-  var data = JSON.parse(e.data);
-  if ('type' in data) {
-    switch (data.type) {
-
-      case 'wfmodule-status':
-        Actions.store.dispatch(Actions.setWfModuleStatusAction(data.id, data.status, data.error_msg ? data.error_msg : ''));
-        return
-
-      case 'reload-workflow':
-        Actions.store.dispatch(Actions.reloadWorkflowAction());
-        return
+  socket.onmessage = (e) => {
+    const data = JSON.parse(e.data);
+    if ('type' in data) {
+      switch (data.type) {
+        case 'wfmodule-status':
+          Actions.store.dispatch(Actions.setWfModuleStatusAction(data.id, data.status, data.error_msg ? data.error_msg : ''))
+          return
+        case 'reload-workflow':
+          Actions.store.dispatch(Actions.reloadWorkflowAction())
+          return
+      }
     }
   }
 }
 
+const socket = buildSocket() // Start listening for events
 
 // --- Main ----
 
