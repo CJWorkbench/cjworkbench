@@ -1,7 +1,9 @@
 import React from 'react'
-import Lesson from './Lesson'
+import ConnectedLesson, { Lesson } from './Lesson'
+import LessonSection from './LessonSection'
 import { mount, shallow } from 'enzyme'
 import configureStore from 'redux-mock-store'
+import { Provider } from 'react-redux'
 
 describe('Lesson', () => {
   const lesson = {
@@ -15,24 +17,24 @@ describe('Lesson', () => {
         title: 'Section One',
         html: '<p>Section One HTML</p>',
         steps: [
-          { html: 'Step One-Ay', highlight: [ { type: 'EditableNotes' } ] },
-          { html: 'Step One-<strong>Bee</strong>', highlight: [ { type: 'WfModule', name: 'Foo' } ] },
+          { html: 'Step One-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
+          { html: 'Step One-<strong>Bee</strong>', highlight: [ { type: 'WfModule', name: 'Foo' } ], testJs: 'return false' },
         ],
       },
       {
         title: 'Section Two',
         html: '<p>Section Two HTML</p>',
         steps: [
-          { html: 'Step Two-Ay', highlight: [ { type: 'EditableNotes' } ] },
-          { html: 'Step Two-<strong>Bee</strong>', highlight: [ { type: 'WfModule', name: 'Foo' } ] },
+          { html: 'Step Two-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
+          { html: 'Step Two-<strong>Bee</strong>', highlight: [ { type: 'WfModule', name: 'Foo' } ], testJs: 'return false' },
         ],
       },
       {
         title: 'Last Section',
         html: '<p>Section Three HTML</p>',
         steps: [
-          { html: 'Step Three-Ay', highlight: [ { type: 'EditableNotes' } ] },
-          { html: 'Step Three-<strong>Bee</strong>', highlight: [ { type: 'WfModule', name: 'Foo' } ] },
+          { html: 'Step Three-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
+          { html: 'Step Three-<strong>Bee</strong>', highlight: [ { type: 'WfModule', name: 'Foo' } ], testJs: 'return false' },
         ],
       },
     ],
@@ -40,8 +42,12 @@ describe('Lesson', () => {
 
   describe('shallow', () => {
     const wrapper = () => {
-      const store = configureStore()({ lesson_highlight: [] })
-      return shallow(<Lesson store={store} {...lesson} />).dive()
+      const setLessonHighlight = jest.fn()
+      return shallow(
+        <Lesson {...lesson}
+          setLessonHighlight={setLessonHighlight}
+          />
+      )
     }
 
     it('renders a title', () => {
@@ -53,11 +59,11 @@ describe('Lesson', () => {
     })
 
     it('renders LessonSections', () => {
-      expect(wrapper().find('LessonSection')).toHaveLength(3)
+      expect(wrapper().find(LessonSection)).toHaveLength(3)
     })
 
     it('sets the first Lesson active', () => {
-      expect(wrapper().find('LessonSection').map(s => s.props().active)).toEqual([ true, false, false ])
+      expect(wrapper().find(LessonSection).map(s => s.props().active)).toEqual([ true, false, false ])
     })
   })
 
@@ -68,7 +74,11 @@ describe('Lesson', () => {
     let store
     const wrapper = () => {
       store = configureStore()({ lesson_highlight: [] })
-      return mount(<Lesson store={store} {...lesson} />)
+      return mount(
+        <Provider store={store}>
+          <ConnectedLesson {...lesson} />
+        </Provider>
+      )
     }
 
     it('shows "Next" and an unclickable "Previous"', () => {

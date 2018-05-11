@@ -32,7 +32,8 @@ describe('WfModule, not read-only mode', () => {
     ],
     'module_version' : {
       'module' : {
-        'id_name' : 'loadurl'
+        'id_name' : 'loadurl',
+        'name': 'Load from URL',
       },
     }
   };

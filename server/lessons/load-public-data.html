@@ -13,38 +13,55 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Add from URL"}]'
-      data-test="document.querySelector('.wf-module[data-module-name=\"Add from URL\"]')"
+      data-test="return workflow.wfModules.length === 1 && workflow.wfModules[0].moduleName === 'Add from URL'"
       >Add the module ‘Add from URL’.</li>
     <li
       data-highlight='[{"type":"WfParameter","moduleName":"Add from URL","name":"url"}]'
-      data-test="document.querySelector('.wf-module[data-module-name=\"Add from URL\"] textarea[name=\"url\"]').value === 'https://data.sfgov.org/resource/e2px-wugd.json'"
+      data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].parameters.get('url') === 'https://data.sfgov.org/resource/e2px-wugd.json'"
       >Paste in the URL of the dataset in the module.
       <div class="copy-txt content-3 t-white">https://data.sfgov.org/resource/e2px-wugd.json</div>
     </li>
     <li
       data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]',
-      data-test="document.querySelector('.wf-module[data-module-name=\"Add from URL\"] textarea[name=\"notes\"]:not(:empty)"
+      data-test="return workflow.wfModules.length > 0 && !!workflow.wfModules[0].note"
       >Add a note to the module, for example:
       <div class="copy-txt content-3 t-white">Hello, world!</div>
     </li>
-    <li>Collapse the module.</li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].isCollapsed"
+      >Collapse the module.</li>
   </ol>
 </section>
 <section>
   <h2>2. Making a column Chart</h2>
   <p>Let’s add a column chart to visualize this data.</p>
   <ol class="steps">
-    <li>Add the module ‘Column chart’ using the search in the module library.</li>
-    <li>Add a title to the chart.</li>
+    <li
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Column chart"}]'
+      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Column chart'"
+      >Add the module ‘Column chart’ using the search in the module library.</li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].parameters.get('title').length > 0"
+      >Add a title to the chart.</li>
   </ol>
 </section>
 <section>
   <h2>3. Filtering with a condition</h2>
   <p>Let’s make our chart more legible by filtering and sorting its data.</p>
   <ol class="steps">
-    <li>Add the module ‘Filter’ by dragging it between the two already there.</li>
-    <li>Select the column ‘Affordable units’, choose the condition ‘Greater than’ and keep all rows having more than 200 affordable units.</li>
-    <li>Sort the ‘Affordable units’ column in descending order using the toggle in the column header. </li>
-    <li>Select the ‘Column chart’ module to see the chart with revised data.</li>
+    <li
+      data-highlight='[]'
+      data-test="return workflow.wfModules.length > 2 && workflow.wfModules[1].moduleName === 'Filter'"
+      >Add the module ‘Filter’ by dragging it between the two already there.</li>
+    <li
+      data-highlight='[]'
+      data-test="const params = workflow.wfModules[1].moduleName.parameters; return params.get('column') === 'affordable_units' && params.get('condition') === 'Greater Than' && params.get('value') === '200' && params.get('keep') === 'Keep'"
+      >Select the column ‘Affordable units’, choose the condition ‘Greater than’ and keep all rows having more than 200 affordable units.</li>
+    <li
+      data-highlight='[]'
+      data-test="return state.selectedWfModule.moduleName === 'Column chart'"
+      >Select the ‘Column chart’ module to see the chart with revised data.</li>
   </ol>
 </section>

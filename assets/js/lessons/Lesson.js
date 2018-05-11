@@ -74,6 +74,7 @@ Lesson.propTypes = {
     steps: PropTypes.arrayOf(PropTypes.shape({
       html: PropTypes.string.isRequired,
       highlight: LessonHighlightsType.isRequired,
+      testJs: PropTypes.string.isRequired,
     })).isRequired,
   })).isRequired,
   setLessonHighlight: PropTypes.func.isRequired,

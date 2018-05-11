@@ -4,17 +4,27 @@ import { LessonHighlightsType } from '../util/LessonHighlight'
 
 export default class LessonStep extends React.Component {
   render() {
-    const { html } = this.props
+    const { html, status } = this.props
 
     return (
-      <li>
+      <li className={status}>
         <div className="description" dangerouslySetInnerHTML={({__html: html})}></div>
       </li>
     )
   }
 }
 
+LessonStep.Status = {
+  FUTURE: 'future',
+  CURRENT: 'current',
+  DONE: 'done',
+}
+
 LessonStep.propTypes = {
   html: PropTypes.string.isRequired,
-  highlight: LessonHighlightsType.isRequired,
+  status: PropTypes.oneOf([
+    LessonStep.Status.FUTURE,
+    LessonStep.Status.CURRENT,
+    LessonStep.Status.DONE,
+  ]).isRequired,
 }

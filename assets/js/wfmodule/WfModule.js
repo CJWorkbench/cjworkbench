@@ -194,7 +194,7 @@ class WfModule extends React.Component {
     var paramdivs = wfModule.parameter_vals.map((ps, i) => {
         return (<WfParameter
           api={this.props.api}
-          moduleName={this.props.name}
+          moduleName={module.name}
           isReadOnly={this.props.isReadOnly}
           key={i}
           p={ps}
@@ -293,7 +293,7 @@ class WfModule extends React.Component {
       // Removing this outer div breaks the drag and drop animation for reasons
       // that aren't clear right now. It doesn't hurt anything but it shouldn't
       // be necessary either.
-      <div onClick={this.click} className={'wf-module' + (this.props.isOver ? (' over ' + this.state.dragPosition) : '')}>
+      <div onClick={this.click} className={'wf-module' + (this.props.isOver ? (' over ' + this.state.dragPosition) : '')} data-module-name={module.name}>
         {notes}
         <div className={'wf-card mx-auto '+ (this.props.isDragging ? 'wf-module--dragging ' : '')} ref={this.setModuleRef}>
 

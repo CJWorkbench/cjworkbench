@@ -8,19 +8,27 @@ class LessonTests(SimpleTestCase):
         self.assertEquals(out, Lesson('a-slug', LessonHeader('Lesson', '<p>p1</p><p>p2</p>'), []))
 
     def test_parse_step(self):
-        out = Lesson.parse('a-slug', '<header><h1>Lesson</h1><p>Contents</p></header><section><h2>Foo</h2><p>bar</p><ol class="steps"><li data-highlight=\'[{"type":"Foo"}]\'>1</li></ol></section>')
+        out = Lesson.parse('a-slug', '<header><h1>Lesson</h1><p>Contents</p></header><section><h2>Foo</h2><p>bar</p><ol class="steps"><li data-highlight=\'[{"type":"Foo"}]\' data-test="true">1</li></ol></section>')
         self.assertEquals(out,
             Lesson(
                 'a-slug',
                 LessonHeader('Lesson', '<p>Contents</p>'),
-                [ LessonSection('Foo', '<p>bar</p>', [ LessonSectionStep('1', [ { 'type': 'Foo' } ]) ]) ]
+                [
+                    LessonSection('Foo', '<p>bar</p>', [
+                        LessonSectionStep('1', [ { 'type': 'Foo' } ], 'true'),
+                    ]),
+                ]
             )
         )
 
     def test_parse_invalid_step_highlight_json(self):
         with self.assertRaisesMessage(LessonParseError, 'data-highlight contains invalid JSON'):
-            Lesson.parse('a-slug', '<header><h1>Lesson</h1><p>Contents</p></header><section><h2>Foo</h2><p>bar</p><ol class="steps"><li data-highlight=\'[{"type":"Foo"]\'>1</li></ol></section>')
+            Lesson.parse('a-slug', '<header><h1>Lesson</h1><p>Contents</p></header><section><h2>Foo</h2><p>bar</p><ol class="steps"><li data-highlight=\'[{"type":"Foo"]\' data-test="true">1</li></ol></section>')
 
+
+    def test_parse_missing_step_highlight_done(self):
+        with self.assertRaisesMessage(LessonParseError, 'missing data-test attribute, which must be JavaScript'):
+            Lesson.parse('a-slug', '<header><h1>Lesson</h1><p>Contents</p></header><section><h2>Foo</h2><p>bar</p><ol class="steps"><li data-highlight="[]">1</li></ol></section>')
 
     def test_parse_no_header(self):
         with self.assertRaisesMessage(LessonParseError, 'Lesson HTML needs a top-level <header>'):
@@ -32,7 +40,7 @@ class LessonTests(SimpleTestCase):
 
     def test_parse_no_section_title(self):
         with self.assertRaisesMessage(LessonParseError, 'Lesson <section> needs a non-empty <h2> title'):
-            Lesson.parse('a-slug', '<header><h1>x</h1><p>y</p></header><section><ol class="steps"><li>foo</li></ol></section>')
+            Lesson.parse('a-slug', '<header><h1>x</h1><p>y</p></header><section><ol class="steps"><li data-test="true">foo</li></ol></section>')
 
     def test_parse_no_section_steps(self):
         out = Lesson.parse('a-slug', '<header><h1>x</h1><p>y</p></header><section><h2>title</h2><ol class="not-steps"><li>foo</li></ol></section>')
@@ -59,8 +67,8 @@ class LessonManagerTests(SimpleTestCase):
                 LessonHeader('Lesson', '<p>Contents</p>'),
                 [
                     LessonSection('Foo', '<p>bar</p>', [
-                        LessonSectionStep('Step One', []),
-                        LessonSectionStep('Step Two', []),
+                        LessonSectionStep('Step One', [], 'true'),
+                        LessonSectionStep('Step Two', [], 'false'),
                     ])
                 ]
             )
@@ -83,8 +91,8 @@ class LessonManagerTests(SimpleTestCase):
                 LessonHeader('Earlier Lesson (alphabetically)', '<p>Contents</p>'),
                 [
                     LessonSection('Foo', '<p>bar</p>', [
-                        LessonSectionStep('Step One', []),
-                        LessonSectionStep('Step Two', []),
+                        LessonSectionStep('Step One', [], 'true'),
+                        LessonSectionStep('Step Two', [], 'false'),
                     ])
                 ]
             ),
@@ -93,8 +101,8 @@ class LessonManagerTests(SimpleTestCase):
                 LessonHeader('Lesson', '<p>Contents</p>'),
                 [
                     LessonSection('Foo', '<p>bar</p>', [
-                        LessonSectionStep('Step One', []),
-                        LessonSectionStep('Step Two', []),
+                        LessonSectionStep('Step One', [], 'true'),
+                        LessonSectionStep('Step Two', [], 'false'),
                     ])
                 ]
             )

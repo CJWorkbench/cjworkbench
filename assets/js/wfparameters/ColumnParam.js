@@ -65,6 +65,7 @@ export default class ColumnParam extends React.Component {
           className='custom-select parameter-base dropdown-selector'
           value={idx}
           onChange={this.onChange}
+          name={this.props.name}
           disabled={this.props.isReadOnly}
           ref={(ref) => this.selectRef= ref}
         >
@@ -77,6 +78,7 @@ export default class ColumnParam extends React.Component {
 ColumnParam.propTypes = {
   selectedCol:    PropTypes.string.isRequired,
   getColNames:    PropTypes.func.isRequired,
+  name:           PropTypes.string.isRequired,
   noSelectionText:PropTypes.string,
   isReadOnly:     PropTypes.bool.isRequired,
   revision:       PropTypes.number.isRequired,

@@ -185,4 +185,5 @@ class LessonSerializer(serializers.BaseSerializer):
         return {
             'html': obj.html,
             'highlight': obj.highlight,
+            'testJs': obj.test_js,
         }

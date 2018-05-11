@@ -36,17 +36,7 @@ class TextOrNothing extends React.Component {
 export default class WfParameter extends React.Component {
 
   constructor(props) {
-    super(props);
-
-    this.type = this.props.p.parameter_spec.type;
-    this.name = this.props.p.parameter_spec.name;
-    this.paramClassName = '';
-
-    let nameParts = this.props.p.parameter_spec.id_name.split('|')[0].split('.');
-
-    if (nameParts.length > 1) {
-      this.paramClassName = nameParts.slice(1).join(' ');
-    }
+    super(props)
 
     this.firstProps = true;
 
@@ -54,6 +44,11 @@ export default class WfParameter extends React.Component {
     this.blur = this.blur.bind(this);
     this.click = this.click.bind(this);
     this.getInputColNames = this.getInputColNames.bind(this);
+  }
+
+  get paramClassName() {
+    const nameParts = this.props.p.parameter_spec.id_name.split('|')[0].split('.');
+    return nameParts.slice(1).join(' ')
   }
 
   paramChanged(newVal, pressedEnter) {
@@ -109,9 +104,6 @@ export default class WfParameter extends React.Component {
 
   // We need to update input contents when we get new props
   componentWillReceiveProps(newProps) {
-    this.type = newProps.p.parameter_spec.type;
-    this.name = newProps.p.parameter_spec.name;
-
     // If this is our first time through, update form controls to current values
     // this conditional fixes https://www.pivotaltracker.com/story/show/154104065
     if (this.firstProps) {
@@ -122,8 +114,9 @@ export default class WfParameter extends React.Component {
 
   // Render one of the many parameter types that are specific to a particular module
   render_custom_parameter() {
+    const { id_name } = this.props.p.parameter_spec
 
-    if (this.props.p.parameter_spec.id_name === 'chart') {
+    if (id_name === 'chart') {
 
       // Load and save chart state, image to hidden parameters
       var loadState = ( () => this.props.getParamText('chartstate') );
@@ -145,7 +138,7 @@ export default class WfParameter extends React.Component {
         </div>
       );
 
-    } else if (this.props.p.parameter_spec.id_name == 'chart_editor') {
+    } else if (id_name == 'chart_editor') {
       return (
         <ChartEditor
           isReadOnly={ this.props.isReadOnly }
@@ -156,7 +149,7 @@ export default class WfParameter extends React.Component {
           api={this.props.api}
         />
       )
-    } else if (this.props.p.parameter_spec.id_name == 'version_select') {
+    } else if (id_name == 'version_select') {
 
       var button = (!this.props.isReadOnly)
         ? <div className='button-blue action-button mt-0' onClick={this.click}>{this.name}</div>
@@ -185,7 +178,7 @@ export default class WfParameter extends React.Component {
 
         </div>
       );
-    } else if (this.props.p.parameter_spec.id_name == 'version_select_simpler') {
+    } else if (id_name == 'version_select_simpler') {
 
       return (
         <div className='versionSelect--uploadFile'>
@@ -199,7 +192,7 @@ export default class WfParameter extends React.Component {
           />
         </div>
       );
-    } else if (this.props.p.parameter_spec.id_name == 'colrename') {
+    } else if (id_name == 'colrename') {
       var renameParam = this.props.getParamText('newcolnames');
       let saveState = ( state => this.props.setParamText('newcolnames', state) );
       return (
@@ -212,13 +205,13 @@ export default class WfParameter extends React.Component {
             getColNames={this.getInputColNames}
             revision={this.props.revision} />
         </div> );
-    } else if (this.props.p.parameter_spec.id_name == 'file') {
+    } else if (id_name == 'file') {
       return (
             <DropZone
             wfModuleId={this.props.wf_module_id}
             revision={this.props.revision} />
         );
-    } else if (this.props.p.parameter_spec.id_name == 'barchart') {
+    } else if (id_name == 'barchart') {
       return (
         <BarChart
           wf_module_id={this.props.wf_module_id}
@@ -228,13 +221,13 @@ export default class WfParameter extends React.Component {
           setParamText={this.props.setParamText}
         />
       )
-    } else if (this.props.p.parameter_spec.id_name == 'connect') {
+    } else if (id_name == 'connect') {
       return (
         <GoogleConnect
           userCreds={this.props.loggedInUser.google_credentials}
         />
       )
-    } else if (this.props.p.parameter_spec.id_name == 'fileselect') {
+    } else if (id_name == 'fileselect') {
       return (
         <FileSelect
           api={this.props.api}
@@ -244,21 +237,21 @@ export default class WfParameter extends React.Component {
           getState={() => this.props.getParamText('fileselect')}
         />
       )
-    } else if (this.props.p.parameter_spec.id_name == 'code') {
+    } else if (id_name == 'code') {
       return (
         <WorkbenchAceEditor
           name={this.props.p.parameter_spec.name}
           onSave={ (val) => { this.paramChanged( val ) } }
           defaultValue={this.props.p.value} />
       )
-    } else if (this.props.p.parameter_spec.id_name == 'celledits') {
+    } else if (id_name == 'celledits') {
       return (
         <CellEditor
           edits={this.props.p.value}
           onSave={(val) => { this.paramChanged(val) }}
         />
       )
-    } else if (this.props.p.parameter_spec.id_name == 'refine') {
+    } else if (id_name == 'refine') {
         return (
             <Refine
                 wfModuleId={this.props.wf_module_id}
@@ -307,25 +300,27 @@ export default class WfParameter extends React.Component {
   }
 
   render() {
+    const { id_name, name, type, visible_if, visible_if_not } = this.props.p.parameter_spec
+
     if (!this.props.p.visible) {
-      return false; // nothing to see here
+      return null // nothing to see here
     }
 
-    if(this.props.p.parameter_spec.visible_if) {
-      var condition = JSON.parse(this.props.p.parameter_spec.visible_if);
-      if(!this.displayConditionalUI(condition, 'visible_if')) {
-        return false;
+    if (visible_if) {
+      const condition = JSON.parse(visible_if)
+      if (!this.displayConditionalUI(condition, 'visible_if')) {
+        return null
       }
     }
 
-    if (this.props.p.parameter_spec.visible_if_not) {
-      var condition = JSON.parse(this.props.p.parameter_spec.visible_if_not);
-      if(!this.displayConditionalUI(condition, 'visible_if_not')) {
-        return false;
+    if (visible_if_not) {
+      const condition = JSON.parse(visible_if_not)
+      if (!this.displayConditionalUI(condition, 'visible_if_not')) {
+        return null
       }
     }
 
-    switch (this.type) {
+    switch (type) {
       case 'string':
         // Different size and style if it's a multiline string
         var sclass, srows;
@@ -339,9 +334,9 @@ export default class WfParameter extends React.Component {
 
         return (
           <div className={'parameter-margin ' + this.paramClassName}>
-            <div className='label-margin t-d-gray content-3'>{this.name}</div>
+            <div className='label-margin t-d-gray content-3'>{name}</div>
             {/* <TextOrNothing text={this.name} className='label-margin t-d-gray content-3'/> */}
-            <textarea
+            <input type="text"
               onMouseEnter={() => this.props.stopDrag() }
               onMouseLeave={() => this.props.startDrag() }
               onBlur={this.blur}
@@ -349,6 +344,7 @@ export default class WfParameter extends React.Component {
               onClick={this.click}
               readOnly={this.props.isReadOnly}
               className={sclass}
+              name={id_name}
               rows={srows}
               defaultValue={this.props.p.value}
               placeholder={this.props.p.parameter_spec.placeholder || ''}
@@ -364,6 +360,7 @@ export default class WfParameter extends React.Component {
             <input type="text"
               readOnly={this.props.isReadOnly}
               className='number-field parameter-base t-d-gray content-3'
+              name={id_name}
               rows='1'
               defaultValue={this.props.p.value}
               onBlur={this.blur}
@@ -381,7 +378,7 @@ export default class WfParameter extends React.Component {
         );
       case 'statictext':
         return (
-          <div className={'t-m-gray info-2 ' + this.paramClassName}>{this.name}</div>
+          <div data-name={id_name} className={'t-m-gray info-2 ' + this.paramClassName}>{this.name}</div>
         );
 
       case 'checkbox':
@@ -393,6 +390,7 @@ export default class WfParameter extends React.Component {
                     type="checkbox" className="checkbox"
                     checked={this.props.p.value}
                     onChange={this.click}
+                    name={id_name}
                     ref={ el => this.checkboxRef = el}
                     id={this.props.p.id} />
                   <label htmlFor={this.props.p.id} className='t-d-gray content-3'>{this.name}</label>
@@ -405,7 +403,7 @@ export default class WfParameter extends React.Component {
           <div className={'parameter-margin ' + this.paramClassName}>
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <MenuParam
-              name={this.name}
+              name={id_name}
               items={this.props.p.menu_items}
               selectedIdx={parseInt(this.props.p.value)}
               isReadOnly={this.props.isReadOnly}
@@ -419,6 +417,7 @@ export default class WfParameter extends React.Component {
             <div className='label-margin t-d-gray content-3'>{this.name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
+              name={id_name}
               getColNames={this.getInputColNames}
               noSelectionText={this.props.p.parameter_spec.placeholder}
               isReadOnly={this.props.isReadOnly}
@@ -435,6 +434,7 @@ export default class WfParameter extends React.Component {
               selectedCols={this.props.getParamText('colnames')}
               saveState={state => this.props.setParamText('colnames', state) }
               getColNames={this.getInputColNames}
+              name={id_name}
               isReadOnly={this.props.isReadOnly}
               revision={this.props.revision} />
           </div> );
@@ -450,7 +450,12 @@ export default class WfParameter extends React.Component {
 }
 
 WfParameter.propTypes = {
-  p:                PropTypes.object.isRequired,  // the actual parameter json
+  p: PropTypes.shape({
+    parameter_spec: PropTypes.shape({
+      id_name: PropTypes.string.isRequired,
+      type: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
   moduleName:       PropTypes.string.isRequired,
   wf_module_id:     PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,

@@ -4,6 +4,7 @@ exports[`ColumnParam renders with noSelectionText 1`] = `
 <ColumnParam
   getColNames={[Function]}
   isReadOnly={true}
+  name="column"
   noSelectionText="Just pick something, user"
   onChange={[Function]}
   revision={101}
@@ -12,6 +13,7 @@ exports[`ColumnParam renders with noSelectionText 1`] = `
   <select
     className="custom-select parameter-base dropdown-selector"
     disabled={true}
+    name="column"
     onChange={[Function]}
     value={3}
   >
@@ -72,6 +74,7 @@ exports[`ColumnParam renders without noSelectionText 1`] = `
 <ColumnParam
   getColNames={[Function]}
   isReadOnly={true}
+  name="column"
   onChange={[Function]}
   revision={101}
   selectedCol="baz"
@@ -79,6 +82,7 @@ exports[`ColumnParam renders without noSelectionText 1`] = `
   <select
     className="custom-select parameter-base dropdown-selector"
     disabled={true}
+    name="column"
     onChange={[Function]}
     value={3}
   >
