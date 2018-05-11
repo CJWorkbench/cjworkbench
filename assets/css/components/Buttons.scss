@@ -108,7 +108,11 @@ button:focus { outline:0 !important; }
   }
 }
 
-
+.wf-card {
+  .button-blue:hover {
+    background-color: $brand-blue--light;
+  }
+}
 
 
 
@@ -175,6 +179,7 @@ button:focus { outline:0 !important; }
   border: 1px solid $brand-workspace ;
   background-color: transparent;
 }
+
 .button-blue:active {
   background-color: $brand-workspace !important;
   color: $white !important;
