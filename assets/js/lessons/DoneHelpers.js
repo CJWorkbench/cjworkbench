@@ -51,11 +51,11 @@ export class WorkflowModuleWithHelpers {
   }
 
   get module() {
-    return this.moduleVersion.module
+    return this.moduleVersion ? this.moduleVersion.module : null
   }
 
   get moduleName() {
-    return this.module.name
+    return this.module ? this.module.name : this.wfModule.name
   }
 
   get moduleVersion() {
@@ -67,7 +67,7 @@ export class WorkflowModuleWithHelpers {
   }
 
   get parameters() {
-    return new ParametersWithHelpers(this.wfModule.parameter_vals)
+    return new ParametersWithHelpers(this.wfModule.parameter_vals || [])
   }
 }
 

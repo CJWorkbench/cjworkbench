@@ -52,9 +52,10 @@ function findEditCellsModule(state, wfModuleId) {
 // TODO: Approximately from here down, move into reducer
 
 function addEditCellWfModule(state, insertBefore) {
-  var moduleId =  state.editCellsModuleId;
+  const moduleId =  state.editCellsModuleId;
+  const workflowId = state.workflow ? state.workflow.id : null
   return (
-      api.addModule(window.initState.workflowId, moduleId, insertBefore)
+      api.addModule(workflowId, moduleId, insertBefore)
   )
 }
 

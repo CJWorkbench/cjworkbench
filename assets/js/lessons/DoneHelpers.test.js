@@ -53,6 +53,24 @@ describe('DoneHelpers', () => {
       expect(parameters.get('bar')).toEqual('baz')
       expect(parameters.get('moo')).toBe(null)
     })
+
+    it('should have null parameters.get() on placeholder', () => {
+      const wfModule = new WorkflowModuleWithHelpers({
+        placeholder: true,
+      })
+      const parameters = wfModule.parameters
+      expect(parameters.get('url')).toBe(null)
+      expect(parameters.get('bar')).toBe(null)
+      expect(parameters.get('moo')).toBe(null)
+    })
+
+    it('should have moduleName even when placeholder', () => {
+      const wfModule = new WorkflowModuleWithHelpers({
+        placeholder: true,
+        name: 'Add from URL',
+      })
+      expect(wfModule.moduleName).toEqual('Add from URL')
+    })
   })
 
   describe('StateWithHelpers', () => {
