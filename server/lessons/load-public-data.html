@@ -23,7 +23,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]',
-      data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].note.length > 0"
+      data-test="return workflow.wfModules.length > 0 && !!workflow.wfModules[0].note"
       >Add a note to the module, for example:
       <div class="copy-txt content-3 t-white">Hello, world!</div>
     </li>
