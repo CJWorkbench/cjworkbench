@@ -62,7 +62,9 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                       />
                       <div
                         className="t-d-gray WFmodule-name"
-                      />
+                      >
+                        Load from URL
+                      </div>
                       <div
                         className="icon-sort-up context-collapse-button"
                         style={
@@ -108,153 +110,9 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                           onClick={[Function]}
                         >
                           <div
-<<<<<<< HEAD
-                            className="icon-undefined WFmodule-icon mr-2"
-                          />
-                          <div
-                            className="t-d-gray WFmodule-name"
-                          >
-                            Load from URL
-                          </div>
-                          <div
-                            className="icon-sort-up context-collapse-button"
-                            style={
-                              Object {
-                                "opacity": "0",
-                              }
-                            }
-                          />
-                        </div>
-                        <div
-                          className="context-buttons--container"
-                        >
-                          <div
-                            style={
-                              Object {
-                                "opacity": "0",
-                              }
-                            }
-                          >
-                            <button
-                              className="context-button btn"
-                            >
-                              <a
-                                className="help-button d-flex align-items-center"
-                                href={undefined}
-                                target="_blank"
-                              >
-                                <div
-                                  className="icon-help"
-                                />
-                              </a>
-                            </button>
-                          </div>
-                          <div
-                            style={
-                              Object {
-                                "opacity": "0",
-                              }
-                            }
-                          >
-                            <button
-                              className="context-button btn edit-note"
-                              onClick={[Function]}
-                            >
-                              <div
-                                className="icon-note icon-l-gray "
-                              />
-                            </button>
-                          </div>
-                          <div
-                            style={
-                              Object {
-                                "opacity": "0",
-                              }
-                            }
-                          >
-                            <WfModuleContextMenu
-                              className=""
-                              id={999}
-                              removeModule={[Function]}
-                              stopProp={[Function]}
-                            />
-                          </div>
-                        </div>
-||||||| merged common ancestors
-                            className="icon-undefined WFmodule-icon mr-2"
-                          />
-                          <div
-                            className="t-d-gray WFmodule-name"
-                          />
-                          <div
-                            className="icon-sort-up context-collapse-button"
-                            style={
-                              Object {
-                                "opacity": "0",
-                              }
-                            }
-                          />
-                        </div>
-                        <div
-                          className="context-buttons--container"
-                        >
-                          <div
-                            style={
-                              Object {
-                                "opacity": "0",
-                              }
-                            }
-                          >
-                            <button
-                              className="context-button btn"
-                            >
-                              <a
-                                className="help-button d-flex align-items-center"
-                                href={undefined}
-                                target="_blank"
-                              >
-                                <div
-                                  className="icon-help"
-                                />
-                              </a>
-                            </button>
-                          </div>
-                          <div
-                            style={
-                              Object {
-                                "opacity": "0",
-                              }
-                            }
-                          >
-                            <button
-                              className="context-button btn edit-note"
-                              onClick={[Function]}
-                            >
-                              <div
-                                className="icon-note icon-l-gray "
-                              />
-                            </button>
-                          </div>
-                          <div
-                            style={
-                              Object {
-                                "opacity": "0",
-                              }
-                            }
-                          >
-                            <WfModuleContextMenu
-                              className=""
-                              id={999}
-                              removeModule={[Function]}
-                              stopProp={[Function]}
-                            />
-                          </div>
-                        </div>
-=======
                             className="icon-note icon-l-gray "
                           />
                         </button>
->>>>>>> Refactor modules HTML and css
                       </div>
                       <div
                         style={
@@ -298,48 +156,13 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                             "onParamChanged": [MockFunction],
                             "postParamEvent": [MockFunction],
                           }
-<<<<<<< HEAD
-                          changeParam={[Function]}
-                          getParamMenuItems={[Function]}
-                          getParamText={[Function]}
-                          isReadOnly={false}
-                          loggedInUser={undefined}
-                          moduleName="Load from URL"
-                          notifications={undefined}
-                          p={
-                            Object {
-                              "id": 100,
-                              "parameter_spec": Object {
-                                "id_name": "url",
-                                "type": "string",
-                              },
-                              "value": "http://some.URL.me",
-                            }
-||||||| merged common ancestors
-                          changeParam={[Function]}
-                          getParamMenuItems={[Function]}
-                          getParamText={[Function]}
-                          isReadOnly={false}
-                          loggedInUser={undefined}
-                          moduleName="TestModule"
-                          notifications={undefined}
-                          p={
-                            Object {
-                              "id": 100,
-                              "parameter_spec": Object {
-                                "id_name": "url",
-                                "type": "string",
-                              },
-                              "value": "http://some.URL.me",
-                            }
-=======
                         }
                         changeParam={[Function]}
                         getParamMenuItems={[Function]}
                         getParamText={[Function]}
                         isReadOnly={false}
                         loggedInUser={undefined}
-                        moduleName="TestModule"
+                        moduleName="Load from URL"
                         notifications={undefined}
                         p={
                           Object {
@@ -349,7 +172,6 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                               "type": "string",
                             },
                             "value": "http://some.URL.me",
->>>>>>> Refactor modules HTML and css
                           }
                         }
                         revision={707}
@@ -373,46 +195,13 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                             "onParamChanged": [MockFunction],
                             "postParamEvent": [MockFunction],
                           }
-<<<<<<< HEAD
-                          changeParam={[Function]}
-                          getParamMenuItems={[Function]}
-                          getParamText={[Function]}
-                          isReadOnly={false}
-                          loggedInUser={undefined}
-                          moduleName="Load from URL"
-                          notifications={undefined}
-                          p={
-                            Object {
-                              "id": 101,
-                              "parameter_spec": Object {
-                                "id_name": "version_select",
-                                "type": "custom",
-                              },
-                            }
-||||||| merged common ancestors
-                          changeParam={[Function]}
-                          getParamMenuItems={[Function]}
-                          getParamText={[Function]}
-                          isReadOnly={false}
-                          loggedInUser={undefined}
-                          moduleName="TestModule"
-                          notifications={undefined}
-                          p={
-                            Object {
-                              "id": 101,
-                              "parameter_spec": Object {
-                                "id_name": "version_select",
-                                "type": "custom",
-                              },
-                            }
-=======
                         }
                         changeParam={[Function]}
                         getParamMenuItems={[Function]}
                         getParamText={[Function]}
                         isReadOnly={false}
                         loggedInUser={undefined}
-                        moduleName="TestModule"
+                        moduleName="Load from URL"
                         notifications={undefined}
                         p={
                           Object {
@@ -421,7 +210,6 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                               "id_name": "version_select",
                               "type": "custom",
                             },
->>>>>>> Refactor modules HTML and css
                           }
                         }
                         revision={707}
