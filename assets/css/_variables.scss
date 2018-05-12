@@ -1,13 +1,19 @@
 
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
-$brand-workspace: #48C8D7;
-$brand-learn: #ffaad3;
+$brand-blue: #48C8D7;
+$brand-pink: #ffaad3;
+$brand-orange:#FBAA6D;
+$WF-background:#E9EBEE;
+$page-background:#EDECEC;
+
+// Secondary Colors
 $dark-blue: #577485;
 $medium-blue: #719BB0;
 $error-prompt: rgba(232,114,110,0.6);
 
-$WF-background:#E9EBEE;
-$page-background: #EDECEC;
+$light-gray: #b4b4b4;
+$medium-gray: #a2a2a2;
+$strong-gray: #8b8b8b;
 
 // Text colors ＼(＾O＾)／
 $brand-text--dark: #686768;
@@ -21,8 +27,10 @@ $dark-accent--medium: rgba(0,0,0,.1);
 $light-accent--soft: rgba(255,255,255,.05);
 $light-accent--medium: rgba(255,255,255,.1);
 $light-accent--strong: rgba(255,255,255,.2);
+$light-accent--Vstrong:rgba(255,255,255,0.4);
 
-$brand-blue--light:lighten($brand-workspace,41%);
+$brand-blue--light:lighten($brand-blue,39%);
+$brand-orange--light:lighten($brand-orange,26%);
 
 // Input fields  ᕕ( ᐛ )ᕗ
 $search-field--light: rgba(255,255,255,.2);

@@ -107,11 +107,11 @@ textarea:focus, input:focus{
 // focus states
 
 .custom-select:focus{
-  border: 2px solid $brand-workspace;
+  border: 2px solid $brand-blue;
 }
 
 .parameter-base:focus{
-  border: 2px solid $brand-workspace;
+  border: 2px solid $brand-blue;
 }
 
 // placeholder text within text fields
@@ -147,7 +147,7 @@ textarea:focus, input:focus{
 }
 
 .form-control:focus{
-  border-color: $brand-workspace;
+  border-color: $brand-blue;
 }
 
 .form-control{

@@ -59,12 +59,12 @@
 
 .close {
   font-size:2rem;
-  color:#b4b4b4;
+  color:$light-gray;
 }
 
 .icon-close {
   font-size:1.2rem;
-  color:#b4b4b4;
+  color:$light-gray;
 }
 
 .icon-close:hover{
@@ -120,7 +120,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color:#b4b4b4;
+  color:$light-gray;
   border-radius: 0px;
 }
 

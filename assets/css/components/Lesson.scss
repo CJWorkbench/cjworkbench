@@ -71,7 +71,7 @@ article.lesson {
         }
         &.current::before {
           content: "\e939";
-          color:$brand-learn;
+          color:$brand-pink;
         }
         &.done::before {
           content: "\e904"; // icon-check

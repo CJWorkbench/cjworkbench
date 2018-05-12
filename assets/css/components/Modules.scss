@@ -45,7 +45,7 @@
         align-items: center;
         justify-content: center;
         background-color: transparent;
-        color:#b4b4b4;
+        color:$light-gray;
         border-radius: 5rem;
         margin-right:0rem;
       }
@@ -104,11 +104,6 @@
 
     .module-card-params {
       padding: 0 1.5rem 1rem 1.5rem;
-    }
-
-    // Action button in modules
-    .button-blue:hover {
-      background-color: $brand-blue--light;
     }
   }
   .wf-module-error-msg {
@@ -262,7 +257,7 @@
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  color:#8b8b8b;
+  color:$strong-gray;
   opacity: 0.5;
   margin-right:0;
 }
@@ -270,7 +265,7 @@
 .help-button:hover {
   border: none;
   background-color: transparent;
-  color:#8b8b8b;
+  color:$strong-gray;
   opacity: 1;
   decoration:none;
 }

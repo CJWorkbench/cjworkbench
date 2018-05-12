@@ -72,11 +72,11 @@
   }
 
   .ML-list--container:hover .ML-search-field {
-    border-color: $brand-workspace;
+    border-color: $brand-blue;
   }
 
   .ML-list--container .ML-search-field.lesson-highlight {
-    border-color: $brand-learn;
+    border-color: $brand-pink;
   }
 
   // ENTIRE module list
@@ -129,7 +129,7 @@
     border-radius: 0;
 
     &.lesson-highlight {
-      border-color: $brand-learn;
+      border-color: $brand-pink;
     }
   }
 
@@ -187,7 +187,7 @@
   .module-search-result {
     border: 3px solid transparent;
     &.lesson-highlight {
-      border-color: $brand-learn;
+      border-color: $brand-pink;
     }
   }
 
@@ -269,12 +269,12 @@
     border-right: $dark-accent--soft;
 
     .ML-list--container:hover .ML-search-field {
-      border:3px solid $brand-learn;
+      border:3px solid $brand-pink;
     }
 
     .ML-header {
       padding-left: 1.5rem;
-      background-color: $brand-learn;
+      background-color: $brand-pink;
 
       .ML-toggle{
         visibility: hidden;

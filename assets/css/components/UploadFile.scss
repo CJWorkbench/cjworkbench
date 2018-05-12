@@ -2,9 +2,9 @@
 
 .dropzone{
   height:8rem;
-  border: 3px dashed #FBAA6D;
+  border: 3px dashed $brand-orange;
   opacity: 0.6;
-  color:#FBAA6D;
+  color:$brand-orange;
   margin-bottom: 1.5rem;
 }
 
@@ -67,6 +67,6 @@
  height:1px;
  opacity:1;
  width: 23rem;
- background: #FBAA6D;
+ background: $brand-orange;
  box-shadow: none;
 }

@@ -43,7 +43,7 @@
       font-size: 1.6rem;
     }
     .outputpane-iframe-control-overlay .btn:hover{
-      background-color: $brand-workspace;
+      background-color: $brand-blue;
       border: 0px;
       color: #fff;
     }
@@ -54,29 +54,29 @@
     flex: 1 1 auto;
 
     .row-number {
-      color:#b4b4b4;
+      color:$light-gray;
       text-align: center;
       font-size: 1.1rem!important;
     }
     // Shrinking font sizes based on number of digits
     // TODO: Can we make the font size a variable?
     .row-number-3 {
-      color:#b4b4b4;
+      color:$light-gray;
       text-align: center;
       font-size: 1.0rem!important;
     }
     .row-number-4 {
-      color:#b4b4b4;
+      color:$light-gray;
       text-align: center;
       font-size: 0.9rem!important;
     }
     .row-number-5 {
-      color:#b4b4b4;
+      color:$light-gray;
       text-align: center;
       font-size: 0.8rem!important;
     }
     .row-number-6 {
-      color:#b4b4b4;
+      color:$light-gray;
       text-align: center;
       font-size: 0.7rem!important;
     }
@@ -159,7 +159,7 @@
     .react-grid-Cell:focus,
     .react-grid-Cell input.editor-main {
     	border-radius: 0;
-    	outline: 2px solid #FBAA6D;
+    	outline: 2px solid $brand-orange;
     }
 
     /* This div may be superfluous wrt .outputpane */
