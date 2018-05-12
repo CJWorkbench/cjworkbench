@@ -1,7 +1,7 @@
 from django.http import HttpResponseForbidden, Http404
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, redirect
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
@@ -27,7 +27,6 @@ def edit_cells_module_id():
 
     return edit_cells_module_id.id
 
-
 edit_cells_module_id.id = None
 
 
@@ -46,26 +45,25 @@ sort_module_id.id = None
 
 
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
-def make_init_state(request):
+def make_init_state(request, workflow=None):
+    ret = {}
+
+    if workflow:
+        ret['workflowId'] = workflow.id
+
     if request.user.is_authenticated():
-        user = UserSerializer(request.user)
-        edit_cells_module = edit_cells_module_id()
-        sort_module = sort_module_id()
-        init_state = {
-            'loggedInUser': user.data,
-            'editCellsModuleId' : edit_cells_module,
-            'sortModuleId': sort_module
-        }
-        return json.dumps(init_state)
-    else:
-        return '{}'
+        ret['loggedInUser'] = UserSerializer(request.user).data
+        ret['editCellsModuleId'] = edit_cells_module_id()
+        ret['sortModuleId'] = sort_module_id()
+
+    return ret
 
 # ---- Workflows list page ----
 
 @login_required
 def render_workflows(request):
     init_state = make_init_state(request)
-    return TemplateResponse(request, 'workflows.html', {'initState': init_state})
+    return TemplateResponse(request, 'workflows.html', {'initState': json.dumps(init_state)})
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])
@@ -101,9 +99,11 @@ def render_workflow(request, pk=None):
     if not workflow.user_authorized_read(request.user):
         raise Http404()
 
-    init_state = make_init_state(request)
-    return TemplateResponse(request, 'workflow.html', {'initState': init_state})
-
+    if workflow.lesson and workflow.owner == request.user:
+        return redirect(workflow.lesson)
+    else:
+        init_state = make_init_state(request, workflow=workflow)
+        return TemplateResponse(request, 'workflow.html', {'initState': json.dumps(init_state)})
 
 # Retrieve or delete a workflow instance.
 # Or reorder modules

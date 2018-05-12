@@ -19,8 +19,8 @@ exports[`Renders the grid 1`] = `
     ]
   }
   getRow={[Function]}
-  onEditCell={[Function]}
-  onGridSort={[Function]}
+  onEditCell={[MockFunction]}
+  onGridSort={[MockFunction]}
   totalRows={2}
 >
   <ReactDataGrid
@@ -45,7 +45,7 @@ exports[`Renders the grid 1`] = `
             onSort={undefined}
             showLetter={undefined}
             sortDirection={undefined}
-      />,
+          />,
           "key": "aaa",
           "name": "aaa",
           "resizable": true,
@@ -61,7 +61,7 @@ exports[`Renders the grid 1`] = `
             onSort={undefined}
             showLetter={undefined}
             sortDirection={undefined}
-      />,
+          />,
           "key": "bbbb",
           "name": "bbbb",
           "resizable": true,
@@ -77,7 +77,7 @@ exports[`Renders the grid 1`] = `
             onSort={undefined}
             showLetter={undefined}
             sortDirection={undefined}
-      />,
+          />,
           "key": "ccccc",
           "name": "ccccc",
           "resizable": true,
@@ -93,7 +93,7 @@ exports[`Renders the grid 1`] = `
             onSort={undefined}
             showLetter={undefined}
             sortDirection={undefined}
-      />,
+          />,
           "key": "rn_",
           "name": "rn_",
           "resizable": true,
@@ -106,6 +106,7 @@ exports[`Renders the grid 1`] = `
     enableRowSelect={false}
     headerFiltersHeight={45}
     headerRowHeight={36}
+    key="0"
     minColumnWidth={80}
     minHeight={-2}
     minWidth={-2}
@@ -196,7 +197,7 @@ exports[`Renders the grid 1`] = `
                     onSort={undefined}
                     showLetter={undefined}
                     sortDirection={undefined}
-            />,
+                  />,
                   "key": "aaa",
                   "left": 40,
                   "name": "aaa",
@@ -213,7 +214,7 @@ exports[`Renders the grid 1`] = `
                     onSort={undefined}
                     showLetter={undefined}
                     sortDirection={undefined}
-            />,
+                  />,
                   "key": "bbbb",
                   "left": 200,
                   "name": "bbbb",
@@ -230,7 +231,7 @@ exports[`Renders the grid 1`] = `
                     onSort={undefined}
                     showLetter={undefined}
                     sortDirection={undefined}
-            />,
+                  />,
                   "key": "ccccc",
                   "left": 360,
                   "name": "ccccc",
@@ -247,7 +248,7 @@ exports[`Renders the grid 1`] = `
                     onSort={undefined}
                     showLetter={undefined}
                     sortDirection={undefined}
-            />,
+                  />,
                   "key": "rn_",
                   "left": 520,
                   "name": "rn_",
@@ -279,7 +280,7 @@ exports[`Renders the grid 1`] = `
                   onSort={undefined}
                   showLetter={undefined}
                   sortDirection={undefined}
-            />,
+                />,
                 "key": "aaa",
                 "name": "aaa",
                 "resizable": true,
@@ -295,7 +296,7 @@ exports[`Renders the grid 1`] = `
                   onSort={undefined}
                   showLetter={undefined}
                   sortDirection={undefined}
-            />,
+                />,
                 "key": "bbbb",
                 "name": "bbbb",
                 "resizable": true,
@@ -311,7 +312,7 @@ exports[`Renders the grid 1`] = `
                   onSort={undefined}
                   showLetter={undefined}
                   sortDirection={undefined}
-            />,
+                />,
                 "key": "ccccc",
                 "name": "ccccc",
                 "resizable": true,
@@ -327,7 +328,7 @@ exports[`Renders the grid 1`] = `
                   onSort={undefined}
                   showLetter={undefined}
                   sortDirection={undefined}
-            />,
+                />,
                 "key": "rn_",
                 "name": "rn_",
                 "resizable": true,
@@ -452,7 +453,7 @@ exports[`Renders the grid 1`] = `
                         onSort={undefined}
                         showLetter={undefined}
                         sortDirection={undefined}
-                />,
+                      />,
                       "key": "aaa",
                       "left": 40,
                       "name": "aaa",
@@ -469,7 +470,7 @@ exports[`Renders the grid 1`] = `
                         onSort={undefined}
                         showLetter={undefined}
                         sortDirection={undefined}
-                />,
+                      />,
                       "key": "bbbb",
                       "left": 200,
                       "name": "bbbb",
@@ -486,7 +487,7 @@ exports[`Renders the grid 1`] = `
                         onSort={undefined}
                         showLetter={undefined}
                         sortDirection={undefined}
-                />,
+                      />,
                       "key": "ccccc",
                       "left": 360,
                       "name": "ccccc",
@@ -503,7 +504,7 @@ exports[`Renders the grid 1`] = `
                         onSort={undefined}
                         showLetter={undefined}
                         sortDirection={undefined}
-                />,
+                      />,
                       "key": "rn_",
                       "left": 520,
                       "name": "rn_",
@@ -566,7 +567,7 @@ exports[`Renders the grid 1`] = `
                           onSort={undefined}
                           showLetter={undefined}
                           sortDirection={undefined}
-                    />,
+                        />,
                         "key": "aaa",
                         "left": 40,
                         "name": "aaa",
@@ -583,7 +584,7 @@ exports[`Renders the grid 1`] = `
                           onSort={undefined}
                           showLetter={undefined}
                           sortDirection={undefined}
-                    />,
+                        />,
                         "key": "bbbb",
                         "left": 200,
                         "name": "bbbb",
@@ -600,7 +601,7 @@ exports[`Renders the grid 1`] = `
                           onSort={undefined}
                           showLetter={undefined}
                           sortDirection={undefined}
-                    />,
+                        />,
                         "key": "ccccc",
                         "left": 360,
                         "name": "ccccc",
@@ -617,7 +618,7 @@ exports[`Renders the grid 1`] = `
                           onSort={undefined}
                           showLetter={undefined}
                           sortDirection={undefined}
-                    />,
+                        />,
                         "key": "rn_",
                         "left": 520,
                         "name": "rn_",
@@ -627,6 +628,9 @@ exports[`Renders the grid 1`] = `
                     ]
                   }
                   height={36}
+                  key="function ref(node) {
+	        return _this3.row = node;
+	      }"
                   onColumnResize={[Function]}
                   onColumnResizeEnd={[Function]}
                   onScroll={[Function]}
@@ -685,7 +689,7 @@ exports[`Renders the grid 1`] = `
                               onSort={undefined}
                               showLetter={undefined}
                               sortDirection={undefined}
-                          />,
+                            />,
                             "key": "aaa",
                             "left": 40,
                             "name": "aaa",
@@ -695,6 +699,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={36}
+                        key="1"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={
@@ -739,7 +744,7 @@ exports[`Renders the grid 1`] = `
                                   onSort={undefined}
                                   showLetter={undefined}
                                   sortDirection={undefined}
-                              />,
+                                />,
                                 "key": "aaa",
                                 "left": 40,
                                 "name": "aaa",
@@ -822,7 +827,7 @@ exports[`Renders the grid 1`] = `
                               onSort={undefined}
                               showLetter={undefined}
                               sortDirection={undefined}
-                          />,
+                            />,
                             "key": "bbbb",
                             "left": 200,
                             "name": "bbbb",
@@ -832,6 +837,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={36}
+                        key="2"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={
@@ -876,7 +882,7 @@ exports[`Renders the grid 1`] = `
                                   onSort={undefined}
                                   showLetter={undefined}
                                   sortDirection={undefined}
-                              />,
+                                />,
                                 "key": "bbbb",
                                 "left": 200,
                                 "name": "bbbb",
@@ -959,7 +965,7 @@ exports[`Renders the grid 1`] = `
                               onSort={undefined}
                               showLetter={undefined}
                               sortDirection={undefined}
-                          />,
+                            />,
                             "key": "ccccc",
                             "left": 360,
                             "name": "ccccc",
@@ -969,6 +975,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={36}
+                        key="3"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={
@@ -1013,7 +1020,7 @@ exports[`Renders the grid 1`] = `
                                   onSort={undefined}
                                   showLetter={undefined}
                                   sortDirection={undefined}
-                              />,
+                                />,
                                 "key": "ccccc",
                                 "left": 360,
                                 "name": "ccccc",
@@ -1096,7 +1103,7 @@ exports[`Renders the grid 1`] = `
                               onSort={undefined}
                               showLetter={undefined}
                               sortDirection={undefined}
-                          />,
+                            />,
                             "key": "rn_",
                             "left": 520,
                             "name": "rn_",
@@ -1106,6 +1113,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={36}
+                        key="4"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={
@@ -1150,7 +1158,7 @@ exports[`Renders the grid 1`] = `
                                   onSort={undefined}
                                   showLetter={undefined}
                                   sortDirection={undefined}
-                              />,
+                                />,
                                 "key": "rn_",
                                 "left": 520,
                                 "name": "rn_",
@@ -1234,6 +1242,7 @@ exports[`Renders the grid 1`] = `
                           }
                         }
                         height={36}
+                        key="0"
                         onResize={[Function]}
                         onResizeEnd={[Function]}
                         renderer={[Function]}
@@ -1329,7 +1338,7 @@ exports[`Renders the grid 1`] = `
                           onSort={undefined}
                           showLetter={undefined}
                           sortDirection={undefined}
-                  />,
+                        />,
                         "key": "aaa",
                         "left": 40,
                         "name": "aaa",
@@ -1346,7 +1355,7 @@ exports[`Renders the grid 1`] = `
                           onSort={undefined}
                           showLetter={undefined}
                           sortDirection={undefined}
-                  />,
+                        />,
                         "key": "bbbb",
                         "left": 200,
                         "name": "bbbb",
@@ -1363,7 +1372,7 @@ exports[`Renders the grid 1`] = `
                           onSort={undefined}
                           showLetter={undefined}
                           sortDirection={undefined}
-                  />,
+                        />,
                         "key": "ccccc",
                         "left": 360,
                         "name": "ccccc",
@@ -1380,7 +1389,7 @@ exports[`Renders the grid 1`] = `
                           onSort={undefined}
                           showLetter={undefined}
                           sortDirection={undefined}
-                  />,
+                        />,
                         "key": "rn_",
                         "left": 520,
                         "name": "rn_",
@@ -1489,7 +1498,7 @@ exports[`Renders the grid 1`] = `
                             onSort={undefined}
                             showLetter={undefined}
                             sortDirection={undefined}
-                      />,
+                          />,
                           "key": "aaa",
                           "left": 40,
                           "name": "aaa",
@@ -1506,7 +1515,7 @@ exports[`Renders the grid 1`] = `
                             onSort={undefined}
                             showLetter={undefined}
                             sortDirection={undefined}
-                      />,
+                          />,
                           "key": "bbbb",
                           "left": 200,
                           "name": "bbbb",
@@ -1523,7 +1532,7 @@ exports[`Renders the grid 1`] = `
                             onSort={undefined}
                             showLetter={undefined}
                             sortDirection={undefined}
-                      />,
+                          />,
                           "key": "ccccc",
                           "left": 360,
                           "name": "ccccc",
@@ -1540,7 +1549,7 @@ exports[`Renders the grid 1`] = `
                             onSort={undefined}
                             showLetter={undefined}
                             sortDirection={undefined}
-                      />,
+                          />,
                           "key": "rn_",
                           "left": 520,
                           "name": "rn_",
@@ -1590,576 +1599,6 @@ exports[`Renders the grid 1`] = `
                         rowIdx={0}
                         rows={
                           Array [
-                            <Row
-                              cellMetaData={
-                                  Object {
-                                      "copied": null,
-                                      "dragged": null,
-                                      "enableCellAutoFocus": true,
-                                      "enableCellSelect": true,
-                                      "getCellActions": undefined,
-                                      "getDataGridDOMNode": [Function],
-                                      "handleDragEnterRow": [Function],
-                                      "handleTerminateDrag": [Function],
-                                      "hoveredRowIdx": undefined,
-                                      "isScrollingHorizontallyWithKeyboard": false,
-                                      "isScrollingVerticallyWithKeyboard": false,
-                                      "onAddSubRow": undefined,
-                                      "onCellClick": [Function],
-                                      "onCellContextMenu": [Function],
-                                      "onCellDoubleClick": [Function],
-                                      "onCellExpand": [Function],
-                                      "onCellFocus": [Function],
-                                      "onColumnEvent": [Function],
-                                      "onCommit": [Function],
-                                      "onCommitCancel": [Function],
-                                      "onDeleteSubRow": undefined,
-                                      "onDragHandleDoubleClick": [Function],
-                                      "onRowExpandToggle": [Function],
-                                      "onRowHover": undefined,
-                                      "openCellEditor": [Function],
-                                      "rowKey": "id",
-                                      "selected": Object {
-                                        "idx": 0,
-                                        "rowIdx": 0,
-                                      },
-                                    }
-                              }
-                              cellRenderer={[Function]}
-                              colDisplayEnd={5}
-                              colDisplayStart={0}
-                              colVisibleEnd={4}
-                              colVisibleStart={0}
-                              columns={
-                                  Array [
-                                      Object {
-                                        "formatter": [Function],
-                                        "key": "rn__",
-                                        "left": 0,
-                                        "locked": true,
-                                        "name": "",
-                                        "width": 40,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "headerRenderer": <HeaderRenderer
-                                          colname="aaa"
-                                          coltype=""
-                                          idx="0"
-                                          isSorted={false}
-                                          onSort={undefined}
-                                          showLetter={undefined}
-                                          sortDirection={undefined}
-                                  />,
-                                        "key": "aaa",
-                                        "left": 40,
-                                        "name": "aaa",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "headerRenderer": <HeaderRenderer
-                                          colname="bbbb"
-                                          coltype=""
-                                          idx="1"
-                                          isSorted={false}
-                                          onSort={undefined}
-                                          showLetter={undefined}
-                                          sortDirection={undefined}
-                                  />,
-                                        "key": "bbbb",
-                                        "left": 200,
-                                        "name": "bbbb",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "headerRenderer": <HeaderRenderer
-                                          colname="ccccc"
-                                          coltype=""
-                                          idx="2"
-                                          isSorted={false}
-                                          onSort={undefined}
-                                          showLetter={undefined}
-                                          sortDirection={undefined}
-                                  />,
-                                        "key": "ccccc",
-                                        "left": 360,
-                                        "name": "ccccc",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "headerRenderer": <HeaderRenderer
-                                          colname="rn_"
-                                          coltype=""
-                                          idx="3"
-                                          isSorted={false}
-                                          onSort={undefined}
-                                          showLetter={undefined}
-                                          sortDirection={undefined}
-                                  />,
-                                        "key": "rn_",
-                                        "left": 520,
-                                        "name": "rn_",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                    ]
-                              }
-                              expandedRows={Array []}
-                              height={35}
-                              idx={0}
-                              isScrolling={true}
-                              isSelected={false}
-                              onMouseOver={undefined}
-                              row={
-                                  Object {
-                                      "aaa": "9",
-                                      "bbbb": "foo",
-                                      "ccccc": "9",
-                                      "rn_": "someval",
-                                      "rn__": 1,
-                                    }
-                              }
-                              subRowDetails={Object {}}
-                              visibleEnd={-1}
-                              visibleStart={0}
-                          />,
-                            <Row
-                              cellMetaData={
-                                  Object {
-                                      "copied": null,
-                                      "dragged": null,
-                                      "enableCellAutoFocus": true,
-                                      "enableCellSelect": true,
-                                      "getCellActions": undefined,
-                                      "getDataGridDOMNode": [Function],
-                                      "handleDragEnterRow": [Function],
-                                      "handleTerminateDrag": [Function],
-                                      "hoveredRowIdx": undefined,
-                                      "isScrollingHorizontallyWithKeyboard": false,
-                                      "isScrollingVerticallyWithKeyboard": false,
-                                      "onAddSubRow": undefined,
-                                      "onCellClick": [Function],
-                                      "onCellContextMenu": [Function],
-                                      "onCellDoubleClick": [Function],
-                                      "onCellExpand": [Function],
-                                      "onCellFocus": [Function],
-                                      "onColumnEvent": [Function],
-                                      "onCommit": [Function],
-                                      "onCommitCancel": [Function],
-                                      "onDeleteSubRow": undefined,
-                                      "onDragHandleDoubleClick": [Function],
-                                      "onRowExpandToggle": [Function],
-                                      "onRowHover": undefined,
-                                      "openCellEditor": [Function],
-                                      "rowKey": "id",
-                                      "selected": Object {
-                                        "idx": 0,
-                                        "rowIdx": 0,
-                                      },
-                                    }
-                              }
-                              cellRenderer={[Function]}
-                              colDisplayEnd={5}
-                              colDisplayStart={0}
-                              colVisibleEnd={4}
-                              colVisibleStart={0}
-                              columns={
-                                  Array [
-                                      Object {
-                                        "formatter": [Function],
-                                        "key": "rn__",
-                                        "left": 0,
-                                        "locked": true,
-                                        "name": "",
-                                        "width": 40,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "headerRenderer": <HeaderRenderer
-                                          colname="aaa"
-                                          coltype=""
-                                          idx="0"
-                                          isSorted={false}
-                                          onSort={undefined}
-                                          showLetter={undefined}
-                                          sortDirection={undefined}
-                                  />,
-                                        "key": "aaa",
-                                        "left": 40,
-                                        "name": "aaa",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "headerRenderer": <HeaderRenderer
-                                          colname="bbbb"
-                                          coltype=""
-                                          idx="1"
-                                          isSorted={false}
-                                          onSort={undefined}
-                                          showLetter={undefined}
-                                          sortDirection={undefined}
-                                  />,
-                                        "key": "bbbb",
-                                        "left": 200,
-                                        "name": "bbbb",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "headerRenderer": <HeaderRenderer
-                                          colname="ccccc"
-                                          coltype=""
-                                          idx="2"
-                                          isSorted={false}
-                                          onSort={undefined}
-                                          showLetter={undefined}
-                                          sortDirection={undefined}
-                                  />,
-                                        "key": "ccccc",
-                                        "left": 360,
-                                        "name": "ccccc",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                      Object {
-                                        "editable": true,
-                                        "headerRenderer": <HeaderRenderer
-                                          colname="rn_"
-                                          coltype=""
-                                          idx="3"
-                                          isSorted={false}
-                                          onSort={undefined}
-                                          showLetter={undefined}
-                                          sortDirection={undefined}
-                                  />,
-                                        "key": "rn_",
-                                        "left": 520,
-                                        "name": "rn_",
-                                        "resizable": true,
-                                        "width": 160,
-                                      },
-                                    ]
-                              }
-                              expandedRows={Array []}
-                              height={35}
-                              idx={1}
-                              isScrolling={true}
-                              isSelected={false}
-                              onMouseOver={undefined}
-                              row={
-                                  Object {
-                                      "aaa": "9",
-                                      "bbbb": "9",
-                                      "ccccc": "baz",
-                                      "rn_": "someotherval",
-                                      "rn__": 2,
-                                    }
-                              }
-                              subRowDetails={Object {}}
-                              visibleEnd={-1}
-                              visibleStart={0}
-                          />,
-                          ]
-                        }
-                        width={680}
-                      >
-                        <SimpleRowsContainer
-                          idx={0}
-                          rowIdx={0}
-                          rows={
-                            Array [
-                              <Row
-                                cellMetaData={
-                                    Object {
-                                        "copied": null,
-                                        "dragged": null,
-                                        "enableCellAutoFocus": true,
-                                        "enableCellSelect": true,
-                                        "getCellActions": undefined,
-                                        "getDataGridDOMNode": [Function],
-                                        "handleDragEnterRow": [Function],
-                                        "handleTerminateDrag": [Function],
-                                        "hoveredRowIdx": undefined,
-                                        "isScrollingHorizontallyWithKeyboard": false,
-                                        "isScrollingVerticallyWithKeyboard": false,
-                                        "onAddSubRow": undefined,
-                                        "onCellClick": [Function],
-                                        "onCellContextMenu": [Function],
-                                        "onCellDoubleClick": [Function],
-                                        "onCellExpand": [Function],
-                                        "onCellFocus": [Function],
-                                        "onColumnEvent": [Function],
-                                        "onCommit": [Function],
-                                        "onCommitCancel": [Function],
-                                        "onDeleteSubRow": undefined,
-                                        "onDragHandleDoubleClick": [Function],
-                                        "onRowExpandToggle": [Function],
-                                        "onRowHover": undefined,
-                                        "openCellEditor": [Function],
-                                        "rowKey": "id",
-                                        "selected": Object {
-                                          "idx": 0,
-                                          "rowIdx": 0,
-                                        },
-                                      }
-                                }
-                                cellRenderer={[Function]}
-                                colDisplayEnd={5}
-                                colDisplayStart={0}
-                                colVisibleEnd={4}
-                                colVisibleStart={0}
-                                columns={
-                                    Array [
-                                        Object {
-                                          "formatter": [Function],
-                                          "key": "rn__",
-                                          "left": 0,
-                                          "locked": true,
-                                          "name": "",
-                                          "width": 40,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "headerRenderer": <HeaderRenderer
-                                            colname="aaa"
-                                            coltype=""
-                                            idx="0"
-                                            isSorted={false}
-                                            onSort={undefined}
-                                            showLetter={undefined}
-                                            sortDirection={undefined}
-                                    />,
-                                          "key": "aaa",
-                                          "left": 40,
-                                          "name": "aaa",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "headerRenderer": <HeaderRenderer
-                                            colname="bbbb"
-                                            coltype=""
-                                            idx="1"
-                                            isSorted={false}
-                                            onSort={undefined}
-                                            showLetter={undefined}
-                                            sortDirection={undefined}
-                                    />,
-                                          "key": "bbbb",
-                                          "left": 200,
-                                          "name": "bbbb",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "headerRenderer": <HeaderRenderer
-                                            colname="ccccc"
-                                            coltype=""
-                                            idx="2"
-                                            isSorted={false}
-                                            onSort={undefined}
-                                            showLetter={undefined}
-                                            sortDirection={undefined}
-                                    />,
-                                          "key": "ccccc",
-                                          "left": 360,
-                                          "name": "ccccc",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "headerRenderer": <HeaderRenderer
-                                            colname="rn_"
-                                            coltype=""
-                                            idx="3"
-                                            isSorted={false}
-                                            onSort={undefined}
-                                            showLetter={undefined}
-                                            sortDirection={undefined}
-                                    />,
-                                          "key": "rn_",
-                                          "left": 520,
-                                          "name": "rn_",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                      ]
-                                }
-                                expandedRows={Array []}
-                                height={35}
-                                idx={0}
-                                isScrolling={true}
-                                isSelected={false}
-                                onMouseOver={undefined}
-                                row={
-                                    Object {
-                                        "aaa": "9",
-                                        "bbbb": "foo",
-                                        "ccccc": "9",
-                                        "rn_": "someval",
-                                        "rn__": 1,
-                                      }
-                                }
-                                subRowDetails={Object {}}
-                                visibleEnd={-1}
-                                visibleStart={0}
-                            />,
-                              <Row
-                                cellMetaData={
-                                    Object {
-                                        "copied": null,
-                                        "dragged": null,
-                                        "enableCellAutoFocus": true,
-                                        "enableCellSelect": true,
-                                        "getCellActions": undefined,
-                                        "getDataGridDOMNode": [Function],
-                                        "handleDragEnterRow": [Function],
-                                        "handleTerminateDrag": [Function],
-                                        "hoveredRowIdx": undefined,
-                                        "isScrollingHorizontallyWithKeyboard": false,
-                                        "isScrollingVerticallyWithKeyboard": false,
-                                        "onAddSubRow": undefined,
-                                        "onCellClick": [Function],
-                                        "onCellContextMenu": [Function],
-                                        "onCellDoubleClick": [Function],
-                                        "onCellExpand": [Function],
-                                        "onCellFocus": [Function],
-                                        "onColumnEvent": [Function],
-                                        "onCommit": [Function],
-                                        "onCommitCancel": [Function],
-                                        "onDeleteSubRow": undefined,
-                                        "onDragHandleDoubleClick": [Function],
-                                        "onRowExpandToggle": [Function],
-                                        "onRowHover": undefined,
-                                        "openCellEditor": [Function],
-                                        "rowKey": "id",
-                                        "selected": Object {
-                                          "idx": 0,
-                                          "rowIdx": 0,
-                                        },
-                                      }
-                                }
-                                cellRenderer={[Function]}
-                                colDisplayEnd={5}
-                                colDisplayStart={0}
-                                colVisibleEnd={4}
-                                colVisibleStart={0}
-                                columns={
-                                    Array [
-                                        Object {
-                                          "formatter": [Function],
-                                          "key": "rn__",
-                                          "left": 0,
-                                          "locked": true,
-                                          "name": "",
-                                          "width": 40,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "headerRenderer": <HeaderRenderer
-                                            colname="aaa"
-                                            coltype=""
-                                            idx="0"
-                                            isSorted={false}
-                                            onSort={undefined}
-                                            showLetter={undefined}
-                                            sortDirection={undefined}
-                                    />,
-                                          "key": "aaa",
-                                          "left": 40,
-                                          "name": "aaa",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "headerRenderer": <HeaderRenderer
-                                            colname="bbbb"
-                                            coltype=""
-                                            idx="1"
-                                            isSorted={false}
-                                            onSort={undefined}
-                                            showLetter={undefined}
-                                            sortDirection={undefined}
-                                    />,
-                                          "key": "bbbb",
-                                          "left": 200,
-                                          "name": "bbbb",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "headerRenderer": <HeaderRenderer
-                                            colname="ccccc"
-                                            coltype=""
-                                            idx="2"
-                                            isSorted={false}
-                                            onSort={undefined}
-                                            showLetter={undefined}
-                                            sortDirection={undefined}
-                                    />,
-                                          "key": "ccccc",
-                                          "left": 360,
-                                          "name": "ccccc",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                        Object {
-                                          "editable": true,
-                                          "headerRenderer": <HeaderRenderer
-                                            colname="rn_"
-                                            coltype=""
-                                            idx="3"
-                                            isSorted={false}
-                                            onSort={undefined}
-                                            showLetter={undefined}
-                                            sortDirection={undefined}
-                                    />,
-                                          "key": "rn_",
-                                          "left": 520,
-                                          "name": "rn_",
-                                          "resizable": true,
-                                          "width": 160,
-                                        },
-                                      ]
-                                }
-                                expandedRows={Array []}
-                                height={35}
-                                idx={1}
-                                isScrolling={true}
-                                isSelected={false}
-                                onMouseOver={undefined}
-                                row={
-                                    Object {
-                                        "aaa": "9",
-                                        "bbbb": "9",
-                                        "ccccc": "baz",
-                                        "rn_": "someotherval",
-                                        "rn__": 2,
-                                      }
-                                }
-                                subRowDetails={Object {}}
-                                visibleEnd={-1}
-                                visibleStart={0}
-                            />,
-                            ]
-                          }
-                          width={680}
-                        >
-                          <div>
                             <Row
                               cellMetaData={
                                 Object {
@@ -2220,7 +1659,7 @@ exports[`Renders the grid 1`] = `
                                       onSort={undefined}
                                       showLetter={undefined}
                                       sortDirection={undefined}
-                                />,
+                                    />,
                                     "key": "aaa",
                                     "left": 40,
                                     "name": "aaa",
@@ -2237,7 +1676,7 @@ exports[`Renders the grid 1`] = `
                                       onSort={undefined}
                                       showLetter={undefined}
                                       sortDirection={undefined}
-                                />,
+                                    />,
                                     "key": "bbbb",
                                     "left": 200,
                                     "name": "bbbb",
@@ -2254,7 +1693,7 @@ exports[`Renders the grid 1`] = `
                                       onSort={undefined}
                                       showLetter={undefined}
                                       sortDirection={undefined}
-                                />,
+                                    />,
                                     "key": "ccccc",
                                     "left": 360,
                                     "name": "ccccc",
@@ -2271,7 +1710,7 @@ exports[`Renders the grid 1`] = `
                                       onSort={undefined}
                                       showLetter={undefined}
                                       sortDirection={undefined}
-                                />,
+                                    />,
                                     "key": "rn_",
                                     "left": 520,
                                     "name": "rn_",
@@ -2285,6 +1724,579 @@ exports[`Renders the grid 1`] = `
                               idx={0}
                               isScrolling={true}
                               isSelected={false}
+                              onMouseOver={undefined}
+                              row={
+                                Object {
+                                  "aaa": "9",
+                                  "bbbb": "foo",
+                                  "ccccc": "9",
+                                  "rn_": "someval",
+                                  "rn__": 1,
+                                }
+                              }
+                              subRowDetails={Object {}}
+                              visibleEnd={-1}
+                              visibleStart={0}
+                            />,
+                            <Row
+                              cellMetaData={
+                                Object {
+                                  "copied": null,
+                                  "dragged": null,
+                                  "enableCellAutoFocus": true,
+                                  "enableCellSelect": true,
+                                  "getCellActions": undefined,
+                                  "getDataGridDOMNode": [Function],
+                                  "handleDragEnterRow": [Function],
+                                  "handleTerminateDrag": [Function],
+                                  "hoveredRowIdx": undefined,
+                                  "isScrollingHorizontallyWithKeyboard": false,
+                                  "isScrollingVerticallyWithKeyboard": false,
+                                  "onAddSubRow": undefined,
+                                  "onCellClick": [Function],
+                                  "onCellContextMenu": [Function],
+                                  "onCellDoubleClick": [Function],
+                                  "onCellExpand": [Function],
+                                  "onCellFocus": [Function],
+                                  "onColumnEvent": [Function],
+                                  "onCommit": [Function],
+                                  "onCommitCancel": [Function],
+                                  "onDeleteSubRow": undefined,
+                                  "onDragHandleDoubleClick": [Function],
+                                  "onRowExpandToggle": [Function],
+                                  "onRowHover": undefined,
+                                  "openCellEditor": [Function],
+                                  "rowKey": "id",
+                                  "selected": Object {
+                                    "idx": 0,
+                                    "rowIdx": 0,
+                                  },
+                                }
+                              }
+                              cellRenderer={[Function]}
+                              colDisplayEnd={5}
+                              colDisplayStart={0}
+                              colVisibleEnd={4}
+                              colVisibleStart={0}
+                              columns={
+                                Array [
+                                  Object {
+                                    "formatter": [Function],
+                                    "key": "rn__",
+                                    "left": 0,
+                                    "locked": true,
+                                    "name": "",
+                                    "width": 40,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="aaa"
+                                      coltype=""
+                                      idx="0"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                    />,
+                                    "key": "aaa",
+                                    "left": 40,
+                                    "name": "aaa",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="bbbb"
+                                      coltype=""
+                                      idx="1"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                    />,
+                                    "key": "bbbb",
+                                    "left": 200,
+                                    "name": "bbbb",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="ccccc"
+                                      coltype=""
+                                      idx="2"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                    />,
+                                    "key": "ccccc",
+                                    "left": 360,
+                                    "name": "ccccc",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="rn_"
+                                      coltype=""
+                                      idx="3"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                    />,
+                                    "key": "rn_",
+                                    "left": 520,
+                                    "name": "rn_",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                ]
+                              }
+                              expandedRows={Array []}
+                              height={35}
+                              idx={1}
+                              isScrolling={true}
+                              isSelected={false}
+                              onMouseOver={undefined}
+                              row={
+                                Object {
+                                  "aaa": "9",
+                                  "bbbb": "9",
+                                  "ccccc": "baz",
+                                  "rn_": "someotherval",
+                                  "rn__": 2,
+                                }
+                              }
+                              subRowDetails={Object {}}
+                              visibleEnd={-1}
+                              visibleStart={0}
+                            />,
+                          ]
+                        }
+                        width={680}
+                      >
+                        <SimpleRowsContainer
+                          idx={0}
+                          rowIdx={0}
+                          rows={
+                            Array [
+                              <Row
+                                cellMetaData={
+                                  Object {
+                                    "copied": null,
+                                    "dragged": null,
+                                    "enableCellAutoFocus": true,
+                                    "enableCellSelect": true,
+                                    "getCellActions": undefined,
+                                    "getDataGridDOMNode": [Function],
+                                    "handleDragEnterRow": [Function],
+                                    "handleTerminateDrag": [Function],
+                                    "hoveredRowIdx": undefined,
+                                    "isScrollingHorizontallyWithKeyboard": false,
+                                    "isScrollingVerticallyWithKeyboard": false,
+                                    "onAddSubRow": undefined,
+                                    "onCellClick": [Function],
+                                    "onCellContextMenu": [Function],
+                                    "onCellDoubleClick": [Function],
+                                    "onCellExpand": [Function],
+                                    "onCellFocus": [Function],
+                                    "onColumnEvent": [Function],
+                                    "onCommit": [Function],
+                                    "onCommitCancel": [Function],
+                                    "onDeleteSubRow": undefined,
+                                    "onDragHandleDoubleClick": [Function],
+                                    "onRowExpandToggle": [Function],
+                                    "onRowHover": undefined,
+                                    "openCellEditor": [Function],
+                                    "rowKey": "id",
+                                    "selected": Object {
+                                      "idx": 0,
+                                      "rowIdx": 0,
+                                    },
+                                  }
+                                }
+                                cellRenderer={[Function]}
+                                colDisplayEnd={5}
+                                colDisplayStart={0}
+                                colVisibleEnd={4}
+                                colVisibleStart={0}
+                                columns={
+                                  Array [
+                                    Object {
+                                      "formatter": [Function],
+                                      "key": "rn__",
+                                      "left": 0,
+                                      "locked": true,
+                                      "name": "",
+                                      "width": 40,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="aaa"
+                                        coltype=""
+                                        idx="0"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                      />,
+                                      "key": "aaa",
+                                      "left": 40,
+                                      "name": "aaa",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="bbbb"
+                                        coltype=""
+                                        idx="1"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                      />,
+                                      "key": "bbbb",
+                                      "left": 200,
+                                      "name": "bbbb",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="ccccc"
+                                        coltype=""
+                                        idx="2"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                      />,
+                                      "key": "ccccc",
+                                      "left": 360,
+                                      "name": "ccccc",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="rn_"
+                                        coltype=""
+                                        idx="3"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                      />,
+                                      "key": "rn_",
+                                      "left": 520,
+                                      "name": "rn_",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                  ]
+                                }
+                                expandedRows={Array []}
+                                height={35}
+                                idx={0}
+                                isScrolling={true}
+                                isSelected={false}
+                                onMouseOver={undefined}
+                                row={
+                                  Object {
+                                    "aaa": "9",
+                                    "bbbb": "foo",
+                                    "ccccc": "9",
+                                    "rn_": "someval",
+                                    "rn__": 1,
+                                  }
+                                }
+                                subRowDetails={Object {}}
+                                visibleEnd={-1}
+                                visibleStart={0}
+                              />,
+                              <Row
+                                cellMetaData={
+                                  Object {
+                                    "copied": null,
+                                    "dragged": null,
+                                    "enableCellAutoFocus": true,
+                                    "enableCellSelect": true,
+                                    "getCellActions": undefined,
+                                    "getDataGridDOMNode": [Function],
+                                    "handleDragEnterRow": [Function],
+                                    "handleTerminateDrag": [Function],
+                                    "hoveredRowIdx": undefined,
+                                    "isScrollingHorizontallyWithKeyboard": false,
+                                    "isScrollingVerticallyWithKeyboard": false,
+                                    "onAddSubRow": undefined,
+                                    "onCellClick": [Function],
+                                    "onCellContextMenu": [Function],
+                                    "onCellDoubleClick": [Function],
+                                    "onCellExpand": [Function],
+                                    "onCellFocus": [Function],
+                                    "onColumnEvent": [Function],
+                                    "onCommit": [Function],
+                                    "onCommitCancel": [Function],
+                                    "onDeleteSubRow": undefined,
+                                    "onDragHandleDoubleClick": [Function],
+                                    "onRowExpandToggle": [Function],
+                                    "onRowHover": undefined,
+                                    "openCellEditor": [Function],
+                                    "rowKey": "id",
+                                    "selected": Object {
+                                      "idx": 0,
+                                      "rowIdx": 0,
+                                    },
+                                  }
+                                }
+                                cellRenderer={[Function]}
+                                colDisplayEnd={5}
+                                colDisplayStart={0}
+                                colVisibleEnd={4}
+                                colVisibleStart={0}
+                                columns={
+                                  Array [
+                                    Object {
+                                      "formatter": [Function],
+                                      "key": "rn__",
+                                      "left": 0,
+                                      "locked": true,
+                                      "name": "",
+                                      "width": 40,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="aaa"
+                                        coltype=""
+                                        idx="0"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                      />,
+                                      "key": "aaa",
+                                      "left": 40,
+                                      "name": "aaa",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="bbbb"
+                                        coltype=""
+                                        idx="1"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                      />,
+                                      "key": "bbbb",
+                                      "left": 200,
+                                      "name": "bbbb",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="ccccc"
+                                        coltype=""
+                                        idx="2"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                      />,
+                                      "key": "ccccc",
+                                      "left": 360,
+                                      "name": "ccccc",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                    Object {
+                                      "editable": true,
+                                      "headerRenderer": <HeaderRenderer
+                                        colname="rn_"
+                                        coltype=""
+                                        idx="3"
+                                        isSorted={false}
+                                        onSort={undefined}
+                                        showLetter={undefined}
+                                        sortDirection={undefined}
+                                      />,
+                                      "key": "rn_",
+                                      "left": 520,
+                                      "name": "rn_",
+                                      "resizable": true,
+                                      "width": 160,
+                                    },
+                                  ]
+                                }
+                                expandedRows={Array []}
+                                height={35}
+                                idx={1}
+                                isScrolling={true}
+                                isSelected={false}
+                                onMouseOver={undefined}
+                                row={
+                                  Object {
+                                    "aaa": "9",
+                                    "bbbb": "9",
+                                    "ccccc": "baz",
+                                    "rn_": "someotherval",
+                                    "rn__": 2,
+                                  }
+                                }
+                                subRowDetails={Object {}}
+                                visibleEnd={-1}
+                                visibleStart={0}
+                              />,
+                            ]
+                          }
+                          width={680}
+                        >
+                          <div
+                            key="rows-container"
+                          >
+                            <Row
+                              cellMetaData={
+                                Object {
+                                  "copied": null,
+                                  "dragged": null,
+                                  "enableCellAutoFocus": true,
+                                  "enableCellSelect": true,
+                                  "getCellActions": undefined,
+                                  "getDataGridDOMNode": [Function],
+                                  "handleDragEnterRow": [Function],
+                                  "handleTerminateDrag": [Function],
+                                  "hoveredRowIdx": undefined,
+                                  "isScrollingHorizontallyWithKeyboard": false,
+                                  "isScrollingVerticallyWithKeyboard": false,
+                                  "onAddSubRow": undefined,
+                                  "onCellClick": [Function],
+                                  "onCellContextMenu": [Function],
+                                  "onCellDoubleClick": [Function],
+                                  "onCellExpand": [Function],
+                                  "onCellFocus": [Function],
+                                  "onColumnEvent": [Function],
+                                  "onCommit": [Function],
+                                  "onCommitCancel": [Function],
+                                  "onDeleteSubRow": undefined,
+                                  "onDragHandleDoubleClick": [Function],
+                                  "onRowExpandToggle": [Function],
+                                  "onRowHover": undefined,
+                                  "openCellEditor": [Function],
+                                  "rowKey": "id",
+                                  "selected": Object {
+                                    "idx": 0,
+                                    "rowIdx": 0,
+                                  },
+                                }
+                              }
+                              cellRenderer={[Function]}
+                              colDisplayEnd={5}
+                              colDisplayStart={0}
+                              colVisibleEnd={4}
+                              colVisibleStart={0}
+                              columns={
+                                Array [
+                                  Object {
+                                    "formatter": [Function],
+                                    "key": "rn__",
+                                    "left": 0,
+                                    "locked": true,
+                                    "name": "",
+                                    "width": 40,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="aaa"
+                                      coltype=""
+                                      idx="0"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                    />,
+                                    "key": "aaa",
+                                    "left": 40,
+                                    "name": "aaa",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="bbbb"
+                                      coltype=""
+                                      idx="1"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                    />,
+                                    "key": "bbbb",
+                                    "left": 200,
+                                    "name": "bbbb",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="ccccc"
+                                      coltype=""
+                                      idx="2"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                    />,
+                                    "key": "ccccc",
+                                    "left": 360,
+                                    "name": "ccccc",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                  Object {
+                                    "editable": true,
+                                    "headerRenderer": <HeaderRenderer
+                                      colname="rn_"
+                                      coltype=""
+                                      idx="3"
+                                      isSorted={false}
+                                      onSort={undefined}
+                                      showLetter={undefined}
+                                      sortDirection={undefined}
+                                    />,
+                                    "key": "rn_",
+                                    "left": 520,
+                                    "name": "rn_",
+                                    "resizable": true,
+                                    "width": 160,
+                                  },
+                                ]
+                              }
+                              expandedRows={Array []}
+                              height={35}
+                              idx={0}
+                              isScrolling={true}
+                              isSelected={false}
+                              key="row-0"
                               row={
                                 Object {
                                   "aaa": "9",
@@ -2356,7 +2368,7 @@ exports[`Renders the grid 1`] = `
                                         onSort={undefined}
                                         showLetter={undefined}
                                         sortDirection={undefined}
-                                    />,
+                                      />,
                                       "key": "aaa",
                                       "left": 40,
                                       "name": "aaa",
@@ -2380,6 +2392,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="aaa-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2499,7 +2512,7 @@ exports[`Renders the grid 1`] = `
                                         onSort={undefined}
                                         showLetter={undefined}
                                         sortDirection={undefined}
-                                    />,
+                                      />,
                                       "key": "bbbb",
                                       "left": 200,
                                       "name": "bbbb",
@@ -2523,6 +2536,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="bbbb-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2642,7 +2656,7 @@ exports[`Renders the grid 1`] = `
                                         onSort={undefined}
                                         showLetter={undefined}
                                         sortDirection={undefined}
-                                    />,
+                                      />,
                                       "key": "ccccc",
                                       "left": 360,
                                       "name": "ccccc",
@@ -2666,6 +2680,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="ccccc-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2785,7 +2800,7 @@ exports[`Renders the grid 1`] = `
                                         onSort={undefined}
                                         showLetter={undefined}
                                         sortDirection={undefined}
-                                    />,
+                                      />,
                                       "key": "rn_",
                                       "left": 520,
                                       "name": "rn_",
@@ -2809,6 +2824,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="rn_-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -2944,6 +2960,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="rn__-0"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -3066,7 +3083,7 @@ exports[`Renders the grid 1`] = `
                                       onSort={undefined}
                                       showLetter={undefined}
                                       sortDirection={undefined}
-                                />,
+                                    />,
                                     "key": "aaa",
                                     "left": 40,
                                     "name": "aaa",
@@ -3083,7 +3100,7 @@ exports[`Renders the grid 1`] = `
                                       onSort={undefined}
                                       showLetter={undefined}
                                       sortDirection={undefined}
-                                />,
+                                    />,
                                     "key": "bbbb",
                                     "left": 200,
                                     "name": "bbbb",
@@ -3100,7 +3117,7 @@ exports[`Renders the grid 1`] = `
                                       onSort={undefined}
                                       showLetter={undefined}
                                       sortDirection={undefined}
-                                />,
+                                    />,
                                     "key": "ccccc",
                                     "left": 360,
                                     "name": "ccccc",
@@ -3117,7 +3134,7 @@ exports[`Renders the grid 1`] = `
                                       onSort={undefined}
                                       showLetter={undefined}
                                       sortDirection={undefined}
-                                />,
+                                    />,
                                     "key": "rn_",
                                     "left": 520,
                                     "name": "rn_",
@@ -3131,6 +3148,7 @@ exports[`Renders the grid 1`] = `
                               idx={1}
                               isScrolling={true}
                               isSelected={false}
+                              key="row-1"
                               row={
                                 Object {
                                   "aaa": "9",
@@ -3202,7 +3220,7 @@ exports[`Renders the grid 1`] = `
                                         onSort={undefined}
                                         showLetter={undefined}
                                         sortDirection={undefined}
-                                    />,
+                                      />,
                                       "key": "aaa",
                                       "left": 40,
                                       "name": "aaa",
@@ -3226,6 +3244,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="aaa-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -3345,7 +3364,7 @@ exports[`Renders the grid 1`] = `
                                         onSort={undefined}
                                         showLetter={undefined}
                                         sortDirection={undefined}
-                                    />,
+                                      />,
                                       "key": "bbbb",
                                       "left": 200,
                                       "name": "bbbb",
@@ -3369,6 +3388,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="bbbb-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -3488,7 +3508,7 @@ exports[`Renders the grid 1`] = `
                                         onSort={undefined}
                                         showLetter={undefined}
                                         sortDirection={undefined}
-                                    />,
+                                      />,
                                       "key": "ccccc",
                                       "left": 360,
                                       "name": "ccccc",
@@ -3512,6 +3532,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="ccccc-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -3631,7 +3652,7 @@ exports[`Renders the grid 1`] = `
                                         onSort={undefined}
                                         showLetter={undefined}
                                         sortDirection={undefined}
-                                    />,
+                                      />,
                                       "key": "rn_",
                                       "left": 520,
                                       "name": "rn_",
@@ -3655,6 +3676,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="rn_-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",
@@ -3790,6 +3812,7 @@ exports[`Renders the grid 1`] = `
                                   isExpanded={false}
                                   isRowSelected={false}
                                   isScrolling={true}
+                                  key="rn__-1"
                                   rowData={
                                     Object {
                                       "aaa": "9",
