@@ -45,7 +45,7 @@ export default class ModuleCategory extends React.Component {
 
     return (
       <Module
-        key={name}
+        key={id}
         name={name}
         icon={icon}
         id={id}
