@@ -253,10 +253,11 @@ describe('TableView', () => {
             currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SORT_MODULE_ID))}
         />
     );
+
     setImmediate(() => {
+      tree.update();
       var dataGrid = tree.find(DataGrid);
       expect(dataGrid).toHaveLength(1);
-      console.log(dataGrid.props());
       expect(dataGrid.prop('sortColumn')).toBe('b');
       expect(dataGrid.prop('sortDirection')).toBe('DESC');
 
@@ -272,6 +273,7 @@ describe('TableView', () => {
           />
       );
       setImmediate(() => {
+        tree.update();
         dataGrid = tree.find(DataGrid);
         expect(dataGrid).toHaveLength(1);
         expect(dataGrid.prop('sortColumn')).toBeUndefined();
@@ -329,7 +331,7 @@ describe('TableView', () => {
             },
           },
       ]
-    }
+    };
 
     // Try a mount with the formula module selected, should show letter
     var tree = mount(
@@ -343,6 +345,7 @@ describe('TableView', () => {
         />
     );
     setImmediate(() => {
+      tree.update();
       var dataGrid = tree.find(DataGrid);
       expect(dataGrid).toHaveLength(1);
       expect(dataGrid.prop('showLetter')).toBe(true);
@@ -359,6 +362,7 @@ describe('TableView', () => {
           />
       );
       setImmediate(() => {
+        tree.update();
         dataGrid = tree.find(DataGrid);
         expect(dataGrid).toHaveLength(1);
         expect(dataGrid.prop('showLetter')).toBe(false);

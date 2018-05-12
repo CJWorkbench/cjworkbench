@@ -37,8 +37,9 @@ function findEditCellsModule(state, wfModuleId) {
 
 function addEditCellWfModule(state, insertBefore) {
   var moduleId =  state.editCellsModuleId;
+  const workflowId = state.workflow ? state.workflow.id : null;
   return (
-      api.addModule(getPageID(), moduleId, insertBefore)
+      api.addModule(workflowId, moduleId, insertBefore)
   )
 }
 

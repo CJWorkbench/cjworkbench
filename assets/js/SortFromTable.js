@@ -56,6 +56,7 @@ function updateSortModule(wfm, sortColumn, sortType) {
 
 export function updateSort(wfModuleId, sortColumn, sortType) {
     var state = store.getState();
+    const workflowId = state.workflow ? state.workflow.id : null;
 
     // Must be kept in sync with sortfromtable.json
     let sortTypes = "String|Number|Date".split("|")
@@ -71,7 +72,7 @@ export function updateSort(wfModuleId, sortColumn, sortType) {
         // I have tried but using the reducer introduces odd bugs
         // w.r.t selecting the new sort module, it bounces to the new module
         // and then bounces back
-        api.addModule(getPageID(), state.sortModuleId, wfModuleIdx + 1)
+        api.addModule(workflowId, state.sortModuleId, wfModuleIdx + 1)
             .then((newWfm) => {
                 store.dispatch(setSelectedWfModuleAction(newWfm.id));
                 updateSortModule(newWfm, sortColumn, sortTypeIdx);

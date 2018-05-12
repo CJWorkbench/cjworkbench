@@ -200,12 +200,10 @@ export default class TableView extends React.Component {
       // Maps sort direction to ReactDataGrid direction names
       let sortDirectionTranslator = ["NONE", "ASC", "DESC"];
       var sortColumn = undefined;
+      var sortDirection = undefined;
+
       if(moduleIsSort) {
         sortColumn = findParamValByIdName(this.props.currentModule, 'column').value;
-      }
-
-      var sortDirection = undefined;
-      if(moduleIsSort) {
         sortDirection = sortDirectionTranslator[findParamValByIdName(this.props.currentModule, 'direction').value];
       }
 

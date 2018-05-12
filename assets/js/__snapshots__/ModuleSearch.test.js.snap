@@ -1,9 +1,11 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ModuleSearch Close icon will clear text from search field 1`] = `
+exports[`ModuleSearch most tests Renders search bar 1`] = `
 <ModuleSearch
   addModule={[Function]}
-  items={
+  isLessonHighlight={false}
+  lessonHighlightModuleNames={Array []}
+  modules={
     Array [
       Object {
         "author": "Workbench",
@@ -33,14 +35,12 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
   }
 >
   <div
-    className="d-flex align-items-center search-bar"
+    className="module-search d-flex align-items-center ML-search-field"
   >
     <div
       className="icon-search-white ml-icon-search ml-4"
     />
-    <div
-      onBlur={[Function]}
-    >
+    <div>
       <Autosuggest
         alwaysRenderSuggestions={false}
         focusInputOnSuggestionClick={true}
@@ -52,8 +52,8 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
           Object {
             "autoFocus": true,
             "onChange": [Function],
-            "placeholder": "Search modules",
-            "value": "wow",
+            "placeholder": "Modules",
+            "value": "",
           }
         }
         multiSection={true}
@@ -96,8 +96,8 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
               "onChange": [Function],
               "onFocus": [Function],
               "onKeyDown": [Function],
-              "placeholder": "Search modules",
-              "value": "wow",
+              "placeholder": "Modules",
+              "value": "",
             }
           }
           itemProps={[Function]}
@@ -107,7 +107,7 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
           renderItem={[Function]}
           renderItemData={
             Object {
-              "query": "wow",
+              "query": "",
             }
           }
           renderItemsContainer={[Function]}
@@ -133,27 +133,31 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
         >
           <div
             className="react-autosuggest__container"
+            key="react-autowhatever-1-container"
           >
             <input
               aria-activedescendant={null}
               aria-autocomplete="list"
               aria-expanded={false}
+              aria-haspopup={false}
               aria-owns="react-autowhatever-1"
               autoComplete="off"
               autoFocus={true}
               className="react-autosuggest__input"
+              key="react-autowhatever-1-input"
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
-              placeholder="Search modules"
+              placeholder="Modules"
               role="combobox"
               type="text"
-              value="wow"
+              value=""
             />
             <div
               className="react-autosuggest__suggestions-container"
               id="react-autowhatever-1"
+              key="react-autowhatever-1-items-container"
             />
           </div>
         </Autowhatever>
@@ -161,20 +165,17 @@ exports[`ModuleSearch Close icon will clear text from search field 1`] = `
     </div>
     <div
       className="ML-search--close"
-    >
-      <div
-        className="icon-close-white mr-4"
-        onClick={[Function]}
-      />
-    </div>
+    />
   </div>
 </ModuleSearch>
 `;
 
-exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
+exports[`ModuleSearch most tests finds a suggestion matching search input 1`] = `
 <ModuleSearch
   addModule={[Function]}
-  items={
+  isLessonHighlight={false}
+  lessonHighlightModuleNames={Array []}
+  modules={
     Array [
       Object {
         "author": "Workbench",
@@ -204,14 +205,12 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
   }
 >
   <div
-    className="d-flex align-items-center search-bar"
+    className="module-search d-flex align-items-center ML-search-field"
   >
     <div
       className="icon-search-white ml-icon-search ml-4"
     />
-    <div
-      onBlur={[Function]}
-    >
+    <div>
       <Autosuggest
         alwaysRenderSuggestions={false}
         focusInputOnSuggestionClick={true}
@@ -223,7 +222,7 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
           Object {
             "autoFocus": true,
             "onChange": [Function],
-            "placeholder": "Search modules",
+            "placeholder": "Modules",
             "value": "a",
           }
         }
@@ -284,7 +283,7 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
               "onChange": [Function],
               "onFocus": [Function],
               "onKeyDown": [Function],
-              "placeholder": "Search modules",
+              "placeholder": "Modules",
               "value": "a",
             }
           }
@@ -321,20 +320,23 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
         >
           <div
             className="react-autosuggest__container"
+            key="react-autowhatever-1-container"
           >
             <input
               aria-activedescendant={null}
               aria-autocomplete="list"
               aria-expanded={false}
+              aria-haspopup={false}
               aria-owns="react-autowhatever-1"
               autoComplete="off"
               autoFocus={true}
               className="react-autosuggest__input"
+              key="react-autowhatever-1-input"
               onBlur={[Function]}
               onChange={[Function]}
               onFocus={[Function]}
               onKeyDown={[Function]}
-              placeholder="Search modules"
+              placeholder="Modules"
               role="combobox"
               type="text"
               value="a"
@@ -342,6 +344,7 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
             <div
               className="react-autosuggest__suggestions-container"
               id="react-autowhatever-1"
+              key="react-autowhatever-1-items-container"
             />
           </div>
         </Autowhatever>
@@ -355,338 +358,6 @@ exports[`ModuleSearch Finds a suggestion matching search input 1`] = `
         onClick={[Function]}
       />
     </div>
-  </div>
-</ModuleSearch>
-`;
-
-exports[`ModuleSearch Loads modules from props  1`] = `
-<ModuleSearch
-  addModule={[Function]}
-  items={
-    Array [
-      Object {
-        "author": "Workbench",
-        "category": "Add data",
-        "description": "Connect a dataset from Enigma's collection via URL.",
-        "icon": "url",
-        "id": 4,
-        "link": "",
-        "name": "Load from Enigma",
-      },
-      Object {
-        "author": "Workbench",
-        "category": "Filter",
-        "description": "Filter rows by matching text in specific columns.",
-        "icon": "filter",
-        "id": 10,
-        "link": "",
-        "name": "Filter by Text",
-      },
-    ]
-  }
-  workflow={
-    Object {
-      "id": 15,
-      "name": "What a workflow!",
-    }
-  }
->
-  <div
-    className="d-flex align-items-center search-bar"
-  >
-    <div
-      className="icon-search-white ml-icon-search ml-4"
-    />
-    <div
-      onBlur={[Function]}
-    >
-      <Autosuggest
-        alwaysRenderSuggestions={false}
-        focusInputOnSuggestionClick={true}
-        getSectionSuggestions={[Function]}
-        getSuggestionValue={[Function]}
-        highlightFirstSuggestion={false}
-        id="1"
-        inputProps={
-          Object {
-            "autoFocus": true,
-            "onChange": [Function],
-            "placeholder": "Search modules",
-            "value": "",
-          }
-        }
-        multiSection={true}
-        onSuggestionSelected={[Function]}
-        onSuggestionsClearRequested={[Function]}
-        onSuggestionsFetchRequested={[Function]}
-        renderSectionTitle={[Function]}
-        renderSuggestion={[Function]}
-        renderSuggestionsContainer={[Function]}
-        shouldRenderSuggestions={[Function]}
-        suggestions={Array []}
-        theme={
-          Object {
-            "container": "react-autosuggest__container",
-            "containerOpen": "react-autosuggest__container--open",
-            "input": "react-autosuggest__input",
-            "inputFocused": "react-autosuggest__input--focused",
-            "inputOpen": "react-autosuggest__input--open",
-            "sectionContainer": "react-autosuggest__section-container",
-            "sectionContainerFirst": "react-autosuggest__section-container--first",
-            "sectionTitle": "react-autosuggest__section-title",
-            "suggestion": "react-autosuggest__suggestion",
-            "suggestionFirst": "react-autosuggest__suggestion--first",
-            "suggestionHighlighted": "react-autosuggest__suggestion--highlighted",
-            "suggestionsContainer": "react-autosuggest__suggestions-container",
-            "suggestionsContainerOpen": "react-autosuggest__suggestions-container--open",
-            "suggestionsList": "react-autosuggest__suggestions-list",
-          }
-        }
-      >
-        <Autowhatever
-          getSectionItems={[Function]}
-          highlightedItemIndex={null}
-          highlightedSectionIndex={null}
-          id="1"
-          inputProps={
-            Object {
-              "autoFocus": true,
-              "onBlur": [Function],
-              "onChange": [Function],
-              "onFocus": [Function],
-              "onKeyDown": [Function],
-              "placeholder": "Search modules",
-              "value": "",
-            }
-          }
-          itemProps={[Function]}
-          items={Array []}
-          multiSection={true}
-          renderInputComponent={[Function]}
-          renderItem={[Function]}
-          renderItemData={
-            Object {
-              "query": "",
-            }
-          }
-          renderItemsContainer={[Function]}
-          renderSectionTitle={[Function]}
-          theme={
-            Object {
-              "container": "react-autosuggest__container",
-              "containerOpen": "react-autosuggest__container--open",
-              "input": "react-autosuggest__input",
-              "inputFocused": "react-autosuggest__input--focused",
-              "inputOpen": "react-autosuggest__input--open",
-              "item": "react-autosuggest__suggestion",
-              "itemFirst": "react-autosuggest__suggestion--first",
-              "itemHighlighted": "react-autosuggest__suggestion--highlighted",
-              "itemsContainer": "react-autosuggest__suggestions-container",
-              "itemsContainerOpen": "react-autosuggest__suggestions-container--open",
-              "itemsList": "react-autosuggest__suggestions-list",
-              "sectionContainer": "react-autosuggest__section-container",
-              "sectionContainerFirst": "react-autosuggest__section-container--first",
-              "sectionTitle": "react-autosuggest__section-title",
-            }
-          }
-        >
-          <div
-            className="react-autosuggest__container"
-          >
-            <input
-              aria-activedescendant={null}
-              aria-autocomplete="list"
-              aria-expanded={false}
-              aria-owns="react-autowhatever-1"
-              autoComplete="off"
-              autoFocus={true}
-              className="react-autosuggest__input"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              placeholder="Search modules"
-              role="combobox"
-              type="text"
-              value=""
-            />
-            <div
-              className="react-autosuggest__suggestions-container"
-              id="react-autowhatever-1"
-            />
-          </div>
-        </Autowhatever>
-      </Autosuggest>
-    </div>
-    <div
-      className="ML-search--close"
-    />
-  </div>
-</ModuleSearch>
-`;
-
-exports[`ModuleSearch Renders search bar 1`] = `
-<ModuleSearch
-  addModule={[Function]}
-  items={
-    Array [
-      Object {
-        "author": "Workbench",
-        "category": "Add data",
-        "description": "Connect a dataset from Enigma's collection via URL.",
-        "icon": "url",
-        "id": 4,
-        "link": "",
-        "name": "Load from Enigma",
-      },
-      Object {
-        "author": "Workbench",
-        "category": "Filter",
-        "description": "Filter rows by matching text in specific columns.",
-        "icon": "filter",
-        "id": 10,
-        "link": "",
-        "name": "Filter by Text",
-      },
-    ]
-  }
-  workflow={
-    Object {
-      "id": 15,
-      "name": "What a workflow!",
-    }
-  }
->
-  <div
-    className="d-flex align-items-center search-bar"
-  >
-    <div
-      className="icon-search-white ml-icon-search ml-4"
-    />
-    <div
-      onBlur={[Function]}
-    >
-      <Autosuggest
-        alwaysRenderSuggestions={false}
-        focusInputOnSuggestionClick={true}
-        getSectionSuggestions={[Function]}
-        getSuggestionValue={[Function]}
-        highlightFirstSuggestion={false}
-        id="1"
-        inputProps={
-          Object {
-            "autoFocus": true,
-            "onChange": [Function],
-            "placeholder": "Search modules",
-            "value": "",
-          }
-        }
-        multiSection={true}
-        onSuggestionSelected={[Function]}
-        onSuggestionsClearRequested={[Function]}
-        onSuggestionsFetchRequested={[Function]}
-        renderSectionTitle={[Function]}
-        renderSuggestion={[Function]}
-        renderSuggestionsContainer={[Function]}
-        shouldRenderSuggestions={[Function]}
-        suggestions={Array []}
-        theme={
-          Object {
-            "container": "react-autosuggest__container",
-            "containerOpen": "react-autosuggest__container--open",
-            "input": "react-autosuggest__input",
-            "inputFocused": "react-autosuggest__input--focused",
-            "inputOpen": "react-autosuggest__input--open",
-            "sectionContainer": "react-autosuggest__section-container",
-            "sectionContainerFirst": "react-autosuggest__section-container--first",
-            "sectionTitle": "react-autosuggest__section-title",
-            "suggestion": "react-autosuggest__suggestion",
-            "suggestionFirst": "react-autosuggest__suggestion--first",
-            "suggestionHighlighted": "react-autosuggest__suggestion--highlighted",
-            "suggestionsContainer": "react-autosuggest__suggestions-container",
-            "suggestionsContainerOpen": "react-autosuggest__suggestions-container--open",
-            "suggestionsList": "react-autosuggest__suggestions-list",
-          }
-        }
-      >
-        <Autowhatever
-          getSectionItems={[Function]}
-          highlightedItemIndex={null}
-          highlightedSectionIndex={null}
-          id="1"
-          inputProps={
-            Object {
-              "autoFocus": true,
-              "onBlur": [Function],
-              "onChange": [Function],
-              "onFocus": [Function],
-              "onKeyDown": [Function],
-              "placeholder": "Search modules",
-              "value": "",
-            }
-          }
-          itemProps={[Function]}
-          items={Array []}
-          multiSection={true}
-          renderInputComponent={[Function]}
-          renderItem={[Function]}
-          renderItemData={
-            Object {
-              "query": "",
-            }
-          }
-          renderItemsContainer={[Function]}
-          renderSectionTitle={[Function]}
-          theme={
-            Object {
-              "container": "react-autosuggest__container",
-              "containerOpen": "react-autosuggest__container--open",
-              "input": "react-autosuggest__input",
-              "inputFocused": "react-autosuggest__input--focused",
-              "inputOpen": "react-autosuggest__input--open",
-              "item": "react-autosuggest__suggestion",
-              "itemFirst": "react-autosuggest__suggestion--first",
-              "itemHighlighted": "react-autosuggest__suggestion--highlighted",
-              "itemsContainer": "react-autosuggest__suggestions-container",
-              "itemsContainerOpen": "react-autosuggest__suggestions-container--open",
-              "itemsList": "react-autosuggest__suggestions-list",
-              "sectionContainer": "react-autosuggest__section-container",
-              "sectionContainerFirst": "react-autosuggest__section-container--first",
-              "sectionTitle": "react-autosuggest__section-title",
-            }
-          }
-        >
-          <div
-            className="react-autosuggest__container"
-          >
-            <input
-              aria-activedescendant={null}
-              aria-autocomplete="list"
-              aria-expanded={false}
-              aria-owns="react-autowhatever-1"
-              autoComplete="off"
-              autoFocus={true}
-              className="react-autosuggest__input"
-              onBlur={[Function]}
-              onChange={[Function]}
-              onFocus={[Function]}
-              onKeyDown={[Function]}
-              placeholder="Search modules"
-              role="combobox"
-              type="text"
-              value=""
-            />
-            <div
-              className="react-autosuggest__suggestions-container"
-              id="react-autowhatever-1"
-            />
-          </div>
-        </Autowhatever>
-      </Autosuggest>
-    </div>
-    <div
-      className="ML-search--close"
-    />
   </div>
 </ModuleSearch>
 `;
