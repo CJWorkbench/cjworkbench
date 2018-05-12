@@ -114,7 +114,7 @@ export default class WfParameter extends React.Component {
 
   // Render one of the many parameter types that are specific to a particular module
   render_custom_parameter() {
-    const { id_name } = this.props.p.parameter_spec
+    const { id_name, name } = this.props.p.parameter_spec
 
     if (id_name === 'chart') {
 
@@ -152,7 +152,7 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'version_select') {
 
       var button = (!this.props.isReadOnly)
-        ? <div className='button-blue action-button mt-0' onClick={this.click}>{this.name}</div>
+        ? <button className='button-blue action-button mt-0' onClick={this.click}>{name}</button>
         : null
 
       return (
