@@ -248,7 +248,7 @@ describe('TableView', () => {
             revision={1}
             id={100}
             api={api}
-            setBusySpinner={false}
+            setBusySpinner={jest.fn()}
             resizing={false}
             currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SORT_MODULE_ID))}
         />
@@ -267,7 +267,7 @@ describe('TableView', () => {
               revision={1}
               id={100}
               api={api}
-              setBusySpinner={false}
+              setBusySpinner={jest.fn()}
               resizing={false}
               currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SORT_MODULE_ID))}
           />
@@ -339,7 +339,7 @@ describe('TableView', () => {
             revision={1}
             id={100}
             api={api}
-            setBusySpinner={false}
+            setBusySpinner={jest.fn()}
             resizing={false}
             currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SHOWLETTER_ID))}
         />
@@ -356,7 +356,7 @@ describe('TableView', () => {
               revision={1}
               id={100}
               api={api}
-              setBusySpinner={false}
+              setBusySpinner={jest.fn()}
               resizing={false}
               currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SHOWLETTER_ID))}
           />
