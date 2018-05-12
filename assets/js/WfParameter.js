@@ -58,7 +58,7 @@ export default class WfParameter extends React.Component {
   // Save value (and re-render) when user presses enter (but not on multiline fields)
   // Applies only to non-multiline fields
   keyPress(e) {
-    if (e.key == 'Enter' && (this.type != 'string' || !this.props.p.parameter_spec.multiline)) {
+    if (e.key == 'Enter' && (type != 'string' || !this.props.p.parameter_spec.multiline)) {
         this.paramChanged(e.target.value, PRESSED_ENTER);
         e.preventDefault();       // eat the Enter so it doesn't get in our input field
     }
@@ -70,18 +70,19 @@ export default class WfParameter extends React.Component {
 
   // Send event to server for button click
   click(e) {
+    const type = this.props.p.parameter_spec.type
 
     // type==custom a hack for version_select type
-    if (this.type == 'button' || this.type == 'custom') {
+    if (type == 'button' || type == 'custom') {
       var eventData = {'type': 'click'};
       this.props.api.postParamEvent(this.props.p.id, eventData)
     }
 
-    if (this.type == 'checkbox') {
+    if (type == 'checkbox') {
       this.paramChanged(e.target.checked, DIDNT_PRESS_ENTER)
     }
 
-    if (this.type == 'string' && !this.props.isReadOnly) {
+    if (type == 'string' && !this.props.isReadOnly) {
       this.stringRef.select();
     }
   }
@@ -93,11 +94,12 @@ export default class WfParameter extends React.Component {
 
   // set contents of HTML input field corresponding to our type
   setInputValue(val) {
-    if (this.type === 'string' && this.stringRef) {
+    const type = this.props.p.parameter_spec.type
+    if (type === 'string' && this.stringRef) {
       this.stringRef.value = val;
-    } else if (this.type === 'checkbox' && this.checkboxRef) {
+    } else if (type === 'checkbox' && this.checkboxRef) {
       this.checkboxRef.value = val;
-    } else if ((this.type === 'integer' || this.type == 'float') && this.numberRef) {
+    } else if ((type === 'integer' || type == 'float') && this.numberRef) {
       this.numberRef.value = val;
     }
   }
