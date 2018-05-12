@@ -299,3 +299,77 @@ input[type=checkbox]:checked:after {
 	left: 2.5px;
 	color: $white;
 }
+
+// ADD REMOVE BUTTONS FOR PARAMETERS
+
+.checkbox-wrapper.addremove {
+  margin-right:0;
+}
+
+.addremove .checkbox {
+  display: none;
+}
+
+.checkbox-wrapper label {
+  margin-bottom: 0;
+}
+
+.addremove label {
+  @extend .icon;
+  background: transparent;
+  width:1.3rem;
+  height:1.3rem;
+  font-size:1.3rem;
+  display:block;
+  color: #B4B4B4;
+  cursor: pointer;
+}
+
+.addremove label:hover{
+  color: #686768;
+}
+
+.addremove .checkbox + label {
+  @extend .icon-addc;
+  position: relative;
+  padding:0 0.5rem;
+  left: 21.2rem;
+  top:0.2rem;
+}
+
+.addremove .checkbox:checked + label {
+  @extend .icon-addm;
+  margin-right: 0.5rem;
+}
+
+.addremove .checkbox:checked + label, .addremove + .addremove label {
+  padding:0 0.5rem;
+  left: 19.25rem;
+  top:0.2rem;
+
+
+}
+
+.addremove.last .checkbox:checked + label {
+  padding:0 0.5rem;
+  left: 21.2rem;
+  top:0.2rem;
+
+}
+
+/* This is here until we create actual grouped parameters. When the
+next group down has its 'active' checkbox checked, we insert an element
+before the previous checkbox, then hide both that checkbox and its
+sibling. This is a terrible hack and also the most lightweight way
+to do this until we make larger architectural changes. */
+.cheat, .cheat + .addremove {
+  display:none;
+}
+
+.hide-with-sibling {
+  display:none;
+}
+
+.show-sibling + .hide-with-sibling {
+  display: block;
+}

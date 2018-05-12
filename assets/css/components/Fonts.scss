@@ -35,6 +35,7 @@
 	font-weight: 300;
 	line-height: 2.5rem;
 }
+
 .title-2 {
 	font-size: 2.2rem;
 	line-height: 2.2rem;
@@ -42,12 +43,13 @@
   @extend %font-nunito-regular;
 
 }
+
 .title-3 {
 	font-size: 1.8rem;
-	font-weight: 300;
 	line-height: 2.2rem;
   letter-spacing: 0.2px;
 }
+
 .title-4 {
 	font-size: 1.3rem;
 	font-weight: 500;
@@ -57,13 +59,6 @@
 	font-size: 1.1rem;
 	font-weight: 900;
 	line-height: 2rem;
-}
-/* for editable workflow title  */
-.title-workflow {
-	font-size: 1.8rem;
-	font-weight: 500;
-  line-height: 2.4rem;
-  color: #686768;
 }
 
 .content-1 {
@@ -130,14 +125,6 @@
 	font-size: 1rem;
 	font-weight: 500;
 	line-height: 1.1rem;
-}
-
-.note {
-  padding: 0.5rem;
-  font-size: 1.6rem;
-	font-weight: 100;
-  line-height: 2.8rem;
-  background: rgba(251,170,109,0.2);
 }
 
 /* --- Colors ---  */

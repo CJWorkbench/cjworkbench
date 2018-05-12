@@ -482,9 +482,10 @@
     width: 100%;
     height: 100%;
     padding-left: 0.3rem;
-    @extend %font-nunito-extra-light;
+    @extend %font-nunito-regular;
     font-size: 1.4rem;
     line-height: 1.4rem;
+    font-weight: 400;
   }
 
   .react-autosuggest__input--focused {
