@@ -47,24 +47,24 @@
   background-color:transparent;
   box-shadow: none;
   width: 23rem;
-  height:1px;
+  height:2px;
 }
 
 ///placing container before and after loading
 //Empty -->loading
 .loader-empty{
-  top:12.7rem;
+  top:13rem;
   left:-.5rem;
 }
 //Loaded -->Replace
 .loader-replace{
-  top:8.7rem;
+  top:9rem;
   left:12rem;
 }
 
 //Upload bar
 .react-fine-uploader-gallery-total-progress-bar{
- height:1px;
+ height:2px;
  opacity:1;
  width: 23rem;
  background: $brand-orange;
