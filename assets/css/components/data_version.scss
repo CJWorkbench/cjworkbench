@@ -1,0 +1,38 @@
+/* ---- Data Module: data versions box */
+
+.version-item {
+  display: flex;
+  align-items: center;
+  width:14.5rem;
+}
+
+.frequency-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+/* --- UpdateFrequencySelect --- */
+
+.update-freq-settings {
+  display: flex;
+  justify-content: flex-start;
+  flex-direction: row;
+}
+
+#updateFreqNum {
+  display: inline;
+  width: 5rem;
+}
+
+#updateFreqUnit {
+  display: inline;
+  width:10rem;
+  border-radius: 0px!important;
+}
+
+select {
+  border-radius: 0px;
+}

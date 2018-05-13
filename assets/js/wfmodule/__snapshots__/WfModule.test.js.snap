@@ -122,7 +122,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                         }
                       >
                         <WfModuleContextMenu
-                          className=""
+                          
                           id={999}
                           removeModule={[Function]}
                           stopProp={[Function]}
@@ -131,7 +131,7 @@ exports[`WfModule, not read-only mode Renders and calls functions on componentDi
                     </div>
                   </div>
                   <Collapse
-                    className=""
+                    
                     delay={
                       Object {
                         "hide": 350,

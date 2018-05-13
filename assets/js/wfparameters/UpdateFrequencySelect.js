@@ -128,7 +128,7 @@ export default class UpdateFrequencySelect extends React.Component {
           <ModalHeader toggle={this.toggleModal} className='dialog-header'>
             <span className='title-4 t-d-gray'>WORKFLOW UPDATE</span>
           </ModalHeader>
-          <ModalBody className='dialog-body'>
+          <ModalBody >
             {this.state.message.length > 0 &&
               <div className='info-3 mt-2 mb-5'>{this.state.message}</div>
             }
@@ -180,7 +180,7 @@ export default class UpdateFrequencySelect extends React.Component {
               </div>
             </FormGroup>
           </ModalBody>
-          <ModalFooter className='dialog-footer'>
+          <ModalFooter >
             <div className='action-button button-gray test-cancel-button mr-4' onClick={this.toggleModal}>Cancel</div>
             <div className='action-button button-blue test-ok-button' onClick={this.saveSettings}>Apply</div>
 

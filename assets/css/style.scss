@@ -29,6 +29,7 @@
 @import './components/Chartbuilder.scss';
 @import './components/Alerts.scss';
 @import './components/Facets.scss';
+@import './components/data_version.scss';
 
 
 html {
@@ -51,7 +52,7 @@ body {
 #root {
   height: 100vh;
 	width: 100%;
-  background-color:#EDECEC;
+  background-color:$Vlight-gray;
 }
 
 ::-webkit-scrollbar-thumb{

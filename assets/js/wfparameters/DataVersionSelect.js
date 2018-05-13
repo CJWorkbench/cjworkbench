@@ -146,7 +146,7 @@ class DataVersionSelect extends React.Component {
               <div className='title-4 t-d-gray'>DATA VERSIONS</div>
             </ModalHeader>
             <ModalBody className='list-body'>
-              <div className=''>
+              <div>
                 {this.props.versions.versions.map( version => {
                   return (
                     <div
@@ -167,7 +167,7 @@ class DataVersionSelect extends React.Component {
                 })}
               </div>
             </ModalBody>
-            <ModalFooter className='dialog-footer d-flex justify-content-between'>
+            <ModalFooter className=' d-flex justify-content-between'>
             <div className='alert-setting-modal'>
               {this.props.notifications ? (
                 [<div className='alert-setting' key='1'>

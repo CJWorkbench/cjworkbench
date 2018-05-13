@@ -350,7 +350,7 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
             moduleAdded={[Function]}
           >
             <div
-              className=""
+              
             >
               <div
                 className="closed-ML--category"
@@ -732,7 +732,7 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
             moduleAdded={[Function]}
           >
             <div
-              className=""
+              
             >
               <div
                 className="closed-ML--category"

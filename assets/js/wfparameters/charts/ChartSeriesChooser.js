@@ -82,7 +82,7 @@ export default class ChartSeriesChooser extends React.Component {
     }
     return (
       <div className="color-picker d-flex parameter-margin">
-        <div className="">
+        <div >
           <InputGroup size="lg">
             <InputGroupButton>
               <Button onClick={this.handleClick} className="color-picker button">

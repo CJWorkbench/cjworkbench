@@ -135,7 +135,7 @@ export default class WfModuleContextMenu extends React.Component {
           <div className='t-d-gray title-4'>EXPORT DATA</div>
           <div className='icon-close' onClick={this.toggleExportModal}></div>
         </ModalHeader>
-        <ModalBody className='dialog-body'>
+        <ModalBody >
           <FormGroup>
             <div className='d-flex justify-content-between flex-row'>
               <Label className='t-d-gray info-1'>CSV</Label>
@@ -159,7 +159,7 @@ export default class WfModuleContextMenu extends React.Component {
             </div>
           </FormGroup>
         </ModalBody>
-        <ModalFooter className='dialog-footer'>
+        <ModalFooter >
           <div onClick={this.toggleExportModal} className='button-blue action-button test-done-button'>Done</div>{' '}
         </ModalFooter>
       </Modal>

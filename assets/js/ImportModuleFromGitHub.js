@@ -34,7 +34,7 @@ export default class ImportModuleFromGitHub extends React.Component {
       handleSubmit(event);
     }
   }
-  
+
 
   /**
    * Keep the state updated with the latest value of the textfield.
@@ -105,7 +105,7 @@ export default class ImportModuleFromGitHub extends React.Component {
             </div>
           </div>
         footer =
-          <div className="dialog-footer modal-footer">
+          <div className=" modal-footer">
               <div onClick={this.toggleModal} className='button-gray action-button'>
                 Cancel
               </div>
@@ -122,7 +122,7 @@ export default class ImportModuleFromGitHub extends React.Component {
             </div>
           </div>
         footer =
-          <div className="dialog-footer modal-footer">
+          <div className=" modal-footer">
             <div onClick={this.toggleModal} className='button-blue action-button'>
               OK
             </div>
@@ -130,7 +130,7 @@ export default class ImportModuleFromGitHub extends React.Component {
       }
     } else {
       footer =
-        <div className='dialog-footer modal-footer'>
+        <div className=' modal-footer'>
           <div onClick={this.toggleModal} className='button-gray action-button mr-4'>
             Cancel
           </div>
@@ -150,13 +150,13 @@ export default class ImportModuleFromGitHub extends React.Component {
         </div>
 
     return (
-      <div className=''>
+      <div >
         {button}
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
           <ModalHeader toggle={this.toggleModal} >
             <div className='title-4 t-d-gray'>IMPORT CUSTOM MODULE</div>
           </ModalHeader>
-          <ModalBody className='dialog-body'>
+          <ModalBody >
             <form onSubmit={this.handleSubmit}>
               <div className="label-margin t-d-gray content-3">GIT URL</div>
               <div className="import-url-field">

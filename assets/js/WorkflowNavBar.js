@@ -131,11 +131,11 @@ export default class WorkflowNavBar extends React.Component {
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
           <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
-        <ModalBody className='dialog-body'>
+        <ModalBody >
           <div className='title-3 mb-3'>This workflow is currently private</div>
           <div className='info-2 t-d-gray'>Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.</div>
         </ModalBody>
-        <div className="modal-footer dialog-footer">
+        <div className="modal-footer ">
           <div onClick={this.toggleModals} className='button-gray action-button mr-4'>Cancel</div>
           <div onClick={this.setPublic} className='button-blue action-button test-public-button'>Set Public</div>
         </div>
@@ -148,7 +148,7 @@ export default class WorkflowNavBar extends React.Component {
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
           <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
-        <ModalBody className='dialog-body'>
+        <ModalBody >
           <FormGroup>
             <div className='d-flex align-items-center justify-content-between flex-row'>
               <Label className='label-margin info-1'>Public link</Label>

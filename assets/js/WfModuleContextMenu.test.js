@@ -55,7 +55,7 @@ describe('WfModuleContextMenu', () => {
   //    expect(wrapper.state().exportModalOpen).toBe(true);
 
   //    expect(modal).toMatchSnapshot();
-  //    expect(modal.find('.dialog-body')).toHaveLength(1);
+  //    expect(modal.find('.')).toHaveLength(1);
 
   //    // check that links have rendered correctly
   //    let csvField = modal.find('.test-csv-field');

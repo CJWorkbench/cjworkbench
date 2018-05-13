@@ -45,7 +45,7 @@ export default class ModuleLibraryClosed extends React.Component {
           <div className='t-d-gray title-4'>SIGN IN TO EDIT</div>
           <div className='icon-close' onClick={this.toggleSignInModal}></div>
         </ModalHeader>
-        <ModalBody className='dialog-body mt-4 mb-4 d-flex align-items-center'>
+        <ModalBody className=' mt-4 mb-4 d-flex align-items-center'>
           <a href="/account/login" className="button-blue col-sm-3 action-button">Sign in</a>
           <div className="info-2 col-sm-9 ml-4">Sign in to your account to duplicate and edit this workflow.</div>
         </ModalBody>

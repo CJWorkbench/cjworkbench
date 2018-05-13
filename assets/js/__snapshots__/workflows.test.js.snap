@@ -957,7 +957,7 @@ exports[`Workflow list page renders correctly 1`] = `
       className="help-container"
     >
       <a
-        className=""
+        
         href="http://help.workbenchdata.com/getting-started/build-your-first-workflow"
         target="_blank"
       >

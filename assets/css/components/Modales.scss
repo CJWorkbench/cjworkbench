@@ -7,105 +7,79 @@
   position:absolute;
   margin:auto;
   top: 0; left: 0; bottom: 0; right: 0;
-}
 
-.modal-content{
-  border:0;
-  border-radius:0px;
-}
+  .modal-content{
+    border:0;
+    border-radius:0px;
 
-.modal-header {
-  height: 6rem;
-  padding: 2rem;
-  background-color: #F5F7F8;
-  border-bottom: 1px solid #eceeef;
-}
+    .modal-header {
+      height: 6rem;
+      padding: 2rem;
+      background-color: $modal-color;
+      border-bottom: 1px solid $Vlight-gray;
 
-.modal-header .modal-title {
-  width: 100%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
+      .modal-title {
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      }
 
-.modal-body{
-  padding:0px;
-}
+      //Close modal button
+      .close {
+        font-size:2rem;
+        color:$light-gray;
+        &:hover{color:$strong-gray;}
+      }
+    }
 
-.dialog-body {
-  background-color: #FFF;
-  padding: 2rem;
-  border: 0;
-  max-height: 40rem;
-  overflow: scroll;
-}
+    //Contains content of modal window
+    .modal-body{
+      padding:0px;
+      background-color: #FFF;
+      padding:2rem;
+      border: 0;
+      max-height: 40rem;
+      overflow: scroll;
 
-.list-body{
-  background-color: #edecec;
-  border: 0;
-  max-height: 40rem;
-  overflow: scroll;
-}
+      .info-2{cursor: default;}
+    }
 
-.dialog-body p{
-  font-size: 1.5rem;
-  font-weight: 100;
-}
+    //When a list is the content of the modal body
+    .modal-body.list-body{
+      background-color: $Vlight-gray;
+      border: 0;
+      max-height: 40rem;
+      overflow: scroll;
+      padding: 0;
+    }
+  }
 
-.dialog-body.content-3{
-  font-size: 1.5rem;
-}
+  /* imported modal settings */
+  .modal-footer{
+    border-top:0;
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: flex-end;
+    border-top: 1px solid $Vlight-gray;
+    background-color: $modal-color;
 
-.close {
-  font-size:2rem;
-  color:$light-gray;
-}
+    /* Option to toggle alert in modal footer in version select */
+    .alert-setting-modal {
+      width: 75%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-right: 4rem;
+      border-right: 1px solid $Vlight-gray;
 
-.icon-close {
-  font-size:1.2rem;
-  color:$light-gray;
-}
-
-.icon-close:hover{
-  color:black;
-}
-
-.form-group {
-  margin-bottom:0;
-}
-
-
-/* imported modal setting cancelled */
-.modal-footer{
-  border-top:0;
-  display: block;
-}
-
-/* new style for dialog..footer */
-.dialog-footer {
-  padding: 1.5rem 2rem;
-  display: flex;
-  justify-content: flex-end;
-  border-top: 1px solid #eceeef;
-  background-color: #F5F7F8;
-}
-
-/* Data version modal */
-
-.alert-setting-modal {
-  width: 75%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-right: 4rem;
-  border-right: 1px solid #E9E9E9;
-
-}
-
-.alert-setting {
-  margin-right: 1rem;
-  width:60%;
+      .alert-setting {
+        margin-right: 1rem;
+        width:60%;
+      }
+    }
+  }
 }
 
 /* from Export Data modal, in WfModuleContextMenu  */
@@ -116,7 +90,7 @@
 	border-top: 1px solid $Vlight-gray;
   border-right: 1px solid $Vlight-gray;
   border-bottom: 1px solid $Vlight-gray;
-  background-color: #FFFFFF;
+  background-color: $white;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -129,54 +103,6 @@
   background-color: #F8F8F8;
   decoration:none;
 }
-
-
-/* ---- Data Module: data versions box */
-
-
-.version-item {
-  display: flex;
-  align-items: center;
-  width:14.5rem;
-}
-
-.frequency-item {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-right: 1rem;
-}
-
-.centered{
-  margin:auto;
-  text-align: center;
-}
-
-/* --- UpdateFrequencySelect --- */
-
-.update-freq-settings {
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: row;
-}
-
-#updateFreqNum {
-  display: inline;
-  width: 5rem;
-}
-
-#updateFreqUnit {
-  display: inline;
-  width:10rem;
-  border-radius: 0px!important;
-}
-
-select {
-  border-radius: 0px;
-}
-
-
 
 /* ImportModuleFromGitHub */
 

@@ -89,11 +89,11 @@ export default class FileSelect extends React.Component {
                   <div className='title-4 t-d-gray'>Choose File</div>
                 </ModalHeader>
                 <ModalBody className="list-body">
-                  <div className="">
+                  <div >
                     {fileList}
                   </div>
                 </ModalBody>
-                <div className="dialog-footer modal-footer"></div>
+                <div className=" modal-footer"></div>
               </Modal>
           </div>
         );

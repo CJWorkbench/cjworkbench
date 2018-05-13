@@ -257,7 +257,7 @@ class WfModule extends React.Component {
           removeModule={ () => this.removeModule() }
           stopProp={(e) => e.stopPropagation()}
           id={wfModule.id}
-          className=''
+          
         />;
 
 
@@ -313,7 +313,7 @@ class WfModule extends React.Component {
                   {contextBtns}
                 </div>
                 {/* --- Module content when expanded --- */}
-                <Collapse className='' isOpen={!this.state.isCollapsed} >
+                <Collapse  isOpen={!this.state.isCollapsed} >
                   {/* --- Error message --- */}
                   <StatusLine status={wfModule.status} error_msg={wfModule.error_msg} />
 

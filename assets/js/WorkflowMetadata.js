@@ -63,7 +63,7 @@ export default class WorkflowMetadata extends React.Component {
         <ModalHeader toggle={this.togglePrivacyModal} className='dialog-header' >
           <span className='t-d-gray title-4'>PRIVACY SETTING</span>
         </ModalHeader>
-        <ModalBody className='dialog-body'>
+        <ModalBody >
           <div className="row d-flex align-items-center mb-5">
             <div className="col-sm-3">
               <div
@@ -89,7 +89,7 @@ export default class WorkflowMetadata extends React.Component {
             </div>
           </div>
         </ModalBody>
-        <div className='dialog-footer modal-footer'>
+        <div className=' modal-footer'>
           <div onClick={this.togglePrivacyModal} className='action-button button-gray'>Cancel</div>
         </div>
       </Modal>

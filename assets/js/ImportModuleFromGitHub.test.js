@@ -51,7 +51,7 @@ describe('ImportModuleFromGitHub', () => {
 //      expect(modal_element.length).toBe(1);
 //      let modal = new ReactWrapper(modal_element[0], true)
 //      expect(modal).toMatchSnapshot();
-//      expect(modal.find('.dialog-body')).toHaveLength(1);
+//      expect(modal.find('.')).toHaveLength(1);
 //    });
 //
 //    it('Import button makes API call', () => { 
@@ -99,7 +99,7 @@ describe('ImportModuleFromGitHub', () => {
 //      expect(modal_element.length).toBe(3);
 //      let modal = new ReactWrapper(modal_element[0], true)
 //      expect(modal).toMatchSnapshot();
-//      expect(modal.find('.dialog-body')).toHaveLength(1);
+//      expect(modal.find('.')).toHaveLength(1);
 //    });
 //
 //  });
