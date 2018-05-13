@@ -244,7 +244,7 @@ a:focus, a:hover{
   border-radius: 3px;
   max-height: 26rem;
   overflow: auto;
-  border: 1px solid #e9e9e9;
+  border: 1px solid $Vlight-gray;
 }
 
 .list-scroll{
@@ -267,7 +267,7 @@ input[type=checkbox]
 {
   -webkit-appearance: none;
 	background-color: #fff;
-	border: 1px solid #e9e9e9;
+	border: 1px solid $Vlight-gray;
 	padding: 0.7rem;
 	border-radius: 3px;
 	display: inline-block;

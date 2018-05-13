@@ -107,42 +107,42 @@ export default class DropZone extends Component {
             <div className={"parameter-margin"}>
                 {this.state.files.length == 0 ? (
                     <div>
-                        <Dropzone
-                            className={"dropzone d-flex justify-content-center align-items-center"}
-                            multiple={false}
-                            uploader={this.uploader}>
-                            <div className={"content-3 ml-4 mr-2"}>Drag file here, or&nbsp;</div>
-                            <FileInput className={"content-3 t-f-blue"} multiple={false}
-                                       uploader={this.uploader}>Browse</FileInput>
-                        </Dropzone>
-                        {
-                            this.state.submittedFiles.map(id => (
-                                <div
-                                    className={"loader-empty react-fine-uploader-gallery-total-progress-bar-container"}
-                                    key={id}>
-                                    <ProgressBar className={"react-fine-uploader-gallery-total-progress-bar"} id={id}
-                                                 uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
-                                </div>
-                            ))
-                        }
+                      <Dropzone
+                        className={"dropzone d-flex justify-content-center align-items-center"}
+                        multiple={false}
+                        uploader={this.uploader}>
+                        <div className={"content-3 ml-4 mr-2"}>Drag file here, or&nbsp;</div>
+                        <FileInput className={"content-3 t-f-blue"} multiple={false}
+                                   uploader={this.uploader}>Browse</FileInput>
+                      </Dropzone>
+                      {
+                          this.state.submittedFiles.map(id => (
+                              <div
+                                  className={"loader-empty react-fine-uploader-gallery-total-progress-bar-container"}
+                                  key={id}>
+                                  <ProgressBar className={"react-fine-uploader-gallery-total-progress-bar"} id={id}
+                                               uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
+                              </div>
+                          ))
+                      }
                     </div>
                 ) : (
                     <div>
-                        <div className={"upload-box"}>
-                            <div>
-                                <div className={"label-margin t-d-gray content-3"}>File name</div>
-                                <div className={"t-d-gray content-3 text-field-readonly"}>{this.state.filename}</div>
-                            </div>
-                            <FileInput className={"button-blue dropzone-button action-button"} multiple={false}
-                                       uploader={this.uploader}>Replace</FileInput>
+                      <div className={"upload-box"}>
+                        <div>
+                          <div className={"label-margin t-d-gray content-3"}>File name</div>
+                          <div className={"t-d-gray content-3 text-field-readonly"}>{this.state.filename}</div>
+                        </div>
+                          <FileInput className={"button-blue dropzone-button action-button"} multiple={false}
+                                     uploader={this.uploader}>Replace</FileInput>
                         </div>
                         {
-                            this.state.submittedFiles.map(id => (
-                                <div className={"loader-replace react-fine-uploader-gallery-progress-bar-container"} key={id}>
-                                    <ProgressBar id={id} className={"react-fine-uploader-gallery-total-progress-bar"}
-                                                 uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
-                                </div>
-                            ))
+                          this.state.submittedFiles.map(id => (
+                              <div className={"loader-replace react-fine-uploader-gallery-progress-bar-container"} key={id}>
+                                  <ProgressBar id={id} className={"react-fine-uploader-gallery-total-progress-bar"}
+                                               uploader={this.uploader} hideBeforeStart={true} hideOnComplete={true}/>
+                              </div>
+                          ))
                         }
                     </div>
                 )}
