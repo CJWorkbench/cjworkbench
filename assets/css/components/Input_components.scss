@@ -2,63 +2,65 @@
 
 .dropdown-menu {
   margin-top: 0.5rem;
-  border:2px solid rgba(118,155,176,0.3);
+  border:2px solid $brand-blue--medium;
   border-radius: 5px;
-  box-shadow: -0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.10);
+  box-shadow: $dropdown-shadow;
   padding:0.5rem 0 0.5rem 0;
+
+  .dropdown-menu--item {
+    height: 4rem;
+    width: 14rem;
+    background-color: $white;
+    color: rgba(104,103,104,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 1rem;
+    cursor:pointer;
+
+    &:hover {
+      background-color: $dark-accent--soft;
+      color: $brand-text--dark;
+    }
+    &:active {
+      background-color: $dark-accent--medium;
+    }
+  }
+
+  .dropdown-divider{
+    opacity: 0.5;
+  }
+
+  .dropdown-menu--icon {
+    width: 1.5rem;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+  }
 }
 
-.dropdown-menu--item {
-  height: 4rem;
-  width: 14rem;
-  background-color: #FFFFFF;
-  color: rgba(104,103,104,0.8);
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-left: 1rem;
-  cursor:pointer;
-}
 
-.dropdown-menu--item:hover {
-  background-color: #f4f4f4;
-  color: rgba(104,103,104,1);
-}
-
-.dropdown-menu--item:active {
-  background-color: #e5e5e5;
-  color: rgba(104,103,104,1);
-}
-
-.dropdown-divider{
-  opacity: 0.5;
-}
-
-.dropdown-menu--icon {
-  width: 1.5rem;
-  font-size: 1.5rem;
-  display: flex;
-  justify-content: center;
-}
 
 
 // Parameters input and text Fields
+
+// Getting rid of system blue
 
 textarea:focus, input:focus{
     outline: none;
 }
 
+// Shared style to all paramters in modules
+
 .parameter-base {
   width:100%;
   height:3.5rem;
   border-radius: 3px;
-  border: 2px solid #EDEDED;
-  background-color: #EDEDED !important;
-}
-
-.parameter-base:hover {
-  border: 2px solid #EFEFEF;
-  background-color: #EFEFEF !important;
+  border: 2px solid $Vlight-gray;
+  background-color: $Vlight-gray !important;
+  &:hover {
+  border: 2px solid $dark-accent--soft;
+  }
 }
 
 .text-field {
@@ -122,19 +124,17 @@ textarea:focus, input:focus{
 
 }
 ::-moz-placeholder { /* Firefox 19+ */
-  color: #c8c8c8;
+  color: $placeholder;
   font-size: 1.3rem;
-
 }
+
 :-ms-input-placeholder { /* IE 10+ */
-  color:#c8c8c8;
-
-
+  color:$placeholder;
 }
-:-moz-placeholder { /* Firefox 18- */
-  color:#c8c8c8;
-  font-size: 1.3rem;
 
+:-moz-placeholder { /* Firefox 18- */
+  color:$placeholder;
+  font-size: 1.3rem;
 }
 
 
@@ -153,7 +153,7 @@ textarea:focus, input:focus{
 .form-control{
   height:3.5rem!important;
   border-radius: 0px;
-  border: 1px solid #e9e9e9;
+  border: 1px solid $Vlight-gray;
 }
 
 select.form-control {

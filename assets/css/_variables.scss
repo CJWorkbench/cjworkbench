@@ -1,5 +1,6 @@
 
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
+
 $brand-blue: #48C8D7;
 $brand-pink: #ffaad3;
 $brand-orange:#FBAA6D;
@@ -7,20 +8,22 @@ $WF-background:#E9EBEE;
 $page-background:#EDECEC;
 
 // Secondary Colors
+
 $dark-blue: #577485;
 $medium-blue: #719BB0;
 $error-prompt: rgba(232,114,110,0.6);
 
+$Vlight-gray: #EDEDED;
 $light-gray: #b4b4b4;
 $medium-gray: #a2a2a2;
 $strong-gray: #8b8b8b;
 
 // Text colors ＼(＾O＾)／
+
 $brand-text--dark: #686768;
 
-
-
 // Accent: transparent light or dark color use on top of backgrounds --> (soft|medium|strong)
+
 $dark-accent--soft: rgba(0,0,0,.05);
 $dark-accent--medium: rgba(0,0,0,.1);
 
@@ -30,15 +33,19 @@ $light-accent--strong: rgba(255,255,255,.2);
 $light-accent--Vstrong:rgba(255,255,255,0.4);
 
 $brand-blue--light:lighten($brand-blue,39%);
+$brand-blue--medium:lighten($brand-blue,18%);
 $brand-orange--light:lighten($brand-orange,26%);
 
 // Input fields  ᕕ( ᐛ )ᕗ
+
 $search-field--light: rgba(255,255,255,.2);
 
 $placeholder: #c8c8c8;
 $placeholder--light: rgba(255,255,255,.5);
 
 // box shadows ~~~~ ༼ つ ◕_◕ ༽つ
+
 $menu-shadow:-5px 8px 20px 0px rgba(0,0,0,0.15);
 $button-area:-2px 2px 15px 0px $dark-accent--soft;
 $button-area--hover:-2px 2px 1px 0px $dark-accent--soft;
+$dropdown-shadow:-0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.10);
