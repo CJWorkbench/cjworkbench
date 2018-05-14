@@ -48,7 +48,6 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
       </span>
     </ModalHeader>
     <ModalBody
-      
       tag="div"
     >
       <FormGroup
@@ -149,7 +148,6 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
       </FormGroup>
     </ModalBody>
     <ModalFooter
-      
       tag="div"
     >
       <div
@@ -217,7 +215,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       </span>
     </ModalHeader>
     <ModalBody
-      
       tag="div"
     >
       <FormGroup
@@ -318,7 +315,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       </FormGroup>
     </ModalBody>
     <ModalFooter
-      
       tag="div"
     >
       <div
@@ -386,7 +382,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       </span>
     </ModalHeader>
     <ModalBody
-      
       tag="div"
     >
       <FormGroup
@@ -487,7 +482,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       </FormGroup>
     </ModalBody>
     <ModalFooter
-      
       tag="div"
     >
       <div
@@ -555,7 +549,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       </span>
     </ModalHeader>
     <ModalBody
-      
       tag="div"
     >
       <FormGroup
@@ -656,7 +649,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       </FormGroup>
     </ModalBody>
     <ModalFooter
-      
       tag="div"
     >
       <div

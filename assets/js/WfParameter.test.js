@@ -48,7 +48,7 @@ describe('WfParameter', () => {
 
   it('Renders string input field', () => {
     var wrapper = shallowParameter({visible: true, value: 'data.sfgov.org', parameter_spec: {type:'string', id_name:'url'}});
-    expect(wrapper.find('input[type="text"]')).toHaveLength(1);
+    expect(wrapper.find('textarea')).toHaveLength(1);
     expect(wrapper).toMatchSnapshot();
   });
 
@@ -64,7 +64,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(visibilityCond1),
         }
     }, 3);
-    expect(wrapper.find('input[type="text"]')).toHaveLength(1);
+    expect(wrapper.find('textarea')).toHaveLength(1);
   });
 
   it('Does not render a parameter when visible_if conditions are not met', () => {
@@ -77,7 +77,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(visibilityCond2),
         }
     }, 3);
-    expect(wrapper.find('input[type="text"]')).toHaveLength(0);
+    expect(wrapper.find('textarea')).toHaveLength(0);
   });
 
   it('Does not render a parameter when visible_if conditions are met but visible_if is inverted', () => {
@@ -92,7 +92,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(newVisibilityCond),
         }
     }, 3);
-    expect(wrapper.find('input[type="text"]')).toHaveLength(0);
+    expect(wrapper.find('textarea')).toHaveLength(0);
   });
 
   it('Renders a parameter when visible_if conditions are not met but visible_if is inverted', () => {
@@ -107,7 +107,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(newVisibilityCond),
         }
     }, 3);
-    expect(wrapper.find('input[type="text"]')).toHaveLength(1);
+    expect(wrapper.find('textarea')).toHaveLength(1);
   });
 
   it('Renders a parameter when boolean visible_if conditions are met', () => {
@@ -120,7 +120,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(visibilityCond3),
         }
     }, true);
-    expect(wrapper.find('input[type="text"]')).toHaveLength(1);
+    expect(wrapper.find('textarea')).toHaveLength(1);
   });
 
   it('It does not render a parameter when boolean visible_if conditions are not met', () => {
@@ -133,7 +133,7 @@ describe('WfParameter', () => {
           visible_if: JSON.stringify(visibilityCond3),
         }
     }, false);
-    expect(wrapper.find('input[type="text"]')).toHaveLength(0);
+    expect(wrapper.find('textarea')).toHaveLength(0);
   });
 
 });

@@ -349,9 +349,7 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
             libraryOpen={false}
             moduleAdded={[Function]}
           >
-            <div
-              
-            >
+            <div>
               <div
                 className="closed-ML--category"
                 onClick={[Function]}
@@ -549,7 +547,7 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
                         icon="url"
                         id={4}
                         isReadOnly={true}
-                        key="Load from Enigma"
+                        key="4"
                         libraryOpen={false}
                         name="Load from Enigma"
                         setOpenCategory={[Function]}
@@ -731,9 +729,7 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
             libraryOpen={false}
             moduleAdded={[Function]}
           >
-            <div
-              
-            >
+            <div>
               <div
                 className="closed-ML--category"
                 onClick={[Function]}

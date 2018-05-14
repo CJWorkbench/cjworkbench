@@ -14,7 +14,7 @@ exports[`WfParameter Renders string input field 1`] = `
   <div
     className="label-margin t-d-gray content-3"
   />
-  <input
+  <textarea
     className="parameter-base t-d-gray content-2 text-field"
     defaultValue="data.sfgov.org"
     name="url"
@@ -25,7 +25,6 @@ exports[`WfParameter Renders string input field 1`] = `
     onMouseLeave={[Function]}
     placeholder=""
     rows={1}
-    type="text"
   />
 </div>
 `;

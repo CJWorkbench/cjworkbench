@@ -58,6 +58,8 @@ export default class WfParameter extends React.Component {
   // Save value (and re-render) when user presses enter (but not on multiline fields)
   // Applies only to non-multiline fields
   keyPress(e) {
+    const type = this.props.p.parameter_spec.type
+
     if (e.key == 'Enter' && (type != 'string' || !this.props.p.parameter_spec.multiline)) {
         this.paramChanged(e.target.value, PRESSED_ENTER);
         e.preventDefault();       // eat the Enter so it doesn't get in our input field
@@ -337,8 +339,7 @@ export default class WfParameter extends React.Component {
         return (
           <div className={'parameter-margin ' + this.paramClassName}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
-            {/* <TextOrNothing text={this.name} className='label-margin t-d-gray content-3'/> */}
-            <input type="text"
+            <textarea
               onMouseEnter={() => this.props.stopDrag() }
               onMouseLeave={() => this.props.startDrag() }
               onBlur={this.blur}
@@ -350,7 +351,8 @@ export default class WfParameter extends React.Component {
               rows={srows}
               defaultValue={this.props.p.value}
               placeholder={this.props.p.parameter_spec.placeholder || ''}
-              ref={ el => this.stringRef = el}/>
+              ref={ el => this.stringRef = el}
+              />
           </div>
         );
 
