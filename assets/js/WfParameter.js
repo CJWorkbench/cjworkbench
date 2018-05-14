@@ -360,7 +360,7 @@ export default class WfParameter extends React.Component {
       case 'float':
         return (
           <div className={'parameter-margin ' + this.paramClassName}>
-            <div className='label-margin t-d-gray content-3'>{this.name}</div>
+            <div className='label-margin t-d-gray content-3'>{name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
               className='number-field parameter-base t-d-gray content-3'
@@ -377,12 +377,12 @@ export default class WfParameter extends React.Component {
       case 'button':
         return (
           <div className={'parameter-margin d-flex justify-content-end ' + this.paramClassName}>
-            <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{this.name}</div>
+            <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{name}</div>
           </div>
         );
       case 'statictext':
         return (
-          <div data-name={id_name} className={'t-m-gray info-2 ' + this.paramClassName}>{this.name}</div>
+          <div data-name={id_name} className={'t-m-gray info-2 ' + this.paramClassName}>{name}</div>
         );
 
       case 'checkbox':
@@ -397,7 +397,7 @@ export default class WfParameter extends React.Component {
                     name={id_name}
                     ref={ el => this.checkboxRef = el}
                     id={this.props.p.id} />
-                  <label htmlFor={this.props.p.id} className='t-d-gray content-3'>{this.name}</label>
+                  <label htmlFor={this.props.p.id} className='t-d-gray content-3'>{name}</label>
                 </div>
             </div>
         );
@@ -405,7 +405,7 @@ export default class WfParameter extends React.Component {
       case 'menu':
         return (
           <div className={'parameter-margin ' + this.paramClassName}>
-            <div className='label-margin t-d-gray content-3'>{this.name}</div>
+            <div className='label-margin t-d-gray content-3'>{name}</div>
             <MenuParam
               name={id_name}
               items={this.props.p.menu_items}
@@ -418,7 +418,7 @@ export default class WfParameter extends React.Component {
       case 'column':
         return (
           <div className={'parameter-margin ' + this.paramClassName}>
-            <div className='label-margin t-d-gray content-3'>{this.name}</div>
+            <div className='label-margin t-d-gray content-3'>{name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
               name={id_name}
@@ -433,7 +433,7 @@ export default class WfParameter extends React.Component {
       case 'multicolumn':
         return (
           <div className={'parameter-margin ' + this.paramClassName}>
-            <div className='t-d-gray content-3 label-margin'>{this.name}</div>
+            <div className='t-d-gray content-3 label-margin'>{name}</div>
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}
               saveState={state => this.props.setParamText('colnames', state) }
