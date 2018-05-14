@@ -64,6 +64,7 @@ To see what Workbench does, try our [public server](http://workbenchdata.org), n
 # Contributing
 
 - How to [set up a development environment](https://github.com/jstray/cjworkbench/wiki/Setting-up-a-development-environment).
+- [Creating your own modules](https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module)
 - [Join us on gitter](https://gitter.im/workbenchdata/Lobby)!
 
 # Contact us
