@@ -35,7 +35,7 @@ class TestWfModule(LoggedInIntegrationTest):
     def test_module_buttons_exist(self):
         b = self.browser
 
-        header = b.find_by_css('.module-header-content')
+        header = b.find_by_css('.module-card-header')
         header.first.mouse_over()
 
         self.assertTrue(b.is_element_present_by_css('.icon-help'))
@@ -45,11 +45,8 @@ class TestWfModule(LoggedInIntegrationTest):
 
     def test_context_menu_and_export_dialog(self):
         b = self.browser
-        header = b.find_by_css('.module-header-content')
-
-        # context menu not open yet
-        self.assertFalse(header.find_by_css('.dropdown-menu--icon').first.visible)
-
+        header = b.find_by_css('.module-card-header')
+        header.find_by_css('.context-buttons--container').first.mouse_over()
         header.find_by_css('.context-button--icon').click()
 
         # check for correct items

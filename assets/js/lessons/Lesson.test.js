@@ -18,7 +18,7 @@ describe('Lesson', () => {
         html: '<p>Section One HTML</p>',
         steps: [
           { html: 'Step One-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-          { html: 'Step One-<strong>Bee</strong>', highlight: [ { type: 'WfModule', name: 'Foo' } ], testJs: 'return false' },
+          { html: 'Step One-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' },
         ],
       },
       {
@@ -26,7 +26,7 @@ describe('Lesson', () => {
         html: '<p>Section Two HTML</p>',
         steps: [
           { html: 'Step Two-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-          { html: 'Step Two-<strong>Bee</strong>', highlight: [ { type: 'WfModule', name: 'Foo' } ], testJs: 'return false' },
+          { html: 'Step Two-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' },
         ],
       },
       {
@@ -34,7 +34,7 @@ describe('Lesson', () => {
         html: '<p>Section Three HTML</p>',
         steps: [
           { html: 'Step Three-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-          { html: 'Step Three-<strong>Bee</strong>', highlight: [ { type: 'WfModule', name: 'Foo' } ], testJs: 'return false' },
+          { html: 'Step Three-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' },
         ],
       },
     ],

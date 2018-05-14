@@ -30,7 +30,7 @@ describe('LessonHighlight', () => {
   })
 
   it('should allow WfModule', () => {
-    const valid = { type: 'WfModule', name: 'Foo' }
+    const valid = { type: 'WfModule', moduleName: 'Foo' }
     expect(isValid([ valid ])).toBe(true)
     expect(isValid([ { type: 'WfModule', foo: 'bar' } ])).toBe(false)
   })

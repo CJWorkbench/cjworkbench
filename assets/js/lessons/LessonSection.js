@@ -6,6 +6,21 @@ import { StateWithHelpers } from './DoneHelpers'
 import { connect } from 'react-redux'
 
 export class LessonSection extends React.PureComponent {
+  componentDidMount() {
+    this._resetLessonHighlight()
+  }
+
+  componentDidUpdate() {
+    this._resetLessonHighlight()
+  }
+
+  _resetLessonHighlight() {
+    if (this.props.active) {
+      const activeStep = this.props.steps[this.props.activeStepIndex] || null
+      this.props.setLessonHighlight(activeStep ? activeStep.highlight : [])
+    }
+  }
+
   renderStep(step, index) {
     let status
     if (this.props.activeStepIndex !== null && this.props.activeStepIndex < index) {
@@ -58,6 +73,8 @@ LessonSection.propTypes = {
     highlight: LessonHighlightsType.isRequired,
     testJs: PropTypes.string.isRequired,
   })).isRequired,
+  activeStepIndex: PropTypes.number, // or null
+  setLessonHighlight: PropTypes.func.isRequired,
 }
 
 function isStepDone(sectionTitle, stepIndex, stateWithHelpers, step) {

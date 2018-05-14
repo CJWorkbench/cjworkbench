@@ -22,21 +22,6 @@ export class Lesson extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this._resetLessonHighlight(this.state.activeSectionIndex)
-  }
-
-  componentDidUpdate() {
-    this._resetLessonHighlight(this.state.activeSectionIndex)
-  }
-
-  _resetLessonHighlight(sectionIndex) {
-    const section = this.props.sections[sectionIndex]
-    const step = section.steps ? section.steps[0] : null
-    const highlight = step ? step.highlight : []
-    this.props.setLessonHighlight(highlight)
-  }
-
   render() {
     const { header, sections } = this.props
 
@@ -44,6 +29,7 @@ export class Lesson extends React.Component {
       return <LessonSection
         key={i}
         active={this.state.activeSectionIndex === i}
+        setLessonHighlight={this.props.setLessonHighlight}
         {...s}
         />
     })

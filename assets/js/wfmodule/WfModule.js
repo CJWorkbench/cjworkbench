@@ -16,17 +16,18 @@ import {
 import PropTypes from 'prop-types'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 import { sortableWfModule } from "./WfModuleDragDropConfig";
-
+import { connect } from 'react-redux'
+import { matchLessonHighlight } from '../util/LessonHighlight'
 
 // Libraries to provide a collapsible table view
 import { Collapse } from 'reactstrap';
 
 
 // ---- WfModule ----
-class WfModule extends React.Component {
-
+export class WfModule extends React.Component {
   constructor(props) {
     super(props);
+
     this.click = this.click.bind(this);
     this.changeParam = this.changeParam.bind(this);
     this.setParamText = this.setParamText.bind(this);
@@ -43,10 +44,8 @@ class WfModule extends React.Component {
     this.onClickNotification = this.onClickNotification.bind(this);
     this.setModuleRef = this.setModuleRef.bind(this);
     this.moduleRef = null;
-  }
 
-  componentWillMount() {
-    this.setState({
+    this.state = {
       isCollapsed: this.props.wfModule.is_collapsed,
       showButtons: false,
       showNotes:  ( this.props.wfModule.notes
@@ -56,7 +55,7 @@ class WfModule extends React.Component {
       showEditableNotes: false,             // do not display in edit state on initial load
       notifications: this.props.wfModule.notifications,
       notification_count: this.props.wfModule.notification_count,
-    });
+    }
   }
 
   // pass a function to all wf_parameters to allow them to overload
@@ -99,7 +98,7 @@ class WfModule extends React.Component {
 			// IE fallback: specify that we'd rather screenshot the node
 			// when it already knows it's being dragged so we can hide it with CSS.
 			captureDraggingState: true,
-		});
+		})
   }
 
   // We become the selected module on any click
@@ -247,7 +246,7 @@ class WfModule extends React.Component {
 
     var notesIcon;
     if (!this.state.showNotes && !this.props.isReadOnly)
-      notesIcon = <button className='context-button btn edit-note' onClick={this.showNotes}>
+      notesIcon = <button className={'context-button btn edit-note' + this.props.isLessonHighlightNotes ? ' lesson-highlight' : ''} onClick={this.showNotes}>
                     <div className='icon-note icon-l-gray ' />
                   </button>;
 
@@ -290,7 +289,7 @@ class WfModule extends React.Component {
       // Removing this outer div breaks the drag and drop animation for reasons
       // that aren't clear right now. It doesn't hurt anything but it shouldn't
       // be necessary either.
-      <div onClick={this.click} className={'wf-module' + (this.props.isOver ? (' over ' + this.state.dragPosition) : '')} data-module-name={module.name}>
+      <div onClick={this.click} className={'wf-module' + (this.props.isOver ? (' over ' + this.state.dragPosition) : '') + (this.props.isLessonHighlight ? ' lesson-highlight' : '')} data-module-name={module.name}>
         {notes}
         <div className={'wf-card mx-auto '+ (this.props.isDragging ? 'wf-module--dragging ' : '')} ref={this.setModuleRef}>
 
@@ -303,12 +302,10 @@ class WfModule extends React.Component {
                   <div className='module-id--group' onClick={this.toggleCollapsed}>
                     <div className={moduleIcon} />
                     <div className='t-d-gray WFmodule-name'>{module.name}</div>
-                    <div style={{ opacity: this.state.showButtons ? '.5' : '0' }} className={
-                      this.state.isCollapsed ?
-                        'icon-sort-down context-collapse-button' :
-                        'icon-sort-up context-collapse-button'
-                      }>
-                    </div>
+                    <WfModuleCollapseButton
+                      isCollapsed={this.state.isCollapsed}
+                      isLessonHighlight={this.props.isLessonHighlightCollapse}
+                      />
                   </div>
                   {contextBtns}
                 </div>
@@ -333,7 +330,6 @@ class WfModule extends React.Component {
     )) || null;
   }
 }
-
 WfModule.propTypes = {
   isReadOnly:         PropTypes.bool.isRequired,
   wfModule:           PropTypes.object,
@@ -345,8 +341,57 @@ WfModule.propTypes = {
   connectDragSource:  PropTypes.func,
   connectDropTarget:  PropTypes.func,
   connectDragPreview: PropTypes.func,
-  focusModule:        PropTypes.func
-};
+  focusModule:        PropTypes.func,
+  isLessonHighlight: PropTypes.bool.isRequired,
+  isLessonHighlightNotes: PropTypes.bool.isRequired,
+  isLessonHighlightCollapse: PropTypes.bool.isRequired,
+}
 
-export { WfModule };
-export default sortableWfModule(WfModule);
+class WfModuleCollapseButton extends React.PureComponent {
+  render() {
+    const iconClass = this.props.isCollapsed ? 'icon-sort-down' : 'icon-sort-up'
+    const lessonHighlightClass = this.props.isLessonHighlight ? 'lesson-highlight' : ''
+    return (
+      <i className={`context-collapse-button ${iconClass} ${lessonHighlightClass}`}></i>
+    )
+  }
+}
+WfModuleCollapseButton.propTypes = {
+  isCollapsed: PropTypes.bool.isRequired,
+  isLessonHighlight: PropTypes.bool.isRequired,
+}
+
+function propsToModuleName(props) {
+  return (
+    props.wfModule
+    && props.wfModule.module_version
+    && props.wfModule.module_version.module
+    && props.wfModule.module_version.module.name
+    || ''
+  )
+}
+
+export function mapStateToProps(state, ownProps) {
+  const highlight = state.lesson_highlight || []
+  const moduleName = propsToModuleName(ownProps)
+  return {
+    isLessonHighlight: matchLessonHighlight(
+      highlight,
+      { type: 'WfModule', moduleName: moduleName }
+    ),
+    isLessonHighlightCollapse: matchLessonHighlight(
+      highlight,
+      { type: 'WfModuleContextButton', moduleName: moduleName, button: 'collapse' }
+    ),
+    isLessonHighlightNotes: matchLessonHighlight(
+      highlight,
+      { type: 'WfModuleContextButton', moduleName: moduleName, button: 'notes' }
+    ),
+  }
+}
+
+// TODO replace "store.dispatch" with mapDispatchToProps()
+
+export default connect(
+  mapStateToProps,
+)(sortableWfModule(WfModule))
