@@ -1,0 +1,8 @@
+{
+  "plugins": {
+    "webpack": {
+      "configPath": "./webpack.config.js"
+    }
+  },
+  "dontLoad": [ "assets/bundles/*" ]
+}
