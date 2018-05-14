@@ -28,7 +28,7 @@
       <div class="copy-txt content-3 t-white">Hello, world!</div>
     </li>
     <li
-      data-highlight='[]'
+      data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"collapse"}]'
       data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].isCollapsed"
       >Collapse the module.</li>
   </ol>
@@ -38,7 +38,7 @@
   <p>Let’s add a column chart to visualize this data.</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Column chart"}]'
+      data-highlight='[{"type":"ModuleSearch"},{"type":"WfModule","moduleName":"Column chart"}]'
       data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Column chart'"
       >Add the module ‘Column chart’ using the search in the module library.</li>
     <li

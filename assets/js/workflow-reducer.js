@@ -2,7 +2,7 @@
 // That is, provides all the state transition functions that are executed on user command
 import { nonce } from './utils'
 import WorkbenchAPI from './WorkbenchAPI'
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, compose } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
 import thunk from 'redux-thunk'
 import { newContext } from 'immutability-helper'
@@ -51,7 +51,12 @@ export function mockAPI(mock_api) {
 // ---- Our Store ----
 // Master state for the workflow. Export so that components can store.dispatch()
 // var so it can be mocked for testing
-export var store = createStore(workflowReducer, window.initState, applyMiddleware( promiseMiddleware(), thunk ));
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
+export var store = createStore( // TODO make it const
+  workflowReducer,
+  window.initState,
+  composeEnhancers(applyMiddleware(promiseMiddleware(), thunk))
+);
 
 export function mockStore(mock_store) {
   store = mock_store;

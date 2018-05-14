@@ -15,7 +15,7 @@ const LessonHighlightType = P.oneOfType([
     name: P.string.isRequired,
   }),
   Shape('WfModule', {
-    name: P.string.isRequired,
+    moduleName: P.string.isRequired,
   }),
   Shape('WfParameter', {
     moduleName: P.string.isRequired,
@@ -23,7 +23,7 @@ const LessonHighlightType = P.oneOfType([
   }),
   Shape('WfModuleContextButton', {
     moduleName: P.string.isRequired,
-    button: P.oneOf([ 'notes', ]).isRequired,
+    button: P.oneOf([ 'notes', 'collapse' ]).isRequired,
   }),
   Shape('EditableNotes', {
   }),
