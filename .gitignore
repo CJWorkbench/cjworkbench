@@ -8,6 +8,7 @@ __pycache__/
 local_settings.py
 webpack-stats.json
 db.sqlite3
+db.sqlite3-journal
 dbdata/
 local_mail/
 client_secret.json

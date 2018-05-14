@@ -9,8 +9,11 @@ from server.models import Module, ModuleVersion, WfModule, ParameterSpec, Parame
 import logging
 logger = logging.getLogger(__name__)
 
-# Top level call, (re)load module definitions from files
-# Returns a string indicating status
+class InitModuleError(Exception):
+    pass
+
+# Top level call, (re)load module definitions from files.
+# Raises on error.
 def init_modules():
     module_path = os.path.join(BASE_DIR, 'server/modules')
 
@@ -18,19 +21,18 @@ def init_modules():
     modfiles = [f for f in os.listdir(module_path) if os.path.isfile(os.path.join(module_path, f)) and f.endswith(".json")]
 
     # Load all modules from files
-    cnt = 0
     for f in modfiles:
         try:
             load_module_from_file(os.path.join(module_path, f))
         except ValueError as e:
-            msg = "Error loading Module definition file " + f + ": " + str(e)
-            logger.error(msg)
-            return msg
-        cnt += 1
+            logger.error(
+                "Error loading Module definition file %s: %s",
+                f,
+                str(e)
+            )
+            raise InitModuleError() from e
 
-    msg = "Loaded " + str(cnt) + " modules successfully."
-    logger.error(msg)
-    return msg
+    logger.info('Loaded %d modules', len(modfiles))
 
 
 # Create a module object by reading in the json description in a file

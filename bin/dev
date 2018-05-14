@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Run a development environment:
+#
+# * ./manage.py runserver: runs a web server on http://localhost:8000
+# * webpack: refreshes asset bundles whenever files change
+
+set -e
+
+DIR="$(dirname "$0")"/..
+
+fail() {
+  echo "$1" >&2
+  exit 1
+}
+
+check_command() {
+  type "$1" >/dev/null 2>&1 || fail "$2"
+}
+
+check_command 'npm' '`npm` is not in your $PATH. Install NodeJS from https://nodejs.org/en/'
+check_command 'pipenv' '`pipenv` is not in your $PATH. Install Python3, then install Pipenv from https://github.com/pypa/pipenv'
+pipenv --venv >/dev/null 2>&1 || fail 'You are missing Python dependencies. Run `pipenv sync --dev`'
+test -x "$DIR"/node_modules/.bin/check-dependencies && "$DIR"/node_modules/.bin/check-dependencies || fail 'You are missing Node dependencies. Run `npm install`'
+
+# need `migrate sites` before `migrate`. To save time, we'll assume that if
+# db.sqlite3 exists, `migrate sites` completed successfully.
+if [ ! -f "$DIR"/db.sqlite3 ]; then
+  pipenv run "$DIR"/manage.py migrate sites -v1
+
+  pipenv run "$DIR"/manage.py migrate -v1
+
+  echo 'Creating superuser.'
+  echo 'Type "admin123" at this prompt to make your admin password "admin123"'
+  pipenv run "$DIR"/manage.py createsuperuser \
+    --username admin \
+    --email admin@localhost
+fi
+
+# Regular migrations (always run these -- we modify fields frequently)
+pipenv run "$DIR"/manage.py migrate -v1
+
+# Reload source code (always run this -- it changes frequently)
+pipenv run "$DIR"/manage.py initmodules
+
+# Clear temporary data from previous runs
+rm -rf "$DIR"/assets/bundles "$DIR"/webpack-stats.json
+
+# Run watchjs in the background: we'll kill it when Python dies.
+#
+# Run pipenv in the _foreground_. Normally the background would be better, but
+# pipenv seems to avoid `kill $(jobs -p)`, so there would be no way to shut down.
+"$DIR"/node_modules/.bin/webpack --config "$DIR"/webpack.config.js --mode development --watch &
+PIDS="$!"
+pipenv run "$DIR"/manage.py runserver # waits until Ctrl+C
+
+# Ctrl+C will send a SIGINT to webpack as well
+wait
