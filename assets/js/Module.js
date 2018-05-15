@@ -15,6 +15,7 @@ import { getEmptyImage } from 'react-dnd-html5-backend';
 import debounce from 'lodash/debounce';
 import { connect } from 'react-redux'
 import { matchLessonHighlight } from './util/LessonHighlight'
+import lessonSelector from './lessons/lessonSelector'
 
 // TODO: gather all functions for dragging into one utility file
 const spec = {
@@ -127,10 +128,9 @@ Module.propTypes = {
 }
 
 function mapStateToProps(state, ownProps) {
-  const lessonHighlight = state.lesson_highlight || []
-  const test = { type: 'MlModule', name: ownProps.name }
+  const { testHighlight } = lessonSelector(state)
   return {
-    isLessonHighlight: matchLessonHighlight(lessonHighlight, test),
+    isLessonHighlight: testHighlight({ type: 'MlModule', name: ownProps.name }),
   }
 }
 

@@ -42,7 +42,6 @@ describe('Reducer actions', () => {
   // test state has second module selected
   const test_state = {
     workflow: test_workflow,
-    lesson_highlight: [],
     selected_wf_module: 20
   };
 
@@ -298,14 +297,5 @@ describe('Reducer actions', () => {
       }
     });
     expect(state.workflow.wf_modules[0].notification_count).toBe(0);
-  });
-
-  it('Sets the lesson_highlight to non-empty', () => {
-    const state = workflowReducer(test_state, {
-      type: 'SET_LESSON_HIGHLIGHT',
-      payload: [ { type: 'WfModule', name: 'Foo' } ],
-    });
-    expect(state.workflow).toBe(test_state.workflow);
-    expect(state.lesson_highlight).toEqual([ { type: 'WfModule', name: 'Foo' } ])
   });
 });

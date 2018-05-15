@@ -4,6 +4,7 @@
  * -Search bar will render suggestions of modules matching input
  * 
  */
+jest.mock('./lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
 
 import React from 'react'
 import ConnectedModuleSearch, { ModuleSearch } from './ModuleSearch'
@@ -12,6 +13,7 @@ import { DragDropContextProvider } from 'react-dnd'
 import { mount, shallow } from 'enzyme'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
+import lessonSelector from './lessons/lessonSelector'
 
 describe('ModuleSearch', () => {
   const modules = [
@@ -38,13 +40,14 @@ describe('ModuleSearch', () => {
     "id":15,
     "name":"What a workflow!"
   };
-  const defaultProps = {
-    addModule: () => {},
+  let defaultProps
+  beforeEach(() => defaultProps = {
+    addModule: jest.fn(),
     modules,
     workflow,
     isLessonHighlight: false,
-    lessonHighlightModuleNames: [],
-  }
+    isLessonHighlightForModuleName: jest.fn(name => false),
+  })
 
   describe('most tests', () => {
     let wrapper
@@ -94,20 +97,39 @@ describe('ModuleSearch', () => {
     expect(yesHighlight.hasClass('lesson-highlight')).toBe(true)
   })
 
+  describe('watching state', () => {
+    let globalLessonSelector
+    beforeEach(() => {
+      globalLessonSelector = lessonSelector
+    })
+  })
+
   describe('with store', () => {
     let store
     let wrapper
+    let nonce = 0
 
-    function highlight(v) {
-      store.dispatch({ type: 'x', payload: v })
+    function highlight(yesOrNo, moduleName) {
+      lessonSelector.mockReturnValue({
+        testHighlight: test => {
+          if (!yesOrNo) return false
+          if (test.type === 'ModuleSearch') return true
+          return test.type === 'MlModule' && test.name === moduleName
+        }
+      })
+
+      // trigger a change
+      store.dispatch({ type: 'whatever', payload: ++nonce })
     }
 
     beforeEach(() => {
-      store = createStore(
-        // reducer: payload => state.lesson_highlight
-        (_, action) => ({ lesson_highlight: action.payload }),
-        { lesson_highlight: [] }
-      )
+      lessonSelector.mockReset()
+
+      // Store just needs to change, to trigger mapStateToProps. We don't care
+      // about its value
+      store = createStore((_, action) => action.payload)
+
+      highlight(false)
 
       wrapper = mount(
         <Provider store={store}>
@@ -117,10 +139,18 @@ describe('ModuleSearch', () => {
         </Provider>
       )
     })
-    afterEach(() => { wrapper.unmount() })
+    afterEach(() => {
+      wrapper.unmount()
+    })
+
+    it('highlights the search box', () => {
+      highlight(true, null)
+      wrapper.update()
+      expect(wrapper.find('.module-search').prop('className')).toMatch(/\blesson-highlight\b/)
+    })
 
     it('highlights a suggestion matching search input in a lesson', () => { 
-      highlight([ { type: 'MlModule', name: 'Filter by Text' } ])
+      highlight(true, 'Filter by Text')
 
       // Find 'Load from Enigma' and 'Filter by Text', in that order
       // 'r' matches both

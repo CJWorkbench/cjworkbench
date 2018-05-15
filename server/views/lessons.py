@@ -33,7 +33,7 @@ def _render_get_lesson_detail(request, lesson):
     workflow = get_object_or_404(Workflow, owner=request.user, lesson_slug=lesson.slug)
 
     init_state = make_init_state(request, workflow=workflow)
-    init_state['lesson'] = LessonSerializer(lesson).data
+    init_state['lessonData'] = LessonSerializer(lesson).data
     return TemplateResponse(request, 'workflow.html', { 'initState': json.dumps(init_state) })
 
 @login_required

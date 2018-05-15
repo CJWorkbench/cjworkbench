@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { matchLessonHighlight, stateHasLessonHighlight, LessonHighlightsType } from './LessonHighlight'
+import { matchLessonHighlight, LessonHighlightsType } from './LessonHighlight'
 
 const isValid = (obj) => {
   const globalConsole = global.console
@@ -65,28 +65,5 @@ describe('LessonHighlight', () => {
     expect(matchLessonHighlight(valid, { type: 'MlModule', name: 'Bar' })).toBe(false)
     expect(matchLessonHighlight(valid, { type: 'EditableNotes' })).toBe(true)
     expect(matchLessonHighlight(valid, { type: 'XditableNotes' })).toBe(false)
-  })
-
-  it('should have stateHasLessonHighlight', () => {
-    const f = stateHasLessonHighlight({ type: 'MlModule', name: 'Foo' })
-    expect(f({ lesson_highlight: [ { type: 'MlModule', name: 'Foo' }, { type: 'EditableNotes' } ] })).toBe(true)
-    expect(f({ lesson_highlight: [] })).toBe(false)
-    expect(f({ lesson_highlight: [ { type: 'EditableNotes' } ] })).toBe(false)
-  })
-
-  it('should make stateHasLessonHighlight throw an error on bad call', () => {
-    const globalConsole = global.console
-    global.console = { error: jest.fn() }
-    try {
-      stateHasLessonHighlight({ type: 'NonValidType', name: 'Boo' })
-      expect(global.console.error).toHaveBeenCalled()
-    } finally {
-      global.console = globalConsole
-    }
-  })
-
-  it('should allow state.lesson_highlight=undefined (useful in unrelated unit tests)', () => {
-    const f = stateHasLessonHighlight({ type: 'MlModule', name: 'Foo' })
-    expect(f({})).toBe(false)
   })
 })

@@ -8,7 +8,7 @@ import Autosuggest from 'react-autosuggest';
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
 import { connect } from 'react-redux'
-import { stateHasLessonHighlight } from './util/LessonHighlight'
+import lessonSelector from './lessons/lessonSelector'
 
 const spec = {
   beginDrag(props, monitor, component) {
@@ -133,14 +133,13 @@ export class ModuleSearch extends React.Component {
 
   renderSuggestion(suggestion) {
     const { id, icon, name } = suggestion
-    const isLessonHighlight = this.props.lessonHighlightModuleNames.includes(name)
     return (
       <DraggableModuleSearchResult
         dropModule={this.props.dropModule}
         id={id}
         icon={icon}
         name={name}
-        isLessonHighlight={isLessonHighlight}
+        isLessonHighlight={this.props.isLessonHighlightForModuleName(name)}
         />
     )
   }
@@ -214,21 +213,15 @@ ModuleSearch.propTypes = {
   modules:    PropTypes.array.isRequired,
   workflow:   PropTypes.object.isRequired,
   isLessonHighlight: PropTypes.bool.isRequired,
-  lessonHighlightModuleNames: PropTypes.arrayOf(PropTypes.string.isRequired).isRequired,
+  isLessonHighlightForModuleName: PropTypes.func.isRequired,
   alwaysRenderSuggestions: PropTypes.bool, // useful in testing
 }
 
-const isLessonHighlight = stateHasLessonHighlight({ type: 'ModuleSearch' })
-function lessonHighlightModuleNames(state) {
-  const lessonHighlight = state.lesson_highlight || []
-  return lessonHighlight
-    .filter(h => h.type === 'MlModule')
-    .map(h => h.name)
-}
 const mapStateToProps = (state) => {
+  const { testHighlight } = lessonSelector(state)
   return {
-    isLessonHighlight: isLessonHighlight(state),
-    lessonHighlightModuleNames: lessonHighlightModuleNames(state),
+    isLessonHighlight: testHighlight({ type: 'ModuleSearch' }),
+    isLessonHighlightForModuleName: (name) => testHighlight({ type: 'MlModule', name: name }),
   }
 }
 

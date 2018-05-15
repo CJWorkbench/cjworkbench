@@ -1,7 +1,15 @@
+jest.mock('../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
+
 import React from 'react'
-import { WfModule, mapStateToProps } from './WfModule'
+import HTML5Backend from 'react-dnd-html5-backend'
+import { DragDropContextProvider } from 'react-dnd'
+import ConnectedWfModule, { WfModule } from './WfModule'
 import { okResponseMock } from '../utils'
-import { shallow } from 'enzyme'
+import { shallow, mount } from 'enzyme'
+import deepEqual from 'fast-deep-equal'
+import { createStore } from 'redux'
+import { Provider } from 'react-redux'
+import lessonSelector from '../lessons/lessonSelector'
 
 describe('WfModule, not read-only mode', () => {
   let props;
@@ -31,6 +39,7 @@ describe('WfModule, not read-only mode', () => {
   const wf_module = {
     'id' : 999,
     'notes': [],
+    'is_collapsed': false,
     'parameter_vals': [
       {
         'id': 100,
@@ -100,47 +109,80 @@ describe('WfModule, not read-only mode', () => {
     expect(wf_module.parameter_vals[0].value).toEqual('http://some.URL.me')
   })
 
-  describe('mapStateToProps', () => {
-    it('should set isLessonHighlight=true', () => {
-      expect(mapStateToProps(
-        { lesson_highlight: [ { type: 'WfModule', moduleName: 'Load from URL' } ] },
-        buildShallowProps()
-      ).isLessonHighlight).toBe(true)
+  describe('highlights', () => {
+    let store
+    let wrapper = null
+    let nonce = 0
+
+    function highlight(selectors) {
+      lessonSelector.mockReturnValue({
+        testHighlight: test => {
+          return selectors.some(s => deepEqual(test, s))
+        }
+      })
+
+      // trigger a change
+      store.dispatch({ type: 'whatever', payload: ++nonce })
+      if (wrapper !== null) wrapper.update()
+    }
+
+    beforeEach(() => {
+      lessonSelector.mockReset()
+
+      // Store just needs to change, to trigger mapStateToProps. We don't care
+      // about its value
+      store = createStore((_, action) => action.payload)
+
+      highlight([])
+
+      wrapper = mount(
+        <Provider store={store}>
+          <DragDropContextProvider backend={HTML5Backend}>
+            <ConnectedWfModule {...props} />
+          </DragDropContextProvider>
+        </Provider>
+      )
+    })
+    afterEach(() => {
+      wrapper.unmount()
+      wrapper = null
     })
 
-    it('should set isLessonHighlight=false', () => {
-      expect(mapStateToProps(
-        { lesson_highlight: [ { type: 'WfModule', moduleName: 'Anything but "Load from URL"' } ] },
-        buildShallowProps()
-      ).isLessonHighlight).toBe(false)
+    it('highlights a WfModule', () => {
+      highlight([{ type: 'WfModule', moduleName: 'Load from URL' }])
+      expect(wrapper.find('.wf-module').prop('className')).toMatch(/\blesson-highlight\b/)
     })
 
-    it('should set isLessonHighlightCollapse=true', () => {
-      expect(mapStateToProps(
-        { lesson_highlight: [ { type: 'WfModuleContextButton', moduleName: 'Load from URL', button: 'collapse' } ] },
-        buildShallowProps()
-      ).isLessonHighlightCollapse).toBe(true)
+    it('unhighlights a WfModule', () => {
+      // wrong name
+      highlight([{ type: 'WfModule', moduleName: 'TestModule2' }])
+      expect(wrapper.find('.wf-module').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
 
-    it('should set isLessonHighlightCollapse=false', () => {
-      expect(mapStateToProps(
-        { lesson_highlight: [ { type: 'WfModuleContextButton', moduleName: 'Load from URL', button: 'notes' } ] },
-        buildShallowProps()
-      ).isLessonHighlightCollapse).toBe(false)
+    it('highlights the "collapse" button', () => {
+      highlight([{ type: 'WfModuleContextButton', moduleName: 'Load from URL', button: 'collapse' }])
+      expect(wrapper.find('i.context-collapse-button').prop('className')).toMatch(/\blesson-highlight\b/)
     })
 
-    it('should set isLessonHighlightNotes=true', () => {
-      expect(mapStateToProps(
-        { lesson_highlight: [ { type: 'WfModuleContextButton', moduleName: 'Load from URL', button: 'notes' } ] },
-        buildShallowProps()
-      ).isLessonHighlightNotes).toBe(true)
+    it('unhighlights the "collapse" button', () => {
+      // wrong moduleName
+      highlight([{ type: 'WfModuleContextButton', moduleName: 'TestModule2', button: 'collapse' }])
+      expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
+
+      // wrong button
+      highlight([{ type: 'WfModuleContextButton', moduleName: 'Load from URL', button: 'notes' }])
+      expect(wrapper.find('i.context-collapse-button').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
 
-    it('should set isLessonHighlightNotes=false', () => {
-      expect(mapStateToProps(
-        { lesson_highlight: [ { type: 'WfModuleContextButton', moduleName: 'Load from URL', button: 'collapse' } ] },
-        buildShallowProps()
-      ).isLessonHighlightNotes).toBe(false)
+    it('highlights the notes button', () => {
+      highlight([{ type: 'WfModuleContextButton', moduleName: 'Load from URL', button: 'notes' } ])
+      expect(wrapper.find('button.edit-note').prop('className')).toMatch(/\blesson-highlight\b/)
+    })
+
+    it('unhighlights the notes button', () => {
+      // wrong moduleName
+      highlight([{ type: 'WfModuleContextButton', moduleName: 'TestModule2', button: 'notes' } ])
+      expect(wrapper.find('button.edit-note').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
   })
 })

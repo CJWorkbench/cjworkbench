@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import { LessonHighlightsType } from '../util/LessonHighlight'
 
-export default class LessonStep extends React.Component {
+export default class LessonStep extends React.PureComponent {
   render() {
     const { html, status } = this.props
 
@@ -16,7 +16,7 @@ export default class LessonStep extends React.Component {
 
 LessonStep.Status = {
   FUTURE: 'future',
-  CURRENT: 'current',
+  ACTIVE: 'active',
   DONE: 'done',
 }
 
@@ -24,7 +24,7 @@ LessonStep.propTypes = {
   html: PropTypes.string.isRequired,
   status: PropTypes.oneOf([
     LessonStep.Status.FUTURE,
-    LessonStep.Status.CURRENT,
+    LessonStep.Status.ACTIVE,
     LessonStep.Status.DONE,
   ]).isRequired,
 }

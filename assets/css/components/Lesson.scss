@@ -20,7 +20,7 @@ article.lesson {
     width: 30rem;
     padding:2rem;
 
-    &.inactive { display: none; }
+    &.not-current { display: none; }
 
     h2 {
       color:#fff;
@@ -69,7 +69,7 @@ article.lesson {
           position: absolute;
           margin-left: -2rem;
         }
-        &.current::before {
+        &.active::before {
           content: "\e939";
           color:$brand-pink;
         }
@@ -88,8 +88,16 @@ article.lesson {
     align-items: center;
     padding: 2rem;
 
-      .action-button {
-        width:9rem;
+    .action-button {
+      width:9rem;
+
+      &.lesson-highlight {
+        background-color: $brand-pink;
       }
+    }
+
+    .current-and-total {
+      white-space: nowrap;
+    }
   }
 }

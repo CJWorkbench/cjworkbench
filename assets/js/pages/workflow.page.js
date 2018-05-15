@@ -78,7 +78,7 @@ ReactDOM.render(
       <DragDropContextProvider backend={HTML5Backend}>
         <div>
           <CustomDragLayer />
-          <WorkflowContainer lesson={window.initState.lesson} />
+          <WorkflowContainer lesson={window.initState.lessonData} />
         </div>
       </DragDropContextProvider>
     </Provider>,
