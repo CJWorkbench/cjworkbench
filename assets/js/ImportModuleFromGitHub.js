@@ -3,16 +3,15 @@
  * to insert a URL to a GitHub repository in a textfield, and, if there are no errors,
  * a new module is added to the Module Library.
  *
- * Currently, users can't set any entitlements on these modules. Also, there is no client-side
- * validation albeit maybe there should be?
  */
 
 import React from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
 import PropTypes from 'prop-types'
-import { csrfToken } from './utils'
+import { loadModulesAction } from './workflow-reducer'
+import {connect} from "react-redux";
 
-export default class ImportModuleFromGitHub extends React.Component {
+export class ImportModuleFromGitHub extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -29,7 +28,7 @@ export default class ImportModuleFromGitHub extends React.Component {
   keyPress(event) {
     event.preventDefault(); // stops the page from refreshing
     if (e.key == 'Enter') {
-      handleSubmit(event);
+      handleSubmit(event);``
     }
   }
 
@@ -54,11 +53,15 @@ export default class ImportModuleFromGitHub extends React.Component {
     event.preventDefault(); // stops the page from refreshing
     var eventData = {'url': this.state.url};
     this.props.api.importFromGithub(eventData)
-    .then(json => this.handleResponse(json),
-          error => this.handleResponse(null)) // 500 error
-    .then(() => {
-      this.props.moduleAdded();
-    })
+      .then(
+        (json) => {
+          this.handleResponse(json);
+          this.props.reloadModules();
+        },
+        (error) => {
+          this.handleResponse(null); // 500 error
+        }
+      );
   }
 
   handleResponse(response) {
@@ -161,7 +164,15 @@ export default class ImportModuleFromGitHub extends React.Component {
 
 
 ImportModuleFromGitHub.propTypes = {
-  moduleAdded: PropTypes.func.isRequired,
   closeModal:  PropTypes.func.isRequired,
   api:         PropTypes.object.isRequired,
 };
+
+const mapDispatchToProps = {
+  reloadModules: loadModulesAction
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(ImportModuleFromGitHub);

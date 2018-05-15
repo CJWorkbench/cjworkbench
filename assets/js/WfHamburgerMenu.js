@@ -23,7 +23,6 @@ export default class WfHamburgerMenu extends React.Component {
   renderImportModal() {
     return (
       <ImportModuleFromGitHub
-        moduleAdded={() => {}}
         closeModal={this.toggleImportModal}
         api={this.props.api}
       />
