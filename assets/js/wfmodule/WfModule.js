@@ -257,7 +257,7 @@ export class WfModule extends React.Component {
           removeModule={ () => this.removeModule() }
           stopProp={(e) => e.stopPropagation()}
           id={wfModule.id}
-          
+
         />;
 
 
