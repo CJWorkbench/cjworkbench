@@ -94,7 +94,6 @@ export default class WfHamburgerMenu extends React.Component {
 
       importModule =
         <div>
-          <DropdownItem divider key={100} />
           <DropdownItem key={4}
             onClick={this.toggleImportModal} className='dropdown-menu--item mb-1 test-export-button'>
             <span className='content-3 ml-3'>Import Module</span>
