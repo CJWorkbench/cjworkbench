@@ -57,6 +57,8 @@ export class ModuleLibrary extends React.Component {
 
   // Take modules from props and prepare them just the way we like 'em (sorted by category)
   static sortModules(modules) {
+    if (!modules)
+      return [];
     return modules.slice().sort(compareModules);
   }
 
@@ -129,7 +131,7 @@ ModuleLibrary.propTypes = {
   isReadOnly:   PropTypes.bool.isRequired,
   libraryOpen:  PropTypes.bool.isRequired,
   setWfLibraryCollapse: PropTypes.func.isRequired,
-}
+};
 
 function mapDispatchToProps(dispatch) {
   return {

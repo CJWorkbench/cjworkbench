@@ -13,14 +13,13 @@ import { genericTestModules } from './test-utils'
 describe('ModuleLibrary', () => {
   let wrapper;
   let api;
+  let stubs;
 
   let workflow = {
     "id":15,
     "name":"What a workflow!",
   };
 
-
-  let stubs;
   beforeEach(() => {
     stubs = {
       setLibraryOpen: jest.fn(),
@@ -29,6 +28,22 @@ describe('ModuleLibrary', () => {
       setWfLibraryCollapse: jest.fn(),
     }
   });
+
+  it('deals with empty modules', ()=>{
+    // this can happen on first mount; don't crash
+    wrapper = shallow(
+      <ModuleLibrary
+        {...stubs}
+        api={{}}
+        modules={undefined}
+        workflow={workflow}
+        isReadOnly={true}
+        libraryOpen={true}
+        />
+    );
+    expect(wrapper.state().modules).toEqual([])
+  });
+
 
   describe('Not Read-only', () => {
     beforeEach(() => {
@@ -88,6 +103,7 @@ describe('ModuleLibrary', () => {
 
       expect(wrapper.find('ModuleLibraryClosed').props().modules).toEqual(genericTestModules);
     });
+
   });
 
 });
