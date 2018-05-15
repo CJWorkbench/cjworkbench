@@ -1,5 +1,5 @@
 body {
-  background-color: #f9f9f9;
+  background-color: $SuperLightGray;
   font-size: 12px;
 }
 .cb-alert {
@@ -150,7 +150,7 @@ body {
   color: #333;
 }
 .cb-button-group .cb-button.active {
-  background: #f9f9f9;
+  background: $SuperLightGray;
   color: #333;
   -webkit-transition: background-color 0.2s linear;
   -moz-transition: background-color 0.2s linear;
@@ -181,7 +181,7 @@ body {
   top: -20px;
   left: 50px;
   display: flex;
-  background-color: #f9f9f9;
+  background-color: $SuperLightGray;
 }
 .cb-colorpicker-els.active {
   -webkit-transition: 0.2s opacity linear;
@@ -397,7 +397,7 @@ body {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background-color: #f9f9f9;
+  background-color: $SuperLightGray;
   box-sizing: border-box;
   -webkit-transition: all 0.2s ease;
   -moz-transition: all 0.2s ease;
