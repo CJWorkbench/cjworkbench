@@ -8,59 +8,18 @@
 import React from 'react'
 import { ModuleLibrary } from './ModuleLibrary'
 import { shallow } from 'enzyme'
-import { jsonResponseMock, emptyAPI } from './utils'
+import { genericTestModules } from './test-utils'
 
 describe('ModuleLibrary', () => {
-  let wrapper
-  let api
+  let wrapper;
+  let api;
+  let stubs;
 
   let workflow = {
     "id":15,
     "name":"What a workflow!",
-  }
-  const modules = [
-    {
-      "id":1,
-      "name":"Chartbuilder",
-      "category":"Visualize",
-      "description":"Create line, column and scatter plot charts.",
-      "icon":"chart"
-    },
-    {
-      "id":2,
-      "name":"Load from Facebork",
-      "category":"Add data",
-      "description":"Import from your favorite snowshall media",
-      "icon":"url"
-    },
-    {
-      "id":3,
-      "name":"Load from Enigma",
-      "category":"Add data",
-      "description":"Connect a dataset from Enigma's collection via URL.",
-      "icon":"url"
-    },
-    {
-      "id":4,
-      "name":"Other Module 1",
-      "category":"other category",    // test modules outside the predefined categories
-      "icon":"url"
-    },
-    {
-      "id":5,
-      "name":"Other Module 2",
-      "category":"x category",
-      "icon":"url"
-    },
-    {
-      "id":6,
-      "name":"Other Module 3",
-      "category":"other category",
-      "icon":"url"
-    },
-  ]
+  };
 
-  let stubs
   beforeEach(() => {
     stubs = {
       setLibraryOpen: jest.fn(),
@@ -68,75 +27,83 @@ describe('ModuleLibrary', () => {
       dropModule: jest.fn(),
       setWfLibraryCollapse: jest.fn(),
     }
-  })
+  });
+
+  it('deals with empty modules', ()=>{
+    // this can happen on first mount; don't crash
+    wrapper = shallow(
+      <ModuleLibrary
+        {...stubs}
+        api={{}}
+        modules={undefined}
+        workflow={workflow}
+        isReadOnly={true}
+        libraryOpen={true}
+        />
+    );
+    expect(wrapper.state().modules).toEqual([])
+  });
+
 
   describe('Not Read-only', () => {
     beforeEach(() => {
       api = {
-        getModules: jsonResponseMock(modules),
         setWfLibraryCollapse: jest.fn(),
-      }
+      };
       wrapper = shallow(
         <ModuleLibrary
           {...stubs}
+          modules={genericTestModules}
           api={api}
           workflow={workflow}
           isReadOnly={false}
           libraryOpen={true}
           />
       )
-    })
+    });
 
     it('matches snapshot', () => {
       expect(wrapper).toMatchSnapshot()
+    });
+
+    it('loads modules', () => {
+      const moduleLibraryOpen = wrapper.find('ModuleLibraryOpen');
+      expect(moduleLibraryOpen).toHaveLength(1); // is open
+      expect(moduleLibraryOpen.props().modules).toHaveLength(genericTestModules.length);
+
+      expect(wrapper.find('ModuleLibraryOpen').props().modules).toEqual(genericTestModules);
     })
-
-    it('loads modules', (done) => {
-      const moduleLibraryOpen = wrapper.find('ModuleLibraryOpen')
-      expect(moduleLibraryOpen).toHaveLength(1) // is open
-      expect(moduleLibraryOpen.props().modules).toHaveLength(0) // no modules by default
-
-      expect(api.getModules).toHaveBeenCalled()
-
-      // let json promise resolve (wait for modules to load)
-      setImmediate(() => {
-        wrapper.update()
-        expect(wrapper.find('ModuleLibraryOpen').props().modules).toEqual(modules)
-        done()
-      })
-    })
-  })
+  });
 
   describe('Read-only', () => {
     beforeEach(() => {
+      api = {
+        setWfLibraryCollapse: jest.fn(),
+      };
       wrapper = shallow(
         <ModuleLibrary
           {...stubs}
           api={api}
+          modules={genericTestModules}
           workflow={workflow}
           isReadOnly={true}
           libraryOpen={true}
           />
       )
-    })
+    });
 
     it('matches snapshot', () => {
       expect(wrapper).toMatchSnapshot()
-    })
+    });
 
-    it('loads modules', (done) => {
-      const moduleLibraryClosed = wrapper.find('ModuleLibraryClosed')
-      expect(moduleLibraryClosed).toHaveLength(1) // is open
-      expect(moduleLibraryClosed.props().modules).toHaveLength(0) // no modules by default
+    it('loads modules', () => {
+      const moduleLibraryClosed = wrapper.find('ModuleLibraryClosed');
+      expect(moduleLibraryClosed).toHaveLength(1); // is open
+      expect(moduleLibraryClosed.props().modules).toHaveLength(genericTestModules.length);
 
-      expect(api.getModules).toHaveBeenCalled()
+      expect(wrapper.find('ModuleLibraryClosed').props().modules).toEqual(genericTestModules);
+    });
 
-      // let json promise resolve (wait for modules to load)
-      setImmediate(() => {
-        wrapper.update()
-        expect(wrapper.find('ModuleLibraryClosed').props().modules).toEqual(modules)
-        done()
-      })
-    })
-  })
-})
+  });
+
+});

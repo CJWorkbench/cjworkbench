@@ -1,7 +1,7 @@
 import React from 'react'
 import Refine, {EditRow, mockAPI} from './Refine'
 import {mockStore} from '../workflow-reducer'
-import {jsonResponseMock} from '../utils'
+import {jsonResponseMock} from '../test-utils'
 import {mount} from 'enzyme'
 
 describe('Refine', () => {

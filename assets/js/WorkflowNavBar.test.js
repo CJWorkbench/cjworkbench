@@ -2,7 +2,7 @@ import React from 'react'
 import WorkflowNavBar from './WorkflowNavBar'
 import { shallow, mount, ReactWrapper } from 'enzyme'
 const Utils = require('./utils');
-import { jsonResponseMock, okResponseMock } from './utils'
+import { jsonResponseMock, okResponseMock } from './test-utils'
 
 
 describe('WorkflowNavBar', () => {

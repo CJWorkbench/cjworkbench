@@ -11,6 +11,7 @@ import { validLessonHighlight } from './util/LessonHighlight'
 // Workflow
 const INITIAL_LOAD_WORKFLOW = 'INITIAL_LOAD_WORKFLOW';
 const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
+const LOAD_MODULES = 'LOAD_MODULES'
 const ADD_MODULE = 'ADD_MODULE';
 const DELETE_MODULE = 'DELETE_MODULE';
 const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE';
@@ -23,7 +24,7 @@ const SET_LESSON_HIGHLIGHT = 'SET_LESSON_HIGHLIGHT';
 const GET_CURRENT_USER = 'GET_CURRENT_USER';
 const DISCONNECT_CURRENT_USER = 'DISCONNECT_CURRENT_USER';
 
-// Module
+// WfModule
 const SET_WF_MODULE_STATUS = 'SET_WF_MODULE_STATUS';
 const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED';
 const UPDATE_WF_MODULE = 'UPDATE_WF_MODULE';
@@ -101,7 +102,7 @@ update.extend('$swap', function(value, original) {
   return newArray;
 });
 
-// ---- Utilities ----
+// ---- Utilities for translating between ID and index ----
 
 export function findIdxByProp(searchArray, searchProp, searchValue) {
   let returnIdx;
@@ -154,7 +155,7 @@ export function paramIdToIndices(workflow, paramId) {
 
 // ---- Actions ----
 
-// -- Workflow --
+// -- Workflow actions --
 
 
 // INITIAL_LOAD_WORKFLOW
@@ -198,6 +199,20 @@ registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
   return update(state, {
     workflow: {$merge: action.payload},
     selected_wf_module: {$set: action.payload.selected_wf_module},
+  });
+});
+
+// LOAD_MODULES
+// Populate/refresh the module library
+export function loadModulesAction() {
+  return {
+    type: LOAD_MODULES,
+    payload: api.getModules()
+  }
+}
+registerReducerFunc(LOAD_MODULES + '_FULFILLED', (state, action) => {
+  return update(state, {
+    modules: {$set: action.payload}
   });
 });
 
@@ -441,7 +456,7 @@ registerReducerFunc(SET_WF_LIBRARY_COLLAPSE + '_PENDING', (state, action) => {
 
 
 
-// -- User --
+// --- User actions ---
 
 
 // GET_CURRENT_USER
@@ -495,7 +510,7 @@ registerReducerFunc(DISCONNECT_CURRENT_USER + '_PENDING', (state, action) => {
   return state;
 });
 
-// -- Workflow Module --
+// --- Workflow Module actions ---
 
 // UPDATE_WF_MODULE
 // Patch a workflow module with new data
@@ -613,7 +628,7 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
   return state;
 });
 
-// -- Parameters --
+// --- Parameter actions ---
 
 // SET_PARAM_VALUE
 
@@ -682,6 +697,8 @@ registerReducerFunc(SET_PARAM_VALUE + '_PENDING', (state, action) => {
   return state;
 });
 
+// --- Data Version actions ---
+
 // SET_DATA_VERSION
 export function setDataVersionAction(wfModuleId, selectedVersion) {
   return {
@@ -714,6 +731,8 @@ registerReducerFunc(SET_DATA_VERSION + '_PENDING', (state, action) => {
   })
 });
 
+// MARK_DATA_VERSIONS_READ
+// Called when the user views a version that has a "new data" alert on it
 export function markDataVersionsReadAction(id, versions) {
   let versions_to_update = [].concat(versions); // will accept one or many
   return {
@@ -786,6 +805,7 @@ registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
   }
   return state;
 });
+
 
 // ---- Reducer ----
 // Main dispatch for actions. Each action mutates the state to a new state, in typical Redux fashion

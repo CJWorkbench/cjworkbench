@@ -1,6 +1,6 @@
 import {addCellEdit, mockAPI } from "./EditCells";
 import {mockStore, mockAPI as mockStoreApi} from './workflow-reducer'
-import { jsonResponseMock } from './utils'
+import { jsonResponseMock } from './test-utils'
 
 describe('Edit Cell actions', () => {
 

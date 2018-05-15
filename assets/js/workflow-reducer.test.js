@@ -1,6 +1,17 @@
 import * as wfr from './workflow-reducer'
+import { jsonResponseMock, genericTestModules } from './test-utils'
 
 const workflowReducer = wfr.workflowReducer;
+
+// Sets a specfic function for reduver mockAPI, with optional json return
+function installMockApiCall(key, response) {
+  let mockFn = response ? jsonResponseMock(response) : jest.fn();
+  const api = {
+    [key] : mockFn
+  };
+  wfr.mockAPI(api);
+  return api;
+}
 
 describe('Reducer actions', () => {
 
@@ -72,6 +83,19 @@ describe('Reducer actions', () => {
     });
     expect(state.workflow).toEqual(test_workflow);
     expect(state.selected_wf_module).toEqual(test_workflow.selected_wf_module);
+  });
+
+   // LOAD_MODULES
+   it('loadModules', () => {
+     let api = installMockApiCall('getModules', genericTestModules);
+     let action = wfr.loadModulesAction();
+     expect(api.getModules).toHaveBeenCalled();
+
+    const state = workflowReducer(test_state, {
+      type: 'LOAD_MODULES_FULFILLED',
+      payload: genericTestModules
+    });
+    expect(state.modules).toEqual(genericTestModules);
   });
 
   // ADD_MODULE

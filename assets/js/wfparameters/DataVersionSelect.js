@@ -1,5 +1,6 @@
 import React from 'react'
 import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import { findIdxByProp } from "../workflow-reducer";
 import dateFormat from 'dateformat'
 import * as Actions from '../workflow-reducer'
 import PropTypes from 'prop-types'
@@ -209,15 +210,11 @@ class DataVersionSelect extends React.Component {
   }
 }
 
-const mapStateToProps = (state, ownProps) => {
-  let wfModuleIdx;
-  for (let i = 0; i < state.workflow.wf_modules.length; i++) {
-    if (state.workflow.wf_modules[i].id === ownProps.wfModuleId) {
-      wfModuleIdx = i;
-      break;
-    }
-  }
+export const mapStateToProps = (state, ownProps) => {
+  let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, ownProps.wfModuleId);
+
   if (typeof wfModuleIdx === 'undefined') return;
+
   return {
     notifications: state.workflow.wf_modules[wfModuleIdx].notifications,
     versions: state.workflow.wf_modules[wfModuleIdx].versions

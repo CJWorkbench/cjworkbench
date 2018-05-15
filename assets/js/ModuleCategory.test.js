@@ -12,7 +12,7 @@
 import React from 'react'
 import ModuleCategory from './ModuleCategory'
 import Module from './Module'
-import { shallowWithStubbedStore } from './test-util'
+import { shallowWithStubbedStore } from './test-utils'
 
 describe('ModuleCategory ', () => {
   let wrapper

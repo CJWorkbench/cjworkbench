@@ -124,6 +124,5 @@ ModuleLibraryClosed.propTypes = {
   setOpenCategory:  PropTypes.func.isRequired,
   libraryOpen:      PropTypes.bool.isRequired,
   isReadOnly:       PropTypes.bool.isRequired,
-  moduleAdded:      PropTypes.func.isRequired,
   openLibrary:      PropTypes.func.isRequired,
 };

@@ -21,7 +21,6 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
       dropModule={[Function]}
       isReadOnly={false}
       libraryOpen={true}
-      moduleAdded={[Function]}
       modules={
         Array [
           Object {

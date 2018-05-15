@@ -1,7 +1,7 @@
 import React from 'react'
 import FileSelect  from './FileSelect'
 import { mount, shallow } from 'enzyme'
-import { jsonResponseMock } from '../utils'
+import { jsonResponseMock } from '../test-utils'
 
 describe('FileSelect', () => {
   let gDriveFileMeta = JSON.stringify({

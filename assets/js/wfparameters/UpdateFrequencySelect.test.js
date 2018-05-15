@@ -1,7 +1,7 @@
 import React from 'react'
 import UpdateFrequencySelect  from './UpdateFrequencySelect'
 import { shallow } from 'enzyme'
-import { okResponseMock } from '../utils'
+import { okResponseMock } from '../test-utils'
 
 
 describe('UpdateFrequencySelect', () => {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import { jsonResponseMock } from "./utils";
+import { jsonResponseMock } from "./test-utils";
 import TableView from './TableView'
 import { mockAddCellEdit, initialRows, preloadRows, deltaRows } from "./TableView";
 import DataGrid from "./DataGrid";

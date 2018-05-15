@@ -33,13 +33,13 @@ describe('WfModule, not read-only mode', () => {
     isLessonHighlight: false,
     isLessonHighlightCollapse: false,
     isLessonHighlightNotes: false,
-  })
+  });
 
   // A mock module that looks like LoadURL
   const wf_module = {
     'id' : 999,
     'notes': [],
-    'is_collapsed': false,
+    'is_collapsed': false,  // false because we render more, so better test
     'parameter_vals': [
       {
         'id': 100,
