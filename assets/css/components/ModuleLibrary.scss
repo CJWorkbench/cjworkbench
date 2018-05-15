@@ -321,6 +321,10 @@
         //category name
         .ML-cat {
           color:$brand-text--dark;
+
+          .category-name {
+            margin-left: 1.5rem;
+          }
         }
       }
 
@@ -332,6 +336,7 @@
 
         .react-autosuggest__section-title {
           color: $brand-text--dark;
+          padding-left: 1.5rem;
         }
 
         .react-autosuggest__suggestion-inner {
