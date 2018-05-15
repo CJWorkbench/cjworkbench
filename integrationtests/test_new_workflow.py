@@ -17,11 +17,14 @@ class TestNewWorkflow(LoggedInIntegrationTest):
         # Module library
         self.assertTrue(b.is_text_present('Add data'))
         self.assertTrue(b.is_text_present('Add data alert'))
-        self.assertTrue(b.is_text_present('IMPORT CUSTOM MODULE'))
 
-        # nav bar
+        # nav bar and context menu
         self.assertTrue(b.is_text_present('Duplicate'))
         self.assertTrue(b.is_text_present('Share'))
+
+        self.assertTrue(b.is_text_present('My Workflows'))
+        self.assertTrue(b.is_text_present('Log Out'))
+        self.assertTrue(b.is_text_present('Import Module'))
 
         # output pane
         self.assertTrue(b.is_text_present('Rows'))

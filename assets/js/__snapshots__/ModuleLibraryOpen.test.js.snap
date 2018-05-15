@@ -94,11 +94,5 @@ exports[`ModuleLibraryOpen  matches snapshot 1`] = `
   <div
     className="ml-divider"
   />
-  <ImportModuleFromGitHub
-    api={Object {}}
-    isReadOnly={false}
-    libraryOpen={true}
-    moduleAdded={[Function]}
-  />
 </div>
 `;

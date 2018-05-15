@@ -1,7 +1,14 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WfHamburgerMenu renders correctly 1`] = `
+exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
 <WfHamburgerMenu
+  api={Object {}}
+  isReadOnly={false}
+  user={
+    Object {
+      "id": 100,
+    }
+  }
   workflowId={1}
 >
   <UncontrolledDropdown>
@@ -54,110 +61,146 @@ exports[`WfHamburgerMenu renders correctly 1`] = `
             role="menu"
             tabIndex="-1"
           >
-            <div>
-              <DropdownItem
-                className="dropdown-menu--item"
-                href="/account/logout"
-                key="5"
-                tag="a"
-                toggle={true}
-              >
-                <a
-                  className="dropdown-menu--item dropdown-item"
-                  href="/account/logout"
-                  onClick={[Function]}
-                  tabIndex="0"
-                >
-                  <span
-                    className="content-3 ml-3"
-                  >
-                    Logout
-                  </span>
-                </a>
-              </DropdownItem>
-            </div>
-          </div>
-        </DropdownMenu>
-      </div>
-    </Dropdown>
-  </UncontrolledDropdown>
-</WfHamburgerMenu>
-`;
-
-exports[`WfHamburgerMenu renders correctly for workflows list page 1`] = `
-<WfHamburgerMenu>
-  <UncontrolledDropdown>
-    <Dropdown
-      isOpen={false}
-      tag="div"
-      toggle={[Function]}
-    >
-      <div
-        className="dropdown"
-      >
-        <DropdownToggle
-          aria-haspopup={true}
-          className="context-button"
-          color="secondary"
-          data-toggle="dropdown"
-          key=".$.0"
-        >
-          <Button
-            aria-expanded={false}
-            aria-haspopup="true"
-            className="context-button"
-            color="secondary"
-            data-toggle="dropdown"
-            onClick={[Function]}
-            tag="button"
-          >
-            <button
-              aria-expanded={false}
-              aria-haspopup="true"
-              className="context-button btn btn-secondary"
-              data-toggle="dropdown"
-              onClick={[Function]}
-              type="button"
+            <DropdownItem
+              className="dropdown-menu--item"
+              href="/workflows"
+              key="1"
+              tag="a"
+              toggle={true}
             >
-              <div
-                className="context-button--icon icon-more"
-              />
-            </button>
-          </Button>
-        </DropdownToggle>
-        <DropdownMenu
-          key=".$.1"
-          right={true}
-          tag="div"
-        >
-          <div
-            aria-hidden={true}
-            className="dropdown-menu dropdown-menu-right"
-            role="menu"
-            tabIndex="-1"
-          >
+              <a
+                className="dropdown-menu--item dropdown-item"
+                href="/workflows"
+                onClick={[Function]}
+                tabIndex="0"
+              >
+                <span
+                  className="content-3 ml-3"
+                >
+                  My Workflows
+                </span>
+              </a>
+            </DropdownItem>
             <div>
               <DropdownItem
-                className="dropdown-menu--item"
-                href="/account/logout"
-                key="5"
-                tag="a"
+                divider={true}
+                key="100"
+                tag="button"
                 toggle={true}
               >
-                <a
+                <div
+                  className="dropdown-divider"
+                  onClick={[Function]}
+                  tabIndex="-1"
+                />
+              </DropdownItem>
+              <DropdownItem
+                className="dropdown-menu--item"
+                key="2"
+                onClick={[Function]}
+                tag="button"
+                toggle={true}
+              >
+                <button
                   className="dropdown-menu--item dropdown-item"
-                  href="/account/logout"
                   onClick={[Function]}
                   tabIndex="0"
+                  type="button"
                 >
                   <span
                     className="content-3 ml-3"
                   >
-                    Logout
+                    Undo
                   </span>
-                </a>
+                </button>
+              </DropdownItem>
+              <DropdownItem
+                className="dropdown-menu--item"
+                key="3"
+                onClick={[Function]}
+                tag="button"
+                toggle={true}
+              >
+                <button
+                  className="dropdown-menu--item dropdown-item"
+                  onClick={[Function]}
+                  tabIndex="0"
+                  type="button"
+                >
+                  <span
+                    className="content-3 ml-3"
+                  >
+                    Redo
+                  </span>
+                </button>
+              </DropdownItem>
+              <DropdownItem
+                divider={true}
+                key="200"
+                tag="button"
+                toggle={true}
+              >
+                <div
+                  className="dropdown-divider"
+                  onClick={[Function]}
+                  tabIndex="-1"
+                />
               </DropdownItem>
             </div>
+            <div>
+              <DropdownItem
+                divider={true}
+                key="100"
+                tag="button"
+                toggle={true}
+              >
+                <div
+                  className="dropdown-divider"
+                  onClick={[Function]}
+                  tabIndex="-1"
+                />
+              </DropdownItem>
+              <DropdownItem
+                className="dropdown-menu--item mb-1 test-export-button"
+                key="4"
+                onClick={[Function]}
+                tag="button"
+                toggle={true}
+              >
+                <button
+                  className="dropdown-menu--item mb-1 test-export-button dropdown-item"
+                  onClick={[Function]}
+                  tabIndex="0"
+                  type="button"
+                >
+                  <span
+                    className="content-3 ml-3"
+                  >
+                    Import Module
+                  </span>
+                </button>
+              </DropdownItem>
+            </div>
+            <DropdownItem
+              className="dropdown-menu--item"
+              href="/account/logout"
+              key="5"
+              tag="a"
+              toggle={true}
+            >
+              <a
+                className="dropdown-menu--item dropdown-item"
+                href="/account/logout"
+                onClick={[Function]}
+                tabIndex="0"
+              >
+                <span
+                  className="content-3 ml-3"
+                >
+                  Log Out
+                </span>
+              </a>
+            </DropdownItem>
           </div>
         </DropdownMenu>
       </div>

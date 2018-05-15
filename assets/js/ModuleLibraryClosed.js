@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap'
 import ModuleCategories from './ModuleCategories';
-import ImportModuleFromGitHub from './ImportModuleFromGitHub';
 import AddNotificationButtonClosed from './AddNotificationButtonClosed';
 
 
@@ -99,13 +98,6 @@ export default class ModuleLibraryClosed extends React.Component {
 
           <AddNotificationButtonClosed
             setOpenCategory={this.props.setOpenCategory}
-            isReadOnly={this.props.isReadOnly}
-          />
-
-          <ImportModuleFromGitHub
-            moduleAdded={this.props.moduleAdded}
-            libraryOpen={false}
-            api={this.props.api}
             isReadOnly={this.props.isReadOnly}
           />
 

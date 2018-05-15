@@ -117,8 +117,6 @@ describe('ModuleLibraryClosed', () => {
     })
 
     it('opens sign-in modal on click below header', () => {
-      const importLink = wrapper.find('ImportModuleFromGitHub');
-      importLink.simulate('click');
       expect(document.querySelector('.test-signin-modal [href="/account/login"]')).toBeDefined()
     })
   })

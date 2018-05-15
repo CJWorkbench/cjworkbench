@@ -343,36 +343,6 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
               </div>
             </AddNotificationButtonClosed>
           </DragSource(AddNotificationButtonClosed)>
-          <ImportModuleFromGitHub
-            api={Object {}}
-            isReadOnly={false}
-            libraryOpen={false}
-            moduleAdded={[Function]}
-          >
-            <div>
-              <div
-                className="closed-ML--category"
-                onClick={[Function]}
-              >
-                <div
-                  className="icon-add"
-                  title="Import From Github"
-                />
-              </div>
-              <Modal
-                autoFocus={true}
-                backdrop={true}
-                backdropTransitionTimeout={150}
-                className="modal-dialog"
-                fade={true}
-                isOpen={false}
-                keyboard={true}
-                modalTransitionTimeout={300}
-                toggle={[Function]}
-                zIndex={1050}
-              />
-            </div>
-          </ImportModuleFromGitHub>
         </div>
       </div>
     </ModuleLibraryClosed>
@@ -723,36 +693,6 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
               </div>
             </AddNotificationButtonClosed>
           </DragSource(AddNotificationButtonClosed)>
-          <ImportModuleFromGitHub
-            api={Object {}}
-            isReadOnly={true}
-            libraryOpen={false}
-            moduleAdded={[Function]}
-          >
-            <div>
-              <div
-                className="closed-ML--category"
-                onClick={[Function]}
-              >
-                <div
-                  className="icon-add"
-                  title="Import From Github"
-                />
-              </div>
-              <Modal
-                autoFocus={true}
-                backdrop={true}
-                backdropTransitionTimeout={150}
-                className="modal-dialog"
-                fade={true}
-                isOpen={false}
-                keyboard={true}
-                modalTransitionTimeout={300}
-                toggle={[Function]}
-                zIndex={1050}
-              />
-            </div>
-          </ImportModuleFromGitHub>
         </div>
       </div>
     </ModuleLibraryClosed>

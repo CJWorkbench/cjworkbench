@@ -16,7 +16,6 @@ export default class ImportModuleFromGitHub extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      modalOpen: false,
       url: '',
       message_type: '',
       message: null
@@ -25,7 +24,6 @@ export default class ImportModuleFromGitHub extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.onKeyPress = this.keyPress.bind(this); // to handle user hitting enter, which then submits
     this.handleResponse = this.handleResponse.bind(this);
-    this.toggleModal = this.toggleModal.bind(this);
   }
 
   keyPress(event) {
@@ -82,15 +80,6 @@ export default class ImportModuleFromGitHub extends React.Component {
     }
   }
 
-  // opens/closes modal, and resets message state
-  toggleModal() {
-    this.setState({
-      modalOpen: !this.state.modalOpen ,
-      message_type: '',
-      message: null
-    });
-  }
-
   render() {
 
     var formContent = null;
@@ -106,7 +95,7 @@ export default class ImportModuleFromGitHub extends React.Component {
           </div>
         footer =
           <div className=" modal-footer">
-              <div onClick={this.toggleModal} className='button-gray action-button'>
+              <div onClick={this.props.closeModal} className='button-gray action-button'>
                 Cancel
               </div>
               <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button ml-3'>
@@ -123,7 +112,7 @@ export default class ImportModuleFromGitHub extends React.Component {
           </div>
         footer =
           <div className=" modal-footer">
-            <div onClick={this.toggleModal} className='button-blue action-button'>
+            <div onClick={this.props.closeModal} className='button-blue action-button'>
               OK
             </div>
           </div>
@@ -131,7 +120,7 @@ export default class ImportModuleFromGitHub extends React.Component {
     } else {
       footer =
         <div className=' modal-footer'>
-          <div onClick={this.toggleModal} className='button-gray action-button mr-4'>
+          <div onClick={this.props.closeModal} className='button-gray action-button mr-4'>
             Cancel
           </div>
           <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button'>
@@ -140,20 +129,10 @@ export default class ImportModuleFromGitHub extends React.Component {
         </div>
     };
 
-    // refactor this
-    var button = (this.props.libraryOpen)
-      ? <div className='import-module-button content-4 t-vl-gray' onClick={this.toggleModal}>
-          <span>IMPORT CUSTOM MODULE</span>
-        </div>
-      : <div className='closed-ML--category' onClick={this.toggleModal}>
-          <div className='icon-add' title='Import From Github'></div>
-        </div>
-
     return (
       <div >
-        {button}
-        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
-          <ModalHeader toggle={this.toggleModal} >
+        <Modal isOpen={true} className='modal-dialog'>
+          <ModalHeader>
             <div className='title-4 t-d-gray'>IMPORT CUSTOM MODULE</div>
           </ModalHeader>
           <ModalBody >
@@ -183,7 +162,6 @@ export default class ImportModuleFromGitHub extends React.Component {
 
 ImportModuleFromGitHub.propTypes = {
   moduleAdded: PropTypes.func.isRequired,
-  libraryOpen: PropTypes.bool.isRequired,
+  closeModal:  PropTypes.func.isRequired,
   api:         PropTypes.object.isRequired,
-  isReadOnly:  PropTypes.bool.isRequired
 };

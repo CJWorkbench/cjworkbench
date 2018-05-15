@@ -34,7 +34,7 @@ export default class EditableWorkflowName extends React.Component {
   }
 
   saveName() {
-    this.props.api.setWfName(this.props.wfId, this.state.value);
+    this.props.api.setWfName(this.props.workflowId, this.state.value);
   }
 
   render() {
@@ -64,7 +64,7 @@ export default class EditableWorkflowName extends React.Component {
 
 EditableWorkflowName.propTypes = {
   value:      PropTypes.string,
-  wfId:       PropTypes.number,
+  workflowId:       PropTypes.number,
   api:        PropTypes.object.isRequired,
   isReadOnly: PropTypes.bool
 };

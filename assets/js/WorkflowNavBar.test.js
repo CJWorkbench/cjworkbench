@@ -15,20 +15,20 @@ describe('WorkflowNavBar', () => {
     owner_name: 'Paula Plagarizer',
     public: false
   };
-  const api = {
-    duplicateWorkflow: jsonResponseMock(mockWorkflowCopy),
-    setWorkflowPublic: okResponseMock()
-  };
+  let api;
 
-  afterEach(() => wrapper.unmount())
-
-  let globalGoToUrl
+  let globalGoToUrl;
   beforeEach(() => {
-    globalGoToUrl = Utils.goToUrl
-    Utils.goToUrl = jest.fn()
+    globalGoToUrl = Utils.goToUrl;
+    Utils.goToUrl = jest.fn();
+    api = {
+      duplicateWorkflow: jsonResponseMock(mockWorkflowCopy),
+      setWorkflowPublic: okResponseMock()
+    };
   })
   afterEach(() => {
     Utils.goToUrl = globalGoToUrl
+    wrapper.unmount();
   })
 
   it('With user logged in, Duplicate button sends user to new copy', (done) => {
@@ -64,10 +64,8 @@ describe('WorkflowNavBar', () => {
     
     // then we wait for promise to resolve
     setImmediate( () => {
-      // no snapshot test here: 
-      //  we have not actually rendered the new workflow copy, just mocked the calls to change url
-      expect(Utils.goToUrl).toHaveBeenCalledWith('/workflows/77')
-      expect(api.duplicateWorkflow).toHaveBeenCalled()
+      expect(Utils.goToUrl).toHaveBeenCalledWith('/workflows/77');
+      expect(api.duplicateWorkflow).toHaveBeenCalled();
       done();
     });
   });
@@ -96,13 +94,8 @@ describe('WorkflowNavBar', () => {
 
     // wait for promise to resolve
     setImmediate( () => {
-      // no snapshot test here: 
-      //  we have not actually rendered the sign in page, just mocked the calls to change url
-    
-      // goToUrl() called once previously
-      expect(Utils.goToUrl).toHaveBeenCalledWith('/account/login')
-      // check that API was NOT called (has one call from last test)
-      expect(api.duplicateWorkflow.mock.calls.length).toBe(1);
+      expect(Utils.goToUrl).toHaveBeenCalledWith('/account/login');
+      expect(api.duplicateWorkflow.mock.calls.length).toBe(0);
       done();
     });
 

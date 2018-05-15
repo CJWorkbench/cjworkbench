@@ -4,13 +4,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
 <WorkflowNavBar
   api={
     Object {
-      "duplicateWorkflow": [MockFunction] {
-        "calls": Array [
-          Array [
-            undefined,
-          ],
-        ],
-      },
+      "duplicateWorkflow": [MockFunction],
       "setWorkflowPublic": [MockFunction],
     }
   }
@@ -42,13 +36,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
         <EditableWorkflowName
           api={
             Object {
-              "duplicateWorkflow": [MockFunction] {
-                "calls": Array [
-                  Array [
-                    undefined,
-                  ],
-                ],
-              },
+              "duplicateWorkflow": [MockFunction],
               "setWorkflowPublic": [MockFunction],
             }
           }
@@ -72,13 +60,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
         <WorkflowMetadata
           api={
             Object {
-              "duplicateWorkflow": [MockFunction] {
-                "calls": Array [
-                  Array [
-                    undefined,
-                  ],
-                ],
-              },
+              "duplicateWorkflow": [MockFunction],
               "setWorkflowPublic": [MockFunction],
             }
           }
@@ -158,13 +140,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
         <WfHamburgerMenu
           api={
             Object {
-              "duplicateWorkflow": [MockFunction] {
-                "calls": Array [
-                  Array [
-                    undefined,
-                  ],
-                ],
-              },
+              "duplicateWorkflow": [MockFunction],
               "setWorkflowPublic": [MockFunction],
             }
           }
@@ -174,7 +150,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
               "id": 99,
             }
           }
-          wfId={808}
+          workflowId={808}
         >
           <UncontrolledDropdown>
             <Dropdown
@@ -314,26 +290,58 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                     </div>
                     <div>
                       <DropdownItem
-                        className="dropdown-menu--item"
-                        href="/account/logout"
-                        key="5"
-                        tag="a"
+                        divider={true}
+                        key="100"
+                        tag="button"
                         toggle={true}
                       >
-                        <a
-                          className="dropdown-menu--item dropdown-item"
-                          href="/account/logout"
+                        <div
+                          className="dropdown-divider"
+                          onClick={[Function]}
+                          tabIndex="-1"
+                        />
+                      </DropdownItem>
+                      <DropdownItem
+                        className="dropdown-menu--item mb-1 test-export-button"
+                        key="4"
+                        onClick={[Function]}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <button
+                          className="dropdown-menu--item mb-1 test-export-button dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
+                          type="button"
                         >
                           <span
                             className="content-3 ml-3"
                           >
-                            Logout
+                            Import Module
                           </span>
-                        </a>
+                        </button>
                       </DropdownItem>
                     </div>
+                    <DropdownItem
+                      className="dropdown-menu--item"
+                      href="/account/logout"
+                      key="5"
+                      tag="a"
+                      toggle={true}
+                    >
+                      <a
+                        className="dropdown-menu--item dropdown-item"
+                        href="/account/logout"
+                        onClick={[Function]}
+                        tabIndex="0"
+                      >
+                        <span
+                          className="content-3 ml-3"
+                        >
+                          Log Out
+                        </span>
+                      </a>
+                    </DropdownItem>
                   </div>
                 </DropdownMenu>
               </div>
@@ -350,13 +358,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
 <WorkflowNavBar
   api={
     Object {
-      "duplicateWorkflow": [MockFunction] {
-        "calls": Array [
-          Array [
-            undefined,
-          ],
-        ],
-      },
+      "duplicateWorkflow": [MockFunction],
       "setWorkflowPublic": [MockFunction],
     }
   }
@@ -388,13 +390,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
         <EditableWorkflowName
           api={
             Object {
-              "duplicateWorkflow": [MockFunction] {
-                "calls": Array [
-                  Array [
-                    undefined,
-                  ],
-                ],
-              },
+              "duplicateWorkflow": [MockFunction],
               "setWorkflowPublic": [MockFunction],
             }
           }
@@ -418,13 +414,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
         <WorkflowMetadata
           api={
             Object {
-              "duplicateWorkflow": [MockFunction] {
-                "calls": Array [
-                  Array [
-                    undefined,
-                  ],
-                ],
-              },
+              "duplicateWorkflow": [MockFunction],
               "setWorkflowPublic": [MockFunction],
             }
           }
@@ -504,13 +494,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
         <WfHamburgerMenu
           api={
             Object {
-              "duplicateWorkflow": [MockFunction] {
-                "calls": Array [
-                  Array [
-                    undefined,
-                  ],
-                ],
-              },
+              "duplicateWorkflow": [MockFunction],
               "setWorkflowPublic": [MockFunction],
             }
           }
@@ -520,7 +504,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
               "id": 47,
             }
           }
-          wfId={808}
+          workflowId={808}
         >
           <UncontrolledDropdown>
             <Dropdown
@@ -660,26 +644,58 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
                     </div>
                     <div>
                       <DropdownItem
-                        className="dropdown-menu--item"
-                        href="/account/logout"
-                        key="5"
-                        tag="a"
+                        divider={true}
+                        key="100"
+                        tag="button"
                         toggle={true}
                       >
-                        <a
-                          className="dropdown-menu--item dropdown-item"
-                          href="/account/logout"
+                        <div
+                          className="dropdown-divider"
+                          onClick={[Function]}
+                          tabIndex="-1"
+                        />
+                      </DropdownItem>
+                      <DropdownItem
+                        className="dropdown-menu--item mb-1 test-export-button"
+                        key="4"
+                        onClick={[Function]}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <button
+                          className="dropdown-menu--item mb-1 test-export-button dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
+                          type="button"
                         >
                           <span
                             className="content-3 ml-3"
                           >
-                            Logout
+                            Import Module
                           </span>
-                        </a>
+                        </button>
                       </DropdownItem>
                     </div>
+                    <DropdownItem
+                      className="dropdown-menu--item"
+                      href="/account/logout"
+                      key="5"
+                      tag="a"
+                      toggle={true}
+                    >
+                      <a
+                        className="dropdown-menu--item dropdown-item"
+                        href="/account/logout"
+                        onClick={[Function]}
+                        tabIndex="0"
+                      >
+                        <span
+                          className="content-3 ml-3"
+                        >
+                          Log Out
+                        </span>
+                      </a>
+                    </DropdownItem>
                   </div>
                 </DropdownMenu>
               </div>
@@ -696,13 +712,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
 <WorkflowNavBar
   api={
     Object {
-      "duplicateWorkflow": [MockFunction] {
-        "calls": Array [
-          Array [
-            undefined,
-          ],
-        ],
-      },
+      "duplicateWorkflow": [MockFunction],
       "setWorkflowPublic": [MockFunction],
     }
   }
@@ -729,13 +739,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
         <EditableWorkflowName
           api={
             Object {
-              "duplicateWorkflow": [MockFunction] {
-                "calls": Array [
-                  Array [
-                    undefined,
-                  ],
-                ],
-              },
+              "duplicateWorkflow": [MockFunction],
               "setWorkflowPublic": [MockFunction],
             }
           }
@@ -759,13 +763,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
         <WorkflowMetadata
           api={
             Object {
-              "duplicateWorkflow": [MockFunction] {
-                "calls": Array [
-                  Array [
-                    undefined,
-                  ],
-                ],
-              },
+              "duplicateWorkflow": [MockFunction],
               "setWorkflowPublic": [MockFunction],
             }
           }
@@ -1054,26 +1052,58 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                   >
                     <div>
                       <DropdownItem
-                        className="dropdown-menu--item"
-                        href="/account/logout"
-                        key="5"
-                        tag="a"
+                        divider={true}
+                        key="100"
+                        tag="button"
                         toggle={true}
                       >
-                        <a
-                          className="dropdown-menu--item dropdown-item"
-                          href="/account/logout"
+                        <div
+                          className="dropdown-divider"
+                          onClick={[Function]}
+                          tabIndex="-1"
+                        />
+                      </DropdownItem>
+                      <DropdownItem
+                        className="dropdown-menu--item mb-1 test-export-button"
+                        key="4"
+                        onClick={[Function]}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <button
+                          className="dropdown-menu--item mb-1 test-export-button dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
+                          type="button"
                         >
                           <span
                             className="content-3 ml-3"
                           >
-                            Logout
+                            Import Module
                           </span>
-                        </a>
+                        </button>
                       </DropdownItem>
                     </div>
+                    <DropdownItem
+                      className="dropdown-menu--item"
+                      href="/account/logout"
+                      key="5"
+                      tag="a"
+                      toggle={true}
+                    >
+                      <a
+                        className="dropdown-menu--item dropdown-item"
+                        href="/account/logout"
+                        onClick={[Function]}
+                        tabIndex="0"
+                      >
+                        <span
+                          className="content-3 ml-3"
+                        >
+                          Log Out
+                        </span>
+                      </a>
+                    </DropdownItem>
                   </div>
                 </DropdownMenu>
               </div>

@@ -192,7 +192,7 @@ export default class WorkflowNavBar extends React.Component {
     var contextMenu;
     if (this.props.loggedInUser) {
       contextMenu = <WfHamburgerMenu
-          wfId={this.props.workflow.id}
+          workflowId={this.props.workflow.id}
           api={this.props.api}
           isReadOnly={this.props.isReadOnly}
           user={this.props.loggedInUser}

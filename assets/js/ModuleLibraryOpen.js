@@ -8,7 +8,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleCategories from './ModuleCategories';
-import ImportModuleFromGitHub from './ImportModuleFromGitHub';
 import ModuleSearch from './ModuleSearch'
 import AddNotificationButtonOpen from './AddNotificationButtonOpen'
 
@@ -61,12 +60,6 @@ export default class ModuleLibraryOpen extends React.Component {
         <AddNotificationButtonOpen/>
         <div className="ml-divider"></div>
 
-        <ImportModuleFromGitHub
-          moduleAdded={this.props.moduleAdded}
-          libraryOpen={true}
-          api={this.props.api}
-          isReadOnly={this.props.isReadOnly}
-          />
       </div>
     )
   }
