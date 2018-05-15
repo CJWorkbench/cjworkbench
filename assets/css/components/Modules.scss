@@ -248,6 +248,10 @@
   margin-top: 0.8rem;
 }
 
+.wf-parameter.lesson-highlight {
+  outline: 3px solid $brand-pink;
+}
+
 /* Margin for a line of 1 parameters, part of a group */
 .param-line-margin{
   margin-bottom:1rem;

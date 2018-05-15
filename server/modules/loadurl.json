@@ -10,9 +10,9 @@
     {
       "name": "",
       "id_name" : "url",
-      "type": "string",
+      "type": "url",
       "default": "",
-      "placeholder":"http://"
+      "placeholder":"http://…"
     },
     {
       "name": "Update",

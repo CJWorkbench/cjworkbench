@@ -18,7 +18,8 @@ import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
 import { csrfToken } from './utils'
 import { store, setWfModuleStatusAction } from './workflow-reducer'
-
+import lessonSelector from './lessons/lessonSelector'
+import { connect } from 'react-redux'
 
 const PRESSED_ENTER = true;
 const DIDNT_PRESS_ENTER = false;
@@ -33,7 +34,7 @@ class TextOrNothing extends React.Component {
   }
 }
 
-export default class WfParameter extends React.Component {
+export class WfParameter extends React.Component {
 
   constructor(props) {
     super(props)
@@ -47,7 +48,9 @@ export default class WfParameter extends React.Component {
   }
 
   get paramClassName() {
-    const nameParts = this.props.p.parameter_spec.id_name.split('|')[0].split('.');
+    const nameParts = this.props.p.parameter_spec.id_name.split('|')[0].split('.')
+    nameParts.push('wf-parameter')
+    if (this.props.isLessonHighlight) nameParts.push('lesson-highlight')
     return nameParts.slice(1).join(' ')
   }
 
@@ -84,7 +87,7 @@ export default class WfParameter extends React.Component {
       this.paramChanged(e.target.checked, DIDNT_PRESS_ENTER)
     }
 
-    if (type == 'string' && !this.props.isReadOnly) {
+    if ((type == 'string' || type == 'url') && !this.props.isReadOnly) {
       this.stringRef.select();
     }
   }
@@ -356,6 +359,24 @@ export default class WfParameter extends React.Component {
           </div>
         );
 
+      case 'url':
+        return (
+          <div className={'parameter-margin ' + this.paramClassName}>
+            <div className='label-margin t-d-gray content-3'>{name}</div>
+            <input
+              type="url"
+              name={id_name}
+              isReadOnly={this.props.isReadOnly}
+              onBlur={this.blur}
+              onKeyPress={this.keypress}
+              onClick={this.click}
+              defaultValue={this.props.p.value || ''}
+              placeholder={this.props.p.parameter_spec.placeholder || ''}
+              ref={ el => this.stringRef = el}
+              />
+          </div>
+        )
+
       case 'integer':
       case 'float':
         return (
@@ -443,7 +464,6 @@ export default class WfParameter extends React.Component {
               revision={this.props.revision} />
           </div> );
 
-
       case 'custom':
         return this.render_custom_parameter();
 
@@ -461,6 +481,7 @@ WfParameter.propTypes = {
     }).isRequired,
   }).isRequired,
   moduleName:       PropTypes.string.isRequired,
+  isLessonHighlight: PropTypes.bool.isRequired,
   wf_module_id:     PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,
   loggedInUser:     PropTypes.object,             // in read-only there is no user logged in
@@ -471,4 +492,17 @@ WfParameter.propTypes = {
   setParamText:     PropTypes.func.isRequired,
   startDrag:        PropTypes.func.isRequired,
   stopDrag:         PropTypes.func.isRequired,
-};
+}
+
+function mapStateToProps(state, ownProps) {
+  const { testHighlight } = lessonSelector(state)
+  const moduleName = ownProps.moduleName
+  const name = ownProps.p.parameter_spec.id_name
+  return {
+    isLessonHighlight: testHighlight({ type: 'WfParameter', moduleName, name }),
+  }
+}
+
+export default connect(
+  mapStateToProps
+)(WfParameter)
