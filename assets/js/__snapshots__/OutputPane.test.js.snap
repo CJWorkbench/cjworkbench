@@ -911,12 +911,7 @@ exports[`OutputPane Fetches and renders 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             />
                                           </div>
                                         </HeaderRenderer>
@@ -1047,12 +1042,7 @@ exports[`OutputPane Fetches and renders 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             >
                                                
                                             </div>
@@ -1185,12 +1175,7 @@ exports[`OutputPane Fetches and renders 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             >
                                                  
                                             </div>
@@ -1323,12 +1308,7 @@ exports[`OutputPane Fetches and renders 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             >
                                                   
                                             </div>
@@ -7037,12 +7017,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             />
                                           </div>
                                         </HeaderRenderer>
@@ -7173,12 +7148,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             >
                                                
                                             </div>
@@ -7311,12 +7281,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             >
                                                  
                                             </div>
@@ -7449,12 +7414,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             >
                                                   
                                             </div>
@@ -13106,12 +13066,7 @@ exports[`OutputPane Renders when no module id 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             />
                                           </div>
                                         </HeaderRenderer>
@@ -13242,12 +13197,7 @@ exports[`OutputPane Renders when no module id 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             >
                                                
                                             </div>
@@ -13380,12 +13330,7 @@ exports[`OutputPane Renders when no module id 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             >
                                                  
                                             </div>
@@ -13518,12 +13463,7 @@ exports[`OutputPane Renders when no module id 1`] = `
                                             onMouseLeave={[Function]}
                                           >
                                             <div
-                                              style={
-                                                Object {
-                                                  "height": "24px",
-                                                  "width": "100%",
-                                                }
-                                              }
+                                              className="sort-container"
                                             >
                                                   
                                             </div>

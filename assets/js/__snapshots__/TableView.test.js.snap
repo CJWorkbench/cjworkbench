@@ -795,12 +795,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                     onMouseLeave={[Function]}
                                   >
                                     <div
-                                      style={
-                                        Object {
-                                          "height": "24px",
-                                          "width": "100%",
-                                        }
-                                      }
+                                      className="sort-container"
                                     />
                                   </div>
                                 </HeaderRenderer>
@@ -931,12 +926,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                     onMouseLeave={[Function]}
                                   >
                                     <div
-                                      style={
-                                        Object {
-                                          "height": "24px",
-                                          "width": "100%",
-                                        }
-                                      }
+                                      className="sort-container"
                                     >
                                        
                                     </div>
@@ -1069,12 +1059,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                     onMouseLeave={[Function]}
                                   >
                                     <div
-                                      style={
-                                        Object {
-                                          "height": "24px",
-                                          "width": "100%",
-                                        }
-                                      }
+                                      className="sort-container"
                                     >
                                          
                                     </div>
@@ -1207,12 +1192,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                     onMouseLeave={[Function]}
                                   >
                                     <div
-                                      style={
-                                        Object {
-                                          "height": "24px",
-                                          "width": "100%",
-                                        }
-                                      }
+                                      className="sort-container"
                                     >
                                           
                                     </div>
@@ -6759,12 +6739,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                     onMouseLeave={[Function]}
                                   >
                                     <div
-                                      style={
-                                        Object {
-                                          "height": "24px",
-                                          "width": "100%",
-                                        }
-                                      }
+                                      className="sort-container"
                                     />
                                   </div>
                                 </HeaderRenderer>
@@ -6895,12 +6870,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                     onMouseLeave={[Function]}
                                   >
                                     <div
-                                      style={
-                                        Object {
-                                          "height": "24px",
-                                          "width": "100%",
-                                        }
-                                      }
+                                      className="sort-container"
                                     >
                                        
                                     </div>
@@ -7033,12 +7003,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                     onMouseLeave={[Function]}
                                   >
                                     <div
-                                      style={
-                                        Object {
-                                          "height": "24px",
-                                          "width": "100%",
-                                        }
-                                      }
+                                      className="sort-container"
                                     >
                                          
                                     </div>
@@ -7171,12 +7136,7 @@ exports[`TableView Fetches, renders, and edits cells 1`] = `
                                     onMouseLeave={[Function]}
                                   >
                                     <div
-                                      style={
-                                        Object {
-                                          "height": "24px",
-                                          "width": "100%",
-                                        }
-                                      }
+                                      className="sort-container"
                                     >
                                           
                                     </div>
