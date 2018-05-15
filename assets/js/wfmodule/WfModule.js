@@ -17,7 +17,7 @@ import PropTypes from 'prop-types'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 import { sortableWfModule } from "./WfModuleDragDropConfig";
 import { connect } from 'react-redux'
-import { matchLessonHighlight } from '../util/LessonHighlight'
+import lessonSelector from '../lessons/lessonSelector'
 
 // Libraries to provide a collapsible table view
 import { Collapse } from 'reactstrap';
@@ -371,22 +371,13 @@ function propsToModuleName(props) {
   )
 }
 
-export function mapStateToProps(state, ownProps) {
-  const highlight = state.lesson_highlight || []
+function mapStateToProps(state, ownProps) {
+  const { testHighlight } = lessonSelector(state)
   const moduleName = propsToModuleName(ownProps)
   return {
-    isLessonHighlight: matchLessonHighlight(
-      highlight,
-      { type: 'WfModule', moduleName: moduleName }
-    ),
-    isLessonHighlightCollapse: matchLessonHighlight(
-      highlight,
-      { type: 'WfModuleContextButton', moduleName: moduleName, button: 'collapse' }
-    ),
-    isLessonHighlightNotes: matchLessonHighlight(
-      highlight,
-      { type: 'WfModuleContextButton', moduleName: moduleName, button: 'notes' }
-    ),
+    isLessonHighlight: testHighlight({ type: 'WfModule', moduleName }),
+    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', moduleName }),
+    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', moduleName }),
   }
 }
 

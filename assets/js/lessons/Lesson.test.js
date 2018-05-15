@@ -1,5 +1,5 @@
 import React from 'react'
-import ConnectedLesson, { Lesson } from './Lesson'
+import { Lesson } from './Lesson'
 import LessonSection from './LessonSection'
 import { mount, shallow } from 'enzyme'
 import configureStore from 'redux-mock-store'
@@ -17,38 +17,41 @@ describe('Lesson', () => {
         title: 'Section One',
         html: '<p>Section One HTML</p>',
         steps: [
-          { html: 'Step One-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-          { html: 'Step One-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' },
+          { html: 'Step One-Ay' },
+          { html: 'Step One-<strong>Bee</strong>' },
         ],
       },
       {
         title: 'Section Two',
         html: '<p>Section Two HTML</p>',
         steps: [
-          { html: 'Step Two-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-          { html: 'Step Two-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' },
+          { html: 'Step Two-Ay' },
+          { html: 'Step Two-<strong>Bee</strong>' },
         ],
       },
       {
         title: 'Last Section',
         html: '<p>Section Three HTML</p>',
         steps: [
-          { html: 'Step Three-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-          { html: 'Step Three-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' },
+          { html: 'Step Three-Ay' },
+          { html: 'Step Three-<strong>Bee</strong>' },
         ],
       },
     ],
   }
 
+  const navProps = {
+    activeSectionIndex: 0,
+    activeStepIndex: 0,
+  }
+
+  function wrapper(extraProps) {
+    return shallow(
+      <Lesson {...lesson} {...navProps} {...(extraProps || {})} />
+    )
+  }
+
   describe('shallow', () => {
-    const wrapper = () => {
-      const setLessonHighlight = jest.fn()
-      return shallow(
-        <Lesson {...lesson}
-          setLessonHighlight={setLessonHighlight}
-          />
-      )
-    }
 
     it('renders a title', () => {
       expect(wrapper().find('h1').text()).toEqual('Lesson Title')
@@ -62,30 +65,35 @@ describe('Lesson', () => {
       expect(wrapper().find(LessonSection)).toHaveLength(3)
     })
 
-    it('sets the first Lesson active', () => {
-      expect(wrapper().find(LessonSection).map(s => s.props().active)).toEqual([ true, false, false ])
+    it('sets LessonNav activeSectionIndex', () => {
+      const w = wrapper({ activeSectionIndex: 1 })
+      const nav = w.find('LessonNav')
+    })
+
+    it('sets LessonSection activeSectionIndex and activeStepIndex', () => {
+      const w1 = wrapper({ activeSectionIndex: 1, activeStepIndex: 2 })
+      expect(w1.find(LessonSection).map(s => s.prop('activeSectionIndex'))).toEqual([ 1, 1, 1 ])
+      expect(w1.find(LessonSection).map(s => s.prop('activeStepIndex'))).toEqual([ 2, 2, 2 ])
+    })
+
+    it('defaults to currentSectionIndex=0', () => {
+      expect(wrapper().find('LessonNav').prop('currentSectionIndex')).toBe(0)
     })
   })
 
   describe('navigation', () => {
-    // integration-test-y: this tests that Lesson, LessonNav and LessonSection
-    // all work together to track the active section.
-
-    let store
-    const wrapper = () => {
-      store = configureStore()({ lesson_highlight: [] })
+    // integration-test-y: this tests that Lesson and LessonNav play nice
+    function wrapper(extraProps) {
       return mount(
-        <Provider store={store}>
-          <ConnectedLesson {...lesson} />
-        </Provider>
+        <Lesson {...lesson} {...navProps} {...(extraProps || {})} />
       )
     }
 
     it('shows "Next" and an unclickable "Previous"', () => {
       const w = wrapper()
       expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(1)
-      expect(w.find('footer .active').text()).toEqual('1 of 3')
-      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'active', 'inactive', 'inactive' ])
+      expect(w.find('footer .current-and-total').text()).toEqual('1 of 3')
+      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'current', 'not-current', 'not-current' ])
       expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(0)
     })
 
@@ -93,8 +101,8 @@ describe('Lesson', () => {
       const w = wrapper()
       w.find('footer button[name="Next"]').simulate('click')
       expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(0)
-      expect(w.find('footer .active').text()).toEqual('2 of 3')
-      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'inactive', 'active', 'inactive' ])
+      expect(w.find('footer .current-and-total').text()).toEqual('2 of 3')
+      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'not-current', 'current', 'not-current' ])
       expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(0)
     })
 
@@ -102,16 +110,9 @@ describe('Lesson', () => {
       const w = wrapper()
       w.find('footer button[name="Next"]').simulate('click').simulate('click')
       expect(w.find('footer button[name="Previous"][disabled=true]')).toHaveLength(0)
-      expect(w.find('footer .active').text()).toEqual('3 of 3')
-      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'inactive', 'inactive', 'active' ])
+      expect(w.find('footer .current-and-total').text()).toEqual('3 of 3')
+      expect(w.find('section').map(n => n.prop('className'))).toEqual([ 'not-current', 'not-current', 'current' ])
       expect(w.find('footer button[name="Next"][disabled=true]')).toHaveLength(1)
-    })
-
-    it('dispatches store.setLessonHighlight', () => {
-      const w = wrapper()
-      expect(store.getActions()).toEqual([
-        { type: 'SET_LESSON_HIGHLIGHT', payload: [ { type: 'EditableNotes' } ] },
-      ])
     })
   })
 })

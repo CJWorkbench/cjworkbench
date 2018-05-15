@@ -1,59 +1,70 @@
 import React from 'react'
-import ConnectedLessionSection, { LessonSection } from './LessonSection'
+import LessonSection from './LessonSection'
 import { mount, shallow } from 'enzyme'
 
 describe('LessonSection', () => {
+  const commonProps = {
+    active: true,
+    title: 'Section One',
+    html: '<p>Section One HTML</p>',
+    steps: [
+      { html: 'Step One-Ay' },
+      { html: 'Step One-<strong>Bee</strong>' },
+      { html: 'Step One-<strong>See?</strong>' },
+    ],
+    setLessonHighlight: jest.fn(),
+    index: 1,
+    isCurrent: true,
+    activeStepIndex: 2,
+    activeSectionIndex: 1,
+  }
 
-  let commonProps
-  beforeEach(() => {
-    commonProps = {
-      active: true,
-      title: 'Section One',
-      html: '<p>Section One HTML</p>',
-      steps: [
-        { html: 'Step One-Ay', highlight: [{"type":"EditableNotes"}], testJs: 'return true' },
-        { html: 'Step One-<strong>Bee</strong>', highlight: [{"type":"ModuleSearch"}], testJs: 'return false' },
-      ],
-      setLessonHighlight: jest.fn(),
-      activeStepIndex: 1,
-    }
-  })
+  function wrapper(extraProps) {
+    return shallow(<LessonSection {...commonProps} {...(extraProps || {})} />)
+  }
 
   it('renders a title', () => {
-    const wrapper = shallow(<LessonSection {...commonProps} />)
-    expect(wrapper.find('h2').text()).toEqual('Section One')
+    expect(wrapper().find('h2').text()).toEqual('Section One')
+  })
+
+  it('renders .not-current when !isCurrent', () => {
+    expect(wrapper({ isCurrent: false }).prop('className')).toMatch(/\bnot-current\b/)
   })
 
   it('renders the description HTML', () => {
-    const wrapper = shallow(<LessonSection {...commonProps} />)
-    expect(wrapper.find('.description').html()).toEqual('<div class="description lesson-content--1"><p>Section One HTML</p></div>')
+    expect(wrapper().find('.description').html()).toEqual('<div class="description lesson-content--1"><p>Section One HTML</p></div>')
   })
 
   it('renders steps', () => {
-    const wrapper = shallow(<LessonSection {...commonProps} />)
-    expect(wrapper.find('h3.instructions')).toHaveLength(1)
-    expect(wrapper.find('ol.steps')).toHaveLength(1)
-    expect(wrapper.find('LessonStep')).toHaveLength(2)
+    const w = wrapper()
+    expect(w.find('h3.instructions')).toHaveLength(1)
+    expect(w.find('ol.steps')).toHaveLength(1)
+    expect(w.find('LessonStep')).toHaveLength(3)
   })
 
-  it('does not render a zero steps', () => {
-    const wrapper = shallow(<LessonSection {...commonProps} steps={[]} />)
-    expect(wrapper.find('h3.instructions')).toHaveLength(0)
-    expect(wrapper.find('ol.steps')).toHaveLength(0)
+  it('renders steps as FUTURE when index<activeStepIndex', () => {
+    const w = wrapper({ index: 1, activeSectionIndex: 0, activeStepIndex: 1 })
+    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual([ 'future', 'future', 'future' ])
   })
 
-  it('runs setLessonHighlight when active', () => {
-    const wrapper = shallow(<LessonSection {...commonProps} active={true} activeStepIndex={1} />)
-    expect(commonProps.setLessonHighlight).toHaveBeenCalledWith([{"type":"ModuleSearch"}])
+  it('renders steps as DONE when index>activeStepIndex', () => {
+    const w = wrapper({ index: 1, activeSectionIndex: 2, activeStepIndex: 1 })
+    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual([ 'done', 'done', 'done' ])
   })
 
-  it('runs setLessonHighlight([]) when active without active steps', () => {
-    const wrapper = shallow(<LessonSection {...commonProps} active={true} activeStepIndex={null} />)
-    expect(commonProps.setLessonHighlight).toHaveBeenCalledWith([])
+  it('renders steps as FUTURE, ACTIVE and DONE when index==activeStepIndex', () => {
+    const w = wrapper({ index: 1, activeSectionIndex: 1, activeStepIndex: 1 })
+    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual([ 'done', 'active', 'future' ])
   })
 
-  it('does not run setLessonHighlight when inactive', () => {
-    const wrapper = shallow(<LessonSection {...commonProps} active={false} />)
-    expect(commonProps.setLessonHighlight).not.toHaveBeenCalled()
+  it('renders steps as DONE when activeSectionIndex === null', () => {
+    const w = wrapper({ index: 1, activeSectionIndex: null, activeStepIndex: null })
+    expect(w.find('LessonStep').map(s => s.prop('status'))).toEqual([ 'done', 'done', 'done' ])
+  })
+
+  it('does not render zero steps', () => {
+    const w = wrapper({ steps: [] })
+    expect(w.find('h3.instructions')).toHaveLength(0)
+    expect(w.find('ol.steps')).toHaveLength(0)
   })
 })

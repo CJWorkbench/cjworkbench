@@ -5,6 +5,7 @@
  * -Read-only version will collapse parent category on click
  *
  */
+jest.mock('./lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
 
 import React from 'react'
 import ConnectedModule, { Module } from './Module'
@@ -13,6 +14,7 @@ import HTML5Backend from 'react-dnd-html5-backend'
 import { DragDropContextProvider } from 'react-dnd'
 import { Provider } from 'react-redux'
 import { createStore } from 'redux'
+import lessonSelector from './lessons/lessonSelector'
 
 describe('Module', () => {
   let wrapper
@@ -72,17 +74,26 @@ describe('Module', () => {
 
   describe('with redux', () => {
     let store
+    let nonce = 0
 
-    function highlight(v) {
-      store.dispatch({ type: 'x', payload: v })
+    function highlight(name) {
+      lessonSelector.mockReturnValue({
+        testHighlight: test => test.type === 'MlModule' && test.name === name
+      })
+
+      // trigger a change
+      store.dispatch({ type: 'whatever', payload: ++nonce })
+      if (wrapper !== null) wrapper.update()
     }
 
     beforeEach(() => {
-      store = createStore(
-        // reducer makes every action reset state.lesson_highlight
-        (_, action) => ({ lesson_highlight: action.payload }),
-        { lesson_highlight: [] }
-      )
+      // Store just needs to change, to trigger mapStateToProps. We don't care
+      // about its value
+      store = createStore((_, action) => action.payload)
+
+      lessonSelector.mockReset()
+      wrapper = null // highlight(null) will test it
+      highlight(null)
 
       wrapper = mount(
         <Provider store={store}>
@@ -98,18 +109,15 @@ describe('Module', () => {
       expect(wrapper.find('.lesson-highlight')).toHaveLength(0)
 
       // Highlight something else
-      highlight([ { type: 'ModuleSearch' } ])
-      wrapper.update()
+      highlight(null)
       expect(wrapper.find('.lesson-highlight')).toHaveLength(0)
 
       // Highlight some other Module
-      highlight([ { type: 'MlModule', name: 'Unsweet Module' } ])
-      wrapper.update()
+      highlight('Unsweet Module')
       expect(wrapper.find('.lesson-highlight')).toHaveLength(0)
 
       // Highlight this Module
-      highlight([ { type: 'MlModule', name: 'Sweet Module' } ])
-      wrapper.update()
+      highlight('Sweet Module')
       expect(wrapper.find('.lesson-highlight')).toHaveLength(1)
     })
   })

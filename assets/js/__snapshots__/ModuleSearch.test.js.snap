@@ -2,9 +2,9 @@
 
 exports[`ModuleSearch most tests Renders search bar 1`] = `
 <ModuleSearch
-  addModule={[Function]}
+  addModule={[MockFunction]}
   isLessonHighlight={false}
-  lessonHighlightModuleNames={Array []}
+  isLessonHighlightForModuleName={[MockFunction]}
   modules={
     Array [
       Object {
@@ -171,9 +171,9 @@ exports[`ModuleSearch most tests Renders search bar 1`] = `
 
 exports[`ModuleSearch most tests finds a suggestion matching search input 1`] = `
 <ModuleSearch
-  addModule={[Function]}
+  addModule={[MockFunction]}
   isLessonHighlight={false}
-  lessonHighlightModuleNames={Array []}
+  isLessonHighlightForModuleName={[MockFunction]}
   modules={
     Array [
       Object {

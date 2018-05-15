@@ -272,20 +272,6 @@ registerReducerFunc(REORDER_WFMODULES + '_PENDING', (state, action) => {
   });
 });
 
-// SET_LESSON_HIGHLIGHT
-// Sets the thing the lesson wants us to highlight
-export function setLessonHighlight(lessonHighlight) {
-  return {
-    type: SET_LESSON_HIGHLIGHT,
-    payload: lessonHighlight,
-  }
-}
-registerReducerFunc(SET_LESSON_HIGHLIGHT, (state, action) => {
-  return update(state, {
-    lesson_highlight: { $set: action.payload },
-  })
-})
-
 // ADD_MODULE
 export function addModuleAction(moduleId, insertBefore, placeholder) {
   let nonce = generateNonce(moduleId);
