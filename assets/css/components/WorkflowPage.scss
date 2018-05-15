@@ -8,85 +8,87 @@
   min-height: 100vh;
   position: fixed;
   width: 100%;
-}
 
-.workflows-page {
-  background-color: $Vlight-gray;
-  padding-bottom: 20em;
-}
 
-/* Contains Navbar, Modulestack, and Outputpane */
-.workflow-container {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
+  .workflows-page {
+    background-color: $Vlight-gray;
+    padding-bottom: 20em;
+  }
 
-/* Contains Modulestack and Outputpane */
-.workflow-columns {
-  flex: 1 1 auto;
-  display: flex;
-  flex-direction: row;
-  min-height:100vh;
-  background-color: #E9EBEE;
-}
+  /* Contains Navbar, Modulestack, and Outputpane */
+  .workflow-container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
 
-.workflow-root.in-lesson .workflow-columns {
-  border-left: 1px solid $dark-accent--soft;
-}
+  /* Contains Modulestack and Outputpane */
+  .workflow-columns {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: row;
+    min-height:100vh;
+    background-color: $WF-background;
+  }
 
-/* Module Stack */
-.modulestack {
-  flex: 0 0 30rem;
-  background-color: #E9EBEE;
-  overflow: scroll;
-  height:100vh;
-  position: relative;
-}
+  .workflow-root.in-lesson .workflow-columns {
+    border-left: 1px solid $dark-accent--soft;
+  }
 
-.modulestack-list {
-  min-height:100%;
-  width: 100%;
-  padding-bottom: 30rem;
-  padding-top: 1.5rem;
-}
-.modulestack-list.dragging {
-  background: rgba(118,155,176,0.15);
-}
-.modulestack-empty {
-  cursor: default;
-  width: 27rem;
-  margin: 1.5rem;
-  padding: 7rem 0;
-  border: 4px dashed $brand-orange;
-  opacity: 0.6;
-  height:20rem;
-}
+  /* Module Stack */
+  .modulestack {
+    flex: 0 0 30rem;
+    background-color: $WF-background;
+    overflow: scroll;
+    height:100vh;
+    position: relative;
+  }
 
-.overlapping .modulestack.focus {
-  z-index: 2;
-  box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
-}
+  .modulestack-list {
+    min-height:100%;
+    width: 100%;
+    padding-bottom: 30rem;
+    padding-top: 1.5rem;
+  }
+  .modulestack-list.dragging {
+    background: rgba(118,155,176,0.15);
+  }
+  .modulestack-empty {
+    cursor: default;
+    width: 27rem;
+    margin: 1.5rem;
+    padding: 7rem 0;
+    border: 4px dashed $brand-orange;
+    opacity: 1;
+    height:20rem;
+  }
 
-// contain iframe
-.data-reactroot {
-  background-color: red;
-}
+  .overlapping .modulestack.focus {
+    z-index: 2;
+    box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
+  }
 
-/* Create an overlay to absorb click events so we don't change settings or set a different
-active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
-div into the DOM, since we don't really want another element, we just want this behavior. */
-.modulestack-empty.dragging {
-  border-color: rgba(118,155,176,0.5);
-}
+  // contain iframe
+  .data-reactroot {
+    background-color: red;
+  }
 
-.overlapping .modulestack:not(.focus)::after {
-  content:' ';
-  display: block;
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
+  /* Create an overlay to absorb click events so we don't change settings or set a different
+  active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
+  div into the DOM, since we don't really want another element, we just want this behavior. */
+  .modulestack-empty.dragging {
+    border-color: rgba(118,155,176,0.5);
+  }
+
+  .overlapping .modulestack:not(.focus)::after {
+    content:' ';
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+  }
+
 }
