@@ -97,7 +97,7 @@
 
       .category-name {
         cursor:default;
-        margin-left: 2rem;
+        margin-left: 1.5rem;
         font-size: 1.3rem;
         font-weight: 100;
         line-height: 1.6rem;
@@ -112,7 +112,7 @@
   // Modules IN MODULE LIST + ADD DATA ALERT
 
   .ml-module-name{
-    margin-left:0.6rem;
+    margin-left:0.5rem;
   }
 
   .ml-icon-container{
@@ -138,7 +138,7 @@
     opacity: 0.7;
     position: relative;
     height: 4rem;
-    padding-left: 2.5rem;
+    padding-left: 2rem;
 
     .ml-icon {
       font-size: 1.4rem;
@@ -148,7 +148,7 @@
 
     // Module handle container
     .ml-handle {
-      padding: 0 0.5rem;
+      padding: 0 0.2rem;
       display: flex;
       align-items: center;
       justify-content: flex-end;
@@ -184,13 +184,6 @@
 
   /*search result*/
 
-  .module-search-result {
-    border: 3px solid transparent;
-    &.lesson-highlight {
-      border-color: $brand-pink;
-    }
-  }
-
   .react-autosuggest__suggestions-container--open {
     margin-top: 2.2rem;
     margin-left: -6.2rem;
@@ -209,11 +202,12 @@
     .react-autosuggest__section-title {
       display: flex;
       align-items: center;
-      padding-left: 2rem;
+      padding-left: 1.5rem;
       font-size: 1.3rem;
       color: $white;
       opacity: .4;
       height: 4rem;
+      margin-bottom: .2rem;
 
       div{
         padding-top: 0.4rem;
@@ -226,13 +220,18 @@
       list-style-type: none;
 
       .react-autosuggest__suggestion {
+        border: 3px solid transparent;
+
+        &.lesson-highlight {
+          border-color: $brand-pink;
+        }
         padding: 0;
         margin: 0;
 
         .react-autosuggest__suggestion-inner {
           cursor: pointer;
           height: 4rem;
-          padding: 0.8rem 0  0.5rem 2.5rem;
+          padding-left: 2rem;
           color: $white;
           opacity: 0.7;
           display:flex;
@@ -264,7 +263,7 @@
 .workflow-root.in-lesson {
 
   .module-library {
-    width: 16rem;
+    width: 17rem;
     background-color: $WF-background;
     border-right: $dark-accent--soft;
 
@@ -284,7 +283,7 @@
     // Modules and data alerts
 
     .ML-module {
-      padding-left: 1.5rem;
+      padding-left: 1rem;
       color:$brand-text--dark;
       opacity: 0.7;
     }
@@ -329,14 +328,14 @@
           margin-left: -5.7rem;
           background-color: $WF-background;
           color: $brand-text--dark;
-          width:16rem;
+          width:17rem;
 
         .react-autosuggest__section-title {
           color: $brand-text--dark;
         }
 
         .react-autosuggest__suggestion-inner {
-          padding: 0.8rem 0  0.5rem 1.5rem;
+          padding: 1rem;
           color: $brand-text--dark;
 
           .ml-icon-search:before {
@@ -437,7 +436,7 @@
     align-items: center;
 
     .ml-module-name{
-      margin-left:0.7rem;
+      margin-left:0.6rem;
     }
 
     .ml-handle {
