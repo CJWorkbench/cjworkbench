@@ -104,6 +104,14 @@
       height: 4rem;
       padding-left: 1rem;
       padding-right: 1rem;
+
+      .sort-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .column-sort-arrow {font-size: 0.8rem;}
+      }
     }
 
 

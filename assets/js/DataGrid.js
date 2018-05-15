@@ -91,7 +91,7 @@ export class HeaderRenderer extends React.Component {
 
     if(sortDirectionClass.length > 0) {
       return (
-          <div className={'column-sort-arrow'} style={{display: 'inline-block', float: 'right'}}>
+          <div className='column-sort-arrow'>
             <div className={sortDirectionClass}></div>
           </div>
       );
@@ -102,10 +102,8 @@ export class HeaderRenderer extends React.Component {
   renderLetter() {
     if(this.props.showLetter) {
       return (
-          <div
-              className={'column-letter'}
-              style={{height: '24px', width: '100%', textAlign: 'center'}}>
-              {this.idxToLetter(this.props.idx)}
+          <div className='column-letter'>
+            {this.idxToLetter(this.props.idx)}
           </div>
       );
     }
@@ -124,7 +122,7 @@ export class HeaderRenderer extends React.Component {
             style={this.state.isHovered ? {backgroundColor:'#219EE8'} : undefined}
         >
             {letterSection}
-            <div style={{height: '24px', width: '100%'}}>
+            <div className="sort-container">
                 {this.props.colname}
                 {sortArrowSection}
             </div>
