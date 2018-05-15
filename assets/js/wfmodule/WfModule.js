@@ -246,7 +246,7 @@ export class WfModule extends React.Component {
 
     var notesIcon;
     if (!this.state.showNotes && !this.props.isReadOnly)
-      notesIcon = <button className={'context-button btn edit-note' + this.props.isLessonHighlightNotes ? ' lesson-highlight' : ''} onClick={this.showNotes}>
+      notesIcon = <button className={'context-button btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')} onClick={this.showNotes}>
                     <div className='icon-note icon-l-gray ' />
                   </button>;
 
@@ -256,7 +256,7 @@ export class WfModule extends React.Component {
           removeModule={ () => this.removeModule() }
           stopProp={(e) => e.stopPropagation()}
           id={wfModule.id}
-          
+
         />;
 
 
