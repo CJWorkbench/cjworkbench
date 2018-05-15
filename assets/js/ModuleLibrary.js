@@ -19,6 +19,9 @@ import ModuleLibraryClosed from './ModuleLibraryClosed'
 import ModuleLibraryOpen from './ModuleLibraryOpen'
 import { setWfLibraryCollapseAction } from './workflow-reducer'
 import { connect } from 'react-redux'
+import {matchLessonHighlight} from "./util/LessonHighlight";
+import {WfModule} from "./wfmodule/WfModule";
+import {sortableWfModule} from "./wfmodule/WfModuleDragDropConfig";
 
 // Helper to sort modules by category, then name
 const CategoryOrder = ['Add data', 'Clean', 'Analyze', 'Visualize', 'Code', 'Other']
@@ -43,43 +46,24 @@ export class ModuleLibrary extends React.Component {
 
     this.state = {
       openCategory: (workflowEmpty && this.props.libraryOpen) ? "Add data" : null,
-      modules: [],
+      modules: ModuleLibrary.sortModules(this.props.modules),
     };
+
     this.addModule = this.props.addModule.bind(this);
     this.setOpenCategory = this.setOpenCategory.bind(this);
     this.toggleLibrary = this.toggleLibrary.bind(this);
     this.openLibrary = this.openLibrary.bind(this);
-    this.updateModules = this.updateModules.bind(this);
   }
 
-
-  /**
-   * Queries server for all the available modules for the given credentials.
-   * The response that's returned should be a list, where each item has the
-   * following properties:
-   * - name (e.g. "Paste CSV")
-   * - id (e.g. 8)
-   * - category (e.g. "Sources")
-   * - description (e.g. "Allows users to copy in a CSV from an external source.")
-   *
-   * Additionally, these properties are optional (and mostly used by modules
-   * imported from GitHub, i.e. not the core modules):
-   * - icon
-   * - source
-   * - author
-   * - version
-   */
-  loadModules () {
-    this.props.api.getModules()
-      .then(json => {
-        const modules = json.slice()
-        modules.sort(compareModules)
-        this.setState({ modules: modules })
-      })
+  // Take modules from props and prepare them just the way we like 'em (sorted by category)
+  static sortModules(modules) {
+    return modules.slice().sort(compareModules);
   }
 
-  componentDidMount() {
-    this.loadModules()
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      modules: ModuleLibrary.sortModules(nextProps.modules)
+    })
   }
 
   // Categories call this to indicate that they've been opened, so we can close all the rest
@@ -89,10 +73,6 @@ export class ModuleLibrary extends React.Component {
 
   itemClick(event) {
     this.props.addModule(event.target.id);
-  }
-
-  updateModules() {
-    this.loadModules()
   }
 
   toggleLibrary() {
@@ -117,7 +97,6 @@ export class ModuleLibrary extends React.Component {
             modules={this.state.modules}
             addModule={this.props.addModule}
             dropModule={this.props.dropModule}
-            moduleAdded={this.updateModules}
             toggleLibrary={this.toggleLibrary}
             openCategory={this.state.openCategory}
             setOpenCategory={this.setOpenCategory}
@@ -133,7 +112,6 @@ export class ModuleLibrary extends React.Component {
           modules={this.state.modules}
           addModule={this.props.addModule}
           dropModule={this.props.dropModule}
-          moduleAdded={this.updateModules}
           openLibrary={this.openLibrary}
           openCategory={this.state.openCategory}
           setOpenCategory={this.setOpenCategory}
@@ -159,4 +137,10 @@ function mapDispatchToProps(dispatch) {
   }
 }
 
-export default connect(null, mapDispatchToProps)(ModuleLibrary)
+function mapStateToProps(state, ownProps) {
+  return {
+    modules: state.modules
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ModuleLibrary)

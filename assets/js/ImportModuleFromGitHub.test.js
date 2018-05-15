@@ -1,15 +1,7 @@
-/**
- * Testing Stories:
- * -Renders library-open version, which opens to modal
- * -Renders library-closed version, "
- * -Modal will call API to begin import process
- * 
- */
-
 import React from 'react'
 import ImportModuleFromGitHub  from './ImportModuleFromGitHub'
 import { mount, ReactWrapper } from 'enzyme'
-import { jsonResponseMock, okResponseMock } from './utils'
+import { jsonResponseMock, okResponseMock } from './test-utils'
 
 //FIXME upgrade to react v16 then test these modals
 describe('ImportModuleFromGitHub', () => {

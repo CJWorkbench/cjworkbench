@@ -80,6 +80,5 @@ ModuleLibraryOpen.propTypes = {
   setOpenCategory:  PropTypes.func.isRequired,
   libraryOpen:      PropTypes.bool.isRequired,
   isReadOnly:       PropTypes.bool.isRequired,
-  moduleAdded:      PropTypes.func.isRequired,
   toggleLibrary:    PropTypes.func.isRequired,
 }

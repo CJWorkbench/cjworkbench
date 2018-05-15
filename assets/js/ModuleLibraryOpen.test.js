@@ -8,7 +8,7 @@
 
 import React from 'react'
 import ModuleLibraryOpen  from './ModuleLibraryOpen'
-import { shallowWithStubbedStore } from './test-util'
+import { shallowWithStubbedStore } from './test-utils'
 
 describe('ModuleLibraryOpen ', () => {
   let wrapper

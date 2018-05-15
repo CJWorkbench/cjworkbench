@@ -1,6 +1,6 @@
 import {updateSort, mockAPI} from "./SortFromTable";
 import {mockStore, mockAPI as mockStoreApi} from './workflow-reducer'
-import { jsonResponseMock } from './utils'
+import { jsonResponseMock } from './test-utils'
 
 describe("SortFromTable actions", () => {
    var store, api;

@@ -10,31 +10,9 @@ export function goToUrl(url) {
 export const csrfToken = Cookies.get('csrftoken');
 
 // Mocked server API object that does nothing, for tests where API never actually called
-export class EmptyAPI {};
+export class EmptyAPI {}
 export var emptyAPI = new EmptyAPI();
 
-// More testing fun
-export function mockResponse (status, statusText, response) {
-  return new window.Response(response, {
-    status: status,
-    statusText: statusText,
-    headers: {
-      'Content-type': 'application/json'
-    }
-  });
-};
-
-// Returns new mock function that returns given json. Used for mocking "get" API calls
-export function jsonResponseMock (json) {
-  return jest.fn().mockImplementation(()=>
-    Promise.resolve(json)
-  )
-}
-
-// Returns new mock function that gives an OK HTTP response. Use for mocking "set" API calls
-export function okResponseMock () {
-  return jsonResponseMock(null)
-}
 
 // Find if an module of moduleIdName exists as or is next to module with wfModuleId
 export function findModuleWithIdAndIdName(state, wfModuleId, moduleIdName) {

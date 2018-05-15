@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow } from 'enzyme'
 import EditableNotes from './EditableNotes'
-import { okResponseMock } from './utils'
+import { okResponseMock } from './test-utils'
 
 
 describe('EditableNotes', () => {

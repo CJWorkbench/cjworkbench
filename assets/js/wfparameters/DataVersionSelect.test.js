@@ -1,8 +1,10 @@
 import React from 'react'
 import { DataVersionSelectTest as DataVersionSelect }  from './DataVersionSelect'
+import { mapStateToProps }  from './DataVersionSelect'
 import { mount, ReactWrapper } from 'enzyme'
-import { okResponseMock, jsonResponseMock } from '../utils'
+import { okResponseMock, jsonResponseMock, genericTestWorkflow } from '../test-utils'
 import * as workflowReducer from '../workflow-reducer'
+import {findIdxByProp} from "../workflow-reducer";
 
 jest.useFakeTimers();
 
@@ -211,4 +213,18 @@ describe('DataVersionSelect', () => {
     });
 
   });
+
+  it('mapStateToProps works correctly', () =>{
+    let mockState = {
+      workflow: genericTestWorkflow
+    };
+    let mockProps = {
+      wfModuleId : 10  // module which has unread notifications
+    }
+
+    let { notifications, versions } = mapStateToProps(mockState, mockProps);
+
+    expect(notifications).toBe(mockState.workflow.wf_modules[0].notifications);
+    expect(versions).toBe(mockState.workflow.wf_modules[0].versions);
+  })
 });

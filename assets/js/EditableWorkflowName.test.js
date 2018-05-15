@@ -1,7 +1,7 @@
 import React from 'react'
 import { shallow, mount } from 'enzyme'
 import EditableWorkflowName from './EditableWorkflowName'
-import { okResponseMock } from './utils'
+import { okResponseMock } from './test-utils'
 
 
 describe('EditableWorkflowName', () => {

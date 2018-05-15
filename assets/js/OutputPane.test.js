@@ -1,7 +1,7 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import OutputPane from './OutputPane'
-import { jsonResponseMock } from './utils'
+import { jsonResponseMock } from './test-utils'
 import {OutputIframe} from "./OutputIframe";
 import TableView from "./TableView"
 import DataGrid from "./DataGrid"

@@ -85,8 +85,9 @@ ReactDOM.render(
     document.getElementById('root')
 );
 
-// Load the page, Select the first module in the workflow (if one exists, else shows Module Library)
+// Load the page and modules
 Actions.store.dispatch(Actions.initialLoadWorkflowAction());
+Actions.store.dispatch(Actions.loadModulesAction());
 
 // Start Intercom, if we're that sort of installation
 //// We are indeed: Very mission, much business!

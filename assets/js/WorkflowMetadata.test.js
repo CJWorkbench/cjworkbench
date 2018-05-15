@@ -1,7 +1,7 @@
 import React from 'react'
 import WorkflowMetadata  from './WorkflowMetadata'
 import { mount, ReactWrapper } from 'enzyme'
-import { okResponseMock } from './utils'
+import { okResponseMock } from './test-utils'
 
 
 describe('WorkflowMetadata - private mode', () => {

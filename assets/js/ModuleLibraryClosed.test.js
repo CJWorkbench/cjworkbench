@@ -62,7 +62,6 @@ describe('ModuleLibraryClosed', () => {
               modules={modules}
               addModule={() => {}}
               dropModule={() => {}}
-              moduleAdded={() => {}}
               openLibrary={openLibrary}
               openCategory={"Add data"}
               setOpenCategory={() => {}}
