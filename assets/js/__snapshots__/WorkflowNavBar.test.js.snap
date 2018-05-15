@@ -290,18 +290,6 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                     </div>
                     <div>
                       <DropdownItem
-                        divider={true}
-                        key="100"
-                        tag="button"
-                        toggle={true}
-                      >
-                        <div
-                          className="dropdown-divider"
-                          onClick={[Function]}
-                          tabIndex="-1"
-                        />
-                      </DropdownItem>
-                      <DropdownItem
                         className="dropdown-menu--item mb-1 test-export-button"
                         key="4"
                         onClick={[Function]}
@@ -643,18 +631,6 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
                       </DropdownItem>
                     </div>
                     <div>
-                      <DropdownItem
-                        divider={true}
-                        key="100"
-                        tag="button"
-                        toggle={true}
-                      >
-                        <div
-                          className="dropdown-divider"
-                          onClick={[Function]}
-                          tabIndex="-1"
-                        />
-                      </DropdownItem>
                       <DropdownItem
                         className="dropdown-menu--item mb-1 test-export-button"
                         key="4"
@@ -1051,18 +1027,6 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                     tabIndex="-1"
                   >
                     <div>
-                      <DropdownItem
-                        divider={true}
-                        key="100"
-                        tag="button"
-                        toggle={true}
-                      >
-                        <div
-                          className="dropdown-divider"
-                          onClick={[Function]}
-                          tabIndex="-1"
-                        />
-                      </DropdownItem>
                       <DropdownItem
                         className="dropdown-menu--item mb-1 test-export-button"
                         key="4"

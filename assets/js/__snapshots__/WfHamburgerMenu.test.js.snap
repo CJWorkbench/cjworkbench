@@ -149,18 +149,6 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
             </div>
             <div>
               <DropdownItem
-                divider={true}
-                key="100"
-                tag="button"
-                toggle={true}
-              >
-                <div
-                  className="dropdown-divider"
-                  onClick={[Function]}
-                  tabIndex="-1"
-                />
-              </DropdownItem>
-              <DropdownItem
                 className="dropdown-menu--item mb-1 test-export-button"
                 key="4"
                 onClick={[Function]}
