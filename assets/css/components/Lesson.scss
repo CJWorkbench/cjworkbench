@@ -75,6 +75,7 @@ article.lesson {
         }
         &.done::before {
           content: "\e904"; // icon-check
+          color:$brand-pink;
         }
       }
     }
