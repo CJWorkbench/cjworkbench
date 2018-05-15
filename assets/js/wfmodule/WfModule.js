@@ -17,7 +17,6 @@ import PropTypes from 'prop-types'
 import { getEmptyImage } from 'react-dnd-html5-backend'
 import { sortableWfModule } from "./WfModuleDragDropConfig";
 import { connect } from 'react-redux'
-import { matchLessonHighlight } from '../util/LessonHighlight'
 import lessonSelector from '../lessons/lessonSelector'
 
 // Libraries to provide a collapsible table view
