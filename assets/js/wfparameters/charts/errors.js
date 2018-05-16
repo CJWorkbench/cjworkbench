@@ -1,4 +1,4 @@
-export const errorText = {
+export default {
 	"EMPTY": {
 		location: "input",
 		text: "Enter some data above.",

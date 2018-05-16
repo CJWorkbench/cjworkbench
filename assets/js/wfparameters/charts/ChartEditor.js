@@ -5,22 +5,11 @@ import { errorText } from './errors'
 import {setParamValueActionByIdName, setWfModuleStatusAction, store} from "../../workflow-reducer";
 import debounce from 'lodash/debounce'
 import { OutputIframeCtrl } from '../../OutputIframe'
+import update from 'immutability-helper'
 
-// Chartbuilder Flux stores. These are global but we only uses them synchronously to put data in, parse it, get CB state out
-var ChartServerActions = require("chartbuilder/src/js/actions/ChartServerActions");
-var ChartPropertiesStore = require("chartbuilder/src/js/stores/ChartPropertiesStore");
-var ChartMetadataStore = require("chartbuilder/src/js/stores/ChartMetadataStore");
-var SessionStore = require("chartbuilder/src/js/stores/SessionStore");
-var ErrorStore = require("chartbuilder/src/js/stores/ErrorStore");
-
-var ChartViewActions = require("chartbuilder/src/js/actions/ChartViewActions");
-var chartConfig = require("chartbuilder/src/js/charts/chart-type-configs");
-
-// Overload the chartbuilder error messages so we can set our own
-var cbErrorText = require("chartbuilder/src/js/util/error-names");
-Object.keys(cbErrorText).map( (key) => {
-  cbErrorText[key].text = errorText[key].text;
-});
+import chartConfig from 'chartbuilder/src/js/charts/chart-type-configs'
+import validateDataInput from 'chartbuilder/src/js/util/validate-data-input'
+import Errors from './errors'
 
 // Data format adapter, would eventually be obsolete with a CSV format /input endpoint
 function JSONtoCSV(d) {
@@ -36,90 +25,89 @@ function JSONtoCSV(d) {
   }
 }
 
-
 export default class ChartEditor extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: true,
       model: null,      // Chartbuilder model object. Also where we store/update current parameter values
-      inputData: null
+      inputData: null,
     };
+    this.lastWfModuleStatus = null
     this.onChangeChartSettings = this.onChangeChartSettings.bind(this);
     this.onChangeTitle = this.onChangeTitle.bind(this);
-    this.onChangeDate = this.onChangeDate.bind(this);
     this.onChangePrefix = this.onChangePrefix.bind(this);
     this.onChangeSuffix = this.onChangeSuffix.bind(this);
-    this.getStateFromStores = this.getStateFromStores.bind(this);
-    this.saveStateToDatabase = debounce(this.saveStateToDatabase, 1000);
   }
 
-   // Turn ChartBuilder errors into module errors (so user gets the red light etc.)
-  parseErrors(errors) {
-    var errorMessage = errors.messages
-      .filter((m) => {
-        return m.type === 'error';
-      })
-      .map((m) => {
-        return m.text;
-      })
-      .join("\n\r");
-    if (errorMessage !== '') {
+  ickyDispatchSideEffect() {
+    const { messages, valid } = this.state.model.errors
+    if (!valid) {
+      const errorMessage = messages.map(e => e.text).join('\n')
       store.dispatch(setWfModuleStatusAction(this.props.wfModuleId, 'error', errorMessage))
+      this.lastWfModuleStatus = 'error'
     } else {
-      store.dispatch(setWfModuleStatusAction(this.props.wfModuleId, 'ready'))
+      if (this.lastWfModuleStatus !== 'ready') {
+        store.dispatch(setWfModuleStatusAction(this.props.wfModuleId, 'ready'))
+        this.lastWfModuleStatus = 'ready'
+      }
     }
   }
 
   // Rehydrate saved chart state text into a model object that Chartbuilder can use
-  loadChartProps(modelText, data) {
+  loadChartProps() {
+    const modelText = this.props.modelText
+
     let model;
     if (modelText !== "") {
       model = JSON.parse(modelText);
     } else {
-      let defaults = chartConfig.xy.defaultProps;
-      defaults.chartProps.chartSettings[0].type = this.props.type;
-      defaults.chartProps.scale.typeSettings.maxLength = 7;
-      model = defaults;
+      model = update(chartConfig.xy.defaultProps, {
+        chartProps: {
+          chartSettings: { 0: { type: { $set: this.props.type } } },
+          scale: { typeSettings: { maxLength: { $set: 7 } } },
+        }
+      })
     }
-    model.chartProps.input = {raw: data};
     return model;
   }
 
-  // Retrieve Chartbuilder's current state from its global store
-  getStateFromStores() {
-  	return {
-  		chartProps: ChartPropertiesStore.getAll(),
-  		metadata: ChartMetadataStore.getAll(),
-  		session: SessionStore.getAll(),
-      errors: ErrorStore.getAll()
-  	};
-  }
-
   // Go from input data + saved model text to a Chartbuilder model, handling data parser errors if any
-  parseChartState(data) {
-    let newModel = this.loadChartProps(this.props.modelText, data);
-    let parsedModel;
-    // In order to preserve the saved chart settings, we have to set up the initial chart model with the raw input data.
-    // However, if there are errors in the data, receiveModel won't find them. We need to call .updateInput so Chartbuilder's
-    // internal parser will find errors in the data.
-    ChartServerActions.receiveModel(newModel);
-    ChartViewActions.updateInput('input', {raw: data});
-    parsedModel = this.getStateFromStores();
-    if (parsedModel.errors.valid === false) {
-        this.parseErrors(parsedModel.errors);
-        return null;
+  parseInputData(data) {
+    const model = this.loadChartProps()
+    model.chartProps.input = { raw: data }
+
+    // bypass ChartBuilder's flux et al: just use the lower-level stuff
+
+    // this is from ChartBuilder's ChartPropertiesStore.js:
+    const chartType = model.metadata.chartType
+    const config = chartConfig[chartType]
+    const parser = config.parser
+    const chartProps = parser(config, model.chartProps)
+
+    const errorCodes = validateDataInput(chartProps)
+    const errors = errorCodes.map(ec => Errors[ec])
+    const valid = errors.filter(e => e.type === 'error').length === 0
+
+    model.errors = {
+      messages: errors, // ChartBuilder should have named this "objects", not "messages"
+      valid,
     }
-    return parsedModel;
+
+    return model
   }
 
   // Retreive the data we want to chart from the server, then chart it
   loadChartState() {
     this.setState({loading: true});
     this.props.api.input(this.props.wfModuleId).then((json) => {
-      let inputData = JSONtoCSV(json.rows);
-      let parsedChartState = this.parseChartState(inputData);
-      this.setState({model: parsedChartState, inputData, loading: false});
+      const inputData = JSONtoCSV(json.rows);
+      this.setState({
+        loading: false,
+        inputData,
+        model: this.parseInputData(inputData),
+      })
+      this.ickyDispatchSideEffect()
     })
   }
 
@@ -182,13 +170,6 @@ export default class ChartEditor extends React.Component {
   onChangeSuffix(e) {
     let stateCopy = this.deepCopyState(this.state.model);
     stateCopy.chartProps.scale.primaryScale.suffix = e.target.value;
-    this.setState({model: stateCopy});
-    this.saveState(stateCopy);
-  }
-
-  onChangeDate(uh) {
-    let stateCopy = this.deepCopyState(this.state.model);
-    stateCopy.chartProps.scale = uh;
     this.setState({model: stateCopy});
     this.saveState(stateCopy);
   }

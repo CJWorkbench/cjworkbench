@@ -43,7 +43,7 @@
       >Add the module ‘Column Chart’ using the search in the module library.</li>
     <li
       data-highlight='[]'
-      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].parameters.get('title').length > 0"
+      data-test="return workflow.wfModules.length > 1 && JSON.parse(workflow.wfModules[workflow.wfModules.length-1].parameters.get('chart_editor')).metadata.title"
       >Add a title to the chart.</li>
   </ol>
 </section>
