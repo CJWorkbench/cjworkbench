@@ -4,7 +4,7 @@
   height: 100vh;
   background-color: $dark-blue;
   color: $white;
-  width: 20rem;
+  width: 18rem;
   flex: 0 0 20rem;
 
   .card {
@@ -40,7 +40,7 @@
   .ML-list--container {
 
     .ML-search--container {
-      padding: 1.5rem 2rem;
+      padding: 1.5rem 1.5rem;
       display: flex;
       justify-content: center;
 
@@ -138,7 +138,7 @@
     opacity: 0.7;
     position: relative;
     height: 4rem;
-    padding-left: 2rem;
+    padding-left: 1.5rem;
 
     .ml-icon {
       font-size: 1.4rem;
@@ -194,7 +194,7 @@
     color:$white;
     font-weight: 300;
     font-size: 1.6rem;
-    width: 20rem;
+    width: 18 rem;
     z-index: 2;
     overflow-y: scroll;
     height:calc(100vh - 40rem);
@@ -323,7 +323,7 @@
           color:$brand-text--dark;
 
           .category-name {
-            margin-left: 1.5rem;
+            margin-left: 1rem;
           }
         }
       }
