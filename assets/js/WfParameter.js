@@ -232,16 +232,6 @@ export class WfParameter extends React.Component {
             wfModuleId={this.props.wf_module_id}
             revision={this.props.revision} />
         );
-    } else if (id_name == 'barchart') {
-      return (
-        <BarChart
-          wf_module_id={this.props.wf_module_id}
-          index={this.props.getParamText('column')}
-          dataKeys={this.props.getParamText('multicolumn_colorpicker')}
-          getParamText={this.props.getParamText}
-          setParamText={this.props.setParamText}
-        />
-      )
     } else if (id_name == 'connect') {
       return (
         <GoogleConnect
