@@ -16,8 +16,8 @@
       data-test="return workflow.wfModules.length === 1 && workflow.wfModules[0].moduleName === 'Add from URL'"
       >Add the module ‘Add from URL’.</li>
     <li
-      data-highlight='[{"type":"WfParameter","moduleName":"Add from URL","name":"url"}]'
-      data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].parameters.get('url') === 'https://data.sfgov.org/resource/e2px-wugd.json'"
+      data-highlight='[{"type":"WfParameter","moduleName":"Add from URL","name":"url"},{"type":"WfParameter","moduleName":"Add from URL","name":"version_select"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://data.sfgov.org/resource/e2px-wugd.json' && wfModule.selectedVersion"
       >Paste in the URL of the dataset in the module, and load the data by clicking 'Update'.
       <div class="copy-txt content-3 t-white">https://data.sfgov.org/resource/e2px-wugd.json</div>
     </li>

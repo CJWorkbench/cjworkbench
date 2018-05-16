@@ -47,11 +47,25 @@ export class WfParameter extends React.Component {
     this.getInputColNames = this.getInputColNames.bind(this);
   }
 
+  get outerDivProps() {
+    const { id_name } = this.props.p.parameter_spec
+
+    return {
+      className: this.paramClassName,
+      'data-name': id_name,
+    }
+  }
+
   get paramClassName() {
-    const nameParts = this.props.p.parameter_spec.id_name.split('|')[0].split('.')
-    nameParts.push('wf-parameter')
-    if (this.props.isLessonHighlight) nameParts.push('lesson-highlight')
-    return nameParts.slice(1).join(' ')
+    const { id_name, type } = this.props.p.parameter_spec
+
+    const nameParts = id_name.split('|')[0].split('.').slice(1)
+
+    if (this.props.isLessonHighlight) nameParts.unshift('lesson-highlight')
+    nameParts.unshift(`wf-parameter-${type}`)
+    nameParts.unshift('wf-parameter')
+
+    return nameParts.join(' ')
   }
 
   paramChanged(newVal, pressedEnter) {
@@ -163,7 +177,7 @@ export class WfParameter extends React.Component {
         : null
 
       return (
-        <div className='parameter-margin'>
+        <div {...this.outerDivProps}>
           <UpdateFrequencySelect
             isReadOnly={this.props.isReadOnly}
             updateSettings={this.props.updateSettings}
@@ -340,7 +354,7 @@ export class WfParameter extends React.Component {
         }
 
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <textarea
               onMouseEnter={() => this.props.stopDrag() }
@@ -361,7 +375,7 @@ export class WfParameter extends React.Component {
 
       case 'url':
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <input
               type="url"
@@ -380,7 +394,7 @@ export class WfParameter extends React.Component {
       case 'integer':
       case 'float':
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
@@ -397,35 +411,35 @@ export class WfParameter extends React.Component {
 
       case 'button':
         return (
-          <div className={'parameter-margin d-flex justify-content-end ' + this.paramClassName}>
+          <div {...this.outerDivProps} className={this.paramClassName + ' d-flex justify-content-end'}>
             <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{name}</div>
           </div>
         );
       case 'statictext':
         return (
-          <div data-name={id_name} className={'t-m-gray info-2 ' + this.paramClassName}>{name}</div>
+          <div {...this.outerDivProps} className={this.paramClassName + ' t-m-gray info-2'}>{name}</div>
         );
 
       case 'checkbox':
         return (
-            <div className={'checkbox-wrapper ' + this.paramClassName}>
-                <div className='d-flex align-items-center'>
-                  <input
-                    disabled={this.props.isReadOnly}
-                    type="checkbox" className="checkbox"
-                    checked={this.props.p.value}
-                    onChange={this.click}
-                    name={id_name}
-                    ref={ el => this.checkboxRef = el}
-                    id={this.props.p.id} />
-                  <label htmlFor={this.props.p.id} className='t-d-gray content-3'>{name}</label>
-                </div>
+          <div {...this.outerDivProps} className={this.paramClassName + ' checkbox-wrapper'}>
+            <div className='d-flex align-items-center'>
+              <input
+                disabled={this.props.isReadOnly}
+                type="checkbox" className="checkbox"
+                checked={this.props.p.value}
+                onChange={this.click}
+                name={id_name}
+                ref={ el => this.checkboxRef = el}
+                id={this.props.p.id} />
+              <label htmlFor={this.props.p.id} className='t-d-gray content-3'>{name}</label>
             </div>
+          </div>
         );
 
       case 'menu':
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <MenuParam
               name={id_name}
@@ -438,7 +452,7 @@ export class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
@@ -453,7 +467,7 @@ export class WfParameter extends React.Component {
 
       case 'multicolumn':
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='t-d-gray content-3 label-margin'>{name}</div>
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}

@@ -71,6 +71,24 @@ describe('DoneHelpers', () => {
       })
       expect(wfModule.moduleName).toEqual('Add from URL')
     })
+
+    it('should have selectedVersion', () => {
+      const wfModule = new WorkflowModuleWithHelpers({
+        versions: {
+          versions: [ [ 'some-sort-of-id', 'why is this an Array?' ] ],
+          selected: 'some-sort-of-id'
+        }
+      })
+      expect(wfModule.selectedVersion).toBe('some-sort-of-id')
+    })
+
+    it('should have selectedVersion even when placeholder', () => {
+      const wfModule = new WorkflowModuleWithHelpers({
+        placeholder: true,
+        name: 'Add from URL',
+      })
+      expect(wfModule.selectedVersion).toBe(null)
+    })
   })
 
   describe('StateWithHelpers', () => {
