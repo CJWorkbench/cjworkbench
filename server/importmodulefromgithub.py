@@ -163,10 +163,6 @@ def move_files_to_final_location(destination_directory, curdir, json_file, pytho
             raise ValidationError("Unable to move HTML file to module directory.")
 
 
-# adds two spaces before every line
-def indent_lines(str):
-    return '  ' + str.replace('\n', '\n  ');
-
 
 module_boilerplate = """
 import numpy as np
@@ -174,12 +170,6 @@ import pandas as pd
 from io import StringIO
 import re
 
-class Importable:
-  @staticmethod
-  def __init__(self):
-    pass
-
-  @staticmethod
 """
 
 # Convert line numbers in our imported module code back to line numbers in the original file
@@ -201,7 +191,7 @@ def add_boilerplate_and_check_syntax(destination_directory, python_file):
         raise ValidationError("Unable to open Python code file {}.".format(python_file))
 
     # Indent the user's function declaration to put it inside the Importable class, then replace file contents
-    script = module_boilerplate + indent_lines(script)
+    script = module_boilerplate + script
     sfile = open(os.path.join(filename), 'w')
     sfile.write(script)
     sfile.close()
@@ -234,17 +224,15 @@ def validate_python_functions(destination_directory, python_file):
     sys.path.insert(0, destination_directory)
     time.sleep(2)
     imported_module = import_module(p)
-    imported_class = inspect.getmembers(imported_module, inspect.isclass)
+    render_fn = getattr(imported_module,'render')
 
     try:
-        imported_class = imported_class[0]
-        if not callable(imported_class[1].render):
+        if not callable(render_fn):
             raise ValidationError("Module render() function isn't callable.")
     except:
         raise ValidationError("Module render() function is missing.")
 
-    return imported_class
-
+    return render_fn
 
 # Get head version hash from git repo on disk
 def extract_version(repodir):

@@ -4,7 +4,7 @@ from django.conf import settings
 from server.models import WfModule
 from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
-from .dynamicdispatch import DynamicDispatch
+from .dynamicdispatch import get_module_render_fn,get_module_html_path
 from .importmodulefromgithub import original_module_lineno
 from .utils import sanitize_dataframe, truncate_table_if_too_big
 import os, sys, traceback, types, inspect
@@ -104,13 +104,6 @@ def create_parameter_dict(wf_module, table):
 
 # ---- Dispatch Entrypoints ----
 
-dynamic_dispatch = DynamicDispatch()
-
-#the wf_module should have both attributes: the module and the version.
-def load_dynamically(wf_module):
-    # check if this module is loadable dynamically; if so, load it.
-    return dynamic_dispatch.load_module(wf_module=wf_module)
-
 # Main render entrypoint.
 def module_dispatch_render(wf_module, table):
     if wf_module.module_version is None:
@@ -123,13 +116,13 @@ def module_dispatch_render(wf_module, table):
     # External module -- gets only a parameter dictionary
     if dispatch not in module_dispatch_tbl.keys():
 
-        loadable = load_dynamically(wf_module=wf_module)
-        if not loadable:
+        render_fn = get_module_render_fn(wf_module)
+        if not render_fn:
             raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
 
         params = create_parameter_dict(wf_module, table)
         try:
-            tableout = loadable.render(table, params)
+            tableout = render_fn(table, params)
         except Exception as e:
             # Catch exceptions in the module render function, and return error message + line number to user
             exc_name = type(e).__name__
@@ -196,7 +189,7 @@ def module_dispatch_event(wf_module, **kwargs):
 def module_dispatch_output(wf_module, table, **kwargs):
     dispatch = wf_module.module_version.module.dispatch
     if dispatch not in module_dispatch_tbl.keys():
-        html_file_path = dynamic_dispatch.html_output_path(wf_module)
+        html_file_path = get_module_html_path(wf_module)
     else:
         module_path = os.path.dirname(inspect.getfile(module_dispatch_tbl[dispatch]))
         for f in os.listdir(module_path):

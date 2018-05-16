@@ -3,7 +3,7 @@ from server.dispatch import module_dispatch_render
 from server.tests.utils import *
 from pathlib import Path
 import pandas as pd
-import io
+import io, types
 import mock
 import logging, os, shutil
 
@@ -244,8 +244,8 @@ class ImportFromGitHubTest(LoggedInTestCase):
         #test valid scenario
         shutil.copy(os.path.join(test_dir, "importable.py"), destination_directory)
         add_boilerplate_and_check_syntax(destination_directory, "importable.py")  # adds crucial boilerplate to the file
-        imported_class = validate_python_functions(destination_directory, "importable.py")
-        self.assertTrue(type(imported_class[1]) == type, "The module must be importable, and be of type 'type'.")
+        render_fn = validate_python_functions(destination_directory, "importable.py")
+        self.assertTrue(isinstance(render_fn, types.FunctionType), "The module must be importable, and be of type 'type'.")
 
 
     # syntax errors in module source files should be detected
