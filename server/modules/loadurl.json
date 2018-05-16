@@ -10,7 +10,7 @@
     {
       "name": "",
       "id_name" : "url",
-      "type": "url",
+      "type": "string",
       "default": "",
       "placeholder":"http://…"
     },
