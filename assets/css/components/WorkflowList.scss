@@ -2,16 +2,8 @@
 
 .workflows-page {
 
-  .workflows-list {
-    border: 0;
-    margin-top: 1.5rem;
-    background-color: transparent;
-    width:75%;
-    padding:1.5rem;
-  }
-
-  .button-blue {
-    &:hover {background-color: $light-accent--strong;}
+  .button-blue:hover {
+    background-color: $light-accent--strong;
   }
 
   .new-workflow-button {
@@ -27,40 +19,46 @@
   .workflow-item .context-button {
     width: 3rem;
     height: 3rem;
-  }
-  .workflow-item .context-button:hover {
-    background-color: #f0f0f0;
-  }
-  .context-button.context-button.btn-secondary.active{
-    background-color: #E7EAEB;
-  }
-
-  // background list
-  .workflows-item--wrap {
-    padding:1px 1px 1px 1px;
-    background-color: $Vlight-gray;
-  }
-
-  .workflow-item {
-    height: 7rem;
-    margin-bottom: 1px;
-    border: 0;
-    border-radius:0;
-    padding: 0 2.5rem;
-    background:#fff;
-    display:flex;
-    align-items:center;
-    justify-content: space-between;
-    z-index: 3;
     &:hover {
-    background-color: $SuperLightGray;
-    text-decoration: none;
+    background-color: #f0f0f0;
+    }
+    &.context-button.context-button.btn-secondary.active{
+      background-color: $Vlight-gray;
     }
   }
 
+  .workflows-list {
+    border: 0;
+    margin-top: 1.5rem;
+    background-color: transparent;
+    width:75%;
+    padding:1.5rem;
 
+    // background list
+    .workflows-item--wrap {
+      padding:1px 1px 1px 1px;
+      background-color: $Vlight-gray;
+    }
 
-  .workflow-item:last-child {
-    margin-bottom: 0px;
+    .workflow-item {
+      height: 7rem;
+      margin-bottom: 1px;
+      border: 0;
+      border-radius:0;
+      padding: 0 2.5rem;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      z-index: 3;
+
+      &:hover {
+      background-color: $SuperLightGray;
+      text-decoration: none;
+      }
+      &:last-child {
+        margin-bottom: 0px;
+      }
+    }
   }
 }
