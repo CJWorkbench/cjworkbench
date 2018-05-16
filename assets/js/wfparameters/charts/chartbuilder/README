@@ -1,0 +1,2 @@
+We copy/pasted just enough ChartBuilder code that we can delete ChartBuilder
+itself ... saving us lots of icky dependencies like React 15

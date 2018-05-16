@@ -7,8 +7,8 @@ import debounce from 'lodash/debounce'
 import { OutputIframeCtrl } from '../../OutputIframe'
 import update from 'immutability-helper'
 
-import chartConfig from 'chartbuilder/src/js/charts/chart-type-configs'
-import validateDataInput from 'chartbuilder/src/js/util/validate-data-input'
+import chartConfig from './chartbuilder/charts/chart-type-configs'
+import validateDataInput from './chartbuilder/util/validate-data-input'
 import Errors from './errors'
 
 // Data format adapter, would eventually be obsolete with a CSV format /input endpoint
