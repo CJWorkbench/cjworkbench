@@ -13,7 +13,7 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Add from URL"}]'
-      data-test="return workflow.wfModules.length === 1 && workflow.wfModules[0].moduleName === 'Add from URL'"
+      data-test="return workflow.wfModules[0] && workflow.wfModules[0].moduleName === 'Add from URL'"
       >Add the module ‘Add from URL’.</li>
     <li
       data-highlight='[{"type":"WfParameter","moduleName":"Add from URL","name":"url"},{"type":"WfParameter","moduleName":"Add from URL","name":"version_select"}]'
@@ -38,12 +38,12 @@
   <p>Let’s add a column chart to visualize this data.</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"ModuleSearch"},{"type":"WfModule","moduleName":"Column chart"}]'
-      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Column chart'"
-      >Add the module ‘Column chart’ using the search in the module library.</li>
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Column Chart"}]'
+      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Column Chart'"
+      >Add the module ‘Column Chart’ using the search in the module library.</li>
     <li
       data-highlight='[]'
-      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].parameters.get('title').length > 0"
+      data-test="return workflow.wfModules.length > 1 && JSON.parse(workflow.wfModules[workflow.wfModules.length-1].parameters.get('chart_editor')).metadata.title"
       >Add a title to the chart.</li>
   </ol>
 </section>

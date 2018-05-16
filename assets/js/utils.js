@@ -1,6 +1,5 @@
 // ---- Utilities ---
 import * as Cookies from "js-cookie"
-import timediff from 'timediff'
 
 export function goToUrl(url) {
   window.location.href = url;
@@ -62,34 +61,38 @@ export function logUserEvent(name, metadata) {
 }
 
 export function timeDifference (start, end) {
-  var diff = timediff(start,end);
+  const ms = new Date(end) - new Date(start)
+  const minutes = Math.floor(ms / 1000 / 60)
+  const hours = Math.floor(minutes / 60)
+  const days = Math.floor(hours / 24)
+  const years = Math.floor(days / 365.25)
 
-  if (diff.years > 0) {
-    if (diff.years == 1) {
+  if (years > 0) {
+    if (years == 1) {
       return "1y ago";
     } else {
-      return "" + diff.years + "y ago";
+      return "" + years + "y ago";
     }
   }
-  else if (diff.days > 0) {
-    if (diff.days == 1) {
+  else if (days > 0) {
+    if (days == 1) {
       return "1d ago";
     } else {
-      return "" + diff.days + "d ago";
+      return "" + days + "d ago";
     }
   }
-  else if (diff.hours > 0) {
-    if (diff.hours == 1) {
+  else if (hours > 0) {
+    if (hours == 1) {
       return "1h ago";
     } else {
-      return "" + diff.hours + "h ago";
+      return "" + hours + "h ago";
     }
   }
-  else if (diff.minutes > 0) {
-    if (diff.minutes == 1) {
+  else if (minutes > 0) {
+    if (minutes == 1) {
       return "1m ago";
     } else {
-      return "" + diff.minutes + "m ago";
+      return "" + minutes + "m ago";
     }
   }
   else {
