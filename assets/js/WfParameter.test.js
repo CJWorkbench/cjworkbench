@@ -197,7 +197,6 @@ describe('WfParameter', () => {
     it('should highlight and unhighlight', () => {
       wrap({ parameter_spec: { id_name: 'url', type: 'string', name: 'URL' }})
       highlight('test', 'url')
-      console.log(wrapper.html())
       expect(wrapper.find('.wf-parameter').prop('className')).toMatch(/\blesson-highlight\b/)
       highlight('test', 'anything_but_url')
       expect(wrapper.find('.wf-parameter').prop('className')).not.toMatch(/\blesson-highlight\b/)
