@@ -97,7 +97,7 @@
 
       .category-name {
         cursor:default;
-        margin-left: 2.5rem;
+        margin-left: 2rem;
         font-size: 1.3rem;
         font-weight: 100;
         line-height: 1.6rem;
@@ -138,7 +138,7 @@
     opacity: 0.7;
     position: relative;
     height: 4rem;
-    padding-left: 1.5rem;
+    padding-left: 1rem;
 
     .ml-icon {
       font-size: 1.4rem;
@@ -202,7 +202,7 @@
     .react-autosuggest__section-title {
       display: flex;
       align-items: center;
-      padding-left: 2.5rem;
+      padding-left: 2rem;
       font-size: 1.3rem;
       color: $white;
       opacity: .4;
@@ -231,7 +231,7 @@
         .react-autosuggest__suggestion-inner {
           cursor: pointer;
           height: 4rem;
-          padding-left: 1.5rem;
+          padding-left: 1rem;
           color: $white;
           opacity: 0.7;
           display:flex;
