@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ColumnColorPicker from  './ColumnColorPicker'
-import DateScaleSettings from './DateScaleSettings'
 import { errorText } from './errors'
 import {setParamValueActionByIdName, setWfModuleStatusAction, store} from "../../workflow-reducer";
 import debounce from 'lodash/debounce'
