@@ -5,7 +5,7 @@
   background-color: $dark-blue;
   color: $white;
   width: 18rem;
-  flex: 0 0 20rem;
+  flex: 0 0 18rem;
 
   .card {
     background-color: transparent;
@@ -186,7 +186,7 @@
 
   .react-autosuggest__suggestions-container--open {
     margin-top: 2.2rem;
-    margin-left: -6.2rem;
+    margin-left: -5.7rem;
     display: block;
     position: absolute;
     border: 0px;
@@ -194,7 +194,7 @@
     color:$white;
     font-weight: 300;
     font-size: 1.6rem;
-    width: 18 rem;
+    width: 18rem;
     z-index: 2;
     overflow-y: scroll;
     height:calc(100vh - 40rem);
@@ -231,7 +231,7 @@
         .react-autosuggest__suggestion-inner {
           cursor: pointer;
           height: 4rem;
-          padding-left: 2rem;
+          padding-left: 1.5rem;
           color: $white;
           opacity: 0.7;
           display:flex;
@@ -385,7 +385,7 @@
     cursor: pointer;
   }
   .ml-icon {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
   }
 
   .card {
