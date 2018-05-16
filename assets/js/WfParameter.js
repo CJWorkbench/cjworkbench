@@ -2,7 +2,6 @@
 
 import React from 'react'
 import MenuParam from './wfparameters/MenuParam'
-import ChartParameter from './wfparameters/charts/Chart'
 import ChartEditor from './wfparameters/charts/ChartEditor'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
@@ -137,29 +136,7 @@ export class WfParameter extends React.Component {
   render_custom_parameter() {
     const { id_name, name } = this.props.p.parameter_spec
 
-    if (id_name === 'chart') {
-
-      // Load and save chart state, image to hidden parameters
-      var loadState = ( () => this.props.getParamText('chartstate') );
-      var saveState = ( state => this.props.setParamText('chartstate', state) );
-
-      var saveImageDataURI = ( data => this.props.setParamText('chart', data) );
-
-      return (
-        <div>
-          <a href={'/public/paramdata/live/' + this.props.p.id + '.png'}>PNG</a>
-          <ChartParameter
-            isReadOnly={this.props.isReadOnly}
-            wf_module_id={this.props.wf_module_id}
-            revision={this.props.revision}
-            saveState={saveState}
-            loadState={loadState}
-            saveImageDataURI={saveImageDataURI}
-          />
-        </div>
-      );
-
-    } else if (id_name == 'chart_editor') {
+    if (id_name == 'chart_editor') {
       return (
         <ChartEditor
           isReadOnly={ this.props.isReadOnly }
