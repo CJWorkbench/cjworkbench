@@ -51,7 +51,7 @@ export class WfParameter extends React.Component {
 
     return {
       className: this.paramClassName,
-      'data-name': id_name,
+      'data-name': id_name, // super-useful when inspecting -- e.g., when developing lessons
     }
   }
 
@@ -100,7 +100,7 @@ export class WfParameter extends React.Component {
       this.paramChanged(e.target.checked, DIDNT_PRESS_ENTER)
     }
 
-    if ((type == 'string' || type == 'url') && !this.props.isReadOnly) {
+    if (type == 'string' && !this.props.isReadOnly) {
       this.stringRef.select();
     }
   }
@@ -339,24 +339,6 @@ export class WfParameter extends React.Component {
               />
           </div>
         );
-
-      case 'url':
-        return (
-          <div {...this.outerDivProps}>
-            <div className='label-margin t-d-gray content-3'>{name}</div>
-            <input
-              type="url"
-              name={id_name}
-              isReadOnly={this.props.isReadOnly}
-              onBlur={this.blur}
-              onKeyPress={this.keypress}
-              onClick={this.click}
-              defaultValue={this.props.p.value || ''}
-              placeholder={this.props.p.parameter_spec.placeholder || ''}
-              ref={ el => this.stringRef = el}
-              />
-          </div>
-        )
 
       case 'integer':
       case 'float':
