@@ -587,6 +587,8 @@ registerReducerFunc(SET_WF_MODULE_STATUS, (state, action) => {
           }
         }
       });
+    } else {
+      return state
     }
   } else {
     return state;
