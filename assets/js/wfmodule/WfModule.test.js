@@ -109,7 +109,7 @@ describe('WfModule, not read-only mode', () => {
     expect(wf_module.parameter_vals[0].value).toEqual('http://some.URL.me')
   })
 
-  describe('highlights', () => {
+  describe('lesson highlights', () => {
     let store
     let wrapper = null
     let nonce = 0

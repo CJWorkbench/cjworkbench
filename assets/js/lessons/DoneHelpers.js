@@ -69,6 +69,11 @@ export class WorkflowModuleWithHelpers {
   get parameters() {
     return new ParametersWithHelpers(this.wfModule.parameter_vals || [])
   }
+
+  get selectedVersion() {
+    const versions = this.wfModule.versions
+    return versions && versions.selected || null
+  }
 }
 
 export class ParametersWithHelpers {

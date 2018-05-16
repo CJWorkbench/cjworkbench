@@ -248,6 +248,19 @@
   margin-top: 0.8rem;
 }
 
+.wf-parameter.lesson-highlight {
+  outline: 3px solid $brand-pink;
+
+  &.wf-parameter-custom[data-name="version_select"] {
+    outline: none;
+    button {
+      color: $brand-pink;
+      font-weight: bold;
+      border-color: $brand-pink;
+    }
+  }
+}
+
 /* Margin for a line of 1 parameters, part of a group */
 .param-line-margin{
   margin-bottom:1rem;

@@ -18,7 +18,8 @@ import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
 import { csrfToken } from './utils'
 import { store, setWfModuleStatusAction } from './workflow-reducer'
-
+import lessonSelector from './lessons/lessonSelector'
+import { connect } from 'react-redux'
 
 const PRESSED_ENTER = true;
 const DIDNT_PRESS_ENTER = false;
@@ -33,7 +34,7 @@ class TextOrNothing extends React.Component {
   }
 }
 
-export default class WfParameter extends React.Component {
+export class WfParameter extends React.Component {
 
   constructor(props) {
     super(props)
@@ -46,9 +47,25 @@ export default class WfParameter extends React.Component {
     this.getInputColNames = this.getInputColNames.bind(this);
   }
 
+  get outerDivProps() {
+    const { id_name } = this.props.p.parameter_spec
+
+    return {
+      className: this.paramClassName,
+      'data-name': id_name,
+    }
+  }
+
   get paramClassName() {
-    const nameParts = this.props.p.parameter_spec.id_name.split('|')[0].split('.');
-    return nameParts.slice(1).join(' ')
+    const { id_name, type } = this.props.p.parameter_spec
+
+    const nameParts = id_name.split('|')[0].split('.').slice(1)
+
+    if (this.props.isLessonHighlight) nameParts.unshift('lesson-highlight')
+    nameParts.unshift(`wf-parameter-${type}`)
+    nameParts.unshift('wf-parameter')
+
+    return nameParts.join(' ')
   }
 
   paramChanged(newVal, pressedEnter) {
@@ -84,7 +101,7 @@ export default class WfParameter extends React.Component {
       this.paramChanged(e.target.checked, DIDNT_PRESS_ENTER)
     }
 
-    if (type == 'string' && !this.props.isReadOnly) {
+    if ((type == 'string' || type == 'url') && !this.props.isReadOnly) {
       this.stringRef.select();
     }
   }
@@ -160,7 +177,7 @@ export default class WfParameter extends React.Component {
         : null
 
       return (
-        <div className='parameter-margin'>
+        <div {...this.outerDivProps}>
           <UpdateFrequencySelect
             isReadOnly={this.props.isReadOnly}
             updateSettings={this.props.updateSettings}
@@ -337,7 +354,7 @@ export default class WfParameter extends React.Component {
         }
 
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <textarea
               onMouseEnter={() => this.props.stopDrag() }
@@ -356,10 +373,28 @@ export default class WfParameter extends React.Component {
           </div>
         );
 
+      case 'url':
+        return (
+          <div {...this.outerDivProps}>
+            <div className='label-margin t-d-gray content-3'>{name}</div>
+            <input
+              type="url"
+              name={id_name}
+              isReadOnly={this.props.isReadOnly}
+              onBlur={this.blur}
+              onKeyPress={this.keypress}
+              onClick={this.click}
+              defaultValue={this.props.p.value || ''}
+              placeholder={this.props.p.parameter_spec.placeholder || ''}
+              ref={ el => this.stringRef = el}
+              />
+          </div>
+        )
+
       case 'integer':
       case 'float':
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
@@ -376,35 +411,35 @@ export default class WfParameter extends React.Component {
 
       case 'button':
         return (
-          <div className={'parameter-margin d-flex justify-content-end ' + this.paramClassName}>
+          <div {...this.outerDivProps} className={this.paramClassName + ' d-flex justify-content-end'}>
             <div className='action-button button-blue' onClick={!this.props.readOnly && this.click}>{name}</div>
           </div>
         );
       case 'statictext':
         return (
-          <div data-name={id_name} className={'t-m-gray info-2 ' + this.paramClassName}>{name}</div>
+          <div {...this.outerDivProps} className={this.paramClassName + ' t-m-gray info-2'}>{name}</div>
         );
 
       case 'checkbox':
         return (
-            <div className={'checkbox-wrapper ' + this.paramClassName}>
-                <div className='d-flex align-items-center'>
-                  <input
-                    disabled={this.props.isReadOnly}
-                    type="checkbox" className="checkbox"
-                    checked={this.props.p.value}
-                    onChange={this.click}
-                    name={id_name}
-                    ref={ el => this.checkboxRef = el}
-                    id={this.props.p.id} />
-                  <label htmlFor={this.props.p.id} className='t-d-gray content-3'>{name}</label>
-                </div>
+          <div {...this.outerDivProps} className={this.paramClassName + ' checkbox-wrapper'}>
+            <div className='d-flex align-items-center'>
+              <input
+                disabled={this.props.isReadOnly}
+                type="checkbox" className="checkbox"
+                checked={this.props.p.value}
+                onChange={this.click}
+                name={id_name}
+                ref={ el => this.checkboxRef = el}
+                id={this.props.p.id} />
+              <label htmlFor={this.props.p.id} className='t-d-gray content-3'>{name}</label>
             </div>
+          </div>
         );
 
       case 'menu':
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <MenuParam
               name={id_name}
@@ -417,7 +452,7 @@ export default class WfParameter extends React.Component {
 
       case 'column':
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <ColumnParam
               selectedCol={this.props.p.value}
@@ -432,7 +467,7 @@ export default class WfParameter extends React.Component {
 
       case 'multicolumn':
         return (
-          <div className={'parameter-margin ' + this.paramClassName}>
+          <div {...this.outerDivProps}>
             <div className='t-d-gray content-3 label-margin'>{name}</div>
             <ColumnSelector
               selectedCols={this.props.getParamText('colnames')}
@@ -442,7 +477,6 @@ export default class WfParameter extends React.Component {
               isReadOnly={this.props.isReadOnly}
               revision={this.props.revision} />
           </div> );
-
 
       case 'custom':
         return this.render_custom_parameter();
@@ -461,6 +495,7 @@ WfParameter.propTypes = {
     }).isRequired,
   }).isRequired,
   moduleName:       PropTypes.string.isRequired,
+  isLessonHighlight: PropTypes.bool.isRequired,
   wf_module_id:     PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,
   loggedInUser:     PropTypes.object,             // in read-only there is no user logged in
@@ -471,4 +506,17 @@ WfParameter.propTypes = {
   setParamText:     PropTypes.func.isRequired,
   startDrag:        PropTypes.func.isRequired,
   stopDrag:         PropTypes.func.isRequired,
-};
+}
+
+function mapStateToProps(state, ownProps) {
+  const { testHighlight } = lessonSelector(state)
+  const moduleName = ownProps.moduleName
+  const name = ownProps.p.parameter_spec.id_name
+  return {
+    isLessonHighlight: testHighlight({ type: 'WfParameter', moduleName, name }),
+  }
+}
+
+export default connect(
+  mapStateToProps
+)(WfParameter)
