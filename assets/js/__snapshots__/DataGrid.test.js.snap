@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Render without data 1`] = `
+exports[`DataGrid tests, Render without data 1`] = `
 <DataGrid
   columns={Array []}
   getRow={[Function]}
@@ -8,7 +8,7 @@ exports[`Render without data 1`] = `
 />
 `;
 
-exports[`Renders the grid 1`] = `
+exports[`DataGrid tests, Renders the grid 1`] = `
 <DataGrid
   columns={
     Array [

@@ -350,7 +350,7 @@ describe('TableView', () => {
       expect(dataGrid).toHaveLength(1);
       expect(dataGrid.prop('showLetter')).toBe(true);
 
-      // Try a mount with a non-sort module selected, sortColumn and sortDirection should be undefined
+      // Try a mount with a non-formula module selected, should not show letter
       tree = mount(
           <TableView
               revision={1}

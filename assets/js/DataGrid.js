@@ -102,6 +102,7 @@ export class HeaderRenderer extends React.Component {
   renderLetter() {
     if(this.props.showLetter) {
       return (
+          // The 'column-letter' class name is used in the test so please be careful with it
           <div className='column-letter'>
             {this.idxToLetter(this.props.idx)}
           </div>
