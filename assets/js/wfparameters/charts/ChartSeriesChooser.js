@@ -77,16 +77,13 @@ export default class ChartSeriesChooser extends React.Component {
   }
 
   render() {
-    var backgroundColor =  {
-      background: this.state.color
-    }
     return (
       <div className="color-picker d-flex parameter-margin">
         <div >
           <InputGroup size="lg">
             <InputGroupButton>
               <Button onClick={this.handleClick} className="color-picker button">
-                <div className="color-picker color" style={backgroundColor}>
+                <div className="color-picker color" style={{ background: this.state.color}}>
                   <div className="icon-sort-down-vl-gray button-icon color-picker" style={{position:'relative'}} />
                 </div>
               </Button>
