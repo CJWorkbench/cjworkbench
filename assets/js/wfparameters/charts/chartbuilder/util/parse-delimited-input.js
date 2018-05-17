@@ -1,7 +1,7 @@
 // Parse a string of TSV or CSV. Returns a flat array of objects of the form { column: value }
 // as well as the column names using `d3.dsv`
 
-var d3 = require("d3");
+var d3Dsv = require("d3-dsv");
 var each = require("lodash/each");
 var parseUtils = require("./parse-utils");
 var help = require("./helper.js");
@@ -49,7 +49,7 @@ function parseDelimInput(input, opts) {
 	var stripCharsRegex = new RegExp(_stripCharsStr, "g");
 
 	var columnNames = input.split(newLineRegex)[0].split(_defaultOpts.delimiter);
-	var dsv = d3.dsv(_defaultOpts.delimiter, "text/plain");
+	var dsv = d3Dsv.dsvFormat(_defaultOpts.delimiter, "text/plain");
 	var all_index_types = [];
 
 	var casted_data = cast_data(input, columnNames, stripCharsRegex, _defaultOpts);
@@ -66,7 +66,7 @@ function parseDelimInput(input, opts) {
 
 		if(isNumeric && !_defaultOpts.type && _defaultOpts.checkForDate) {
 			// if the entries are certain four digit numbers that look like years reparse as years if there isn't a specified type
-			var entry_extent = d3.extent(all_entry_values);
+			var entry_extent = d3Array.extent(all_entry_values);
 			if(entry_extent[0] > 1500 && entry_extent[1] < 3000) {
 				var _forceDate = assign(_defaultOpts, { type: "date" });
 				data = cast_data(input, columnNames, stripCharsRegex, _forceDate).data;
@@ -86,7 +86,7 @@ function parseDelimInput(input, opts) {
 }
 
 function cast_data(input, columnNames, stripCharsRegex, opts) {
-	var dsv = d3.dsv(opts.delimiter, "text/plain");
+	var dsv = d3Dsv.dsvFormat(opts.delimiter, "text/plain");
 	var all_index_types = [];
 	var all_entry_values = [];
 
