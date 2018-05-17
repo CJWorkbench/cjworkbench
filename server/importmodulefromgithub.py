@@ -126,8 +126,8 @@ def get_module_config_from_json(url, extension_file_mapping, directory):
 
     return module_config
 
-# Where this version of this module actually lives. Filed under importedmodules/reponame/git_version_hash
-def destination_directory_name(reponame, version):
+# Directory where this version of this module actually lives. Filed under importedmodules/reponame/git_version_hash
+def create_destination_directory(reponame, version):
 
     # check if files with the same name already exist.
     # This can happen if a module is deleted from the server DB, then re-imported
@@ -135,33 +135,33 @@ def destination_directory_name(reponame, version):
     destination_directory = os.path.join(MODULE_DIRECTORY, reponame, version)
     if os.path.isdir(destination_directory):
         shutil.rmtree(destination_directory)
+    os.makedirs(destination_directory)
+    original_dir = destination_directory + '-original'
+    if os.path.isdir(original_dir):
+        shutil.rmtree(original_dir)
+    os.makedirs(original_dir)
 
     return destination_directory
 
 
-# Move py and json files to the directory where they will live henceforth
-# that's /importedmodules/projname/version
-def move_files_to_final_location(destination_directory, curdir, json_file, python_file, html_file=None):
+# Move py,json,html files to the directory where they will live henceforth
+# that's /importedmodules/projname/version for the mangled ones (with boilerplate) that we run
+# plus /importedmodules/projname/version-original for the pristine source files (so we can change boilerplate)
+def move_files_to_final_location(destination_directory, imported_dir, files):
 
-    try:
-        os.makedirs(destination_directory)
-        shutil.move(os.path.join(curdir, json_file), os.path.join(destination_directory, json_file))
-    except (OSError, Exception) as error:
-        raise ValidationError("Unable to move JSON file to module directory: {}.".format(error))
+    original_dir = destination_directory + '-original'
 
-    try:
-        shutil.move(os.path.join(curdir, python_file),
-                  os.path.join(destination_directory, python_file))
-    except (OSError, Exception) as error:
-        raise ValidationError("Unable to move Python file to module directory.")
+    for f in files:
+        if f:  # html or other optional files might be None
+            try:
+                shutil.copy(os.path.join(imported_dir, f), os.path.join(original_dir, f))
+            except (OSError, Exception) as error:
+                raise ValidationError("Unable to copy %s to module directory: %s" % (f, str(error)))
 
-    if html_file:
-        try:
-            shutil.move(os.path.join(curdir, html_file),
-                      os.path.join(destination_directory, html_file))
-        except (OSError, Exception) as error:
-            raise ValidationError("Unable to move HTML file to module directory.")
-
+            try:
+                shutil.move(os.path.join(imported_dir, f), os.path.join(destination_directory, f))
+            except (OSError, Exception) as error:
+                raise ValidationError("Unable to move %s to module directory: %s" % (f, str(error)))
 
 
 module_boilerplate = """
@@ -213,7 +213,7 @@ def add_boilerplate_and_check_syntax(destination_directory, python_file):
     return compiled
 
 
-# Now check if the module is importablr and defines the render function
+# Now check if the module is importable and defines the render function
 def validate_python_functions(destination_directory, python_file):
     p, m = python_file.rsplit(".", 1)
 
@@ -262,6 +262,7 @@ def import_module_from_directory(url, reponame, version, importdir):
         json_file = extension_file_mapping['json']
         html_file = extension_file_mapping.get('html', None)
 
+        # load json file
         module_config = get_module_config_from_json(url, extension_file_mapping, importdir)
         id_name = module_config['id_name']
 
@@ -288,8 +289,8 @@ def import_module_from_directory(url, reponame, version, importdir):
             module_config["category"] = "Other"
 
         # The core work of creating a module
-        destination_directory = destination_directory_name(id_name, version)
-        move_files_to_final_location(destination_directory, importdir, json_file, python_file, html_file=html_file)
+        destination_directory = create_destination_directory(id_name, version)
+        move_files_to_final_location(destination_directory, importdir, [json_file, python_file, html_file])
         add_boilerplate_and_check_syntax(destination_directory, python_file)
         validate_python_functions(destination_directory, python_file)
 
@@ -339,7 +340,6 @@ def import_module_from_github(url):
         # pull contents from GitHub
         try:
             git.Repo.clone_from(url, importdir)
-
         except (ValidationError, GitCommandError) as ve:
             if type(ve) == GitCommandError:
                 message = "Received Git error status code {}".format(ve.status)
@@ -348,11 +348,9 @@ def import_module_from_github(url):
             raise ValidationError('Unable to clone from GitHub: %s' % (url) +
                                   ': %s' % (message))
 
-        # retrieve Git hash to use as the version number.
+        # load it
         version = extract_version(importdir)
-
         ui_info = import_module_from_directory(url, reponame, version, importdir)
-
 
     except Exception as e:
         # Clean up any existing dirs and pass exception up (ValidationErrors will have error message for user)

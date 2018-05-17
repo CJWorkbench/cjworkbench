@@ -194,19 +194,23 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.assertTrue(all (k in module_config for k in ("id_name", "description", "name", "category", "parameters")),
                         "Not all mandatory keys exist in the module_config/json file.")
 
-    def test_destination_directory_name(self):
+    def test_create_destination_directory(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
 
-        #check valid scenario
-        destination_directory = destination_directory_name('my_id_name', '123456')
+        # Should create destination and originals files directory
+        destination_directory = create_destination_directory('my_id_name', '123456')
         expected_path = os.path.normpath(pwd + '/../../importedmodules/my_id_name/123456')
         self.assertTrue(Path(destination_directory) == Path(expected_path))
+        self.assertTrue(os.path.isdir(destination_directory))
+        self.assertTrue(os.path.isdir(destination_directory + '-original'))
 
         # should work even if files already exists for the given module-version combination
         # in which case the dir should be deleted, so as to be ready for re-import
-        os.makedirs(destination_directory)
-        destination_directory_name('my_id_name','123456')
-        self.assertFalse(os.path.isdir(destination_directory))
+        junkfile = os.path.join(destination_directory, "junk")
+        open(junkfile, 'w+')
+        self.assertTrue(os.path.isfile(junkfile))
+        create_destination_directory('my_id_name','123456')
+        self.assertFalse(os.path.isfile(junkfile))
 
 
     def test_add_boilerplate_and_check_syntax(self):
