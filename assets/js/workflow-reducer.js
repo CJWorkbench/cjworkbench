@@ -168,7 +168,6 @@ export function initialLoadWorkflowAction() {
 }
 registerReducerFunc(INITIAL_LOAD_WORKFLOW + '_FULFILLED', (state, action) => {
   // Sets the selected module from backend if it exists, or the first module if there are any at all
-  console.log("INITIAL_LOAD_WORKFLOW");
   let selectedWfModule = null;
 
   if (action.payload.selected_wf_module) {
@@ -193,9 +192,6 @@ export function reloadWorkflowAction() {
   }
 }
 registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
-  console.log("RELOAD_WORKFLOW");
-  console.log("new workflow revision " + action.payload.revision);
-
   return update(state, {
     workflow: {$merge: action.payload},
     selected_wf_module: {$set: action.payload.selected_wf_module},

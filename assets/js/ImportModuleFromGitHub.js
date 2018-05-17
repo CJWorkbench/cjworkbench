@@ -11,6 +11,20 @@ import PropTypes from 'prop-types'
 import { loadModulesAction } from './workflow-reducer'
 import {connect} from "react-redux";
 
+class Button extends React.PureComponent {
+  render() {
+    const { onClick, color, name, children } = this.props
+
+    return <button name={name} className={`action-button button-${color}`} onClick={onClick}>{children}</button>
+  }
+}
+Button.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  color: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  extraClassName: PropTypes.string,
+}
+
 export class ImportModuleFromGitHub extends React.Component {
   constructor(props) {
     super(props);
@@ -90,46 +104,39 @@ export class ImportModuleFromGitHub extends React.Component {
 
     if (this.state.message) {
       if (this.state.message_type == 'error') {
-        formContent =
+        formContent = (
           <div>
             <div className="import-github-error">
-                <div>{this.state.message}</div>
+              <div>{this.state.message}</div>
             </div>
           </div>
-        footer =
-          <div className=" modal-footer">
-              <div onClick={this.props.closeModal} className='button-gray action-button'>
-                Cancel
-              </div>
-              <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button ml-3'>
-                Retry
-              </div>
-          </div>
+        )
+        footer = (
+          <React.Fragment>
+            <Button onClick={this.props.closeModal} color="gray" name="cancel">Cancel</Button>
+            <Button onClick={this.handleSubmit} color="blue" name="retry">Retry</Button>
+          </React.Fragment>
+        )
       } else if (this.state.message_type == 'success') {
         var json = JSON.parse(this.state.message);
-        formContent =
+        formContent = (
           <div>
-            <div className="import-github-success">
+            <button className="import-github-success">
               Successfully imported {json.author} module "{json.name}" under category "{json.category}".
-            </div>
+            </button>
           </div>
-        footer =
-          <div className=" modal-footer">
-            <div onClick={this.props.closeModal} className='button-blue action-button'>
-              OK
-            </div>
-          </div>
+        )
+        footer = (
+          <Button onClick={this.props.closeModal} color="blue" name="ok">OK</Button>
+        )
       }
     } else {
-      footer =
-        <div className=' modal-footer'>
-          <div onClick={this.props.closeModal} className='button-gray action-button mr-4'>
-            Cancel
-          </div>
-          <div onClick={this.handleSubmit.bind(this)} className='button-blue action-button'>
-            Import
-          </div>
-        </div>
+      footer = (
+        <React.Fragment>
+          <Button onClick={this.props.closeModal} color="gray" name="cancel">Cancel</Button>
+          <Button onClick={this.handleSubmit} color="blue" name="import">Import</Button>
+        </React.Fragment>
+      )
     };
 
     return (
@@ -154,7 +161,7 @@ export class ImportModuleFromGitHub extends React.Component {
               {formContent}
             </form>
           </ModalBody>
-          {footer}
+          <ModalFooter>{footer}</ModalFooter>
         </Modal>
 
       </div>

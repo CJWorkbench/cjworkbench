@@ -10,7 +10,6 @@ import {
 } from 'reactstrap'
 import PropTypes from 'prop-types'
 
-
 export default class WfContextMenu extends React.Component {
   constructor(props) {
     super(props);
@@ -18,21 +17,21 @@ export default class WfContextMenu extends React.Component {
 
   render() {
     return (
-       <UncontrolledDropdown>
+      <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
-          <div className='context-button--icon icon-more'></div>
+          <i className='context-button--icon icon-more'></i>
         </DropdownToggle>
-        <DropdownMenu right className='dropdown-menu'>
-          <DropdownItem key={2} onClick={this.props.duplicateWorkflow} className='dropdown-menu--item test-duplicate-button'>
-            <i className="icon-duplicate dropdown-menu--icon"></i>
-            <span className='content-3 ml-3'>Duplicate</span>
+        <DropdownMenu right>
+          <DropdownItem onClick={this.props.duplicateWorkflow} className='test-duplicate-button'>
+            <i className="icon-duplicate"></i>
+            <span>Duplicate</span>
           </DropdownItem>
-          <DropdownItem key={3} onClick={this.props.deleteWorkflow} className='dropdown-menu--item test-delete-button'>
-            <i className="icon-bin dropdown-menu--icon"></i>
-            <span className='content-3 ml-3'>Delete</span>
+          <DropdownItem onClick={this.props.deleteWorkflow} className='test-delete-button'>
+            <i className="icon-bin"></i>
+            <span>Delete</span>
           </DropdownItem>
         </DropdownMenu>
-       </UncontrolledDropdown>
+      </UncontrolledDropdown>
     );
   }
 }

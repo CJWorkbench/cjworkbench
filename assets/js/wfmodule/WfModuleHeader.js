@@ -41,7 +41,7 @@ export default class WfModuleHeader extends React.Component {
   }
 }
 
-WfModuleHeader.PropTypes = {
+WfModuleHeader.propTypes = {
   isSelected: PropTypes.bool,
   moduleIcon: PropTypes.string,
   moduleName: PropTypes.string,

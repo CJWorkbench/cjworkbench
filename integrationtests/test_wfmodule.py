@@ -50,8 +50,8 @@ class TestWfModule(LoggedInIntegrationTest):
         header.find_by_css('.context-button--icon').click()
 
         # check for correct items
-        self.assertTrue(header.find_by_css('.dropdown-menu--item').first.visible)
-        self.assertEqual(len(header.find_by_css('.dropdown-menu--item')), 2)
+        self.assertTrue(header.find_by_css('.dropdown-item').first.visible)
+        self.assertEqual(len(header.find_by_css('.dropdown-item')), 2)
         self.assertTrue(header.find_by_text('Export'))
         self.assertTrue(header.find_by_text('Delete'))
 

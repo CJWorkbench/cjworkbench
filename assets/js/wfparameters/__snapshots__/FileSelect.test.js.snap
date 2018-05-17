@@ -25,12 +25,181 @@ exports[`FileSelect Does not show the modal link if there is no user credential 
         <div>
           <span
             className="t-d-gray content-3 mb-3"
-          >
-            Police Data
-          </span>
+          />
         </div>
       </div>
     </div>
+  </div>
+</div>
+`;
+
+exports[`FileSelect Loads correctly and allows a user to choose a new file 1`] = `
+<FileSelect
+  api={
+    Object {
+      "postParamEvent": [MockFunction] {
+        "calls": Array [
+          Array [
+            1,
+            Object {
+              "type": "fetchFiles",
+            },
+          ],
+        ],
+      },
+    }
+  }
+  getState={[Function]}
+  pid={1}
+  saveState={[Function]}
+  userCreds={
+    Array [
+      0,
+    ]
+  }
+>
+  <div
+    className="parameter-margin"
+  >
+    <div
+      className="parameter-margin d-flex gdrive-fileSelect align-items-center"
+    >
+      <div
+        className="file-info content-3"
+      >
+        <div>
+          <div
+            className="d-flex"
+          >
+            <div
+              className="t-d-gray content-3 label-margin"
+            >
+              File
+            </div>
+          </div>
+          <div>
+            <span
+              className="t-d-gray content-3 mb-3"
+            >
+              Police Data
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</FileSelect>
+`;
+
+exports[`FileSelect Loads correctly and allows a user to choose a new file 2`] = `
+<div
+  className="modal-dialog"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      closeAriaLabel="Close"
+      tag="h5"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="modal-header"
+      >
+        <h5
+          className="modal-title"
+        >
+          <div
+            className="title-4 t-d-gray"
+          >
+            Choose File
+          </div>
+        </h5>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      className="list-body"
+      tag="div"
+    >
+      <div
+        className="list-body modal-body"
+      >
+        <div>
+          <div
+            className="line-item--data-version"
+            key="0"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              Police Data
+            </span>
+          </div>
+          <div
+            className="line-item--data-version"
+            key="1"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              Government Contracts
+            </span>
+          </div>
+          <div
+            className="line-item--data-version"
+            key="2"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              Labor and materials
+            </span>
+          </div>
+          <div
+            className="line-item--data-version"
+            key="3"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              Budget
+            </span>
+          </div>
+          <div
+            className="line-item--data-version"
+            key="4"
+            onClick={[Function]}
+          >
+            <span
+              className="content-3"
+            >
+              Science Data
+            </span>
+          </div>
+        </div>
+      </div>
+    </ModalBody>
+    <div
+      className=" modal-footer"
+    />
   </div>
 </div>
 `;

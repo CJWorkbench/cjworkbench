@@ -36,16 +36,21 @@ export default class WorkflowMetadata extends React.Component {
     });
   }
 
+  reloadPageToEnsureConsistencyBecauseNavbarDoesntListenToState() {
+    // hard reload, to ensure consistency of state with Share button in parent Navbar component
+    location.reload();
+  }
+
   setPublic(isPublic) {
+    // FIXME use redux
     this.props.api.setWorkflowPublic(this.props.workflow.id, isPublic)
-    .then(() => {
-      this.setState({isPublic: isPublic});
-      // hard reload, to ensure consistency of state with Share button in parent Navbar component
-      location.reload();
-    })
-    .catch((error) => {
-      console.log('Request failed', error);
-    });
+      .then(() => {
+        this.setState({isPublic: isPublic});
+        this.reloadPageToEnsureConsistencyBecauseNavbarDoesntListenToState()
+      })
+      .catch((error) => {
+        console.log('Request failed', error);
+      });
   }
 
   togglePrivacyModal(e) {

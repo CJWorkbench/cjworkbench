@@ -59,6 +59,10 @@ button:focus { outline:0 !important; }
   transition: opacity 0.1s;
 }
 
+.action-button + .action-button {
+  margin-left: 1rem;
+}
+
 .button-white {
   color: $white;
   border: 1px solid $white;

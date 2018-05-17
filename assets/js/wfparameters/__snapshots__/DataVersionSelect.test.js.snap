@@ -41,6 +41,516 @@ exports[`DataVersionSelect Displays empty when no versions available 1`] = `
 </DataVersionSelect>
 `;
 
+exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
+<DataVersionSelect
+  api={
+    Object {
+      "loadWorkflow": [Function],
+      "markDataVersionsRead": [MockFunction],
+      "setWfModuleVersion": [MockFunction],
+      "updateWfModule": [MockFunction],
+    }
+  }
+  isReadOnly={false}
+  markDataVersionsRead={[MockFunction]}
+  notifications={true}
+  revision={202}
+  setClickNotification={[Function]}
+  setDataVersionAction={[MockFunction]}
+  testing={true}
+  updateWfModuleAction={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          808,
+          Object {
+            "notifications": false,
+          },
+        ],
+      ],
+    }
+  }
+  versions={
+    Object {
+      "selected": "2017-04-10 17:57:58.324Z",
+      "versions": Array [
+        Array [
+          "2017-07-10 17:57:58.324Z",
+          false,
+        ],
+        Array [
+          "2017-06-10 17:57:58.324Z",
+          true,
+        ],
+        Array [
+          "2017-05-10 17:57:58.324Z",
+          true,
+        ],
+        Array [
+          "2017-04-10 17:57:58.324Z",
+          true,
+        ],
+        Array [
+          "2017-03-10 17:57:58.324Z",
+          true,
+        ],
+      ],
+    }
+  }
+  wfModuleId={808}
+>
+  <div
+    className="version-item"
+  >
+    <div
+      className="t-d-gray content-3"
+    >
+      Version
+    </div>
+    <div>
+      <div
+        className="open-modal t-f-blue content-3 ml-2"
+        onClick={[Function]}
+      >
+        2 of 5
+      </div>
+      <Modal
+        autoFocus={true}
+        backdrop={true}
+        backdropTransition={
+          Object {
+            "mountOnEnter": true,
+            "timeout": 150,
+          }
+        }
+        centered={false}
+        className="modal-dialog"
+        fade={true}
+        isOpen={false}
+        keyboard={true}
+        modalTransition={
+          Object {
+            "timeout": 300,
+          }
+        }
+        onClosed={[Function]}
+        onOpened={[Function]}
+        role="dialog"
+        toggle={[Function]}
+        zIndex={1050}
+      >
+        <Portal
+          node={
+            <div
+              style="position: relative; z-index: 1050;"
+              tabindex="-1"
+            >
+              <div
+                class=""
+              >
+                <div
+                  class="modal fade"
+                  role="dialog"
+                  style="display: block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class="modal-dialog modal-dialog"
+                    role="document"
+                  >
+                    <div
+                      class="modal-content"
+                    >
+                      <div
+                        class="dialog-header modal-header"
+                      >
+                        <h5
+                          class="modal-title"
+                        >
+                          <div
+                            class="title-4 t-d-gray"
+                          >
+                            DATA VERSIONS
+                          </div>
+                        </h5>
+                        <button
+                          aria-label="Close"
+                          class="close"
+                          type="button"
+                        >
+                          <span
+                            aria-hidden="true"
+                          >
+                            ×
+                          </span>
+                        </button>
+                      </div>
+                      <div
+                        class="list-body modal-body"
+                      >
+                        <div>
+                          <div
+                            class="line-item--data-version d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              Jul 10 2017 - 05:57PM
+                            </div>
+                            <div
+                              class="icon icon-notification mr-5"
+                            />
+                          </div>
+                          <div
+                            class="line-item--data-version d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              Jun 10 2017 - 05:57PM
+                            </div>
+                          </div>
+                          <div
+                            class="line-item--data-version d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              May 10 2017 - 05:57PM
+                            </div>
+                          </div>
+                          <div
+                            class="line-item--data-version--selected d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              Apr 10 2017 - 05:57PM
+                            </div>
+                          </div>
+                          <div
+                            class="line-item--data-version d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              Mar 10 2017 - 05:57PM
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class=" d-flex justify-content-between modal-footer"
+                      >
+                        <div
+                          class="alert-setting-modal"
+                        >
+                          <div
+                            class="alert-setting"
+                          >
+                            <div
+                              class="d-flex align-items-center mb-2"
+                            >
+                              <div
+                                class="icon-notification t-orange module-icon mr-3"
+                              />
+                              <div
+                                class="info-1 t-orange"
+                              >
+                                Alerts are ON
+                              </div>
+                            </div>
+                            <div>
+                               If new data is released, you will be notified via email.
+                            </div>
+                          </div>
+                          <div
+                            class="button-gray action-button test-cancel-button"
+                          >
+                            Turn off
+                          </div>
+                        </div>
+                        <div
+                          class="button-blue action-button test-ok-button"
+                        >
+                          Load
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="modal-backdrop fade"
+                />
+              </div>
+            </div>
+          }
+        >
+          <div
+            className=""
+          >
+            <Fade
+              appear={true}
+              baseClass="fade"
+              baseClassActive="show"
+              className="modal"
+              enter={true}
+              exit={true}
+              in={false}
+              mountOnEnter={false}
+              onClick={[Function]}
+              onEnter={[Function]}
+              onEntered={[Function]}
+              onEntering={[Function]}
+              onExit={[Function]}
+              onExited={[Function]}
+              onExiting={[Function]}
+              onKeyUp={[Function]}
+              role="dialog"
+              style={
+                Object {
+                  "display": "block",
+                }
+              }
+              tabIndex="-1"
+              tag="div"
+              timeout={300}
+              unmountOnExit={false}
+            >
+              <Transition
+                appear={true}
+                enter={true}
+                exit={true}
+                in={false}
+                mountOnEnter={false}
+                onEnter={[Function]}
+                onEntered={[Function]}
+                onEntering={[Function]}
+                onExit={[Function]}
+                onExited={[Function]}
+                onExiting={[Function]}
+                timeout={300}
+                unmountOnExit={false}
+              >
+                <div
+                  className="modal fade"
+                  onClick={[Function]}
+                  onKeyUp={[Function]}
+                  role="dialog"
+                  style={
+                    Object {
+                      "display": "block",
+                    }
+                  }
+                  tabIndex="-1"
+                >
+                  <div
+                    className="modal-dialog modal-dialog"
+                    role="document"
+                  >
+                    <div
+                      className="modal-content"
+                    >
+                      <ModalHeader
+                        className="dialog-header"
+                        closeAriaLabel="Close"
+                        tag="h5"
+                        toggle={[Function]}
+                        wrapTag="div"
+                      >
+                        <div
+                          className="dialog-header modal-header"
+                        >
+                          <h5
+                            className="modal-title"
+                          >
+                            <div
+                              className="title-4 t-d-gray"
+                            >
+                              DATA VERSIONS
+                            </div>
+                          </h5>
+                          <button
+                            aria-label="Close"
+                            className="close"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            <span
+                              aria-hidden="true"
+                            >
+                              ×
+                            </span>
+                          </button>
+                        </div>
+                      </ModalHeader>
+                      <ModalBody
+                        className="list-body"
+                        tag="div"
+                      >
+                        <div
+                          className="list-body modal-body"
+                        >
+                          <div>
+                            <div
+                              className="line-item--data-version d-flex justify-content-between list-test-class"
+                              key="2017-07-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                Jul 10 2017 - 05:57PM
+                              </div>
+                              <div
+                                className="icon icon-notification mr-5"
+                              />
+                            </div>
+                            <div
+                              className="line-item--data-version d-flex justify-content-between list-test-class"
+                              key="2017-06-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                Jun 10 2017 - 05:57PM
+                              </div>
+                            </div>
+                            <div
+                              className="line-item--data-version d-flex justify-content-between list-test-class"
+                              key="2017-05-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                May 10 2017 - 05:57PM
+                              </div>
+                            </div>
+                            <div
+                              className="line-item--data-version--selected d-flex justify-content-between list-test-class"
+                              key="2017-04-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                Apr 10 2017 - 05:57PM
+                              </div>
+                            </div>
+                            <div
+                              className="line-item--data-version d-flex justify-content-between list-test-class"
+                              key="2017-03-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                Mar 10 2017 - 05:57PM
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ModalBody>
+                      <ModalFooter
+                        className=" d-flex justify-content-between"
+                        tag="div"
+                      >
+                        <div
+                          className=" d-flex justify-content-between modal-footer"
+                        >
+                          <div
+                            className="alert-setting-modal"
+                          >
+                            <div
+                              className="alert-setting"
+                              key="1"
+                            >
+                              <div
+                                className="d-flex align-items-center mb-2"
+                              >
+                                <div
+                                  className="icon-notification t-orange module-icon mr-3"
+                                />
+                                <div
+                                  className="info-1 t-orange"
+                                >
+                                  Alerts are ON
+                                </div>
+                              </div>
+                              <div>
+                                 If new data is released, you will be notified via email.
+                              </div>
+                            </div>
+                            <div
+                              className="button-gray action-button test-cancel-button"
+                              key="2"
+                              onClick={[Function]}
+                            >
+                              Turn off
+                            </div>
+                          </div>
+                          <div
+                            className="button-blue action-button test-ok-button"
+                            onClick={[Function]}
+                          >
+                            Load
+                          </div>
+                        </div>
+                      </ModalFooter>
+                    </div>
+                  </div>
+                </div>
+              </Transition>
+            </Fade>
+            <Fade
+              appear={true}
+              baseClass="fade"
+              baseClassActive="show"
+              className="modal-backdrop"
+              enter={true}
+              exit={true}
+              in={false}
+              mountOnEnter={true}
+              onEnter={[Function]}
+              onEntered={[Function]}
+              onEntering={[Function]}
+              onExit={[Function]}
+              onExited={[Function]}
+              onExiting={[Function]}
+              tag="div"
+              timeout={150}
+              unmountOnExit={false}
+            >
+              <Transition
+                appear={true}
+                enter={true}
+                exit={true}
+                in={false}
+                mountOnEnter={true}
+                onEnter={[Function]}
+                onEntered={[Function]}
+                onEntering={[Function]}
+                onExit={[Function]}
+                onExited={[Function]}
+                onExiting={[Function]}
+                timeout={150}
+                unmountOnExit={false}
+              >
+                <div
+                  className="modal-backdrop fade"
+                />
+              </Transition>
+            </Fade>
+          </div>
+        </Portal>
+      </Modal>
+    </div>
+  </div>
+</DataVersionSelect>
+`;
+
 exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 1`] = `
 <DataVersionSelect
   api={
@@ -106,15 +616,696 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
       <Modal
         autoFocus={true}
         backdrop={true}
-        backdropTransitionTimeout={150}
+        backdropTransition={
+          Object {
+            "mountOnEnter": true,
+            "timeout": 150,
+          }
+        }
+        centered={false}
         className="modal-dialog"
         fade={true}
         isOpen={false}
         keyboard={true}
-        modalTransitionTimeout={300}
+        modalTransition={
+          Object {
+            "timeout": 300,
+          }
+        }
+        onClosed={[Function]}
+        onOpened={[Function]}
+        role="dialog"
         toggle={[Function]}
         zIndex={1050}
       />
+    </div>
+  </div>
+</DataVersionSelect>
+`;
+
+exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 2`] = `
+<div
+  className="modal-dialog modal-dialog"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      className="dialog-header"
+      closeAriaLabel="Close"
+      tag="h5"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="dialog-header modal-header"
+      >
+        <h5
+          className="modal-title"
+        >
+          <div
+            className="title-4 t-d-gray"
+          >
+            DATA VERSIONS
+          </div>
+        </h5>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      className="list-body"
+      tag="div"
+    >
+      <div
+        className="list-body modal-body"
+      >
+        <div>
+          <div
+            className="line-item--data-version d-flex justify-content-between list-test-class"
+            key="2017-07-10 17:57:58.324Z"
+            onClick={[Function]}
+          >
+            <div
+              className="content-3"
+            >
+              Jul 10 2017 - 05:57PM
+            </div>
+            <div
+              className="icon icon-notification mr-5"
+            />
+          </div>
+          <div
+            className="line-item--data-version d-flex justify-content-between list-test-class"
+            key="2017-06-10 17:57:58.324Z"
+            onClick={[Function]}
+          >
+            <div
+              className="content-3"
+            >
+              Jun 10 2017 - 05:57PM
+            </div>
+          </div>
+          <div
+            className="line-item--data-version d-flex justify-content-between list-test-class"
+            key="2017-05-10 17:57:58.324Z"
+            onClick={[Function]}
+          >
+            <div
+              className="content-3"
+            >
+              May 10 2017 - 05:57PM
+            </div>
+          </div>
+          <div
+            className="line-item--data-version--selected d-flex justify-content-between list-test-class"
+            key="2017-04-10 17:57:58.324Z"
+            onClick={[Function]}
+          >
+            <div
+              className="content-3"
+            >
+              Apr 10 2017 - 05:57PM
+            </div>
+          </div>
+          <div
+            className="line-item--data-version d-flex justify-content-between list-test-class"
+            key="2017-03-10 17:57:58.324Z"
+            onClick={[Function]}
+          >
+            <div
+              className="content-3"
+            >
+              Mar 10 2017 - 05:57PM
+            </div>
+          </div>
+        </div>
+      </div>
+    </ModalBody>
+    <ModalFooter
+      className=" d-flex justify-content-between"
+      tag="div"
+    >
+      <div
+        className=" d-flex justify-content-between modal-footer"
+      >
+        <div
+          className="alert-setting-modal"
+        >
+          <div
+            className="alert-setting"
+            key="1"
+          >
+            <div
+              className="d-flex align-items-center mb-2"
+            >
+              <div
+                className="icon-notification t-orange module-icon mr-3"
+              />
+              <div
+                className="info-1 t-orange"
+              >
+                Alerts are ON
+              </div>
+            </div>
+            <div>
+               If new data is released, you will be notified via email.
+            </div>
+          </div>
+          <div
+            className="button-gray action-button test-cancel-button"
+            key="2"
+            onClick={[Function]}
+          >
+            Turn off
+          </div>
+        </div>
+        <div
+          className="button-blue action-button test-ok-button"
+          onClick={[Function]}
+        >
+          Load
+        </div>
+      </div>
+    </ModalFooter>
+  </div>
+</div>
+`;
+
+exports[`DataVersionSelect Renders correctly when in Private mode, and selection is confirmed when user hits OK 3`] = `
+<DataVersionSelect
+  api={
+    Object {
+      "loadWorkflow": [Function],
+      "markDataVersionsRead": [MockFunction],
+      "setWfModuleVersion": [MockFunction],
+      "updateWfModule": [MockFunction],
+    }
+  }
+  isReadOnly={false}
+  markDataVersionsRead={[MockFunction]}
+  notifications={true}
+  revision={202}
+  setClickNotification={[Function]}
+  setDataVersionAction={
+    [MockFunction] {
+      "calls": Array [
+        Array [
+          808,
+          "2017-07-10 17:57:58.324Z",
+        ],
+      ],
+    }
+  }
+  testing={true}
+  updateWfModuleAction={[MockFunction]}
+  versions={
+    Object {
+      "selected": "2017-04-10 17:57:58.324Z",
+      "versions": Array [
+        Array [
+          "2017-07-10 17:57:58.324Z",
+          false,
+        ],
+        Array [
+          "2017-06-10 17:57:58.324Z",
+          true,
+        ],
+        Array [
+          "2017-05-10 17:57:58.324Z",
+          true,
+        ],
+        Array [
+          "2017-04-10 17:57:58.324Z",
+          true,
+        ],
+        Array [
+          "2017-03-10 17:57:58.324Z",
+          true,
+        ],
+      ],
+    }
+  }
+  wfModuleId={808}
+>
+  <div
+    className="version-item"
+  >
+    <div
+      className="t-d-gray content-3"
+    >
+      Version
+    </div>
+    <div>
+      <div
+        className="open-modal t-f-blue content-3 ml-2"
+        onClick={[Function]}
+      >
+        2 of 5
+      </div>
+      <Modal
+        autoFocus={true}
+        backdrop={true}
+        backdropTransition={
+          Object {
+            "mountOnEnter": true,
+            "timeout": 150,
+          }
+        }
+        centered={false}
+        className="modal-dialog"
+        fade={true}
+        isOpen={false}
+        keyboard={true}
+        modalTransition={
+          Object {
+            "timeout": 300,
+          }
+        }
+        onClosed={[Function]}
+        onOpened={[Function]}
+        role="dialog"
+        toggle={[Function]}
+        zIndex={1050}
+      >
+        <Portal
+          node={
+            <div
+              style="position: relative; z-index: 1050;"
+              tabindex="-1"
+            >
+              <div
+                class=""
+              >
+                <div
+                  class="modal fade"
+                  role="dialog"
+                  style="display: block;"
+                  tabindex="-1"
+                >
+                  <div
+                    class="modal-dialog modal-dialog"
+                    role="document"
+                  >
+                    <div
+                      class="modal-content"
+                    >
+                      <div
+                        class="dialog-header modal-header"
+                      >
+                        <h5
+                          class="modal-title"
+                        >
+                          <div
+                            class="title-4 t-d-gray"
+                          >
+                            DATA VERSIONS
+                          </div>
+                        </h5>
+                        <button
+                          aria-label="Close"
+                          class="close"
+                          type="button"
+                        >
+                          <span
+                            aria-hidden="true"
+                          >
+                            ×
+                          </span>
+                        </button>
+                      </div>
+                      <div
+                        class="list-body modal-body"
+                      >
+                        <div>
+                          <div
+                            class="line-item--data-version d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              Jul 10 2017 - 05:57PM
+                            </div>
+                            <div
+                              class="icon icon-notification mr-5"
+                            />
+                          </div>
+                          <div
+                            class="line-item--data-version d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              Jun 10 2017 - 05:57PM
+                            </div>
+                          </div>
+                          <div
+                            class="line-item--data-version d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              May 10 2017 - 05:57PM
+                            </div>
+                          </div>
+                          <div
+                            class="line-item--data-version--selected d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              Apr 10 2017 - 05:57PM
+                            </div>
+                          </div>
+                          <div
+                            class="line-item--data-version d-flex justify-content-between list-test-class"
+                          >
+                            <div
+                              class="content-3"
+                            >
+                              Mar 10 2017 - 05:57PM
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class=" d-flex justify-content-between modal-footer"
+                      >
+                        <div
+                          class="alert-setting-modal"
+                        >
+                          <div
+                            class="alert-setting"
+                          >
+                            <div
+                              class="d-flex align-items-center mb-2"
+                            >
+                              <div
+                                class="icon-notification t-orange module-icon mr-3"
+                              />
+                              <div
+                                class="info-1 t-orange"
+                              >
+                                Alerts are ON
+                              </div>
+                            </div>
+                            <div>
+                               If new data is released, you will be notified via email.
+                            </div>
+                          </div>
+                          <div
+                            class="button-gray action-button test-cancel-button"
+                          >
+                            Turn off
+                          </div>
+                        </div>
+                        <div
+                          class="button-blue action-button test-ok-button"
+                        >
+                          Load
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="modal-backdrop fade"
+                />
+              </div>
+            </div>
+          }
+        >
+          <div
+            className=""
+          >
+            <Fade
+              appear={true}
+              baseClass="fade"
+              baseClassActive="show"
+              className="modal"
+              enter={true}
+              exit={true}
+              in={false}
+              mountOnEnter={false}
+              onClick={[Function]}
+              onEnter={[Function]}
+              onEntered={[Function]}
+              onEntering={[Function]}
+              onExit={[Function]}
+              onExited={[Function]}
+              onExiting={[Function]}
+              onKeyUp={[Function]}
+              role="dialog"
+              style={
+                Object {
+                  "display": "block",
+                }
+              }
+              tabIndex="-1"
+              tag="div"
+              timeout={300}
+              unmountOnExit={false}
+            >
+              <Transition
+                appear={true}
+                enter={true}
+                exit={true}
+                in={false}
+                mountOnEnter={false}
+                onEnter={[Function]}
+                onEntered={[Function]}
+                onEntering={[Function]}
+                onExit={[Function]}
+                onExited={[Function]}
+                onExiting={[Function]}
+                timeout={300}
+                unmountOnExit={false}
+              >
+                <div
+                  className="modal fade"
+                  onClick={[Function]}
+                  onKeyUp={[Function]}
+                  role="dialog"
+                  style={
+                    Object {
+                      "display": "block",
+                    }
+                  }
+                  tabIndex="-1"
+                >
+                  <div
+                    className="modal-dialog modal-dialog"
+                    role="document"
+                  >
+                    <div
+                      className="modal-content"
+                    >
+                      <ModalHeader
+                        className="dialog-header"
+                        closeAriaLabel="Close"
+                        tag="h5"
+                        toggle={[Function]}
+                        wrapTag="div"
+                      >
+                        <div
+                          className="dialog-header modal-header"
+                        >
+                          <h5
+                            className="modal-title"
+                          >
+                            <div
+                              className="title-4 t-d-gray"
+                            >
+                              DATA VERSIONS
+                            </div>
+                          </h5>
+                          <button
+                            aria-label="Close"
+                            className="close"
+                            onClick={[Function]}
+                            type="button"
+                          >
+                            <span
+                              aria-hidden="true"
+                            >
+                              ×
+                            </span>
+                          </button>
+                        </div>
+                      </ModalHeader>
+                      <ModalBody
+                        className="list-body"
+                        tag="div"
+                      >
+                        <div
+                          className="list-body modal-body"
+                        >
+                          <div>
+                            <div
+                              className="line-item--data-version d-flex justify-content-between list-test-class"
+                              key="2017-07-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                Jul 10 2017 - 05:57PM
+                              </div>
+                              <div
+                                className="icon icon-notification mr-5"
+                              />
+                            </div>
+                            <div
+                              className="line-item--data-version d-flex justify-content-between list-test-class"
+                              key="2017-06-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                Jun 10 2017 - 05:57PM
+                              </div>
+                            </div>
+                            <div
+                              className="line-item--data-version d-flex justify-content-between list-test-class"
+                              key="2017-05-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                May 10 2017 - 05:57PM
+                              </div>
+                            </div>
+                            <div
+                              className="line-item--data-version--selected d-flex justify-content-between list-test-class"
+                              key="2017-04-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                Apr 10 2017 - 05:57PM
+                              </div>
+                            </div>
+                            <div
+                              className="line-item--data-version d-flex justify-content-between list-test-class"
+                              key="2017-03-10 17:57:58.324Z"
+                              onClick={[Function]}
+                            >
+                              <div
+                                className="content-3"
+                              >
+                                Mar 10 2017 - 05:57PM
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </ModalBody>
+                      <ModalFooter
+                        className=" d-flex justify-content-between"
+                        tag="div"
+                      >
+                        <div
+                          className=" d-flex justify-content-between modal-footer"
+                        >
+                          <div
+                            className="alert-setting-modal"
+                          >
+                            <div
+                              className="alert-setting"
+                              key="1"
+                            >
+                              <div
+                                className="d-flex align-items-center mb-2"
+                              >
+                                <div
+                                  className="icon-notification t-orange module-icon mr-3"
+                                />
+                                <div
+                                  className="info-1 t-orange"
+                                >
+                                  Alerts are ON
+                                </div>
+                              </div>
+                              <div>
+                                 If new data is released, you will be notified via email.
+                              </div>
+                            </div>
+                            <div
+                              className="button-gray action-button test-cancel-button"
+                              key="2"
+                              onClick={[Function]}
+                            >
+                              Turn off
+                            </div>
+                          </div>
+                          <div
+                            className="button-blue action-button test-ok-button"
+                            onClick={[Function]}
+                          >
+                            Load
+                          </div>
+                        </div>
+                      </ModalFooter>
+                    </div>
+                  </div>
+                </div>
+              </Transition>
+            </Fade>
+            <Fade
+              appear={true}
+              baseClass="fade"
+              baseClassActive="show"
+              className="modal-backdrop"
+              enter={true}
+              exit={true}
+              in={false}
+              mountOnEnter={true}
+              onEnter={[Function]}
+              onEntered={[Function]}
+              onEntering={[Function]}
+              onExit={[Function]}
+              onExited={[Function]}
+              onExiting={[Function]}
+              tag="div"
+              timeout={150}
+              unmountOnExit={false}
+            >
+              <Transition
+                appear={true}
+                enter={true}
+                exit={true}
+                in={false}
+                mountOnEnter={true}
+                onEnter={[Function]}
+                onEntered={[Function]}
+                onEntering={[Function]}
+                onExit={[Function]}
+                onExited={[Function]}
+                onExiting={[Function]}
+                timeout={150}
+                unmountOnExit={false}
+              >
+                <div
+                  className="modal-backdrop fade"
+                />
+              </Transition>
+            </Fade>
+          </div>
+        </Portal>
+      </Modal>
     </div>
   </div>
 </DataVersionSelect>

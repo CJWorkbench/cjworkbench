@@ -154,78 +154,89 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
         >
           <UncontrolledDropdown>
             <Dropdown
+              active={false}
+              addonType={false}
+              direction="down"
+              inNavbar={false}
               isOpen={false}
-              tag="div"
+              nav={false}
+              setActiveFromChild={false}
               toggle={[Function]}
             >
-              <div
+              <Manager
                 className="dropdown"
+                onKeyDown={[Function]}
+                tag="div"
               >
-                <DropdownToggle
-                  aria-haspopup={true}
-                  className="context-button"
-                  color="secondary"
-                  data-toggle="dropdown"
-                  key=".$.0"
+                <div
+                  className="dropdown"
+                  onKeyDown={[Function]}
                 >
-                  <Button
-                    aria-expanded={false}
-                    aria-haspopup="true"
+                  <DropdownToggle
+                    aria-haspopup={true}
                     className="context-button"
                     color="secondary"
-                    data-toggle="dropdown"
-                    onClick={[Function]}
-                    tag="button"
                   >
-                    <button
+                    <Target
                       aria-expanded={false}
-                      aria-haspopup="true"
-                      className="context-button btn btn-secondary"
-                      data-toggle="dropdown"
+                      aria-haspopup={true}
+                      className="context-button"
+                      color="secondary"
+                      component={[Function]}
                       onClick={[Function]}
-                      type="button"
                     >
-                      <div
-                        className="context-button--icon icon-more"
-                      />
-                    </button>
-                  </Button>
-                </DropdownToggle>
-                <DropdownMenu
-                  key=".$.1"
-                  right={true}
-                  tag="div"
-                >
-                  <div
-                    aria-hidden={true}
-                    className="dropdown-menu dropdown-menu-right"
-                    role="menu"
-                    tabIndex="-1"
-                  >
-                    <DropdownItem
-                      className="dropdown-menu--item"
-                      href="/workflows"
-                      key="1"
-                      tag="a"
-                      toggle={true}
-                    >
-                      <a
-                        className="dropdown-menu--item dropdown-item"
-                        href="/workflows"
+                      <Button
+                        aria-expanded={false}
+                        aria-haspopup={true}
+                        className="context-button"
+                        color="secondary"
+                        innerRef={[Function]}
                         onClick={[Function]}
-                        tabIndex="0"
+                        tag="button"
                       >
-                        <span
-                          className="content-3 ml-3"
+                        <button
+                          aria-expanded={false}
+                          aria-haspopup={true}
+                          className="context-button btn btn-secondary"
+                          onClick={[Function]}
+                          type="button"
                         >
-                          My Workflows
-                        </span>
-                      </a>
-                    </DropdownItem>
-                    <div>
+                          <div
+                            className="context-button--icon icon-more"
+                          />
+                        </button>
+                      </Button>
+                    </Target>
+                  </DropdownToggle>
+                  <DropdownMenu
+                    flip={true}
+                    right={true}
+                    tag="div"
+                  >
+                    <div
+                      aria-hidden={true}
+                      className="dropdown-menu dropdown-menu-right"
+                      role="menu"
+                      tabIndex="-1"
+                    >
+                      <DropdownItem
+                        href="/workflows"
+                        tag="button"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-item"
+                          href="/workflows"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                          <span>
+                            My Workflows
+                          </span>
+                        </a>
+                      </DropdownItem>
                       <DropdownItem
                         divider={true}
-                        key="100"
                         tag="button"
                         toggle={true}
                       >
@@ -236,48 +247,39 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                         />
                       </DropdownItem>
                       <DropdownItem
-                        className="dropdown-menu--item"
-                        key="2"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu--item dropdown-item"
+                          className="dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
                         >
-                          <span
-                            className="content-3 ml-3"
-                          >
+                          <span>
                             Undo
                           </span>
                         </button>
                       </DropdownItem>
                       <DropdownItem
-                        className="dropdown-menu--item"
-                        key="3"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu--item dropdown-item"
+                          className="dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
                         >
-                          <span
-                            className="content-3 ml-3"
-                          >
+                          <span>
                             Redo
                           </span>
                         </button>
                       </DropdownItem>
                       <DropdownItem
                         divider={true}
-                        key="200"
                         tag="button"
                         toggle={true}
                       >
@@ -287,52 +289,43 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                           tabIndex="-1"
                         />
                       </DropdownItem>
-                    </div>
-                    <div>
                       <DropdownItem
-                        className="dropdown-menu--item mb-1 test-export-button"
-                        key="4"
+                        className="test-export-button"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu--item mb-1 test-export-button dropdown-item"
+                          className="test-export-button dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
                         >
-                          <span
-                            className="content-3 ml-3"
-                          >
+                          <span>
                             Import Module
                           </span>
                         </button>
                       </DropdownItem>
-                    </div>
-                    <DropdownItem
-                      className="dropdown-menu--item"
-                      href="/account/logout"
-                      key="5"
-                      tag="a"
-                      toggle={true}
-                    >
-                      <a
-                        className="dropdown-menu--item dropdown-item"
+                      <DropdownItem
                         href="/account/logout"
-                        onClick={[Function]}
-                        tabIndex="0"
+                        tag="button"
+                        toggle={true}
                       >
-                        <span
-                          className="content-3 ml-3"
+                        <a
+                          className="dropdown-item"
+                          href="/account/logout"
+                          onClick={[Function]}
+                          tabIndex="0"
                         >
-                          Log Out
-                        </span>
-                      </a>
-                    </DropdownItem>
-                  </div>
-                </DropdownMenu>
-              </div>
+                          <span>
+                            Log Out
+                          </span>
+                        </a>
+                      </DropdownItem>
+                    </div>
+                  </DropdownMenu>
+                </div>
+              </Manager>
             </Dropdown>
           </UncontrolledDropdown>
         </WfHamburgerMenu>
@@ -340,6 +333,232 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
     </nav>
   </div>
 </WorkflowNavBar>
+`;
+
+exports[`WorkflowNavBar In Private mode, Share button invites user to set to Public 2`] = `
+<div
+  className="modal-dialog test-setpublic-modal"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      className="dialog-header modal-header d-flex align-items-center"
+      closeAriaLabel="Close"
+      tag="h5"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="dialog-header modal-header d-flex align-items-center modal-header"
+      >
+        <h5
+          className="modal-title"
+        >
+          <div
+            className="t-d-gray title-4"
+          >
+            SHARE THIS WORKFLOW
+          </div>
+        </h5>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      tag="div"
+    >
+      <div
+        className="modal-body"
+      >
+        <div
+          className="title-3 mb-3"
+        >
+          This workflow is currently private
+        </div>
+        <div
+          className="info-2 t-d-gray"
+        >
+          Set this workflow to Public in order to share it? Anyone with the URL will be able to access and duplicate it.
+        </div>
+      </div>
+    </ModalBody>
+    <div
+      className="modal-footer "
+    >
+      <div
+        className="button-gray action-button mr-4"
+        onClick={[Function]}
+      >
+        Cancel
+      </div>
+      <div
+        className="button-blue action-button test-public-button"
+        onClick={[Function]}
+      >
+        Set Public
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`WorkflowNavBar In Private mode, Share button invites user to set to Public 3`] = `
+<div
+  className="modal-dialog test-share-modal"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      className="dialog-header modal-header d-flex align-items-center"
+      closeAriaLabel="Close"
+      tag="h5"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="dialog-header modal-header d-flex align-items-center modal-header"
+      >
+        <h5
+          className="modal-title"
+        >
+          <div
+            className="t-d-gray title-4"
+          >
+            SHARE THIS WORKFLOW
+          </div>
+        </h5>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      tag="div"
+    >
+      <div
+        className="modal-body"
+      >
+        <FormGroup
+          tag="div"
+        >
+          <div
+            className="form-group"
+          >
+            <div
+              className="d-flex align-items-center justify-content-between flex-row"
+            >
+              <Label
+                className="label-margin info-1"
+                tag="label"
+                widths={
+                  Array [
+                    "xs",
+                    "sm",
+                    "md",
+                    "lg",
+                    "xl",
+                  ]
+                }
+              >
+                <label
+                  className="label-margin info-1 "
+                >
+                  Public link
+                </label>
+              </Label>
+              <CopyToClipboard
+                className="info-2 t-f-blue"
+                onCopy={[Function]}
+                text="/workflows/808"
+              >
+                <div
+                  className="info-2 t-f-blue"
+                  onClick={[Function]}
+                >
+                  Copy to clipboard
+                </div>
+              </CopyToClipboard>
+            </div>
+            <div
+              className="mb-3"
+            >
+              <Input
+                className="url-link t-d-gray content-2 test-link-field"
+                placeholder="/workflows/808"
+                readOnly={true}
+                type="url"
+              >
+                <input
+                  className="url-link t-d-gray content-2 test-link-field form-control"
+                  placeholder="/workflows/808"
+                  readOnly={true}
+                  type="url"
+                />
+              </Input>
+            </div>
+          </div>
+        </FormGroup>
+        <div
+          className="d-flex justify-content-start mt-4"
+        >
+          <div
+            className="twitter-button-container"
+          >
+            <Share
+              onLoad={[Function]}
+              options={
+                Object {
+                  "text": "Check out this chart I made using @cjworkbench:",
+                }
+              }
+              url="/workflows/808"
+            >
+              <AbstractWidget
+                ready={[Function]}
+              >
+                <div />
+              </AbstractWidget>
+            </Share>
+          </div>
+          <a
+            className="button-icon facebook-share ml-4"
+            href="https://www.facebook.com/sharer.php?u=/workflows/808"
+            onClick={[Function]}
+            target="_blank"
+          >
+            <div
+              className="icon-facebook"
+            />
+            Share
+          </a>
+        </div>
+      </div>
+    </ModalBody>
+  </div>
+</div>
 `;
 
 exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] = `
@@ -496,78 +715,89 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
         >
           <UncontrolledDropdown>
             <Dropdown
+              active={false}
+              addonType={false}
+              direction="down"
+              inNavbar={false}
               isOpen={false}
-              tag="div"
+              nav={false}
+              setActiveFromChild={false}
               toggle={[Function]}
             >
-              <div
+              <Manager
                 className="dropdown"
+                onKeyDown={[Function]}
+                tag="div"
               >
-                <DropdownToggle
-                  aria-haspopup={true}
-                  className="context-button"
-                  color="secondary"
-                  data-toggle="dropdown"
-                  key=".$.0"
+                <div
+                  className="dropdown"
+                  onKeyDown={[Function]}
                 >
-                  <Button
-                    aria-expanded={false}
-                    aria-haspopup="true"
+                  <DropdownToggle
+                    aria-haspopup={true}
                     className="context-button"
                     color="secondary"
-                    data-toggle="dropdown"
-                    onClick={[Function]}
-                    tag="button"
                   >
-                    <button
+                    <Target
                       aria-expanded={false}
-                      aria-haspopup="true"
-                      className="context-button btn btn-secondary"
-                      data-toggle="dropdown"
+                      aria-haspopup={true}
+                      className="context-button"
+                      color="secondary"
+                      component={[Function]}
                       onClick={[Function]}
-                      type="button"
                     >
-                      <div
-                        className="context-button--icon icon-more"
-                      />
-                    </button>
-                  </Button>
-                </DropdownToggle>
-                <DropdownMenu
-                  key=".$.1"
-                  right={true}
-                  tag="div"
-                >
-                  <div
-                    aria-hidden={true}
-                    className="dropdown-menu dropdown-menu-right"
-                    role="menu"
-                    tabIndex="-1"
-                  >
-                    <DropdownItem
-                      className="dropdown-menu--item"
-                      href="/workflows"
-                      key="1"
-                      tag="a"
-                      toggle={true}
-                    >
-                      <a
-                        className="dropdown-menu--item dropdown-item"
-                        href="/workflows"
+                      <Button
+                        aria-expanded={false}
+                        aria-haspopup={true}
+                        className="context-button"
+                        color="secondary"
+                        innerRef={[Function]}
                         onClick={[Function]}
-                        tabIndex="0"
+                        tag="button"
                       >
-                        <span
-                          className="content-3 ml-3"
+                        <button
+                          aria-expanded={false}
+                          aria-haspopup={true}
+                          className="context-button btn btn-secondary"
+                          onClick={[Function]}
+                          type="button"
                         >
-                          My Workflows
-                        </span>
-                      </a>
-                    </DropdownItem>
-                    <div>
+                          <div
+                            className="context-button--icon icon-more"
+                          />
+                        </button>
+                      </Button>
+                    </Target>
+                  </DropdownToggle>
+                  <DropdownMenu
+                    flip={true}
+                    right={true}
+                    tag="div"
+                  >
+                    <div
+                      aria-hidden={true}
+                      className="dropdown-menu dropdown-menu-right"
+                      role="menu"
+                      tabIndex="-1"
+                    >
+                      <DropdownItem
+                        href="/workflows"
+                        tag="button"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-item"
+                          href="/workflows"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                          <span>
+                            My Workflows
+                          </span>
+                        </a>
+                      </DropdownItem>
                       <DropdownItem
                         divider={true}
-                        key="100"
                         tag="button"
                         toggle={true}
                       >
@@ -578,48 +808,39 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
                         />
                       </DropdownItem>
                       <DropdownItem
-                        className="dropdown-menu--item"
-                        key="2"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu--item dropdown-item"
+                          className="dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
                         >
-                          <span
-                            className="content-3 ml-3"
-                          >
+                          <span>
                             Undo
                           </span>
                         </button>
                       </DropdownItem>
                       <DropdownItem
-                        className="dropdown-menu--item"
-                        key="3"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu--item dropdown-item"
+                          className="dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
                         >
-                          <span
-                            className="content-3 ml-3"
-                          >
+                          <span>
                             Redo
                           </span>
                         </button>
                       </DropdownItem>
                       <DropdownItem
                         divider={true}
-                        key="200"
                         tag="button"
                         toggle={true}
                       >
@@ -629,52 +850,43 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
                           tabIndex="-1"
                         />
                       </DropdownItem>
-                    </div>
-                    <div>
                       <DropdownItem
-                        className="dropdown-menu--item mb-1 test-export-button"
-                        key="4"
+                        className="test-export-button"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu--item mb-1 test-export-button dropdown-item"
+                          className="test-export-button dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
                         >
-                          <span
-                            className="content-3 ml-3"
-                          >
+                          <span>
                             Import Module
                           </span>
                         </button>
                       </DropdownItem>
-                    </div>
-                    <DropdownItem
-                      className="dropdown-menu--item"
-                      href="/account/logout"
-                      key="5"
-                      tag="a"
-                      toggle={true}
-                    >
-                      <a
-                        className="dropdown-menu--item dropdown-item"
+                      <DropdownItem
                         href="/account/logout"
-                        onClick={[Function]}
-                        tabIndex="0"
+                        tag="button"
+                        toggle={true}
                       >
-                        <span
-                          className="content-3 ml-3"
+                        <a
+                          className="dropdown-item"
+                          href="/account/logout"
+                          onClick={[Function]}
+                          tabIndex="0"
                         >
-                          Log Out
-                        </span>
-                      </a>
-                    </DropdownItem>
-                  </div>
-                </DropdownMenu>
-              </div>
+                          <span>
+                            Log Out
+                          </span>
+                        </a>
+                      </DropdownItem>
+                    </div>
+                  </DropdownMenu>
+                </div>
+              </Manager>
             </Dropdown>
           </UncontrolledDropdown>
         </WfHamburgerMenu>
@@ -682,6 +894,153 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
     </nav>
   </div>
 </WorkflowNavBar>
+`;
+
+exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] = `
+<div
+  className="modal-dialog test-share-modal"
+  role="document"
+>
+  <div
+    className="modal-content"
+  >
+    <ModalHeader
+      className="dialog-header modal-header d-flex align-items-center"
+      closeAriaLabel="Close"
+      tag="h5"
+      toggle={[Function]}
+      wrapTag="div"
+    >
+      <div
+        className="dialog-header modal-header d-flex align-items-center modal-header"
+      >
+        <h5
+          className="modal-title"
+        >
+          <div
+            className="t-d-gray title-4"
+          >
+            SHARE THIS WORKFLOW
+          </div>
+        </h5>
+        <button
+          aria-label="Close"
+          className="close"
+          onClick={[Function]}
+          type="button"
+        >
+          <span
+            aria-hidden="true"
+          >
+            ×
+          </span>
+        </button>
+      </div>
+    </ModalHeader>
+    <ModalBody
+      tag="div"
+    >
+      <div
+        className="modal-body"
+      >
+        <FormGroup
+          tag="div"
+        >
+          <div
+            className="form-group"
+          >
+            <div
+              className="d-flex align-items-center justify-content-between flex-row"
+            >
+              <Label
+                className="label-margin info-1"
+                tag="label"
+                widths={
+                  Array [
+                    "xs",
+                    "sm",
+                    "md",
+                    "lg",
+                    "xl",
+                  ]
+                }
+              >
+                <label
+                  className="label-margin info-1 "
+                >
+                  Public link
+                </label>
+              </Label>
+              <CopyToClipboard
+                className="info-2 t-f-blue"
+                onCopy={[Function]}
+                text="/workflows/808"
+              >
+                <div
+                  className="info-2 t-f-blue"
+                  onClick={[Function]}
+                >
+                  Copy to clipboard
+                </div>
+              </CopyToClipboard>
+            </div>
+            <div
+              className="mb-3"
+            >
+              <Input
+                className="url-link t-d-gray content-2 test-link-field"
+                placeholder="/workflows/808"
+                readOnly={true}
+                type="url"
+              >
+                <input
+                  className="url-link t-d-gray content-2 test-link-field form-control"
+                  placeholder="/workflows/808"
+                  readOnly={true}
+                  type="url"
+                />
+              </Input>
+            </div>
+          </div>
+        </FormGroup>
+        <div
+          className="d-flex justify-content-start mt-4"
+        >
+          <div
+            className="twitter-button-container"
+          >
+            <Share
+              onLoad={[Function]}
+              options={
+                Object {
+                  "text": "Check out this chart I made using @cjworkbench:",
+                }
+              }
+              url="/workflows/808"
+            >
+              <AbstractWidget
+                ready={[Function]}
+              >
+                <div />
+              </AbstractWidget>
+            </Share>
+          </div>
+          <a
+            className="button-icon facebook-share ml-4"
+            href="https://www.facebook.com/sharer.php?u=/workflows/808"
+            onClick={[Function]}
+            target="_blank"
+          >
+            <div
+              className="icon-facebook"
+            />
+            Share
+          </a>
+        </div>
+      </div>
+    </ModalBody>
+  </div>
+</div>
 `;
 
 exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to sign-in page 1`] = `
@@ -978,99 +1337,108 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
         >
           <UncontrolledDropdown>
             <Dropdown
+              active={false}
+              addonType={false}
+              direction="down"
+              inNavbar={false}
               isOpen={false}
-              tag="div"
+              nav={false}
+              setActiveFromChild={false}
               toggle={[Function]}
             >
-              <div
+              <Manager
                 className="dropdown"
+                onKeyDown={[Function]}
+                tag="div"
               >
-                <DropdownToggle
-                  aria-haspopup={true}
-                  className="context-button"
-                  color="secondary"
-                  data-toggle="dropdown"
-                  key=".$.0"
+                <div
+                  className="dropdown"
+                  onKeyDown={[Function]}
                 >
-                  <Button
-                    aria-expanded={false}
-                    aria-haspopup="true"
+                  <DropdownToggle
+                    aria-haspopup={true}
                     className="context-button"
                     color="secondary"
-                    data-toggle="dropdown"
-                    onClick={[Function]}
-                    tag="button"
                   >
-                    <button
+                    <Target
                       aria-expanded={false}
-                      aria-haspopup="true"
-                      className="context-button btn btn-secondary"
-                      data-toggle="dropdown"
+                      aria-haspopup={true}
+                      className="context-button"
+                      color="secondary"
+                      component={[Function]}
                       onClick={[Function]}
-                      type="button"
                     >
-                      <div
-                        className="context-button--icon icon-more"
-                      />
-                    </button>
-                  </Button>
-                </DropdownToggle>
-                <DropdownMenu
-                  key=".$.1"
-                  right={true}
-                  tag="div"
-                >
-                  <div
-                    aria-hidden={true}
-                    className="dropdown-menu dropdown-menu-right"
-                    role="menu"
-                    tabIndex="-1"
+                      <Button
+                        aria-expanded={false}
+                        aria-haspopup={true}
+                        className="context-button"
+                        color="secondary"
+                        innerRef={[Function]}
+                        onClick={[Function]}
+                        tag="button"
+                      >
+                        <button
+                          aria-expanded={false}
+                          aria-haspopup={true}
+                          className="context-button btn btn-secondary"
+                          onClick={[Function]}
+                          type="button"
+                        >
+                          <div
+                            className="context-button--icon icon-more"
+                          />
+                        </button>
+                      </Button>
+                    </Target>
+                  </DropdownToggle>
+                  <DropdownMenu
+                    flip={true}
+                    right={true}
+                    tag="div"
                   >
-                    <div>
+                    <div
+                      aria-hidden={true}
+                      className="dropdown-menu dropdown-menu-right"
+                      role="menu"
+                      tabIndex="-1"
+                    >
                       <DropdownItem
-                        className="dropdown-menu--item mb-1 test-export-button"
-                        key="4"
+                        className="test-export-button"
                         onClick={[Function]}
                         tag="button"
                         toggle={true}
                       >
                         <button
-                          className="dropdown-menu--item mb-1 test-export-button dropdown-item"
+                          className="test-export-button dropdown-item"
                           onClick={[Function]}
                           tabIndex="0"
                           type="button"
                         >
-                          <span
-                            className="content-3 ml-3"
-                          >
+                          <span>
                             Import Module
                           </span>
                         </button>
                       </DropdownItem>
-                    </div>
-                    <DropdownItem
-                      className="dropdown-menu--item"
-                      href="/account/logout"
-                      key="5"
-                      tag="a"
-                      toggle={true}
-                    >
-                      <a
-                        className="dropdown-menu--item dropdown-item"
+                      <DropdownItem
                         href="/account/logout"
-                        onClick={[Function]}
-                        tabIndex="0"
+                        tag="button"
+                        toggle={true}
                       >
-                        <span
-                          className="content-3 ml-3"
+                        <a
+                          className="dropdown-item"
+                          href="/account/logout"
+                          onClick={[Function]}
+                          tabIndex="0"
                         >
-                          Log Out
-                        </span>
-                      </a>
-                    </DropdownItem>
-                  </div>
-                </DropdownMenu>
-              </div>
+                          <span>
+                            Log Out
+                          </span>
+                        </a>
+                      </DropdownItem>
+                    </div>
+                  </DropdownMenu>
+                </div>
+              </Manager>
             </Dropdown>
           </UncontrolledDropdown>
         </WfHamburgerMenu>

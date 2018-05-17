@@ -33,7 +33,7 @@ const LessonHighlightType = P.oneOfType([
  * Use it in your PropTypes like this:
  *
  * ```js
- * MyComponent.PropTypes = {
+ * MyComponent.propTypes = {
  *   lessonHighlights: LessonHighlightsType.isRequired,
  * }
  * ```

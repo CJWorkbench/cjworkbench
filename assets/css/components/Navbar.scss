@@ -17,7 +17,6 @@
 //// navbar wf list
 .navbar {
   display:flex;
-  align-items: center;
   height: 6rem;
   flex-direction: row;
   justify-content: space-between;
@@ -111,7 +110,7 @@ img.logo {
 // Workflow title
 
 .title-metadata-stack {
-  width: 100%;
+  flex-grow: 1;
 }
 
 .editable-title--container{

@@ -1,5 +1,6 @@
 // Dropdown menus
 
+
 .dropdown-menu {
   margin-top: 0.5rem;
   border:2px solid $brand-blue--medium;
@@ -7,7 +8,8 @@
   box-shadow: $dropdown-shadow;
   padding:0.5rem 0 0.5rem 0;
 
-  .dropdown-menu--item {
+  .dropdown-item {
+    @extend .content-3;
     height: 4rem;
     width: 14rem;
     background-color: $white;
@@ -31,9 +33,10 @@
     opacity: 0.5;
   }
 
-  .dropdown-menu--icon {
-    width: 1.5rem;
-    font-size: 1.5rem;
+  i {
+    margin-right: .75rem;
+    width: 1.25rem;
+    font-size: 1.25rem;
     display: flex;
     justify-content: center;
   }

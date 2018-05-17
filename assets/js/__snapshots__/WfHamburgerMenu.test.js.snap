@@ -13,78 +13,89 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
 >
   <UncontrolledDropdown>
     <Dropdown
+      active={false}
+      addonType={false}
+      direction="down"
+      inNavbar={false}
       isOpen={false}
-      tag="div"
+      nav={false}
+      setActiveFromChild={false}
       toggle={[Function]}
     >
-      <div
+      <Manager
         className="dropdown"
+        onKeyDown={[Function]}
+        tag="div"
       >
-        <DropdownToggle
-          aria-haspopup={true}
-          className="context-button"
-          color="secondary"
-          data-toggle="dropdown"
-          key=".$.0"
+        <div
+          className="dropdown"
+          onKeyDown={[Function]}
         >
-          <Button
-            aria-expanded={false}
-            aria-haspopup="true"
+          <DropdownToggle
+            aria-haspopup={true}
             className="context-button"
             color="secondary"
-            data-toggle="dropdown"
-            onClick={[Function]}
-            tag="button"
           >
-            <button
+            <Target
               aria-expanded={false}
-              aria-haspopup="true"
-              className="context-button btn btn-secondary"
-              data-toggle="dropdown"
+              aria-haspopup={true}
+              className="context-button"
+              color="secondary"
+              component={[Function]}
               onClick={[Function]}
-              type="button"
             >
-              <div
-                className="context-button--icon icon-more"
-              />
-            </button>
-          </Button>
-        </DropdownToggle>
-        <DropdownMenu
-          key=".$.1"
-          right={true}
-          tag="div"
-        >
-          <div
-            aria-hidden={true}
-            className="dropdown-menu dropdown-menu-right"
-            role="menu"
-            tabIndex="-1"
-          >
-            <DropdownItem
-              className="dropdown-menu--item"
-              href="/workflows"
-              key="1"
-              tag="a"
-              toggle={true}
-            >
-              <a
-                className="dropdown-menu--item dropdown-item"
-                href="/workflows"
+              <Button
+                aria-expanded={false}
+                aria-haspopup={true}
+                className="context-button"
+                color="secondary"
+                innerRef={[Function]}
                 onClick={[Function]}
-                tabIndex="0"
+                tag="button"
               >
-                <span
-                  className="content-3 ml-3"
+                <button
+                  aria-expanded={false}
+                  aria-haspopup={true}
+                  className="context-button btn btn-secondary"
+                  onClick={[Function]}
+                  type="button"
                 >
-                  My Workflows
-                </span>
-              </a>
-            </DropdownItem>
-            <div>
+                  <div
+                    className="context-button--icon icon-more"
+                  />
+                </button>
+              </Button>
+            </Target>
+          </DropdownToggle>
+          <DropdownMenu
+            flip={true}
+            right={true}
+            tag="div"
+          >
+            <div
+              aria-hidden={true}
+              className="dropdown-menu dropdown-menu-right"
+              role="menu"
+              tabIndex="-1"
+            >
+              <DropdownItem
+                href="/workflows"
+                tag="button"
+                toggle={true}
+              >
+                <a
+                  className="dropdown-item"
+                  href="/workflows"
+                  onClick={[Function]}
+                  tabIndex="0"
+                >
+                  <span>
+                    My Workflows
+                  </span>
+                </a>
+              </DropdownItem>
               <DropdownItem
                 divider={true}
-                key="100"
                 tag="button"
                 toggle={true}
               >
@@ -95,48 +106,39 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                 />
               </DropdownItem>
               <DropdownItem
-                className="dropdown-menu--item"
-                key="2"
                 onClick={[Function]}
                 tag="button"
                 toggle={true}
               >
                 <button
-                  className="dropdown-menu--item dropdown-item"
+                  className="dropdown-item"
                   onClick={[Function]}
                   tabIndex="0"
                   type="button"
                 >
-                  <span
-                    className="content-3 ml-3"
-                  >
+                  <span>
                     Undo
                   </span>
                 </button>
               </DropdownItem>
               <DropdownItem
-                className="dropdown-menu--item"
-                key="3"
                 onClick={[Function]}
                 tag="button"
                 toggle={true}
               >
                 <button
-                  className="dropdown-menu--item dropdown-item"
+                  className="dropdown-item"
                   onClick={[Function]}
                   tabIndex="0"
                   type="button"
                 >
-                  <span
-                    className="content-3 ml-3"
-                  >
+                  <span>
                     Redo
                   </span>
                 </button>
               </DropdownItem>
               <DropdownItem
                 divider={true}
-                key="200"
                 tag="button"
                 toggle={true}
               >
@@ -146,52 +148,43 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                   tabIndex="-1"
                 />
               </DropdownItem>
-            </div>
-            <div>
               <DropdownItem
-                className="dropdown-menu--item mb-1 test-export-button"
-                key="4"
+                className="test-export-button"
                 onClick={[Function]}
                 tag="button"
                 toggle={true}
               >
                 <button
-                  className="dropdown-menu--item mb-1 test-export-button dropdown-item"
+                  className="test-export-button dropdown-item"
                   onClick={[Function]}
                   tabIndex="0"
                   type="button"
                 >
-                  <span
-                    className="content-3 ml-3"
-                  >
+                  <span>
                     Import Module
                   </span>
                 </button>
               </DropdownItem>
-            </div>
-            <DropdownItem
-              className="dropdown-menu--item"
-              href="/account/logout"
-              key="5"
-              tag="a"
-              toggle={true}
-            >
-              <a
-                className="dropdown-menu--item dropdown-item"
+              <DropdownItem
                 href="/account/logout"
-                onClick={[Function]}
-                tabIndex="0"
+                tag="button"
+                toggle={true}
               >
-                <span
-                  className="content-3 ml-3"
+                <a
+                  className="dropdown-item"
+                  href="/account/logout"
+                  onClick={[Function]}
+                  tabIndex="0"
                 >
-                  Log Out
-                </span>
-              </a>
-            </DropdownItem>
-          </div>
-        </DropdownMenu>
-      </div>
+                  <span>
+                    Log Out
+                  </span>
+                </a>
+              </DropdownItem>
+            </div>
+          </DropdownMenu>
+        </div>
+      </Manager>
     </Dropdown>
   </UncontrolledDropdown>
 </WfHamburgerMenu>

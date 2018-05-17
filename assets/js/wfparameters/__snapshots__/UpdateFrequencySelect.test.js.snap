@@ -26,18 +26,32 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
   <Modal
     autoFocus={true}
     backdrop={true}
-    backdropTransitionTimeout={150}
+    backdropTransition={
+      Object {
+        "mountOnEnter": true,
+        "timeout": 150,
+      }
+    }
+    centered={false}
     className="modal-dialog"
     fade={true}
     isOpen={false}
     keyboard={true}
-    modalTransitionTimeout={300}
+    modalTransition={
+      Object {
+        "timeout": 300,
+      }
+    }
+    onClosed={[Function]}
+    onOpened={[Function]}
+    role="dialog"
     toggle={[Function]}
     zIndex={1050}
   >
     <ModalHeader
       className="dialog-header"
-      tag="h4"
+      closeAriaLabel="Close"
+      tag="h5"
       toggle={[Function]}
       wrapTag="div"
     >
@@ -78,6 +92,15 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
               className="content-3 t-d-gray mt-4 mb-2"
               for="updateFreq"
               tag="label"
+              widths={
+                Array [
+                  "xs",
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                ]
+              }
             >
               Check for update every
             </Label>
@@ -91,7 +114,6 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
                 min="1"
                 name="updateFreq"
                 onChange={[Function]}
-                tag="p"
                 type="number"
                 value={5}
               />
@@ -100,7 +122,6 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
                 id="updateFreqUnit"
                 name="updateFreq"
                 onChange={[Function]}
-                tag="p"
                 type="select"
                 value="minutes"
               >
@@ -193,18 +214,32 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
   <Modal
     autoFocus={true}
     backdrop={true}
-    backdropTransitionTimeout={150}
+    backdropTransition={
+      Object {
+        "mountOnEnter": true,
+        "timeout": 150,
+      }
+    }
+    centered={false}
     className="modal-dialog"
     fade={true}
     isOpen={false}
     keyboard={true}
-    modalTransitionTimeout={300}
+    modalTransition={
+      Object {
+        "timeout": 300,
+      }
+    }
+    onClosed={[Function]}
+    onOpened={[Function]}
+    role="dialog"
     toggle={[Function]}
     zIndex={1050}
   >
     <ModalHeader
       className="dialog-header"
-      tag="h4"
+      closeAriaLabel="Close"
+      tag="h5"
       toggle={[Function]}
       wrapTag="div"
     >
@@ -245,6 +280,15 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
               className="content-3 t-d-gray mt-4 mb-2"
               for="updateFreq"
               tag="label"
+              widths={
+                Array [
+                  "xs",
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                ]
+              }
             >
               Check for update every
             </Label>
@@ -258,7 +302,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
                 min="1"
                 name="updateFreq"
                 onChange={[Function]}
-                tag="p"
                 type="number"
                 value={5}
               />
@@ -267,7 +310,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
                 id="updateFreqUnit"
                 name="updateFreq"
                 onChange={[Function]}
-                tag="p"
                 type="select"
                 value="minutes"
               >
@@ -360,18 +402,32 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
   <Modal
     autoFocus={true}
     backdrop={true}
-    backdropTransitionTimeout={150}
+    backdropTransition={
+      Object {
+        "mountOnEnter": true,
+        "timeout": 150,
+      }
+    }
+    centered={false}
     className="modal-dialog"
     fade={true}
     isOpen={true}
     keyboard={true}
-    modalTransitionTimeout={300}
+    modalTransition={
+      Object {
+        "timeout": 300,
+      }
+    }
+    onClosed={[Function]}
+    onOpened={[Function]}
+    role="dialog"
     toggle={[Function]}
     zIndex={1050}
   >
     <ModalHeader
       className="dialog-header"
-      tag="h4"
+      closeAriaLabel="Close"
+      tag="h5"
       toggle={[Function]}
       wrapTag="div"
     >
@@ -412,6 +468,15 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
               className="content-3 t-d-gray mt-4 mb-2"
               for="updateFreq"
               tag="label"
+              widths={
+                Array [
+                  "xs",
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                ]
+              }
             >
               Check for update every
             </Label>
@@ -425,7 +490,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
                 min="1"
                 name="updateFreq"
                 onChange={[Function]}
-                tag="p"
                 type="number"
                 value={5}
               />
@@ -434,7 +498,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
                 id="updateFreqUnit"
                 name="updateFreq"
                 onChange={[Function]}
-                tag="p"
                 type="select"
                 value="minutes"
               >
@@ -527,18 +590,32 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
   <Modal
     autoFocus={true}
     backdrop={true}
-    backdropTransitionTimeout={150}
+    backdropTransition={
+      Object {
+        "mountOnEnter": true,
+        "timeout": 150,
+      }
+    }
+    centered={false}
     className="modal-dialog"
     fade={true}
     isOpen={false}
     keyboard={true}
-    modalTransitionTimeout={300}
+    modalTransition={
+      Object {
+        "timeout": 300,
+      }
+    }
+    onClosed={[Function]}
+    onOpened={[Function]}
+    role="dialog"
     toggle={[Function]}
     zIndex={1050}
   >
     <ModalHeader
       className="dialog-header"
-      tag="h4"
+      closeAriaLabel="Close"
+      tag="h5"
       toggle={[Function]}
       wrapTag="div"
     >
@@ -579,6 +656,15 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
               className="content-3 t-d-gray mt-4 mb-2"
               for="updateFreq"
               tag="label"
+              widths={
+                Array [
+                  "xs",
+                  "sm",
+                  "md",
+                  "lg",
+                  "xl",
+                ]
+              }
             >
               Check for update every
             </Label>
@@ -592,7 +678,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
                 min="1"
                 name="updateFreq"
                 onChange={[Function]}
-                tag="p"
                 type="number"
                 value={888}
               />
@@ -601,7 +686,6 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
                 id="updateFreqUnit"
                 name="updateFreq"
                 onChange={[Function]}
-                tag="p"
                 type="select"
                 value="days"
               >

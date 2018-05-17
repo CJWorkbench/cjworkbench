@@ -6,46 +6,39 @@ exports[`WfContextMenu renders correctly 1`] = `
     aria-haspopup={true}
     className="context-button"
     color="secondary"
-    data-toggle="dropdown"
   >
-    <div
+    <i
       className="context-button--icon icon-more"
     />
   </DropdownToggle>
   <DropdownMenu
-    className="dropdown-menu"
+    flip={true}
     right={true}
     tag="div"
   >
     <DropdownItem
-      className="dropdown-menu--item test-duplicate-button"
-      key="2"
+      className="test-duplicate-button"
       onClick={[MockFunction]}
       tag="button"
       toggle={true}
     >
       <i
-        className="icon-duplicate dropdown-menu--icon"
+        className="icon-duplicate"
       />
-      <span
-        className="content-3 ml-3"
-      >
+      <span>
         Duplicate
       </span>
     </DropdownItem>
     <DropdownItem
-      className="dropdown-menu--item test-delete-button"
-      key="3"
+      className="test-delete-button"
       onClick={[MockFunction]}
       tag="button"
       toggle={true}
     >
       <i
-        className="icon-bin dropdown-menu--icon"
+        className="icon-bin"
       />
-      <span
-        className="content-3 ml-3"
-      >
+      <span>
         Delete
       </span>
     </DropdownItem>

@@ -56,63 +56,59 @@ describe('FileSelect', () => {
     }
   })
 
-  // FIXME upgrade to React v16 and uncomment this test
-  //it('Loads correctly and allows a user to choose a new file', (done) => {
-  //  var wrapper = mount(
-  //    <FileSelect
-  //      api={api}
-  //      userCreds={[0]}
-  //      pid={1}
-  //      saveState={ (state) => { gDriveFileMeta = JSON.stringify(state); } }
-  //      getState={() => { return gDriveFileMeta; }}
-  //    />
-  //  );
+  it('Loads correctly and allows a user to choose a new file', (done) => {
+    const wrapper = mount(
+      <FileSelect
+        api={api}
+        userCreds={[0]}
+        pid={1}
+        saveState={ (state) => { gDriveFileMeta = JSON.stringify(state); } }
+        getState={() => { return gDriveFileMeta; }}
+      />
+    );
 
-  //  expect(api.postParamEvent.mock.calls.length).toBe(1);
+    expect(api.postParamEvent.mock.calls.length).toBe(1);
 
-  //  expect(wrapper).toMatchSnapshot();
+    expect(wrapper).toMatchSnapshot();
 
-  //  // should call API for its data on componentDidMount
-  //  expect(wrapper.state().modalOpen).toBe(false);
+    // should call API for its data on componentDidMount
+    expect(wrapper.state().modalOpen).toBe(false);
 
-  //  setImmediate( () => {
-  //    var fileName = wrapper.find('span.t-d-gray.content-3.mb-3');
-  //    var modalLink = wrapper.find('.file-info .t-f-blue');
-  //    expect(fileName.text()).toEqual('Police Data');
-  //    modalLink.simulate('click');
+    setImmediate( () => {
+      wrapper.update();
+      const fileName = wrapper.find('span.t-d-gray.content-3.mb-3');
+      const modalLink = wrapper.find('.file-info .t-f-blue');
+      expect(fileName.text()).toEqual('Police Data');
+      modalLink.simulate('click');
 
-  //    setImmediate( () => {
-  //      expect(wrapper.state().modalOpen).toBe(true);
+      setImmediate( () => {
+        wrapper.update();
+        expect(wrapper.state().modalOpen).toBe(true);
 
-  //      let modal_element = document.getElementsByClassName('modal-dialog');
-  //      expect(modal_element.length).toBe(1);
-  //      let modal = new ReactWrapper(modal_element[0], true);
+        const modal = wrapper.find('div.modal-dialog');
+        expect(modal).toMatchSnapshot();
+        expect(modal.find('div.list-body')).toHaveLength(1);
 
-  //      expect(modal).toMatchSnapshot();
-  //      expect(modal.find('.list-body')).toHaveLength(1);
+        expect(wrapper.state().files).toEqual(gDriveFiles['files']);
+        const filesListItems = modal.find('.line-item--data-version');
+        expect(filesListItems).toHaveLength(5);
 
-  //      expect(wrapper.state().files).toEqual(gDriveFiles['files']);
-  //      let filesListItems = modal.find('.line-item--data-version');
-  //      expect(filesListItems).toHaveLength(5);
+        const secondListItem = filesListItems.filterWhere(n => n.key() == 1);
+        secondListItem.simulate('click');
 
-  //      let secondListItem = filesListItems.filterWhere(n => n.key() == 1);
-  //      expect(secondListItem).toHaveLength(1);
-  //      secondListItem.simulate('click');
+        setImmediate( () => {
+          expect(wrapper.state().file).toEqual({
+            "kind": "drive#file",
+            "id": "jdsiu9cu89BJHBI789fdsfdsLAHY5637hdnbthywhsua",
+            "name": "Government Contracts",
+            "mimeType": "application/vnd.google-apps.spreadsheet"
+          });
+          done();
+        })
 
-  //      setImmediate( () => {
-
-  //        expect(wrapper.state().file).toEqual({
-  //          "kind": "drive#file",
-  //          "id": "jdsiu9cu89BJHBI789fdsfdsLAHY5637hdnbthywhsua",
-  //          "name": "Government Contracts",
-  //          "mimeType": "application/vnd.google-apps.spreadsheet"
-  //        });
-  //        done();
-  //      })
-
-  //    });
-  //  });
-  //});
+      });
+    });
+  });
 
   it('Shows the file count and larger button if there is no file and a user credential is present', (done) => {
     const noFileWrapper = shallow(

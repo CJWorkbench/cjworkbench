@@ -43,7 +43,6 @@ exports[`WfModuleHeader Mounts and focuses 1`] = `
         Array [
           <div
             class="wf-module--placeholder mx-auto"
-            data-reactroot=""
           >
             <div
               class="module-content"
