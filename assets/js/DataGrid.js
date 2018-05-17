@@ -6,6 +6,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid'
+import DraggableContainer from './DraggableContainer'
+import {idxToLetter} from "./utils";
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
@@ -58,15 +60,6 @@ export class HeaderRenderer extends React.Component {
     this.setState({isHovered: false});
   }
 
-  idxToLetter(idx) {
-    var letters = '';
-    do {
-      letters = String.fromCharCode(idx % 26 + 65) + letters;
-      idx = Math.floor(idx / 26);
-    } while(idx > 0)
-    return letters;
-  }
-
   renderSortArrow() {
     var sortDirectionClass = '';
 
@@ -104,7 +97,7 @@ export class HeaderRenderer extends React.Component {
       return (
           // The 'column-letter' class name is used in the test so please be careful with it
           <div className='column-letter'>
-            {this.idxToLetter(this.props.idx)}
+            {idxToLetter(this.props.idx)}
           </div>
       );
     }
@@ -167,6 +160,7 @@ function makeFormattedCols(props, rowNumKey) {
       editable: editable,
       width: 160,
       headerRenderer: currentHeaderRenderer,
+        draggable: true
     };
     formattedCols.push(d)
   }
@@ -189,6 +183,7 @@ export default class DataGrid extends React.Component {
     this.getRow = this.getRow.bind(this);
     this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
     this.onGridSort = this.onGridSort.bind(this);
+    this.onHeaderDrop = this.onHeaderDrop.bind(this);
   }
 
   // After the component mounts, and on any change, set the height to parent div height
@@ -271,23 +266,41 @@ export default class DataGrid extends React.Component {
     this.props.onSort(sortCol, sortDir);
   }
 
+  onHeaderDrop(source, target) {
+    console.log("Drag with");
+    console.log(source);
+    console.log(target);
+    console.log(this.props);
+
+    let sourceIdx = this.props.columns.indexOf(source);
+    let targetIdx = this.props.columns.indexOf(target);
+    console.log("Moved " + source + " from " + idxToLetter(sourceIdx) + " to " + idxToLetter(targetIdx));
+  }
+
   render() {
     if (this.props.totalRows > 0) {
 
       this.updateRowNumKey(this.props);
       var columns = makeFormattedCols(this.props, this.rowNumKey);
 
-      return <ReactDataGrid
-        columns={columns}
-        rowGetter={this.getRow}
-        rowsCount={this.props.totalRows}
-        minWidth={this.state.gridWidth -2}
-        minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
-        headerRowHeight={this.props.showLetter ? 54 : 36}
-        enableCellSelect={true}
-        onGridRowsUpdated={this.onGridRowsUpdated}
-        key={this.state.componentKey}
-      />
+      return(
+          <DraggableContainer
+            onHeaderDrop={this.onHeaderDrop}
+          >
+            <ReactDataGrid
+              columns={columns}
+              rowGetter={this.getRow}
+              rowsCount={this.props.totalRows}
+              minWidth={this.state.gridWidth -2}
+              minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
+              headerRowHeight={this.props.showLetter ? 54 : 36}
+              enableCellSelect={true}
+              onGridRowsUpdated={this.onGridRowsUpdated}
+              enableDragAndDrop={true}
+              key={this.state.componentKey}
+            />
+          </DraggableContainer>
+        )
 
     }  else {
       return null;

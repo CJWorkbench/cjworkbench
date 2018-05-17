@@ -94,7 +94,6 @@ describe('DataGrid tests,', () => {
     expect(treeWithLetter.find('.column-letter').get(2).props.children).toEqual('C');
     expect(treeWithLetter.find('.column-letter').get(3).props.children).toEqual('D');
 
-
     const treeWithoutLetter = mount(<DataGrid
         totalRows={testData.totalRows}
         columns={testData.columns}

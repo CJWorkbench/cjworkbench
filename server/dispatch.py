@@ -25,6 +25,7 @@ from .modules.refine import Refine
 from .modules.urlscraper import URLScraper
 from .modules.scrapetable import ScrapeTable
 from .modules.sortfromtable import SortFromTable
+from .modules.reorder import ReorderFromTable
 
 # ---- Test Support ----
 
@@ -57,6 +58,7 @@ module_dispatch_tbl = {
     'urlscraper':       URLScraper,
     'scrapetable':      ScrapeTable,
     'sort-from-table':  SortFromTable,
+    'reorder-columns':  ReorderFromTable,
 
     # For testing
     'NOP':          NOP,

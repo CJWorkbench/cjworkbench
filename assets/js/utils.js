@@ -54,6 +54,16 @@ export function getWfModuleIndexfromId(state, id) {
   return wfModuleIdx;
 }
 
+// Gets the letter coordinate of a column from its index within the column names array
+export function idxToLetter(idx) {
+  var letters = '';
+  do {
+    letters = String.fromCharCode(idx % 26 + 65) + letters;
+    idx = Math.floor(idx / 26);
+  } while(idx > 0)
+  return letters;
+}
+
 // Log to Intercom, if installed
 export function logUserEvent(name, metadata) {
   if (window.APP_ID) {
