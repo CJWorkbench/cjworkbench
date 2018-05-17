@@ -8,11 +8,17 @@
 }
 
 .navbar .links {
+  display: flex;
+  align-items: center;
   font-size: 1.5rem;
+  position: relative;
+  left:-5.5rem;
+
   a {
     padding: 0 1rem;
   }
 }
+
 
 //// navbar wf list
 .navbar {
