@@ -25,6 +25,7 @@ export default class WorkbenchAceEditor extends React.Component {
       <div className='parameter-margin'>
         <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
         <AceEditor
+          editorProps={{ $blockScrolling: Infinity }}
           width="100%"
           height="10rem"
           mode="python"
