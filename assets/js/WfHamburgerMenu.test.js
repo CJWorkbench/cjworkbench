@@ -51,7 +51,7 @@ describe('WfHamburgerMenu', () => {
     expect(wrapper.find('span[children="Undo"]')).toHaveLength(0);
     expect(wrapper.find('span[children="Redo"]')).toHaveLength(0);
     expect(wrapper.find('span[children="Import Module"]')).toHaveLength(0);
-    expect(wrapper.find('span[children="Log In"]')).toHaveLength(1);
+    expect(wrapper.find('span[children="Log out"]')).toHaveLength(1);
   });
 
 

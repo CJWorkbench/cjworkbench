@@ -89,21 +89,21 @@ exports[`Workflow list page renders correctly 1`] = `
                     >
                       <DropdownItem
                         className="dropdown-menu--item"
-                        href="/account/login"
+                        href="/account/logout"
                         key="2"
                         tag="a"
                         toggle={true}
                       >
                         <a
                           className="dropdown-menu--item dropdown-item"
-                          href="/account/login"
+                          href="/account/logout"
                           onClick={[Function]}
                           tabIndex="0"
                         >
                           <span
                             className="content-3 ml-3"
                           >
-                            Log In
+                            Log out
                           </span>
                         </a>
                       </DropdownItem>
