@@ -21,6 +21,7 @@ export default class WorkbenchAceEditor extends React.Component {
 
   // Render editor
   render() {
+    // $blockScrolling fixes a console.warn() we'd otherwise see
     return (
       <div className='parameter-margin'>
         <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
