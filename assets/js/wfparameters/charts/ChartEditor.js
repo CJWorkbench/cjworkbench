@@ -83,9 +83,9 @@ export default class ChartEditor extends React.Component {
     const chartType = model.metadata.chartType
     const config = chartConfig[chartType]
     const parser = config.parser
-    const chartProps = parser(config, model.chartProps)
+    model.chartProps = parser(config, model.chartProps)
 
-    const errorCodes = validateDataInput(chartProps)
+    const errorCodes = validateDataInput(model.chartProps)
     const errors = errorCodes.map(ec => Errors[ec])
     const valid = errors.filter(e => e.type === 'error').length === 0
 

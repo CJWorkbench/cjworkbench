@@ -2,8 +2,29 @@ var isArray = require("lodash/isArray");
 var isUndefined = require("lodash/isUndefined");
 var keys = require("lodash/keys");
 var reduce = require("lodash/reduce");
-var d3 = require("d3");
-var processDates = require("./process-dates");
+var d3Array = require("d3-array");
+
+function niceExtent(extent) {
+	// was:
+	//var extent = d3.extent(data);
+	//var niced = d3.scale.linear()
+	//		.domain(extent)
+	//		.nice()
+	//		.domain();
+	//
+	// ... now, let's see if we can nix a gazillion deps by nixing d3.scale.linear
+	//
+  // from https://github.com/d3/d3-scale/blob/master/src/linear.js:
+	var count = 10;
+	var start = extent[0], stop = extent[1];
+  var step = d3Array.tickIncrement(start, stop, count);
+  start = Math.floor(start / step) * step;
+  stop = Math.ceil(stop / step) * step;
+  step = d3Array.tickIncrement(start, stop, count);
+  start = Math.floor(start / step) * step;
+  stop = Math.ceil(stop / step) * step;
+  return [ start, stop ];
+}
 
 /**
  * Generate an exact number of ticks given a domain
@@ -66,11 +87,8 @@ function compute_scale_domain(scaleObj, data, opts) {
 		throw new TypeError("data passed to compute_scale_domain must be an array");
 	}
 
-	var extent = d3.extent(data);
-	var niced = d3.scale.linear()
-			.domain(extent)
-			.nice()
-			.domain();
+	var extent = d3Array.extent(data);
+	var niced = niceExtent(extent);
 
 	if (!scaleObj.domain || !scaleObj.custom) {
 		if (opts.nice) {
@@ -95,45 +113,6 @@ function compute_scale_domain(scaleObj, data, opts) {
 		domain: _domain,
 		custom: (!defaultMin || !defaultMax)
 	};
-}
-
-/**
- * round_to_precision
- * Round a number to N decimal places
- *
- * @param {number} num - Number to be rounded
- * @param {number} precision - Desired precision
- * @param {boolean} supress_thou_sep
- * @static
- * @memberof helper
- * @return {number} Rounded number
- */
-function round_to_precision(num, precision, supress_thou_sep, supress_00) {
-	//zero should always be "0"
-	if (num === 0) return "0";
-
-	var s = Math.round(num * Math.pow(10,precision)) / Math.pow(10,precision);
-	s = s + "";
-
-	s = s.split(".");
-
-	if (s.length == 1) {
-		s[1] = "";
-	}
-
-	if (s[1].length < precision) {
-		s[1] += Array(precision-s[1].length + 1).join("0");
-	}
-
-	if (!supress_thou_sep) {
-		s[0] = d3.format(",")(parseInt(s[0]));
-	}
-
-	if (precision === 0 || (supress_00 && parseInt(s[1]) === 0)) {
-		return s[0];
-	}
-
-	return s.join(".");
 }
 
 /**
@@ -301,7 +280,6 @@ function add_pref_suf(tickText, renderPrefSuf, prefix, suffix) {
  */
 var helper = {
 	exactTicks : exact_ticks,
-	roundToPrecision: round_to_precision,
 	combineMarginPadding: combine_margin_pading,
 	computeScaleDomain: compute_scale_domain,
 	precision: precision,
