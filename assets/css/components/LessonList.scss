@@ -27,22 +27,31 @@
     .lessons {
       list-style: none;
       margin:0;
+      display: flex;
+      justify-content: space-around;
 
       // each lesson card
       .lesson {
       cursor: pointer;
       margin:2rem;
-      padding:2rem 2.5rem;
       background-color: $white;
       color: $brand-text--dark;
       border-radius: 5px;
-      width:45rem;
+      width:50rem;
       height: 24rem;
       box-shadow: $button-area;
 
-        .action-button {
-          position: absolute;
-
+        .lesson-begin{
+          padding:2rem 2.5rem;
+          position: relative;
+          width: 100%;
+          height:100%;
+        }
+        a {
+          text-decoration: none;
+        }
+        h2 {
+          color:$brand-text--dark;
         }
       }
 
