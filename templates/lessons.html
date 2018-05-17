@@ -14,12 +14,9 @@
           <ul class="lessons">
             {% for lesson in lessons %}
               <li class='lesson'>
-                <a href="{{lesson.get_absolute_url}}">{% csrf_token %}
-                  <div class="lesson-begin">
-                    <h2>{{lesson.title}}</h2>
-                    <div class="description content-3">{{lesson.header.html|safe}}</div>
-                  </div>
-                </a>
+                <h2>{{lesson.title}}</h2>
+                <div class="description content-3">{{lesson.header.html|safe}}</div>
+                <form method="post" action="{{lesson.get_absolute_url}}">{% csrf_token %}<button class='action-button button-blue' type="submit">Begin</button></form>
               </li>
             {% endfor %}
           </ul>
