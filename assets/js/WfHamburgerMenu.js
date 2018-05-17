@@ -119,10 +119,10 @@ export default class WfHamburgerMenu extends React.Component {
         <DropdownItem
           key={2}
           tag="a"
-          href="/account/login"
+          href="/account/logout"
           className='dropdown-menu--item'
         >
-          <span className='content-3 ml-3'>Log In</span>
+          <span className='content-3 ml-3'>Log out</span>
         </DropdownItem>
     }
 
