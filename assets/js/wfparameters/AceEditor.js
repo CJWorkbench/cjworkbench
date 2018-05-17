@@ -1,5 +1,5 @@
 import React from 'react';
-import AceEditor from 'react-ace';
+import AceEditor from 'react-ace/lib/ace';
 
 import 'brace/mode/python';
 import 'brace/theme/tomorrow';
