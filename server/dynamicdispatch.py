@@ -52,11 +52,12 @@ def dynamically_load_module(wf_module):
 # -- Main entrypoints --
 
 def get_module_render_fn(wf_module):
-    if wf_module.module_version in _dynamic_module_dispatches.keys():
-        return _dynamic_module_dispatches[wf_module.module_version]
+    version_key = wf_module.module_version.module.id_name + wf_module.module_version.source_version_hash
+    if version_key in _dynamic_module_dispatches.keys():
+        return _dynamic_module_dispatches[version_key]
     else:
         render_fn = dynamically_load_module(wf_module)
-        _dynamic_module_dispatches[wf_module.module_version] = render_fn
+        _dynamic_module_dispatches[version_key] = render_fn
         return render_fn
 
 
