@@ -9,7 +9,7 @@ class TestLessons(LoggedInIntegrationTest):
     def test_lesson_detail(self):
         b = self.browser
         b.visit(self.live_server_url + '/lessons/')
-        b.find_by_xpath('//button[text()="Begin"]').click()
+        b.find_by_xpath('//li[.//h2[contains(text(),"Load public data")]]//button').click()
 
         self.assertTrue(b.url.endswith('/lessons/load-public-data/'))
         self.assertTrue(b.is_text_present('DROP MODULE HERE'))
