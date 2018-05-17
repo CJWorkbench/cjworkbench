@@ -28,7 +28,7 @@ class WorkbenchBase(StaticLiveServerTestCase):
 
         init_modules() # the server should run with a least core modules loaded
 
-        self.browser = Browser()
+        self.browser = Browser('chrome')
 
     def tearDown(self):
         self.browser.quit()
