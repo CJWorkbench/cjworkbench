@@ -33,7 +33,7 @@ class TextOrNothing extends React.Component {
   }
 }
 
-export class WfParameter extends React.Component {
+export default class WfParameter extends React.Component {
 
   constructor(props) {
     super(props)
@@ -60,7 +60,6 @@ export class WfParameter extends React.Component {
 
     const nameParts = id_name.split('|')[0].split('.').slice(1)
 
-    if (this.props.isLessonHighlight) nameParts.unshift('lesson-highlight')
     nameParts.unshift(`wf-parameter-${type}`)
     nameParts.unshift('wf-parameter')
 
@@ -444,7 +443,6 @@ WfParameter.propTypes = {
     }).isRequired,
   }).isRequired,
   moduleName:       PropTypes.string.isRequired,
-  isLessonHighlight: PropTypes.bool.isRequired,
   wf_module_id:     PropTypes.number.isRequired,
   revision:         PropTypes.number.isRequired,
   loggedInUser:     PropTypes.object,             // in read-only there is no user logged in
@@ -456,16 +454,3 @@ WfParameter.propTypes = {
   startDrag:        PropTypes.func.isRequired,
   stopDrag:         PropTypes.func.isRequired,
 }
-
-function mapStateToProps(state, ownProps) {
-  const { testHighlight } = lessonSelector(state)
-  const moduleName = ownProps.moduleName
-  const name = ownProps.p.parameter_spec.id_name
-  return {
-    isLessonHighlight: testHighlight({ type: 'WfParameter', moduleName, name }),
-  }
-}
-
-export default connect(
-  mapStateToProps
-)(WfParameter)

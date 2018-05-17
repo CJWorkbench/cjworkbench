@@ -73,8 +73,8 @@ Lesson.propTypes = {
    * 2. Once a user has completed all steps in a section, we want to _prompt_
    *    to switch sections -- not navigate automatically.
    */
-  activeSectionIndex: PropTypes.number.isRequired,
-  activeStepIndex: PropTypes.number.isRequired,
+  activeSectionIndex: PropTypes.number, // or null
+  activeStepIndex: PropTypes.number, // or null
 }
 
 const mapStateToProps = (state) => {

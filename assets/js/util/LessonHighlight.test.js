@@ -35,13 +35,6 @@ describe('LessonHighlight', () => {
     expect(isValid([ { type: 'WfModule', foo: 'bar' } ])).toBe(false)
   })
 
-  it('should allow WfParameter', () => {
-    const valid = { type: 'WfParameter', moduleName: 'Foo', name: 'bar' }
-    expect(isValid([ valid ])).toBe(true)
-    expect(isValid([ { type: 'WfParameter', name: 'bar' } ])).toBe(false)
-    expect(isValid([ { type: 'WfParameter', moduleName: 'Foo' } ])).toBe(false)
-  })
-
   it('should allow WfModuleContextButton', () => {
     const valid = { type: 'WfModuleContextButton', moduleName: 'Foo', button: 'notes' }
     expect(isValid([ valid ])).toBe(true)

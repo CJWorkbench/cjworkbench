@@ -205,6 +205,11 @@
 
 
 // Module placeholder: either DND or placeholder while module is being rendered.
+.wf-module {
+  &.lesson-highlight .module-content {
+    outline: 3px solid $brand-pink;
+  }
+}
 
 .wf-module--placeholder{
   width: 18rem;
@@ -246,19 +251,6 @@
 
 .parameter-margin:not(:first-child) {
   margin-top: 0.8rem;
-}
-
-.wf-parameter.lesson-highlight {
-  outline: 3px solid $brand-pink;
-
-  &.wf-parameter-custom[data-name="version_select"] {
-    outline: none;
-    button {
-      color: $brand-pink;
-      font-weight: bold;
-      border-color: $brand-pink;
-    }
-  }
 }
 
 /* Margin for a line of 1 parameters, part of a group */
