@@ -17,7 +17,7 @@ article.lesson {
     flex-direction: column;
     background-color: $medium-blue;
     height: calc(100vh - 8rem);
-    width: 30rem;
+    width: 32rem;
     padding:2rem;
 
     &.not-current { display: none; }
@@ -61,6 +61,12 @@ article.lesson {
           cursor: text;
         }
 
+        .image{
+          position: relative;
+          left:-2rem;
+          margin:1rem 0;
+        }
+
         &::before {
           content: "\e938";
           color: $text-muted;
@@ -94,6 +100,11 @@ article.lesson {
 
       &.lesson-highlight {
         background-color: $brand-pink;
+        border: $brand-pink;
+        &:hover {
+          background-color: $light-accent--strong;
+          border: 1px solid $brand-pink;
+        }
       }
     }
 

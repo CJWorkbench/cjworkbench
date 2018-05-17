@@ -1,0 +1,73 @@
+<header>
+  <h1>Cleaning data</h1>
+  <p>Manipulate open data with Workbench.</p>
+</header>
+<section>
+  <h2>Overview</h2>
+  <p>In this lesson you will clean and prepare a dataset to visualize a chart series.</p>
+</section>
+<section>
+  <h2>1. Deleting empty columns and rows</h2>
+  <p>The two columns on at the far right of our dataset are empty.</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Drop empty columns"}]'
+      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[1].moduleName === 'Drop empty columns'"
+      >Add the module 'Drop empty columns.'
+    </li>
+    <li
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Drop empty rows"}]'
+      data-test="return workflow.wfModules.length > 2 && workflow.wfModules[2].moduleName === 'Drop empty rows'"
+      >Add the module 'Drop empty rows'.
+    </li>
+    <li
+      data-highlight='[]',
+      data-test="return workflow.wfModules.length > 2 && workflow.wfModules[2].moduleName === 'Drop empty rows'"
+      >Select the columns that are required for a row to be useful. Incomplete rows will be deleted.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>2. Harmonizing column values</h2>
+  <p>The same value is frequently spelled in multiple ways, or with irregular capitalization.  Ex: ‘APPLE’, ‘Apple’, ‘APL’.</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MLModule","name":"Refine"}]'
+      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Refine'"
+      >Add the module 'Refine'.</li>
+    <li
+      data-highlight='[]'
+      data-test="const params = workflow.wfModules[3].moduleName.parameters; return params.get('column') === 'MetroArea'"
+      >Select the column ‘MetroArea’ wich contains messy data. Edit values in the list until each is only displayed once.
+      <p>
+        <img class="image" src="/static/images/lesson_2/refine_row.svg" style="width:28rem;">
+      </p>
+    </li>
+    <li
+      data-highlight='[]'
+      data-test="const params = workflow.wfModules[3].moduleName.parameters; return params.get('column') === 'MetroArea'"
+      >Un-check any undesirable value to drop them off the dataset.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>3. Changing table format</h2>
+  <p>The table is currently in a 'long' format, where each row is a unique observation. In order to make it more legible, we need to display it in the 'wide' format, used in most spreadshseets.</p>
+  <p>
+    <img class="image" src="/static/images/lesson_2/long_wide.svg" style="width:28rem;">
+  </p>
+  <ol class="steps">
+    <li
+      data-highlight='[]'
+      data-test="return workflow.wfModules.length > 2 && workflow.wfModules[1].moduleName === 'Filter'"
+      >Add the module ‘Reshape’ to your workflow, and select 'Long to wide'.</li>
+    <li
+      data-highlight='[]'
+      data-test="const params = workflow.wfModules[1].moduleName.parameters; return params.get('column') === 'affordable_units' && params.get('condition') === 'Greater Than' && params.get('value') === '200' && params.get('keep') === 'Keep'"
+      >Choose the 'Key' column. Its values will be displayed in most left columns of the wide table.</li>
+    <li
+      data-highlight='[]'
+      data-test="return state.selectedWfModule.moduleName === 'Column chart'"
+      >Choose the 'Variable' column. In the wide table, variables will be displayed in the header.</li>
+  </ol>
+</section>
