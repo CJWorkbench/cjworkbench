@@ -52,7 +52,7 @@ function collect(monitor) {
   }
 }
 
-CustomDragLayer.PropTypes = {
+CustomDragLayer.propTypes = {
   isDragging: PropTypes.bool,
   itemType: PropTypes.string,
   item: PropTypes.shape({

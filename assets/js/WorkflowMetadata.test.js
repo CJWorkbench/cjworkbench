@@ -39,46 +39,43 @@ describe('WorkflowMetadata - private mode', () => {
     expect(wrapper).toMatchSnapshot(); // 1
   })
 
-  // FIXME upgrade to React 16! This breaks in the meantime
-  //it('modal operates', (done) => {
-  //  var publicLink = wrapper.find('.test-button');
-  //  expect(publicLink).toHaveLength(1);
-  //  publicLink.first().simulate('click');
+  it('modal operates', (done) => {
+    var publicLink = wrapper.find('.test-button');
+    expect(publicLink).toHaveLength(1);
+    publicLink.first().simulate('click');
 
-  //  setImmediate(() => {
-  //    // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
-  //    // So find them, and make a new Wrapper
-  //    // Reference: "https://github.com/airbnb/enzyme/issues/252"
-  //    let modal_element = document.getElementsByClassName('modal-content');
-  //    expect(modal_element.length).toBe(1); // dialog should be open
-  //    let modal = new ReactWrapper(modal_element, true)
+    setImmediate(() => {
+      // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
+      // So find them, and make a new Wrapper
+      // Reference: "https://github.com/airbnb/enzyme/issues/252"
+      const modal = wrapper.find('.modal-content');
+      expect(modal.length).toBe(1); // dialog should be open
 
-  //    // Dialog should be open, and have correct contents
-  //    expect(wrapper).toMatchSnapshot(); // 2
-  //    expect(modal).toMatchSnapshot(); // 3
+      wrapper.instance().reloadPageToEnsureConsistencyBecauseNavbarDoesntListenToState = jest.fn()
 
-  //    // Click the Private setting
-  //    var privateButton = modal.find('.test-button-gray');
-  //    expect(privateButton).toHaveLength(1);
-  //    privateButton.first().simulate('click');
+      // Dialog should be open, and have correct contents
+      expect(wrapper).toMatchSnapshot(); // 2
 
-  //    setImmediate(() => {
-  //      // Dialog should be closed, link should now say private
-  //      //let modal_element = document.getElementsByClassName('modal-dialog');
+      // Click the Private setting
+      var privateButton = modal.find('.test-button-gray');
+      expect(privateButton).toHaveLength(1);
+      privateButton.first().simulate('click');
 
-  //      expect(publicLink.childAt(0).text()).toBe('-');
-  //      expect(wrapper).toMatchSnapshot(); // 4
+      setImmediate(() => {
+        // Dialog should be closed, link should now say private
+        //let modal_element = document.getElementsByClassName('modal-dialog');
 
-  //      // Check that the API was called
-  //      expect(api.setWorkflowPublic.mock.calls.length).toBe(1);
-  //      expect(api.setWorkflowPublic.mock.calls[0][0]).toBe(100);
-  //      expect(api.setWorkflowPublic.mock.calls[0][1]).toBe(true);     // checking if False was passed in for isPublic argument
+        expect(publicLink.childAt(0).text()).toBe('-');
+        expect(wrapper).toMatchSnapshot(); // 4
 
-  //      expect(wrapper.state('isPublic')).toBe(true);
-  //      done();
-  //    });
-  //  });
-  //});
+        // Check that the API was called
+        expect(api.setWorkflowPublic).toHaveBeenCalledWith(100, true);
+
+        expect(wrapper.state('isPublic')).toBe(true);
+        done();
+      });
+    });
+  });
 });
 
 describe('WorkflowMetadata - private mode', () => {

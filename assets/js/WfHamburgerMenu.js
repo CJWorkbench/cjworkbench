@@ -38,96 +38,65 @@ export default class WfHamburgerMenu extends React.Component {
     let loggedIn = typeof this.props.user !== 'undefined' && this.props.user.id;
 
     if (this.props.workflowId != undefined) {  // on Wf page
-
       if (loggedIn) {
-        homeLink =
-          <DropdownItem
-            key={1}
-            tag="a"
-            href="/workflows"
-            className='dropdown-menu--item'
-          >
-            <span className='content-3 ml-3'>My Workflows</span>
-          </DropdownItem>;
-      } else {
-        homeLink =
-          <DropdownItem
-            key={1}
-            tag="a"
-            href="https://workbenchdata.com"
-            className='dropdown-menu--item'
-          >
-            <span className='content-3 ml-3'>Home</span>
+        homeLink = (
+          <DropdownItem href="/workflows">
+            <span>My Workflows</span>
           </DropdownItem>
+        );
+      } else {
+        homeLink = (
+          <DropdownItem href="https://workbenchdata.com">
+            <span>Home</span>
+          </DropdownItem>
+        );
       }
-
     }
 
     // If we can edit the workflow we have undo and redo items
     if (this.props.workflowId != undefined && !this.props.isReadOnly) {
-
-      undoRedo =
-        <div>
-          <DropdownItem divider key={100} />
-          <DropdownItem
-            key={2}
-            onClick={ () => { this.props.api.undo(this.props.workflowId)} }
-            className='dropdown-menu--item'
-          >
-            <span className='content-3 ml-3'>Undo</span>
+      undoRedo = (
+        <React.Fragment>
+          <DropdownItem divider/>
+          <DropdownItem onClick={ () => { this.props.api.undo(this.props.workflowId)} }>
+            <span>Undo</span>
           </DropdownItem>
-          <DropdownItem
-            key={3}
-            onClick={ () => { this.props.api.redo(this.props.workflowId)} }
-            className='dropdown-menu--item'
-          >
-            <span className='content-3 ml-3'>Redo</span>
+          <DropdownItem onClick={ () => { this.props.api.redo(this.props.workflowId)} }>
+            <span>Redo</span>
           </DropdownItem>
-          <DropdownItem divider key={200} />
-        </div>;
+          <DropdownItem divider/>
+        </React.Fragment>
+      );
     }
 
     // can import if logged in
     if (loggedIn) {
       let importModal = this.state.importModalOpen ? this.renderImportModal() : null;
 
-      importModule =
-        <div>
-          <DropdownItem key={4}
-            onClick={this.toggleImportModal} className='dropdown-menu--item mb-1 test-export-button'>
-            <span className='content-3 ml-3'>Import Module</span>
-            {importModal}
-          </DropdownItem>
-        </div>
+      importModule = (
+        <DropdownItem onClick={this.toggleImportModal} className='test-export-button'>
+          <span>Import Module</span>
+          {importModal}
+        </DropdownItem>
+      )
     }
 
     // either log in or out
     if (loggedIn) {
       logInorOut = (
-        <DropdownItem
-          key={5}
-          tag="a"
-          href="/account/logout"
-          className='dropdown-menu--item'
-        >
-           <span className='content-3 ml-3'>Log Out</span>
+        <DropdownItem href="/account/logout">
+           <span>Log Out</span>
         </DropdownItem>
       )
-
     } else {
       logInorOut =
-        <DropdownItem
-          key={2}
-          tag="a"
-          href="/account/logout"
-          className='dropdown-menu--item'
-        >
-          <span className='content-3 ml-3'>Log out</span>
+        <DropdownItem href="/account/logout">
+          <span>Log out</span>
         </DropdownItem>
     }
 
     return (
-       <UncontrolledDropdown>
+      <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
           <div className='context-button--icon icon-more'></div>
         </DropdownToggle>
@@ -137,7 +106,7 @@ export default class WfHamburgerMenu extends React.Component {
           {importModule}
           {logInorOut}
         </DropdownMenu>
-       </UncontrolledDropdown>
+      </UncontrolledDropdown>
     );
   }
 }

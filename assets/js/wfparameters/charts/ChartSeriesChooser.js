@@ -1,5 +1,5 @@
 import React from 'react'
-import { InputGroup, InputGroupButton, Input, Button, ButtonDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
+import { InputGroup, InputGroupButton, Input, Button } from 'reactstrap'
 import BlockPicker from 'react-color/lib/Block'
 import { defaultColors } from './ChartColors'
 

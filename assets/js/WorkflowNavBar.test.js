@@ -130,39 +130,31 @@ describe('WorkflowNavBar', () => {
 
     expect(wrapper.state().modalsOpen).toBe(true);      
 
-    // FIXME upgrade to React v16 and reactstrap v5 and uncomment
-    done()
-    //// The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
-    //// So find them, and make a new Wrapper
-    //// Reference: "https://github.com/airbnb/enzyme/issues/252"
-    //let setpubModalElement = document.getElementsByClassName('test-setpublic-modal');
-    //let setpubModal = new ReactWrapper(setpubModalElement[0], true)
+    // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
+    // So find them, and make a new Wrapper
+    // Reference: "https://github.com/airbnb/enzyme/issues/252"
+    const setpubModal = wrapper.find('div.test-setpublic-modal');
+    expect(setpubModal).toMatchSnapshot(); 
 
-    //expect(setpubModal).toMatchSnapshot(); 
+    const setPublicButton = setpubModal.find('.test-public-button');
+    setPublicButton.simulate('click');
 
-    //let setPublicButton = setpubModal.find('.test-public-button');
-    //expect(setPublicButton.length).toBe(1);
-    //setPublicButton.simulate('click');
-
-    //// wait for promise to resolve
-    //setImmediate( () => {
-    //  wrapper.update()
-    //  // find the Share modal & wrap it
-    //  let shareModalElement = document.getElementsByClassName('test-share-modal');
-    //  let shareModal = new ReactWrapper(shareModalElement[0], true)
-
-    //  expect(shareModal).toMatchSnapshot(); 
-    //
-    //  // check that link has rendered correctly
-    //  let linkField = shareModal.find('.test-link-field');
-    //  expect(linkField.length).toBe(1);
-    //  // Need to fix this once correct link string in place
-    //  // expect(linkField.props().placeholder).toEqual("");
-    //
-    //  expect(api.setWorkflowPublic.mock.calls.length).toBe(1);
-    //  done();
-    //});
-
+    // wait for promise to resolve
+    setImmediate( () => {
+      wrapper.update()
+      // find the Share modal & wrap it
+      const shareModal = wrapper.find('div.test-share-modal');
+      expect(shareModal).toMatchSnapshot(); 
+    
+      // check that link has rendered correctly
+      const linkField = shareModal.find('input.test-link-field');
+      expect(linkField.length).toBe(1);
+      // Need to fix this once correct link string in place
+      // expect(linkField.props().placeholder).toEqual("");
+    
+      expect(api.setWorkflowPublic).toHaveBeenCalled();
+      done();
+    });
   });
 
 
@@ -194,21 +186,14 @@ describe('WorkflowNavBar', () => {
 
     expect(wrapper.state().modalsOpen).toBe(true);      
 
-    // FIXME Upgrade to React v16 and reactstrap v5 and uncomment
-    //// The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
-    //// So find them, and make a new Wrapper
-    //// Reference: "https://github.com/airbnb/enzyme/issues/252"
-    //let shareModalElement = document.getElementsByClassName('test-share-modal');
-    //let shareModal = new ReactWrapper(shareModalElement[0], true)
+    const shareModal = wrapper.find('div.test-share-modal');
+    expect(shareModal).toMatchSnapshot(); 
 
-    //expect(shareModal).toMatchSnapshot(); 
-
-    //// check that link has rendered correctly
-    //let linkField = shareModal.find('.test-link-field');
-    //expect(linkField.length).toBe(1);
-    //expect(linkField.props().placeholder).toEqual("/workflows/808");
+    // check that link has rendered correctly
+    const linkField = shareModal.find('input.test-link-field');
+    expect(linkField.length).toBe(1);
+    expect(linkField.props().placeholder).toEqual("/workflows/808");
   
-    //// no extra calls to API expected, 1 from last test
-    //expect(api.setWorkflowPublic.mock.calls.length).toBe(1);
+    expect(api.setWorkflowPublic).not.toHaveBeenCalled();
   });
 });

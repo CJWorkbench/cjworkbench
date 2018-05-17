@@ -17,7 +17,7 @@ export default class StatusLine extends React.Component {
   }
 }
 
-StatusLine.PropTypes = {
+StatusLine.propTypes = {
   status: PropTypes.string,
   error_msg: PropTypes.string
 }

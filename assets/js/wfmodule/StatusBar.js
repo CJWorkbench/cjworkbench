@@ -27,7 +27,7 @@ export default class StatusBar extends React.Component {
   }
 }
 
-StatusBar.PropTypes = {
+StatusBar.propTypes = {
   isDragging: PropTypes.bool,
   isSelected: PropTypes.bool,
   status: PropTypes.string

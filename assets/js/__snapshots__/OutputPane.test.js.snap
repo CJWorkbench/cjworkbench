@@ -6188,23 +6188,49 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
             <Modal
               autoFocus={true}
               backdrop={true}
-              backdropTransitionTimeout={150}
+              backdropTransition={
+                Object {
+                  "mountOnEnter": true,
+                  "timeout": 150,
+                }
+              }
+              centered={false}
               className="test-setpublic-modal"
               fade={true}
               isOpen={false}
               keyboard={true}
-              modalTransitionTimeout={300}
+              modalTransition={
+                Object {
+                  "timeout": 300,
+                }
+              }
+              onClosed={[Function]}
+              onOpened={[Function]}
+              role="dialog"
               zIndex={1050}
             />
             <Modal
               autoFocus={true}
               backdrop={true}
-              backdropTransitionTimeout={150}
+              backdropTransition={
+                Object {
+                  "mountOnEnter": true,
+                  "timeout": 150,
+                }
+              }
+              centered={false}
               className="test-setpublic-modal"
               fade={true}
               isOpen={false}
               keyboard={true}
-              modalTransitionTimeout={300}
+              modalTransition={
+                Object {
+                  "timeout": 300,
+                }
+              }
+              onClosed={[Function]}
+              onOpened={[Function]}
+              role="dialog"
               zIndex={1050}
             />
             <iframe

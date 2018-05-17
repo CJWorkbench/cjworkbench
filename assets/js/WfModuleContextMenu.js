@@ -160,7 +160,7 @@ export default class WfModuleContextMenu extends React.Component {
           </FormGroup>
         </ModalBody>
         <ModalFooter >
-          <div onClick={this.toggleExportModal} className='button-blue action-button test-done-button'>Done</div>{' '}
+          <button onClick={this.toggleExportModal} className='button-blue action-button test-done-button'>Done</button>{' '}
         </ModalFooter>
       </Modal>
     );
@@ -174,17 +174,17 @@ export default class WfModuleContextMenu extends React.Component {
         <DropdownToggle className='context-button'>
           <div className='context-button--icon icon-more'></div>
         </DropdownToggle>
-        <DropdownMenu right className='dropdown-menu'>
+        <DropdownMenu right>
           {/* Opens Modal window for downloading files */}
-          <DropdownItem key={1} onClick={this.toggleExportModal} className='dropdown-menu--item mb-1 test-export-button'>
-            <span className='icon-download dropdown-menu--icon'></span>
-            <span className='content-3 ml-3'>Export</span>
+          <DropdownItem key={1} onClick={this.toggleExportModal} className='test-export-button'>
+            <i className='icon-download'></i>
+            <span>Export</span>
             {exportModal}
           </DropdownItem>
           {/* Will delete the parent WF Module from the list */}
-          <DropdownItem key={3} onClick={this.deleteOption} className='dropdown-menu--item test-delete-button'>
-            <span className='icon-bin dropdown-menu--icon'></span>
-            <span className='content-3 ml-3'>Delete</span>
+          <DropdownItem key={3} onClick={this.deleteOption} className='test-delete-button'>
+            <i className='icon-bin'></i>
+            <span>Delete</span>
           </DropdownItem>
         </DropdownMenu>
        </UncontrolledDropdown>
