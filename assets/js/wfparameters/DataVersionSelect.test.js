@@ -53,12 +53,8 @@ describe('DataVersionSelect', () => {
       />);
   });
 
-  // modal is a portal component, does not get cleaned up by enzyme between tests. So manually clear the DOM here
   afterEach(() => {
-    var node = global.document.body;
-    while (node.firstChild) {
-      node.removeChild(node.firstChild);
-    }
+    wrapper.unmount();
   });
 
 

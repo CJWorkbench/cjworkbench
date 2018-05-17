@@ -45,9 +45,6 @@ describe('WorkflowMetadata - private mode', () => {
     publicLink.first().simulate('click');
 
     setImmediate(() => {
-      // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
-      // So find them, and make a new Wrapper
-      // Reference: "https://github.com/airbnb/enzyme/issues/252"
       const modal = wrapper.find('.modal-content');
       expect(modal.length).toBe(1); // dialog should be open
 

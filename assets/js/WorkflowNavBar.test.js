@@ -130,9 +130,6 @@ describe('WorkflowNavBar', () => {
 
     expect(wrapper.state().modalsOpen).toBe(true);      
 
-    // The insides of the Modal are a "portal", that is, attached to root of DOM, not a child of Wrapper
-    // So find them, and make a new Wrapper
-    // Reference: "https://github.com/airbnb/enzyme/issues/252"
     const setpubModal = wrapper.find('div.test-setpublic-modal');
     expect(setpubModal).toMatchSnapshot(); 
 
