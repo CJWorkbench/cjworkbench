@@ -23,6 +23,11 @@
   background-color: $brand-blue;
   color: #FFFFFF;
   padding: 0.5rem 4rem 0.5rem 4rem;
+
+  .dropdown {
+    display: flex;
+    align-items: center;
+  }
 }
 
 //// navbar wf page
