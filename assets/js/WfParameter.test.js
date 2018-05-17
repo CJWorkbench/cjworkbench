@@ -1,11 +1,6 @@
-jest.mock('./lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
-
 import React from 'react'
-import ConnectedWfParameter, { WfParameter } from './WfParameter'
-import { shallow, mount } from 'enzyme'
-import { createStore } from 'redux'
-import { Provider } from 'react-redux'
-import lessonSelector from './lessons/lessonSelector'
+import WfParameter from './WfParameter'
+import { shallow } from 'enzyme'
 
 describe('WfParameter', () => {
 
@@ -42,7 +37,6 @@ describe('WfParameter', () => {
         getParamMenuItems={mockGetParamMenuItems}
         startDrag={nullFn}
         stopDrag={nullFn}        
-        isLessonHighlight={false}
       />);
   }
 
@@ -141,66 +135,5 @@ describe('WfParameter', () => {
     }, false);
     expect(wrapper.find('textarea')).toHaveLength(0);
   });
-
-  describe('lesson highlights', () => {
-    let store
-    let wrapper = null
-    let nonce = 0
-
-    function highlight(moduleName=null, name=null) {
-      lessonSelector.mockReturnValue({
-        testHighlight: test => {
-          return test.type === 'WfParameter' && test.moduleName === moduleName && test.name === name
-        }
-      })
-
-      // trigger a change
-      store.dispatch({ type: 'whatever', payload: ++nonce })
-      if (wrapper !== null) wrapper.update()
-    }
-
-    beforeEach(() => {
-      lessonSelector.mockReset()
-
-      // Store just needs to change, to trigger mapStateToProps. We don't care
-      // about its value
-      store = createStore((_, action) => action.payload)
-
-      wrapper = null // highlight() reads it
-      highlight(null)
-    })
-    afterEach(() => {
-      wrapper.unmount()
-    })
-
-    function wrap(p) {
-      wrapper = mount(
-        <Provider store={store}>
-          <ConnectedWfParameter
-            p={Object.assign({ visible: true }, p)}
-            moduleName="test"
-            wf_module_id={0}
-            revision={0}
-            loggedInUser={{}}
-            api={{}}
-            changeParam={jest.fn()}
-            getParamText={(id) => paramtextReturnValue}
-            setParamText={jest.fn()}
-            getParamMenuItems={mockGetParamMenuItems}
-            startDrag={jest.fn()}
-            stopDrag={jest.fn()}        
-            />
-        </Provider>
-      )
-    }
-
-    it('should highlight and unhighlight', () => {
-      wrap({ parameter_spec: { id_name: 'url', type: 'string', name: 'URL' }})
-      highlight('test', 'url')
-      expect(wrapper.find('.wf-parameter').prop('className')).toMatch(/\blesson-highlight\b/)
-      highlight('test', 'anything_but_url')
-      expect(wrapper.find('.wf-parameter').prop('className')).not.toMatch(/\blesson-highlight\b/)
-    })
-  })
 });
 
