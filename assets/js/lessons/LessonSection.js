@@ -55,6 +55,7 @@ export default class LessonSection extends React.PureComponent {
 
     return (
       <section className={ isCurrent ? 'current' : 'not-current' }>
+        <a href='/lessons/' className="backToLessons info-1">LESSONS</a>
         <h2>{title}</h2>
         <div className="description lesson-content--1" dangerouslySetInnerHTML={({__html: html})}></div>
         { this.renderSteps(steps) }

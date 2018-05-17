@@ -22,6 +22,15 @@ article.lesson {
 
     &.not-current { display: none; }
 
+    .backToLessons {
+      color:$white;
+      text-decoration: none;
+      margin-bottom: 1rem;
+      &:hover{
+        text-decoration: underline;
+      }
+    }
+
     h2 {
       color:#fff;
     }
