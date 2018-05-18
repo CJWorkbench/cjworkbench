@@ -12,15 +12,43 @@
   align-items: center;
   font-size: 1.5rem;
   position: relative;
-  left:-5.5rem;
+  left:-6.2rem;
+  height:100%;
+  padding-top: 1rem;
+  cursor: pointer;
 
   a {
-    padding: 0 1rem;
+    padding: 0 0.5rem;
+    color:$white;
+    &:hover{
+      text-decoration: none;
+    }
+  }
+
+  .LS-toggle--link,
+  .WF-toggle--link {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin:0 1rem;
+    padding-top: .5rem;
+    height:100%;
+
+    .WF-link--under,
+    .LS-link--under{
+      height:.6rem;
+      background-color: $white;
+      position: relative ;
+      top:1.3rem;
+    }
   }
 }
 
+.LS-toggle--link:hover .LS-link--under {
+  opacity: 0.6;
+}
+//// navbar
 
-//// navbar wf list
 .navbar {
   display:flex;
   height: 6rem;
@@ -30,9 +58,41 @@
   color: #FFFFFF;
   padding: 0.5rem 4rem 0.5rem 4rem;
 
+  .links {
+    // Making the underline in nav toggle highlight the selected page
+    .LS-link--under{
+      opacity: 0;
+    }
+    .WF-link--under{
+      opacity: 1;
+      width:11.2rem;
+    }
+  }
+
   .dropdown {
     display: flex;
     align-items: center;
+  }
+}
+
+//// navbar in lessons list
+
+.lessons-page {
+
+  .links {
+
+    // Making the underline in nav toggle highlight the selected page
+    .LS-link--under{
+      opacity: 1;
+      width:7.8rem;
+    }
+    .WF-link--under{
+      opacity: 0;
+    }
+    // Selector appear on hover
+    .WF-toggle--link:hover .WF-link--under {
+      opacity: 0.6;
+    }
   }
 }
 
