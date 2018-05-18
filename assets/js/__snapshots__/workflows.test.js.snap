@@ -36,6 +36,36 @@ exports[`Workflow list page renders correctly 1`] = `
               Workbench
             </div>
           </div>
+          <div
+            className="links"
+          >
+            <div
+              className="WF-toggle--link"
+            >
+              <a
+                className="active"
+                href={null}
+              >
+                WORKFLOWS
+              </a>
+              <div
+                className="WF-link--under"
+              />
+            </div>
+            <div
+              className="LS-toggle--link"
+            >
+              <a
+                className="inactive"
+                href="/lessons/"
+              >
+                LESSONS
+              </a>
+              <div
+                className="LS-link--under"
+              />
+            </div>
+          </div>
           <WfHamburgerMenu>
             <UncontrolledDropdown>
               <Dropdown
