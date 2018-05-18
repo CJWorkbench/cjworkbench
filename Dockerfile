@@ -20,7 +20,7 @@ COPY Pipfile Pipfile.lock /app/
 RUN pipenv install --dev --deploy --system
 
 # nltk models (for sentiment)
-RUN python -m nltk.downloader -d /usr/local/share/nltk_data all
+RUN python -m nltk.downloader -d /usr/local/share/nltk_data vader_lexicon
 
 # 2. Node deps -- completely independent
 FROM node:10.0.0-slim AS jsbuild
