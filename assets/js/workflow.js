@@ -13,7 +13,7 @@ import CustomDragLayer from './CustomDragLayer'
 
 class Workflow extends React.Component {
 
-  constructor(props: iProps) {
+  constructor(props) {
     super(props);
     this.state = {
         isPublic: false,
@@ -21,8 +21,6 @@ class Workflow extends React.Component {
         overlapping: false, // Does the right pane overlap the left pane? Used to set focus, draw shadows, etc
         libraryOpen: false 
     };
-    this.setOverlapping = this.setOverlapping.bind(this);
-    this.setLibraryOpen = this.setLibraryOpen.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -37,13 +35,13 @@ class Workflow extends React.Component {
     });
   }
 
-  setOverlapping(overlapping) {
+  setOverlapping = (overlapping) => {
     this.setState({
       overlapping
     });
   }
 
-  setLibraryOpen(libraryOpen, cb) {
+  setLibraryOpen = (libraryOpen, cb) => {
     this.setState({
       libraryOpen
     }, cb);

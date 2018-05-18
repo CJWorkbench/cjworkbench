@@ -38,10 +38,11 @@ module.exports = {
     rules: [
       {
         test: /\.jsx?$/,
-        // chartbuilder and included modules need their jsx compiled, but most node-modules do not
-        exclude: /node_modules(?!([\\]+|\/)(react-tangle|chartbuilder))/,
-        loader: 'babel-loader',
-        query: {presets: ['env', 'react']}  // to transform JSX into JS
+        exclude: /node_modules/,
+        loader: 'babel-loader', // config is in package.json
+        options: {
+          cacheDirectory: true,
+        },
       },
       {
         test: /\.css$/,
