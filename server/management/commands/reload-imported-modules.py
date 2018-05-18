@@ -6,8 +6,15 @@ from server.importmodulefromgithub import import_module_from_github
 class Command(BaseCommand):
     help = 'Re-imports all modules which were imported from github'
 
-    def handle(self, *args, **options):
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--force',
+            action='store_true',
+            dest='force',
+            help='Reload modules even if the version has not changed',
+        )
 
+    def handle(self, *args, **options):
         totes = 0
         external_modules = Module.objects.exclude(link__exact='')
         for m in external_modules:
@@ -15,7 +22,7 @@ class Command(BaseCommand):
             print('Importing module %s from %s' % (m.name, url))
 
             try:
-                import_module_from_github(url)
+                import_module_from_github(url, force_reload=options['force'])
                 totes += 1
             except Exception as e:
                 print(str(e))

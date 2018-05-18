@@ -61,6 +61,9 @@ class ImportFromGitHubTest(LoggedInTestCase):
         shutil.copytree(os.path.join(pwd, source_dir), clonedir)
         return clonedir
 
+
+    # -- Tests ---
+
     def test_sanitise_url(self):
         #test valid url
         input_url = "https://github.com/anothercookiecrumbles/somerepo"
@@ -107,6 +110,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         with self.assertRaisesMessage(ValidationError, 'Invalid GitHub URL entered: %s' % (input_url)):
             sanitise_url(input_url)
 
+
     def test_retrieve_project_name(self):
         #Here, we assume that we have a _clean_/_sanitised_ URL; if we didn't, the code should've thrown an exception
         #earlier in the stack. Hence, we don't test _bad_ urls.
@@ -115,6 +119,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         git_url = "https://github.com/anothercookiecrumbles/somerepo"
         project_name = retrieve_project_name(git_url)
         self.assertEqual(project_name, "somerepo")
+
 
     def test_validate_module_structure(self):
         # We don't want to rely on a remote repo existing, so we drive this test off a local repo equivalent
@@ -177,6 +182,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
                           "The hash of the git repo should be {}, but the function returned {}.".format('427847c',
                                                                                                         version))
 
+
     @mock.patch('server.importmodulefromgithub.get_already_imported_module_urls', side_effect=overriden_get_already_imported)
     def test_validate_json(self, get_already_imported_function):
         test_dir = self.fake_github_clone()
@@ -193,6 +199,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
                                                  ' {} items.'.format(len(module_config)))
         self.assertTrue(all (k in module_config for k in ("id_name", "description", "name", "category", "parameters")),
                         "Not all mandatory keys exist in the module_config/json file.")
+
 
     def test_create_destination_directory(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
@@ -240,6 +247,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         with self.assertRaises(ValidationError):
             compiled = add_boilerplate_and_check_syntax(destination_directory, "additional_file.py")
 
+
     def test_validate_python_functions(self):
         test_dir = self.fake_github_clone()
         destination_directory = os.path.join(self.imported_dir(), "123456")
@@ -271,6 +279,19 @@ class ImportFromGitHubTest(LoggedInTestCase):
         test_dir = self.fake_github_clone() # import moves files, so get same files again
         with self.assertRaises(ValidationError):
             import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+
+
+    # We will do a reload of same version if force_reload==True
+    def test_load_twice_force_relaod(self):
+        test_dir = self.fake_github_clone()
+        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir)
+        self.assertEqual(ModuleVersion.objects.filter(module__id_name=self.importable_id_name).count(), 1)
+
+        test_dir = self.fake_github_clone() # import moves files, so get same files again
+        import_module_from_directory("https://test_url_of_test_module", "importable", "123456", test_dir, force_reload=True)
+
+        # should replace existing module_version, not add a new one
+        self.assertEqual(ModuleVersion.objects.filter(module__id_name=self.importable_id_name).count(), 1)
 
 
     # don't allow loading the same id_name from a different URL. Prevents module replacement attacks, and user confusion

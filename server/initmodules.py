@@ -77,17 +77,14 @@ def load_module_from_dict(d):
 
     module.save()
 
-    if 'source_version' in d:
-        module_version = ModuleVersion(source_version_hash=d['source_version'])
-        module_version.module = module
-        internal = False
-    else:
-        # This is an internal module. Re-use existing module_version if it exists
-        try:
-            module_version =  ModuleVersion.objects.get(module=module)
-        except ModuleVersion.DoesNotExist:
-            module_version = ModuleVersion(module=module, source_version_hash='1.0') # always 1.0 for internal modules
-        internal = True
+    source_version = d.get('source_version', '1.0')  # if no source_version, internal module, version 1.0 always
+    try:
+        # if we are loading the same version again, re-use existing module_version
+        module_version = ModuleVersion.objects.get(module=module, source_version_hash=source_version)
+        reusing_version = True
+    except ModuleVersion.DoesNotExist:
+        module_version = ModuleVersion(module=module, source_version_hash=source_version)
+        reusing_version = False
 
     module_version.html_output = d.get('html_output', False)
     module_version.save()
@@ -98,8 +95,8 @@ def load_module_from_dict(d):
     else:
         pspecs = []
 
-    # If we are re-using the module_version, delete all ParameterSpecs that were not in the new module description
-    if internal:
+    # Delete all ParameterSpecs that were not in the new module description
+    if reusing_version:
         for ps in ParameterSpec.objects.filter(module_version=module_version):
             if ps not in pspecs: # relies on model == comparing id field
                 ps.delete()
@@ -158,7 +155,8 @@ def load_parameter_spec(d, module_version, order):
     pspec.order = order
     pspec.save()
 
-    # For internal modules, which are not versioned, we need to migrate all existing parameter vals to new spec
+    # When we are updating a module_version (possibly due to force_reload in init_module_from_github,
+    # or an internal module which is not versioned) we need to migrate all existing parameter vals to new spec
     update_parameter_vals_to_new_spec(old_spec, pspec)
     if old_spec:
         old_spec.delete()

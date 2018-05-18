@@ -250,7 +250,7 @@ MODULE_DIRECTORY = os.path.join(ROOT_DIRECTORY, "importedmodules")
 # Load a module after cloning from github
 # This is the guts of our module import, also a good place to hook into for tests (bypassing github access)
 # Returns a dictionary of info to display to user (category, repo name, author, id_name)
-def import_module_from_directory(url, reponame, version, importdir):
+def import_module_from_directory(url, reponame, version, importdir, force_reload=False):
 
     destination_directory = None
     ui_info = {}
@@ -266,11 +266,12 @@ def import_module_from_directory(url, reponame, version, importdir):
         module_config = get_module_config_from_json(url, extension_file_mapping, importdir)
         id_name = module_config['id_name']
 
-        # Don't allow importing the same version twice
-        if ModuleVersion.objects.filter(module__id_name=id_name, source_version_hash=version):
-            raise ValidationError('Version {} of module {} has already been imported'.format(version, url))
+        # Don't allow importing the same version twice, unless forced
+        if not force_reload:
+            if ModuleVersion.objects.filter(module__id_name=id_name, source_version_hash=version):
+                raise ValidationError('Version {} of module {} has already been imported'.format(version, url))
 
-        # Don't allow loading a module with the same id_name from a different repo.
+        # Don't allow loading a module with the same id_name from a different repo. Prevents replacement attacks.
         module_urls = get_already_imported_module_urls()
         if module_config["id_name"] in module_urls and url != module_urls[module_config["id_name"]]:
             source = module_urls[module_config["id_name"]]
@@ -318,14 +319,19 @@ def import_module_from_directory(url, reponame, version, importdir):
                 shutil.rmtree(destination_directory)
             except:
                 pass
+            try:
+                shutil.rmtree(destination_directory + '-original')
+            except:
+                pass
         raise
 
     return ui_info
 
 
 # Top level import, clones from github
+# If force_relaod, reloads the module even if the version hasn't changed (normally, this is an error)
 # On success, returnd a dict with (category, repo name, author, id_name) to tell user what happened
-def import_module_from_github(url):
+def import_module_from_github(url, force_reload=False):
 
     url = url.lower().strip()
     url = sanitise_url(url)
@@ -351,7 +357,7 @@ def import_module_from_github(url):
 
         # load it
         version = extract_version(importdir)
-        ui_info = import_module_from_directory(url, reponame, version, importdir)
+        ui_info = import_module_from_directory(url, reponame, version, importdir, force_reload)
 
     except Exception as e:
         # Clean up any existing dirs and pass exception up (ValidationErrors will have error message for user)
