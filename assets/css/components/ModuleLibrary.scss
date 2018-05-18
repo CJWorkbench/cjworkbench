@@ -266,7 +266,6 @@
   .module-library {
     width: 17rem;
     background-color: $WF-background;
-    border-right: $dark-accent--soft;
 
     .ML-list--container:hover .ML-search-field {
       border:3px solid $brand-pink;
@@ -300,6 +299,8 @@
     // Search, modules container and search results
 
     .ML-list--container {
+
+      border-right: 1px solid $dark-accent--soft;
 
       .ML-search--container {
         padding: 1.5rem 1.5rem;
