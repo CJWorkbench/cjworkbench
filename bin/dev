@@ -40,8 +40,8 @@ fi
 # Regular migrations (always run these -- we modify fields frequently)
 pipenv run "$DIR"/manage.py migrate -v1
 
-# Reload source code (always run this -- it changes frequently)
-pipenv run "$DIR"/manage.py initmodules
+# Reload modules that are part of our source tree (always run this -- it changes frequently)
+pipenv run "$DIR"/manage.py reload-internal-modules
 
 # Clear temporary data from previous runs
 rm -rf "$DIR"/assets/bundles "$DIR"/webpack-stats.json

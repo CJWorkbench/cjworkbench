@@ -324,6 +324,7 @@ def import_module_from_directory(url, reponame, version, importdir):
 
 
 # Top level import, clones from github
+# On success, returnd a dict with (category, repo name, author, id_name) to tell user what happened
 def import_module_from_github(url):
 
     url = url.lower().strip()

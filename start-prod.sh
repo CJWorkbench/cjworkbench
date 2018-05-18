@@ -17,6 +17,6 @@ cron
 ./manage.py migrate sites
 ./manage.py migrate
 ./manage.py load_socialaccounts
-./manage.py initmodules
+./manage.py reload-internal-modules
 
 ./manage.py runserver --insecure 0.0.0.0:8000
