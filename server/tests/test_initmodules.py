@@ -74,30 +74,6 @@ class InitmoduleTests(LoggedInTestCase):
               ]
             }
 
-        # A very barebones module to test conditional UI loading
-        self.cond_ui_valid = {
-            'name': 'CondUI1',
-            'id_name': 'condui1',
-            'category': 'Analyze',
-            'parameters': [
-                {
-                    'name': 'cond_menu',
-                    'id_name': 'cond_menu',
-                    'type': 'menu',
-                    'menu_items': 'cond1|cond2|cond3'
-                },
-                {
-                    'name': 'cond_test',
-                    'id_name': 'cond_test',
-                    'type': 'checkbox',
-                    'visible_if': {
-                        'id_name': 'cond_menu',
-                        'value': 'cond1|cond3'
-                    }
-                }
-            ]
-        }
-
 
     def test_load_valid(self):
         self.assertEqual(len(Module.objects.all()), 0)   # we should be starting with no modules
@@ -221,9 +197,19 @@ class InitmoduleTests(LoggedInTestCase):
         with self.assertRaises(ParameterVal.DoesNotExist):
             ParameterVal.objects.get(parameter_spec__id_name='newint')
 
+        # load same version again, should re-use module_version
+        m3 = load_module_from_dict(mini_module2)
+        self.assertEqual(m2.id, m3.id)
+
+        # load a different version
+        mini_module4 = copy.deepcopy(mini_module2)
+        mini_module4['source_version'] = 'f0f0beef'
+        m4 = load_module_from_dict(mini_module4)
+        self.assertNotEqual(m3.id, m4.id)
+
 
     # Checks that re-importing an internal module (same id_name) overwrites the old fields
-    # and exiting ParameterVals are updated
+    # and existing ParameterVals are updated
     def test_reload_internal_module(self):
         self.assertEqual(len(Module.objects.all()), 0)   # we should be starting with no modules
 
@@ -281,19 +267,46 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(menu_pval2.value, '1')
         self.assertEqual(menu_pval1.order, 0)
 
+        # load the old one again, just for kicks (and to test updating a previously updated module_version)
+        m2 = load_module_from_dict(self.loadcsv)
+
 
     # A brief check of conditional UI, in that the JSON can be stored and retrieved correctly.
     def test_condui(self):
+        # A very barebones module to test conditional UI loading
+        cond_ui_valid = {
+            'name': 'CondUI1',
+            'id_name': 'condui1',
+            'category': 'Analyze',
+            'parameters': [
+                {
+                    'name': 'cond_menu',
+                    'id_name': 'cond_menu',
+                    'type': 'menu',
+                    'menu_items': 'cond1|cond2|cond3'
+                },
+                {
+                    'name': 'cond_test',
+                    'id_name': 'cond_test',
+                    'type': 'checkbox',
+                    'visible_if': {
+                        'id_name': 'cond_menu',
+                        'value': 'cond1|cond3'
+                    }
+                }
+            ]
+        }
+
         self.assertEqual(len(Module.objects.all()), 0)
-        load_module_from_dict(self.cond_ui_valid)
+        load_module_from_dict(cond_ui_valid)
         cond_spec = ParameterSpec.objects.get(id_name='cond_test')
         cond_spec_visibility = json.loads(cond_spec.visible_if)
-        self.assertEqual(cond_spec_visibility, self.cond_ui_valid['parameters'][1]['visible_if'])
+        self.assertEqual(cond_spec_visibility, cond_ui_valid['parameters'][1]['visible_if'])
 
-        new_cond_ui = copy.copy(self.cond_ui_valid)
+        new_cond_ui = copy.copy(cond_ui_valid)
         del new_cond_ui['parameters'][1]['visible_if']['value']
         with self.assertRaises(ValueError):
-            load_module_from_dict(new_cond_ui)
+            load_module_from_dict(new_cond_ui) # this also tests that db is still valid if load fails
 
         new_cond_ui['parameters'][1]['visible_if']['value'] = 'cond1|cond2'
         load_module_from_dict(new_cond_ui)

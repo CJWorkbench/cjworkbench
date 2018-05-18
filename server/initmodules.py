@@ -49,57 +49,76 @@ def load_module_from_file(fname):
 # testable entrypoint
 # returns Module
 def load_module_from_dict(d):
-    required = ['name', 'id_name', 'category']
-    for x in required:
-        if not x in d:
-            raise ValueError("Module specification missing field " + x)
 
-    id_name = d['id_name']
+    with transaction.atomic():
+        required = ['name', 'id_name', 'category']
+        for x in required:
+            if not x in d:
+                raise ValueError("Module specification missing field " + x)
 
-    # If we can find an existing module with the same id_name, use that
-    try:
-        module = Module.objects.get(id_name=id_name)
-    except Module.DoesNotExist:
-        module = Module()
+        id_name = d['id_name']
 
-    # save module data
-    module.name = d['name']
-    module.category = d['category']
-    module.id_name = id_name
-    module.dispatch = id_name
-    module.source = d.get('source', '')
-    module.description = d.get('description', '')
-    module.author = d.get('author', 'Workbench')
-    module.link = d.get('link', '')
-    module.icon = d.get('icon', 'settings')
-    module.loads_data = d.get('loads_data', False)
-    module.help_url = d.get('help_url', '')
+        # If we can find an existing module with the same id_name, use that
+        try:
+            module = Module.objects.get(id_name=id_name)
+        except Module.DoesNotExist:
+            module = Module()
 
-    module.save()
+        # save module data
+        module.name = d['name']
+        module.category = d['category']
+        module.id_name = id_name
+        module.dispatch = id_name
+        module.source = d.get('source', '')
+        module.description = d.get('description', '')
+        module.author = d.get('author', 'Workbench')
+        module.link = d.get('link', '')
+        module.icon = d.get('icon', 'settings')
+        module.loads_data = d.get('loads_data', False)
+        module.help_url = d.get('help_url', '')
 
-    source_version = d.get('source_version', '1.0')  # if no source_version, internal module, version 1.0 always
-    try:
-        # if we are loading the same version again, re-use existing module_version
-        module_version = ModuleVersion.objects.get(module=module, source_version_hash=source_version)
-        reusing_version = True
-    except ModuleVersion.DoesNotExist:
-        module_version = ModuleVersion(module=module, source_version_hash=source_version)
-        reusing_version = False
+        module.save()
 
-    module_version.html_output = d.get('html_output', False)
-    module_version.save()
+        source_version = d.get('source_version', '1.0')  # if no source_version, internal module, version 1.0 always
+        try:
+            # if we are loading the same version again, re-use existing module_version
+            module_version = ModuleVersion.objects.get(module=module, source_version_hash=source_version)
+            reusing_version = True
+        except ModuleVersion.DoesNotExist:
+            module_version = ModuleVersion(module=module, source_version_hash=source_version)
+            reusing_version = False
 
-    # load params
-    if 'parameters' in d:
-        pspecs = [ load_parameter_spec(p, module_version, order) for (order,p) in enumerate(d['parameters']) ]
-    else:
-        pspecs = []
+        module_version.html_output = d.get('html_output', False)
+        module_version.save()
 
-    # Delete all ParameterSpecs that were not in the new module description
-    if reusing_version:
-        for ps in ParameterSpec.objects.filter(module_version=module_version):
-            if ps not in pspecs: # relies on model == comparing id field
-                ps.delete()
+        # load params
+        if 'parameters' in d:
+            pspecs = [ load_parameter_spec(p, module_version, order) for (order,p) in enumerate(d['parameters']) ]
+        else:
+            pspecs = []
+
+        # Migrate parameters, if we're updating an existing module_version
+        if reusing_version:
+            # Deleted parameters
+            new_id_names = [p.id_name for p in pspecs]
+            for old_spec in ParameterSpec.objects.filter(module_version=module_version):
+                if old_spec.id_name not in new_id_names:
+                    old_spec.delete() # also deletes old ParameterVals via cascade
+
+            for new_spec in pspecs:
+                try:
+                    # Changed parameters
+                    old_spec = ParameterSpec.objects.\
+                        exclude(id=new_spec.id).\
+                        get(id_name=new_spec.id_name, module_version=module_version)
+                    for pv in ParameterVal.objects.filter(parameter_spec=old_spec):
+                        migrate_parameter_val(pv, old_spec, new_spec)
+                    old_spec.delete()
+
+                except ParameterSpec.DoesNotExist:
+                    # Added parameters
+                    for wfm in WfModule.objects.filter(module_version=module_version):
+                        create_parameter_val(wfm, new_spec)
 
     return module_version
 
@@ -123,13 +142,6 @@ def load_parameter_spec(d, module_version, order):
     # Is this type recognized?
     if ptype not in ParameterSpec.TYPES:
         raise ValueError("Unknown parameter type " + ptype)
-
-    # If internal, get the spec for the same parameter from the previous module_version
-    # Internal modules currently have only one version ever
-    try:
-        old_spec = ParameterSpec.objects.get(id_name=id_name, module_version__module=module_version.module)
-    except ParameterSpec.DoesNotExist:
-        old_spec = None
 
     pspec = ParameterSpec(name=name, id_name=id_name, type=ptype, module_version=module_version)
 
@@ -155,12 +167,6 @@ def load_parameter_spec(d, module_version, order):
     pspec.order = order
     pspec.save()
 
-    # When we are updating a module_version (possibly due to force_reload in init_module_from_github,
-    # or an internal module which is not versioned) we need to migrate all existing parameter vals to new spec
-    update_parameter_vals_to_new_spec(old_spec, pspec)
-    if old_spec:
-        old_spec.delete()
-
     return pspec
 
 # --- Parameter Spec migration ----
@@ -182,33 +188,6 @@ def migrate_parameter_val(pval, old_spec, new_spec):
     if type_changed:
         pval.init_from_spec()
     pval.save()
-
-
-# Migrate parameter values on all existing WfModules to a new spec
-# - If the parameter didn't exist before, add it
-# - If the parameter has been removed, delete it
-# - If the parameter changed:
-#     - point existing vals to new spec
-#     - set new order
-#     - set to default value if the type changed
-def update_parameter_vals_to_new_spec(old_spec, new_spec):
-
-    if old_spec is None:
-        # Added this parameter.
-        if new_spec.module_version:
-            # Update only if there are wfm that point to the new module version
-            # (so not when we load a new version of an external module)
-            for wfm in WfModule.objects.filter(module_version=new_spec.module_version):
-                create_parameter_val(wfm, new_spec)
-
-    elif new_spec is None:
-        # Deleted this parameter
-        ParameterVal.objects.filter(parameter_spec=old_spec).delete()
-
-    else:
-        # Changed this parameter
-        for pval in ParameterVal.objects.filter(parameter_spec=old_spec):
-            migrate_parameter_val(pval, old_spec, new_spec)
 
 
 # Bump a module and all its existing ParameterVals to a new version of a module
