@@ -13,12 +13,10 @@ dbdata/
 local_mail/
 client_secret.json
 
-# Asset bundles, static files, downloaded modules, saved data
+# Asset bundles, downloaded modules, saved data
 /node_modules/
 /assets/bundles/
-/static/
 /server/modules/dynamic
-/config/modules/dynamic
 /media/
 
 #pycharm
