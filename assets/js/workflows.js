@@ -60,8 +60,11 @@ export default class Workflows extends React.Component {
       <div className="workflows-page">
         <WorkflowListNavBar/>
         <div className="container">
+          <a href="/lessons/" className="lesson-banner title-2 mx-auto">
+            LEARN HOW TO USE WORKBENCH
+          </a>
           <div className="d-flex justify-content-center">
-            <div className='button-blue action-button new-workflow-button' onClick={this.click}>New</div>
+            <div className='button-blue action-button new-workflow-button' onClick={this.click}>Create Workflow</div>
           </div>
           <div className="mx-auto workflows-list">
             <h3 className="workflows-list--title title-3 t-m-gray">WORKFLOWS</h3>

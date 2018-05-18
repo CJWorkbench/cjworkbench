@@ -2,14 +2,33 @@
 
 .workflows-page {
 
+  a {text-decoration: none;}
+
   .container {height: 100vh;}
+
+  .lesson-banner {
+    width:50%;
+    min-width:30rem;
+    height:10rem;
+    border:3px solid $brand-pink;
+    color:$brand-pink;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin:4rem;
+    padding:1.5rem;
+    &:hover {
+      background-color: $brand-pink--light;
+    }
+  }
 
   .button-blue:hover {
     background-color: $light-accent--strong;
   }
 
   .new-workflow-button {
-    margin-top: 6rem;
+    margin-top: 2rem;
   }
 
   .workflows-list--title {
