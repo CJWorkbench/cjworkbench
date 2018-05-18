@@ -21,32 +21,28 @@ exports[`WorkflowListNavBar Renders correctly 1`] = `
     <div
       className="links"
     >
-      <div
+      <a
         className="WF-toggle--link"
+        href={null}
       >
-        <a
-          className="active"
-          href={null}
-        >
+        <div>
           WORKFLOWS
-        </a>
+        </div>
         <div
           className="WF-link--under"
         />
-      </div>
-      <div
+      </a>
+      <a
         className="LS-toggle--link"
+        href="/lessons/"
       >
-        <a
-          className="inactive"
-          href="/lessons/"
-        >
-          LESSONS
-        </a>
+        <div>
+          LEARN
+        </div>
         <div
           className="LS-link--under"
         />
-      </div>
+      </a>
     </div>
     <WfHamburgerMenu />
   </nav>
