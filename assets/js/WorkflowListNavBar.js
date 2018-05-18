@@ -15,14 +15,14 @@ export default class WorkflowListNavBar extends React.Component {
     }
     const links = (
       <div className="links">
-        <div className="WF-toggle--link">
-          <a href="/workflows/" {...propsForLink('workflows')}>WORKFLOWS</a>
+        <a href="/workflows/" {...propsForLink('workflows')} className="WF-toggle--link">
+          <div>WORKFLOWS</div>
           <div className='WF-link--under'></div>
-        </div>
-        <div className="LS-toggle--link">
-          <a href="/lessons/" {...propsForLink('lessons')}>LESSONS</a>
+        </a>
+        <a href="/lessons/" {...propsForLink('lessons')} className="LS-toggle--link">
+          <div>LEARN</div>
           <div className='LS-link--under'></div>
-        </div>
+        </a>
       </div>
     )
 
