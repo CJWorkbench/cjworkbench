@@ -10,9 +10,13 @@ class Command(BaseCommand):
         for wfm in WfModule.objects.all():
             module = wfm.module_version.module
 
-            if module != None:      # could be a missing module
+            # update module if not missing and not internal
+            if module != None and module.link != '':
+
                 latest_version = ModuleVersion.objects.filter(module=module).order_by('-last_update_time').first()
                 if wfm.module_version != latest_version:
+                    print('Updating module %s from %s to %s' %
+                          (str(wfm), wfm.module_version.source_version_hash, latest_version.source_version_hash))
                     update_wfm_parameters_to_new_version(wfm, latest_version)
                     totes += 1
 
