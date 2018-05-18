@@ -201,13 +201,13 @@ export default class WorkflowNavBar extends React.Component {
       contextMenu = <a href="http://app.workbenchdata.com/account/login" className='nav--link t-white content-2'>Sign in</a>
     }
 
-    var duplicate = <div onClick={this.handleDuplicate} className='button-white--fill action-button test-duplicate-button'>
+    var duplicate = <button onClick={this.handleDuplicate} className='button-white--fill action-button test-duplicate-button'>
                       Duplicate
-                    </div>
+                    </button>
 
-    var share = <div onClick={this.toggleModals} className='button-white action-button test-share-button'>
+    var share = <button onClick={this.toggleModals} className='button-white action-button test-share-button'>
                   Share
-                </div>
+                </button>
 
     var modals = this.renderModals();
 

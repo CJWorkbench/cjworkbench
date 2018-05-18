@@ -1,12 +1,12 @@
 # Utilities for integration tests
 
 from django.contrib.staticfiles.testing import StaticLiveServerTestCase
-from splinter import Browser
-from server.models import User
-from server.initmodules import init_modules
-from allauth.account.models import EmailAddress
 from django.contrib.sites.models import Site
+from server.initmodules import init_modules
 
+
+from integrationtests.browser import Browser
+from integrationtests.helpers import accounts
 
 class WorkbenchBase(StaticLiveServerTestCase):
     def setUp(self):
@@ -28,23 +28,24 @@ class WorkbenchBase(StaticLiveServerTestCase):
 
         init_modules() # the server should run with a least core modules loaded
 
-        self.browser = Browser()
+        self.browser = Browser(base_url=self.live_server_url)
+        self.account_admin = accounts.AccountAdmin()
 
     def tearDown(self):
-        self.browser.quit()
+        pass # browser exits automatically
 
 # Derive from this to perform all tests logged in
 class LoggedInIntegrationTest(WorkbenchBase):
     def setUp(self):
         super().setUp()
 
-        self.password = 'password'
-        self.user = User.objects.create_user(username='username', email='user@users.com', password=self.password)
-        # django-allauth uses a seperate model to keep track of verified emails. Without this, we can't log in.
-        self.email = EmailAddress.objects.create(user=self.user, email='user@users.com', primary=True, verified=True)
+        self.user = self.account_admin.create_user('user@example.org')
+        self.user_email = self.account_admin.verify_user_email(self.user)
 
-        b = self.browser
-        b.visit(self.live_server_url + '/account/login')
-        b.fill('login', self.user.email)
-        b.fill('password', self.password)
-        b.find_by_tag('button').click()
+        accounts.login(self.browser, self.user.email, self.user.email)
+
+    def tearDown(self):
+        self.account_admin.destroy_user_email(self.user_email)
+        self.account_admin.destroy_user(self.user)
+
+        super().tearDown()

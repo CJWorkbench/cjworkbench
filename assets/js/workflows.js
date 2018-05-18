@@ -61,7 +61,7 @@ export default class Workflows extends React.Component {
         <WorkflowListNavBar/>
         <div className="container">
           <div className="d-flex justify-content-center">
-            <div className='button-blue action-button new-workflow-button' onClick={this.click}>New</div>
+            <button className='button-blue action-button new-workflow-button' onClick={this.click}>New</button>
           </div>
           <div className="mx-auto workflows-list">
             <h3 className="workflows-list--title title-3 t-m-gray">WORKFLOWS</h3>

@@ -7,22 +7,25 @@ class TestWfModule(LoggedInIntegrationTest):
     def setUp(self):
         super().setUp()
 
-        self.wf = add_new_workflow("Integration Test Workflow")
-        csvspec = ModuleVersion.objects.get(module__id_name='pastecsv')
-        self.wfm = add_new_wf_module(self.wf, csvspec)
-        csv_pval = get_param_by_id_name('csv')
-        csv_pval.set_value(mock_csv_text2)
-        csv_pval.save()
+        b = self.browser
+        b.click_button('New') # navigate to a workflow page
 
-        self.browser.visit(self.live_server_url + '/workflows')
-        self.browser.click_link_by_partial_text('Integration Test Workflow')
+        # wait for page load
+        b.assert_element('input[name="title"]', text='New Workflow', wait=True)
+
 
     def test_paste_csv_workflow(self):
+        csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
+
         b = self.browser
 
-        # module library
-        self.assertTrue(b.is_element_present_by_text('Paste data'))
-        self.assertTrue(b.is_element_present_by_text(mock_csv_text2))
+        b.click_link('Paste data')
+        # wait for wfmodule to appear
+        b.fill_in('textarea[name=csv]', csv, wait=True)
+
+        b.click_whatever('.outputpane-header')
+
+        b.assert_element('
 
         self.assertTrue(b.is_element_present_by_text('Has header row'))
 

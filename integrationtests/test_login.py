@@ -15,7 +15,7 @@ class TestLogin(WorkbenchBase):
 
     def test_login(self):
         b = self.browser
-        b.visit(self.live_server_url + '/account/login')
+        b.visit('/account/login')
 
         self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
         self.assertTrue(b.is_element_present_by_text('Use Google account'))
