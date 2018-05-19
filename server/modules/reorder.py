@@ -4,7 +4,8 @@ import json
 
 class ReorderFromTable(ModuleImpl):
     def render(wf_module, table):
-        history = wf_module.get_param_raw('history', 'custom')
+        history = wf_module.get_param_raw('reorder-history', 'custom')
+        print(history)
 
         # NOP if history is empty
         if len(history.strip()) == 0:

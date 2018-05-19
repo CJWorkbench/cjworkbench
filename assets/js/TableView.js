@@ -8,6 +8,7 @@ import DataGrid from "./DataGrid";
 import update from 'immutability-helper'
 import * as EditCells from './EditCells'
 import * as SortFromTable from './SortFromTable'
+import * as ReorderColumns from './ReorderColumns'
 import {findParamValByIdName} from "./utils";
 
 export function mockAddCellEdit(fn) {
@@ -221,6 +222,7 @@ export default class TableView extends React.Component {
             sortColumn={sortColumn}
             sortDirection={sortDirection}
             showLetter={showColumnLetter}
+            selectedModule={this.props.currentModule}
           />
         </div>
       // adds commas to row count

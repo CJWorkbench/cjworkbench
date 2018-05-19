@@ -33,7 +33,7 @@ class ReorderFromTableTests(LoggedInTestCase):
         })
         self.workflow = create_testdata_workflow(csv_text=self.test_csv)
         self.wf_module = load_and_add_module('reorder', workflow=self.workflow)
-        self.history_pval = get_param_by_id_name('history')
+        self.history_pval = get_param_by_id_name('reorder-history')
 
     def test_reorder_empty(self):
         self.history_pval.value = ' '

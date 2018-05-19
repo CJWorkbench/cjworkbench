@@ -44,6 +44,20 @@ def sort_module_id():
 sort_module_id.id = None
 
 
+# Deal with reorder from table the same way we deal with EditCells
+def reorder_module_id():
+    if reorder_module_id.id is None:
+        try:
+            reorder_module_id.id = Module.objects.get(id_name='reorder-columns').id
+        except Module.DoesNotExist:
+            return None
+
+    return reorder_module_id.id
+
+
+reorder_module_id.id = None
+
+
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
 def make_init_state(request, workflow=None):
     ret = {}
@@ -55,6 +69,7 @@ def make_init_state(request, workflow=None):
         ret['loggedInUser'] = UserSerializer(request.user).data
         ret['editCellsModuleId'] = edit_cells_module_id()
         ret['sortModuleId'] = sort_module_id()
+        ret['reorderModuleId'] = reorder_module_id()
 
     return ret
 

@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid'
 import DraggableContainer from './DraggableContainer'
 import {idxToLetter} from "./utils";
+import * as ReorderColumns from "./ReorderColumns"
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
@@ -213,6 +214,22 @@ export default class DataGrid extends React.Component {
     this.updateSize();
   }
 
+  // Check if column names are changed between props, used for shouldKeyUpdate
+  columnsChanged(prevColumns, nextColumns) {
+    if((prevColumns == null) || (nextColumns == null)) {
+      return true;
+    }
+    if(prevColumns.length != nextColumns.length) {
+      return true;
+    }
+    for(var i = 0; i < prevColumns.length; i ++) {
+      if(prevColumns[i] != nextColumns[i]) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   shouldKeyUpdate(nextProps) {
     if(this.props.sortColumn != nextProps.sortColumn) {
       return true;
@@ -221,6 +238,12 @@ export default class DataGrid extends React.Component {
       return true;
     }
     if(this.props.showLetter != nextProps.showLetter) {
+      return true;
+    }
+    // For some reason, react-data-grid does not change column order
+    // in its output when the column order changes when custom header renderer
+    // is involved, so we bump the key if columns are changed
+    if(this.columnsChanged(this.props.columns, nextProps.columns)) {
       return true;
     }
     return false;
@@ -237,12 +260,12 @@ export default class DataGrid extends React.Component {
   componentWillUnmount() {
     window.removeEventListener("resize", this.updateSize);
   }
-
+/*
   // don't re-render while we are being dragged. makes things very smooth.
   shouldComponentUpdate(nextProps) {
     return !nextProps.resizing;
   }
-
+*/
   // Add row number as first column, when we look up data
   getRow(i) {
     var row = this.props.getRow(i);
@@ -275,13 +298,18 @@ export default class DataGrid extends React.Component {
     let sourceIdx = this.props.columns.indexOf(source);
     let targetIdx = this.props.columns.indexOf(target);
     console.log("Moved " + source + " from " + idxToLetter(sourceIdx) + " to " + idxToLetter(targetIdx));
+
+    ReorderColumns.updateReorder(this.props.selectedModule, source, sourceIdx, targetIdx);
   }
 
   render() {
+    console.log(this.props);
+
     if (this.props.totalRows > 0) {
 
       this.updateRowNumKey(this.props);
       var columns = makeFormattedCols(this.props, this.rowNumKey);
+      console.log(columns)
 
       return(
           <DraggableContainer
