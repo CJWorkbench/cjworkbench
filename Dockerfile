@@ -45,7 +45,6 @@ COPY --from=jsbuild /app/assets/ /app/assets/
 COPY cjworkbench/ /app/cjworkbench/
 COPY server/ /app/server/
 COPY templates/ /app/templates/
-COPY static/ /app/static/
 COPY database.yml manage.py start-prod.sh /app/
 
 # needed for django to load correctly
