@@ -1,6 +1,8 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import DataGrid from "./DataGrid"
+import TestBackend from 'react-dnd-test-backend'
+import { DragDropContextProvider } from 'react-dnd'
 
 describe('DataGrid tests,', () => {
   var testData = {
@@ -31,13 +33,17 @@ describe('DataGrid tests,', () => {
     var editCellMock = jest.fn();
     var sortMock = jest.fn();
 
-    const tree = mount( <DataGrid
-      totalRows={testData.totalRows}
-      columns={testData.columns}
-      getRow={getRow}
-      onEditCell={editCellMock}
-      onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
-    />);
+    const tree = mount(
+        <DragDropContextProvider backend={TestBackend}>
+            <DataGrid
+              totalRows={testData.totalRows}
+              columns={testData.columns}
+              getRow={getRow}
+              onEditCell={editCellMock}
+              onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
+            />
+        </DragDropContextProvider>
+    );
 
     // Check that we ended up with five columns (first is row number), with the right names
     // If rows values are not present, ensure intial DataGrid state.gridHeight > 0
@@ -55,7 +61,7 @@ describe('DataGrid tests,', () => {
     expect(text).toContain('2');
 
     // row number column should not have the same name as any of our cols
-    expect(testData.columns.includes(tree.instance().rowNumKey)).toBeFalsy();
+    expect(testData.columns.includes(tree.find('DataGrid').instance().rowNumKey)).toBeFalsy();
 
     expect(tree).toMatchSnapshot();
 
@@ -71,35 +77,46 @@ describe('DataGrid tests,', () => {
 
   it('Render without data', () => {
 
-    const tree = mount( <DataGrid
-      totalRows={0}
-      columns={[]}
-      getRow={() => {}}
-    />);
+    const tree = mount(
+        <DragDropContextProvider backend={TestBackend}>
+          <DataGrid
+            totalRows={0}
+            columns={[]}
+            getRow={() => {}}
+          />
+        </DragDropContextProvider>
+    );
     expect(tree.find('HeaderCell')).toHaveLength(0);
 
     expect(tree).toMatchSnapshot();
   });
 
   it('Shows/hides letters in the header according to props', () => {
-    const treeWithLetter = mount(<DataGrid
-        totalRows={testData.totalRows}
-        columns={testData.columns}
-        getRow={getRow}
-        showLetter={true}
-    />);
+    const treeWithLetter = mount(
+        <DragDropContextProvider backend={TestBackend}>
+          <DataGrid
+              totalRows={testData.totalRows}
+              columns={testData.columns}
+              getRow={getRow}
+              showLetter={true}
+          />
+        </DragDropContextProvider>
+    );
     expect(treeWithLetter.find('.column-letter')).toHaveLength(testData.columns.length);
     expect(treeWithLetter.find('.column-letter').get(0).props.children).toEqual('A');
     expect(treeWithLetter.find('.column-letter').get(1).props.children).toEqual('B');
     expect(treeWithLetter.find('.column-letter').get(2).props.children).toEqual('C');
     expect(treeWithLetter.find('.column-letter').get(3).props.children).toEqual('D');
 
-    const treeWithoutLetter = mount(<DataGrid
-        totalRows={testData.totalRows}
-        columns={testData.columns}
-        getRow={getRow}
-        showLetter={false}
-    />);
+    const treeWithoutLetter = mount(
+        <DragDropContextProvider backend={TestBackend}>
+          <DataGrid
+            totalRows={testData.totalRows}
+            columns={testData.columns}
+            getRow={getRow}
+            showLetter={false}
+          />
+        </DragDropContextProvider>);
     expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0);
   });
 });

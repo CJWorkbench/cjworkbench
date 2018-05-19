@@ -303,13 +303,13 @@ export default class DataGrid extends React.Component {
   }
 
   render() {
-    console.log(this.props);
+    //console.log(this.props);
 
     if (this.props.totalRows > 0) {
 
       this.updateRowNumKey(this.props);
       var columns = makeFormattedCols(this.props, this.rowNumKey);
-      console.log(columns)
+      //console.log(columns)
 
       return(
           <DraggableContainer
