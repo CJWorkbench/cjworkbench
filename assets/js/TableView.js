@@ -185,7 +185,7 @@ export default class TableView extends React.Component {
       // rendering it and all of its children in a seperate compositing layer,
       // improving the rendering of everything else in the app.
       // Expand the list of letter-showing modules by changing the array here
-      let showLetterWfModuleIdNames = ['formula'];
+      let showLetterWfModuleIdNames = ['formula', 'reorder-columns'];
 
       var moduleIsSort = false;
       var showColumnLetter = false;
