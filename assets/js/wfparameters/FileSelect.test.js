@@ -12,7 +12,7 @@ describe('FileSelect', () => {
   })
 
   const gDriveFiles = {
-    "kind": "drive#fileList", 
+    "kind": "drive#fileList",
     "incompleteSearch": false,
     "files": [
       {
@@ -169,7 +169,7 @@ describe('FileSelect', () => {
     expect(api.postParamEvent).not.toHaveBeenCalled()
     expect(noCredsNoFileWrapper).toMatchSnapshot();
 
-    expect(noCredsNoFileWrapper.find('.parameter-margin').length).toBe(0);
+    expect(noCredsNoFileWrapper.find('gdrive-fileSelect').length).toBe(0);
 
     done();
   });

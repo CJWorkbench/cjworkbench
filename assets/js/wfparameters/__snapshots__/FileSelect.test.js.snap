@@ -4,10 +4,10 @@ exports[`FileSelect Does not show anything if neither a user credential nor a fi
 
 exports[`FileSelect Does not show the modal link if there is no user credential present 1`] = `
 <div
-  className="parameter-margin"
+  className=""
 >
   <div
-    className="parameter-margin d-flex gdrive-fileSelect align-items-center"
+    className=" d-flex gdrive-fileSelect align-items-center"
   >
     <div
       className="file-info content-3"
@@ -59,10 +59,10 @@ exports[`FileSelect Loads correctly and allows a user to choose a new file 1`] =
   }
 >
   <div
-    className="parameter-margin"
+    className=""
   >
     <div
-      className="parameter-margin d-flex gdrive-fileSelect align-items-center"
+      className=" d-flex gdrive-fileSelect align-items-center"
     >
       <div
         className="file-info content-3"

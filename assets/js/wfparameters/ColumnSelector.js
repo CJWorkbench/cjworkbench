@@ -94,7 +94,7 @@ export default class ColumnSelector extends React.Component {
     return (
       // The name attributes in the buttons are used for selection in tests. Do not change them.
       <div>
-        <div className="d-flex mb-2 mt-2 parameter-margin">
+        <div className="d-flex mb-2 mt-2 ">
           <button
               disabled={this.props.isReadOnly}
               onClick={this.selectAllClicked}

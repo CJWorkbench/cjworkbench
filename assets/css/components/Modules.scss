@@ -109,8 +109,24 @@
     width:100%;
     padding:0;
 
+
+
     .module-card-params {
       padding: 0 1.5rem 1rem 1.5rem;
+
+      // Spacing on top of each parameter, excpet the first one in module
+      .wf-parameter:not(:first-child) {
+        margin-top: 0.8rem;
+      }
+
+      //spacing for add/remove param button
+      .wf-parameter.wf-parameter-checkbox {
+        margin-top: 0.4rem;
+      }
+      //only for chartbuilder
+      .param-line-margin{
+        margin-bottom:1rem!important;
+      }
     }
   }
   .wf-module-error-msg {
@@ -247,16 +263,7 @@
 }
 
 
-/* Margin for a group of parameters (can include several lines)*/
 
-.parameter-margin:not(:first-child) {
-  margin-top: 0.8rem;
-}
-
-/* Margin for a line of 1 parameters, part of a group */
-.param-line-margin{
-  margin-bottom:1rem;
-}
 
 
 .help-button {

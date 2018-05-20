@@ -104,7 +104,7 @@ export default class DropZone extends Component {
     render() {
       // Classe names are in brackets becaue of : --->> [Fine Uploader 5.15.3] Caught exception in 'onStatusChange' callback - input is a void element tag and must neither have `children` nor use `dangerouslySetInnerHTML`. Check the render method of DropZone.
         return (
-            <div className={"parameter-margin"}>
+            <div className={""}>
                 {this.state.files.length == 0 ? (
                     <div>
                       <Dropzone

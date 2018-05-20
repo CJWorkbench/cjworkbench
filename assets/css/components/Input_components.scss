@@ -118,6 +118,10 @@ textarea:focus, input:focus{
 
 // focus states
 
+.custom-select {
+  background-size: 0px;
+}
+
 .custom-select:focus{
   border: 2px solid $brand-blue;
 }
