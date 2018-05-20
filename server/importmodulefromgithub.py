@@ -223,16 +223,22 @@ def validate_python_functions(destination_directory, python_file):
     # recognise the insert of the new path. There's probably a better solution though?
     sys.path.insert(0, destination_directory)
     time.sleep(2)
-    imported_module = import_module(p)
-    render_fn = getattr(imported_module,'render')
 
     try:
-        if not callable(render_fn):
-            raise ValidationError("Module render() function isn't callable.")
+        imported_module = import_module(p)
     except:
-        raise ValidationError("Module render() function is missing.")
+       raise ValidationError("Cannot load module")
+
+    try:
+       render_fn = getattr(imported_module, 'render')
+    except:
+       raise ValidationError("Module render() function is missing.")
+
+    if not callable(render_fn):
+        raise ValidationError("Module render() function isn't callable.")
 
     return render_fn
+
 
 # Get head version hash from git repo on disk
 def extract_version(repodir):

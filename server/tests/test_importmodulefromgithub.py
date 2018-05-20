@@ -249,15 +249,18 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
 
     def test_validate_python_functions(self):
-        test_dir = self.fake_github_clone()
-        destination_directory = os.path.join(self.imported_dir(), "123456")
-        os.makedirs(destination_directory)
 
         #test valid scenario
-        shutil.copy(os.path.join(test_dir, "importable.py"), destination_directory)
-        add_boilerplate_and_check_syntax(destination_directory, "importable.py")  # adds crucial boilerplate to the file
-        render_fn = validate_python_functions(destination_directory, "importable.py")
+        test_dir = self.fake_github_clone()
+        add_boilerplate_and_check_syntax(test_dir , "importable.py")  # adds crucial boilerplate to the file
+        render_fn = validate_python_functions(test_dir , "importable.py")
         self.assertTrue(isinstance(render_fn, types.FunctionType), "The module must be importable, and be of type 'type'.")
+
+        # test missing/unloadable render function
+        test_dir = self.fake_github_clone('test_data/missing_render_module')
+        add_boilerplate_and_check_syntax(test_dir, "missing_render_module.py")
+        with self.assertRaises(ValidationError):
+            validate_python_functions(test_dir, "missing_render_module.py")
 
 
     # syntax errors in module source files should be detected
