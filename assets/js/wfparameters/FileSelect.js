@@ -118,14 +118,14 @@ export default class FileSelect extends React.Component {
 
       if (fileInfo) {
         return (
-          <div className="">
+
             <div className={" d-flex gdrive-fileSelect align-items-center"}>
               <div className={"file-info content-3"}>
                 {fileInfo}
               </div>
               {filesModal}
             </div>
-          </div>
+
         );
       } else {
         return null
