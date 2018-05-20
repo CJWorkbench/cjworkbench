@@ -16,7 +16,7 @@ import FileSelect from './wfparameters/FileSelect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
-import ReorderColumns from './wfparameters/ReorderColumns'
+import ReorderHistory from './wfparameters/ReorderHistory'
 import { csrfToken } from './utils'
 import { store, setWfModuleStatusAction } from './workflow-reducer'
 
@@ -268,7 +268,7 @@ export default class WfParameter extends React.Component {
         )
     } else if (id_name == 'reorder-history') {
       return (
-        <ReorderColumns
+        <ReorderHistory
           history={this.props.getParamText('reorder-history')}
         />
       )

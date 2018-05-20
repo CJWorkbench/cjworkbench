@@ -57,10 +57,13 @@ export function getWfModuleIndexfromId(state, id) {
 // Gets the letter coordinate of a column from its index within the column names array
 export function idxToLetter(idx) {
   var letters = '';
+  var cidx = parseInt(idx);
+  cidx += 1;
   do {
-    letters = String.fromCharCode(idx % 26 + 65) + letters;
-    idx = Math.floor(idx / 26);
-  } while(idx > 0)
+    cidx -= 1;
+    letters = String.fromCharCode(cidx % 26 + 65) + letters;
+    cidx = Math.floor(cidx / 26);
+  } while(cidx > 0)
   return letters;
 }
 

@@ -9,14 +9,18 @@ export default class ReorderHistory extends React.Component {
         let history = (historyStr.length > 0) ? JSON.parse(historyStr) : [];
         let historyRows = history.map((entry, idx) => {
             return (
+                // Note: The class names are used in tests, please keep them intact
+                // or update the tests if you change them.
                 <tr key={idx}>
-                    <td>{idx + 1}</td>
-                    <td>{entry.column}</td>
-                    <td>{idxToLetter(entry.from)}</td>
-                    <td>{idxToLetter(entry.to)}</td>
+                    <td className={'reorder-idx'}>{idx + 1}</td>
+                    <td className={'reorder-column'}>{entry.column}</td>
+                    <td className={'reorder-from'}>{idxToLetter(entry.from)}</td>
+                    <td className={'reorder-to'}>{idxToLetter(entry.to)}</td>
                 </tr>
             );
         });
+
+        console.log(this.props);
 
         return (
             <Table>
@@ -34,4 +38,8 @@ export default class ReorderHistory extends React.Component {
             </Table>
         );
     }
+}
+
+ReorderHistory.propTypes = {
+    history: PropTypes.string.isRequired
 }
