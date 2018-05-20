@@ -53,7 +53,7 @@
   height: 6rem;
   flex-direction: row;
   justify-content: space-between;
-  background-color: $brand-blue;
+  background-color: $brand-workspace;
   color: #FFFFFF;
   padding: 0.5rem 4rem 0.5rem 4rem;
 
@@ -207,7 +207,7 @@ img.logo {
 }
 
 .workflow-root.in-lesson .navbar {
-  background-color: $brand-pink;
+  background-color: $brand-learn;
 
   .WF-meta {
     display: none;

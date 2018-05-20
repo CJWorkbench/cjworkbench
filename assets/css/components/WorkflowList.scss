@@ -10,9 +10,9 @@
     width:50%;
     min-width:30rem;
     height:10rem;
-    border:3px solid $brand-pink;
-    color:$brand-pink;
-    background-color: $brand-pink--Vlight;
+    border:3px solid $brand-learn;
+    color:$brand-learn;
+    background-color: $brand-learn--Vlight;
     border-radius: 15px;
     display: flex;
     justify-content: center;
@@ -20,7 +20,7 @@
     margin:4rem;
     padding:1.5rem;
     &:hover {
-      background-color: $brand-pink--light;
+      background-color: $brand-learn--light;
     }
   }
 

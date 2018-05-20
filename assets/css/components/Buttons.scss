@@ -77,7 +77,7 @@ button:focus { outline:0 !important; }
 
 .button-white--fill {
   background-color: #FFF;
-  color: $brand-blue;
+  color: $brand-workspace;
   border:1px solid #fff;
   &:hover{
     color:$white;
@@ -100,27 +100,27 @@ button:focus { outline:0 !important; }
 }
 
 .button-blue {
-  color: $brand-blue;
-  border: 1px solid $brand-blue ;
+  color: $brand-workspace;
+  border: 1px solid $brand-workspace ;
   background-color: transparent;
-  &:hover {background-color: $brand-blue--light}
+  &:hover {background-color: $brand-workspace--light}
   &:active {
-    background-color: $brand-blue !important;
+    background-color: $brand-workspace !important;
     color: $white !important;
   }
 }
 
 .button-blue--fill {
-  background-color: $brand-blue;
+  background-color: $brand-workspace;
   color: $white;
   border:none;
   &:hover {
-    background-color: $brand-blue--light;
-    border: 1px solid $brand-blue;
-    color:$brand-blue;
+    background-color: $brand-workspace--light;
+    border: 1px solid $brand-workspace;
+    color:$brand-workspace;
   }
   &:active {
-    background-color: $brand-blue !important;
+    background-color: $brand-workspace !important;
     color: $white !important;
   }
 }

@@ -1,8 +1,8 @@
 
 // Main colors  (*・‿・)ノ⌒*:･ﾟ✧
 
-$brand-blue: #48C8D7;
-$brand-pink: #ffaad3;
+$brand-workspace: #48C8D7;
+$brand-learn: #ffaad3;
 $brand-orange:#FBAA6D;
 $WF-background:#E9EBEE;
 $page-background:#EDECEC;
@@ -34,13 +34,13 @@ $light-accent--medium: rgba(255,255,255,.1);
 $light-accent--strong: rgba(255,255,255,.2);
 $light-accent--Vstrong:rgba(255,255,255,0.4);
 
-$brand-blue--light:lighten($brand-blue,39%);
-$brand-blue--medium:lighten($brand-blue,18%);
+$brand-workspace--light:lighten($brand-workspace,39%);
+$brand-workspace--medium:lighten($brand-workspace,18%);
 $brand-orange--light:lighten($brand-orange,26%);
 
-$brand-pink--Vlight:lighten($brand-pink,14%);
-$brand-pink--light:lighten($brand-pink,11%);
-$brand-pink--medium:lighten($brand-pink,8%);
+$brand-learn--Vlight:lighten($brand-learn,14%);
+$brand-learn--light:lighten($brand-learn,11%);
+$brand-learn--medium:lighten($brand-learn,8%);
 
 
 

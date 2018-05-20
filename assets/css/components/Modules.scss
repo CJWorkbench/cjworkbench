@@ -51,9 +51,9 @@
         opacity: 0.5;
 
         &.lesson-highlight {
-          color: $brand-pink;
+          color: $brand-learn;
           font-weight: bold;
-          outline: 1px dotted $brand-pink;
+          outline: 1px dotted $brand-learn;
         }
       }
     }
@@ -223,7 +223,7 @@
 // Module placeholder: either DND or placeholder while module is being rendered.
 .wf-module {
   &.lesson-highlight .module-content {
-    outline: 3px solid $brand-pink;
+    outline: 3px solid $brand-learn;
   }
 }
 

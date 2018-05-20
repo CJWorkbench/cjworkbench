@@ -86,11 +86,11 @@ article.lesson {
         }
         &.active::before {
           content: "\e939";
-          color:$brand-pink;
+          color:$brand-learn;
         }
         &.done::before {
           content: "\e904"; // icon-check
-          color:$brand-pink;
+          color:$brand-learn;
         }
       }
     }
@@ -108,11 +108,11 @@ article.lesson {
       width:9rem;
 
       &.lesson-highlight {
-        background-color: $brand-pink;
-        border: $brand-pink;
+        background-color: $brand-learn;
+        border: $brand-learn;
         &:hover {
           background-color: $light-accent--strong;
-          border: 1px solid $brand-pink;
+          border: 1px solid $brand-learn;
         }
       }
     }
