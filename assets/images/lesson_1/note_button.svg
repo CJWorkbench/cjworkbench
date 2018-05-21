@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="31px" height="28px" viewBox="0 0 31 28" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Group</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Images-for-lessons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Artboard" transform="translate(-10.000000, -18.000000)">
+            <g id="Group" transform="translate(10.000000, 18.000000)">
+                <g id="Icon-/-note-/-white" transform="translate(7.000000, 4.000000)">
+                    <g id="Group-2" transform="translate(0.000000, 3.800000)">
+                        <rect id="Rectangle-13" fill="#FFFFFF" x="0" y="4.75" width="10.45" height="1.9"></rect>
+                        <rect id="Rectangle-13-Copy" fill="#FFFFFF" x="0" y="0" width="10.45" height="1.9"></rect>
+                        <rect id="Rectangle-2-Copy-2" fill="#FFFFFF" x="0" y="9.5" width="7.6" height="1.9"></rect>
+                        <rect id="Rectangle-3" fill="#F9F9F9" x="15.2" y="0" width="1" height="6.65"></rect>
+                        <rect id="Rectangle-3-Copy" fill="#F9F9F9" transform="translate(15.675000, 3.325000) rotate(-90.000000) translate(-15.675000, -3.325000) " x="15.2" y="0" width="1" height="6.65"></rect>
+                    </g>
+                </g>
+                <rect id="Rectangle" stroke="#FFFFFF" x="0.5" y="0.5" width="30" height="27" rx="4"></rect>
+            </g>
+        </g>
+    </g>
+</svg>
