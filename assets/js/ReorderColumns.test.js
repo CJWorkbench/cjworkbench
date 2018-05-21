@@ -53,7 +53,11 @@ describe('ReorderColumns actions', () => {
                             parameter_spec: {
                                 id_name: 'reorder-history'
                             },
-                            value: ''
+                            value: JSON.stringify([{
+                                column: 'existing_test_col',
+                                from: 2,
+                                to: 4
+                            }])
                         }
                     ]
                 }
@@ -117,6 +121,62 @@ describe('ReorderColumns actions', () => {
             );
 
             done();
-        })
+        });
     });
-})
+
+    it('Updates the parameter values of an adjacent reorder module correctly', (done) => {
+        updateReorder(FILTER_WFM_ID, 'test_col', 3, 0);
+        setImmediate(() => {
+            // No new module should be added as there is a reorder module next to it
+            expect(api.addModule.mock.calls).toHaveLength(0);
+
+            // Checks the parameter setting part
+            expect(api.onParamChanged.mock.calls).toHaveLength(1);
+            expect(api.onParamChanged.mock.calls[0][0]).toBe(REORDER_HISTORY_PAR_ID);
+            expect(api.onParamChanged.mock.calls[0][1].value).toBe(
+                JSON.stringify([
+                    {
+                        column: 'existing_test_col',
+                        from: 2,
+                        to: 4
+                    },
+                    {
+                        column: 'test_col',
+                        from: 3,
+                        to: 0
+                    }
+                ])
+            );
+
+            done();
+        });
+    });
+
+    it('Updates the parameter values of the currently selected reorder module correctly', (done) => {
+        updateReorder(REORDER_WFM_ID, 'test_col', 3, 0);
+        setImmediate(() => {
+            // No new module should be added as there is a reorder module next to it
+            expect(api.addModule.mock.calls).toHaveLength(0);
+
+            // Checks the parameter setting part
+            expect(api.onParamChanged.mock.calls).toHaveLength(1);
+            expect(api.onParamChanged.mock.calls[0][0]).toBe(REORDER_HISTORY_PAR_ID);
+            expect(api.onParamChanged.mock.calls[0][1].value).toBe(
+                JSON.stringify([
+                    {
+                        column: 'existing_test_col',
+                        from: 2,
+                        to: 4
+                    },
+                    {
+                        column: 'test_col',
+                        from: 3,
+                        to: 0
+                    }
+                ])
+            );
+
+            done();
+        });
+    });
+});
