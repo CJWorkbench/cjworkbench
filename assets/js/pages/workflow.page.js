@@ -97,7 +97,7 @@ if (window.APP_ID) {
       app_id: window.APP_ID,
       email: window.initState.loggedInUser.email,
       user_id: window.initState.loggedInUser.id,
-      alignment: 'left',
+      alignment: 'right',
       horizontal_padding: 30,
       vertical_padding: 20
     });
@@ -105,7 +105,7 @@ if (window.APP_ID) {
     // no one logged in -- viewing read only workflow
     window.Intercom("boot", {
       app_id: window.APP_ID,
-      alignment: 'left',
+      alignment: 'right',
       horizontal_padding: 30,
       vertical_padding: 20
     });

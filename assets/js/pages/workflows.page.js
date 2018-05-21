@@ -18,7 +18,7 @@ if (window.APP_ID) {
     app_id: window.APP_ID,
     email: window.initState.loggedInUser.email,
     user_id: window.initState.loggedInUser.id,
-    alignment: 'left',
+    alignment: 'right',
     horizontal_padding: 20,
     vertical_padding: 20
   });
