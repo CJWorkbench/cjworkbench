@@ -31,7 +31,7 @@ export default class ColumnColorPicker extends React.Component {
           index={idx}
           onChange={this.onChange} />
       ))
-      return (<div>{selectors}</div>);
+      return (<div className="column-color-picker">{selectors}</div>);
     } else {
       return (<p>ok</p>);
     }

@@ -324,9 +324,11 @@ svg .svg-background{
   border: 1px red;
 }
 
-.chart-label{
-  width: 100%;
-  margin-left: 0.5rem;
+// Overcome Bootstrap putting buttons over one another. Fixes the problem:
+// [x][column 1] (x is button for open color picker)
+// [ ][column 2] (should appear _underneath_ open color picker
+.input-group-prepend button.color-picker {
+  z-index: auto;
 }
 
 
