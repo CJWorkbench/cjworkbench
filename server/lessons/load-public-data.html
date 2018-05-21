@@ -51,7 +51,7 @@
       >Add the module ‘Column Chart’ using the search in the module library.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="return workflow.wfModules.length > 1 && JSON.parse(workflow.wfModules[workflow.wfModules.length-1].parameters.get('chart_editor')).metadata.title"
+      data-test="if (workflow.wfModules.length <= 1) return false; const wfModule = workflow.wfModules[workflow.wfModules.length - 1]; if (wfModule.moduleName !== 'Column Chart') return false; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!p.metadata) return false; return !!p.metadata.title"
       >Add a title to the chart.</li>
   </ol>
 </section>
