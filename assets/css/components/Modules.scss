@@ -223,8 +223,8 @@
 // Module placeholder: either DND or placeholder while module is being rendered.
 .wf-module {
   &.lesson-highlight .module-content {
-    outline: 3px solid $brand-learn;
-    outline-offset:-3px;
+    outline: 2px solid $brand-learn;
+    outline-offset:-2px;
   }
 }
 
