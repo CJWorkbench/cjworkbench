@@ -346,7 +346,7 @@ export default class facet extends React.Component {
             });
 
             return (
-                <div>
+                <div className="wf-parameter">
                     {this.state.showWarning ?
                         (
                             <div>
