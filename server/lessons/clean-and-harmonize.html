@@ -32,7 +32,7 @@
     <li
       data-highlight='[]',
       data-test="return workflow.wfModules.length > 2 && workflow.wfModules[2].moduleName === 'Drop empty rows'"
-      >Select the columns that are required for a row to be useful. Incomplete rows will be deleted.
+      >Select the columns 'MetroArea' and 'Population'. The rows missing those values will be deleted.
     </li>
   </ol>
 </section>
@@ -47,9 +47,9 @@
     <li
       data-highlight='[]'
       data-test="const params = workflow.wfModules[3].moduleName.parameters; return params.get('column') === 'MetroArea'"
-      >Select the column ‘MetroArea’ wich contains messy data.
+      >Select the column ‘MetroArea’ which contains messy data.
       <p>
-        Edit values in the list until each one is displayed only once. When you're done, the list should contain 5 unique values.
+        Edit values in the list until each one is displayed only once. When you're done, the list should contain 5 only unique values.
       </p>
       <p>
         <img class="image" src="/static/images/lesson_2/refine_row.svg" style="width:28rem;">
@@ -76,10 +76,24 @@
     <li
       data-highlight='[]'
       data-test="const params = workflow.wfModules[1].moduleName.parameters; return params.get('column') === 'affordable_units' && params.get('condition') === 'Greater Than' && params.get('value') === '200' && params.get('keep') === 'Keep'"
-      >Choose the 'Key' column. Those values will be displayed in most left columns of the wide table.</li>
+      >Choose 'Year' as the Key column. Those values will be displayed in most left columns of the wide table.</li>
     <li
       data-highlight='[]'
       data-test="return state.selectedWfModule.moduleName === 'Column chart'"
-      >Choose the 'Variable' column. Those values will be displayed in the header.</li>
+      >Choose 'MetroArea' as the Variable column. Those values will be displayed in the header.</li>
+  </ol>
+</section>
+<section>
+  <h2>4. Making a line Chart with series</h2>
+  <p>Let’s create a line chart to compare the growth of population between each geographic area.</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Line Chart"}]'
+      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Column Chart'"
+      >Add the module ‘Line Chart’ using the search in the module library.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
+      data-test="return workflow.wfModules.length > 1 && JSON.parse(workflow.wfModules[workflow.wfModules.length-1].parameters.get('chart_editor')).metadata.title"
+      >Add a title to the chart, and you're done!</li>
   </ol>
 </section>
