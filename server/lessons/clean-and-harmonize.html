@@ -17,7 +17,7 @@
       data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
       >Add the module 'Add from URL' and paste in the following URL before clicking 'Update'.
       <div class="copy-txt content-3 t-white">https://app.workbenchdata.com/static/data/population_dirty_data.csv</div>
-      <p class="lesson-note">The two columns on at the far right of our dataset are empty.</p>
+      <p class="lesson-note">The two columns on at the far right of the dataset are empty.</p>
     </li>
     <li
       data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Drop empty columns"}]'
@@ -49,7 +49,7 @@
       data-test="const params = workflow.wfModules[3].moduleName.parameters; return params.get('column') === 'MetroArea'"
       >Select the column ‘MetroArea’ wich contains messy data.
       <p>
-        Edit values in the list until each value is only displayed once. When you're done, the list should contain 5 unique values.
+        Edit values in the list until each one is displayed only once. When you're done, the list should contain 5 unique values.
       </p>
       <p>
         <img class="image" src="/static/images/lesson_2/refine_row.svg" style="width:28rem;">
