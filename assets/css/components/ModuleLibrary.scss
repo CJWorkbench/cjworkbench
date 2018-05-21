@@ -125,12 +125,13 @@
 
   .ml-module-card {
     cursor: pointer;
-    border: 3px solid transparent;
+    border: 2px solid transparent;
     background-color: transparent;
     border-radius: 0;
 
     &.lesson-highlight {
-      border-color: $brand-learn;
+      border: 2px solid $brand-learn;
+      background-color: $brand-learn--Vlight;
     }
   }
 
