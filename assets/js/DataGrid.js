@@ -299,7 +299,11 @@ export default class DataGrid extends React.Component {
     let targetIdx = this.props.columns.indexOf(target);
     console.log("Moved " + source + " from " + idxToLetter(sourceIdx) + " to " + idxToLetter(targetIdx));
 
-    ReorderColumns.updateReorder(this.props.selectedModule, source, sourceIdx, targetIdx);
+    ReorderColumns.updateReorder(this.props.selectedModule, {
+      column: source,
+      from: sourceIdx,
+      to: targetIdx
+    });
   }
 
   render() {

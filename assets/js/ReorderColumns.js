@@ -9,7 +9,7 @@ export function mockAPI(mock_api) {
     api = mock_api;
 }
 
-function updateReorderModule(module, column, fromIdx, toIdx) {
+function updateReorderModule(module, reorderInfo) {
     var historyParam = findParamValByIdName(module, "reorder-history");
     console.log(module);
     var historyStr = historyParam ? historyParam.value.trim() : '';
@@ -17,16 +17,12 @@ function updateReorderModule(module, column, fromIdx, toIdx) {
     try {
         historyEntries = JSON.parse(historyStr);
     } catch(e) {}
-    historyEntries.push({
-        column: column,
-        from: fromIdx,
-        to: toIdx
-    });
+    historyEntries.push(reorderInfo);
     console.log(historyEntries);
     api.onParamChanged(historyParam.id, {value: JSON.stringify(historyEntries)});
 }
 
-export function updateReorder(wfModuleId, column, fromIdx, toIdx) {
+export function updateReorder(wfModuleId, reorderInfo) {
     var state = store.getState();
     const workflowId = state.workflow ? state.workflow.id : null;
 
@@ -36,13 +32,13 @@ export function updateReorder(wfModuleId, column, fromIdx, toIdx) {
         if(existingReorderModule.id != wfModuleId) {
             store.dispatch(setSelectedWfModuleAction(existingReorderModule.id));
         }
-        updateReorderModule(existingReorderModule, column, fromIdx, toIdx);
+        updateReorderModule(existingReorderModule, reorderInfo);
     } else {
         let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
         api.addModule(workflowId, state.reorderModuleId, wfModuleIdx + 1)
             .then((newWfm) => {
                 store.dispatch(setSelectedWfModuleAction(newWfm.id));
-                updateReorderModule(newWfm, column, fromIdx, toIdx);
+                updateReorderModule(newWfm, reorderInfo);
             });
     }
 }

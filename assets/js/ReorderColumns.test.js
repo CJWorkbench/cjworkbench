@@ -100,7 +100,11 @@ describe('ReorderColumns actions', () => {
 
     it('Adds a new reorder module after the current non-reorder module '
         + 'if a reorder module does not exist next to it and sets parameters correctly', (done) => {
-        updateReorder(LOADURL_WFM_ID, 'test_col', 3, 0);
+        updateReorder(LOADURL_WFM_ID, {
+            column: 'test_col',
+            from: 3,
+            to: 0
+        });
         setImmediate(() => {
             // Checks the module adding part
             expect(api.addModule.mock.calls).toHaveLength(1);
@@ -125,7 +129,11 @@ describe('ReorderColumns actions', () => {
     });
 
     it('Updates the parameter values of an adjacent reorder module correctly', (done) => {
-        updateReorder(FILTER_WFM_ID, 'test_col', 3, 0);
+        updateReorder(FILTER_WFM_ID, {
+            column: 'test_col',
+            from: 3,
+            to: 0
+        });
         setImmediate(() => {
             // No new module should be added as there is a reorder module next to it
             expect(api.addModule.mock.calls).toHaveLength(0);
@@ -153,7 +161,11 @@ describe('ReorderColumns actions', () => {
     });
 
     it('Updates the parameter values of the currently selected reorder module correctly', (done) => {
-        updateReorder(REORDER_WFM_ID, 'test_col', 3, 0);
+        updateReorder(REORDER_WFM_ID, {
+            column: 'test_col',
+            from: 3,
+            to: 0
+        });
         setImmediate(() => {
             // No new module should be added as there is a reorder module next to it
             expect(api.addModule.mock.calls).toHaveLength(0);
