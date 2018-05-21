@@ -51,7 +51,7 @@
       >Add the module ‘Column Chart’ using the search in the module library.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="if (workflow.wfModules.length <= 1) return false; const wfModule = workflow.wfModules[workflow.wfModules.length - 1]; if (wfModule.moduleName !== 'Column Chart') return false; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!p.metadata) return false; return !!p.metadata.title"
+      data-test="if (workflow.wfModules.length <= 1) return false; const wfModule = workflow.wfModules[workflow.wfModules.length - 1]; if (wfModule.moduleName !== 'Column Chart') return false; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
       >Add a title to the chart.</li>
   </ol>
 </section>
@@ -65,8 +65,8 @@
       >Add the module ‘Filter’ by dragging it between the two already there.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
-      data-test="const p = workflow.wfModules[1].parameters; return p.get('column') === 'affordable_units' && p.get('condition') === 10 && p.get('value') === '200' && p.get('keep') === 0"
-      >Select the column ‘Affordable units’, choose the condition ‘Greater than’ and keep all rows having more than 200 affordable units.</li>
+      data-test="const p = workflow.wfModules[1].parameters; return p.get('column') === 'Sum of affordable_units' && p.get('condition') === 10 && p.get('value') === '200' && p.get('keep') === 0"
+      >Select the column ‘Sum of affordable_units’, choose the condition ‘Greater than’ and keep all rows having more than 200 affordable units.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="return state.selectedWfModule.moduleName === 'Column Chart'"
