@@ -224,6 +224,7 @@
 .wf-module {
   &.lesson-highlight .module-content {
     outline: 3px solid $brand-learn;
+    outline-offset:-3px;
   }
 }
 
