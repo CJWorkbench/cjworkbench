@@ -1,15 +1,24 @@
 <header>
-  <h1>Clean and harmonize data</h1>
-  <p>Manipulate open data with Workbench.</p>
+  <h1>Clean and standardize data</h1>
+  <p>Clean format and standardize data to build a chart series.</p>
 </header>
 <section>
   <h2>Overview</h2>
   <p>In this lesson you will clean and prepare a dataset to visualize a chart series.</p>
+  <ol class="steps">
+
+  </ol>
 </section>
 <section>
   <h2>1. Deleting empty columns and rows</h2>
-  <p>The two columns on at the far right of our dataset are empty.</p>
   <ol class="steps">
+    <li
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Add from URL"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      >Add the module 'Add from URL' and paste in the following URL before clicking 'Update'.
+      <div class="copy-txt content-3 t-white">https://app.workbenchdata.com/static/data/population_dirty_data.csv</div>
+      <p class="lesson-note">The two columns on at the far right of the dataset are empty.</p>
+    </li>
     <li
       data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Drop empty columns"}]'
       data-test="return workflow.wfModules.length > 1 && workflow.wfModules[1].moduleName === 'Drop empty columns'"
@@ -23,7 +32,7 @@
     <li
       data-highlight='[]',
       data-test="return workflow.wfModules.length > 2 && workflow.wfModules[2].moduleName === 'Drop empty rows'"
-      >Select the columns that are required for a row to be useful. Incomplete rows will be deleted.
+      >Select the columns 'MetroArea' and 'Population'. The rows missing those values will be deleted.
     </li>
   </ol>
 </section>
@@ -38,7 +47,10 @@
     <li
       data-highlight='[]'
       data-test="const params = workflow.wfModules[3].moduleName.parameters; return params.get('column') === 'MetroArea'"
-      >Select the column ‘MetroArea’ wich contains messy data. Edit values in the list until each is only displayed once.
+      >Select the column ‘MetroArea’ which contains messy data.
+      <p>
+        Edit values in the list until each one is displayed only once. When you're done, the list should contain 5 only unique values.
+      </p>
       <p>
         <img class="image" src="/static/images/lesson_2/refine_row.svg" style="width:28rem;">
       </p>
@@ -46,7 +58,7 @@
     <li
       data-highlight='[]'
       data-test="const params = workflow.wfModules[3].moduleName.parameters; return params.get('column') === 'MetroArea'"
-      >Un-check any undesirable value to drop them off the dataset.
+    >Un-check 'Denver - Aurora', which contains incomplete data.
     </li>
   </ol>
 </section>
@@ -60,14 +72,28 @@
     <li
       data-highlight='[]'
       data-test="return workflow.wfModules.length > 2 && workflow.wfModules[1].moduleName === 'Filter'"
-      >Add the module ‘Reshape’ to your workflow, and select 'Long to wide'.</li>
+      >Add the module ‘Reshape’, and select 'Long to wide'.</li>
     <li
       data-highlight='[]'
       data-test="const params = workflow.wfModules[1].moduleName.parameters; return params.get('column') === 'affordable_units' && params.get('condition') === 'Greater Than' && params.get('value') === '200' && params.get('keep') === 'Keep'"
-      >Choose the 'Key' column. Its values will be displayed in most left columns of the wide table.</li>
+      >Choose 'Year' as the Key column. Those values will be displayed in most left columns of the wide table.</li>
     <li
       data-highlight='[]'
       data-test="return state.selectedWfModule.moduleName === 'Column chart'"
-      >Choose the 'Variable' column. In the wide table, variables will be displayed in the header.</li>
+      >Choose 'MetroArea' as the Variable column. Those values will be displayed in the header.</li>
+  </ol>
+</section>
+<section>
+  <h2>4. Making a line Chart with series</h2>
+  <p>Let’s create a line chart to compare the growth of population between each geographic area.</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Line Chart"}]'
+      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Column Chart'"
+      >Add the module ‘Line Chart’ using the search in the module library.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
+      data-test="return workflow.wfModules.length > 1 && JSON.parse(workflow.wfModules[workflow.wfModules.length-1].parameters.get('chart_editor')).metadata.title"
+      >Add a title to the chart, and you're done!</li>
   </ol>
 </section>

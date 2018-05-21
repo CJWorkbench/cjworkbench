@@ -3,7 +3,7 @@
 
 .dropdown-menu {
   margin-top: 0.5rem;
-  border:2px solid $brand-blue--medium;
+  border:2px solid $brand-workspace--medium;
   border-radius: 5px;
   box-shadow: $dropdown-shadow;
   padding:0.5rem 0 0.5rem 0;
@@ -42,6 +42,13 @@
   }
 }
 
+.workflow-root.in-lesson,
+.lessons-page {
+
+  .dropdown-menu {
+    border:2px solid $brand-learn--medium;
+  }
+}
 
 
 
@@ -111,12 +118,16 @@ textarea:focus, input:focus{
 
 // focus states
 
+.custom-select {
+  background-size: 0px;
+}
+
 .custom-select:focus{
-  border: 2px solid $brand-blue;
+  border: 2px solid $brand-workspace;
 }
 
 .parameter-base:focus{
-  border: 2px solid $brand-blue;
+  border: 2px solid $brand-workspace;
 }
 
 // placeholder text within text fields
@@ -150,7 +161,7 @@ textarea:focus, input:focus{
 }
 
 .form-control:focus{
-  border-color: $brand-blue;
+  border-color: $brand-workspace;
 }
 
 .form-control{

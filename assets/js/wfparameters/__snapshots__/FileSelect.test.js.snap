@@ -4,29 +4,25 @@ exports[`FileSelect Does not show anything if neither a user credential nor a fi
 
 exports[`FileSelect Does not show the modal link if there is no user credential present 1`] = `
 <div
-  className="parameter-margin"
+  className=" d-flex gdrive-fileSelect align-items-center"
 >
   <div
-    className="parameter-margin d-flex gdrive-fileSelect align-items-center"
+    className="file-info content-3"
   >
-    <div
-      className="file-info content-3"
-    >
-      <div>
+    <div>
+      <div
+        className="d-flex"
+      >
         <div
-          className="d-flex"
+          className="t-d-gray content-3 label-margin"
         >
-          <div
-            className="t-d-gray content-3 label-margin"
-          >
-            File
-          </div>
+          File
         </div>
-        <div>
-          <span
-            className="t-d-gray content-3 mb-3"
-          />
-        </div>
+      </div>
+      <div>
+        <span
+          className="t-d-gray content-3 mb-3"
+        />
       </div>
     </div>
   </div>
@@ -59,31 +55,27 @@ exports[`FileSelect Loads correctly and allows a user to choose a new file 1`] =
   }
 >
   <div
-    className="parameter-margin"
+    className=" d-flex gdrive-fileSelect align-items-center"
   >
     <div
-      className="parameter-margin d-flex gdrive-fileSelect align-items-center"
+      className="file-info content-3"
     >
-      <div
-        className="file-info content-3"
-      >
-        <div>
+      <div>
+        <div
+          className="d-flex"
+        >
           <div
-            className="d-flex"
+            className="t-d-gray content-3 label-margin"
           >
-            <div
-              className="t-d-gray content-3 label-margin"
-            >
-              File
-            </div>
+            File
           </div>
-          <div>
-            <span
-              className="t-d-gray content-3 mb-3"
-            >
-              Police Data
-            </span>
-          </div>
+        </div>
+        <div>
+          <span
+            className="t-d-gray content-3 mb-3"
+          >
+            Police Data
+          </span>
         </div>
       </div>
     </div>

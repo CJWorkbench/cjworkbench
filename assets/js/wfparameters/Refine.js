@@ -380,7 +380,7 @@ export default class facet extends React.Component {
     render() {
         const componentContent = this.renderHistogram();
         return (
-            <div className="parameter-margin">
+            <div className="">
                 {componentContent}
             </div>
         )

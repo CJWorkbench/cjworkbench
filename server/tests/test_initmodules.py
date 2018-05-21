@@ -1,7 +1,7 @@
 # test module (re)loading
 from django.test import TestCase
 from server.models import ParameterVal, ParameterSpec, Module, WfModule, Workflow
-from server.initmodules import load_module_from_dict
+from server.initmodules import load_module_from_dict, update_wfm_parameters_to_new_version
 from server.tests.utils import *
 import json
 import copy
@@ -51,8 +51,8 @@ class InitmoduleTests(LoggedInTestCase):
             ]
         }
 
-        # a new version of LoadCSV that deletes one parameter, changes the type and order of another, and adds a new one
-        # Also tests menu param
+        # a new version of LoadCSV that deletes one parameter, changes the type and order of another,
+        # and adds a new one, and tests menu param
         self.loadcsv2 = {
             'name': 'Load CSV RELOADED',
             'id_name': 'loadcsv',
@@ -73,49 +73,6 @@ class InitmoduleTests(LoggedInTestCase):
                 }
               ]
             }
-
-        # A very barebones module to test conditional UI loading
-        self.cond_ui_valid = {
-            'name': 'CondUI1',
-            'id_name': 'condui1',
-            'category': 'Analyze',
-            'parameters': [
-                {
-                    'name': 'cond_menu',
-                    'id_name': 'cond_menu',
-                    'type': 'menu',
-                    'menu_items': 'cond1|cond2|cond3'
-                },
-                {
-                    'name': 'cond_test',
-                    'id_name': 'cond_test',
-                    'type': 'checkbox',
-                    'visible_if': {
-                        'id_name': 'cond_menu',
-                        'value': 'cond1|cond3'
-                    }
-                }
-            ]
-        }
-
-        # create versions of loadcsv that have missing required elements
-        self.missing_name = copy.deepcopy(self.loadcsv)
-        del self.missing_name['name']
-
-        self.missing_id_name = copy.deepcopy(self.loadcsv)
-        del self.missing_id_name['id_name']
-
-        self.missing_category = copy.deepcopy(self.loadcsv)
-        del self.missing_category['category']
-
-        self.missing_param_name = copy.deepcopy(self.loadcsv)
-        del self.missing_param_name['parameters'][0]['name']
-
-        self.missing_param_id_name = copy.deepcopy(self.loadcsv)
-        del self.missing_param_id_name['parameters'][0]['id_name']
-
-        self.missing_param_type = copy.deepcopy(self.loadcsv)
-        del self.missing_param_type['parameters'][0]['type']
 
 
     def test_load_valid(self):
@@ -171,33 +128,95 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(cb_spec.type, ParameterSpec.CHECKBOX)
         self.assertEqual(cb_spec.def_value, 'True')
 
+
     # we should bail when keys are missing
     def test_missing_keys(self):
-        with self.assertRaises(ValueError):
-            load_module_from_dict(self.missing_name)
+        module_keys = ['name','id_name','category']
+        for k in module_keys:
+            missing = copy.deepcopy(self.loadcsv)
+            del missing[k]
+            with self.assertRaises(ValueError):
+                load_module_from_dict(missing)
 
-        with self.assertRaises(ValueError):
-            load_module_from_dict(self.missing_id_name)
-
-        with self.assertRaises(ValueError):
-            load_module_from_dict(self.missing_category)
-
-        with self.assertRaises(ValueError):
-            load_module_from_dict(self.missing_param_name)
-
-        with self.assertRaises(ValueError):
-            load_module_from_dict(self.missing_param_id_name)
-
-        with self.assertRaises(ValueError):
-            load_module_from_dict(self.missing_param_type)
+        param_keys = ['name','id_name','type']
+        for k in param_keys:
+            missing = copy.deepcopy(self.loadcsv)
+            del missing['parameters'][0][k]
+            with self.assertRaises(ValueError):
+                load_module_from_dict(missing)
 
 
-    # checks that a new module with the same id_name overwrites the old, and parameters are fixed up
-    def test_module_reload(self):
+    # Reloading an external module should create a new module_version, but not add new parameters
+    def test_reload_external_module(self):
+        # source_version => external
+        mini_module = {
+            'name': 'Test',
+            'id_name': 'test',
+            'category': 'Cats',
+            'source_version' : 'f00dbeef',
+            'parameters': [
+                {
+                    'name': 'URL',
+                    'id_name': 'url',
+                    'type': 'string',
+                },
+            ]
+        }
+
+        m1 = load_module_from_dict(mini_module)
+        self.assertEqual(m1.source_version_hash, mini_module['source_version'])
+        pspec1 = ParameterSpec.objects.get(id_name='url', module_version=m1)
+
+        # Create a wf_module that references this module. Should create a new ParameterVal
+        wf = add_new_workflow(name='Worky')
+        wfm = add_new_wf_module(workflow=wf, module_version=m1, order=1)
+        ParameterVal.objects.get(parameter_spec=pspec1)
+
+        mini_module2 = {
+            'name': 'Test',
+            'id_name': 'test',
+            'category': 'Cats',
+            'source_version' : 'deadbeef',
+            'parameters': [
+                {
+                    'name': 'URL',
+                    'id_name': 'url',
+                    'type': 'string',
+                },
+                {
+                    'name': 'New Integer',
+                    'id_name': 'newint',
+                    'type' : 'integer'
+                }
+            ]
+        }
+
+        # loading new definition should create new module_version, should not add/alter old parameter values
+        m2 = load_module_from_dict(mini_module2)
+        self.assertNotEqual(m1.id, m2.id)
+        with self.assertRaises(ParameterVal.DoesNotExist):
+            ParameterVal.objects.get(parameter_spec__id_name='newint')
+
+        # load same version again, should re-use module_version
+        m3 = load_module_from_dict(mini_module2)
+        self.assertEqual(m2.id, m3.id)
+
+        # load a different version
+        mini_module4 = copy.deepcopy(mini_module2)
+        mini_module4['source_version'] = 'f0f0beef'
+        m4 = load_module_from_dict(mini_module4)
+        self.assertNotEqual(m3.id, m4.id)
+
+
+    # Checks that re-importing an internal module (same id_name) overwrites the old fields
+    # and existing ParameterVals are updated
+    def test_reload_internal_module(self):
         self.assertEqual(len(Module.objects.all()), 0)   # we should be starting with no modules
+
         m1 = load_module_from_dict(self.loadcsv)
         url_spec1 = ParameterSpec.objects.get(id_name='url')
-        button_spec1 = ParameterSpec.objects.get(id_name='fetch')
+        ParameterSpec.objects.get(id_name='fetch')
+        self.assertEqual(m1.source_version_hash, '1.0')  # internal modules get this version
 
         # create wf_modules in two different workflows that reference this module
         wf1 = add_new_workflow(name='Worky')
@@ -215,23 +234,25 @@ class InitmoduleTests(LoggedInTestCase):
         # load the revised module, check that it ends up with the same primary key
         m2 = load_module_from_dict(self.loadcsv2)
         self.assertEqual(m1.id, m2.id)
-
         self.assertEqual(m2.module.help_url, '')
 
         # button pspec should be gone
         with self.assertRaises(ParameterSpec.DoesNotExist):
             ParameterSpec.objects.get(id_name='fetch')
 
-        # url spec should still exist with same id, new type, new order
-        # existing parameterval should have new default values
+        # parametervals should now point to spec with new type, order, default value
+        # and have value=default value because type changed
+        self.assertEqual(ParameterSpec.objects.filter(id_name='url').count(), 1)
         url_spec2 = ParameterSpec.objects.get(id_name='url')
-        self.assertEqual(url_spec1.id, url_spec2.id)
         self.assertEqual(url_spec2.type, ParameterSpec.INTEGER)
         self.assertEqual(url_spec2.order, 1)
+        self.assertEqual(url_spec2.def_value, '42')
         url_pval1.refresh_from_db()
         self.assertEqual(url_pval1.value, '42')
+        self.assertEqual(url_pval1.parameter_spec.id, url_spec2.id)
         url_pval2.refresh_from_db()
         self.assertEqual(url_pval2.value, '42')
+        self.assertEqual(url_pval2.parameter_spec.id, url_spec2.id)
 
         # new Menu parameter should exist, with corresponding new values in WfModules
         menu_spec = ParameterSpec.objects.get(id_name='caketype')
@@ -246,24 +267,95 @@ class InitmoduleTests(LoggedInTestCase):
         self.assertEqual(menu_pval2.value, '1')
         self.assertEqual(menu_pval1.order, 0)
 
+        # load the old one again, just for kicks (and to test updating a previously updated module_version)
+        m2 = load_module_from_dict(self.loadcsv)
+
+
     # A brief check of conditional UI, in that the JSON can be stored and retrieved correctly.
     def test_condui(self):
+        # A very barebones module to test conditional UI loading
+        cond_ui_valid = {
+            'name': 'CondUI1',
+            'id_name': 'condui1',
+            'category': 'Analyze',
+            'parameters': [
+                {
+                    'name': 'cond_menu',
+                    'id_name': 'cond_menu',
+                    'type': 'menu',
+                    'menu_items': 'cond1|cond2|cond3'
+                },
+                {
+                    'name': 'cond_test',
+                    'id_name': 'cond_test',
+                    'type': 'checkbox',
+                    'visible_if': {
+                        'id_name': 'cond_menu',
+                        'value': 'cond1|cond3'
+                    }
+                }
+            ]
+        }
+
         self.assertEqual(len(Module.objects.all()), 0)
-        load_module_from_dict(self.cond_ui_valid)
+        load_module_from_dict(cond_ui_valid)
         cond_spec = ParameterSpec.objects.get(id_name='cond_test')
         cond_spec_visibility = json.loads(cond_spec.visible_if)
-        self.assertEqual(cond_spec_visibility, self.cond_ui_valid['parameters'][1]['visible_if'])
+        self.assertEqual(cond_spec_visibility, cond_ui_valid['parameters'][1]['visible_if'])
 
-        new_cond_ui = copy.copy(self.cond_ui_valid)
+        new_cond_ui = copy.copy(cond_ui_valid)
         del new_cond_ui['parameters'][1]['visible_if']['value']
         with self.assertRaises(ValueError):
-            load_module_from_dict(new_cond_ui)
+            load_module_from_dict(new_cond_ui) # this also tests that db is still valid if load fails
 
         new_cond_ui['parameters'][1]['visible_if']['value'] = 'cond1|cond2'
         load_module_from_dict(new_cond_ui)
         cond_spec_new = ParameterSpec.objects.get(id_name='cond_test')
         cond_spec_visibility_new = json.loads(cond_spec_new.visible_if)
         self.assertEqual(cond_spec_visibility_new, new_cond_ui['parameters'][1]['visible_if'])
+
+
+    def test_update_module_to_new_spec(self):
+        # Setup a workflow, wfmodule, and parameter vals
+        module = Module.objects.create()
+        module_version1 = ModuleVersion.objects.create(module=module)
+        unchanged_spec = ParameterSpec.objects.create(id_name='unchanged', type='string', module_version=module_version1)
+        changed_spec = ParameterSpec.objects.create(id_name='changed', type='string', module_version=module_version1, def_value='foo')
+        deleted_spec = ParameterSpec.objects.create(id_name='deleted', type='string', module_version=module_version1)
+
+        wf = add_new_workflow(name='Worky')
+        wfm = add_new_wf_module(workflow=wf, module_version=module_version1)
+
+        unchanged_pval = ParameterVal.objects.get(parameter_spec=unchanged_spec)
+        changed_pval = ParameterVal.objects.get(parameter_spec=changed_spec)
+        deleted_pval = ParameterVal.objects.get(parameter_spec=deleted_spec)
+
+        # initialize a new module version with one unchanged, one changed, one added, one deleted
+        module_version2 = ModuleVersion.objects.create(module=module)
+        unchanged_spec2 = ParameterSpec.objects.create(id_name='unchanged', type='string', module_version=module_version2)
+        changed_spec2 = ParameterSpec.objects.create(id_name='changed', type='integer', module_version=module_version2, def_value='42') # changed type
+        added_spec2 = ParameterSpec.objects.create(id_name='added', type='string', module_version=module_version2)
+
+        update_wfm_parameters_to_new_version(wfm, module_version2)
+        self.assertEqual(wfm.module_version, module_version2)
+
+        # still exists
+        ParameterVal.objects.get(parameter_spec=unchanged_spec2)
+
+        # changed type, reset to default
+        changed_pval = ParameterVal.objects.get(parameter_spec=changed_spec2)
+        self.assertEqual(changed_pval.value, '42')
+
+        # deleted
+        with self.assertRaises(ParameterVal.DoesNotExist):
+            ParameterVal.objects.get(parameter_spec=deleted_spec)
+
+        # added
+        ParameterVal.objects.get(parameter_spec=added_spec2)
+
+
+
+
 
 
 

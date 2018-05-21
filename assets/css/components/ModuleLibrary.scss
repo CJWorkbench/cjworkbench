@@ -72,11 +72,11 @@
   }
 
   .ML-list--container:hover .ML-search-field {
-    border-color: $brand-blue;
+    border-color: $brand-workspace;
   }
 
   .ML-list--container .ML-search-field.lesson-highlight {
-    border-color: $brand-pink;
+    border-color: $brand-learn;
   }
 
 
@@ -130,7 +130,7 @@
     border-radius: 0;
 
     &.lesson-highlight {
-      border-color: $brand-pink;
+      border-color: $brand-learn;
     }
   }
 
@@ -224,7 +224,7 @@
         border: 3px solid transparent;
 
         &.lesson-highlight {
-          border-color: $brand-pink;
+          border-color: $brand-learn;
         }
         padding: 0;
         margin: 0;
@@ -266,15 +266,14 @@
   .module-library {
     width: 17rem;
     background-color: $WF-background;
-    border-right: $dark-accent--soft;
 
     .ML-list--container:hover .ML-search-field {
-      border:3px solid $brand-pink;
+      border:3px solid $brand-learn;
     }
 
     .ML-header {
       padding-left: 1.5rem;
-      background-color: $brand-pink;
+      background-color: $brand-learn;
 
       .ML-toggle{
         visibility: hidden;
@@ -301,6 +300,8 @@
 
     .ML-list--container {
 
+      border-right: 1px solid $dark-accent--soft;
+
       .ML-search--container {
         padding: 1.5rem 1.5rem;
         display: flex;
@@ -324,7 +325,7 @@
           color:$brand-text--dark;
 
           .category-name {
-            margin-left: 1rem;
+            margin-left: 1.5rem;
           }
         }
       }

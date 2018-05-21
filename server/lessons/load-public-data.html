@@ -1,6 +1,6 @@
 <header>
-  <h1>Load public data and make a column chart</h1>
-  <p>Manipulate open data with Workbench.</p>
+  <h1>Load public data and make a chart</h1>
+  <p>Load data from public URL and create an embeddable chart.</p>
 </header>
 <section>
   <h2>Overview</h2>
@@ -17,9 +17,9 @@
       >Add the module ‘Add from URL’.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://data.sfgov.org/resource/e2px-wugd.json' && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/affordable_housing_lesson_1.csv' && wfModule.selectedVersion"
       >Paste in the URL of the dataset in the module, and load the data by clicking 'Update'.
-      <div class="copy-txt content-3 t-white">https://data.sfgov.org/resource/e2px-wugd.json</div>
+      <div class="copy-txt content-3 t-white">https://app.workbenchdata.com/static/data/affordable_housing_lesson_1.csv</div>
     </li>
     <li
       data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]',

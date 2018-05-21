@@ -1,8 +1,8 @@
 from unittest import mock
 
 from server.tests.utils import *
-from ..dynamicdispatch import DynamicDispatch
-import json, os, shutil, sys
+from ..dynamicdispatch import get_module_render_fn
+import json, os, shutil, types
 
 class DynamicDispatchTest(LoggedInTestCase):
     def setUp(self):
@@ -16,7 +16,7 @@ class DynamicDispatchTest(LoggedInTestCase):
     #creates dummy objects of things we need for testing like workflow, wf_module, module_version, module, etc.
     def create_components(self):
         # Extract module specification from test_data/imported.
-        # This has the modified .py file that importfromgihub.compile_python() creates when it loads from github
+        # This has the modified .py file that add_boilerplate_and_check_syntax() creates when it loads from github
         pwd = os.path.dirname(os.path.abspath(__file__))
         test_json = os.path.join(pwd, "test_data/imported", "imported.json")
         with open(test_json) as readable:
@@ -38,30 +38,14 @@ class DynamicDispatchTest(LoggedInTestCase):
         shutil.copytree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "test_data", "imported"), versiondir)
 
 
-
     def test_load_module(self):
-        dynamicdispatch = DynamicDispatch()
-
         wf, wf_module = self.create_components()
         self.setup_directory()
 
-        # ensure item is loaded from file system
-        dispatched = dynamicdispatch.load_module(wf_module)
-        self.assertEquals(type(dispatched), type, "load_module should return a class.")
-        self.assertEquals(dispatched.__name__, 'Importable', 'load_module should return an instance of Importable.')
+        render_fn = get_module_render_fn(wf_module)
+        self.assertTrue(isinstance(render_fn, types.FunctionType))
 
-    @mock.patch.object(DynamicDispatch, 'dynamically_load_module')
-    def test_load_module_cached(self, mocked):
-        # ensure item is loaded from dict
-        dynamicdispatch = DynamicDispatch()
-        wf, wf_module = self.create_components()
-        self.setup_directory()
-
-        # first call, which should cache the module
-        dispatched = dynamicdispatch.load_module(wf_module)
-        self.assertEqual(mocked.call_count, 1, "DynamicDispatch.dynamically_load_module should've been called through load_module.")
-
-        # second call, which should retrieve module from cache.
-        dispatched = dynamicdispatch.load_module(wf_module)
-        self.assertLess(mocked.call_count, 2,
-                 "DynamicDispatch.dynamically_load_module should've only been called once.")
+        # if we call again, should be cached
+        with mock.patch('server.dynamicdispatch.dynamically_load_module') as mocked:
+            get_module_render_fn(wf_module)
+            self.assertEqual(mocked.call_count, 0)

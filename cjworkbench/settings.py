@@ -239,21 +239,11 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.10/howto/static-files/
-# I don't think we actually use this, we're webpack instead -- jms 2017-7-24
-
+# Static files. CSS, JavaScript are bundled by webpack, but fonts, test data, images, etc. are not
 STATIC_URL = '/static/'
 STATIC_ROOT = normpath(join(DJANGO_ROOT, 'static'))
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'assets'), # We do this so that django's collectstatic copies or our bundles to the STATIC_ROOT or syncs them to whatever storage we use.
-)
-
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
-
-STATICFILES_FINDERS = (
-    'django.contrib.staticfiles.finders.FileSystemFinder',
-    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
 # Webpack loads all our js/css into handy bundles

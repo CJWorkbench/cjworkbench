@@ -8,6 +8,33 @@
 //getting rid of Blue Focus
 button:focus { outline:0 !important; }
 
+/*overriding React styles for contextual button*/
+
+.btn:focus, .btn.focus {
+  webkit-box-shadow:none;
+  box-shadow: none;
+}
+
+a:focus, a:hover{
+  color:$strong-gray;
+}
+
+.btn-secondary:focus, .btn-secondary.focus {
+  box-shadow: 0 0 0 transparent;
+}
+
+.btn-secondary.active{
+  background-color: $light-accent--Vstrong;
+  color:transparent;
+}
+
+.show > .btn-secondary.dropdown-toggle {
+  color:$white;
+  background-color: $light-accent--strong;
+  border-color: transparent;
+}
+
+
 .context-button {
   cursor: pointer;
   border: 0;
@@ -36,6 +63,40 @@ button:focus { outline:0 !important; }
   border-radius: 5rem;
   color:#686768;
   opacity:1;
+}
+
+.wf-card {
+  .btn-secondary:not(:disabled):not(.disabled):active,
+  .btn-secondary:not(:disabled):not(.disabled).active,
+  .show > .btn-secondary.dropdown-toggle {
+    background-color: $Vlight-gray;
+    box-shadow: none;
+    color:$strong-gray
+  }
+}
+
+.navbar {
+
+  .context-button {
+    width: 3rem;
+    height: 3rem;
+    color:$white;
+    opacity:.8;
+    &:hover {
+      background-color: $light-accent--medium;
+      opacity: 1;
+    }
+  }
+
+
+  .btn-secondary:not(:disabled):not(.disabled):active,
+  .btn-secondary:not(:disabled):not(.disabled).active,
+  .show > .btn-secondary.dropdown-toggle {
+    box-shadow: none;
+    background: $light-accent--strong;
+    opacity: 1;
+    color:$white;
+  }
 }
 
 
@@ -77,9 +138,10 @@ button:focus { outline:0 !important; }
 
 .button-white--fill {
   background-color: #FFF;
-  color: $brand-blue;
+  color: $brand-workspace;
   border:1px solid #fff;
   &:hover{
+    background-color:$light-accent--strong;
     color:$white;
   }
   &:active {
@@ -91,36 +153,35 @@ button:focus { outline:0 !important; }
 .button-gray {
   color: $medium-gray;
   border: 1px solid $medium-gray;
-  background-color: none;
-  &:hover {background-color:$dark-accent--soft;}
+  background-color: transparent;
+  &:hover {background-color:$light-accent--Vstrong;}
   &:active {
-    background-color:$medium-gray;
-    color: $white;
+    background-color:$dark-accent--soft;
   }
 }
 
 .button-blue {
-  color: $brand-blue;
-  border: 1px solid $brand-blue ;
+  color: $brand-workspace;
+  border: 1px solid $brand-workspace ;
   background-color: transparent;
-  &:hover {background-color: $brand-blue--light}
+  &:hover {background-color: $brand-workspace--light}
   &:active {
-    background-color: $brand-blue !important;
+    background-color: $brand-workspace !important;
     color: $white !important;
   }
 }
 
 .button-blue--fill {
-  background-color: $brand-blue;
+  background-color: $brand-workspace;
   color: $white;
   border:none;
   &:hover {
-    background-color: $brand-blue--light;
-    border: 1px solid $brand-blue;
-    color:$brand-blue;
+    background-color: $brand-workspace--light;
+    border: 1px solid $brand-workspace;
+    color:$brand-workspace;
   }
   &:active {
-    background-color: $brand-blue !important;
+    background-color: $brand-workspace !important;
     color: $white !important;
   }
 }
@@ -145,6 +206,7 @@ button:focus { outline:0 !important; }
   position: fixed;
   bottom: 9rem;
   left: 4.5rem;
+  display: none;
 }
 
 // On Worklow page
@@ -176,31 +238,6 @@ button:focus { outline:0 !important; }
   text-decoration: none;
 }
 
-/*overriding React styles for contextual button*/
-
-.btn:focus, .btn.focus {
-  webkit-box-shadow:none;
-  box-shadow: none;
-}
-
-a:focus, a:hover{
-  color:$strong-gray;
-}
-
-.btn-secondary:focus, .btn-secondary.focus {
-  box-shadow: 0 0 0 transparent;
-}
-
-.btn-secondary.active{
-  background-color: $light-accent--Vstrong;
-  color:transparent;
-}
-
-.show > .btn-secondary.dropdown-toggle {
-  color:$white;
-  background-color: $light-accent--strong;
-  border-color: transparent;
-}
 
 /*checkbox-list*/
 

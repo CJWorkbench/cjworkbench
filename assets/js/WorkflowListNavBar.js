@@ -15,8 +15,14 @@ export default class WorkflowListNavBar extends React.Component {
     }
     const links = (
       <div className="links">
-        <a href="/workflows/" {...propsForLink('workflows')}>Workflows</a>
-        <a href="/lessons/" {...propsForLink('lessons')}>Learn</a>
+        <a href="/workflows/" {...propsForLink('workflows')} className="WF-toggle--link">
+          <div>WORKFLOWS</div>
+          <div className='WF-link--under'></div>
+        </a>
+        <a href="/lessons/" {...propsForLink('lessons')} className="LS-toggle--link">
+          <div>LEARN</div>
+          <div className='LS-link--under'></div>
+        </a>
       </div>
     )
 
@@ -27,7 +33,7 @@ export default class WorkflowListNavBar extends React.Component {
             <img src="/static/images/logo.svg" className="logo"/>
             <div className="logo-1">Workbench</div>
           </div>
-          {hideLinksBecauseFeatureIsNotFinished ? null : links}
+          {links}
           <WfHamburgerMenu />
         </nav>
       </div>

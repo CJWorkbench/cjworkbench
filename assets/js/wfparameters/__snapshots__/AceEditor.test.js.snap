@@ -7,7 +7,7 @@ exports[`AceEditor Mounts correctly and saves on blur 1`] = `
   onSave={[Function]}
 >
   <div
-    className="parameter-margin"
+    className=""
   >
     <div
       className="label-margin t-d-gray content-3"

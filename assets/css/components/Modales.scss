@@ -135,18 +135,18 @@
   margin-top:2rem;
   padding-left:0rem;
   font-size: 1.3rem;
-  font-weight: 300;
+  @extend %font-nunito-extra-light;
   line-height: 1.9rem;
 }
 
 .import-github-success {
   height: 4rem;
-  color: #1CA8B9;
-  @extend %font-nunito-extra-light;
-  font-size: 1.3rem;
-  line-height: 1.9rem;
+  color: $link-hover-success;
   margin-top: 2rem;
   padding-left: 0rem;
+  font-size: 1.3rem;
+  @extend %font-nunito-extra-light;
+  line-height: 1.9rem;
 }
 
 .test-button{

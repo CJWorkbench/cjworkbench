@@ -36,6 +36,32 @@ exports[`Workflow list page renders correctly 1`] = `
               Workbench
             </div>
           </div>
+          <div
+            className="links"
+          >
+            <a
+              className="WF-toggle--link"
+              href={null}
+            >
+              <div>
+                WORKFLOWS
+              </div>
+              <div
+                className="WF-link--under"
+              />
+            </a>
+            <a
+              className="LS-toggle--link"
+              href="/lessons/"
+            >
+              <div>
+                LEARN
+              </div>
+              <div
+                className="LS-link--under"
+              />
+            </a>
+          </div>
           <WfHamburgerMenu>
             <UncontrolledDropdown>
               <Dropdown
@@ -133,6 +159,12 @@ exports[`Workflow list page renders correctly 1`] = `
     <div
       className="container"
     >
+      <a
+        className="lesson-banner title-2 mx-auto"
+        href="/lessons/"
+      >
+        LEARN HOW TO USE WORKBENCH
+      </a>
       <div
         className="d-flex justify-content-center"
       >
@@ -140,7 +172,7 @@ exports[`Workflow list page renders correctly 1`] = `
           className="button-blue action-button new-workflow-button"
           onClick={[Function]}
         >
-          New
+          Create Workflow
         </div>
       </div>
       <div
