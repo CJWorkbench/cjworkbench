@@ -1,5 +1,5 @@
 import React from 'react'
-import { InputGroup, InputGroupButton, Input, Button } from 'reactstrap'
+import { InputGroup, InputGroupAddon, Input, Button } from 'reactstrap'
 import BlockPicker from 'react-color/lib/Block'
 import { defaultColors } from './ChartColors'
 
@@ -12,9 +12,7 @@ export default class ChartSeriesChooser extends React.Component {
     this.handleChange = this.handleChange.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleTextChange = this.handleTextChange.bind(this);
-  }
 
-  componentWillMount() {
     this.state = {
       dropdownOpen: false,
       displayColorPicker: false,
@@ -78,27 +76,20 @@ export default class ChartSeriesChooser extends React.Component {
 
   render() {
     return (
-      <div className="color-picker d-flex align-items-center">
-        <div >
-          <InputGroup size="lg">
-            <InputGroupButton>
-              <Button onClick={this.handleClick} className="color-picker button">
-                <div className="color-picker color" style={{ background: this.state.color}}>
-                  <div className="icon-sort-down-vl-gray button-icon color-picker" style={{position:'relative'}} />
-                </div>
-              </Button>
-              { this.state.displayColorPicker ? <div className="color-picker pop-over">
-                <div className="color-picker cover" onClick={this.handleClose}/>
-                <BlockPicker color={ this.state.color } colors={ defaultColors } onChange={ this.handleChange } triangle="hide" />
-              </div> : null }
-            </InputGroupButton>
-          </InputGroup>
-        </div>
-
-        <div className="chart-label wf-parameter">
-          <Input size="lg" type="text" value={this.state.label} onChange={this.handleTextChange} />
-        </div>
-      </div>
+      <React.Fragment>
+        <InputGroup size="lg" className="color-picker d-flex align-items-center wf-parameter">
+          <InputGroupAddon addonType="prepend">
+            <Button onClick={this.handleClick} className="color-picker button color" style={{ background: this.state.color }}>
+              <i className="icon-sort-down-vl-gray button-icon color-picker"/>
+            </Button>
+          </InputGroupAddon>
+          <Input bsSize="lg" type="text" value={this.state.label} onChange={this.handleTextChange} />
+        </InputGroup>
+        { this.state.displayColorPicker ? <div className="color-picker pop-over">
+          <div className="color-picker cover" onClick={this.handleClose}/>
+          <BlockPicker color={ this.state.color } colors={ defaultColors } onChange={ this.handleChange } triangle="hide" />
+        </div> : null }
+      </React.Fragment>
     );
   }
 }

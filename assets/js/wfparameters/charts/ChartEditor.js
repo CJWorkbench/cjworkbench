@@ -177,12 +177,11 @@ export default class ChartEditor extends React.Component {
   render() {
     if (this.state.model && this.state.model.errors && this.state.model.errors.valid) {
       return (
-        <div>
-          <div>
-            <ColumnColorPicker
-              series={this.state.model.chartProps.chartSettings}
-              saveState={this.onChangeChartSettings}/>
-          </div>
+        <React.Fragment>
+          <ColumnColorPicker
+            series={this.state.model.chartProps.chartSettings}
+            saveState={this.onChangeChartSettings}/>
+
           <div className="param-line-margin">
             <div className="label-margin t-d-gray content-3">
               Title
@@ -193,38 +192,33 @@ export default class ChartEditor extends React.Component {
               value={this.state.model.metadata.title}
               onChange={this.onChangeTitle} />
           </div>
+
           <div >
-
-            <div >
-              <div className="label-margin t-d-gray content-3">
-                Prefix
-              </div>
-              <input
-                type="text"
-                className="wfmoduleStringInput t-d-gray parameter-base content-2 text-field"
-                value={this.state.model.chartProps.scale.primaryScale.prefix}
-                onChange={this.onChangePrefix} />
+            <div className="label-margin t-d-gray content-3">
+              Prefix
             </div>
-
-            <div >
-              <div className="label-margin t-d-gray content-3">
-                Suffix
-              </div>
-              <input
-                type="text"
-                className="wfmoduleStringInput t-d-gray parameter-base content-2 text-field"
-                value={this.state.model.chartProps.scale.primaryScale.suffix}
-                onChange={this.onChangeSuffix} />
-            </div>
-
+            <input
+              type="text"
+              className="wfmoduleStringInput t-d-gray parameter-base content-2 text-field"
+              value={this.state.model.chartProps.scale.primaryScale.prefix}
+              onChange={this.onChangePrefix} />
           </div>
 
-        </div>
+          <div >
+            <div className="label-margin t-d-gray content-3">
+              Suffix
+            </div>
+            <input
+              type="text"
+              className="wfmoduleStringInput t-d-gray parameter-base content-2 text-field"
+              value={this.state.model.chartProps.scale.primaryScale.suffix}
+              onChange={this.onChangeSuffix} />
+          </div>
+
+        </React.Fragment>
       )
     } else {
-      return (
-        <div></div>
-      )
+      return null
     }
   }
 }

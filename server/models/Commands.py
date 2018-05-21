@@ -259,6 +259,7 @@ class ChangeParameterCommand(Delta):
         self.parameter_val.set_value(self.old_value)
 
     def rerender_from(self):
+        if self.parameter_val is None: return None
         return self.parameter_val.wf_module
 
     @staticmethod

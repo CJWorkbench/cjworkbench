@@ -11,108 +11,99 @@ const apiHeaders = {
 
 // All API calls which fetch data return a promise which returns JSON
 class WorkbenchAPI {
+  /**
+   * Returns Promise of JSON on HTTP success (or `null` on HTTP 204 success).
+   *
+   * The Promise will fail with:
+   *
+   * * RangeError if the status code is not between 200 and 299.
+   * * TypeError if the response Content-Type is not application/json,
+   *   or if security checks (like CORS) prevent the fetch.
+   * * SyntaxError if the response is invalid JSON.
+   */
+  _fetch(url, options) {
+    const realOptions = Object.assign({ credentials: 'include' }, options || {})
+    return fetch(url, realOptions)
+      .then(res => {
+        if (!res.ok) {
+          throw new RangeError(`Server responded with non-200 status code ${res.status}`)
+        }
+        if (res.headers.get('content-type') && res.headers.get('content-type').toLowerCase().indexOf('application/json') === -1) {
+          throw new TypeError("Server response is not JSON", res)
+        }
+        if (res.status === 204) {
+          return null // No content
+        }
+        return res.json()
+      })
+  }
+
+  _submit(method, url, body, options) {
+    const realOptions = Object.assign(
+      { method: method, headers: apiHeaders },
+      { body: JSON.stringify(body) },
+      options || {}
+    )
+    return this._fetch(url, realOptions)
+  }
+
+  _patch(url, body, options) {
+    return this._submit('patch', url, body, options)
+  }
+
+  _put(url, body, options) {
+    return this._submit('put', url, body, options)
+  }
+
+  _post(url, body, options) {
+    return this._submit('post', url, body, options)
+  }
+
+  _delete(url, options) {
+    return this._submit('delete', url, null, { body: '' })
+  }
 
   listWorkflows() {
-    return (
-      fetch('/api/workflows', {credentials: 'include'})
-      .then(response => response.json())
-    )
+    return this._fetch('/api/workflows')
   }
 
   loadWorkflow(workflowId) {
-    return (
-      fetch('/api/workflows/' + workflowId, { credentials: 'include'})
-      .then(response => response.json())
-    )
+    return this._fetch(`/api/workflows/${workflowId}`)
   }
 
   newWorkflow(newWorkflowName) {
-    return (
-      fetch('/api/workflows',
-        {
-          method: 'post',
-          credentials: 'include',
-          headers: apiHeaders,
-          body: JSON.stringify({name: newWorkflowName})
-        })
-      .then(response => response.json()))
+    return this._post('/api/workflows', { name: newWorkflowName })
   }
 
   deleteWorkflow(workflowId) {
-    return (
-      fetch(
-        '/api/workflows/' + workflowId ,
-        {
-          method: 'delete',
-          credentials: 'include',
-          headers: {
-            'X-CSRFToken': csrfToken
-          }
-        }
-      )
-    )
+    return this._delete(`/api/workflows/${workflowId}`)
   }
 
   reorderWfModules(workflowId, newOrder) {
-    return (
-      fetch('/api/workflows/' + workflowId, {
-        method: 'patch',
-        credentials: 'include',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrfToken
-        },
-        body: JSON.stringify(newOrder) }
-      )
-    )
+    return this._patch(`/api/workflows/${workflowId}`, newOrder)
   }
 
   addModule(workflowId, moduleId, insertBefore) {
-    return (
-      fetch(
-        '/api/workflows/' + workflowId + "/addmodule",
-        {
-          method: 'put',
-          credentials: 'include',
-          headers: apiHeaders,
-          body: JSON.stringify({insertBefore: insertBefore, moduleId: moduleId})
-        }
-      ).then(response => response.json())
-    )
+    return this._put(`/api/workflows/${workflowId}/addmodule`, {
+      insertBefore: insertBefore,
+      moduleId: moduleId
+    })
   }
 
   deleteModule(wfModuleId) {
-    return (
-      fetch('/api/wfmodules/' + wfModuleId, {
-        method: 'delete',
-        credentials: 'include',
-        headers: {'X-CSRFToken': csrfToken}
-      }));
+    return this._delete(`/api/wfmodules/${wfModuleId}`)
   }
 
-  setWorkflowPublic(workflowID, isPublic) {
-    return (
-      fetch('/api/workflows/' + workflowID, {
-        method: 'post',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify({'public': isPublic})
-      }));
+  setWorkflowPublic(workflowId, isPublic) {
+    return this._post(`/api/workflows/${workflowId}`, { 'public': isPublic })
   }
 
   onParamChanged(paramID, newVal) {
-    return (
-      fetch('/api/parameters/' + paramID, {
-        method: 'patch',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify(newVal)
-      }));
+    return this._patch(`/api/parameters/${paramID}`, newVal)
   }
 
-  render(wf_module_id, startrow, endrow) {
-    var url = '/api/wfmodules/' + wf_module_id + '/render';
+  render(wfModuleId, startrow, endrow) {
+    let url = '/api/wfmodules/' + wfModuleId + '/render';
 
     if (startrow || endrow) {
       url += "?";
@@ -126,278 +117,115 @@ class WorkbenchAPI {
       }
     }
 
-    return (
-      fetch(url, {credentials: 'include'})
-      .then(response => response.json())
-    )
+    return this._fetch(url)
   }
 
-  input(wf_module_id) {
-    return (
-      fetch('/api/wfmodules/' + wf_module_id + '/input', {credentials: 'include'})
-      .then(response => response.json())
-    )
+  input(wfModuleId) {
+    return this._fetch(`/api/wfmodules/${wfModuleId}/input`)
   }
 
-  inputColumns(wf_module_id) {
-    return (
-      fetch('/api/wfmodules/' + wf_module_id + '/input?startrow=0&endrow=0', {credentials: 'include'})
-      .then(response => response.json()).then(returnJson => returnJson.columns)
-
-    )
+  inputColumns(wfModuleId) {
+    return this._fetch(`/api/wfmodules/${wfModuleId}/input?startrow=0&endrow=0`)
+      .then(json => json.columns)
   }
 
-  output(wf_module_id) {
-      return (
-          fetch('/api/wfmodules/' + wf_module_id + '/output', {credentials: 'include'})
-              .then(response => response.json())
-      )
+  output(wfModuleId) {
+    return this._fetch(`/api/wfmodules/${wfModuleId}/output`)
   }
 
-  histogram(wf_module_id, column) {
-      return (
-          fetch('/api/wfmodules/' + wf_module_id + '/histogram/' + column, {credentials: 'include'})
-              .then(response => {
-                  if(response.ok) {
-                    return response.json();
-                  }
-                  return 'request error';
-              })
-      )
+  histogram(wfModuleId, column) {
+    return this._fetch(`/api/wfmodules/${wfModuleId}/histogram/${column}`)
   }
 
-  getColumns(wf_module_id) {
-      return (
-          fetch('/api/wfmodules/' + wf_module_id + '/columns', {credentials: 'include'})
-              .then(response => response.json())
-      )
+  getColumns(wfModuleId) {
+    return this._fetch(`/api/wfmodules/${wfModuleId}/columns`)
   }
 
   // All available modules in the system
   getModules() {
-    return (
-      fetch('/api/modules/', { credentials: 'include' })
-      .then(response => response.json())
+    return this._fetch(`/api/modules/`)
+  }
+
+  setWfModuleVersion(wfModuleId, version) {
+    return this._patch(
+      `/api/wfmodules/${wfModuleId}/dataversions`,
+      { selected: version }
     )
   }
 
-  getWfModuleVersions(wf_module_id) {
-    // NB need parens around the contents of the return, or this will fail miserably (return undefined)
-    return (
-        fetch('/api/wfmodules/' + wf_module_id + '/dataversions', {credentials: 'include'})
-        .then(response => response.json())
-    )
-  }
-
-  setWfModuleVersion(wf_module_id, version) {
-    return (
-      fetch('/api/wfmodules/' + wf_module_id + '/dataversions', {
-        method: 'patch',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify({
-          selected: version
-        })
-      }))
-  }
-
-  setWfModuleNotes(wf_module_id, text) {
-    return (
-      fetch('/api/wfmodules/' + wf_module_id, {
-        method: 'patch',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify({
-          notes: text
-        })
-      }))
+  setWfModuleNotes(wfModuleId, text) {
+    return this._patch(`/api/wfmodules/${wfModuleId}`, { notes: text })
   }
 
 
-  setWfModuleCollapsed(wf_module_id, isCollapsed) {
-    return fetch('/api/wfmodules/' + wf_module_id, {
-        method: 'patch',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify({
-          collapsed: isCollapsed
-        })
-      })
+  setWfModuleCollapsed(wfModuleId, isCollapsed) {
+    return this._patch(`/api/wfmodules/${wfModuleId}`, { collapsed: isCollapsed })
   }
 
-  setWfName(wfId, newName) {
-    return (
-      fetch('/api/workflows/' + wfId, {
-        method: 'post',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify({
-          newName: newName
-        })
-      })
-    )
+  setWfName(workflowId, newName) {
+    return this._post(`/api/workflows/${workflowId}`, { newName: newName })
   }
 
-  setWfLibraryCollapse(workflow_id, isCollapsed) {
-    return (
-      fetch('/api/workflows/' + workflow_id, {
-        method: 'post',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify({
-          module_library_collapsed: isCollapsed
-        })
-      })
-    )
+  setWfLibraryCollapse(workflowId, isCollapsed) {
+    return this._post(`/api/workflows/${workflowId}`, { module_library_collapsed: isCollapsed })
   }
 
-  setSelectedWfModule(workflow_id, module_id) {
-    return (
-      fetch('/api/workflows/' + workflow_id, {
-        method: 'post',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify({
-          selected_wf_module: module_id
-        })
-      })
-    )
+  setSelectedWfModule(workflowId, wfModuleId) {
+    return this._post(`/api/workflows/${workflowId}`, { selected_wf_module: wfModuleId })
   }
 
   // Params should be an object matching format below
-  setWfModuleUpdateSettings(wf_module_id, params) {
-    return (
-      fetch('/api/wfmodules/' + wf_module_id, {
-        method: 'patch',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify({
-          'auto_update_data' : params.auto_update_data,  // bool
-          'update_interval'  : params.update_interval,   // int
-          'update_units'     : params.update_units       // str
-        })
-      })
-    )
+  setWfModuleUpdateSettings(wfModuleId, params) {
+    return this._patch(`/api/wfmodules/${wfModuleId}`, {
+      auto_update_data: params.auto_update_data, // bool
+      update_interval: params.update_interval, // int
+      update_units: params.update_units // str
+    })
   }
 
-  updateWfModule(wf_module_id, params) {
-    return(
-      fetch('/api/wfmodules/' + wf_module_id, {
-        method: 'patch',
-        credentials: 'include',
-        headers: apiHeaders,
-        // Don't validate here, but possibly filter out props not in
-        // a hardcoded list later
-        body: JSON.stringify(params)
-      })
-    )
+  updateWfModule(wfModuleId, params) {
+    return this._patch(`/api/wfmodules/${wfModuleId}`, params)
   }
 
-  undo(workflow_id) {
-    return (
-      fetch('/api/workflows/' + workflow_id + '/undo', {
-        method: 'put',
-        credentials: 'include',
-        headers: {
-          'X-CSRFToken': csrfToken
-        }
-      }))
+  undo(workflowId) {
+    return this._put(`/api/workflows/${workflowId}/undo`, null)
   }
 
-  redo(workflow_id) {
-    return (
-      fetch('/api/workflows/' + workflow_id + '/redo', {
-        method: 'put',
-        credentials: 'include',
-        headers: {
-          'X-CSRFToken': csrfToken
-        }
-      }))
+  redo(workflowId) {
+    return this._post(`/api/workflows/${workflowId}/redo`, null)
   }
 
-  duplicateWorkflow(workflow_id) {
-    return (
-      fetch('/api/workflows/' + workflow_id + '/duplicate', {credentials: 'include'})
-        .then(response => response.json())
-    )
+  duplicateWorkflow(workflowId) {
+    return this._fetch(`/api/workflows/${workflowId}/duplicate`)
   }
 
   currentUser() {
-    return (
-      fetch('/api/user/', {credentials: 'include'})
-        .then(response => response.json())
-    )
+    return this._fetch('/api/user/')
   }
 
   disconnectCurrentUser(id) {
-    return (
-      fetch('/api/user/google_credentials', {
-        credentials: 'include',
-        method: 'delete',
-        headers: apiHeaders,
-        body: JSON.stringify({
-          credentialId: id
-        })
-      }).then(response => response.json())
-    )
+    return this._submit('delete', `/api/user/google_credentials`, { credentialId: id })
   }
 
-  deleteWfModuleNotifications(wf_module_id) {
-    return (
-      fetch('/api/wfmodules/' + wf_module_id + '/notifications', {
-        credentials: 'include',
-        method: 'delete',
-        headers: apiHeaders
-      }).then(response => response.json())
-    )
+  deleteWfModuleNotifications(wfModuleId) {
+    return this._delete(`/api/wfmodules/${wfModuleId}/notifications`)
   }
 
   importFromGithub(eventData) {
-    return (
-      fetch('/api/importfromgithub/', {
-        method: 'post',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify(eventData)
-      }).then(response => response.json())
-    )
+    return this._post(`/api/importfromgithub/`, eventData)
   }
 
   // This is Bad. You should get a list of serialized data versions on the
   // workflow module instead of a 2-tuple, and there should be a generic
   // data version create/read/update/delete method. As there should be for
   // every object in the database.
-  markDataVersionsRead(wf_module_id, data_versions) {
-    return (
-      fetch('/api/wfmodules/' + wf_module_id + '/dataversion/read', {
-        credentials: 'include',
-        method: 'patch',
-        headers: apiHeaders,
-        body: JSON.stringify({
-          versions: data_versions
-        })
-      })
-    )
+  markDataVersionsRead(wfModuleId, data_versions) {
+    return this._patch(`/api/wfmodules/${wfModuleId}/dataversion/read`, { versions: data_versions })
   }
 
   postParamEvent(paramId, data) {
-    return (
-      fetch( '/api/parameters/' + paramId + '/event', {
-        method: 'post',
-        credentials: 'include',
-        headers: apiHeaders,
-        body: JSON.stringify(data)
-      }).then((response) => {
-        if (response.status === 204) {
-          //Don't try to parse JSON if we got an empty response
-          return {};
-        } else {
-          return response.json();
-        }
-      })
-    )
+    return this._post(`/api/parameters/${paramId}/event`, data)
   }
-
 }
 
 // Singleton API object for global use

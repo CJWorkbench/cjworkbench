@@ -86,6 +86,11 @@ article.lesson {
           margin:1rem 0;
         }
 
+        .text-insert {
+          margin: 0 .5rem;
+          width:2.7rem;
+        }
+
         &::before {
           content: "\e938";
           color: $text-muted;

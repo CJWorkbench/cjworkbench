@@ -30,8 +30,8 @@
       >Add the module 'Drop empty rows'.
     </li>
     <li
-      data-highlight='[]',
-      data-test="return workflow.wfModules.length > 2 && workflow.wfModules[2].moduleName === 'Drop empty rows'"
+      data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]',
+      data-test="return workflow.wfModules[2].parameters.get('colnames') === 'MetroArea,Population'"
       >Select the columns 'MetroArea' and 'Population'. The rows missing those values will be deleted.
     </li>
   </ol>
@@ -41,12 +41,12 @@
   <p>The same value is frequently spelled in multiple ways, or with irregular capitalization.  Ex: ‘APPLE’, ‘Apple’, ‘APL’.</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"ModuleSearch"},{"type":"MLModule","name":"Refine"}]'
-      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Refine'"
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Refine"}]'
+      data-test="return workflow.wfModules.length > 3 && workflow.wfModules[3].moduleName === 'Refine'"
       >Add the module 'Refine'.</li>
     <li
-      data-highlight='[]'
-      data-test="const params = workflow.wfModules[3].moduleName.parameters; return params.get('column') === 'MetroArea'"
+      data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
+      data-test="const json = workflow.wfModules[3].parameters.get('refine'); if (!json) return false; const allJson = JSON.parse(json); const changes = allJson.filter(x => x.type === 'change').map(x => x.content); if (changes.length !== 8) { console.log('Expect user to change Refine 8 times; found ' + changes.length + ' changes'); return false } const uniqueVals = {}; changes.forEach(x => uniqueVals[x.toVal] = null); if (Object.keys(uniqueVals).length !== 5) { console.log('Expect 5 unique values in Refine for MetroArea; found: ' + JSON.stringify(Object.keys(uniqueVals))); return false; } return true"
       >Select the column ‘MetroArea’ which contains messy data.
       <p>
         Edit values in the list until each one is displayed only once. When you're done, the list should contain 5 only unique values.

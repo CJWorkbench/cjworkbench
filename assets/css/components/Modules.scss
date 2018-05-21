@@ -223,7 +223,8 @@
 // Module placeholder: either DND or placeholder while module is being rendered.
 .wf-module {
   &.lesson-highlight .module-content {
-    outline: 3px solid $brand-learn;
+    outline: 2px solid $brand-learn;
+    outline-offset:-2px;
   }
 }
 
@@ -323,9 +324,11 @@ svg .svg-background{
   border: 1px red;
 }
 
-.chart-label{
-  width: 100%;
-  margin-left: 0.5rem;
+// Overcome Bootstrap putting buttons over one another. Fixes the problem:
+// [x][column 1] (x is button for open color picker)
+// [ ][column 2] (should appear _underneath_ open color picker
+.input-group-prepend button.color-picker {
+  z-index: auto;
 }
 
 

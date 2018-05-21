@@ -4,12 +4,12 @@
 </header>
 <section>
   <h2>Overview</h2>
-  <p>In this lesson you will analyze open data from the City of San Francisco.</p>
-  <p>You will visualize how many housing projects with more  than 20 affordable units are planned to be built in the sunny Mission district.</p>
+  <p>In this lesson you will work with open data on affordable housing published by the City of San Francisco.</p>
+  <p>You will visualize how many affordable and market rates units are currently going through the City's development process, in each of its neighborhoods.</p>
 </section>
 <section>
   <h2>1. Load Public Data by URL</h2>
-  <p>Through this lesson you will work with the dataset ‘Affordable Housing Pipeline’, publicaly hosted on Workbench. </p>
+  <p> For the purpose of this lesson, the dataset is hosted on Workbench.</p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Add from URL"}]'
@@ -24,13 +24,21 @@
     <li
       data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]',
       data-test="return workflow.wfModules.length > 0 && !!workflow.wfModules[0].note"
-      >Add a note to the module, for example:
-      <div class="copy-txt content-3 t-white">Hello, world!</div>
+      >Add a note
+      <span>
+        <img class="text-insert" src="/static/images/lesson_1/note_button.svg">
+      </span>
+      to the module, for example:
+      <div class="copy-txt content-3 t-white">Data from datasf.org</div>
     </li>
     <li
-      data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"collapse"}]'
+      data-highlight='[]'
       data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].isCollapsed"
-      >Collapse the module.</li>
+      >Collapse
+      <span>
+        <img class="text-insert" src="/static/images/lesson_1/collapse_button.svg">
+      </span>
+      the module.</li>
   </ol>
 </section>
 <section>
@@ -43,7 +51,7 @@
       >Add the module ‘Column Chart’ using the search in the module library.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="return workflow.wfModules.length > 1 && JSON.parse(workflow.wfModules[workflow.wfModules.length-1].parameters.get('chart_editor')).metadata.title"
+      data-test="if (workflow.wfModules.length <= 1) return false; const wfModule = workflow.wfModules[workflow.wfModules.length - 1]; if (wfModule.moduleName !== 'Column Chart') return false; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
       >Add a title to the chart.</li>
   </ol>
 </section>
@@ -57,8 +65,8 @@
       >Add the module ‘Filter’ by dragging it between the two already there.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
-      data-test="const p = workflow.wfModules[1].parameters; return p.get('column') === 'affordable_units' && p.get('condition') === 10 && p.get('value') === '200' && p.get('keep') === 0"
-      >Select the column ‘Affordable units’, choose the condition ‘Greater than’ and keep all rows having more than 200 affordable units.</li>
+      data-test="const p = workflow.wfModules[1].parameters; return p.get('column') === 'Sum of affordable_units' && p.get('condition') === 10 && p.get('value') === '200' && p.get('keep') === 0"
+      >Select the column ‘Sum of affordable_units’, choose the condition ‘Greater than’ and keep all rows having more than 200 affordable units.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="return state.selectedWfModule.moduleName === 'Column Chart'"
