@@ -48,6 +48,15 @@
   .dropdown-menu {
     border:2px solid $brand-learn--medium;
   }
+  .custom-select:focus{
+    border: 2px solid $brand-learn;
+    box-shadow: none;
+  }
+
+  .parameter-base:focus{
+    border: 2px solid $brand-learn;
+    box-shadow: none;
+  }
 }
 
 
@@ -129,6 +138,8 @@ textarea:focus, input:focus{
 .parameter-base:focus{
   border: 2px solid $brand-workspace;
 }
+
+
 
 // placeholder text within text fields
 
