@@ -37,6 +37,8 @@ def dynamically_load_module(wf_module):
             if f.endswith(".py"):
                 python_file = os.path.join(path_to_code, f)
                 break
+        else:
+            raise ValueError(f'Expected .py file in {path_to_code}')
 
         #Now we can load the code into memory.
         temp = importlib.machinery.SourceFileLoader(os.path.join(path_to_code, f),
