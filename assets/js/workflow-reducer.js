@@ -40,6 +40,7 @@ const CLEAR_NOTIFICATIONS = 'CLEAR_NOTIFICATIONS';
 
 // Sometimes, do nothing
 export const NOP_ACTION = 'NOP_ACTION';
+const NOP = { type: NOP_ACTION, payload: {} }
 
 const WorkflowId = window.initState ? window.initState.workflowId : 'MISSING-WORKFLOW-ID';
 
@@ -238,9 +239,7 @@ export function reorderWfModulesAction(wfModuleID, newIndex) {
   let state = store.getState();
   let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleID);
   if (wfModuleIdx === newIndex) {
-    return {
-      type: NOP_ACTION
-    };
+    return NOP
   }
   if (wfModuleIdx < newIndex) {
     newIndex -= 1;
@@ -405,14 +404,21 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
 
 // SET_SELECTED_MODULE
 // Set the selected module in the workflow
-export function setSelectedWfModuleAction(wfModuleID) {
-  let workflowID = store.getState().workflow.id;
-  return {
-    type : SET_SELECTED_MODULE,
-    payload : {
-      promise: api.setSelectedWfModule(workflowID, wfModuleID),
-      data: {
-        wf_module_id: wfModuleID
+export function setSelectedWfModuleAction(wfModuleId) {
+  const workflow = store.getState().workflow
+
+  if (workflow && wfModuleId === workflow.selected_wf_module) {
+    return NOP
+  } else {
+    const workflowId = workflow ? workflow.id : null
+
+    return {
+      type : SET_SELECTED_MODULE,
+      payload : {
+        promise: api.setSelectedWfModule(workflowId, wfModuleId),
+        data: {
+          wf_module_id: wfModuleId
+        }
       }
     }
   }
@@ -635,11 +641,7 @@ function setParamValueAction_base(state, wfModuleIdx, paramIdx, paramId, newValu
 
   // Suppress changing to the same value (don't trigger expensive HTTP request)
   let oldValue = state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx].value;
-  if (newValue.value === oldValue)
-    return {
-      type : NOP_ACTION,
-      payload : {}
-    };
+  if (newValue.value === oldValue) return NOP
 
   return {
     type: SET_PARAM_VALUE,
