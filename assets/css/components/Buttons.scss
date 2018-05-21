@@ -65,6 +65,40 @@ a:focus, a:hover{
   opacity:1;
 }
 
+.wf-card {
+  .btn-secondary:not(:disabled):not(.disabled):active,
+  .btn-secondary:not(:disabled):not(.disabled).active,
+  .show > .btn-secondary.dropdown-toggle {
+    background-color: $Vlight-gray;
+    box-shadow: none;
+    color:$strong-gray
+  }
+}
+
+.navbar {
+
+  .context-button {
+    width: 3rem;
+    height: 3rem;
+    color:$white;
+    opacity:.8;
+    &:hover {
+      background-color: $light-accent--medium;
+      opacity: 1;
+    }
+  }
+
+
+  .btn-secondary:not(:disabled):not(.disabled):active,
+  .btn-secondary:not(:disabled):not(.disabled).active,
+  .show > .btn-secondary.dropdown-toggle {
+    box-shadow: none;
+    background: $light-accent--strong;
+    opacity: 1;
+    color:$white;
+  }
+}
+
 
 
 

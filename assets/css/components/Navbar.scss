@@ -108,46 +108,6 @@ img.logo {
   width: 2.2rem;
 }
 
-//// context button for workflow page and workflow list
-
-.navbar .context-button,
-.workflow-container .navbar .context-button
- {
-  cursor: pointer;
-  border:0;
-  width: 3rem;
-  height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: none;
-  margin-right: 3rem;
-  border-radius: 5rem;
-  opacity:0.8;
-}
-
-.navbar .context-button:hover,
-.workflow-container .navbar .context-button:hover {
-  background: rgba(255,255,255,0.1);
-  opacity: 1;
-}
-
-.navbar .context-button.context-button.btn-secondary.active,
-.navbar .context-button.btn-secondary.active,
-.workflow-container .navbar .context-button.btn-secondary.active {
-  background: rgba(255,255,255,0.3);
-  opacity: 1;
-}
-
-// convert color of context button for to be white in navbar
-
-.navbar .context-button--icon {
-  font-size: 1.5rem;
-  color: #fff;
-}
-
-//convert colors of metadata line to be visible on blue background-color
-
 .workflow-container .navbar .t-f-blue {
   color:white;
   text-decoration: underline;
