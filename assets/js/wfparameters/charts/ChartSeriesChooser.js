@@ -78,7 +78,7 @@ export default class ChartSeriesChooser extends React.Component {
 
   render() {
     return (
-      <div className="color-picker d-flex ">
+      <div className="color-picker d-flex align-items-center">
         <div >
           <InputGroup size="lg">
             <InputGroupButton>
@@ -95,7 +95,7 @@ export default class ChartSeriesChooser extends React.Component {
           </InputGroup>
         </div>
 
-        <div className="chart-label">
+        <div className="chart-label wf-parameter">
           <Input size="lg" type="text" value={this.state.label} onChange={this.handleTextChange} />
         </div>
       </div>
