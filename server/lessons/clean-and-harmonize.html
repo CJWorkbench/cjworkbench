@@ -49,10 +49,16 @@
       data-test="const json = workflow.wfModules[3].parameters.get('refine'); if (!json) return false; const allJson = JSON.parse(json); const changes = allJson.filter(x => x.type === 'change').map(x => x.content); if (changes.length !== 8) { console.log('Expect user to change Refine 8 times; found ' + changes.length + ' changes'); return false } const uniqueVals = {}; changes.forEach(x => uniqueVals[x.toVal] = null); if (Object.keys(uniqueVals).length !== 5) { console.log('Expect 5 unique values in Refine for MetroArea; found: ' + JSON.stringify(Object.keys(uniqueVals))); return false; } return true"
       >Select the column ‘MetroArea’ which contains messy data.
       <p>
-        Edit values in the list until each one is displayed only once. When you're done, the list should contain 5 only unique values.
+        Edit values in the list until each one is displayed only once.
       </p>
       <p>
-        <img class="image" src="/static/images/lesson_2/refine_row.svg" style="width:28rem;">
+        <img class="image" src="/static/images/lesson_2/refine_row.svg">
+      </p>
+      <p class="lesson-note">
+       When you're done, the list should look as follow:
+      </p>
+      <p>
+        <img class="image" src="/static/images/lesson_2/refine_result.svg">
       </p>
     </li>
     <li
