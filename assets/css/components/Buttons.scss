@@ -153,11 +153,10 @@ a:focus, a:hover{
 .button-gray {
   color: $medium-gray;
   border: 1px solid $medium-gray;
-  background-color: none;
-  &:hover {background-color:$dark-accent--soft;}
+  background-color: transparent;
+  &:hover {background-color:$light-accent--Vstrong;}
   &:active {
-    background-color:$medium-gray;
-    color: $white;
+    background-color:$dark-accent--soft;
   }
 }
 

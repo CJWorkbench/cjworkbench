@@ -121,9 +121,9 @@ export class ImportModuleFromGitHub extends React.Component {
         var json = JSON.parse(this.state.message);
         formContent = (
           <div>
-            <button className="import-github-success">
+            <div className="import-github-success">
               Successfully imported {json.author} module "{json.name}" under category "{json.category}".
-            </button>
+            </div>
           </div>
         )
         footer = (
