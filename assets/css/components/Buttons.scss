@@ -141,6 +141,7 @@ a:focus, a:hover{
   color: $brand-workspace;
   border:1px solid #fff;
   &:hover{
+    background-color:$light-accent--strong;
     color:$white;
   }
   &:active {
