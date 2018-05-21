@@ -63,12 +63,21 @@ article.lesson {
         padding-left: 2rem;
 
         .copy-txt {
-          margin-top: 1rem;
+          position: relative;
+          left:-2rem;
+          width: 28rem;
+          margin: 1rem 0;
           padding:1rem;
           background-color: rgba(0,0,0,0.1);
           border-radius: 3px;
           word-break: break-all;
           cursor: text;
+        }
+
+        .lesson-note {
+          position: relative;
+          left:-2rem;
+          font-weight: bold;
         }
 
         .image{

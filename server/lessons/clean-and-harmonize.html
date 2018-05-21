@@ -5,11 +5,20 @@
 <section>
   <h2>Overview</h2>
   <p>In this lesson you will clean and prepare a dataset to visualize a chart series.</p>
+  <ol class="steps">
+
+  </ol>
 </section>
 <section>
   <h2>1. Deleting empty columns and rows</h2>
-  <p>The two columns on at the far right of our dataset are empty.</p>
   <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      >Add the module 'Add from URL' and paste in the following URL before clicking 'Update'.
+      <div class="copy-txt content-3 t-white">https://app.workbenchdata.com/static/data/population_dirty_data.csv</div>
+      <p class="lesson-note">The two columns on at the far right of our dataset are empty.</p>
+    </li>
     <li
       data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Drop empty columns"}]'
       data-test="return workflow.wfModules.length > 1 && workflow.wfModules[1].moduleName === 'Drop empty columns'"
