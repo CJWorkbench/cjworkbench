@@ -2,6 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import LessonSection from './LessonSection'
 import LessonNav from './LessonNav'
+import LessonAnalyticsTracker from './LessonAnalyticsTracker'
 import lessonSelector from './lessonSelector'
 import { connect } from 'react-redux'
 import { LessonHighlightsType } from '../util/LessonHighlight'
@@ -20,8 +21,17 @@ export class Lesson extends React.Component {
     }
   }
 
+  trackMaxProgress = (slug, sectionTitle, stepIndex) => {
+    const log = this.props.logUserEvent
+    if (sectionTitle === null) {
+      log(`Lesson ${slug}: done`)
+    } else {
+      log(`Lesson ${slug}: at ${sectionTitle} step ${stepIndex+1}`)
+    }
+  }
+
   render() {
-    const { header, sections } = this.props
+    const { slug, header, sections, activeSectionIndex, activeStepIndex } = this.props
 
     const sectionComponents = sections.map((s, i) => {
       return <LessonSection
@@ -36,12 +46,19 @@ export class Lesson extends React.Component {
 
     return (
       <article className="lesson">
+        <LessonAnalyticsTracker
+          slug={slug}
+          sections={sections}
+          activeSectionIndex={activeSectionIndex}
+          activeStepIndex={activeStepIndex}
+          trackMaxProgress={this.trackMaxProgress}
+          />
         <h1>{header.title}</h1>
         <div className="description" dangerouslySetInnerHTML={({__html: header.html})}></div>
         <div className="sections">{sectionComponents}</div>
         <LessonNav
           nSections={sections.length}
-          activeSectionIndex={this.props.activeSectionIndex}
+          activeSectionIndex={activeSectionIndex}
           currentSectionIndex={this.state.currentSectionIndex}
           setCurrentSectionIndex={this.setCurrentSectionIndex}
           />
@@ -75,6 +92,8 @@ Lesson.propTypes = {
    */
   activeSectionIndex: PropTypes.number, // or null
   activeStepIndex: PropTypes.number, // or null
+
+  logUserEvent: PropTypes.func.isRequired, // for tracking progress
 }
 
 const mapStateToProps = (state) => {

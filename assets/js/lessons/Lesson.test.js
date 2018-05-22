@@ -2,8 +2,6 @@ import React from 'react'
 import { Lesson } from './Lesson'
 import LessonSection from './LessonSection'
 import { mount, shallow } from 'enzyme'
-import configureStore from 'redux-mock-store'
-import { Provider } from 'react-redux'
 
 describe('Lesson', () => {
   const lesson = {
@@ -47,7 +45,7 @@ describe('Lesson', () => {
 
   function wrapper(extraProps) {
     return shallow(
-      <Lesson {...lesson} {...navProps} {...(extraProps || {})} />
+      <Lesson {...lesson} logUserEvent={jest.fn()} {...navProps} {...(extraProps || {})} />
     )
   }
 
@@ -85,7 +83,7 @@ describe('Lesson', () => {
     // integration-test-y: this tests that Lesson and LessonNav play nice
     function wrapper(extraProps) {
       return mount(
-        <Lesson {...lesson} {...navProps} {...(extraProps || {})} />
+        <Lesson {...lesson} logUserEvent={jest.fn()} {...navProps} {...(extraProps || {})} />
       )
     }
 
