@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce'
 import { OutputIframeCtrl } from '../../OutputIframe'
 import update from 'immutability-helper'
 
-import chartConfig from './chartbuilder/charts/chart-type-configs'
+import ChartConfig from './chartbuilder/charts/cb-xy/xy-config'
 import validateDataInput from './chartbuilder/util/validate-data-input'
 import Errors from './errors'
 
@@ -62,7 +62,7 @@ export default class ChartEditor extends React.Component {
     if (modelText !== "") {
       model = JSON.parse(modelText);
     } else {
-      model = update(chartConfig.xy.defaultProps, {
+      model = update(ChartConfig.defaultProps, {
         chartProps: {
           scale: { typeSettings: { maxLength: { $set: 7 } } },
         }
@@ -85,10 +85,7 @@ export default class ChartEditor extends React.Component {
     // bypass ChartBuilder's flux et al: just use the lower-level stuff
 
     // this is from ChartBuilder's ChartPropertiesStore.js:
-    const chartType = model.metadata.chartType
-    const config = chartConfig[chartType]
-    const parser = config.parser
-    model.chartProps = parser(config, model.chartProps)
+    model.chartProps = ChartConfig.parser(ChartConfig, model.chartProps)
 
     const errorCodes = validateDataInput(model.chartProps)
     const errors = errorCodes.map(ec => Errors[ec])
