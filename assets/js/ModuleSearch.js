@@ -13,15 +13,25 @@ import lessonSelector from './lessons/lessonSelector'
 const spec = {
   beginDrag(props, monitor, component) {
     return {
+      type: 'module',
       index: false,
       id: props.id,
+      name: props.name,
+      icon: props.icon,
       insert: true,
     }
   },
   endDrag(props, monitor, component) {
     if (monitor.didDrop()) {
       const result = monitor.getDropResult();
-      props.dropModule(result.source.id, result.source.index);
+      props.dropModule(
+        result.source.id,
+        result.source.target,
+        {
+          name: result.source.name,
+          icon: result.source.icon,
+        }
+      );
     }
   }
 }
