@@ -20,6 +20,7 @@ article.lesson {
     width: 32rem;
     padding:2rem;
     overflow-y: scroll;
+    overflow-x: hidden;
 
     &.not-current { display: none; }
 

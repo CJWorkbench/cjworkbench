@@ -263,10 +263,6 @@
   margin-bottom: 0px;
 }
 
-
-
-
-
 .help-button {
   cursor: pointer;
   border-radius:5rem;
@@ -347,7 +343,7 @@ monitoring the isDragging prop set by the react-dnd higher-order components. */
   margin:0 auto;
   height:0;
   padding-bottom:0.5rem;
-  border-bottom:0.5rem solid #7A9BB0;
+  border-bottom:0.5rem solid $medium-blue;
   position:relative;
   top: -0.5rem;
 }
@@ -358,7 +354,7 @@ monitoring the isDragging prop set by the react-dnd higher-order components. */
   margin:0 auto;
   height:0;
   padding-bottom:0.5rem;
-  border-bottom:0.5rem solid #7A9BB0;
+  border-bottom:0.5rem solid $medium-blue;
   position:relative;
   top: -0.5rem;
 }
