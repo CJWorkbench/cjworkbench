@@ -116,24 +116,6 @@ function compute_scale_domain(scaleObj, data, opts) {
 }
 
 /**
- * combine_margin_pading
- *
- * @param m
- * @param p
- * @static
- * @memberof helper
- * @return {object}
- */
-function combine_margin_pading(m,p) {
-	return {
-		top: m.top + p.top,
-		right: m.right + p.right,
-		bottom: m.bottom + p.bottom,
-		left: m.left + p.left
-	};
-}
-
-/**
  * precision
  *
  * @param a
@@ -152,44 +134,6 @@ function precision(a) {
   } else {
 		return 0;
   }
-}
-
-/**
- * transform_coords
- *
- * @param transformString
- * @static
- * @memberof helper
- * @return {undefined}
- */
-function transform_coords(transformString) {
-	// Split on both space and comma because IE10 likes spaces?
-	var s = transformString.split(/\s|,/);
-	return [s[0].split("(")[1],s[1].split(")")[0]].map(parseFloat);
-}
-
-/**
- * Given a defaults object and a source object, copy the value from the source
- * if it contains the same key, otherwise return the default. Skip keys that
- * only exist in the source object.
- * @param {object} defaults - Default schema
- * @param {object} source - Source object to copy properties from
- * @returns {object} - Result has identical keys to defaults
- * @static
- * @memberof helper
-*/
-function merge_or_apply(defaults, source) {
-	var defaultKeys = keys(defaults);
-	var sourceKeys = keys(source);
-	return reduce(defaultKeys, function(result, key) {
-		if (sourceKeys.indexOf(key) > -1) {
-			result[key] = source[key];
-			return result;
-		} else {
-			result[key] = defaults[key];
-			return result;
-		}
-	}, {});
 }
 
 /**
@@ -230,65 +174,14 @@ function suggest_tick_num(domain) {
 }
 
 /**
- * Given a timezone offset in an hour:minute format and return the equivalent
- * number of minutes as a number
- * only exist in the source object.
- * @param {object} offset - A string in a hh:mm format or "Z" for no offset
- * @returns {number} - Number of minutes
- * @static
- * @memberof helper
-*/
-function tz_offset_to_minutes(offset) {
-	if (offset == "Z") {
-		return 0
-	}
-
-	var offset = offset.split(":")
-
-	if(offset.length == 1) {
-		offset = offset[0]
-		split_loc = offset.length - 2
-		offset = [offset.substring(0, split_loc), offset.substring(split_loc)]
-	}
-	sign = offset[0].indexOf("-") > -1 ? -1 : 1
-
-	offset = offset.map(parseFloat)
-
-	return (offset[0]*60) + (sign * offset[1])
-}
-
-function compute_text_width(text, font) {
-	// re-use canvas object for better performance
-	var canvas = compute_text_width.canvas || (compute_text_width.canvas = document.createElement("canvas"));
-	var context = canvas.getContext("2d");
-	context.font = font;
-	var metrics = context.measureText(text);
-	return (Math.round(metrics.width * 100) / 100);
-};
-
-function add_pref_suf(tickText, renderPrefSuf, prefix, suffix) {
-	if (renderPrefSuf) {
-		return [prefix, tickText, suffix].join("");
-	} else {
-		return tickText;
-	}
-}
-
-/**
  * Helper functions!
  * @name helper
  */
 var helper = {
 	exactTicks : exact_ticks,
-	combineMarginPadding: combine_margin_pading,
 	computeScaleDomain: compute_scale_domain,
 	precision: precision,
-	transformCoords: transform_coords,
-	mergeOrApply: merge_or_apply,
 	suggestTickNum: suggest_tick_num,
-	TZOffsetToMinutes: tz_offset_to_minutes,
-	computeTextWidth: compute_text_width,
-	addPrefSuf: add_pref_suf
 };
 
 module.exports = helper;
