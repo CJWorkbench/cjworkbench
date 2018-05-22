@@ -2,6 +2,8 @@ body {
   background-color: $SuperLightGray;
   font-size: 12px;
 }
+
+
 .cb-alert {
   margin: 0;
   -webkit-transition: background-color 0.1s linear;

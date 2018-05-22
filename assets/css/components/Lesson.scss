@@ -83,13 +83,12 @@ article.lesson {
           left:-2rem;
           margin-top: 2.5rem;
           width:28rem;
-          font-weight: 600;
         }
 
         .image{
           position: relative;
           left:-2rem;
-          margin:1rem 0;
+          margin:0.5rem 0 1rem 0;
           width: 28rem;
           background-color: $dark-accent--medium;
           padding: 1.5rem;
@@ -122,7 +121,7 @@ article.lesson {
 
   footer {
     background-color: $medium-blue;
-    border-top: 1px solid $dark-accent--soft;
+    border-top: 1px solid $dark-accent--medium;
     height: 100%;
     display: flex;
     justify-content: space-between;
