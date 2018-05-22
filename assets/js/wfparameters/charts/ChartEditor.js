@@ -58,18 +58,23 @@ export default class ChartEditor extends React.Component {
   loadChartProps() {
     const modelText = this.props.modelText
 
-    let model;
+    let model
     if (modelText !== "") {
       model = JSON.parse(modelText);
     } else {
       model = update(chartConfig.xy.defaultProps, {
         chartProps: {
-          chartSettings: { 0: { type: { $set: this.props.type } } },
           scale: { typeSettings: { maxLength: { $set: 7 } } },
         }
       })
     }
-    return model;
+
+    // <sarcasm>Not a hack at all</sarcasm>: we're using "xy" type for bar
+    // charts. Turn each series into a bar on that xy chart if it's a bar chart.
+    for (const series of model.chartProps.chartSettings) {
+      series.type = this.props.type
+    }
+    return model
   }
 
   // Go from input data + saved model text to a Chartbuilder model, handling data parser errors if any
