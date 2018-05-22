@@ -22,7 +22,7 @@ export default class LessonNav extends React.PureComponent {
       <footer className="lesson-nav">
         <button
           name="Previous"
-          className={`previous action-button button-white ${a < i ? 'lesson-highlight' : ''}`}
+          className={`previous action-button button-white ${(a !== null && a < i) ? 'lesson-highlight' : ''}`}
           disabled={i <= 0}
           onClick={this.onClickPrevious}
           >Previous</button>
@@ -33,7 +33,7 @@ export default class LessonNav extends React.PureComponent {
         </div>
         <button
           name="Next"
-          className={`next action-button button-white ${a > i ? 'lesson-highlight' : ''}`}
+          className={`next action-button button-white ${(a !== null && a > i) ? 'lesson-highlight' : ''}`}
           disabled={i + 1 >= n}
           onClick={this.onClickNext}
           >Next</button>
@@ -44,7 +44,7 @@ export default class LessonNav extends React.PureComponent {
 
 LessonNav.propTypes = {
   currentSectionIndex: PropTypes.number.isRequired, // what the user is reading
-  activeSectionIndex: PropTypes.number.isRequired,  // where the next incomplete step is
+  activeSectionIndex: PropTypes.number,  // where the next incomplete step is (null if done)
   nSections: PropTypes.number.isRequired,
   setCurrentSectionIndex: PropTypes.func.isRequired,
 }

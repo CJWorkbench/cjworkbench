@@ -163,7 +163,7 @@ textarea:focus, input:focus{
 }
 
 
-/*Style form controls */
+/*Style form controls for Chartbuilder*/
 
 .form-control-lg, .input-group-lg > .form-control, .input-group-lg > .input-group-addon, .input-group-lg > .input-group-btn > .btn{
   border-radius: 0px;
@@ -175,10 +175,12 @@ textarea:focus, input:focus{
   border-color: $brand-workspace;
 }
 
-.form-control{
+.form-control-lg.form-control{
   height:3.5rem!important;
-  border-radius: 0px;
-  border: 1px solid $Vlight-gray;
+  border: 2px solid $Vlight-gray;
+  border-radius: 3px;
+  background-color: $Vlight-gray;
+  height: 3.5rem;
 }
 
 select.form-control {

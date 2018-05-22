@@ -62,7 +62,7 @@
       </p>
     </li>
     <li
-      data-highlight='[]'
+      data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
       data-test="const params = workflow.wfModules[3].moduleName.parameters; return params.get('column') === 'MetroArea'"
     >Un-check 'Denver - Aurora', which contains incomplete data.
     </li>
@@ -73,7 +73,7 @@
   <p>The table is currently in a 'long' format, where each row is a unique observation. In order to make it more legible, we need to display it in the 'wide' format, used in most spreadshseets.</p>
   <ol class="steps">
     <li
-      data-highlight='[]'
+      data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules.length > 2 && workflow.wfModules[1].moduleName === 'Filter'"
       >Add the module ‘Reshape’, and select 'Long to wide'.
       <p>

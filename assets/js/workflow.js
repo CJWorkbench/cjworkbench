@@ -8,6 +8,7 @@ import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
 import ModuleStack from './ModuleStack'
 import CustomDragLayer from './CustomDragLayer'
+import { logUserEvent } from './utils'
 
 // ---- WorkflowMain ----
 
@@ -64,7 +65,7 @@ class Workflow extends React.Component {
 
     return (
         <div className={className}>
-          { this.props.lesson ? <Lesson {...this.props.lesson} /> : '' }
+          { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEvent} /> : '' }
 
           <ModuleLibrary
             addModule={(module_id, placeholder) => this.props.addModule(module_id, this.props.workflow.wf_modules.length, placeholder)}
