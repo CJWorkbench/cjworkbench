@@ -10,30 +10,28 @@ button:focus { outline:0 !important; }
 
 /*overriding React styles for contextual button*/
 
-.btn:focus, .btn.focus {
+.btn:focus {
   webkit-box-shadow:none;
   box-shadow: none;
 }
 
-a:focus, a:hover{
+
+//Button when clicked only
+.btn-secondary:not(:disabled):not(.disabled).active:focus,
+.show > .btn-secondary.dropdown-toggle:focus {
+  box-shadow: none;
+  background-color:$Vlight-gray;
   color:$strong-gray;
+  opacity: 1;
 }
 
-.btn-secondary:focus, .btn-secondary.focus {
-  box-shadow: 0 0 0 transparent;
+// BUTTON IN FOCUS, After click
+.btn-secondary:focus {
+  background-color:$Vlight-gray;
+  color:$strong-gray;
+  opacity: 1;
+  border:0px;
 }
-
-.btn-secondary.active{
-  background-color: $light-accent--Vstrong;
-  color:transparent;
-}
-
-.show > .btn-secondary.dropdown-toggle {
-  color:$white;
-  background-color: $light-accent--strong;
-  border-color: transparent;
-}
-
 
 .context-button {
   cursor: pointer;
@@ -51,7 +49,6 @@ a:focus, a:hover{
   font-size: 1.4rem;
   &:hover {
     border: none;
-    background-color: transparent;
     color:$strong-gray;
     opacity: 1;
   }
@@ -65,15 +62,6 @@ a:focus, a:hover{
   opacity:1;
 }
 
-.wf-card {
-  .btn-secondary:not(:disabled):not(.disabled):active,
-  .btn-secondary:not(:disabled):not(.disabled).active,
-  .show > .btn-secondary.dropdown-toggle {
-    background-color: $Vlight-gray;
-    box-shadow: none;
-    color:$strong-gray
-  }
-}
 
 .navbar {
 
@@ -97,9 +85,17 @@ a:focus, a:hover{
     opacity: 1;
     color:$white;
   }
+
+  .btn-secondary:focus{
+    background-color: $light-accent--strong;
+  }
 }
 
-
+.wf-card {
+  .context-button:hover{
+    background-color: $dark-accent--soft;
+  }
+}
 
 
 //* - Action button - */

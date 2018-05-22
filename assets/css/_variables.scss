@@ -10,6 +10,8 @@ $modal-color:#F5F7F8;
 
 // Secondary Colors (づ ￣ ³￣)づ
 
+$soft: pink;
+
 $dark-blue: #577485;
 $medium-blue: #719BB0;
 $error-prompt: rgba(232,114,110,0.6);
@@ -29,6 +31,7 @@ $link-hover-success:#2D9DAA;
 // Accent: transparent light or dark color use on top of backgrounds
 
 $dark-accent--soft: rgba(0,0,0,.05);
+$dark-accent--soft-M:rgba(0,0,0,.075);
 $dark-accent--medium: rgba(0,0,0,.1);
 
 $light-accent--soft: rgba(255,255,255,.05);
