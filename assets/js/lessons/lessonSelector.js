@@ -16,6 +16,7 @@ function isStepDone(sectionTitle, stepIndex, stateWithHelpers, step) {
     return fn(stateWithHelpers, stateWithHelpers.workflow)
   } catch (e) {
     console.error(e)
+    console.error('The previous error is a bug in this function, called with these arguments:', fn, stateWithHelpers, stateWithHelpers.workflow)
     return false
   }
 }
