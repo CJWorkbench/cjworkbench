@@ -7,7 +7,6 @@ import pandas as pd
 import datetime
 import aiohttp
 import asyncio
-import async_timeout
 import re
 
 
@@ -38,11 +37,20 @@ def is_valid_url(url):
         return False
 
 async def async_get_url(url):
-    with async_timeout.timeout(settings.SCRAPER_TIMEOUT):
-        session = aiohttp.ClientSession()
-        response = await session.get(url)   # returns when we have the HTTP header
-        text = await response.text()        # so wait until we have the content
-        return {'status': response.status, 'text': text}
+    """Returns a Future { 'status': ..., 'text': ... } dict.
+
+    The Future will resolve within settings.SCRAPER_TIMEOUT seconds: either
+    to a dict, an asyncio.TimeoutError, or an
+    aiohttp.client_exceptions.ClientError. (The most obvious ClientError is
+    ClientConnectionError, but there are others.)
+    """
+    session = aiohttp.ClientSession()
+    response = await session.get(url, timeout=settings.SCRAPER_TIMEOUT)
+    # We have the header. Now read the content.
+    # response.text() times out according to SCRAPER_TIMEOUT above. See
+    # https://docs.aiohttp.org/en/stable/client_quickstart.html#timeouts
+    text = await response.text()
+    return {'status': response.status, 'text': text}
 
 # Parses the HTTP response object and stores it as a row in our table
 def add_result_to_table(table, i, response):
