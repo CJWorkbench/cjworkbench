@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce'
 import { OutputIframeCtrl } from '../../OutputIframe'
 import update from 'immutability-helper'
 
-import chartConfig from './chartbuilder/charts/chart-type-configs'
+import ChartConfig from './chartbuilder/charts/cb-xy/xy-config'
 import validateDataInput from './chartbuilder/util/validate-data-input'
 import Errors from './errors'
 
@@ -58,18 +58,23 @@ export default class ChartEditor extends React.Component {
   loadChartProps() {
     const modelText = this.props.modelText
 
-    let model;
+    let model
     if (modelText !== "") {
       model = JSON.parse(modelText);
     } else {
-      model = update(chartConfig.xy.defaultProps, {
+      model = update(ChartConfig.defaultProps, {
         chartProps: {
-          chartSettings: { 0: { type: { $set: this.props.type } } },
           scale: { typeSettings: { maxLength: { $set: 7 } } },
         }
       })
     }
-    return model;
+
+    // <sarcasm>Not a hack at all</sarcasm>: we're using "xy" type for bar
+    // charts. Turn each series into a bar on that xy chart if it's a bar chart.
+    for (const series of model.chartProps.chartSettings) {
+      series.type = this.props.type
+    }
+    return model
   }
 
   // Go from input data + saved model text to a Chartbuilder model, handling data parser errors if any
@@ -80,10 +85,7 @@ export default class ChartEditor extends React.Component {
     // bypass ChartBuilder's flux et al: just use the lower-level stuff
 
     // this is from ChartBuilder's ChartPropertiesStore.js:
-    const chartType = model.metadata.chartType
-    const config = chartConfig[chartType]
-    const parser = config.parser
-    model.chartProps = parser(config, model.chartProps)
+    model.chartProps = ChartConfig.parser(ChartConfig, model.chartProps)
 
     const errorCodes = validateDataInput(model.chartProps)
     const errors = errorCodes.map(ec => Errors[ec])

@@ -4,13 +4,8 @@
 var d3Dsv = require("d3-dsv");
 var each = require("lodash/each");
 var parseUtils = require("./parse-utils");
-var help = require("./helper.js");
-var assign = require("lodash/assign");
-var defaults = require("lodash/defaults");
 var unique = require("lodash/uniq");
-var separators;
-
-separators = {
+var separators = {
   decimal: ".",
   thousands: ","
 };
@@ -23,24 +18,22 @@ var stripChars = [
 ];
 
 var newLineRegex = /\r\n|\r|\n/;
-var parseErrors = [];
 
 function parseDelimInput(input, opts) {
 	var hasDate = null;
 	var isNumeric = null;
 
 	opts = opts || {};
-	var _defaultOpts = defaults(opts, {
+	var _defaultOpts = Object.assign({
 		delimiter: parseUtils.detectDelimiter(input),
 		type: opts.type,
 		inputTZ: "Z"
-	});
+	}, opts);
 
 	if (opts.checkForDate === false) {
 		_defaultOpts.type = "ordinal";
 	}
 
-	parseErrors = [];
 	// create regex of special characters we want to strip out as well as our
 	// computed locale-specific thousands separator.
 	var _stripCharsStr = stripChars.concat([separators.thousands]).reduce(function(a, b) {
@@ -68,7 +61,7 @@ function parseDelimInput(input, opts) {
 			// if the entries are certain four digit numbers that look like years reparse as years if there isn't a specified type
 			var entry_extent = d3Array.extent(all_entry_values);
 			if(entry_extent[0] > 1500 && entry_extent[1] < 3000) {
-				var _forceDate = assign(_defaultOpts, { type: "date" });
+				var _forceDate = Object.assign(_defaultOpts, { type: "date" });
 				data = cast_data(input, columnNames, stripCharsRegex, _forceDate).data;
 				isNumeric = false;
 				hasDate = true;
@@ -95,19 +88,11 @@ function cast_data(input, columnNames, stripCharsRegex, opts) {
 
 	var data = dsv.parse(input, function(d,ii) {
 		var curOffset = (new Date()).getTimezoneOffset();
-		var offset = opts.inputTZ !== null ? -help.TZOffsetToMinutes(opts.inputTZ) : curOffset;
 		each(columnNames, function(column, i) {
 			if (i === 0) {
 				//first column
 
 				var parsed = parseKeyColumn(d[column], opts.type);
-
-				if(parsed.type == "date") {
-					//apply a timezone to the data
-					if(!found_timezones) {
-					  parsed.val = new Date(parsed.val + (offset - curOffset) * 60 * 1000)
-					}
-				}
 
 				all_index_types.push(parsed.type);
 				all_entry_values.push(parsed.val);
@@ -121,18 +106,6 @@ function cast_data(input, columnNames, stripCharsRegex, opts) {
 		});
 		return d;
 	});
-
-	var index_types = unique(all_index_types);
-
-	/* Dead code, hasDate/isNumeric never used, and strict mode complains about assignment to undefined
-	if(index_types.length !== 1 && !opts.type) {
-
-	}
-	else {
-		hasDate = opts.type ? opts.type == "date" : index_types[0] === "date";
-		isNumeric = opts.type ? opts.type == "numeric" : index_types[0] === "number";
-	}
-	*/
 
 	return {
 		data: data,
@@ -164,21 +137,11 @@ function parseKeyColumn(entry, type) {
 	var num = Number(entry);
 	if ((num && !type) || type == "numeric") {
 		return {type: "number", val: num};
-	}
-	else {
-		// Let dates remain text
-		/*var date = new Date.create(entry);
-		if((!isNaN(date) && !type) || type == "date") {
-			return {type: "date", val: date};
-		}*/
-
+	} else {
 		return {type: "string", val: entry};
 	}
 }
 
 module.exports = {
 	parser: parseDelimInput,
-	_cast_data: cast_data,
-	_parseKeyColumn: parseKeyColumn,
-	_parseValue: parseValue
 };
