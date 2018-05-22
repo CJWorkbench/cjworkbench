@@ -65,8 +65,8 @@
       >Add the module ‘Filter’ by dragging it between the two already there.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
-      data-test="const p = workflow.wfModules[1].parameters; return p.get('column') === 'Sum of affordable_units' && p.get('condition') === 10 && p.get('value') === '200' && p.get('keep') === 0"
-      >Select the column ‘Sum of affordable_units’, choose the condition ‘Greater than’ and keep all rows having more than 200 affordable units.</li>
+      data-test="const p = workflow.wfModules[1].parameters; return p.get('column') === 'affordable_units' && p.get('condition') === 10 && p.get('value') === '200' && p.get('keep') === 0"
+      >Select the column ‘affordable_units’, choose the condition ‘Greater than’ and keep all rows having more than 200 affordable units.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="return state.selectedWfModule.moduleName === 'Column Chart'"
