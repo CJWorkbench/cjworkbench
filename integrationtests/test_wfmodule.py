@@ -8,64 +8,64 @@ class TestWfModule(LoggedInIntegrationTest):
         super().setUp()
 
         b = self.browser
-        b.click_button('New') # navigate to a workflow page
+        b.click_button('Create Workflow') # navigate to a workflow page
 
         # wait for page load
-        b.assert_element('input[name="title"]', text='New Workflow', wait=True)
+        b.assert_element('input[name="name"][value="New Workflow"]', wait=True)
+
+
+    def _add_csv_data(self):
+        csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
+
+        self.browser.click_whatever('div[data-module-name="Paste data"]')
+        # wait for wfmodule to appear
+        self.browser.fill_in('csv', csv, wait=True)
+        # blur, to begin saving result to server
+        self.browser.click_whatever('ul.WF-meta span', text='by')
 
 
     def test_paste_csv_workflow(self):
-        csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
+        self._add_csv_data()
 
         b = self.browser
 
-        b.click_link('Paste data')
-        # wait for wfmodule to appear
-        b.fill_in('textarea[name=csv]', csv, wait=True)
-
-        b.click_whatever('.outputpane-header')
-
-        b.assert_element('
-
-        self.assertTrue(b.is_element_present_by_text('Has header row'))
+        b.assert_element('label', text='Has header row')
 
         # output table with correct values
-        self.assertTrue(b.is_element_present_by_text('Jan'))
-        self.assertTrue(b.is_element_present_by_text('Feb'))
-        self.assertTrue(b.is_element_present_by_text('Alicia Aliciason'))
-        self.assertTrue(b.is_element_present_by_text('Fred Frederson'))
+        # Wait for the table to load
+        b.assert_element('.react-grid-HeaderCell', text='Month', wait=True)
+        b.assert_element('.react-grid-Cell', text='Jan')
+        b.assert_element('.react-grid-Cell', text='Feb')
+        b.assert_element('.react-grid-HeaderCell', text='Name')
+        b.assert_element('.react-grid-Cell', text='Alicia Aliciason')
+        b.assert_element('.react-grid-Cell', text='Fred Frederson')
+
 
     def test_module_buttons_exist(self):
         b = self.browser
 
-        header = b.find_by_css('.module-card-header')
-        header.first.mouse_over()
+        b.click_whatever('div[data-module-name="Paste data"]')
 
-        self.assertTrue(b.is_element_present_by_css('.icon-help'))
-        self.assertTrue(b.is_element_present_by_css('.icon-sort-up'))  # should be uncollapsed, else .icon-collapse-o
-        self.assertTrue(b.is_element_present_by_css('.icon-note'))
-        self.assertTrue(b.is_element_present_by_css('.context-button'))
+        # Wait for wfmodule to appear
+        b.hover_over_element('.module-card-header', wait=True)
 
-    def test_context_menu_and_export_dialog(self):
+        b.assert_element('.icon-sort-up') # should be uncollapsed, else .icon-collapse-o
+        b.assert_element('.icon-help')
+        b.assert_element('.icon-note')
+        b.assert_element('button[title=more]')
+
+
+    def text_export(self):
+        self._add_csv_data()
+
         b = self.browser
-        header = b.find_by_css('.module-card-header')
-        header.find_by_css('.context-buttons--container').first.mouse_over()
-        header.find_by_css('.context-button--icon').click()
+        b.hover_over_element('.module-card-header', wait=True)
+        b.click_button('more')
+        b.click_button('Export')
 
-        # check for correct items
-        self.assertTrue(header.find_by_css('.dropdown-item').first.visible)
-        self.assertEqual(len(header.find_by_css('.dropdown-item')), 2)
-        self.assertTrue(header.find_by_text('Export'))
-        self.assertTrue(header.find_by_text('Delete'))
-
-        # open, then close the export dialog
-        header.find_by_text('Export').first.click()
-        self.assertTrue(b.is_element_present_by_text('EXPORT DATA'))
-        self.assertTrue(b.find_link_by_partial_href('/public/moduledata/live/' + str(self.wfm.id) + '.csv')) # b not header as modal is a portal component
-        self.assertTrue(b.find_link_by_partial_href('/public/moduledata/live/' + str(self.wfm.id) + '.json'))
-
-        b.find_by_text('Done').first.click()
-        self.assertFalse(b.is_element_present_by_text('Export Data'))
+        b.assert_element('a[download][href$=csv]')
+        b.assert_element('a[download][href$=json]')
+        # TODO actually test the export.
 
 
     # Delete module test fails because it depends on websockets, and manage.py does not run channels server

@@ -49,6 +49,7 @@ export default class EditableWorkflowName extends React.Component {
                 ? ( <span className='editable-title--field'>{this.props.value}</span> )
                 : (
                     <input type="text"
+                      name="name"
                       value={this.state.value}
                       onChange={this.handleChange}
                       onBlur={this.saveName}

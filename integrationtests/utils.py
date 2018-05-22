@@ -1,6 +1,6 @@
 # Utilities for integration tests
 
-from django.contrib.staticfiles.testing import StaticLiveServerTestCase
+from channels.testing import ChannelsLiveServerTestCase
 from django.contrib.sites.models import Site
 from server.initmodules import init_modules
 
@@ -8,7 +8,9 @@ from server.initmodules import init_modules
 from integrationtests.browser import Browser
 from integrationtests.helpers import accounts
 
-class WorkbenchBase(StaticLiveServerTestCase):
+class WorkbenchBase(ChannelsLiveServerTestCase):
+    serve_static = True
+
     def setUp(self):
         super().setUp()
 
@@ -32,7 +34,7 @@ class WorkbenchBase(StaticLiveServerTestCase):
         self.account_admin = accounts.AccountAdmin()
 
     def tearDown(self):
-        pass # browser exits automatically
+        self.browser.quit()
 
 # Derive from this to perform all tests logged in
 class LoggedInIntegrationTest(WorkbenchBase):

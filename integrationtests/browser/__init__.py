@@ -87,7 +87,7 @@ class Browser:
         self.page.click_button(locator, **kwargs)
 
 
-    def click_link(self, locator: str) -> None:
+    def click_link(self, locator: str, **kwargs) -> None:
         """Clicks the <a> with id/text/title 'locator'.
 
         Keyword arguments:
@@ -103,8 +103,28 @@ class Browser:
         Raises unless 1 element matches the selector.
 
         Calling this method usually means the site has an accessibility
-        problem. Prever click_link() and click_button(): the user should be
+        problem. Prefer click_link() and click_button(): the user should be
         clicking on links and buttons to make things happen.
+        
+        See 'assert_element()' for syntax.
+
+        Keyword arguments:
+        wait -- seconds to poll (default 0)
+        text -- text the element must contain
+        """
+        self._capybarize_kwargs(kwargs)
+        # There's a race here between find() and click(). If we get an error
+        # about "missing element", write the exception handler we need.
+        self.page.find(*selector, **kwargs).click()
+
+
+    def hover_over_element(self, *selector, **kwargs) -> None:
+        """Clicks the selected element.
+
+        Raises unless 1 element matches the selector.
+
+        Calling this method usually means the site has an accessibility
+        problem. Not all users can hover.
         
         See 'assert_element()' for syntax.
 
@@ -176,3 +196,9 @@ class Browser:
         """
         with self.page.scope(selector):
             yield
+
+
+    def quit(self) -> None:
+        """Destroys the browser and everything it created.
+        """
+        self.page.driver.browser.quit() # hack Capybara's internals

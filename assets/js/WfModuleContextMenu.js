@@ -171,8 +171,8 @@ export default class WfModuleContextMenu extends React.Component {
 
     return (
        <UncontrolledDropdown onClick={this.props.stopProp}>
-        <DropdownToggle className='context-button'>
-          <div className='context-button--icon icon-more'></div>
+        <DropdownToggle title="more" className='context-button'>
+          <i className='context-button--icon icon-more'></i>
         </DropdownToggle>
         <DropdownMenu right>
           {/* Opens Modal window for downloading files */}
