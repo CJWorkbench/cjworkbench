@@ -4,7 +4,6 @@
 
 from polymorphic.models import PolymorphicModel
 from server.models.Workflow import *
-from server.triggerrender import trigger_render
 from django.db import transaction
 import django.utils
 
@@ -59,21 +58,6 @@ class Delta(PolymorphicModel):
         else:
             # we're already in the linked list, just save
             super(Delta, self).save(*args, **kwargs)
-
-        # workflow version bumped, re-render
-        if self.triggers_rerender():
-            trigger_render(self.workflow, self.rerender_from())
-
-
-    # should this command, when applied, cause a re-render? Most commands do,
-    # but some do not (e.g. change module update settings)
-    def triggers_rerender(self):
-        return True
-
-    # Does this command apply to a particular module? Defining this in child classes
-    # prevents previous modules from being re-rendered. None = re-render all
-    def rerender_from(self):
-        return None
 
     def __str__(self):
         return str(self.datetime) + " " + self.command_description

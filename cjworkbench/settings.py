@@ -197,11 +197,11 @@ REST_FRAMEWORK = {
 }
 
 WSGI_APPLICATION = 'cjworkbench.wsgi.application'
+ASGI_APPLICATION = 'cjworkbench.asgi.application'
 
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'asgiref.inmemory.ChannelLayer',
-        'ROUTING': 'cjworkbench.routing.channel_routing',
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
     },
 }
 

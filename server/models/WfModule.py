@@ -3,6 +3,7 @@
 
 from django.db import models
 import pandas as pd
+from server import websockets
 from server.models.Module import *
 from server.models.ModuleVersion import *
 from server.models.ParameterVal import *
@@ -11,14 +12,6 @@ from server.models.StoredObject import StoredObject
 from django.core.files.storage import default_storage
 from django.db.models.signals import post_save
 from django.dispatch import receiver
-
-# Completely ridiculous work to resolve circular imports: websockets -> Workflow -> WfModule which needs websockets
-# So we create an object with callbacks, which we then set in websockets.py
-class WsCallbacks:
-    ws_client_wf_module_status = None
-    ws_client_rerender_workflow = None
-
-ws_callbacks = WsCallbacks()
 
 # Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
 def current_iso_datetime_ms():
@@ -230,7 +223,7 @@ class WfModule(models.Model):
         self.status = self.BUSY
         self.error_msg = ''
         if notify:
-            ws_callbacks.ws_client_wf_module_status(self, self.status)
+            websockets.ws_client_wf_module_status(self, self.status)
         self.save()
 
     # re-render entire workflow when a module goes ready or error, on the assumption that new output data is available
@@ -238,7 +231,7 @@ class WfModule(models.Model):
         self.status = self.READY
         self.error_msg = ''
         if notify:
-            ws_callbacks.ws_client_rerender_workflow(self.workflow)
+            websockets.ws_client_rerender_workflow(self.workflow)
         self.save()
 
     def set_error(self, message, notify=True):
@@ -246,13 +239,13 @@ class WfModule(models.Model):
         self.status = self.ERROR
         self.save()
         if notify:
-            ws_callbacks.ws_client_rerender_workflow(self.workflow)
+            websockets.ws_client_rerender_workflow(self.workflow)
 
     def set_is_collapsed(self, collapsed, notify=True):
         self.is_collapsed = collapsed
         self.save()
         if notify:
-            ws_callbacks.ws_client_rerender_workflow(self.workflow)
+            websockets.ws_client_rerender_workflow(self.workflow)
 
     # --- Duplicate ---
     # used when duplicating a whole workflow

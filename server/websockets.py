@@ -1,57 +1,85 @@
 # Receive and send websockets messages.
 # Clients open a socket on a specific workflow, and all clients viewing that workflow are a "group"
 import json
-from channels import Group
-from server.models import Workflow
-from server.models.WfModule import ws_callbacks
+from asgiref.sync import async_to_sync
+from channels.layers import get_channel_layer
+from channels.generic.websocket import JsonWebsocketConsumer
+from channels.exceptions import DenyConnection
+from typing import Dict, Any
 
-# Clients connect to channels at ws://server/workflows/[id]
-# This extracts the id. Throws ValueError if id is not an int
-def ws_url_to_id(url):
-    id = url.rstrip('/').split('/')[-1]
-    return int(id)
+def _workflow_channel_name(workflow_id: int) -> str:
+    """Given a workflow ID, returns a channel_layer channel name.
 
-# Convert workflow id to channel group name
-def ws_id_to_group(id):
-    return "workflow-"+str(id)
+    Messages sent to this channel name will be sent to all clients connected to
+    this workflow.
+    """
+    return f"workflow-{str(workflow_id)}"
 
-# Client connects to URL to start monitoring for changes
-def ws_add(message):
-    id =  ws_url_to_id(message.content['path'])
-    try:
-        workflow = Workflow.objects.get(pk=id)
-    except Workflow.DoesNotExist:
-        message.reply_channel.send({'accept': False})       # can't find that workflow, don't connect
+class WorkflowConsumer(JsonWebsocketConsumer):
+    @property
+    def workflow_id(self):
+        return int(self.scope['url_route']['kwargs']['workflow_id'])
+
+    @property
+    def workflow_channel_name(self):
+        return _workflow_channel_name(self.workflow_id)
+
+    @property
+    def workflow(self):
+        """The current user's Workflow, if exists and authorized; else None
+        """
+        from server.models import Workflow
+
+        try:
+            ret = Workflow.objects.get(pk=self.workflow_id)
+        except Workflow.DoesNotExist:
+            return None
+
+        if not ret.user_authorized_read(self.scope['user']):
+            # failed auth. Don't leak any info: behave exactly as we would if
+            # the workflow didn't exist
+            return None
+
+        return ret
+
+    def connect(self):
+        if self.workflow is None: raise DenyConnection()
+
+        async_to_sync(self.channel_layer.group_add)(self.workflow_channel_name,
+                                                    self.channel_name)
+        self.accept()
+
+    def disconnect(self):
+        async_to_sync(self.channel_layer.group_discard)(self.workflow_channel_name,
+                                                        self.channel_name)
+
+    def send_data_to_workflow_client(self, message):
+        self.send_json(message['data'])
+
+def _workflow_group_send(workflow_id: int, message_dict: Dict[str,Any]) -> None:
+    """Sends message_dict as JSON to all clients connected to the workflow.
+    """
+    channel_name = _workflow_channel_name(workflow_id)
+    channel_layer = get_channel_layer()
+    group_send = async_to_sync(channel_layer.group_send)
+    group_send(channel_name, {
+        'type': 'send_data_to_workflow_client',
+        'data': message_dict,
+    })
+
+def ws_client_rerender_workflow(workflow) -> None:
+    """Tells clients of the workflow to re-request it and update themselves.
+    """
+    message = { 'type': 'reload-workflow'}
+    _workflow_group_send(workflow.id, message)
+
+def ws_client_wf_module_status(wf_module, status):
+    """Tells clients of the wf_module's workflow to reload the wf_module.
+    """
+    workflow = wf_module.workflow
+    if workflow is None:
+        # [adamhooper, 2018-05-22] when does this happen?
         return
 
-    Group(ws_id_to_group(id)).add(message.reply_channel)
-    message.reply_channel.send({'accept': True})
-
-
-# Remove from workflow->channel dict when client disconnects
-def ws_disconnect(message):
-    id =  ws_url_to_id(message.content['path'])
-    Group(ws_id_to_group(id)).discard(message.reply_channel)
-
-
-# Send a message to all clients listening to a workflow
-def ws_send_workflow_update(workflow, message_dict):
-    # print("Sending message to " + str(workflow.id) + ": " + str(message_dict))
-    Group(ws_id_to_group(workflow.id)).send({'text' : json.dumps(message_dict)}, immediately=True)
-
-# Tell clients to reload entire workflow
-def ws_client_rerender_workflow(workflow):
-    message = { 'type': 'reload-workflow'}
-    ws_send_workflow_update(workflow, message)
-
-# Tell clients to reload specific wfmodule
-def ws_client_wf_module_status(wf_module, status):
-    workflow = wf_module.workflow
-    if workflow is not None:
-        message = { 'type' : 'wfmodule-status', 'id' : wf_module.id, 'status' : status}
-        ws_send_workflow_update(workflow, message)
-
-# Completely ridiculous work to resolve circular imports: websockets -> Workflow -> WfModule which needs websockets
-# So we create an object with callbacks in WfModule, which we then fill out here
-ws_callbacks.ws_client_rerender_workflow = ws_client_rerender_workflow
-ws_callbacks.ws_client_wf_module_status = ws_client_wf_module_status
+    message = { 'type' : 'wfmodule-status', 'id' : wf_module.id, 'status' : status}
+    _workflow_group_send(workflow.id, message)

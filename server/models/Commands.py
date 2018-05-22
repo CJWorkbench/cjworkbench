@@ -226,9 +226,6 @@ class ChangeDataVersionCommand(Delta):
     def backward(self):
         self.wf_module.set_fetched_data_version(self.old_version)
 
-    def rerender_from(self):
-        return self.wf_module
-
     @staticmethod
     def create(wf_module, version):
         description = \
@@ -257,10 +254,6 @@ class ChangeParameterCommand(Delta):
 
     def backward(self):
         self.parameter_val.set_value(self.old_value)
-
-    def rerender_from(self):
-        if self.parameter_val is None: return None
-        return self.parameter_val.wf_module
 
     @staticmethod
     def create(parameter_val, value):
@@ -312,9 +305,6 @@ class ChangeWorkflowTitleCommand(Delta):
         self.workflow.name = self.old_value
         self.workflow.save()
 
-    def triggers_rerender(self):
-        return False
-
     @staticmethod
     def create(workflow, name):
         old_name = workflow.name
@@ -344,9 +334,6 @@ class ChangeWfModuleNotesCommand(Delta):
     def backward(self):
         self.wf_module.notes = self.old_value
         self.wf_module.save()
-
-    def triggers_rerender(self):
-        return False
 
     @staticmethod
     def create(wf_module, notes):
@@ -386,9 +373,6 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
         self.wf_module.next_update = self.old_next_update
         self.wf_module.update_interval = self.old_update_interval
         self.wf_module.save()
-
-    def triggers_rerender(self):
-        return False
 
     @staticmethod
     def create(wf_module, auto_update_data, next_update, update_interval):
