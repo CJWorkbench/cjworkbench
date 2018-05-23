@@ -5,7 +5,7 @@ class TestLessons(LoggedInIntegrationTest):
         b = self.browser
         b.visit(self.live_server_url + '/lessons/')
         import time; time.sleep(5)
-        self.assertTrue(b.is_text_present('Load public data and make a chart'))
+        self.assertTrue(b.is_text_present('I. Load public data and make a chart'))
 
     def test_lesson_detail(self):
         b = self.browser
