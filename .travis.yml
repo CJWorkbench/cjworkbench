@@ -1,8 +1,11 @@
 language: python
+sudo: required
 python:
-- '3.6.2'
+- '3.6.5'
 node_js:
-- '7.7'
+- '10.1.0'
+services:
+- docker
 addons:
   firefox: latest
 
@@ -18,17 +21,18 @@ install:
 - nvm use stable
 - npm install
 - ./node_modules/.bin/webpack --config webpack.config.js
+- docker build .
 
 # Geckodriver needed  for integration tests
-- wget https://github.com/mozilla/geckodriver/releases/download/v0.19.1/geckodriver-v0.19.1-linux64.tar.gz
+- wget https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
 - mkdir geckodriver
-- tar -xzf geckodriver-v0.19.1-linux64.tar.gz -C geckodriver
+- tar -xzf geckodriver-v0.20.1-linux64.tar.gz -C geckodriver
 - export PATH=$PATH:$PWD/geckodriver
 
 script:
 - pipenv run ./manage.py test
 - npm test
-- pipenv run ./manage.py test integrationtests
+- bin/integration-test
 
 notifications:
   slack:
