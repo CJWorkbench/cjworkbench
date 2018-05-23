@@ -227,6 +227,7 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
             aria-haspopup={true}
             className="context-button"
             color="secondary"
+            title="more"
           >
             <Target
               aria-expanded={false}
@@ -235,6 +236,7 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
               color="secondary"
               component={[Function]}
               onClick={[Function]}
+              title="more"
             >
               <Button
                 aria-expanded={false}
@@ -244,15 +246,17 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                 innerRef={[Function]}
                 onClick={[Function]}
                 tag="button"
+                title="more"
               >
                 <button
                   aria-expanded={false}
                   aria-haspopup={true}
                   className="context-button btn btn-secondary"
                   onClick={[Function]}
+                  title="more"
                   type="button"
                 >
-                  <div
+                  <i
                     className="context-button--icon icon-more"
                   />
                 </button>

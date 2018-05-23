@@ -49,6 +49,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
           >
             <input
               className="editable-title--field"
+              name="name"
               onBlur={[Function]}
               onChange={[Function]}
               onKeyPress={[Function]}
@@ -125,18 +126,18 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
       <div
         className="d-flex flex-row align-items-center"
       >
-        <div
+        <button
           className="button-white--fill action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
-        </div>
-        <div
+        </button>
+        <button
           className="button-white action-button test-share-button"
           onClick={[Function]}
         >
           Share
-        </div>
+        </button>
         <WfHamburgerMenu
           api={
             Object {
@@ -176,6 +177,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                     aria-haspopup={true}
                     className="context-button"
                     color="secondary"
+                    title="menu"
                   >
                     <Target
                       aria-expanded={false}
@@ -184,6 +186,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                       color="secondary"
                       component={[Function]}
                       onClick={[Function]}
+                      title="menu"
                     >
                       <Button
                         aria-expanded={false}
@@ -193,15 +196,17 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                         innerRef={[Function]}
                         onClick={[Function]}
                         tag="button"
+                        title="menu"
                       >
                         <button
                           aria-expanded={false}
                           aria-haspopup={true}
                           className="context-button btn btn-secondary"
                           onClick={[Function]}
+                          title="menu"
                           type="button"
                         >
-                          <div
+                          <i
                             className="context-button--icon icon-more"
                           />
                         </button>
@@ -610,6 +615,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
           >
             <input
               className="editable-title--field"
+              name="name"
               onBlur={[Function]}
               onChange={[Function]}
               onKeyPress={[Function]}
@@ -686,18 +692,18 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
       <div
         className="d-flex flex-row align-items-center"
       >
-        <div
+        <button
           className="button-white--fill action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
-        </div>
-        <div
+        </button>
+        <button
           className="button-white action-button test-share-button"
           onClick={[Function]}
         >
           Share
-        </div>
+        </button>
         <WfHamburgerMenu
           api={
             Object {
@@ -737,6 +743,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
                     aria-haspopup={true}
                     className="context-button"
                     color="secondary"
+                    title="menu"
                   >
                     <Target
                       aria-expanded={false}
@@ -745,6 +752,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
                       color="secondary"
                       component={[Function]}
                       onClick={[Function]}
+                      title="menu"
                     >
                       <Button
                         aria-expanded={false}
@@ -754,15 +762,17 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
                         innerRef={[Function]}
                         onClick={[Function]}
                         tag="button"
+                        title="menu"
                       >
                         <button
                           aria-expanded={false}
                           aria-haspopup={true}
                           className="context-button btn btn-secondary"
                           onClick={[Function]}
+                          title="menu"
                           type="button"
                         >
-                          <div
+                          <i
                             className="context-button--icon icon-more"
                           />
                         </button>
@@ -1087,6 +1097,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
           >
             <input
               className="editable-title--field"
+              name="name"
               onBlur={[Function]}
               onChange={[Function]}
               onKeyPress={[Function]}
@@ -1163,18 +1174,18 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
       <div
         className="d-flex flex-row align-items-center"
       >
-        <div
+        <button
           className="button-white--fill action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
-        </div>
-        <div
+        </button>
+        <button
           className="button-white action-button test-share-button"
           onClick={[Function]}
         >
           Share
-        </div>
+        </button>
         <a
           className="nav--link t-white content-2"
           href="http://app.workbenchdata.com/account/login"
@@ -1236,6 +1247,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
           >
             <input
               className="editable-title--field"
+              name="name"
               onBlur={[Function]}
               onChange={[Function]}
               onKeyPress={[Function]}
@@ -1312,18 +1324,18 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
       <div
         className="d-flex flex-row align-items-center"
       >
-        <div
+        <button
           className="button-white--fill action-button test-duplicate-button"
           onClick={[Function]}
         >
           Duplicate
-        </div>
-        <div
+        </button>
+        <button
           className="button-white action-button test-share-button"
           onClick={[Function]}
         >
           Share
-        </div>
+        </button>
         <WfHamburgerMenu
           api={
             Object {
@@ -1363,6 +1375,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                     aria-haspopup={true}
                     className="context-button"
                     color="secondary"
+                    title="menu"
                   >
                     <Target
                       aria-expanded={false}
@@ -1371,6 +1384,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                       color="secondary"
                       component={[Function]}
                       onClick={[Function]}
+                      title="menu"
                     >
                       <Button
                         aria-expanded={false}
@@ -1380,15 +1394,17 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                         innerRef={[Function]}
                         onClick={[Function]}
                         tag="button"
+                        title="menu"
                       >
                         <button
                           aria-expanded={false}
                           aria-haspopup={true}
                           className="context-button btn btn-secondary"
                           onClick={[Function]}
+                          title="menu"
                           type="button"
                         >
-                          <div
+                          <i
                             className="context-button--icon icon-more"
                           />
                         </button>

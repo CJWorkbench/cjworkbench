@@ -35,6 +35,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
             aria-haspopup={true}
             className="context-button"
             color="secondary"
+            title="menu"
           >
             <Target
               aria-expanded={false}
@@ -43,6 +44,7 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
               color="secondary"
               component={[Function]}
               onClick={[Function]}
+              title="menu"
             >
               <Button
                 aria-expanded={false}
@@ -52,15 +54,17 @@ exports[`WfHamburgerMenu renders logged in, non-read only 1`] = `
                 innerRef={[Function]}
                 onClick={[Function]}
                 tag="button"
+                title="menu"
               >
                 <button
                   aria-expanded={false}
                   aria-haspopup={true}
                   className="context-button btn btn-secondary"
                   onClick={[Function]}
+                  title="menu"
                   type="button"
                 >
-                  <div
+                  <i
                     className="context-button--icon icon-more"
                   />
                 </button>

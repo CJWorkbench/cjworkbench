@@ -87,6 +87,7 @@ exports[`Workflow list page renders correctly 1`] = `
                       aria-haspopup={true}
                       className="context-button"
                       color="secondary"
+                      title="menu"
                     >
                       <Target
                         aria-expanded={false}
@@ -95,6 +96,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         color="secondary"
                         component={[Function]}
                         onClick={[Function]}
+                        title="menu"
                       >
                         <Button
                           aria-expanded={false}
@@ -104,15 +106,17 @@ exports[`Workflow list page renders correctly 1`] = `
                           innerRef={[Function]}
                           onClick={[Function]}
                           tag="button"
+                          title="menu"
                         >
                           <button
                             aria-expanded={false}
                             aria-haspopup={true}
                             className="context-button btn btn-secondary"
                             onClick={[Function]}
+                            title="menu"
                             type="button"
                           >
-                            <div
+                            <i
                               className="context-button--icon icon-more"
                             />
                           </button>
@@ -168,12 +172,12 @@ exports[`Workflow list page renders correctly 1`] = `
       <div
         className="d-flex justify-content-center"
       >
-        <div
+        <button
           className="button-blue action-button new-workflow-button"
           onClick={[Function]}
         >
           Create Workflow
-        </div>
+        </button>
       </div>
       <div
         className="mx-auto workflows-list"

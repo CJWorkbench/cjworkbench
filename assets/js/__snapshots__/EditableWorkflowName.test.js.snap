@@ -17,6 +17,7 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
   >
     <input
       className="editable-title--field"
+      name="name"
       onBlur={[Function]}
       onChange={[Function]}
       onKeyPress={[Function]}
