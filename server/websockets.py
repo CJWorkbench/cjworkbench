@@ -49,7 +49,7 @@ class WorkflowConsumer(JsonWebsocketConsumer):
                                                     self.channel_name)
         self.accept()
 
-    def disconnect(self):
+    def disconnect(self, code):
         async_to_sync(self.channel_layer.group_discard)(self.workflow_channel_name,
                                                         self.channel_name)
 

@@ -1,6 +1,4 @@
 from integrationtests.utils import WorkbenchBase
-from django.core import mail
-import time
 import re
 
 
@@ -12,30 +10,33 @@ class TestSignup(WorkbenchBase):
         # This will break when signup is open to the public
         b.visit(self.live_server_url + '/xyzzy/signup/')
 
-        self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
-        self.assertTrue(b.is_element_present_by_text('Use Google account'))
+        #self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
+        #self.assertTrue(b.is_element_present_by_text('Use Google account'))
 
-        b.fill('email', 'user@user.org')
-        b.fill('first_name', 'Jane')
-        b.fill('last_name', 'Doe')
-        b.fill('password1', '?P455W0rd!') # Should we actually allow someone to use this password?
-        b.fill('password2', '?P455W0rd!')
-        b.find_by_tag('button').click()
-        time.sleep(2)
+        b.fill_in('email', 'user@example.org')
+        b.fill_in('first_name', 'Jane')
+        b.fill_in('last_name', 'Doe')
+        b.fill_in('password1', '?P455W0rd!')
+        b.fill_in('password2', '?P455W0rd!')
+        b.click_button('Register')
 
-        # if we signed up successfully, we should be at the 'verify your email' screen
-        self.assertTrue(b.url.endswith('/confirm-email/'))
-        self.assertEqual(len(mail.outbox), 1)
-        email_text = mail.outbox[0].message().get_payload()
-        url = url_regex.search(email_text)
-        self.assertTrue(url.group(0))
+        b.assert_element('h1', text='Verify Your E-mail Address', wait=True)
+
+        # Test the email is right
+        email = self.account_admin.latest_sent_email
+        self.assertTrue(email)
+        self.assertEqual('user@example.org', email['To'])
+        body = email.get_payload()
+        url = url_regex.search(body)
+        self.assertTrue(url and url.group(0))
+
+        # Follow the link
         b.visit(url.group(0))
-        b.find_by_tag('button').click()
-        self.assertTrue(b.url.endswith('/login/'))
+        b.click_button('Confirm', wait=True)
 
         # Now log in with our new account
-        b.fill('login', 'user@user.org')
-        b.fill('password', '?P455W0rd!')
-        b.find_by_tag('button').click()
-        time.sleep(2)
-        self.assertTrue(b.url.endswith('/workflows/'))
+        # TODO _why_? The user already logged in
+        b.fill_in('login', 'user@example.org', wait=True)
+        b.fill_in('password', '?P455W0rd!')
+        b.click_button('Sign In')
+        b.wait_for_element('h3', text='WORKFLOWS', wait=True)

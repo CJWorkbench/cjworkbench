@@ -1,13 +1,28 @@
 # Utilities for integration tests
 
+import subprocess
 import unittest
 
 from integrationtests.browser import Browser
 from integrationtests.helpers import accounts
 
+
+def _find_server_url():
+    """Get URL using `docker port`"""
+    process = subprocess.run([
+        'docker',
+        'port',
+        'cjworkbench_integrationtest_django',
+        '8000/tcp'
+    ], stdout=subprocess.PIPE)
+    port_str = process.stdout.decode('ascii').split(':')[1].strip()
+    return f"http://localhost:{port_str}"
+
+
 class WorkbenchBase(unittest.TestCase):
     serve_static = True
-    self.account_admin = accounts.AccountAdmin()
+    account_admin = accounts.AccountAdmin()
+    live_server_url = _find_server_url()
 
     def setUp(self):
         super().setUp()

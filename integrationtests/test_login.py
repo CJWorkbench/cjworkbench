@@ -1,29 +1,22 @@
-from django.contrib.auth.models import User
-from allauth.account.models import EmailAddress
 from integrationtests.utils import WorkbenchBase
-
-import time
+from integrationtests.helpers import accounts
 
 
 class TestLogin(WorkbenchBase):
     def setUp(self):
         super().setUp()
 
-        self.password = 'password' # cannot be retrieved from User object, save it here
-        self.user = User.objects.create_user(username='username', email='user@users.com', password=self.password)
-        self.email = EmailAddress.objects.create(user=self.user, email='user@users.com', primary=True, verified=True)
+        self.user = self.account_admin.create_user('user@example.org')
+        self.user_email = self.account_admin.verify_user_email(self.user)
+
+    def tearDown(self):
+        self.account_admin.destroy_user_email(self.user_email)
+        self.account_admin.destroy_user(self.user)
+
+        super().tearDown()
 
     def test_login(self):
-        b = self.browser
-        b.visit('/account/login')
-
-        self.assertTrue(b.is_element_present_by_text('Use Facebook account'))
-        self.assertTrue(b.is_element_present_by_text('Use Google account'))
-
-        b.fill('login', self.user.email)
-        b.fill('password', self.password)
-        b.find_by_tag('button').click()
-        time.sleep(2)
-        # if we logged in sucessfully, we should be at an empty Workflows screen
-        self.assertTrue(b.url.endswith('/workflows/'))
-        self.assertTrue(b.find_by_css('.new-workflow-button'))
+        # TODO make this test suite non-redundant. We already test this in
+        # LoggedInIntegrationTest.
+        accounts.login(self.browser, self.user.email, self.user.password)
+        self.browser.assert_element('button', text='Create Workflow')

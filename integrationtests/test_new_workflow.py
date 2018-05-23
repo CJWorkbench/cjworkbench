@@ -5,7 +5,7 @@ class TestNewWorkflow(LoggedInIntegrationTest):
     def test_new_workflow(self):
         b = self.browser
 
-        b.click_button('New')
+        b.click_button('Create Workflow')
 
         # Empty module stack
         # wait: for page to load

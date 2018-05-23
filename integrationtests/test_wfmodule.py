@@ -17,7 +17,8 @@ class TestWfModule(LoggedInIntegrationTest):
 
         self.browser.click_whatever('div[data-module-name="Paste data"]')
         # wait for wfmodule to appear
-        self.browser.fill_in('csv', csv, wait=True)
+        self.browser.click_whatever('textarea[name="csv"]', wait=True)
+        self.browser.fill_in('csv', csv)
         # blur, to begin saving result to server
         self.browser.click_whatever('ul.WF-meta span', text='by')
 
@@ -31,7 +32,7 @@ class TestWfModule(LoggedInIntegrationTest):
 
         # output table with correct values
         # Wait for the table to load
-        b.assert_element('.react-grid-HeaderCell', text='Month', wait=True)
+        b.assert_element('.react-grid-HeaderCell', text='Month', wait=500)
         b.assert_element('.react-grid-Cell', text='Jan')
         b.assert_element('.react-grid-Cell', text='Feb')
         b.assert_element('.react-grid-HeaderCell', text='Name')
@@ -53,7 +54,7 @@ class TestWfModule(LoggedInIntegrationTest):
         b.assert_element('button[title=more]')
 
 
-    def text_export(self):
+    def test_export(self):
         self._add_csv_data()
 
         b = self.browser

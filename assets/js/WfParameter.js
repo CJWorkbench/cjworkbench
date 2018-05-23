@@ -325,7 +325,7 @@ export default class WfParameter extends React.Component {
             <textarea
               onMouseEnter={() => this.props.stopDrag() }
               onMouseLeave={() => this.props.startDrag() }
-              onBlur={this.blur}
+              onChange={this.blur}
               onKeyPress={this.keyPress}
               onClick={this.click}
               readOnly={this.props.isReadOnly}

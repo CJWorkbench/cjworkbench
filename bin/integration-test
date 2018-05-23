@@ -51,9 +51,10 @@ start_django() {
   echo -n 'Starting Django… ' >&2 # `docker run` will output container id
   docker run \
     --detach \
+    --env CJW_MOCK_EMAIL=true \
     --env CJW_SECRET_KEY=notasecret \
     --env CJW_SENDGRID_API_KEY=notasecret \
-		--env CJW_SENDGRID_INVITATION_ID=notanid \
+    --env CJW_SENDGRID_INVITATION_ID=notanid \
     --env CJW_SENDGRID_CONFIRMATION_ID=notanid \
     --env CJW_SENDGRID_PASSWORD_CHANGE_ID=notanid \
     --env CJW_SENDGRID_PASSWORD_RESET_ID=notanid \
@@ -68,10 +69,14 @@ find_django_url() {
   echo "http://localhost:$port"
 }
 
+cleanup() {
+  stop_container_if_running database
+  stop_container_if_running django
+  docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 && docker network rm "$NETWORK_NAME" || true
+}
+
 echo 'Cleaning old containers…' >&2
-stop_container_if_running database
-stop_container_if_running django
-docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 && docker network rm "$NETWORK_NAME" || true
+cleanup
 
 echo 'Setting up network…' >&2
 docker network create "${PREFIX}_network"
@@ -85,8 +90,18 @@ docker exec cjworkbench_integrationtest_django sh -c 'until curl -sf localhost:8
 url=$(find_django_url)
 echo "Django is at ${url}" >&2
 
-exit 0 # debug
+echo 'Testing. On error, the environment will stay up and you can use' >&2
+echo '`pipenv run python -m unittest -v integrationtests.[module]` to re-run the tests' >&2
 
-echo 'Cleaning containers...' >&2
-stop_container_if_running database
-stop_container_if_running django
+if [ -z "$1" ]; then
+  echo 'Running all tests' >&2
+  pipenv run python -m unittest discover -v integrationtests
+else
+  echo "Running selected tests: $@" >&2
+  pipenv run python -m unittest -v "$@"
+fi
+
+echo 'Success!' >&2
+
+echo 'Cleaning containers…' >&2
+cleanup

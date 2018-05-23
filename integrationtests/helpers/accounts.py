@@ -1,3 +1,5 @@
+import email
+import email.message
 import os
 import random
 import select
@@ -5,7 +7,7 @@ import string
 import subprocess
 import termios
 import weakref
-from typing import Tuple
+from typing import Tuple, Optional
 
 from integrationtests.browser import Browser
 
@@ -16,7 +18,7 @@ def login(browser: Browser, email: str, password: str) -> None:
     browser.fill_in('login', email)
     browser.fill_in('password', password)
     browser.click_button('Sign In')
-    browser.wait_for_element('h3', text='WORKFLOWS', wait=200)
+    browser.wait_for_element('h3', text='WORKFLOWS', wait=True)
 
 
 def _close_shell(shell, pty_master):
@@ -78,9 +80,14 @@ class AccountAdmin:
         (self.pty_master, pty_slave) = os.openpty()
         self.shell = subprocess.Popen(
             [
-                'docker', 'exec', '-i', 'cjworkbench_integrationtest_django',
+                'docker', 'exec', '-it',
+                    '-e', 'CJW_PRODUCTION=True',
+                    '-e', 'CJW_DB_HOST=workbench-db',
+                    '-e', 'CJW_DB_PASSWORD=cjworkbench',
+                'cjworkbench_integrationtest_django',
                 'sh', '-c', ' '.join([
-                    'echo "import sys; sys.ps1 = str(); sys.ps2 = str()" > /tmp/pystart;',
+                    'stty -onlcr;', # do not convert \n to \r\n https://github.com/moby/moby/issues/8513
+                    'echo "import sys; sys.ps1 = str(); sys.ps2 = str(); import termios; fd = sys.stdin.fileno(); new = termios.tcgetattr(fd); new[3] = new[3] & ~termios.ECHO; termios.tcsetattr(fd, termios.TCSANOW, new)" > /tmp/pystart;',
                     'chmod +x /tmp/pystart;',
                     'PYTHONSTARTUP=/tmp/pystart',
                     'python', # not ./manage.py shell, because it isn't quiet
@@ -90,7 +97,8 @@ class AccountAdmin:
             stdin=pty_slave,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            bufsize=0 # no buffer on subprocess stdin/stdout/stderr
+            bufsize=0, # no buffer on subprocess stdin/stdout/stderr
+            universal_newlines=False
         )
         os.close(pty_slave)
 
@@ -107,7 +115,11 @@ class AccountAdmin:
             "_ = os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cjworkbench.settings')",
             'django.setup()',
             'from allauth.account.models import EmailAddress',
-            'from server.models import User'
+            'from cjworkbench.models.Profile import UserProfile',
+            'from server.models import User',
+            '_ = UserProfile.objects.all().delete()',
+            '_ = EmailAddress.objects.all().delete()',
+            '_ = User.objects.all().delete()',
         ]), timeout=5)
 
 
@@ -154,7 +166,7 @@ class AccountAdmin:
         )
         b = b''
         if r == [ self.shell.stdout ]:
-            b = r.read(4)
+            b = r[0].read(4)
             if b == b"_ok\n":
                 return # we're done!
             raise RuntimeError(
@@ -178,7 +190,7 @@ class AccountAdmin:
         Call this to set a variable. For instance:
 
             var = self._execute_setvar('VAR = User.objects.create_user(...)')
-            self._execute(f'{var}.destroy')
+            self._execute(f'{var}.delete(); delete {var}')
 
         Keyword arguments:
         timeout -- Number of seconds to wait for _ok before throwing
@@ -220,7 +232,7 @@ class AccountAdmin:
     def destroy_user(self, user: UserHandle) -> None:
         """Clean up the return value of create_user().
         """
-        self._execute(f'{user._var}.destroy(); del {user._var}')
+        self._execute(f'_ = {user._var}.delete(); del {user._var}')
 
 
     def verify_user_email(self, user: UserHandle) -> EmailAddressHandle:
@@ -232,7 +244,7 @@ class AccountAdmin:
         """
         var = self._execute_setvar('\n'.join([
             f'VAR = EmailAddress.objects.create(',
-            f'    user={repr(user._var)},',
+            f'    user={user._var},',
             f'    email={repr(user.email)},',
             f'    primary=True,',
             f'    verified=True',
@@ -244,4 +256,23 @@ class AccountAdmin:
     def destroy_user_email(self, email: EmailAddressHandle) -> None:
         """Clean up the return value of verify_user_email().
         """
-        self._execute(f'{email._var}.destroy(); del {email._var}')
+        self._execute(f'_ = {email._var}.delete(); del {email._var}')
+
+
+    @property
+    def latest_sent_email(self) -> Optional[email.message.Message]:
+        """The last sent email, or None."""
+        script = ';'.join([
+            'basename=$(ls local_mail -t | head -n1)',
+            'test -z "$basename" && echo -n "" || cat local_mail/$basename'
+        ])
+        completed = subprocess.run([
+            'docker',
+            'exec',
+            'cjworkbench_integrationtest_django',
+            'sh', '-c', script
+        ], stdout=subprocess.PIPE)
+        if completed.stdout.strip():
+            return email.message_from_bytes(completed.stdout)
+        else:
+            return None

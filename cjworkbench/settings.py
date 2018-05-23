@@ -96,7 +96,12 @@ if DEBUG==False:
         ]):
         sys.exit('Must set Sendgrid template IDs for all system emails')
 
-    EMAIL_BACKEND = 'sgbackend.SendGridBackend'
+    if os.environ.get('CJW_MOCK_EMAIL'): # e.g., integration tests
+        EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+        EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'local_mail')
+    else:
+        EMAIL_BACKEND = 'sgbackend.SendGridBackend'
+
     SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
     ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
     SENDGRID_TEMPLATE_IDS = {
