@@ -27,6 +27,8 @@ class WorkbenchBase(unittest.TestCase):
     def setUp(self):
         super().setUp()
 
+        self.account_admin.clear_data_from_previous_tests()
+
         #self.current_site = Site.objects.get_current()
         #self.SocialApp1 = self.current_site.socialapp_set.create(
         #    provider="facebook",
@@ -43,8 +45,10 @@ class WorkbenchBase(unittest.TestCase):
 
         self.browser = Browser(base_url=self.live_server_url)
 
+
     def tearDown(self):
         self.browser.quit()
+
 
 # Derive from this to perform all tests logged in
 class LoggedInIntegrationTest(WorkbenchBase):
@@ -55,6 +59,7 @@ class LoggedInIntegrationTest(WorkbenchBase):
         self.user_email = self.account_admin.verify_user_email(self.user)
 
         accounts.login(self.browser, self.user.email, self.user.email)
+
 
     def tearDown(self):
         self.account_admin.destroy_user_email(self.user_email)

@@ -117,14 +117,21 @@ class AccountAdmin:
             'from allauth.account.models import EmailAddress',
             'from cjworkbench.models.Profile import UserProfile',
             'from server.models import User',
-            '_ = UserProfile.objects.all().delete()',
+        ]))
+        self.clear_data_from_previous_tests()
+
+
+    def clear_data_from_previous_tests(self):
+        """Delete all accounts and related data."""
+        self._execute('\n'.join([
             '_ = EmailAddress.objects.all().delete()',
+            '_ = UserProfile.objects.all().delete()',
             '_ = User.objects.all().delete()',
-        ]), timeout=5)
+        ]))
 
 
     def _ensure_empty_stdout_and_stderr(self) -> None:
-        """Raises RuntimeError if self.shell wrote to stdout or stderr."""
+        """Raise RuntimeError if self.shell wrote to stdout or stderr."""
         r, _, _ = select.select(
             [ self.shell.stdout, self.shell.stderr ],
             [],
