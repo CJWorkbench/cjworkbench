@@ -53,7 +53,8 @@
         &.lesson-highlight {
           color: $brand-learn;
           font-weight: bold;
-          outline: 1px dotted $brand-learn;
+          //border:1px solid $brand-learn;
+          opacity: 1;
         }
       }
     }
