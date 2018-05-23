@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="187px" height="65px" viewBox="0 0 187 65" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 9</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <linearGradient x1="10.0508493%" y1="50%" x2="97.0195087%" y2="50%" id="linearGradient-1">
+            <stop stop-color="#C5BCBC" offset="0%"></stop>
+            <stop stop-color="#719BB0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Web" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="background-image-copy-2" transform="translate(-363.000000, -429.000000)">
+            <g id="Group-3" transform="translate(363.000000, 100.000000)">
+                <g id="Group-8-Copy-2">
+                    <g id="Group-9" transform="translate(0.000000, 329.000000)">
+                        <rect id="Rectangle-Copy" fill="url(#linearGradient-1)" transform="translate(93.500000, 32.500000) scale(-1, 1) translate(-93.500000, -32.500000) " x="0" y="0" width="187" height="65"></rect>
+                        <g id="Icon-/-Edit-/-white" transform="translate(15.000000, 20.000000)">
+                            <rect id="Rectangle" x="0" y="0" width="25" height="25"></rect>
+                            <g id="Group" stroke-width="1" fill-rule="evenodd" transform="translate(0.833333, 0.833333)" fill="#FFFFFF">
+                                <path d="M10.8182504,0.637254902 L2.6372549,0.637254902 C1.5326854,0.637254902 0.637254902,1.5326854 0.637254902,2.6372549 L0.637254902,20.6960784 C0.637254902,21.8006479 1.5326854,22.6960784 2.6372549,22.6960784 L20.6960784,22.6960784 C21.8006479,22.6960784 22.6960784,21.8006479 22.6960784,20.6960784 L22.6960784,12.515083 L21.0372545,12.515083 L21.0372545,20.0372545 C21.0372545,20.5895393 20.5895393,21.0372545 20.0372545,21.0372545 L3.30392157,21.0372545 C2.75163682,21.0372545 2.30392157,20.5895393 2.30392157,20.0372545 L2.30392157,3.30392157 C2.30392157,2.75163682 2.75163682,2.30392157 3.30392157,2.30392157 L10.8182504,2.30392157 L10.8182504,0.637254902 Z" id="Path-1121"></path>
+                                <path d="M12.1112037,2.37933635 L12.1112037,13.4087481 L15.5048689,13.4087481 L15.5048689,2.37933635 L12.1112037,2.37933635 Z M12.1112037,14.2571644 L15.5048689,14.2571644 L13.8080363,17.6508296 L12.1112037,14.2571644 Z M12.1112037,-1.01432881 L15.5048689,-1.01432881 L15.5048689,1.53092006 L12.1112037,1.53092006 L12.1112037,-1.01432881 Z" id="Path-1121" transform="translate(13.808036, 8.318250) rotate(-315.000000) translate(-13.808036, -8.318250) "></path>
+                            </g>
+                        </g>
+                        <g id="Icon-/-Filter-/-white" transform="translate(78.000000, 20.000000)" fill="#FFFFFF">
+                            <rect id="Rectangle" x="1.66666667" y="2.5" width="21.6666667" height="2.5"></rect>
+                            <rect id="Rectangle-Copy" x="5.83333333" y="11.25" width="13.3333333" height="2.5"></rect>
+                            <rect id="Rectangle-Copy-2" x="10" y="19.5833333" width="5" height="2.5"></rect>
+                        </g>
+                        <g id="Icon-/-notepad-/-white" transform="translate(143.000000, 20.000000)" fill="#FFFFFF">
+                            <g id="Icon-/-notepad" transform="translate(1.916667, 0.000000)">
+                                <path d="M21.1538462,1.62820513 L15.9711538,1.62820513 L15.9711538,0.0256410256 L13.7275641,0.0256410256 L7.42628205,0.0288461538 L5.18269231,0.0288461538 L5.18269231,1.63141026 L0,1.63141026 L0,24.7083333 L21.1538462,24.7083333 L21.1538462,1.62820513 Z M6.46474359,1.30769231 L8.70833333,1.30769231 L12.4455128,1.31089744 L14.6891026,1.31089744 L14.6891026,4.14102564 L6.46474359,4.14102564 L6.46474359,1.30769231 Z M19.8717949,23.4230769 L1.28205128,23.4230769 L1.28205128,2.91025641 L5.18269231,2.91025641 L5.18269231,5.41987179 L15.9711538,5.41987179 L15.9711538,2.91025641 L19.8717949,2.91025641 L19.8717949,23.4230769 Z" id="Shape" fill-rule="nonzero"></path>
+                                <polygon id="Shape" fill-rule="nonzero" points="9.25 15.6474359 6.48397436 12.5160256 5.5224359 13.3621795 9.13782051 17.4583333 15.6314103 11.7051282 14.7788462 10.7435897"></polygon>
+                            </g>
+                        </g>
+                        <g id="Group-Copy-3" transform="translate(52.000000, 25.000000)" fill="#FFFFFF">
+                            <g id="Group-12">
+                                <rect id="Rectangle-3" x="5.6" y="0" width="2.8" height="14"></rect>
+                                <rect id="Rectangle-3-Copy" transform="translate(7.000000, 6.650000) rotate(-270.000000) translate(-7.000000, -6.650000) " x="5.6" y="-0.35" width="2.8" height="14"></rect>
+                            </g>
+                            <g id="Group-13" transform="translate(65.000000, 0.000000)">
+                                <g id="Group-14">
+                                    <rect id="Rectangle-3-Copy-3" x="5.6" y="0" width="2.8" height="14"></rect>
+                                    <rect id="Rectangle-3-Copy-2" transform="translate(7.000000, 6.650000) rotate(-270.000000) translate(-7.000000, -6.650000) " x="5.6" y="-0.35" width="2.8" height="14"></rect>
+                                </g>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

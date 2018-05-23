@@ -15,48 +15,68 @@
   }
 
   .lessons-list--title {
-    margin-left: 1rem;
+    margin-left: 3.5rem;
   }
 
   .container {
-    // display: flex;
-    // justify-content: center;
+
 
     ul {
       padding: 0;
     }
 
-    .lessons {
-      list-style: none;
-      margin:0;
-      display: flex;
-      margin: auto;
+    .lessons-list {
+      width: 80%;
+      margin-bottom:8rem;
 
-      // each lesson card
-      .lesson {
-      display: block;
-      width: 100%;
-      min-width: 45rem;
-      cursor: pointer;
-      margin:1rem;
-      background-color: $white;
-      color: $brand-text--dark;
-      border-radius: 5px;
-      box-shadow: $button-area;
-      &:hover {
-        box-shadow: $button-area--hover;
-      }
 
-        .lesson-button {
-          height: 24rem;
-          display: block;
-          padding:2rem 2rem;
-          text-decoration: none;
+      .lessons {
+        list-style: none;
+        margin:0;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+
+
+        // each lesson card
+        .lesson {
+        width: 40rem;
+        display: block;
+        cursor: pointer;
+        margin:1rem;
+        padding: 2rem 2rem;
+        background-color: $white;
+        color: $brand-text--dark;
+        border-radius: 5px;
+        box-shadow: $button-area;
+        &:hover {
+          box-shadow: $button-area--hover;
         }
 
-        h2,
-        .description {
-          color: $brand-text--dark;
+          .lesson-button {
+            display: block;
+            text-decoration: none;
+
+            .description {
+              font-size: 1.6rem;
+              margin-top: .5rem;
+              line-height: 2.4rem;
+              color:$brand-text--medium;
+            }
+            img {
+              position: relative;
+              width: 100%;
+            }
+          }
+
+          h2,
+          .description {
+
+            color: $brand-text--dark;
+          }
+
+
         }
       }
     }
