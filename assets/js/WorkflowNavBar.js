@@ -228,7 +228,7 @@ export default class WorkflowNavBar extends React.Component {
           <div className='title-metadata-stack'>
             <EditableWorkflowName
               value={this.props.workflow.name}
-              wfId={this.props.workflow.id}
+              workflowId={this.props.workflow.id}
               isReadOnly={this.props.workflow.read_only}
               api={this.props.api}
             />
@@ -252,7 +252,7 @@ export default class WorkflowNavBar extends React.Component {
 
 WorkflowNavBar.propTypes = {
   api:            PropTypes.object.isRequired,
-  workflow:       PropTypes.object,
+  workflow:       PropTypes.object.isRequired,
   isReadOnly:     PropTypes.bool.isRequired,
   loggedInUser:   PropTypes.object            // undefined if no user logged in
 };

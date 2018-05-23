@@ -9,7 +9,7 @@ exports[`EditableWorkflowName NOT Read-only Renders a title that can be edited a
   }
   isReadOnly={false}
   value="Test Title"
-  wfId={808}
+  workflowId={808}
 >
   <div
     className="editable-title--container"

@@ -13,7 +13,7 @@ describe('EditableWorkflowName', () => {
     beforeEach(() => wrapper = shallow(
       <EditableWorkflowName
         value={'Test Title'}
-        wfId={808}
+        workflowId={808}
         isReadOnly={true}
         api={{}}
       />
@@ -36,7 +36,7 @@ describe('EditableWorkflowName', () => {
     beforeEach(() => wrapper = mount(
       <EditableWorkflowName
         value={'Test Title'}
-        wfId={808}
+        workflowId={808}
         isReadOnly={false}
         api={api}
       />
