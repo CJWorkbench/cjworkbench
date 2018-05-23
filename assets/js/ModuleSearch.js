@@ -13,15 +13,25 @@ import lessonSelector from './lessons/lessonSelector'
 const spec = {
   beginDrag(props, monitor, component) {
     return {
+      type: 'module',
       index: false,
       id: props.id,
+      name: props.name,
+      icon: props.icon,
       insert: true,
     }
   },
   endDrag(props, monitor, component) {
     if (monitor.didDrop()) {
       const result = monitor.getDropResult();
-      props.dropModule(result.source.id, result.source.index);
+      props.dropModule(
+        result.source.id,
+        result.source.target,
+        {
+          name: result.source.name,
+          icon: result.source.icon,
+        }
+      );
     }
   }
 }
@@ -57,10 +67,10 @@ class ModuleSearchResult extends React.Component {
     return this.props.connectDragSource(
       <div className={className}>
         <div className='suggest-handle'>
-          <div className='icon-grip'></div>
+          <i className='icon-grip'></i>
         </div>
         <div className='d-flex align-items-center'>
-          <span className={'ml-icon-search ml-icon-container icon-' + this.props.icon}></span>
+          <i className={'ml-icon-search ml-icon-container icon-' + this.props.icon}></i>
           <span className='content-5 ml-module-name'>{this.props.name}</span>
         </div>
       </div>

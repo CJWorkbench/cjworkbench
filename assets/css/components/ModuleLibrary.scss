@@ -222,11 +222,6 @@
       list-style-type: none;
 
       .react-autosuggest__suggestion {
-        border: 3px solid transparent;
-
-        &.lesson-highlight {
-          border-color: $brand-learn;
-        }
         padding: 0;
         margin: 0;
 
@@ -238,6 +233,11 @@
           opacity: 0.7;
           display:flex;
           align-items: center;
+          border: 2px solid transparent;
+
+          &.lesson-highlight {
+            border-color: $brand-learn;
+          }
 
           .suggest-handle{
             padding: 0 0.5rem;

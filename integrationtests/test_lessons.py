@@ -6,14 +6,14 @@ class TestLessons(LoggedInIntegrationTest):
         b.visit('/lessons/')
         b.assert_element(
             'h2',
-            text='Load public data and make a chart',
+            text='I. Load public data and make a chart',
             wait=True
         )
 
     def test_lesson_detail(self):
         b = self.browser
         b.visit('/lessons/')
-        b.click_whatever('h2', text='Load public data and make a chart', wait=True)
+        b.click_whatever('h2', text='I. Load public data and make a chart', wait=True)
 
         b.assert_element('.modulestack-empty', text='DROP MODULE HERE')
         b.assert_element('h2', text='Overview')

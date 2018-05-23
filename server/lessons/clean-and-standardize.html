@@ -1,6 +1,7 @@
 <header>
-  <h1>Clean and standardize data</h1>
-  <p>Clean format and standardize data to build a chart series.</p>
+  <h1>II. Clean and standardize data</h1>
+  <p>Clean format and standardize data to build a chart series</p>
+  <img src="/static/images/lesson_banners/clean_standard_banner.svg">
 </header>
 <section>
   <h2>Overview</h2>
@@ -37,7 +38,7 @@
   </ol>
 </section>
 <section>
-  <h2>2. Harmonizing column values</h2>
+  <h2>2. Standardize column values</h2>
   <p>The same value is frequently spelled in multiple ways, or with irregular capitalization.  Ex: ‘APPLE’, ‘Apple’, ‘APL’.</p>
   <ol class="steps">
     <li
@@ -46,7 +47,7 @@
       >Add the module 'Refine'.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const json = workflow.wfModules[3].parameters.get('refine'); if (!json) return false; const allJson = JSON.parse(json); const changes = allJson.filter(x => x.type === 'change').map(x => x.content); if (changes.length !== 8) { console.log('Expect user to change Refine 8 times; found ' + changes.length + ' changes'); return false } const uniqueVals = {}; changes.forEach(x => uniqueVals[x.toVal] = null); if (Object.keys(uniqueVals).length !== 5) { console.log('Expect 5 unique values in Refine for MetroArea; found: ' + JSON.stringify(Object.keys(uniqueVals))); return false; } return true"
+      data-test="const params = workflow.wfModules[3].parameters; if (params.get('column') !== 'MetroArea') return false; const json = params.get('refine'); if (!json) return false; const allJson = JSON.parse(json); const changes = allJson.filter(x => x.type === 'change').map(x => x.content.fromVal); const Expected = [ 'San Jose-San Francisco-Oakland CSA', 'Austin', 'Bay Area', 'DallasFORTHWorth', 'SF - BAY AREA' ]; for (var i = 0; i < Expected.length; i++) { if (changes.indexOf(Expected[i]) === -1) { console.log('User has yet to rename ' + Expected[i] + '; changes were ' + JSON.stringify(changes)); return false; } } return true;"
       >Select the column ‘MetroArea’ which contains messy data.
       <p>
         Edit values in the list until each one is displayed only once.
@@ -63,7 +64,7 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
-      data-test="const params = workflow.wfModules[3].moduleName.parameters; return params.get('column') === 'MetroArea'"
+      data-test="const params = workflow.wfModules[3].parameters; const json = JSON.parse(params.get('refine')); return json.filter(x => x.type === 'select' && x.content.value === 'Denver - Aurora').length > 0"
     >Un-check 'Denver - Aurora', which contains incomplete data.
     </li>
   </ol>
@@ -73,21 +74,26 @@
   <p>The table is currently in a 'long' format, where each row is a unique observation. In order to make it more legible, we need to display it in the 'wide' format, used in most spreadshseets.</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
-      data-test="return workflow.wfModules.length > 2 && workflow.wfModules[1].moduleName === 'Filter'"
-      >Add the module ‘Reshape’, and select 'Long to wide'.
+      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Reshape" }]'
+      data-test="return workflow.wfModules.length > 4 && workflow.wfModules[4].moduleName === 'Reshape'"
+      >Add the module ‘Reshape’.
       <p>
         <img class="image" src="/static/images/lesson_2/3_reshape_long_wide.svg">
       </p>
     </li>
     <li
-      data-highlight='[]'
-      data-test="const params = workflow.wfModules[1].moduleName.parameters; return params.get('column') === 'affordable_units' && params.get('condition') === 'Greater Than' && params.get('value') === '200' && params.get('keep') === 'Keep'"
-      >Choose 'Year' as the Key column. Those values will be displayed in most left columns of the wide table.</li>
+      data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
+      data-test="return workflow.wfModules[4].parameters.get('direction') === 1"
+      >Select 'Long to wide'.
+    </li>
     <li
-      data-highlight='[]'
-      data-test="return state.selectedWfModule.moduleName === 'Column chart'"
-      >Choose 'MetroArea' as the Variable column. Those values will be displayed in the header.</li>
+      data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
+      data-test="return workflow.wfModules[4].parameters.get('colnames') == 'Year'"
+      >Choose 'Year' as the Key column. Those values will be displayed in leftmost column of the wide table.</li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
+      data-test="return workflow.wfModules[4].parameters.get('varcol') == 'MetroArea'"
+      >Choose 'MetroArea' as the Variable column. Metro ares will be the column names of the wide table.</li>
   </ol>
 </section>
 <section>
@@ -96,11 +102,11 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Line Chart"}]'
-      data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Column Chart'"
+      data-test="return workflow.wfModules.length > 5 && workflow.wfModules[5].moduleName === 'Line Chart'"
       >Add the module ‘Line Chart’ using the search in the module library.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
-      data-test="return workflow.wfModules.length > 1 && JSON.parse(workflow.wfModules[workflow.wfModules.length-1].parameters.get('chart_editor')).metadata.title"
+      data-test="const wfModule = workflow.wfModules[5]; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
       >Add a title to the chart, and you're done!</li>
   </ol>
 </section>

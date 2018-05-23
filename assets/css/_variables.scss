@@ -10,6 +10,8 @@ $modal-color:#F5F7F8;
 
 // Secondary Colors (づ ￣ ³￣)づ
 
+$soft: pink;
+
 $dark-blue: #577485;
 $medium-blue: #719BB0;
 $error-prompt: rgba(232,114,110,0.6);
@@ -23,12 +25,14 @@ $strong-gray: #8b8b8b;
 // Text colors ＼(＾O＾)／
 
 $brand-text--dark: #686768;
+$brand-text--medium: #7d7d7d;
 
 $link-hover-success:#2D9DAA;
 
 // Accent: transparent light or dark color use on top of backgrounds
 
 $dark-accent--soft: rgba(0,0,0,.05);
+$dark-accent--soft-M:rgba(0,0,0,.075);
 $dark-accent--medium: rgba(0,0,0,.1);
 
 $light-accent--soft: rgba(255,255,255,.05);
@@ -42,7 +46,7 @@ $brand-orange--light:lighten($brand-orange,26%);
 
 $brand-learn--Vlight:lighten($brand-learn,14%);
 $brand-learn--light:lighten($brand-learn,11%);
-$brand-learn--medium:lighten($brand-learn,8%);
+$brand-learn--medium:lighten($brand-learn,7%);
 
 
 
@@ -57,5 +61,5 @@ $placeholder--light: rgba(255,255,255,.5);
 
 $menu-shadow:-5px 8px 20px 0px rgba(0,0,0,0.15);
 $button-area:-4px 4px 20px 0px $dark-accent--medium;
-$button-area--hover:-2px 2px 1px 0px $dark-accent--soft;
+$button-area--hover:-2px 2px 1px 0px $dark-accent--medium;
 $dropdown-shadow:-0.5rem 0.5rem 2.5rem 0 rgba(0,0,0,0.10);

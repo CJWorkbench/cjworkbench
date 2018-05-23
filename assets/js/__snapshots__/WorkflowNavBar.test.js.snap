@@ -41,7 +41,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
             }
           }
           value="Original Version"
-          wfId={808}
+          workflowId={808}
         >
           <div
             className="editable-title--container"
@@ -602,7 +602,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
             }
           }
           value="Original Version"
-          wfId={808}
+          workflowId={808}
         >
           <div
             className="editable-title--container"
@@ -1079,7 +1079,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
             }
           }
           value="Original Version"
-          wfId={303}
+          workflowId={303}
         >
           <div
             className="editable-title--container"
@@ -1203,6 +1203,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
   }
   workflow={
     Object {
+      "id": 12,
       "name": "Original Version",
       "owner_name": "John Johnson",
       "public": true,
@@ -1227,6 +1228,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
             }
           }
           value="Original Version"
+          workflowId={12}
         >
           <div
             className="editable-title--container"
@@ -1252,6 +1254,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
           isPublic={true}
           workflow={
             Object {
+              "id": 12,
               "name": "Original Version",
               "owner_name": "John Johnson",
               "public": true,
@@ -1334,6 +1337,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
               "id": 8,
             }
           }
+          workflowId={12}
         >
           <UncontrolledDropdown>
             <Dropdown
@@ -1402,6 +1406,76 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                       role="menu"
                       tabIndex="-1"
                     >
+                      <DropdownItem
+                        href="/workflows"
+                        tag="button"
+                        toggle={true}
+                      >
+                        <a
+                          className="dropdown-item"
+                          href="/workflows"
+                          onClick={[Function]}
+                          tabIndex="0"
+                        >
+                          <span>
+                            My Workflows
+                          </span>
+                        </a>
+                      </DropdownItem>
+                      <DropdownItem
+                        divider={true}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <div
+                          className="dropdown-divider"
+                          onClick={[Function]}
+                          tabIndex="-1"
+                        />
+                      </DropdownItem>
+                      <DropdownItem
+                        onClick={[Function]}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <button
+                          className="dropdown-item"
+                          onClick={[Function]}
+                          tabIndex="0"
+                          type="button"
+                        >
+                          <span>
+                            Undo
+                          </span>
+                        </button>
+                      </DropdownItem>
+                      <DropdownItem
+                        onClick={[Function]}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <button
+                          className="dropdown-item"
+                          onClick={[Function]}
+                          tabIndex="0"
+                          type="button"
+                        >
+                          <span>
+                            Redo
+                          </span>
+                        </button>
+                      </DropdownItem>
+                      <DropdownItem
+                        divider={true}
+                        tag="button"
+                        toggle={true}
+                      >
+                        <div
+                          className="dropdown-divider"
+                          onClick={[Function]}
+                          tabIndex="-1"
+                        />
+                      </DropdownItem>
                       <DropdownItem
                         className="test-export-button"
                         onClick={[Function]}

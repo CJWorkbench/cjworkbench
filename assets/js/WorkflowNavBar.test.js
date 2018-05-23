@@ -36,6 +36,7 @@ describe('WorkflowNavBar', () => {
       id: 8
     };
     workflow = {
+      id: 12,
       name: 'Original Version',
       owner_name: 'John Johnson',
       public: true
