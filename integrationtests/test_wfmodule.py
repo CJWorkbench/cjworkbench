@@ -1,6 +1,4 @@
 from integrationtests.utils import LoggedInIntegrationTest
-from server.models import ModuleVersion
-from server.tests.utils import mock_csv_text2, add_new_workflow, add_new_wf_module, get_param_by_id_name
 
 # WfModule expand/collapse, notes, context menu, export, delete
 class TestWfModule(LoggedInIntegrationTest):

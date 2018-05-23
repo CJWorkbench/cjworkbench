@@ -16,3 +16,4 @@ server/modules/dynamic
 tmp/
 webpack-stats.json
 .DS_Store
+integrationtests/

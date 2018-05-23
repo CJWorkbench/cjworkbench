@@ -1,7 +1,12 @@
-from allauth.account.models import EmailAddress
+import os
+import random
+import select
+import string
+import subprocess
+import termios
+import weakref
 from typing import Tuple
 
-from server.models import User
 from integrationtests.browser import Browser
 
 def login(browser: Browser, email: str, password: str) -> None:
@@ -14,8 +19,36 @@ def login(browser: Browser, email: str, password: str) -> None:
     browser.wait_for_element('h3', text='WORKFLOWS', wait=200)
 
 
+def _close_shell(shell, pty_master):
+    """Close the given subprocess which is a Python shell.
+    """
+    os.close(pty_master)
+
+    try:
+        stdout, stderr = shell.communicate(timeout=5)
+    except subprocess.TimeoutExpired:
+        shell.kill()
+        stdout, stderr = shell.communicate()
+
+    if len(stdout): print(f"STDOUT (wanted empty): {stdout}")
+    if len(stderr): print(f"STDERR (wanted empty): {stderr}")
+
+
+class UserHandle:
+    def __init__(self, var: str, username: str, password: str, email: str):
+        self._var = var
+        self.username = username
+        self.password = password
+        self.email = email
+
+
+class EmailAddressHandle:
+    def __init__(self, var: str):
+        self._var = var
+
+
 class AccountAdmin:
-    """Provides an interface for the caller to create/delete users.
+    """An interface for the caller to create/delete users.
 
     Example usage:
 
@@ -31,11 +64,140 @@ class AccountAdmin:
         account_admin.destroy_user_email(user_email)
         account_admin.destroy_user(user)
     """
-    # [adam, 2018-05-18] this is a class because I expect we'll someday want to
-    # handle user admin externally instead of through global variables.
+    def __init__(self):
+        """Open a Django shell, using Docker.
 
-    def create_user(self, email: str, username: str=None, password: str=None) -> User:
-        """Adds the specified user to the database.
+        Rather than log in using the web admin interface, we log in using the
+        commandline. This is a hack, with consequences:
+
+        - We're write-only.
+        - Any output from the subprocess that isn't "_ok" is an error.
+
+        Call _execute() to run a Python command in the subprocess.
+        """
+        (self.pty_master, pty_slave) = os.openpty()
+        self.shell = subprocess.Popen(
+            [
+                'docker', 'exec', '-i', 'cjworkbench_integrationtest_django',
+                'sh', '-c', ' '.join([
+                    'echo "import sys; sys.ps1 = str(); sys.ps2 = str()" > /tmp/pystart;',
+                    'chmod +x /tmp/pystart;',
+                    'PYTHONSTARTUP=/tmp/pystart',
+                    'python', # not ./manage.py shell, because it isn't quiet
+                    '-q', # no copyright
+                ])
+            ],
+            stdin=pty_slave,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            bufsize=0 # no buffer on subprocess stdin/stdout/stderr
+        )
+        os.close(pty_slave)
+
+        self._finalizer = weakref.finalize(
+            self,
+            _close_shell,
+            self.shell,
+            self.pty_master
+        )
+
+        self._execute('\n'.join([
+            'import os',
+            'import django',
+            "_ = os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cjworkbench.settings')",
+            'django.setup()',
+            'from allauth.account.models import EmailAddress',
+            'from server.models import User'
+        ]), timeout=5)
+
+
+    def _ensure_empty_stdout_and_stderr(self) -> None:
+        """Raises RuntimeError if self.shell wrote to stdout or stderr."""
+        r, _, _ = select.select(
+            [ self.shell.stdout, self.shell.stderr ],
+            [],
+            [],
+            1
+        )
+        if r:
+            raise RuntimeError(
+                f'Unexpected data on stdout or stderr: {r[0].read(1024)}'
+            )
+
+
+    def _execute(self, code: str, timeout: float=5) -> None:
+        """Run the given Python code.
+
+        To make sure the code returns, we do the following:
+
+        1. Send the code to stdin, followed by \n
+        2. Send a separate line: print('_ok')\n
+        3. Read back the '_ok\n' on stdout
+
+        This strategy lets us write _blocks_ of code (since the un-indented
+        print() comes after, Python knows the block is closed). But if the code
+        outputs any messages, that's an error.
+
+        Keyword arguments:
+        timeout -- Number of seconds to wait for _ok before throwing
+        """
+        self._ensure_empty_stdout_and_stderr()
+
+        message = f"{code}\nprint('_ok')\n".encode('utf-8')
+        os.write(self.pty_master, message)
+        termios.tcdrain(self.pty_master)
+        r, _, _ = select.select(
+            [ self.shell.stdout, self.shell.stderr ],
+            [],
+            [],
+            timeout
+        )
+        b = b''
+        if r == [ self.shell.stdout ]:
+            b = r.read(4)
+            if b == b"_ok\n":
+                return # we're done!
+            raise RuntimeError(
+                f'Expected b"_ok\\n"; got: {b}\nCode was:\n{code}'
+            )
+        else:
+            if not r:
+                raise RuntimeError(f'Timeout running code:\n{code}')
+            else:
+                raise RuntimeError('\n'.join([
+                    'Python wrote to stderr while executing code:',
+                    code,
+                    'STDERR:',
+                    str(r[0].read()),
+                ]))
+
+
+    def _execute_setvar(self, code: str, timeout: float=5) -> str:
+        """Execute code, replacing 'VAR = ' with a random variable name.
+
+        Call this to set a variable. For instance:
+
+            var = self._execute_setvar('VAR = User.objects.create_user(...)')
+            self._execute(f'{var}.destroy')
+
+        Keyword arguments:
+        timeout -- Number of seconds to wait for _ok before throwing
+        """
+        if 'VAR = ' not in code:
+            raise ValueError(f"Code is missing 'VAR = ':\n{code}")
+
+        var = f"var_{''.join(random.choices(string.ascii_lowercase, k=8))}"
+        replaced_code = code.replace('VAR = ', f"{var} = ")
+
+        self._execute(replaced_code, timeout=timeout)
+
+        return var
+
+
+    def create_user(
+        self, email: str, username: str=None, password: str=None
+    ) -> UserHandle:
+        """Add the specified user to the database.
 
         When done with the User, `account_admin.destroy_user(user)`
 
@@ -45,32 +207,41 @@ class AccountAdmin:
         """
         if username is None: username = email.split('@')[0]
         if password is None: password = email
-        return User.objects.create_user(username=username, email=email,
-                                        password=password)
+        var = self._execute_setvar('\n'.join([
+            f'VAR = User.objects.create_user(',
+            f'    username={repr(username)},',
+            f'    password={repr(password)},',
+            f'    email={repr(email)}',
+            f')',
+        ]))
+        return UserHandle(var, username, password, email)
 
 
-    def destroy_user(self, user: User) -> None:
-        """Cleans up the return value of create_user().
+    def destroy_user(self, user: UserHandle) -> None:
+        """Clean up the return value of create_user().
         """
-        # This isn't just `email.destroy` because we may migrate away from
-        # global variables one day, meaning this wouldn't be a django model.
-        user.delete()
+        self._execute(f'{user._var}.destroy(); del {user._var}')
 
 
-    def verify_user_email(self, user: User) -> EmailAddress:
-        """Verifies a user's email address.
+    def verify_user_email(self, user: UserHandle) -> EmailAddressHandle:
+        """Verify a user's email address.
 
         When done with the EmailAddress, `account_admin.destroy_email(email)`.
 
         The user can't log in until the email address is verified.
         """
-        return EmailAddress.objects.create(user=user, email=user.email,
-                                           primary=True, verified=True)
+        var = self._execute_setvar('\n'.join([
+            f'VAR = EmailAddress.objects.create(',
+            f'    user={repr(user._var)},',
+            f'    email={repr(user.email)},',
+            f'    primary=True,',
+            f'    verified=True',
+            f')',
+        ]))
+        return EmailAddressHandle(var)
 
 
-    def destroy_user_email(self, email: EmailAddress) -> None:
-        """Cleans up the return value of verify_user_email().
+    def destroy_user_email(self, email: EmailAddressHandle) -> None:
+        """Clean up the return value of verify_user_email().
         """
-        # This isn't just `email.destroy` because we may migrate away from
-        # global variables one day, meaning this wouldn't be a django model.
-        email.delete()
+        self._execute(f'{email._var}.destroy(); del {email._var}')

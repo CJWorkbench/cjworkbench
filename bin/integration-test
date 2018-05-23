@@ -1,0 +1,92 @@
+#!/bin/bash
+
+set -e
+#set -x
+
+cd "$(dirname "$0")"/..
+
+echo 'Running `docker build .`, which may take 30 minutes…' >&2
+# To see which steps are slow:
+# docker build . --no-cache # watch a cold build
+# or
+# docker build . # watch build steps after you've edited .js or .py files
+DJANGO_IMAGE_ID="$(docker build . -q)"
+
+
+PREFIX=cjworkbench_integrationtest
+NETWORK_NAME="${PREFIX}_network"
+
+stop_container_if_running() {
+  basename="$1"
+  name="${PREFIX}_${basename}"
+  id=$(docker ps -a -q --filter name="$name")
+  test -z "$id" || docker rm -f "$name"
+}
+
+pulled_or_cached_image_id() {
+  name="$1"
+  id=$(docker image ls -q "$name")
+  if [ -z "$id" ]; then
+    docker image pull "$name" >&2
+    id=$(docker image ls -q "$name")
+  fi
+  echo $id
+}
+
+start_database() {
+  echo -n 'Starting database… ' >&2 # `docker run` will output container id
+  image_id="$(pulled_or_cached_image_id "postgres:9.6.9")"
+  docker run \
+    --detach \
+    --env POSTGRES_USER=cjworkbench \
+    --env POSTGRES_PASSWORD=cjworkbench \
+    --env POSTGRES_DB=cjworkbench \
+    --network "$NETWORK_NAME" \
+    --network-alias "workbench-db" \
+    --name "${PREFIX}_database" \
+    "$image_id"
+}
+
+start_django() {
+  echo -n 'Starting Django… ' >&2 # `docker run` will output container id
+  docker run \
+    --detach \
+    --env CJW_SECRET_KEY=notasecret \
+    --env CJW_SENDGRID_API_KEY=notasecret \
+		--env CJW_SENDGRID_INVITATION_ID=notanid \
+    --env CJW_SENDGRID_CONFIRMATION_ID=notanid \
+    --env CJW_SENDGRID_PASSWORD_CHANGE_ID=notanid \
+    --env CJW_SENDGRID_PASSWORD_RESET_ID=notanid \
+    --network "$NETWORK_NAME" \
+    --name "${PREFIX}_django" \
+    --publish-all \
+    "$DJANGO_IMAGE_ID"
+}
+
+find_django_url() {
+  port=$(docker port cjworkbench_integrationtest_django 8000/tcp | cut -d: -f2)
+  echo "http://localhost:$port"
+}
+
+echo 'Cleaning old containers…' >&2
+stop_container_if_running database
+stop_container_if_running django
+docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 && docker network rm "$NETWORK_NAME" || true
+
+echo 'Setting up network…' >&2
+docker network create "${PREFIX}_network"
+
+start_database
+start_django
+
+echo -n 'Waiting for Django to start its database and HTTP server… ' >&2
+docker exec cjworkbench_integrationtest_django sh -c 'until curl -sf localhost:8000; do echo -n "."; sleep 1; done; echo'
+
+url=$(find_django_url)
+echo "Django is at ${url}" >&2
+
+exit 0 # debug
+
+echo 'Cleaning containers...' >&2
+stop_container_if_running database
+stop_container_if_running django
