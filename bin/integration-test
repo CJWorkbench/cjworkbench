@@ -91,14 +91,19 @@ url=$(find_django_url)
 echo "Django is at ${url}" >&2
 
 echo 'Testing. On error, the environment will stay up and you can use' >&2
-echo '`pipenv run python -m unittest -v integrationtests.[module]` to re-run the tests' >&2
+
+# Development: use pipenv, because developers run `pipenv install`
+# Travis: use python, because we manually pip install capybara-py+selenium,
+# integration tests have no other deps, and pipenv is not installed.
+PYTHON=$(pipenv --venv >/dev/null 2>&1 && echo 'pipenv run python' || echo 'python')
+echo "'$PYTHON -m unittest -v integrationtests.[module]' to re-run the tests" >&2
 
 if [ -z "$1" ]; then
   echo 'Running all tests' >&2
-  pipenv run python -m unittest discover -v integrationtests
+  $PYTHON -m unittest discover -v integrationtests
 else
   echo "Running selected tests: $@" >&2
-  pipenv run python -m unittest -v "$@"
+  $PYTHON -m unittest -v "$@"
 fi
 
 echo 'Success!' >&2
