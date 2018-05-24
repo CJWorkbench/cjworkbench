@@ -338,66 +338,42 @@ registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
 // DELETE_MODULE_ACTION
 // Call delete API, then dispatch a reload
 export function deleteModuleAction(id_to_delete) {
-  // If we are deleting the selected module, then set previous module in stack as selected
-  let newSelectedId = null;
-  let state = store.getState();
-  if (id_to_delete === state.selected_wf_module) {
-
-    // Find id of previous in stack
-    let wf_modules = state.workflow.wf_modules;
-    for (let wfm of wf_modules) {
-      if (wfm.id === id_to_delete)
-        break;
-      newSelectedId = wfm.id;
-    }
-
-    // if we are deleting first module, set to new first module if any
-    if (newSelectedId === null) {
-      if (wf_modules.length > 1) {
-        newSelectedId = wf_modules[1].id;
-      } else {
-        newSelectedId = null; // deleting last module
+  return {
+    type: DELETE_MODULE,
+    payload: {
+      promise: api.deleteModule(id_to_delete),
+      data: {
+        wf_module_id: id_to_delete
       }
     }
-  } else {
-    // If we are not deleting the selected module, don't change selection
-    newSelectedId = state.selected_wf_module;
-  }
-
-  return function (dispatch) {
-    return (
-      // Set the new selected module before deleting to avoid errors.
-      // We do this even if the selected module isn't changing to avoid
-      // writing a subtly tricky conditional here.
-      dispatch(setSelectedWfModuleAction(newSelectedId)).then(() => {
-      // Remove the module
-      dispatch({
-        type: DELETE_MODULE,
-        payload: {
-          promise: api.deleteModule(id_to_delete),
-          data: {
-            wf_module_id: id_to_delete
-          }
-        }
-      });
-    }));
   }
 }
 registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
-  let wfModuleIdx = findIdxByProp(
-    state.workflow.wf_modules,
-    'id',
-    action.payload.wf_module_id
-  );
+  const wfModuleId = action.payload.wf_module_id;
+  const wfModuleIdx = state.workflow.wf_modules.findIndex(w => w.id === wfModuleId);
 
-  if (typeof wfModuleIdx === 'undefined') {
+  if (wfModuleIdx === -1) {
     return state;
+  }
+
+  let wf_modules = state.workflow.wf_modules.filter(w => w.id !== wfModuleId);
+
+  // If we are deleting the selected module, then set previous module in stack as selected
+  let selected_wf_module = state.selected_wf_module;
+  if (selected_wf_module === wfModuleId) {
+    if (wf_modules.length === 0) {
+      selected_wf_module = null;
+    } else {
+      const newIdx = Math.max(0, wfModuleIdx - 1);
+      selected_wf_module = wf_modules[newIdx].id;
+    }
   }
 
   return update(state, {
     workflow: {
-      wf_modules: {$splice: [[wfModuleIdx, 1]] }
-    }
+      wf_modules: { $set: wf_modules },
+    },
+    selected_wf_module: { $set: selected_wf_module },
   });
 });
 
