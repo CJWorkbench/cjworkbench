@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="176px" height="137px" viewBox="0 0 176 137" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 50.2 (55047) - http://www.bohemiancoding.com/sketch -->
+    <title>Artboard 2</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Artboard-2" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <text id="Tm" font-family="NunitoSans-Bold, Nunito Sans" font-size="14" font-weight="bold" fill="#FFFFFF">
+            <tspan x="13" y="29">Tm</tspan>
+        </text>
+        <text id="Team" font-family="NunitoSans-Bold, Nunito Sans" font-size="14" font-weight="bold" fill="#FFFFFF">
+            <tspan x="83" y="29">Team</tspan>
+        </text>
+        <text id="2B" font-family="NunitoSans-Bold, Nunito Sans" font-size="14" font-weight="bold" fill="#FFFFFF">
+            <tspan x="13" y="59">2B</tspan>
+        </text>
+        <text id="Double-hits" font-family="NunitoSans-Bold, Nunito Sans" font-size="14" font-weight="bold" fill="#FFFFFF">
+            <tspan x="83" y="59">Double hits</tspan>
+        </text>
+        <text id="3B" font-family="NunitoSans-Bold, Nunito Sans" font-size="14" font-weight="bold" fill="#FFFFFF">
+            <tspan x="13" y="89">3B</tspan>
+        </text>
+        <text id="Triple-hits" font-family="NunitoSans-Bold, Nunito Sans" font-size="14" font-weight="bold" fill="#FFFFFF">
+            <tspan x="83" y="89">Triple hits</tspan>
+        </text>
+        <text id="HR" font-family="NunitoSans-Bold, Nunito Sans" font-size="14" font-weight="bold" fill="#FFFFFF">
+            <tspan x="13" y="119">HR</tspan>
+        </text>
+        <text id="Home-runs" font-family="NunitoSans-Bold, Nunito Sans" font-size="14" font-weight="bold" fill="#FFFFFF">
+            <tspan x="83" y="119">Home runs</tspan>
+        </text>
+        <path d="M48.5,115.5 L65.5,115.5" id="Line" stroke="#FFFFFF" stroke-width="3"></path>
+        <path id="Line-decoration-1" d="M65.5,115.5 L54.7,112.5 L54.7,118.5 L65.5,115.5 Z" stroke="#FFFFFF" stroke-width="3"></path>
+        <path d="M48.5,85.5 L65.5,85.5" id="Line-Copy" stroke="#FFFFFF" stroke-width="3"></path>
+        <path id="Line-Copy-decoration-1" d="M65.5,85.5 L54.7,82.5 L54.7,88.5 L65.5,85.5 Z" stroke="#FFFFFF" stroke-width="3"></path>
+        <path d="M48.5,55.5 L65.5,55.5" id="Line-Copy-2" stroke="#FFFFFF" stroke-width="3"></path>
+        <path id="Line-Copy-2-decoration-1" d="M65.5,55.5 L54.7,52.5 L54.7,58.5 L65.5,55.5 Z" stroke="#FFFFFF" stroke-width="3"></path>
+        <path d="M48.5,25.5 L65.5,25.5" id="Line-Copy-3" stroke="#FFFFFF" stroke-width="3"></path>
+        <path id="Line-Copy-3-decoration-1" d="M65.5,25.5 L54.7,22.5 L54.7,28.5 L65.5,25.5 Z" stroke="#FFFFFF" stroke-width="3"></path>
+    </g>
+</svg>

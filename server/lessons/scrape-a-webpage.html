@@ -16,12 +16,37 @@
       <div class="copy-txt content-3 t-white">https://www.baseball-reference.com/leagues/MLB/2018-standard-batting.shtml</div>
       <p>Click 'Scrape' to load the table.</p>
     </li>
-    <li
-      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
-      >Add the module 'Scrape table'. And paste the following URL, where the data table is published.
-      <div class="copy-txt content-3 t-white">https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml</div>
-      <p>Click 'Scrape' to load the table.</p>
-    </li>
   </ol>
 </section>
+<section>
+  <h2>2. Standardize column values</h2>
+  <p>The table contains 32 columns. Let's just keep the one that are useful to our analysis.</p>
+    <ol class="steps">
+      <li
+        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
+        data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
+        >
+        <p>Add the module 'Select columns'</p>
+      </li>
+      <li
+        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
+        data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
+        >
+        <p>Select and keep the columns 'TM', '2B', '2C' and 'HR'.</p>
+      </li>
+      <li
+        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
+        data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
+        >
+        <p>Add the module 'Rename columns' and edit the column names as follow:</p>
+        <p>
+          <img class="image" src="/static/images/lesson_2/1_refine_row.svg">
+        </p>
+      </li>
+      <li
+        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
+        data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
+        >
+        <p>Add the module 'Drop rows'. Delete row 31 to 32.</p>
+      </li>
+    </ol>
