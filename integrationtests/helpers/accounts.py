@@ -12,8 +12,7 @@ from typing import Tuple, Optional
 from integrationtests.browser import Browser
 
 def login(browser: Browser, email: str, password: str) -> None:
-    """Logs in through `/account/login` to the given URL.
-    """
+    """Log in through `/account/login` as the given user."""
     browser.visit('/account/login')
     browser.fill_in('login', email)
     browser.fill_in('password', password)
@@ -112,11 +111,13 @@ class AccountAdmin:
         self._execute('\n'.join([
             'import os',
             'import django',
+            'import shutil',
             "_ = os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cjworkbench.settings')",
             'django.setup()',
             'from allauth.account.models import EmailAddress',
             'from cjworkbench.models.Profile import UserProfile',
-            'from server.models import User',
+            'from server.models import User, ModuleVersion, Module',
+            'from server import dynamicdispatch',
         ]))
         self.clear_data_from_previous_tests()
 
@@ -128,6 +129,7 @@ class AccountAdmin:
             '_ = UserProfile.objects.all().delete()',
             '_ = User.objects.all().delete()',
         ]))
+        self.destroy_modules()
 
 
     def _ensure_empty_stdout_and_stderr(self) -> None:
@@ -261,9 +263,18 @@ class AccountAdmin:
 
 
     def destroy_user_email(self, email: EmailAddressHandle) -> None:
-        """Clean up the return value of verify_user_email().
-        """
+        """Clean up the return value of verify_user_email()."""
         self._execute(f'_ = {email._var}.delete(); del {email._var}')
+
+
+    def destroy_modules(self) -> None:
+        """Clean up any modules imported during test."""
+        self._execute('\n'.join([
+            'dynamicdispatch._dynamic_module_dispatches.clear()',
+            '_ = ModuleVersion.objects.exclude(module__link="").delete()',
+            '_ = Module.objects.exclude(link="").delete()',
+            'shutil.rmtree("importedmodules", ignore_errors=True)',
+        ]))
 
 
     @property

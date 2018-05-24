@@ -74,7 +74,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         #test valid url with a git suffix
         input_url_git = "https://github.com/anothercookiecrumbles/somerepo.git"
         returned_url_git = sanitise_url(input_url_git)
-        self.assertEqual(input_url, returned_url_git, "In this case, the input url should have .git stripped out.")
+        self.assertEqual(input_url_git, returned_url_git, ".git is optional, and we leave it")
 
         #test valid url with padding (i.e. extra spaces)
         input_url_spaces = "     https://github.com/anothercookiecrumbles/somerepo"
@@ -87,27 +87,18 @@ class ImportFromGitHubTest(LoggedInTestCase):
         self.assertEqual(input_url, returned_url_spaces, "In this case, the input url needs to be trimmed. "
                     "Therefore the output {} should be the input trimmed {}.".format(returned_url, input_url_spaces))
 
-        #test valid url, invalid github url
-        input_url = "www.testmeifyoucan.com"
-        with self.assertRaisesMessage(ValidationError, 'Invalid GitHub URL entered: http://%s' % (input_url)):
-            sanitise_url(input_url)
-
-        input_url = "http://www.testmeifyoucan.com"
-        with self.assertRaisesMessage(ValidationError, 'Invalid GitHub URL entered: %s' % (input_url)):
-            sanitise_url(input_url)
-
         #test empty string
         input_url = ""
-        with self.assertRaisesMessage(ValidationError, 'Empty URL entered.'):
+        with self.assertRaisesMessage(ValidationError, 'Empty URL'):
             sanitise_url(input_url)
 
         input_url = "    " #non-trimmed empty string
-        with self.assertRaisesMessage(ValidationError, 'Empty URL entered.'):
+        with self.assertRaisesMessage(ValidationError, 'Empty URL'):
             sanitise_url(input_url)
 
         #test non-url
         input_url = "this is not a url"
-        with self.assertRaisesMessage(ValidationError, 'Invalid GitHub URL entered: %s' % (input_url)):
+        with self.assertRaisesMessage(ValidationError, 'Invalid Git repo URL entered: %s' % (input_url)):
             sanitise_url(input_url)
 
 

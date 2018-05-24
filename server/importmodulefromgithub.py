@@ -36,23 +36,20 @@ def refresh_module_from_github(url):
     import_module_from_github(url)
 
 def sanitise_url(url):
-    if url.strip() == "":
-        raise ValidationError("Empty URL entered.")
-    # verify if this is a valid GitHub url
-    url_form_field = URLField()
-    try:
-        url = url_form_field.clean(url)
-        if "github" not in url:
-            raise ValidationError('Invalid GitHub URL entered: %s' % (url))
-        # - if entered url has a tailing '/', remove it
-        if url[-1] == '/':
-            url = url[:-1]
-        # - strip out '.git' if it exists in the URL
-        if url.endswith('.git'):
-            url = url[0:-4]
+    url = url.strip()
+    if not url:
+        raise ValidationError("Empty URL")
+
+    if 'http://git-server/' in url:
+        # integration tests
         return url
+
+    try:
+        url = URLField().clean(url)
     except ValidationError:
-        raise ValidationError('Invalid GitHub URL entered: %s' % (url))
+        raise ValidationError('Invalid Git repo URL entered: %s' % (url))
+
+    return url
 
 def retrieve_project_name(url):
     # - extract the folder name from the url
@@ -321,8 +318,6 @@ def import_module_from_directory(url, reponame, version, importdir, force_reload
 # If force_relaod, reloads the module even if the version hasn't changed (normally, this is an error)
 # On success, returnd a dict with (category, repo name, author, id_name) to tell user what happened
 def import_module_from_github(url, force_reload=False):
-
-    url = url.lower().strip()
     url = sanitise_url(url)
 
     reponame = retrieve_project_name(url)

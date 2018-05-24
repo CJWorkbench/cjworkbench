@@ -64,5 +64,6 @@ class LoggedInIntegrationTest(WorkbenchBase):
     def tearDown(self):
         self.account_admin.destroy_user_email(self.user_email)
         self.account_admin.destroy_user(self.user)
+        self.account_admin.destroy_modules()
 
         super().tearDown()

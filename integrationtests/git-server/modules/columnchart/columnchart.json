@@ -1,0 +1,24 @@
+{
+  "name": "Column Chart",
+  "id_name": "columnchart",
+  "category" : "Visualize",
+  "icon" : "chart",
+  "description" : "Create a column chart.",
+  "html_output": true,
+  "help_url":"modules/visualization/column-and-line-charts",
+  "parameters": [
+    {
+      "name": "Chart Options",
+      "id_name": "chart_editor",
+      "type": "custom",
+      "ui-only": true
+    },
+    {
+      "name": "Chart Type",
+      "id_name": "chart_type",
+      "type": "string",
+      "default": "column",
+      "visible": false
+    }
+  ]
+}

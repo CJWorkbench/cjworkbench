@@ -151,10 +151,10 @@ export class ImportModuleFromGitHub extends React.Component {
               <div className="import-url-field">
                 <input type="text"
                       className="text-field mb-3 mt-2 content-3"
+                      name="url"
                       value={this.state.value}
                       placeholder='https://github.com/...'
                       onChange={this.handleChange}
-                      onKeyPress={this.handleChange}
                       />
               <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a target="_blank" href=" https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module" className=' t-f-blue'>here</a></div>
               </div>

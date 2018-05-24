@@ -1,0 +1,14 @@
+#!/bin/sh
+
+mkdir -p /git
+
+for module in $(ls /modules/); do
+  cd "/modules/$module"
+  git init -q .
+  git config user.email 'user@example.org'
+  git config user.name 'User'
+  git add .
+  git commit -m 'convert-modules-to-repos'
+  git gc --quiet
+  mv .git "/git/$module.git"
+done

@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# Updates a module to the latest version on GitHub.
+
+set -e
+
+DIR="$(dirname "$0")"
+URL=${1:?"Usage: $0 URL"}
+NAME="$(basename --suffix=.git "$URL")"
+
+MODULE_DIR="$DIR"/modules/"$NAME"
+
+TMPDIR=$(mktemp -d)
+
+git clone --bare "$URL" "$TMPDIR"
+rm -rf "$MODULE_DIR"
+mkdir -p "$MODULE_DIR"
+(cd "$TMPDIR" && git archive --format=tar master) \
+  | tar xf - -C "$MODULE_DIR"
+
+rm -rf "$TMPDIR"

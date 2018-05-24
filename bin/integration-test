@@ -5,13 +5,15 @@ set -e
 
 cd "$(dirname "$0")"/..
 
-echo 'Running `docker build .`, which may take 30 minutes…' >&2
+echo 'Building git server (`docker build ./integrationtests/git-server`)…' >&2
+GIT_IMAGE_ID="$(docker build ./integrationtests/git-server -q)"
+
+echo 'Building django (`docker build .`), which may take 30 minutes…' >&2
 # To see which steps are slow:
 # docker build . --no-cache # watch a cold build
 # or
 # docker build . # watch build steps after you've edited .js or .py files
 DJANGO_IMAGE_ID="$(docker build . -q)"
-
 
 PREFIX=cjworkbench_integrationtest
 NETWORK_NAME="${PREFIX}_network"
@@ -47,6 +49,19 @@ start_database() {
     "$image_id"
 }
 
+start_git() {
+  echo -n 'Starting mock-module Git HTTP server… ' >&2 # `docker run` will output container id
+  # We call it "git-server" and not "git" because someday, somebody might
+  # register a ".git" TLD and enforce SSL, like Google git with ".dev"
+  docker run \
+    --detach \
+    --network "$NETWORK_NAME" \
+    --name "${PREFIX}_git" \
+    --network-alias "git-server" \
+    --publish-all \
+    "$GIT_IMAGE_ID"
+}
+
 start_django() {
   echo -n 'Starting Django… ' >&2 # `docker run` will output container id
   docker run \
@@ -71,6 +86,7 @@ find_django_url() {
 
 cleanup() {
   stop_container_if_running database
+  stop_container_if_running git
   stop_container_if_running django
   docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 && docker network rm "$NETWORK_NAME" || true
 }
@@ -82,10 +98,12 @@ echo 'Setting up network…' >&2
 docker network create "${PREFIX}_network"
 
 start_database
+start_git
 start_django
 
 echo -n 'Waiting for Django to start its database and HTTP server… ' >&2
 docker exec cjworkbench_integrationtest_django sh -c 'until curl -sf localhost:8000; do echo -n "."; sleep 1; done; echo'
+# No need to wait for git to start: django is 1,000,000 times slower
 
 url=$(find_django_url)
 echo "Django is at ${url}" >&2
