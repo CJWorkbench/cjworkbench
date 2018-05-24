@@ -33,6 +33,13 @@ def create_test_user(username='username', email='user@example.org', password='pa
     return User.objects.create(username=username, email=email, password=password)
 
 
+def clear_db():
+    ParameterVal.objects.all().delete()
+    WfModule.objects.all().delete()
+    Workflow.objects.all().delete()
+    User.objects.all().delete()
+
+
 # ---- Setting up workflows ----
 
 def add_new_module_version(name, *, id_name='', dispatch=''):  # * means don't let extra arguments fill up the kwargs
@@ -48,11 +55,14 @@ def add_new_parameter_spec(module_version, type, id_name='', order=0, def_value=
         order=order,
         def_value=def_value)
 
-def add_new_workflow(name):
+def add_new_workflow(name, **kwargs):
     # Workflows have to have an owner, which means we need at least one user
-    if not User.objects.exists():
-        User.objects.create_user(username='username', password='password')
-    return Workflow.objects.create(name=name, owner=User.objects.first())
+    if 'owner' not in kwargs:
+        if not User.objects.exists():
+            kwargs['owner'] = User.objects.create_user(username='username', password='password')
+        else:
+            kwargs['owner'] = User.objects.first()
+    return Workflow.objects.create(name=name, **kwargs)
 
 def add_new_wf_module(workflow, module_version, order=0):
     wfm = WfModule.objects.create(workflow=workflow, module_version=module_version, order=order)

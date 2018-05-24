@@ -1,57 +1,96 @@
 # Tests for our websockets (Channels) handling
-# Pretty minimal rn, just tests that we can open a connection to a workflow
 
-from channels import Channel
-from channels.tests import ChannelTestCase, HttpClient
-from server.models import Module, Workflow
-from server.websockets import *
-from server.tests.utils import *
+import asyncio
+from aiounittest import async_test
+from channels.testing import WebsocketCommunicator
+import json
+from unittest import TestCase
 
-class ChannelTests(ChannelTestCase, LoggedInTestCase):
+from cjworkbench.asgi import create_url_router
+from server.websockets import ws_client_rerender_workflow_async, ws_client_wf_module_status_async, WorkflowConsumer
+from server.tests.utils import add_new_workflow, add_new_module_version, add_new_wf_module, LoggedInTestCase, create_test_user, clear_db
+
+class ChannelTests(TestCase):
     def setUp(self):
-        super(ChannelTests, self).setUp() # log in
+        super(ChannelTests, self).setUp()
+
+        clear_db()
+
+        self.user = create_test_user(username='usual', email='usual@example.org')
         self.workflow = add_new_workflow('Workflow 1')
         self.wf_id = self.workflow.id
         self.module = add_new_module_version('Module')
         self.wf_module = add_new_wf_module(self.workflow, self.module)
+        self.application = self.mock_auth_middleware(create_url_router())
 
-    def test_websockets(self):
-        client = HttpClient()
-        wf_path = '/workflow/' + str(self.wf_id)
 
-        # cannot connect to an invalid workflow ID
-        with self.assertRaises(AssertionError):
-            client.send_and_consume('websocket.connect', path='/workflow/999999')
-        self.assertIsNone(client.receive())
+    def tearDown(self):
+        clear_db()
 
-        # can connect to valid workflow ID
-        client.send_and_consume('websocket.connect', path=wf_path)
-        self.assertIsNone(client.receive())
 
-        # send message
-        ws_send_workflow_update(self.workflow, {'foo':42})
-        self.assertEqual(client.receive(), {'foo' : 42})
+    def mock_auth_middleware(self, application):
+        def inner(scope):
+            scope['user'] = self.user
+            return application(scope)
+        return inner
 
-        # add another client to same workflow, test receive
-        client2 = HttpClient()
-        client2.send_and_consume('websocket.connect', path=wf_path)
-        self.assertIsNone(client2.receive())
 
-        ws_send_workflow_update(self.workflow, {'bar': 42})
-        self.assertEqual(client.receive(), {'bar': 42})
-        self.assertEqual(client2.receive(), {'bar': 42})
+    @async_test
+    async def test_deny_missing_id(self):
+        comm = WebsocketCommunicator(self.application, '/workflows/98913123/')
+        connected, _ = await comm.connect()
+        self.assertFalse(connected)
 
-        # remove client from workflow, test no longer receives
-        client2.send_and_consume('websocket.disconnect', path=wf_path)
-        self.assertIsNone(client2.receive())
-        ws_send_workflow_update(self.workflow, {'baz': 42})
-        self.assertEqual(client.receive(), {'baz': 42})
-        self.assertIsNone(client2.receive())
 
-        # test that utility functions send the right messages
-        ws_client_rerender_workflow(self.workflow)
-        self.assertEqual(client.receive(), {'type':'reload-workflow'})
+    @async_test
+    async def test_deny_other_users_workflow(self):
+        other_workflow = add_new_workflow(
+                'Workflow 2',
+                owner=create_test_user('other', 'other@example.org')
+        )
+        comm = WebsocketCommunicator(self.application, f'/workflows/{other_workflow.id}/')
+        connected, _ = await comm.connect()
+        self.assertFalse(connected)
 
-        ws_client_wf_module_status(self.wf_module, 'busy')
-        self.assertEqual(client.receive(), {'type':'wfmodule-status', 'id':self.wf_module.id, 'status':'busy'})
 
+    @async_test
+    async def test_message(self):
+        comm = WebsocketCommunicator(self.application, f'/workflows/{self.workflow.id}/')
+        connected, _ = await comm.connect(); self.assertTrue(connected)
+        await ws_client_rerender_workflow_async(self.workflow)
+        response = await comm.receive_from()
+        self.assertEqual(json.loads(response), { 'type': 'reload-workflow' })
+
+
+    @async_test
+    async def test_two_clients_get_messages_on_same_workflow(self):
+        comm1 = WebsocketCommunicator(self.application, f'/workflows/{self.workflow.id}/')
+        comm2 = WebsocketCommunicator(self.application, f'/workflows/{self.workflow.id}/')
+        connected1, _ = await comm1.connect(); self.assertTrue(connected1)
+        connected2, _ = await comm2.connect(); self.assertTrue(connected2)
+        await ws_client_rerender_workflow_async(self.workflow)
+        response1 = await comm1.receive_from()
+        self.assertEqual(json.loads(response1), { 'type': 'reload-workflow' })
+        response2 = await comm2.receive_from()
+        self.assertEqual(json.loads(response2), { 'type': 'reload-workflow' })
+
+
+    @async_test
+    async def test_after_disconnect_client_gets_no_message(self):
+        comm = WebsocketCommunicator(self.application, f'/workflows/{self.workflow.id}/')
+        connected, _ = await comm.connect(); self.assertTrue(connected)
+        await comm.disconnect()
+        self.assertTrue(await comm.receive_nothing())
+
+
+    @async_test
+    async def test_wf_module_message(self):
+        comm = WebsocketCommunicator(self.application, f'/workflows/{self.workflow.id}/')
+        connected, _ = await comm.connect(); self.assertTrue(connected)
+        await ws_client_wf_module_status_async(self.wf_module, 'busy')
+        response = await comm.receive_from()
+        self.assertEqual(json.loads(response), {
+            'id': self.wf_module.id,
+            'type': 'wfmodule-status',
+            'status': 'busy',
+        })

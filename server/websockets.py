@@ -3,31 +3,35 @@
 import json
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from channels.generic.websocket import JsonWebsocketConsumer
+from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
 from typing import Dict, Any
 
 def _workflow_channel_name(workflow_id: int) -> str:
-    """Given a workflow ID, returns a channel_layer channel name.
+    """Given a workflow ID, return a channel_layer channel name.
 
     Messages sent to this channel name will be sent to all clients connected to
     this workflow.
     """
     return f"workflow-{str(workflow_id)}"
 
-class WorkflowConsumer(JsonWebsocketConsumer):
+
+class WorkflowConsumer(AsyncJsonWebsocketConsumer):
     @property
     def workflow_id(self):
         return int(self.scope['url_route']['kwargs']['workflow_id'])
+
 
     @property
     def workflow_channel_name(self):
         return _workflow_channel_name(self.workflow_id)
 
+
     @property
     def workflow(self):
         """The current user's Workflow, if exists and authorized; else None
         """
+        # [adamhooper, 2018-05-24] This should probably be async.
         from server.models import Workflow
 
         try:
@@ -42,39 +46,66 @@ class WorkflowConsumer(JsonWebsocketConsumer):
 
         return ret
 
-    def connect(self):
+
+    async def connect(self):
         if self.workflow is None: raise DenyConnection()
 
-        async_to_sync(self.channel_layer.group_add)(self.workflow_channel_name,
-                                                    self.channel_name)
-        self.accept()
+        await self.channel_layer.group_add(self.workflow_channel_name,
+                                           self.channel_name)
+        await self.accept()
 
-    def disconnect(self, code):
-        async_to_sync(self.channel_layer.group_discard)(self.workflow_channel_name,
-                                                        self.channel_name)
 
-    def send_data_to_workflow_client(self, message):
-        self.send_json(message['data'])
+    async def disconnect(self, code):
+        await self.channel_layer.group_discard(self.workflow_channel_name,
+                                               self.channel_name)
 
-def _workflow_group_send(workflow_id: int, message_dict: Dict[str,Any]) -> None:
-    """Sends message_dict as JSON to all clients connected to the workflow.
+
+    async def send_data_to_workflow_client(self, message):
+        await self.send_json(message['data'])
+
+
+async def _workflow_group_send(workflow_id: int, message_dict: Dict[str,Any]) -> None:
+    """Send message_dict as JSON to all clients connected to the workflow.
     """
     channel_name = _workflow_channel_name(workflow_id)
     channel_layer = get_channel_layer()
-    group_send = async_to_sync(channel_layer.group_send)
-    group_send(channel_name, {
+    await channel_layer.group_send(channel_name, {
         'type': 'send_data_to_workflow_client',
         'data': message_dict,
     })
 
+
+def _workflow_group_send_sync(workflow_id: int, message_dict: Dict[str,Any]) -> None:
+    """Send message_dict as JSON to all clients connected to the workflow.
+    """
+    async_to_sync(_workflow_group_send)(workflow_id, message_dict)
+
+
 def ws_client_rerender_workflow(workflow) -> None:
-    """Tells clients of the workflow to re-request it and update themselves.
+    """Tell clients of the workflow to re-request it and update themselves.
+
+    TODO rename this to _sync, and make _async the default
+    """
+    async_to_sync(ws_client_rerender_workflow_async)(workflow)
+
+
+async def ws_client_rerender_workflow_async(workflow) -> None:
+    """Tell clients of the workflow to re-request it and update themselves.
     """
     message = { 'type': 'reload-workflow'}
-    _workflow_group_send(workflow.id, message)
+    await _workflow_group_send(workflow.id, message)
+
 
 def ws_client_wf_module_status(wf_module, status):
-    """Tells clients of the wf_module's workflow to reload the wf_module.
+    """Tell clients of the wf_module's workflow to reload the wf_module.
+
+    TODO rename this to _sync, and make _async the default
+    """
+    async_to_sync(ws_client_wf_module_status_async)(wf_module, status)
+
+
+async def ws_client_wf_module_status_async(wf_module, status):
+    """Tell clients of the wf_module's workflow to reload the wf_module.
     """
     workflow = wf_module.workflow
     if workflow is None:
@@ -82,4 +113,4 @@ def ws_client_wf_module_status(wf_module, status):
         return
 
     message = { 'type' : 'wfmodule-status', 'id' : wf_module.id, 'status' : status}
-    _workflow_group_send(workflow.id, message)
+    await _workflow_group_send(workflow.id, message)
