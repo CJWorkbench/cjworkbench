@@ -13,7 +13,7 @@ class TestWfModule(LoggedInIntegrationTest):
 
 
     def _add_csv_data(self):
-        csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
+        csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson\n'
 
         self.browser.click_whatever('div[data-module-name="Paste data"]')
         # wait for wfmodule to appear
