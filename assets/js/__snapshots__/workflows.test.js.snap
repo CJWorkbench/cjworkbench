@@ -187,7 +187,7 @@ exports[`Workflow list page renders correctly 1`] = `
         <p
           className="content-2"
         >
-          Learn to scrape, monitor and clean data without coding.
+          Learn to scrape, monitor, clean and analyze data without coding.
         </p>
       </a>
       <div
