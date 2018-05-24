@@ -22,7 +22,7 @@ jsonpickle = "==0.9.5"
 lxml = "==4.2.1"
 numpy = "==1.11.3"
 "oauth2client" = {git = "https://github.com/CJWorkbench/oauth2client.git"}
-pandas = "==0.21.1"
+pandas = ">=0.23.0"
 "psycopg2" = "==2.7.1"
 "python-intercom" = "==3.1.0"
 "sendgrid-django" = "==4.0.4"
