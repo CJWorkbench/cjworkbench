@@ -17,10 +17,11 @@ class TestWfModule(LoggedInIntegrationTest):
 
         self.browser.click_whatever('div[data-module-name="Paste data"]')
         # wait for wfmodule to appear
-        self.browser.click_whatever('textarea[name="csv"]', wait=True)
-        self.browser.fill_in('csv', csv)
+        self.browser.fill_in('csv', csv, wait=True)
         # blur, to begin saving result to server
         self.browser.click_whatever('ul.WF-meta span', text='by')
+        # and for some reason, that doesn't do the trick! Focus again?
+        self.browser.click_whatever('textarea[name="csv"]')
 
 
     def test_paste_csv_workflow(self):
