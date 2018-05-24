@@ -72,7 +72,7 @@ class ScrapeUrlsTest(TestCase):
         pass
 
     # does the hard work for a set of urls/timings/results
-    @override_settings(SCRAPER_TIMEOUT=1.1)  # all our test data has 1 second lag max
+    @override_settings(SCRAPER_TIMEOUT=0.2)  # all our test data has 0.25s lag max
     def scraper_result_test(self, results, response_times):
         with mock.patch('aiohttp.ClientSession') as session:
             urls = results['url']
@@ -101,7 +101,7 @@ class ScrapeUrlsTest(TestCase):
 
     # basic tests, where number of urls is smaller than max simultaneous connections
     def test_few_urls(self):
-        response_times=[0.5, 0.1, 0.2]
+        response_times=[0.05, 0.02, 0.08]
         self.scraper_result_test(simple_result_table, response_times)
 
         self.scraper_result_test(invalid_url_table, response_times)
@@ -135,7 +135,7 @@ class ScrapeUrlsTest(TestCase):
         urls = ['https://meh.mydomain%d.com/foofile/%d' % (i,i*43) for i in url_range]
         status = [random_status() for i in url_range ]
         content = [ '<h1>Best headline number %d' % random.randint(1,1000) if status[i]==200 else '' for i in url_range ]
-        response_times =[ random.uniform(0,1) for i in url_range ] # seconds before the "server" responds
+        response_times =[ random.uniform(0,0.01) for i in url_range ] # seconds before the "server" responds
 
         results_table = pd.DataFrame({'url':urls, 'date': testdate, 'status':status, 'html':content})
 
