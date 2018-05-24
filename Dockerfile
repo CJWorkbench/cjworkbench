@@ -52,14 +52,15 @@ COPY server/ /app/server/
 COPY templates/ /app/templates/
 COPY database.yml manage.py start-prod.sh /app/
 
-# Inject unit tests into our continuous integration
-# This is how Travis tests
-RUN pipenv run ./manage.py test
-
 # needed for django to load correctly
 COPY --from=jsbuild /app/webpack-stats.json /app/webpack-stats.json
 
-# so we can live-edit js to debug
+# Inject unit tests into our continuous integration
+# This is how Travis tests
+RUN ./manage.py test
+
+# so we can live-edit js to debug while running on production
+# during live-edits, the site will likely be crashy for most users
 COPY watchjs /app/
 COPY --from=jsbuild /app/node_modules /app/node_modules
 
