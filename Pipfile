@@ -16,7 +16,7 @@ djangorestframework = "==3.5.4"
 "django-user-accounts" = "==2.0.3"
 "django-webpack-loader" = "==0.4.1"
 formulas = {git = "https://github.com/CJWorkbench/formulas.git"}
-gitpython = "==2.1.3"
+gitpython = ">=2.1.8"
 "google-api-python-client" = "==1.6.4"
 "html5lib" = "==1.0.1"
 "httplib2" = "==0.10.3"
