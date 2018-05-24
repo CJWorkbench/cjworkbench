@@ -23,7 +23,7 @@ RUN pipenv install --dev --system --deploy
 RUN python -m nltk.downloader -d /usr/local/share/nltk_data vader_lexicon
 
 # 2. Node deps -- completely independent
-FROM node:10.0.0-slim AS jsbuild
+FROM node:10.1.0-slim AS jsbuild
 
 RUN apt-get update && apt-get install --no-install-recommends -y git
 
@@ -33,8 +33,11 @@ WORKDIR /app
 COPY package.json package-lock.json /app/
 RUN npm install
 
-COPY webpack.config.js /app/
+COPY webpack.config.js setupJest.js /app/
 COPY assets /app/assets/
+# Inject unit tests into our continuous integration
+# This is how Travis tests
+RUN npm test
 RUN node_modules/.bin/webpack -p
 
 
@@ -48,6 +51,10 @@ COPY cjworkbench/ /app/cjworkbench/
 COPY server/ /app/server/
 COPY templates/ /app/templates/
 COPY database.yml manage.py start-prod.sh /app/
+
+# Inject unit tests into our continuous integration
+# This is how Travis tests
+RUN pipenv run ./manage.py test
 
 # needed for django to load correctly
 COPY --from=jsbuild /app/webpack-stats.json /app/webpack-stats.json

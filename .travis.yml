@@ -2,10 +2,10 @@ language: python
 sudo: required
 python:
 - '3.6.5'
-node_js:
-- '10.1.0'
 services:
 - docker
+git:
+  depth: 1
 addons:
   firefox: latest
 
@@ -14,14 +14,7 @@ env:
   - MOZ_HEADLESS=1
 
 install:
-- pip install pipenv==11.10.0  # 11.10.x won't run under travis https://github.com/pypa/pipenv/issues/2078
-- pipenv install --dev --deploy
-- ". $HOME/.nvm/nvm.sh"
-- nvm install stable
-- nvm use stable
-- npm install
-- ./node_modules/.bin/webpack --config webpack.config.js
-- docker build .
+- pip install capybara-py selenium
 
 # Geckodriver needed  for integration tests
 - wget https://github.com/mozilla/geckodriver/releases/download/v0.20.1/geckodriver-v0.20.1-linux64.tar.gz
@@ -30,8 +23,8 @@ install:
 - export PATH=$PATH:$PWD/geckodriver
 
 script:
-- pipenv run ./manage.py test
-- npm test
+# Docker build does both npm test and ./manage.py test
+- docker build .
 - bin/integration-test
 
 notifications:
