@@ -4,25 +4,17 @@ from server.utils import log_message
 from django.forms import URLField
 from django.core.exceptions import ValidationError
 
-import importlib.machinery
-from importlib import import_module
+import importlib.util
 
 import inspect
 import json
 import os
 import re
 import shutil
-import sys
 
 import time
 import git
 from git.exc import GitCommandError
-
-
-# add /server to path -- needed?
-cwd = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-parent_directory = os.path.dirname(cwd)
-sys.path.insert(0, parent_directory)
 
 categories = set()
 
@@ -215,22 +207,18 @@ def add_boilerplate_and_check_syntax(destination_directory, python_file):
 
 # Now check if the module is importable and defines the render function
 def validate_python_functions(destination_directory, python_file):
-    p, m = python_file.rsplit(".", 1)
-
-    # We need to reinsert the path so that the imported module can be read. :/
-    # OK, the time.sleep is weird, but it seems to circumvent the issue where we get an error
-    # "ImportError: No module named ..." probably because of a race condition/the time it takes for the system to
-    # recognise the insert of the new path. There's probably a better solution though?
-    sys.path.insert(0, destination_directory)
-    time.sleep(2)
-
+    # execute the module, as  test -- dynamicdispatch will execute again
+    # when needed
+    path = os.path.join(destination_directory, python_file)
     try:
-        imported_module = import_module(p)
+        spec = importlib.util.spec_from_file_location('test', path)
+        test_module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(test_module)
     except:
        raise ValidationError("Cannot load module")
 
     try:
-       render_fn = getattr(imported_module, 'render')
+       render_fn = getattr(test_module, 'render')
     except:
        raise ValidationError("Module render() function is missing.")
 
@@ -300,11 +288,6 @@ def import_module_from_directory(url, reponame, version, importdir, force_reload
         move_files_to_final_location(destination_directory, importdir, [json_file, python_file, html_file])
         add_boilerplate_and_check_syntax(destination_directory, python_file)
         validate_python_functions(destination_directory, python_file)
-
-        # actually import the module into our Python environment, as  test -- dynamicdispatch will load as needed
-        temp = importlib.machinery.SourceFileLoader(os.path.join(destination_directory, python_file),
-                                                    os.path.join(destination_directory, python_file)).load_module()
-        globals().update(temp.__dict__)
 
         # If that succeeds, initialise module in our database
         load_module_from_dict(module_config)
