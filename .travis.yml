@@ -24,8 +24,7 @@ install:
 
 script:
 # Docker build does both npm test and ./manage.py test
-- docker build .
-- bin/integration-test
+- docker build . && bin/integration-test
 
 notifications:
   slack:
