@@ -59,12 +59,6 @@ COPY --from=jsbuild /app/webpack-stats.json /app/webpack-stats.json
 # This is how Travis tests
 RUN ./manage.py test
 
-# so we can live-edit js to debug while running on production
-# during live-edits, the site will likely be crashy for most users
-COPY watchjs /app/
-COPY --from=jsbuild /app/node_modules /app/node_modules
-
-
 # Start cron to hit our "update data" endpoint once per minute
 RUN echo "* * * * * /usr/bin/curl http://localhost:8000/runcron" | crontab
 
