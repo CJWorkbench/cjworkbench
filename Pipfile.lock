@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "aca1e5a0c8cbe6fd0972bffea8ce54a211186f5db68f712f7cde1c6e9636e22a"
+            "sha256": "a7ce39f8e25052706aa1df176e31177d1e887d04eaba8106d8f025d9689e22dd"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -122,10 +122,10 @@
         },
         "daphne": {
             "hashes": [
-                "sha256:b1cd7481dae553d5c933f1c45cf7bb991e0e6a9b2a7d0a8afbf744beaaf7fa80",
-                "sha256:06faadc685da8df991f01d647fd9bae3778cf8ce83b85b170af15629056a1bf2"
+                "sha256:8b980752a8509d2016b44d3ec146278ccd640bd9e0d18557bd4c229277df8e63",
+                "sha256:e279c47e9d090b165562eaca683666a66124ca7dfc8687026c04e493ad736964"
             ],
-            "version": "==2.1.2"
+            "version": "==2.1.1"
         },
         "defusedxml": {
             "hashes": [
@@ -200,10 +200,10 @@
         },
         "gitpython": {
             "hashes": [
-                "sha256:1ec4c44846cf76a1e55769560673a97731849c9d05401e035e607495f10db959",
-                "sha256:b60b045cf64a321e5b620debb49890099fa6c7be6dfb7fb249027e5d34227301"
+                "sha256:f4380e0aabaa9ce0499d6b6136d89b6ca30e1c8a6839c34b40b3dde8a1f9499d",
+                "sha256:3826185b11e1fc372e7d31251e9b65e11ccb7c27f82c771d619048bdb5b66c81"
             ],
-            "version": "==2.1.10"
+            "version": "==2.1.3"
         },
         "google-api-python-client": {
             "hashes": [
