@@ -5,21 +5,31 @@
   a {text-decoration: none;}
 
   .lesson-banner {
-    width:50%;
-    min-width:30rem;
+    width:40rem;
     height:10rem;
     border:3px solid $brand-learn;
     color:$brand-learn;
     background-color: $brand-learn--Vlight;
     border-radius: 15px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block;
     margin:4rem;
     padding:1.5rem;
     &:hover {
       background-color: $brand-learn--light;
     }
+
+    .content-3 {
+      margin-bottom: .2rem;
+    }
+
+    .icon-star {
+      font-size: 2rem;
+      margin-right: .5rem;
+    }
+
+    p {margin-top: 1rem;}
+
+
   }
 
   .button-blue:hover {

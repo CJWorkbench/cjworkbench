@@ -20,7 +20,7 @@ export default class WorkflowListNavBar extends React.Component {
           <div className='WF-link--under'></div>
         </a>
         <a href="/lessons/" {...propsForLink('lessons')} className="LS-toggle--link">
-          <div>LEARN</div>
+          <div>TRAINING</div>
           <div className='LS-link--under'></div>
         </a>
       </div>

@@ -55,7 +55,7 @@ exports[`Workflow list page renders correctly 1`] = `
               href="/lessons/"
             >
               <div>
-                LEARN
+                TRAINING
               </div>
               <div
                 className="LS-link--under"
@@ -164,10 +164,31 @@ exports[`Workflow list page renders correctly 1`] = `
       className="container"
     >
       <a
-        className="lesson-banner title-2 mx-auto"
+        className="lesson-banner mx-auto"
         href="/lessons/"
       >
-        LEARN HOW TO USE WORKBENCH
+        <div
+          className="content-3"
+        >
+          NEW
+        </div>
+        <div
+          className="d-flex"
+        >
+          <span
+            className="icon-star"
+          />
+          <div
+            className=" title-2 "
+          >
+            TRAINING
+          </div>
+        </div>
+        <p
+          className="content-2"
+        >
+          Learn to scrape, monitor and clean data without coding.
+        </p>
       </a>
       <div
         className="d-flex justify-content-center"
