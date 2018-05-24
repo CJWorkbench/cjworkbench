@@ -354,3 +354,5 @@ if I_AM_TESTING:
                      'allauth.socialaccount.providers.google']:
         if provider not in INSTALLED_APPS:
             INSTALLED_APPS.append(provider)
+
+TEST_RUNNER = 'server.tests.runner.TimeLoggingDiscoverRunner'
