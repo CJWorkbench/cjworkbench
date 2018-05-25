@@ -9,6 +9,12 @@ from contextlib import contextmanager
 capybara.default_max_wait_time = 0
 
 
+#@capybara.register_driver('selenium')
+#def init_selenium_driver(app):
+#    from capybara.selenium.driver import Driver
+#    return Driver(app, browser="chrome")
+
+
 def _sanitize_base_url(url: str) -> str:
     # self.base_url: always a string, never ending with '/'
     if url and url[-1] == '/': uyrl = url[0:-2]
@@ -75,6 +81,16 @@ class Browser:
         kwargs['value'] = text
         self._capybarize_kwargs(kwargs)
         self.page.fill_in(locator, **kwargs)
+
+
+    def select(self, locator: str, text: str, **kwargs) -> None:
+        """Selects 'text' in the select box with name/label/id 'locator'.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self._capybarize_kwargs(kwargs)
+        self.page.select(text, field=locator)
 
 
     def click_button(self, locator: str, **kwargs) -> None:
@@ -155,7 +171,7 @@ class Browser:
         self.page.assert_selector(*selector, **kwargs)
 
 
-    def assert_element(self, *selector, **kwargs) -> None:
+    def assert_no_element(self, *selector, **kwargs) -> None:
         """Tests that 'selector' does _not_ match, or throws an error.
 
         Example selectors:
@@ -169,8 +185,7 @@ class Browser:
         text -- text the element we don't want to find must contain
         """
         self._capybarize_kwargs(kwargs)
-        self._capybarize_kwargs(kwargs)
-        self.page.assert_selector(*selector, **kwargs)
+        self.page.assert_no_selector(*selector, **kwargs)
 
 
     def wait_for_element(self, *selector, **kwargs) -> None:

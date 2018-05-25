@@ -3,11 +3,7 @@ import PropTypes from 'prop-types';
 import { DragLayer } from 'react-dnd';
 import WfModuleHeader from './wfmodule/WfModuleHeader';
 
-class CustomDragLayer extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
+export class CustomDragLayer extends React.Component {
   getItemStyles(props) {
     const { getSourceClientOffset } = props;
 
@@ -23,7 +19,7 @@ class CustomDragLayer extends React.Component {
     return {
       willChange: 'transform',
       transform: transform,
-      WebkitTransform: transform
+      WebkitTransform: transform,
     };
   }
 
@@ -65,5 +61,4 @@ CustomDragLayer.propTypes = {
   })
 };
 
-export { CustomDragLayer }; // Export un-decorated component for testing
 export default DragLayer(collect)(CustomDragLayer);

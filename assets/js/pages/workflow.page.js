@@ -9,6 +9,7 @@ import workbenchAPI from '../WorkbenchAPI'
 import { DragDropContextProvider } from 'react-dnd'
 import HTML5Backend from 'react-dnd-html5-backend'
 import CustomDragLayer from '../CustomDragLayer'
+import { DragLayer } from 'react-dnd'
 
 // Global API object, encapsulates all calls to the server
 const api = workbenchAPI();
@@ -76,10 +77,10 @@ const socket = buildSocket() // Start listening for events
 ReactDOM.render(
     <Provider store={Actions.store}>
       <DragDropContextProvider backend={HTML5Backend}>
-        <div>
+        <React.Fragment>
           <CustomDragLayer />
           <WorkflowContainer lesson={window.initState.lessonData} />
-        </div>
+        </React.Fragment>
       </DragDropContextProvider>
     </Provider>,
     document.getElementById('root')

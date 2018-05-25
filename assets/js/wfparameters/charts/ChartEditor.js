@@ -190,6 +190,7 @@ export default class ChartEditor extends React.Component {
             </div>
             <input
               type="text"
+              name="title"
               className="wfmoduleStringInput parameter-base t-d-gray content-2 text-field"
               value={this.state.model.metadata.title}
               onChange={this.onChangeTitle} />

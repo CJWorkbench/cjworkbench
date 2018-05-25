@@ -13,15 +13,12 @@
  *
  */
 
-import PropTypes from 'prop-types'
 import React from 'react'
+import PropTypes from 'prop-types'
 import ModuleLibraryClosed from './ModuleLibraryClosed'
 import ModuleLibraryOpen from './ModuleLibraryOpen'
 import { setWfLibraryCollapseAction } from './workflow-reducer'
 import { connect } from 'react-redux'
-import {matchLessonHighlight} from "./util/LessonHighlight";
-import {WfModule} from "./wfmodule/WfModule";
-import {sortableWfModule} from "./wfmodule/WfModuleDragDropConfig";
 
 // Helper to sort modules by category, then name
 const CategoryOrder = ['Add data', 'Clean', 'Analyze', 'Visualize', 'Code', 'Other']
@@ -47,6 +44,7 @@ export class ModuleLibrary extends React.Component {
     this.state = {
       openCategory: (workflowEmpty && this.props.libraryOpen) ? "Add data" : null,
       modules: ModuleLibrary.sortModules(this.props.modules),
+      propModulesWereDerivedFrom: this.props.modules, // for memoizing
     };
 
     this.addModule = this.props.addModule.bind(this);
@@ -62,15 +60,13 @@ export class ModuleLibrary extends React.Component {
     return modules.slice().sort(compareModules);
   }
 
-  componentWillReceiveProps(nextProps) {
-    this.setState({
-      modules: ModuleLibrary.sortModules(nextProps.modules)
-    })
-  }
+  static getDerivedStateFromProps(props, state) {
+    if (state.propModulesWereDerivedFrom === props.modules) return null
 
-  // Categories call this to indicate that they've been opened, so we can close all the rest
-  setOpenCategory(name) {
-      this.setState({openCategory: name});
+    return {
+      propModulesWereDerivedFrom: props.modules,
+      modules: props.modules.slice().sort(compareModules),
+    }
   }
 
   itemClick(event) {
@@ -85,30 +81,29 @@ export class ModuleLibrary extends React.Component {
     this.props.setWfLibraryCollapse(this.props.workflow.id, false, this.props.isReadOnly)
   }
 
+  setOpenCategory(name) {
+    this.setState({openCategory: name});
+  }
+
   // Main render.
   render() {
     if (this.props.libraryOpen && !this.props.isReadOnly) {
-      // Outermost div seems necessary to set background color below ImportFromGithub
       return (
-        <div>
-          <ModuleLibraryOpen
-            workflow={this.props.workflow}
-            libraryOpen={true}
-            api={this.props.api}
-            isReadOnly={this.props.isReadOnly}
-            modules={this.state.modules}
-            addModule={this.props.addModule}
-            dropModule={this.props.dropModule}
-            toggleLibrary={this.toggleLibrary}
-            openCategory={this.state.openCategory}
-            setOpenCategory={this.setOpenCategory}
-          />
-        </div>
+        <ModuleLibraryOpen
+          workflow={this.props.workflow}
+          api={this.props.api}
+          isReadOnly={this.props.isReadOnly}
+          modules={this.state.modules}
+          addModule={this.props.addModule}
+          dropModule={this.props.dropModule}
+          toggleLibrary={this.toggleLibrary}
+          openCategory={this.state.openCategory}
+          setOpenCategory={this.setOpenCategory}
+        />
       )
     } else {
       return (
         <ModuleLibraryClosed
-          libraryOpen={false}
           api={this.props.api}
           isReadOnly={this.props.isReadOnly}
           modules={this.state.modules}

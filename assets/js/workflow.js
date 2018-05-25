@@ -7,7 +7,6 @@ import OutputPane from './OutputPane'
 import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
 import ModuleStack from './ModuleStack'
-import CustomDragLayer from './CustomDragLayer'
 import { logUserEvent } from './utils'
 
 // ---- WorkflowMain ----

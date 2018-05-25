@@ -78,7 +78,6 @@ ModuleLibraryOpen.propTypes = {
     icon: PropTypes.string.isRequired,
   })).isRequired,
   setOpenCategory:  PropTypes.func.isRequired,
-  libraryOpen:      PropTypes.bool.isRequired,
   isReadOnly:       PropTypes.bool.isRequired,
   toggleLibrary:    PropTypes.func.isRequired,
 }

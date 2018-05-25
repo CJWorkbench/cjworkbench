@@ -5,13 +5,14 @@
 
 import React from 'react';
 import Autosuggest from 'react-autosuggest';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import PropTypes from 'prop-types'
 import { DragSource } from 'react-dnd';
 import { connect } from 'react-redux'
 import lessonSelector from './lessons/lessonSelector'
 
 const spec = {
-  beginDrag(props, monitor, component) {
+  beginDrag(props) {
     return {
       type: 'module',
       index: false,
@@ -21,7 +22,7 @@ const spec = {
       insert: true,
     }
   },
-  endDrag(props, monitor, component) {
+  endDrag(props, monitor) {
     if (monitor.didDrop()) {
       const result = monitor.getDropResult();
       props.dropModule(
@@ -39,6 +40,7 @@ const spec = {
 function collect(connect, monitor) {
   return {
     connectDragSource: connect.dragSource(),
+    connectDragPreview: connect.dragPreview(),
     isDragging: monitor.isDragging()
   }
 }
@@ -61,11 +63,19 @@ function groupModules(items) {
 }
 
 class ModuleSearchResult extends React.Component {
+  componentDidMount() {
+    this.props.connectDragPreview(getEmptyImage(), {
+			// IE fallback: specify that we'd rather screenshot the node
+			// when it already knows it's being dragged so we can hide it with CSS.
+			captureDraggingState: true,
+		})
+  }
+
   render() {
     const className = `module-search-result ${this.props.isLessonHighlight ? 'lesson-highlight' : ''} react-autosuggest__suggestion-inner`
 
     return this.props.connectDragSource(
-      <div className={className}>
+      <div className={className} data-module-name={this.props.name}>
         <div className='suggest-handle'>
           <i className='icon-grip'></i>
         </div>

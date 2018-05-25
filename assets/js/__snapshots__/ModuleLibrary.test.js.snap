@@ -1,71 +1,68 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ModuleLibrary Not Read-only matches snapshot 1`] = `
-<div>
-  <ModuleLibraryOpen
-    addModule={[MockFunction]}
-    api={
+<ModuleLibraryOpen
+  addModule={[MockFunction]}
+  api={
+    Object {
+      "setWfLibraryCollapse": [MockFunction],
+    }
+  }
+  dropModule={[MockFunction]}
+  isReadOnly={false}
+  modules={
+    Array [
       Object {
-        "setWfLibraryCollapse": [MockFunction],
-      }
-    }
-    dropModule={[MockFunction]}
-    isReadOnly={false}
-    libraryOpen={true}
-    modules={
-      Array [
-        Object {
-          "category": "Visualize",
-          "description": "Create line, column and scatter plot charts.",
-          "icon": "chart",
-          "id": 1,
-          "name": "Chartbuilder",
-        },
-        Object {
-          "category": "Add data",
-          "description": "Import from your favorite snowshall media",
-          "icon": "url",
-          "id": 2,
-          "name": "Load from Facebork",
-        },
-        Object {
-          "category": "Add data",
-          "description": "Connect a dataset from Enigma's collection via URL.",
-          "icon": "url",
-          "id": 3,
-          "name": "Load from Enigma",
-        },
-        Object {
-          "category": "other category",
-          "icon": "url",
-          "id": 4,
-          "name": "Other Module 1",
-        },
-        Object {
-          "category": "x category",
-          "icon": "url",
-          "id": 5,
-          "name": "Other Module 2",
-        },
-        Object {
-          "category": "other category",
-          "icon": "url",
-          "id": 6,
-          "name": "Other Module 3",
-        },
-      ]
-    }
-    openCategory="Add data"
-    setOpenCategory={[Function]}
-    toggleLibrary={[Function]}
-    workflow={
+        "category": "Visualize",
+        "description": "Create line, column and scatter plot charts.",
+        "icon": "chart",
+        "id": 1,
+        "name": "Chartbuilder",
+      },
       Object {
-        "id": 15,
-        "name": "What a workflow!",
-      }
+        "category": "Add data",
+        "description": "Import from your favorite snowshall media",
+        "icon": "url",
+        "id": 2,
+        "name": "Load from Facebork",
+      },
+      Object {
+        "category": "Add data",
+        "description": "Connect a dataset from Enigma's collection via URL.",
+        "icon": "url",
+        "id": 3,
+        "name": "Load from Enigma",
+      },
+      Object {
+        "category": "other category",
+        "icon": "url",
+        "id": 4,
+        "name": "Other Module 1",
+      },
+      Object {
+        "category": "x category",
+        "icon": "url",
+        "id": 5,
+        "name": "Other Module 2",
+      },
+      Object {
+        "category": "other category",
+        "icon": "url",
+        "id": 6,
+        "name": "Other Module 3",
+      },
+    ]
+  }
+  openCategory="Add data"
+  setOpenCategory={[Function]}
+  toggleLibrary={[Function]}
+  workflow={
+    Object {
+      "id": 15,
+      "name": "What a workflow!",
     }
-  />
-</div>
+  }
+/>
 `;
 
 exports[`ModuleLibrary Read-only matches snapshot 1`] = `
@@ -78,7 +75,6 @@ exports[`ModuleLibrary Read-only matches snapshot 1`] = `
   }
   dropModule={[MockFunction]}
   isReadOnly={true}
-  libraryOpen={false}
   modules={
     Array [
       Object {
