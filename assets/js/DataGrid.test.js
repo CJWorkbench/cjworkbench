@@ -2,7 +2,8 @@ import React from 'react'
 import { mount } from 'enzyme'
 import DataGrid from "./DataGrid"
 import TestBackend from 'react-dnd-test-backend'
-import { DragDropContextProvider } from 'react-dnd'
+import { DragDropContextProvider, DragDropContext } from 'react-dnd'
+import {HeaderRenderer} from "./DataGrid";
 
 describe('DataGrid tests,', () => {
   var testData = {

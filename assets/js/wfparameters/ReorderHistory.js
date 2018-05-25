@@ -20,8 +20,6 @@ export default class ReorderHistory extends React.Component {
             );
         });
 
-        console.log(this.props);
-
         return (
             <Table>
                 <thead>

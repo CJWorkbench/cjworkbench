@@ -8,7 +8,6 @@ import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid'
 import DraggableContainer from './DraggableContainer'
 import {idxToLetter} from "./utils";
-import * as ReorderColumns from "./ReorderColumns"
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
@@ -290,16 +289,10 @@ export default class DataGrid extends React.Component {
   }
 
   onHeaderDrop(source, target) {
-    console.log("Drag with");
-    console.log(source);
-    console.log(target);
-    console.log(this.props);
-
     let sourceIdx = this.props.columns.indexOf(source);
     let targetIdx = this.props.columns.indexOf(target);
-    console.log("Moved " + source + " from " + idxToLetter(sourceIdx) + " to " + idxToLetter(targetIdx));
 
-    ReorderColumns.updateReorder(this.props.selectedModule, {
+    this.props.reorderColumns(this.props.selectedModule, {
       column: source,
       from: sourceIdx,
       to: targetIdx

@@ -11,14 +11,12 @@ export function mockAPI(mock_api) {
 
 function updateReorderModule(module, reorderInfo) {
     var historyParam = findParamValByIdName(module, "reorder-history");
-    console.log(module);
     var historyStr = historyParam ? historyParam.value.trim() : '';
     var historyEntries = []
     try {
         historyEntries = JSON.parse(historyStr);
     } catch(e) {}
     historyEntries.push(reorderInfo);
-    console.log(historyEntries);
     api.onParamChanged(historyParam.id, {value: JSON.stringify(historyEntries)});
 }
 
@@ -27,7 +25,6 @@ export function updateReorder(wfModuleId, reorderInfo) {
     const workflowId = state.workflow ? state.workflow.id : null;
 
     var existingReorderModule = findModuleWithIdAndIdName(state, wfModuleId, 'reorder-columns');
-    console.log(existingReorderModule);
     if(existingReorderModule) {
         if(existingReorderModule.id != wfModuleId) {
             store.dispatch(setSelectedWfModuleAction(existingReorderModule.id));

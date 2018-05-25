@@ -5,7 +5,6 @@ import json
 import pandas as pd
 import numpy as np
 import io
-from server.modules.reorder import ReorderFromTable
 
 
 class ReorderFromTableTests(LoggedInTestCase):
@@ -67,3 +66,30 @@ class ReorderFromTableTests(LoggedInTestCase):
         self.assertEqual(out.columns.tolist(), ref_cols)
         for col in ref_cols:
             self.assertTrue(out[col].equals(self.table[col]))
+
+    def test_corrupt_reorder(self):
+        # If an input column is removed (e.g. via select columns)
+        # then the entire reorder history becomes incoherent
+        # and the module should report error
+        reorder_ops = [
+            {
+                'column': 'count',
+                'from': 2,
+                'to': 0
+            },  # gives ['count', 'name', 'date', 'float']
+            {
+                'column': 'nonexistent-name',
+                'from': 1,
+                'to': 3
+            },  # invalid
+            {
+                'column': 'float',
+                'from': 3,
+                'to': 2
+            },
+        ]
+        self.history_pval.value = json.dumps(reorder_ops)
+        self.history_pval.save()
+        _ = execute_nocache(self.wf_module)
+        self.wf_module.refresh_from_db()
+        self.assertEqual(self.wf_module.status, WfModule.ERROR)

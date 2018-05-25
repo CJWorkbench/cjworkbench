@@ -15,6 +15,14 @@ export function mockAddCellEdit(fn) {
   EditCells.addCellEdit = fn;
 }
 
+export function mockSortColumn(fn) {
+  SortFromTable.updateSort = fn;
+}
+
+export function mockReorderColumns(fn) {
+  ReorderColumns.updateReorder = fn;
+}
+
 // Constants to control loading behaviour. Exported so they are accessible to tests
 export const initialRows = 200;   // because react-data-grid seems to preload to 100
 export const preloadRows = 100;    // load when we have less then this many rows ahead
@@ -223,6 +231,7 @@ export default class TableView extends React.Component {
             sortDirection={sortDirection}
             showLetter={showColumnLetter}
             selectedModule={this.props.currentModule}
+            reorderColumns={ReorderColumns.updateReorder}
           />
         </div>
       // adds commas to row count

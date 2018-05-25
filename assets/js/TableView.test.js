@@ -2,7 +2,7 @@ import React from 'react'
 import { mount } from 'enzyme'
 import { jsonResponseMock } from "./test-utils";
 import TableView from './TableView'
-import { mockAddCellEdit, initialRows, preloadRows, deltaRows } from "./TableView";
+import { mockAddCellEdit, mockReorderColumns, mockSortColumn, initialRows, preloadRows, deltaRows } from "./TableView";
 import DataGrid from "./DataGrid";
 import TestBackend from 'react-dnd-test-backend'
 import { DragDropContextProvider } from 'react-dnd'
@@ -26,18 +26,26 @@ describe('TableView', () => {
     return jsonResponseMock(data);
   }
 
-  /*
-  // This test is removed for now as I haven't figure out how to do
-  // state testing for a wrapped component, which the DnD on header cells now
-  // necessitate.
-  it('Fetches, renders, and edits cells', (done) => {
+
+  // This test has been re-written and watered-down as wrapping the whole thing in
+  // DragDropContextProvider makes it nigh impossible to do state testing
+  it('Fetches, renders, edits cells, sorts columns and reorders columns', (done) => {
 
     var api = {
       render: makeRenderResponse(0, 2, 1000)
     };
 
+    // Mocks table-related operations for testing
+    let addCellEditMock = jest.fn();
+    mockAddCellEdit(addCellEditMock);
+    let updateSortMock = jest.fn();
+    mockSortColumn(updateSortMock);
+    let reorderColumnsMock = jest.fn();
+    mockReorderColumns(reorderColumnsMock);
+
+
     const tree = mount(
-        <DragDropContextProvider backend={HTML5Backend}>
+        <DragDropContextProvider backend={TestBackend}>
           <TableView id={100} revision={1} api={api}/>
         </DragDropContextProvider>
     )
@@ -47,10 +55,6 @@ describe('TableView', () => {
       // should have called API for its data, and loaded it
       expect(api.render.mock.calls.length).toBe(1);
       expect(api.render.mock.calls[0][0]).toBe(100);
-
-      console.log(tree.dive());
-
-      expect(tree.get(0).state.tableData.rows).toHaveLength(2);
 
       expect(tree).toMatchSnapshot();
 
@@ -63,25 +67,25 @@ describe('TableView', () => {
       expect(headerText).toContain('1,000');  
 
       // Test calls to EditCells.addCellEdit
-      let addCellEditMock = jest.fn();
-      mockAddCellEdit(addCellEditMock);
-
       // Don't call addCellEdit if the cell value has not changed
-      expect(tree.state().tableData.rows[0]['c']).toBe(3);
-      tree.instance().onEditCell(0, 'c', '3');            // edited value always string...
+      tree.find(TableView).instance().onEditCell(0, 'c', '3');            // edited value always string...
       expect(addCellEditMock.mock.calls.length).toBe(0);  // but should still detect no change
-      expect(tree.state().tableData.rows[0]['c']).toBe(3);
-
       // Do call addCellEdit if the cell value has changed
-      expect(tree.state().tableData.rows[1]['b']).toBe(2);
-      tree.instance().onEditCell(1, 'b', '1000');
+      tree.find(TableView).instance().onEditCell(1, 'b', '1000');
       expect(addCellEditMock.mock.calls.length).toBe(1);
-      expect(tree.state().tableData.rows[1]['b']).toBe('1000');
+
+      // Calls SortFromTable
+      tree.find(TableView).instance().onSort('a', 'ASC');
+      expect(updateSortMock.mock.calls.length).toBe(1);
+
+      // Calls ReorderColumns
+      tree.find(DataGrid).instance().onHeaderDrop(0, 2);
+      expect(reorderColumnsMock.mock.calls.length).toBe(1);
 
       done();
     });
   });
-  */
+
 
   it('Blank table when no module id', () => {
     const tree = mount(
