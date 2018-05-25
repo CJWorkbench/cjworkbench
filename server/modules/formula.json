@@ -25,7 +25,7 @@
       "type": "string",
       "multiline": "True",
       "default": "",
-      "placeholder": "e.g. = A + B",
+      "placeholder": "e.g. =SUM(A:B)",
       "visible_if": {
         "id_name": "syntax",
         "value": "Excel"
