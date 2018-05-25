@@ -234,6 +234,7 @@
     border-radius: 3px;
     max-height: 26rem;
     overflow: auto;
+    overflow-x: hidden;
 
     .react-grid-Main{
       outline:0px;
