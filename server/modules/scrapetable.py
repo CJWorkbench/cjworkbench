@@ -17,7 +17,7 @@ class ScrapeTable(ModuleImpl):
     def event(wfm, event=None, **kwargs):
         table = None
         url = wfm.get_param_string('url').strip()
-        tablenum = wfm.get_param_integer('tablenum') + 1  # 1 based for user
+        tablenum = wfm.get_param_integer('tablenum') - 1  # 1 based for user
 
         validate = URLValidator()
         try:
