@@ -57,7 +57,8 @@ class LessonTest(LoggedInIntegrationTest):
         import time; time.sleep(0.25)
         if position is None:
             self.browser.click_whatever(
-                f'.module-search-result[data-module-name="{name}"]'
+                f'.module-search-result[data-module-name="{name}"]',
+                wait=True
             )
         else:
             # react-dnd error https://github.com/react-dnd/react-dnd/issues/391 might be
