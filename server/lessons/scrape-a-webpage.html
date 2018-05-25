@@ -19,20 +19,21 @@
   </ol>
 </section>
 <section>
-  <h2>2. Standardize column values</h2>
-  <p>The table contains 32 columns. Let's just keep the one that are useful to our analysis.</p>
+  <h2>2. Making the data more legible</h2>
+  <p>The table contains 32 columns and is difficult to naviguate. Let's make it more legible and only keep the information useful to our us.</p>
     <ol class="steps">
       <li
         data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
         data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
         >
         <p>Add the module 'Select columns'</p>
+        <p>Select and keep the columns 'TM', '2B', '3B' and 'HR'.</p>
       </li>
       <li
         data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
         data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
         >
-        <p>Select and keep the columns 'TM', '2B', '2C' and 'HR'.</p>
+
       </li>
       <li
         data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
@@ -40,7 +41,7 @@
         >
         <p>Add the module 'Rename columns' and edit the column names as follow:</p>
         <p>
-          <img class="image" src="/static/images/lesson_2/1_refine_row.svg">
+          <img class="image" src="/static/images/lesson_3/1_rename_columns.svg">
         </p>
       </li>
       <li
