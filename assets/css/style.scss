@@ -42,7 +42,7 @@ body {
   margin: 0px;
   height: 100%;
   @extend %font-nunito-regular;
-  background-color:#f6f6f6;
+  background-color:$page-background;
   color: $brand-text--dark;
 }
 
