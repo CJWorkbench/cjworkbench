@@ -43,11 +43,12 @@
         <p>
           <img class="image" src="/static/images/lesson_3/1_rename_columns.svg">
         </p>
+        <p class="lesson-note">Row 31 is an outlier in the data, as it is showing averages accross all teams. The last row, Row 32, contains aggregates of all the other rows. In the original table, it was actually part of the footer.</p>
       </li>
       <li
-        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
+        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Drop rows"}]'
         data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
         >
-        <p>Add the module 'Drop rows'. Delete row 31 to 32.</p>
+        <p>Add the module 'Drop rows' and delete row 32 to 32.</p>
       </li>
     </ol>
