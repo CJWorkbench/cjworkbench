@@ -25,6 +25,8 @@
 #updateFreqNum {
   display: inline;
   width: 5rem;
+  border-radius: 0px;
+  border:1px solid $Vlight-gray;
 }
 
 #updateFreqUnit {
