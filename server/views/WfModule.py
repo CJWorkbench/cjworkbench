@@ -139,7 +139,7 @@ def make_render_json(table, startrow=None, endrow=None):
     # The workaround is to usr table.to_json to get a string, and then glue the other
     # fields we want around that string. Like savages.
 
-    rowstr = table.to_json(orient="records")
+    rowstr = table.to_json(orient="records", date_format='iso')
     colnames = table.columns.values.tolist()
     colstr = json.dumps(colnames, ensure_ascii=False)
     typesstr = json.dumps(get_simple_column_types(table))
