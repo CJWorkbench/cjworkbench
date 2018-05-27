@@ -167,27 +167,29 @@ exports[`Workflow list page renders correctly 1`] = `
         className="lesson-banner mx-auto"
         href="/lessons/"
       >
-        <div
-          className="content-3"
-        >
-          NEW
-        </div>
-        <div
-          className="d-flex"
-        >
-          <span
-            className="icon-star"
-          />
+        <div>
           <div
-            className=" title-2 "
+            className="content-3"
           >
-            TRAINING
+            NEW
+          </div>
+          <div
+            className="d-flex"
+          >
+            <span
+              className="icon-star"
+            />
+            <div
+              className=" title-2 "
+            >
+              TRAINING
+            </div>
           </div>
         </div>
         <p
           className="content-2"
         >
-          Learn to scrape, monitor, clean and analyze data without coding.
+          Learn how to work with data without coding
         </p>
       </a>
       <div
