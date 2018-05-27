@@ -54,29 +54,39 @@
           box-shadow: $button-area--hover;
         }
 
-          .lesson-button {
-            display: block;
-            text-decoration: none;
+          .container {
+            height:100%;
+            padding:0;
 
+            .lesson-button {
+              height: 100%;
+              text-decoration: none;
+              display: flex;
+              flex-direction: column;
+              justify-content: space-between;
+
+              .description {
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                font-size: 1.6rem;
+                margin-top: .5rem;
+                line-height: 2.4rem;
+                color:$brand-text--medium;
+              }
+              img {
+                position: relative;
+                width: 100%;
+              }
+            }
+
+            h2,
             .description {
-              font-size: 1.6rem;
-              margin-top: .5rem;
-              line-height: 2.4rem;
-              color:$brand-text--medium;
-            }
-            img {
-              position: relative;
-              width: 100%;
+
+              color: $brand-text--dark;
             }
           }
-
-          h2,
-          .description {
-
-            color: $brand-text--dark;
-          }
-
-
         }
       }
     }
