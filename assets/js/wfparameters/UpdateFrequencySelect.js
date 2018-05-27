@@ -126,7 +126,7 @@ export default class UpdateFrequencySelect extends React.Component {
         {lastChecked}
         <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
           <ModalHeader toggle={this.toggleModal} className='dialog-header'>
-            <span className='title-4 t-d-gray'>WORKFLOW UPDATE</span>
+            <span className='title-4 t-d-gray'>WORKFLOW SETTINGS</span>
           </ModalHeader>
           <ModalBody >
             {this.state.message.length > 0 &&
