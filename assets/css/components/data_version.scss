@@ -1,38 +1,100 @@
 /* ---- Data Module: data versions box */
+.update-frequency-form {
+  .version-item {
+    display: flex;
+    align-items: center;
+    width:14.5rem;
+  }
 
-.version-item {
-  display: flex;
-  align-items: center;
-  width:14.5rem;
+  .frequency-item {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-right: 1rem;
+  }
 }
 
-.frequency-item {
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-right: 1rem;
-}
+.modal-body.update-frequency-form {
+  .big-radio {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
 
-/* --- UpdateFrequencySelect --- */
+    p {
+      font-size: 1.3rem; // because body font-size is 10px
+    }
 
-.update-freq-settings {
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: row;
-}
+    &>label {
+      width: 7rem;
+      margin-right: 1rem;
+      flex: 0 0 auto;
+      cursor: pointer;
 
-#updateFreqNum {
-  display: inline;
-  width: 5rem;
-}
+      input { display: none; }
+      color: $brand-workspace;
+      text-transform: uppercase;
+      font-weight: bold;
+      font-size: 1.5rem;
+      line-height: 1;
+      text-align: center;
 
-#updateFreqUnit {
-  display: inline;
-  width:10rem;
-  border-radius: 0px!important;
-}
+      span {
+        display: inline-block;
+        width: 100%;
+        border: 1px solid $brand-workspace;
+        border-radius: 1.5rem;
+        padding: .75rem;
+      }
 
-select {
-  border-radius: 0px;
+      &.big-radio-checked {
+        opacity: 1;
+      }
+
+      &.big-radio-unchecked {
+        opacity: .5;
+      }
+    }
+  }
+
+  .big-radio-unchecked {
+    &>label {
+      opacity: .5;
+    }
+
+    &>.big-radio-details {
+      opacity: .8;
+    }
+  }
+
+  .big-radio-auto-update-false {
+    margin-top: 2rem;
+  }
+
+  .big-radio-auto-update-false .big-radio-details {
+    // Line up with label, which is ~2 lines high
+    padding-top: .75rem; // label padding
+  }
+
+  /* --- UpdateFrequencySelect --- */
+  .update-freq-settings {
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: row;
+  }
+
+  input[name="timeNumber"] {
+    display: inline;
+    width: 5rem;
+  }
+
+  input[name="timeUnit"] {
+    display: inline-block;
+    width:10rem;
+    border-radius: 0px!important;
+  }
+
+  select {
+    border-radius: 0px;
+  }
 }

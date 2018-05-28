@@ -1,122 +1,184 @@
-import React from 'react'
-import UpdateFrequencySelect  from './UpdateFrequencySelect'
-import { shallow } from 'enzyme'
-import { okResponseMock } from '../test-utils'
+let mockApi
+jest.mock('../WorkbenchAPI', () => {
+  mockApi = {
+    updateWfModule: jest.fn(),
+  }
+  return () => mockApi
+})
 
+import React from 'react'
+import ConnectedUpdateFrequencySelect, { UpdateFrequencySelect } from './UpdateFrequencySelect'
+import { shallow, mount } from 'enzyme'
+import { Provider } from 'react-redux'
 
 describe('UpdateFrequencySelect', () => {
+  describe('shallow', () => {
+    const defaultProps = {
+      wfModuleId: 212,
+      isReadOnly: false,
+      lastCheckDate: new Date(Date.parse('2018-05-28T19:00:54.154Z')),
+      settings: {
+        isAutoUpdate: false, // start in Manual mode
+        isEmailUpdates: false,
+        timeNumber: 5,
+        timeUnit: 'minutes',
+      },
+    }
 
-  var today = new Date();
-  var day_before = today.setDate(today.getDate() - 2);
-  const updateSettings = {
-    autoUpdateData: false, // start in Manual mode
-    updateInterval: 5,
-    updateUnits: 'minutes',
-    lastUpdateCheck: day_before
-  };
-  const api = {
-    setWfModuleUpdateSettings: okResponseMock()
-  };
-  var wrapper;
-  var freqNum;
-  var freqUnit;
-  var modalLink;
-  var autoButton;
+    let dateSpy
+    beforeEach(() => {
+      dateSpy = jest.spyOn(Date, 'now').mockImplementation(() => 1527534812631)
+    })
+    afterEach(() => dateSpy.mockRestore())
 
-  beforeEach(() => wrapper = shallow(
-    <UpdateFrequencySelect
-      isReadOnly={false}
-      updateSettings={updateSettings}
-      wfModuleId={212}
-      api={api}
-    />));
-  beforeEach(() => freqUnit = wrapper.find('#updateFreqUnit'));
-  beforeEach(() => freqNum = wrapper.find('#updateFreqNum'));
-  beforeEach(() => modalLink = wrapper.find('.test-modal-button'));
-  beforeEach(() => autoButton = wrapper.find('.auto-button'));
+    let updateSettings
 
+    const wrapper = (extraProps) => {
+      updateSettings = jest.fn()
 
-  it('Renders correctly when in Private mode and changes are confirmed with OK', (done) => {
+      const oldDateNow = Date.now
+      return shallow(
+        <UpdateFrequencySelect
+          {...defaultProps}
+          updateSettings={updateSettings}
+          {...extraProps}
+          />
+      )
+    }
 
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.state().liveSettings.manual).toBe(true);
-    expect(freqNum.get(0).props.value).toBe(5);
-    expect(wrapper.state().dialogSettings.period).toBe(5);
-    expect(freqUnit.get(0).props.value).toBe('minutes');
-    expect(wrapper.state().dialogSettings.unit).toBe('minutes');
+    it('matches snapshot', () => {
+      expect(wrapper()).toMatchSnapshot()
+    })
 
-    expect(modalLink).toHaveLength(1);
-    modalLink.first().simulate('click');
+    it('does not render modal on first load', () => {
+      expect(wrapper().find('UpdateFrequencySelectModal')).toHaveLength(0)
+    })
 
-    // Dialog should be open
-    expect(wrapper).toMatchSnapshot();
+    it('submits modal', () => {
+      const w = wrapper()
+      const newSettings = {
+        isAutoUpdate: true,
+        isEmailUpdates: false,
+        timeNumber: 10,
+        timeUnit: 'minutes',
+      }
+      w.find('a[title="change auto-update settings"]').simulate('click')
+      w.find('UpdateFrequencySelectModal').prop('onSubmit')(newSettings)
+      expect(updateSettings).toHaveBeenCalledWith(newSettings)
+      w.update()
+      expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
+    })
 
-    expect(autoButton).toHaveLength(1);
-    autoButton.first().simulate('click');
+    it('cancels modal', () => {
+      const w = wrapper()
+      w.find('a[title="change auto-update settings"]').simulate('click')
+      w.find('UpdateFrequencySelectModal').prop('onCancel')()
+      expect(updateSettings).not.toHaveBeenCalled()
+      w.update()
+      expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
+    })
 
-    freqNum.simulate('change', {target: {value: 888}});
-    expect(wrapper.state().dialogSettings.period).toBe(888);
+    it('does not open modal when not read-only', () => {
+      const w = wrapper({ isReadOnly: true })
+      w.find('a[title="change auto-update settings"]').simulate('click')
+      expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
+    })
+  })
 
-    freqUnit.simulate('change', {target: {value: 'days'}});
-    expect(wrapper.state().dialogSettings.unit).toBe('days');
+  describe('connected to state', () => {
+    let wrapper = null
+    afterEach(() => {
+      if (wrapper) {
+        wrapper.unmount()
+        wrapper = null
+      }
+    })
 
-    var okButton = wrapper.find('.test-ok-button');
-    expect(okButton).toHaveLength(1);
-    okButton.first().simulate('click');
+    const sampleState = {
+      workflow: {
+        wf_modules: [
+          { id: 1, name: 'Ignore this one' },
+          { id: 212, auto_update_data: true, update_interval: 10, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' },
+        ],
+      }
+    }
 
-    // Dialog should be closed, link should now say "auto"
-    expect(wrapper).toMatchSnapshot();
-    expect(api.setWfModuleUpdateSettings.mock.calls.length).toBe(1);
+    it('should get settings from state', () => {
+      const store = {
+        getState: () => sampleState,
+        dispatch: jest.fn(),
+        subscribe: jest.fn(),
+      }
+      wrapper = mount(
+        <Provider store={store}>
+          <ConnectedUpdateFrequencySelect
+            wfModuleId={212}
+            lastCheckDate={null}
+            />
+        </Provider>
+      )
+      expect(wrapper.find('time').prop('time')).toEqual('2018-05-28T19:00:54.154Z')
+      wrapper.find('a[title="change auto-update settings"]').simulate('click')
+      const modal = wrapper.find('UpdateFrequencySelectModal')
+      expect(modal.prop('timeNumber')).toBe(10)
+    })
 
-    // '.toBe()' requires strict equality, and will fail
-    expect(wrapper.state().liveSettings).toEqual({
-      manual: false,
-      period: 888,
-      unit: 'days'
-    });
+    it('should not crash on a placeholder', () => {
+      const store = {
+        getState: () => ({
+          workflow: { wf_modules: [ { id: 212, placeholder: true } ] },
+        }),
+        dispatch: jest.fn(),
+        subscribe: jest.fn(),
+      }
+      wrapper = mount(
+        <Provider store={store}>
+          <ConnectedUpdateFrequencySelect
+            wfModuleId={212}
+            />
+        </Provider>
+      )
+      wrapper.find('a[title="change auto-update settings"]').simulate('click')
+      expect(true).toBe(true)
+    })
 
-    done();
-  });
-
-  it('Does not save changed settings when user hits Cancel', (done) => {
-
-    modalLink.first().simulate('click');
-
-    autoButton.first().simulate('click');
-    freqNum.simulate('change', {target: {value: 888}});
-    freqUnit.simulate('change', {target: {value: 'days'}});
-
-    var cancelButton = wrapper.find('.test-cancel-button');
-    expect(cancelButton).toHaveLength(1);
-    cancelButton.first().simulate('click');
-
-    // Dialog should be closed, link should now say "manual"
-    expect(wrapper).toMatchSnapshot();
-    // check that API was not called (was called once already in previous test)
-    expect(api.setWfModuleUpdateSettings.mock.calls.length).toBe(1);
-
-    // check that Live settings have NOT changed
-    // '.toBe()' requires strict equality, and will fail
-    expect(wrapper.state().liveSettings).toEqual({
-      manual: true,
-      period: 5,
-      unit: 'minutes'
-    });
-    done();
-  });
-
-  it('Does not open modal when in read-only mode', (done) => {
-    var readOnlyWrapper = shallow(
-      <UpdateFrequencySelect
-        isReadOnly={true}
-        updateSettings={updateSettings}
-        wfModuleId={212}
-        api={api}
-    />);
-    expect(readOnlyWrapper.state().modalOpen).toBe(false);
-    modalLink.first().simulate('click');
-    expect(readOnlyWrapper.state().modalOpen).toBe(false);
-    done();
-  });
-
-});
+    it('should dispatch an update (and call the API method)', () => {
+      const store = {
+        getState: () => sampleState,
+        dispatch: jest.fn(),
+        subscribe: jest.fn(),
+      }
+      wrapper = mount(
+        <Provider store={store}>
+          <ConnectedUpdateFrequencySelect
+            wfModuleId={212}
+            lastCheckDate={null}
+            />
+        </Provider>
+      )
+      wrapper.find('a[title="change auto-update settings"]').simulate('click')
+      const modal = wrapper.find('UpdateFrequencySelectModal')
+      modal.prop('onSubmit')({
+        isAutoUpdate: true,
+        isEmailUpdates: true,
+        timeNumber: 2,
+        timeUnit: 'days',
+      })
+      expect(store.dispatch).toHaveBeenCalledWith({
+        type: 'UPDATE_WF_MODULE',
+        payload: {
+          promise: undefined,
+          data: {
+            id: 212,
+            data: {
+              auto_update_data: true,
+              notifications: true,
+              update_interval: 2,
+              update_units: 'days',
+            }
+          }
+        }
+      })
+    })
+  })
+})

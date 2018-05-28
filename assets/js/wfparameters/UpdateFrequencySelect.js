@@ -1,199 +1,116 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
-import { Form, FormGroup, Label, Input } from 'reactstrap'
+import UpdateFrequencySelectModal from './UpdateFrequencySelectModal'
 import { timeDifference } from '../utils'
-import { store, updateWfModuleAction } from '../workflow-reducer'
+import { updateWfModuleAction } from '../workflow-reducer'
+import { connect } from 'react-redux'
 
-export default class UpdateFrequencySelect extends React.Component {
+export class UpdateFrequencySelect extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      modalOpen: false,
-      message: "",
-      liveSettings: {
-        manual: !this.props.updateSettings.autoUpdateData,
-        period: this.props.updateSettings.updateInterval,
-        unit: this.props.updateSettings.updateUnits
-      }
-    };
-    this.state.dialogSettings = Object.assign({}, this.state.liveSettings);
-
-    // Allow props to specify a conversion from browser time to displayed time, so tests can run in UTC (not test machine tz)
-    if (props.timezoneOffset != undefined) {
-      this.state.timezoneOffset = props.timezoneOffset;
-    } else {
-      this.state.timezoneOffset = 0; // display in browser local time
-    }
-
-    this.toggleModal = this.toggleModal.bind(this);
-    this.toggleManual = this.toggleManual.bind(this);
-    this.updatePeriod = this.updatePeriod.bind(this);
-    this.updateUnit = this.updateUnit.bind(this);
-    this.saveSettings = this.saveSettings.bind(this);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.notifications && (!this.props.notifications && this.state.liveSettings.manual)) {
-      this.toggleModal();
-      this.toggleManual();
-      this.setState({
-        message: "Choose how often to check for new data and click 'Apply'."
-      })
+      isModalOpen: false,
     }
   }
 
-  toggleModal() {
-    if (!this.props.isReadOnly) {
-      this.setState({
-        modalOpen: !this.state.modalOpen,
-        dialogSettings: Object.assign({}, this.state.liveSettings)
-      }, () => {
-        if (!this.state.modalOpen && this.state.liveSettings.manual && this.props.notifications) {
-          store.dispatch(updateWfModuleAction(this.props.wfModuleId, {
-            notifications: false
-          }));
-        }
-      });
-    }
+  onOpenModal = (ev) => {
+    if (ev && ev.preventDefault) ev.preventDefault() // <a> => do not change URL
+    if (this.props.isReadOnly) return
+
+    this.setState({
+      isModalOpen: true,
+    })
   }
 
-  toggleManual() {
-    this.setState(
-      {dialogSettings: {
-        manual: !this.state.dialogSettings.manual,
-        period: this.state.dialogSettings.period,
-        unit: this.state.dialogSettings.unit
-    }});
+  onSubmit = (settings) => {
+    this.props.updateSettings(settings)
+    // TODO keep modal open until server responds with OK?
+    this.setState({
+      isModalOpen: false,
+    })
   }
 
-  updatePeriod(event) {
-    this.setState(
-        {dialogSettings: {
-          manual: this.state.dialogSettings.manual,
-          period: event.target.value,
-          unit: this.state.dialogSettings.unit
-    }});
+  onCancel = () => {
+    this.setState({
+      isModalOpen: false,
+    })
   }
-
-  updateUnit(event) {
-    this.setState(
-      {dialogSettings: {
-        manual: this.state.dialogSettings.manual,
-        period: this.state.dialogSettings.period,
-        unit: event.target.value
-    }});
-  }
-
-  saveSettings() {
-    var params = {
-      auto_update_data: !this.state.dialogSettings.manual,
-      update_interval: this.state.dialogSettings.period,
-      update_units: this.state.dialogSettings.unit
-    };
-    this.props.api.setWfModuleUpdateSettings(this.props.wfModuleId, params);
-    this.setState({liveSettings: Object.assign({}, this.state.dialogSettings)}, () => {
-      this.toggleModal();
-    });
-  }
-
 
   render() {
+    const lastChecked = this.props.lastCheckDate ? (
+      <div className="content-4 t-m-gray">
+        Checked <time time={this.props.lastCheckDate.toISOString()}>{timeDifference(this.props.lastCheckDate, Date.now())}</time>
+      </div>
+    ) : null
 
-    // button highlights
-    var highlightManual = 'action-button manual-button ' + (this.state.dialogSettings.manual ? 'button-blue--fill' : 'button-gray ');
-    var highlightAuto = 'action-button auto-button ' + (!this.state.dialogSettings.manual ? 'button-blue--fill' : 'button-gray');
+    const autoOrManual = this.props.settings.isAutoUpdate ? 'auto' : 'manual'
 
-    // info shown on Wf Module card
-    var manual = this.state.liveSettings.manual;
-    var period = this.state.liveSettings.period;
-    var unit = this.state.liveSettings.unit;
-    var settingsInfo = manual ? 'manual' :'auto'
-
-    var lastChecked = null;
-    var now = new Date();
-    if (this.props.updateSettings.lastUpdateCheck)
-      lastChecked = <div className='content-4 t-m-gray'>
-                      Checked {timeDifference(this.props.updateSettings.lastUpdateCheck, now)}
-                    </div>
+    const maybeModal = this.state.isModalOpen ? (
+        <UpdateFrequencySelectModal
+          {...this.props.settings}
+          onCancel={this.onCancel}
+          onSubmit={this.onSubmit}
+          />
+    ) : null
 
     return (
       <div className='frequency-item'>
         <div>
           <span className='content-3 t-d-gray'>Update </span>
-          <span className='content-3 ml-1 t-f-blue test-modal-button' onClick={this.toggleModal}>{settingsInfo}</span>
+          <a href="#" title="change auto-update settings" className='content-3 ml-1 t-f-blue' onClick={this.onOpenModal}>{autoOrManual}</a>
         </div>
         {lastChecked}
-        <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
-          <ModalHeader toggle={this.toggleModal} className='dialog-header'>
-            <span className='title-4 t-d-gray'>WORKFLOW UPDATE</span>
-          </ModalHeader>
-          <ModalBody >
-            {this.state.message.length > 0 &&
-              <div className='info-3 mt-2 mb-5'>{this.state.message}</div>
-            }
-            <FormGroup>
-              <div className="row">
-                <div className="col-sm-3">
-                  <div onClick={this.toggleManual} className={highlightAuto}>On</div>
-                </div>
-
-                <div className="col-sm-9">
-                  <div className='info-2'>Automatically update this workflow with the newest data (old versions will be saved).</div>
-                  <Label for="updateFreq" className='content-3 t-d-gray mt-4 mb-2'>Check for update every</Label>
-                  <div className='update-freq-settings update-freq-test-class mb-5'>
-                    <Input
-                      type="number"
-                      onChange={this.updatePeriod}
-                      value={this.state.dialogSettings.period}
-                      min='1'
-                      max='500'
-                      name="updateFreq"
-                      id="updateFreqNum"
-                      className='number-field t-d-gray content-2'>
-                    </Input>
-                    <Input
-                      type="select"
-                      value={this.state.dialogSettings.unit}
-                      onChange={this.updateUnit}
-                      name="updateFreq"
-                      id="updateFreqUnit"
-                      className='ml-3 input-dropdown'
-                    >
-                      <option>minutes</option>
-                      <option>hours</option>
-                      <option id='days-option'>days</option>
-                      <option>weeks</option>
-                    </Input>
-                  </div>
-                </div>
-              </div>
-
-              <div className="row d-flex align-items-center">
-                <div className="col-sm-3">
-                  <div onClick={this.toggleManual} className={highlightManual}>Off</div>
-                </div>
-
-                <div className="col-sm-9">
-                  <div className='info-2'>Check for new data manually.</div>
-                </div>
-              </div>
-            </FormGroup>
-          </ModalBody>
-          <ModalFooter >
-            <div className='action-button button-gray test-cancel-button mr-4' onClick={this.toggleModal}>Cancel</div>
-            <div className='action-button button-blue test-ok-button' onClick={this.saveSettings}>Apply</div>
-
-          </ModalFooter>
-        </Modal>
+        {maybeModal}
       </div>
-    );
+    )
   }
 
 }
 
 UpdateFrequencySelect.propTypes = {
-  api:              PropTypes.object.isRequired,
-  updateSettings:   PropTypes.object.isRequired,
-  wfModuleId:       PropTypes.number.isRequired
-};
+  wfModuleId: PropTypes.number.isRequired,
+  lastCheckDate: PropTypes.instanceOf(Date), // null if never updated
+  settings: PropTypes.shape({
+    isAutoUpdate: PropTypes.bool.isRequired,
+    isEmailUpdates: PropTypes.bool.isRequired,
+    timeNumber: PropTypes.number.isRequired,
+    timeUnit: PropTypes.oneOf([ 'minutes', 'hours', 'days', 'weeks' ]).isRequired,
+  }).isRequired,
+  updateSettings: PropTypes.func.isRequired, // func({ isAutoUpdate, isEmailUpdates, timeNumber, timeUnit }) -> undefined
+}
+
+const mapStateToProps = (state, ownProps) => {
+  const workflow = state.workflow || {}
+  const wfModules = workflow.wf_modules || {}
+  const wfModule = wfModules.find(wfm => wfm.id === ownProps.wfModuleId) || {}
+  // We need a "default" value for everything: wfModule might be a placeholder
+
+  const lastCheckString = wfModule.last_update_check // JSON has no date -- that's a STring
+  const lastCheckDate = lastCheckString ? new Date(Date.parse(lastCheckString)) : null
+
+  return {
+    lastCheckDate,
+    settings: {
+      isAutoUpdate: wfModule.auto_update_data || false,
+      isEmailUpdates: wfModule.notifications || false,
+      timeNumber: wfModule.update_interval || 1,
+      timeUnit: wfModule.update_units || 'days',
+    }
+  }
+}
+
+const mapDispatchToProps = (dispatch, ownProps) => {
+  return {
+    updateSettings: (settings) => {
+      const action = updateWfModuleAction(ownProps.wfModuleId, {
+        auto_update_data: settings.isAutoUpdate,
+        update_interval: settings.timeNumber,
+        update_units: settings.timeUnit,
+        notifications: settings.isEmailUpdates,
+      })
+      dispatch(action)
+    },
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(UpdateFrequencySelect)

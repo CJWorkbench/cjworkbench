@@ -174,15 +174,6 @@ class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}`, { selected_wf_module: wfModuleId })
   }
 
-  // Params should be an object matching format below
-  setWfModuleUpdateSettings(wfModuleId, params) {
-    return this._patch(`/api/wfmodules/${wfModuleId}`, {
-      auto_update_data: params.auto_update_data, // bool
-      update_interval: params.update_interval, // int
-      update_units: params.update_units // str
-    })
-  }
-
   updateWfModule(wfModuleId, params) {
     return this._patch(`/api/wfmodules/${wfModuleId}`, params)
   }

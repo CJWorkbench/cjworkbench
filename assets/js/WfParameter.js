@@ -155,11 +155,8 @@ export default class WfParameter extends React.Component {
       return (
         <div {...this.outerDivProps}>
           <UpdateFrequencySelect
-            isReadOnly={this.props.isReadOnly}
-            updateSettings={this.props.updateSettings}
             wfModuleId={this.props.wf_module_id}
-            api={this.props.api}
-            notifications={this.props.notifications}
+            isReadOnly={this.props.isReadOnly}
           />
           <div className="d-flex justify-content-between mt-2">
             <DataVersionSelect
