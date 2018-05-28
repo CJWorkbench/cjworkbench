@@ -13,40 +13,7 @@ exports[`Workflow list page renders correctly 1`] = `
         "results": Array [
           Object {
             "isThrow": false,
-            "value": Promise {
-              "_a": undefined,
-              "_c": Array [],
-              "_d": true,
-              "_h": 0,
-              "_n": false,
-              "_s": 1,
-              "_v": Array [
-                Object {
-                  "id": 1,
-                  "name": "Charting",
-                  "owner_name": "Fred Frederson",
-                  "public": true,
-                },
-                Object {
-                  "id": 7,
-                  "name": "Messy data cleanup",
-                  "owner_name": "John Johnson",
-                  "public": false,
-                },
-                Object {
-                  "id": 8,
-                  "name": "Document search",
-                  "owner_name": "Sally Sallerson",
-                  "public": true,
-                },
-                Object {
-                  "id": 9,
-                  "name": "Visualization",
-                  "owner_name": "Mr. Manfrengenson",
-                  "public": false,
-                },
-              ],
-            },
+            "value": Promise {},
           },
         ],
       },
@@ -280,40 +247,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         "results": Array [
                           Object {
                             "isThrow": false,
-                            "value": Promise {
-                              "_a": undefined,
-                              "_c": Array [],
-                              "_d": true,
-                              "_h": 0,
-                              "_n": false,
-                              "_s": 1,
-                              "_v": Array [
-                                Object {
-                                  "id": 1,
-                                  "name": "Charting",
-                                  "owner_name": "Fred Frederson",
-                                  "public": true,
-                                },
-                                Object {
-                                  "id": 7,
-                                  "name": "Messy data cleanup",
-                                  "owner_name": "John Johnson",
-                                  "public": false,
-                                },
-                                Object {
-                                  "id": 8,
-                                  "name": "Document search",
-                                  "owner_name": "Sally Sallerson",
-                                  "public": true,
-                                },
-                                Object {
-                                  "id": 9,
-                                  "name": "Visualization",
-                                  "owner_name": "Mr. Manfrengenson",
-                                  "public": false,
-                                },
-                              ],
-                            },
+                            "value": Promise {},
                           },
                         ],
                       },
@@ -532,40 +466,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         "results": Array [
                           Object {
                             "isThrow": false,
-                            "value": Promise {
-                              "_a": undefined,
-                              "_c": Array [],
-                              "_d": true,
-                              "_h": 0,
-                              "_n": false,
-                              "_s": 1,
-                              "_v": Array [
-                                Object {
-                                  "id": 1,
-                                  "name": "Charting",
-                                  "owner_name": "Fred Frederson",
-                                  "public": true,
-                                },
-                                Object {
-                                  "id": 7,
-                                  "name": "Messy data cleanup",
-                                  "owner_name": "John Johnson",
-                                  "public": false,
-                                },
-                                Object {
-                                  "id": 8,
-                                  "name": "Document search",
-                                  "owner_name": "Sally Sallerson",
-                                  "public": true,
-                                },
-                                Object {
-                                  "id": 9,
-                                  "name": "Visualization",
-                                  "owner_name": "Mr. Manfrengenson",
-                                  "public": false,
-                                },
-                              ],
-                            },
+                            "value": Promise {},
                           },
                         ],
                       },
@@ -784,40 +685,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         "results": Array [
                           Object {
                             "isThrow": false,
-                            "value": Promise {
-                              "_a": undefined,
-                              "_c": Array [],
-                              "_d": true,
-                              "_h": 0,
-                              "_n": false,
-                              "_s": 1,
-                              "_v": Array [
-                                Object {
-                                  "id": 1,
-                                  "name": "Charting",
-                                  "owner_name": "Fred Frederson",
-                                  "public": true,
-                                },
-                                Object {
-                                  "id": 7,
-                                  "name": "Messy data cleanup",
-                                  "owner_name": "John Johnson",
-                                  "public": false,
-                                },
-                                Object {
-                                  "id": 8,
-                                  "name": "Document search",
-                                  "owner_name": "Sally Sallerson",
-                                  "public": true,
-                                },
-                                Object {
-                                  "id": 9,
-                                  "name": "Visualization",
-                                  "owner_name": "Mr. Manfrengenson",
-                                  "public": false,
-                                },
-                              ],
-                            },
+                            "value": Promise {},
                           },
                         ],
                       },
@@ -1036,40 +904,7 @@ exports[`Workflow list page renders correctly 1`] = `
                         "results": Array [
                           Object {
                             "isThrow": false,
-                            "value": Promise {
-                              "_a": undefined,
-                              "_c": Array [],
-                              "_d": true,
-                              "_h": 0,
-                              "_n": false,
-                              "_s": 1,
-                              "_v": Array [
-                                Object {
-                                  "id": 1,
-                                  "name": "Charting",
-                                  "owner_name": "Fred Frederson",
-                                  "public": true,
-                                },
-                                Object {
-                                  "id": 7,
-                                  "name": "Messy data cleanup",
-                                  "owner_name": "John Johnson",
-                                  "public": false,
-                                },
-                                Object {
-                                  "id": 8,
-                                  "name": "Document search",
-                                  "owner_name": "Sally Sallerson",
-                                  "public": true,
-                                },
-                                Object {
-                                  "id": 9,
-                                  "name": "Visualization",
-                                  "owner_name": "Mr. Manfrengenson",
-                                  "public": false,
-                                },
-                              ],
-                            },
+                            "value": Promise {},
                           },
                         ],
                       },

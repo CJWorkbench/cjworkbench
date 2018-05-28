@@ -15,36 +15,7 @@ exports[`OutputPane Fetches and renders 1`] = `
         "results": Array [
           Object {
             "isThrow": false,
-            "value": Promise {
-              "_a": undefined,
-              "_c": Array [],
-              "_d": true,
-              "_h": 0,
-              "_n": false,
-              "_s": 1,
-              "_v": Object {
-                "columns": Array [
-                  "a",
-                  "b",
-                  "c",
-                ],
-                "end_row": 2,
-                "rows": Array [
-                  Object {
-                    "a": "1",
-                    "b": "2",
-                    "c": "3",
-                  },
-                  Object {
-                    "a": "4",
-                    "b": "5",
-                    "c": "6",
-                  },
-                ],
-                "start_row": 0,
-                "total_rows": 2,
-              },
-            },
+            "value": Promise {},
           },
         ],
       },
@@ -150,36 +121,7 @@ exports[`OutputPane Fetches and renders 1`] = `
                 "results": Array [
                   Object {
                     "isThrow": false,
-                    "value": Promise {
-                      "_a": undefined,
-                      "_c": Array [],
-                      "_d": true,
-                      "_h": 0,
-                      "_n": false,
-                      "_s": 1,
-                      "_v": Object {
-                        "columns": Array [
-                          "a",
-                          "b",
-                          "c",
-                        ],
-                        "end_row": 2,
-                        "rows": Array [
-                          Object {
-                            "a": "1",
-                            "b": "2",
-                            "c": "3",
-                          },
-                          Object {
-                            "a": "4",
-                            "b": "5",
-                            "c": "6",
-                          },
-                        ],
-                        "start_row": 0,
-                        "total_rows": 2,
-                      },
-                    },
+                    "value": Promise {},
                   },
                 ],
               },
