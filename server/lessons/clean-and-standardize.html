@@ -93,7 +93,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules[4].parameters.get('varcol') == 'MetroArea'"
-      >Choose 'MetroArea' as the Variable column. Metro ares will be the column names of the wide table.</li>
+      >Choose 'MetroArea' as the Variable column. Those values will be used as column names in the wide table.</li>
   </ol>
 </section>
 <section>
@@ -107,6 +107,8 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="const wfModule = workflow.wfModules[5]; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
-      >Add a title to the chart, and you're done!</li>
+      >Add a title to the chart, and you're done!
+    <p>To embbed the chart, click on the export button at the top right of the </p>
+    </li>
   </ol>
 </section>

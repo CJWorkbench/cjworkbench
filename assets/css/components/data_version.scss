@@ -1,18 +1,18 @@
 /* ---- Data Module: data versions box */
-.update-frequency-form {
-  .version-item {
-    display: flex;
-    align-items: center;
-    width:14.5rem;
-  }
 
-  .frequency-item {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-right: 1rem;
-  }
+
+.version-item {
+  display: flex;
+  align-items: center;
+  width:14.5rem;
+}
+
+.frequency-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 1rem;
 }
 
 .modal-body.update-frequency-form {
