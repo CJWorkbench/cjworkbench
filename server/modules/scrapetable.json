@@ -25,6 +25,12 @@
       "name": "Scrape",
       "id_name" : "version_select",
       "type": "custom"
+    },
+    {
+      "name": "First row is header",
+      "id_name": "first_row_is_header",
+      "type": "checkbox",
+      "default": "False"
     }
   ]
 }

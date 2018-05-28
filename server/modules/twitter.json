@@ -38,7 +38,7 @@
       }
     },
     {
-      "name": "Check",
+      "name": "Update",
       "id_name" : "version_select",
       "type": "custom"
     },

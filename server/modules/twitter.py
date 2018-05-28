@@ -33,17 +33,18 @@ class Twitter(ModuleImpl):
         if querytype == Twitter.QUERY_TYPE_USER:
             if query[0] == '@':                     # allow user to type @username or username
                 query = query[1:]
-            tweetsgen = api.user_timeline(query, count=200)
+            tweetsgen = api.user_timeline(query, count=200, tweet_mode='extended')
         else:
-            tweetsgen = api.search(q=query, count=100)
+            tweetsgen = api.search(q=query, count=100, tweet_mode='extended')
 
         # Columns to retrieve and store from Twitter
         # Also, we use this to figure ou the index the id field when merging old and new tweets
-        cols = ['id', 'created_at', 'text', 'in_reply_to_screen_name', 'in_reply_to_status_id', 'retweeted',
+        cols = ['id', 'created_at', 'full_text', 'in_reply_to_screen_name', 'in_reply_to_status_id', 'retweeted',
                 'retweet_count', 'favorited', 'favorite_count', 'source']
 
         tweets = [[getattr(t, x) for x in cols] for t in tweetsgen]
         table = pd.DataFrame(tweets, columns=cols)
+        table.rename(columns={'full_text':'text'}, inplace=True)  # 280 chars should still be called 'text', meh
         return table
 
 

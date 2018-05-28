@@ -17,6 +17,8 @@
       padding: 2rem;
       background-color: $modal-color;
       border-bottom: 1px solid $Vlight-gray;
+      display: flex;
+      align-items: center;
 
       .modal-title {
       width: 100%;
@@ -43,7 +45,42 @@
       max-height: 40rem;
       overflow: scroll;
 
-      .info-2{cursor: default;}
+      .info-2 {cursor: default;}
+
+      /* from Export Data modal, in WfModuleContextMenu  */
+
+      .url-link{
+        width: 100%;
+        padding: 1.3rem 1.5rem 1.3rem 1.5rem;
+        margin-bottom: 1rem;
+        height: 3.5rem;
+        border-radius: 0px;
+        border: 0px;
+        background-color:$Vlight-gray;
+      }
+
+      .download-icon-box {
+      	height: 3.5rem;
+      	width: 6rem;
+      	border-top: 1px solid $Vlight-gray;
+        border-right: 1px solid $Vlight-gray;
+        border-bottom: 1px solid $Vlight-gray;
+        background-color: $white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color:$light-gray;
+        border-radius: 0px;
+        font-size: 1.4rem;
+
+      }
+
+
+      .download-icon-box:hover {
+        background-color: #F8F8F8;
+        decoration:none;
+      }
+
     }
 
     //When a list is the content of the modal body
@@ -82,27 +119,6 @@
   }
 }
 
-/* from Export Data modal, in WfModuleContextMenu  */
-
-.download-icon-box {
-	height: 3.5rem;
-	width: 6rem;
-	border-top: 1px solid $Vlight-gray;
-  border-right: 1px solid $Vlight-gray;
-  border-bottom: 1px solid $Vlight-gray;
-  background-color: $white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color:$light-gray;
-  border-radius: 0px;
-}
-
-
-.download-icon-box:hover {
-  background-color: #F8F8F8;
-  decoration:none;
-}
 
 /* ImportModuleFromGitHub */
 
@@ -151,4 +167,65 @@
 
 .test-button{
   cursor: pointer;
+}
+
+// Data version select
+
+.line-item--data-version {
+  height: 4rem;
+  background-color: #FFFFFF;
+  color: #686768;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 2rem;
+  cursor: pointer;
+  margin-bottom: 1px;
+}
+
+.line-item--data-version:hover {
+  background-color: #F5F5F5;
+}
+
+.line-item--data-version--selected {
+  height: 4rem;
+  background-color: $brand-workspace;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 2rem;
+}
+
+.input-dropdown {
+  height: 4rem !important;
+  color: #686768;
+  background-color: #FFFFFF;
+	font-size: 1.4rem;
+	font-weight: 500;
+	line-height: 1.4rem;
+  border-radius:0px;
+  border: 1px solid $Vlight-gray
+}
+
+// Share workflow modal
+
+.facebook-share {
+  height: 2rem;
+  width:6.5rem;
+  background-color: #3c5b97;
+  color:#fff;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  border-radius:3px;
+  @extend %font-nunito-regular;
+  font-size: 1.2rem;
+  padding: 0 0.5rem;
+}
+
+.facebook-share:hover{
+  background-color:#2f4e87;
+  color:#fff;
+  text-decoration: none;
 }

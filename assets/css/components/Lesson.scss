@@ -22,6 +22,11 @@ article.lesson {
     overflow-y: scroll;
     overflow-x: hidden;
 
+    a {
+      color:$white;
+      text-decoration: underline;
+    }
+
     &.not-current { display: none; }
 
     .backToLessons {
@@ -79,11 +84,13 @@ article.lesson {
           cursor: text;
         }
 
+
         .lesson-note {
           position: relative;
           left:-2rem;
           margin-top: 2.5rem;
           width:28rem;
+          font-weight: 500;
         }
 
         .image{

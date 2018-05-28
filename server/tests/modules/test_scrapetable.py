@@ -17,6 +17,8 @@ class ScrapeTableTest(LoggedInTestCase):
         # save references to our parameter values so we can tweak them later
         self.url_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='url'))
         self.fetch_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='version_select'))
+        self.table_number_pval = get_param_by_id_name('tablenum', self.wfmodule)
+        self.first_row_pval = get_param_by_id_name('first_row_is_header', self.wfmodule)
 
     # send fetch event to button to load data
     def press_fetch_button(self):
@@ -35,9 +37,9 @@ class ScrapeTableTest(LoggedInTestCase):
         with mock.patch('pandas.read_html') as readmock:
             readmock.return_value = [mock_csv_table]
             self.press_fetch_button()
-            out = execute_nocache(self.wfmodule)
             self.assertEqual(readmock.call_args, mock.call(url, flavor='html5lib') )
 
+        out = execute_nocache(self.wfmodule)
         self.assertTrue(out.equals(mock_csv_table))
 
         # should create a new data version on the WfModule, and a new delta representing the change
@@ -45,6 +47,44 @@ class ScrapeTableTest(LoggedInTestCase):
         self.wfmodule.workflow.refresh_from_db()
         self.assertIsNotNone(self.wfmodule.get_fetched_data_version())
         self.assertIsNotNone(self.wfmodule.workflow.last_delta)
+
+
+    def test_first_row_is_header(self):
+        url = 'http://test.com/tablepage.html'
+        self.url_pval.set_value(url)
+        self.url_pval.save()
+        self.first_row_pval.set_value(True)
+        self.first_row_pval.save()
+
+        with mock.patch('pandas.read_html') as readmock:
+            readmock.return_value = [mock_csv_table]
+            self.press_fetch_button()
+            self.assertEqual(readmock.call_args, mock.call(url, flavor='html5lib') )
+
+        out = execute_nocache(self.wfmodule)
+        self.assertListEqual(list(out.columns), [str(x) for x in mock_csv_table.iloc[0,:]])
+        self.assertEqual(len(out), len(mock_csv_table)-1)
+
+
+    def test_table_index_under(self):
+        self.assertEqual(self.wfmodule.status, WfModule.READY)
+        self.table_number_pval.set_value(0) # can't be < 1
+        self.table_number_pval.save()
+        self.press_fetch_button()
+        self.wfmodule.refresh_from_db()
+        self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+
+
+    def test_table_index_over(self):
+        self.assertEqual(self.wfmodule.status, WfModule.READY)
+        self.table_number_pval.set_value(3) # can't be > number of tables
+        self.table_number_pval.save()
+        with mock.patch('pandas.read_html') as readmock:
+            readmock.return_value = [mock_csv_table, mock_csv_table]
+            self.press_fetch_button()
+        self.wfmodule.refresh_from_db()
+        self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+
 
     def test_invalid_url(self):
         url = 'nuh uh not a url'
@@ -54,6 +94,7 @@ class ScrapeTableTest(LoggedInTestCase):
         self.press_fetch_button()
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+
 
     def test_bad_server(self):
         url = 'http://test.com/the.csv'
@@ -66,6 +107,7 @@ class ScrapeTableTest(LoggedInTestCase):
 
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+
 
     def test_404(self):
         url = 'http://test.com/the.csv'

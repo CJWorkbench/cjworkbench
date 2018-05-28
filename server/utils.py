@@ -136,7 +136,7 @@ def get_google_analytics_id():
 def _setup_intercom_client():
     try:
         token = os.environ['CJW_INTERCOM_ACCESS_TOKEN']
-        intercom_cl = Client(personal_access_token=token)
+        return Client(personal_access_token=token)
     except KeyError:
         return  # env var not set
     except Exception as e:

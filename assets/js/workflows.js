@@ -61,12 +61,14 @@ export default class Workflows extends React.Component {
         <WorkflowListNavBar/>
         <div className="container">
           <a href="/lessons/" className="lesson-banner mx-auto">
-            <div className="content-3">NEW</div>
-            <div className="d-flex">
-              <span className="icon-star"></span>
-              <div className=" title-2 ">TRAINING</div>
+            <div>
+              <div className="content-3">NEW</div>
+              <div className="d-flex">
+                <span className="icon-star"></span>
+                <div className=" title-2 ">TRAINING</div>
+              </div>
             </div>
-            <p className="content-2">Learn to scrape, monitor, clean and analyze data without coding.</p>
+            <p className="content-2">Learn how to work with data without coding</p>
           </a>
           <div className="d-flex justify-content-center">
             <button className='button-blue action-button new-workflow-button' onClick={this.click}>Create Workflow</button>

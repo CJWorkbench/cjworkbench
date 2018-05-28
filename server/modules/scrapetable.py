@@ -11,13 +11,22 @@ class ScrapeTable(ModuleImpl):
 
     @staticmethod
     def render(wf_module, table):
-        return wf_module.retrieve_fetched_table()
+        table = wf_module.retrieve_fetched_table()
+        first_row_is_header = wf_module.get_param_checkbox('first_row_is_header')
+        if first_row_is_header:
+            table.columns = list(table.iloc[0,:])
+            table = table[1:]
+        return table
 
     @staticmethod
     def event(wfm, event=None, **kwargs):
         table = None
         url = wfm.get_param_string('url').strip()
-        tablenum = wfm.get_param_integer('tablenum') + 1  # 1 based for user
+        tablenum = wfm.get_param_integer('tablenum') - 1  # 1 based for user
+
+        if tablenum < 0:
+            wfm.set_error(_('Table number must be at least 1'))
+            return
 
         validate = URLValidator()
         try:
@@ -38,25 +47,38 @@ class ScrapeTable(ModuleImpl):
 
         except ValueError as e:
             wfm.set_error(_('No tables found on this page'))
+            return
 
         except HTTPError as e: # catch this first as it's a subclass of URLError
             if e.code == 404:
                 wfm.set_error(_('Page not found (404)'))
+                return
             else:
                 raise e
         except URLError as e:
             wfm.set_error(_('Server not found'))   # bad domain, probably
+            return
 
-        if wfm.status != wfm.ERROR:
-            wfm.set_ready(notify=False)
+        numtables = len(tables)
+        if numtables == 0:
+            wfm.set_error(_('There are no HTML <table> tags on this page'))
+            return
 
-            tablenum = max(0, min(tablenum, len(tables) - 1))
-            table = tables[tablenum]
+        if tablenum >= numtables:
+            if numtables == 1:
+                wfm.set_error(_('There is only one HTML <table> tag on this page'))
+            else:
+                wfm.set_error(_('There are only %d HTML <table> tags on this page') % numtables)
+            return
 
-            # Change the data version (when new data found) only if this module set to auto update, or user triggered
-            auto = wfm.auto_update_data or (event is not None and event.get('type') == "click")
+        wfm.set_ready(notify=False)
 
-            sanitize_dataframe(table) # ensure all columns are simple types (e.g. nested json to strings)
+        table = tables[tablenum]
 
-            # Also notifies client
-            save_fetched_table_if_changed(wfm, table, auto_change_version=auto)
+        # Change the data version (when new data found) only if this module set to auto update, or user triggered
+        auto = wfm.auto_update_data or (event is not None and event.get('type') == "click")
+
+        sanitize_dataframe(table) # ensure all columns are simple types (e.g. nested json to strings)
+
+        # Also notifies client
+        save_fetched_table_if_changed(wfm, table, auto_change_version=auto)
