@@ -193,7 +193,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
       Cancel
     </button>
     <button
-      className="action-button button-ok"
+      className="action-button button-blue button-ok"
       form="updateFrequencySelectModalForm"
       type="submit"
     >

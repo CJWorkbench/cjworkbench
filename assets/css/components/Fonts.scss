@@ -72,10 +72,15 @@
 	font-weight: 500;
 	line-height: 1.4rem;
 }
-.content-3 {
+
+%content-3 {
 	font-size: 1.3rem;
 	line-height: 2rem;
 }
+.content-3{
+	@extend %content-3
+}
+
 .content-4 {
 	font-size: 1.1rem;
 	font-weight: 300;
@@ -99,11 +104,14 @@
 	line-height: 2.4rem;
 }
 
-.info-1 {
+%info-1 {
 	font-size: 1.2rem;
 	line-height: 1.2rem;
   @extend %font-nunito-extra-light;
 }
+.info-1 {@extend %info-1;}
+
+
 .info-2 {
 	font-size: 1.4rem;
 	line-height: 2rem;
