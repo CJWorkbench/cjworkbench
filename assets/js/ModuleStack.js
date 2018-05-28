@@ -3,7 +3,7 @@ import { scrollTo } from './utils'
 import { DropTarget } from 'react-dnd'
 import FlipMove from 'react-flip-move'
 import PropTypes from 'prop-types'
-import SortableWfModule from './wfmodule/WfModule'
+import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
 import debounce from 'lodash/debounce'
 import { store, insertPlaceholderAction } from "./workflow-reducer";
@@ -106,7 +106,7 @@ class ModuleStack extends React.Component {
         };
 
         return (
-          <SortableWfModule
+          <WfModule
             {...childProps}
           />
         );
