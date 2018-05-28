@@ -1,4 +1,5 @@
 __pycache__/
+.git/
 *.py[cod]
 *$py.class
 assets/bundles/
