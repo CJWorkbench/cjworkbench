@@ -58,7 +58,7 @@ exports[`UpdateFrequencySelect Does not save changed settings when user hits Can
       <span
         className="title-4 t-d-gray"
       >
-        WORKFLOW UPDATE
+        WORKFLOW SETTINGS
       </span>
     </ModalHeader>
     <ModalBody
@@ -246,7 +246,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       <span
         className="title-4 t-d-gray"
       >
-        WORKFLOW UPDATE
+        WORKFLOW SETTINGS
       </span>
     </ModalHeader>
     <ModalBody
@@ -434,7 +434,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       <span
         className="title-4 t-d-gray"
       >
-        WORKFLOW UPDATE
+        WORKFLOW SETTINGS
       </span>
     </ModalHeader>
     <ModalBody
@@ -622,7 +622,7 @@ exports[`UpdateFrequencySelect Renders correctly when in Private mode and change
       <span
         className="title-4 t-d-gray"
       >
-        WORKFLOW UPDATE
+        WORKFLOW SETTINGS
       </span>
     </ModalHeader>
     <ModalBody
