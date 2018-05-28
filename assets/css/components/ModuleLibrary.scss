@@ -6,6 +6,8 @@
   color: $white;
   width: 18rem;
   flex: 0 0 18rem;
+  display: flex;
+  flex-direction: column;
 
   .card {
     background-color: transparent;
@@ -38,9 +40,13 @@
 
   // Search and list of modules container
   .ML-list--container {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
 
     .ML-search--container {
       padding: 1.5rem 1.5rem;
+      flex: 0 0 auto;
       display: flex;
       justify-content: center;
 
@@ -83,7 +89,7 @@
   // ENTIRE module list
   .ML--module-list {
     max-width: 100%;
-    height:calc(100vh - 40rem);
+    flex: 1 1 auto;
     overflow-y: scroll;
     overflow-x: hidden;
     box-shadow: 0 -1px 0 $light-accent--medium, 0 1px 0 $light-accent--medium;
@@ -199,7 +205,7 @@
     width: 18rem;
     z-index: 2;
     overflow-y: scroll;
-    height:calc(100vh - 40rem);
+    height:100vh;
 
     .react-autosuggest__section-title {
       display: flex;
@@ -464,15 +470,6 @@
 
   .ML-module:hover .ml-handle {
     opacity: .6;
-  }
-
-  /* AddNotificationButtonClosed */
-  .alert-closed-ML {
-    background-color: $dark-blue;
-    z-index: 100;
-    position: absolute;
-    left: 6rem;
-    top: 30rem;
   }
 }
 

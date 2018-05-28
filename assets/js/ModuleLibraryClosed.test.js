@@ -1,6 +1,6 @@
 /**
  * Testing Stories:
- * -Renders collapsed menu with <ModuleCategories>, <AddNotificationButton>,
+ * -Renders collapsed menu with <ModuleCategories>
  *    and <ImportModuleFromGitHub> components
  * -Toggle arrow will invoke toggleLibrary() from props
  *

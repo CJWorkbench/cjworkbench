@@ -1,7 +1,7 @@
 /**
  * Full version of the <ModuleLibrary>.
  *
- * Renders a wide menu, with <ModuleSearch>, <ModuleCategories>, <AddNotificationButton>,
+ * Renders a wide menu, with <ModuleSearch>, <ModuleCategories>
  *    and <ImportModuleFromGitHub> components, and toggle arrow to Closed version.
  */
 
@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import ModuleCategories from './ModuleCategories';
 import ModuleSearch from './ModuleSearch'
-import AddNotificationButtonOpen from './AddNotificationButtonOpen'
 
 export default class ModuleLibraryOpen extends React.Component {
   constructor(props) {
@@ -56,10 +55,6 @@ export default class ModuleLibraryOpen extends React.Component {
             />
           </div>
         </div>
-        <div className="mb-3"></div>
-        <AddNotificationButtonOpen/>
-        <div className="ml-divider"></div>
-
       </div>
     )
   }

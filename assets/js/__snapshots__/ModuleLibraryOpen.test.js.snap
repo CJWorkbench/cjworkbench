@@ -87,12 +87,5 @@ exports[`ModuleLibraryOpen  matches snapshot 1`] = `
       />
     </div>
   </div>
-  <div
-    className="mb-3"
-  />
-  <DragSource(AddNotificationButtonOpen) />
-  <div
-    className="ml-divider"
-  />
 </div>
 `;

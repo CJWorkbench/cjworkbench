@@ -1,7 +1,7 @@
 /**
  * Collapsed version of the <ModuleLibrary>.
  *
- *  Renders a narrow menu, with <ModuleCategories>, <AddNotificationButton>,
+ *  Renders a narrow menu, with <ModuleCategories>
  *    and <ImportModuleFromGitHub> components, and toggle arrow to Clossed version.
  */
 
@@ -9,7 +9,6 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {Modal, ModalHeader, ModalBody, ModalFooter} from 'reactstrap'
 import ModuleCategories from './ModuleCategories';
-import AddNotificationButtonClosed from './AddNotificationButtonClosed';
 
 
 export default class ModuleLibraryClosed extends React.Component {
@@ -94,11 +93,6 @@ export default class ModuleLibraryClosed extends React.Component {
             addModule={this.props.addModule}
             dropModule={this.props.dropModule}
             modules={this.props.modules}
-          />
-
-          <AddNotificationButtonClosed
-            setOpenCategory={this.props.setOpenCategory}
-            isReadOnly={this.props.isReadOnly}
           />
 
           {signInModal}

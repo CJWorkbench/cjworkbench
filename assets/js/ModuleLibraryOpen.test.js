@@ -1,6 +1,6 @@
 /**
  * Testing Stories:
- * -Renders full menu with <ModuleSearch>, <ModuleCategories>, <AddNotificationButton>,
+ * -Renders full menu with <ModuleSearch>, <ModuleCategories>
  *    and <ImportModuleFromGitHub> components
  * -Toggle arrow will invoke toggleLibrary() from props
  *

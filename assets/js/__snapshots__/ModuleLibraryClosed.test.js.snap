@@ -287,61 +287,6 @@ exports[`ModuleLibraryClosed NOT Read-Only matches snapshot 1`] = `
               </ModuleCategory>
             </div>
           </ModuleCategories>
-          <DragSource(AddNotificationButtonClosed)
-            isReadOnly={false}
-            setOpenCategory={[Function]}
-          >
-            <AddNotificationButtonClosed
-              connectDragSource={[Function]}
-              isDragging={false}
-              isReadOnly={false}
-              setOpenCategory={[Function]}
-            >
-              <div
-                className="notification-button-closed"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onMouseLeave={[Function]}
-              >
-                <div
-                  className="card ml-module-card"
-                >
-                  <div
-                    className="closed-ML--category t-vl-gray"
-                  >
-                    <div
-                      className="ml-icon-container"
-                    >
-                      <div
-                        className="icon-notification ml-icon"
-                        title="Add Notification"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="card alert-closed-ML d-none"
-                >
-                  <div
-                    className="ML-module d-flex "
-                  >
-                    <div
-                      className="content-5  my-auto mr-5"
-                    >
-                      Add data alert
-                    </div>
-                    <div
-                      className="ml-handle"
-                    >
-                      <div
-                        className="icon-grip"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AddNotificationButtonClosed>
-          </DragSource(AddNotificationButtonClosed)>
         </div>
       </div>
     </ModuleLibraryClosed>
@@ -637,61 +582,6 @@ exports[`ModuleLibraryClosed Read-Only matches snapshot 1`] = `
               </ModuleCategory>
             </div>
           </ModuleCategories>
-          <DragSource(AddNotificationButtonClosed)
-            isReadOnly={true}
-            setOpenCategory={[Function]}
-          >
-            <AddNotificationButtonClosed
-              connectDragSource={[Function]}
-              isDragging={false}
-              isReadOnly={true}
-              setOpenCategory={[Function]}
-            >
-              <div
-                className="notification-button-closed"
-                onClick={[Function]}
-                onMouseEnter={[Function]}
-                onMouseLeave={[Function]}
-              >
-                <div
-                  className="card ml-module-card"
-                >
-                  <div
-                    className="closed-ML--category t-vl-gray"
-                  >
-                    <div
-                      className="ml-icon-container"
-                    >
-                      <div
-                        className="icon-notification ml-icon"
-                        title="Add Notification"
-                      />
-                    </div>
-                  </div>
-                </div>
-                <div
-                  className="card alert-closed-ML d-none"
-                >
-                  <div
-                    className="ML-module d-flex "
-                  >
-                    <div
-                      className="content-5  my-auto mr-5"
-                    >
-                      Add data alert
-                    </div>
-                    <div
-                      className="ml-handle"
-                    >
-                      <div
-                        className="icon-grip"
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </AddNotificationButtonClosed>
-          </DragSource(AddNotificationButtonClosed)>
         </div>
       </div>
     </ModuleLibraryClosed>
