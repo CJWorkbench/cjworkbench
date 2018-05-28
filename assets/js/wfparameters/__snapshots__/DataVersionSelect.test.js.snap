@@ -68,6 +68,12 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
           },
         ],
       ],
+      "results": Array [
+        Object {
+          "isThrow": false,
+          "value": undefined,
+        },
+      ],
     }
   }
   versions={
@@ -825,6 +831,12 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
           808,
           "2017-07-10 17:57:58.324Z",
         ],
+      ],
+      "results": Array [
+        Object {
+          "isThrow": false,
+          "value": undefined,
+        },
       ],
     }
   }
