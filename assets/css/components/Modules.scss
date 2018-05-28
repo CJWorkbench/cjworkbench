@@ -39,7 +39,7 @@
 
       .context-collapse-button {
         border: 0;
-        width: 2.5rem;
+        width: 1rem;
         height: 2.5rem;
         display: flex;
         align-items: center;
@@ -47,7 +47,7 @@
         background-color: transparent;
         color:$light-gray;
         border-radius: 5rem;
-        margin-right:0rem;
+        margin-right:.5rem;
         opacity: 0.5;
 
         &.lesson-highlight {

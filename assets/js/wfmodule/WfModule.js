@@ -299,14 +299,15 @@ export class WfModule extends React.Component {
             </div>
             <div className='module-content' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
                 <div className='module-card-header'>
-                  <div className='module-id--group' onClick={this.toggleCollapsed}>
-                    <div className={moduleIcon} />
-                    <div className='t-d-gray WFmodule-name'>{module.name}</div>
-                    <WfModuleCollapseButton
-                      isCollapsed={this.state.isCollapsed}
-                      isLessonHighlight={this.props.isLessonHighlightCollapse}
-                      />
-                  </div>
+
+                    <div className='module-id--group' onClick={this.toggleCollapsed}>
+                      <WfModuleCollapseButton
+                        isCollapsed={this.state.isCollapsed}
+                        isLessonHighlight={this.props.isLessonHighlightCollapse}
+                        />
+                      <div className={moduleIcon} />
+                      <div className='t-d-gray WFmodule-name'>{module.name}</div>
+                    </div>
                   {contextBtns}
                 </div>
                 {/* --- Module content when expanded --- */}
@@ -349,7 +350,7 @@ WfModule.propTypes = {
 
 class WfModuleCollapseButton extends React.PureComponent {
   render() {
-    const iconClass = this.props.isCollapsed ? 'icon-sort-down' : 'icon-sort-up'
+    const iconClass = this.props.isCollapsed ? 'icon-sort-right' : 'icon-sort-down'
     const lessonHighlightClass = this.props.isLessonHighlight ? 'lesson-highlight' : ''
     return (
       <i className={`context-collapse-button ${iconClass} ${lessonHighlightClass}`}></i>
