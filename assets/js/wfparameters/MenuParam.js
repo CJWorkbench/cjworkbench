@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 export default class MenuParam extends React.Component {
   constructor(props) {
     super(props);
-    this.onChange = this.onChange.bind(this);
     this.state = {
       selectedIdx: this.props.selectedIdx
     };
@@ -16,7 +15,7 @@ export default class MenuParam extends React.Component {
       this.setState({selectedIdx :  newProps.selectedIdx})
   }
 
-  onChange(evt) {
+  onChange = (evt) => {
     var idx =  evt.target.value;
     this.setState({selectedIdx: idx });
     this.props.onChange(idx);

@@ -16,35 +16,26 @@ import lessonSelector from './lessons/lessonSelector'
 describe('ModuleSearch', () => {
   const modules = [
     {
-      "id":4,
-      "name":"Load from Enigma",
-      "category":"Add data",
-      "description":"Connect a dataset from Enigma's collection via URL.",
-      "link":"",
-      "author":"Workbench",
-      "icon":"url"
+      id: 4,
+      name: "Load from Enigma",
+      category: "Add data",
+      icon: "url",
+      isLessonHighlight: true,
     },
     {
-      "id":10,
-      "name":"Filter by Text",
-      "category":"Filter",
-      "description":"Filter rows by matching text in specific columns.",
-      "link":"",
-      "author":"Workbench",
-      "icon":"filter"
+      id: 10,
+      name: "Filter by Text",
+      category: "Filter",
+      icon: "filter",
+      isLessonHighlight: false,
     }
   ];
-  const workflow = {
-    "id":15,
-    "name":"What a workflow!"
-  };
   let defaultProps
   beforeEach(() => defaultProps = {
-    addModule: jest.fn(),
+    onClickModuleId: jest.fn(),
+    onCancel: jest.fn(),
     modules,
-    workflow,
     isLessonHighlight: false,
-    isLessonHighlightForModuleName: jest.fn(name => false),
   })
 
   describe('most tests', () => {
@@ -53,38 +44,44 @@ describe('ModuleSearch', () => {
     afterEach(() => wrapper.unmount())
 
     let searchField
-    beforeEach(() => searchField = wrapper.find('.react-autosuggest__input'))
+    beforeEach(() => searchField = wrapper.find('input[name="moduleQ"]'))
 
-    it('Renders search bar', () => { 
-      expect(wrapper).toMatchSnapshot(); // 1    
+    it('matches snapshot', () => { 
+      expect(wrapper).toMatchSnapshot()
+    })
+
+    it('finds all suggestions by default', () => {
+      expect(wrapper.text()).toMatch(/Load from Enigma/)
+      expect(wrapper.text()).toMatch(/Filter by Text/)
     })
 
     it('finds a suggestion matching search input', () => { 
-      // Search field is focused by default, enter value to text field
       searchField.simulate('change', {target: {value: 'a'}})
       wrapper.update()
-      expect(wrapper).toMatchSnapshot()
-      // check for presence of suggestion matching input
-      expect(wrapper.state().suggestions.length).toEqual(1)
-      expect(wrapper.state().suggestions[0].modules[0].name).toEqual("Load from Enigma");      
+      expect(wrapper.text()).toMatch(/Load from Enigma/)
+      expect(wrapper.text()).not.toMatch(/Filter by Text/)
     })
 
-    it('Close icon will clear text from search field', () => { 
+    it('calls onCancel on form reset (e.g., clicking button.close)', () => { 
       // search field should be empty at start
-      expect(wrapper.state().value).toEqual(''); 
-      // close icon whould not be rendered
-      let closeIcon = wrapper.find('.icon-close-white');
-      expect(closeIcon).toHaveLength(0);             
-      // enter value to text field
-      searchField.simulate('change', {target: {value: 'wow'}});
-      wrapper.update()
-      expect(wrapper.state().value).toEqual('wow'); 
-      // find Close icon again, click to clear search field
-      closeIcon = wrapper.find('.icon-close-white');
-      expect(closeIcon).toHaveLength(1);
-      closeIcon.simulate('click');
-      expect(wrapper.state().value).toEqual('');              
+      wrapper.find('form').simulate('reset')
+      expect(wrapper.prop('onCancel')).toHaveBeenCalled()
     });
+
+    it('calls onCancel on pressing Escape', () => {
+      searchField.simulate('keyDown', { keyCode: 27 })
+      expect(wrapper.prop('onCancel')).toHaveBeenCalled()
+    })
+
+    it('calls onClickModuleId on click', () => {
+      wrapper.find('li[data-module-name="Load from Enigma"]').simulate('click')
+      expect(wrapper.prop('onClickModuleId')).toHaveBeenCalledWith(4)
+    })
+
+    it('should lesson-highlight module', () => {
+      expect(wrapper.find('li[data-module-name="Load from Enigma"]').hasClass('lesson-highlight')).toBe(true)
+      expect(wrapper.find('li[data-module-name="Filter by Text"]').hasClass('lesson-highlight')).toBe(false)
+    })
   })
     
   it('should highlight search box based on isLessonHighlight', () => {
@@ -93,13 +90,6 @@ describe('ModuleSearch', () => {
 
     const yesHighlight = shallow(<ModuleSearch {...defaultProps} isLessonHighlight={true} />)
     expect(yesHighlight.hasClass('lesson-highlight')).toBe(true)
-  })
-
-  describe('watching state', () => {
-    let globalLessonSelector
-    beforeEach(() => {
-      globalLessonSelector = lessonSelector
-    })
   })
 
   describe('with store', () => {
@@ -125,7 +115,7 @@ describe('ModuleSearch', () => {
 
       // Store just needs to change, to trigger mapStateToProps. We don't care
       // about its value
-      store = createStore((_, action) => action.payload)
+      store = createStore((_, action) => ({ modules, ...action.payload }), { modules })
 
       highlight(false)
 
@@ -139,22 +129,14 @@ describe('ModuleSearch', () => {
       wrapper.unmount()
     })
 
+    it('loads modules', () => {
+      expect(wrapper.text()).toMatch(/Load from Enigma/)
+    })
+
     it('highlights the search box', () => {
       highlight(true, null)
       wrapper.update()
       expect(wrapper.find('.module-search').prop('className')).toMatch(/\blesson-highlight\b/)
-    })
-
-    it('highlights a suggestion matching search input in a lesson', () => { 
-      highlight(true, 'Filter by Text')
-
-      // Find 'Load from Enigma' and 'Filter by Text', in that order
-      // 'r' matches both
-      const searchField = wrapper.find('.react-autosuggest__input')
-      searchField.simulate('change', {target: {value: 'r'}})
-
-      expect(wrapper.find('.module-search-result').at(0).filter('.lesson-highlight')).toHaveLength(0)
-      expect(wrapper.find('.module-search-result').at(1).filter('.lesson-highlight')).toHaveLength(1)
     })
   })
 });
