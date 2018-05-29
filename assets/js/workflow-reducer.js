@@ -17,7 +17,7 @@ const DELETE_MODULE = 'DELETE_MODULE';
 const SET_SELECTED_MODULE = 'SET_SELECTED_MODULE';
 const SET_WORKFLOW_PUBLIC = 'SET_WORKFLOW_PUBLIC';
 const SET_WF_LIBRARY_COLLAPSE = 'SET_WF_LIBRARY_COLLAPSE';
-const REORDER_WFMODULES = 'REORDER_WFMODULES';
+const MOVE_MODULE = 'MOVE_MODULE';
 const SET_LESSON_HIGHLIGHT = 'SET_LESSON_HIGHLIGHT';
 
 // User
@@ -95,7 +95,7 @@ const removeNonce = (nonce) => {
 };
 
 const update = newContext();
-update.extend('$swap', function(value, original) {
+update.extend('$reorder', function(value, original) {
   let oldIndex, newIndex;
   [oldIndex, newIndex] = value;
   let newArray = original.slice();
@@ -233,36 +233,36 @@ export function setWorkflowPublicAction(workflowId, isPublic) {
   }
 }
 
-// REORDER_WFMODULES
+// MOVE_MODULE
 // Re-order the modules in the module stack
-export function reorderWfModulesAction(wfModuleID, newIndex) {
-  let state = store.getState();
-  let wfModuleIdx = findIdxByProp(state.workflow.wf_modules, 'id', wfModuleID);
-  if (wfModuleIdx === newIndex) {
-    return NOP
-  }
-  if (wfModuleIdx < newIndex) {
+export function moveModuleAction(oldIndex, newIndex) {
+  if (oldIndex < newIndex) {
     newIndex -= 1;
   }
-  let newState = update(state, {
+  // todo avoid store.getState() here:
+  let newState = update(store.getState(), {
     workflow: {
-      wf_modules: {$swap: [wfModuleIdx, newIndex]}
+      wf_modules: { $reorder: [ oldIndex, newIndex ] }
     }
   });
   let newOrder = newState.workflow.wf_modules.map( (item, i) => {return { id: item.id, order: i } } );
 
   return {
-    type: REORDER_WFMODULES,
+    type: MOVE_MODULE,
     payload: {
       promise: api.reorderWfModules(WorkflowId, newOrder),
-      data: newState.workflow.wf_modules
+      data: { oldIndex, newIndex },
     }
   }
 }
-registerReducerFunc(REORDER_WFMODULES + '_PENDING', (state, action) => {
+registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
+  let { oldIndex, newIndex } = action.payload
+  if (oldIndex < newIndex) {
+    newIndex -= 1;
+  }
   return update(state, {
     workflow: {
-      wf_modules: {$set: action.payload}
+      wf_modules: { $reorder: [ oldIndex, newIndex ] }
     }
   });
 });

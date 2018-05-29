@@ -4,11 +4,96 @@ import ModuleSearch from './ModuleSearch'
 import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
 import debounce from 'lodash/debounce'
-import { addModuleAction } from './workflow-reducer'
+import { addModuleAction, moveModuleAction } from './workflow-reducer'
 import { scrollTo } from './utils'
 import { connect } from 'react-redux';
 
+
+class ModuleDropSpot extends React.PureComponent {
+  static propTypes = {
+    index: PropTypes.number.isRequired,
+    isDraggingModuleAtIndex: PropTypes.number,
+    moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      isDragHovering: false,
+    }
+  }
+
+  canDrop() {
+    const { index, isDraggingModuleAtIndex } = this.props
+    if (isDraggingModuleAtIndex === null) return false
+
+    // Can't drag to before or after ourselves
+    return !(index === isDraggingModuleAtIndex || index === isDraggingModuleAtIndex + 1)
+  }
+
+  onDragOver = (ev) => {
+    if (!this.canDrop()) return
+
+    ev.preventDefault() // unlike default, this is a valid drop target
+  }
+
+  onDragEnter = (ev) => {
+    if (!this.canDrop()) return
+
+    this.setState({
+      isDragHovering: true,
+    })
+  }
+
+  onDragLeave = () => {
+    if (!this.canDrop()) return
+
+    this.setState({
+      isDragHovering: false,
+    })
+  }
+
+  onDrop = (ev) => {
+    if (!this.canDrop()) return
+
+    ev.preventDefault() // we want no browser defaults
+
+    this.props.moveModuleByIndex(this.props.isDraggingModuleAtIndex, this.props.index)
+
+    this.setState({
+      isDragHovering: false, // otherwise, will stay hovering next drag
+    })
+  }
+
+  render() {
+    if (this.canDrop()) {
+      let className = 'module-drop-target'
+      if (this.state.isDragHovering) className += ' is-drag-hovering'
+      return (
+        <div
+          className={className}
+          onDragOver={this.onDragOver}
+          onDragEnter={this.onDragEnter}
+          onDragLeave={this.onDragLeave}
+          onDrop={this.onDrop}
+          ></div>
+      )
+    } else {
+      return null
+    }
+  }
+}
+
+
 class BaseModuleStackInsertSpot extends React.PureComponent {
+  static propTypes = {
+    addModule: PropTypes.func.isRequired,
+    index: PropTypes.number.isRequired,
+    isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
+    moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
+  }
+
   constructor(props) {
     super(props)
 
@@ -51,21 +136,27 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
   }
 
   render() {
-    // TODO let people drop-to-reorder here
     return (
-      <React.Fragment>
-        <div className="module-drop-spot"></div>
+      <div className="in-between-modules">
         {this.renderModuleSearchButton()}
-      </React.Fragment>
+        <ModuleDropSpot
+          index={this.props.index}
+          isDraggingModuleAtIndex={this.props.isDraggingModuleAtIndex}
+          moveModuleByIndex={this.props.moveModuleByIndex}
+          />
+      </div>
     )
   }
 }
-BaseModuleStackInsertSpot.propTypes = {
-  addModule: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
-}
 
 class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
+  static propTypes = {
+    addModule: PropTypes.func.isRequired,
+    index: PropTypes.number.isRequired,
+    isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
+    moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
+  }
+
   renderModuleSearchButton() {
     let className = 'add-module-in-between-search'
     if (this.state.isSearching) className += ' searching'
@@ -80,12 +171,15 @@ class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
     )
   }
 }
-ModuleStackInsertSpot.propTypes = {
-  addModule: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
-}
 
 class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
+  static propTypes = {
+    addModule: PropTypes.func.isRequired,
+    index: PropTypes.number.isRequired,
+    isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
+    moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
+  }
+
   renderModuleSearchButton() {
     let className = 'add-module-search'
     if (this.state.isSearching) className += ' searching'
@@ -101,20 +195,31 @@ class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
     )
   }
 }
-LastModuleStackInsertSpot.propTypes = {
-  addModule: PropTypes.func.isRequired,
-  index: PropTypes.number.isRequired,
-}
 
 const FixmeIKilledDragAndDrop = () => {}
 
 class ModuleStack extends React.Component {
+  static propTypes = {
+    api:                PropTypes.object.isRequired,
+    workflow:           PropTypes.object,
+    selected_wf_module: PropTypes.number,
+    changeParam:        PropTypes.func.isRequired,
+    addModule:          PropTypes.func.isRequired, // func(moduleId, index) => undefined
+    moveModuleByIndex:  PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
+    removeModule:       PropTypes.func.isRequired,
+    loggedInUser:       PropTypes.object             // undefined if no one logged in (viewing public wf)
+  }
+
   constructor(props) {
     super(props);
     this.scrollRef = React.createRef();
     // Debounced so that execution is cancelled if we start
     // another animation. See note on focusModule definition.
     this.focusModule = debounce(this.focusModule.bind(this), 200);
+
+    this.state = {
+      isDraggingModuleAtIndex: null,
+    }
   }
 
   focusModule(module) {
@@ -133,8 +238,27 @@ class ModuleStack extends React.Component {
     });
   }
 
-  addModule = (moduleId, index) => {
-    this.props.addModule(moduleId, index)
+  onDragStart = (obj) => {
+    this.setState({
+      isDraggingModuleAtIndex: obj.index,
+    })
+  }
+
+  onDragEnd = () => {
+    this.setState({
+      isDraggingModuleAtIndex: null,
+    })
+  }
+
+  moduleStackInsertSpot(index) {
+    return (
+      <ModuleStackInsertSpot
+        index={index}
+        isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
+        addModule={this.props.addModule}
+        moveModuleByIndex={this.props.moveModuleByIndex}
+        />
+    )
   }
 
   render() {
@@ -145,7 +269,7 @@ class ModuleStack extends React.Component {
       if (item.placeholder) {
         return (
           <React.Fragment key={i}>
-            <ModuleStackInsertSpot index={i} addModule={this.addModule} />
+            {this.moduleStackInsertSpot(i)}
             <WfModuleHeader
               moduleName={item.name}
               moduleIcon={item.icon}
@@ -157,7 +281,7 @@ class ModuleStack extends React.Component {
       } else {
         return (
           <React.Fragment key={i}>
-            <ModuleStackInsertSpot index={i} addModule={this.addModule} />
+            {this.moduleStackInsertSpot(i)}
             <WfModule
               isReadOnly={this.props.workflow.read_only}
               wfModule={item}
@@ -169,12 +293,8 @@ class ModuleStack extends React.Component {
               user={this.props.loggedInUser}
               loads_data={item.moduleVersion && item.module_version.module.loads_data}
               index={i}
-              drag={FixmeIKilledDragAndDrop}
-              drop={FixmeIKilledDragAndDrop}
-              dragNew={FixmeIKilledDragAndDrop}
-              canDrag={false}
-              startDrag={FixmeIKilledDragAndDrop}
-              stopDrag={FixmeIKilledDragAndDrop}
+              onDragStart={this.onDragStart}
+              onDragEnd={this.onDragEnd}
               focusModule={this.focusModule}
             />
           </React.Fragment>
@@ -185,21 +305,17 @@ class ModuleStack extends React.Component {
     return (
       <div className="module-stack">
         {spotsAndItems}
-        <LastModuleStackInsertSpot key="last" index={wfModules.length} addModule={this.addModule} />
+        <LastModuleStackInsertSpot
+          key="last"
+          index={wfModules.length}
+          isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
+          addModule={this.props.addModule}
+          moveModuleByIndex={this.props.moveModuleByIndex}
+      />
       </div>
     )
   }
 }
-
-ModuleStack.propTypes = {
-  api:                PropTypes.object.isRequired,
-  workflow:           PropTypes.object,
-  selected_wf_module: PropTypes.number,
-  changeParam:        PropTypes.func.isRequired,
-  addModule:          PropTypes.func.isRequired,
-  removeModule:       PropTypes.func.isRequired,
-  loggedInUser:       PropTypes.object             // undefined if no one logged in (viewing public wf)
-};
 
 const mapStateToProps = (state) => {
   return {
@@ -209,10 +325,15 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
-    addModule: (moduleId, index) => {
+    addModule(moduleId, index) {
       const action = addModuleAction(moduleId, index)
       dispatch(action)
-    }
+    },
+
+    moveModuleByIndex(oldIndex, newIndex) {
+      const action = moveModuleAction(oldIndex, newIndex)
+      dispatch(action)
+    },
   }
 }
 

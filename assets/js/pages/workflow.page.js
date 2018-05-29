@@ -6,10 +6,6 @@ import { Provider, connect } from 'react-redux'
 import * as Actions from '../workflow-reducer'
 import Workflow from '../workflow'
 import workbenchAPI from '../WorkbenchAPI'
-import { DragDropContextProvider } from 'react-dnd'
-import HTML5Backend from 'react-dnd-html5-backend'
-import CustomDragLayer from '../CustomDragLayer'
-import { DragLayer } from 'react-dnd'
 
 // Global API object, encapsulates all calls to the server
 const api = workbenchAPI();
@@ -72,15 +68,12 @@ const socket = buildSocket() // Start listening for events
 
 // Render with Provider to root so all objects in the React DOM can access state
 ReactDOM.render(
+  (
     <Provider store={Actions.store}>
-      <DragDropContextProvider backend={HTML5Backend}>
-        <React.Fragment>
-          <CustomDragLayer />
-          <WorkflowContainer lesson={window.initState.lessonData} />
-        </React.Fragment>
-      </DragDropContextProvider>
-    </Provider>,
-    document.getElementById('root')
+      <WorkflowContainer lesson={window.initState.lessonData} />
+    </Provider>
+  ),
+  document.getElementById('root')
 );
 
 // Load the page and modules

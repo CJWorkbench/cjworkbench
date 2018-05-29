@@ -319,8 +319,6 @@ export default class WfParameter extends React.Component {
           <div {...this.outerDivProps}>
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <textarea
-              onMouseEnter={() => this.props.stopDrag() }
-              onMouseLeave={() => this.props.startDrag() }
               onBlur={this.blur}
               onKeyPress={this.keyPress}
               onClick={this.click}
@@ -447,6 +445,4 @@ WfParameter.propTypes = {
   changeParam:      PropTypes.func.isRequired,
 	getParamText:     PropTypes.func.isRequired,
   setParamText:     PropTypes.func.isRequired,
-  startDrag:        PropTypes.func.isRequired,
-  stopDrag:         PropTypes.func.isRequired,
 }

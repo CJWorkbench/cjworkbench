@@ -8,8 +8,6 @@ jest.mock('./lessons/lessonSelector', () => jest.fn()) // same mock in every tes
 
 import React from 'react'
 import ConnectedModuleSearch, { ModuleSearch } from './ModuleSearch'
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContextProvider } from 'react-dnd'
 import { mount, shallow } from 'enzyme'
 import { createStore } from 'redux'
 import { Provider } from 'react-redux'
@@ -133,9 +131,7 @@ describe('ModuleSearch', () => {
 
       wrapper = mount(
         <Provider store={store}>
-          <DragDropContextProvider backend={HTML5Backend}>
-            <ConnectedModuleSearch {...defaultProps} alwaysRenderSuggestions={true} />
-          </DragDropContextProvider>
+          <ConnectedModuleSearch {...defaultProps} alwaysRenderSuggestions={true} />
         </Provider>
       )
     })

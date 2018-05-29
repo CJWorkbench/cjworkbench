@@ -14,8 +14,6 @@ import {
   setSelectedWfModuleAction
 } from '../workflow-reducer'
 import PropTypes from 'prop-types'
-import { getEmptyImage } from 'react-dnd-html5-backend'
-import { sortableWfModule } from "./WfModuleDragDropConfig";
 import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
 
@@ -24,7 +22,7 @@ import { Collapse } from 'reactstrap';
 
 
 // ---- WfModule ----
-export class WfModule extends React.Component {
+export class WfModule extends React.PureComponent {
   constructor(props) {
     super(props);
 
@@ -55,6 +53,7 @@ export class WfModule extends React.Component {
       showEditableNotes: false,             // do not display in edit state on initial load
       notifications: this.props.wfModule.notifications,
       notification_count: this.props.wfModule.notification_count,
+      isDragging: false,
     }
   }
 
@@ -93,12 +92,6 @@ export class WfModule extends React.Component {
     if (this.props.selected) {
       this.props.focusModule(this.moduleRef);
     }
-
-		this.props.connectDragPreview(getEmptyImage(), {
-			// IE fallback: specify that we'd rather screenshot the node
-			// when it already knows it's being dragged so we can hide it with CSS.
-			captureDraggingState: true,
-		})
   }
 
   // We become the selected module on any click
@@ -108,6 +101,34 @@ export class WfModule extends React.Component {
 
   changeParam(id, payload) {
     this.props.changeParam(id, payload)
+  }
+
+  onDragStart = (ev) => {
+    if (ev.target.tagName in {
+      'button': null,
+      'input': null,
+      'select': null,
+      'textarea': null,
+      'label': null,
+    }) {
+      // Don't drag when user selects text
+      ev.preventDefault()
+      return
+    }
+
+    const dragObject = {
+      type: 'WfModule',
+      index: this.props.index,
+      id: this.props.wfModule.id,
+    }
+    ev.dataTransfer.setData('application/json', JSON.stringify(dragObject))
+    ev.dataTransfer.effectAllowed = 'move'
+    ev.dataTransfer.dropEffect = 'move'
+    this.props.onDragStart(dragObject)
+  }
+
+  onDragEnd = (ev) => {
+    this.props.onDragEnd()
   }
 
   // These functions allow parameters to access each others value (text params only)
@@ -207,8 +228,6 @@ export class WfModule extends React.Component {
           setClickNotification={this.setClickNotification}
           notifications={wfModule.notifications}
           loggedInUser={this.props.user}
-          startDrag={this.props.startDrag}
-          stopDrag={this.props.stopDrag}
         />)
       });
 
@@ -283,15 +302,10 @@ export class WfModule extends React.Component {
     const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon mr-2';
 
     // Putting it all together: name, status, parameters, output
-    // For testing: connectDropTarget and connectDragSource will return null because they're provided as mock functions,
-    // so if this outputs 'undefined' we return null
-    return this.props.connectDropTarget(this.props.connectDragSource(
-      // Removing this outer div breaks the drag and drop animation for reasons
-      // that aren't clear right now. It doesn't hurt anything but it shouldn't
-      // be necessary either.
-      <div onClick={this.click} className={'wf-module' + (this.props.isOver ? (' over ' + this.state.dragPosition) : '') + (this.props.isLessonHighlight ? ' lesson-highlight' : '')} data-module-name={module.name}>
+    return (
+      <div onClick={this.click} className={'wf-module' + (this.props.isLessonHighlight ? ' lesson-highlight' : '')} data-module-name={module.name}>
         {notes}
-        <div className={'wf-card '+ (this.props.isDragging ? 'wf-module--dragging ' : '')} ref={this.setModuleRef}>
+        <div className={'wf-card '+ (this.props.isDragging ? 'wf-module--dragging ' : '')} ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
 
           <div>
             <div className='output-bar-container'>
@@ -328,20 +342,20 @@ export class WfModule extends React.Component {
           </div>
         </div>
       </div>
-    )) || null;
+    ) || null;
   }
 }
 WfModule.propTypes = {
   isReadOnly:         PropTypes.bool.isRequired,
+  index:              PropTypes.number.isRequired,
   wfModule:           PropTypes.object,
   revison:            PropTypes.number,
   selected:           PropTypes.bool,
   changeParam:        PropTypes.func,
   removeModule:       PropTypes.func,
   api:                PropTypes.object.isRequired,
-  connectDragSource:  PropTypes.func,
-  connectDropTarget:  PropTypes.func,
-  connectDragPreview: PropTypes.func,
+  onDragStart:        PropTypes.func.isRequired, // func({ type:'WfModule',id,index }) => undefined
+  onDragEnd:          PropTypes.func.isRequired, // func() => undefined
   focusModule:        PropTypes.func,
   isLessonHighlight: PropTypes.bool.isRequired,
   isLessonHighlightNotes: PropTypes.bool.isRequired,
@@ -386,4 +400,4 @@ function mapStateToProps(state, ownProps) {
 
 export default connect(
   mapStateToProps,
-)(sortableWfModule(WfModule))
+)(WfModule)

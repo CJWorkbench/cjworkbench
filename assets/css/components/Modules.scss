@@ -321,35 +321,3 @@ svg .svg-background{
 .input-group-prepend button.color-picker {
   z-index: auto;
 }
-
-
-/* CSS-based drag-and-drop placeholder */
-/* We use :before and :after pseudoelements to avoid DOM manipulation and
-outsource performance optimization to the browser. The .over class is set by
-monitoring the isDragging prop set by the react-dnd higher-order components. */
-.over {
-  position: relative;
-}
-
-.over.top::before, .over.bottom:after {
-  content: ' ';
-  display:block;
-  width: 26rem;
-  margin:0 auto;
-  height:0;
-  padding-bottom:0.5rem;
-  border-bottom:0.5rem solid $medium-blue;
-  position:relative;
-  top: -0.5rem;
-}
-.modulestack.over .modulestack-list::after {
-  content: ' ';
-  display:block;
-  width: 26rem;
-  margin:0 auto;
-  height:0;
-  padding-bottom:0.5rem;
-  border-bottom:0.5rem solid $medium-blue;
-  position:relative;
-  top: -0.5rem;
-}

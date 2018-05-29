@@ -1,8 +1,6 @@
 jest.mock('../lessons/lessonSelector', () => jest.fn()) // same mock in every test :( ... we'll live
 
 import React from 'react'
-import HTML5Backend from 'react-dnd-html5-backend'
-import { DragDropContextProvider } from 'react-dnd'
 import ConnectedWfModule, { WfModule } from './WfModule'
 import { okResponseMock } from '../test-utils'
 import { shallow, mount } from 'enzyme'
@@ -137,9 +135,7 @@ describe('WfModule, not read-only mode', () => {
 
       wrapper = mount(
         <Provider store={store}>
-          <DragDropContextProvider backend={HTML5Backend}>
-            <ConnectedWfModule {...props} />
-          </DragDropContextProvider>
+          <ConnectedWfModule {...props} />
         </Provider>
       )
     })

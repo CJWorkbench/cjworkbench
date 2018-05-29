@@ -6,6 +6,10 @@
   overflow-y: scroll;
   position: relative;
 
+  .in-between-modules {
+    position: relative;
+  }
+
   .add-module-search {
     width: $module-width;
     margin-left: 1rem;
@@ -71,6 +75,22 @@
           color: $white;
         }
       }
+    }
+  }
+
+  .module-drop-target {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; // go over <button>
+    background: $brand-workspace;
+    border: .25rem solid transparent;
+
+    &.is-drag-hovering {
+      background: $brand-orange;
     }
   }
 }
