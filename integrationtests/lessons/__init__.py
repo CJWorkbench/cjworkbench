@@ -43,6 +43,22 @@ class LessonTest(LoggedInIntegrationTest):
         """
         self.browser.assert_no_element('.lesson-highlight')
 
+    def select_column(self, name: str, text: str, **kwargs) -> None:
+        """Selects 'text' in the ColumnSelect box with name 'name'.
+
+        Waits for '.loading' to disappear before filling in the text.
+
+        Note: unlike browser.select(), this does _not_ handle id or
+        label locators.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self.browser.assert_element(
+            f'select[name="{name}"]:not(.loading)',
+            wait=True
+        )
+        self.browser.select(name, text, **kwargs)
 
     def add_wf_module(self, name: str, position=None) -> None:
         """Adds module with name 'name' to the workflow.

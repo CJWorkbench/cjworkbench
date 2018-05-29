@@ -56,4 +56,18 @@ describe('ColumnParam', () => {
       done();
     });
   });
+
+  it('renders .loading when there are no colNames', () => {
+    const deadPromise = new Promise(() => {})
+    let wrapper = mount(
+        <ColumnParam
+          name="column"
+          selectedCol='baz'
+          getColNames={() => deadPromise}
+          isReadOnly={true}
+          revision={101}
+          onChange={()=>{}}
+        />);
+    expect(wrapper.find('select').prop('className')).toMatch(/\bloading\b/)
+  })
 });

@@ -58,7 +58,7 @@ class TestLesson(LessonTest):
         self.add_wf_module('Filter', position=1)
 
         self.expect_highlight(1, '.wf-module[data-module-name="Filter"]')
-        b.select('column', 'affordable_units', wait=True) # wait for module load
+        self.select_column('column', 'affordable_units', wait=True) # wait for module load
         b.select('condition', 'Greater than')
         b.fill_in('value', 200)
         b.click_whatever('h2') # blur, to commit data
