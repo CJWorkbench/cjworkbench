@@ -1,17 +1,18 @@
 <header>
   <h1>II. Clean and standardize data</h1>
-  <p>Clean format and standardize data to build a chart series</p>
+  <p>Clean and a messy dataset and format it in order to build a chart series</p>
   <img src="/static/images/lesson_banners/clean_standard_banner.svg">
 </header>
 <section>
   <h2>Overview</h2>
-  <p>In this lesson you will clean and prepare a dataset to visualize a chart series.</p>
+  <p>In this lesson you will work with a messy dataset to compare population growth in major U.S. technological hubs.</p>
+  <p>You will learn how to use the powerful 'Refine' and 'Reshape' modules to clean and prepare data for a chart series.</p>
   <ol class="steps">
 
   </ol>
 </section>
 <section>
-  <h2>1. Deleting empty columns and rows</h2>
+  <h2>1. Dropping empty rows and columns</h2>
   <ol class="steps">
     <li
       data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Add from URL"}]'
@@ -93,7 +94,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules[4].parameters.get('varcol') == 'MetroArea'"
-      >Choose 'MetroArea' as the Variable column. Metro ares will be the column names of the wide table.</li>
+      >Choose 'MetroArea' as the Variable column. Those values will be used as column names in the wide table.</li>
   </ol>
 </section>
 <section>
@@ -107,6 +108,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="const wfModule = workflow.wfModules[5]; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
-      >Add a title to the chart, and you're done!</li>
+      >Add a title to the chart, and you're done!
+    </li>
   </ol>
 </section>

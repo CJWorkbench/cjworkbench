@@ -1,18 +1,18 @@
 /* ---- Data Module: data versions box */
-.update-frequency-form {
-  .version-item {
-    display: flex;
-    align-items: center;
-    width:14.5rem;
-  }
 
-  .frequency-item {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-right: 1rem;
-  }
+
+.version-item {
+  display: flex;
+  align-items: center;
+  width:14.5rem;
+}
+
+.frequency-item {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-right: 1rem;
 }
 
 .modal-body.update-frequency-form {
@@ -20,6 +20,17 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+
+    label {@extend %info-1;}
+
+    .form-check-label {
+      @extend %info-1;
+      display: flex;
+      align-items: center;
+      .form-check-input {
+        margin-bottom: .4rem;
+      }
+    }
 
     p {
       font-size: 1.3rem; // because body font-size is 10px
@@ -40,31 +51,28 @@
       text-align: center;
 
       span {
-        display: inline-block;
         width: 100%;
         border: 1px solid $brand-workspace;
-        border-radius: 1.5rem;
         padding: .75rem;
-      }
-
-      &.big-radio-checked {
-        opacity: 1;
-      }
-
-      &.big-radio-unchecked {
-        opacity: .5;
       }
     }
   }
 
-  .big-radio-unchecked {
-    &>label {
-      opacity: .5;
-    }
+  .big-radio-checked>label span {
+    @extend %action-button;
+    @extend %button-blue--fill;
+  }
+  .big-radio-unchecked>label span {
+    @extend %action-button;
+    @extend %button-blue;
+  }
 
-    &>.big-radio-details {
-      opacity: .8;
-    }
+  .big-radio-unchecked {
+    opacity: .5;
+  }
+
+  .big-radio-checked {
+    opacity: 1;
   }
 
   .big-radio-auto-update-false {
@@ -86,15 +94,19 @@
   input[name="timeNumber"] {
     display: inline;
     width: 5rem;
+    @extend %parameter-base;
   }
 
   input[name="timeUnit"] {
     display: inline-block;
     width:10rem;
-    border-radius: 0px!important;
+    @extend %parameter-base;
   }
 
   select {
     border-radius: 0px;
+    @extend %parameter-base;
+    height: 3.5rem!important;
+    border-radius: 3px!important;
   }
 }

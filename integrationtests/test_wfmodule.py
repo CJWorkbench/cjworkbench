@@ -49,7 +49,7 @@ class TestWfModule(LoggedInIntegrationTest):
         # Wait for wfmodule to appear
         b.hover_over_element('.module-card-header', wait=True)
 
-        b.assert_element('.icon-sort-up') # should be uncollapsed, else .icon-collapse-o
+        b.assert_element('.icon-sort-down') # should be uncollapsed
         b.assert_element('.icon-help')
         b.assert_element('.icon-note')
         b.assert_element('button[title=more]')

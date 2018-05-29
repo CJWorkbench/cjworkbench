@@ -64,8 +64,8 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
     const { isAutoUpdate, isEmailUpdates, timeNumber, timeUnit } = this.state
 
     return (
-      <Modal isOpen={true} onClosed={this.props.onCancel}>
-        <ModalHeader toggle={this.toggleModal}>
+      <Modal isOpen={true} onClosed={this.props.onCancel} className='modal-dialog'>
+        <ModalHeader toggle={this.toggleModal} className='dialog-header'>
           <span className='title-4 t-d-gray'>WORKFLOW UPDATE</span>
         </ModalHeader>
         <ModalBody className="update-frequency-form">
@@ -150,7 +150,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
         </ModalBody>
         <ModalFooter>
           <button type="cancel" className="action-button button-gray" form="updateFrequencySelectModalForm">Cancel</button>
-          <button type="submit" className="action-button button-ok" form="updateFrequencySelectModalForm">Apply</button>
+          <button type="submit" className="action-button button-blue button-ok" form="updateFrequencySelectModalForm">Apply</button>
         </ModalFooter>
       </Modal>
     )

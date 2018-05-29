@@ -100,7 +100,7 @@ button:focus { outline:0 !important; }
 
 //* - Action button - */
 
-.action-button {
+%action-button {
   cursor: pointer;
   text-align: center;
   min-width: 7rem;
@@ -115,6 +115,8 @@ button:focus { outline:0 !important; }
   -webkit-transition: opacity 0.1s;
   transition: opacity 0.1s;
 }
+
+.action-button { @extend %action-button; }
 
 .action-button + .action-button {
   margin-left: 1rem;
@@ -156,7 +158,7 @@ button:focus { outline:0 !important; }
   }
 }
 
-.button-blue {
+%button-blue {
   color: $brand-workspace;
   border: 1px solid $brand-workspace ;
   background-color: transparent;
@@ -167,7 +169,9 @@ button:focus { outline:0 !important; }
   }
 }
 
-.button-blue--fill {
+.button-blue { @extend %button-blue; }
+
+%button-blue--fill {
   background-color: $brand-workspace;
   color: $white;
   border:none;
@@ -181,6 +185,9 @@ button:focus { outline:0 !important; }
     color: $white !important;
   }
 }
+
+.button-blue--fill { @extend %button-blue--fill; }
+
 
 .button-orange {
   color: $brand-orange;
