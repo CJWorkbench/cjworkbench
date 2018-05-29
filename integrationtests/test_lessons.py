@@ -15,7 +15,7 @@ class TestLessons(LoggedInIntegrationTest):
         b.visit('/lessons/')
         b.click_whatever('h2', text='I. Load public data and make a chart', wait=True)
 
-        b.assert_element('.modulestack-empty', text='DROP MODULE HERE')
+        b.assert_element('.module-stack')
         b.assert_element('h2', text='Overview')
         b.assert_element('.current-and-total', text='1 of 4')
         b.click_button('Next')

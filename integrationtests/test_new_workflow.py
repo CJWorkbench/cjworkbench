@@ -8,12 +8,7 @@ class TestNewWorkflow(LoggedInIntegrationTest):
         b.click_button('Create Workflow')
 
         # Empty module stack
-        # wait: for page to load
-        b.wait_for_element('.modulestack-empty', text='DROP MODULE HERE')
-
-        # Module library
-        b.assert_element('.category-name', text='Add data')
-        b.assert_element('.ML-module', text='Add from URL')
+        b.wait_for_element('.module-stack', wait=True)
 
         # nav bar
         with b.scope('nav'):
