@@ -171,7 +171,7 @@ class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
     return (
       <div className={className}>
         <button className="search" title="Add Module" onClick={this.onClickSearch}>
-          <i className="icon-addc"></i>
+          <i className="icon-add"></i>
         </button>
         {this.renderModuleSearchIfSearching()}
       </div>
