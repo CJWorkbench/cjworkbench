@@ -42,6 +42,12 @@ exports[`FileSelect Loads correctly and allows a user to choose a new file 1`] =
             },
           ],
         ],
+        "results": Array [
+          Object {
+            "isThrow": false,
+            "value": Promise {},
+          },
+        ],
       },
     }
   }

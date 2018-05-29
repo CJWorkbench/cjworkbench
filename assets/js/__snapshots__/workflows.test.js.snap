@@ -10,6 +10,12 @@ exports[`Workflow list page renders correctly 1`] = `
         "calls": Array [
           Array [],
         ],
+        "results": Array [
+          Object {
+            "isThrow": false,
+            "value": Promise {},
+          },
+        ],
       },
       "newWorkflow": [MockFunction],
     }
@@ -238,6 +244,12 @@ exports[`Workflow list page renders correctly 1`] = `
                         "calls": Array [
                           Array [],
                         ],
+                        "results": Array [
+                          Object {
+                            "isThrow": false,
+                            "value": Promise {},
+                          },
+                        ],
                       },
                       "newWorkflow": [MockFunction],
                     }
@@ -450,6 +462,12 @@ exports[`Workflow list page renders correctly 1`] = `
                       "listWorkflows": [MockFunction] {
                         "calls": Array [
                           Array [],
+                        ],
+                        "results": Array [
+                          Object {
+                            "isThrow": false,
+                            "value": Promise {},
+                          },
                         ],
                       },
                       "newWorkflow": [MockFunction],
@@ -664,6 +682,12 @@ exports[`Workflow list page renders correctly 1`] = `
                         "calls": Array [
                           Array [],
                         ],
+                        "results": Array [
+                          Object {
+                            "isThrow": false,
+                            "value": Promise {},
+                          },
+                        ],
                       },
                       "newWorkflow": [MockFunction],
                     }
@@ -876,6 +900,12 @@ exports[`Workflow list page renders correctly 1`] = `
                       "listWorkflows": [MockFunction] {
                         "calls": Array [
                           Array [],
+                        ],
+                        "results": Array [
+                          Object {
+                            "isThrow": false,
+                            "value": Promise {},
+                          },
                         ],
                       },
                       "newWorkflow": [MockFunction],
