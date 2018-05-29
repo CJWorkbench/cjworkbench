@@ -30,6 +30,11 @@
       font-size: 1.3rem;
       padding: .75rem;
     }
+
+    &.lesson-highlight button.search {
+      border-color: $brand-learn;
+      color: $brand-learn;
+    }
   }
 
   .add-module-in-between-search {
@@ -73,6 +78,17 @@
         i {
           background: $brand-workspace;
           color: $white;
+        }
+      }
+    }
+
+    &.lesson-highlight {
+      button.search {
+        background: $brand-learn;
+
+        i {
+          background: $brand-learn;
+          color: $white
         }
       }
     }

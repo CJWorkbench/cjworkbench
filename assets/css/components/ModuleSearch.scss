@@ -65,6 +65,10 @@
     }
   }
 
+  &.lesson-highlight .module-search-field input {
+    border-color: $brand-learn;
+  }
+
   .module-search-result-groups {
     max-height: 40rem;
     background-color: $white;
@@ -86,6 +90,7 @@
   }
 
   .module-search-result {
+    border: 2px solid transparent;
     color: $brand-text--dark;
     cursor: pointer;
 
@@ -97,6 +102,10 @@
     &:hover {
       color: $white;
       background-color: $heading-bg;
+    }
+
+    &.lesson-highlight {
+      border-color: $brand-learn;
     }
   }
 }

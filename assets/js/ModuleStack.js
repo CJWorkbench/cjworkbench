@@ -7,6 +7,7 @@ import debounce from 'lodash/debounce'
 import { addModuleAction, moveModuleAction } from './workflow-reducer'
 import { scrollTo } from './utils'
 import { connect } from 'react-redux';
+import lessonSelector from './lessons/lessonSelector'
 
 
 class ModuleDropSpot extends React.PureComponent {
@@ -128,7 +129,11 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
   renderModuleSearchIfSearching() {
     if (this.state.isSearching) {
       return (
-        <ModuleSearch onClickModuleId={this.onClickModuleId} onCancel={this.onCancelSearch} />
+        <ModuleSearch
+          index={this.props.index}
+          onClickModuleId={this.onClickModuleId}
+          onCancel={this.onCancelSearch}
+          />
       )
     } else {
       return null
@@ -155,11 +160,13 @@ class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
+    isLessonHighlightSearch: PropTypes.bool.isRequired,
   }
 
   renderModuleSearchButton() {
     let className = 'add-module-in-between-search'
     if (this.state.isSearching) className += ' searching'
+    if (this.props.isLessonHighlightSearch) className += ' lesson-highlight'
 
     return (
       <div className={className}>
@@ -178,11 +185,13 @@ class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
+    isLessonHighlightSearch: PropTypes.bool.isRequired,
   }
 
   renderModuleSearchButton() {
     let className = 'add-module-search'
     if (this.state.isSearching) className += ' searching'
+    if (this.props.isLessonHighlightSearch) className += ' lesson-highlight'
 
     return (
       <div className={className}>
@@ -207,7 +216,8 @@ class ModuleStack extends React.Component {
     addModule:          PropTypes.func.isRequired, // func(moduleId, index) => undefined
     moveModuleByIndex:  PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     removeModule:       PropTypes.func.isRequired,
-    loggedInUser:       PropTypes.object             // undefined if no one logged in (viewing public wf)
+    loggedInUser:       PropTypes.object,            // undefined if no one logged in (viewing public wf)
+    testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
   }
 
   constructor(props) {
@@ -257,6 +267,7 @@ class ModuleStack extends React.Component {
         isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
         addModule={this.props.addModule}
         moveModuleByIndex={this.props.moveModuleByIndex}
+        isLessonHighlightSearch={this.props.testLessonHighlightIndex(index)}
         />
     )
   }
@@ -311,6 +322,7 @@ class ModuleStack extends React.Component {
           isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
           addModule={this.props.addModule}
           moveModuleByIndex={this.props.moveModuleByIndex}
+          isLessonHighlightSearch={this.props.testLessonHighlightIndex(wfModules.length)}
       />
       </div>
     )
@@ -318,8 +330,10 @@ class ModuleStack extends React.Component {
 }
 
 const mapStateToProps = (state) => {
+  const { testHighlight } = lessonSelector(state)
   return {
-    wf_modules: state.workflow.wf_modules
+    wf_modules: state.workflow.wf_modules,
+    testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', index: index }),
   }
 }
 

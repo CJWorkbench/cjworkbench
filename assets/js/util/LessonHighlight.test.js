@@ -23,10 +23,10 @@ const isValid = (obj) => {
 }
 
 describe('LessonHighlight', () => {
-  it('should allow MlModule', () => {
-    const valid = { type: 'MlModule', name: 'Foo' }
+  it('should allow Module', () => {
+    const valid = { type: 'Module', name: 'Foo', index: 1 }
     expect(isValid([ valid ])).toBe(true)
-    expect(isValid([ { type: 'MlModule', foo: 'bar' } ])).toBe(false)
+    expect(isValid([ { type: 'Module', foo: 'bar', index: 1 } ])).toBe(false)
   })
 
   it('should allow WfModule', () => {
@@ -47,16 +47,16 @@ describe('LessonHighlight', () => {
     expect(isValid([ valid ])).toBe(true)
   })
 
-  it('should allow ModuleSearch', () => {
-    const valid = { type: 'ModuleSearch' }
-    expect(isValid([ valid ])).toBe(true)
-  })
-
   it('should match using deepEqual on array elements', () => {
-    const valid = [ { type: 'MlModule', name: 'Foo' }, { type: 'EditableNotes' } ]
-    expect(matchLessonHighlight(valid, { type: 'MlModule', name: 'Foo' })).toBe(true)
-    expect(matchLessonHighlight(valid, { type: 'MlModule', name: 'Bar' })).toBe(false)
+    const valid = [ { type: 'Module', name: 'Foo', index: 2 }, { type: 'EditableNotes' } ]
+    expect(matchLessonHighlight(valid, { type: 'Module', name: 'Foo', index: 2 })).toBe(true)
+    expect(matchLessonHighlight(valid, { type: 'Module', name: 'Bar', index: 2 })).toBe(false)
     expect(matchLessonHighlight(valid, { type: 'EditableNotes' })).toBe(true)
     expect(matchLessonHighlight(valid, { type: 'XditableNotes' })).toBe(false)
+  })
+
+  it('should partial-match', () => {
+    const valid = [ { type: 'Module', name: 'Foo', index: 2 }, { type: 'EditableNotes' } ]
+    expect(matchLessonHighlight(valid, { type: 'Module', index: 2 })).toBe(true)
   })
 })

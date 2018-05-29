@@ -10,7 +10,7 @@
   <h2>1. Loading the HTML table</h2>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Scrape table"}]'
+      data-highlight='[{"type":"Module","index":0,"name":"Scrape table"}]'
       data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-batting.shtml' && wfModule.selectedVersion"
       >Add the module 'Scrape table'. And paste the following URL, where the data table is published.
       <div class="copy-txt content-3 t-white">https://www.baseball-reference.com/leagues/MLB/2018-standard-batting.shtml</div>
@@ -23,20 +23,20 @@
   <p>The table contains 32 columns and is difficult to naviguate. Let's make it more legible for our needs.</p>
     <ol class="steps">
       <li
-        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
+        data-highlight='[{"type":"Module","index";1,"name":"Select columns"}]'
         data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
         >
         <p>Add the module 'Select columns'</p>
         <p>Select and keep the columns 'TM', '2B', '3B' and 'HR'.</p>
       </li>
       <li
-        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
+        data-highlight='[{"type":"WfModule","moduleName":"Select columns"}]'
         data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
         >
 
       </li>
       <li
-        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Select columns"}]'
+        data-highlight='[{"type":"Module","index":2,"name":"Rename columns"}]'
         data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
         >
         <p>Add the module 'Rename columns' and edit the column names as follow:</p>
@@ -46,7 +46,7 @@
         <p class="lesson-note">Row 31 is an outlier in the data, as it is showing averages accross all teams. The last row, Row 32, contains aggregates of all the other rows. In the original table, it was actually part of the footer.</p>
       </li>
       <li
-        data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Drop rows"}]'
+        data-highlight='[{"type":"Module","index":3,"name":"Drop rows"}]'
         data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://www.baseball-reference.com/leagues/MLB/2018-standard-pitching.shtml' && wfModule.selectedVersion"
         >
         <p>Add the module 'Drop rows' and delete row 32 to 32.</p>

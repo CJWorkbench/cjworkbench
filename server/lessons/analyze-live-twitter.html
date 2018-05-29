@@ -14,7 +14,7 @@
 
 <ol class="steps">
   <li
-    data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Twitter"}]'
+    data-highlight='[{"type":"Module","index":0,"name":"Twitter"}]'
     data-test="return workflow.wfModules[0] && workflow.wfModules[0].moduleName === 'Twitter'"
     >Add the module 'Twitter'.
   </li>
@@ -32,8 +32,8 @@
 <p>Let's filter and group the tweets to find out how often a specific word is used.</p>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Filter"}]'
-    data-test="return workflow.wfModules[0] && workflow.wfModules[0].moduleName === 'Twitter'"
+    data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
+    data-test="return workflow.wfModules[1] && workflow.wfModules[1].moduleName === 'Filter'"
     >Add the module 'Filter'.
 
   </li>

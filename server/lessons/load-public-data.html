@@ -13,7 +13,7 @@
   <p> For the purpose of this lesson, the dataset is hosted on Workbench.</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Add from URL"}]'
+      data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
       data-test="return workflow.wfModules[0] && workflow.wfModules[0].moduleName === 'Add from URL'"
       >Add the module ‘Add from URL’.</li>
     <li
@@ -47,7 +47,7 @@
   <p>Let’s add a column chart to visualize this data.</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Column Chart"}]'
+      data-highlight='[{"type":"Module","index":1,"name":"Column Chart"}]'
       data-test="return workflow.wfModules.length > 1 && workflow.wfModules[workflow.wfModules.length-1].moduleName === 'Column Chart'"
       >Add the module ‘Column Chart’ using the search in the module library.</li>
     <li
@@ -61,7 +61,7 @@
   <p>Let’s make our chart more legible by filtering and sorting its data.</p>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"ModuleSearch"},{"type":"MlModule","name":"Filter"}]'
+      data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
       data-test="return workflow.wfModules.length > 2 && workflow.wfModules[1].moduleName === 'Filter'"
       >Add the module ‘Filter’ by dragging it between the two already there.</li>
     <li

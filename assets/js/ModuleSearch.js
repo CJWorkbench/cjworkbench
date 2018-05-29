@@ -211,18 +211,19 @@ ModuleSearch.propTypes = {
     category: PropTypes.string.isRequired,
     icon: PropTypes.string.isRequired,
   })).isRequired,
+  index: PropTypes.number.isRequired, // helps mapStateToProps() calculate isLessonHighlight
   isLessonHighlight: PropTypes.bool.isRequired,
   onCancel: PropTypes.func.isRequired, // func() => undefined
   onClickModuleId: PropTypes.func.isRequired, // func(moduleId) => undefined
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   const { testHighlight } = lessonSelector(state)
   return {
-    isLessonHighlight: testHighlight({ type: 'ModuleSearch' }),
+    isLessonHighlight: testHighlight({ type: 'Module', index: ownProps.index }),
     modules: state.modules.map(module => (
       Object.assign({
-        isLessonHighlight: testHighlight({ type: 'MlModule', name: module.name })
+        isLessonHighlight: testHighlight({ type: 'Module', name: module.name, index: ownProps.index })
       }, module)
     )),
   }

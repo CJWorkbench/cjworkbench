@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types'
-import deepEqual from 'fast-deep-equal'
 
 const P = PropTypes
 
@@ -11,8 +10,9 @@ function Shape(type, propTypes) {
 }
 
 const LessonHighlightType = P.oneOfType([
-  Shape('MlModule', {
-    name: P.string.isRequired,
+  Shape('Module', {
+    index: P.number.isRequired, // index in ModuleStack where we want to add the module
+    name: P.string.isRequired,  // name of the Module
   }),
   Shape('WfModule', {
     moduleName: P.string.isRequired,
@@ -22,8 +22,6 @@ const LessonHighlightType = P.oneOfType([
     button: P.oneOf([ 'notes', 'collapse' ]).isRequired,
   }),
   Shape('EditableNotes', {
-  }),
-  Shape('ModuleSearch', {
   }),
 ])
 
@@ -40,6 +38,10 @@ const LessonHighlightType = P.oneOfType([
  */
 export const LessonHighlightsType = P.arrayOf(LessonHighlightType)
 
+const matchOneLessonHighlight = (lessonHighlight, test) => {
+  return !Object.keys(test).some(key => test[key] !== lessonHighlight[key])
+}
+
 /**
  * Test that `lessonHighlight` specifies `test` should be highlighted.
  *
@@ -49,13 +51,13 @@ export const LessonHighlightsType = P.arrayOf(LessonHighlightType)
  * // What we're saying we want to highlight
  * // (e.g., from redux store)
  * const lessonHighlight = [
- *   { type: 'WfModule', name: 'Add from URL' },
- *   { type: 'ModuleSearch' },
+ *   { type: 'WfModule', moduleName: 'Add from URL' },
+ *   { type: 'Module', name: 'Filter', index: 0 },
  * ]
  *
  * // What we're rendering
- * // (e.g., within ModuleSearch.js)
- * const test = { type: 'ModuleSearch' }
+ * // (e.g., within WfModule.js)
+ * const test = { type: 'WfModule', moduleName: 'Add from URL' }
  *
  * matchLessonHighlight(lessonHighlight, test) // true
  * ```
@@ -64,5 +66,5 @@ export const LessonHighlightsType = P.arrayOf(LessonHighlightType)
  * @param {Object} test Single element that may or may not be in `lessonHighlight`
  */
 export const matchLessonHighlight = (lessonHighlight, test) => {
-  return lessonHighlight.some(x => deepEqual(x, test))
+  return lessonHighlight.some(x => matchOneLessonHighlight(x, test))
 }

@@ -2,6 +2,7 @@
 
 exports[`ModuleSearch most tests matches snapshot 1`] = `
 <ModuleSearch
+  index={2}
   isLessonHighlight={false}
   modules={
     Array [

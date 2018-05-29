@@ -34,6 +34,7 @@ describe('ModuleSearch', () => {
   beforeEach(() => defaultProps = {
     onClickModuleId: jest.fn(),
     onCancel: jest.fn(),
+    index: 2,
     modules,
     isLessonHighlight: false,
   })
@@ -97,12 +98,11 @@ describe('ModuleSearch', () => {
     let wrapper
     let nonce = 0
 
-    function highlight(yesOrNo, moduleName) {
+    function highlight(index, moduleName) {
       lessonSelector.mockReturnValue({
         testHighlight: test => {
-          if (!yesOrNo) return false
-          if (test.type === 'ModuleSearch') return true
-          return test.type === 'MlModule' && test.name === moduleName
+          if (index === null) return false
+          return test.type === 'Module' && (test.name ? (test.name === moduleName) : true) && test.index === index
         }
       })
 
@@ -117,7 +117,7 @@ describe('ModuleSearch', () => {
       // about its value
       store = createStore((_, action) => ({ modules, ...action.payload }), { modules })
 
-      highlight(false)
+      highlight(null)
 
       wrapper = mount(
         <Provider store={store}>
@@ -134,9 +134,13 @@ describe('ModuleSearch', () => {
     })
 
     it('highlights the search box', () => {
-      highlight(true, null)
+      highlight(2, null)
       wrapper.update()
       expect(wrapper.find('.module-search').prop('className')).toMatch(/\blesson-highlight\b/)
+
+      highlight(1, null)
+      wrapper.update()
+      expect(wrapper.find('.module-search').prop('className')).not.toMatch(/\blesson-highlight\b/)
     })
   })
 });
