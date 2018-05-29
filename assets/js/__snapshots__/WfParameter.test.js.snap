@@ -22,8 +22,6 @@ exports[`WfParameter Renders string input field 1`] = `
     onBlur={[Function]}
     onClick={[Function]}
     onKeyPress={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
     placeholder=""
     rows={1}
   />

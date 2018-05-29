@@ -1,3 +1,204 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`WfModule, not read-only mode matches snapshot 1`] = `""`;
+exports[`WfModule, not read-only mode matches snapshot 1`] = `
+<div
+  className="wf-module"
+  data-module-name="Load from URL"
+  onClick={[Function]}
+>
+  <div
+    className="wf-card "
+    draggable={true}
+    onDragEnd={[Function]}
+    onDragStart={[Function]}
+  >
+    <div>
+      <div
+        className="output-bar-container"
+      >
+        <StatusBar
+          isSelected={true}
+        />
+      </div>
+      <div
+        className="module-content"
+        onMouseEnter={[Function]}
+        onMouseLeave={[Function]}
+      >
+        <div
+          className="module-card-header"
+        >
+          <div
+            className="module-id--group"
+            onClick={[Function]}
+          >
+            <WfModuleCollapseButton
+              isCollapsed={false}
+              isLessonHighlight={false}
+            />
+            <div
+              className="icon-undefined WFmodule-icon mr-2"
+            />
+            <div
+              className="t-d-gray WFmodule-name"
+            >
+              Load from URL
+            </div>
+          </div>
+          <div
+            className="context-buttons--container"
+          >
+            <div
+              style={
+                Object {
+                  "opacity": "0",
+                }
+              }
+            >
+              <button
+                className="context-button btn"
+              >
+                <a
+                  className="help-button d-flex align-items-center"
+                  target="_blank"
+                >
+                  <div
+                    className="icon-help"
+                  />
+                </a>
+              </button>
+            </div>
+            <div
+              style={
+                Object {
+                  "opacity": "0",
+                }
+              }
+            >
+              <button
+                className="context-button btn edit-note"
+                onClick={[Function]}
+                title="Edit Note"
+              >
+                <div
+                  className="icon-note icon-l-gray "
+                />
+              </button>
+            </div>
+            <div
+              style={
+                Object {
+                  "opacity": "0",
+                }
+              }
+            >
+              <WfModuleContextMenu
+                id={999}
+                removeModule={[Function]}
+                stopProp={[Function]}
+              />
+            </div>
+          </div>
+        </div>
+        <Collapse
+          appear={false}
+          enter={true}
+          exit={true}
+          in={false}
+          isOpen={true}
+          mountOnEnter={false}
+          onEnter={[Function]}
+          onEntered={[Function]}
+          onEntering={[Function]}
+          onExit={[Function]}
+          onExited={[Function]}
+          onExiting={[Function]}
+          tag="div"
+          timeout={350}
+          unmountOnExit={false}
+        >
+          <StatusLine />
+          <div
+            className="module-card-params"
+          >
+            <WfParameter
+              api={
+                Object {
+                  "onParamChanged": [MockFunction],
+                  "postParamEvent": [MockFunction],
+                }
+              }
+              changeParam={[Function]}
+              getParamMenuItems={[Function]}
+              getParamText={[Function]}
+              isReadOnly={false}
+              key="0"
+              moduleName="Load from URL"
+              p={
+                Object {
+                  "id": 100,
+                  "parameter_spec": Object {
+                    "id_name": "url",
+                    "type": "string",
+                  },
+                  "value": "http://some.URL.me",
+                }
+              }
+              revision={707}
+              setClickNotification={[Function]}
+              setParamText={[Function]}
+              updateSettings={
+                Object {
+                  "autoUpdateData": undefined,
+                  "lastUpdateCheck": undefined,
+                  "updateInterval": undefined,
+                  "updateUnits": undefined,
+                }
+              }
+              wf_module_id={999}
+            />
+            <WfParameter
+              api={
+                Object {
+                  "onParamChanged": [MockFunction],
+                  "postParamEvent": [MockFunction],
+                }
+              }
+              changeParam={[Function]}
+              getParamMenuItems={[Function]}
+              getParamText={[Function]}
+              isReadOnly={false}
+              key="1"
+              moduleName="Load from URL"
+              p={
+                Object {
+                  "id": 101,
+                  "parameter_spec": Object {
+                    "id_name": "version_select",
+                    "type": "custom",
+                  },
+                }
+              }
+              revision={707}
+              setClickNotification={[Function]}
+              setParamText={[Function]}
+              updateSettings={
+                Object {
+                  "autoUpdateData": undefined,
+                  "lastUpdateCheck": undefined,
+                  "updateInterval": undefined,
+                  "updateUnits": undefined,
+                }
+              }
+              wf_module_id={999}
+            />
+          </div>
+        </Collapse>
+      </div>
+      <div
+        className="drop-alert "
+      />
+    </div>
+  </div>
+</div>
+`;

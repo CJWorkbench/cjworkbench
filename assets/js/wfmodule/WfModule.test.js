@@ -22,12 +22,10 @@ describe('WfModule, not read-only mode', () => {
     revision: 707,
     selected: true,
     api: mockApi,
-    connectDragSource: jest.fn(),
-    connectDropTarget: jest.fn(),
-    connectDragPreview: jest.fn(),
+    index: 2,
     focusModule: jest.fn(),
-    startDrag: jest.fn(),
-    stopDrag: jest.fn(),
+    onDragStart: jest.fn(),
+    onDragEnd: jest.fn(),
     isLessonHighlight: false,
     isLessonHighlightCollapse: false,
     isLessonHighlightNotes: false,
@@ -77,12 +75,6 @@ describe('WfModule, not read-only mode', () => {
   it('matches snapshot', () => {
     const wrapper = shallow(<WfModule {...props}/>)
     expect(wrapper).toMatchSnapshot();
-  })
-
-  it('is draggable', () => {
-    shallow(<WfModule {...props}/>)
-    expect(props.connectDragSource).toHaveBeenCalled()
-    expect(props.connectDropTarget).toHaveBeenCalled()
   })
 
   it('auto-focuses if selected', () => {
