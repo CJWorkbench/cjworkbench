@@ -1,0 +1,102 @@
+.module-search {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: $module-width;
+  font-size: 1.4rem;
+  box-shadow: $module-search-shadow;
+  border-radius: .5rem;
+  overflow: hidden; // stay inside the border-radius
+  background: $white;
+
+  ul, li {
+    // reset styles. (we'll re-change this later.)
+    display: block;
+    margin: 0;
+    padding: 0;
+  }
+
+  .module-search-field {
+    background: $heading-bg;
+    padding: 1rem;
+    color: $input-alt;
+    position: relative;
+
+    input {
+      // left padding for "search" icon; right padding for "close" button
+      padding: .5rem 3.4rem .5rem;
+      display: block;
+      width: 100%;
+      color: $input-alt;
+      background: $input-alt-bg;
+      border-radius: 2rem;
+      border: 3px solid transparent;
+      
+      &:focus {
+        border-color: $brand-workspace;
+      }
+    }
+
+    ::placeholder, ::-ms-input-placeholder {
+      color: $input-alt-placeholder;
+    }
+
+    &::before {
+      // "search" icon
+      display: inline-block;
+      position: absolute;
+      top: 1.6rem;
+      left: 2.4rem;
+      font-size: 1.6rem;
+      font-family: 'Workbench';
+      content: "\e91a "; // .icon-search
+    }
+
+    button.close {
+      border: 0;
+      position: absolute;
+      right: 2.4rem;
+      top: 2rem;
+      font-size: 1.6rem;
+      margin: 0;
+      padding: 0;
+      text-shadow: none;
+      color: $danger;
+    }
+  }
+
+  .module-search-result-groups {
+    max-height: 40rem;
+    background-color: $white;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  .module-search-result-group + .module-search-result-group {
+    border-top: 1px solid $border-color;
+  }
+
+  h4, .module-search-result {
+    margin: 0;
+    padding: 1.5rem 2rem;
+  }
+
+  h4 {
+    color: $light-gray;
+  }
+
+  .module-search-result {
+    color: $brand-text--dark;
+    cursor: pointer;
+
+    i {
+      width: 1.5rem;
+      margin-right: 1rem;
+    }
+
+    &:hover {
+      color: $white;
+      background-color: $heading-bg;
+    }
+  }
+}

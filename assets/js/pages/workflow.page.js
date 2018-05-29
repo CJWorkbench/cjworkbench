@@ -29,9 +29,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addModule: (module_id, insertBefore, placeholder) => {
-      dispatch(Actions.addModuleAction(module_id, insertBefore, placeholder))
-    },
     removeModule: (wfModuleId) => {
       dispatch(Actions.deleteModuleAction(wfModuleId))
     },

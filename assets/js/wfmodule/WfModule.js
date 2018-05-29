@@ -291,7 +291,7 @@ export class WfModule extends React.Component {
       // be necessary either.
       <div onClick={this.click} className={'wf-module' + (this.props.isOver ? (' over ' + this.state.dragPosition) : '') + (this.props.isLessonHighlight ? ' lesson-highlight' : '')} data-module-name={module.name}>
         {notes}
-        <div className={'wf-card mx-auto '+ (this.props.isDragging ? 'wf-module--dragging ' : '')} ref={this.setModuleRef}>
+        <div className={'wf-card '+ (this.props.isDragging ? 'wf-module--dragging ' : '')} ref={this.setModuleRef}>
 
           <div>
             <div className='output-bar-container'>

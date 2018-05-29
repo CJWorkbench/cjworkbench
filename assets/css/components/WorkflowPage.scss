@@ -36,35 +36,8 @@
     border-left: 1px solid $dark-accent--soft;
   }
 
-  /* Module Stack */
-  .modulestack {
-    flex: 0 0 30rem;
-    background-color: $WF-background;
-    overflow: scroll;
-    height:100vh;
-    position: relative;
-  }
 
-  .modulestack-list {
-    min-height:100%;
-    width: 100%;
-    padding-bottom: 30rem;
-    padding-top: 1.5rem;
-  }
-  .modulestack-list.dragging {
-    background: rgba(118,155,176,0.15);
-  }
-  .modulestack-empty {
-    cursor: default;
-    width: 27rem;
-    margin: 1.5rem;
-    padding: 7rem 0;
-    border: 4px dashed $brand-orange;
-    opacity: 1;
-    height:20rem;
-  }
-
-  .overlapping .modulestack.focus {
+  .overlapping .module-stack.focus {
     z-index: 2;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.3);
   }
@@ -74,14 +47,7 @@
     background-color: red;
   }
 
-  /* Create an overlay to absorb click events so we don't change settings or set a different
-  active wfmodule on focus change. We use the pseudo-element "after" to avoid writing an empty
-  div into the DOM, since we don't really want another element, we just want this behavior. */
-  .modulestack-empty.dragging {
-    border-color: rgba(118,155,176,0.5);
-  }
-
-  .overlapping .modulestack:not(.focus)::after {
+  .overlapping .module-stack:not(.focus)::after {
     content:' ';
     display: block;
     position: absolute;
@@ -94,8 +60,7 @@
 }
 
 .workflow-root.in-lesson {
-
   .help-shortcut {
     display: none;
   }
-  }
+}

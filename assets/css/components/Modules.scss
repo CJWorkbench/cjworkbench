@@ -1,8 +1,6 @@
-// Module in workflow
-
 .wf-card{
-  width: 26rem;
-  margin-bottom: 0.5rem;
+  width: $module-width;
+  margin: 0.25rem $module-margin; // most of the in-between margin comes from .add-module-in-between-search
   background-color: #f8f8f8;
   position: relative;
   &:hover {background:#fcfcfc;}

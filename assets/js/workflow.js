@@ -1,7 +1,6 @@
 // This is the main script for the Workflow view
 
 import React from 'react'
-import ModuleLibrary from './ModuleLibrary'
 import WorkflowNavBar from './WorkflowNavBar'
 import OutputPane from './OutputPane'
 import Lesson from './lessons/Lesson'
@@ -66,16 +65,6 @@ class Workflow extends React.Component {
         <div className={className}>
           { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEvent} /> : '' }
 
-          <ModuleLibrary
-            addModule={(module_id, placeholder) => this.props.addModule(module_id, this.props.workflow.wf_modules.length, placeholder)}
-            dropModule={(module_id, insert_before, placeholder) => this.props.addModule(module_id, ((insert_before === false) ? this.props.workflow.wf_modules.length : insert_before), placeholder)}
-            api={this.props.api}
-            isReadOnly={this.props.workflow.read_only}
-            workflow={this.props.workflow} // We pass the workflow down so that we can toggle the module library visibility in a sensible manner.
-            libraryOpen={this.state.libraryOpen}
-            setLibraryOpen={this.setLibraryOpen}
-          />
-
           <div className="workflow-container">
 
             <WorkflowNavBar
@@ -91,7 +80,6 @@ class Workflow extends React.Component {
                 selected_wf_module={this.props.selected_wf_module}
                 changeParam={this.props.changeParam}
                 removeModule={this.props.removeModule}
-                addModule={this.props.addModule}
                 api={this.props.api}
                 loggedInUser={this.props.loggedInUser}
                 isOver={this.props.isOver}
@@ -134,7 +122,6 @@ Workflow.propTypes = {
   workflow:           PropTypes.object,             // not required as fetched after page loads
   selected_wf_module: PropTypes.number,
   changeParam:        PropTypes.func.isRequired,
-  addModule:          PropTypes.func.isRequired,
   removeModule:       PropTypes.func.isRequired,
   loggedInUser:       PropTypes.object,             // undefined if no one logged in (viewing public wf)
 };
