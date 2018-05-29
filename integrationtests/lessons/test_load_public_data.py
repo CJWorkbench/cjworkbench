@@ -1,4 +1,5 @@
 from integrationtests.lessons import LessonTest
+import time
 
 class TestLesson(LessonTest):
     def test_lesson(self):
@@ -62,6 +63,8 @@ class TestLesson(LessonTest):
         b.select('condition', 'Greater than')
         b.fill_in('value', 200)
         b.click_whatever('h2') # blur, to commit data
+
+        time.sleep(5) # FIXME this gets around a server race condition, which seems to appear only on Mac (not Linux)
 
         self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]')
         # bug in the test: it's hard to click the column chart without changing
