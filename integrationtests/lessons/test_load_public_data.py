@@ -14,7 +14,7 @@ class TestLesson(LessonTest):
         self.click_next()
 
         # 2. 1. Load Public Data by URL
-        self.expect_highlight(0, '[data-module-name="Add from URL"]')
+        self.expect_highlight(0)
         self.add_wf_module('Add from URL')
 
         self.expect_highlight(
@@ -43,7 +43,7 @@ class TestLesson(LessonTest):
         self.click_next()
 
         # 3. 2. Make a column chart
-        self.expect_highlight(0, '[data-module-name="Column Chart"]')
+        self.expect_highlight(0)
         self.add_wf_module('Column Chart')
 
         self.expect_highlight(1, '.wf-module[data-module-name="Column Chart"]')
@@ -54,21 +54,20 @@ class TestLesson(LessonTest):
         self.click_next()
 
         # 4. 3. Filter with a condition
-        self.expect_highlight(0, '[data-module-name="Filter"]')
-        # TODO nix drag-and-drop
-        #self.add_wf_module('Filter', position=1)
+        self.expect_highlight(0)
+        self.add_wf_module('Filter', position=1)
 
-        #self.expect_highlight(1, '.wf-module[data-module-name="Filter"]')
-        #b.select('column', 'affordable_units', wait=True) # wait for module load
-        #b.select('condition', 'Greater than')
-        #b.fill_in('value', 200)
-        #b.click_whatever('h2') # blur, to commit data
+        self.expect_highlight(1, '.wf-module[data-module-name="Filter"]')
+        b.select('column', 'affordable_units', wait=True) # wait for module load
+        b.select('condition', 'Greater than')
+        b.fill_in('value', 200)
+        b.click_whatever('h2') # blur, to commit data
 
-        #self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]')
-        ## bug in the test: it's hard to click the column chart without changing
-        ## anything. But we'll try.
-        #b.click_whatever(
-        #    '.wf-module[data-module-name="Column Chart"] input[name="title"]'
-        #)
+        self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]')
+        # bug in the test: it's hard to click the column chart without changing
+        # anything. But we'll try.
+        b.click_whatever(
+            '.wf-module[data-module-name="Column Chart"] input[name="title"]'
+        )
 
-        #b.assert_no_element('.lesson-highlight')
+        b.assert_no_element('.lesson-highlight')
