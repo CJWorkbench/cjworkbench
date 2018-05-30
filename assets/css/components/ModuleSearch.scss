@@ -5,7 +5,7 @@
   width: $module-width;
   font-size: 1.4rem;
   box-shadow: $overlay-shadow;
-  border-radius: .5rem;
+  border-radius: .3rem;
   overflow: hidden; // stay inside the border-radius
   background: $white;
 
@@ -100,6 +100,7 @@
     border: 2px solid transparent;
     color: $brand-text--dark;
     cursor: pointer;
+    opacity: .7;
 
     i {
       width: 1.5rem;
@@ -107,6 +108,7 @@
     }
 
     &:hover {
+      opacity: 1;
       background-color: $dark-accent--soft;
     }
 
