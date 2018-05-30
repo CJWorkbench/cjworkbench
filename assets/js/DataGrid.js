@@ -296,6 +296,22 @@ class ConnectedDraggableHeaderCell extends React.Component {
 
 export default class DataGrid extends React.Component {
 
+  static propTypes = {
+    totalRows:          PropTypes.number.isRequired,
+    getRow:             PropTypes.func.isRequired,
+    columns:            PropTypes.array.isRequired,
+    columnTypes:        PropTypes.array.isRequired,
+    wfModuleId:         PropTypes.number.isRequired,    // which module are we showing the data for?
+    revision:           PropTypes.number,
+    resizing:           PropTypes.bool,
+    onEditCell:         PropTypes.func,
+    onSortColumn:       PropTypes.func,
+    sortColumn:         PropTypes.string,
+    sortDirection:      PropTypes.string,
+    showLetter:         PropTypes.bool,
+    onReorderColumns:   PropTypes.func
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -422,19 +438,19 @@ export default class DataGrid extends React.Component {
   }
 
   onDragDropHeader = (sourceKey, targetKey) => {
-    const sourceIdx = this.props.columns.indexOf(sourceKey)
-    const targetIdx = this.props.columns.indexOf(targetKey)
+    const sourceIdx = this.props.columns.indexOf(sourceKey);
+    const targetIdx = this.props.columns.indexOf(targetKey);
 
     if (sourceIdx === -1 || targetIdx === -1) {
       throw new Error(`Invalid columns in drag+drop: from ${sourceKey} (${sourceIdx}) to ${targetKey} (${targetIdx})`)
     }
 
-    this.props.reorderColumns(this.props.selectedModule, {
+    this.props.onReorderColumns(this.props.wfModuleId, {
       column: sourceKey,
       from: sourceIdx,
       to: targetIdx
     });
-  }
+  };
 
   onDragStartHeader = (column) => {
     if (this.state.dropContextValue.draggingColumnKey === column) return
@@ -442,7 +458,7 @@ export default class DataGrid extends React.Component {
     this.setState({
       dropContextValue: { ...this.state.dropContextValue, draggingColumnKey: column },
     })
-  }
+  };
 
   onDragEndHeader = () => {
     if (this.state.dropContextValue.draggingColumnKey === null) return
@@ -450,7 +466,7 @@ export default class DataGrid extends React.Component {
     this.setState({
       dropContextValue: { ...this.state.dropContextValue, draggingColumnKey: null },
     })
-  }
+  };
 
   render() {
     //console.log(this.props);
@@ -483,11 +499,3 @@ export default class DataGrid extends React.Component {
     }
   }
 }
-
-DataGrid.propTypes = {
-  totalRows:  PropTypes.number.isRequired,
-  columns:    PropTypes.array.isRequired,
-  getRow:     PropTypes.func.isRequired,
-  resizing:   PropTypes.bool,
-  onEditCell: PropTypes.func
-};

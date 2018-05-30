@@ -24,6 +24,7 @@ describe('TableView', () => {
       start_row: start,
       end_row: end,
       columns: ["a", "b", "c"],
+      column_types: ["Number", "Number", "Number"],
       rows: Array(nRows).fill({
         "a": 1,
         "b": 2,
@@ -83,7 +84,7 @@ describe('TableView', () => {
 
       // Calls ReorderColumns
       tree.find(DataGrid).instance().onDragDropHeader('a', 'b');
-      expect(reorderColumnsMock).toHaveBeenCalledWith(undefined, { column: 'a', from: 0, to: 1 })
+      expect(reorderColumnsMock).toHaveBeenCalledWith(100, { column: 'a', from: 0, to: 1 })
 
       done();
     });

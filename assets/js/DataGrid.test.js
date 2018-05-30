@@ -17,6 +17,12 @@ describe('DataGrid tests,', () => {
   var testData = {
     totalRows : 2,
     columns : ["aaa", "bbbb", "ccccc", "rn_"],
+    "column_types": [
+      "Number",
+      "String",
+      "String",
+      "String"
+      ],
     rows : [
       {
       "aaa": "9",
@@ -44,8 +50,11 @@ describe('DataGrid tests,', () => {
 
     const tree = mount(
       <DataGrid
+        wfModuleId={100}
+        revision={999}
         totalRows={testData.totalRows}
         columns={testData.columns}
+        columnTypes={testData.column_types}
         getRow={getRow}
         onEditCell={editCellMock}
         onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
@@ -86,8 +95,11 @@ describe('DataGrid tests,', () => {
 
     const tree = mount(
       <DataGrid
+        wfModuleId={100}
+        revision={999}
         totalRows={0}
         columns={[]}
+        columnTypes={[]}
         getRow={() => {}}
       />
     );
@@ -99,8 +111,11 @@ describe('DataGrid tests,', () => {
   it('Shows/hides letters in the header according to props', () => {
     const treeWithLetter = mount(
       <DataGrid
+          wfModuleId={100}
+          revision={999}
           totalRows={testData.totalRows}
           columns={testData.columns}
+          columnTypes={testData.column_types}
           getRow={getRow}
           showLetter={true}
       />
@@ -113,8 +128,11 @@ describe('DataGrid tests,', () => {
 
     const treeWithoutLetter = mount(
       <DataGrid
+        wfModuleId={100}
+        revision={999}
         totalRows={testData.totalRows}
         columns={testData.columns}
+        columnTypes={testData.column_types}
         getRow={getRow}
         showLetter={false}
       />);
