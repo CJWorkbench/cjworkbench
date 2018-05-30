@@ -6,14 +6,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid'
-//import { DraggableContainer } from 'react-data-grid-addons'
 import {idxToLetter} from "./utils";
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
-const {
-  DraggableHeader: { DraggableContainer }
-} = require('react-data-grid-addons');
+// react-data-grid-addons adds 1MB to dev bundle, which is slow
+//import { DraggableHeader } from 'react-data-grid-addons/src/'
+//const DraggableContainer = DraggableHeader.DraggableContainer
+// Instead, we hack it by importing from its internals:
+import DraggableContainer from './vendor/react-data-grid-addons/draggable-header/DraggableContainer'
 
 
 // Custom Formatter component, to render row number in a different style
