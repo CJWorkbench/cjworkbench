@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "afb8277f1397128af123cb93795ad43ed69d0e2cdddff713722d93e4befef10c"
+            "sha256": "0557329c9b7a81ca9644082fe4c0d82a2f058399ee4a93d1fd43d1f46aa830d5"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -60,10 +60,10 @@
         },
         "autobahn": {
             "hashes": [
-                "sha256:7fc6aafaccab44cbe5ef904cd18e9cbc8a8c4ae0451c3d1499eebd50f8922cac",
-                "sha256:f027887715628d82ba83af218eb0483ed70cc1e9a277df318be3b5346f2c115c"
+                "sha256:4f83dfb044bf72312d15f0632c4cf625de3c93912797a00801bd1564560c651e",
+                "sha256:fc88885b44fd2f42d962d7ea6a1c9baf3d1551adddb92acc861be17418183fa0"
             ],
-            "version": "==18.5.1"
+            "version": "==18.5.2"
         },
         "automat": {
             "hashes": [
@@ -180,6 +180,13 @@
         },
         "formulas": {
             "git": "https://github.com/CJWorkbench/formulas.git"
+        },
+        "futures": {
+            "hashes": [
+                "sha256:9ec02aa7d674acb8618afb127e27fde7fc68994c0437ad759fa094a574adb265",
+                "sha256:ec0a6cb848cc212002b9828c3e34c675e0c9ff6741dc445cab6fdd4e1085d1f1"
+            ],
+            "version": "==3.2.0"
         },
         "gitdb2": {
             "hashes": [
@@ -419,18 +426,17 @@
         },
         "pyarrow": {
             "hashes": [
-                "sha256:1d9a5e98f57c90064f0f3d195737ab11e1b7941f9c8a159c6e4cd85a9d576b1a",
-                "sha256:2c4b8120d8a45896626fa874092f7a20df24f1655e2da5a6a2b045bce03b11a1",
-                "sha256:332a06d969ef4dd77a07ea45e60b2a4d4c14f8b3e3e74c7b4b3b5a11f6710c6f",
-                "sha256:5ab089085b0a9281f8b991b1c9ddfd59bfa7e95acf19a6b8797e1339ae67214b",
-                "sha256:7908c71b0109d6f622436bdf719cde5b749287a697134d23040e35d32c28a313",
-                "sha256:92301033a5e72d2619efca80beb638ed049c29d9103f61fdb037a78da1e7a65c",
-                "sha256:9e1db8e95c9f658cc9a565bcf483216ff6104bbbab4f7d480f0effe72dba3e1c",
-                "sha256:b3820441f93a9f371692649ac77104df035af195a8b6b5695e9f989f7fff5260",
-                "sha256:bc4a18babbeede9db8674072285b59b523c1e8f0f0fbac11e953f6df840da2d8"
+                "sha256:0068f9faecb811e65db10219f6e2d39412f8807126367982a86e83138dca02f8",
+                "sha256:0c714f122fe6b7f84554756d86d23894cd450d5f93d87b53b376e1bbe206bee9",
+                "sha256:4deeaec7bc8654523791241cad40809ec4878d0c691c6969979883809982c15b",
+                "sha256:515b7d614fc5a6953f12bd986a64cf139a6fa36131cc57e0658550b6a047f730",
+                "sha256:7db8ce2f0eff5a00d6da918ce9f9cfec265e13f8a119b4adb1595e5b19fd6242",
+                "sha256:98639b861c74820c52f81775e792931658de764ca0d88676ab6e7313481545c3",
+                "sha256:a853a7e0bdcd6ec2e9ce783425ea8d50bafa826f406367078bf4571c302da9ea",
+                "sha256:f91d3988bf3654df02db2dcd7bc5cc9c4e329258bc2cb40428254020d028ce0d"
             ],
             "index": "pypi",
-            "version": "==0.7.1"
+            "version": "==0.9.0"
         },
         "pyasn1": {
             "hashes": [
