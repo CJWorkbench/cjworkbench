@@ -226,7 +226,7 @@ export default class WorkflowNavBar extends React.Component {
         <div className="d-flex justify-content-center">{spinner}</div>
         <nav className="navbar">
           <a href="/workflows/" className="logo-navbar">
-            <img class="image" src="/static/images/logo.svg"/>
+            <img className="image" src="/static/images/logo.svg"/>
           </a>
           <div className='title-metadata-stack'>
             <EditableWorkflowName
