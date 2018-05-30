@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "0557329c9b7a81ca9644082fe4c0d82a2f058399ee4a93d1fd43d1f46aa830d5"
+            "sha256": "abc24232fac98fa5b22d55be7858aba101b201dafa89f2a729873c810a22924e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -180,13 +180,6 @@
         },
         "formulas": {
             "git": "https://github.com/CJWorkbench/formulas.git"
-        },
-        "futures": {
-            "hashes": [
-                "sha256:9ec02aa7d674acb8618afb127e27fde7fc68994c0437ad759fa094a574adb265",
-                "sha256:ec0a6cb848cc212002b9828c3e34c675e0c9ff6741dc445cab6fdd4e1085d1f1"
-            ],
-            "version": "==3.2.0"
         },
         "gitdb2": {
             "hashes": [
@@ -426,17 +419,12 @@
         },
         "pyarrow": {
             "hashes": [
-                "sha256:0068f9faecb811e65db10219f6e2d39412f8807126367982a86e83138dca02f8",
-                "sha256:0c714f122fe6b7f84554756d86d23894cd450d5f93d87b53b376e1bbe206bee9",
-                "sha256:4deeaec7bc8654523791241cad40809ec4878d0c691c6969979883809982c15b",
-                "sha256:515b7d614fc5a6953f12bd986a64cf139a6fa36131cc57e0658550b6a047f730",
-                "sha256:7db8ce2f0eff5a00d6da918ce9f9cfec265e13f8a119b4adb1595e5b19fd6242",
-                "sha256:98639b861c74820c52f81775e792931658de764ca0d88676ab6e7313481545c3",
-                "sha256:a853a7e0bdcd6ec2e9ce783425ea8d50bafa826f406367078bf4571c302da9ea",
-                "sha256:f91d3988bf3654df02db2dcd7bc5cc9c4e329258bc2cb40428254020d028ce0d"
+                "sha256:5d06a1df6c1c43a122cd05077a3d47ae8a53dabc0f3620aba78c7d434075b2c8",
+                "sha256:92c7441d3a57870e34a47bd30d55dfd4c5d49d29893e3221955608e4a10fa57d",
+                "sha256:df1b0b67ab4029628264219c5f236f3c828c030e14b455cfd2b2a9d41cf3609b"
             ],
             "index": "pypi",
-            "version": "==0.9.0"
+            "version": "==0.9.0.post1"
         },
         "pyasn1": {
             "hashes": [
