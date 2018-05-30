@@ -19,26 +19,34 @@
     position: relative;
 
     button.search {
-      display: block;
-      width: $module-width;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 1rem;
+      width: 24rem;
       border-radius: 2rem;
       border: 1px solid $module-action;
       background: transparent;
       cursor: pointer;
       text-transform: uppercase;
       color: $medium-blue;
-      font-size: 1.3rem;
-      padding: .75rem;
+      font-size: 1.4rem;
+      height: 3.5rem;
       opacity: .6;
       &:hover{
         background-color: $module-action;
         opacity: 1;
       }
+      i {
+        font-size: 1.8rem;
+        margin-right:.5rem;
+      }
     }
 
     &.lesson-highlight button.search {
-      border-color: $brand-learn;
+      border:2px solid $brand-learn;
       color: $brand-learn;
+      &:hover{background-color: $brand-learn--light}
     }
   }
 
