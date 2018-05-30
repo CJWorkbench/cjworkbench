@@ -40,15 +40,15 @@ class ModuleDropSpot extends React.PureComponent {
   }
 
   onDragEnter = (ev) => {
-    if (!this.canDrop()) return
+    if (!this.canDrop(ev)) return
 
     this.setState({
       isDragHovering: true,
     })
   }
 
-  onDragLeave = () => {
-    if (!this.canDrop()) return
+  onDragLeave = (ev) => {
+    if (!this.canDrop(ev)) return
 
     this.setState({
       isDragHovering: false,
@@ -56,7 +56,7 @@ class ModuleDropSpot extends React.PureComponent {
   }
 
   onDrop = (ev) => {
-    if (!this.canDrop()) return
+    if (!this.canDrop(ev)) return
 
     ev.preventDefault() // we want no browser defaults
 

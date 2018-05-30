@@ -5,8 +5,17 @@ import TableView from './TableView'
 import { mockAddCellEdit, mockReorderColumns, mockSortColumn, initialRows, preloadRows, deltaRows } from "./TableView";
 import DataGrid from "./DataGrid";
 
-describe('TableView', () => {
+// TODO upgrade Enzyme. enzyme-adapter-react-16@1.1.1 does not support contexts.
+// https://github.com/airbnb/enzyme/issues/1509
+jest.mock('./DataGridDragDropContext', () => {
+  const context = {}
+  return {
+    Consumer: (props) => props.children(context),
+    Provider: (props) => props.children,
+  }
+})
 
+describe('TableView', () => {
   // Mocks json response (promise) returning part of a larger table
   function makeRenderResponse(start, end, totalRows) {
     let nRows = end-start;
@@ -73,8 +82,8 @@ describe('TableView', () => {
       expect(updateSortMock.mock.calls.length).toBe(1);
 
       // Calls ReorderColumns
-      tree.find(DataGrid).instance().onHeaderDrop(0, 2);
-      expect(reorderColumnsMock.mock.calls.length).toBe(1);
+      tree.find(DataGrid).instance().onDragDropHeader('a', 'b');
+      expect(reorderColumnsMock).toHaveBeenCalledWith(undefined, { column: 'a', from: 0, to: 1 })
 
       done();
     });

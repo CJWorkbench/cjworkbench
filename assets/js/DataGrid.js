@@ -5,16 +5,10 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
-import ReactDataGrid from 'react-data-grid'
+import ReactDataGrid, { HeaderCell } from 'react-data-grid'
 import {idxToLetter} from "./utils";
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
-
-// react-data-grid-addons adds 1MB to dev bundle, which is slow
-//import { DraggableHeader } from 'react-data-grid-addons/src/'
-//const DraggableContainer = DraggableHeader.DraggableContainer
-// Instead, we hack it by importing from its internals:
-import DraggableContainer from './vendor/react-data-grid-addons/draggable-header/DraggableContainer'
 
 
 // Custom Formatter component, to render row number in a different style
@@ -174,13 +168,146 @@ function makeFormattedCols(props, rowNumKey) {
   return formattedCols;
 }
 
+
+// To weave a function through react-data-grid's innards...:
+//
+// 1. Create a function in DataGrid and supply it in a Provider
+// 2. Wrap HeaderCell in DraggableHeaderCell, which passes its `props.inner` as
+//    HeaderCell's `props`
+// 3. Wrap DraggableHeaderCell in a Consumer, to read `props.onDragDropHeader`
+
+// This import is only so we can mock for tests. It should be a React.createContext()
+// one-liner.
+import DropFunctionContext from './DataGridDragDropContext'
+// (When we upgrade to enzyme-adapter-react-16>1.1.1, nix this:)
+//const DropFunctionContext = React.createContext(() => {})
+
+
+class DraggableHeaderCell extends HeaderCell {
+  constructor(props) {
+    super(props)
+
+    this.normalStyle = { width: 0, cursor: 'move', opacity: 1 }
+    this.draggingStyle = { width: 0, cursor: 'move', opacity: 0.2 }
+    this.normalClassName = ''
+    this.droppingClassName = 'rdg-can-drop'
+
+    this.state = {
+      // These styles and classNames are copied from react-data-grid-addons
+      style: this.normalStyle, // "am I dragging?"
+      className: this.normalClassName, // "am I dropping?"
+    }
+  }
+
+  onDragStart = (ev) => {
+    ev.dataTransfer.setData('application/json', JSON.stringify({
+      type: 'DraggableHeaderCell',
+      columnKey: this.props.innerProps.column.key,
+    }))
+    ev.dataTransfer.effectAllowed = [ 'move' ]
+    ev.dataTransfer.dropEffect = 'move'
+
+    this.props.onDragStartHeader(this.props.innerProps.column.key)
+
+    this.setState({
+      style: this.draggingStyle,
+    })
+  }
+
+  onDragEnter = (ev) => {
+    if (!this.canDrop()) return
+
+    this.setState({
+      className: this.droppingClassName,
+    })
+  }
+
+  onDragLeave = (ev) => {
+    if (!this.canDrop()) return
+
+    this.setState({
+      className: this.normalClassName,
+    })
+  }
+
+  onDragEnd = () => {
+    this.props.onDragEndHeader()
+    this.setState({
+      style: this.normalStyle,
+      className: this.normalClassName,
+    })
+  }
+
+  canDrop() {
+    return !!this.props.draggingColumnKey && this.props.draggingColumnKey !== this.props.innerProps.column.key
+  }
+
+  onDragOver = (ev) => {
+    if (!this.canDrop()) return
+
+    ev.preventDefault() // default is, "can't drop"
+  }
+
+  onDrop = (ev) => {
+    if (!this.canDrop()) return
+
+    ev.preventDefault() // we want no browser defaults
+
+    this.props.onDragDropHeader(this.props.draggingColumnKey, this.props.innerProps.column.key)
+    this.props.onDragEndHeader()
+
+    this.setState({
+      style: this.normalStyle,
+      className: this.normalClassName,
+    })
+  }
+
+  render() {
+    return (
+      <div
+        className={this.state.className}
+        style={this.state.style}
+        draggable="true"
+        onDragStart={this.onDragStart}
+        onDragEnter={this.onDragEnter}
+        onDragLeave={this.onDragLeave}
+        onDragEnd={this.onDragEnd}
+        onDragOver={this.onDragOver}
+        onDrop={this.onDrop}
+        >
+        <HeaderCell {...this.props.innerProps} />
+      </div>
+    )
+  }
+}
+
+class ConnectedDraggableHeaderCell extends React.Component {
+  render() {
+    return (
+      <DropFunctionContext.Consumer>
+        { value =>
+          <DraggableHeaderCell innerProps={this.props} {...value} />
+        }
+      </DropFunctionContext.Consumer>
+    )
+  }
+}
+
+
 export default class DataGrid extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
       gridHeight : 100,  // arbitrary, reset at componentDidMount, but non-zero means we get row elements in testing
-      componentKey: 0   // a key for the component; updates if the column header needs
+      componentKey: 0,  // a key for the component; updates if the column header needs
+      dropContextValue: {
+        // not mutable
+        onDragDropHeader: this.onDragDropHeader,
+        onDragStartHeader: this.onDragStartHeader,
+        onDragEndHeader: this.onDragEndHeader,
+        draggingColumnKey: null, // not ev.dataTransfer.setData(), because that's only visible in onDrop()
+      },
     };
     this.rowNumKey = null;  // can't be in state because we need to update it in render() for getRow() to use
 
@@ -189,7 +316,7 @@ export default class DataGrid extends React.Component {
     this.getRow = this.getRow.bind(this);
     this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
     this.onGridSort = this.onGridSort.bind(this);
-    this.onHeaderDrop = this.onHeaderDrop.bind(this);
+
   }
 
   // After the component mounts, and on any change, set the height to parent div height
@@ -294,15 +421,35 @@ export default class DataGrid extends React.Component {
     this.props.onSort(sortCol, sortDir);
   }
 
-  onHeaderDrop(source, target) {
-    let sourceIdx = this.props.columns.indexOf(source);
-    let targetIdx = this.props.columns.indexOf(target);
+  onDragDropHeader = (sourceKey, targetKey) => {
+    const sourceIdx = this.props.columns.indexOf(sourceKey)
+    const targetIdx = this.props.columns.indexOf(targetKey)
+
+    if (sourceIdx === -1 || targetIdx === -1) {
+      throw new Error(`Invalid columns in drag+drop: from ${sourceKey} (${sourceIdx}) to ${targetKey} (${targetIdx})`)
+    }
 
     this.props.reorderColumns(this.props.selectedModule, {
-      column: source,
+      column: sourceKey,
       from: sourceIdx,
       to: targetIdx
     });
+  }
+
+  onDragStartHeader = (column) => {
+    if (this.state.dropContextValue.draggingColumnKey === column) return
+
+    this.setState({
+      dropContextValue: { ...this.state.dropContextValue, draggingColumnKey: column },
+    })
+  }
+
+  onDragEndHeader = () => {
+    if (this.state.dropContextValue.draggingColumnKey === null) return
+
+    this.setState({
+      dropContextValue: { ...this.state.dropContextValue, draggingColumnKey: null },
+    })
   }
 
   render() {
@@ -315,24 +462,22 @@ export default class DataGrid extends React.Component {
       //console.log(columns)
 
       return(
-          <DraggableContainer
-            onHeaderDrop={this.onHeaderDrop}
-          >
-            <ReactDataGrid
-              columns={columns}
-              rowGetter={this.getRow}
-              rowsCount={this.props.totalRows}
-              minWidth={this.state.gridWidth -2}
-              minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
-              headerRowHeight={this.props.showLetter ? 54 : 36}
-              enableCellSelect={true}
-              onGridRowsUpdated={this.onGridRowsUpdated}
-              enableDragAndDrop={true}
-              key={this.state.componentKey}
+        <DropFunctionContext.Provider value={this.state.dropContextValue}>
+          <ReactDataGrid
+            columns={columns}
+            rowGetter={this.getRow}
+            rowsCount={this.props.totalRows}
+            minWidth={this.state.gridWidth -2}
+            minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
+            headerRowHeight={this.props.showLetter ? 54 : 36}
+            enableCellSelect={true}
+            onGridRowsUpdated={this.onGridRowsUpdated}
+            enableDragAndDrop={true}
+            draggableHeaderCell={ConnectedDraggableHeaderCell}
+            key={this.state.componentKey}
             />
-          </DraggableContainer>
-        )
-
+        </DropFunctionContext.Provider>
+      )
     }  else {
       return null;
     }

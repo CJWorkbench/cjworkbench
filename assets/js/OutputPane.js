@@ -18,10 +18,11 @@ export default class OutputPane extends React.Component {
         width: "100%",
         height: "100%",
         maxWidth: "300%",
-        parentBase: null,
         pctBase: null,
         resizing: false
     };
+
+    this.parentBase = React.createRef()
 
     this.setBusySpinner = this.setBusySpinner.bind(this);
     this.saveSpinnerEl = this.saveSpinnerEl.bind(this);
@@ -134,17 +135,20 @@ export default class OutputPane extends React.Component {
 
       resetOffset = this.state.leftOffset + libraryOffset;
 
+      const parentBase = this.parentBase.current;
+      const parentWidth = parentBase ? parentBase.width : 100;
+
       if (resetOffset > 0 || this.state.leftOffset === 0) {
           resetOffset = 0;
           resetWidth = '100%';
       } else {
-          resetWidth = ((this.state.parentBase.clientWidth - resetOffset) / this.state.parentBase.clientWidth) * 100 + '%';
+          resetWidth = ((parentWidth - resetOffset) / parentWidth) * 100 + '%';
       }
 
-      resetMaxWidth = ((this.getWindowWidth() - maxWidthOffset) / this.state.parentBase.clientWidth) * 100 + '%';
+      resetMaxWidth = ((this.getWindowWidth() - maxWidthOffset) / parentWidth) * 100 + '%';
 
-      if ( parseFloat(resetWidth) > parseFloat(resetMaxWidth) ) {
-          resetOffset = resetOffset + ( this.state.parentBase.clientWidth * ( ( parseFloat(resetWidth) - parseFloat(resetMaxWidth) ) / 100 ) );
+      if (parentBase && parseFloat(resetWidth) > parseFloat(resetMaxWidth)) {
+          resetOffset = resetOffset + ( parentWidth * ( ( parseFloat(resetWidth) - parseFloat(resetMaxWidth) ) / 100 ) );
           resetWidth = resetMaxWidth;
       }
 
@@ -154,7 +158,7 @@ export default class OutputPane extends React.Component {
           width: resetWidth,
           height: "100%",
           maxWidth: resetMaxWidth,
-          pctBase: this.state.parentBase.clientWidth
+          pctBase: parentWidth,
       });
   }
 
@@ -217,7 +221,7 @@ export default class OutputPane extends React.Component {
 
     return (
         <div className={"outputpane" + (this.props.focus ? " focus" : "")}
-             ref={(ref) => this.state.parentBase = ref}
+             ref={this.parentBase}
              onClick={this.props.setFocus} >
             <Resizable
               style={{
