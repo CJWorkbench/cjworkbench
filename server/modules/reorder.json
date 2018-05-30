@@ -1,0 +1,15 @@
+{
+  "name": "Reorder columns",
+  "id_name": "reorder-columns",
+  "category": "Clean",
+  "icon": "filter",
+  "description": "Reorder columns",
+  "help_url":"modules/clean/reorder columns",
+  "parameters": [
+    {
+      "name": "",
+      "id_name": "reorder-history",
+      "type": "custom"
+    }
+  ]
+}

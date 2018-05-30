@@ -1,9 +1,11 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import DataGrid from "./DataGrid"
+import TestBackend from 'react-dnd-test-backend'
+import { DragDropContextProvider, DragDropContext } from 'react-dnd'
+import {HeaderRenderer} from "./DataGrid";
 
-it('Renders the grid', () => {
-
+describe('DataGrid tests,', () => {
   var testData = {
     totalRows : 2,
     columns : ["aaa", "bbbb", "ccccc", "rn_"],
@@ -27,58 +29,97 @@ it('Renders the grid', () => {
     return testData.rows[i];
   }
 
-  var editCellMock = jest.fn();
-  var sortMock = jest.fn();
+  it('Renders the grid', () => {
 
-  const tree = mount( <DataGrid
-    totalRows={testData.totalRows}
-    columns={testData.columns}
-    getRow={getRow}
-    onEditCell={editCellMock}
-    onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
-  />);
+    var editCellMock = jest.fn();
+    var sortMock = jest.fn();
 
-  // Check that we ended up with five columns (first is row number), with the right names
-  // If rows values are not present, ensure intial DataGrid state.gridHeight > 0
-  expect(tree.find('HeaderCell')).toHaveLength(5);
-  let text = tree.text();
-  expect(text).toContain('aaa');      // columns
-  expect(text).toContain('bbbb');
-  expect(text).toContain('ccccc');
-  expect(text).toContain('rn_');
+    const tree = mount(
+        <DragDropContextProvider backend={TestBackend}>
+            <DataGrid
+              totalRows={testData.totalRows}
+              columns={testData.columns}
+              getRow={getRow}
+              onEditCell={editCellMock}
+              onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
+            />
+        </DragDropContextProvider>
+    );
 
-  expect(text).toContain('foo');      // some cell values
-  expect(text).toContain('someval');
+    // Check that we ended up with five columns (first is row number), with the right names
+    // If rows values are not present, ensure intial DataGrid state.gridHeight > 0
+    expect(tree.find('HeaderCell')).toHaveLength(5);
+    let text = tree.text();
+    expect(text).toContain('aaa');      // columns
+    expect(text).toContain('bbbb');
+    expect(text).toContain('ccccc');
+    expect(text).toContain('rn_');
 
-  expect(text).toContain('1');        // row numbers
-  expect(text).toContain('2');
+    expect(text).toContain('foo');      // some cell values
+    expect(text).toContain('someval');
 
-  // row number column should not have the same name as any of our cols
-  expect(testData.columns.includes(tree.instance().rowNumKey)).toBeFalsy();
+    expect(text).toContain('1');        // row numbers
+    expect(text).toContain('2');
 
-  expect(tree).toMatchSnapshot();
+    // row number column should not have the same name as any of our cols
+    expect(testData.columns.includes(tree.find('DataGrid').instance().rowNumKey)).toBeFalsy();
 
-  // Double click on a cell, enter text, enter, and ensure onCellEdit is called
-  // Sadly, can't get this to work
-  // var cell = tree.find('Cell').first();
-  // expect(cell).toHaveLength(1)
-  // cell.simulate('doubleclick');
-  // cell.simulate('keydown', { which: 'X' });
-  // cell.simulate('keydown', { which: '\n' });
-  // expect(editCellMock.mock.calls).toHaveLength(1);
-});
+    expect(tree).toMatchSnapshot();
 
+    // Double click on a cell, enter text, enter, and ensure onCellEdit is called
+    // Sadly, can't get this to work
+    // var cell = tree.find('Cell').first();
+    // expect(cell).toHaveLength(1)
+    // cell.simulate('doubleclick');
+    // cell.simulate('keydown', { which: 'X' });
+    // cell.simulate('keydown', { which: '\n' });
+    // expect(editCellMock.mock.calls).toHaveLength(1);
+  });
 
-it('Render without data', () => {
+  it('Render without data', () => {
 
-  const tree = mount( <DataGrid
-    totalRows={0}
-    columns={[]}
-    getRow={() => {}}
-  />);
-  expect(tree.find('HeaderCell')).toHaveLength(0);
+    const tree = mount(
+        <DragDropContextProvider backend={TestBackend}>
+          <DataGrid
+            totalRows={0}
+            columns={[]}
+            getRow={() => {}}
+          />
+        </DragDropContextProvider>
+    );
+    expect(tree.find('HeaderCell')).toHaveLength(0);
 
-  expect(tree).toMatchSnapshot();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('Shows/hides letters in the header according to props', () => {
+    const treeWithLetter = mount(
+        <DragDropContextProvider backend={TestBackend}>
+          <DataGrid
+              totalRows={testData.totalRows}
+              columns={testData.columns}
+              getRow={getRow}
+              showLetter={true}
+          />
+        </DragDropContextProvider>
+    );
+    expect(treeWithLetter.find('.column-letter')).toHaveLength(testData.columns.length);
+    expect(treeWithLetter.find('.column-letter').get(0).props.children).toEqual('A');
+    expect(treeWithLetter.find('.column-letter').get(1).props.children).toEqual('B');
+    expect(treeWithLetter.find('.column-letter').get(2).props.children).toEqual('C');
+    expect(treeWithLetter.find('.column-letter').get(3).props.children).toEqual('D');
+
+    const treeWithoutLetter = mount(
+        <DragDropContextProvider backend={TestBackend}>
+          <DataGrid
+            totalRows={testData.totalRows}
+            columns={testData.columns}
+            getRow={getRow}
+            showLetter={false}
+          />
+        </DragDropContextProvider>);
+    expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0);
+  });
 });
 
 

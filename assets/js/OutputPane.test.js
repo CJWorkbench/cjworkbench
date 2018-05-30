@@ -5,6 +5,8 @@ import { jsonResponseMock } from './test-utils'
 import {OutputIframe} from "./OutputIframe";
 import TableView from "./TableView"
 import DataGrid from "./DataGrid"
+import TestBackend from 'react-dnd-test-backend'
+import { DragDropContextProvider } from 'react-dnd'
 
 
 describe('OutputPane', () => {
@@ -34,7 +36,11 @@ describe('OutputPane', () => {
       render: jsonResponseMock(testData),
     };
 
-    const tree = mount(<OutputPane id={100} revision={1} api={api}/>)
+    const tree = mount(
+        <DragDropContextProvider backend={TestBackend}>
+          <OutputPane id={100} revision={1} api={api}/>
+        </DragDropContextProvider>
+    );
 
     // wait for promise to resolve, then see what we get
     setImmediate(() => {
@@ -50,20 +56,28 @@ describe('OutputPane', () => {
   });
 
   it('Renders when no module id', () => {
-    const tree = mount(<OutputPane id={undefined} revision={1} api={{}}/>)
+    const tree = mount(
+        <DragDropContextProvider backend={TestBackend}>
+            <OutputPane id={undefined} revision={1} api={{}}/>
+        </DragDropContextProvider>
+    );
 
     expect(tree.find('.outputpane-header')).toHaveLength(1);
     expect(tree).toMatchSnapshot();
   });
 
   it('Iframe when htmloutput set', () => {
-    const tree = mount(<OutputPane
-      id={undefined}
-      workflow={{id:777,public:true}}
-      selectedWfModuleId={999}
-      revision={1}
-      htmlOutput={true}
-      api={{}}/>)
+    const tree = mount(
+        <DragDropContextProvider backend={TestBackend}>
+          <OutputPane
+            id={undefined}
+            workflow={{id:777,public:true}}
+            selectedWfModuleId={999}
+            revision={1}
+            htmlOutput={true}
+            api={{}}/>
+        </DragDropContextProvider>
+    );
 
     expect(tree.find('OutputIframe')).toHaveLength(1);
     expect(tree).toMatchSnapshot();

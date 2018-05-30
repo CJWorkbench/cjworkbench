@@ -8,10 +8,19 @@ import DataGrid from "./DataGrid";
 import update from 'immutability-helper'
 import * as EditCells from './EditCells'
 import * as SortFromTable from './SortFromTable'
+import * as ReorderColumns from './ReorderColumns'
 import {findParamValByIdName} from "./utils";
 
 export function mockAddCellEdit(fn) {
   EditCells.addCellEdit = fn;
+}
+
+export function mockSortColumn(fn) {
+  SortFromTable.updateSort = fn;
+}
+
+export function mockReorderColumns(fn) {
+  ReorderColumns.updateReorder = fn;
 }
 
 // Constants to control loading behaviour. Exported so they are accessible to tests
@@ -184,7 +193,7 @@ export default class TableView extends React.Component {
       // rendering it and all of its children in a seperate compositing layer,
       // improving the rendering of everything else in the app.
       // Expand the list of letter-showing modules by changing the array here
-      let showLetterWfModuleIdNames = ['formula'];
+      let showLetterWfModuleIdNames = ['formula', 'reorder-columns'];
 
       var moduleIsSort = false;
       var showColumnLetter = false;
@@ -221,6 +230,8 @@ export default class TableView extends React.Component {
             sortColumn={sortColumn}
             sortDirection={sortDirection}
             showLetter={showColumnLetter}
+            selectedModule={this.props.currentModule}
+            reorderColumns={ReorderColumns.updateReorder}
           />
         </div>
       // adds commas to row count
