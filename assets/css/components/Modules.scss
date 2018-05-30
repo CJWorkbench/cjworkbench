@@ -1,6 +1,6 @@
 .wf-card{
   width: $module-width;
-  margin: 0.25rem $module-margin; // most of the in-between margin comes from .add-module-in-between-search
+  margin: 0 $module-margin; // most of the in-between margin comes from .add-module-in-between-search
   background-color: #f8f8f8;
   position: relative;
   &:hover {background:#fcfcfc;}
@@ -154,7 +154,7 @@
   .module-output--selected {
     height: 100%;
     background-color:#fff;
-    border: 2px solid #C7D6DF;
+    border: 2px solid $module-action;
     display: flex;
     align-items: center;
     flex-direction: row;
@@ -162,8 +162,8 @@
     border: solid transparent;
     content: " ";
     border-left-color: rgba(118,155,176,0.3);
-    border-width: 2rem 0 2.25rem 1rem;
-    margin-left: 26.3rem
+    border-width: 1.8rem 0 1.8rem 1rem;
+    margin-left: 26.2rem
     }
   }
 

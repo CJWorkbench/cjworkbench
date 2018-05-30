@@ -8,27 +8,32 @@
 
   .in-between-modules {
     position: relative;
+    margin:0;
   }
 
   .add-module-search {
     width: $module-width;
-    margin-left: 1rem;
-    margin-top: 1rem;
+    margin:0 $module-margin;
+    margin-top: .8rem;
     margin-bottom: 40rem; // so there's always a scrollbar, and clicking "Add Module" doesn't add one
-    padding: 0 1rem;
     position: relative;
 
     button.search {
       display: block;
-      width: 100%;
+      width: $module-width;
       border-radius: 2rem;
-      border: 1px solid $brand-workspace;
+      border: 1px solid $module-action;
       background: transparent;
       cursor: pointer;
       text-transform: uppercase;
-      color: $heading-bg;
+      color: $medium-blue;
       font-size: 1.3rem;
       padding: .75rem;
+      opacity: .6;
+      &:hover{
+        background-color: $module-action;
+        opacity: 1;
+      }
     }
 
     &.lesson-highlight button.search {
@@ -39,11 +44,11 @@
 
   .add-module-in-between-search {
     width: $module-width;
-    margin-left: 1rem;
+    margin-left: $module-margin;
     position: relative;
 
     &.searching {
-      z-index: 1; // appear above other modules/in-betweens
+      z-index: 2; // appear above other modules/in-betweens
     }
 
     button.search {
@@ -51,25 +56,29 @@
       // be invisible; but the big borders are part of the button, so they're
       // clickable/hoverable.
       display: block;
-      width: 100%;
-      height: 1rem;
+      width: 27rem;
+      height: .5rem;
       cursor: pointer;
-      border: .4rem solid $page-background;
-      right: -1rem;
-      top: -.5rem;
+      z-index:2;
+      border: .1rem solid $WF-background;
+      top: -1rem;
       font-size: 1rem;
       color: transparent;
       background: transparent;
+      margin: .1rem 0 .1rem 0;
 
       i {
         position: absolute;
-        right: -1.4rem;
-        top: -.3rem;
-        font-size: 1.6rem;
+        right: -1.8rem;
+        top: -.5rem;
+        font-size: 1.2rem;
         line-height: 1;
         width: 1.6rem;
         height: 1.6rem;
         border-radius: .8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       &:hover {
@@ -97,16 +106,16 @@
   .module-drop-target {
     display: block;
     position: absolute;
+    opacity: 0;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1; // go over <button>
-    background: $brand-workspace;
-    border: .25rem solid transparent;
+    width: $module-width;
+    margin:0 $module-margin;
+    height: 0.5rem;
 
     &.is-drag-hovering {
-      background: $brand-orange;
+      opacity: 1;
+      background: $brand-workspace;
     }
   }
 }
