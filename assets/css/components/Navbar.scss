@@ -98,6 +98,15 @@
 //// navbar wf page
 .workflow-container .navbar {
   padding-left: 2rem;
+
+  .logo-navbar {
+    margin-right: 1.5rem;
+
+    img {
+      width:3.7rem;
+      margin-top: 0rem;
+    }
+  }
 }
 
 // Brand logo
@@ -105,7 +114,7 @@
 img.logo {
   vertical-align: middle;
   margin-right: 0.7rem;
-  width: 2.2rem;
+  width: 2.5rem;
 }
 
 .workflow-container .navbar .t-f-blue {
