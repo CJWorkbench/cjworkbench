@@ -1,6 +1,6 @@
 .module-search {
   position: absolute;
-  top: 0;
+  top: -10px;
   left: 0;
   width: $module-width;
   font-size: 1.4rem;
@@ -85,8 +85,11 @@
   }
 
   h4, .module-search-result {
+    display: flex;
+    align-items: center;
     margin: 0;
-    padding: 1.5rem 2rem;
+    height: 4rem;
+    padding: 0 2rem;
   }
 
   h4 {
