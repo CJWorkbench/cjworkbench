@@ -6,10 +6,15 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
 import ReactDataGrid from 'react-data-grid'
-import DraggableContainer from './DraggableContainer'
+//import { DraggableContainer } from 'react-data-grid-addons'
 import {idxToLetter} from "./utils";
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
+
+const {
+  DraggableHeader: { DraggableContainer }
+} = require('react-data-grid-addons');
+
 
 // Custom Formatter component, to render row number in a different style
 export class RowNumberFormatter extends React.Component {

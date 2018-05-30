@@ -1,62 +1,62 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`TableView Blank table when no module id 1`] = `
-<DragDropContextProvider
-  backend={[Function]}
+<TableView
+  api={Object {}}
+  revision={1}
 >
-  <TableView
-    api={Object {}}
-    revision={1}
+  <div
+    className="outputpane-table"
   >
     <div
-      className="outputpane-table"
+      className="outputpane-header d-flex flex-row justify-content-start"
     >
       <div
-        className="outputpane-header d-flex flex-row justify-content-start"
+        className="d-flex flex-column align-items-center justify-content-center mr-5"
       >
         <div
-          className="d-flex flex-column align-items-center justify-content-center mr-5"
+          className="content-4 t-m-gray mb-2"
         >
-          <div
-            className="content-4 t-m-gray mb-2"
-          >
-            Rows
-          </div>
-          <div
-            className="content-2 t-d-gray"
-          >
-            0
-          </div>
+          Rows
         </div>
         <div
-          className="d-flex flex-column align-items-center justify-content-center"
+          className="content-2 t-d-gray"
         >
-          <div
-            className="content-4 t-m-gray mb-2"
-          >
-            Columns
-          </div>
-          <div
-            className="content-2 t-d-gray"
-          >
-            0
-          </div>
+          0
         </div>
       </div>
       <div
-        className="outputpane-data"
+        className="d-flex flex-column align-items-center justify-content-center"
       >
-        <DataGrid
-          columns={
-            Array [
-              "",
-              " ",
-              "   ",
-              "    ",
-            ]
-          }
-          getRow={[Function]}
-          totalRows={10}
+        <div
+          className="content-4 t-m-gray mb-2"
+        >
+          Columns
+        </div>
+        <div
+          className="content-2 t-d-gray"
+        >
+          0
+        </div>
+      </div>
+    </div>
+    <div
+      className="outputpane-data"
+    >
+      <DataGrid
+        columns={
+          Array [
+            "",
+            " ",
+            "   ",
+            "    ",
+          ]
+        }
+        getRow={[Function]}
+        totalRows={10}
+      >
+        <DragDropContext(DraggableContainer)
+          onHeaderDrop={[Function]}
         >
           <DraggableContainer
             onHeaderDrop={[Function]}
@@ -6629,83 +6629,83 @@ exports[`TableView Blank table when no module id 1`] = `
               </ReactDataGrid>
             </div>
           </DraggableContainer>
-        </DataGrid>
-      </div>
+        </DragDropContext(DraggableContainer)>
+      </DataGrid>
     </div>
-  </TableView>
-</DragDropContextProvider>
+  </div>
+</TableView>
 `;
 
 exports[`TableView Fetches, renders, edits cells, sorts columns and reorders columns 1`] = `
-<DragDropContextProvider
-  backend={[Function]}
->
-  <TableView
-    api={
-      Object {
-        "render": [MockFunction] {
-          "calls": Array [
-            Array [
-              100,
-              0,
-              200,
-            ],
+<TableView
+  api={
+    Object {
+      "render": [MockFunction] {
+        "calls": Array [
+          Array [
+            100,
+            0,
+            200,
           ],
-        },
-      }
+        ],
+      },
     }
-    id={100}
-    revision={1}
+  }
+  id={100}
+  revision={1}
+>
+  <div
+    className="outputpane-table"
   >
     <div
-      className="outputpane-table"
+      className="outputpane-header d-flex flex-row justify-content-start"
     >
       <div
-        className="outputpane-header d-flex flex-row justify-content-start"
+        className="d-flex flex-column align-items-center justify-content-center mr-5"
       >
         <div
-          className="d-flex flex-column align-items-center justify-content-center mr-5"
+          className="content-4 t-m-gray mb-2"
         >
-          <div
-            className="content-4 t-m-gray mb-2"
-          >
-            Rows
-          </div>
-          <div
-            className="content-2 t-d-gray"
-          >
-            0
-          </div>
+          Rows
         </div>
         <div
-          className="d-flex flex-column align-items-center justify-content-center"
+          className="content-2 t-d-gray"
         >
-          <div
-            className="content-4 t-m-gray mb-2"
-          >
-            Columns
-          </div>
-          <div
-            className="content-2 t-d-gray"
-          >
-            0
-          </div>
+          0
         </div>
       </div>
       <div
-        className="outputpane-data"
+        className="d-flex flex-column align-items-center justify-content-center"
       >
-        <DataGrid
-          columns={
-            Array [
-              "",
-              " ",
-              "   ",
-              "    ",
-            ]
-          }
-          getRow={[Function]}
-          totalRows={10}
+        <div
+          className="content-4 t-m-gray mb-2"
+        >
+          Columns
+        </div>
+        <div
+          className="content-2 t-d-gray"
+        >
+          0
+        </div>
+      </div>
+    </div>
+    <div
+      className="outputpane-data"
+    >
+      <DataGrid
+        columns={
+          Array [
+            "",
+            " ",
+            "   ",
+            "    ",
+          ]
+        }
+        getRow={[Function]}
+        totalRows={10}
+      >
+        <DragDropContext(DraggableContainer)
+          onHeaderDrop={[Function]}
         >
           <DraggableContainer
             onHeaderDrop={[Function]}
@@ -13278,9 +13278,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
               </ReactDataGrid>
             </div>
           </DraggableContainer>
-        </DataGrid>
-      </div>
+        </DragDropContext(DraggableContainer)>
+      </DataGrid>
     </div>
-  </TableView>
-</DragDropContextProvider>
+  </div>
+</TableView>
 `;

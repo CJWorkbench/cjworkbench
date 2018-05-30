@@ -4,8 +4,6 @@ import { jsonResponseMock } from "./test-utils";
 import TableView from './TableView'
 import { mockAddCellEdit, mockReorderColumns, mockSortColumn, initialRows, preloadRows, deltaRows } from "./TableView";
 import DataGrid from "./DataGrid";
-import TestBackend from 'react-dnd-test-backend'
-import { DragDropContextProvider } from 'react-dnd'
 
 describe('TableView', () => {
 
@@ -27,8 +25,6 @@ describe('TableView', () => {
   }
 
 
-  // This test has been re-written and watered-down as wrapping the whole thing in
-  // DragDropContextProvider makes it nigh impossible to do state testing
   it('Fetches, renders, edits cells, sorts columns and reorders columns', (done) => {
 
     var api = {
@@ -45,9 +41,7 @@ describe('TableView', () => {
 
 
     const tree = mount(
-        <DragDropContextProvider backend={TestBackend}>
-          <TableView id={100} revision={1} api={api}/>
-        </DragDropContextProvider>
+      <TableView id={100} revision={1} api={api}/>
     )
 
     // wait for promise to resolve, then see what we get
@@ -89,9 +83,7 @@ describe('TableView', () => {
 
   it('Blank table when no module id', () => {
     const tree = mount(
-        <DragDropContextProvider backend={TestBackend}>
-            <TableView id={undefined} revision={1} api={{}}/>
-        </DragDropContextProvider>
+      <TableView id={undefined} revision={1} api={{}}/>
     );
     tree.update();
 
@@ -110,9 +102,7 @@ describe('TableView', () => {
     };
 
     const tree = mount(
-        <DragDropContextProvider backend={TestBackend}>
-          <TableView id={100} revision={1} api={api}/>
-        </DragDropContextProvider>
+      <TableView id={100} revision={1} api={api}/>
     );
     let tableView = tree.find('TableView').instance();
 
@@ -269,16 +259,14 @@ describe('TableView', () => {
 
     // Try a mount with the sort module selected, should have sortColumn and sortDirection
     var tree = mount(
-        <DragDropContextProvider backend={TestBackend}>
-          <TableView
-              revision={1}
-              id={100}
-              api={api}
-              setBusySpinner={jest.fn()}
-              resizing={false}
-              currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SORT_MODULE_ID))}
-          />
-        </DragDropContextProvider>
+      <TableView
+          revision={1}
+          id={100}
+          api={api}
+          setBusySpinner={jest.fn()}
+          resizing={false}
+          currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SORT_MODULE_ID))}
+      />
     );
 
     setImmediate(() => {
@@ -290,16 +278,14 @@ describe('TableView', () => {
 
       // Try a mount with a non-sort module selected, sortColumn and sortDirection should be undefined
       tree = mount(
-          <DragDropContextProvider backend={TestBackend}>
-            <TableView
-                revision={1}
-                id={100}
-                api={api}
-                setBusySpinner={jest.fn()}
-                resizing={false}
-                currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SORT_MODULE_ID))}
-            />
-          </DragDropContextProvider>
+        <TableView
+            revision={1}
+            id={100}
+            api={api}
+            setBusySpinner={jest.fn()}
+            resizing={false}
+            currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SORT_MODULE_ID))}
+        />
       );
       setImmediate(() => {
         tree.update();
@@ -364,16 +350,14 @@ describe('TableView', () => {
 
     // Try a mount with the formula module selected, should show letter
     var tree = mount(
-        <DragDropContextProvider backend={TestBackend}>
-          <TableView
-              revision={1}
-              id={100}
-              api={api}
-              setBusySpinner={jest.fn()}
-              resizing={false}
-              currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SHOWLETTER_ID))}
-          />
-        </DragDropContextProvider>
+      <TableView
+          revision={1}
+          id={100}
+          api={api}
+          setBusySpinner={jest.fn()}
+          resizing={false}
+          currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SHOWLETTER_ID))}
+      />
     );
     setImmediate(() => {
       tree.update();
@@ -383,16 +367,14 @@ describe('TableView', () => {
 
       // Try a mount with a non-formula module selected, should not show letter
       tree = mount(
-          <DragDropContextProvider backend={TestBackend}>
-            <TableView
-                revision={1}
-                id={100}
-                api={api}
-                setBusySpinner={jest.fn()}
-                resizing={false}
-                currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SHOWLETTER_ID))}
-            />
-          </DragDropContextProvider>
+        <TableView
+            revision={1}
+            id={100}
+            api={api}
+            setBusySpinner={jest.fn()}
+            resizing={false}
+            currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SHOWLETTER_ID))}
+        />
       );
       setImmediate(() => {
         tree.update();

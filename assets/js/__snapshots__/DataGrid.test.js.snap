@@ -1,34 +1,30 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`DataGrid tests, Render without data 1`] = `
-<DragDropContextProvider
-  backend={[Function]}
->
-  <DataGrid
-    columns={Array []}
-    getRow={[Function]}
-    totalRows={0}
-  />
-</DragDropContextProvider>
+<DataGrid
+  columns={Array []}
+  getRow={[Function]}
+  totalRows={0}
+/>
 `;
 
 exports[`DataGrid tests, Renders the grid 1`] = `
-<DragDropContextProvider
-  backend={[Function]}
+<DataGrid
+  columns={
+    Array [
+      "aaa",
+      "bbbb",
+      "ccccc",
+      "rn_",
+    ]
+  }
+  getRow={[Function]}
+  onEditCell={[MockFunction]}
+  onGridSort={[MockFunction]}
+  totalRows={2}
 >
-  <DataGrid
-    columns={
-      Array [
-        "aaa",
-        "bbbb",
-        "ccccc",
-        "rn_",
-      ]
-    }
-    getRow={[Function]}
-    onEditCell={[MockFunction]}
-    onGridSort={[MockFunction]}
-    totalRows={2}
+  <DragDropContext(DraggableContainer)
+    onHeaderDrop={[Function]}
   >
     <DraggableContainer
       onHeaderDrop={[Function]}
@@ -4544,6 +4540,6 @@ exports[`DataGrid tests, Renders the grid 1`] = `
         </ReactDataGrid>
       </div>
     </DraggableContainer>
-  </DataGrid>
-</DragDropContextProvider>
+  </DragDropContext(DraggableContainer)>
+</DataGrid>
 `;

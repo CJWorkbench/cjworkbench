@@ -3,10 +3,6 @@ import { mount } from 'enzyme'
 import OutputPane from './OutputPane'
 import { jsonResponseMock } from './test-utils'
 import {OutputIframe} from "./OutputIframe";
-import TableView from "./TableView"
-import DataGrid from "./DataGrid"
-import TestBackend from 'react-dnd-test-backend'
-import { DragDropContextProvider } from 'react-dnd'
 
 
 describe('OutputPane', () => {
@@ -37,9 +33,7 @@ describe('OutputPane', () => {
     };
 
     const tree = mount(
-        <DragDropContextProvider backend={TestBackend}>
           <OutputPane id={100} revision={1} api={api}/>
-        </DragDropContextProvider>
     );
 
     // wait for promise to resolve, then see what we get
@@ -57,9 +51,7 @@ describe('OutputPane', () => {
 
   it('Renders when no module id', () => {
     const tree = mount(
-        <DragDropContextProvider backend={TestBackend}>
             <OutputPane id={undefined} revision={1} api={{}}/>
-        </DragDropContextProvider>
     );
 
     expect(tree.find('.outputpane-header')).toHaveLength(1);
@@ -68,7 +60,6 @@ describe('OutputPane', () => {
 
   it('Iframe when htmloutput set', () => {
     const tree = mount(
-        <DragDropContextProvider backend={TestBackend}>
           <OutputPane
             id={undefined}
             workflow={{id:777,public:true}}
@@ -76,7 +67,6 @@ describe('OutputPane', () => {
             revision={1}
             htmlOutput={true}
             api={{}}/>
-        </DragDropContextProvider>
     );
 
     expect(tree.find('OutputIframe')).toHaveLength(1);
