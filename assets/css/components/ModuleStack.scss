@@ -106,16 +106,16 @@
   .module-drop-target {
     display: block;
     position: absolute;
+    opacity: 0;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1; // go over <button>
-    background: $brand-workspace;
-    border: .25rem solid transparent;
+    width: $module-width;
+    margin:0 $module-margin;
+    height: 0.5rem;
 
     &.is-drag-hovering {
-      background: $brand-orange;
+      opacity: 1;
+      background: $brand-workspace;
     }
   }
 }
