@@ -30,6 +30,15 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
     <nav
       className="navbar"
     >
+      <a
+        className="logo-navbar"
+        href="/workflows/"
+      >
+        <img
+          class="image"
+          src="/static/images/logo.svg"
+        />
+      </a>
       <div
         className="title-metadata-stack"
       >
@@ -596,6 +605,15 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
     <nav
       className="navbar"
     >
+      <a
+        className="logo-navbar"
+        href="/workflows/"
+      >
+        <img
+          class="image"
+          src="/static/images/logo.svg"
+        />
+      </a>
       <div
         className="title-metadata-stack"
       >
@@ -1078,6 +1096,15 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
     <nav
       className="navbar"
     >
+      <a
+        className="logo-navbar"
+        href="/workflows/"
+      >
+        <img
+          class="image"
+          src="/static/images/logo.svg"
+        />
+      </a>
       <div
         className="title-metadata-stack"
       >
@@ -1228,6 +1255,15 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
     <nav
       className="navbar"
     >
+      <a
+        className="logo-navbar"
+        href="/workflows/"
+      >
+        <img
+          class="image"
+          src="/static/images/logo.svg"
+        />
+      </a>
       <div
         className="title-metadata-stack"
       >
