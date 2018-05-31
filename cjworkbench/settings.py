@@ -115,17 +115,29 @@ else:
     # We are running in debug
     SECRET_KEY = 'my debug secret key is not a secret'
 
-    #print('Server running in debug.')
+    from django.db.backends.signals import connection_created
+    def speed_up_writes_by_20_percent(sender, connection, **kwargs):
+        """Truncate, don't delete, sqlite3 journal.
+
+        This is faster because every write no longer needs to create and
+        delete a file (which would mean two directory writes).
+        """
+        cursor = connection.cursor()
+        cursor.execute('PRAGMA journal_mode=TRUNCATE')
+
+    connection_created.connect(speed_up_writes_by_20_percent)
 
     DATABASES = {
         'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
+            'ENGINE': 'cjworkbench.sqlite3withbeginimmediate',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
             'OPTIONS': {
                 'timeout': 30,
+                'isolation_level': 'IMMEDIATE',
             },
         },
     }
+
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'local_mail')
 
@@ -273,6 +285,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
+        #'debug_console': {
+        #    'level': 'DEBUG',
+        #    'class': 'logging.StreamHandler',
+        #    'formatter': 'simple'
+        #},
     },
     'loggers': {
         'django': {
@@ -280,6 +297,10 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
+        #'django.db.backends': { # only gets messages when settings.DEBUG is True
+        #    'level': 'DEBUG',
+        #    'handlers': [ 'debug_console' ],
+        #},
     }
 }
 
