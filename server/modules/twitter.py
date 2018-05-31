@@ -1,7 +1,7 @@
 import tweepy
 from tweepy import TweepError
 import pandas as pd
-import os
+import os, re
 from .moduleimpl import ModuleImpl
 from server.versions import save_fetched_table_if_changed
 
@@ -12,6 +12,7 @@ class Twitter(ModuleImpl):
     # Must match order of items in twitter.json module def
     QUERY_TYPE_USER = 0
     QUERY_TYPE_SEARCH = 1
+    QUERY_TYPE_LIST = 2
 
     # Get dataframe of last tweets fron our storage,
     @staticmethod
@@ -33,8 +34,13 @@ class Twitter(ModuleImpl):
             if query[0] == '@':                     # allow user to type @username or username
                 query = query[1:]
             tweetsgen = api.user_timeline(query, count=200, tweet_mode='extended')
-        else:
+        elif querytype == Twitter.QUERY_TYPE_SEARCH:
             tweetsgen = api.search(q=query, count=100, tweet_mode='extended')
+        else:
+            queryparts = re.search('(?:https?://)twitter.com/([A-Z0-9]*)/lists/([A-Z0-9-_]*)', query, re.IGNORECASE)
+            if not queryparts:
+                raise Exception('not a Twitter list URL')
+            tweetsgen = api.list_timeline(queryparts.group(1), queryparts.group(2), count=200, tweet_mode='extended')
 
         # Columns to retrieve and store from Twitter
         # Also, we use this to figure ou the index the id field when merging old and new tweets
@@ -63,20 +69,23 @@ class Twitter(ModuleImpl):
     @staticmethod
     def event(wfm, event=None, **kwargs):
         table = None
+        param_names = {
+            Twitter.QUERY_TYPE_USER: 'username',
+            Twitter.QUERY_TYPE_SEARCH: 'query',
+            Twitter.QUERY_TYPE_LIST: 'listurl'
+        }
+
+        querytype = wfm.get_param_menu_idx("querytype")
+        query = wfm.get_param_string(param_names[querytype])
+
+        if query.strip() == '':
+            wfm.set_error('Please enter a query')
+            return
 
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy(notify=True)
 
         try:
-            querytype = wfm.get_param_menu_idx("querytype")
-            if querytype==Twitter.QUERY_TYPE_USER:
-                query = wfm.get_param_string('username')
-            else:
-                query = wfm.get_param_string('query')
-
-            if query.strip() == '':
-                wfm.set_error('Please enter a query')
-                return
 
             if wfm.get_param_checkbox('accumulate'):
                 old_tweets = Twitter.get_stored_tweets(wfm)

@@ -49,6 +49,7 @@ class TwitterTests(LoggedInTestCase):
         self.wf_module = load_and_add_module('twitter')
         self.query_pval = get_param_by_id_name('query')
         self.username_pval = get_param_by_id_name('username')
+        self.listurl_pval = get_param_by_id_name('listurl')
         self.type_pval = get_param_by_id_name('querytype')
 
         self.env_patch = { 'CJW_TWITTER_CONSUMER_KEY':'mykey',
@@ -69,7 +70,7 @@ class TwitterTests(LoggedInTestCase):
         self.press_fetch_button()
         self.assertEqual(self.wf_module.status, WfModule.ERROR)
 
-    def test_user_timeline(self):
+    def test_user_timeline_and_accumulate(self):
         self.username_pval.set_value('foouser')
         self.username_pval.save()
         self.type_pval.set_value(0)  # user timeline, as opposed to search
@@ -113,3 +114,50 @@ class TwitterTests(LoggedInTestCase):
                     merged_table = pd.concat([ self.mock_tweet_table, self.mock_tweet_table2.iloc[[1]] ],ignore_index=True)
                     self.assertTrue(table2.equals(merged_table))
                     self.assertEqual(len(table2), 3)
+
+
+    def test_twitter_search(self):
+        query = 'cat'
+        self.query_pval.set_value(query)
+        self.query_pval.save()
+        self.type_pval.set_value(1)
+        self.type_pval.save()
+
+        with patch.dict('os.environ', self.env_patch):
+            with mock.patch('tweepy.AppAuthHandler') as auth:
+                with mock.patch('tweepy.API') as api:
+                    instance = api.return_value
+
+                    # Actually fetch!
+                    instance.search.return_value = self.mock_statuses
+                    self.press_fetch_button()
+                    self.assertEqual(self.wf_module.status, WfModule.READY)
+                    self.assertEqual(instance.search.mock_calls[0][2]['q'], query)
+
+                    # Check that render output is right
+                    table = Twitter.render(self.wf_module, None)
+                    self.assertTrue(table.equals(self.mock_tweet_table))
+
+
+    def test_twitter_list(self):
+        listurl = 'https://twitter.com/thatuser/lists/theirlist'
+        self.listurl_pval.set_value(listurl)
+        self.listurl_pval.save()
+        self.type_pval.set_value(2)
+        self.type_pval.save()
+
+        with patch.dict('os.environ', self.env_patch):
+            with mock.patch('tweepy.AppAuthHandler') as auth:
+                with mock.patch('tweepy.API') as api:
+                    instance = api.return_value
+
+                    # Actually fetch!
+                    instance.list_timeline.return_value = self.mock_statuses
+                    self.press_fetch_button()
+                    self.assertEqual(self.wf_module.status, WfModule.READY)
+                    self.assertEqual(instance.list_timeline.mock_calls[0][1][0], 'thatuser')
+                    self.assertEqual(instance.list_timeline.mock_calls[0][1][1], 'theirlist')
+
+                    # Check that render output is right
+                    table = Twitter.render(self.wf_module, None)
+                    self.assertTrue(table.equals(self.mock_tweet_table))
