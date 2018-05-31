@@ -17,6 +17,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
         className="output-bar-container"
       >
         <StatusBar
+          isDragging={false}
           isSelected={true}
         />
       </div>
