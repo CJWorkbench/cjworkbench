@@ -3,7 +3,6 @@ from tweepy import TweepError
 import pandas as pd
 import os
 from .moduleimpl import ModuleImpl
-from .utils import *
 from server.versions import save_fetched_table_if_changed
 
 # ---- Twitter import module ----
@@ -39,8 +38,7 @@ class Twitter(ModuleImpl):
 
         # Columns to retrieve and store from Twitter
         # Also, we use this to figure ou the index the id field when merging old and new tweets
-        cols = ['id', 'created_at', 'full_text', 'in_reply_to_screen_name', 'in_reply_to_status_id', 'retweeted',
-                'retweet_count', 'favorited', 'favorite_count', 'source']
+        cols = ['id', 'created_at', 'full_text', 'retweet_count', 'favorite_count', 'in_reply_to_screen_name', 'source']
 
         tweets = [[getattr(t, x) for x in cols] for t in tweetsgen]
         table = pd.DataFrame(tweets, columns=cols)

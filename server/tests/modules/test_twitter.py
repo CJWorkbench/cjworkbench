@@ -33,8 +33,7 @@ def make_mock_statuses(json_text):
 
 # Turn those status objects into a Pandas table
 def make_mock_tweet_table(statuses):
-    cols = ['id', 'created_at', 'full_text', 'in_reply_to_screen_name', 'in_reply_to_status_id', 'retweeted',
-            'retweet_count', 'favorited', 'favorite_count', 'source']
+    cols = ['id', 'created_at', 'full_text', 'retweet_count', 'favorite_count', 'in_reply_to_screen_name', 'source']
 
     tweets = [[getattr(t, x) for x in cols] for t in statuses]
     table = pd.DataFrame(tweets, columns=cols)
