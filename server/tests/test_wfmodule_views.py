@@ -293,21 +293,27 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertEqual(response.data['update_interval'], 5)
         self.assertEqual(response.data['update_units'], 'weeks')
 
-        # Now check for error checking! As usual, this is most of the work
-        missing_units_key = {'auto_update_data': True, 'update_interval': 1000}
-        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, missing_units_key)
+    # Test set/get update interval
+    def test_wf_module_update_settings_missing_units(self):
+        settings = {'auto_update_data': True,
+                    'update_interval': 5,
+                    }
+
+        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, settings)
         force_authenticate(request, user=self.user)
         response = wfmodule_detail(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        missing_interval_key = {'auto_update_data': True, 'update_units': 'days'}
-        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, missing_interval_key)
+    def test_wf_module_update_settings_missing_interval(self):
+        settings = {'auto_update_data': True, 'update_units': 'days'}
+        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, settings)
         force_authenticate(request, user=self.user)
         response = wfmodule_detail(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-        bad_units_key = {'auto_update_data': True, 'update_interval': 66, 'update_units': 'pajama'}
-        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, bad_units_key)
+    def test_wf_module_update_settings_bad_units(self):
+        settings = {'auto_update_data': True, 'update_interval': 66, 'update_units': 'pajama'}
+        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, settings)
         force_authenticate(request, user=self.user)
         response = wfmodule_detail(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)

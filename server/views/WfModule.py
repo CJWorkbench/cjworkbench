@@ -37,9 +37,10 @@ def patch_update_settings(wf_module, data):
 
 def patch_wfmodule(wf_module, data):
     # Just patch it using the built-in Django Rest Framework methods.
-    serializer = WfModuleSerializer(wf_module, data, partial=True)
-    if serializer.is_valid():
-        serializer.save()
+    with wf_module.workflow.cooperative_lock():
+        serializer = WfModuleSerializer(wf_module, data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
 
 
 def get_simple_column_types(table):
@@ -77,8 +78,9 @@ def wfmodule_detail(request, pk, format=None):
         return HttpResponseNotFound()
 
     if request.method == 'GET':
-        serializer = WfModuleSerializer(wf_module)
-        return Response(serializer.data)
+        with wf_module.workflow.cooperative_lock():
+            serializer = WfModuleSerializer(wf_module)
+            return Response(serializer.data)
 
     elif request.method == 'DELETE':
         delta = DeleteModuleCommand.create(wf_module)
@@ -91,21 +93,21 @@ def wfmodule_detail(request, pk, format=None):
         # For patch, we check which fields are set in data, and process all of them
         # TODO: replace all of these with the generic patch method, most of this is unnecessary
         try:
-
             if not set(request.data.keys()).intersection({"notes", "auto_update_data", "collapsed", "notifications"}):
                 raise ValueError('Unknown fields: {}'.format(request.data))
 
-            if 'notes' in request.data:
-                patch_notes(wf_module, request.data)
+            with wf_module.workflow.cooperative_lock():
+                if 'notes' in request.data:
+                    patch_notes(wf_module, request.data)
 
-            if 'auto_update_data' in request.data:
-                patch_update_settings(wf_module, request.data)
+                if 'auto_update_data' in request.data:
+                    patch_update_settings(wf_module, request.data)
 
-            if 'collapsed' in request.data:
-                wf_module.set_is_collapsed(request.data['collapsed'], notify=False)
+                if 'collapsed' in request.data:
+                    wf_module.set_is_collapsed(request.data['collapsed'], notify=False)
 
-            if 'notifications' in request.data:
-                patch_wfmodule(wf_module, request.data)
+                if 'notifications' in request.data:
+                    patch_wfmodule(wf_module, request.data)
 
         except Exception as e:
             return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -160,8 +162,9 @@ def table_result(request, wf_module):
     except ValueError:
         return Response({'message': 'bad row number', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
 
-    table = execute_wfmodule(wf_module)
-    j = make_render_json(table, startrow, endrow)
+    with wf_module.workflow.cooperative_lock():
+        table = execute_wfmodule(wf_module)
+        j = make_render_json(table, startrow, endrow)
     return HttpResponse(j, content_type="application/json")
 
 
@@ -260,12 +263,13 @@ def wfmodule_input(request, pk, format=None):
         if not wf_module.user_authorized_read(request.user):
             return HttpResponseForbidden()
 
-        # return empty table if this is the first module in the stack
-        prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
-        if not prev_modules:
-            return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
-        else:
-            return table_result(request, prev_modules.last())
+        with wf_module.workflow.cooperative_lock():
+            # return empty table if this is the first module in the stack
+            prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
+            if not prev_modules:
+                return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
+            else:
+                return table_result(request, prev_modules.last())
 
 
 # returns a list of columns and their simplified types
@@ -282,8 +286,10 @@ def wfmodule_columns(request, pk, format=None):
         if not wf_module.workflow.user_authorized_read(request.user):
             return HttpResponseForbidden()
 
-        table = execute_wfmodule(wf_module)
-        dtypes = table.dtypes.to_dict()
+        with wf_module.workflow.cooperative_lock():
+            table = execute_wfmodule(wf_module)
+            dtypes = table.dtypes.to_dict()
+
         ret_types = []
         for col in dtypes:
             # We are simplifying the data types here.
@@ -315,15 +321,16 @@ def wfmodule_public_output(request, pk, type, format=None):
     if not wf_module.user_authorized_read(request.user):
         return HttpResponseNotFound()
 
-    table = execute_wfmodule(wf_module)
-    if type=='json':
-        d = table.to_json(orient='records')
-        return HttpResponse(d, content_type="application/json")
-    elif type=='csv':
-        d = table.to_csv(index=False)
-        return HttpResponse(d, content_type="text/csv")
-    else:
-        return HttpResponseNotFound()
+    with wf_module.workflow.cooperative_lock():
+        table = execute_wfmodule(wf_module)
+        if type=='json':
+            d = table.to_json(orient='records')
+            return HttpResponse(d, content_type="application/json")
+        elif type=='csv':
+            d = table.to_csv(index=False)
+            return HttpResponse(d, content_type="text/csv")
+        else:
+            return HttpResponseNotFound()
 
 
 # Get list of data versions, or set current data version
@@ -340,24 +347,26 @@ def wfmodule_dataversion(request, pk, format=None):
         if not wf_module.user_authorized_read(request.user):
             return HttpResponseNotFound()
 
-        versions = wf_module.list_fetched_data_versions()
-        current_version = wf_module.get_fetched_data_version()
-        response = {'versions': versions, 'selected': current_version}
-        return Response(response)
+        with wf_module.workflow.cooperative_lock():
+            versions = wf_module.list_fetched_data_versions()
+            current_version = wf_module.get_fetched_data_version()
+            response = {'versions': versions, 'selected': current_version}
+            return Response(response)
 
     elif request.method == 'PATCH':
         if not wf_module.user_authorized_write(request.user):
             return HttpResponseForbidden()
 
-        ChangeDataVersionCommand.create(wf_module, datetime.datetime.strptime(request.data['selected'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=pytz.UTC))
+        with wf_module.workflow.cooperative_lock():
+            ChangeDataVersionCommand.create(wf_module, datetime.datetime.strptime(request.data['selected'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=pytz.UTC))
 
-        stored_object_at_version = StoredObject.objects.filter(wf_module=wf_module).get(stored_at=request.data['selected'])
+            stored_object_at_version = StoredObject.objects.filter(wf_module=wf_module).get(stored_at=request.data['selected'])
 
-        if not stored_object_at_version.read:
-            stored_object_at_version.read = True
-            stored_object_at_version.save()
+            if not stored_object_at_version.read:
+                stored_object_at_version.read = True
+                stored_object_at_version.save()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+            return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['PATCH'])
@@ -371,9 +380,10 @@ def wfmodule_dataversion_read(request, pk):
     if not wf_module.user_authorized_write(request.user):
         return HttpResponseForbidden()
 
-    stored_objects = StoredObject.objects.filter(wf_module=wf_module, \
-        stored_at__in=request.data['versions'])
+    with wf_module.workflow.cooperative_lock():
+        stored_objects = StoredObject.objects.filter(wf_module=wf_module, \
+            stored_at__in=request.data['versions'])
 
-    stored_objects.update(read=True)
+        stored_objects.update(read=True)
 
     return Response(status=status.HTTP_204_NO_CONTENT)

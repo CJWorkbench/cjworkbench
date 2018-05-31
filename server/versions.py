@@ -7,53 +7,55 @@ from django.conf import settings
 
 # Undo is pretty much just running workflow.last_delta backwards
 def WorkflowUndo(workflow):
-    delta = workflow.last_delta
+    with workflow.cooperative_lock():
+        delta = workflow.last_delta
 
-    # Undo, if not at the very beginning of undo chain
-    if delta:
-        delta.backward()
-        workflow.refresh_from_db() # backward() may change it
-        workflow.last_delta = delta.prev_delta
-        workflow.save()
+        # Undo, if not at the very beginning of undo chain
+        if delta:
+            delta.backward()
+            workflow.refresh_from_db() # backward() may change it
+            workflow.last_delta = delta.prev_delta
+            workflow.save()
 
-        # oh, also update the version, and notify the client
-        notify_client_workflow_version_changed(workflow)
+    # oh, also update the version, and notify the client (after COMMIT)
+    notify_client_workflow_version_changed(workflow)
 
 
 # Redo is pretty much just running workflow.last_delta.next_delta forward
 def WorkflowRedo(workflow):
+    with workflow.cooperative_lock():
+        # if we are at very beginning of delta chain, find first delta from db
+        if workflow.last_delta:
+            next_delta = workflow.last_delta.next_delta
+        else:
+            next_delta = Delta.objects.filter(workflow=workflow).order_by('datetime').first()
 
-    # if we are at very beginning of delta chain, find first delta from db
-    if workflow.last_delta:
-        next_delta = workflow.last_delta.next_delta
-    else:
-        next_delta = Delta.objects.filter(workflow=workflow).order_by('datetime').first()
+        # Redo, if not at very end of undo chain
+        if next_delta:
+            next_delta.forward()
+            workflow.refresh_from_db() # forward() may change it
+            workflow.last_delta = next_delta
+            workflow.save()
 
-    # Redo, if not at very end of undo chain
-    if next_delta:
-        next_delta.forward()
-        workflow.refresh_from_db() # forward() may change it
-        workflow.last_delta = next_delta
-        workflow.save()
-
-        # oh, also update the version, and notify the client
-        notify_client_workflow_version_changed(workflow)
+    # oh, also update the version, and notify the client (after COMMIT)
+    notify_client_workflow_version_changed(workflow)
 
 
 # Store retrieved data (in text form here, as csv) if it isn't different from currently stored data
 # If it is and auto_change_verssion, switch to new data using a ChangeDataVersion command
 # Returns creation time of newly created StoredObject, if any
 def save_fetched_table_if_changed(wfm, new_table, auto_change_version=True):
+    with wfm.workflow.cooperative_lock():
+        wfm.last_update_check = timezone.now()
+        wfm.save()
 
-    wfm.last_update_check = timezone.now()
-    wfm.save()
+        # Store this data only if it's different from most recent data
+        version_added = wfm.store_fetched_table_if_different(new_table)
 
-    # Store this data only if it's different from most recent data
-    version_added = wfm.store_fetched_table_if_different(new_table)
+        if version_added:
+            enforce_storage_limits(wfm)
 
-    if version_added:
-        enforce_storage_limits(wfm)
-
+    # un-indent: COMMIT, so we can notify the client and the client sees changes
     if version_added and auto_change_version:
         if wfm.notifications == True:
             Notification.create(wfm, "New data version available")
@@ -82,4 +84,3 @@ def enforce_storage_limits(wfm):
         if cumulative > limit and not first:  # allow most recent version to be stored even if it is itself over limit
             so.delete()
         first = False
-

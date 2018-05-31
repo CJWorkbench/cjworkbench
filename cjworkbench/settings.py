@@ -122,9 +122,9 @@ else:
             'ENGINE': 'django.db.backends.sqlite3',
             'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
             'OPTIONS': {
-                'timeout': 2000
-            }
-        }
+                'timeout': 30,
+            },
+        },
     }
     EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
     EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'local_mail')

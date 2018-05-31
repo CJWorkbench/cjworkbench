@@ -1,4 +1,5 @@
-from django.db import models
+from contextlib import contextmanager
+from django.db import models, transaction
 from django.contrib.auth.models import User
 from server.models.WfModule import WfModule
 from django.urls import reverse
@@ -23,6 +24,36 @@ class Workflow(models.Model):
                                    null=True,   # if null, no Commands applied yet
                                    default=None,
                                    on_delete=models.SET_DEFAULT)
+
+    @contextmanager
+    def cooperative_lock(self):
+        """Yields in a database transaction with self selected FOR UPDATE.
+
+        Example:
+
+            with workflow.cooperative_lock():
+                # ... do stuff
+                workflow.save()
+
+        This is _cooperative_. It only works if every write uses this method.
+        _Always_ use this method: writing without it is a bug.
+
+        It is safe to call cooperative_lock() within a cooperative_lock(). The
+        inner one will behave as a no-op.
+        """
+        # savepoint=False because on sqlite, savepoints commit before start
+        with transaction.atomic(savepoint=False):
+            # Lock the workflow, in the database.
+            # This will block until the workflow is released.
+            # https://docs.djangoproject.com/en/2.0/ref/models/querysets/#select-for-update
+            #
+            # In sqlite select_for_update() is a no-op; but we're safe because
+            # sqlite doesn't allow concurrent transactions.
+            #
+            # list() executes the query
+            list(Workflow.objects.select_for_update().filter(id=self.id))
+
+            yield
 
     def user_authorized_read(self, user):
         return user == self.owner or self.public == True
@@ -50,9 +81,11 @@ class Workflow(models.Model):
     # Loses undo history (do we want that?)
     def duplicate(self, target_user):
         new_wf_name = 'Copy of ' + self.name if not self.example else self.name  # don't prepend 'Copy of' to examples
-        new_wf = Workflow.objects.create(name=new_wf_name, owner=target_user, public=False, last_delta=None)
-        for wfm in WfModule.objects.filter(workflow=self):
-            wfm.duplicate(new_wf)
+
+        with self.cooperative_lock():
+            new_wf = Workflow.objects.create(name=new_wf_name, owner=target_user, public=False, last_delta=None)
+            for wfm in WfModule.objects.filter(workflow=self):
+                wfm.duplicate(new_wf)
 
         return new_wf
 

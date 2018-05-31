@@ -58,7 +58,7 @@ class AddModuleCommand(Delta):
     applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
     selected_wf_module = models.IntegerField(null=True, blank=True)     # what was selected before we were added?
 
-    def forward(self):
+    def forward_impl(self):
         insert_wf_module(self.wf_module, self.workflow, self.order)     # may alter wf_module.order without saving
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
@@ -66,7 +66,7 @@ class AddModuleCommand(Delta):
         self.applied = True
         self.save()
 
-    def backward(self):
+    def backward_impl(self):
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
         self.workflow.selected_wf_module = self.selected_wf_module      # go back to old selection when deleted
@@ -77,21 +77,21 @@ class AddModuleCommand(Delta):
 
     @staticmethod
     def create(workflow, module_version, insert_before):
-        newwfm = WfModule.objects.create(workflow=None, module_version=module_version,
-                                         order=insert_before, is_collapsed=False)
-        newwfm.create_default_parameters()
+        with workflow.cooperative_lock():
+            newwfm = WfModule.objects.create(workflow=None, module_version=module_version,
+                                             order=insert_before, is_collapsed=False)
+            newwfm.create_default_parameters()
 
-        # start EditCells collapsed, just this one module for now
-        if (module_version.module.id_name == 'editcells'):
-            newwfm.is_collapsed = True
+            # start EditCells collapsed, just this one module for now
+            if (module_version.module.id_name == 'editcells'):
+                newwfm.is_collapsed = True
 
-        description = 'Added \'' + module_version.module.name + '\' module'
-        delta = AddModuleCommand.objects.create(
-            workflow=workflow,
-            wf_module=newwfm,
-            order=insert_before,
-            command_description=description)
-        delta.forward()
+            description = 'Added \'' + module_version.module.name + '\' module'
+            delta = Delta.create_impl(AddModuleCommand,
+                workflow=workflow,
+                wf_module=newwfm,
+                order=insert_before,
+                command_description=description)
 
         return delta
 
@@ -112,7 +112,7 @@ class DeleteModuleCommand(Delta):
     selected_wf_module = models.IntegerField(null=True, blank=True)
     applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
 
-    def forward(self):
+    def forward_impl(self):
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
@@ -122,7 +122,7 @@ class DeleteModuleCommand(Delta):
         self.applied = True
         self.save()
 
-    def backward(self):
+    def backward_impl(self):
         insert_wf_module(self.wf_module, self.workflow, self.wf_module.order)
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
@@ -142,12 +142,11 @@ class DeleteModuleCommand(Delta):
                 return None     # this wfm was already deleted, do nothing
 
             description = 'Deleted \'' + wf_module.get_module_name() + '\' module'
-            delta = DeleteModuleCommand.objects.create(
+            delta = Delta.create_impl(DeleteModuleCommand,
                 workflow=workflow,
                 wf_module=wf_module,
                 selected_wf_module=workflow.selected_wf_module,
                 command_description=description)
-            delta.forward()
             notify_client_workflow_version_changed(workflow)
             return delta
 
@@ -176,10 +175,10 @@ class ReorderModulesCommand(Delta):
                 wfm.order = record['order']
                 wfm.save()
 
-    def forward(self):
+    def forward_impl(self):
         self.apply_order(json.loads(self.new_order))
 
-    def backward(self):
+    def backward_impl(self):
         self.apply_order(json.loads(self.old_order))
 
     @staticmethod
@@ -204,12 +203,11 @@ class ReorderModulesCommand(Delta):
             raise ValueError('WfModule orders must be in range 0..n-1')
 
         # Looks good, let's reorder
-        delta = ReorderModulesCommand.objects.create(
+        delta = Delta.create_impl(ReorderModulesCommand,
+            workflow=workflow,
             old_order=json.dumps([ {'id': wfm.id, 'order': wfm.order} for wfm in wfms]),
             new_order=json.dumps(new_order),
-            workflow=workflow,
             command_description='Reordered modules')
-        delta.forward()
 
         notify_client_workflow_version_changed(workflow)
         return delta
@@ -220,10 +218,10 @@ class ChangeDataVersionCommand(Delta):
     old_version = models.DateTimeField('old_version', null=True)    # may not have had a previous version
     new_version = models.DateTimeField('new_version')
 
-    def forward(self):
+    def forward_impl(self):
         self.wf_module.set_fetched_data_version(self.new_version)
 
-    def backward(self):
+    def backward_impl(self):
         self.wf_module.set_fetched_data_version(self.old_version)
 
     @staticmethod
@@ -231,14 +229,13 @@ class ChangeDataVersionCommand(Delta):
         description = \
             'Changed \'' + wf_module.get_module_name() + '\' module data version to ' + str(version)
 
-        delta = ChangeDataVersionCommand.objects.create(
+        delta = Delta.create_impl(ChangeDataVersionCommand,
             wf_module=wf_module,
             new_version=version,
             old_version=wf_module.get_fetched_data_version(),
             workflow=wf_module.workflow,
             command_description=description)
 
-        delta.forward()
         notify_client_workflow_version_changed(wf_module.workflow)
         return delta
 
@@ -249,10 +246,10 @@ class ChangeParameterCommand(Delta):
     new_value = models.TextField('new_value')
     old_value = models.TextField('old_value')
 
-    def forward(self):
+    def forward_impl(self):
         self.parameter_val.set_value(self.new_value)
 
-    def backward(self):
+    def backward_impl(self):
         self.parameter_val.set_value(self.old_value)
 
     @staticmethod
@@ -272,14 +269,12 @@ class ChangeParameterCommand(Delta):
         description = \
             'Changed parameter \'' + pspec.name + '\' of \'' + parameter_val.wf_module.get_module_name() + '\' module'
 
-        delta =  ChangeParameterCommand.objects.create(
+        delta = Delta.create_impl(ChangeParameterCommand,
             parameter_val=parameter_val,
             new_value=value,
             old_value=parameter_val.get_value(),
             workflow=workflow,
             command_description=description)
-
-        delta.forward()
 
         # Clear wf_module errors, on the theory that user might have fixed them. The next render()
         # or event() will re-create the errors if there is still a problem. The only other place
@@ -297,11 +292,11 @@ class ChangeWorkflowTitleCommand(Delta):
     new_value = models.TextField('new_value')
     old_value = models.TextField('old_value')
 
-    def forward(self):
+    def forward_impl(self):
         self.workflow.name = self.new_value
         self.workflow.save()
 
-    def backward(self):
+    def backward_impl(self):
         self.workflow.name = self.old_value
         self.workflow.save()
 
@@ -310,14 +305,13 @@ class ChangeWorkflowTitleCommand(Delta):
         old_name = workflow.name
         description = 'Changed workflow name from ' + old_name + ' to ' + name
 
-        delta = ChangeWorkflowTitleCommand.objects.create(
+        delta = Delta.create_impl(ChangeWorkflowTitleCommand,
             workflow = workflow,
             new_value = name,
             old_value = old_name,
             command_description = description
         )
 
-        delta.forward()
         # don't notify client b/c client has already updated UI
 
         return delta
@@ -327,11 +321,11 @@ class ChangeWfModuleNotesCommand(Delta):
     new_value = models.TextField('new_value')
     old_value = models.TextField('old_value')
 
-    def forward(self):
+    def forward_impl(self):
         self.wf_module.notes = self.new_value
         self.wf_module.save()
 
-    def backward(self):
+    def backward_impl(self):
         self.wf_module.notes = self.old_value
         self.wf_module.save()
 
@@ -340,7 +334,7 @@ class ChangeWfModuleNotesCommand(Delta):
         old_value = wf_module.notes if wf_module.notes else ''
         description = 'Changed workflow module note from ' + old_value + ' to ' + notes
 
-        delta = ChangeWfModuleNotesCommand.objects.create(
+        delta = Delta.create_impl(ChangeWfModuleNotesCommand,
             workflow = wf_module.workflow,
             wf_module = wf_module,
             new_value = notes,
@@ -348,7 +342,6 @@ class ChangeWfModuleNotesCommand(Delta):
             command_description = description
         )
 
-        delta.forward()
         notify_client_workflow_version_changed(wf_module.workflow)
 
         return delta
@@ -362,13 +355,13 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
     new_update_interval = models.IntegerField()
     old_update_interval = models.IntegerField()
 
-    def forward(self):
+    def forward_impl(self):
         self.wf_module.auto_update_data = self.new_auto
         self.wf_module.next_update = self.new_next_update
         self.wf_module.update_interval = self.new_update_interval
         self.wf_module.save()
 
-    def backward(self):
+    def backward_impl(self):
         self.wf_module.auto_update_data = self.old_auto
         self.wf_module.next_update = self.old_next_update
         self.wf_module.update_interval = self.old_update_interval
@@ -378,7 +371,7 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
     def create(wf_module, auto_update_data, next_update, update_interval):
         description = 'Changed workflow update settings'
 
-        delta = ChangeWfModuleUpdateSettingsCommand.objects.create(
+        delta = Delta.create_impl(ChangeWfModuleUpdateSettingsCommand,
             workflow = wf_module.workflow,
             wf_module = wf_module,
             old_auto = wf_module.auto_update_data,
@@ -390,7 +383,6 @@ class ChangeWfModuleUpdateSettingsCommand(Delta):
             command_description = description
         )
 
-        delta.forward()
         # No notification needed as client will do update
         # notify_client_workflow_version_changed(wf_module.workflow)
 

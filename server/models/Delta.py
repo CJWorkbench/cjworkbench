@@ -4,17 +4,15 @@
 
 from polymorphic.models import PolymorphicModel
 from server.models.Workflow import *
-from django.db import transaction
 import django.utils
 
 # Base class of a single undoable/redoable action
 # Derived classes implement the actual mutations on the database (via polymorphic forward()/backward())
 # To derive a command from Delta:
-#   - implement forward() and backward()
-#   - implement a static create() that takes whatever parameters define the action,creates 
-#     an instance of the Delta subclass with that info, sets the workflow and description,
-#     and runs forward()
-#
+#   - implement forward_impl() and backward_impl()
+#   - implement a static create() that takes whatever parameters define the action,
+#     and calls `Delta.create_impl(MyCommandClass, **kwargs)`. `Delta.create_impl()`
+#     will call `delta.forward()` within a Workflow.cooperative_lock().
 class Delta(PolymorphicModel):
     class Meta:
     # OMG this bug ate so many hours...
@@ -31,30 +29,62 @@ class Delta(PolymorphicModel):
     prev_delta = models.ForeignKey('self', related_name='+', null=True, default=None, on_delete=models.SET_DEFAULT)
     datetime = models.DateTimeField('datetime', default=django.utils.timezone.now)
 
-    # On very first save, add this Delta to the linked list
+    def forward(self):
+        """Call forward_impl() with workflow.cooperative_lock()."""
+        with self.workflow.cooperative_lock():
+            self.forward_impl()
+
+    def backward(self):
+        """Call backward_impl() with workflow.cooperative_lock()."""
+        with self.workflow.cooperative_lock():
+            self.backward_impl()
+
+    @staticmethod
+    def create_impl(klass, **kwargs) -> None:
+        """Create the given Delta and run .forward(), in a Workflow.cooperative_lock().
+
+        Keyword arguments vary by klass, but `workflow` is always required.
+
+        Example:
+
+            delta = Delta.create_impl(ChangeWfModuleNotesCommand,
+                workflow=wf_module.workflow,
+                # ... other kwargs
+            )
+            # now delta has been applied and committed to the database.
+        """
+        workflow = kwargs['workflow']
+        with workflow.cooperative_lock():
+            delta = klass.objects.create(**kwargs)
+            delta.forward()
+
+        return delta
+
     def save(self, *args, **kwargs):
+        # We only get here from create_impl(), forward_impl() and
+        # backward_impl(). So we already hold self.workflow.cooperative_lock().
         if not self.pk:
-            # Brand new object, add at the end of the Delta linked list
-            # Do this in a transaction, since we need to update three pointers to maintain list integrity
-            with transaction.atomic():
+            # On very first save, add this Delta to the linked list
+            # The workflow lock is important here: we need to update three pointers
+            # to maintain list integrity
 
-                # Blow away all deltas starting after last applied (wipe redo stack)
-                delete_unapplied_deltas(self.workflow)
+            # Blow away all deltas starting after last applied (wipe redo stack)
+            delete_unapplied_deltas(self.workflow)
 
-                # Point us backward to last delta in chain
-                last_delta = self.workflow.last_delta
-                if last_delta:
-                    self.prev_delta = last_delta
+            # Point us backward to last delta in chain
+            last_delta = self.workflow.last_delta
+            if last_delta:
+                self.prev_delta = last_delta
 
-                # Save ourselves to DB, then point last delta to us
-                super(Delta, self).save(*args, **kwargs)
-                if last_delta:
-                    last_delta.next_delta = self  # must be done after save, because we need our new pk
-                    last_delta.save()
+            # Save ourselves to DB, then point last delta to us
+            super(Delta, self).save(*args, **kwargs)
+            if last_delta:
+                last_delta.next_delta = self  # must be done after save, because we need our new pk
+                last_delta.save()
 
-                # Point workflow to us
-                self.workflow.last_delta = self
-                self.workflow.save()
+            # Point workflow to us
+            self.workflow.last_delta = self
+            self.workflow.save()
         else:
             # we're already in the linked list, just save
             super(Delta, self).save(*args, **kwargs)

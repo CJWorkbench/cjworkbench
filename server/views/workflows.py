@@ -135,8 +135,9 @@ def workflow_detail(request, pk, format=None):
     if request.method == 'GET':
         if workflow.name.startswith('Demo'):
             log_user_event(request.user, 'Opened Demo Workflow', {'name': workflow.name})
-        serializer = WorkflowSerializer(workflow, context={'user' : request.user})
-        return Response(serializer.data)
+        with workflow.cooperative_lock():
+            serializer = WorkflowSerializer(workflow, context={'user' : request.user})
+            return Response(serializer.data)
 
     # We use PATCH to set the order of the modules when the user drags.
     elif request.method == 'PATCH':
@@ -158,21 +159,22 @@ def workflow_detail(request, pk, format=None):
             if not set(request.data.keys()).intersection({"newName", "public", "module_library_collapsed", "selected_wf_module"}):
                 raise ValueError('Unknown fields: {}'.format(request.data))
 
-            if 'newName' in request.data:
-                ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
+            with workflow.cooperative_lock():
+                if 'newName' in request.data:
+                    ChangeWorkflowTitleCommand.create(workflow, request.data['newName'])
 
-            if 'public' in request.data:
-                # TODO this should be a command, so it's undoable
-                workflow.public = request.data['public']
-                workflow.save()
+                if 'public' in request.data:
+                    # TODO this should be a command, so it's undoable
+                    workflow.public = request.data['public']
+                    workflow.save()
 
-            if 'module_library_collapsed' in request.data:
-                workflow.module_library_collapsed = request.data['module_library_collapsed']
-                workflow.save()
+                if 'module_library_collapsed' in request.data:
+                    workflow.module_library_collapsed = request.data['module_library_collapsed']
+                    workflow.save()
 
-            if 'selected_wf_module' in request.data:
-                workflow.selected_wf_module = request.data['selected_wf_module']
-                workflow.save()
+                if 'selected_wf_module' in request.data:
+                    workflow.selected_wf_module = request.data['selected_wf_module']
+                    workflow.save()
 
         except Exception as e:
             return Response({'message': str(e), 'status_code':400}, status=status.HTTP_400_BAD_REQUEST)
@@ -190,7 +192,6 @@ def workflow_detail(request, pk, format=None):
 @api_view(['PUT'])
 @renderer_classes((JSONRenderer,))
 def workflow_addmodule(request, pk, format=None):
-
     workflow = get_object_or_404(Workflow, pk=pk)
 
     if not workflow.user_authorized_write(request.user):
@@ -213,9 +214,10 @@ def workflow_addmodule(request, pk, format=None):
     if module.id_name in watch_list:
         log_user_event(request.user, 'Add ' + module.name, {'name': module.name, 'id_name':module.id_name})
 
-    delta = AddModuleCommand.create(workflow, module_version, insert_before)
-    serializer = WfModuleSerializer(delta.wf_module)
-    wfmodule_data = serializer.data
+    with workflow.cooperative_lock():
+        delta = AddModuleCommand.create(workflow, module_version, insert_before)
+        serializer = WfModuleSerializer(delta.wf_module)
+        wfmodule_data = serializer.data
     wfmodule_data['insert_before'] = request.data['insertBefore']
 
     return Response(wfmodule_data, status.HTTP_201_CREATED)
