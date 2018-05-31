@@ -72,6 +72,7 @@ textarea:focus, input:focus{
 // Shared style to all paramters in modules
 
 %parameter-base {
+  cursor: pointer;
   width:100%;
   height:3.5rem;
   border-radius: 3px;

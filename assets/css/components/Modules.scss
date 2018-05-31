@@ -241,12 +241,14 @@
 }
 
 // Module being dragged
-.wf-module--dragging{
-  //background-color: #FFE6D2;
+.wf-module--dragging {
+  opacity: .1!important;
+  background-color: pink;
 }
 .wf-card.wf-module--dragging:hover{
   //background-color: #FFE6D2;
   border:2px solid #F9C399;
+  opacity: .1;
 }
 .module-output--selected.wf-module--dragging{
   border:none;
