@@ -11,6 +11,8 @@ import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
 
+// --- Row and column formatting ---
+
 // Custom Formatter component, to render row number in a different style
 export class RowNumberFormatter extends React.Component {
 
@@ -37,12 +39,13 @@ RowNumberFormatter.propTypes = {
 };
 
 
+// Sort arrows, A-Z letter identifiers
 export class HeaderRenderer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isHovered: false,
-    }
+    };
     this.handleClick = this.handleClick.bind(this);
     this.handleHoverEnter = this.handleHoverEnter.bind(this);
     this.handleHoverLeave = this.handleHoverLeave.bind(this);
@@ -68,7 +71,7 @@ export class HeaderRenderer extends React.Component {
       'NONE': '',
       'ASC': 'icon-sort-up-vl-gray',
       'DESC': 'icon-sort-down-vl-gray'
-    }
+    };
 
     if(this.props.isSorted && (this.props.sortDirection != 'NONE')) {
       // If column is sorted, set the direction to current sort direction
@@ -127,9 +130,9 @@ export class HeaderRenderer extends React.Component {
 
 
 // Add row number col and make all cols resizeable
-function makeFormattedCols(props, rowNumKey) {
+function makeFormattedCols(props, rowNumKey, wfModuleId) {
   var cols = props.columns;
-  var editable = (props.onEditCell !== undefined);
+  var editable = (props.onEditCell !== undefined) && props.wfModuleId !== undefined; // no wfModuleId means blank table
   var coltypes = props.columnTypes;
 
   // Add a row number column, which has its own formatting
@@ -168,6 +171,8 @@ function makeFormattedCols(props, rowNumKey) {
   return formattedCols;
 }
 
+
+// --- Column Drag and Drop  ---
 
 // To weave a function through react-data-grid's innards...:
 //
@@ -294,14 +299,16 @@ class ConnectedDraggableHeaderCell extends React.Component {
 }
 
 
+// --- Main component  ---
+
 export default class DataGrid extends React.Component {
 
   static propTypes = {
     totalRows:          PropTypes.number.isRequired,
     getRow:             PropTypes.func.isRequired,
     columns:            PropTypes.array.isRequired,
-    columnTypes:        PropTypes.array.isRequired,
-    wfModuleId:         PropTypes.number.isRequired,    // which module are we showing the data for?
+    columnTypes:        PropTypes.array,     // not required if blank table
+    wfModuleId:         PropTypes.number,    // not required if blank table
     revision:           PropTypes.number,
     resizing:           PropTypes.bool,
     onEditCell:         PropTypes.func,
@@ -453,7 +460,7 @@ export default class DataGrid extends React.Component {
   };
 
   onDragStartHeader = (column) => {
-    if (this.state.dropContextValue.draggingColumnKey === column) return
+    if (this.state.dropContextValue.draggingColumnKey === column) return;
 
     this.setState({
       dropContextValue: { ...this.state.dropContextValue, draggingColumnKey: column },
@@ -461,7 +468,7 @@ export default class DataGrid extends React.Component {
   };
 
   onDragEndHeader = () => {
-    if (this.state.dropContextValue.draggingColumnKey === null) return
+    if (this.state.dropContextValue.draggingColumnKey === null) return;
 
     this.setState({
       dropContextValue: { ...this.state.dropContextValue, draggingColumnKey: null },
@@ -474,7 +481,7 @@ export default class DataGrid extends React.Component {
     if (this.props.totalRows > 0) {
 
       this.updateRowNumKey(this.props);
-      var columns = makeFormattedCols(this.props, this.rowNumKey);
+      var columns = makeFormattedCols(this.props, this.rowNumKey, this.props.wfModuleId);
       //console.log(columns)
 
       return(

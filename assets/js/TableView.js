@@ -239,10 +239,11 @@ export default class TableView extends React.Component {
       ncols = this.state.tableData.columns.length;
     } else {
       // Empty grid, big enough to fill screen.
-      // 50 rows by five blank columns (each with a different number of spaces, for unique names)
+      // 10 rows by four blank columns (each with a different number of spaces, for unique names)
       gridView =
         <div className="outputpane-data">
           <DataGrid
+            id={undefined}
             totalRows={10}
             columns={['',' ','   ','    ']}
             getRow={() => {return {}}}
