@@ -1,6 +1,7 @@
 import capybara
 from capybara.session import Session
 from contextlib import contextmanager
+import os
 
 
 # DISABLE capybara's default wait time! We're more explicit about timeouts in
@@ -13,6 +14,16 @@ capybara.default_max_wait_time = 0
 #def init_selenium_driver(app):
 #    from capybara.selenium.driver import Driver
 #    return Driver(app, browser="chrome")
+@capybara.register_driver('selenium')
+def init_selenium_driver(app):
+    from capybara.selenium.driver import Driver
+    from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+    capabilities = DesiredCapabilities.FIREFOX.copy()
+    capabilities['moz:firefoxOptions'] = {
+        'log': { 'level': 'trace' },
+        'args': [],
+    }
+    return Driver(app, browser="firefox", desired_capabilities=capabilities)
 
 
 def _sanitize_base_url(url: str) -> str:

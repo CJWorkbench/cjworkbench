@@ -3,6 +3,11 @@
 set -e
 #set -x
 
+# Set HEADLESS, one way or the other
+if [ "$HEADLESS" != "false" ]; then
+  HEADLESS=true
+fi
+
 cd "$(dirname "$0")"/..
 
 echo 'Building git server (`docker build ./integrationtests/git-server`)…' >&2
@@ -113,7 +118,13 @@ echo 'Testing. On error, the environment will stay up and you can use' >&2
 # Development: use pipenv, because developers run `pipenv install`
 # Travis: use python, because we manually pip install capybara-py+selenium,
 # integration tests have no other deps, and pipenv is not installed.
-PYTHON=$(pipenv --venv >/dev/null 2>&1 && echo 'pipenv run python' || echo 'python')
+PYTHON="python"
+if [ "$HEADLESS" != "false" ]; then
+  PYTHON="env MOZ_HEADLESS=1 $PYTHON"
+fi
+if pipenv --venv >/dev/null 2>&1; then
+  PYTHON="pipenv run $PYTHON"
+fi
 echo "'$PYTHON -m unittest -v integrationtests.[module]' to re-run the tests" >&2
 
 if [ -z "$1" ]; then
