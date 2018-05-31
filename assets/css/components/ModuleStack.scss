@@ -66,7 +66,6 @@
       width: 27rem;
       height: .5rem;
       cursor: pointer;
-      z-index:2;
       border: .1rem solid $WF-background;
       top: -1rem;
       font-size: 1rem;
@@ -117,12 +116,22 @@
     top: 0;
     left: 0;
     width: $module-width;
-    margin:0 $module-margin;
+    margin: 0 $module-margin;
     height: 0.5rem;
+    z-index: 1;
 
     &.is-drag-hovering {
       opacity: 1;
       background: $brand-workspace;
+    }
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -1rem;
+      bottom: -1rem;
+      left: 0;
+      right: 0;
     }
   }
 }
