@@ -14,7 +14,7 @@
   .add-module-search {
     width: $module-width;
     margin: 0 $module-margin;
-    margin-top: 1.2rem;
+    top:1.2rem;
     margin-bottom: 40rem; // so there's always a scrollbar, and clicking "Add Module" doesn't add one
     position: relative;
 
@@ -53,6 +53,7 @@
     width: $module-width;
     margin-left: $module-margin;
     position: relative;
+    height: .5rem;
 
     &.searching {
       z-index: 2; // appear above other modules/in-betweens
@@ -63,26 +64,34 @@
       // be invisible; but the big borders are part of the button, so they're
       // clickable/hoverable.
       display: block;
-      width: 27rem;
+      width: 26rem;
       height: .5rem;
       cursor: pointer;
-      border: .25rem solid $WF-background;
+      border: .1rem solid transparent;
       top: -1rem;
       font-size: 1rem;
       color: transparent;
       background: transparent;
       margin: 0;
       padding: 0;
+      &::before {
+        content: '';
+        position: absolute;
+        top: -1rem;
+        bottom: -5rem;
+        left: 0;
+        right: 0;
+      }
 
       i {
         position: absolute;
-        right: -1.8rem;
-        top: -.5rem;
+        left: -1.8rem;
+        top: -.6rem;
         font-size: 1.2rem;
         line-height: 1;
-        width: 1.6rem;
-        height: 1.6rem;
-        border-radius: .8rem;
+        width: 1.8rem;
+        height: 1.8rem;
+        border-radius: 1rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -119,7 +128,7 @@
     margin: 0 $module-margin;
     height: 0.5rem;
     z-index: 1;
-    background: $brand-workspace;
+    background: transparent;
 
     &.is-drag-hovering {
       opacity: 1;
@@ -129,8 +138,8 @@
     &::before {
       content: '';
       position: absolute;
-      top: -1rem;
-      bottom: -1rem;
+      top: -2.5rem;
+      bottom: -2.5rem;
       left: 0;
       right: 0;
     }
