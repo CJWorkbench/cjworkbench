@@ -139,6 +139,10 @@
     @extend %font-nunito-regular;
     text-align: left;
   }
+
+  &.dragging {
+    background-color: $brand-workspace;
+  }
 }
 
 
@@ -153,7 +157,6 @@
   /* all good & selected */
   .module-output--selected {
     height: 100%;
-    background-color:#fff;
     border: 2px solid $module-action;
     display: flex;
     align-items: center;
@@ -186,7 +189,6 @@
   /* error  */
   .module-output--error {
     height: 100%;
-    background-color: transparent;
     border:2px solid rgba(0,114,110,0);
     display: flex;
     align-items: center;
@@ -203,7 +205,6 @@
   /* error & selected */
   .module-output--error-selected {
     height: 100%;
-    background-color: transparent;
     border:2px solid rgba(232,114,110,0.5);
     display: flex;
     align-items: center;
@@ -240,20 +241,6 @@
   font-size: 1.2rem;
 }
 
-// Module being dragged
-.wf-module--dragging {
-  opacity: .1!important;
-  background-color: pink;
-}
-.wf-card.wf-module--dragging:hover{
-  //background-color: #FFE6D2;
-  border:2px solid #F9C399;
-  opacity: .1;
-}
-.module-output--selected.wf-module--dragging{
-  border:none;
-}
-
 /*** Module Parameters spacing ***/
 
 .label-margin{
@@ -285,12 +272,6 @@
   color:$strong-gray;
   opacity: 1;
   decoration:none;
-}
-
-// Action button in Module
-
-.wf-card .action-button {
-	height: 3.5rem;
 }
 
 /*Charts module using Chartbuilder*/

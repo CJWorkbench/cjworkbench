@@ -79,12 +79,6 @@ export class WfModule extends React.PureComponent {
         isCollapsed: newProps.wfModule.is_collapsed
       })
     }
-
-    if(!newProps.isDragging && this.state.dragPosition) {
-      this.setState({
-        dragPosition: null
-      })
-    }
   }
 
   // Scroll when we create a new wfmodule
@@ -125,10 +119,18 @@ export class WfModule extends React.PureComponent {
     ev.dataTransfer.effectAllowed = 'move'
     ev.dataTransfer.dropEffect = 'move'
     this.props.onDragStart(dragObject)
+
+    this.setState({
+      isDragging: true,
+    })
   }
 
   onDragEnd = (ev) => {
     this.props.onDragEnd()
+
+    this.setState({
+      isDragging: false,
+    })
   }
 
   // These functions allow parameters to access each others value (text params only)
@@ -305,11 +307,11 @@ export class WfModule extends React.PureComponent {
     return (
       <div onClick={this.click} className={'wf-module' + (this.props.isLessonHighlight ? ' lesson-highlight' : '')} data-module-name={module.name}>
         {notes}
-        <div className={'wf-card '+ (this.props.isDragging ? 'wf-module--dragging ' : '')} ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
+        <div className={'wf-card '+ (this.state.isDragging ? 'dragging ' : '')} ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
 
           <div>
             <div className='output-bar-container'>
-              <StatusBar status={wfModule.status} isSelected={this.props.selected} isDragging={this.props.isDragging}/>
+              <StatusBar status={wfModule.status} isSelected={this.props.selected} isDragging={this.state.isDragging}/>
             </div>
             <div className='module-content' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
                 <div className='module-card-header'>
