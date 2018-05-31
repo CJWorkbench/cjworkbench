@@ -2,6 +2,7 @@
 # Clients open a socket on a specific workflow, and all clients viewing that workflow are a "group"
 import json
 from asgiref.sync import async_to_sync
+from channels.db import database_sync_to_async
 from channels.layers import get_channel_layer
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels.exceptions import DenyConnection
@@ -27,8 +28,8 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         return _workflow_channel_name(self.workflow_id)
 
 
-    @property
-    def workflow(self):
+    @database_sync_to_async
+    def get_workflow(self):
         """The current user's Workflow, if exists and authorized; else None
         """
         # [adamhooper, 2018-05-24] This should probably be async.
@@ -48,7 +49,7 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
 
 
     async def connect(self):
-        if self.workflow is None: raise DenyConnection()
+        if await self.get_workflow() is None: raise DenyConnection()
 
         await self.channel_layer.group_add(self.workflow_channel_name,
                                            self.channel_name)
