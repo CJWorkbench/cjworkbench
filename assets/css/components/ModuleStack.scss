@@ -8,12 +8,12 @@
 
   .in-between-modules {
     position: relative;
-    margin:0;
+    margin: 0;
   }
 
   .add-module-search {
     width: $module-width;
-    margin:0 $module-margin;
+    margin: 0 $module-margin;
     margin-top: 1.2rem;
     margin-bottom: 40rem; // so there's always a scrollbar, and clicking "Add Module" doesn't add one
     position: relative;
@@ -66,12 +66,13 @@
       width: 27rem;
       height: .5rem;
       cursor: pointer;
-      border: .1rem solid $WF-background;
+      border: .25rem solid $WF-background;
       top: -1rem;
       font-size: 1rem;
       color: transparent;
       background: transparent;
-      margin: .1rem 0 .1rem 0;
+      margin: 0;
+      padding: 0;
 
       i {
         position: absolute;
@@ -112,17 +113,17 @@
   .module-drop-target {
     display: block;
     position: absolute;
-    opacity: 0;
     top: 0;
     left: 0;
     width: $module-width;
     margin: 0 $module-margin;
     height: 0.5rem;
     z-index: 1;
+    background: $brand-workspace;
 
     &.is-drag-hovering {
       opacity: 1;
-      background: $brand-workspace;
+      background: $brand-orange;
     }
 
     &::before {
