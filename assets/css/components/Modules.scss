@@ -28,6 +28,10 @@
       display: inline-block;
     }
 
+    .WFmodule-icon {
+      font-size: 1.2rem;
+    }
+
     .module-name {
       font-size: 1.2rem;
       line-height: 1.2rem;
@@ -42,8 +46,10 @@
       background: transparent;
       color: inherit;
       font-size: 1.2rem;
-      padding: 1rem .75rem 1rem 1.5rem;
+      padding: 1rem .5rem 1rem 1.5rem;
       cursor: pointer;
+      opacity: .5;
+      &:hover{opacity: 1}
     }
 
     .module-name {
@@ -62,7 +68,7 @@
       color:$light-gray;
       border-radius: 5rem;
       margin-right:.5rem;
-      opacity: 0.5;
+      opacity: 1;
 
       &.lesson-highlight {
         color: $brand-learn;
