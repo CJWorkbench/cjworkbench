@@ -12,6 +12,8 @@ export default class EditableNotes extends React.Component {
     this.state = {
       value: this.props.value
     }
+
+    this.wrapperRef = React.createRef()
   }
 
   // Enter editing state upon mount
@@ -51,7 +53,8 @@ export default class EditableNotes extends React.Component {
   // selects the text for editing on a click
   handleClick(event) {
     if (!this.props.isReadOnly) {
-      if (this.textInput) this.textInput.childNodes[0].select()
+      const ref = this.wrapperRef.current
+      if (ref) ref.childNodes[0].select()
     }
   }
 
@@ -60,7 +63,7 @@ export default class EditableNotes extends React.Component {
     // Saves a ref to parent to allow targeting of imported component
     return <span className='note-wrapper'
               // Saves a reference to parent to allow targeting of imported component
-              ref={(input) => {this.textInput = input;}}
+              ref={this.wrapperRef}
               onClick={this.handleClick}
             >
               {this.props.isReadOnly
