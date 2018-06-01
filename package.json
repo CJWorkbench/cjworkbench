@@ -32,7 +32,7 @@
     "react-fine-uploader": "^1.1.0",
     "react-redux": "^5.0.7",
     "react-sortable": "^2.0.0",
-    "react-textarea-autosize": "^5.1.0",
+    "react-textarea-autosize": "^6.1.0",
     "react-twitter-widgets": "^1.7.1",
     "reactstrap": "^6.0.1",
     "redux": "^4.0.0",
