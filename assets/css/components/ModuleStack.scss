@@ -1,6 +1,5 @@
 .module-stack {
-  width: $module-stack-width;
-  flex: 0 0 auto;
+  flex: 0 0 auto; // auto-width: width of contents (including scrollbar)
   padding-top: 1.5rem;
   background-color: $WF-background;
   overflow-y: scroll;
