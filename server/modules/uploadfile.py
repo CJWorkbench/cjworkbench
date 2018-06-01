@@ -1,7 +1,7 @@
 from django.conf import settings
 from server.models.UploadedFile import UploadedFile
 from server.models.StoredObject import StoredObject
-from server.utils import sanitize_dataframe,truncate_table_if_too_big
+from server.sanitizedataframe import sanitize_dataframe,truncate_table_if_too_big
 from server.models import ChangeDataVersionCommand, StoredObject
 from django.utils.translation import gettext as _
 from .moduleimpl import ModuleImpl

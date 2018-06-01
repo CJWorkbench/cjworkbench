@@ -3,7 +3,7 @@ import numpy as np
 from .moduleimpl import ModuleImpl
 import json
 import logging
-from server.utils import safe_column_to_string
+from server.sanitizedataframe import safe_column_to_string
 
 logger = logging.getLogger(__name__)
 

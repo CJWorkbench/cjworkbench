@@ -3,7 +3,7 @@ import numpy as np
 from .moduleimpl import ModuleImpl
 import json
 from .editcells import to_numeric
-from server.utils import safe_column_to_string
+from server.sanitizedataframe import safe_column_to_string
 import logging
 
 

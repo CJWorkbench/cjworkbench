@@ -60,6 +60,7 @@ class RefineTests(LoggedInTestCase):
         self.edits_pval.save()
         out = execute_nocache(self.wf_module)
         ref_table = self.table[[False, True, True, False]]
+        ref_table.index = pd.RangeIndex(len(ref_table.index))  # reset to contiguous indices
         self.assertTrue(out.equals(ref_table))
 
         # Perform a selection on the same value, table should be back to normal

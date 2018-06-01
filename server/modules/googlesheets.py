@@ -4,7 +4,7 @@ from cjworkbench.google_oauth import maybe_authorize
 from django.http import JsonResponse, HttpResponseBadRequest
 import httplib2
 from googleapiclient.discovery import build
-from server.utils import *
+from server.sanitizedataframe import *
 import io
 import json
 import pandas as pd

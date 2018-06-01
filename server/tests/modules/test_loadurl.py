@@ -6,7 +6,7 @@ import os
 import json
 import tempfile
 from django.test import override_settings
-from server.utils import sanitize_dataframe
+from server.sanitizedataframe import sanitize_dataframe
 from collections import OrderedDict
 
 mock_json_text = '[ {"Month" : "Jan", "Amount": 10},\n {"Month" : "Feb", "Amount": 20} ]'

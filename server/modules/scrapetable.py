@@ -3,7 +3,7 @@ import pandas as pd
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from server.versions import save_fetched_table_if_changed
-from server.utils import sanitize_dataframe
+from server.sanitizedataframe import sanitize_dataframe
 from django.utils.translation import gettext as _
 from urllib.error import URLError, HTTPError
 

@@ -7,7 +7,7 @@ import io
 import requests
 import json
 from server.versions import save_fetched_table_if_changed
-from server.utils import sanitize_dataframe
+from server.sanitizedataframe import sanitize_dataframe
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 

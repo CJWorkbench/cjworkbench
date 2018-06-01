@@ -6,7 +6,7 @@ from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
 from .dynamicdispatch import get_module_render_fn,get_module_html_path
 from .importmodulefromgithub import original_module_lineno
-from .utils import sanitize_dataframe, truncate_table_if_too_big
+from .sanitizedataframe import sanitize_dataframe, truncate_table_if_too_big
 import os, sys, traceback, types, inspect
 from django.utils.translation import gettext as _
 
