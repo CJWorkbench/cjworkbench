@@ -1,0 +1,24 @@
+{
+  "name": "Line Chart",
+  "id_name": "linechart",
+  "category" : "Visualize",
+  "icon" : "linechart",
+  "description" : "Create a line chart.",
+  "help_url":"modules/visualization/column-and-line-charts",
+  "html_output" : true,
+  "parameters": [
+    {
+      "name": "Chart Options",
+      "id_name": "chart_editor",
+      "type": "custom",
+      "ui-only": true
+    },
+    {
+      "name": "Chart Type",
+      "id_name": "chart_type",
+      "type": "string",
+      "default": "line",
+      "visible": false
+    }
+  ]
+}

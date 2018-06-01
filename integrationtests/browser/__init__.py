@@ -94,6 +94,26 @@ class Browser:
         self.page.fill_in(locator, **kwargs)
 
 
+    def check(self, locator: str, **kwargs) -> None:
+        """Check the checkbox with name/label/id 'locator'.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self._capybarize_kwargs(kwargs)
+        self.page.check(locator, **kwargs)
+
+
+    def uncheck(self, locator: str, **kwargs) -> None:
+        """Unheck the checkbox with name/label/id 'locator'.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self._capybarize_kwargs(kwargs)
+        self.page.uncheck(locator, **kwargs)
+
+
     def select(self, locator: str, text: str, **kwargs) -> None:
         """Selects 'text' in the select box with name/label/id 'locator'.
 
@@ -101,7 +121,8 @@ class Browser:
         wait -- True or number of seconds to wait until element appears
         """
         self._capybarize_kwargs(kwargs)
-        self.page.select(text, field=locator)
+        kwargs['field'] = locator
+        self.page.select(text, **kwargs)
 
 
     def click_button(self, locator: str, **kwargs) -> None:

@@ -16,8 +16,13 @@
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
-      >Add the module 'Add from URL' and paste in the following URL before clicking 'Update'.
+      data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].moduleName === 'Add from URL'"
+      >Add the module 'Add from URL'.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      >Paste in the following URL and click 'Update'.
       <div class="copy-txt content-3 t-white">https://app.workbenchdata.com/static/data/population_dirty_data.csv</div>
       <p class="lesson-note">The two columns on at the far right of the dataset are empty.</p>
     </li>
@@ -106,7 +111,7 @@
       data-test="return workflow.wfModules.length > 5 && workflow.wfModules[5].moduleName === 'Line Chart'"
       >Add the module ‘Line Chart’ using the search in the module library.</li>
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
+      data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
       data-test="const wfModule = workflow.wfModules[5]; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
       >Add a title to the chart, and you're done!
     </li>

@@ -88,6 +88,7 @@ class EditRow extends React.Component {
                 style={{'whiteSpace': 'nowrap'}}>
                 <div className="d-flex align-items-center">
                   <input
+                      name={`selected[${this.state.initValue}]`}
                       type='checkbox'
                       onChange={this.handleSelectionChange}
                       checked={this.state.selected}
@@ -95,6 +96,7 @@ class EditRow extends React.Component {
                   />
                   <input
                       type='text'
+                      name={`rename[${this.state.initValue}]`}
                       value={this.state.dataValue}
                       onChange={this.handleValueChange}
                       onFocus={this.handleFocus}

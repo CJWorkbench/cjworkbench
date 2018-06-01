@@ -6,8 +6,16 @@ class LessonTest(LoggedInIntegrationTest):
         import_workbench_module(self.browser, slug)
 
 
-    def expect_highlight_next(self) -> None:
-        self.browser.assert_element('button[name=Next].lesson-highlight')
+    def expect_highlight_next(self, **kwargs) -> None:
+        """Assert highlight on the "Next" button at the lesson's footer.
+        
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self.browser.assert_element(
+            'button[name=Next].lesson-highlight',
+            **kwargs
+        )
 
 
     def click_next(self) -> None:

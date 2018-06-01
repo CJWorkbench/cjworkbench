@@ -237,12 +237,12 @@ export default class WfParameter extends React.Component {
       )
     } else if (id_name == 'refine') {
         return (
-            <Refine
-                wfModuleId={this.props.wf_module_id}
-                selectedColumn={this.props.getParamText('column')}
-                existingEdits={this.props.p.value}
-                saveEdits={(val) => this.paramChanged(val)}
-                revision={this.props.revision}
+          <Refine
+            wfModuleId={this.props.wf_module_id}
+            selectedColumn={this.props.getParamText('column')}
+            existingEdits={this.props.p.value}
+            saveEdits={(val) => this.paramChanged(val)}
+            revision={this.props.revision}
             />
         )
     } else if (id_name == 'reorder-history') {
