@@ -381,11 +381,12 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
 // SET_SELECTED_MODULE
 // Set the selected module in the workflow
 export function setSelectedWfModuleAction(wfModuleId) {
-  const workflow = store.getState().workflow
+  const state = store.getState()
 
-  if (workflow && wfModuleId === workflow.selected_wf_module) {
+  if (state.workflow && wfModuleId === state.selected_wf_module) {
     return NOP
   } else {
+    const workflow = state.workflow
     const workflowId = workflow ? workflow.id : null
 
     return {
