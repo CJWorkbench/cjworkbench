@@ -57,7 +57,7 @@
     "empty-module": "0.0.2",
     "enzyme": "^3.3.0",
     "enzyme-adapter-react-16": "^1.1.1",
-    "enzyme-to-json": "^3.3.3",
+    "enzyme-to-json": "^3.3.4",
     "file-loader": "^1.1.11",
     "jest": "^22.4.3",
     "jquery": "^3.3.1",
