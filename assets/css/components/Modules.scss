@@ -141,7 +141,8 @@
   }
 
   &.dragging {
-    background-color: $brand-workspace;
+    opacity: .6;
+    outline: .5rem solid $brand-orange;
   }
 }
 
