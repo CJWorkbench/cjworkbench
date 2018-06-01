@@ -93,6 +93,7 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
+    isReadOnly: PropTypes.bool.isRequired,
   }
 
   constructor(props) {
@@ -140,7 +141,15 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
     }
   }
 
+  renderReadOnly() {
+    return (
+      <div className="in-between-modules read-only"></div>
+    )
+  }
+
   render() {
+    if (this.props.isReadOnly) return this.renderReadOnly()
+
     return (
       <div className="in-between-modules">
         {this.renderModuleSearchButton()}
@@ -161,6 +170,7 @@ class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     isLessonHighlightSearch: PropTypes.bool.isRequired,
+    isReadonly: PropTypes.bool.isRequired,
   }
 
   renderModuleSearchButton() {
@@ -186,6 +196,7 @@ class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     isLessonHighlightSearch: PropTypes.bool.isRequired,
+    isReadonly: PropTypes.bool.isRequired,
   }
 
   renderModuleSearchButton() {
@@ -218,6 +229,7 @@ class ModuleStack extends React.Component {
     removeModule:       PropTypes.func.isRequired,
     loggedInUser:       PropTypes.object,            // undefined if no one logged in (viewing public wf)
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
+    isReadOnly:         PropTypes.bool.isRequired,
   }
 
   constructor(props) {
@@ -264,6 +276,7 @@ class ModuleStack extends React.Component {
     return (
       <ModuleStackInsertSpot
         index={index}
+        isReadOnly={this.props.isReadOnly}
         isDraggingModuleAtIndex={this.state.isDraggingModuleAtIndex}
         addModule={this.props.addModule}
         moveModuleByIndex={this.props.moveModuleByIndex}
@@ -323,7 +336,8 @@ class ModuleStack extends React.Component {
           addModule={this.props.addModule}
           moveModuleByIndex={this.props.moveModuleByIndex}
           isLessonHighlightSearch={this.props.testLessonHighlightIndex(wfModules.length)}
-      />
+          isReadOnly={this.props.isReadOnly}
+          />
       </div>
     )
   }
@@ -333,6 +347,7 @@ const mapStateToProps = (state) => {
   const { testHighlight } = lessonSelector(state)
   return {
     wf_modules: state.workflow.wf_modules,
+    isReadOnly: !state.loggedInUser,
     testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', index: index }),
   }
 }

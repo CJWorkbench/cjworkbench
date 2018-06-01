@@ -8,6 +8,10 @@
   .in-between-modules {
     position: relative;
     margin: 0;
+
+    &.read-only {
+      height: .5rem;
+    }
   }
 
   .add-module-search {
