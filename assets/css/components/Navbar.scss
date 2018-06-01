@@ -14,7 +14,7 @@
   position: relative;
   left:-7.7rem;
   height:100%;
-  padding-top: 1rem;
+  padding-top: .5rem;
   cursor: pointer;
 
   a {
@@ -38,7 +38,7 @@
       height:.6rem;
       background-color: $white;
       position: relative ;
-      top:1.3rem;
+      top:1.1rem;
     }
   }
 }
@@ -55,7 +55,7 @@
   justify-content: space-between;
   background-color: $brand-workspace;
   color: #FFFFFF;
-  padding: 0.5rem 4rem 0.5rem 4rem;
+  padding: 1.1rem 4rem 1.1rem 4rem;
 
   .links {
     // Making the underline in nav toggle highlight the selected page
