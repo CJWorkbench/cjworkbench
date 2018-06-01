@@ -31,6 +31,8 @@
     display: flex;
     flex-direction: row;
     background-color: $WF-background;
+
+    overflow: hidden; // height determined by parent, not children. https://www.pivotaltracker.com/story/show/158034835
   }
 
   .workflow-root.in-lesson .workflow-columns {

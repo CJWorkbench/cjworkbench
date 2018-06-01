@@ -211,19 +211,19 @@ export default class WorkflowNavBar extends React.Component {
 
     var modals = this.renderModals();
 
-    var spinner = (this.state.spinnerVisible)
-                    ? <div id="spinner-container">
-                        <div id="spinner-l1">
-                          <div id="spinner-l2">
-                            <div id="spinner-l3"></div>
-                          </div>
-                        </div>
-                      </div>
-                    : null
+    var spinner = this.state.spinnerVisible ? (
+      <div id="spinner-container">
+        <div id="spinner-l1">
+          <div id="spinner-l2">
+            <div id="spinner-l3"></div>
+          </div>
+        </div>
+      </div>
+    ) : null
 
     return (
-      <div>
-        <div className="d-flex justify-content-center">{spinner}</div>
+      <React.Fragment>
+        {spinner}
         <nav className="navbar">
           <a href="/workflows/" className="logo-navbar">
             <img className="image" src="/static/images/logo.svg"/>
@@ -248,7 +248,7 @@ export default class WorkflowNavBar extends React.Component {
             {contextMenu}
           </div>
         </nav>
-      </div>
+      </React.Fragment>
     );
   }
 }
