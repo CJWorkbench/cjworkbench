@@ -143,6 +143,9 @@
   &.dragging {
     opacity: .6;
     outline: .5rem solid $brand-orange;
+    cursor: grabbing;
+    cursor: -moz-grabbing;
+    cursor: -webkit-grabbing;
   }
 }
 
