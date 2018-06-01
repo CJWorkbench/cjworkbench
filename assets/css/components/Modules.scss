@@ -1,10 +1,17 @@
 .wf-module {
+
   .wf-card {
     width: $module-width;
     margin: 0 $module-margin; // most of the in-between margin comes from .add-module-in-between-search
     background-color: #f8f8f8;
     position: relative;
     &:hover {background:#fcfcfc;}
+
+    &.wf-card:hover .context-buttons {
+      a.help-button, button.edit-note, button.context-button {
+        opacity: 1;
+      }
+    }
   }
 
   .module-card-params {
@@ -22,10 +29,6 @@
     a {
       text-decoration:none;
       color: inherit;
-    }
-
-    .dropdown {
-      display: inline-block;
     }
 
     .WFmodule-icon {
@@ -46,10 +49,12 @@
       background: transparent;
       color: inherit;
       font-size: 1.2rem;
-      padding: 1rem .5rem 1rem 1.5rem;
+      padding: 1rem .3rem 1rem 1.5rem;
       cursor: pointer;
       opacity: .5;
       &:hover{opacity: 1}
+
+      i.icon-sort-right {font-size:1rem;}
     }
 
     .module-name {
@@ -79,18 +84,21 @@
     }
 
     .context-buttons {
+
+      align-items: center;
       flex: 1 0 auto; // grow to the right
       text-align: right;
       white-space: nowrap;
-      margin-right: 1.5rem;
+      margin-right: 1rem;
 
-      &>a, &>button, &>.dropdown, &>.dropdown>button {
+      &>a, &>button, &>.dropdown>button {
         // Beware: we're highlighting .dropdown _and_ .dropdown>button. So be
         // sure these rules don't conflict when nested. (e.g., no `opacity`)
         display: inline-block;
         font-size: 1.2rem;
         width: 2.2rem;
         height: 2.2rem;
+        border-radius: 5rem;
         line-height:1;
         text-align: center;
         vertical-align: middle;
@@ -98,25 +106,37 @@
         margin: 0;
         border: 0;
         background: transparent;
-
         color: $medium-gray;
         &:hover {
           color: $brand-text--dark;
+          background-color: $dark-accent--soft;
         }
+      }
+      //menu button when focused and menu visisble
+      .btn-secondary:focus {
+        background-color:$Vlight-gray;
+        color:$strong-gray;
+      }
+
+      a.help-button, button.edit-note, button.context-button {
+        opacity: 0; // only show context buttons when hovering over wf-card
       }
 
       i.icon-help {
         vertical-align: -.6rem; // icky glyph sizing in the font?
+        font-size: 1.25rem;
       }
 
-      a.help-button, button.edit-note, button.context-button {
-        opacity: 0; // only show context buttons when hovering over header
+      .edit-note {
+        margin-left: .1rem;
+        margin-right:.2rem;
+        i.icon-note { margin-left: .1rem;}
       }
-    }
 
-    &:hover .context-buttons {
-      a.help-button, button.edit-note, button.context-button {
-        opacity: 1;
+      .dropdown {
+        margin-top: .1rem;
+        display: inline-block;
+        margin-left: -.3rem;
       }
     }
 
