@@ -1,114 +1,135 @@
-.wf-card{
-  width: $module-width;
-  margin: 0 $module-margin; // most of the in-between margin comes from .add-module-in-between-search
-  background-color: #f8f8f8;
-  position: relative;
-  &:hover {background:#fcfcfc;}
+.wf-module {
+  .wf-card {
+    width: $module-width;
+    margin: 0 $module-margin; // most of the in-between margin comes from .add-module-in-between-search
+    background-color: #f8f8f8;
+    position: relative;
+    &:hover {background:#fcfcfc;}
+  }
+
+  .module-card-params {
+    display: none;
+  }
+  &.expanded .module-card-params {
+    display: block;
+  }
 
   // Header of module in stack. Includes everything showm when collapsed.
   .module-card-header {
-    clear:left;
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin:0 1rem 0 1.5rem;
-    height:4rem;
 
     a {
       text-decoration:none;
+      color: inherit;
     }
 
-    .module-id--group {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
+    .dropdown {
+      display: inline-block;
+    }
+
+    .module-name {
+      font-size: 1.2rem;
+      line-height: 1.2rem;
+      font-weight: 500;
+    }
+
+    button.wf-module-collapse {
+      // Make it big and clickable! Lots of padding.
+      // This button dictates the height of the entire header.
+      margin: 0;
+      border: 0;
+      background: transparent;
+      color: inherit;
+      font-size: 1.2rem;
+      padding: 1rem .75rem 1rem 1.5rem;
       cursor: pointer;
-      &:hover .context-collapse-button{opacity:1;}
-
-      .WFmodule-name{
-        font-size: 1.2rem;
-        line-height: 1.2rem;
-        font-weight: 500;
-      }
-
-      .WFmodule-icon {
-        font-size: 1.2rem;
-      }
-
-      .context-collapse-button {
-        border: 0;
-        width: 1rem;
-        height: 2.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background-color: transparent;
-        color:$light-gray;
-        border-radius: 5rem;
-        margin-right:.5rem;
-        opacity: 0.5;
-
-        &.lesson-highlight {
-          color: $brand-learn;
-          font-weight: bold;
-          //border:1px solid $brand-learn;
-          opacity: 1;
-        }
-      }
     }
 
-    .context-buttons--container {
-      display: flex;
-      align-items: center;
-      justify-content: space-around;
+    .module-name {
+      color: $brand-text--dark;
+      cursor: grab;
     }
 
-    // Context buttons - three dots buttons with menu
-    .context-button {
-      font-size: 1rem;
+    .context-collapse-button {
+      border: 0;
+      width: 1rem;
+      height: 2.5rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 2.2rem;
-      height: 2.2rem;
+      background-color: transparent;
+      color:$light-gray;
+      border-radius: 5rem;
+      margin-right:.5rem;
+      opacity: 0.5;
 
-      // Actual icon of context menu in module
-      .context-button--icon {
-        font-size: 1.2rem;
-      }
-
-      // Cheap fix issue for alignment
-      .icon-note {
-        margin-top: -.2rem;
-      }
-
-      .help-button {
-        margin-top:-0.54rem;
-        margin-left: -.045rem;
+      &.lesson-highlight {
+        color: $brand-learn;
+        font-weight: bold;
+        //border:1px solid $brand-learn;
         opacity: 1;
       }
+    }
 
+    .context-buttons {
+      flex: 1 0 auto; // grow to the right
+      text-align: right;
+      white-space: nowrap;
+      margin-right: 1.5rem;
+
+      &>a, &>button, &>.dropdown, &>.dropdown>button {
+        // Beware: we're highlighting .dropdown _and_ .dropdown>button. So be
+        // sure these rules don't conflict when nested. (e.g., no `opacity`)
+        display: inline-block;
+        font-size: 1.2rem;
+        width: 2.2rem;
+        height: 2.2rem;
+        line-height:1;
+        text-align: center;
+        vertical-align: middle;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        background: transparent;
+
+        color: $medium-gray;
+        &:hover {
+          color: $brand-text--dark;
+        }
+      }
+
+      i.icon-help {
+        vertical-align: -.6rem; // icky glyph sizing in the font?
+      }
+
+      a.help-button, button.edit-note, button.context-button {
+        opacity: 0; // only show context buttons when hovering over header
+      }
+    }
+
+    &:hover .context-buttons {
+      a.help-button, button.edit-note, button.context-button {
+        opacity: 1;
+      }
     }
 
     // Alert icons in modules when notifications are set
     .notification-badge{
-      display: flex;
-      opacity: 0.6;
-      margin-right: 0.4rem;
-      &:hover {opacity:1;}
+      display: inline-block;
+      cursor: pointer;
+      font-size: 1.3rem;
 
-      .notification-badge-icon{
-        font-size: 1.3rem;
-        cursor: pointer;
+      span.count {
+        font-size: 1rem;
       }
     }
   }
+
   .module-content {
     position:relative;
     width:100%;
     padding:0;
-
-
 
     .module-card-params {
       padding: 0 1.5rem 1rem 1.5rem;
@@ -253,53 +274,6 @@
 
 .wf-card .label{
   margin-bottom: 0px;
-}
-
-.help-button {
-  cursor: pointer;
-  border-radius:5rem;
-  width:2.5rem;
-  height:2.5rem;
-  border: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: transparent;
-  color:$strong-gray;
-  opacity: 0.5;
-  margin-right:0;
-}
-
-.help-button:hover {
-  border: none;
-  background-color: transparent;
-  color:$strong-gray;
-  opacity: 1;
-  decoration:none;
-}
-
-/*Charts module using Chartbuilder*/
-
-.svg-credit-data {
-  display:none;
-}
-
-.grid-lines{
-  opacity: 0.5;
-}
-
-.zero{
-  opacity: 0.3;
-}
-
-.chartbuilder-svg{
-  border:1px #f1f1f1 solid;
-}
-
-svg .svg-background{
-  opacity: 1;
-  fill:#fff;
-  border: 1px red;
 }
 
 // Overcome Bootstrap putting buttons over one another. Fixes the problem:

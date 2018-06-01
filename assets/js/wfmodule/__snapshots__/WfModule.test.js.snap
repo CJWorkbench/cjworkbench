@@ -2,7 +2,7 @@
 
 exports[`WfModule, not read-only mode matches snapshot 1`] = `
 <div
-  className="wf-module"
+  className="wf-module expanded"
   data-module-name="Load from URL"
   onClick={[Function]}
 >
@@ -23,178 +23,128 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
       </div>
       <div
         className="module-content"
-        onMouseEnter={[Function]}
-        onMouseLeave={[Function]}
       >
         <div
           className="module-card-header"
         >
+          <WfModuleCollapseButton
+            isCollapsed={false}
+            isLessonHighlight={false}
+            onCollapse={[Function]}
+            onExpand={[Function]}
+          />
+          <i
+            className="icon-undefined WFmodule-icon mr-2"
+          />
           <div
-            className="module-id--group"
-            onClick={[Function]}
+            className="module-name"
           >
-            <WfModuleCollapseButton
-              isCollapsed={false}
-              isLessonHighlight={false}
-            />
-            <div
-              className="icon-undefined WFmodule-icon mr-2"
-            />
-            <div
-              className="t-d-gray WFmodule-name"
-            >
-              Load from URL
-            </div>
+            Load from URL
           </div>
           <div
-            className="context-buttons--container"
+            className="context-buttons"
           >
-            <div
-              style={
-                Object {
-                  "opacity": "0",
-                }
-              }
+            <a
+              className="help-button"
+              target="_blank"
+              title="Help for this module"
             >
-              <button
-                className="context-button btn"
-              >
-                <a
-                  className="help-button d-flex align-items-center"
-                  target="_blank"
-                >
-                  <div
-                    className="icon-help"
-                  />
-                </a>
-              </button>
-            </div>
-            <div
-              style={
-                Object {
-                  "opacity": "0",
-                }
-              }
-            >
-              <button
-                className="context-button btn edit-note"
-                onClick={[Function]}
-                title="Edit Note"
-              >
-                <div
-                  className="icon-note icon-l-gray "
-                />
-              </button>
-            </div>
-            <div
-              style={
-                Object {
-                  "opacity": "0",
-                }
-              }
-            >
-              <WfModuleContextMenu
-                id={999}
-                removeModule={[Function]}
-                stopProp={[Function]}
+              <i
+                className="icon-help"
               />
-            </div>
+            </a>
+            <button
+              className="btn edit-note"
+              onClick={[Function]}
+              title="Edit Note"
+            >
+              <i
+                className="icon-note"
+              />
+            </button>
+            <WfModuleContextMenu
+              id={999}
+              removeModule={[Function]}
+              stopProp={[Function]}
+            />
           </div>
         </div>
-        <Collapse
-          appear={false}
-          enter={true}
-          exit={true}
-          in={false}
-          isOpen={true}
-          mountOnEnter={false}
-          onEnter={[Function]}
-          onEntered={[Function]}
-          onEntering={[Function]}
-          onExit={[Function]}
-          onExited={[Function]}
-          onExiting={[Function]}
-          tag="div"
-          timeout={350}
-          unmountOnExit={false}
+        <StatusLine />
+        <div
+          className="module-card-params"
         >
-          <StatusLine />
-          <div
-            className="module-card-params"
-          >
-            <WfParameter
-              api={
-                Object {
-                  "onParamChanged": [MockFunction],
-                  "postParamEvent": [MockFunction],
-                }
+          <WfParameter
+            api={
+              Object {
+                "onParamChanged": [MockFunction],
+                "postParamEvent": [MockFunction],
               }
-              changeParam={[Function]}
-              getParamMenuItems={[Function]}
-              getParamText={[Function]}
-              isReadOnly={false}
-              key="0"
-              moduleName="Load from URL"
-              p={
-                Object {
-                  "id": 100,
-                  "parameter_spec": Object {
-                    "id_name": "url",
-                    "type": "string",
-                  },
-                  "value": "http://some.URL.me",
-                }
+            }
+            changeParam={[Function]}
+            getParamMenuItems={[Function]}
+            getParamText={[Function]}
+            isReadOnly={false}
+            key="0"
+            moduleName="Load from URL"
+            p={
+              Object {
+                "id": 100,
+                "parameter_spec": Object {
+                  "id_name": "url",
+                  "type": "string",
+                },
+                "value": "http://some.URL.me",
               }
-              revision={707}
-              setClickNotification={[Function]}
-              setParamText={[Function]}
-              updateSettings={
-                Object {
-                  "autoUpdateData": undefined,
-                  "lastUpdateCheck": undefined,
-                  "updateInterval": undefined,
-                  "updateUnits": undefined,
-                }
+            }
+            revision={707}
+            setClickNotification={[Function]}
+            setParamText={[Function]}
+            updateSettings={
+              Object {
+                "autoUpdateData": undefined,
+                "lastUpdateCheck": undefined,
+                "updateInterval": undefined,
+                "updateUnits": undefined,
               }
-              wf_module_id={999}
-            />
-            <WfParameter
-              api={
-                Object {
-                  "onParamChanged": [MockFunction],
-                  "postParamEvent": [MockFunction],
-                }
+            }
+            wf_module_id={999}
+          />
+          <WfParameter
+            api={
+              Object {
+                "onParamChanged": [MockFunction],
+                "postParamEvent": [MockFunction],
               }
-              changeParam={[Function]}
-              getParamMenuItems={[Function]}
-              getParamText={[Function]}
-              isReadOnly={false}
-              key="1"
-              moduleName="Load from URL"
-              p={
-                Object {
-                  "id": 101,
-                  "parameter_spec": Object {
-                    "id_name": "version_select",
-                    "type": "custom",
-                  },
-                }
+            }
+            changeParam={[Function]}
+            getParamMenuItems={[Function]}
+            getParamText={[Function]}
+            isReadOnly={false}
+            key="1"
+            moduleName="Load from URL"
+            p={
+              Object {
+                "id": 101,
+                "parameter_spec": Object {
+                  "id_name": "version_select",
+                  "type": "custom",
+                },
               }
-              revision={707}
-              setClickNotification={[Function]}
-              setParamText={[Function]}
-              updateSettings={
-                Object {
-                  "autoUpdateData": undefined,
-                  "lastUpdateCheck": undefined,
-                  "updateInterval": undefined,
-                  "updateUnits": undefined,
-                }
+            }
+            revision={707}
+            setClickNotification={[Function]}
+            setParamText={[Function]}
+            updateSettings={
+              Object {
+                "autoUpdateData": undefined,
+                "lastUpdateCheck": undefined,
+                "updateInterval": undefined,
+                "updateUnits": undefined,
               }
-              wf_module_id={999}
-            />
-          </div>
-        </Collapse>
+            }
+            wf_module_id={999}
+          />
+        </div>
       </div>
       <div
         className="drop-alert "

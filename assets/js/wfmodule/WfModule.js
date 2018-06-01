@@ -17,9 +17,6 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
 
-// Libraries to provide a collapsible table view
-import { Collapse } from 'reactstrap';
-
 
 // ---- WfModule ----
 export class WfModule extends React.PureComponent {
@@ -34,9 +31,6 @@ export class WfModule extends React.PureComponent {
     this.removeModule = this.removeModule.bind(this);
     this.showNotes = this.showNotes.bind(this);
     this.hideNotes = this.hideNotes.bind(this);
-    this.showButtons = this.showButtons.bind(this);
-    this.hideButtons = this.hideButtons.bind(this);
-    this.toggleCollapsed = this.toggleCollapsed.bind(this);
     this.setNotifications = this.setNotifications.bind(this);
     this.setClickNotification = this.setClickNotification.bind(this);
     this.onClickNotification = this.onClickNotification.bind(this);
@@ -45,7 +39,6 @@ export class WfModule extends React.PureComponent {
 
     this.state = {
       isCollapsed: this.props.wfModule.is_collapsed,
-      showButtons: false,
       showNotes:  ( this.props.wfModule.notes
                     && (this.props.wfModule.notes != "")
                     && (this.props.wfModule.notes != "Write notes here")
@@ -166,9 +159,24 @@ export class WfModule extends React.PureComponent {
 
   // Optimistically updates the state, and then sends the new state to the server,
   // where it's persisted across sessions and through time.
-  toggleCollapsed(e) {
-    e.stopPropagation();
-    store.dispatch( setWfModuleCollapsedAction(this.props.wfModule.id, !this.state.isCollapsed, this.props.isReadOnly) );
+  setCollapsed(isCollapsed) {
+    this.setState({
+      isCollapsed,
+    })
+
+    store.dispatch(setWfModuleCollapsedAction(
+      this.props.wfModule.id,
+      isCollapsed,
+      this.props.isReadOnly
+    ))
+  }
+
+  collapse = () => {
+    this.setCollapsed(true)
+  }
+
+  expand = () => {
+    this.setCollapsed(false)
   }
 
   // when Notes icon is clicked, show notes and start in editable state if not read-only
@@ -179,14 +187,6 @@ export class WfModule extends React.PureComponent {
 
   hideNotes() {
     this.setState({showNotes: false});
-  }
-
-  showButtons() {
-    this.setState({showButtons: true});
-  }
-
-  hideButtons() {
-    this.setState({showButtons: false});
   }
 
   setNotifications() {
@@ -233,12 +233,6 @@ export class WfModule extends React.PureComponent {
         />)
       });
 
-    var inside;
-    if (!this.state.isCollapsed)
-      inside =  <div className='module-card-params'>
-                  {paramdivs}
-                </div>;
-
     var notes;
     var value = ( wfModule.notes && (wfModule.notes != "") )
       ? wfModule.notes
@@ -256,19 +250,19 @@ export class WfModule extends React.PureComponent {
                 />
               </div>;
 
-    var helpIcon;
-    if (!this.props.isReadOnly)
-      helpIcon =  <button className='context-button btn'>
-                    <a className='help-button d-flex align-items-center'
-                        href={module.help_url} target="_blank">
-                      <div className='icon-help' />
-                    </a>
-                  </button>
+    let helpIcon;
+    if (!this.props.isReadOnly) {
+      helpIcon = (
+        <a title='Help for this module' className='help-button' href={module.help_url} target='_blank'>
+          <i className='icon-help'></i>
+        </a>
+      );
+    }
 
     var notesIcon;
     if (!this.state.showNotes && !this.props.isReadOnly)
-      notesIcon = <button title="Edit Note" className={'context-button btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')} onClick={this.showNotes}>
-                    <div className='icon-note icon-l-gray ' />
+      notesIcon = <button title="Edit Note" className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')} onClick={this.showNotes}>
+                    <i className='icon-note'></i>
                   </button>;
 
     var contextMenu;
@@ -285,27 +279,26 @@ export class WfModule extends React.PureComponent {
     // buttons create (e.g. export dialog) are still visible. Can't use display: none as we need display: flex
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     const contextBtns =
-        <div className='context-buttons--container'>
+        <div className='context-buttons'>
           {wfModule.notifications &&
-          <div className={'notification-badge' + (wfModule.notification_count > 0 ? ' active t-f-blue' : '' )}>
-            <div
-              className="icon-notification notification-badge-icon ml-3 mr-1"
-              onClick={this.onClickNotification} />
-            {wfModule.notification_count > 0 &&
-            <div>{wfModule.notification_count}</div>
-            }
-          </div>
+          <button
+            className={'notification-badge' + (wfModule.notification_count > 0 ? ' active t-f-blue' : '' )}
+            onClick={this.onClickNotification}
+            >
+            <i className="icon-notification"></i>
+            { wfModule.notification_count > 0 && <span className="count">{wfModule.notification_count}</span> }
+          </button>
           }
-          <div style={{ opacity: this.state.showButtons ? '1' : '0' }}>{helpIcon}</div>
-          <div style={{ opacity: this.state.showButtons ? '1' : '0' }}>{notesIcon}</div>
-          <div style={{ opacity: this.state.showButtons ? '1' : '0' }}>{contextMenu}</div>
+          {helpIcon}
+          {notesIcon}
+          {contextMenu}
         </div>
 
     const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon mr-2';
 
     // Putting it all together: name, status, parameters, output
     return (
-      <div onClick={this.click} className={'wf-module' + (this.props.isLessonHighlight ? ' lesson-highlight' : '')} data-module-name={module.name}>
+      <div onClick={this.click} className={'wf-module' + (this.props.isLessonHighlight ? ' lesson-highlight' : '') + (this.state.isCollapsed ? ' collapsed' : ' expanded')} data-module-name={module.name}>
         {notes}
         <div className={'wf-card '+ (this.state.isDragging ? 'dragging ' : '')} ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
 
@@ -313,27 +306,23 @@ export class WfModule extends React.PureComponent {
             <div className='output-bar-container'>
               <StatusBar status={wfModule.status} isSelected={this.props.selected} isDragging={this.state.isDragging}/>
             </div>
-            <div className='module-content' onMouseEnter={this.showButtons} onMouseLeave={this.hideButtons}>
-                <div className='module-card-header'>
-
-                    <div className='module-id--group' onClick={this.toggleCollapsed}>
-                      <WfModuleCollapseButton
-                        isCollapsed={this.state.isCollapsed}
-                        isLessonHighlight={this.props.isLessonHighlightCollapse}
-                        />
-                      <div className={moduleIcon} />
-                      <div className='t-d-gray WFmodule-name'>{module.name}</div>
-                    </div>
-                  {contextBtns}
-                </div>
-                {/* --- Module content when expanded --- */}
-                <Collapse  isOpen={!this.state.isCollapsed} >
-                  {/* --- Error message --- */}
-                  <StatusLine status={wfModule.status} error_msg={wfModule.error_msg} />
-
-                  {inside}
-                </Collapse>
-
+            <div className='module-content'>
+              <div className='module-card-header'>
+                <WfModuleCollapseButton
+                  isCollapsed={this.state.isCollapsed}
+                  isLessonHighlight={this.props.isLessonHighlightCollapse}
+                  onCollapse={this.collapse}
+                  onExpand={this.expand}
+                  />
+                <i className={moduleIcon}></i>
+                <div className='module-name'>{module.name}</div>
+                {contextBtns}
+              </div>
+              {/* --- Error message --- */}
+              <StatusLine status={wfModule.status} error_msg={wfModule.error_msg} />
+              <div className='module-card-params'>
+                {paramdivs}
+              </div>
             </div>
             <div className={
               'drop-alert ' +
@@ -365,17 +354,26 @@ WfModule.propTypes = {
 }
 
 class WfModuleCollapseButton extends React.PureComponent {
+  static propTypes = {
+    isCollapsed: PropTypes.bool.isRequired,
+    isLessonHighlight: PropTypes.bool.isRequired,
+    onCollapse: PropTypes.func.isRequired, // func() => undefined
+    onExpand: PropTypes.func.isRequired, // func() => undefined
+  }
+
   render() {
-    const iconClass = this.props.isCollapsed ? 'icon-sort-right' : 'icon-sort-down'
-    const lessonHighlightClass = this.props.isLessonHighlight ? 'lesson-highlight' : ''
+    const { isCollapsed, isLessonHighlight, onCollapse, onExpand } = this.props
+
+    const iconClass = isCollapsed ? 'icon-sort-right' : 'icon-sort-down'
+    const onClick = isCollapsed ? onExpand : onCollapse
+    const name = isCollapsed ? 'expand module' : 'collapse module'
+    const lessonHighlightClass = isLessonHighlight ? 'lesson-highlight' : ''
     return (
-      <i className={`context-collapse-button ${iconClass} ${lessonHighlightClass}`}></i>
+      <button name={name} className="wf-module-collapse" onClick={onClick}>
+        <i className={`context-collapse-button ${iconClass} ${lessonHighlightClass}`}></i>
+      </button>
     )
   }
-}
-WfModuleCollapseButton.propTypes = {
-  isCollapsed: PropTypes.bool.isRequired,
-  isLessonHighlight: PropTypes.bool.isRequired,
 }
 
 function propsToModuleName(props) {
