@@ -49,8 +49,8 @@
 //// navbar
 
 .navbar {
+  flex: 0 0 auto; // fixed height
   display:flex;
-  height: 6rem;
   flex-direction: row;
   justify-content: space-between;
   background-color: $brand-workspace;
@@ -97,7 +97,7 @@
 
 //// navbar wf page
 .workflow-container .navbar {
-  padding-left: 2rem;
+  padding: 1rem 2rem;
 
   .logo-navbar {
     margin-right: 1.5rem;

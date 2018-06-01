@@ -19,112 +19,275 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
     }
   }
 >
-  <div>
-    <ul
-      className="WF-meta"
+  <ul
+    className="WF-meta"
+  >
+    <li
+      className="WF-meta--item content-3 t-m-gray attribution"
     >
-      <li
-        className="WF-meta--item content-3 t-m-gray attribution"
+      <span
+        className="content-3 t-m-gray"
       >
-        <span
-          className="content-3 t-m-gray"
-        >
-          by 
-          Harry Harrison
-        </span>
-        <span
+        by 
+        Harry Harrison
+      </span>
+      <span
+        className="content-3 metadataSeparator t-m-gray"
+      >
+        -
+      </span>
+    </li>
+    <li
+      className="WF-meta--item content-3 t-m-gray"
+    >
+      Updated 
+      now
+    </li>
+    <li
+      className="WF-meta--item content-3 t-m-gray"
+    >
+      <div
+        className="WF-meta--item test-button"
+        onClick={[Function]}
+      >
+        <div
           className="content-3 metadataSeparator t-m-gray"
         >
           -
-        </span>
-      </li>
-      <li
-        className="WF-meta--item content-3 t-m-gray"
-      >
-        Updated 
-        now
-      </li>
-      <li
-        className="WF-meta--item content-3 t-m-gray"
-      >
+        </div>
         <div
-          className="WF-meta--item test-button"
-          onClick={[Function]}
+          className="t-f-blue"
+        >
+          private
+        </div>
+      </div>
+    </li>
+  </ul>
+  <Modal
+    autoFocus={true}
+    backdrop={true}
+    backdropTransition={
+      Object {
+        "mountOnEnter": true,
+        "timeout": 150,
+      }
+    }
+    centered={false}
+    fade={true}
+    isOpen={true}
+    keyboard={true}
+    modalTransition={
+      Object {
+        "timeout": 300,
+      }
+    }
+    onClosed={[Function]}
+    onOpened={[Function]}
+    role="dialog"
+    toggle={[Function]}
+    zIndex={1050}
+  >
+    <Portal
+      node={
+        <div
+          style="position: relative; z-index: 1050;"
+          tabindex="-1"
         >
           <div
-            className="content-3 metadataSeparator t-m-gray"
-          >
-            -
-          </div>
-          <div
-            className="t-f-blue"
-          >
-            private
-          </div>
-        </div>
-      </li>
-    </ul>
-    <Modal
-      autoFocus={true}
-      backdrop={true}
-      backdropTransition={
-        Object {
-          "mountOnEnter": true,
-          "timeout": 150,
-        }
-      }
-      centered={false}
-      fade={true}
-      isOpen={true}
-      keyboard={true}
-      modalTransition={
-        Object {
-          "timeout": 300,
-        }
-      }
-      onClosed={[Function]}
-      onOpened={[Function]}
-      role="dialog"
-      toggle={[Function]}
-      zIndex={1050}
-    >
-      <Portal
-        node={
-          <div
-            style="position: relative; z-index: 1050;"
-            tabindex="-1"
+            class=""
           >
             <div
-              class=""
+              class="modal fade"
+              role="dialog"
+              style="display: block;"
+              tabindex="-1"
             >
               <div
-                class="modal fade"
-                role="dialog"
-                style="display: block;"
-                tabindex="-1"
+                class="modal-dialog"
+                role="document"
               >
                 <div
-                  class="modal-dialog"
-                  role="document"
+                  class="modal-content"
                 >
                   <div
-                    class="modal-content"
+                    class="dialog-header modal-header"
+                  >
+                    <h5
+                      class="modal-title"
+                    >
+                      <span
+                        class="t-d-gray title-4"
+                      >
+                        PRIVACY SETTING
+                      </span>
+                    </h5>
+                    <button
+                      aria-label="Close"
+                      class="close"
+                      type="button"
+                    >
+                      <span
+                        aria-hidden="true"
+                      >
+                        ×
+                      </span>
+                    </button>
+                  </div>
+                  <div
+                    class="modal-body"
                   >
                     <div
-                      class="dialog-header modal-header"
+                      class="row d-flex align-items-center mb-5"
+                    >
+                      <div
+                        class="col-sm-3"
+                      >
+                        <div
+                          class="action-button button-gray test-button-gray"
+                        >
+                          Public
+                        </div>
+                      </div>
+                      <div
+                        class="col-sm-9"
+                      >
+                        <div
+                          class="info-2"
+                        >
+                          Anyone can access and duplicate the workflow or any of its modules
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="row d-flex align-items-center"
+                    >
+                      <div
+                        class="col-sm-3"
+                      >
+                        <div
+                          class="action-button button-blue--fill"
+                        >
+                          Private
+                        </div>
+                      </div>
+                      <div
+                        class="col-sm-9"
+                      >
+                        <div
+                          class="info-2"
+                        >
+                          Only you can access and edit the workflow
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class=" modal-footer"
+                  >
+                    <div
+                      class="action-button button-gray"
+                    >
+                      Cancel
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="modal-backdrop fade"
+            />
+          </div>
+        </div>
+      }
+    >
+      <div
+        className=""
+      >
+        <Fade
+          appear={true}
+          baseClass="fade"
+          baseClassActive="show"
+          className="modal"
+          enter={true}
+          exit={true}
+          in={true}
+          mountOnEnter={false}
+          onClick={[Function]}
+          onEnter={[Function]}
+          onEntered={[Function]}
+          onEntering={[Function]}
+          onExit={[Function]}
+          onExited={[Function]}
+          onExiting={[Function]}
+          onKeyUp={[Function]}
+          role="dialog"
+          style={
+            Object {
+              "display": "block",
+            }
+          }
+          tabIndex="-1"
+          tag="div"
+          timeout={300}
+          unmountOnExit={false}
+        >
+          <Transition
+            appear={true}
+            enter={true}
+            exit={true}
+            in={true}
+            mountOnEnter={false}
+            onEnter={[Function]}
+            onEntered={[Function]}
+            onEntering={[Function]}
+            onExit={[Function]}
+            onExited={[Function]}
+            onExiting={[Function]}
+            timeout={300}
+            unmountOnExit={false}
+          >
+            <div
+              className="modal fade"
+              onClick={[Function]}
+              onKeyUp={[Function]}
+              role="dialog"
+              style={
+                Object {
+                  "display": "block",
+                }
+              }
+              tabIndex="-1"
+            >
+              <div
+                className="modal-dialog"
+                role="document"
+              >
+                <div
+                  className="modal-content"
+                >
+                  <ModalHeader
+                    className="dialog-header"
+                    closeAriaLabel="Close"
+                    tag="h5"
+                    toggle={[Function]}
+                    wrapTag="div"
+                  >
+                    <div
+                      className="dialog-header modal-header"
                     >
                       <h5
-                        class="modal-title"
+                        className="modal-title"
                       >
                         <span
-                          class="t-d-gray title-4"
+                          className="t-d-gray title-4"
                         >
                           PRIVACY SETTING
                         </span>
                       </h5>
                       <button
                         aria-label="Close"
-                        class="close"
+                        className="close"
+                        onClick={[Function]}
                         type="button"
                       >
                         <span
@@ -134,245 +297,97 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
                         </span>
                       </button>
                     </div>
+                  </ModalHeader>
+                  <ModalBody
+                    tag="div"
+                  >
                     <div
-                      class="modal-body"
+                      className="modal-body"
                     >
                       <div
-                        class="row d-flex align-items-center mb-5"
+                        className="row d-flex align-items-center mb-5"
                       >
                         <div
-                          class="col-sm-3"
+                          className="col-sm-3"
                         >
                           <div
-                            class="action-button button-gray test-button-gray"
+                            className="action-button button-gray test-button-gray"
+                            onClick={[Function]}
                           >
                             Public
                           </div>
                         </div>
                         <div
-                          class="col-sm-9"
+                          className="col-sm-9"
                         >
                           <div
-                            class="info-2"
+                            className="info-2"
                           >
                             Anyone can access and duplicate the workflow or any of its modules
                           </div>
                         </div>
                       </div>
                       <div
-                        class="row d-flex align-items-center"
+                        className="row d-flex align-items-center"
                       >
                         <div
-                          class="col-sm-3"
+                          className="col-sm-3"
                         >
                           <div
-                            class="action-button button-blue--fill"
+                            className="action-button button-blue--fill"
+                            onClick={[Function]}
                           >
                             Private
                           </div>
                         </div>
                         <div
-                          class="col-sm-9"
+                          className="col-sm-9"
                         >
                           <div
-                            class="info-2"
+                            className="info-2"
                           >
                             Only you can access and edit the workflow
                           </div>
                         </div>
                       </div>
                     </div>
-                    <div
-                      class=" modal-footer"
-                    >
-                      <div
-                        class="action-button button-gray"
-                      >
-                        Cancel
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                class="modal-backdrop fade"
-              />
-            </div>
-          </div>
-        }
-      >
-        <div
-          className=""
-        >
-          <Fade
-            appear={true}
-            baseClass="fade"
-            baseClassActive="show"
-            className="modal"
-            enter={true}
-            exit={true}
-            in={true}
-            mountOnEnter={false}
-            onClick={[Function]}
-            onEnter={[Function]}
-            onEntered={[Function]}
-            onEntering={[Function]}
-            onExit={[Function]}
-            onExited={[Function]}
-            onExiting={[Function]}
-            onKeyUp={[Function]}
-            role="dialog"
-            style={
-              Object {
-                "display": "block",
-              }
-            }
-            tabIndex="-1"
-            tag="div"
-            timeout={300}
-            unmountOnExit={false}
-          >
-            <Transition
-              appear={true}
-              enter={true}
-              exit={true}
-              in={true}
-              mountOnEnter={false}
-              onEnter={[Function]}
-              onEntered={[Function]}
-              onEntering={[Function]}
-              onExit={[Function]}
-              onExited={[Function]}
-              onExiting={[Function]}
-              timeout={300}
-              unmountOnExit={false}
-            >
-              <div
-                className="modal fade"
-                onClick={[Function]}
-                onKeyUp={[Function]}
-                role="dialog"
-                style={
-                  Object {
-                    "display": "block",
-                  }
-                }
-                tabIndex="-1"
-              >
-                <div
-                  className="modal-dialog"
-                  role="document"
-                >
+                  </ModalBody>
                   <div
-                    className="modal-content"
+                    className=" modal-footer"
                   >
-                    <ModalHeader
-                      className="dialog-header"
-                      closeAriaLabel="Close"
-                      tag="h5"
-                      toggle={[Function]}
-                      wrapTag="div"
-                    >
-                      <div
-                        className="dialog-header modal-header"
-                      >
-                        <h5
-                          className="modal-title"
-                        >
-                          <span
-                            className="t-d-gray title-4"
-                          >
-                            PRIVACY SETTING
-                          </span>
-                        </h5>
-                        <button
-                          aria-label="Close"
-                          className="close"
-                          onClick={[Function]}
-                          type="button"
-                        >
-                          <span
-                            aria-hidden="true"
-                          >
-                            ×
-                          </span>
-                        </button>
-                      </div>
-                    </ModalHeader>
-                    <ModalBody
-                      tag="div"
-                    >
-                      <div
-                        className="modal-body"
-                      >
-                        <div
-                          className="row d-flex align-items-center mb-5"
-                        >
-                          <div
-                            className="col-sm-3"
-                          >
-                            <div
-                              className="action-button button-gray test-button-gray"
-                              onClick={[Function]}
-                            >
-                              Public
-                            </div>
-                          </div>
-                          <div
-                            className="col-sm-9"
-                          >
-                            <div
-                              className="info-2"
-                            >
-                              Anyone can access and duplicate the workflow or any of its modules
-                            </div>
-                          </div>
-                        </div>
-                        <div
-                          className="row d-flex align-items-center"
-                        >
-                          <div
-                            className="col-sm-3"
-                          >
-                            <div
-                              className="action-button button-blue--fill"
-                              onClick={[Function]}
-                            >
-                              Private
-                            </div>
-                          </div>
-                          <div
-                            className="col-sm-9"
-                          >
-                            <div
-                              className="info-2"
-                            >
-                              Only you can access and edit the workflow
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </ModalBody>
                     <div
-                      className=" modal-footer"
+                      className="action-button button-gray"
+                      onClick={[Function]}
                     >
-                      <div
-                        className="action-button button-gray"
-                        onClick={[Function]}
-                      >
-                        Cancel
-                      </div>
+                      Cancel
                     </div>
                   </div>
                 </div>
               </div>
-            </Transition>
-          </Fade>
-          <Fade
+            </div>
+          </Transition>
+        </Fade>
+        <Fade
+          appear={true}
+          baseClass="fade"
+          baseClassActive="show"
+          className="modal-backdrop"
+          enter={true}
+          exit={true}
+          in={true}
+          mountOnEnter={true}
+          onEnter={[Function]}
+          onEntered={[Function]}
+          onEntering={[Function]}
+          onExit={[Function]}
+          onExited={[Function]}
+          onExiting={[Function]}
+          tag="div"
+          timeout={150}
+          unmountOnExit={false}
+        >
+          <Transition
             appear={true}
-            baseClass="fade"
-            baseClassActive="show"
-            className="modal-backdrop"
             enter={true}
             exit={true}
             in={true}
@@ -383,34 +398,17 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
             onExit={[Function]}
             onExited={[Function]}
             onExiting={[Function]}
-            tag="div"
             timeout={150}
             unmountOnExit={false}
           >
-            <Transition
-              appear={true}
-              enter={true}
-              exit={true}
-              in={true}
-              mountOnEnter={true}
-              onEnter={[Function]}
-              onEntered={[Function]}
-              onEntering={[Function]}
-              onExit={[Function]}
-              onExited={[Function]}
-              onExiting={[Function]}
-              timeout={150}
-              unmountOnExit={false}
-            >
-              <div
-                className="modal-backdrop fade"
-              />
-            </Transition>
-          </Fade>
-        </div>
-      </Portal>
-    </Modal>
-  </div>
+            <div
+              className="modal-backdrop fade"
+            />
+          </Transition>
+        </Fade>
+      </div>
+    </Portal>
+  </Modal>
 </WorkflowMetadata>
 `;
 
@@ -440,52 +438,50 @@ exports[`WorkflowMetadata - private mode modal operates 2`] = `
     }
   }
 >
-  <div>
-    <ul
-      className="WF-meta"
+  <ul
+    className="WF-meta"
+  >
+    <li
+      className="WF-meta--item content-3 t-m-gray attribution"
     >
-      <li
-        className="WF-meta--item content-3 t-m-gray attribution"
+      <span
+        className="content-3 t-m-gray"
       >
-        <span
-          className="content-3 t-m-gray"
-        >
-          by 
-          Harry Harrison
-        </span>
-        <span
+        by 
+        Harry Harrison
+      </span>
+      <span
+        className="content-3 metadataSeparator t-m-gray"
+      >
+        -
+      </span>
+    </li>
+    <li
+      className="WF-meta--item content-3 t-m-gray"
+    >
+      Updated 
+      now
+    </li>
+    <li
+      className="WF-meta--item content-3 t-m-gray"
+    >
+      <div
+        className="WF-meta--item test-button"
+        onClick={[Function]}
+      >
+        <div
           className="content-3 metadataSeparator t-m-gray"
         >
           -
-        </span>
-      </li>
-      <li
-        className="WF-meta--item content-3 t-m-gray"
-      >
-        Updated 
-        now
-      </li>
-      <li
-        className="WF-meta--item content-3 t-m-gray"
-      >
-        <div
-          className="WF-meta--item test-button"
-          onClick={[Function]}
-        >
-          <div
-            className="content-3 metadataSeparator t-m-gray"
-          >
-            -
-          </div>
-          <div
-            className="t-f-blue"
-          >
-            private
-          </div>
         </div>
-      </li>
-    </ul>
-  </div>
+        <div
+          className="t-f-blue"
+        >
+          private
+        </div>
+      </div>
+    </li>
+  </ul>
 </WorkflowMetadata>
 `;
 
@@ -508,52 +504,50 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
     }
   }
 >
-  <div>
-    <ul
-      className="WF-meta"
+  <ul
+    className="WF-meta"
+  >
+    <li
+      className="WF-meta--item content-3 t-m-gray attribution"
     >
-      <li
-        className="WF-meta--item content-3 t-m-gray attribution"
+      <span
+        className="content-3 t-m-gray"
       >
-        <span
-          className="content-3 t-m-gray"
-        >
-          by 
-          Harry Harrison
-        </span>
-        <span
+        by 
+        Harry Harrison
+      </span>
+      <span
+        className="content-3 metadataSeparator t-m-gray"
+      >
+        -
+      </span>
+    </li>
+    <li
+      className="WF-meta--item content-3 t-m-gray"
+    >
+      Updated 
+      now
+    </li>
+    <li
+      className="WF-meta--item content-3 t-m-gray"
+    >
+      <div
+        className="WF-meta--item test-button"
+        onClick={[Function]}
+      >
+        <div
           className="content-3 metadataSeparator t-m-gray"
         >
           -
-        </span>
-      </li>
-      <li
-        className="WF-meta--item content-3 t-m-gray"
-      >
-        Updated 
-        now
-      </li>
-      <li
-        className="WF-meta--item content-3 t-m-gray"
-      >
-        <div
-          className="WF-meta--item test-button"
-          onClick={[Function]}
-        >
-          <div
-            className="content-3 metadataSeparator t-m-gray"
-          >
-            -
-          </div>
-          <div
-            className="t-f-blue"
-          >
-            private
-          </div>
         </div>
-      </li>
-    </ul>
-  </div>
+        <div
+          className="t-f-blue"
+        >
+          private
+        </div>
+      </div>
+    </li>
+  </ul>
 </WorkflowMetadata>
 `;
 
@@ -576,35 +570,33 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
     }
   }
 >
-  <div>
-    <ul
-      className="WF-meta"
+  <ul
+    className="WF-meta"
+  >
+    <li
+      className="WF-meta--item content-3 t-m-gray attribution"
     >
-      <li
-        className="WF-meta--item content-3 t-m-gray attribution"
+      <span
+        className="content-3 t-m-gray"
       >
-        <span
-          className="content-3 t-m-gray"
-        >
-          by 
-          Harry Harrison
-        </span>
-        <span
-          className="content-3 metadataSeparator t-m-gray"
-        >
-          -
-        </span>
-      </li>
-      <li
-        className="WF-meta--item content-3 t-m-gray"
+        by 
+        Harry Harrison
+      </span>
+      <span
+        className="content-3 metadataSeparator t-m-gray"
       >
-        Updated 
-        now
-      </li>
-      <li
-        className="WF-meta--item content-3 t-m-gray"
-      />
-    </ul>
-  </div>
+        -
+      </span>
+    </li>
+    <li
+      className="WF-meta--item content-3 t-m-gray"
+    >
+      Updated 
+      now
+    </li>
+    <li
+      className="WF-meta--item content-3 t-m-gray"
+    />
+  </ul>
 </WorkflowMetadata>
 `;

@@ -122,7 +122,7 @@ export default class WorkflowMetadata extends React.Component {
         </div>
 
     return (
-      <div>
+      <React.Fragment>
         <ul className="WF-meta">
           {attribution}
           <li className="WF-meta--item content-3 t-m-gray">
@@ -133,7 +133,7 @@ export default class WorkflowMetadata extends React.Component {
           </li>
         </ul>
         { this.renderPrivacyModal() }
-      </div>
+      </React.Fragment>
     );
   }
 }

@@ -253,52 +253,50 @@ exports[`Workflow list page renders correctly 1`] = `
                     }
                   }
                 >
-                  <div>
-                    <ul
-                      className="WF-meta"
+                  <ul
+                    className="WF-meta"
+                  >
+                    <li
+                      className="WF-meta--item content-3 t-m-gray attribution"
                     >
-                      <li
-                        className="WF-meta--item content-3 t-m-gray attribution"
+                      <span
+                        className="content-3 t-m-gray"
                       >
-                        <span
-                          className="content-3 t-m-gray"
-                        >
-                          by 
-                          Fred Frederson
-                        </span>
-                        <span
+                        by 
+                        Fred Frederson
+                      </span>
+                      <span
+                        className="content-3 metadataSeparator t-m-gray"
+                      >
+                        -
+                      </span>
+                    </li>
+                    <li
+                      className="WF-meta--item content-3 t-m-gray"
+                    >
+                      Updated 
+                      now
+                    </li>
+                    <li
+                      className="WF-meta--item content-3 t-m-gray"
+                    >
+                      <div
+                        className="WF-meta--item test-button"
+                        onClick={[Function]}
+                      >
+                        <div
                           className="content-3 metadataSeparator t-m-gray"
                         >
                           -
-                        </span>
-                      </li>
-                      <li
-                        className="WF-meta--item content-3 t-m-gray"
-                      >
-                        Updated 
-                        now
-                      </li>
-                      <li
-                        className="WF-meta--item content-3 t-m-gray"
-                      >
-                        <div
-                          className="WF-meta--item test-button"
-                          onClick={[Function]}
-                        >
-                          <div
-                            className="content-3 metadataSeparator t-m-gray"
-                          >
-                            -
-                          </div>
-                          <div
-                            className="t-f-blue"
-                          >
-                            public
-                          </div>
                         </div>
-                      </li>
-                    </ul>
-                  </div>
+                        <div
+                          className="t-f-blue"
+                        >
+                          public
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
                 </WorkflowMetadata>
               </div>
             </div>
@@ -466,52 +464,50 @@ exports[`Workflow list page renders correctly 1`] = `
                     }
                   }
                 >
-                  <div>
-                    <ul
-                      className="WF-meta"
+                  <ul
+                    className="WF-meta"
+                  >
+                    <li
+                      className="WF-meta--item content-3 t-m-gray attribution"
                     >
-                      <li
-                        className="WF-meta--item content-3 t-m-gray attribution"
+                      <span
+                        className="content-3 t-m-gray"
                       >
-                        <span
-                          className="content-3 t-m-gray"
-                        >
-                          by 
-                          John Johnson
-                        </span>
-                        <span
+                        by 
+                        John Johnson
+                      </span>
+                      <span
+                        className="content-3 metadataSeparator t-m-gray"
+                      >
+                        -
+                      </span>
+                    </li>
+                    <li
+                      className="WF-meta--item content-3 t-m-gray"
+                    >
+                      Updated 
+                      now
+                    </li>
+                    <li
+                      className="WF-meta--item content-3 t-m-gray"
+                    >
+                      <div
+                        className="WF-meta--item test-button"
+                        onClick={[Function]}
+                      >
+                        <div
                           className="content-3 metadataSeparator t-m-gray"
                         >
                           -
-                        </span>
-                      </li>
-                      <li
-                        className="WF-meta--item content-3 t-m-gray"
-                      >
-                        Updated 
-                        now
-                      </li>
-                      <li
-                        className="WF-meta--item content-3 t-m-gray"
-                      >
-                        <div
-                          className="WF-meta--item test-button"
-                          onClick={[Function]}
-                        >
-                          <div
-                            className="content-3 metadataSeparator t-m-gray"
-                          >
-                            -
-                          </div>
-                          <div
-                            className="t-f-blue"
-                          >
-                            private
-                          </div>
                         </div>
-                      </li>
-                    </ul>
-                  </div>
+                        <div
+                          className="t-f-blue"
+                        >
+                          private
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
                 </WorkflowMetadata>
               </div>
             </div>
@@ -679,52 +675,50 @@ exports[`Workflow list page renders correctly 1`] = `
                     }
                   }
                 >
-                  <div>
-                    <ul
-                      className="WF-meta"
+                  <ul
+                    className="WF-meta"
+                  >
+                    <li
+                      className="WF-meta--item content-3 t-m-gray attribution"
                     >
-                      <li
-                        className="WF-meta--item content-3 t-m-gray attribution"
+                      <span
+                        className="content-3 t-m-gray"
                       >
-                        <span
-                          className="content-3 t-m-gray"
-                        >
-                          by 
-                          Sally Sallerson
-                        </span>
-                        <span
+                        by 
+                        Sally Sallerson
+                      </span>
+                      <span
+                        className="content-3 metadataSeparator t-m-gray"
+                      >
+                        -
+                      </span>
+                    </li>
+                    <li
+                      className="WF-meta--item content-3 t-m-gray"
+                    >
+                      Updated 
+                      now
+                    </li>
+                    <li
+                      className="WF-meta--item content-3 t-m-gray"
+                    >
+                      <div
+                        className="WF-meta--item test-button"
+                        onClick={[Function]}
+                      >
+                        <div
                           className="content-3 metadataSeparator t-m-gray"
                         >
                           -
-                        </span>
-                      </li>
-                      <li
-                        className="WF-meta--item content-3 t-m-gray"
-                      >
-                        Updated 
-                        now
-                      </li>
-                      <li
-                        className="WF-meta--item content-3 t-m-gray"
-                      >
-                        <div
-                          className="WF-meta--item test-button"
-                          onClick={[Function]}
-                        >
-                          <div
-                            className="content-3 metadataSeparator t-m-gray"
-                          >
-                            -
-                          </div>
-                          <div
-                            className="t-f-blue"
-                          >
-                            public
-                          </div>
                         </div>
-                      </li>
-                    </ul>
-                  </div>
+                        <div
+                          className="t-f-blue"
+                        >
+                          public
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
                 </WorkflowMetadata>
               </div>
             </div>
@@ -892,52 +886,50 @@ exports[`Workflow list page renders correctly 1`] = `
                     }
                   }
                 >
-                  <div>
-                    <ul
-                      className="WF-meta"
+                  <ul
+                    className="WF-meta"
+                  >
+                    <li
+                      className="WF-meta--item content-3 t-m-gray attribution"
                     >
-                      <li
-                        className="WF-meta--item content-3 t-m-gray attribution"
+                      <span
+                        className="content-3 t-m-gray"
                       >
-                        <span
-                          className="content-3 t-m-gray"
-                        >
-                          by 
-                          Mr. Manfrengenson
-                        </span>
-                        <span
+                        by 
+                        Mr. Manfrengenson
+                      </span>
+                      <span
+                        className="content-3 metadataSeparator t-m-gray"
+                      >
+                        -
+                      </span>
+                    </li>
+                    <li
+                      className="WF-meta--item content-3 t-m-gray"
+                    >
+                      Updated 
+                      now
+                    </li>
+                    <li
+                      className="WF-meta--item content-3 t-m-gray"
+                    >
+                      <div
+                        className="WF-meta--item test-button"
+                        onClick={[Function]}
+                      >
+                        <div
                           className="content-3 metadataSeparator t-m-gray"
                         >
                           -
-                        </span>
-                      </li>
-                      <li
-                        className="WF-meta--item content-3 t-m-gray"
-                      >
-                        Updated 
-                        now
-                      </li>
-                      <li
-                        className="WF-meta--item content-3 t-m-gray"
-                      >
-                        <div
-                          className="WF-meta--item test-button"
-                          onClick={[Function]}
-                        >
-                          <div
-                            className="content-3 metadataSeparator t-m-gray"
-                          >
-                            -
-                          </div>
-                          <div
-                            className="t-f-blue"
-                          >
-                            private
-                          </div>
                         </div>
-                      </li>
-                    </ul>
-                  </div>
+                        <div
+                          className="t-f-blue"
+                        >
+                          private
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
                 </WorkflowMetadata>
               </div>
             </div>
