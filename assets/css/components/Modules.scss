@@ -12,6 +12,13 @@
         opacity: 1;
       }
     }
+    &.dragging {
+      opacity: .6;
+      outline: .5rem solid $brand-orange;
+      cursor: grabbing;
+      cursor: -moz-grabbing;
+      cursor: -webkit-grabbing;
+    }
   }
 
   .module-card-params {
@@ -59,7 +66,6 @@
 
     .module-name {
       color: $brand-text--dark;
-      cursor: grab;
     }
 
     .context-collapse-button {
@@ -185,14 +191,6 @@
     font-size: 1.2rem;
     @extend %font-nunito-regular;
     text-align: left;
-  }
-
-  &.dragging {
-    opacity: .6;
-    outline: .5rem solid $brand-orange;
-    cursor: grabbing;
-    cursor: -moz-grabbing;
-    cursor: -webkit-grabbing;
   }
 }
 
