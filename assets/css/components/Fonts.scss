@@ -67,10 +67,13 @@
   line-height: 1.4rem;
   opacity: 0.6;
 }
-.content-2 {
+%content-2 {
 	font-size: 1.4rem;
 	font-weight: 500;
 	line-height: 1.4rem;
+}
+.content-2 {
+	@extend %content-2;
 }
 
 %content-3 {
@@ -78,13 +81,16 @@
 	line-height: 2rem;
 }
 .content-3{
-	@extend %content-3
+	@extend %content-3;
 }
 
-.content-4 {
+%content-4 {
 	font-size: 1.1rem;
 	font-weight: 300;
 	line-height: 1.1rem;
+}
+.content-4 {
+	@extend %content-4;
 }
 .content-5 {
 	font-size: 1.2rem;

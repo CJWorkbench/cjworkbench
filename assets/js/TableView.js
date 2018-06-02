@@ -270,23 +270,23 @@ export default class TableView extends React.Component {
 
     return (
       <div className="outputpane-table">
-          <div className="outputpane-header d-flex flex-row justify-content-start">
-              <div className='d-flex flex-column align-items-center justify-content-center mr-5'>
-                  <div className='content-4 t-m-gray mb-2'>Rows</div>
-                  <div className='content-2 t-d-gray'>{nrows}</div>
+          <div className="outputpane-header">
+            <div className="container">
+              <div className='table-info'>
+                  <div className='data'>Rows</div>
+                  <div className='value'>{nrows}</div>
               </div>
-              <div className='d-flex flex-column align-items-center justify-content-center'>
-                  <div className='content-4 t-m-gray mb-2'>Columns</div>
-                  <div className='content-2 t-d-gray'>{ncols}</div>
+              <div className='table-info'>
+                  <div className='data'>Columns</div>
+                  <div className='value'>{ncols}</div>
               </div>
-              <div onClick={this.toggleExportModal}>
-                Export!
-                <ExportModal open={this.state.exportModalOpen} id={this.props.id} onClose={this.toggleExportModal}/>
-              </div>
+            </div>
+            <div className="export-table icon-download" onClick={this.toggleExportModal}>
+              <ExportModal open={this.state.exportModalOpen} id={this.props.id} onClose={this.toggleExportModal}/>
+            </div>
           </div>
           {gridView}
       </div>
     );
   }
 }
-

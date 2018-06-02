@@ -36,14 +36,14 @@ button:focus { outline:0 !important; }
 .show > .btn-secondary.dropdown-toggle:focus {
   box-shadow: none;
   background-color:$Vlight-gray;
-  color:$strong-gray;
+  color:$dark-gray;
   opacity: 1;
 }
 
 // BUTTON IN FOCUS, After click
 .btn-secondary:focus {
   background-color:$Vlight-gray;
-  color:$strong-gray;
+  color:$dark-gray;
   opacity: 1;
   border:0;
 }
@@ -59,7 +59,7 @@ button:focus { outline:0 !important; }
 .btn-secondary:not(:disabled):not(.disabled):active,
 .btn-secondary:not(:disabled):not(.disabled).active,
 .show > .btn-secondary.dropdown-toggle {
-  color:$strong-gray;
+  color:$dark-gray;
   border:0;
 }
 
@@ -74,14 +74,14 @@ button:focus { outline:0 !important; }
   align-items: center;
   justify-content: center;
   background-color: transparent;
-  color:$strong-gray;
+  color:$dark-gray;
   border-radius: 5rem;
   opacity: 0.5;
   margin-right:0;
   font-size: 1.4rem;
   &:hover {
     border: none;
-    color:$strong-gray;
+    color:$dark-gray;
     opacity: 1;
   }
 }
