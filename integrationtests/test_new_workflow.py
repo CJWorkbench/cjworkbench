@@ -22,5 +22,5 @@ class TestNewWorkflow(LoggedInIntegrationTest):
 
         # output pane
         with b.scope('.outputpane-table'):
-            b.assert_element('.outputpane-header div', text='Rows')
-            b.assert_element('.outputpane-header div', text='Columns')
+            b.assert_element('.outputpane-header div', text='ROWS')
+            b.assert_element('.outputpane-header div', text='COLUMNS')
