@@ -94,11 +94,11 @@
         width:3.5rem;
         height: 3.5rem;
         border-radius: 7rem;
-        border:1px solid $light-gray;
-        color:$medium-gray;
+        border:2px solid $brand-workspace--medium;
+        color:$brand-workspace;
         background-color: $white;
         cursor: pointer;
-        &:hover{background-color: $dark-accent--soft;}
+        &:hover{background-color: $brand-workspace--Vlight;}
         font-size: 1.5rem;
       }
     }
@@ -263,6 +263,24 @@
     }
   }
 }
+
+// in lesson
+.workflow-root.in-lesson {
+
+  .outputpane {
+
+    .outputpane-header{
+
+      .export-table {
+        border:2px solid $brand-learn--medium;
+        color:$brand-learn;
+        &:hover {background-color: $brand-learn--Vlight;}
+      }
+    }
+  }
+}
+
+
 
 // Table in modules (Such as Rename columns)
 .module-content {
