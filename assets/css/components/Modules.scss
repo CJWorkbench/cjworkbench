@@ -55,7 +55,6 @@
       margin: 0;
       border: 0;
       background: transparent;
-      color: inherit;
       font-size: 1.2rem;
       padding: 1rem .3rem 1rem 1.5rem;
       cursor: pointer;
@@ -63,6 +62,8 @@
       &:hover{opacity: 1}
 
       i.icon-sort-right {font-size:1rem;}
+
+      i {color:$medium-gray}
     }
 
     .module-name {
