@@ -5,6 +5,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import DataGrid from "./DataGrid";
+import ExportModal from "./ExportModal"
 import update from 'immutability-helper'
 import * as EditCells from './EditCells'
 import * as SortFromTable from './SortFromTable'
@@ -30,25 +31,41 @@ export const deltaRows = 200;     // get this many rows at a time (must be > pre
 
 export default class TableView extends React.Component {
 
+ static propTypes = {
+    id:                 PropTypes.number,             // not actually required, could have no selected module
+    revision:           PropTypes.number.isRequired,
+    api:                PropTypes.object.isRequired,
+    resizing:           PropTypes.bool,
+    setBusySpinner:     PropTypes.func,
+    onEditCell:         PropTypes.func
+  };
+
   constructor(props) {
     super(props);
 
     // componentDidMount will trigger first load
     this.state = {
-        tableData: null,
-        lastLoadedRow : 0,
-        leftOffset : 0,
-        initLeftOffset: 0,
+      tableData: null,
+      lastLoadedRow : 0,
+      leftOffset : 0,
+      initLeftOffset: 0,
+      exportModalOpen: false,
     };
 
     this.getRow = this.getRow.bind(this);
     this.onEditCell = this.onEditCell.bind(this);
     this.onSort = this.onSort.bind(this);
+    this.toggleExportModal = this.toggleExportModal.bind(this);
 
     this.loading = false;
     this.highestRowRequested = 0;
     this.emptyRowCache = null;
   }
+
+  toggleExportModal() {
+    this.setState({ exportModalOpen: !this.state.exportModalOpen });
+  }
+
 
   // safe wrapper as setBusySpinner prop is optional
   setBusySpinner(visible) {
@@ -262,6 +279,10 @@ export default class TableView extends React.Component {
                   <div className='content-4 t-m-gray mb-2'>Columns</div>
                   <div className='content-2 t-d-gray'>{ncols}</div>
               </div>
+              <div onClick={this.toggleExportModal}>
+                Export!
+                <ExportModal open={this.state.exportModalOpen} id={this.props.id} onClose={this.toggleExportModal}/>
+              </div>
           </div>
           {gridView}
       </div>
@@ -269,11 +290,3 @@ export default class TableView extends React.Component {
   }
 }
 
-TableView.propTypes = {
-  id:                 PropTypes.number,             // not actually required, could have no selected module
-  revision:           PropTypes.number.isRequired,
-  api:                PropTypes.object.isRequired,
-  resizing:           PropTypes.bool,
-  setBusySpinner:     PropTypes.func,
-  onEditCell:         PropTypes.func
-};

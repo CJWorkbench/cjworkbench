@@ -39,8 +39,14 @@ exports[`TableView Blank table when no module id 1`] = `
           0
         </div>
       </div>
-      <div>
+      <div
+        onClick={[Function]}
+      >
         Export!
+        <ExportModal
+          onClose={[Function]}
+          open={false}
+        />
       </div>
     </div>
     <div
@@ -6503,8 +6509,15 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
           0
         </div>
       </div>
-      <div>
+      <div
+        onClick={[Function]}
+      >
         Export!
+        <ExportModal
+          id={100}
+          onClose={[Function]}
+          open={false}
+        />
       </div>
     </div>
     <div
