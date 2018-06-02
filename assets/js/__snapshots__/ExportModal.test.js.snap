@@ -1,0 +1,457 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ExportModal should match snapshot 1`] = `
+<ExportModal
+  className="menu-test-class"
+  id={415}
+  onClose={[MockFunction]}
+>
+  <Modal
+    autoFocus={true}
+    backdrop={true}
+    backdropTransition={
+      Object {
+        "mountOnEnter": true,
+        "timeout": 150,
+      }
+    }
+    centered={false}
+    className="menu-test-class"
+    fade={true}
+    isOpen={true}
+    keyboard={true}
+    modalTransition={
+      Object {
+        "timeout": 300,
+      }
+    }
+    onClosed={[Function]}
+    onOpened={[Function]}
+    role="dialog"
+    zIndex={1050}
+  >
+    <Portal
+      node={
+        <div
+          style="position: relative; z-index: 1050;"
+          tabindex="-1"
+        >
+          <div
+            class=""
+          >
+            <div
+              class="modal fade"
+              role="dialog"
+              style="display: block;"
+              tabindex="-1"
+            >
+              <div
+                class="modal-dialog menu-test-class"
+                role="document"
+              >
+                <div
+                  class="modal-content"
+                >
+                  <div
+                    class="dialog-header modal-header d-flex align-items-center modal-header"
+                  >
+                    <h5
+                      class="modal-title"
+                    >
+                      <div
+                        class="t-d-gray title-4"
+                      >
+                        EXPORT DATA
+                      </div>
+                      <div
+                        class="icon-close"
+                      />
+                    </h5>
+                  </div>
+                  <div
+                    class="modal-body"
+                  >
+                    <div
+                      class="form-group"
+                    >
+                      <div
+                        class="d-flex justify-content-between flex-row"
+                      >
+                        <label
+                          class="t-d-gray info-1 "
+                        >
+                          CSV
+                        </label>
+                        <div
+                          class="info-1 t-f-blue test-csv-copy"
+                        >
+                          COPY LIVE LINK
+                        </div>
+                      </div>
+                      <div
+                        class="d-flex justify-content-between flex-row mb-3"
+                      >
+                        <input
+                          class="url-link t-d-gray content-2 test-csv-field form-control"
+                          placeholder="/public/moduledata/live/415.csv"
+                          readonly=""
+                          type="url"
+                        />
+                        <div
+                          class="download-icon-box"
+                        >
+                          <a
+                            class="icon-download t-d-gray button-icon test-csv-download"
+                            download=""
+                            href="/public/moduledata/live/415.csv"
+                          />
+                        </div>
+                      </div>
+                      <div
+                        class="d-flex justify-content-between flex-row"
+                      >
+                        <label
+                          class="t-d-gray info-1 "
+                        >
+                          JSON
+                        </label>
+                        <div
+                          class="info-1 t-f-blue test-json-copy"
+                        >
+                          COPY LIVE LINK
+                        </div>
+                      </div>
+                      <div
+                        class="d-flex justify-content-between flex-row"
+                      >
+                        <input
+                          class="url-link t-d-gray content-2 test-json-field form-control"
+                          placeholder="/public/moduledata/live/415.json"
+                          readonly=""
+                          type="url"
+                        />
+                        <div
+                          class="download-icon-box"
+                        >
+                          <a
+                            class="icon-download t-d-gray button-icon test-json-download"
+                            download=""
+                            href="/public/moduledata/live/415.json"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div
+                    class="modal-footer"
+                  >
+                    <button
+                      class="button-blue action-button test-done-button"
+                    >
+                      Done
+                    </button>
+                     
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div
+              class="modal-backdrop fade"
+            />
+          </div>
+        </div>
+      }
+    >
+      <div
+        className=""
+      >
+        <Fade
+          appear={true}
+          baseClass="fade"
+          baseClassActive="show"
+          className="modal"
+          enter={true}
+          exit={true}
+          in={true}
+          mountOnEnter={false}
+          onClick={[Function]}
+          onEnter={[Function]}
+          onEntered={[Function]}
+          onEntering={[Function]}
+          onExit={[Function]}
+          onExited={[Function]}
+          onExiting={[Function]}
+          onKeyUp={[Function]}
+          role="dialog"
+          style={
+            Object {
+              "display": "block",
+            }
+          }
+          tabIndex="-1"
+          tag="div"
+          timeout={300}
+          unmountOnExit={false}
+        >
+          <Transition
+            appear={true}
+            enter={true}
+            exit={true}
+            in={true}
+            mountOnEnter={false}
+            onEnter={[Function]}
+            onEntered={[Function]}
+            onEntering={[Function]}
+            onExit={[Function]}
+            onExited={[Function]}
+            onExiting={[Function]}
+            timeout={300}
+            unmountOnExit={false}
+          >
+            <div
+              className="modal fade"
+              onClick={[Function]}
+              onKeyUp={[Function]}
+              role="dialog"
+              style={
+                Object {
+                  "display": "block",
+                }
+              }
+              tabIndex="-1"
+            >
+              <div
+                className="modal-dialog menu-test-class"
+                role="document"
+              >
+                <div
+                  className="modal-content"
+                >
+                  <ModalHeader
+                    className="dialog-header modal-header d-flex align-items-center"
+                    closeAriaLabel="Close"
+                    tag="h5"
+                    wrapTag="div"
+                  >
+                    <div
+                      className="dialog-header modal-header d-flex align-items-center modal-header"
+                    >
+                      <h5
+                        className="modal-title"
+                      >
+                        <div
+                          className="t-d-gray title-4"
+                        >
+                          EXPORT DATA
+                        </div>
+                        <div
+                          className="icon-close"
+                          onClick={[MockFunction]}
+                        />
+                      </h5>
+                    </div>
+                  </ModalHeader>
+                  <ModalBody
+                    tag="div"
+                  >
+                    <div
+                      className="modal-body"
+                    >
+                      <FormGroup
+                        tag="div"
+                      >
+                        <div
+                          className="form-group"
+                        >
+                          <div
+                            className="d-flex justify-content-between flex-row"
+                          >
+                            <Label
+                              className="t-d-gray info-1"
+                              tag="label"
+                              widths={
+                                Array [
+                                  "xs",
+                                  "sm",
+                                  "md",
+                                  "lg",
+                                  "xl",
+                                ]
+                              }
+                            >
+                              <label
+                                className="t-d-gray info-1 "
+                              >
+                                CSV
+                              </label>
+                            </Label>
+                            <CopyToClipboard
+                              className="info-1 t-f-blue test-csv-copy"
+                              onCopy={[Function]}
+                              text="/public/moduledata/live/415.csv"
+                            >
+                              <div
+                                className="info-1 t-f-blue test-csv-copy"
+                                onClick={[Function]}
+                              >
+                                COPY LIVE LINK
+                              </div>
+                            </CopyToClipboard>
+                          </div>
+                          <div
+                            className="d-flex justify-content-between flex-row mb-3"
+                          >
+                            <Input
+                              className="url-link t-d-gray content-2 test-csv-field"
+                              placeholder="/public/moduledata/live/415.csv"
+                              readOnly={true}
+                              type="url"
+                            >
+                              <input
+                                className="url-link t-d-gray content-2 test-csv-field form-control"
+                                placeholder="/public/moduledata/live/415.csv"
+                                readOnly={true}
+                                type="url"
+                              />
+                            </Input>
+                            <div
+                              className="download-icon-box"
+                            >
+                              <a
+                                className="icon-download t-d-gray button-icon test-csv-download"
+                                download={true}
+                                href="/public/moduledata/live/415.csv"
+                                onClick={[Function]}
+                              />
+                            </div>
+                          </div>
+                          <div
+                            className="d-flex justify-content-between flex-row"
+                          >
+                            <Label
+                              className="t-d-gray info-1"
+                              tag="label"
+                              widths={
+                                Array [
+                                  "xs",
+                                  "sm",
+                                  "md",
+                                  "lg",
+                                  "xl",
+                                ]
+                              }
+                            >
+                              <label
+                                className="t-d-gray info-1 "
+                              >
+                                JSON
+                              </label>
+                            </Label>
+                            <CopyToClipboard
+                              className="info-1 t-f-blue test-json-copy"
+                              onCopy={[Function]}
+                              text="/public/moduledata/live/415.json"
+                            >
+                              <div
+                                className="info-1 t-f-blue test-json-copy"
+                                onClick={[Function]}
+                              >
+                                COPY LIVE LINK
+                              </div>
+                            </CopyToClipboard>
+                          </div>
+                          <div
+                            className="d-flex justify-content-between flex-row"
+                          >
+                            <Input
+                              className="url-link t-d-gray content-2 test-json-field"
+                              placeholder="/public/moduledata/live/415.json"
+                              readOnly={true}
+                              type="url"
+                            >
+                              <input
+                                className="url-link t-d-gray content-2 test-json-field form-control"
+                                placeholder="/public/moduledata/live/415.json"
+                                readOnly={true}
+                                type="url"
+                              />
+                            </Input>
+                            <div
+                              className="download-icon-box"
+                            >
+                              <a
+                                className="icon-download t-d-gray button-icon test-json-download"
+                                download={true}
+                                href="/public/moduledata/live/415.json"
+                                onClick={[Function]}
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </FormGroup>
+                    </div>
+                  </ModalBody>
+                  <ModalFooter
+                    tag="div"
+                  >
+                    <div
+                      className="modal-footer"
+                    >
+                      <button
+                        className="button-blue action-button test-done-button"
+                        onClick={[MockFunction]}
+                      >
+                        Done
+                      </button>
+                       
+                    </div>
+                  </ModalFooter>
+                </div>
+              </div>
+            </div>
+          </Transition>
+        </Fade>
+        <Fade
+          appear={true}
+          baseClass="fade"
+          baseClassActive="show"
+          className="modal-backdrop"
+          enter={true}
+          exit={true}
+          in={true}
+          mountOnEnter={true}
+          onEnter={[Function]}
+          onEntered={[Function]}
+          onEntering={[Function]}
+          onExit={[Function]}
+          onExited={[Function]}
+          onExiting={[Function]}
+          tag="div"
+          timeout={150}
+          unmountOnExit={false}
+        >
+          <Transition
+            appear={true}
+            enter={true}
+            exit={true}
+            in={true}
+            mountOnEnter={true}
+            onEnter={[Function]}
+            onEntered={[Function]}
+            onEntering={[Function]}
+            onExit={[Function]}
+            onExited={[Function]}
+            onExiting={[Function]}
+            timeout={150}
+            unmountOnExit={false}
+          >
+            <div
+              className="modal-backdrop fade"
+            />
+          </Transition>
+        </Fade>
+      </div>
+    </Portal>
+  </Modal>
+</ExportModal>
+`;
