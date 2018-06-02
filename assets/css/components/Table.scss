@@ -93,9 +93,9 @@
         align-items: center;
         width:3.5rem;
         height: 3.5rem;
-        border-radius: 7rem;
-        border:2px solid $brand-workspace--medium;
-        color:$brand-workspace;
+        border-radius: 2rem;
+        border:2px solid $table-element;
+        color:$table-element;
         background-color: $white;
         cursor: pointer;
         &:hover{background-color: $brand-workspace--Vlight;}
@@ -272,8 +272,8 @@
     .outputpane-header{
 
       .export-table {
-        border:2px solid $brand-learn--medium;
-        color:$brand-learn;
+        border:2px solid $table-element;
+        color:$table-element;
         &:hover {background-color: $brand-learn--Vlight;}
       }
     }

@@ -15,7 +15,7 @@ article.lesson {
     cursor: default;
     display: flex;
     flex-direction: column;
-    background-color: $medium-blue;
+    background-color: $table-element;
     height: calc(100vh - 8rem);
     width: 32rem;
     padding:2rem;
@@ -128,7 +128,7 @@ article.lesson {
   }
 
   footer {
-    background-color: $medium-blue;
+    background-color: $table-element;
     border-top: 1px solid $dark-accent--medium;
     height: 100%;
     display: flex;
