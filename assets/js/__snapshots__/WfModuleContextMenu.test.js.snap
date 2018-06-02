@@ -102,11 +102,16 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                   <span>
                     Export
                   </span>
+                  <ExportModal
+                    id={415}
+                    onClose={[Function]}
+                    open={false}
+                  />
                 </button>
               </DropdownItem>
               <DropdownItem
                 className="test-delete-button"
-                key="3"
+                key="2"
                 onClick={[Function]}
                 tag="button"
                 toggle={true}

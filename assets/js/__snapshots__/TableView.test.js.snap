@@ -39,6 +39,9 @@ exports[`TableView Blank table when no module id 1`] = `
           0
         </div>
       </div>
+      <div>
+        Export!
+      </div>
     </div>
     <div
       className="outputpane-data"
@@ -6499,6 +6502,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
         >
           0
         </div>
+      </div>
+      <div>
+        Export!
       </div>
     </div>
     <div

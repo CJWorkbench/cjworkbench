@@ -16,6 +16,7 @@ describe('ExportModal', () => {
     wrapper = mount(
       <ExportModal
         id={415}
+        open={true}
         onClose={onClose}
         className="menu-test-class"
       />

@@ -12,8 +12,10 @@ import {
   } from 'reactstrap'
 import PropTypes from 'prop-types'
 
+
 export default class ExportModal extends React.Component {
   static propTypes = {
+    open:      PropTypes.bool.isRequired,
     id:        PropTypes.number.isRequired,  // workflow ID, used to construct download URLs
     onClose:   PropTypes.func.isRequired,
   };
@@ -32,6 +34,7 @@ export default class ExportModal extends React.Component {
       jsonCopied: false
     }
   }
+
 
   csvUrlString(id) {
     var path = "/public/moduledata/live/" + id + ".csv";
@@ -106,6 +109,8 @@ export default class ExportModal extends React.Component {
   }
 
   render () {
+    if (!this.props.open)
+      return null;
 
     var csvString = this.csvUrlString(this.props.id);
     var jsonString = this.jsonUrlString(this.props.id);

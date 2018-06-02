@@ -31,10 +31,6 @@ export default class WfModuleContextMenu extends React.Component {
   }
 
   render() {
-    let exportModal = null;
-    if (this.state.exportModalOpen) {
-      exportModal = <ExportModal id={this.props.id} onClose={this.toggleExportModal}/>
-    }
 
     return (
        <UncontrolledDropdown onClick={this.props.stopProp}>
@@ -42,17 +38,18 @@ export default class WfModuleContextMenu extends React.Component {
           <i className='context-button--icon icon-more'></i>
         </DropdownToggle>
         <DropdownMenu right>
-          {/* Opens Modal window for downloading files */}
+
           <DropdownItem key={1} onClick={this.toggleExportModal} className='test-export-button'>
             <i className='icon-download'></i>
             <span>Export</span>
-            {exportModal}
+            <ExportModal open={this.state.exportModalOpen} id={this.props.id} onClose={this.toggleExportModal}/>
           </DropdownItem>
-          {/* Will delete the parent WF Module from the list */}
-          <DropdownItem key={3} onClick={this.deleteOption} className='test-delete-button'>
+
+          <DropdownItem key={2} onClick={this.deleteOption} className='test-delete-button'>
             <i className='icon-bin'></i>
             <span>Delete</span>
           </DropdownItem>
+
         </DropdownMenu>
        </UncontrolledDropdown>
     );
