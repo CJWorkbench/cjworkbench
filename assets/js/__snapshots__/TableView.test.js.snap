@@ -9,40 +9,44 @@ exports[`TableView Blank table when no module id 1`] = `
     className="outputpane-table"
   >
     <div
-      className="outputpane-header d-flex flex-row justify-content-start"
+      className="outputpane-header"
     >
       <div
-        className="d-flex flex-column align-items-center justify-content-center mr-5"
+        className="container"
       >
         <div
-          className="content-4 t-m-gray mb-2"
+          className="table-info"
         >
-          Rows
+          <div
+            className="data"
+          >
+            Rows
+          </div>
+          <div
+            className="value"
+          >
+            0
+          </div>
         </div>
         <div
-          className="content-2 t-d-gray"
+          className="table-info"
         >
-          0
+          <div
+            className="data"
+          >
+            Columns
+          </div>
+          <div
+            className="value"
+          >
+            0
+          </div>
         </div>
       </div>
       <div
-        className="d-flex flex-column align-items-center justify-content-center"
-      >
-        <div
-          className="content-4 t-m-gray mb-2"
-        >
-          Columns
-        </div>
-        <div
-          className="content-2 t-d-gray"
-        >
-          0
-        </div>
-      </div>
-      <div
+        className="export-table icon-download"
         onClick={[Function]}
       >
-        Export!
         <ExportModal
           onClose={[Function]}
           open={false}
@@ -6479,40 +6483,44 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
     className="outputpane-table"
   >
     <div
-      className="outputpane-header d-flex flex-row justify-content-start"
+      className="outputpane-header"
     >
       <div
-        className="d-flex flex-column align-items-center justify-content-center mr-5"
+        className="container"
       >
         <div
-          className="content-4 t-m-gray mb-2"
+          className="table-info"
         >
-          Rows
+          <div
+            className="data"
+          >
+            Rows
+          </div>
+          <div
+            className="value"
+          >
+            0
+          </div>
         </div>
         <div
-          className="content-2 t-d-gray"
+          className="table-info"
         >
-          0
+          <div
+            className="data"
+          >
+            Columns
+          </div>
+          <div
+            className="value"
+          >
+            0
+          </div>
         </div>
       </div>
       <div
-        className="d-flex flex-column align-items-center justify-content-center"
-      >
-        <div
-          className="content-4 t-m-gray mb-2"
-        >
-          Columns
-        </div>
-        <div
-          className="content-2 t-d-gray"
-        >
-          0
-        </div>
-      </div>
-      <div
+        className="export-table icon-download"
         onClick={[Function]}
       >
-        Export!
         <ExportModal
           id={100}
           onClose={[Function]}
