@@ -1,51 +1,3 @@
-
-///// Metadata is in style.scss (also appear in WF list)
-
-//No navbar at login / signup
-
-.navbar-login {
-  display:none;
-}
-
-.navbar .links {
-  display: flex;
-  align-items: center;
-  font-size: 1.5rem;
-  position: relative;
-  left:-7.7rem;
-  height:100%;
-  padding-top: .5rem;
-  cursor: pointer;
-
-  a {
-    color:$white;
-    &:hover{
-      text-decoration: none;
-    }
-  }
-
-  .LS-toggle--link,
-  .WF-toggle--link {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin:0 2rem;
-    padding-top: .5rem;
-    height:100%;
-
-    .WF-link--under,
-    .LS-link--under{
-      height:.6rem;
-      background-color: $white;
-      position: relative ;
-      top:1.1rem;
-    }
-  }
-}
-
-.LS-toggle--link:hover .LS-link--under {
-  opacity: 0.6;
-}
 //// navbar
 
 .navbar {
@@ -57,47 +9,111 @@
   color: #FFFFFF;
   padding: 1.1rem 4rem 1.1rem 4rem;
 
-  .links {
-    // Making the underline in nav toggle highlight the selected page
-    .LS-link--under{
-      opacity: 0;
-    }
-    .WF-link--under{
-      opacity: 1;
-      width:10.5rem;
-    }
-  }
-
   .dropdown {
     display: flex;
     align-items: center;
   }
-}
 
-//// navbar in lessons list
+  .action-button {height:4rem;}
 
-.lessons-page {
+  // Brand logo
+  img.logo {
+    vertical-align: middle;
+    margin-right: 0.7rem;
+    width: 2.5rem;
+  }
+
+  .workflow-container .navbar .t-f-blue {
+    color:white;
+    text-decoration: underline;
+  }
+
+  .workflow-container .navbar .t-m-gray {
+    color:white;
+  }
 
   .links {
+    display: flex;
+    align-items: center;
+    font-size: 1.5rem;
+    position: relative;
+    left:-7.7rem;
+    height:100%;
+    padding-top: .5rem;
+    cursor: pointer;
 
-    // Making the underline in nav toggle highlight the selected page
-    .LS-link--under{
-      opacity: 1;
-      width:7rem;
+    a {
+      color:$white;
+      &:hover{
+        text-decoration: none;
+      }
     }
-    .WF-link--under{
-      opacity: 0;
-    }
-    // Selector appear on hover
-    .WF-toggle--link:hover .WF-link--under {
-      opacity: 0.6;
+
+    .LS-toggle--link,
+    .WF-toggle--link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin:0 2rem;
+      padding-top: .5rem;
+      height:3.3rem;
+      -webkit-transition:$buttons-anim;
+
+      .WF-link--under,
+      .LS-link--under{
+        height:.5rem;
+        background-color: $white;
+        position: relative ;
+        top:1.2rem;
+        -webkit-transition:$buttons-anim;
+      }
+      .WF-link--under{
+        width:10.2rem;
+      }
+
+      .LS-link--under{
+        width:7rem;
+      }
     }
   }
 }
 
-//// navbar wf page
+.workflows-page {
+
+  .WF-link--under {opacity: 1;}
+  .LS-link--under {opacity: 0;}
+  .LS-toggle--link {
+    opacity:0.7;
+    &:hover{
+      opacity: 1}
+  }
+
+  .LS-toggle--link:hover .LS-link--under  {
+    opacity: 0.5;
+  }
+}
+
+.lessons-page {
+
+  .LS-link--under {opacity: 1;}
+  .WF-link--under {opacity: 0;}
+  .WF-toggle--link {
+    opacity:0.7;
+    &:hover{
+      opacity: 1}
+  }
+
+  .WF-toggle--link:hover .WF-link--under  {
+    opacity: 0.5;
+  }
+}
+
+//// navbar in WF
+
 .workflow-container .navbar {
   padding: 1rem 2.5rem 1rem 2rem;
+
+  li,span {color:$white}
 
   .logo-navbar {
     margin-right: 1.5rem;
@@ -107,24 +123,81 @@
       margin-top: 0rem;
     }
   }
+
+  .editable-title--container{
+    margin-right: 3.5rem;
+    min-width: 32rem;
+  }
+  .title-metadata-stack {
+    flex-grow: 1;
+
+    .WF-meta {
+      position: relative;
+      top:-.1rem;
+
+      li, span {
+        line-height: 1.3rem;
+        height: 1rem;
+      }
+    }
+
+    .editable-title--field {
+      position: relative;
+      top:-.3rem;
+      min-width: 100%;
+      border: none;
+      outline: none;
+      padding: 0;
+      resize: none;
+      background: none;
+      @extend %font-nunito-regular;
+      font-size: 1.8rem;
+    	line-height: 1.8rem;
+      color: #FFFFFF;
+      padding-right:1.5rem;
+    }
+
+    .editable-title--field:hover{
+      background-color: rgba(250,250,250,0.2);
+    }
+  }
+  .action-button {
+    margin-right: 4rem;
+  }
 }
 
-// Brand logo
+////navbar in lesson
 
-img.logo {
-  vertical-align: middle;
-  margin-right: 0.7rem;
-  width: 2.5rem;
+.workflow-root.in-lesson .navbar {
+  background-color: $brand-learn;
+
+  .WF-meta {
+    display: none;
+  }
+
+  .attribution, .test-duplicate-button, .test-share-button {
+    display: none;
+  }
 }
 
-.workflow-container .navbar .t-f-blue {
-  color:white;
-  text-decoration: underline;
+//No navbar at login / signup
+
+.navbar-login {
+  display:none;
 }
 
-.workflow-container .navbar .t-m-gray {
-  color:white;
-}
+
+
+
+
+
+
+
+
+
+
+
+
 
 //// Readonly signout navbar
 
@@ -141,48 +214,3 @@ img.logo {
 
 
 //// Workflow page
-
-.workflow-container .navbar .action-button {
-  margin-right: 4rem;
-}
-
-// Workflow title
-
-.title-metadata-stack {
-  flex-grow: 1;
-}
-
-.editable-title--container{
-  margin-right: 3.5rem;
-  min-width: 32rem;
-}
-
-.editable-title--field {
-  min-width: 100%;
-  border: none;
-  outline: none;
-  padding: 0;
-  resize: none;
-  background: none;
-  @extend %font-nunito-regular;
-  font-size: 1.8rem;
-	line-height: 2.4rem;
-  color: #FFFFFF;
-  padding-right:1.5rem;
-}
-
-.editable-title--field:hover{
-  background-color: rgba(250,250,250,0.2);
-}
-
-.workflow-root.in-lesson .navbar {
-  background-color: $brand-learn;
-
-  .WF-meta {
-    display: none;
-  }
-
-  .attribution, .test-duplicate-button, .test-share-button {
-    display: none;
-  }
-}
