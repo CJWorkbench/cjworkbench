@@ -228,22 +228,24 @@ class ColumnHeader extends React.PureComponent {
     const draggingClass = (draggingColumnIndex === index) ? 'dragging' : ''
 
     return (
-      <div
-        className={`data-grid-column-header ${draggingClass}`}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        draggable={true}
-        onDragStart={this.onDragStart}
-        onDragEnd={this.onDragEnd}
-        >
-        {maybeDropZone('left', index)}
+      <React.Fragment>
         {letterSection}
-        <div className="sort-container">
-          <span className="column-key">{columnKey}</span>
-          {sortArrowSection}
+        <div
+          className={`data-grid-column-header ${draggingClass}`}
+          onMouseEnter={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}
+          draggable={true}
+          onDragStart={this.onDragStart}
+          onDragEnd={this.onDragEnd}
+          >
+          {maybeDropZone('left', index)}
+          <div className="sort-container">
+            <span className="column-key">{columnKey}</span>
+            {sortArrowSection}
+          </div>
+          {maybeDropZone('right', index + 1)}
         </div>
-        {maybeDropZone('right', index + 1)}
-      </div>
+      </React.Fragment>
     );
   }
 }
