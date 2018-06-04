@@ -205,9 +205,10 @@
         text-align: center;
         padding-top: .15rem;
         background-color: #fff;
-        color: $medium-gray;
+        color: $light-gray;
         height: 2rem;
         padding-bottom: .1rem;
+        font-weight: 300;
         //box shadow to cover the 1px border from header with a lighter one
         box-shadow:
           -1px 0 0 $table-border,
