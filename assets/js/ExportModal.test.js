@@ -15,7 +15,7 @@ describe('ExportModal', () => {
     // mount not shallow as we are looking for components down in the tree, e.g. the input fields inside FormGroup
     wrapper = mount(
       <ExportModal
-        id={415}
+        wfModuleId={415}
         open={true}
         onClose={onClose}
         className="menu-test-class"

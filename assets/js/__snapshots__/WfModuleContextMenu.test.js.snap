@@ -103,9 +103,9 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                     Export
                   </span>
                   <ExportModal
-                    id={415}
                     onClose={[Function]}
                     open={false}
+                    wfModuleId={415}
                   />
                 </button>
               </DropdownItem>

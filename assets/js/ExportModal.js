@@ -15,9 +15,9 @@ import PropTypes from 'prop-types'
 
 export default class ExportModal extends React.Component {
   static propTypes = {
-    open:      PropTypes.bool.isRequired,
-    id:        PropTypes.number.isRequired,  // workflow ID, used to construct download URLs
-    onClose:   PropTypes.func.isRequired,
+    open:       PropTypes.bool.isRequired,
+    wfModuleId: PropTypes.number.isRequired, // to build download URLs
+    onClose:    PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -36,8 +36,8 @@ export default class ExportModal extends React.Component {
   }
 
 
-  csvUrlString(id) {
-    var path = "/public/moduledata/live/" + id + ".csv";
+  csvUrlString() {
+    var path = "/public/moduledata/live/" + this.props.wfModuleId + ".csv";
     // allowing an out for testing (there is no window.location.href during test)
     if (window.location.href == 'about:blank') {
       return path;
@@ -46,8 +46,8 @@ export default class ExportModal extends React.Component {
     }
   }
 
-  jsonUrlString(id) {
-    var path = "/public/moduledata/live/" + id + ".json";
+  jsonUrlString() {
+    var path = "/public/moduledata/live/" + this.props.wfModuleId + ".json";
     // allowing an out for testing (there is no window.location.href during test)
     if (window.location.href == 'about:blank') {
       return path;
@@ -77,7 +77,7 @@ export default class ExportModal extends React.Component {
   }
 
   renderCsvCopyLink() {
-    var csvString = this.csvUrlString(this.props.id);
+    var csvString = this.csvUrlString(this.props.wfModuleId);
 
     if (this.state.csvCopied) {
       return (
@@ -93,7 +93,7 @@ export default class ExportModal extends React.Component {
   }
 
   renderJsonCopyLink() {
-    var jsonString = this.jsonUrlString(this.props.id);
+    var jsonString = this.jsonUrlString(this.props.wfModuleId);
 
     if (this.state.jsonCopied) {
       return (
@@ -112,8 +112,8 @@ export default class ExportModal extends React.Component {
     if (!this.props.open)
       return null;
 
-    var csvString = this.csvUrlString(this.props.id);
-    var jsonString = this.jsonUrlString(this.props.id);
+    var csvString = this.csvUrlString(this.props.wfModuleId);
+    var jsonString = this.jsonUrlString(this.props.wfModuleId);
     var csvCopyLink = this.renderCsvCopyLink();
     var jsonCopyLink = this.renderJsonCopyLink();
 

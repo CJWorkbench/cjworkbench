@@ -281,9 +281,11 @@ export default class TableView extends React.Component {
                   <div className='value'>{ncols}</div>
               </div>
             </div>
-            <div className="export-table icon-download" onClick={this.toggleExportModal}>
-              <ExportModal open={this.state.exportModalOpen} id={this.props.id} onClose={this.toggleExportModal}/>
-            </div>
+            {this.props.id ? (
+              <div className="export-table icon-download" onClick={this.toggleExportModal}>
+                <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.id} onClose={this.toggleExportModal}/>
+              </div>
+            ) : null}
           </div>
           {gridView}
       </div>

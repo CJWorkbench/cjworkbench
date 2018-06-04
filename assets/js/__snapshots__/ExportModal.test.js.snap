@@ -3,9 +3,9 @@
 exports[`ExportModal should match snapshot 1`] = `
 <ExportModal
   className="menu-test-class"
-  id={415}
   onClose={[MockFunction]}
   open={true}
+  wfModuleId={415}
 >
   <Modal
     autoFocus={true}
