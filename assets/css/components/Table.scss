@@ -209,7 +209,9 @@
         height: 2rem;
         padding-bottom: .1rem;
         //box shadow to cover the 1px border from header with a lighter one
-        box-shadow:-1px 0 0 $table-border;
+        box-shadow:
+          -1px 0 0 $table-border,
+           1px 0 0 $table-border;
       }
 
       .sort-container {
