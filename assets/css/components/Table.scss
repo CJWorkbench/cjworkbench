@@ -62,6 +62,7 @@
 
       .container {
         display: flex;
+        margin-left: 0;
 
         .table-info {
           display: flex;
@@ -174,14 +175,14 @@
         position: absolute;
         top: 0;
         height: 100%;
-        width: 1rem;
+        width: 0.5rem;
         z-index: 1;
 
         &.align-left {
-          left: -.5rem;
+          left: -.25rem;
         }
         &.align-right {
-          right: -.5rem;
+          right: -.25rem;
         }
 
         &.drag-hover {
@@ -195,13 +196,18 @@
           position: absolute;
           top: 0;
           height: 100%;
-          left: -2rem;
-          right: -2rem;
+          left: -8rem;
+          right: -8rem;
         }
       }
 
       .column-letter {
         text-align: center;
+        padding-top: .15rem;
+        background-color: #fff;
+        color: $medium-gray;
+        height: 2rem;
+        outline: 1px solid $table-border;
       }
 
       .sort-container {
@@ -260,8 +266,8 @@
     .react-grid-Cell{
       padding-right:1rem;
       padding-left:1rem;
-      border-right: 1px solid #CFDEE2;
-      border-bottom: 1px solid #CFDEE2;
+      border-right: 1px solid $table-border;
+      border-bottom: 1px solid $table-border;
     }
 
     .react-grid-Cell:not(.editing) .react-grid-Cell__value{
