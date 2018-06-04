@@ -170,7 +170,7 @@ class ModuleStackInsertSpot extends BaseModuleStackInsertSpot {
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     isLessonHighlightSearch: PropTypes.bool.isRequired,
-    isReadonly: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
   }
 
   renderModuleSearchButton() {
@@ -196,7 +196,7 @@ class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     isLessonHighlightSearch: PropTypes.bool.isRequired,
-    isReadonly: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
   }
 
   renderModuleSearchButton() {

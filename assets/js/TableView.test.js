@@ -83,7 +83,7 @@ describe('TableView', () => {
       expect(updateSortMock.mock.calls.length).toBe(1);
 
       // Calls ReorderColumns
-      tree.find(DataGrid).instance().onDragDropHeader('a', 'b');
+      tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1)
       expect(reorderColumnsMock).toHaveBeenCalledWith(100, { column: 'a', from: 0, to: 1 })
 
       done();

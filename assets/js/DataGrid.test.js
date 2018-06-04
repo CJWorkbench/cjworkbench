@@ -91,7 +91,7 @@ describe('DataGrid tests,', () => {
     // expect(editCellMock.mock.calls).toHaveLength(1);
   });
 
-  it('Render without data', () => {
+  it('matches snapshot without data', () => {
 
     const tree = mount(
       <DataGrid
@@ -120,11 +120,11 @@ describe('DataGrid tests,', () => {
           showLetter={true}
       />
     );
-    expect(treeWithLetter.find('.column-letter')).toHaveLength(testData.columns.length);
-    expect(treeWithLetter.find('.column-letter').get(0).props.children).toEqual('A');
-    expect(treeWithLetter.find('.column-letter').get(1).props.children).toEqual('B');
-    expect(treeWithLetter.find('.column-letter').get(2).props.children).toEqual('C');
-    expect(treeWithLetter.find('.column-letter').get(3).props.children).toEqual('D');
+    expect(treeWithLetter.find('.column-letter')).toHaveLength(4);
+    expect(treeWithLetter.find('.column-letter').at(0).text()).toEqual('A');
+    expect(treeWithLetter.find('.column-letter').at(1).text()).toEqual('B');
+    expect(treeWithLetter.find('.column-letter').at(2).text()).toEqual('C');
+    expect(treeWithLetter.find('.column-letter').at(3).text()).toEqual('D');
 
     const treeWithoutLetter = mount(
       <DataGrid

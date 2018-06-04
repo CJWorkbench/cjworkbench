@@ -142,26 +142,89 @@
 
     .react-grid-HeaderRow{
       background-color: $table-background;
+
+      .react-grid-HeaderCell:not(:last-child) .column-reorder-drop-zone.align-right {
+        // We place a dropzone at the beginning and end of each header cell
+        // because it's easy. However, each .react-grid-HeaderCell has
+        // position:absolute set in its style by react-data-grid. That gives
+        // each subsequent cell a higher effective z-index than the previous
+        // one. We want our .align-right dropzone to extend _past_ the right
+        // of the cell, but that will only work on the final cell: in all other
+        // cells, the next .react-grid-HeaderCell will appear on top.
+        //
+        // So we hide the .align-right dropzone on all but the final cell. We
+        // trust DataGrid.js to place a .align-left dropzone in the next cell
+        // in the same place ... and the .align-left dropzone will be on top,
+        // just the way we want.
+        display: none;
+      }
     }
 
     .react-grid-HeaderCell{
       background-color: $heading-bg;
-      overflow:hidden;
       color:white;
       border-right:1px solid rgba(0,0,0,0.1);
       border-bottom:0px;
       @extend %font-nunito-regular;
       font-size: 1.2rem;
-      height: 4rem;
-      padding-left: 1rem;
-      padding-right: 1rem;
+      padding: 0;
+      display: flex;
+
+      .column-reorder-drop-zone {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 1rem;
+        z-index: 1;
+
+        &.align-left {
+          left: -.5rem;
+        }
+        &.align-right {
+          right: -.5rem;
+        }
+
+        &.drag-hover {
+          background-color: $brand-orange;
+        }
+
+        &::before {
+          // Make a bigger, invisible drop zone: when we drag over this,
+          // the user can drop
+          content: '';
+          position: absolute;
+          top: 0;
+          height: 100%;
+          left: -2rem;
+          right: -2rem;
+        }
+      }
+
+      .column-letter {
+        text-align: center;
+      }
 
       .sort-container {
         display: flex;
-        justify-content: space-between;
         align-items: center;
+        overflow: hidden;
 
-        .column-sort-arrow {font-size: 0.8rem;}
+        .column-key {
+          padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
+          flex: 1 1 auto;
+          overflow: hidden;
+        }
+
+        button {
+          flex: 0 0 auto;
+          font-size: 0.8rem;
+          padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
+          margin: 0;
+          border: 0;
+          cursor: pointer;
+          background-color: transparent;
+          color: inherit;
+        }
       }
     }
 

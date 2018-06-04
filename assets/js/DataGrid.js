@@ -14,7 +14,7 @@ import debounce from 'lodash/debounce'
 // --- Row and column formatting ---
 
 // Custom Formatter component, to render row number in a different style
-export class RowNumberFormatter extends React.Component {
+export class RowNumberFormatter extends React.PureComponent {
 
   render() {
 
@@ -39,270 +39,264 @@ RowNumberFormatter.propTypes = {
 };
 
 
+class ReorderColumnDropZone extends React.PureComponent {
+  static propTypes = {
+    leftOrRight: PropTypes.oneOf([ 'left', 'right' ]).isRequired,
+    fromIndex: PropTypes.number.isRequired,
+    toIndex: PropTypes.number.isRequired,
+    onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(fromIndex, toIndex) => undefined
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      isDragHover: false,
+    }
+  }
+
+  onDragEnter = (ev) => {
+    this.setState({
+      isDragHover: true,
+    })
+  }
+
+  onDragLeave = (ev) => {
+    this.setState({
+      isDragHover: false,
+    })
+  }
+
+  onDragOver = (ev) => {
+    ev.preventDefault() // allow drop by preventing the default, which is "no drop"
+  }
+
+  onDrop = (ev) => {
+    const { fromIndex, toIndex, onDropColumnIndexAtIndex } = this.props
+    onDropColumnIndexAtIndex(fromIndex, toIndex)
+  }
+
+  render() {
+    let className = 'column-reorder-drop-zone'
+    className += ' align-' + this.props.leftOrRight
+    if (this.state.isDragHover) className += ' drag-hover'
+
+    return (
+      <div
+        className={className}
+        onDragEnter={this.onDragEnter}
+        onDragLeave={this.onDragLeave}
+        onDragOver={this.onDragOver}
+        onDrop={this.onDrop}
+        >
+      </div>
+    )
+  }
+}
+
+
 // Sort arrows, A-Z letter identifiers
-export class HeaderRenderer extends React.Component {
+class ColumnHeader extends React.PureComponent {
+  static propTypes = {
+    columnKey: PropTypes.string.isRequired,
+    columnType: PropTypes.string.isRequired,
+    index: PropTypes.number.isRequired,
+    isSorted: PropTypes.bool.isRequired,
+    sortDirection: PropTypes.oneOf([ 'NONE', 'ASC', 'DESC' ]), // not required, which is weird
+    onSortColumn: PropTypes.func.isRequired,
+    showLetter: PropTypes.bool.isRequired,
+    onDragStartColumnIndex: PropTypes.func.isRequired, // func(index) => undefined
+    onDragEnd: PropTypes.func.isRequired, // func() => undefined
+    onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
+    draggingColumnIndex: PropTypes.number, // if set, we are dragging
+  }
+
   constructor(props) {
     super(props);
+
     this.state = {
       isHovered: false,
     };
-    this.handleClick = this.handleClick.bind(this);
-    this.handleHoverEnter = this.handleHoverEnter.bind(this);
-    this.handleHoverLeave = this.handleHoverLeave.bind(this);
   }
 
-  handleClick() {
-    this.props.onSort(this.props.colname, this.props.coltype);
+  onClickSort = () => {
+    this.props.onSortColumn(this.props.columnKey, this.props.columnType);
   }
 
-  handleHoverEnter() {
+  onMouseEnter = () => {
     this.setState({isHovered: true});
   }
 
-  handleHoverLeave() {
+  onMouseLeave = () => {
     this.setState({isHovered: false});
   }
 
+  onDragStart = (ev) => {
+    this.props.onDragStartColumnIndex(this.props.index)
+
+    ev.dataTransfer.effectAllowed = [ 'move' ]
+    ev.dataTransfer.dropEffect = 'move'
+    ev.dataTransfer.setData('text/plain', this.props.columnKey)
+  }
+
+  onDragEnd = () => {
+    this.props.onDragEnd()
+  }
+
   renderSortArrow() {
-    var sortDirectionClass = '';
+    const {
+      columnKey,
+      columnType,
+      isSorted,
+      sortDirection,
+      index,
+    } = this.props
+
+    let sortDirectionClass = '';
 
     // If we change the sort icon, change the class names here.
-    var sortDirectionDict = {
+    const sortDirectionDict = {
       'NONE': '',
-      'ASC': 'icon-sort-up-vl-gray',
-      'DESC': 'icon-sort-down-vl-gray'
+      'ASC': 'icon-sort-up',
+      'DESC': 'icon-sort-down',
     };
 
-    if(this.props.isSorted && (this.props.sortDirection != 'NONE')) {
+    if (isSorted && (sortDirection != 'NONE')) {
       // If column is sorted, set the direction to current sort direction
-      sortDirectionClass = sortDirectionDict[this.props.sortDirection];
-    } else if(this.state.isHovered) {
+      sortDirectionClass = sortDirectionDict[sortDirection];
+    } else if (this.state.isHovered) {
       // If there is no sort but column is hovered, set to "default" sort direction
-      if(['Number', 'Date'].indexOf(this.props.coltype) >= 0) {
+      if (['Number', 'Date'].indexOf(columnType) >= 0) {
         sortDirectionClass = sortDirectionDict['DESC'];
-      } else if(['String'].indexOf(this.props.coltype) >= 0) {
+      } else if (['String'].indexOf(columnType) >= 0) {
         sortDirectionClass = sortDirectionDict['ASC'];
       }
     }
 
-    if(sortDirectionClass.length > 0) {
+    if (sortDirectionClass.length > 0) {
       return (
-          <div className='column-sort-arrow'>
-            <div className={sortDirectionClass}></div>
-          </div>
+        <button title="Sort" className='column-sort-arrow' onClick={this.onClickSort}>
+          <i className={sortDirectionClass}></i>
+        </button>
       );
     }
     return '';
   }
 
   renderLetter() {
-    if(this.props.showLetter) {
+    if (this.props.showLetter) {
       return (
           // The 'column-letter' class name is used in the test so please be careful with it
           <div className='column-letter'>
-            {idxToLetter(this.props.idx)}
+            {idxToLetter(this.props.index)}
           </div>
       );
+    } else {
+      return null
     }
-    return '';
   }
 
   render() {
-    let sortArrowSection = this.renderSortArrow();
-    let letterSection = this.renderLetter();
+    const {
+      columnKey,
+      columnType,
+      index,
+      onDropColumnIndexAtIndex,
+      draggingColumnIndex,
+    } = this.props
+
+    const sortArrowSection = this.renderSortArrow();
+    const letterSection = this.renderLetter();
+
+    function maybeDropZone(leftOrRight, toIndex) {
+      if (draggingColumnIndex === null) return null
+      if (draggingColumnIndex === toIndex) return null
+
+      // Also, dragging to fromIndex+1 is a no-op
+      if (draggingColumnIndex === toIndex - 1) return null
+
+      return (
+        <ReorderColumnDropZone
+          leftOrRight={leftOrRight}
+          fromIndex={draggingColumnIndex}
+          toIndex={toIndex}
+          onDropColumnIndexAtIndex={onDropColumnIndexAtIndex}
+          />
+      )
+    }
+
+    const draggingClass = (draggingColumnIndex === index) ? 'dragging' : ''
 
     return (
-        <div
-            onClick={this.handleClick}
-            onMouseEnter={this.handleHoverEnter}
-            onMouseLeave={this.handleHoverLeave}
-            style={this.state.isHovered ? {backgroundColor:'#219EE8'} : undefined}
+      <div
+        className={`data-grid-column-header ${draggingClass}`}
+        onMouseEnter={this.onMouseEnter}
+        onMouseLeave={this.onMouseLeave}
+        draggable={true}
+        onDragStart={this.onDragStart}
+        onDragEnd={this.onDragEnd}
         >
-            {letterSection}
-            <div className="sort-container">
-                {this.props.colname}
-                {sortArrowSection}
-            </div>
+        {maybeDropZone('left', index)}
+        {letterSection}
+        <div className="sort-container">
+          <span className="column-key">{columnKey}</span>
+          {sortArrowSection}
         </div>
+        {maybeDropZone('right', index + 1)}
+      </div>
     );
   }
 }
 
 
 // Add row number col and make all cols resizeable
-function makeFormattedCols(props, rowNumKey, wfModuleId) {
-  var cols = props.columns;
-  var editable = (props.onEditCell !== undefined) && props.wfModuleId !== undefined; // no wfModuleId means blank table
-  var coltypes = props.columnTypes;
+function makeFormattedCols(props) {
+  const editable = (props.onEditCell !== undefined) && props.wfModuleId !== undefined; // no wfModuleId means blank table
 
-  // Add a row number column, which has its own formatting
-  var formattedCols = [{
-    key: rowNumKey,
+  const rowNumberColumn = {
+    key: props.rowNumKey,
     name: '',
     formatter: RowNumberFormatter,
     width: 40,
     locked: true,
-  }];
+  }
 
-  for (let idx in cols) {
-    let currentHeaderRenderer = (
-        <HeaderRenderer
-            colname={cols[idx]}
-            coltype={coltypes ? coltypes[idx] : ''}
-            isSorted={props.sortColumn == cols[idx]}
-            sortDirection={props.sortDirection}
-            idx={idx}
-            onSort={props.onSortColumn}
-            showLetter={props.showLetter}
+  const columns = props.columns.map((columnKey, index) => ({
+    key: columnKey,
+    name: columnKey,
+    resizable: true,
+    editable: editable,
+    width: 160,
+    // react-data-grid normally won't re-render if we change headerRenderer.
+    // So we need to change _other_ props, forcing it to re-render.
+    maybeTriggerRenderIfChangeDraggingColumnIndex: props.draggingColumnIndex,
+    maybeTriggerRenderIfChangeIsSorted: (props.sortColumn === columnKey),
+    maybeTriggerRenderIfChangeSortDirection: props.sortDirection,
+    maybeTriggerRenderIfChangeShowLetter: props.showLetter,
+    headerRenderer: (
+      <ColumnHeader
+        columnKey={columnKey}
+        columnType={props.columnTypes[index]}
+        index={index}
+        isSorted={props.sortColumn === columnKey}
+        sortDirection={props.sortDirection}
+        onSortColumn={props.onSortColumn}
+        showLetter={props.showLetter}
+        onDragStartColumnIndex={props.onDragStartColumnIndex}
+        onDragEnd={props.onDragEnd}
+        draggingColumnIndex={props.draggingColumnIndex}
+        onDropColumnIndexAtIndex={props.onDropColumnIndexAtIndex}
         />
-    );
-    let d = {
-      key: cols[idx],
-      name: cols[idx],
-      resizable: true,
-      editable: editable,
-      width: 160,
-      headerRenderer: currentHeaderRenderer,
-        draggable: true
-    };
-    formattedCols.push(d)
-  }
+    ),
+  }))
 
-  return formattedCols;
-}
-
-
-// --- Column Drag and Drop  ---
-
-// To weave a function through react-data-grid's innards...:
-//
-// 1. Create a function in DataGrid and supply it in a Provider
-// 2. Wrap HeaderCell in DraggableHeaderCell, which passes its `props.inner` as
-//    HeaderCell's `props`
-// 3. Wrap DraggableHeaderCell in a Consumer, to read `props.onDragDropHeader`
-
-// This import is only so we can mock for tests. It should be a React.createContext()
-// one-liner.
-import DropFunctionContext from './DataGridDragDropContext'
-// (When we upgrade to enzyme-adapter-react-16>1.1.1, nix this:)
-//const DropFunctionContext = React.createContext(() => {})
-
-
-class DraggableHeaderCell extends HeaderCell {
-  constructor(props) {
-    super(props)
-
-    this.normalStyle = { width: 0, cursor: 'move', opacity: 1 }
-    this.draggingStyle = { width: 0, cursor: 'move', opacity: 0.2 }
-    this.normalClassName = ''
-    this.droppingClassName = 'rdg-can-drop'
-
-    this.state = {
-      // These styles and classNames are copied from react-data-grid-addons
-      style: this.normalStyle, // "am I dragging?"
-      className: this.normalClassName, // "am I dropping?"
-    }
-  }
-
-  onDragStart = (ev) => {
-    ev.dataTransfer.setData('application/json', JSON.stringify({
-      type: 'DraggableHeaderCell',
-      columnKey: this.props.innerProps.column.key,
-    }))
-    ev.dataTransfer.effectAllowed = [ 'move' ]
-    ev.dataTransfer.dropEffect = 'move'
-
-    this.props.onDragStartHeader(this.props.innerProps.column.key)
-
-    this.setState({
-      style: this.draggingStyle,
-    })
-  }
-
-  onDragEnter = (ev) => {
-    if (!this.canDrop()) return
-
-    this.setState({
-      className: this.droppingClassName,
-    })
-  }
-
-  onDragLeave = (ev) => {
-    if (!this.canDrop()) return
-
-    this.setState({
-      className: this.normalClassName,
-    })
-  }
-
-  onDragEnd = () => {
-    this.props.onDragEndHeader()
-    this.setState({
-      style: this.normalStyle,
-      className: this.normalClassName,
-    })
-  }
-
-  canDrop() {
-    return !!this.props.draggingColumnKey && this.props.draggingColumnKey !== this.props.innerProps.column.key
-  }
-
-  onDragOver = (ev) => {
-    if (!this.canDrop()) return
-
-    ev.preventDefault() // default is, "can't drop"
-  }
-
-  onDrop = (ev) => {
-    if (!this.canDrop()) return
-
-    ev.preventDefault() // we want no browser defaults
-
-    this.props.onDragDropHeader(this.props.draggingColumnKey, this.props.innerProps.column.key)
-    this.props.onDragEndHeader()
-
-    this.setState({
-      style: this.normalStyle,
-      className: this.normalClassName,
-    })
-  }
-
-  render() {
-    return (
-      <div
-        className={this.state.className}
-        style={this.state.style}
-        draggable="true"
-        onDragStart={this.onDragStart}
-        onDragEnter={this.onDragEnter}
-        onDragLeave={this.onDragLeave}
-        onDragEnd={this.onDragEnd}
-        onDragOver={this.onDragOver}
-        onDrop={this.onDrop}
-        >
-        <HeaderCell {...this.props.innerProps} />
-      </div>
-    )
-  }
-}
-
-class ConnectedDraggableHeaderCell extends React.Component {
-  render() {
-    return (
-      <DropFunctionContext.Consumer>
-        { value =>
-          <DraggableHeaderCell innerProps={this.props} {...value} />
-        }
-      </DropFunctionContext.Consumer>
-    )
-  }
+  return [ rowNumberColumn ].concat(columns)
 }
 
 
 // --- Main component  ---
 
 export default class DataGrid extends React.Component {
-
   static propTypes = {
     totalRows:          PropTypes.number.isRequired,
     getRow:             PropTypes.func.isRequired,
@@ -321,25 +315,16 @@ export default class DataGrid extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
       gridHeight : 100,  // arbitrary, reset at componentDidMount, but non-zero means we get row elements in testing
       componentKey: 0,  // a key for the component; updates if the column header needs
-      dropContextValue: {
-        // not mutable
-        onDragDropHeader: this.onDragDropHeader,
-        onDragStartHeader: this.onDragStartHeader,
-        onDragEndHeader: this.onDragEndHeader,
-        draggingColumnKey: null, // not ev.dataTransfer.setData(), because that's only visible in onDrop()
-      },
+      draggingColumnIndex: null,
     };
-    this.rowNumKey = null;  // can't be in state because we need to update it in render() for getRow() to use
 
     this.updateSize = this.updateSize.bind(this);
-    // this.updateRowNumKey= this.updateRowNumKey.bind(this);
     this.getRow = this.getRow.bind(this);
     this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
-    this.onGridSort = this.onGridSort.bind(this);
-
   }
 
   // After the component mounts, and on any change, set the height to parent div height
@@ -356,17 +341,23 @@ export default class DataGrid extends React.Component {
   }
 
   // Each ReactDataGrid col needs a unique key. Make one for our row number column
-  updateRowNumKey(props) {
-    var rowNumKey = 'rn_';
-    while (props.columns.includes(rowNumKey)) {
-      rowNumKey += '_';
+  get rowNumKey() {
+    const columnKeys = this.props.columns
+    let ret = 'rn_';
+    while (columnKeys.includes(ret)) {
+      ret += '_';
     }
-    this.rowNumKey = rowNumKey;
+    return ret;
   }
 
   componentDidMount() {
-    window.addEventListener("resize", debounce(this.updateSize, 200));
+    this._resizeListener = debounce(this.updateSize, 200);
+    window.addEventListener("resize", this._resizeListener);
     this.updateSize();
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this._resizeListener);
   }
 
   // Check if column names are changed between props, used for shouldKeyUpdate
@@ -407,20 +398,11 @@ export default class DataGrid extends React.Component {
   componentWillReceiveProps(nextProps) {
     this.updateSize();
 
-    if(this.shouldKeyUpdate(nextProps)) {
+    if (this.shouldKeyUpdate(nextProps)) {
       this.setState({componentKey: this.state.componentKey + 1});
     }
   }
 
-  componentWillUnmount() {
-    window.removeEventListener("resize", this.updateSize);
-  }
-/*
-  // don't re-render while we are being dragged. makes things very smooth.
-  shouldComponentUpdate(nextProps) {
-    return !nextProps.resizing;
-  }
-*/
   // Add row number as first column, when we look up data
   getRow(i) {
     var row = this.props.getRow(i);
@@ -440,66 +422,56 @@ export default class DataGrid extends React.Component {
       this.props.onEditCell(fromRow, colKey, newVal)  // column key is also column name
   }
 
-  onGridSort(sortCol, sortDir) {
-    this.props.onSort(sortCol, sortDir);
-  }
-
-  onDragDropHeader = (sourceKey, targetKey) => {
-    const sourceIdx = this.props.columns.indexOf(sourceKey);
-    const targetIdx = this.props.columns.indexOf(targetKey);
-
-    if (sourceIdx === -1 || targetIdx === -1) {
-      throw new Error(`Invalid columns in drag+drop: from ${sourceKey} (${sourceIdx}) to ${targetKey} (${targetIdx})`)
-    }
+  onDropColumnIndexAtIndex = (fromIndex, toIndex) => {
+    const sourceKey = this.props.columns[fromIndex];
 
     this.props.onReorderColumns(this.props.wfModuleId, {
       column: sourceKey,
-      from: sourceIdx,
-      to: targetIdx
+      from: fromIndex,
+      to: toIndex,
     });
   };
 
-  onDragStartHeader = (column) => {
-    if (this.state.dropContextValue.draggingColumnKey === column) return;
-
+  onDragStartColumnIndex = (index) => {
     this.setState({
-      dropContextValue: { ...this.state.dropContextValue, draggingColumnKey: column },
+      draggingColumnIndex: index,
     })
   };
 
-  onDragEndHeader = () => {
-    if (this.state.dropContextValue.draggingColumnKey === null) return;
-
+  onDragEnd = () => {
     this.setState({
-      dropContextValue: { ...this.state.dropContextValue, draggingColumnKey: null },
+      draggingColumnIndex: null,
     })
   };
 
   render() {
-    //console.log(this.props);
-
     if (this.props.totalRows > 0) {
-
-      this.updateRowNumKey(this.props);
-      var columns = makeFormattedCols(this.props, this.rowNumKey, this.props.wfModuleId);
-      //console.log(columns)
+      const columns = makeFormattedCols({
+        columns: this.props.columns || [],
+        columnTypes: this.props.columnTypes || this.props.columns.map(_ => ''),
+        showLetter: this.props.showLetter || false,
+        sortColumn: this.props.sortColumn,
+        sortDirection: this.props.sortDirection,
+        rowNumKey: this.rowNumKey,
+        onDragStartColumnIndex: this.onDragStartColumnIndex,
+        onDragEnd: this.onDragEnd,
+        draggingColumnIndex: this.state.draggingColumnIndex,
+        onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
+        onSortColumn: this.props.onSortColumn || (() => {}),
+      })
 
       return(
-        <DropFunctionContext.Provider value={this.state.dropContextValue}>
-          <ReactDataGrid
-            columns={columns}
-            rowGetter={this.getRow}
-            rowsCount={this.props.totalRows}
-            minWidth={this.state.gridWidth -2}
-            minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
-            headerRowHeight={this.props.showLetter ? 54 : 36}
-            enableCellSelect={true}
-            onGridRowsUpdated={this.onGridRowsUpdated}
-            enableDragAndDrop={true}
-            draggableHeaderCell={ConnectedDraggableHeaderCell}
-            key={this.state.componentKey}
-            />
-        </DropFunctionContext.Provider>
+        <ReactDataGrid
+          columns={columns}
+          rowGetter={this.getRow}
+          rowsCount={this.props.totalRows}
+          minWidth={this.state.gridWidth -2}
+          minHeight={this.state.gridHeight-2}   // -2 because grid has borders, don't want to expand our parent DOM node
+          headerRowHeight={this.props.showLetter ? 54 : 36}
+          enableCellSelect={true}
+          onGridRowsUpdated={this.onGridRowsUpdated}
+          key={this.state.componentKey}
+          />
       )
     }  else {
       return null;
