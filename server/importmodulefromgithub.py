@@ -74,6 +74,8 @@ def validate_module_structure(directory):
 
         # Skip directories (__pycache__ etc.) and test_*
         if not os.path.isdir(item) and not item.startswith('test'):
+            if item in [ '__init__.py', 'setup.py' ]: continue
+
             extension = item.rsplit('.', 1)
             if len(extension) > 1:
                 extension = extension[1]
@@ -81,8 +83,7 @@ def validate_module_structure(directory):
                 continue
             if extension in ["py", "json", "html"]:
                 if extension not in extension_file_mapping:
-                    if item not in '__init__.py':
-                        extension_file_mapping[extension] = item
+                    extension_file_mapping[extension] = item
                 else:
                     raise ValidationError(
                         "Multiple files exist with extension {}. This isn't currently supported.".format(extension))

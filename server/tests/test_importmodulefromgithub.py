@@ -163,6 +163,12 @@ class ImportFromGitHubTest(LoggedInTestCase):
             mapping = validate_module_structure(test_dir)
 
 
+    def test_ignore_setup_py(self):
+        test_dir = self.fake_github_clone()
+        open(os.path.join(test_dir, 'setup.py'), 'w').close()
+        mapping = validate_module_structure(test_dir)
+        self.assertEqual(mapping['py'], 'importable.py')
+
     def test_extract_version_hash(self):
         test_dir = self.fake_github_clone()
         os.rename(os.path.join(test_dir, 'git'),
