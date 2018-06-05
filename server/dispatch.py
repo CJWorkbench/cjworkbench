@@ -64,45 +64,6 @@ module_dispatch_tbl = {
     'double_M_col': DoubleMColumn
 }
 
-# ---- Parameter Dictionary Sanitization ----
-
-# Column sanitization: remove invalid column names
-# We can get bad column names if the module is reordered, for example
-# Never make the render function deal with this.
-
-def sanitize_column_param(pval, table_cols):
-    col = pval.get_value()
-    if col in table_cols:
-        return col
-    else:
-        return ''
-
-def sanitize_multicolumn_param(pval, table_cols):
-    cols = pval.get_value().split(',')
-    cols = [c.strip() for c in cols]
-    cols = [c for c in cols if c in table_cols]
-
-    return ','.join(cols)
-
-
-# Extracts all parameter values from the Wf Module, does some error checking,
-# and stores in a dict ready for the (dynamically loaded) module's render function
-def create_parameter_dict(wf_module, table):
-    pdict = {}
-    for p in ParameterVal.objects.filter(wf_module=wf_module):
-        type = p.parameter_spec.type
-        id_name = p.parameter_spec.id_name
-
-        if type == ParameterSpec.COLUMN:
-            pdict[id_name] = sanitize_column_param(p, table.columns)
-        elif type == ParameterSpec.MULTICOLUMN:
-            pdict[id_name] = sanitize_multicolumn_param(p, table.columns)
-        else:
-            pdict[id_name] = p.get_value()
-
-    return pdict
-
-
 # ---- Dispatch Entrypoints ----
 
 # Main render entrypoint.
@@ -110,22 +71,14 @@ def module_dispatch_render(wf_module, table):
     if wf_module.module_version is None:
         return pd.DataFrame()  # happens if module deleted
 
+    render_fn = None
+
     dispatch = wf_module.module_version.module.dispatch
-    error = None
-    tableout = None
-
-    # External module -- gets only a parameter dictionary
-    if dispatch not in module_dispatch_tbl.keys():
-        render_fn = get_module_render_fn(wf_module)
-        if not render_fn:
-            raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
-
-        params = create_parameter_dict(wf_module, table)
-        tableout = render_fn(table, params)
-
-    # Internal module -- has access to internal data structures
+    if dispatch in module_dispatch_tbl:
+        render_fn = module_dispatch_tbl[dispatch].render
     else:
-        tableout = module_dispatch_tbl[dispatch].render(wf_module, table)
+        render_fn = get_module_render_fn(wf_module)
+    tableout = render_fn(wf_module, table)
 
     error = None
     if isinstance(tableout, str):

@@ -32,10 +32,12 @@ class DynamicModule:
         self.module_id_name = module_id_name
         self.version_sha1 = version_sha1
         self.module = load_module(module_id_name, version_sha1)
+        self.has_fetch = hasattr(self.module, 'fetch')
+        self.has_render = hasattr(self.module, 'render')
 
 
-    def render(self, table: Optional[DataFrame],
-               params: Dict[str, Any]) -> Tuple[str, DataFrame]:
+    def render(self, wf_module: WfModule,
+               table: DataFrame) -> Tuple[str, DataFrame]:
         """Process `table` with module `render` method, to build a new
         DataFrame.
 
@@ -46,6 +48,8 @@ class DynamicModule:
         ``(output_frame, error_string)`` format. At least one will be non-None.
         """
         if table is None: return None
+
+        params = wf_module.create_parameter_dict(table)
 
         try:
             out = self.module.render(table, params)
@@ -59,7 +63,10 @@ class DynamicModule:
             error = f'{exc_name}: {str(e)} at line {lineno} of {fname}'
             return (table, error)
 
+        # TODO coerce output. [adamhooper, 2018-06-05] this isn't urgent because
+        # `dispatch.py` does it. But we should really do it here.
         return out
+
 
 @lru_cache(maxsize=None)
 def load_module(module_id_name: str, version_sha1: str) -> ModuleType:
