@@ -66,10 +66,14 @@ class DispatchTests(TestCase):
         out = module_dispatch_render(wfm, self.test_table)
         wfm.refresh_from_db()
         self.assertTrue(wfm.status == WfModule.ERROR)
+        self.assertEqual(
+            wfm.error_msg,
+            'invalid syntax (<string>, line 2) at line 1'
+        )
         self.assertTrue(out.equals(self.test_table))
 
     def test_table_truncation(self):
-        nrows = settings.MAX_ROWS_PER_TABLE * 2
+        nrows = settings.MAX_ROWS_PER_TABLE + 1
         bigtable = pd.DataFrame(np.random.randint(0,100,size=(nrows, 4)), columns=list('ABCD'))
         wfm = load_and_add_module('editcells')  # because it never changes row count
         out = module_dispatch_render(wfm, bigtable)

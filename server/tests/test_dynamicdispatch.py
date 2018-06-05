@@ -1,19 +1,26 @@
 from unittest import mock
 
-from ..dynamicdispatch import DynamicModule
+from ..dynamicdispatch import DynamicModule, load_module
 import json, os, shutil, types
 import pandas
 import unittest
 
 
 class MockWfModule:
-    def __init__(self, params):
+    def __init__(self, params={}, stored_table=None, stored_error=''):
         self.params = params
+        self.stored_table = stored_table
         self.last_table = None
+        self.error_msg = stored_error
+
 
     def create_parameter_dict(self, table):
         self.last_table = table
         return self.params
+
+
+    def retrieve_fetched_table(self):
+        return self.stored_table
 
 
 class DynamicDispatchTest(unittest.TestCase):
@@ -41,6 +48,7 @@ class DynamicDispatchTest(unittest.TestCase):
 
     def tearDown(self):
         shutil.rmtree(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "importedmodules", "imported"))
+        load_module.cache_clear()
 
 
     @property
@@ -60,13 +68,13 @@ class DynamicDispatchTest(unittest.TestCase):
 
 
     def test_render_none(self):
-        self.assertEqual(self.render(MockWfModule({}), None), None)
+        self.assertEqual(self.render(MockWfModule(), None), None)
 
 
     def test_render_exception(self):
         self.mock_render(lambda x, y: 1 / 0) # raise exception
         table = pandas.DataFrame()
-        ret = self.render(MockWfModule({}), table)
+        ret = self.render(MockWfModule(), table)
         self.assertIs(ret[0], table) # no-op
         self.assertRegexpMatches(
             ret[1],
@@ -78,20 +86,20 @@ class DynamicDispatchTest(unittest.TestCase):
         table = pandas.DataFrame({ 'a': [ 'b' ] })
         out = (pandas.DataFrame({ 'b': [ 'c' ] }), None)
         self.mock_render(lambda x, y: out)
-        ret = self.render(MockWfModule({}), table)
+        ret = self.render(MockWfModule(), table)
         self.assertIs(ret, out)
 
 
     def test_render_error(self):
         self.mock_render(lambda x, y: (None, 'error'))
-        ret = self.render(MockWfModule({}), pandas.DataFrame())
+        ret = self.render(MockWfModule(), pandas.DataFrame())
         self.assertEqual(ret[1], 'error')
 
 
     def test_render_arg_table(self):
         table = pandas.DataFrame({ 'a': [ 'b' ] })
         self.mock_render(lambda x, y: (x, None))
-        ret = self.render(MockWfModule({}), table)
+        ret = self.render(MockWfModule(), table)
         self.assertIs(ret[0], table)
 
 
@@ -106,3 +114,32 @@ class DynamicDispatchTest(unittest.TestCase):
 
         # Assert its retval was passed to module's render()
         self.assertEqual(ret[1], repr({ 'a': 'b' }))
+
+
+    def test_render_default_passthrough(self):
+        del self.module.module.render
+        table = pandas.DataFrame()
+        ret = self.render(MockWfModule(), table)
+        self.assertIs(ret[0], table)
+
+
+    def test_render_default_cached(self):
+        del self.module.module.render
+        table1 = pandas.DataFrame()
+        table2 = pandas.DataFrame()
+        ret = self.render(
+            MockWfModule(stored_table=table2, stored_error=''),
+            table1
+        )
+        self.assertIs(ret[0], table2)
+        self.assertEqual(ret[1], '')
+
+
+    def test_render_default_error(self):
+        del self.module.module.render
+        table = pandas.DataFrame()
+        ret = self.render(
+            MockWfModule(stored_table=table, stored_error='Error'),
+            table
+        )
+        self.assertEqual(ret[1], 'Error')

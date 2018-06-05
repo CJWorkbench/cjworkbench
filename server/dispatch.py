@@ -30,7 +30,9 @@ from .modules.reorder import ReorderFromTable
 
 
 class NOP(ModuleImpl):
-    pass
+    @staticmethod
+    def render(wfmodule, table):
+        return table
 
 
 class DoubleMColumn(ModuleImpl):
@@ -78,20 +80,19 @@ def module_dispatch_render(wf_module, table):
         render_fn = module_dispatch_tbl[dispatch].render
     else:
         render_fn = get_module_render_fn(wf_module)
+
     tableout = render_fn(wf_module, table)
-
     error = None
+
     if isinstance(tableout, str):
-        # If the module returns a string, it's an error message. Return the input table (NOP)
-        error = tableout
-        tableout = table # NOP
+        # a string is an error message, and there is no table
+        (tableout, error) = (table, tableout) # weird? output = input
 
-    elif isinstance(tableout, tuple) and isinstance(tableout[0], pd.DataFrame) and isinstance(tableout[1], str):
-        # tuple with a table and a warning message
-        error = tableout[1]
-        tableout = tableout[0]
+    if isinstance(tableout, tuple) and len(tableout) == 2:
+        # a tuple is what we expect: (table, error)
+        (tableout, error) = tableout
 
-    elif (tableout is not None) and (not isinstance(tableout, pd.DataFrame)):
+    if (tableout is not None) and (not isinstance(tableout, pd.DataFrame)):
         # if it's not a string or a tuple it needs to be a table
         error = _('Module did not return a table or an error message')
         tableout = None

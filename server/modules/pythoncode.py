@@ -26,18 +26,18 @@ class PythonCode(ModuleImpl):
         code = 'def process(table):\n' + indent_lines(code)
 
         # this is where we will store the function we define
-        locals = {}
+        inner_locals = {}
 
         # Catch errors with the code and display to user
         try:
-            exec(code, custom_code_globals, locals )
-            out_table = locals['process'](table)
+            exec(code, custom_code_globals, inner_locals)
+            out_table = inner_locals['process'](table)
 
         except SyntaxError as err:
-            return(errorstring(err.lineno, str(err)))
+            return errorstring(err.lineno, str(err))
         except Exception as err:
             cl, exc, tb = sys.exc_info()
             lineno = traceback.extract_tb(tb)[1][1]
-            return(errorstring(lineno, str(err)))
+            return errorstring(lineno, str(err))
 
         return out_table

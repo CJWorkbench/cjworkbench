@@ -5,7 +5,7 @@ import importlib.util
 from .importmodulefromgithub import original_module_lineno
 from pandas import DataFrame
 from types import ModuleType
-from typing import Any, Optional, Dict, Tuple
+from typing import Any, Optional, Tuple
 from functools import lru_cache
 import sys
 import traceback
@@ -20,11 +20,6 @@ _DYNAMIC_MODULES_BASE_DIRECTORY = os.path.join(
 )
 
 
-class DynamicModuleError(Exception):
-    pass
-
-
-
 class DynamicModule:
     """A module with `fetch` and `render` methods.
     """
@@ -32,12 +27,29 @@ class DynamicModule:
         self.module_id_name = module_id_name
         self.version_sha1 = version_sha1
         self.module = load_module(module_id_name, version_sha1)
-        self.has_fetch = hasattr(self.module, 'fetch')
-        self.has_render = hasattr(self.module, 'render')
+
+
+    @property
+    def has_render(self):
+        """If false, render() returns its cached value (default empty).
+        """
+        return hasattr(self.module, 'fetch')
+
+
+    def _default_render(self, wf_module, table):
+        """Render cached value, or pass-through input.
+        """
+        stored_table = wf_module.retrieve_fetched_table()
+        if stored_table is not None:
+            # Return cached value
+            return (stored_table, wf_module.error_msg)
+        else:
+            # Pass-through input
+            return (table, '')
 
 
     def render(self, wf_module: WfModule,
-               table: DataFrame) -> Tuple[str, DataFrame]:
+               table: Optional[DataFrame]) -> Tuple[str, DataFrame]:
         """Process `table` with module `render` method, to build a new
         DataFrame.
 
@@ -48,6 +60,9 @@ class DynamicModule:
         ``(output_frame, error_string)`` format. At least one will be non-None.
         """
         if table is None: return None
+
+        if not hasattr(self.module, 'render'):
+            return self._default_render(wf_module, table)
 
         params = wf_module.create_parameter_dict(table)
 
