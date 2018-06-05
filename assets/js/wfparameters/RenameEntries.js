@@ -11,28 +11,40 @@ class RenameEntry extends React.Component {
     static propTypes = {
         colname: PropTypes.string.isRequired,
         newColname: PropTypes.string.isRequired,
-        onColRename: PropTypes.func.isRequired
+        onColRename: PropTypes.func.isRequired,
+        onEntryDelete: PropTypes.func.isRequired,
     };
 
     constructor(props) {
         super(props);
 
         this.handleChange = this.handleChange.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
     }
 
     handleChange(event) {
         this.props.onColRename(this.props.colname, event.target.value);
     }
 
+    handleDelete() {
+        this.props.onEntryDelete(this.props.colname);
+    }
+
     render() {
+        // The class names below are used in testing.
+        // Changing them would require updating the tests accordingly.
+        console.log(this.props);
         return (
             <div>
-                <div style={{width: '50%', float: 'left'}}>{this.props.colname}</div>
+                <div className={'rename-column'} style={{width: '40%', float: 'left'}}>{this.props.colname}</div>
                 <input
+                    className={'rename-input'}
+                    style={{width: '50%'}}
                     type={'text'}
                     value={this.props.newColname}
                     onChange={this.handleChange}
                 />
+                <button className={'rename-delete'} onClick={this.handleDelete}>X</button>
             </div>
         )
     }
@@ -58,17 +70,20 @@ export default class RenameEntries extends React.Component {
         this.state = {
             columns: undefined,
             entries: entries,
-        }
+        };
 
         this.onInputBlur = this.onInputBlur.bind(this);
         this.onColRename = this.onColRename.bind(this);
+        this.onEntryDelete = this.onEntryDelete.bind(this);
     }
 
     refreshColumns() {
-        api.inputColumns(this.props.wfModuleId)
-            .then((columns) => {
-                this.setState({columns: columns});
-            });
+        if(this.props.displayAll) {
+            api.inputColumns(this.props.wfModuleId)
+                .then((columns) => {
+                    this.setState({columns: columns});
+                });
+        }
     }
 
     componentWillReceiveProps(nextProps) {
@@ -100,24 +115,61 @@ export default class RenameEntries extends React.Component {
         api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
     }
 
+    onEntryDelete(prevName) {
+        var newEntries = Object.assign({}, this.state.entries);
+        if(prevName in newEntries) {
+            delete newEntries[prevName];
+            api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
+        }
+    }
+
     renderEntries() {
         if(this.state.columns) {
             return this.state.columns.map((col) => {
                 if(col in this.state.entries) {
-                    return <RenameEntry key={col} colname={col} newColname={this.state.entries[col]} onColRename={this.onColRename}/>;
+                    return (
+                        <RenameEntry
+                            key={col}
+                            colname={col}
+                            newColname={this.state.entries[col]}
+                            onColRename={this.onColRename}
+                            onEntryDelete={this.onEntryDelete}
+                        />
+                    );
                 } else {
-                    return <RenameEntry key={col} colname={col} newColname={col} onColRename={this.onColRename}/>;
+                    return (
+                        <RenameEntry
+                            key={col}
+                            colname={col}
+                            newColname={col}
+                            onColRename={this.onColRename}
+                            onEntryDelete={this.onEntryDelete}
+                        />
+                    );
                 }
             });
         } else {
+            var entries = [];
             for(let col in this.state.entries) {
-                return <RenameEntry key={col} colname={col} newColname={this.state.entries[col]} onColRename={this.onColRename}/>;
+                entries.push(
+                    <RenameEntry
+                        key={col}
+                        colname={col}
+                        newColname={this.state.entries[col]}
+                        onColRename={this.onColRename}
+                        onEntryDelete={this.onEntryDelete}
+                    />
+                );
             }
+            return entries;
         }
     }
 
     render() {
+        console.log(this.props);
+        console.log(this.state);
         const entries = this.renderEntries();
+        console.log(entries);
         return (
             <div>{entries}</div>
         )

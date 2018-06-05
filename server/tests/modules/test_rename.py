@@ -28,9 +28,16 @@ class RenameFromTableTests(LoggedInTestCase):
         self.wf_module = load_and_add_module('rename', workflow=self.workflow)
         self.entries_pval = get_param_by_id_name('rename-entries')
 
-    def test_rename_empty(self):
-        # Should only happen when a module is first created, returns table
+    def test_rename_empty_str(self):
+        # Should only happen when a module is first created, should return table
         self.entries_pval.value = ' '
+        self.entries_pval.save()
+        out = execute_nocache(self.wf_module)
+        self.assertTrue(out.equals(self.table))
+
+    def test_rename_empty(self):
+        # If there are no entries, return table
+        self.entries_pval.value = json.dumps({})
         self.entries_pval.save()
         out = execute_nocache(self.wf_module)
         self.assertTrue(out.equals(self.table))
