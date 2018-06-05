@@ -13,16 +13,18 @@
     height: 4rem;
     width: 14rem;
     background-color: $white;
-    color: rgba(104,103,104,0.8);
     display: flex;
     align-items: center;
     justify-content: flex-start;
     padding-left: 1rem;
     cursor:pointer;
 
+    span {color: $brand-text--medium;}
+
     &:hover {
       background-color: $dark-accent--soft;
-      color: $brand-text--dark;
+
+      span {color: $brand-text--dark;}
     }
     &:active {
       background-color: $dark-accent--medium;
