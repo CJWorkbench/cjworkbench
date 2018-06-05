@@ -338,6 +338,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         colparam.set_value('M') # double this
         multicolparam.set_value('F,Other') # triple these
         out = module_dispatch_render(wfm, test_table)
+        self.assertEqual(wfm.error_msg, '')
         self.assertEqual(wfm.status, WfModule.READY)
         self.assertTrue(out.equals(test_table_out))
 
