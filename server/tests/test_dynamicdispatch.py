@@ -3,6 +3,7 @@ from unittest import mock
 from server.tests.utils import LoggedInTestCase, load_and_add_module_from_dict, add_new_workflow
 from ..dynamicdispatch import get_module_render_fn, wf_module_to_dynamic_module
 import json, os, shutil, types
+import pandas
 
 class DynamicDispatchTest(LoggedInTestCase):
     def setUp(self):
@@ -56,6 +57,15 @@ class DynamicDispatchTest(LoggedInTestCase):
         return self._dynamic_module
 
 
+    @property
+    def render(self):
+        return self.a_dynamic_module.render
+
+
+    def mock_render(self, func):
+        self.a_dynamic_module.module.render = func
+
+
     def test_load_module(self):
         render_fn = get_module_render_fn(self.a_wf_module)
         self.assertTrue(callable(render_fn))
@@ -69,5 +79,43 @@ class DynamicDispatchTest(LoggedInTestCase):
             self.assertEqual(mocked.call_count, 0)
 
 
-    def test_dynamic_module_render(self):
-        self.assertTrue(hasattr(self.a_dynamic_module, 'render'))
+    def test_render_none(self):
+        self.assertEqual(self.render(None, {}), None)
+
+
+    def test_render_exception(self):
+        self.mock_render(lambda x, y: 1 / 0) # raise exception
+        table = pandas.DataFrame()
+        ret = self.render(table, {})
+        self.assertIs(ret[0], table) # no-op
+        self.assertRegexpMatches(
+            ret[1],
+            f'ZeroDivisionError: .* at line \\d+ of {os.path.basename(__file__)}'
+        )
+
+
+    def test_render_table(self):
+        table = pandas.DataFrame({ 'a': [ 'b' ] })
+        out = (pandas.DataFrame({ 'b': [ 'c' ] }), None)
+        self.mock_render(lambda x, y: out)
+        ret = self.render(table, {})
+        self.assertIs(ret, out)
+
+
+    def test_render_error(self):
+        self.mock_render(lambda x, y: (None, 'error'))
+        ret = self.render(pandas.DataFrame(), {})
+        self.assertEqual(ret[1], 'error')
+
+
+    def test_render_arg_table(self):
+        table = pandas.DataFrame({ 'a': [ 'b' ] })
+        self.mock_render(lambda x, y: (x, None))
+        ret = self.render(table, {})
+        self.assertIs(ret[0], table)
+
+
+    def test_render_arg_params(self):
+        self.mock_render(lambda x, y: (x, repr(y)))
+        ret = self.render(pandas.DataFrame(), { 'a': 'b' })
+        self.assertEqual(ret[1], repr({ 'a': 'b' }))

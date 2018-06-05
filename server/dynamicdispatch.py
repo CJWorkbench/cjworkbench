@@ -2,10 +2,13 @@ from .models import WfModule
 
 import importlib, inspect, os
 import importlib.util
+from .importmodulefromgithub import original_module_lineno
 from pandas import DataFrame
 from types import ModuleType
 from typing import Any, Optional, Dict, Tuple
 from functools import lru_cache
+import sys
+import traceback
 
 
 #the base directory where all modules imported should be stored, i.e. the place where we go to lookup
@@ -40,13 +43,23 @@ class DynamicModule:
         error string. It is always an error for a module to raise an exception.
 
         The `render` method's return value will be coerced into a
-        ``(error_string, output_table)`` format. At least one will be non-None.
+        ``(output_frame, error_string)`` format. At least one will be non-None.
         """
         if table is None: return None
 
-        # TODO handle exceptions, coerce return value
-        return self.module.render(table, params)
+        try:
+            out = self.module.render(table, params)
+        except Exception as e:
+            # Catch exceptions in the module render function, and return error message + line number to user
+            exc_name = type(e).__name__
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
+            fname = os.path.split(tb[0])[1]
+            lineno = original_module_lineno(tb[1])
+            error = f'{exc_name}: {str(e)} at line {lineno} of {fname}'
+            return (table, error)
 
+        return out
 
 @lru_cache(maxsize=None)
 def load_module(module_id_name: str, version_sha1: str) -> ModuleType:

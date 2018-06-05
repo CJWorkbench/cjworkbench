@@ -5,9 +5,8 @@ from server.models import WfModule
 from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
 from .dynamicdispatch import get_module_render_fn,get_module_html_path
-from .importmodulefromgithub import original_module_lineno
 from .sanitizedataframe import sanitize_dataframe, truncate_table_if_too_big
-import os, sys, traceback, types, inspect
+import os, inspect
 from django.utils.translation import gettext as _
 
 from .modules.counybydate import CountByDate
@@ -117,23 +116,12 @@ def module_dispatch_render(wf_module, table):
 
     # External module -- gets only a parameter dictionary
     if dispatch not in module_dispatch_tbl.keys():
-
         render_fn = get_module_render_fn(wf_module)
         if not render_fn:
             raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
 
         params = create_parameter_dict(wf_module, table)
-        try:
-            tableout = render_fn(table, params)
-        except Exception as e:
-            # Catch exceptions in the module render function, and return error message + line number to user
-            exc_name = type(e).__name__
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
-            fname = os.path.split(tb[0])[1]
-            lineno = original_module_lineno(tb[1])
-            error = ('{}: {} at line {} of {}'.format(exc_name, str(e), lineno, fname))
-            tableout = error
+        tableout = render_fn(table, params)
 
     # Internal module -- has access to internal data structures
     else:
