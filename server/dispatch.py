@@ -26,6 +26,7 @@ from .modules.urlscraper import URLScraper
 from .modules.scrapetable import ScrapeTable
 from .modules.sortfromtable import SortFromTable
 from .modules.reorder import ReorderFromTable
+from .modules.rename import RenameFromTable
 
 # ---- Test Support ----
 
@@ -59,6 +60,7 @@ module_dispatch_tbl = {
     'scrapetable':      ScrapeTable,
     'sort-from-table':  SortFromTable,
     'reorder-columns':  ReorderFromTable,
+    'rename-columns':   RenameFromTable,
 
     # For testing
     'NOP':          NOP,

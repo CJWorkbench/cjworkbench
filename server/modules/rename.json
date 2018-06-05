@@ -1,0 +1,22 @@
+{
+  "name": "Rename columns",
+  "id_name": "rename-columns",
+  "category": "Clean",
+  "icon": "edit",
+  "description": "Rename columns",
+  "help_url":"modules/clean/rename-columns",
+  "parameters": [
+    {
+      "name": "",
+      "id_name": "display-all",
+      "type": "checkbox",
+      "visible": false,
+      "default": "True"
+    },
+    {
+      "name": "",
+      "id_name": "rename-entries",
+      "type": "custom"
+    }
+  ]
+}

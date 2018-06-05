@@ -16,6 +16,7 @@ import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
+import RenameEntries from './wfparameters/RenameEntries'
 import { csrfToken } from './utils'
 import { store, setWfModuleStatusAction } from './workflow-reducer'
 import lessonSelector from './lessons/lessonSelector'
@@ -250,6 +251,17 @@ export default class WfParameter extends React.Component {
         <ReorderHistory
           history={this.props.getParamText('reorder-history')}
         />
+      )
+    } else if (id_name == 'rename-entries') {
+      console.log(this.props);
+      return (
+          <RenameEntries
+              displayAll={this.props.getParamText('display-all')}
+              entries={this.props.p.value}
+              wfModuleId={this.props.wf_module_id}
+              paramId={this.props.p.id}
+              revision={this.props.revision}
+          />
       )
     }
   }
