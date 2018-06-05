@@ -215,15 +215,18 @@ def validate_python_functions(destination_directory, python_file):
     except:
        raise ValidationError("Cannot load module")
 
-    try:
-       render_fn = getattr(test_module, 'render')
-    except:
+    if hasattr(test_module, 'render'):
+        if callable(test_module.render):
+            return
+        else:
+            raise ValidationError("Module render() function isn't callable.")
+    elif hasattr(test_module, 'fetch'):
+        if callable(test_module.fetch):
+            return
+        else:
+            raise ValidationError("Module fetch() function isn't callable.")
+    else:
        raise ValidationError("Module render() function is missing.")
-
-    if not callable(render_fn):
-        raise ValidationError("Module render() function isn't callable.")
-
-    return render_fn
 
 
 # Get head version hash from git repo on disk

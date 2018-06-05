@@ -4,7 +4,7 @@ from django.conf import settings
 from server.models import WfModule
 from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
-from .dynamicdispatch import get_module_render_fn,get_module_html_path
+from .dynamicdispatch import get_module_render_fn, get_module_html_path, wf_module_to_dynamic_module
 from .sanitizedataframe import sanitize_dataframe, truncate_table_if_too_big
 import os, inspect
 from django.utils.translation import gettext as _
@@ -123,12 +123,14 @@ def module_dispatch_render(wf_module, table):
 
 def module_dispatch_event(wf_module, **kwargs):
     dispatch = wf_module.module_version.module.dispatch
-    if dispatch not in module_dispatch_tbl.keys():
-        raise ValueError("Unknown dispatch id '%s' while handling event for module '%s'" % (dispatch, str(wf_module)))
+    if dispatch in module_dispatch_tbl:
+        # Clear errors on every new event. (The other place they are cleared is on parameter change)
+        wf_module.set_ready(notify=False)
+        return module_dispatch_tbl[dispatch].event(wf_module, **kwargs)
+    else:
+        dynamic_module = wf_module_to_dynamic_module(wf_module)
+        dynamic_module.fetch(wf_module)
 
-    # Clear errors on every new event. (The other place they are cleared is on parameter change)
-    wf_module.set_ready(notify=False)
-    return module_dispatch_tbl[dispatch].event(wf_module, **kwargs)
 
 def module_dispatch_output(wf_module, table, **kwargs):
     dispatch = wf_module.module_version.module.dispatch
@@ -142,7 +144,7 @@ def module_dispatch_output(wf_module, table, **kwargs):
                 break
 
     tableout = module_dispatch_render(wf_module, table)
-    params = create_parameter_dict(wf_module, table)
+    params = wf_module.create_parameter_dict(table)
     # got some error handling in here if, for some reason, someone tries to call
     # output on this and it doesn't have any defined html output
     html_file = open(html_file_path, 'r+', encoding="utf-8")

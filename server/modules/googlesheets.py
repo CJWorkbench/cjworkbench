@@ -78,12 +78,13 @@ class GoogleSheets(ModuleImpl):
 
             try:
                 table = pd.read_csv(io.StringIO(new_data))
+                error = ''
             except CParserError as e:
-                wfmodule.set_error(str(e))
+                error = str(e)
                 table = pd.DataFrame([{'result':res.text}])
 
             sanitize_dataframe(table)
-            save_fetched_table_if_changed(wfmodule, table)
+            save_fetched_table_if_changed(wfmodule, table, error)
 
             # change this to no response method
             return JsonResponse({}, status=204)

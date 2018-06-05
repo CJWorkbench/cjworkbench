@@ -250,8 +250,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         #test valid scenario
         test_dir = self.fake_github_clone()
         add_boilerplate_and_check_syntax(test_dir , "importable.py")  # adds crucial boilerplate to the file
-        render_fn = validate_python_functions(test_dir , "importable.py")
-        self.assertTrue(isinstance(render_fn, types.FunctionType), "The module must be importable, and be of type 'type'.")
+        validate_python_functions(test_dir , "importable.py")
 
         # test missing/unloadable render function
         test_dir = self.fake_github_clone('test_data/missing_render_module')

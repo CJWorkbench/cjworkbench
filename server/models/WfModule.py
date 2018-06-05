@@ -268,17 +268,17 @@ class WfModule(models.Model):
     def set_busy(self, notify=True):
         self.status = self.BUSY
         self.error_msg = ''
+        self.save()
         if notify:
             websockets.ws_client_wf_module_status(self, self.status)
-        self.save()
 
     # re-render entire workflow when a module goes ready or error, on the assumption that new output data is available
     def set_ready(self, notify=True):
         self.status = self.READY
         self.error_msg = ''
+        self.save()
         if notify:
             websockets.ws_client_rerender_workflow(self.workflow)
-        self.save()
 
     def set_error(self, message, notify=True):
         self.error_msg = message

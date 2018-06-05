@@ -2,13 +2,15 @@ from .models import WfModule
 
 import importlib, inspect, os
 import importlib.util
-from .importmodulefromgithub import original_module_lineno
 from pandas import DataFrame
 from types import ModuleType
-from typing import Any, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 from functools import lru_cache
 import sys
 import traceback
+from .importmodulefromgithub import original_module_lineno
+from . import sanitizedataframe
+from . import versions
 
 
 #the base directory where all modules imported should be stored, i.e. the place where we go to lookup
@@ -48,8 +50,63 @@ class DynamicModule:
             return (table, '')
 
 
+    def _call_method(self, method_name: str, *args,
+                     **kwargs) -> Tuple[DataFrame, str]:
+        """Calls `module.method_name(*params, **kwargs)` and ensures a sane
+        return value.
+
+        The method's return value will be coerced into a
+        ``(data_frame, error_string)`` tuple. data_frame may be empty, but it
+        will not be None.
+
+        Exceptions become error messages. This method cannot produce an
+        exception.
+        """
+        try:
+            method = getattr(self.module, method_name)
+            out = method(*args, **kwargs)
+        except Exception as e:
+            # Catch exceptions in the module render function, and return error message + line number to user
+            exc_name = type(e).__name__
+            exc_type, exc_obj, exc_tb = sys.exc_info()
+            tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
+            fname = os.path.split(tb[0])[1]
+            lineno = original_module_lineno(tb[1])
+            error = f'{exc_name}: {str(e)} at line {lineno} of {fname}'
+            return (DataFrame(), error)
+
+        if isinstance(out, DataFrame):
+            table, error = out, ''
+        elif isinstance(out, str):
+            table, error = DataFrame(), out
+        elif not isinstance(out, tuple):
+            return (DataFrame(), f'Expected {method_name} to return tuple; got {type(out)}')
+        elif len(out) != 2:
+            return (DataFrame(), f'Expected {method_name} to return 2-tuple; got {len(out)}-tuple')
+        elif isinstance(out[0], DataFrame) and isinstance(out[1], str):
+            table, error = out
+        elif isinstance(out[0], DataFrame) and out[1] is None:
+            table, error = out[0], ''
+        elif out[0] is None and isinstance(out[1], str):
+            table, error = DataFrame(), out[1]
+        else:
+            return (DataFrame(), f'Expected {method_name} to return (DataFrame,str) tuple; got ({type(out[0])},{type(out[1])})')
+
+        len_before = len(table)
+        if sanitizedataframe.truncate_table_if_too_big(table):
+            warning = f'Truncated output from {len_before} rows to {len(table)}'
+            if error:
+                error = f'{error}\n{warning}'
+            else:
+                error = warning
+
+        table = sanitizedataframe.sanitize_dataframe(table)
+
+        return (table, error)
+
+
     def render(self, wf_module: WfModule,
-               table: Optional[DataFrame]) -> Tuple[str, DataFrame]:
+               table: Optional[DataFrame]) -> Tuple[DataFrame, str]:
         """Process `table` with module `render` method, to build a new
         DataFrame.
 
@@ -59,28 +116,46 @@ class DynamicModule:
         The `render` method's return value will be coerced into a
         ``(output_frame, error_string)`` format. At least one will be non-None.
         """
-        if table is None: return None
+        if table is None: return None # TODO disallow?
 
         if not hasattr(self.module, 'render'):
             return self._default_render(wf_module, table)
 
         params = wf_module.create_parameter_dict(table)
 
-        try:
-            out = self.module.render(table, params)
-        except Exception as e:
-            # Catch exceptions in the module render function, and return error message + line number to user
-            exc_name = type(e).__name__
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
-            fname = os.path.split(tb[0])[1]
-            lineno = original_module_lineno(tb[1])
-            error = f'{exc_name}: {str(e)} at line {lineno} of {fname}'
-            return (table, error)
+        return self._call_method('render', table, params)
 
-        # TODO coerce output. [adamhooper, 2018-06-05] this isn't urgent because
-        # `dispatch.py` does it. But we should really do it here.
-        return out
+
+    def call_fetch(self, params: Dict[str, Any]) -> Tuple[DataFrame, str]:
+        """Process `params` with module `fetch` method, to build a new
+        DataFrame.
+
+        If the `fetch` method raises an exception, this method will return an
+        error string. It is always an error for a module to raise an exception.
+
+        The `render` method's return value will be coerced into a
+        ``(output_frame, error_string)`` format. At least one will be non-None.
+        """
+        return self._call_method('fetch', params)
+
+
+    def fetch(self, wf_module: WfModule) -> None:
+        """Run `call_fetch(wf_module)` and write to `wf_module`.
+
+        `wf_module` will be set to `busy` until the fetch completes. After,
+        it will be either `ready` or `error`.
+        """
+        # FIXME database writes probably belong in dispatch.py. Right now,
+        # here, half is dispatch stuff and half is database stuff.
+        if not hasattr(self.module, 'fetch'): return
+
+        params = wf_module.create_parameter_dict(None)
+
+        wf_module.set_busy(notify=False)
+
+        (table, error) = self.call_fetch(params)
+
+        versions.save_fetched_table_if_changed(wf_module, table, error)
 
 
 @lru_cache(maxsize=None)

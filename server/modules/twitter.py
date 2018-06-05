@@ -111,11 +111,4 @@ class Twitter(ModuleImpl):
 
 
         if wfm.status != wfm.ERROR:
-
-            wfm.set_ready(notify=False)
-
-            # Change the data version (when new data found) only if this module set to auto update, or user triggered
-            auto = wfm.auto_update_data or (event is not None and event.get('type') == "click")
-
-            # Also notifies client
-            save_fetched_table_if_changed(wfm, tweets, auto_change_version=auto)
+            save_fetched_table_if_changed(wfm, tweets, '')

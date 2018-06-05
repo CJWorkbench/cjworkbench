@@ -79,7 +79,7 @@ class StoredObject(models.Model):
 
         hash = StoredObject._hash_table(table)
         if hash != old_so.hash:
-            return StoredObject.__create_table_internal(wf_module, type, table, metadata, hash)
+            return StoredObject.create_table(wf_module, type, table, metadata=metadata)
         else:
             return None
 

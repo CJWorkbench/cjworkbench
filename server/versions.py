@@ -1,5 +1,7 @@
 # Undo, redo, and other version related things
-from server.models import Delta, Workflow
+import datetime
+from pandas import DataFrame
+from server.models import Delta, Workflow, WfModule
 from server.models import ChangeDataVersionCommand, Notification, StoredObject
 from server.triggerrender import notify_client_workflow_version_changed
 from django.utils import timezone
@@ -41,13 +43,26 @@ def WorkflowRedo(workflow):
     notify_client_workflow_version_changed(workflow)
 
 
-# Store retrieved data (in text form here, as csv) if it isn't different from currently stored data
-# If it is and auto_change_verssion, switch to new data using a ChangeDataVersion command
-# Returns creation time of newly created StoredObject, if any
-def save_fetched_table_if_changed(wfm, new_table, auto_change_version=True):
+def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
+                                  error_message: str) -> datetime.datetime:
+    """Store retrieved data table, if it is a change from wfm's existing data.
+
+    "Change" here means either a changed table or changed error message.
+    
+    The WfModule's `status` and `error_msg` will be set, according to
+    `error_message`.
+
+    Set wfm.last_update_check, regardless.
+
+    Create (and run) a ChangeDataVersionCommand.
+
+    Notify the user.
+
+    Return the timestamp (if changed) or None (if not).
+    """
+
     with wfm.workflow.cooperative_lock():
         wfm.last_update_check = timezone.now()
-        wfm.save()
 
         # Store this data only if it's different from most recent data
         version_added = wfm.store_fetched_table_if_different(new_table)
@@ -55,12 +70,15 @@ def save_fetched_table_if_changed(wfm, new_table, auto_change_version=True):
         if version_added:
             enforce_storage_limits(wfm)
 
+        wfm.error_msg = error_message or ''
+        wfm.status = (WfModule.ERROR if error_message else WfModule.READY)
+        wfm.save()
+
     # un-indent: COMMIT, so we can notify the client and the client sees changes
-    if version_added and auto_change_version:
+    if version_added:
+        ChangeDataVersionCommand.create(wfm, version_added)  # also notifies client
         if wfm.notifications == True:
             Notification.create(wfm, "New data version available")
-        if auto_change_version:
-            ChangeDataVersionCommand.create(wfm, version_added)  # also notifies client
     else:
         # no new data version, but we still want client to update WfModule status and last update check time
         notify_client_workflow_version_changed(wfm.workflow)

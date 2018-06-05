@@ -165,7 +165,7 @@ class URLScraper(ModuleImpl):
                 return
             prev_table = urlscraper_execute_callbacks.execute_wfmodule(wfm.previous_in_stack())
 
-        # column parameters are not sanitized here, could be missing this col
+            # column parameters are not sanitized here, could be missing this col
             if urlcol in prev_table.columns:
                 urls = prev_table[urlcol].tolist()
 
@@ -180,13 +180,4 @@ class URLScraper(ModuleImpl):
 
         table['date'] = URLScraper._mynow().strftime('%Y-%m-%d %H:%M:%S')
 
-        wfm.set_ready(notify=False)
-        save_fetched_table_if_changed(wfm, table, auto_change_version=True)
-
-
-
-
-
-
-
-
+        save_fetched_table_if_changed(wfm, table, '')
