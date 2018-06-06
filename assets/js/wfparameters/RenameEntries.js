@@ -146,7 +146,11 @@ export default class RenameEntries extends React.Component {
         var newEntries = Object.assign({}, this.state.entries);
         if(prevName in newEntries) {
             delete newEntries[prevName];
-            api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
+            if(Object.keys(newEntries).length == 0) {
+                api.deleteModule(this.props.wfModuleId);
+            } else {
+                api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
+            }
         }
     }
 

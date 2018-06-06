@@ -20,7 +20,8 @@ describe('ReorderEntries rendering and interactions', () => {
     beforeEach(() => {
         api = {
             inputColumns: jsonResponseMock(columns),
-            onParamChanged: jest.fn().mockReturnValue(Promise.resolve())
+            onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
+            deleteModule: jest.fn().mockReturnValue(Promise.resolve())
         };
         mockAPI(api);
     });
@@ -171,5 +172,28 @@ describe('ReorderEntries rendering and interactions', () => {
                 done();
             });
         });
+    });
+
+    it('Deletes itself if all entries are deleted', (done) => {
+        let tree = mount(<RenameEntries
+            displayAll={false}
+            entries={JSON.stringify({'name': 'host_name'})}
+            wfModuleId={WFM_ID}
+            paramId={PARAM_ID}
+        />);
+
+        setImmediate(() => {
+            tree.update();
+            expect(tree.find('RenameEntry')).toHaveLength(1);
+            let firstEntry = tree.find('RenameEntry').first();
+            expect(firstEntry.find('.rename-delete')).toHaveLength(1);
+            firstEntry.find('.rename-delete').simulate('click');
+            setImmediate(() => {
+                expect(api.onParamChanged.mock.calls).toHaveLength(0);
+                expect(api.deleteModule.mock.calls).toHaveLength(1);
+                expect(api.deleteModule.mock.calls[0][0]).toBe(WFM_ID);
+                done();
+            })
+        })
     });
 });
