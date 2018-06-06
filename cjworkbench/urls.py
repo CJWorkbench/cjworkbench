@@ -30,7 +30,7 @@ urlpatterns = [
     url(r'^xyzzy/signup/$', SignupView.as_view(), name='account_signup'),
     url(r'^account/signup/$', page_not_found,  {'exception': Http404()}),
     url(r'^authorize/$', authorize),
-    url(r'^oauth/$', get_creds),
+    url(r'^oauth/?$', get_creds),
     url(r'^account/', include('allauth.urls')),
     url(r'^', include('server.urls')),
     url(r'^api/user/$', current_user),

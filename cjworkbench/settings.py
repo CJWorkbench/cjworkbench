@@ -320,7 +320,7 @@ AUTHENTICATION_BACKENDS = [
 
 # Third party services
 
-# Google, for Google Drive. Eventually hook into django-allauth's auth token and replace our own implementation.
+# Google, for Google Drive.
 
 CJW_GOOGLE_CLIENT_SECRETS_PATH = os.environ.get('CJW_GOOGLE_CLIENT_SECRETS', False)
 if not CJW_GOOGLE_CLIENT_SECRETS_PATH:

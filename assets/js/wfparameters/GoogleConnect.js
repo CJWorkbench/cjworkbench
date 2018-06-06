@@ -22,7 +22,7 @@ export default class GoogleConnect extends React.Component {
     )
     interval = window.setInterval(function () {
       try {
-        if (that.state.popup.location.pathname === '/oauth/') {
+        if (/^\/oauth\/?/.test(that.state.popup.location.pathname)) {
           that.state.popup.close();
           store.dispatch(getCurrentUserAction());
           clearInterval(interval);
