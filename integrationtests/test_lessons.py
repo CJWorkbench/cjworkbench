@@ -17,6 +17,6 @@ class TestLessons(LoggedInIntegrationTest):
 
         b.assert_element('.module-stack')
         b.assert_element('h2', text='Overview')
-        b.assert_element('.current-and-total', text='1 of 6')
+        b.assert_element('.current-and-total', text='1 of 4')
         b.click_button('Next')
         b.assert_element('h2', text='1. Load Public Data by URL')
