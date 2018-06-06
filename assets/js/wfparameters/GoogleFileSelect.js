@@ -1,135 +1,174 @@
 import React from 'react'
-import { csrfToken } from '../utils'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import PropTypes from 'prop-types'
 
-export default class FileSelect extends React.Component {
-    constructor(props) {
-      super(props);
-      var savedFileMeta = this.props.getState();
-      if (savedFileMeta !== '') {
-        savedFileMeta = JSON.parse(savedFileMeta);
-      } else {
-        savedFileMeta = false;
-      }
-      this.state = {
-        files: [],
-        file: savedFileMeta,
-        modalOpen: false
-      }
-      this.toggleModal = this.toggleModal.bind(this);
+export default class GoogleFileSelect extends React.PureComponent {
+  static propTypes = {
+    api: PropTypes.shape({
+      currentGoogleClientAccessToken: PropTypes.func.isRequired,
+    }).isRequired,
+    userCreds: PropTypes.number, // TODO document what it is
+    fileMetadataJson: PropTypes.string, // may be empty/null
+    onChangeJson: PropTypes.func.isRequired, // func("{ id, name }") => undefined
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.picker = null
+
+    this.state = {
+      gapiLoaded: false,
+      accessToken: null,
+      loadingAccessToken: false,
+      userCredsThatLedToAccessToken: null,
     }
+  }
 
-    getFiles() {
-      return this.props.api.postParamEvent(
-        this.props.pid,
-        { type: 'fetchFiles' }
-      ).then(result => {
-        this.setState({files: result.files});
-      });
-    }
+  refreshAccessToken() {
+    const userCreds = this.props.userCreds
 
-    componentDidMount() {
-      if (this.props.userCreds.length > 0) {
-        this.getFiles()
-      }
-    }
+    this.setState({
+      accessToken: null,
+      userCredsThatLedToAccessToken: userCreds,
+      loadingAccessToken: true,
+    })
 
-    componentDidUpdate(prevProps) {
-      if (this.props.userCreds.length > 0 && this.props.userCreds[0] !== prevProps.userCreds[0]) {
-        this.getFiles()
-      }
-
-      if (this.props.userCreds.length === 0) {
-        this.setState({
-          files: []
-        })
-      }
-    }
-
-    handleClick(file) {
-      this.props.api.postParamEvent(
-        this.props.pid,
-        {
-          file: file,
-          type: 'fetchFile'
-        }
-      ).then((response) => {
-          this.props.saveState(JSON.stringify(file));
-          this.setState({file: file});
-          this.toggleModal();
-        }
-      );
-    }
-
-    toggleModal() {
-      this.setState({ modalOpen: !this.state.modalOpen });
-    }
-
-    render() {
-      let fileList = null
-      let filesModal = null
-      let fileInfo = null
-
-      if (typeof this.state.files !== 'undefined' && this.state.files.length > 0) {
-
-        fileList = (this.state.files.map( (file, idx) => {
-          return (
-            <div className="line-item--data-version" key={idx} onClick={() => this.handleClick(file)}>
-              <span className="content-3">{file.name}</span>
-            </div>
-          );
-        }));
-
-        filesModal = (
-          <div>
-            {!this.state.file &&
-              <div className="button-orange action-button mt-0" onClick={this.toggleModal}>Choose</div>}
-              <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal}>
-                <ModalHeader toggle={this.toggleModal}>
-                  <div className='title-4 t-d-gray'>Choose File</div>
-                </ModalHeader>
-                <ModalBody className="list-body">
-                  <div >
-                    {fileList}
-                  </div>
-                </ModalBody>
-                <div className=" modal-footer"></div>
-              </Modal>
-          </div>
-        );
-      }
-
-      if (this.state.file) {
-        fileInfo = (
-          <div>
-            <div className="d-flex">
-              <div className={"t-d-gray content-3 label-margin"}>File</div>
-              {this.state.files.length > 0 &&
-              <div onClick={this.toggleModal} className="t-f-blue ml-2">Change</div>}
-            </div>
-            <div><span className={"t-d-gray content-3 mb-3"}>{this.state.file.name}</span></div>
-          </div>
-        )
-      } else if (fileList) {
-        fileInfo = (
-          <p>{this.state.files.length} files found</p>
-        )
-      }
-
-      if (fileInfo) {
-        return (
-
-            <div className={" d-flex gdrive-fileSelect align-items-center"}>
-              <div className={"file-info content-3"}>
-                {fileInfo}
-              </div>
-              {filesModal}
-            </div>
-
-        );
-      } else {
+    this.props.api.currentGoogleClientAccessToken()
+      .then(json => json && json.access_token || null)
+      .catch(err => {
+        console.warn(err)
         return null
-      }
+      })
+      .then(access_token_or_null => {
+        if (userCreds === this.state.userCredsThatLedToAccessToken) { // avoid race
+          this.setState({
+            accessToken: access_token_or_null,
+            loadingAccessToken: false,
+          })
+        }
+      })
+  }
 
+  componentDidMount() {
+    this.callbackName = `GoogleFileSelect_onload_${String(Math.random()).slice(2, 10)}`
+    window[this.callbackName] = this.onGapiLoad
+
+    const script = document.createElement('script')
+    script.async = true
+    script.defer = true
+    script.src = `https://apis.google.com/js/api.js?onload=${this.callbackName}`
+
+    document.querySelector('head').appendChild(script)
+    this.script = script
+
+    this.refreshAccessToken()
+  }
+
+  componentWillUnmount() {
+    delete window[this.callbackName]
+    document.querySelector('head').removeChild(this.script)
+    // we leak window.gapi, but that's probably fine
+
+    if (this.picker) {
+      this.picker.dispose()
+      this.picker = null
     }
+  }
+
+  componentDidUpdate() {
+    if (this.props.userCreds !== this.state.userCredsThatLedToAccessToken) {
+      this.refreshAccessToken()
+    }
+  }
+
+  onGapiLoad = () => {
+    gapi.load('picker', this.onPickerApiLoad)
+  }
+
+  onPickerApiLoad = () => {
+    this.setState({
+      gapiLoaded: true,
+    })
+  }
+
+  openPicker = () => {
+    if (this.picker) return
+
+    const accessToken = this.state.accessToken
+    const view = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
+      .setIncludeFolders(true)
+
+    this.picker = new google.picker.PickerBuilder()
+      .addView(view)
+      .setOrigin(window.location.origin)
+      .setOAuthToken(accessToken)
+      .setCallback(this.onPick)
+      .build()
+
+    this.picker.setVisible(true)
+  }
+
+  onPick = (data) => {
+    switch (data.action) {
+      case 'loaded':
+        break
+
+      case 'picked':
+        const doc = data.docs[0]
+        this.props.onChangeJson(JSON.stringify({
+          id: doc.id,
+          name: doc.name,
+        }))
+
+        this.picker.dispose()
+        this.picker = null
+        return
+
+      case 'cancel':
+        this.picker.dispose()
+        this.picker = null
+        return
+
+      default:
+        console.log(data)
+    }
+  }
+
+  render() {
+    const { gapiLoaded, accessToken, accessTokenLoading } = this.state
+    const { fileMetadataJson } = this.props
+
+    const fileMetadata = fileMetadataJson ? JSON.parse(fileMetadataJson) : null
+    const fileId = fileMetadata ? (fileMetadata.id || null) : null
+    const fileName = fileMetadata ? (fileMetadata.name || null) : null
+
+    let button
+    if (accessTokenLoading || !gapiLoaded) {
+      button = (
+        <p className="loading">Loading...</p>
+      )
+    } else if (!accessToken) {
+      button = (
+        <p className="not-signed-in">
+          To {fileId ? 'choose another file' : 'choose a file'}, you must connect
+        </p>
+      )
+    } else {
+      button = (
+        <button
+          className="button-orange action-button"
+          onClick={this.openPicker}
+          >{ fileId ? 'Change' : 'Choose' }</button>
+      )
+    }
+
+    return (
+      <div className="google-file-select">
+        <div className="file-info">
+          {fileName || '(no file chosen)'}
+        </div>
+        {button}
+      </div>
+    )
+  }
 }

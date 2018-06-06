@@ -132,7 +132,7 @@ describe('Reducer actions', () => {
     const user = {
       display_name: "Example User",
       email: "example@example.org",
-      google_credentials: [1],
+      google_credentials: 1,
       id: 1
     };
     const state = workflowReducer(test_state, {
@@ -146,7 +146,7 @@ describe('Reducer actions', () => {
     const user = {
       display_name: "Example User",
       email: "example@example.org",
-      google_credentials: [1],
+      google_credentials: 1,
       id: 1
     };
 
@@ -162,14 +162,14 @@ describe('Reducer actions', () => {
       }
     });
 
-    expect(state.loggedInUser.google_credentials.length).toEqual(0);
+    expect(state.loggedInUser.google_credentials).toBe(null);
   });
 
   it('Returns state if given a non-existent user credential', () => {
     const user = {
       display_name: "Example User",
       email: "example@example.org",
-      google_credentials: [1],
+      google_credentials: 1,
       id: 1
     };
 

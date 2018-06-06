@@ -50,9 +50,11 @@ class FlowField(models.Field):
         value = self._get_val_from_obj(obj)
         return self.get_prep_value(value)
 
+
 class GoogleCredentials(models.Model):
-    user = models.ForeignKey(User, related_name='google_credentials', null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='google_credentials', null=True)
     credential = CredentialsField()
     flow = FlowField()
+
 
 admin.site.register(GoogleCredentials)

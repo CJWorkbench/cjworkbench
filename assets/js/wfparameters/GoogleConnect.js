@@ -34,7 +34,7 @@ export default class GoogleConnect extends React.Component {
   }
 
   disconnect() {
-    store.dispatch(disconnectCurrentUserAction(this.props.userCreds[0]))
+    store.dispatch(disconnectCurrentUserAction(this.props.userCreds))
   }
 
   closeIt() {
@@ -43,7 +43,9 @@ export default class GoogleConnect extends React.Component {
 
   render () {
     var renderOutput;
-    if (this.props.userCreds.length === 0) {
+    const { userCreds } = this.props
+
+    if (!userCreds) {
       renderOutput = (
         <div className="gdrive-connectAccount">
           <button className='action-button button-orange' onClick={this.oauthDialog}>Connect account</button>
