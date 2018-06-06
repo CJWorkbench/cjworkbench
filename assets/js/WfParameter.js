@@ -11,7 +11,7 @@ import DataVersionSelect from './wfparameters/DataVersionSelect'
 import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
 import GoogleConnect from './wfparameters/GoogleConnect'
-import FileSelect from './wfparameters/FileSelect'
+import GoogleFileSelect from './wfparameters/GoogleFileSelect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
@@ -211,9 +211,9 @@ export default class WfParameter extends React.Component {
           userCreds={this.props.loggedInUser.google_credentials}
         />
       )
-    } else if (id_name == 'fileselect') {
+    } else if (id_name == 'fileselect') { // should be 'googlefileselect'
       return (
-        <FileSelect
+        <GoogleFileSelect
           api={this.props.api}
           userCreds={this.props.loggedInUser.google_credentials}
           pid={this.props.p.id}

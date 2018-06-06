@@ -1,5 +1,5 @@
 import React from 'react'
-import FileSelect  from './FileSelect'
+import GoogleFileSelect  from './GoogleFileSelect'
 import { mount, shallow } from 'enzyme'
 import { jsonResponseMock } from '../test-utils'
 
@@ -58,7 +58,7 @@ describe('FileSelect', () => {
 
   it('Loads correctly and allows a user to choose a new file', (done) => {
     const wrapper = mount(
-      <FileSelect
+      <GoogleFileSelect
         api={api}
         userCreds={[0]}
         pid={1}
@@ -112,7 +112,7 @@ describe('FileSelect', () => {
 
   it('Shows the file count and larger button if there is no file and a user credential is present', (done) => {
     const noFileWrapper = shallow(
-      <FileSelect
+      <GoogleFileSelect
         api={api}
         userCreds={[0]}
         pid={1}
@@ -138,7 +138,7 @@ describe('FileSelect', () => {
 
   it('Does not show the modal link if there is no user credential present', () => {
     const noCredsWrapper = shallow(
-      <FileSelect
+      <GoogleFileSelect
         api={api}
         userCreds={[]}
         pid={1}
@@ -157,7 +157,7 @@ describe('FileSelect', () => {
 
   it('Does not show anything if neither a user credential nor a file are present', (done) => {
     var noCredsNoFileWrapper = shallow(
-      <FileSelect
+      <GoogleFileSelect
         api={api}
         userCreds={[]}
         pid={1}
