@@ -1,5 +1,5 @@
 import React from 'react'
-import RenameEntries, {mockAPI} from './RenameEntries'
+import RenameEntries, {RenameEntry, mockAPI} from './RenameEntries'
 import {mount, shallow} from 'enzyme'
 import {jsonResponseMock} from "../test-utils";
 
@@ -12,8 +12,13 @@ describe('ReorderEntries rendering and interactions', () => {
 
     const columns = ['name', 'build_year', 'narrative', 'cornerstone'];
 
+    const WFM_ID = 1;
+    const PARAM_ID = 2;
+
+    var api = undefined;
+
     beforeEach(() => {
-        const api = {
+        api = {
             inputColumns: jsonResponseMock(columns),
             onParamChanged: jest.fn().mockReturnValue(Promise.resolve())
         };
@@ -81,6 +86,90 @@ describe('ReorderEntries rendering and interactions', () => {
             expect(tree.find('.rename-input').get(1).props.value).toEqual('nrtv');
             tree.unmount();
             done();
+        });
+    });
+
+    it('Updates parameter upon input completion via blur', (done) => {
+        let tree = mount(<RenameEntries
+            displayAll={true}
+            entries={JSON.stringify(testEntries)}
+            wfModuleId={WFM_ID}
+            paramId={PARAM_ID}
+        />);
+
+        setImmediate(() => {
+            tree.update();
+            expect(tree.find('input[value="build_year"]')).toHaveLength(1);
+            let yearInput = tree.find('input[value="build_year"]');
+            yearInput.simulate('change', {target: {value: 'year'}});
+            yearInput.simulate('blur');
+            setImmediate(() => {
+                expect(api.onParamChanged.mock.calls).toHaveLength(1);
+                expect(api.onParamChanged.mock.calls[0]).toHaveLength(2);
+                expect(api.onParamChanged.mock.calls[0][0]).toBe(PARAM_ID);
+                let updatedEntries = JSON.parse(api.onParamChanged.mock.calls[0][1].value);
+                expect(updatedEntries['name']).toBe('host_name');
+                expect(updatedEntries['build_year']).toBe('year');
+                expect(updatedEntries['narrative']).toBe('nrtv');
+                tree.unmount();
+                done();
+            });
+        });
+    });
+
+    it('Updates parameter upon input completion via enter key', (done) => {
+        let tree = mount(<RenameEntries
+            displayAll={true}
+            entries={JSON.stringify(testEntries)}
+            wfModuleId={WFM_ID}
+            paramId={PARAM_ID}
+        />);
+
+        setImmediate(() => {
+            tree.update();
+            expect(tree.find('input[value="host_name"]')).toHaveLength(1);
+            let nameInput = tree.find('input[value="host_name"]');
+            nameInput.simulate('change', {target: {value: 'host'}});
+            nameInput.simulate('keypress', {key: 'Enter'});
+            setImmediate(() => {
+                expect(api.onParamChanged.mock.calls).toHaveLength(1);
+                expect(api.onParamChanged.mock.calls[0]).toHaveLength(2);
+                expect(api.onParamChanged.mock.calls[0][0]).toBe(PARAM_ID);
+                let updatedEntries = JSON.parse(api.onParamChanged.mock.calls[0][1].value);
+                expect(updatedEntries['name']).toBe('host');
+                expect(updatedEntries['narrative']).toBe('nrtv');
+                tree.unmount();
+                done();
+            });
+        });
+    });
+
+    it('Updates parameter upon deleting an entry', (done) => {
+        let tree = mount(<RenameEntries
+            displayAll={true}
+            entries={JSON.stringify(testEntries)}
+            wfModuleId={WFM_ID}
+            paramId={PARAM_ID}
+        />);
+
+        setImmediate(() => {
+            tree.update();
+            expect(tree.find('RenameEntry')).toHaveLength(4);
+            // Should be the "name" entry that we will delete next
+            let nameEntry = tree.find('RenameEntry').first();
+            expect(nameEntry.find('.rename-delete')).toHaveLength(1);
+            let deleteBtn = nameEntry.find('.rename-delete');
+            deleteBtn.simulate('click');
+            setImmediate(() => {
+                expect(api.onParamChanged.mock.calls).toHaveLength(1);
+                expect(api.onParamChanged.mock.calls[0]).toHaveLength(2);
+                expect(api.onParamChanged.mock.calls[0][0]).toBe(PARAM_ID);
+                let updatedEntries = JSON.parse(api.onParamChanged.mock.calls[0][1].value);
+                expect(updatedEntries['name']).toBeUndefined();
+                expect(updatedEntries['narrative']).toBe('nrtv');
+                tree.unmount();
+                done();
+            });
         });
     });
 });

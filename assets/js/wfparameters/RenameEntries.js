@@ -7,7 +7,7 @@ export function mockAPI(mock_api) {
     api = mock_api;
 }
 
-class RenameEntry extends React.Component {
+export class RenameEntry extends React.Component {
     static propTypes = {
         colname: PropTypes.string.isRequired,
         newColname: PropTypes.string.isRequired,
@@ -40,11 +40,13 @@ class RenameEntry extends React.Component {
     }
 
     handleBlur() {
-        this.props.onColRename(this.props.colname, this.state.inputValue);
+        if(this.state.inputValue != this.props.newColname) {
+            this.props.onColRename(this.props.colname, this.state.inputValue);
+        }
     }
 
     handleKeyPress(event) {
-        if(event.key == 'Enter') {
+        if((event.key == 'Enter') && (this.state.inputValue != this.props.newColname)) {
             this.props.onColRename(this.props.colname, this.state.inputValue);
         }
     }
@@ -191,10 +193,7 @@ export default class RenameEntries extends React.Component {
     }
 
     render() {
-        console.log(this.props);
-        console.log(this.state);
         const entries = this.renderEntries();
-        console.log(entries);
         return (
             <div>{entries}</div>
         )
