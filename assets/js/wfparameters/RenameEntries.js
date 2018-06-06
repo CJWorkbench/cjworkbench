@@ -28,6 +28,12 @@ class RenameEntry extends React.Component {
         this.handleDelete = this.handleDelete.bind(this);
     }
 
+    componentWillReceiveProps(nextProps) {
+        if(nextProps.newColname != this.state.inputValue) {
+            this.setState({inputValue: nextProps.newColname});
+        }
+    }
+
     handleChange(event) {
         //this.props.onColRename(this.props.colname, event.target.value);
         this.setState({inputValue: event.target.value});
