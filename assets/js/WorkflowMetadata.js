@@ -117,8 +117,8 @@ export default class WorkflowMetadata extends React.Component {
     var modalLink = (this.props.workflow.read_only)
       ? null
       : <div className="WF-meta--item test-button" onClick={this.togglePrivacyModal}>
-          <div className='content-3 metadataSeparator t-m-gray'>-</div>
-          <div className='t-f-blue'>{this.state.isPublic ? 'public' : 'private'}</div>
+          <span className='content-3 metadataSeparator t-m-gray'>-</span>
+          <span className='publicPrivate t-f-blue'>{this.state.isPublic ? 'public' : 'private'}</span>
         </div>
 
     return (
