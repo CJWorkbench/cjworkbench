@@ -228,11 +228,11 @@ def get_module_render_fn(wf_module):
 
 
 def get_module_html_path(wf_module):
-    module_version = ModuleVersion.objects.filter(module=wf_module.module_version.module,
-                                source_version_hash=wf_module.module_version.source_version_hash)
+    module_id_name = wf_module.module_version.module.id_name
+    version_sha1 = wf_module.module_version.source_version_hash
 
-    path_to_file = os.path.join(_DYNAMIC_MODULES_BASE_DIRECTORY, wf_module.module_version.module.id_name,
-                                    wf_module.module_version.source_version_hash)
+    path_to_file = os.path.join(_DYNAMIC_MODULES_BASE_DIRECTORY,
+                                module_id_name, version_sha1)
 
     for f in os.listdir(path_to_file):
         if f.endswith(".html"):
