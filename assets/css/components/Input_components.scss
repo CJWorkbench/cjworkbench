@@ -19,12 +19,12 @@
     padding-left: 1rem;
     cursor:pointer;
 
-    span {color: $brand-text--medium;}
+    i, span {color: $brand-text--medium;}
 
     &:hover {
       background-color: $dark-accent--soft;
 
-      span {color: $brand-text--dark;}
+    i, span {color: $brand-text--dark;}
     }
     &:active {
       background-color: $dark-accent--medium;
