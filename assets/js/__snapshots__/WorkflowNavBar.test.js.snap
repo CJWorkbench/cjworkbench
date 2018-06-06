@@ -111,16 +111,16 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
               className="WF-meta--item test-button"
               onClick={[Function]}
             >
-              <div
+              <span
                 className="content-3 metadataSeparator t-m-gray"
               >
                 -
-              </div>
-              <div
-                className="t-f-blue"
+              </span>
+              <span
+                className="publicPrivate t-f-blue"
               >
                 private
-              </div>
+              </span>
             </div>
           </li>
         </ul>
@@ -679,16 +679,16 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
               className="WF-meta--item test-button"
               onClick={[Function]}
             >
-              <div
+              <span
                 className="content-3 metadataSeparator t-m-gray"
               >
                 -
-              </div>
-              <div
-                className="t-f-blue"
+              </span>
+              <span
+                className="publicPrivate t-f-blue"
               >
                 public
-              </div>
+              </span>
             </div>
           </li>
         </ul>
@@ -1163,16 +1163,16 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
               className="WF-meta--item test-button"
               onClick={[Function]}
             >
-              <div
+              <span
                 className="content-3 metadataSeparator t-m-gray"
               >
                 -
-              </div>
-              <div
-                className="t-f-blue"
+              </span>
+              <span
+                className="publicPrivate t-f-blue"
               >
                 public
-              </div>
+              </span>
             </div>
           </li>
         </ul>
@@ -1315,16 +1315,16 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
               className="WF-meta--item test-button"
               onClick={[Function]}
             >
-              <div
+              <span
                 className="content-3 metadataSeparator t-m-gray"
               >
                 -
-              </div>
-              <div
-                className="t-f-blue"
+              </span>
+              <span
+                className="publicPrivate t-f-blue"
               >
                 public
-              </div>
+              </span>
             </div>
           </li>
         </ul>

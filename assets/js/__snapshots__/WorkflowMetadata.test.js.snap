@@ -50,16 +50,16 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
         className="WF-meta--item test-button"
         onClick={[Function]}
       >
-        <div
+        <span
           className="content-3 metadataSeparator t-m-gray"
         >
           -
-        </div>
-        <div
-          className="t-f-blue"
+        </span>
+        <span
+          className="publicPrivate t-f-blue"
         >
           private
-        </div>
+        </span>
       </div>
     </li>
   </ul>
@@ -469,16 +469,16 @@ exports[`WorkflowMetadata - private mode modal operates 2`] = `
         className="WF-meta--item test-button"
         onClick={[Function]}
       >
-        <div
+        <span
           className="content-3 metadataSeparator t-m-gray"
         >
           -
-        </div>
-        <div
-          className="t-f-blue"
+        </span>
+        <span
+          className="publicPrivate t-f-blue"
         >
           private
-        </div>
+        </span>
       </div>
     </li>
   </ul>
@@ -535,16 +535,16 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
         className="WF-meta--item test-button"
         onClick={[Function]}
       >
-        <div
+        <span
           className="content-3 metadataSeparator t-m-gray"
         >
           -
-        </div>
-        <div
-          className="t-f-blue"
+        </span>
+        <span
+          className="publicPrivate t-f-blue"
         >
           private
-        </div>
+        </span>
       </div>
     </li>
   </ul>
