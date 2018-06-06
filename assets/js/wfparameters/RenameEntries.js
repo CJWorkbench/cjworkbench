@@ -18,12 +18,29 @@ class RenameEntry extends React.Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            inputValue: this.props.newColname
+        };
+
         this.handleChange = this.handleChange.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
+        this.handleBlur = this.handleBlur.bind(this);
         this.handleDelete = this.handleDelete.bind(this);
     }
 
     handleChange(event) {
-        this.props.onColRename(this.props.colname, event.target.value);
+        //this.props.onColRename(this.props.colname, event.target.value);
+        this.setState({inputValue: event.target.value});
+    }
+
+    handleBlur() {
+        this.props.onColRename(this.props.colname, this.state.inputValue);
+    }
+
+    handleKeyPress(event) {
+        if(event.key == 'Enter') {
+            this.props.onColRename(this.props.colname, this.state.inputValue);
+        }
     }
 
     handleDelete() {
@@ -41,8 +58,10 @@ class RenameEntry extends React.Component {
                     className={'rename-input'}
                     style={{width: '50%'}}
                     type={'text'}
-                    value={this.props.newColname}
+                    value={this.state.inputValue}
                     onChange={this.handleChange}
+                    onBlur={this.handleBlur}
+                    onKeyPress={this.handleKeyPress}
                 />
                 <button className={'rename-delete'} onClick={this.handleDelete}>X</button>
             </div>
