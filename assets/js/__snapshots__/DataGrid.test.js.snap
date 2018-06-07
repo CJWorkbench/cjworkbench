@@ -956,11 +956,16 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               <div
                                 className="sort-container"
                               >
-                                <span
-                                  className="column-key"
+                                <EditableColumnName
+                                  columnKey="aaa"
                                 >
-                                  aaa
-                                </span>
+                                  <span
+                                    className="column-key"
+                                    onClick={[Function]}
+                                  >
+                                    aaa
+                                  </span>
+                                </EditableColumnName>
                               </div>
                             </div>
                           </ColumnHeader>
@@ -1122,11 +1127,16 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               <div
                                 className="sort-container"
                               >
-                                <span
-                                  className="column-key"
+                                <EditableColumnName
+                                  columnKey="bbbb"
                                 >
-                                  bbbb
-                                </span>
+                                  <span
+                                    className="column-key"
+                                    onClick={[Function]}
+                                  >
+                                    bbbb
+                                  </span>
+                                </EditableColumnName>
                               </div>
                             </div>
                           </ColumnHeader>
@@ -1288,11 +1298,16 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               <div
                                 className="sort-container"
                               >
-                                <span
-                                  className="column-key"
+                                <EditableColumnName
+                                  columnKey="ccccc"
                                 >
-                                  ccccc
-                                </span>
+                                  <span
+                                    className="column-key"
+                                    onClick={[Function]}
+                                  >
+                                    ccccc
+                                  </span>
+                                </EditableColumnName>
                               </div>
                             </div>
                           </ColumnHeader>
@@ -1454,11 +1469,16 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                               <div
                                 className="sort-container"
                               >
-                                <span
-                                  className="column-key"
+                                <EditableColumnName
+                                  columnKey="rn_"
                                 >
-                                  rn_
-                                </span>
+                                  <span
+                                    className="column-key"
+                                    onClick={[Function]}
+                                  >
+                                    rn_
+                                  </span>
+                                </EditableColumnName>
                               </div>
                             </div>
                           </ColumnHeader>

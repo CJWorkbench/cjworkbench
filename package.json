@@ -39,6 +39,7 @@
     "redux-promise-middleware": "^5.1.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
+    "riek": "^1.1.0",
     "sizeof": "^1.0.0",
     "superagent": "^3.8.3"
   },

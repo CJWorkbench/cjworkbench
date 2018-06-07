@@ -990,9 +990,14 @@ exports[`TableView Blank table when no module id 1`] = `
                                     <div
                                       className="sort-container"
                                     >
-                                      <span
-                                        className="column-key"
-                                      />
+                                      <EditableColumnName
+                                        columnKey=""
+                                      >
+                                        <span
+                                          className="column-key"
+                                          onClick={[Function]}
+                                        />
+                                      </EditableColumnName>
                                     </div>
                                   </div>
                                 </ColumnHeader>
@@ -1154,11 +1159,16 @@ exports[`TableView Blank table when no module id 1`] = `
                                     <div
                                       className="sort-container"
                                     >
-                                      <span
-                                        className="column-key"
+                                      <EditableColumnName
+                                        columnKey=" "
                                       >
-                                         
-                                      </span>
+                                        <span
+                                          className="column-key"
+                                          onClick={[Function]}
+                                        >
+                                           
+                                        </span>
+                                      </EditableColumnName>
                                     </div>
                                   </div>
                                 </ColumnHeader>
@@ -1320,11 +1330,16 @@ exports[`TableView Blank table when no module id 1`] = `
                                     <div
                                       className="sort-container"
                                     >
-                                      <span
-                                        className="column-key"
+                                      <EditableColumnName
+                                        columnKey="   "
                                       >
-                                           
-                                      </span>
+                                        <span
+                                          className="column-key"
+                                          onClick={[Function]}
+                                        >
+                                             
+                                        </span>
+                                      </EditableColumnName>
                                     </div>
                                   </div>
                                 </ColumnHeader>
@@ -1486,11 +1501,16 @@ exports[`TableView Blank table when no module id 1`] = `
                                     <div
                                       className="sort-container"
                                     >
-                                      <span
-                                        className="column-key"
+                                      <EditableColumnName
+                                        columnKey="    "
                                       >
-                                            
-                                      </span>
+                                        <span
+                                          className="column-key"
+                                          onClick={[Function]}
+                                        >
+                                              
+                                        </span>
+                                      </EditableColumnName>
                                     </div>
                                   </div>
                                 </ColumnHeader>
@@ -7816,9 +7836,14 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                     <div
                                       className="sort-container"
                                     >
-                                      <span
-                                        className="column-key"
-                                      />
+                                      <EditableColumnName
+                                        columnKey=""
+                                      >
+                                        <span
+                                          className="column-key"
+                                          onClick={[Function]}
+                                        />
+                                      </EditableColumnName>
                                     </div>
                                   </div>
                                 </ColumnHeader>
@@ -7980,11 +8005,16 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                     <div
                                       className="sort-container"
                                     >
-                                      <span
-                                        className="column-key"
+                                      <EditableColumnName
+                                        columnKey=" "
                                       >
-                                         
-                                      </span>
+                                        <span
+                                          className="column-key"
+                                          onClick={[Function]}
+                                        >
+                                           
+                                        </span>
+                                      </EditableColumnName>
                                     </div>
                                   </div>
                                 </ColumnHeader>
@@ -8146,11 +8176,16 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                     <div
                                       className="sort-container"
                                     >
-                                      <span
-                                        className="column-key"
+                                      <EditableColumnName
+                                        columnKey="   "
                                       >
-                                           
-                                      </span>
+                                        <span
+                                          className="column-key"
+                                          onClick={[Function]}
+                                        >
+                                             
+                                        </span>
+                                      </EditableColumnName>
                                     </div>
                                   </div>
                                 </ColumnHeader>
@@ -8312,11 +8347,16 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                     <div
                                       className="sort-container"
                                     >
-                                      <span
-                                        className="column-key"
+                                      <EditableColumnName
+                                        columnKey="    "
                                       >
-                                            
-                                      </span>
+                                        <span
+                                          className="column-key"
+                                          onClick={[Function]}
+                                        >
+                                              
+                                        </span>
+                                      </EditableColumnName>
                                     </div>
                                   </div>
                                 </ColumnHeader>

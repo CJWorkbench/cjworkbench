@@ -94,6 +94,73 @@ class ReorderColumnDropZone extends React.PureComponent {
   }
 }
 
+class EditableColumnName extends React.Component {
+  static propTypes = {
+    columnKey: PropTypes.string.isRequired,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      newName: props.columnKey,
+      editMode: false,
+    };
+
+    this.enterEditMode = this.enterEditMode.bind(this);
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleInputBlur = this.handleInputBlur.bind(this);
+    this.handleInputKeyPress = this.handleInputKeyPress.bind(this);
+  }
+
+  enterEditMode() {
+    this.setState({editMode: true});
+  }
+
+  handleInputChange(event) {
+    this.setState({newName: event.target.value});
+  }
+
+  handleInputCommit() {
+    console.log("new column name: " + this.state.newName);
+    this.setState({
+        newName: this.state.newName,
+        editMode: false
+    });
+  }
+
+  handleInputBlur() {
+    this.handleInputCommit();
+  };
+
+  handleInputKeyPress(event) {
+    if(event.key == 'Enter') {
+      this.handleInputCommit();
+    }
+  }
+
+  render() {
+    if(this.state.editMode) {
+      return (
+        <input
+          value={this.state.newName}
+          onChange={this.handleInputChange}
+          onBlur={this.handleInputBlur}
+          onKeyPress={this.handleInputKeyPress}
+        />
+      );
+    } else {
+      return (
+          <span
+              className={'column-key'}
+              onClick={this.enterEditMode}
+          >
+            {this.state.newName}
+          </span>
+      )
+    }
+  }
+}
 
 // Sort arrows, A-Z letter identifiers
 class ColumnHeader extends React.PureComponent {
@@ -109,13 +176,14 @@ class ColumnHeader extends React.PureComponent {
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
-  }
+  };
 
   constructor(props) {
     super(props);
 
     this.state = {
       isHovered: false,
+      newName: props.columnKey
     };
   }
 
@@ -227,6 +295,8 @@ class ColumnHeader extends React.PureComponent {
 
     const draggingClass = (draggingColumnIndex === index) ? 'dragging' : ''
 
+
+    //<span className="column-key">{columnKey}</span>
     return (
       <div
         className={`data-grid-column-header ${draggingClass}`}
@@ -239,7 +309,7 @@ class ColumnHeader extends React.PureComponent {
         {maybeDropZone('left', index)}
         {letterSection}
         <div className="sort-container">
-          <span className="column-key">{columnKey}</span>
+          <EditableColumnName columnKey={columnKey}/>
           {sortArrowSection}
         </div>
         {maybeDropZone('right', index + 1)}
