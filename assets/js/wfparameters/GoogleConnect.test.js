@@ -7,21 +7,17 @@ jest.mock('../workflow-reducer');
 
 describe('GoogleConnect', () => {
   it('Mounts correctly without user creds', (done) => {
-    var wrapper = mount(<GoogleConnect
-      userCreds={[]}
-    />)
+    const wrapper = mount(<GoogleConnect userCreds={null} />)
     expect(wrapper).toMatchSnapshot();
-    var connectButton = wrapper.find('.action-button.button-orange');
+    const connectButton = wrapper.find('button.connect');
     expect(connectButton).toHaveLength(1);
     done();
   });
 
   it('Mounts correctly with user creds and fires call to delete creds on click', (done) => {
-    var wrapper = mount(<GoogleConnect
-      userCreds={[0]}
-    />)
+    const wrapper = mount(<GoogleConnect userCreds={0} />)
     expect(wrapper).toMatchSnapshot();
-    var disconnectButton = wrapper.find('.t-f-blue');
+    const disconnectButton = wrapper.find('button.disconnect');
     expect(disconnectButton).toHaveLength(1);
     disconnectButton.simulate('click');
     expect(disconnectCurrentUserAction.mock.calls.length).toBe(1);

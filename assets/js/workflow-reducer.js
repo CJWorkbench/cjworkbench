@@ -465,9 +465,7 @@ export function disconnectCurrentUserAction(credentialId) {
     type: DISCONNECT_CURRENT_USER,
     payload: {
       promise: api.disconnectCurrentUser(credentialId),
-      data: {
-        credential_id: credentialId
-      }
+      data: {}
     }
   }
 }
