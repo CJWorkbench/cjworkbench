@@ -1,8 +1,9 @@
 from .moduleimpl import ModuleImpl
 from .utils import *
-from cjworkbench.google_oauth import user_to_existing_oauth2_credential
+from cjworkbench import google_oauth
 from django.http import JsonResponse, HttpResponseBadRequest
 import httplib2
+import googleapiclient
 from googleapiclient.discovery import build
 from server.sanitizedataframe import *
 import io
@@ -12,7 +13,7 @@ from pandas.io.common import CParserError
 from server.versions import save_fetched_table_if_changed
 
 def get_spreadsheet(sheet_id, owner=False):
-    credential = user_to_existing_oauth2_credential(user=owner)
+    credential = google_oauth.user_to_existing_oauth2_credential(user=owner)
     if not credential:
         return (None, 'Not authorized. Please reconnect to Google Drive.')
 
@@ -21,8 +22,11 @@ def get_spreadsheet(sheet_id, owner=False):
     service = build("drive", "v3", http=http)
 
     files_request = service.files().export(fileId=sheet_id, mimeType="text/csv")
-    the_file = files_request.execute()
-    return (the_file.decode("utf-8"), None)
+    try:
+        the_file = files_request.execute()
+        return (the_file.decode("utf-8"), None)
+    except googleapiclient.errors.HttpError as err:
+        return (None, str(err))
 
 class GoogleSheets(ModuleImpl):
 
@@ -31,7 +35,7 @@ class GoogleSheets(ModuleImpl):
         return wf_module.retrieve_fetched_table()
 
     @staticmethod
-    def event(wfmodule, request=None, **kwargs):
+    def event(wfmodule, **kwargs):
         file_meta_json = wfmodule.get_param_raw('fileselect', 'custom')
         if not file_meta_json: return
         file_meta = json.loads(file_meta_json)
