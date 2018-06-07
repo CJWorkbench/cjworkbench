@@ -33,21 +33,22 @@ class Twitter(ModuleImpl):
         if querytype == Twitter.QUERY_TYPE_USER:
             if query[0] == '@':                     # allow user to type @username or username
                 query = query[1:]
-            tweetsgen = api.user_timeline(query, count=200, tweet_mode='extended')
+            statuses = api.user_timeline(query, count=200, tweet_mode='extended')
         elif querytype == Twitter.QUERY_TYPE_SEARCH:
-            tweetsgen = api.search(q=query, count=100, tweet_mode='extended')
+            statuses = api.search(q=query, count=100, tweet_mode='extended')
         else:
             queryparts = re.search('(?:https?://)twitter.com/([A-Z0-9]*)/lists/([A-Z0-9-_]*)', query, re.IGNORECASE)
             if not queryparts:
                 raise Exception('not a Twitter list URL')
-            tweetsgen = api.list_timeline(queryparts.group(1), queryparts.group(2), count=200, tweet_mode='extended')
+            statuses = api.list_timeline(queryparts.group(1), queryparts.group(2), count=200, tweet_mode='extended')
 
         # Columns to retrieve and store from Twitter
         # Also, we use this to figure ou the index the id field when merging old and new tweets
-        cols = ['id', 'created_at', 'full_text', 'retweet_count', 'favorite_count', 'in_reply_to_screen_name', 'source']
+        cols = ['created_at', 'full_text', 'retweet_count', 'favorite_count', 'in_reply_to_screen_name', 'source', 'id']
 
-        tweets = [[getattr(t, x) for x in cols] for t in tweetsgen]
+        tweets = [[getattr(t, x) for x in cols] for t in statuses]
         table = pd.DataFrame(tweets, columns=cols)
+        table.insert(0, 'screen_name', [t.user.screen_name for t in statuses])
         table.rename(columns={'full_text':'text'}, inplace=True)  # 280 chars should still be called 'text', meh
         return table
 
