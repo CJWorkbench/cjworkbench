@@ -132,7 +132,7 @@ describe('Reducer actions', () => {
     const user = {
       display_name: "Example User",
       email: "example@example.org",
-      google_credentials: [1],
+      google_credentials: 1,
       id: 1
     };
     const state = workflowReducer(test_state, {
@@ -146,7 +146,7 @@ describe('Reducer actions', () => {
     const user = {
       display_name: "Example User",
       email: "example@example.org",
-      google_credentials: [1],
+      google_credentials: 1,
       id: 1
     };
 
@@ -157,35 +157,10 @@ describe('Reducer actions', () => {
 
     state = workflowReducer(state, {
       type: 'DISCONNECT_CURRENT_USER_PENDING',
-      payload: {
-        credential_id: 1
-      }
+      payload: {}
     });
 
-    expect(state.loggedInUser.google_credentials.length).toEqual(0);
-  });
-
-  it('Returns state if given a non-existent user credential', () => {
-    const user = {
-      display_name: "Example User",
-      email: "example@example.org",
-      google_credentials: [1],
-      id: 1
-    };
-
-    const state = workflowReducer(test_state, {
-      type: 'GET_CURRENT_USER_FULFILLED',
-      payload: user
-    });
-
-    const state2 = workflowReducer(state, {
-      type: 'DISCONNECT_CURRENT_USER_PENDING',
-      payload: {
-        credential_id: 2
-      }
-    });
-
-    expect(state2).toBe(state);
+    expect(state.loggedInUser.google_credentials).toBe(null);
   });
 
   it('Updates the workflow module with the specified data', () => {

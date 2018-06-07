@@ -1,9 +1,12 @@
-from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import flow_from_clientsecrets, OAuth2Credentials
+from django.contrib.auth.models import User
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
 from cjworkbench import settings
 from django.shortcuts import redirect
 from cjworkbench.models.GoogleCreds import GoogleCredentials
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode, quote_plus, unquote_plus
+from typing import Optional
 import jsonpickle
 
 def create_and_store_flow(request, storage):
@@ -22,6 +25,19 @@ def authorize(request):
     storage, created = GoogleCredentials.objects.get_or_create(user=request.user)
     flow = create_and_store_flow(request, storage)
     return redirect(flow.step1_get_authorize_url())
+
+def user_to_existing_oauth2_credential(user: User) -> Optional[OAuth2Credentials]:
+    """Retrieve user's credential, or None if user has not logged in."""
+    try:
+        google_credentials = user.google_credentials
+    except ObjectDoesNotExist:
+        return None
+
+    credential = google_credentials.credential
+    if credential is None or credential.invalid: return None
+
+    return credential
+
 
 def maybe_authorize(request, user = False, redirect_url = False):
     if user:

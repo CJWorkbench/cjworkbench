@@ -132,6 +132,10 @@ export default class WfParameter extends React.Component {
     }
   }
 
+  onChangeGoogleFileSelectJson = (json) => {
+    this.props.setParamText('fileselect', json)
+  }
+
   // Render one of the many parameter types that are specific to a particular module
   render_custom_parameter() {
     const { id_name, name } = this.props.p.parameter_spec
@@ -216,10 +220,9 @@ export default class WfParameter extends React.Component {
         <GoogleFileSelect
           api={this.props.api}
           userCreds={this.props.loggedInUser.google_credentials}
-          pid={this.props.p.id}
-          saveState={state => this.props.setParamText('fileselect', state)}
-          getState={() => this.props.getParamText('fileselect')}
-        />
+          fileMetadataJson={this.props.getParamText('fileselect')}
+          onChangeJson={this.onChangeGoogleFileSelectJson}
+          />
       )
     } else if (id_name == 'code') {
       return (
@@ -437,6 +440,7 @@ export default class WfParameter extends React.Component {
 }
 
 WfParameter.propTypes = {
+  googlePickerApiKey: PropTypes.string, // or null, if API is disabled
   p: PropTypes.shape({
     parameter_spec: PropTypes.shape({
       id_name: PropTypes.string.isRequired,

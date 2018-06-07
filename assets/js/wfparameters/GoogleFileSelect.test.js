@@ -3,175 +3,154 @@ import GoogleFileSelect  from './GoogleFileSelect'
 import { mount, shallow } from 'enzyme'
 import { jsonResponseMock } from '../test-utils'
 
-describe('FileSelect', () => {
-  let gDriveFileMeta = JSON.stringify({
-    "kind": "drive#file",
+const tick = async() => new Promise(resolve => setTimeout(resolve, 0))
+
+describe('GoogleFileSelect', () => {
+  const aFileMetadataJson = JSON.stringify({
     "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
     "name": "Police Data",
-    "mimeType": "application/vnd.google-apps.spreadsheet"
   })
 
-  const gDriveFiles = {
-    "kind": "drive#fileList",
-    "incompleteSearch": false,
-    "files": [
-      {
-        "kind": "drive#file",
-        "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
-        "name": "Police Data",
-        "mimeType": "application/vnd.google-apps.spreadsheet"
-      },
-      {
-        "kind": "drive#file",
-        "id": "jdsiu9cu89BJHBI789fdsfdsLAHY5637hdnbthywhsua",
-        "name": "Government Contracts",
-        "mimeType": "application/vnd.google-apps.spreadsheet"
-      },
-      {
-        "kind": "drive#file",
-        "id": "sdf987IBHJB98uc9uisdjaushwyhtbndh7365YHALsdf",
-        "name": "Labor and materials",
-        "mimeType": "application/vnd.google-apps.spreadsheet"
-      },
-      {
-        "kind": "drive#file",
-        "id": "fdsLAHY5637hdnbthywhsuajdsiu9cu89BJHBI789fds",
-        "name": "Budget",
-        "mimeType": "application/vnd.google-apps.spreadsheet"
-      },
-      {
-        "kind": "drive#file",
-        "id": "9BJHBI789fdsfdsLAHY5637hdnbthywhsuajdsiu9cu8",
-        "name": "Science Data",
-        "mimeType": "application/vnd.google-apps.spreadsheet"
-      }
-    ]
-  };
-
   // Mount is necessary to invoke componentDidMount()
-  let api;
+  let api
+  let userCreds
+  let loadAccessToken
+  let loadPickerFactory
+  let pickerFactory
+  let pickerOpen
+  let pickerClose
+  let fileMetadataJson
+  let onChangeJson
   beforeEach(() => {
+    // set default props. Tests can change them before calling wrapper()
+    fileMetadataJson = aFileMetadataJson
+    loadAccessToken = jest.fn().mockReturnValue(Promise.resolve({ 'access_token': 'access-token' }))
+    pickerFactory = {
+      open: jest.fn(),
+      close: jest.fn(),
+    }
+    loadPickerFactory = jest.fn(() => Promise.resolve(pickerFactory))
+    onChangeJson = jest.fn()
+    userCreds = 0
+
     api = {
-      postParamEvent: jsonResponseMock(gDriveFiles)
+      currentGoogleClientAccessToken: loadAccessToken,
     }
   })
 
-  it('Loads correctly and allows a user to choose a new file', (done) => {
-    const wrapper = mount(
+  let mountedWrapper = null
+  let wrapper = () => {
+    // mount(), not shallow(), because we use componentDidMount()
+    return mountedWrapper = mount(
       <GoogleFileSelect
         api={api}
-        userCreds={[0]}
-        pid={1}
-        saveState={ (state) => { gDriveFileMeta = JSON.stringify(state); } }
-        getState={() => { return gDriveFileMeta; }}
-      />
-    );
-
-    expect(api.postParamEvent.mock.calls.length).toBe(1);
-
-    expect(wrapper).toMatchSnapshot();
-
-    // should call API for its data on componentDidMount
-    expect(wrapper.state().modalOpen).toBe(false);
-
-    setImmediate( () => {
-      wrapper.update();
-      const fileName = wrapper.find('span.t-d-gray.content-3.mb-3');
-      const modalLink = wrapper.find('.file-info .t-f-blue');
-      expect(fileName.text()).toEqual('Police Data');
-      modalLink.simulate('click');
-
-      setImmediate( () => {
-        wrapper.update();
-        expect(wrapper.state().modalOpen).toBe(true);
-
-        const modal = wrapper.find('div.modal-dialog');
-        expect(modal).toMatchSnapshot();
-        expect(modal.find('div.list-body')).toHaveLength(1);
-
-        expect(wrapper.state().files).toEqual(gDriveFiles['files']);
-        const filesListItems = modal.find('.line-item--data-version');
-        expect(filesListItems).toHaveLength(5);
-
-        const secondListItem = filesListItems.filterWhere(n => n.key() == 1);
-        secondListItem.simulate('click');
-
-        setImmediate( () => {
-          expect(wrapper.state().file).toEqual({
-            "kind": "drive#file",
-            "id": "jdsiu9cu89BJHBI789fdsfdsLAHY5637hdnbthywhsua",
-            "name": "Government Contracts",
-            "mimeType": "application/vnd.google-apps.spreadsheet"
-          });
-          done();
-        })
-
-      });
-    });
-  });
-
-  it('Shows the file count and larger button if there is no file and a user credential is present', (done) => {
-    const noFileWrapper = shallow(
-      <GoogleFileSelect
-        api={api}
-        userCreds={[0]}
-        pid={1}
-        saveState={ (state) => { gDriveFileMeta = JSON.stringify(state); } }
-        getState={() => ''}
-      />
+        userCreds={userCreds}
+        fileMetadataJson={fileMetadataJson}
+        onChangeJson={onChangeJson}
+        loadPickerFactory={loadPickerFactory}
+        />
     )
+  }
 
-    expect(api.postParamEvent).toHaveBeenCalled()
+  afterEach(() => {
+    if (mountedWrapper) mountedWrapper.unmount()
+    mountedWrapper = null
+  })
 
-    setImmediate(() => {
-      noFileWrapper.update()
-      const fileCount = noFileWrapper.find('.file-info p')
-      expect(fileCount).toHaveLength(1)
-      expect(fileCount.text()).toBe('5 files found')
+  it('indicates when not connected', async () => {
+    userCreds = null
+    const w = wrapper()
+    await tick()
+    w.update()
+    expect(w.find('.not-signed-in')).toHaveLength(1)
+    expect(loadAccessToken).not.toHaveBeenCalled()
+    expect(w.find('button')).toHaveLength(0)
+  })
 
-      const modalLink = noFileWrapper.find('.button-orange.action-button')
-      expect(modalLink).toHaveLength(1)
+  it('indicates when not connected because userCreds is invalid', async () => {
+    loadAccessToken.mockReturnValue(Promise.resolve(null))
+    const w = wrapper()
+    await tick()
+    w.update()
+    expect(w.find('.not-signed-in')).toHaveLength(1)
+    expect(w.find('button')).toHaveLength(0)
+  })
 
-      done()
+  it('shows loading when google API has not loaded', async () => {
+    loadPickerFactory.mockReturnValue(new Promise(_ => {}))
+    const w = wrapper()
+    await tick()
+    w.update()
+    expect(w.find('.loading')).toHaveLength(1)
+  })
+
+  it('shows loading when access token has not loaded', async () => {
+    loadAccessToken.mockReturnValue(new Promise(_ => {}))
+    const w = wrapper()
+    await tick()
+    w.update()
+    expect(w.find('.loading')).toHaveLength(1)
+  })
+
+
+  it('refreshes access token when changing userCreds', async () => {
+    const w = wrapper()
+    await tick()
+    w.setProps({ userCreds: 1 })
+    expect(loadAccessToken).toHaveBeenCalledTimes(2)
+  })
+
+  it('allows Change of existing file', async () => {
+    fileMetadataJson = aFileMetadataJson
+    const w = wrapper()
+    await tick()
+    w.update()
+    expect(w.find('button')).toHaveLength(1)
+    expect(w.find('button').text()).toEqual('Change')
+
+    pickerFactory.open.mockImplementation((accessToken, onPick, onCancel) => {
+      expect(accessToken).toEqual('access-token')
+      onPick({
+        id: 'newid',
+        name: 'new file',
+      })
     })
+
+    w.find('button').simulate('click')
+    expect(onChangeJson).toHaveBeenCalledWith(JSON.stringify({
+      id: 'newid',
+      name: 'new file',
+    }))
   })
 
-  it('Does not show the modal link if there is no user credential present', () => {
-    const noCredsWrapper = shallow(
-      <GoogleFileSelect
-        api={api}
-        userCreds={[]}
-        pid={1}
-        saveState={ (state) => { gDriveFileMeta = JSON.stringify(state); } }
-        getState={() => { return gDriveFileMeta; }}
-      />
-    )
+  it('works when pick is canceled', async () => {
+    const w = wrapper()
+    await tick()
+    w.update()
 
-    expect(api.postParamEvent).not.toHaveBeenCalled()
-    expect(noCredsWrapper).toMatchSnapshot();
+    pickerFactory.open.mockImplementation((accessToken, onPick, onCancel) => {
+      onCancel()
+    })
 
-    const modalLink = noCredsWrapper.find('.file-info .t-f-blue')
-
-    expect(modalLink).toHaveLength(0)
+    w.find('button').simulate('click')
+    expect(onChangeJson).not.toHaveBeenCalled()
   })
 
-  it('Does not show anything if neither a user credential nor a file are present', (done) => {
-    var noCredsNoFileWrapper = shallow(
-      <GoogleFileSelect
-        api={api}
-        userCreds={[]}
-        pid={1}
-        saveState={ (state) => { gDriveFileMeta = JSON.stringify(state); } }
-        getState={() => { return ''; }}
-      />
-    )
+  it('calls it Choose, not Change, when no file is selected', async () => {
+    fileMetadataJson = null
+    const w = wrapper()
+    await tick()
+    w.update()
+    expect(w.find('button').text()).toEqual('Choose')
+  })
 
-    expect(api.postParamEvent).not.toHaveBeenCalled()
-    expect(noCredsNoFileWrapper).toMatchSnapshot();
-
-    expect(noCredsNoFileWrapper.find('gdrive-fileSelect').length).toBe(0);
-
-    done();
-  });
-
+  it('closes on unmount', async () => {
+    const w = wrapper()
+    await tick()
+    w.update()
+    w.find('button').simulate('click')
+    mountedWrapper.unmount()
+    mountedWrapper = null
+    expect(pickerFactory.close).toHaveBeenCalled()
+  })
 });

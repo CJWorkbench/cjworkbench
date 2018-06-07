@@ -1,34 +1,40 @@
-from server.tests.utils import *
-from rest_framework.test import APIRequestFactory
-from server.modules.googlesheets import *
+from django.conf import settings
+from server.tests.utils import LoggedInTestCase, load_and_add_module, get_param_by_id_name
+from server.modules.googlesheets import GoogleSheets
 from unittest.mock import patch
-from apiclient.http import HttpMockSequence
-from server.sanitizedataframe import *
+from apiclient.http import HttpMock, HttpMockSequence
+from server.sanitizedataframe import sanitize_dataframe
 import pandas as pd
-import io
+import os
 import json
 
-gdrive_discovery = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data/google_drive_api_discovery.json') ).read()
+gdrive_discovery_file = os.path.join(settings.BASE_DIR, 'server/tests/test_data/google_drive_api_discovery.json')
+with open(gdrive_discovery_file) as f: gdrive_discovery = f.read()
 
-gdrive_files = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data/google_drive_files.json') ).read()
+gdrive_file_meta = {
+  "file": {
+    "kind": "drive#file",
+    "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
+    "name": "Police Data",
+    "mimeType": "application/vnd.google-apps.spreadsheet"
+  }
+}
 
-gdrive_file_meta = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data/google_drive_file.json') ).read()
+gdrive_file = os.path.join(settings.BASE_DIR, 'server/tests/test_data/missing_values.csv')
 
-gdrive_file = open( os.path.join(settings.BASE_DIR, 'server/tests/test_data/missing_values.csv') ).read()
 
-def mock_http_files():
-    return HttpMockSequence([
-        ({'status': '200'}, gdrive_discovery),
-        ({'status': '200'}, gdrive_files)])
+class HttpMocks(HttpMock):
+    def __init__(self, *mocks):
+        self.mocks = list(mocks)
 
-def mock_http_file():
-    return HttpMockSequence([
-        ({'status': '200'}, gdrive_discovery),
-        ({'status': '200'}, gdrive_file)])
+    def request(self, *args, **kwargs):
+        return self.mocks.pop(0).request(*args, **kwargs)
+
 
 class DumbCredential():
     def authorize(self, the_request):
         return the_request
+
 
 class GoogleSheetsTests(LoggedInTestCase):
 
@@ -36,102 +42,66 @@ class GoogleSheetsTests(LoggedInTestCase):
         super(GoogleSheetsTests, self).setUp()
         self.wf_module = load_and_add_module('googlesheets')
         self.file_param = get_param_by_id_name('fileselect')
-
-        drive_file_response = json.loads(gdrive_file_meta)
-        self.file_param.value = json.dumps(drive_file_response['file'])
+        self.file_param.value = json.dumps(gdrive_file_meta['file'])
         self.file_param.save()
 
-        param_id = self.file_param.pk
-
-        factory = APIRequestFactory()
-
-        request_event = factory.get('/api/parameters/%d/event' % param_id)
-        request_event.user = self.user
-        request_event.session = self.client.session
-        self.request_event = request_event
-
-        request_post = factory.post('/api/parameters/%d/event' % param_id, json.loads(gdrive_file_meta), format='json')
-        request_post.user = self.user
-        request_post.session = self.client.session
-        self.request_post = request_post
-
-        # To skip the oauth flow we mock maybe_authorize to return
-        # an authorization and a "credential" with an authorize method
-        # that just returns whatever you give it
-        auth_patch = patch('server.modules.googlesheets.maybe_authorize')
-        self.auth_patch = auth_patch.start()
-        dumb_credential = DumbCredential()
-        self.auth_patch.return_value = (True, dumb_credential)
-        self.addCleanup(auth_patch.stop)
-
-        # To mock the Google api we mock httplib2 so it returns a sequence of
-        # specialized mock http objects, which are set per test depending on
-        # what we're trying to return.
-        httplib_patch = patch('server.modules.googlesheets.httplib2.Http')
-        self.httplib_patch = httplib_patch.start()
-        self.addCleanup(httplib_patch.stop)
-
         # our test data
-        self.test_table = pd.read_csv(io.StringIO(gdrive_file))
+        self.test_table = pd.read_csv(gdrive_file)
         sanitize_dataframe(self.test_table)
+
 
     def test_render_no_file(self):
         self.assertIsNone(GoogleSheets.render(self.wf_module, None))
 
-    def test_event_fetch_files(self):
-        self.httplib_patch.return_value = mock_http_files()
-        result = GoogleSheets.event(self.wf_module, event={'type':'fetchFiles'}, request=self.request_event)
-        self.assertEqual(json.loads(result.content.decode('utf-8')), json.loads(gdrive_files))
 
-    @patch('server.modules.googlesheets.GoogleSheets.get_spreadsheet', return_value=gdrive_file)
-    def test_event_fetch_file(self, mock_get_spreadsheet):
-        self.httplib_patch.return_value = mock_http_file()
-        file_meta = json.loads(gdrive_file_meta)
-        result = GoogleSheets.event(self.wf_module, event={'type':'fetchFile'}, request=self.request_post)
+    @patch('cjworkbench.google_oauth.user_to_existing_oauth2_credential')
+    @patch('server.modules.googlesheets.httplib2.Http')
+    def test_event_fetch_file(self, httplib_patch, oauth_patch):
+        oauth_patch.return_value = DumbCredential()
+        auth_mock = HttpMock(filename=gdrive_discovery_file)
+        data_mock = HttpMock(filename=gdrive_file)
+        # Make httplib_patch return first auth_mock, then data_mock
+        httplib_patch.return_value = HttpMocks(auth_mock, data_mock)
 
-        mock_get_spreadsheet.assert_called_with(
-            self.request_post, file_meta['file']['id'], owner=self.wf_module.workflow.owner)
-        self.assertEqual(result.status_code, 204)
-        self.assertEqual(json.loads(result.content.decode('utf-8')), {})
+        GoogleSheets.event(self.wf_module)
+
+        self.assertEqual(data_mock.uri, 'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj/export?mimeType=text%2Fcsv')
 
         # Check that the data was actually stored
         self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
+        self.assertEqual(self.wf_module.error_msg, '')
 
 
-    # click event = select file
-    @patch('server.modules.googlesheets.GoogleSheets.get_spreadsheet', return_value=gdrive_file)
-    def test_event_click(self, mock_get_spreadsheet):
-        self.httplib_patch.return_value = mock_http_file()
-        file_meta = json.loads(self.file_param.value)
-        result = GoogleSheets.event(self.wf_module, event={'type':'click'}, request=self.request_post)
+    @patch('cjworkbench.google_oauth.user_to_existing_oauth2_credential')
+    def test_empty_table_on_missing_auth(self, oauth_patch):
+        oauth_patch.return_value = None
+        GoogleSheets.event(self.wf_module)
 
-        mock_get_spreadsheet.assert_called_with(
-            self.request_post, file_meta['id'], owner=self.wf_module.workflow.owner)
-        self.assertEqual(result.status_code, 204)
-        self.assertEqual(json.loads(result.content.decode('utf-8')), {})
+        self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)
+        self.assertEqual(self.wf_module.error_msg,
+                         'Not authorized. Please reconnect to Google Drive.')
 
-    # empty event type = check for new version
-    @patch('server.modules.googlesheets.GoogleSheets.get_spreadsheet', return_value=gdrive_file)
-    def test_event_no_event_type(self, mock_get_spreadsheet):
-        self.httplib_patch.return_value = mock_http_file()
-        file_meta = json.loads(self.file_param.value)
-        result = GoogleSheets.event(self.wf_module, None, request=self.request_post)
 
-        mock_get_spreadsheet.assert_called_with(
-            self.request_post, file_meta['id'], owner=self.wf_module.workflow.owner)
-        self.assertEqual(result.status_code, 204)
-        self.assertEqual(json.loads(result.content.decode('utf-8')), {})
+    @patch('cjworkbench.google_oauth.user_to_existing_oauth2_credential')
+    @patch('server.modules.googlesheets.httplib2.Http')
+    def test_empty_table_on_missing_table(self, httplib_patch, oauth_patch):
+        oauth_patch.return_value = DumbCredential()
+        httplib_patch.return_value = HttpMockSequence([
+            ({'status': '200'}, gdrive_discovery),
+            ({'status': '404'}, 'not found'),
+        ])
+        GoogleSheets.event(self.wf_module)
 
-    # render after file fetched
-    def test_get_file_and_render(self):
-        self.httplib_patch.return_value = mock_http_file()
-        file_meta = json.loads(gdrive_file_meta)
-        GoogleSheets.event(self.wf_module, event={'type':'fetchFile'}, request=self.request_post)
+        self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)
+        self.assertEqual(
+            self.wf_module.error_msg,
+            '<HttpError 404 when requesting https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj/export?mimeType=text%2Fcsv returned "Ok">'
+        )
+
+
+    def test_render(self):
+        stored_datetime = self.wf_module.store_fetched_table(self.test_table)
+        self.wf_module.set_fetched_data_version(stored_datetime)
+        self.wf_module.save()
         render = GoogleSheets.render(self.wf_module, None)
         self.assertTrue(render.equals(self.test_table))
-
-
-    def test_get_sheets(self):
-        self.httplib_patch.return_value = mock_http_files()
-        result = GoogleSheets.get_spreadsheets(self.request_post, self.wf_module.workflow.owner)
-        self.assertEqual(json.loads(result.content.decode('utf-8')), json.loads(gdrive_files))

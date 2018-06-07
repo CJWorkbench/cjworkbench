@@ -464,29 +464,17 @@ export function disconnectCurrentUserAction(credentialId) {
   return {
     type: DISCONNECT_CURRENT_USER,
     payload: {
-      promise: api.disconnectCurrentUser( credentialId ),
-      data: {
-        credential_id: credentialId
-      }
+      promise: api.disconnectCurrentUser(credentialId),
+      data: {}
     }
   }
 }
 registerReducerFunc(DISCONNECT_CURRENT_USER + '_PENDING', (state, action) => {
-  let credentialIndex
-
-  if (action.payload.credential_id) {
-    credentialIndex = state.loggedInUser.google_credentials.indexOf(action.payload.credential_id);
-  }
-
-  if (credentialIndex >= 0) {
-    return update(state, {
-      loggedInUser: {
-        google_credentials: { $splice: [[credentialIndex, 1]] }
-      }
-    });
-  }
-
-  return state;
+  return update(state, {
+    loggedInUser: {
+      google_credentials: { $set: null }
+    }
+  });
 });
 
 // --- Workflow Module actions ---

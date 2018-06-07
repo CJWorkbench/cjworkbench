@@ -190,6 +190,10 @@ class WorkbenchAPI {
     return this._fetch(`/api/workflows/${workflowId}/duplicate`)
   }
 
+  currentGoogleClientAccessToken() {
+    return this._fetch('/api/user/google-client-access-token')
+  }
+
   currentUser() {
     return this._fetch('/api/user/')
   }

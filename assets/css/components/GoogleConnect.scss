@@ -1,35 +1,36 @@
-.gdrive-connectAccount{
-  padding-bottom: 1.5rem;
+.google-connect-parameter {
+  padding-bottom: 1rem;
   border-bottom: 1px solid $Vlight-gray;
+  text-align: center;
+
+  button.connect {
+    @extend .action-button;
+    @extend .button-orange;
+    display: inline-block;
+  }
+
+  button.disconnect {
+    @extend .btn;
+    @extend .btn-link;
+  }
 }
 
-.gdrive-fileSelect{
+.google-file-select {
+  padding-top: 1rem;
   display: flex;
-  justify-content: space-between;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid $Vlight-gray;
-}
+  font-size: 1.4rem;
+  overflow: hidden;
+  align-items: center;
 
-.gdrive-connectAccount{
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid $Vlight-gray;
-  display: flex;
-  justify-content: center;
-}
+  .file-info {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-weight: bold;
+  }
 
-.gdrive-fileSelect{
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid $Vlight-gray;
-}
-
-
-.file-info p{
-  margin:0;
-}
-
-.connected-account p{
-  margin:0;
-  margin-top: -1rem;
+  button {
+    flex: 0 0 auto;
+  }
 }

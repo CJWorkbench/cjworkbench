@@ -1,135 +1,246 @@
 import React from 'react'
-import { csrfToken } from '../utils'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import PropTypes from 'prop-types'
 
-export default class FileSelect extends React.Component {
-    constructor(props) {
-      super(props);
-      var savedFileMeta = this.props.getState();
-      if (savedFileMeta !== '') {
-        savedFileMeta = JSON.parse(savedFileMeta);
-      } else {
-        savedFileMeta = false;
+
+class PickerFactory {
+  constructor() {
+    this.picker = null
+  }
+
+  /**
+   * Opens a singleton Picker, calling onPick and onCancel.
+   *
+   * Calls onPick({ id, name }) or onCancel() and then destroys the picker.
+   *
+   * If the singleton Picker is already open, this is a no-op.
+   */
+  open(accessToken, onPick, onCancel) {
+    if (this.picker !== null) return
+
+    const onEvent = (data) => {
+      switch (data.action) {
+        case 'loaded':
+          break
+
+        case 'picked':
+          const { id, name } = data.docs[0]
+          onPick({ id, name })
+          this.close()
+          break
+
+        case 'cancel':
+          onCancel()
+          this.close()
+          break
+
+        default:
+          console.log('Unhandled picker event', data)
       }
-      this.state = {
-        files: [],
-        file: savedFileMeta,
-        modalOpen: false
-      }
-      this.toggleModal = this.toggleModal.bind(this);
     }
 
-    getFiles() {
-      return this.props.api.postParamEvent(
-        this.props.pid,
-        { type: 'fetchFiles' }
-      ).then(result => {
-        this.setState({files: result.files});
-      });
+    const view = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
+      .setIncludeFolders(true)
+
+    this.picker = new google.picker.PickerBuilder()
+      .addView(view)
+      .setOAuthToken(accessToken)
+      .setCallback(onEvent)
+      .build()
+
+    this.picker.setVisible(true)
+  }
+
+  /**
+   * Close the singleton picker, if it is open.
+   */
+  close() {
+    if (this.picker !== null) {
+      this.picker.dispose()
+      this.picker = null
     }
+  }
+}
 
-    componentDidMount() {
-      if (this.props.userCreds.length > 0) {
-        this.getFiles()
-      }
-    }
 
-    componentDidUpdate(prevProps) {
-      if (this.props.userCreds.length > 0 && this.props.userCreds[0] !== prevProps.userCreds[0]) {
-        this.getFiles()
-      }
-
-      if (this.props.userCreds.length === 0) {
-        this.setState({
-          files: []
+let googleApiLoadedPromise = null
+/**
+ * Load Google APIs globally (if they haven't been loaded already); return
+ * a Promise[PickerFactory] that will resolve once the Google APIs are loaded.
+ *
+ * This returns a new PickerFactory each call, but it only loads the global
+ * `google` and `gapi` variables once.
+ */
+async function loadDefaultPickerFactory() {
+  if (googleApiLoadedPromise === null) {
+    googleApiLoadedPromise = new Promise((resolve, reject) => {
+      const callbackName = `GoogleFileSelect_onload_${String(Math.random()).slice(2, 10)}`
+      window[callbackName] = function() {
+        delete window[callbackName]
+        gapi.load('picker', function() {
+          resolve()
         })
       }
+
+      const script = document.createElement('script')
+      script.async = true
+      script.defer = true
+      script.src = `https://apis.google.com/js/api.js?onload=${callbackName}`
+
+      document.querySelector('head').appendChild(script)
+      this.script = script
+    })
+  }
+
+  await googleApiLoadedPromise
+  return new PickerFactory()
+}
+
+
+export default class GoogleFileSelect extends React.PureComponent {
+  static propTypes = {
+    api: PropTypes.shape({
+      currentGoogleClientAccessToken: PropTypes.func.isRequired,
+    }).isRequired,
+    userCreds: PropTypes.number, // TODO document what it is
+    fileMetadataJson: PropTypes.string, // may be empty/null
+    onChangeJson: PropTypes.func.isRequired, // func("{ id, name }") => undefined
+    loadPickerFactory: PropTypes.func, // func() => Promise[PickerFactory], default uses Google APIs
+  }
+
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      pickerFactory: null,
+      accessToken: null,
+      loadingAccessToken: false,
+      userCredsThatLedToAccessToken: null,
+    }
+  }
+
+  refreshAccessToken() {
+    const userCreds = this.props.userCreds
+
+    if (userCreds === null) {
+      this.setState({
+        accessToken: null,
+        userCredsThatLedToAccessToken: null,
+        loadingAccessToken: false,
+      })
+      return
     }
 
-    handleClick(file) {
-      this.props.api.postParamEvent(
-        this.props.pid,
-        {
-          file: file,
-          type: 'fetchFile'
-        }
-      ).then((response) => {
-          this.props.saveState(JSON.stringify(file));
-          this.setState({file: file});
-          this.toggleModal();
-        }
-      );
-    }
+    this.setState({
+      accessToken: null,
+      userCredsThatLedToAccessToken: userCreds,
+      loadingAccessToken: true,
+    })
 
-    toggleModal() {
-      this.setState({ modalOpen: !this.state.modalOpen });
-    }
-
-    render() {
-      let fileList = null
-      let filesModal = null
-      let fileInfo = null
-
-      if (typeof this.state.files !== 'undefined' && this.state.files.length > 0) {
-
-        fileList = (this.state.files.map( (file, idx) => {
-          return (
-            <div className="line-item--data-version" key={idx} onClick={() => this.handleClick(file)}>
-              <span className="content-3">{file.name}</span>
-            </div>
-          );
-        }));
-
-        filesModal = (
-          <div>
-            {!this.state.file &&
-              <div className="button-orange action-button mt-0" onClick={this.toggleModal}>Choose</div>}
-              <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal}>
-                <ModalHeader toggle={this.toggleModal}>
-                  <div className='title-4 t-d-gray'>Choose File</div>
-                </ModalHeader>
-                <ModalBody className="list-body">
-                  <div >
-                    {fileList}
-                  </div>
-                </ModalBody>
-                <div className=" modal-footer"></div>
-              </Modal>
-          </div>
-        );
-      }
-
-      if (this.state.file) {
-        fileInfo = (
-          <div>
-            <div className="d-flex">
-              <div className={"t-d-gray content-3 label-margin"}>File</div>
-              {this.state.files.length > 0 &&
-              <div onClick={this.toggleModal} className="t-f-blue ml-2">Change</div>}
-            </div>
-            <div><span className={"t-d-gray content-3 mb-3"}>{this.state.file.name}</span></div>
-          </div>
-        )
-      } else if (fileList) {
-        fileInfo = (
-          <p>{this.state.files.length} files found</p>
-        )
-      }
-
-      if (fileInfo) {
-        return (
-
-            <div className={" d-flex gdrive-fileSelect align-items-center"}>
-              <div className={"file-info content-3"}>
-                {fileInfo}
-              </div>
-              {filesModal}
-            </div>
-
-        );
-      } else {
+    this.props.api.currentGoogleClientAccessToken()
+      .then(json => json && json.access_token || null)
+      .catch(err => {
+        console.warn(err)
         return null
-      }
+      })
+      .then(access_token_or_null => {
+        if (userCreds === this.state.userCredsThatLedToAccessToken) { // avoid race
+          this.setState({
+            accessToken: access_token_or_null,
+            loadingAccessToken: false,
+          })
+        }
+      })
+  }
 
+  loadPickerFactory() {
+    const loadPickerFactory = this.props.loadPickerFactory || loadDefaultPickerFactory
+    loadPickerFactory().then(pf => {
+      if (this._isMounted) {
+        this.setState({ pickerFactory: pf })
+      }
+      // otherwise, no prob: next mount, the promise will return quickly
+    })
+  }
+
+  componentDidMount() {
+    this.loadPickerFactory()
+    this.refreshAccessToken()
+
+    this._isMounted = true
+  }
+
+  componentWillUnmount() {
+    if (this.state.pickerFactory) {
+      this.state.pickerFactory.close()
+      // we leak window.gapi, but that's probably fine
     }
+
+    if (this.state.loadingAccessToken) {
+      // We can't set state when unmounted, and there's an API request
+      // floating about. Ignore the response when it arrives.
+      this.setState({
+        loadingAccessToken: false,
+        accessToken: null,
+        userCredsThatLedToAccessToken: null,
+      })
+    }
+
+    this._isMounted = false
+  }
+
+  componentDidUpdate() {
+    if (this.props.userCreds !== this.state.userCredsThatLedToAccessToken) {
+      this.refreshAccessToken()
+    }
+  }
+
+  openPicker = () => {
+    const { pickerFactory, accessToken } = this.state
+    pickerFactory.open(accessToken, this.onPick, this.onCancel)
+  }
+
+  onPick = (data) => {
+    this.props.onChangeJson(JSON.stringify(data))
+  }
+
+  onCancel = () => {
+    // do nothing
+  }
+
+  render() {
+    const { pickerFactory, accessToken, loadingAccessToken } = this.state
+    const { fileMetadataJson } = this.props
+
+    const defaultFileName = '(no file chosen)'
+    const fileMetadata = fileMetadataJson ? JSON.parse(fileMetadataJson) : null
+    const fileId = fileMetadata ? (fileMetadata.id || null) : null
+    const fileName = fileMetadata ? (fileMetadata.name || defaultFileName) : defaultFileName
+
+    let button
+    if (loadingAccessToken || !pickerFactory) {
+      button = (
+        <p className="loading">Loading...</p>
+      )
+    } else if (!accessToken) {
+      button = (
+        <p className="not-signed-in">
+          To {fileId ? 'choose another file' : 'choose a file'}, you must connect
+        </p>
+      )
+    } else {
+      button = (
+        <button
+          className="button-orange action-button"
+          onClick={this.openPicker}
+          >{ fileId ? 'Change' : 'Choose' }</button>
+      )
+    }
+
+    return (
+      <div className="google-file-select">
+        <div className="file-info">{fileName}</div>
+        {button}
+      </div>
+    )
+  }
 }

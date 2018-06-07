@@ -2,45 +2,34 @@
 
 exports[`GoogleConnect Mounts correctly with user creds and fires call to delete creds on click 1`] = `
 <GoogleConnect
-  userCreds={
-    Array [
-      0,
-    ]
-  }
+  userCreds={0}
 >
   <div
-    className="connected-account"
+    className="google-connect-parameter"
   >
-    <p>
-      <span
-        className="t-f-blue"
-        onClick={[Function]}
-      >
-        Disconnect
-      </span>
-       account
-    </p>
+    <button
+      className="disconnect"
+      onClick={[Function]}
+    >
+      Disconnect account
+    </button>
   </div>
 </GoogleConnect>
 `;
 
 exports[`GoogleConnect Mounts correctly without user creds 1`] = `
 <GoogleConnect
-  userCreds={Array []}
+  userCreds={null}
 >
   <div
-    className="connected-account"
+    className="google-connect-parameter"
   >
-    <div
-      className="gdrive-connectAccount"
+    <button
+      className="connect"
+      onClick={[Function]}
     >
-      <button
-        className="action-button button-orange"
-        onClick={[Function]}
-      >
-        Connect account
-      </button>
-    </div>
+      Connect account
+    </button>
   </div>
 </GoogleConnect>
 `;
