@@ -17,7 +17,7 @@ article.lesson {
     flex-direction: column;
     background-color: $table-element;
     height: calc(100vh - 8rem);
-    width: 32rem;
+    width: 36rem;
     padding:2rem;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -40,6 +40,7 @@ article.lesson {
 
     h2 {
       color:#fff;
+      line-height: 3rem;
     }
 
     &>.description {
@@ -49,6 +50,46 @@ article.lesson {
       p {
         color:#fff;
       }
+    }
+
+    .copy-txt {
+      position: relative;
+      width: 32rem;
+      margin: 1rem 0;
+      padding:1rem;
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 3px;
+      word-break: break-all;
+      cursor: text;
+      @extend %content-3;
+    }
+
+    .code-sample {
+      @extend %code-1;
+      font-size: 1.2rem;
+      font-weight: 400;
+      line-height: 2rem;
+      &.highlight, & .highlight{font-weight: 800;}
+    }
+
+    .image{
+      position: relative;
+      margin:0.5rem 0 1rem 0;
+      width: 32rem;
+      background-color: $dark-accent--medium;
+      padding: .5rem;
+    }
+
+    .highlight {
+      color:$brand-learn;
+      font-weight: 400;
+    }
+
+    .accent {font-weight: 400;}
+
+    .icon-insert {
+      margin: 0 .5rem;
+      width:2.7rem;
     }
 
     &>.instructions {
@@ -72,45 +113,20 @@ article.lesson {
         list-style-type: none;
         padding-left: 2rem;
 
-        .copy-txt {
-          position: relative;
-          left:-2rem;
-          width: 28rem;
-          margin: 1rem 0;
-          padding:1rem;
-          background-color: rgba(0,0,0,0.1);
-          border-radius: 3px;
-          word-break: break-all;
-          cursor: text;
-        }
-
+        .copy-txt, .image {left:-2rem;}
 
         .lesson-note {
           position: relative;
           left:-2rem;
           margin-top: 2.5rem;
           width:28rem;
-          font-weight: 500;
-        }
-
-        .image{
-          position: relative;
-          left:-2rem;
-          margin:0.5rem 0 1rem 0;
-          width: 28rem;
-          background-color: $dark-accent--medium;
-          padding: 1.5rem;
-        }
-
-        .icon-insert {
-          margin: 0 .5rem;
-          width:2.7rem;
+          font-weight: 400;
         }
 
         &::before {
           content: "\e938";
           color: $light-accent--Vstrong;
-          font-size: 0.8rem;
+          font-size: .8rem;
           font-family: Workbench;
           position: absolute;
           margin-left: -2rem;

@@ -1,5 +1,5 @@
 <header>
-  <h1>IV. Monitor content on a webpage using Xpath</h1>
+  <h1>IV. Monitor specific content on a webpage using Xpath</h1>
   <p>Coming soon</p>
   <img src="/static/images/lesson_banners/xpath_list.svg">
 </header>
@@ -7,7 +7,7 @@
   <h2>COMING SOON</h2>
 </section>
 <section>
-  <h2>1. Finding the element to scrape in your browser</h2>
+  <h2>1. Inspecting the element to scrape in the browser</h2>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Scrape list"}]'
@@ -19,7 +19,72 @@
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
       >Paste in the following URL, where we can see the list to monitor.
       <div class="copy-txt content-3 t-white">http://www.atlaudit.org/audit-reports.html</div>
-      <p class="lesson-note">In a new window, naviguate to the <a href="http://www.atlaudit.org/audit-reports.html" target="_blank">page</a>.</p>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      >Naviguate to the page by opening a new browser window <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">here</a>.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>2. Using the inspector to copy the Xpath</h2>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      >Scroll down to the 'list of all publications released by the City Auditor's Office'. Right click on the first item at the top, and select <span class="highlight">inspect</span> in the menu.
+      <p>
+        <img class="image" src="/static/images/xpath_list_lesson/inspect_list.svg">
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      >In the inspector window, right click on the corresponding highlighted HTML element and choose <span class="highlight">Copy Xpath</span>.
+      <p>
+        <img class="image" src="/static/images/xpath_list_lesson/copy_xpath.svg">
+      </p>
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      >Paste the result in the Xpath field of the module and click <span class="highlight">Scrape</span>.
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>3. Editing the Xpath to scrape the entire list</h2>
+  <p class="lesson-note">We succesfully got the Xpath to scrape the first element in our list. However, our goal is to scrape the entire list in order to see if it changes over time, and eventually receive an alert if it does.</p>
+  <p class="lesson-note accent">Let's look closely at the HTML element we got the code from:</p>
+  <p>
+    <img class="image" src="/static/images/xpath_list_lesson/html_element_zoom.svg">
+  </p>
+  <p class="lesson-note">The link we got the Xpath from is situated within the first <span class="highlight code-sample">&lt;li&gt;</span> tag. Each <span class="highlight code-sample">&lt;li&gt;</span> tag is one element of the entire list, which itself starts with the tag <span class="highlight code-sample">&lt;ul&gt;</span>.</p>
+  <p class="lesson-note accent">Now let's compare this to the syntax of the Xpath:</p>
+  <div class="copy-txt code-sample t-white">//*[@id="wsite-content"]/div[3]/ul/li<span class="highlight">[1]</span>/a</div>
+  <p class="lesson-note">The <span class="highlight code-sample">[1]</span> in the syntax points to the first <span class="highlight code-sample">&lt;li&gt;</span> element in the list, because we extracted the Xpath from it.</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
+      >Edit the Xpath in the module and cut out <span class="highlight">[1]</span> in order to select all the <span class="highlight code-sample">&lt;li&gt;</span> elements in the list. Click <span class="highlight">Scrape</span> when your're done!
+    </li>
+  </ol>
+</section>
+<section>
+  <h2>4. Monitoring changes in the list</h2>
+  <p class="lesson-note">Let's set up the workflow to check the source URL every day, and send an email if the list has changed.</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
+      data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+    >Click on 'manual' in the 'Scrape list' module to open the Workflow Settings window.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
+      data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+    >Turn  the feature 'On', set the frequency to '1 day' and click 'Apply'.
+    <p class="lesson-note">Voila! The notification <span><img class="icon-insert" src="/static/images/xpath_list_lesson/alert_button.svg"></span> in the module is set. If new elements are published or deletted, the new list will be displayed in the table and you will receive an email.</p>
     </li>
   </ol>
 </section>

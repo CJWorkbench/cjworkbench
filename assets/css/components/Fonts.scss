@@ -104,11 +104,14 @@
 	font-weight: 200;
 }
 
-.code-1 {
+%code-1 {
   font-family: "PT Mono";
 	font-size: 1.4rem;
 	line-height: 2.4rem;
 }
+.code-1 {@extend %code-1;}
+
+
 
 %info-1 {
 	font-size: 1.2rem;
