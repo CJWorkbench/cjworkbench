@@ -8,6 +8,7 @@
   background-color: $brand-workspace;
   color: #FFFFFF;
   padding: 1.1rem 4rem 1.1rem 4rem;
+  height:6rem;
 
   .dropdown {
     display: flex;
@@ -39,7 +40,7 @@
     position: relative;
     left:-7.7rem;
     height:100%;
-    padding-top: .5rem;
+    top: .8rem;
     cursor: pointer;
 
     a {
@@ -56,7 +57,7 @@
       align-items: center;
       margin:0 2rem;
       padding-top: .5rem;
-      height:3.3rem;
+      height:4.5rem;
       -webkit-transition:$buttons-anim;
 
       .WF-link--under,
