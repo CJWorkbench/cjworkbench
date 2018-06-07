@@ -16,6 +16,7 @@ class ParameterSpec(models.Model):
     BUTTON = 'button'
     COLUMN = 'column'
     MULTICOLUMN = 'multicolumn'
+    SECRET = 'secret'
     CUSTOM = 'custom'           # rendered in front end
 
     TYPE_CHOICES = (
@@ -28,7 +29,8 @@ class ParameterSpec(models.Model):
         (MENU, 'Menu'),
         (COLUMN, 'Column'),
         (MULTICOLUMN, 'Multiple columns'),
-        (CUSTOM, 'Custom')
+        (SECRET, 'Secret'),
+        (CUSTOM, 'Custom'),
     )
 
     TYPES = [x[0] for x in TYPE_CHOICES]

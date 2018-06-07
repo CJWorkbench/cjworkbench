@@ -1,5 +1,6 @@
 from django.db import models
 from server.models.ParameterSpec import *
+import json
 
 # A parameter value, which might be string or float
 class ParameterVal(models.Model):
@@ -108,6 +109,18 @@ class ParameterVal(models.Model):
              ptype == ParameterSpec.STATICTEXT:
             self.value = new_value
 
+        elif ptype == ParameterSpec.SECRET:
+            if not new_value:
+                self.value = ''
+            else:
+                if (type(new_value) is not dict
+                        or type(new_value.get('name')) is not str
+                        or not new_value.get('name')
+                        or not new_value.get('secret')
+                        ):
+                    raise ValueError(f'SECRET parameter {self.parameter_spec.id_name} must be a dict with str "name": "..." and non-empty "secret"')
+                self.value = json.dumps(new_value)
+
         else:
             raise ValueError('Unknown parameter type ' + ptype + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.set_value')
 
@@ -132,8 +145,21 @@ class ParameterVal(models.Model):
              ptype == ParameterSpec.BUTTON or \
              ptype == ParameterSpec.STATICTEXT:
             return self.value
+        elif ptype == ParameterSpec.SECRET:
+            if self.value:
+                parsed = json.loads(self.value)
+                return { 'name': parsed['name'] }
+            else:
+                return None
         else:
             raise ValueError('Unknown parameter ptype ' + ptype + ' for parameter ' + self.parameter_spec.name + ' in ParameterVal.get_value')
+
+
+    def get_secret(self):
+        ptype = self.parameter_spec.type
+        if ptype == ParameterSpec.SECRET:
+            return json.loads(self.value)['secret']
+
 
     def __str__(self):
         return self.wf_module.__str__() + ' - ' + self.parameter_spec.name + ' - ' + str(self.get_value())

@@ -106,8 +106,3 @@ class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
 
             # should have made an call to the LoadURL event handler
             self.assertIs(event_call.call_count, 1)
-
-
-
-
-
