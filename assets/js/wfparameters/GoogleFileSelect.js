@@ -70,7 +70,7 @@ let googleApiLoadedPromise = null
  * This returns a new PickerFactory each call, but it only loads the global
  * `google` and `gapi` variables once.
  */
-async function getPickerFactory() {
+async function loadDefaultPickerFactory() {
   if (googleApiLoadedPromise === null) {
     googleApiLoadedPromise = new Promise((resolve, reject) => {
       const callbackName = `GoogleFileSelect_onload_${String(Math.random()).slice(2, 10)}`
@@ -152,15 +152,18 @@ export default class GoogleFileSelect extends React.PureComponent {
       })
   }
 
-  componentDidMount() {
-    this.props.loadPickerFactory().then(pf => {
+  loadPickerFactory() {
+    const loadPickerFactory = this.props.loadPickerFactory || loadDefaultPickerFactory
+    loadPickerFactory().then(pf => {
       if (this._isMounted) {
         this.setState({ pickerFactory: pf })
       }
-      // otherwise, no prb -- next time we mount, the promise will return
-      // quickly
+      // otherwise, no prob: next mount, the promise will return quickly
     })
+  }
 
+  componentDidMount() {
+    this.loadPickerFactory()
     this.refreshAccessToken()
 
     this._isMounted = true
@@ -208,9 +211,10 @@ export default class GoogleFileSelect extends React.PureComponent {
     const { pickerFactory, accessToken, loadingAccessToken } = this.state
     const { fileMetadataJson } = this.props
 
+    const defaultFileName = '(no file chosen)'
     const fileMetadata = fileMetadataJson ? JSON.parse(fileMetadataJson) : null
     const fileId = fileMetadata ? (fileMetadata.id || null) : null
-    const fileName = fileMetadata ? (fileMetadata.name || null) : null
+    const fileName = fileMetadata ? (fileMetadata.name || defaultFileName) : defaultFileName
 
     let button
     if (loadingAccessToken || !pickerFactory) {
@@ -234,9 +238,7 @@ export default class GoogleFileSelect extends React.PureComponent {
 
     return (
       <div className="google-file-select">
-        <div className="file-info">
-          {fileId ? fileName : '(no file chosen)'}
-        </div>
+        <div className="file-info">{fileName}</div>
         {button}
       </div>
     )
