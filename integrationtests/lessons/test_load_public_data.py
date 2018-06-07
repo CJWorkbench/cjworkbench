@@ -24,7 +24,7 @@ class TestLesson(LessonTest):
         )
         b.fill_in(
             'url',
-            'https://app.workbenchdata.com/static/data/affordable_housing_lesson_1.csv',
+            'https://app.workbenchdata.com/static/data/affordable_housing_1.csv',
             wait=True # wait for module to load
         )
         b.click_whatever('h2') # AAAAH! we need to blur, _then_ click Update!

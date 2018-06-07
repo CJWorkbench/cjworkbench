@@ -18,16 +18,16 @@
       >Add the module ‘Add from URL’.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/affordable_housing_lesson_1.csv' && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule && wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/affordable_housing_url_chart_lesson.csv' && wfModule.selectedVersion"
       >Paste in the URL of the dataset in the module, and load the data by clicking 'Update'.
-      <div class="copy-txt content-3 t-white">https://app.workbenchdata.com/static/data/affordable_housing_lesson_1.csv</div>
+      <div class="copy-txt content-3 t-white">https://app.workbenchdata.com/static/data/affordable_housing_url_chart_lesson.csv</div>
     </li>
     <li
       data-highlight='[{"type":"WfModuleContextButton","moduleName":"Add from URL","button":"notes"},{"type":"EditableNotes"}]',
       data-test="return workflow.wfModules.length > 0 && !!workflow.wfModules[0].note"
       >Add a note
       <span>
-        <img class="icon-insert" src="/static/images/lesson_1/note_button.svg">
+        <img class="icon-insert" src="/static/images/url_chart_lesson/note_button.svg">
       </span>
       to the module, for example:
       <div class="copy-txt content-3 t-white">Data from datasf.org</div>
@@ -37,7 +37,7 @@
       data-test="return workflow.wfModules.length > 0 && workflow.wfModules[0].isCollapsed"
       >Collapse
       <span>
-        <img class="icon-insert" src="/static/images/lesson_1/collapse_button.svg">
+        <img class="icon-insert" src="/static/images/url_chart_lesson/collapse_button.svg">
       </span>
       the module.</li>
   </ol>
@@ -76,7 +76,7 @@
       data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]'
       data-test="return state.selectedWfModule.moduleName === 'Column Chart'"
       >Get the embed code by clicking on the <span>
-      <img class="icon-insert" src="/static/images/lesson_1/embbed_button.svg">
+      <img class="icon-insert" src="/static/images/url_chart_lesson/embbed_button.svg">
     </span> button at the top right of the chart panel.</p>
   </ol>
 </section>
