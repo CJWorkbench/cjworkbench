@@ -27,23 +27,23 @@
       position: absolute;
       top:1.5rem;
       right:6rem;
-      width: 4rem;
-      height: 4rem;
+      width: 3.5rem;
+      height: 3.5rem;
       background-color: transparent;
     }
     .outputpane-iframe-control-overlay .btn {
       position: absolute;
-      width: 4rem;
-      height: 4rem;
+      width: 3.5rem;
+      height: 3.5rem;
       border-radius: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 1px solid #E7E7E7;
+      border: 2px solid #E7E7E7;
       font-size: 1.6rem;
     }
     .outputpane-iframe-control-overlay .btn:hover{
-      background-color: $brand-workspace;
+      background-color: $brand-workspace--light;
       border: 0px;
       color: #fff;
     }
