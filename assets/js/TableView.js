@@ -10,6 +10,7 @@ import update from 'immutability-helper'
 import * as EditCells from './EditCells'
 import * as SortFromTable from './SortFromTable'
 import * as ReorderColumns from './ReorderColumns'
+import * as RenameColumns from './RenameColumns'
 import {findParamValByIdName} from "./utils";
 
 export function mockAddCellEdit(fn) {
@@ -249,6 +250,7 @@ export default class TableView extends React.Component {
             sortDirection={sortDirection}
             showLetter={showColumnLetter}
             onReorderColumns={ReorderColumns.updateReorder}
+            onRenameColumn={RenameColumns.updateRename}
           />
         </div>
       // adds commas to row count

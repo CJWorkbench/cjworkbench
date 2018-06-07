@@ -125,6 +125,9 @@ export default class RenameEntries extends React.Component {
         if(nextProps.revision != this.props.revision) {
             this.refreshColumns();
         }
+        if(nextProps.displayAll != this.displayAll) {
+            this.setState({columns: undefined});
+        }
     }
 
     componentDidMount() {

@@ -97,6 +97,7 @@ class ReorderColumnDropZone extends React.PureComponent {
 class EditableColumnName extends React.Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
+    onRename: PropTypes.func.isRequired,
   };
 
   constructor(props) {
@@ -126,6 +127,10 @@ class EditableColumnName extends React.Component {
     this.setState({
         newName: this.state.newName,
         editMode: false
+    });
+    this.props.onRename({
+        prevName: this.props.columnKey,
+        newName: this.state.newName
     });
   }
 
@@ -176,6 +181,7 @@ class ColumnHeader extends React.PureComponent {
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
+    onRenameColumn: PropTypes.func
   };
 
   constructor(props) {
@@ -309,7 +315,7 @@ class ColumnHeader extends React.PureComponent {
         {maybeDropZone('left', index)}
         {letterSection}
         <div className="sort-container">
-          <EditableColumnName columnKey={columnKey}/>
+          <EditableColumnName columnKey={columnKey} onRename={this.props.onRenameColumn}/>
           {sortArrowSection}
         </div>
         {maybeDropZone('right', index + 1)}
@@ -356,6 +362,7 @@ function makeFormattedCols(props) {
         onDragEnd={props.onDragEnd}
         draggingColumnIndex={props.draggingColumnIndex}
         onDropColumnIndexAtIndex={props.onDropColumnIndexAtIndex}
+        onRenameColumn={props.onRenameColumn}
         />
     ),
   }))
@@ -380,7 +387,8 @@ export default class DataGrid extends React.Component {
     sortColumn:         PropTypes.string,
     sortDirection:      PropTypes.string,
     showLetter:         PropTypes.bool,
-    onReorderColumns:   PropTypes.func
+    onReorderColumns:   PropTypes.func,
+    onRenameColumn:     PropTypes.func,
   };
 
   constructor(props) {
@@ -514,6 +522,10 @@ export default class DataGrid extends React.Component {
     })
   };
 
+  onRename = (renameInfo) => {
+    this.props.onRenameColumn(this.props.wfModuleId, renameInfo);
+  };
+
   render() {
     if (this.props.totalRows > 0) {
       const columns = makeFormattedCols({
@@ -528,7 +540,8 @@ export default class DataGrid extends React.Component {
         draggingColumnIndex: this.state.draggingColumnIndex,
         onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
         onSortColumn: this.props.onSortColumn || (() => {}),
-      })
+        onRenameColumn: this.onRename,
+      });
 
       return(
         <ReactDataGrid
