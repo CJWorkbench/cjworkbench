@@ -26,13 +26,13 @@ describe('ReorderEntries rendering and interactions', () => {
         mockAPI(api);
     });
 
-    it('Adds all columns to entries and turns off displayAll when displayAll is set to true', (done) => {
+    it('Adds all columns to entries and turns off loadAll when loadAll is set to true', (done) => {
         // This test corresponds to behavior when added from module library.
-        var changeDisplayAllMock = jest.fn().mockReturnValue(Promise.resolve());
+        var changeloadAllMock = jest.fn().mockReturnValue(Promise.resolve());
 
         let tree = mount(<RenameEntries
-            displayAll={true}
-            changeDisplayAll={changeDisplayAllMock}
+            loadAll={true}
+            changeloadAll={changeloadAllMock}
             entries={JSON.stringify({})}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
@@ -43,9 +43,9 @@ describe('ReorderEntries rendering and interactions', () => {
             // https://github.com/airbnb/enzyme/issues/1233#issuecomment-343449560
             tree.update();
 
-            // Turns off displayAll after initial load
-            expect(changeDisplayAllMock.mock.calls).toHaveLength(1);
-            expect(changeDisplayAllMock.mock.calls[0][0]).toBe(false);
+            // Turns off loadAll after initial load
+            expect(changeloadAllMock.mock.calls).toHaveLength(1);
+            expect(changeloadAllMock.mock.calls[0][0]).toBe(false);
 
             // Updates entries param to include every column, "renamed" to their original name
             expect(api.onParamChanged.mock.calls).toHaveLength(1);
@@ -60,10 +60,10 @@ describe('ReorderEntries rendering and interactions', () => {
         });
     });
 
-    it('Displays all columns in entries after displayAll is set to false', (done) => {
+    it('Displays all columns in entries after loadAll is set to false', (done) => {
         let tree = mount(<RenameEntries
-            displayAll={false}
-            changeDisplayAll={jest.fn()}
+            loadAll={false}
+            changeloadAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
             wfModuleId={1}
             paramId={2}
@@ -83,8 +83,8 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon input completion via blur', (done) => {
         let tree = mount(<RenameEntries
-            displayAll={false}
-            changeDisplayAll={jest.fn()}
+            loadAll={false}
+            changeloadAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
@@ -111,8 +111,8 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon input completion via enter key', (done) => {
         let tree = mount(<RenameEntries
-            displayAll={false}
-            changeDisplayAll={jest.fn()}
+            loadAll={false}
+            changeloadAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
@@ -139,8 +139,8 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon deleting an entry', (done) => {
         let tree = mount(<RenameEntries
-            displayAll={false}
-            changeDisplayAll={jest.fn()}
+            loadAll={false}
+            changeloadAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
@@ -169,8 +169,8 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Deletes itself if all entries are deleted', (done) => {
         let tree = mount(<RenameEntries
-            displayAll={false}
-            changeDisplayAll={jest.fn()}
+            loadAll={false}
+            changeloadAll={jest.fn()}
             entries={JSON.stringify({'name': 'host_name'})}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}

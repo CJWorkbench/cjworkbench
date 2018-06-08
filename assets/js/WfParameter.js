@@ -256,8 +256,8 @@ export default class WfParameter extends React.Component {
       //console.log(this.props);
       return (
           <RenameEntries
-              displayAll={this.props.getParamText('display-all')}
-              changeDisplayAll={(val) => {this.props.setParamText('display-all', val)}}
+              loadAll={this.props.getParamText('display-all')}
+              changeloadAll={(val) => {this.props.setParamText('display-all', val)}}
               entries={this.props.p.value}
               wfModuleId={this.props.wf_module_id}
               paramId={this.props.p.id}

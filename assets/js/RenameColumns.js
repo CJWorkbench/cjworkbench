@@ -9,8 +9,9 @@ export function mockAPI(mock_api) {
     api = mock_api;
 }
 
+//renameInfo format: {prevName: <current column name in table>, newName: <new name>}
+
 function updateRenameModule(module, renameInfo, isNew=false) {
-    //console.log(module);
     var entriesParam = findParamValByIdName(module, 'rename-entries');
     var existingEntries = {}
     try {
@@ -57,6 +58,9 @@ export function updateRename(wfModuleId, renameInfo) {
         let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
         api.addModule(workflowId, state.renameModuleId, wfModuleIdx + 1)
             .then((newWfm) => {
+                // We set the parameters first and then switch to the new module
+                // to prevent it loading all columns in its initial rendering
+                // (which would be the case if it's added from the module library)
                 updateRenameModule(newWfm, renameInfo, true);
                 store.dispatch(setSelectedWfModuleAction(newWfm.id));
             });

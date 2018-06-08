@@ -79,8 +79,8 @@ export class RenameEntry extends React.Component {
 
 export default class RenameEntries extends React.Component {
     static propTypes = {
-        displayAll: PropTypes.bool.isRequired,
-        changeDisplayAll: PropTypes.func.isRequired,
+        loadAll: PropTypes.bool.isRequired,
+        changeloadAll: PropTypes.func.isRequired,
         entries: PropTypes.string.isRequired,
         wfModuleId: PropTypes.number.isRequired,
         revision: PropTypes.number,
@@ -106,7 +106,7 @@ export default class RenameEntries extends React.Component {
     }
 
     refreshColumns(props) {
-        if(props.displayAll) {
+        if(props.loadAll) {
             api.inputColumns(props.wfModuleId)
                 .then((columns) => {
                     this.setState({columns: columns});
@@ -125,14 +125,14 @@ export default class RenameEntries extends React.Component {
                 this.setState({entries: {}});
             }
         }
-        if((nextProps.revision != this.props.revision) || (nextProps.displayAll != this.props.displayAll)) {
+        if((nextProps.revision != this.props.revision) || (nextProps.loadAll != this.props.loadAll)) {
             this.refreshColumns(nextProps);
         }
     }
 
     componentDidMount() {
         //this.refreshColumns(this.props);
-        if(this.props.displayAll) {
+        if(this.props.loadAll) {
             api.inputColumns(this.props.wfModuleId)
                 .then((columns) => {
                     var entries = {};
@@ -142,7 +142,7 @@ export default class RenameEntries extends React.Component {
                     console.log(entries);
                     api.onParamChanged(this.props.paramId, {value: JSON.stringify(entries)})
                         .then(() => {
-                            this.props.changeDisplayAll(false);
+                            this.props.changeloadAll(false);
                         })
                 });
         }
