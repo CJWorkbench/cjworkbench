@@ -290,7 +290,7 @@ exports[`Workflow list page renders correctly 1`] = `
                           -
                         </span>
                         <span
-                          className="publicPrivate t-f-blue"
+                          className="publicPrivate"
                         >
                           public
                         </span>
@@ -501,7 +501,7 @@ exports[`Workflow list page renders correctly 1`] = `
                           -
                         </span>
                         <span
-                          className="publicPrivate t-f-blue"
+                          className="publicPrivate"
                         >
                           private
                         </span>
@@ -712,7 +712,7 @@ exports[`Workflow list page renders correctly 1`] = `
                           -
                         </span>
                         <span
-                          className="publicPrivate t-f-blue"
+                          className="publicPrivate"
                         >
                           public
                         </span>
@@ -923,7 +923,7 @@ exports[`Workflow list page renders correctly 1`] = `
                           -
                         </span>
                         <span
-                          className="publicPrivate t-f-blue"
+                          className="publicPrivate"
                         >
                           private
                         </span>

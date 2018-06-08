@@ -117,7 +117,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                 -
               </span>
               <span
-                className="publicPrivate t-f-blue"
+                className="publicPrivate"
               >
                 private
               </span>
@@ -685,7 +685,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
                 -
               </span>
               <span
-                className="publicPrivate t-f-blue"
+                className="publicPrivate"
               >
                 public
               </span>
@@ -1169,7 +1169,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
                 -
               </span>
               <span
-                className="publicPrivate t-f-blue"
+                className="publicPrivate"
               >
                 public
               </span>
@@ -1321,7 +1321,7 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
                 -
               </span>
               <span
-                className="publicPrivate t-f-blue"
+                className="publicPrivate"
               >
                 public
               </span>

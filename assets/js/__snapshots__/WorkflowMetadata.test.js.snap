@@ -56,7 +56,7 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
           -
         </span>
         <span
-          className="publicPrivate t-f-blue"
+          className="publicPrivate"
         >
           private
         </span>
@@ -475,7 +475,7 @@ exports[`WorkflowMetadata - private mode modal operates 2`] = `
           -
         </span>
         <span
-          className="publicPrivate t-f-blue"
+          className="publicPrivate"
         >
           private
         </span>
@@ -541,7 +541,7 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
           -
         </span>
         <span
-          className="publicPrivate t-f-blue"
+          className="publicPrivate"
         >
           private
         </span>
