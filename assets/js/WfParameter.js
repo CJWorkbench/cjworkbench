@@ -224,10 +224,12 @@ export default class WfParameter extends React.Component {
         </div> );
     } else if (id_name == 'file') {
       return (
-            <DropZone
-            wfModuleId={this.props.wf_module_id}
-            revision={this.props.revision} />
-        );
+        <DropZone
+          wfModuleId={this.props.wf_module_id}
+          revision={this.props.revision}
+          api={this.props.api}
+          />
+      );
     } else if (id_name == 'googlefileselect') {
       const secret = this.props.getParamText('google_credentials')
       const secretName = secret ? (secret.name || null) : null

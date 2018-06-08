@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 //import Dropzone from 'react-dropzone';
-import request from 'superagent';
 import {store, setWfModuleStatusAction} from '../workflow-reducer'
 import {csrfToken} from '../utils'
 import FineUploaderTraditional from 'fine-uploader-wrappers'
@@ -30,8 +29,6 @@ export default class DropZone extends Component {
             submittedFiles: [],
             filename: ''
         }
-
-        this.update_filename = this.update_filename.bind(this);
 
         this.uploader = new FineUploaderTraditional({
             options: {
@@ -63,22 +60,23 @@ export default class DropZone extends Component {
     }
 
     update_filename(err, res){
-        var filename = '';
-        if (res.ok) {
-            if (JSON.parse(res.text).length > 0)
-                filename = JSON.parse(res.text)[0]['name']
-            this.setState({filename});
-        }
+      if (err === null) {
+        this.setState({
+          filename: res[0].name,
+        })
+      } else {
+        console.warn(err)
+      }
     }
 
-    componentWillReceiveProps(nextProps) {
-        if (this.props.revision != nextProps.revision) {
-            var req = request
-                    .get('/api/uploadfile')
-                    .query({'wf_module': this.props.wfModuleId})
-                    .set('X-CSRFToken', csrfToken);
-            req.end((err, res)=> this.update_filename(err, res));
-        }
+    componentDidUpdate(prevProps) {
+      if (prevProps.revision !== this.props.revision) {
+        this.props.api._fetch(`/api/uploadfile?wf_module=${this.props.wfModuleId}`)
+          .then(
+            res => this.update_filename(null, res),
+            err => this.update_filename(err, null)
+          )
+      }
     }
 
     componentDidMount() {
