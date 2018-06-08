@@ -2,12 +2,10 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-    DropdownMenu,
-    UncontrolledDropdown,
-    DropdownToggle,
-    DropdownItem,
-  } from 'reactstrap'
+import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown'
+import DropdownToggle from 'reactstrap/lib/DropdownToggle'
+import DropdownMenu from 'reactstrap/lib/DropdownMenu'
+import DropdownItem from 'reactstrap/lib/DropdownItem'
 import ExportModal from './ExportModal'
 
 

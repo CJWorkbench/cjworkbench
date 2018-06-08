@@ -6,7 +6,10 @@
  */
 
 import React from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import Modal from 'reactstrap/lib/Modal'
+import ModalHeader from 'reactstrap/lib/ModalHeader'
+import ModalBody from 'reactstrap/lib/ModalBody'
+import ModalFooter from 'reactstrap/lib/ModalFooter'
 import PropTypes from 'prop-types'
 import { loadModulesAction } from './workflow-reducer'
 import {connect} from "react-redux";

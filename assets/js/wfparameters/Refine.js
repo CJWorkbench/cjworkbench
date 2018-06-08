@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WorkbenchAPI from '../WorkbenchAPI'
-import {UncontrolledAlert} from 'reactstrap'
+import UncontrolledAlert from 'reactstrap/lib/UncontrolledAlert'
 
 
 var api = WorkbenchAPI();

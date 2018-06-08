@@ -1,5 +1,8 @@
 import React from 'react'
-import { InputGroup, InputGroupAddon, Input, Button } from 'reactstrap'
+import InputGroup from 'reactstrap/lib/InputGroup'
+import InputGroupAddon from 'reactstrap/lib/InputGroupAddon'
+import Input from 'reactstrap/lib/Input'
+import Button from 'reactstrap/lib/Button'
 import BlockPicker from 'react-color/lib/Block'
 import { defaultColors } from './ChartColors'
 

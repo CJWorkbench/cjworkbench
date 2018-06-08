@@ -2,13 +2,11 @@
 // triggered by click on three-dot icon next to listed workflow
 
 import React from 'react'
-import {
-  UncontrolledDropdown,
-  DropdownToggle,
-  DropdownMenu,
-  DropdownItem
-} from 'reactstrap'
 import PropTypes from 'prop-types'
+import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown'
+import DropdownToggle from 'reactstrap/lib/DropdownToggle'
+import DropdownMenu from 'reactstrap/lib/DropdownMenu'
+import DropdownItem from 'reactstrap/lib/DropdownItem'
 
 export default class WfContextMenu extends React.Component {
   constructor(props) {
