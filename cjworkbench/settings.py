@@ -336,6 +336,7 @@ if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
     with open(GOOGLE_OAUTH2_CLIENT_SECRETS_JSON) as f:
         d = json.load(f)
         PARAMETER_OAUTH_SERVICES['google_credentials'] = {
+            'class': 'oauth2',
             'client_id': d['web']['client_id'],
             'client_secret': d['web']['client_secret'],
             'auth_url': d['web']['auth_uri'],
@@ -343,6 +344,28 @@ if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
             'refresh_url': d['web']['token_uri'],
             'scope': 'email https://www.googleapis.com/auth/drive.readonly',
         }
+
+
+# Twitter, for Twitter module
+
+CJW_TWITTER_CLIENT_SECRETS_PATH = os.environ.get('CJW_TWITTER_CLIENT_SECRETS', False)
+if not CJW_TWITTER_CLIENT_SECRETS_PATH:
+    CJW_TWITTER_CLIENT_SECRETS_PATH = 'twitter_secret.json'
+CJW_TWITTER_CLIENT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_TWITTER_CLIENT_SECRETS_PATH)
+
+try:
+    with open(CJW_TWITTER_CLIENT_SECRETS_PATH) as f:
+        d = json.load(f)
+        PARAMETER_OAUTH_SERVICES['twitter_credentials'] = {
+            'class': 'oauth1a',
+            'client_key': d['key'],
+            'client_secret': d['secret'],
+            'auth_url': 'https://api.twitter.com/oauth/authorize',
+            'token_url': 'https://api.twitter.com/oauth/request_token',
+            'refresh_url': 'https://api.twitter.com/oauth/access_token',
+        }
+except FileNotFoundError:
+    pass
 
 # Various services for django-allauth
 
