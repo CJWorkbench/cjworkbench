@@ -29,18 +29,37 @@ class Twitter(ModuleImpl):
         auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
         api = tweepy.API(auth)
 
-        # Only get last 100 tweets, because that is twitter API max for single call
+        if old_tweets is not None and not old_tweets.empty:
+            last_id = old_tweets['id'].max()
+        else:
+            last_id = None
+
         if querytype == Twitter.QUERY_TYPE_USER:
             if query[0] == '@':                     # allow user to type @username or username
                 query = query[1:]
-            statuses = api.user_timeline(query, count=200, tweet_mode='extended')
+
+            # 16 pages of 200 each is Twitter's current maximum archived
+            statuses = []
+            pages = tweepy.Cursor(api.user_timeline, screen_name=query, tweet_mode='extended', since_id=last_id, count=200).pages(16)
+            for page in pages:
+                statuses.extend([status for status in page])
+
         elif querytype == Twitter.QUERY_TYPE_SEARCH:
-            statuses = api.search(q=query, count=100, tweet_mode='extended')
-        else:
+
+            # 1000 tweets, aribitrarily, to try to go easy on rate limits (this is still 10 calls)
+            statuses = list(tweepy.Cursor(api.search, q=query, since_id=last_id, count=100, tweet_mode='extended').items(1000))
+
+        else: # querytype == Twitter.QUERY_TYPE_LIST
             queryparts = re.search('(?:https?://)twitter.com/([A-Z0-9]*)/lists/([A-Z0-9-_]*)', query, re.IGNORECASE)
             if not queryparts:
                 raise Exception('not a Twitter list URL')
-            statuses = api.list_timeline(queryparts.group(1), queryparts.group(2), count=200, tweet_mode='extended')
+
+            # 2000 tweets, aribitrarily, to try to go easy on rate limits (this is still 10 calls)
+            statuses = []
+            pages = tweepy.Cursor(api.list_timeline, owner_screen_name=queryparts.group(1), slug=queryparts.group(2), since_id=last_id, count=200, tweet_mode='extended').pages(5)
+            for page in pages:
+                statuses.extend([status for status in page])
+
 
         # Columns to retrieve and store from Twitter
         # Also, we use this to figure ou the index the id field when merging old and new tweets
@@ -57,7 +76,7 @@ class Twitter(ModuleImpl):
     def merge_tweets(wf_module, new_table):
         old_table = Twitter.get_stored_tweets(wf_module)
         if old_table is not None:
-            new_table = pd.concat([new_table,old_table]).drop_duplicates(['id']).sort_values('id',ascending=False).reset_index(drop=True)
+            new_table = pd.concat([new_table,old_table]).sort_values('id',ascending=False).reset_index(drop=True)
         return new_table
 
     # Render just returns previously retrieved tweets
@@ -96,14 +115,18 @@ class Twitter(ModuleImpl):
                 tweets = Twitter.get_new_tweets(wfm, querytype, query, None)
 
         except TweepError as e:
-            if querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==401:
-                wfm.set_error('User %s\'s tweets are protected' % query)
-                return
-            elif querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==404:
-                wfm.set_error('User %s does not exist' % query)
-                return
+            if e.response:
+                if querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==401:
+                    wfm.set_error('User %s\'s tweets are protected' % query)
+                    return
+                elif querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==404:
+                    wfm.set_error('User %s does not exist' % query)
+                    return
+                else:
+                    wfm.set_error('HTTP error %s fetching tweets' % str(e.response.status_code))
+                    return
             else:
-                wfm.set_error('HTTP error %s fetching tweets' % str(e.response.status_code))
+                wfm.set_error('Error fetching tweets: ' + str(e))
                 return
 
         except Exception as e:
