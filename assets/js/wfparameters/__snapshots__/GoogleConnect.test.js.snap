@@ -22,7 +22,7 @@ exports[`GoogleConnect matches snapshot 1`] = `
       className="disconnect"
       onClick={[Function]}
     >
-      Disconnect account
+      Sign out
     </button>
   </div>
 </GoogleConnect>
