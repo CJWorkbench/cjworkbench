@@ -1,34 +1,28 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`GoogleConnect Mounts correctly with user creds and fires call to delete creds on click 1`] = `
+exports[`GoogleConnect matches snapshot 1`] = `
 <GoogleConnect
-  userCreds={0}
+  api={
+    Object {
+      "paramOauthDisconnect": [MockFunction],
+    }
+  }
+  paramId={321}
+  secretName="a secret"
 >
   <div
     className="google-connect-parameter"
   >
+    <p
+      className="secret-name"
+    >
+      a secret
+    </p>
     <button
       className="disconnect"
       onClick={[Function]}
     >
       Disconnect account
-    </button>
-  </div>
-</GoogleConnect>
-`;
-
-exports[`GoogleConnect Mounts correctly without user creds 1`] = `
-<GoogleConnect
-  userCreds={null}
->
-  <div
-    className="google-connect-parameter"
-  >
-    <button
-      className="connect"
-      onClick={[Function]}
-    >
-      Connect account
     </button>
   </div>
 </GoogleConnect>

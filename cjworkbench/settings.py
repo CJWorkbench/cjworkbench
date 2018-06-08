@@ -319,6 +319,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 # Third party services
+PARAMETER_OAUTH_SERVICES = {} # id_name => parameters. See requests-oauthlib docs
 
 # Google, for Google Drive.
 
@@ -328,12 +329,20 @@ if not CJW_GOOGLE_CLIENT_SECRETS_PATH:
 
 CJW_GOOGLE_CLIENT_SECRETS_PATH = os.path.join(BASE_DIR, CJW_GOOGLE_CLIENT_SECRETS_PATH)
 
+GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = None
 if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
     GOOGLE_OAUTH2_CLIENT_SECRETS_JSON = CJW_GOOGLE_CLIENT_SECRETS_PATH
-else:
-    # Test environment
-    GOOGLE_OAUTH2_CLIENT_ID = ''
-    GOOGLE_OAUTH2_CLIENT_SECRET = ''
+
+    with open(GOOGLE_OAUTH2_CLIENT_SECRETS_JSON) as f:
+        d = json.load(f)
+        PARAMETER_OAUTH_SERVICES['google_credentials'] = {
+            'client_id': d['web']['client_id'],
+            'client_secret': d['web']['client_secret'],
+            'auth_url': d['web']['auth_uri'],
+            'token_url': d['web']['token_uri'],
+            'refresh_url': d['web']['token_uri'],
+            'scope': 'email https://www.googleapis.com/auth/drive.readonly',
+        }
 
 # Various services for django-allauth
 

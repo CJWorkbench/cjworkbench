@@ -67,7 +67,7 @@ export default class WfParameter extends React.Component {
     return nameParts.join(' ')
   }
 
-  paramChanged(newVal, pressedEnter) {
+  paramChanged = (newVal, pressedEnter) => {
     this.props.changeParam(this.props.p.id, {value: newVal, pressed_enter: pressedEnter});
   }
 
@@ -133,7 +133,26 @@ export default class WfParameter extends React.Component {
   }
 
   onChangeGoogleFileSelectJson = (json) => {
-    this.props.setParamText('fileselect', json)
+    this.props.setParamText('googlefileselect', json)
+  }
+
+  render_secret_parameter() {
+    const { id_name } = this.props.p.parameter_spec
+    switch (id_name) {
+      case 'google_credentials':
+        const { id, value } = this.props.p
+        const secretName = value ? (value.name || null) : null
+        return (
+          <GoogleConnect
+            paramId={id}
+            api={this.props.api}
+            secretName={secretName}
+            />
+        )
+
+     default:
+       return (<p className="error">Secret type {id_name} not handled</p>)
+    }
   }
 
   // Render one of the many parameter types that are specific to a particular module
@@ -209,18 +228,15 @@ export default class WfParameter extends React.Component {
             wfModuleId={this.props.wf_module_id}
             revision={this.props.revision} />
         );
-    } else if (id_name == 'connect') {
-      return (
-        <GoogleConnect
-          userCreds={this.props.loggedInUser.google_credentials}
-        />
-      )
-    } else if (id_name == 'fileselect') { // should be 'googlefileselect'
+    } else if (id_name == 'googlefileselect') {
+      const secret = this.props.getParamText('google_credentials')
+      const secretName = secret ? (secret.name || null) : null
       return (
         <GoogleFileSelect
           api={this.props.api}
-          userCreds={this.props.loggedInUser.google_credentials}
-          fileMetadataJson={this.props.getParamText('fileselect')}
+          googleCredentialsParamId={this.props.getParamId('google_credentials')}
+          googleCredentialsSecretName={secretName}
+          fileMetadataJson={this.props.getParamText('googlefileselect')}
           onChangeJson={this.onChangeGoogleFileSelectJson}
           />
       )
@@ -254,6 +270,8 @@ export default class WfParameter extends React.Component {
           history={this.props.getParamText('reorder-history')}
         />
       )
+    } else {
+      return (<p className="error">Custom type {id_name} not handled</p>)
     }
   }
 
@@ -430,6 +448,9 @@ export default class WfParameter extends React.Component {
               revision={this.props.revision} />
           </div> );
 
+      case 'secret':
+        return this.render_secret_parameter();
+
       case 'custom':
         return this.render_custom_parameter();
 
@@ -440,20 +461,21 @@ export default class WfParameter extends React.Component {
 }
 
 WfParameter.propTypes = {
-  googlePickerApiKey: PropTypes.string, // or null, if API is disabled
   p: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    value: PropTypes.any,
     parameter_spec: PropTypes.shape({
       id_name: PropTypes.string.isRequired,
       type: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
-  moduleName:       PropTypes.string.isRequired,
-  wf_module_id:     PropTypes.number.isRequired,
-  revision:         PropTypes.number.isRequired,
-  loggedInUser:     PropTypes.object,             // in read-only there is no user logged in
-  api:              PropTypes.object.isRequired,
-  updateSettings:   PropTypes.object,             // only for modules that load data
-  changeParam:      PropTypes.func.isRequired,
-	getParamText:     PropTypes.func.isRequired,
-  setParamText:     PropTypes.func.isRequired,
+  moduleName:     PropTypes.string.isRequired,
+  wf_module_id:   PropTypes.number.isRequired,
+  revision:       PropTypes.number.isRequired,
+  api:            PropTypes.object.isRequired,
+  updateSettings: PropTypes.object,             // only for modules that load data
+  changeParam:    PropTypes.func.isRequired,
+  getParamId:     PropTypes.func.isRequired,
+  getParamText:   PropTypes.func.isRequired,
+  setParamText:   PropTypes.func.isRequired,
 }

@@ -2,14 +2,12 @@ from django.conf import settings
 from server.tests.utils import LoggedInTestCase, load_and_add_module, get_param_by_id_name
 from server.modules.googlesheets import GoogleSheets
 from unittest.mock import patch
-from apiclient.http import HttpMock, HttpMockSequence
 from server.sanitizedataframe import sanitize_dataframe
+from collections import namedtuple
+import requests.exceptions
 import pandas as pd
 import os
 import json
-
-gdrive_discovery_file = os.path.join(settings.BASE_DIR, 'server/tests/test_data/google_drive_api_discovery.json')
-with open(gdrive_discovery_file) as f: gdrive_discovery = f.read()
 
 gdrive_file_meta = {
   "file": {
@@ -21,14 +19,10 @@ gdrive_file_meta = {
 }
 
 gdrive_file = os.path.join(settings.BASE_DIR, 'server/tests/test_data/missing_values.csv')
+with open(gdrive_file, encoding='utf-8') as f: gdrive_file_contents = f.read()
 
 
-class HttpMocks(HttpMock):
-    def __init__(self, *mocks):
-        self.mocks = list(mocks)
-
-    def request(self, *args, **kwargs):
-        return self.mocks.pop(0).request(*args, **kwargs)
+MockResponse = namedtuple('MockResponse', [ 'status_code', 'text' ])
 
 
 class DumbCredential():
@@ -41,7 +35,13 @@ class GoogleSheetsTests(LoggedInTestCase):
     def setUp(self):
         super(GoogleSheetsTests, self).setUp()
         self.wf_module = load_and_add_module('googlesheets')
-        self.file_param = get_param_by_id_name('fileselect')
+        self.credentials_param = get_param_by_id_name('google_credentials')
+        self.credentials_param.value = json.dumps({
+            'name': 'file',
+            'secret': { 'refresh_token': 'a-refresh-token' },
+        })
+        self.credentials_param.save()
+        self.file_param = get_param_by_id_name('googlefileselect')
         self.file_param.value = json.dumps(gdrive_file_meta['file'])
         self.file_param.save()
 
@@ -54,48 +54,51 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.assertIsNone(GoogleSheets.render(self.wf_module, None))
 
 
-    @patch('cjworkbench.google_oauth.user_to_existing_oauth2_credential')
-    @patch('server.modules.googlesheets.httplib2.Http')
-    def test_event_fetch_file(self, httplib_patch, oauth_patch):
-        oauth_patch.return_value = DumbCredential()
-        auth_mock = HttpMock(filename=gdrive_discovery_file)
-        data_mock = HttpMock(filename=gdrive_file)
-        # Make httplib_patch return first auth_mock, then data_mock
-        httplib_patch.return_value = HttpMocks(auth_mock, data_mock)
+    @patch('requests_oauthlib.OAuth2Session')
+    def test_event_fetch_file(self, oauth_patch):
+        oauth_patch.return_value.get.return_value = MockResponse(200, gdrive_file_contents)
 
         GoogleSheets.event(self.wf_module)
 
-        self.assertEqual(data_mock.uri, 'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj/export?mimeType=text%2Fcsv')
+        oauth_patch.return_value.refresh_token.assert_called_once()
+        oauth_patch.return_value.get.assert_called_once_with(
+            'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj/export?mimeType=text%2Fcsv'
+        )
 
         # Check that the data was actually stored
         self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
         self.assertEqual(self.wf_module.error_msg, '')
 
 
-    @patch('cjworkbench.google_oauth.user_to_existing_oauth2_credential')
-    def test_empty_table_on_missing_auth(self, oauth_patch):
-        oauth_patch.return_value = None
+    def test_empty_table_on_missing_auth(self):
+        self.credentials_param.value = ''
+        self.credentials_param.save()
+
         GoogleSheets.event(self.wf_module)
 
         self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)
         self.assertEqual(self.wf_module.error_msg,
-                         'Not authorized. Please reconnect to Google Drive.')
+                         'Not authorized. Please connect to Google Drive.')
 
 
-    @patch('cjworkbench.google_oauth.user_to_existing_oauth2_credential')
-    @patch('server.modules.googlesheets.httplib2.Http')
-    def test_empty_table_on_missing_table(self, httplib_patch, oauth_patch):
-        oauth_patch.return_value = DumbCredential()
-        httplib_patch.return_value = HttpMockSequence([
-            ({'status': '200'}, gdrive_discovery),
-            ({'status': '404'}, 'not found'),
-        ])
+    @patch('requests_oauthlib.OAuth2Session')
+    def test_empty_table_on_http_error(self, oauth_patch):
+        oauth_patch.return_value.get.side_effect = requests.exceptions.ReadTimeout('read timeout')
+        GoogleSheets.event(self.wf_module)
+
+        self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)
+        self.assertEqual(self.wf_module.error_msg, 'read timeout')
+
+
+    @patch('requests_oauthlib.OAuth2Session')
+    def test_empty_table_on_missing_table(self, oauth_patch):
+        oauth_patch.return_value.get.return_value = MockResponse(404, 'not found')
         GoogleSheets.event(self.wf_module)
 
         self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)
         self.assertEqual(
             self.wf_module.error_msg,
-            '<HttpError 404 when requesting https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj/export?mimeType=text%2Fcsv returned "Ok">'
+            'HTTP 404 from Google: not found'
         )
 
 

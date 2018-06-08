@@ -1,58 +1,88 @@
-import React from 'react';
-import { store,  getCurrentUserAction, disconnectCurrentUserAction } from '../workflow-reducer';
+import React from 'react'
+import PropTypes from 'prop-types'
 
-export default class GoogleConnect extends React.Component {
+/**
+ * Return true if popup is pointed at an oauth-success page.
+ */
+const isOauthFinished = (popup) => {
+  try {
+    if (!/^\/oauth\/?/.test(popup.location.pathname)) {
+      // We're at the wrong URL.
+      return false
+    }
+  } catch (_) {
+    // We're cross-origin. That's certainly the wrong URL.
+    return false
+  }
+
+  return popup.document.querySelector('p.success')
+
+  // If p.success is not present, the server has not indicated success.
+  // That means one of the following:
+  // 1) error message
+  // 2) request has not completed
+  // ... in either case, oauth is not finished
+}
+
+export default class GoogleConnect extends React.PureComponent {
+  static propTypes = {
+    paramId: PropTypes.number.isRequired,
+    api: PropTypes.shape({
+      paramOauthDisconnect: PropTypes.func.isRequired, // func(paramId) => Promise[HttpResponse]
+    }).isRequired,
+    secretName: PropTypes.string,
+  }
+
   constructor(props) {
     super(props);
-    this.oauthDialog = this.oauthDialog.bind(this);
     this.disconnect = this.disconnect.bind(this);
-    this.state = {
-      popup: null
-    }
   }
 
-  oauthDialog() {
-    var interval;
-    var that = this;
-    this.state.popup = window.open(
-      '/authorize',
-      '_blank',
+  startOauth = () => {
+    const popup = window.open(
+      `/api/parameters/${this.props.paramId}/oauth_authorize`,
+      'workbench-oauth',
       'height=500,width=400'
     )
-    interval = window.setInterval(function () {
-      try {
-        if (/^\/oauth\/?/.test(that.state.popup.location.pathname)) {
-          that.state.popup.close();
-          store.dispatch(getCurrentUserAction());
-          clearInterval(interval);
-        }
-      } catch(e) {
-        //do nothing, we can't access the URL because of cross-origin policy
+    if (!popup) {
+      console.error('Could not open auth popup')
+      return
+    }
+
+    // Watch the popup incessantly, and close it when the user is done with it
+    const interval = window.setInterval(() => {
+      if (!popup || popup.closed || isOauthFinished(popup)) {
+        if (popup && !popup.closed) popup.close()
+        window.clearInterval(interval);
       }
-    }, 500);
+    }, 100)
   }
 
-  disconnect() {
-    store.dispatch(disconnectCurrentUserAction(this.props.userCreds))
+  disconnect = () => {
+    this.props.api.paramOauthDisconnect(this.props.paramId)
+      .catch(console.error)
   }
 
   render () {
-    var renderOutput;
-    const { userCreds } = this.props
+    let { secretName } = this.props
 
-    if (userCreds === null) {
-      renderOutput = (
-        <button className='connect' onClick={this.oauthDialog}>Connect account</button>
+    let contents
+    if (secretName !== null) {
+      contents = (
+        <React.Fragment>
+          <p className="secret-name">{secretName}</p>
+          <button className='disconnect' onClick={this.disconnect}>Disconnect account</button>
+        </React.Fragment>
       )
     } else {
-      renderOutput = (
-        <button className="disconnect" onClick={this.disconnect}>Disconnect account</button>
+      contents = (
+        <button className='connect' onClick={this.startOauth}>Connect account</button>
       )
     }
 
     return(
       <div className="google-connect-parameter">
-        {renderOutput}
+        {contents}
       </div>
     )
   }

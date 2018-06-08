@@ -21,19 +21,12 @@ from django.contrib.auth import views as auth_views
 from django.views.defaults import page_not_found
 from django.http import Http404
 #from cjworkbench.views.signup import SignupView
-from cjworkbench.views.user import current_user, current_user_google_client_access_token, delete_google_creds
-from cjworkbench.google_oauth import authorize, get_creds
 from allauth.account.views import SignupView
 
 urlpatterns = [
     url(r'^admin/?', admin.site.urls),
     url(r'^xyzzy/signup/$', SignupView.as_view(), name='account_signup'),
     url(r'^account/signup/$', page_not_found,  {'exception': Http404()}),
-    url(r'^authorize/$', authorize),
-    url(r'^oauth/?$', get_creds),
     url(r'^account/', include('allauth.urls')),
     url(r'^', include('server.urls')),
-    url(r'^api/user/$', current_user),
-    url(r'^api/user/google-client-access-token$', current_user_google_client_access_token),
-    url(r'^api/user/google_credentials$', delete_google_creds),
 ]
