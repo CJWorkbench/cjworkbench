@@ -95,6 +95,11 @@
       &:last-child {
         margin-bottom: 0px;
       }
+
+      .publicPrivate {
+        color:$brand-workspace;
+        &:hover{color:$link-hover-success;}
+      }
     }
   }
 }

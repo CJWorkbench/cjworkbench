@@ -118,7 +118,7 @@ export default class WorkflowMetadata extends React.Component {
       ? null
       : <div className="WF-meta--item test-button" onClick={this.togglePrivacyModal}>
           <span className='content-3 metadataSeparator t-m-gray'>-</span>
-          <span className='publicPrivate t-f-blue'>{this.state.isPublic ? 'public' : 'private'}</span>
+          <span className='publicPrivate'>{this.state.isPublic ? 'public' : 'private'}</span>
         </div>
 
     return (
