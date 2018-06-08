@@ -1,7 +1,7 @@
 .google-connect-parameter {
   padding-bottom: 1rem;
   border-bottom: 1px solid $Vlight-gray;
-  text-align: center;
+  text-align: left;
 
   button.connect {
     @extend .action-button;
@@ -13,6 +13,20 @@
     @extend .btn;
     @extend .btn-link;
   }
+
+  .secret-name {
+    @extend %info-1;
+    margin:0;
+  }
+
+  .disconnect {
+    color: $brand-workspace!important;
+    padding: 0!important;
+    margin-top:.3rem;
+    font-weight: 400;
+    &:hover{color:$link-hover-success!important}
+  }
+
 }
 
 .google-file-select {
@@ -22,11 +36,14 @@
   overflow: hidden;
   align-items: center;
 
+  .not-signed-in {display: none}
+
   .file-info {
     flex: 1 1 auto;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    color:$brand-text--dark;
   }
 
   button {

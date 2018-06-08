@@ -173,13 +173,20 @@
 .t-d-blue {
   color: #577485;
 }
-.t-f-blue {
+
+//links
+
+%t-f-blue {
   cursor: pointer;
-  color: $brand-workspace;
+  color: $brand-workspace!important;
 }
+.t-f-blue {
+	@extend %t-f-blue;
+}
+
 .t-f-blue:hover {
   cursor: pointer;
-  color: #2D9DAA;
+  color: #2D9DAA!important;
 }
 .t-orange {
   color: #F8AA6D;
