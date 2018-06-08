@@ -6,17 +6,9 @@ from server.sanitizedataframe import sanitize_dataframe
 from collections import namedtuple
 import requests.exceptions
 import pandas as pd
-import os
+import os.path
 import json
 
-gdrive_file_meta = {
-  "file": {
-    "kind": "drive#file",
-    "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
-    "name": "Police Data",
-    "mimeType": "application/vnd.google-apps.spreadsheet"
-  }
-}
 
 gdrive_file = os.path.join(settings.BASE_DIR, 'server/tests/test_data/missing_values.csv')
 with open(gdrive_file, encoding='utf-8') as f: gdrive_file_contents = f.read()
@@ -28,7 +20,22 @@ MockResponse = namedtuple('MockResponse', [ 'status_code', 'text' ])
 class GoogleSheetsTests(LoggedInTestCase):
 
     def setUp(self):
-        super(GoogleSheetsTests, self).setUp()
+        super().setUp()
+
+        # Set up auth
+        self.service_patch = patch.dict(
+            settings.PARAMETER_OAUTH_SERVICES,
+            { 'google_credentials': {
+                'token_url': 'http://token-url',
+                'refresh_url': 'http://refresh-url',
+                'client_id': 'client-id',
+                'client_secret': 'client-secret',
+                'redirect_url': 'http://my-redirect-server',
+            }}
+        )
+        self.service_patch.start()
+
+        # Create WfModule
         self.wf_module = load_and_add_module('googlesheets')
         self.credentials_param = get_param_by_id_name('google_credentials')
         self.credentials_param.value = json.dumps({
@@ -37,12 +44,22 @@ class GoogleSheetsTests(LoggedInTestCase):
         })
         self.credentials_param.save()
         self.file_param = get_param_by_id_name('googlefileselect')
-        self.file_param.value = json.dumps(gdrive_file_meta['file'])
+        self.file_param.value = json.dumps({
+            "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
+            "name": "Police Data",
+            "url": "http://example.org/police-data",
+        })
         self.file_param.save()
 
         # our test data
         self.test_table = pd.read_csv(gdrive_file)
         sanitize_dataframe(self.test_table)
+
+
+    def tearDown(self):
+        self.service_patch.stop()
+
+        super().tearDown()
 
 
     def test_render_no_file(self):
