@@ -9,10 +9,6 @@
   overflow: hidden; // stay inside the border-radius
   background: $white;
 
-  .react-autosuggest__container input {
-    color:pink;
-  }
-
   ul, li {
     // reset styles. (we'll re-change this later.)
     display: block;

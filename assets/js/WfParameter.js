@@ -2,7 +2,7 @@
 
 import React from 'react'
 import MenuParam from './wfparameters/MenuParam'
-import ChartEditor from './wfparameters/charts/ChartEditor'
+import ChartEditor from './wfparameters/ColumnParam'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
 import ColumnRenamer from './wfparameters/ColumnRenamer'
