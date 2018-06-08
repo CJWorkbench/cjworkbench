@@ -74,6 +74,10 @@ export class WorkflowModuleWithHelpers {
     const versions = this.wfModule.versions
     return versions && versions.selected || null
   }
+
+  get isEmailUpdates() {
+    return !!this.wfModule.auto_update_data && !!this.wfModule.notifications
+  }
 }
 
 export class ParametersWithHelpers {
