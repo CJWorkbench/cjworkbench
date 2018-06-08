@@ -30,15 +30,16 @@ function updateRenameModule(module, renameInfo, isNew=false) {
     if(!entryExists) {
         existingEntries[renameInfo.prevName] = renameInfo.newName;
     }
-    api.onParamChanged(entriesParam.id, {value: JSON.stringify(existingEntries)})
-        .then(() => {
-            if(isNew) {
-                var showAllParam = findParamValByIdName(module, 'display-all');
-                try {
-                    api.onParamChanged(showAllParam.id, {value: "False"});
-                } catch(e) {}
-            }
-        });
+    if(isNew) {
+        var showAllParam = findParamValByIdName(module, 'display-all');
+        try {
+            api.onParamChanged(showAllParam.id, {value: false})
+                .then(api.onParamChanged(entriesParam.id, {value: JSON.stringify(existingEntries)}));
+        } catch(e) {}
+    }
+    else {
+        api.onParamChanged(entriesParam.id, {value: JSON.stringify(existingEntries)});
+    }
 }
 
 export function updateRename(wfModuleId, renameInfo) {
@@ -56,8 +57,8 @@ export function updateRename(wfModuleId, renameInfo) {
         let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
         api.addModule(workflowId, state.renameModuleId, wfModuleIdx + 1)
             .then((newWfm) => {
-                store.dispatch(setSelectedWfModuleAction(newWfm.id));
                 updateRenameModule(newWfm, renameInfo, true);
+                store.dispatch(setSelectedWfModuleAction(newWfm.id));
             });
     }
 }

@@ -253,10 +253,11 @@ export default class WfParameter extends React.Component {
         />
       )
     } else if (id_name == 'rename-entries') {
-      console.log(this.props);
+      //console.log(this.props);
       return (
           <RenameEntries
               displayAll={this.props.getParamText('display-all')}
+              changeDisplayAll={(val) => {this.props.setParamText('display-all', val)}}
               entries={this.props.p.value}
               wfModuleId={this.props.wf_module_id}
               paramId={this.props.p.id}

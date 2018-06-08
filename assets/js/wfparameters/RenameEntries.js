@@ -89,7 +89,7 @@ export default class RenameEntries extends React.Component {
     constructor(props) {
         super(props);
 
-        var entries = {}
+        var entries = {};
         try {
             entries = JSON.parse(this.props.entries);
         } catch(e) {}
@@ -104,12 +104,14 @@ export default class RenameEntries extends React.Component {
         this.onEntryDelete = this.onEntryDelete.bind(this);
     }
 
-    refreshColumns() {
-        if(this.props.displayAll) {
-            api.inputColumns(this.props.wfModuleId)
+    refreshColumns(props) {
+        if(props.displayAll) {
+            api.inputColumns(props.wfModuleId)
                 .then((columns) => {
                     this.setState({columns: columns});
                 });
+        } else {
+            this.setState({columns: undefined});
         }
     }
 
@@ -122,16 +124,27 @@ export default class RenameEntries extends React.Component {
                 this.setState({entries: {}});
             }
         }
-        if(nextProps.revision != this.props.revision) {
-            this.refreshColumns();
-        }
-        if(nextProps.displayAll != this.displayAll) {
-            this.setState({columns: undefined});
+        if((nextProps.revision != this.props.revision) || (nextProps.displayAll != this.props.displayAll)) {
+            this.refreshColumns(nextProps);
         }
     }
 
     componentDidMount() {
-        this.refreshColumns();
+        //this.refreshColumns(this.props);
+        if(this.props.displayAll) {
+            api.inputColumns(this.props.wfModuleId)
+                .then((columns) => {
+                    var entries = {};
+                    for(var idx in columns) {
+                        entries[columns[idx]] = columns[idx];
+                    }
+                    console.log(entries);
+                    api.onParamChanged(this.props.paramId, {value: JSON.stringify(entries)})
+                        .then(() => {
+                            this.props.changeDisplayAll(false);
+                        })
+                });
+        }
     }
 
     onInputBlur(event) {
@@ -158,6 +171,7 @@ export default class RenameEntries extends React.Component {
     }
 
     renderEntries() {
+        /*
         if(this.state.columns) {
             return this.state.columns.map((col) => {
                 if(col in this.state.entries) {
@@ -197,9 +211,24 @@ export default class RenameEntries extends React.Component {
             }
             return entries;
         }
+        */
+        var entries = [];
+        for(let col in this.state.entries) {
+            entries.push(
+                <RenameEntry
+                    key={col}
+                    colname={col}
+                    newColname={this.state.entries[col]}
+                    onColRename={this.onColRename}
+                    onEntryDelete={this.onEntryDelete}
+                />
+            );
+        }
+        return entries;
     }
 
     render() {
+        console.log(this.props);
         const entries = this.renderEntries();
         return (
             <div>{entries}</div>
