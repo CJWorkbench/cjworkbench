@@ -4,7 +4,7 @@ from django.utils.translation import gettext as _
 from django.template.response import TemplateResponse
 from django.shortcuts import get_object_or_404, redirect
 import json
-from server.models import Lesson, Workflow
+from server.models import Lesson, Module, Workflow
 from server.serializers import LessonSerializer, UserSerializer
 from server.views.workflows import make_init_state
 
@@ -31,10 +31,12 @@ def _render_post_lesson_detail(request, lesson):
 
 def _render_get_lesson_detail(request, lesson):
     workflow = get_object_or_404(Workflow, owner=request.user, lesson_slug=lesson.slug)
+    modules = Module.objects.all()
 
-    init_state = make_init_state(request, workflow=workflow)
+    init_state = make_init_state(request, workflow=workflow, modules=modules)
     init_state['lessonData'] = LessonSerializer(lesson).data
-    return TemplateResponse(request, 'workflow.html', { 'initState': json.dumps(init_state) })
+    return TemplateResponse(request, 'workflow.html',
+                            { 'initState': init_state })
 
 @login_required
 def render_lesson_detail(request, slug):

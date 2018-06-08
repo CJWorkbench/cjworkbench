@@ -82,7 +82,6 @@ describe('Reducer actions', () => {
       payload: test_workflow,
     });
     expect(state.workflow).toEqual(test_workflow);
-    expect(state.selected_wf_module).toEqual(test_workflow.selected_wf_module);
   });
 
    // LOAD_MODULES
@@ -120,12 +119,10 @@ describe('Reducer actions', () => {
 
   it('Sets the selected module to a module in state', () => {
     const state = workflowReducer(test_state, {
-     type: 'SET_SELECTED_MODULE_PENDING',
-     payload: {
-       wf_module_id: 30
-     }
+     type: 'SET_SELECTED_MODULE',
+     payload: 32,
     });
-    expect(state.selected_wf_module).toBe(30);
+    expect(state.selected_wf_module).toBe(32);
   });
 
   it('Updates the workflow module with the specified data', () => {
