@@ -6,21 +6,37 @@ import { store,  getCurrentUserAction, disconnectCurrentUserAction } from '../wo
 jest.mock('../workflow-reducer');
 
 describe('GoogleConnect', () => {
-  it('Mounts correctly without user creds', (done) => {
-    const wrapper = mount(<GoogleConnect userCreds={null} />)
-    expect(wrapper).toMatchSnapshot();
-    const connectButton = wrapper.find('button.connect');
-    expect(connectButton).toHaveLength(1);
-    done();
-  });
+  let api
+  beforeEach(() => {
+    api = {
+      paramOauthDisconnect: jest.fn().mockImplementation(() => Promise.resolve(null)),
+    }
+  })
 
-  it('Mounts correctly with user creds and fires call to delete creds on click', (done) => {
-    const wrapper = mount(<GoogleConnect userCreds={0} />)
-    expect(wrapper).toMatchSnapshot();
-    const disconnectButton = wrapper.find('button.disconnect');
-    expect(disconnectButton).toHaveLength(1);
-    disconnectButton.simulate('click');
-    expect(disconnectCurrentUserAction.mock.calls.length).toBe(1);
-    done();
-  });
-});
+  const wrapper = (extraProps) => {
+    return mount(
+      <GoogleConnect
+        api={api}
+        paramId={321}
+        secretName={'a secret'}
+        {...extraProps}
+        />
+    )
+  }
+
+  it('matches snapshot', () => {
+    const w = wrapper({})
+    expect(w).toMatchSnapshot()
+  })
+
+  it('renders without a secretName', () => {
+    const w = wrapper({ secretName: null })
+    expect(w.find('button.connect')).toHaveLength(1)
+  })
+
+  it('disconnects', () => {
+    const w = wrapper({ secretName: 'foo@example.org' })
+    w.find('button.disconnect').simulate('click')
+    expect(api.paramOauthDisconnect).toHaveBeenCalledWith(321)
+  })
+})

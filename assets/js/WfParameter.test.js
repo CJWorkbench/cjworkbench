@@ -32,6 +32,7 @@ describe('WfParameter', () => {
         loggedInUser={{}}
         api={nullApi}
         changeParam={nullFn}
+        getParamId={(id) => null}
         getParamText={(id) => paramtextReturnValue}
         setParamText={nullFn}
         getParamMenuItems={mockGetParamMenuItems}
@@ -41,13 +42,13 @@ describe('WfParameter', () => {
   }
 
   it('Renders cell editor', () => {
-    var wrapper = shallowParameter({visible: true, value: '', parameter_spec: {type:'custom', id_name:'celledits' }});
+    var wrapper = shallowParameter({visible: true, id: 123, value: '', parameter_spec: {type:'custom', id_name:'celledits' }});
     expect(wrapper.find('CellEditor')).toHaveLength(1);
     expect(wrapper).toMatchSnapshot();
   });
 
   it('Renders string input field', () => {
-    var wrapper = shallowParameter({visible: true, value: 'data.sfgov.org', parameter_spec: {type:'string', id_name:'url'}});
+    var wrapper = shallowParameter({visible: true, id: 123, value: 'data.sfgov.org', parameter_spec: {type:'string', id_name:'url'}});
     expect(wrapper.find('textarea')).toHaveLength(1);
     expect(wrapper).toMatchSnapshot();
   });
@@ -57,6 +58,7 @@ describe('WfParameter', () => {
   it('Renders a parameter when visible_if conditions are met', () => {
     var wrapper = shallowParameter({
         visible: true,
+        id: 123,
         value: 'data.sfgov.org',
         parameter_spec: {
           id_name: 'url',
@@ -70,6 +72,7 @@ describe('WfParameter', () => {
   it('Does not render a parameter when visible_if conditions are not met', () => {
     var wrapper = shallowParameter({
         visible: true,
+        id: 123,
         value: 'data.sfgov.org',
         parameter_spec: {
           id_name: 'url',
@@ -85,6 +88,7 @@ describe('WfParameter', () => {
       newVisibilityCond['invert'] = true;
       var wrapper = shallowParameter({
         visible: true,
+        id: 123,
         value: 'data.sfgov.org',
         parameter_spec: {
           id_name: 'url',
@@ -100,6 +104,7 @@ describe('WfParameter', () => {
       newVisibilityCond['invert'] = true;
       var wrapper = shallowParameter({
         visible: true,
+        id: 123,
         value: 'data.sfgov.org',
         parameter_spec: {
           id_name: 'url',
@@ -113,6 +118,7 @@ describe('WfParameter', () => {
   it('Renders a parameter when boolean visible_if conditions are met', () => {
       var wrapper = shallowParameter({
         visible: true,
+        id: 123,
         value: 'data.sfgov.org',
         parameter_spec: {
           id_name: 'url',
@@ -126,6 +132,7 @@ describe('WfParameter', () => {
   it('It does not render a parameter when boolean visible_if conditions are not met', () => {
       var wrapper = shallowParameter({
         visible: true,
+        id: 123,
         value: 'data.sfgov.org',
         parameter_spec: {
           id_name: 'url',

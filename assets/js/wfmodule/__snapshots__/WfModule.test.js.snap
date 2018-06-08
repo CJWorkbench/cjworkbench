@@ -81,6 +81,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             changeParam={[Function]}
+            getParamId={[Function]}
             getParamMenuItems={[Function]}
             getParamText={[Function]}
             isReadOnly={false}
@@ -117,6 +118,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             changeParam={[Function]}
+            getParamId={[Function]}
             getParamMenuItems={[Function]}
             getParamText={[Function]}
             isReadOnly={false}

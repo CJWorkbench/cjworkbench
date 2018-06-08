@@ -1,8 +1,9 @@
+import requests_oauthlib
 from oauth2client.client import flow_from_clientsecrets, OAuth2Credentials
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
-from django.http import HttpResponse, JsonResponse
-from cjworkbench import settings
+from django.http import HttpResponse
+from django.conf import settings
 from django.shortcuts import redirect
 from cjworkbench.models.GoogleCreds import GoogleCredentials
 from urllib.parse import urlsplit, urlunsplit, parse_qsl, urlencode, quote_plus, unquote_plus

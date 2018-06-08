@@ -20,10 +20,6 @@ const SET_WF_LIBRARY_COLLAPSE = 'SET_WF_LIBRARY_COLLAPSE';
 const MOVE_MODULE = 'MOVE_MODULE';
 const SET_LESSON_HIGHLIGHT = 'SET_LESSON_HIGHLIGHT';
 
-// User
-const GET_CURRENT_USER = 'GET_CURRENT_USER';
-const DISCONNECT_CURRENT_USER = 'DISCONNECT_CURRENT_USER';
-
 // WfModule
 const SET_WF_MODULE_STATUS = 'SET_WF_MODULE_STATUS';
 const SET_WF_MODULE_COLLAPSED = 'SET_WF_MODULE_COLLAPSED';
@@ -434,48 +430,6 @@ registerReducerFunc(SET_WF_LIBRARY_COLLAPSE + '_PENDING', (state, action) => {
 });
 
 
-
-// --- User actions ---
-
-
-// GET_CURRENT_USER
-// Grab the JSON serialization of the current user data from the server
-export function getCurrentUserAction() {
-  return {
-    type: GET_CURRENT_USER,
-    payload: api.currentUser()
-  }
-}
-registerReducerFunc(GET_CURRENT_USER + '_FULFILLED', (state, action) => {
-  if (state.loggedInUser !== action.payload) {
-    return update(state, {
-      loggedInUser: {$set: action.payload}
-    });
-  } else {
-    return state;
-  }
-});
-
-
-// DISCONNECT_CURRENT_USER
-// Delete a credential object to a third-party service on the user.
-// Currently only used for Google credentials.
-export function disconnectCurrentUserAction(credentialId) {
-  return {
-    type: DISCONNECT_CURRENT_USER,
-    payload: {
-      promise: api.disconnectCurrentUser(credentialId),
-      data: {}
-    }
-  }
-}
-registerReducerFunc(DISCONNECT_CURRENT_USER + '_PENDING', (state, action) => {
-  return update(state, {
-    loggedInUser: {
-      google_credentials: { $set: null }
-    }
-  });
-});
 
 // --- Workflow Module actions ---
 

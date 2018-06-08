@@ -13,7 +13,8 @@ describe('GoogleFileSelect', () => {
 
   // Mount is necessary to invoke componentDidMount()
   let api
-  let userCreds
+  const googleCredentialsParamId = 321
+  let googleCredentialsSecretName
   let loadAccessToken
   let loadPickerFactory
   let pickerFactory
@@ -24,17 +25,17 @@ describe('GoogleFileSelect', () => {
   beforeEach(() => {
     // set default props. Tests can change them before calling wrapper()
     fileMetadataJson = aFileMetadataJson
-    loadAccessToken = jest.fn().mockReturnValue(Promise.resolve({ 'access_token': 'access-token' }))
+    loadAccessToken = jest.fn().mockReturnValue(Promise.resolve('access-token'))
     pickerFactory = {
       open: jest.fn(),
       close: jest.fn(),
     }
     loadPickerFactory = jest.fn(() => Promise.resolve(pickerFactory))
     onChangeJson = jest.fn()
-    userCreds = 0
+    googleCredentialsSecretName = 'user@example.org'
 
     api = {
-      currentGoogleClientAccessToken: loadAccessToken,
+      paramOauthGenerateAccessToken: loadAccessToken,
     }
   })
 
@@ -44,7 +45,8 @@ describe('GoogleFileSelect', () => {
     return mountedWrapper = mount(
       <GoogleFileSelect
         api={api}
-        userCreds={userCreds}
+        googleCredentialsParamId={googleCredentialsParamId}
+        googleCredentialsSecretName={googleCredentialsSecretName}
         fileMetadataJson={fileMetadataJson}
         onChangeJson={onChangeJson}
         loadPickerFactory={loadPickerFactory}
@@ -58,21 +60,12 @@ describe('GoogleFileSelect', () => {
   })
 
   it('indicates when not connected', async () => {
-    userCreds = null
+    googleCredentialsSecretName = null
     const w = wrapper()
     await tick()
     w.update()
     expect(w.find('.not-signed-in')).toHaveLength(1)
     expect(loadAccessToken).not.toHaveBeenCalled()
-    expect(w.find('button')).toHaveLength(0)
-  })
-
-  it('indicates when not connected because userCreds is invalid', async () => {
-    loadAccessToken.mockReturnValue(Promise.resolve(null))
-    const w = wrapper()
-    await tick()
-    w.update()
-    expect(w.find('.not-signed-in')).toHaveLength(1)
     expect(w.find('button')).toHaveLength(0)
   })
 
@@ -92,11 +85,19 @@ describe('GoogleFileSelect', () => {
     expect(w.find('.loading')).toHaveLength(1)
   })
 
-
-  it('refreshes access token when changing userCreds', async () => {
+  it('shows errors when accessToken is missing but googleCredentialsSecretName is set', async () => {
+    googleCredentialsSecretName = 'hi'
+    loadAccessToken.mockReturnValue(Promise.resolve(null))
     const w = wrapper()
     await tick()
-    w.setProps({ userCreds: 1 })
+    w.update()
+    expect(w.find('.sign-in-error')).toHaveLength(1)
+  })
+
+  it('refreshes access token when changing googleCredentialsSecretName', async () => {
+    const w = wrapper()
+    await tick()
+    w.setProps({ googleCredentialsSecretName: 'user1@example.org' })
     expect(loadAccessToken).toHaveBeenCalledTimes(2)
   })
 

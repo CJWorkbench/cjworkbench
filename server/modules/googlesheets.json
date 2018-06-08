@@ -9,12 +9,12 @@
   "parameters": [
     {
       "name": "Connect",
-      "id_name": "connect",
-      "type": "custom"
+      "id_name": "google_credentials",
+      "type": "secret"
     },
     {
       "name": "File Select",
-      "id_name": "fileselect",
+      "id_name": "googlefileselect",
       "type": "custom"
     },
     {

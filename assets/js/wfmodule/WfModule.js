@@ -143,6 +143,13 @@ export class WfModule extends React.PureComponent {
     }
   }
 
+  getParamId = (paramIdName) => {
+    var p = this.props.wfModule.parameter_vals.find( p => p.parameter_spec.id_name == paramIdName );
+    if (p) {
+      return p.id;
+    }
+  }
+
   getParamMenuItems(paramIdName) {
     var p = this.props.wfModule.parameter_vals.find(p => p.parameter_spec.id_name == paramIdName);
     if(p) {
@@ -224,6 +231,7 @@ export class WfModule extends React.PureComponent {
           wf_module_id={wfModule.id}
           revision={this.props.revision}
           updateSettings={updateSettings}
+          getParamId={this.getParamId}
           getParamText={this.getParamText}
           getParamMenuItems={this.getParamMenuItems}
           setParamText={this.setParamText}
