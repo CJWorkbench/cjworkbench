@@ -1,9 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ColumnColorPicker from  './ColumnColorPicker'
-import { errorText } from './errors'
 import {setParamValueActionByIdName, setWfModuleStatusAction, store} from "../../workflow-reducer";
-import debounce from 'lodash/debounce'
 import { OutputIframeCtrl } from '../../OutputIframe'
 import update from 'immutability-helper'
 
