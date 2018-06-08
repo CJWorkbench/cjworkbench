@@ -63,7 +63,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'display_name', 'id', 'google_credentials' )
+        fields = ('email', 'display_name', 'id')
 
 
 class WfModuleSerializer(serializers.ModelSerializer):

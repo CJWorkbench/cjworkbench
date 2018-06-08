@@ -5,7 +5,6 @@ from . import views
 from .views.UploadedFileView import UploadedFileView
 from rest_framework import routers
 from .views.user import current_user
-from .views.oauth import authorize, get_creds
 
 urlpatterns = [
     # ex: /

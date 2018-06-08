@@ -25,11 +25,6 @@ with open(gdrive_file, encoding='utf-8') as f: gdrive_file_contents = f.read()
 MockResponse = namedtuple('MockResponse', [ 'status_code', 'text' ])
 
 
-class DumbCredential():
-    def authorize(self, the_request):
-        return the_request
-
-
 class GoogleSheetsTests(LoggedInTestCase):
 
     def setUp(self):

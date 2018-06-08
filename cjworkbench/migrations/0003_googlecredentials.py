@@ -5,7 +5,6 @@ from __future__ import unicode_literals
 from django.conf import settings
 from django.db import migrations, models
 import django.db.models.deletion
-import oauth2client.contrib.django_util.models
 
 
 class Migration(migrations.Migration):
@@ -20,7 +19,7 @@ class Migration(migrations.Migration):
             name='GoogleCredentials',
             fields=[
                 ('id', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, primary_key=True, serialize=False, to=settings.AUTH_USER_MODEL)),
-                ('credential', oauth2client.contrib.django_util.models.CredentialsField(null=True)),
+                ('credential', models.CharField(max_length=255, null=True)),
             ],
         ),
     ]
