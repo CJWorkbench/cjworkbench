@@ -94,7 +94,7 @@ class ReorderColumnDropZone extends React.PureComponent {
   }
 }
 
-class EditableColumnName extends React.Component {
+export class EditableColumnName extends React.Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     onRename: PropTypes.func.isRequired,
@@ -112,6 +112,7 @@ class EditableColumnName extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleInputBlur = this.handleInputBlur.bind(this);
     this.handleInputKeyPress = this.handleInputKeyPress.bind(this);
+    this.handleInputFocus = this.handleInputFocus.bind(this);
   }
 
   enterEditMode() {
@@ -123,15 +124,16 @@ class EditableColumnName extends React.Component {
   }
 
   handleInputCommit() {
-    console.log("new column name: " + this.state.newName);
     this.setState({
         newName: this.state.newName,
         editMode: false
     });
-    this.props.onRename({
+    if(this.state.newName != this.props.columnKey) {
+      this.props.onRename({
         prevName: this.props.columnKey,
         newName: this.state.newName
-    });
+      });
+    }
   }
 
   handleInputBlur() {
@@ -144,25 +146,35 @@ class EditableColumnName extends React.Component {
     }
   }
 
+  handleInputFocus(event) {
+    event.target.select();
+  }
+
   render() {
     if(this.state.editMode) {
+      // The class name 'column-key-input' is used in
+      // the code to prevent dragging while editing,
+      // please keep it as-is.
       return (
         <input
+          className={'column-key column-key-input'}
+          type={'text'}
           value={this.state.newName}
           onChange={this.handleInputChange}
           onBlur={this.handleInputBlur}
           onKeyPress={this.handleInputKeyPress}
+          onFocus={this.handleInputFocus}
         />
       );
     } else {
       return (
-          <span
-              className={'column-key'}
-              onClick={this.enterEditMode}
-          >
-            {this.state.newName}
-          </span>
-      )
+        <span
+          className={'column-key'}
+          onClick={this.enterEditMode}
+        >
+          {this.state.newName}
+        </span>
+      );
     }
   }
 }
@@ -206,6 +218,11 @@ class ColumnHeader extends React.PureComponent {
   }
 
   onDragStart = (ev) => {
+    if(ev.target.classList.contains('column-key-input')) {
+      ev.preventDefault();
+      return;
+    }
+
     this.props.onDragStartColumnIndex(this.props.index)
 
     ev.dataTransfer.effectAllowed = [ 'move' ]

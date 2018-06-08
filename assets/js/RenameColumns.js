@@ -45,7 +45,6 @@ function updateRenameModule(module, renameInfo, isNew=false) {
 
 export function updateRename(wfModuleId, renameInfo) {
     var state = store.getState();
-    console.log(state);
     const workflowId = state.workflow ? state.workflow.id : null;
 
     var existingRenameModule = findModuleWithIdAndIdName(state, wfModuleId, 'rename-columns');
