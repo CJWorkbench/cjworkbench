@@ -71,7 +71,7 @@ export default class GoogleConnect extends React.PureComponent {
       contents = (
         <React.Fragment>
           <p className="secret-name">{secretName}</p>
-          <button className='disconnect' onClick={this.disconnect}>Disconnect account</button>
+          <button className='disconnect' onClick={this.disconnect}>Sign out</button>
         </React.Fragment>
       )
     } else {

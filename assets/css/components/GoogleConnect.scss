@@ -20,23 +20,36 @@
   }
 
   .disconnect {
-    color: $brand-workspace!important;
+    @extend %info-3;
+    color: $brand-orange!important;
     padding: 0!important;
     margin-top:.3rem;
     font-weight: 400;
-    &:hover{color:$link-hover-success!important}
   }
 
 }
 
 .google-file-select {
+
   padding-top: 1rem;
   display: flex;
+  flex-direction: column;
   font-size: 1.4rem;
   overflow: hidden;
-  align-items: center;
+  align-items: left;
 
   .not-signed-in {display: none}
+
+  .change-file {
+    @extend %info-3;
+    margin-top: .2rem;
+    border:0;
+    background-color:transparent;
+    color:$brand-orange;
+    text-align: left;
+    padding:0;
+    margin-bottom: .5rem;
+  }
 
   .file-info {
     flex: 1 1 auto;

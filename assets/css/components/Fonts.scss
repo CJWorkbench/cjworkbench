@@ -127,11 +127,13 @@
   @extend %font-nunito-extra-light;
 }
 
-.info-3{
-  font-size: 1.6rem;
-	line-height: 1.2rem;
+%info-3 {
+  font-size: 1rem;
+	line-height: 1rem;
   @extend %font-nunito-extra-light;
+	cursor: pointer;
 }
+.info-3 {@extend %info-3;}
 
 .table-1 {
 	font-size: 1.3rem;
