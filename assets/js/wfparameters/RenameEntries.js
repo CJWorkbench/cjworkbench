@@ -80,6 +80,7 @@ export class RenameEntry extends React.Component {
 export default class RenameEntries extends React.Component {
     static propTypes = {
         displayAll: PropTypes.bool.isRequired,
+        changeDisplayAll: PropTypes.func.isRequired,
         entries: PropTypes.string.isRequired,
         wfModuleId: PropTypes.number.isRequired,
         revision: PropTypes.number,

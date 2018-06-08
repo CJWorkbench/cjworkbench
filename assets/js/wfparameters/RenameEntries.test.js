@@ -26,53 +26,44 @@ describe('ReorderEntries rendering and interactions', () => {
         mockAPI(api);
     });
 
-    it('Displays all columns when displayAll is set to true', (done) => {
+    it('Adds all columns to entries and turns off displayAll when displayAll is set to true', (done) => {
+        // This test corresponds to behavior when added from module library.
+        var changeDisplayAllMock = jest.fn().mockReturnValue(Promise.resolve());
+
         let tree = mount(<RenameEntries
             displayAll={true}
+            changeDisplayAll={changeDisplayAllMock}
             entries={JSON.stringify({})}
-            wfModuleId={1}
-            paramId={2}
+            wfModuleId={WFM_ID}
+            paramId={PARAM_ID}
         />);
 
         setImmediate(() => {
             // Got the tip to call .update() in this thread:
             // https://github.com/airbnb/enzyme/issues/1233#issuecomment-343449560
             tree.update();
-            expect(tree.find('.rename-input')).toHaveLength(4);
-            expect(tree.find('.rename-input').get(0).props.value).toEqual('name');
-            expect(tree.find('.rename-input').get(1).props.value).toEqual('build_year');
-            expect(tree.find('.rename-input').get(2).props.value).toEqual('narrative');
-            expect(tree.find('.rename-input').get(3).props.value).toEqual('cornerstone');
+
+            // Turns off displayAll after initial load
+            expect(changeDisplayAllMock.mock.calls).toHaveLength(1);
+            expect(changeDisplayAllMock.mock.calls[0][0]).toBe(false);
+
+            // Updates entries param to include every column, "renamed" to their original name
+            expect(api.onParamChanged.mock.calls).toHaveLength(1);
+            expect(api.onParamChanged.mock.calls[0][0]).toBe(PARAM_ID);
+            let changedParam = JSON.parse(api.onParamChanged.mock.calls[0][1].value);
+            expect(changedParam['name']).toBe('name');
+            expect(changedParam['build_year']).toBe('build_year');
+            expect(changedParam['narrative']).toBe('narrative');
+            expect(changedParam['cornerstone']).toBe('cornerstone');
             tree.unmount();
             done();
         });
     });
 
-    it('Displays changed columns properly when displayAll is set to true', (done) => {
-        let tree = mount(<RenameEntries
-            displayAll={true}
-            entries={JSON.stringify(testEntries)}
-            wfModuleId={1}
-            paramId={2}
-        />);
-
-        setImmediate(() => {
-            // Got the tip to call .update() in this thread:
-            // https://github.com/airbnb/enzyme/issues/1233#issuecomment-343449560
-            tree.update();
-            expect(tree.find('.rename-input')).toHaveLength(4);
-            expect(tree.find('.rename-input').get(0).props.value).toEqual('host_name');
-            expect(tree.find('.rename-input').get(1).props.value).toEqual('build_year');
-            expect(tree.find('.rename-input').get(2).props.value).toEqual('nrtv');
-            expect(tree.find('.rename-input').get(3).props.value).toEqual('cornerstone');
-            tree.unmount();
-            done();
-        });
-    });
-
-    it('Only displays changed columns when displayAll is set to false', (done) => {
+    it('Displays all columns in entries after displayAll is set to false', (done) => {
         let tree = mount(<RenameEntries
             displayAll={false}
+            changeDisplayAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
             wfModuleId={1}
             paramId={2}
@@ -92,7 +83,8 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon input completion via blur', (done) => {
         let tree = mount(<RenameEntries
-            displayAll={true}
+            displayAll={false}
+            changeDisplayAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
@@ -100,17 +92,16 @@ describe('ReorderEntries rendering and interactions', () => {
 
         setImmediate(() => {
             tree.update();
-            expect(tree.find('input[value="build_year"]')).toHaveLength(1);
-            let yearInput = tree.find('input[value="build_year"]');
-            yearInput.simulate('change', {target: {value: 'year'}});
+            expect(tree.find('input[value="host_name"]')).toHaveLength(1);
+            let yearInput = tree.find('input[value="host_name"]');
+            yearInput.simulate('change', {target: {value: 'hn'}});
             yearInput.simulate('blur');
             setImmediate(() => {
                 expect(api.onParamChanged.mock.calls).toHaveLength(1);
                 expect(api.onParamChanged.mock.calls[0]).toHaveLength(2);
                 expect(api.onParamChanged.mock.calls[0][0]).toBe(PARAM_ID);
                 let updatedEntries = JSON.parse(api.onParamChanged.mock.calls[0][1].value);
-                expect(updatedEntries['name']).toBe('host_name');
-                expect(updatedEntries['build_year']).toBe('year');
+                expect(updatedEntries['name']).toBe('hn');
                 expect(updatedEntries['narrative']).toBe('nrtv');
                 tree.unmount();
                 done();
@@ -120,7 +111,8 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon input completion via enter key', (done) => {
         let tree = mount(<RenameEntries
-            displayAll={true}
+            displayAll={false}
+            changeDisplayAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
@@ -147,7 +139,8 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon deleting an entry', (done) => {
         let tree = mount(<RenameEntries
-            displayAll={true}
+            displayAll={false}
+            changeDisplayAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
@@ -155,7 +148,7 @@ describe('ReorderEntries rendering and interactions', () => {
 
         setImmediate(() => {
             tree.update();
-            expect(tree.find('RenameEntry')).toHaveLength(4);
+            expect(tree.find('RenameEntry')).toHaveLength(2);
             // Should be the "name" entry that we will delete next
             let nameEntry = tree.find('RenameEntry').first();
             expect(nameEntry.find('.rename-delete')).toHaveLength(1);
@@ -177,6 +170,7 @@ describe('ReorderEntries rendering and interactions', () => {
     it('Deletes itself if all entries are deleted', (done) => {
         let tree = mount(<RenameEntries
             displayAll={false}
+            changeDisplayAll={jest.fn()}
             entries={JSON.stringify({'name': 'host_name'})}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
@@ -192,6 +186,7 @@ describe('ReorderEntries rendering and interactions', () => {
                 expect(api.onParamChanged.mock.calls).toHaveLength(0);
                 expect(api.deleteModule.mock.calls).toHaveLength(1);
                 expect(api.deleteModule.mock.calls[0][0]).toBe(WFM_ID);
+                tree.unmount();
                 done();
             })
         })
