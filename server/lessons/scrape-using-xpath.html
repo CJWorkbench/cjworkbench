@@ -82,15 +82,15 @@
 <section>
   <h2>4. Monitor the website for changes</h2>
   <p>
-    Now that we have scraped the entire list, let's set up the module so that if a new version of the list is published, it will scrape it and send an email notification.
+    Let's set up the module to monitor the webpage and automatically scrape it if a new list is published.
   </p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]',
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.isEmailUpdates"
-      >Click “manual” next to the “Scrape” button to open the Workflow Update window. Turn the feature “On” and set check “Email me when data changes”. Click “Apply”.
+      >Click the “manual” option in the module to open the Workflow Update window. Turn the feature “On” and check “Email me when data changes”. Click “Apply”.
 
-      <p class="instruction-detail">Voila! The notification <img class="icon-insert" src="/static/images/xpath_list_lesson/alert_button.svg"> in the module is set. If new elements are published or deletted within the Xpath selector, the new list will be displayed and Workbench will notify you by email.</p>
+      <p class="instruction-detail">Voila! The alert <img class="icon-insert" src="/static/images/xpath_list_lesson/alert_button.svg"> is set. If new elements are published or deletted within the selected list of the webpage, the new version will be scraped and Workbench will notify you by email.</p>
     </li>
   </ol>
 </section>
