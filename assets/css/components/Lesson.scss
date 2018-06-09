@@ -11,6 +11,17 @@ article.lesson {
     flex-grow: 1;
   }
 
+  img {
+    position:relative;
+    width: 32rem;
+    padding: 1rem;
+    background-color: $dark-accent--medium;
+    &.icon-insert {
+      padding:0;
+      background-color: transparent;
+    }
+  }
+
   section {
     cursor: default;
     display: flex;
@@ -52,37 +63,30 @@ article.lesson {
       }
     }
 
-    .copy-txt {
+    %copy-txt {
       position: relative;
       width: 32rem;
-      margin: 1rem 0;
+      margin: 1rem 0 2rem 0;
       padding:1rem;
-      background-color: rgba(0,0,0,0.1);
-      border-radius: 3px;
+      background-color: $dark-accent--medium;
       word-break: break-all;
+      border-radius: .3rem;
       cursor: text;
       @extend %content-3;
     }
+    .copy-txt {@extend %copy-txt;} // necessary in order to use @extend
 
-    pre {
+    .code-block {
+      @extend %copy-txt;
       @extend %code-1;
-      @extend .copy-txt;
-      @extend %content-3;
-      color: white;
-      font-size: 1.2rem;
-      font-weight: 400;
-      line-height: 2rem;
-      &.highlight, & .highlight{font-weight: 800;}
     }
 
+    .highlight {color:$brand-learn;}
+
     figure {
-      margin: 0.5rem 0 1rem 0;
+      margin: 0 0 2rem 0!important;
       max-width: 100%;
       margin: 0 auto; // in case image is too small
-
-      img {
-        width: 100%;
-      }
 
       figcaption {
         font-size: 1.3rem;
@@ -91,15 +95,19 @@ article.lesson {
       }
     }
 
-    kbd, code {
-      font-family: mono;
-      color: inherit;
-      background-color: inherit;
+    code {
+      @extend %code-1;
+      background-color: $dark-accent--medium;
+      color:white;
+      padding: 0.5rem;
+      border-radius:.3rem;
     }
 
-    .highlight {
-      color:$brand-learn;
+    kbd {
+      @extend %lesson-content--1;
       font-weight: 400;
+      color:$brand-learn;
+      background-color: transparent;
     }
 
     .icon-insert {
@@ -130,12 +138,16 @@ article.lesson {
 
         .copy-txt, .image {left:-2rem;}
 
-        .lesson-note {
+        .instruction-detail {
           position: relative;
           left:-2rem;
-          margin-top: 2.5rem;
-          width:28rem;
-          font-weight: 400;
+          margin-top: 2rem;
+          width:32rem;
+        }
+
+        figure img, figcaption {
+          margin-left:-2rem;
+
         }
 
         &::before {

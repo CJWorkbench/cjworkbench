@@ -18,7 +18,7 @@
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'http://www.atlaudit.org/audit-reports.html'"
       >Paste in the following URL, where we can see the list to monitor.
-      <pre class="copy-txt">http://www.atlaudit.org/audit-reports.html</pre>
+      <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
   </ol>
 </section>
 <section>
@@ -26,61 +26,63 @@
   <p>
     Now we need an “XPath selector” to tell Workbench which parts of the web page to scrape. Modern web browsers include “Inspector” tools to help.
   </p>
-  <p>
-    Open the page in a new browser tab, <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">here</a>.
-  </p>
-  <p>
-    In that tab, scroll down to the “list of all publications released by the City Auditor's Office.” Right-click on the first link in that list, and click <span class="highlight">Inspect</span> in the menu.
-  </p>
-  <figure>
-    <img alt="Inspect element" src="/static/images/xpath_list_lesson/inspect_list.svg">
-    <figcaption>“Inspect” opens the web browser's development-tools panel.</figcaption>
-  </figure>
-  <p>
-    The Inspector panel will open, highlighting the <code>&lt;a&gt;</code> element you right-clicked. Right-click the element in the inspector panel and choose <kbd>Copy</kbd> and then <kbd>Copy XPath</kbd>.
-  </p>
-  <figure>
-    <img alt="Copy XPath" src="/static/images/xpath_list_lesson/copy_xpath.svg">
-    <figcaption>“Copy XPath” copies an XPath selector to your clipboard.</figcaption>
-  </figure>
   <ol class="steps">
+    <li
+      data-highlight='[]'
+      data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li\/a$/.test(wfModule.parameters.get('selector'))"
+      >Open the page in a new browser tab, <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">here</a>.
+    <p class="instruction-detail">
+      In that tab, scroll down to the “list of all publications released by the City Auditor's Office”. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
+    </p>
+    <figure>
+      <img alt="Inspect element" src="/static/images/xpath_list_lesson/inspect_list.svg">
+    </figure>
+    <p class="instruction-detail">
+      In the Inspector panel, the <code>&lt;a&gt;</code> element corresponding to the link you are inspecting is highlighted. Right-click that element and choose <kbd>Copy</kbd> and then <kbd>Copy XPath</kbd>.
+    </p>
+    <figure>
+      <img alt="Copy XPath" src="/static/images/xpath_list_lesson/copy_xpath.svg">
+    </figure>
+    </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
       data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.parameters.get('selector')) && wfModule.selectedVersion"
-      >Paste the XPath selector you copied from your browser's inspector into Workbench's “XPath Selector” field and click <kbd>Scrape</kbd>.
+      >Back in Workbench, paste the XPath selector you just copied into the module, and click <kbd>Scrape</kbd>.
     </li>
   </ol>
 </section>
 <section>
   <h2>3. Edit the XPath selector to scrape the entire list</h2>
   <p>
-    We succesfully scraped one link from the list. Now let's expand to scrape <em>all</em> links in the list.
+    We succesfully scraped one link from the list. In order to monitor if the list changes over time, we need to expand and scrape all links in our list.
   </p>
-  <h4>Let's look closely at the HTML element in the browser's inspector:</h4>
+  <p>Let's look closely at the HTML element in the browser's inspector:</p>
   <figure>
     <img src="/static/images/xpath_list_lesson/html_element_zoom.svg">
   </figure>
   <p>
     The <code>&lt;a&gt;</code> tag we selected is nested within a <code>&lt;li&gt;</code> parent, which is itself nested within a <code>&lt;ul&gt;</code>.
   </p>
-  <h4>Now look closely at the XPath selector:</h4>
-  <pre>//*[@id="wsite-content"]/div[3]/ul/li<em>[1]</em>/a</pre>
-  <p>(Different browsers build different selectors, but they look similar.)</p>
+  <p>Now look closely at the XPath selector:</p>
+  <div class="code-block">//*[@id="wsite-content"]/div[3]/<span class="highlight">ul/li[1]</span>/a</div>
   <p>
-    The <code>[1]</code> in the selector means, “select just the first <code>&lt;li&gt;</code>.” If we nix <code>[1]</code>, Workbench will select <em>all</em> the <code>&lt;li&gt;</code>s… and thus all the <code>&lt;a&gt;</code>s within them.
+    <code>ul/li[1]</code> means “Select the first <code>&lt;li&gt;</code> inside the <code>&lt;ul&gt;</code>".
+  </p>
+  <p>
+  If we delete <code>[1]</code>, all the <code>&lt;li&gt;</code> elements within the <code>&lt;ul&gt;</code> will be selected, and thus every <code>&lt;a&gt;</code> tags within each of them.
   </p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
       data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li\/a$/.test(wfModule.parameters.get('selector'))"
-      >Delete the three characters, <code>[1]</code>, from Workbench's XPath selector and click <kbd>Scrape</kbd>.
+      >In the module, edit the XPath selector to select all the items in the list, and click <kbd>Scrape</kbd>.
     </li>
   </ol>
 </section>
 <section>
   <h2>4. Monitor the website for changes</h2>
   <p>
-    Let's make Workbench email us when the list changes. If a new version of the website is published with different elements, Workbench will email you and display the new list.
+    Now that we have scraped the entire list, let's set up the module so that if a new version of the list is published, it will scrape it and send an email notification.
   </p>
   <ol class="steps">
     <li
@@ -88,7 +90,7 @@
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.isEmailUpdates"
       >Click “manual” next to the “Scrape” button to open the Workflow Update window. Turn the feature “On” and set check “Email me when data changes”. Click “Apply”.
 
-      <p class="lesson-note">Voila! The notification <img class="icon-insert" src="/static/images/xpath_list_lesson/alert_button.svg"> in the module is set. If new elements are published or deletted, the new list will be displayed in the table and Workbench will email you.</p>
+      <p class="instruction-detail">Voila! The notification <img class="icon-insert" src="/static/images/xpath_list_lesson/alert_button.svg"> in the module is set. If new elements are published or deletted within the Xpath selector, the new list will be displayed and Workbench will notify you by email.</p>
     </li>
   </ol>
 </section>

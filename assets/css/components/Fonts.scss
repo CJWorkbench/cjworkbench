@@ -98,16 +98,21 @@
   font-weight: 400;
 }
 
-.lesson-content--1 {
+%lesson-content--1 {
 	font-size: 1.6rem;
 	line-height: 2.8rem;
 	font-weight: 200;
+	@extend %font-nunito-regular;
 }
+.lesson-content--1 {@extend %lesson-content--1;}
+
+
 
 %code-1 {
   font-family: "PT Mono";
 	font-size: 1.4rem;
 	line-height: 2.4rem;
+	font-weight: 300;
 }
 .code-1 {@extend %code-1;}
 
