@@ -4,10 +4,15 @@
   <img src="/static/images/lesson_banners/xpath_list.svg">
 </header>
 <section>
-  <h2>COMING SOON</h2>
+  <h2>Overview</h2>
+  <p>In this lesson you will learn how to use XPath to monitor changes in the content of a web page.</p>
+  <p>You will scrape a list of reports published by city officials and set up an alert to receive an email notification if that list changes.</p>
 </section>
 <section>
   <h2>1. Choose the web page to scrape</h2>
+  <p>
+    In this tutorial we will use the City's auditor Office website of the City of Atlanta. Our goal is to be notified everytime a new audit report is published.
+  </p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Scrape with Xpath"}]'
@@ -17,7 +22,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]'
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'http://www.atlaudit.org/audit-reports.html'"
-      >Paste in the following URL, where we can see the list to monitor.
+      >Paste in the following URL, where all the public reports are listed.
       <div class="copy-txt">http://www.atlaudit.org/audit-reports.html</div>
   </ol>
 </section>
@@ -29,19 +34,21 @@
   <ol class="steps">
     <li
       data-highlight='[]'
-      data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li\/a$/.test(wfModule.parameters.get('selector'))"
+      data-test="const wfModule = workflow.wfModules[0]; return /\/ul\/li(?:\[1\])?\/a$/.test(wfModule.parameters.get('selector')) && wfModule.selectedVersion"
       >Open the page in a new browser tab, <a href="http://www.atlaudit.org/audit-reports.html" class="highlight" target="_blank">here</a>.
     <p class="instruction-detail">
       In that tab, scroll down to the “list of all publications released by the City Auditor's Office”. Right-click on the first link in that list, and choose <kbd>Inspect</kbd> in the menu to open the Inspector panel.
     </p>
     <figure>
       <img alt="Inspect element" src="/static/images/xpath_list_lesson/inspect_list.svg">
+      <figcaption>Right click and 'Inspect' a link to open the inspector</figcaption>
     </figure>
     <p class="instruction-detail">
       In the Inspector panel, the <code>&lt;a&gt;</code> element corresponding to the link you are inspecting is highlighted. Right-click that element and choose <kbd>Copy</kbd> and then <kbd>Copy XPath</kbd>.
     </p>
     <figure>
       <img alt="Copy XPath" src="/static/images/xpath_list_lesson/copy_xpath.svg">
+      <figcaption>Right click an element to copy its XPath selector</figcaption>
     </figure>
     </li>
     <li
@@ -54,11 +61,12 @@
 <section>
   <h2>3. Edit the XPath selector to scrape the entire list</h2>
   <p>
-    We succesfully scraped one link from the list. In order to monitor if the list changes over time, we need to expand and scrape all links in our list.
+    We succesfully scraped one link from the list. In order to monitor if the list changes over time, we now need to scrape all links in our list.
   </p>
   <p>Let's look closely at the HTML element in the browser's inspector:</p>
   <figure>
     <img src="/static/images/xpath_list_lesson/html_element_zoom.svg">
+    <figcaption>In HTML, elements are are nested within each others</figcaption>
   </figure>
   <p>
     The <code>&lt;a&gt;</code> tag we selected is nested within a <code>&lt;li&gt;</code> parent, which is itself nested within a <code>&lt;ul&gt;</code>.
@@ -69,7 +77,7 @@
     <code>ul/li[1]</code> means “Select the first <code>&lt;li&gt;</code> inside the <code>&lt;ul&gt;</code>".
   </p>
   <p>
-  If we delete <code>[1]</code>, all the <code>&lt;li&gt;</code> elements within the <code>&lt;ul&gt;</code> will be selected, and thus every <code>&lt;a&gt;</code> tags within each of them.
+  If we delete <code>[1]</code>, all the <code>&lt;li&gt;</code> elements within the parent <code>&lt;ul&gt;</code> will be selected, and thus every <code>&lt;a&gt;</code> tags within each <code>&lt;li&gt;</code>.
   </p>
   <ol class="steps">
     <li
@@ -88,9 +96,9 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]',
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.isEmailUpdates"
-      >Click the “manual” option in the module to open the Workflow Update window. Turn the feature “On” and check “Email me when data changes”. Click “Apply”.
+      >In the module, click <kbd>manual</kbd> to open the Workflow Update window. Turn the feature <kbd>ON</kbd> and check “Email me when data changes”. Click <kbd>Apply</kbd>.
 
-      <p class="instruction-detail">Voila! The alert <img class="icon-insert" src="/static/images/xpath_list_lesson/alert_button.svg"> is set. If new elements are published or deletted within the selected list of the webpage, the new version will be scraped and Workbench will notify you by email.</p>
+      <p class="instruction-detail">The alert <img class="icon-insert" src="/static/images/xpath_list_lesson/alert_button.svg"> is set. If new elements are published or deletted within the selectd list, the new version will be scraped and Workbench will notify you by email.</p>
     </li>
   </ol>
 </section>
