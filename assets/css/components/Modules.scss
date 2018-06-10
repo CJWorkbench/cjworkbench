@@ -155,16 +155,19 @@
           top:.1rem;
         }
       }
-    }
+      // Alert icons in modules when notifications are set
+      .notification-badge{
+        display: inline-block;
+        cursor: pointer;
+        line-height:2.3;
 
-    // Alert icons in modules when notifications are set
-    .notification-badge{
-      display: inline-block;
-      cursor: pointer;
-      font-size: 1.3rem;
+        i.icon-notification {
+          font-size: 1.35rem;
+        }
 
-      span.count {
-        font-size: 1rem;
+        span.count {
+          font-size: 1rem;
+        }
       }
     }
   }
