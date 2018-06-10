@@ -41,7 +41,7 @@ export class WfModule extends React.PureComponent {
       isCollapsed: this.props.wfModule.is_collapsed,
       showNotes:  ( this.props.wfModule.notes
                     && (this.props.wfModule.notes != "")
-                    && (this.props.wfModule.notes != "Write notes here")
+                    && (this.props.wfModule.notes != "Type something")
                   ),  // only show on load if a note exists & not default text
       showEditableNotes: false,             // do not display in edit state on initial load
       notifications: this.props.wfModule.notifications,
@@ -244,7 +244,7 @@ export class WfModule extends React.PureComponent {
     var notes;
     var value = ( wfModule.notes && (wfModule.notes != "") )
       ? wfModule.notes
-      : "Write notes here";
+      : "Type something";
 
     if (this.state.showNotes)
       notes = <div className='module-notes'>

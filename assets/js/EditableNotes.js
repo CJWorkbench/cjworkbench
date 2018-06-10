@@ -38,8 +38,8 @@ export default class EditableNotes extends React.Component {
   saveNotes() {
     let value = this.state.value;
 
-    if (!value || (value == "") || (value == "Write notes here")) {
-      this.props.api.setWfModuleNotes(this.props.wfModuleId, "Write notes here");
+    if (!value || (value == "") || (value == "Type something")) {
+      this.props.api.setWfModuleNotes(this.props.wfModuleId, "Type something");
       this.props.hideNotes();
     } else {
       this.props.api.setWfModuleNotes(this.props.wfModuleId, value);
