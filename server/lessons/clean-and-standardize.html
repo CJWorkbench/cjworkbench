@@ -13,6 +13,7 @@
 </section>
 <section>
   <h2>1. Dropping empty rows and columns</h2>
+  <p> For the purpose of this lesson, the dataset is hosted on Workbench.</p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":0,"name":"Add from URL"}]'
@@ -22,9 +23,9 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://app.workbenchdata.com/static/data/population_dirty_data.csv' && wfModule.selectedVersion"
-      >Paste in the following URL and click 'Update'.
+      >Paste in the following URL and click <kbd>Update</kbd> to load the data.
       <div class="copy-txt content-3 t-white">https://app.workbenchdata.com/static/data/population_dirty_data.csv</div>
-      <p class="lesson-note">The two columns on at the far right of the dataset are empty.</p>
+      <p class="instruction-detail">The two columns at the far right of the dataset are empty.</p>
     </li>
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Drop empty columns"}]'
@@ -39,13 +40,13 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]',
       data-test="return workflow.wfModules[2].parameters.get('colnames') === 'MetroArea,Population'"
-      >Select the columns 'MetroArea' and 'Population'. The rows missing those values will be deleted.
+      >Select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing valus in those columns will be deleted.
     </li>
   </ol>
 </section>
 <section>
   <h2>2. Standardize column values</h2>
-  <p>The same value is frequently spelled in multiple ways, or with irregular capitalization.  Ex: ‘APPLE’, ‘Apple’, ‘APL’.</p>
+  <p>In the column <kbd>MetroArea</kbd> the same value is spelled in multiple ways, or with irregular capitalization.  Ex: ‘Bay Area’, ‘SF - Bay Area’, ‘San Jose-San Francisco-Oakland’.</p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":3,"name":"Refine"}]'
@@ -54,24 +55,21 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
       data-test="const params = workflow.wfModules[3].parameters; if (params.get('column') !== 'MetroArea') return false; const json = params.get('refine'); if (!json) return false; const allJson = JSON.parse(json); const changes = allJson.filter(x => x.type === 'change').map(x => x.content.fromVal); const Expected = [ 'San Jose-San Francisco-Oakland CSA', 'Austin', 'Bay Area', 'DallasFORTHWorth', 'SF - BAY AREA' ]; for (var i = 0; i < Expected.length; i++) { if (changes.indexOf(Expected[i]) === -1) { console.log('User has yet to rename ' + Expected[i] + '; changes were ' + JSON.stringify(changes)); return false; } } return true;"
-      >Select the column ‘MetroArea’ which contains messy data.
-      <p>
-        Edit values in the list until each one is displayed only once.
+      >Select the column <kbd>MetroArea</kbd> which contains messy data. Edit values in the list until each one is displayed only once.
+      <figure>
+        <img alt="Inspect element" src="/static/images/clean_standardize_lesson/1_refine_row.png">
+      </figure>
+      <p class="instruction-detail">
+       When you're done, the list should look similar to the following:
       </p>
-      <p>
-        <img class="image" src="/static/images/clean_standardize_lesson/1_refine_row.svg">
-      </p>
-      <p class="lesson-note">
-       When you're done, the list should look similar to this:
-      </p>
-      <p>
-        <img class="image" src="/static/images/clean_standardize_lesson/2_refine_result.svg">
-      </p>
+      <figure>
+        <img alt="Inspect element" src="/static/images/clean_standardize_lesson/2_refine_result.png">
+      </figure>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Refine"}]'
       data-test="const params = workflow.wfModules[3].parameters; const json = JSON.parse(params.get('refine')); return json.filter(x => x.type === 'select' && x.content.value === 'Denver - Aurora').length > 0"
-    >Un-check 'Denver - Aurora', which contains incomplete data.
+    >Un-check <kbd>Denver - Aurora</kbd> which contains incomplete data.
     </li>
   </ol>
 </section>
@@ -83,23 +81,23 @@
       data-highlight='[{"type":"Module","index":4,"name":"Reshape" }]'
       data-test="return workflow.wfModules.length > 4 && workflow.wfModules[4].moduleName === 'Reshape'"
       >Add the module ‘Reshape’.
-      <p>
-        <img class="image" src="/static/images/clean_standardize_lesson/3_reshape_long_wide.svg">
-      </p>
+      <figure>
+        <img alt="Inspect element" src="/static/images/clean_standardize_lesson/3_reshape_long_wide.png">
+      </figure>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules[4].parameters.get('direction') === 1"
-      >Select 'Long to wide'.
+      >Select <kbd>Long to wide</kbd>.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules[4].parameters.get('colnames') == 'Year'"
-      >Choose 'Year' as the Key column. Those values will be displayed in leftmost column of the wide table.</li>
+      >Choose <kbd>Year</kbd> as the Key column. Those values will be displayed in leftmost column of the wide table.</li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules[4].parameters.get('varcol') == 'MetroArea'"
-      >Choose 'MetroArea' as the Variable column. Those values will be used as column names in the wide table.</li>
+      >Choose <kbd>MetroArea</kbd> as the Variable column. Those values will be used as column names in the wide table.</li>
   </ol>
 </section>
 <section>
@@ -113,7 +111,15 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
       data-test="const wfModule = workflow.wfModules[5]; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
-      >Add a title to the chart, and you're done!
+      >Add a title to the chart.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
+      data-test="return state.selectedWfModule.moduleName === 'Line Chart'"
+      >Get the embed code by clicking on the <span>
+      <img class="icon-insert" src="/static/images/url_chart_lesson/embbed_button.svg">
+    </span> button at the top right of the chart panel.
+    <p class="instruction-detail highlight">Your chart is live! Any changes in the data will be reflected in the embedded chart.</p>
     </li>
   </ol>
 </section>

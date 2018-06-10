@@ -1,23 +1,21 @@
 .facet-checkbox-container{
   justify-content: space-between;
-}
 
-.facet-value {
-  border: none;
-  background-color: transparent;
-}
+  .facet-value {
+    border: none;
+    background-color: transparent;
+    width:17rem;
+    &:hover{background-color: $SuperLightGray;}
+  }
+  .facet-value--edited{
+    font-weight: 800;
+    color: $brand-text--darker;
+  }
+  .facet-count {
+    border: none;
+    text-align: right;
+    overflow: hidden;
+    margin:0 0.01rem;
+  }
 
-.facet-value:hover{
-  background-color: $SuperLightGray;
-}
-
-.facet-value--edited{
-  font-weight: bold;
-}
-
-.facet-count {
-  border: none;
-  text-align: right;
-  overflow: hidden;
-  margin:0 0.01rem;
 }
