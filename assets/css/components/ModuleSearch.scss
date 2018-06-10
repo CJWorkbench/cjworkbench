@@ -35,11 +35,23 @@
       &:focus {
         border-color: $brand-workspace;
       }
+
+      //search placholder when empty
+      &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+        color: $white;
+        opacity: .7;
+      }
+      :-ms-input-placeholder { /* IE 10+ */
+        color: $white;
+        opacity: .7;
+      }
+      :-moz-placeholder { /* Firefox 18- */
+        color: $white;
+        opacity: .7;
+      }
+
     }
 
-    ::placeholder, ::-ms-input-placeholder {
-      color: $white;
-    }
 
     &::before {
       // "search" icon
