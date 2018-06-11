@@ -2,7 +2,7 @@
 
 exports[`renders correctly 1`] = `
 <select
-  className="custom-select parameter-base dropdown-selector"
+  className="custom-select module-parameter dropdown-selector"
   name="SuperMenu"
   onChange={[Function]}
   value={1}

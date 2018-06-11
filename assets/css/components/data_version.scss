@@ -94,18 +94,18 @@
   input[name="timeNumber"] {
     display: inline;
     width: 5rem;
-    @extend .parameter-base;
+    @extend .module-parameter;
   }
 
   input[name="timeUnit"] {
     display: inline-block;
     width:10rem;
-    @extend .parameter-base;
+    @extend .module-parameter;
   }
 
   select {
     border-radius: 0px;
-    @extend .parameter-base;
+    @extend .module-parameter;
     height: 3.5rem!important;
     border-radius: 3px!important;
   }

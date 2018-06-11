@@ -29,7 +29,7 @@ export default class MenuParam extends React.Component {
 
     return (
         <select
-          className='custom-select parameter-base dropdown-selector'
+          className='custom-select module-parameter dropdown-selector'
           name={this.props.name}
           value={this.state.selectedIdx}
           onChange={this.onChange}

@@ -60,7 +60,7 @@ export default class ColumnParam extends React.Component {
         return <option key={idx} value={idx} className='dropdown-menu-item t-d-gray content-3'>{name}</option>;
     });
 
-    let className = 'custom-select parameter-base dropdown-selector'
+    let className = 'custom-select module-parameter dropdown-selector'
     if (this.state.colNames.length === 0) {
       className += ' loading'
     }

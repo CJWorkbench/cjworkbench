@@ -55,7 +55,7 @@
     box-shadow: none;
   }
 
-  .parameter-base:focus{
+  .module-parameter:focus{
     border: 2px solid $brand-learn;
     box-shadow: none;
   }
@@ -73,7 +73,7 @@ textarea:focus, input:focus{
 
 // Shared style to all paramters in modules
 
-.parameter-base {
+.module-parameter {
   cursor: pointer;
   width:100%;
   color: $brand-text--dark;
@@ -90,7 +90,7 @@ textarea:focus, input:focus{
 
 
 .text-field {
-  @extend .parameter-base;
+  @extend .module-parameter;
   padding: 0 1rem;
   white-space: nowrap;
   display: flex;
@@ -143,7 +143,7 @@ textarea:focus, input:focus{
   border: 2px solid $brand-workspace;
 }
 
-.parameter-base:focus{
+.module-parameter:focus{
   border: 2px solid $brand-workspace;
 }
 

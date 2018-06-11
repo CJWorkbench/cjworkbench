@@ -341,7 +341,7 @@ export default class WfParameter extends React.Component {
           sclass='text-field';
           srows = 1;
         } else {
-          sclass='parameter-base t-d-gray content-3 text-field-large';
+          sclass='module-parameter t-d-gray content-3 text-field-large';
           srows = 4;
         }
 
@@ -370,7 +370,7 @@ export default class WfParameter extends React.Component {
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
-              className='number-field parameter-base t-d-gray content-3'
+              className='number-field module-parameter t-d-gray content-3'
               name={id_name}
               rows='1'
               defaultValue={this.props.p.value}
