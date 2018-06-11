@@ -40,10 +40,10 @@ Welcome to Workbench! (CJ for computational journalism)
 
 Workbench is a platform that combines data tools and training for journalists. It is a workbook-style data processing system designed around modular tools for data processing -- table in, table out -- with no code required. Features include:
 
-- An integrated data journalism training program
 - Modules to scrape, clean, analyze and visualize data
-- Every action is recorded, so all workflows are repeatable and transparent
+- An integrated data journalism training program
 - Connect to Google Drive, Twitter, and API endpoints.
+- Every action is recorded, so all workflows are repeatable and transparent
 - All data is live and versioned, and you can monitor for changes.
 - Write custom modules in Python + Javascript and add them to the module library
 
@@ -58,6 +58,7 @@ To see what Workbench does, try our [public server](http://workbenchdata.org), n
 # User Documentation
 
 - [What workbench can do for data](https://medium.com/@Workbench/what-workbench-can-do-for-data-c8534384c978)
+- [A different approach to transparent data journalism](https://medium.com/@Workbench/a-different-approach-to-transparent-data-journalism-a019d23595f2)
 - [Data journalism made easier, faster, and more collaborative](https://medium.com/@Workbench/data-journalism-made-easier-faster-and-more-collaborative-e33081bf0080)
 - Our [knowledge base](http://help.workbenchdata.com/) has detailed instructions for each module
 
