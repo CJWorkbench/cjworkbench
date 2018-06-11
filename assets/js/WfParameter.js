@@ -10,9 +10,8 @@ import PropTypes from 'prop-types'
 import DataVersionSelect from './wfparameters/DataVersionSelect'
 import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
-import GoogleConnect from './wfparameters/GoogleConnect'
+import OAuthConnect from './wfparameters/OAuthConnect'
 import GoogleFileSelect from './wfparameters/GoogleFileSelect'
-import TwitterConnect from './wfparameters/TwitterConnect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
@@ -144,17 +143,9 @@ export default class WfParameter extends React.Component {
 
     switch (id_name) {
       case 'google_credentials':
-        return (
-          <GoogleConnect
-            paramId={id}
-            api={this.props.api}
-            secretName={secretName}
-            />
-        )
-
       case 'twitter_credentials':
         return (
-          <TwitterConnect
+          <OAuthConnect
             paramId={id}
             api={this.props.api}
             secretName={secretName}

@@ -24,7 +24,7 @@ const isOauthFinished = (popup) => {
   // ... in either case, oauth is not finished
 }
 
-export default class GoogleConnect extends React.PureComponent {
+export default class OAuthConnect extends React.PureComponent {
   static propTypes = {
     paramId: PropTypes.number.isRequired,
     api: PropTypes.shape({
@@ -81,7 +81,7 @@ export default class GoogleConnect extends React.PureComponent {
     }
 
     return(
-      <div className="google-connect-parameter">
+      <div className="oauth-connect-parameter">
         {contents}
       </div>
     )

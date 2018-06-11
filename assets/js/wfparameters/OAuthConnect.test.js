@@ -1,11 +1,11 @@
 import React from 'react'
-import GoogleConnect  from './GoogleConnect'
+import OAuthConnect  from './OAuthConnect'
 import { mount, ReactWrapper } from 'enzyme'
 import { jsonResponseMock } from '../utils'
 import { store,  getCurrentUserAction, disconnectCurrentUserAction } from '../workflow-reducer';
 jest.mock('../workflow-reducer');
 
-describe('GoogleConnect', () => {
+describe('OAuthConnect', () => {
   let api
   beforeEach(() => {
     api = {
@@ -15,7 +15,7 @@ describe('GoogleConnect', () => {
 
   const wrapper = (extraProps) => {
     return mount(
-      <GoogleConnect
+      <OAuthConnect
         api={api}
         paramId={321}
         secretName={'a secret'}
