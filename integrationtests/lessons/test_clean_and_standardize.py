@@ -101,7 +101,7 @@ class TestLesson(LessonTest):
 
         b.assert_element('input[name="rename[Seattle - Tacoma]"]', wait=True)
         self._rename_column(
-            'San Jose-San Francisco-Oakland CSA', 'San Francisco - Oakland'
+            'San Jose-San Francisco-Oakland', 'San Francisco - Oakland'
         )
         self._rename_column('Austin', 'Austin - Round Rock')
         self._rename_column('Bay Area', 'San Francisco - Oakland')
