@@ -336,12 +336,13 @@ if os.path.isfile(CJW_GOOGLE_CLIENT_SECRETS_PATH):
     with open(GOOGLE_OAUTH2_CLIENT_SECRETS_JSON) as f:
         d = json.load(f)
         PARAMETER_OAUTH_SERVICES['google_credentials'] = {
-            'class': 'oauth2',
+            'class': 'OAuth2',
             'client_id': d['web']['client_id'],
             'client_secret': d['web']['client_secret'],
             'auth_url': d['web']['auth_uri'],
             'token_url': d['web']['token_uri'],
             'refresh_url': d['web']['token_uri'],
+            'redirect_url': d['web']['redirect_uris'][0],
             'scope': 'email https://www.googleapis.com/auth/drive.readonly',
         }
 
@@ -357,7 +358,7 @@ try:
     with open(CJW_TWITTER_CLIENT_SECRETS_PATH) as f:
         d = json.load(f)
         PARAMETER_OAUTH_SERVICES['twitter_credentials'] = {
-            'class': 'oauth1a',
+            'class': 'OAuth1a',
             'client_key': d['key'],
             'client_secret': d['secret'],
             'auth_url': 'https://api.twitter.com/oauth/authorize',

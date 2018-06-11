@@ -12,6 +12,7 @@ from ..serializers import ParameterValSerializer
 from ..execute import execute_wfmodule
 from ..dispatch import module_dispatch_event
 from .. import triggerrender
+from .. import oauth
 import requests_oauthlib
 import base64
 import json
@@ -27,12 +28,12 @@ def parameter_val_or_response_for_read(
     try:
         param = ParameterVal.objects.get(pk=pk) # raises
     except ParameterVal.DoesNotExist:
-        return HttpResponseNotFound()
+        return HttpResponseNotFound('Param not found')
 
     if param.user_authorized_read(user):
         return param
     else:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden('Not allowed to read param')
 
 
 def parameter_val_or_response_for_write(
@@ -41,12 +42,12 @@ def parameter_val_or_response_for_write(
     try:
         param = ParameterVal.objects.get(pk=pk) # raises
     except ParameterVal.DoesNotExist:
-        return HttpResponseNotFound()
+        return HttpResponseNotFound('Param not found')
 
     if param.user_authorized_write(user):
         return param
     else:
-        return HttpResponseForbidden()
+        return HttpResponseForbidden('Not allowed to write param')
 
 
 # Get or set parameter value
@@ -108,10 +109,7 @@ def parameterval_png(request, pk):
     return HttpResponse(binary, content_type='image/png')
 
 
-OauthServices = settings.PARAMETER_OAUTH_SERVICES
-
-
-def _oauth_step1_redirect(request, param: ParameterVal, id_name: str) -> HttpResponse:
+def _oauth_start_authorize(request, param: ParameterVal, id_name: str) -> HttpResponse:
     """Redirects to the specified OAuth service provider.
 
     Returns 404 if id_name is not configured (e.g., user asked for
@@ -122,61 +120,70 @@ def _oauth_step1_redirect(request, param: ParameterVal, id_name: str) -> HttpRes
     the remote service. When the remote service redirects to our redirect_uri
     (which does not accept parameters), it will include the state in the URL.
     """
-    if id_name not in OauthServices:
+    service = oauth.OAuthService.lookup_or_none(id_name)
+    if not service:
         return HttpResponseNotFound(f'Oauth service for {id_name} not configured')
 
-    service = OauthServices[id_name]
+    url, state = service.generate_redirect_url_and_state()
 
-    nonce = uuid.uuid4().hex # CSRF protection -- the original intent of state
-    state = f'{id_name}-{param.pk}-{nonce}'
-
-    session = requests_oauthlib.OAuth2Session(
-        client_id=service['client_id'],
-        scope=service['scope'],
-        redirect_uri=request.build_absolute_uri('/oauth')
-    )
-    url, _ = session.authorization_url(
-        url=service['auth_url'],
-        state=state,
-        access_type='offline', approval_prompt='force'
-    )
-
-    param.value = json.dumps({
-        'name': '',
-        'secret': { 'state': state },
-    })
-    param.save()
+    request.session['oauth-flow'] = {
+        'state': state,
+        'service-id': service.service_id,
+        'param-pk': param.pk,
+    }
 
     return redirect(url)
 
 
-def _oauth_step2_handle_code(request, param: ParameterVal) -> HttpResponse:
-    """Exchange `request` for an auth token and save it in param."""
+@api_view(['GET', 'DELETE'])
+def parameterval_oauth_start_authorize(request, pk):
+    param = parameter_val_or_response_for_write(pk, request.user)
+    if isinstance(param, HttpResponse): return param
+
     spec = param.parameter_spec
-    id_name = spec.id_name
-    service = OauthServices[id_name] # if we got here, id_name is valid
+    if spec.type != ParameterSpec.SECRET:
+        return HttpResponseNotFound(f'This is a {spec.type}, not a SECRET')
 
-    session = requests_oauthlib.OAuth2Session(
-        client_id=service['client_id'],
-        scope=service['scope'],
-        redirect_uri=request.build_absolute_uri('/oauth')
-    )
-    token = session.fetch_token(
-        client_secret=service['client_secret'],
-        token_url=service['token_url'],
-        code=request.GET['code'],
-        timeout=30
-    )
+    if request.method == 'GET':
+        return _oauth_start_authorize(request, param, spec.id_name)
 
-    if not token.get('refresh_token'):
-        return HttpResponseServerError(f'{id_name} did not provide a refresh_token')
+    elif request.method == 'DELETE':
+        with param.wf_module.workflow.cooperative_lock():
+            param.set_value('')
+        triggerrender.notify_client_workflow_version_changed(param.wf_module.workflow)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
-    # This line may be Google-specific.
-    email = jwt.decode(token['id_token'], verify=False)['email']
+
+@api_view(['GET'])
+def parameterval_oauth_finish_authorize(request) -> HttpResponse:
+    """Set parameter secret to something valid.
+
+    The external service redirects here after _we_ redirect to _it_ in
+    parameterval_oauth_start_authorize(). We cannot include pk in that request
+    (since our client id is married to our redirect_url), so we pass pk in
+    session['oauth-flow'].
+    """
+    try:
+        flow = request.session['oauth-flow']
+    except KeyError:
+        return HttpResponseForbidden('Did not expect auth response.')
+
+    param = parameter_val_or_response_for_write(flow['param-pk'], request.user)
+    if isinstance(param, HttpResponse): return param
+
+    service = oauth.OAuthService.lookup_or_none(flow['service-id'])
+    if not service: return HttpResponseNotFound('Service not configured')
+
+    offline_token = service.acquire_refresh_token_or_str_error(request.GET,
+                                                               flow['state'])
+    if isinstance(offline_token, str):
+        return HttpResponseForbidden(offline_token)
+
+    email = service.extract_email_from_token(offline_token)
 
     with param.wf_module.workflow.cooperative_lock():
         # TODO consider ChangeParameterCommand. It might not play nice with 'secret'
-        param.set_value({ 'name': email, 'secret': token })
+        param.set_value({ 'name': email, 'secret': offline_token })
         # Copied from ChangeParameterCommand. Clear errors in case the connect fixed things
         param.wf_module.set_ready(notify=False)
 
@@ -191,70 +198,6 @@ def _oauth_step2_handle_code(request, param: ParameterVal) -> HttpResponse:
             </body>
         </html>
     """)
-    
-
-
-@api_view(['GET', 'DELETE'])
-def parameterval_oauth_start_authorize(request, pk):
-    param = parameter_val_or_response_for_write(pk, request.user)
-    if isinstance(param, HttpResponse): return param
-
-    spec = param.parameter_spec
-    if spec.type != ParameterSpec.SECRET:
-        return HttpResponseNotFound(f'This is a {spec.type}, not a SECRET')
-    if spec.id_name not in OauthServices:
-        return HttpResponseNotFound(f'We only support id_name {", ".join(OauthServices)}')
-
-    if request.method == 'GET':
-        return _oauth_step1_redirect(request, param, spec.id_name)
-
-    elif request.method == 'DELETE':
-        with param.wf_module.workflow.cooperative_lock():
-            param.set_value('')
-        triggerrender.notify_client_workflow_version_changed(param.wf_module.workflow)
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-@api_view(['GET'])
-def parameterval_oauth_finish_authorize(request) -> HttpResponse:
-    """Set parameter secret to something valid.
-
-    The external service redirects here after _we_ redirect to _it_ in
-    parameterval_oauth_start_authorize(). We cannot include pk in the request,
-    so we pass it to the oauth service instead and read it back here.
-    """
-    state = request.GET.get('state', '')
-    id_name, state_pk, _ = f'{state}--'.split('-', 2)
-    # we'll prove id_name is valid once we check _this_ state against the _real_ state
-    # we wrote in param.value['state'].
-
-    # is the state string remotely close to valid?
-    # If not, return.
-    try:
-        state_pk = int(state_pk)
-    except ValueError:
-        return HttpResponseNotFound(f'State "{state}" did not contain an int primary key')
-
-    # Load the specified param from the database.
-    param = parameter_val_or_response_for_write(state_pk, request.user)
-
-    # Does the param exist and belong to the user?
-    # If not, return.
-    if isinstance(param, HttpResponse): return param
-
-    # Is param.value['state'] the state we wrote in the param before redirect?
-    # If not, return.
-    try:
-        data = json.loads(param.value)
-    except json.decoder.JSONDecodeError:
-        # We won't describe `param.value` here, because it's a secret
-        return HttpResponseNotFound(f'State "{state}" pointed to an unexpected param')
-    param_state = data.get('secret', {}).get('state', '')
-    if param_state != state:
-        return HttpResponseNotFound(f'State "{state}" did not match the state in the database')
-
-    # Now we know enough to handle the OAuth value.
-    return _oauth_step2_handle_code(request, param)
 
 
 @api_view(['POST'])
@@ -280,12 +223,17 @@ def parameterval_oauth_generate_access_token(request, pk) -> HttpResponse:
         # Let's be abundantly clear: this is a _secret_. Users give us their
         # refresh tokens under the assmption that we won't share access to all
         # their files with _anybody_.
+        #
+        # We aren't checking if writes are allowed. We're checking the user's
+        # identity.
         return HttpResponseForbidden('only the workspace owner can generate an access token')
 
     spec = param.parameter_spec
     if spec.type != ParameterSpec.SECRET:
         return HttpResponseForbidden(f'This is a {spec.type}, not a SECRET')
-    if spec.id_name not in OauthServices:
+
+    service = oauth.OAuthService.lookup_or_none(spec.id_name)
+    if not service:
         return HttpResponseForbidden(f'We only support id_name {", ".join(OauthServices)}')
 
     secret_json = param.value
@@ -296,25 +244,12 @@ def parameterval_oauth_generate_access_token(request, pk) -> HttpResponse:
     except json.decoder.JSONDecodeError:
         return HttpResponseForbidden('non-JSON secret')
     try:
-        secret = secret_data['secret']
+        offline_token = secret_data['secret']
     except KeyError:
         return HttpResponseForbidden('secret value has no secret')
-    if 'refresh_token' not in secret:
-        # This is possible if the user is mid-authentication
-        return HttpResponseForbidden('secret has no refresh_token')
 
-    service = OauthServices[spec.id_name]
-    session = requests_oauthlib.OAuth2Session(
-        client_id=service['client_id'],
-        scope=service['scope'],
-        redirect_uri=request.build_absolute_uri('/oauth'),
-        token=secret
-    )
-    token = session.refresh_token(
-        service['token_url'],
-        client_id=service['client_id'],
-        client_secret=service['client_secret']
-    ) # TODO handle exceptions: revoked token, HTTP error
+    token = service.generate_access_token_or_str_error(offline_token)
+    if isinstance(token, str): return HttpResponseForbidden(token)
 
     # token['access_token'] is short-term (1hr). token['refresh_token'] is
     # super-private and we should never transmit it.
