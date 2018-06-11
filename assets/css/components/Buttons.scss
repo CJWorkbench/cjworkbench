@@ -144,6 +144,8 @@ button:focus { outline:0 !important; }
 	font-size: 1.4rem;
   line-height: 1.4rem;
   padding: 0 1.6rem;
+  text-decoration: none;
+  a:hover{color:none;}
 }
 
 .action-button { @extend %action-button; }
