@@ -206,7 +206,7 @@ exports[`Workflow list page renders correctly 1`] = `
         className="mx-auto workflows-list"
       >
         <h3
-          className="workflows-list--title title-3 t-m-gray"
+          className="workflows-list--title"
         >
           WORKFLOWS
         </h3>
@@ -222,7 +222,7 @@ exports[`Workflow list page renders correctly 1`] = `
               className="mt-1"
             >
               <div
-                className="t-d-gray mb-2 title-4"
+                className="workflow-title"
               >
                 Charting
               </div>
@@ -254,46 +254,42 @@ exports[`Workflow list page renders correctly 1`] = `
                   }
                 >
                   <ul
-                    className="WF-meta"
+                    className="metadata-container"
                   >
                     <li
-                      className="WF-meta--item content-3 t-m-gray attribution"
+                      className="attribution"
                     >
                       <span
-                        className="content-3 t-m-gray"
+                        className="metadata"
                       >
                         by 
                         Fred Frederson
                       </span>
                       <span
-                        className="content-3 metadataSeparator t-m-gray"
+                        className="separator"
                       >
                         -
                       </span>
                     </li>
-                    <li
-                      className="WF-meta--item content-3 t-m-gray"
-                    >
+                    <li>
                       Updated 
                       now
                     </li>
-                    <li
-                      className="WF-meta--item content-3 t-m-gray"
-                    >
+                    <li>
                       <div
-                        className="WF-meta--item test-button"
+                        className="metadata test-button"
                         onClick={[Function]}
                       >
-                        <div
-                          className="content-3 metadataSeparator t-m-gray"
+                        <span
+                          className="separator"
                         >
                           -
-                        </div>
-                        <div
-                          className="t-f-blue"
+                        </span>
+                        <span
+                          className="publicPrivate"
                         >
                           public
-                        </div>
+                        </span>
                       </div>
                     </li>
                   </ul>
@@ -433,7 +429,7 @@ exports[`Workflow list page renders correctly 1`] = `
               className="mt-1"
             >
               <div
-                className="t-d-gray mb-2 title-4"
+                className="workflow-title"
               >
                 Messy data cleanup
               </div>
@@ -465,46 +461,42 @@ exports[`Workflow list page renders correctly 1`] = `
                   }
                 >
                   <ul
-                    className="WF-meta"
+                    className="metadata-container"
                   >
                     <li
-                      className="WF-meta--item content-3 t-m-gray attribution"
+                      className="attribution"
                     >
                       <span
-                        className="content-3 t-m-gray"
+                        className="metadata"
                       >
                         by 
                         John Johnson
                       </span>
                       <span
-                        className="content-3 metadataSeparator t-m-gray"
+                        className="separator"
                       >
                         -
                       </span>
                     </li>
-                    <li
-                      className="WF-meta--item content-3 t-m-gray"
-                    >
+                    <li>
                       Updated 
                       now
                     </li>
-                    <li
-                      className="WF-meta--item content-3 t-m-gray"
-                    >
+                    <li>
                       <div
-                        className="WF-meta--item test-button"
+                        className="metadata test-button"
                         onClick={[Function]}
                       >
-                        <div
-                          className="content-3 metadataSeparator t-m-gray"
+                        <span
+                          className="separator"
                         >
                           -
-                        </div>
-                        <div
-                          className="t-f-blue"
+                        </span>
+                        <span
+                          className="publicPrivate"
                         >
                           private
-                        </div>
+                        </span>
                       </div>
                     </li>
                   </ul>
@@ -644,7 +636,7 @@ exports[`Workflow list page renders correctly 1`] = `
               className="mt-1"
             >
               <div
-                className="t-d-gray mb-2 title-4"
+                className="workflow-title"
               >
                 Document search
               </div>
@@ -676,46 +668,42 @@ exports[`Workflow list page renders correctly 1`] = `
                   }
                 >
                   <ul
-                    className="WF-meta"
+                    className="metadata-container"
                   >
                     <li
-                      className="WF-meta--item content-3 t-m-gray attribution"
+                      className="attribution"
                     >
                       <span
-                        className="content-3 t-m-gray"
+                        className="metadata"
                       >
                         by 
                         Sally Sallerson
                       </span>
                       <span
-                        className="content-3 metadataSeparator t-m-gray"
+                        className="separator"
                       >
                         -
                       </span>
                     </li>
-                    <li
-                      className="WF-meta--item content-3 t-m-gray"
-                    >
+                    <li>
                       Updated 
                       now
                     </li>
-                    <li
-                      className="WF-meta--item content-3 t-m-gray"
-                    >
+                    <li>
                       <div
-                        className="WF-meta--item test-button"
+                        className="metadata test-button"
                         onClick={[Function]}
                       >
-                        <div
-                          className="content-3 metadataSeparator t-m-gray"
+                        <span
+                          className="separator"
                         >
                           -
-                        </div>
-                        <div
-                          className="t-f-blue"
+                        </span>
+                        <span
+                          className="publicPrivate"
                         >
                           public
-                        </div>
+                        </span>
                       </div>
                     </li>
                   </ul>
@@ -855,7 +843,7 @@ exports[`Workflow list page renders correctly 1`] = `
               className="mt-1"
             >
               <div
-                className="t-d-gray mb-2 title-4"
+                className="workflow-title"
               >
                 Visualization
               </div>
@@ -887,46 +875,42 @@ exports[`Workflow list page renders correctly 1`] = `
                   }
                 >
                   <ul
-                    className="WF-meta"
+                    className="metadata-container"
                   >
                     <li
-                      className="WF-meta--item content-3 t-m-gray attribution"
+                      className="attribution"
                     >
                       <span
-                        className="content-3 t-m-gray"
+                        className="metadata"
                       >
                         by 
                         Mr. Manfrengenson
                       </span>
                       <span
-                        className="content-3 metadataSeparator t-m-gray"
+                        className="separator"
                       >
                         -
                       </span>
                     </li>
-                    <li
-                      className="WF-meta--item content-3 t-m-gray"
-                    >
+                    <li>
                       Updated 
                       now
                     </li>
-                    <li
-                      className="WF-meta--item content-3 t-m-gray"
-                    >
+                    <li>
                       <div
-                        className="WF-meta--item test-button"
+                        className="metadata test-button"
                         onClick={[Function]}
                       >
-                        <div
-                          className="content-3 metadataSeparator t-m-gray"
+                        <span
+                          className="separator"
                         >
                           -
-                        </div>
-                        <div
-                          className="t-f-blue"
+                        </span>
+                        <span
+                          className="publicPrivate"
                         >
                           private
-                        </div>
+                        </span>
                       </div>
                     </li>
                   </ul>

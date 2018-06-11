@@ -33,19 +33,17 @@
     }
     .outputpane-iframe-control-overlay .btn {
       position: absolute;
-      width: 4rem;
-      height: 4rem;
+      width: 3.5rem;
+      height: 3.5rem;
       border-radius: 50px;
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 1px solid #E7E7E7;
+      border: 2px solid $Vlight-gray;
       font-size: 1.6rem;
     }
     .outputpane-iframe-control-overlay .btn:hover{
-      background-color: $brand-workspace;
-      border: 0px;
-      color: #fff;
+      border:2px solid $light-gray;
     }
   }
 
@@ -58,17 +56,19 @@
       align-items: center;
       height: 5.5rem;
       background-color: #FFFFFF;
-      padding:0 2.5rem;
+      padding:0 2.25rem;
 
       .container {
         display: flex;
+        margin-left: 1.5rem;
+        width:30rem;
 
         .table-info {
           display: flex;
           flex-direction: column;
           align-items: center;
           justify-content: space-between;
-          margin-right: 2rem;
+          margin-right: 5rem;
           margin-top: .5rem;
           background-color: transparent;
 
@@ -94,11 +94,13 @@
         width:3.5rem;
         height: 3.5rem;
         border-radius: 2rem;
-        border:2px solid $table-element;
+        border:2px solid $table-element--light;
         color:$table-element;
         background-color: $white;
         cursor: pointer;
-        &:hover{background-color: $brand-workspace--Vlight;}
+        &:hover{
+          border:2px solid $table-element;
+        }
         font-size: 1.5rem;
       }
     }
@@ -174,14 +176,14 @@
         position: absolute;
         top: 0;
         height: 100%;
-        width: 1rem;
+        width: 0.5rem;
         z-index: 1;
 
         &.align-left {
-          left: -.5rem;
+          left: -.25rem;
         }
         &.align-right {
-          right: -.5rem;
+          right: -.25rem;
         }
 
         &.drag-hover {
@@ -195,13 +197,23 @@
           position: absolute;
           top: 0;
           height: 100%;
-          left: -2rem;
-          right: -2rem;
+          left: -8rem;
+          right: -8rem;
         }
       }
 
       .column-letter {
         text-align: center;
+        padding-top: .15rem;
+        background-color: #fff;
+        color: $light-gray;
+        height: 2rem;
+        padding-bottom: .1rem;
+        font-weight: 300;
+        //box shadow to cover the 1px border from header with a lighter one
+        box-shadow:
+          -1px 0 0 $table-border,
+           1px 0 0 $table-border;
       }
 
       .sort-container {
@@ -260,8 +272,8 @@
     .react-grid-Cell{
       padding-right:1rem;
       padding-left:1rem;
-      border-right: 1px solid #CFDEE2;
-      border-bottom: 1px solid #CFDEE2;
+      border-right: 1px solid $table-border;
+      border-bottom: 1px solid $table-border;
     }
 
     .react-grid-Cell:not(.editing) .react-grid-Cell__value{

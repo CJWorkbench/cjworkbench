@@ -16,8 +16,8 @@ from rest_framework.permissions import IsAuthenticatedOrReadOnly
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def module_list(request, format=None):
     if request.method == 'GET':
-        workflows = Module.objects.all()
-        serializer = ModuleSerializer(workflows, many=True)
+        modules = Module.objects.all()
+        serializer = ModuleSerializer(modules, many=True)
         return Response(serializer.data)
 
 

@@ -74,6 +74,8 @@ def validate_module_structure(directory):
 
         # Skip directories (__pycache__ etc.) and test_*
         if not os.path.isdir(item) and not item.startswith('test'):
+            if item in [ '__init__.py', 'setup.py' ]: continue
+
             extension = item.rsplit('.', 1)
             if len(extension) > 1:
                 extension = extension[1]
@@ -81,8 +83,7 @@ def validate_module_structure(directory):
                 continue
             if extension in ["py", "json", "html"]:
                 if extension not in extension_file_mapping:
-                    if item not in '__init__.py':
-                        extension_file_mapping[extension] = item
+                    extension_file_mapping[extension] = item
                 else:
                     raise ValidationError(
                         "Multiple files exist with extension {}. This isn't currently supported.".format(extension))
@@ -214,15 +215,18 @@ def validate_python_functions(destination_directory, python_file):
     except:
        raise ValidationError("Cannot load module")
 
-    try:
-       render_fn = getattr(test_module, 'render')
-    except:
+    if hasattr(test_module, 'render'):
+        if callable(test_module.render):
+            return
+        else:
+            raise ValidationError("Module render() function isn't callable.")
+    elif hasattr(test_module, 'fetch'):
+        if callable(test_module.fetch):
+            return
+        else:
+            raise ValidationError("Module fetch() function isn't callable.")
+    else:
        raise ValidationError("Module render() function is missing.")
-
-    if not callable(render_fn):
-        raise ValidationError("Module render() function isn't callable.")
-
-    return render_fn
 
 
 # Get head version hash from git repo on disk

@@ -13,16 +13,18 @@
     height: 4rem;
     width: 14rem;
     background-color: $white;
-    color: rgba(104,103,104,0.8);
     display: flex;
     align-items: center;
     justify-content: flex-start;
     padding-left: 1rem;
     cursor:pointer;
 
+    i, span {color: $brand-text--medium;}
+
     &:hover {
       background-color: $dark-accent--soft;
-      color: $brand-text--dark;
+
+    i, span {color: $brand-text--dark;}
     }
     &:active {
       background-color: $dark-accent--medium;
@@ -53,7 +55,7 @@
     box-shadow: none;
   }
 
-  .parameter-base:focus{
+  .module-parameter:focus{
     border: 2px solid $brand-learn;
     box-shadow: none;
   }
@@ -71,9 +73,11 @@ textarea:focus, input:focus{
 
 // Shared style to all paramters in modules
 
-%parameter-base {
+.module-parameter {
   cursor: pointer;
   width:100%;
+  color: $brand-text--dark;
+  @extend .content-3;
   height:3.5rem;
   border-radius: 3px;
   border: 2px solid $Vlight-gray;
@@ -82,12 +86,11 @@ textarea:focus, input:focus{
   border: 2px solid $dark-accent--soft;
   }
 }
-.parameter-base {
-  @extend %parameter-base;
-}
+
 
 
 .text-field {
+  @extend .module-parameter;
   padding: 0 1rem;
   white-space: nowrap;
   display: flex;
@@ -140,7 +143,7 @@ textarea:focus, input:focus{
   border: 2px solid $brand-workspace;
 }
 
-.parameter-base:focus{
+.module-parameter:focus{
   border: 2px solid $brand-workspace;
 }
 

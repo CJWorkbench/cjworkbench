@@ -2,6 +2,7 @@ from django.test import TestCase
 from server.models import ParameterVal, ParameterSpec, Module, WfModule, ModuleVersion
 from server.tests.utils import *
 
+
 # Base class sets up a workflow for testing, shared between this file and test_parameterval_views.py
 class ParameterValTestsBase(TestCase):
 
@@ -82,6 +83,17 @@ class ParameterValTests(ParameterValTestsBase):
         self.createTestWorkflow()
 
 
+    def secret_val(self):
+        spec = ParameterSpec.objects.create(
+            name='SecretParam',
+            id_name='asecret',
+            module_version=self.module_version,
+            type=ParameterSpec.SECRET
+        )
+        val = ParameterVal.objects.create(parameter_spec=spec, wf_module=self.wfmodule, value='')
+        return val
+
+
     # Value retrieval methods must return correct values and enforce type
     def test_parameter_get_values(self):
 
@@ -137,3 +149,29 @@ class ParameterValTests(ParameterValTestsBase):
         self.assertEqual(sp.menu_items, spd.menu_items)
         self.assertEqual(sp.visible, spd.visible)
         self.assertEqual(sp.order, spd.order)
+
+
+    def test_secret_default_none(self):
+        self.assertIs(self.secret_val().get_value(), None)
+
+    def test_secret_set_get_value(self):
+        val = self.secret_val()
+        val.set_value({ 'name': 'foo', 'secret': { 'bar': 'baz' } })
+
+        self.assertEqual(val.get_value(), { 'name': 'foo' })
+        self.assertEqual(val.get_secret(), { 'bar': 'baz' })
+
+    def test_secret_check_set_value(self):
+        val = self.secret_val()
+        with self.assertRaises(ValueError):
+            val.set_value({ 'namex': 'foo', 'secret': { 'bar': 'baz' } }) # no name
+        with self.assertRaises(ValueError):
+            val.set_value({ 'name': '', 'secret': { 'bar': 'baz' } }) # empty name
+        with self.assertRaises(ValueError):
+            val.set_value({ 'name': 'foo', 'secret': '' }) # no secret
+
+    def test_secret_set_value_empty(self):
+        val = self.secret_val()
+        val.set_value({ 'name': 'foo', 'secret': 'foo' })
+        val.set_value(None)
+        self.assertIs(val.get_value(), None)

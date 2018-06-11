@@ -1,8 +1,11 @@
 // "Hamburger" drop down on workflow and workflows page. Fixed contents.
 
 import React from 'react'
-import { UncontrolledDropdown, DropdownToggle, DropdownMenu, DropdownItem } from 'reactstrap'
 import PropTypes from 'prop-types'
+import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown'
+import DropdownToggle from 'reactstrap/lib/DropdownToggle'
+import DropdownMenu from 'reactstrap/lib/DropdownMenu'
+import DropdownItem from 'reactstrap/lib/DropdownItem'
 import ImportModuleFromGitHub from './ImportModuleFromGitHub';
 
 export default class WfHamburgerMenu extends React.Component {

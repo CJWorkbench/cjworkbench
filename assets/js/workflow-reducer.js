@@ -9,7 +9,6 @@ import { newContext } from 'immutability-helper'
 import { validLessonHighlight } from './util/LessonHighlight'
 
 // Workflow
-const INITIAL_LOAD_WORKFLOW = 'INITIAL_LOAD_WORKFLOW';
 const RELOAD_WORKFLOW = 'RELOAD_WORKFLOW';
 const LOAD_MODULES = 'LOAD_MODULES'
 const ADD_MODULE = 'ADD_MODULE';
@@ -19,10 +18,6 @@ const SET_WORKFLOW_PUBLIC = 'SET_WORKFLOW_PUBLIC';
 const SET_WF_LIBRARY_COLLAPSE = 'SET_WF_LIBRARY_COLLAPSE';
 const MOVE_MODULE = 'MOVE_MODULE';
 const SET_LESSON_HIGHLIGHT = 'SET_LESSON_HIGHLIGHT';
-
-// User
-const GET_CURRENT_USER = 'GET_CURRENT_USER';
-const DISCONNECT_CURRENT_USER = 'DISCONNECT_CURRENT_USER';
 
 // WfModule
 const SET_WF_MODULE_STATUS = 'SET_WF_MODULE_STATUS';
@@ -158,44 +153,17 @@ export function paramIdToIndices(workflow, paramId) {
 
 // -- Workflow actions --
 
-
-// INITIAL_LOAD_WORKFLOW
-// Load the workflow for the first time
-export function initialLoadWorkflowAction() {
-  return {
-    type: INITIAL_LOAD_WORKFLOW,
-    payload: api.loadWorkflow(WorkflowId),
-  }
-}
-registerReducerFunc(INITIAL_LOAD_WORKFLOW + '_FULFILLED', (state, action) => {
-  // Sets the selected module from backend if it exists, or the first module if there are any at all
-  let selectedWfModule = null;
-
-  if (action.payload.selected_wf_module) {
-    selectedWfModule = action.payload.selected_wf_module;
-  } else if (action.payload.wf_modules && action.payload.wf_modules.length) {
-    selectedWfModule = action.payload.wf_modules[0].id;
-  }
-
-  return Object.assign({}, state, {
-    selected_wf_module: selectedWfModule,
-    workflow: action.payload
-  });
-});
-
 // RELOAD_WORKFLOW
 // Re-load the workflow
-// TODO: Do we need both initial and reload?
 export function reloadWorkflowAction() {
   return {
     type: RELOAD_WORKFLOW,
-    payload: api.loadWorkflow(WorkflowId).then((json) => {return json})
+    payload: api.loadWorkflow(WorkflowId),
   }
 }
 registerReducerFunc(RELOAD_WORKFLOW + '_FULFILLED', (state, action) => {
   return update(state, {
     workflow: {$merge: action.payload},
-    selected_wf_module: {$set: action.payload.selected_wf_module},
   });
 });
 
@@ -383,30 +351,24 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
 export function setSelectedWfModuleAction(wfModuleId) {
   const state = store.getState()
 
-  if (state.workflow && wfModuleId === state.selected_wf_module) {
+  if (wfModuleId === state.selected_wf_module) {
     return NOP
   } else {
-    const workflow = state.workflow
-    const workflowId = workflow ? workflow.id : null
+    // Fire-and-forget: tell the server about this new selected_wf_module,
+    // so next time we load the page it will pass it in initState.
+    api.setSelectedWfModule(WorkflowId, wfModuleId)
+      .catch(console.warn)
 
     return {
-      type : SET_SELECTED_MODULE,
-      payload : {
-        promise: api.setSelectedWfModule(workflowId, wfModuleId),
-        data: {
-          wf_module_id: wfModuleId
-        }
-      }
+      type: SET_SELECTED_MODULE,
+      payload: wfModuleId,
     }
   }
 }
-registerReducerFunc(SET_SELECTED_MODULE + '_PENDING', (state, action) => {
-  if (!('selected_wf_module' in state) || (action.payload.wf_module_id !== state.selected_wf_module)) {
-    return update(state, {
-      selected_wf_module: {$set: action.payload.wf_module_id}
-    });
-  } else {
-    return state;
+registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {
+  return {
+    ...state,
+    selected_wf_module: action.payload
   }
 });
 
@@ -434,60 +396,6 @@ registerReducerFunc(SET_WF_LIBRARY_COLLAPSE + '_PENDING', (state, action) => {
 });
 
 
-
-// --- User actions ---
-
-
-// GET_CURRENT_USER
-// Grab the JSON serialization of the current user data from the server
-export function getCurrentUserAction() {
-  return {
-    type: GET_CURRENT_USER,
-    payload: api.currentUser()
-  }
-}
-registerReducerFunc(GET_CURRENT_USER + '_FULFILLED', (state, action) => {
-  if (state.loggedInUser !== action.payload) {
-    return update(state, {
-      loggedInUser: {$set: action.payload}
-    });
-  } else {
-    return state;
-  }
-});
-
-
-// DISCONNECT_CURRENT_USER
-// Delete a credential object to a third-party service on the user.
-// Currently only used for Google credentials.
-export function disconnectCurrentUserAction(credentialId) {
-  return {
-    type: DISCONNECT_CURRENT_USER,
-    payload: {
-      promise: api.disconnectCurrentUser( credentialId ),
-      data: {
-        credential_id: credentialId
-      }
-    }
-  }
-}
-registerReducerFunc(DISCONNECT_CURRENT_USER + '_PENDING', (state, action) => {
-  let credentialIndex
-
-  if (action.payload.credential_id) {
-    credentialIndex = state.loggedInUser.google_credentials.indexOf(action.payload.credential_id);
-  }
-
-  if (credentialIndex >= 0) {
-    return update(state, {
-      loggedInUser: {
-        google_credentials: { $splice: [[credentialIndex, 1]] }
-      }
-    });
-  }
-
-  return state;
-});
 
 // --- Workflow Module actions ---
 

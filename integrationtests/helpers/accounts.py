@@ -270,7 +270,7 @@ class AccountAdmin:
     def destroy_modules(self) -> None:
         """Clean up any modules imported during test."""
         self._execute('\n'.join([
-            'dynamicdispatch._dynamic_module_dispatches.clear()',
+            'dynamicdispatch.load_module.cache_clear()',
             '_ = ModuleVersion.objects.exclude(module__link="").delete()',
             '_ = Module.objects.exclude(link="").delete()',
             'shutil.rmtree("importedmodules", ignore_errors=True)',

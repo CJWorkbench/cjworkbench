@@ -11,7 +11,7 @@ exports[`ColumnParam renders with noSelectionText 1`] = `
   selectedCol="baz"
 >
   <select
-    className="custom-select parameter-base dropdown-selector"
+    className="custom-select module-parameter dropdown-selector"
     disabled={true}
     name="column"
     onChange={[Function]}
@@ -80,7 +80,7 @@ exports[`ColumnParam renders without noSelectionText 1`] = `
   selectedCol="baz"
 >
   <select
-    className="custom-select parameter-base dropdown-selector"
+    className="custom-select module-parameter dropdown-selector"
     disabled={true}
     name="column"
     onChange={[Function]}

@@ -41,7 +41,7 @@ export class WfModule extends React.PureComponent {
       isCollapsed: this.props.wfModule.is_collapsed,
       showNotes:  ( this.props.wfModule.notes
                     && (this.props.wfModule.notes != "")
-                    && (this.props.wfModule.notes != "Write notes here")
+                    && (this.props.wfModule.notes != "Type something")
                   ),  // only show on load if a note exists & not default text
       showEditableNotes: false,             // do not display in edit state on initial load
       notifications: this.props.wfModule.notifications,
@@ -143,6 +143,13 @@ export class WfModule extends React.PureComponent {
     }
   }
 
+  getParamId = (paramIdName) => {
+    var p = this.props.wfModule.parameter_vals.find( p => p.parameter_spec.id_name == paramIdName );
+    if (p) {
+      return p.id;
+    }
+  }
+
   getParamMenuItems(paramIdName) {
     var p = this.props.wfModule.parameter_vals.find(p => p.parameter_spec.id_name == paramIdName);
     if(p) {
@@ -224,6 +231,7 @@ export class WfModule extends React.PureComponent {
           wf_module_id={wfModule.id}
           revision={this.props.revision}
           updateSettings={updateSettings}
+          getParamId={this.getParamId}
           getParamText={this.getParamText}
           getParamMenuItems={this.getParamMenuItems}
           setParamText={this.setParamText}
@@ -236,7 +244,7 @@ export class WfModule extends React.PureComponent {
     var notes;
     var value = ( wfModule.notes && (wfModule.notes != "") )
       ? wfModule.notes
-      : "Write notes here";
+      : "Type something";
 
     if (this.state.showNotes)
       notes = <div className='module-notes'>
@@ -282,7 +290,7 @@ export class WfModule extends React.PureComponent {
         <div className='context-buttons'>
           {wfModule.notifications &&
           <button
-            className={'notification-badge' + (wfModule.notification_count > 0 ? ' active t-f-blue' : '' )}
+            className={'notification-badge' + (wfModule.notification_count > 0 ? ' active action-link' : '' )}
             onClick={this.onClickNotification}
             >
             <i className="icon-notification"></i>
@@ -294,7 +302,7 @@ export class WfModule extends React.PureComponent {
           {contextMenu}
         </div>
 
-    const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon mr-2';
+    const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon';
 
     // Putting it all together: name, status, parameters, output
     return (

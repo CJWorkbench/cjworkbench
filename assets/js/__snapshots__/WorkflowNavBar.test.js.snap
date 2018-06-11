@@ -81,46 +81,42 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
         }
       >
         <ul
-          className="WF-meta"
+          className="metadata-container"
         >
           <li
-            className="WF-meta--item content-3 t-m-gray attribution"
+            className="attribution"
           >
             <span
-              className="content-3 t-m-gray"
+              className="metadata"
             >
               by 
               Fred Frederson
             </span>
             <span
-              className="content-3 metadataSeparator t-m-gray"
+              className="separator"
             >
               -
             </span>
           </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          >
+          <li>
             Updated 
             now
           </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          >
+          <li>
             <div
-              className="WF-meta--item test-button"
+              className="metadata test-button"
               onClick={[Function]}
             >
-              <div
-                className="content-3 metadataSeparator t-m-gray"
+              <span
+                className="separator"
               >
                 -
-              </div>
-              <div
-                className="t-f-blue"
+              </span>
+              <span
+                className="publicPrivate"
               >
                 private
-              </div>
+              </span>
             </div>
           </li>
         </ul>
@@ -497,12 +493,12 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                 </label>
               </Label>
               <CopyToClipboard
-                className="info-2 t-f-blue"
+                className="info-2 action-link"
                 onCopy={[Function]}
                 text="/workflows/808"
               >
                 <div
-                  className="info-2 t-f-blue"
+                  className="info-2 action-link"
                   onClick={[Function]}
                 >
                   Copy to clipboard
@@ -649,46 +645,42 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 1`] 
         }
       >
         <ul
-          className="WF-meta"
+          className="metadata-container"
         >
           <li
-            className="WF-meta--item content-3 t-m-gray attribution"
+            className="attribution"
           >
             <span
-              className="content-3 t-m-gray"
+              className="metadata"
             >
               by 
               Fred Frederson
             </span>
             <span
-              className="content-3 metadataSeparator t-m-gray"
+              className="separator"
             >
               -
             </span>
           </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          >
+          <li>
             Updated 
             now
           </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          >
+          <li>
             <div
-              className="WF-meta--item test-button"
+              className="metadata test-button"
               onClick={[Function]}
             >
-              <div
-                className="content-3 metadataSeparator t-m-gray"
+              <span
+                className="separator"
               >
                 -
-              </div>
-              <div
-                className="t-f-blue"
+              </span>
+              <span
+                className="publicPrivate"
               >
                 public
-              </div>
+              </span>
             </div>
           </li>
         </ul>
@@ -986,12 +978,12 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
                 </label>
               </Label>
               <CopyToClipboard
-                className="info-2 t-f-blue"
+                className="info-2 action-link"
                 onCopy={[Function]}
                 text="/workflows/808"
               >
                 <div
-                  className="info-2 t-f-blue"
+                  className="info-2 action-link"
                   onClick={[Function]}
                 >
                   Copy to clipboard
@@ -1133,46 +1125,42 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
         }
       >
         <ul
-          className="WF-meta"
+          className="metadata-container"
         >
           <li
-            className="WF-meta--item content-3 t-m-gray attribution"
+            className="attribution"
           >
             <span
-              className="content-3 t-m-gray"
+              className="metadata"
             >
               by 
               Not LogggedIn
             </span>
             <span
-              className="content-3 metadataSeparator t-m-gray"
+              className="separator"
             >
               -
             </span>
           </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          >
+          <li>
             Updated 
             now
           </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          >
+          <li>
             <div
-              className="WF-meta--item test-button"
+              className="metadata test-button"
               onClick={[Function]}
             >
-              <div
-                className="content-3 metadataSeparator t-m-gray"
+              <span
+                className="separator"
               >
                 -
-              </div>
-              <div
-                className="t-f-blue"
+              </span>
+              <span
+                className="publicPrivate"
               >
                 public
-              </div>
+              </span>
             </div>
           </li>
         </ul>
@@ -1285,46 +1273,42 @@ exports[`WorkflowNavBar With user logged in, Duplicate button sends user to new 
         }
       >
         <ul
-          className="WF-meta"
+          className="metadata-container"
         >
           <li
-            className="WF-meta--item content-3 t-m-gray attribution"
+            className="attribution"
           >
             <span
-              className="content-3 t-m-gray"
+              className="metadata"
             >
               by 
               John Johnson
             </span>
             <span
-              className="content-3 metadataSeparator t-m-gray"
+              className="separator"
             >
               -
             </span>
           </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          >
+          <li>
             Updated 
             now
           </li>
-          <li
-            className="WF-meta--item content-3 t-m-gray"
-          >
+          <li>
             <div
-              className="WF-meta--item test-button"
+              className="metadata test-button"
               onClick={[Function]}
             >
-              <div
-                className="content-3 metadataSeparator t-m-gray"
+              <span
+                className="separator"
               >
                 -
-              </div>
-              <div
-                className="t-f-blue"
+              </span>
+              <span
+                className="publicPrivate"
               >
                 public
-              </div>
+              </span>
             </div>
           </li>
         </ul>

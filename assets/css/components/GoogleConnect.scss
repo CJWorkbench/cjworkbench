@@ -1,35 +1,67 @@
-.gdrive-connectAccount{
-  padding-bottom: 1.5rem;
+.google-connect-parameter {
+  padding-bottom: 1rem;
   border-bottom: 1px solid $Vlight-gray;
+  text-align: left;
+
+  button.connect {
+    @extend .action-button;
+    @extend .button-orange;
+    display: inline-block;
+  }
+
+  button.disconnect {
+    @extend .info-1;
+    border:0;
+    @extend .btn-link;
+    @extend .system-link;
+  }
+
+  .secret-name {
+    @extend %info-1;
+    margin:0;
+  }
+
+  .disconnect {
+    @extend %content-3;
+    padding: 0!important;
+    margin-top:.3rem;
+    font-weight: 400;
+  }
+
 }
 
-.gdrive-fileSelect{
+.google-file-select {
+
+  padding-top: 1rem;
   display: flex;
-  justify-content: space-between;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid $Vlight-gray;
-}
+  flex-direction: column;
+  font-size: 1.4rem;
+  overflow: hidden;
+  align-items: left;
 
-.gdrive-connectAccount{
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid $Vlight-gray;
-  display: flex;
-  justify-content: center;
-}
-
-.gdrive-fileSelect{
-  display: flex;
-  justify-content: space-between;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid $Vlight-gray;
-}
+  .not-signed-in {display: none}
 
 
-.file-info p{
-  margin:0;
-}
+  .change-file {
+    @extend %content-3;
+    cursor: pointer;
+    border:0;
+    margin-top:-.2rem;
+    background-color:transparent;
+    color:$brand-workspace;
+    text-align: left;
+    padding:0;
+  }
 
-.connected-account p{
-  margin:0;
-  margin-top: -1rem;
+  .file-info {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color:$brand-text--dark;
+  }
+
+  button {
+    flex: 0 0 auto;
+  }
 }

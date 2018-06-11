@@ -163,6 +163,12 @@ class ImportFromGitHubTest(LoggedInTestCase):
             mapping = validate_module_structure(test_dir)
 
 
+    def test_ignore_setup_py(self):
+        test_dir = self.fake_github_clone()
+        open(os.path.join(test_dir, 'setup.py'), 'w').close()
+        mapping = validate_module_structure(test_dir)
+        self.assertEqual(mapping['py'], 'importable.py')
+
     def test_extract_version_hash(self):
         test_dir = self.fake_github_clone()
         os.rename(os.path.join(test_dir, 'git'),
@@ -244,8 +250,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         #test valid scenario
         test_dir = self.fake_github_clone()
         add_boilerplate_and_check_syntax(test_dir , "importable.py")  # adds crucial boilerplate to the file
-        render_fn = validate_python_functions(test_dir , "importable.py")
-        self.assertTrue(isinstance(render_fn, types.FunctionType), "The module must be importable, and be of type 'type'.")
+        validate_python_functions(test_dir , "importable.py")
 
         # test missing/unloadable render function
         test_dir = self.fake_github_clone('test_data/missing_render_module')
@@ -332,6 +337,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         colparam.set_value('M') # double this
         multicolparam.set_value('F,Other') # triple these
         out = module_dispatch_render(wfm, test_table)
+        self.assertEqual(wfm.error_msg, '')
         self.assertEqual(wfm.status, WfModule.READY)
         self.assertTrue(out.equals(test_table_out))
 

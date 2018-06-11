@@ -99,4 +99,4 @@ class LoadURL(ModuleImpl):
             sanitize_dataframe(table) # ensure all columns are simple types (e.g. nested json to strings)
 
             # Also notifies client
-            save_fetched_table_if_changed(wfm, table, auto_change_version=auto)
+            save_fetched_table_if_changed(wfm, table, '')

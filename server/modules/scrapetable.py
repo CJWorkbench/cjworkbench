@@ -40,7 +40,6 @@ class ScrapeTable(ModuleImpl):
 
         tables=[]
         try:
-
             tables = pd.read_html(url, flavor='html5lib')
             if len(tables) == 0:
                 wfm.set_error(_('Did not find any <table> tags on that page.'))
@@ -71,14 +70,9 @@ class ScrapeTable(ModuleImpl):
                 wfm.set_error(_('There are only %d HTML <table> tags on this page') % numtables)
             return
 
-        wfm.set_ready(notify=False)
-
         table = tables[tablenum]
-
-        # Change the data version (when new data found) only if this module set to auto update, or user triggered
-        auto = wfm.auto_update_data or (event is not None and event.get('type') == "click")
 
         sanitize_dataframe(table) # ensure all columns are simple types (e.g. nested json to strings)
 
         # Also notifies client
-        save_fetched_table_if_changed(wfm, table, auto_change_version=auto)
+        save_fetched_table_if_changed(wfm, table, '')

@@ -321,22 +321,24 @@ class ColumnHeader extends React.PureComponent {
 
     //<span className="column-key">{columnKey}</span>
     return (
-      <div
-        className={`data-grid-column-header ${draggingClass}`}
-        onMouseEnter={this.onMouseEnter}
-        onMouseLeave={this.onMouseLeave}
-        draggable={true}
-        onDragStart={this.onDragStart}
-        onDragEnd={this.onDragEnd}
-        >
-        {maybeDropZone('left', index)}
+      <React.Fragment>
         {letterSection}
-        <div className="sort-container">
-          <EditableColumnName columnKey={columnKey} onRename={this.props.onRenameColumn}/>
-          {sortArrowSection}
+        <div
+          className={`data-grid-column-header ${draggingClass}`}
+          onMouseEnter={this.onMouseEnter}
+          onMouseLeave={this.onMouseLeave}
+          draggable={true}
+          onDragStart={this.onDragStart}
+          onDragEnd={this.onDragEnd}
+          >
+          {maybeDropZone('left', index)}
+          <div className="sort-container">
+            <EditableColumnName columnKey={columnKey} onRename={this.props.onRenameColumn}/>
+            {sortArrowSection}
+          </div>
+          {maybeDropZone('right', index + 1)}
         </div>
-        {maybeDropZone('right', index + 1)}
-      </div>
+      </React.Fragment>
     );
   }
 }

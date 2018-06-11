@@ -11,16 +11,16 @@ class VersionTests(TestCase):
 
     def test_store_if_changed(self):
         table = mock_csv_table.copy()
-        save_fetched_table_if_changed(self.wfm, table)
+        save_fetched_table_if_changed(self.wfm, table, '')
         self.assertEqual(StoredObject.objects.count(), 1)
 
         # store same table again, should not create a new one
-        save_fetched_table_if_changed(self.wfm, table)
+        save_fetched_table_if_changed(self.wfm, table, '')
         self.assertEqual(StoredObject.objects.count(), 1)
 
         # changed table should create new
         table = table.append(table, ignore_index=True)
-        save_fetched_table_if_changed(self.wfm, table)
+        save_fetched_table_if_changed(self.wfm, table, '')
         self.assertEqual(StoredObject.objects.count(), 2)
 
 
@@ -29,7 +29,7 @@ class VersionTests(TestCase):
         table = mock_csv_table.copy()
 
         for i in range(0, 10):
-            save_fetched_table_if_changed(self.wfm, table)
+            save_fetched_table_if_changed(self.wfm, table, '')
 
             # make the table bigger, forcing a new object to be created and mimicking real world usage
             table = table.append(table, ignore_index=True)

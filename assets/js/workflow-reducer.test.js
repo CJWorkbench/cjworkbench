@@ -82,7 +82,6 @@ describe('Reducer actions', () => {
       payload: test_workflow,
     });
     expect(state.workflow).toEqual(test_workflow);
-    expect(state.selected_wf_module).toEqual(test_workflow.selected_wf_module);
   });
 
    // LOAD_MODULES
@@ -120,72 +119,10 @@ describe('Reducer actions', () => {
 
   it('Sets the selected module to a module in state', () => {
     const state = workflowReducer(test_state, {
-     type: 'SET_SELECTED_MODULE_PENDING',
-     payload: {
-       wf_module_id: 30
-     }
+     type: 'SET_SELECTED_MODULE',
+     payload: 32,
     });
-    expect(state.selected_wf_module).toBe(30);
-  });
-
-  it('Sets the logged in user to the value we specify', () => {
-    const user = {
-      display_name: "Example User",
-      email: "example@example.org",
-      google_credentials: [1],
-      id: 1
-    };
-    const state = workflowReducer(test_state, {
-      type: 'GET_CURRENT_USER_FULFILLED',
-      payload: user
-    });
-    expect(state.loggedInUser).toBe(user);
-  });
-
-  it('Deletes the expected user credential', () => {
-    const user = {
-      display_name: "Example User",
-      email: "example@example.org",
-      google_credentials: [1],
-      id: 1
-    };
-
-    let state = workflowReducer(test_state, {
-      type: 'GET_CURRENT_USER_FULFILLED',
-      payload: user
-    });
-
-    state = workflowReducer(state, {
-      type: 'DISCONNECT_CURRENT_USER_PENDING',
-      payload: {
-        credential_id: 1
-      }
-    });
-
-    expect(state.loggedInUser.google_credentials.length).toEqual(0);
-  });
-
-  it('Returns state if given a non-existent user credential', () => {
-    const user = {
-      display_name: "Example User",
-      email: "example@example.org",
-      google_credentials: [1],
-      id: 1
-    };
-
-    const state = workflowReducer(test_state, {
-      type: 'GET_CURRENT_USER_FULFILLED',
-      payload: user
-    });
-
-    const state2 = workflowReducer(state, {
-      type: 'DISCONNECT_CURRENT_USER_PENDING',
-      payload: {
-        credential_id: 2
-      }
-    });
-
-    expect(state2).toBe(state);
+    expect(state.selected_wf_module).toBe(32);
   });
 
   it('Updates the workflow module with the specified data', () => {

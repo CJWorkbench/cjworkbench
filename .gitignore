@@ -33,5 +33,6 @@ importedmodules/
 
 client_secret.json
 socialaccounts_secrets.json
+twitter_secret.json
 
 .DS_Store

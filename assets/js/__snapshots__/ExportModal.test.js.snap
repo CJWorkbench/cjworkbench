@@ -84,7 +84,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           CSV
                         </label>
                         <div
-                          class="info-1 t-f-blue test-csv-copy"
+                          class="info-1 action-link test-csv-copy"
                         >
                           COPY LIVE LINK
                         </div>
@@ -117,7 +117,7 @@ exports[`ExportModal should match snapshot 1`] = `
                           JSON
                         </label>
                         <div
-                          class="info-1 t-f-blue test-json-copy"
+                          class="info-1 action-link test-json-copy"
                         >
                           COPY LIVE LINK
                         </div>
@@ -287,12 +287,12 @@ exports[`ExportModal should match snapshot 1`] = `
                               </label>
                             </Label>
                             <CopyToClipboard
-                              className="info-1 t-f-blue test-csv-copy"
+                              className="info-1 action-link test-csv-copy"
                               onCopy={[Function]}
                               text="/public/moduledata/live/415.csv"
                             >
                               <div
-                                className="info-1 t-f-blue test-csv-copy"
+                                className="info-1 action-link test-csv-copy"
                                 onClick={[Function]}
                               >
                                 COPY LIVE LINK
@@ -349,12 +349,12 @@ exports[`ExportModal should match snapshot 1`] = `
                               </label>
                             </Label>
                             <CopyToClipboard
-                              className="info-1 t-f-blue test-json-copy"
+                              className="info-1 action-link test-json-copy"
                               onCopy={[Function]}
                               text="/public/moduledata/live/415.json"
                             >
                               <div
-                                className="info-1 t-f-blue test-json-copy"
+                                className="info-1 action-link test-json-copy"
                                 onClick={[Function]}
                               >
                                 COPY LIVE LINK

@@ -194,10 +194,6 @@ class WorkbenchAPI {
     return this._fetch('/api/user/')
   }
 
-  disconnectCurrentUser(id) {
-    return this._submit('delete', `/api/user/google_credentials`, { credentialId: id })
-  }
-
   deleteWfModuleNotifications(wfModuleId) {
     return this._delete(`/api/wfmodules/${wfModuleId}/notifications`)
   }
@@ -216,6 +212,38 @@ class WorkbenchAPI {
 
   postParamEvent(paramId, data) {
     return this._post(`/api/parameters/${paramId}/event`, data)
+  }
+
+  /**
+   * Return a String access token, or null.
+   */
+  paramOauthGenerateAccessToken(paramId) {
+    // Unlike other API methods, this one accepts 404 and 403 as valid.
+    //
+    // The server happens to return text instead of JSON, but the real reason
+    // we can't share code is the status codes.
+    return fetch(`/api/parameters/${paramId}/oauth_generate_access_token`, {
+      method: 'post',
+      headers: apiHeaders,
+      credentials: 'include',
+    })
+      .then(res => {
+        if (res.status === 404) {
+          return null
+        } else if (res.status !== 200) {
+          console.warn('Server did not generate OAuth token: ', res.text())
+          return null
+        } else if ((res.headers.get('content-type') || '').toLowerCase().indexOf('text/plain') !== 0) {
+          console.warn('Server response is not text/plain', res)
+          return null
+        } else {
+          return res.text() || null
+        }
+      })
+  }
+
+  paramOauthDisconnect(paramId) {
+    return this._delete(`/api/parameters/${paramId}/oauth_authorize`)
   }
 }
 

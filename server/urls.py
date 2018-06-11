@@ -4,6 +4,7 @@ from django.views.generic.base import RedirectView
 from . import views
 from .views.UploadedFileView import UploadedFileView
 from rest_framework import routers
+from .views.user import current_user
 
 urlpatterns = [
     # ex: /
@@ -53,6 +54,10 @@ urlpatterns = [
     # Parameters
     url(r'^api/parameters/(?P<pk>[0-9]+)/?$', views.parameterval_detail),
     url(r'^api/parameters/(?P<pk>[0-9]+)/event/?$', views.parameterval_event),
+    url(r'^api/parameters/(?P<pk>[0-9]+)/oauth_authorize$', views.parameterval_oauth_start_authorize),
+    url(r'^api/parameters/(?P<pk>[0-9]+)/oauth_generate_access_token$',
+        views.parameterval_oauth_generate_access_token),
+    url(r'^oauth/?$', views.parameterval_oauth_finish_authorize),
 
     url(r'^public/paramdata/live/(?P<pk>[0-9]+).png$', views.parameterval_png),
 
@@ -65,7 +70,9 @@ urlpatterns = [
     # Preloader testing
     url(r'^preloader/$', TemplateView.as_view(template_name='preloader.html')),
 
+    # User
+    url(r'^api/user/$', current_user),
+
     # 404
     url(r'^404/$', TemplateView.as_view(template_name='404.html')),
-
 ]

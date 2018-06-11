@@ -1,7 +1,9 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import IframeCtrl from './IframeCtrl'
-import {Modal, ModalBody, ModalHeader} from 'reactstrap'
+import Modal from 'reactstrap/lib/Modal'
+import ModalHeader from 'reactstrap/lib/ModalHeader'
+import ModalBody from 'reactstrap/lib/ModalBody'
 import {store, setWorkflowPublicAction} from "./workflow-reducer"
 import {escapeHtml} from "./utils";
 let OutputIframeCtrl;

@@ -213,5 +213,3 @@ def update_wfm_parameters_to_new_version(wfm, new_version):
 
             wfm.module_version = new_version
             wfm.save()
-
-

@@ -3,10 +3,12 @@
 
 from django.db import models
 import pandas as pd
+import json
 from server import websockets
-from server.models.Module import *
-from server.models.ModuleVersion import *
-from server.models.ParameterVal import *
+from .Module import Module
+from .ModuleVersion import ModuleVersion
+from .ParameterSpec import ParameterSpec
+from .ParameterVal import ParameterVal
 from django.utils import timezone
 from server.models.StoredObject import StoredObject
 from django.core.files.storage import default_storage
@@ -16,6 +18,26 @@ from django.dispatch import receiver
 # Formatted to return milliseconds... so we are assuming that we won't store two data versions in the same ms
 def current_iso_datetime_ms():
     return timezone.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
+
+
+# ---- Parameter Dictionary Sanitization ----
+
+# Column sanitization: remove invalid column names
+# We can get bad column names if the module is reordered, for example
+# Never make the render function deal with this.
+def sanitize_column_param(pval, table_cols):
+    col = pval.get_value()
+    if col in table_cols:
+        return col
+    else:
+        return ''
+
+def sanitize_multicolumn_param(pval, table_cols):
+    cols = pval.get_value().split(',')
+    cols = [c.strip() for c in cols]
+    cols = [c for c in cols if c in table_cols]
+
+    return ','.join(cols)
 
 
 class WfModule(models.Model):
@@ -28,6 +50,31 @@ class WfModule(models.Model):
         else:
             wfstr = ' - deleted from workflow'
         return self.get_module_name() + ' - id: ' + str(self.id) + wfstr
+
+
+    def create_parameter_dict(self, table):
+        """Present parameters as a dict, with some inconsistent munging.
+
+        A `column` parameter that refers to an invalid column will be renamed
+        to the empty string.
+
+        A `multicolumn` parameter will have its values `strip()`ed and have
+        invalid columns removed.
+        """
+        pdict = {}
+        for p in self.parameter_vals.all().prefetch_related('parameter_spec'):
+            type = p.parameter_spec.type
+            id_name = p.parameter_spec.id_name
+
+            if type == ParameterSpec.COLUMN:
+                pdict[id_name] = sanitize_column_param(p, table.columns)
+            elif type == ParameterSpec.MULTICOLUMN:
+                pdict[id_name] = sanitize_multicolumn_param(p, table.columns)
+            else:
+                pdict[id_name] = p.get_value()
+
+        return pdict
+
 
     # --- Fields ----
     workflow = models.ForeignKey(
@@ -209,6 +256,26 @@ class WfModule(models.Model):
         pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
         return pval.selected_menu_item_string()
 
+    def get_param_secret_secret(self, id_name: str):
+        """Get a secret's "secret" data, or None."""
+        try:
+            pspec = ParameterSpec.objects.get(module_version=self.module_version, id_name=id_name)
+        except ParameterSpec.DoesNotExist:
+            raise ValueError(f'Request for non-existent secret parameter ' + id_name)
+        pval = ParameterVal.objects.get(wf_module=self, parameter_spec=pspec)
+        # Don't use get_value(), since it hides the secret. (We're paranoid
+        # about leaking users' secrets.)
+        json_val = pval.value
+        if json_val:
+            try:
+                val = json.loads(json_val)
+            except json.decoder.JSONDecodeError:
+                return None
+
+            return val['secret']
+        else:
+            return None
+
     def get_param_column(self, name):
         return self.get_param_raw(name, ParameterSpec.COLUMN)
 
@@ -222,17 +289,18 @@ class WfModule(models.Model):
     def set_busy(self, notify=True):
         self.status = self.BUSY
         self.error_msg = ''
+        self.save()
         if notify:
             websockets.ws_client_wf_module_status(self, self.status)
-        self.save()
+
 
     # re-render entire workflow when a module goes ready or error, on the assumption that new output data is available
     def set_ready(self, notify=True):
         self.status = self.READY
         self.error_msg = ''
+        self.save()
         if notify:
             websockets.ws_client_rerender_workflow(self.workflow)
-        self.save()
 
     def set_error(self, message, notify=True):
         self.error_msg = message

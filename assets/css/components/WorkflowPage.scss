@@ -47,7 +47,7 @@
 
   // contain iframe
   .data-reactroot {
-    background-color: red;
+    background-color: $WF-background;
   }
 
   .overlapping .module-stack:not(.focus)::after {

@@ -2,12 +2,10 @@
 
 import React from 'react'
 import PropTypes from 'prop-types'
-import {
-    DropdownMenu,
-    UncontrolledDropdown,
-    DropdownToggle,
-    DropdownItem,
-  } from 'reactstrap'
+import UncontrolledDropdown from 'reactstrap/lib/UncontrolledDropdown'
+import DropdownToggle from 'reactstrap/lib/DropdownToggle'
+import DropdownMenu from 'reactstrap/lib/DropdownMenu'
+import DropdownItem from 'reactstrap/lib/DropdownItem'
 import ExportModal from './ExportModal'
 
 
@@ -41,7 +39,7 @@ export default class WfModuleContextMenu extends React.Component {
 
           <DropdownItem key={1} onClick={this.toggleExportModal} className='test-export-button'>
             <i className='icon-download'></i>
-            <span>Export</span>
+            <span>Export data</span>
             <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.id} onClose={this.toggleExportModal}/>
           </DropdownItem>
 

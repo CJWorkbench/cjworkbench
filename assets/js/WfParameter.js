@@ -11,7 +11,7 @@ import DataVersionSelect from './wfparameters/DataVersionSelect'
 import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
 import GoogleConnect from './wfparameters/GoogleConnect'
-import FileSelect from './wfparameters/FileSelect'
+import GoogleFileSelect from './wfparameters/GoogleFileSelect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
@@ -68,7 +68,7 @@ export default class WfParameter extends React.Component {
     return nameParts.join(' ')
   }
 
-  paramChanged(newVal, pressedEnter) {
+  paramChanged = (newVal, pressedEnter) => {
     this.props.changeParam(this.props.p.id, {value: newVal, pressed_enter: pressedEnter});
   }
 
@@ -130,6 +130,29 @@ export default class WfParameter extends React.Component {
     if (this.firstProps) {
       this.setInputValue(newProps.p.value);
       this.firstProps = false;
+    }
+  }
+
+  onChangeGoogleFileSelectJson = (json) => {
+    this.props.setParamText('googlefileselect', json)
+  }
+
+  render_secret_parameter() {
+    const { id_name } = this.props.p.parameter_spec
+    switch (id_name) {
+      case 'google_credentials':
+        const { id, value } = this.props.p
+        const secretName = value ? (value.name || null) : null
+        return (
+          <GoogleConnect
+            paramId={id}
+            api={this.props.api}
+            secretName={secretName}
+            />
+        )
+
+     default:
+       return (<p className="error">Secret type {id_name} not handled</p>)
     }
   }
 
@@ -202,25 +225,23 @@ export default class WfParameter extends React.Component {
         </div> );
     } else if (id_name == 'file') {
       return (
-            <DropZone
-            wfModuleId={this.props.wf_module_id}
-            revision={this.props.revision} />
-        );
-    } else if (id_name == 'connect') {
-      return (
-        <GoogleConnect
-          userCreds={this.props.loggedInUser.google_credentials}
-        />
-      )
-    } else if (id_name == 'fileselect') {
-      return (
-        <FileSelect
+        <DropZone
+          wfModuleId={this.props.wf_module_id}
+          revision={this.props.revision}
           api={this.props.api}
-          userCreds={this.props.loggedInUser.google_credentials}
-          pid={this.props.p.id}
-          saveState={state => this.props.setParamText('fileselect', state)}
-          getState={() => this.props.getParamText('fileselect')}
-        />
+          />
+      );
+    } else if (id_name == 'googlefileselect') {
+      const secret = this.props.getParamText('google_credentials')
+      const secretName = secret ? (secret.name || null) : null
+      return (
+        <GoogleFileSelect
+          api={this.props.api}
+          googleCredentialsParamId={this.props.getParamId('google_credentials')}
+          googleCredentialsSecretName={secretName}
+          fileMetadataJson={this.props.getParamText('googlefileselect')}
+          onChangeJson={this.onChangeGoogleFileSelectJson}
+          />
       )
     } else if (id_name == 'code') {
       return (
@@ -253,7 +274,6 @@ export default class WfParameter extends React.Component {
         />
       )
     } else if (id_name == 'rename-entries') {
-      //console.log(this.props);
       return (
           <RenameEntries
               loadAll={this.props.getParamText('display-all')}
@@ -264,6 +284,8 @@ export default class WfParameter extends React.Component {
               revision={this.props.revision}
           />
       )
+    } else {
+      return (<p className="error">Custom type {id_name} not handled</p>)
     }
   }
 
@@ -328,10 +350,10 @@ export default class WfParameter extends React.Component {
         // Different size and style if it's a multiline string
         var sclass, srows;
         if (!this.props.p.parameter_spec.multiline) {
-          sclass='parameter-base t-d-gray content-2 text-field';
+          sclass='text-field';
           srows = 1;
         } else {
-          sclass='parameter-base t-d-gray content-3 text-field-large';
+          sclass='module-parameter t-d-gray content-3 text-field-large';
           srows = 4;
         }
 
@@ -360,7 +382,7 @@ export default class WfParameter extends React.Component {
             <div className='label-margin t-d-gray content-3'>{name}</div>
             <input type="text"
               readOnly={this.props.isReadOnly}
-              className='number-field parameter-base t-d-gray content-3'
+              className='number-field module-parameter t-d-gray content-3'
               name={id_name}
               rows='1'
               defaultValue={this.props.p.value}
@@ -440,6 +462,9 @@ export default class WfParameter extends React.Component {
               revision={this.props.revision} />
           </div> );
 
+      case 'secret':
+        return this.render_secret_parameter();
+
       case 'custom':
         return this.render_custom_parameter();
 
@@ -451,18 +476,20 @@ export default class WfParameter extends React.Component {
 
 WfParameter.propTypes = {
   p: PropTypes.shape({
+    id: PropTypes.number.isRequired,
+    value: PropTypes.any,
     parameter_spec: PropTypes.shape({
       id_name: PropTypes.string.isRequired,
       type: PropTypes.string.isRequired,
     }).isRequired,
   }).isRequired,
-  moduleName:       PropTypes.string.isRequired,
-  wf_module_id:     PropTypes.number.isRequired,
-  revision:         PropTypes.number.isRequired,
-  loggedInUser:     PropTypes.object,             // in read-only there is no user logged in
-  api:              PropTypes.object.isRequired,
-  updateSettings:   PropTypes.object,             // only for modules that load data
-  changeParam:      PropTypes.func.isRequired,
-	getParamText:     PropTypes.func.isRequired,
-  setParamText:     PropTypes.func.isRequired,
+  moduleName:     PropTypes.string.isRequired,
+  wf_module_id:   PropTypes.number.isRequired,
+  revision:       PropTypes.number.isRequired,
+  api:            PropTypes.object.isRequired,
+  updateSettings: PropTypes.object,             // only for modules that load data
+  changeParam:    PropTypes.func.isRequired,
+  getParamId:     PropTypes.func.isRequired,
+  getParamText:   PropTypes.func.isRequired,
+  setParamText:   PropTypes.func.isRequired,
 }

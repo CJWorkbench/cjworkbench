@@ -4,10 +4,9 @@ from django.conf import settings
 from server.models import WfModule
 from server.models.ParameterSpec import ParameterSpec
 from server.models.ParameterVal import ParameterVal
-from .dynamicdispatch import get_module_render_fn,get_module_html_path
-from .importmodulefromgithub import original_module_lineno
+from .dynamicdispatch import get_module_render_fn, get_module_html_path, wf_module_to_dynamic_module
 from .sanitizedataframe import sanitize_dataframe, truncate_table_if_too_big
-import os, sys, traceback, types, inspect
+import os, inspect
 from django.utils.translation import gettext as _
 
 from .modules.counybydate import CountByDate
@@ -32,7 +31,9 @@ from .modules.rename import RenameFromTable
 
 
 class NOP(ModuleImpl):
-    pass
+    @staticmethod
+    def render(wfmodule, table):
+        return table
 
 
 class DoubleMColumn(ModuleImpl):
@@ -67,45 +68,6 @@ module_dispatch_tbl = {
     'double_M_col': DoubleMColumn
 }
 
-# ---- Parameter Dictionary Sanitization ----
-
-# Column sanitization: remove invalid column names
-# We can get bad column names if the module is reordered, for example
-# Never make the render function deal with this.
-
-def sanitize_column_param(pval, table_cols):
-    col = pval.get_value()
-    if col in table_cols:
-        return col
-    else:
-        return ''
-
-def sanitize_multicolumn_param(pval, table_cols):
-    cols = pval.get_value().split(',')
-    cols = [c.strip() for c in cols]
-    cols = [c for c in cols if c in table_cols]
-
-    return ','.join(cols)
-
-
-# Extracts all parameter values from the Wf Module, does some error checking,
-# and stores in a dict ready for the (dynamically loaded) module's render function
-def create_parameter_dict(wf_module, table):
-    pdict = {}
-    for p in ParameterVal.objects.filter(wf_module=wf_module):
-        type = p.parameter_spec.type
-        id_name = p.parameter_spec.id_name
-
-        if type == ParameterSpec.COLUMN:
-            pdict[id_name] = sanitize_column_param(p, table.columns)
-        elif type == ParameterSpec.MULTICOLUMN:
-            pdict[id_name] = sanitize_multicolumn_param(p, table.columns)
-        else:
-            pdict[id_name] = p.get_value()
-
-    return pdict
-
-
 # ---- Dispatch Entrypoints ----
 
 # Main render entrypoint.
@@ -113,46 +75,26 @@ def module_dispatch_render(wf_module, table):
     if wf_module.module_version is None:
         return pd.DataFrame()  # happens if module deleted
 
+    render_fn = None
+
     dispatch = wf_module.module_version.module.dispatch
-    error = None
-    tableout = None
-
-    # External module -- gets only a parameter dictionary
-    if dispatch not in module_dispatch_tbl.keys():
-
-        render_fn = get_module_render_fn(wf_module)
-        if not render_fn:
-            raise ValueError('Unknown render dispatch %s for module %s' % (dispatch, wf_module.module.name))
-
-        params = create_parameter_dict(wf_module, table)
-        try:
-            tableout = render_fn(table, params)
-        except Exception as e:
-            # Catch exceptions in the module render function, and return error message + line number to user
-            exc_name = type(e).__name__
-            exc_type, exc_obj, exc_tb = sys.exc_info()
-            tb = traceback.extract_tb(exc_tb)[1]    # [1] = where the exception ocurred, not the render() just above
-            fname = os.path.split(tb[0])[1]
-            lineno = original_module_lineno(tb[1])
-            error = ('{}: {} at line {} of {}'.format(exc_name, str(e), lineno, fname))
-            tableout = error
-
-    # Internal module -- has access to internal data structures
+    if dispatch in module_dispatch_tbl:
+        render_fn = module_dispatch_tbl[dispatch].render
     else:
-        tableout = module_dispatch_tbl[dispatch].render(wf_module, table)
+        render_fn = get_module_render_fn(wf_module)
 
+    tableout = render_fn(wf_module, table)
     error = None
+
     if isinstance(tableout, str):
-        # If the module returns a string, it's an error message. Return the input table (NOP)
-        error = tableout
-        tableout = table # NOP
+        # a string is an error message, and there is no table
+        (tableout, error) = (table, tableout) # weird? output = input
 
-    elif isinstance(tableout, tuple) and isinstance(tableout[0], pd.DataFrame) and isinstance(tableout[1], str):
-        # tuple with a table and a warning message
-        error = tableout[1]
-        tableout = tableout[0]
+    if isinstance(tableout, tuple) and len(tableout) == 2:
+        # a tuple is what we expect: (table, error)
+        (tableout, error) = tableout
 
-    elif (tableout is not None) and (not isinstance(tableout, pd.DataFrame)):
+    if (tableout is not None) and (not isinstance(tableout, pd.DataFrame)):
         # if it's not a string or a tuple it needs to be a table
         error = _('Module did not return a table or an error message')
         tableout = None
@@ -183,12 +125,14 @@ def module_dispatch_render(wf_module, table):
 
 def module_dispatch_event(wf_module, **kwargs):
     dispatch = wf_module.module_version.module.dispatch
-    if dispatch not in module_dispatch_tbl.keys():
-        raise ValueError("Unknown dispatch id '%s' while handling event for module '%s'" % (dispatch, str(wf_module)))
+    if dispatch in module_dispatch_tbl:
+        # Clear errors on every new event. (The other place they are cleared is on parameter change)
+        wf_module.set_ready(notify=False)
+        return module_dispatch_tbl[dispatch].event(wf_module, **kwargs)
+    else:
+        dynamic_module = wf_module_to_dynamic_module(wf_module)
+        dynamic_module.fetch(wf_module)
 
-    # Clear errors on every new event. (The other place they are cleared is on parameter change)
-    wf_module.set_ready(notify=False)
-    return module_dispatch_tbl[dispatch].event(wf_module, **kwargs)
 
 def module_dispatch_output(wf_module, table, **kwargs):
     dispatch = wf_module.module_version.module.dispatch
@@ -202,7 +146,7 @@ def module_dispatch_output(wf_module, table, **kwargs):
                 break
 
     tableout = module_dispatch_render(wf_module, table)
-    params = create_parameter_dict(wf_module, table)
+    params = wf_module.create_parameter_dict(table)
     # got some error handling in here if, for some reason, someone tries to call
     # output on this and it doesn't have any defined html output
     html_file = open(html_file_path, 'r+', encoding="utf-8")

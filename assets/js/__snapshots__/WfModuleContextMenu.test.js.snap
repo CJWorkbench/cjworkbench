@@ -100,7 +100,7 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                     className="icon-download"
                   />
                   <span>
-                    Export
+                    Export data
                   </span>
                   <ExportModal
                     onClose={[Function]}

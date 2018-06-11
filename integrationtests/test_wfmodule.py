@@ -26,7 +26,7 @@ class TestWfModule(LoggedInIntegrationTest):
         # wait for wfmodule to appear
         self.browser.fill_in('csv', csv, wait=True)
         # blur, to begin saving result to server
-        self.browser.click_whatever('ul.WF-meta span', text='by')
+        self.browser.click_whatever('ul.metadata-container', text='by')
         # and for some reason, that doesn't do the trick! Focus again?
         self.browser.click_whatever('textarea[name="csv"]')
 

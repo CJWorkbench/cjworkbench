@@ -1,5 +1,8 @@
 import React from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import Modal from 'reactstrap/lib/Modal'
+import ModalHeader from 'reactstrap/lib/ModalHeader'
+import ModalBody from 'reactstrap/lib/ModalBody'
+import ModalFooter from 'reactstrap/lib/ModalFooter'
 import { findIdxByProp } from "../workflow-reducer";
 import dateFormat from 'dateformat'
 import * as Actions from '../workflow-reducer'
@@ -139,7 +142,7 @@ class DataVersionSelect extends React.Component {
 
       modalLink =
         <div>
-          <div className='open-modal t-f-blue content-3 ml-2' onClick={this.toggleModal}>
+          <div className='open-modal action-link content-3 ml-2' onClick={this.toggleModal}>
             {versionText}
           </div>
         
@@ -199,7 +202,7 @@ class DataVersionSelect extends React.Component {
     } else {
       versionText = "No data loaded";
       modalLink =
-        <div className='open-modal t-f-blue content-3 ml-2'>-</div>
+        <div className='open-modal action-link content-3 ml-2'>-</div>
     }
 
     return (

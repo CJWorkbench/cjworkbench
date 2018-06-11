@@ -39,6 +39,7 @@
     }
 
     .WFmodule-icon {
+      margin-right: .6rem;
       font-size: 1.2rem;
     }
 
@@ -61,6 +62,8 @@
       &:hover{opacity: 1}
 
       i.icon-sort-right {font-size:1rem;}
+
+      i.icon-sort-down {font-size:.6rem;}
 
       i {color:$medium-gray}
     }
@@ -137,24 +140,35 @@
       .edit-note {
         margin-left: .1rem;
         margin-right:.2rem;
-        i.icon-note { margin-left: .1rem;}
+        i.icon-note {
+          margin-left: .1rem;
+          font-size: 1.5rem;
+        }
       }
 
       .dropdown {
-        margin-top: .1rem;
+        margin-top: .2rem;
         display: inline-block;
         margin-left: -.3rem;
+
+        i.icon-more {
+          position: relative;
+          top:.1rem;
+        }
       }
-    }
+      // Alert icons in modules when notifications are set
+      .notification-badge{
+        display: inline-block;
+        cursor: pointer;
+        line-height:2.3;
 
-    // Alert icons in modules when notifications are set
-    .notification-badge{
-      display: inline-block;
-      cursor: pointer;
-      font-size: 1.3rem;
+        i.icon-notification {
+          font-size: 1.35rem;
+        }
 
-      span.count {
-        font-size: 1rem;
+        span.count {
+          font-size: 1rem;
+        }
       }
     }
   }

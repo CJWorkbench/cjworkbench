@@ -70,7 +70,7 @@ describe('DataVersionSelect', () => {
       wrapper.update()
       var modalLink = wrapper.find('div.open-modal');
       expect(modalLink).toHaveLength(1);
-      expect(wrapper.find('.t-f-blue').text()).toEqual("2 of 5");
+      expect(wrapper.find('.action-link').text()).toEqual("2 of 5");
 
       modalLink.simulate('click');
       expect(wrapper.state().modalOpen).toBe(true);

@@ -1,9 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import ColumnColorPicker from  './ColumnColorPicker'
-import { errorText } from './errors'
 import {setParamValueActionByIdName, setWfModuleStatusAction, store} from "../../workflow-reducer";
-import debounce from 'lodash/debounce'
 import { OutputIframeCtrl } from '../../OutputIframe'
 import update from 'immutability-helper'
 
@@ -191,7 +189,7 @@ export default class ChartEditor extends React.Component {
             <input
               type="text"
               name="title"
-              className="wfmoduleStringInput parameter-base t-d-gray content-2 text-field"
+              className="wfmoduleStringInput module-parameter t-d-gray content-2 text-field"
               value={this.state.model.metadata.title}
               onChange={this.onChangeTitle} />
           </div>
@@ -202,7 +200,7 @@ export default class ChartEditor extends React.Component {
             </div>
             <input
               type="text"
-              className="wfmoduleStringInput t-d-gray parameter-base content-2 text-field"
+              className="wfmoduleStringInput t-d-gray module-parameter content-2 text-field"
               value={this.state.model.chartProps.scale.primaryScale.prefix}
               onChange={this.onChangePrefix} />
           </div>
@@ -213,7 +211,7 @@ export default class ChartEditor extends React.Component {
             </div>
             <input
               type="text"
-              className="wfmoduleStringInput t-d-gray parameter-base content-2 text-field"
+              className="wfmoduleStringInput t-d-gray module-parameter content-2 text-field"
               value={this.state.model.chartProps.scale.primaryScale.suffix}
               onChange={this.onChangeSuffix} />
           </div>

@@ -4,16 +4,14 @@ import EditableWorkflowName from './EditableWorkflowName'
 import WorkflowMetadata from './WorkflowMetadata'
 import PropTypes from 'prop-types'
 import {goToUrl, logUserEvent} from './utils'
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Form,
-  FormGroup,
-  Label,
-  Input
-} from 'reactstrap'
+import Modal from 'reactstrap/lib/Modal'
+import ModalHeader from 'reactstrap/lib/ModalHeader'
+import ModalBody from 'reactstrap/lib/ModalBody'
+import ModalFooter from 'reactstrap/lib/ModalFooter'
+import Form from 'reactstrap/lib/Form'
+import FormGroup from 'reactstrap/lib/FormGroup'
+import Label from 'reactstrap/lib/Label'
+import Input from 'reactstrap/lib/Input'
 import CopyToClipboard from 'react-copy-to-clipboard';
 import { Share } from 'react-twitter-widgets'
 
@@ -109,7 +107,7 @@ export default class WorkflowNavBar extends React.Component {
       );
     } else {
       return (
-        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='info-2 t-f-blue'>
+        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='info-2 action-link'>
           <div>Copy to clipboard</div>
         </CopyToClipboard>
       );

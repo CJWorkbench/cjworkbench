@@ -6,7 +6,10 @@
  */
 
 import React from 'react'
-import { Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap'
+import Modal from 'reactstrap/lib/Modal'
+import ModalHeader from 'reactstrap/lib/ModalHeader'
+import ModalBody from 'reactstrap/lib/ModalBody'
+import ModalFooter from 'reactstrap/lib/ModalFooter'
 import PropTypes from 'prop-types'
 import { loadModulesAction } from './workflow-reducer'
 import {connect} from "react-redux";
@@ -156,7 +159,7 @@ export class ImportModuleFromGitHub extends React.Component {
                       placeholder='https://github.com/...'
                       onChange={this.handleChange}
                       />
-              <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a target="_blank" href=" https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module" className=' t-f-blue'>here</a></div>
+              <div className="label-margin t-m-gray info-1">Learn more about how to build your own module <a target="_blank" href=" https://github.com/CJWorkbench/cjworkbench/wiki/Creating-A-Module" className=' action-link'>here</a></div>
               </div>
               {formContent}
             </form>

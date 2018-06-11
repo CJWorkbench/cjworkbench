@@ -12,7 +12,7 @@ from rest_framework.renderers import JSONRenderer
 from server.utils import *
 from server.models import Module, ModuleVersion, Workflow
 from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
-from server.serializers import WorkflowSerializer, WorkflowSerializerLite, WfModuleSerializer, UserSerializer
+from server.serializers import WorkflowSerializer, ModuleSerializer, WorkflowSerializerLite, WfModuleSerializer, UserSerializer
 from server.versions import WorkflowUndo, WorkflowRedo
 from django.db.models import Q
 import json
@@ -73,11 +73,16 @@ rename_module_id.id = None
 
 
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
-def make_init_state(request, workflow=None):
+def make_init_state(request, workflow=None, modules=None):
     ret = {}
 
     if workflow:
         ret['workflowId'] = workflow.id
+        ret['workflow'] = WorkflowSerializer(workflow, context={'user' : request.user}).data
+        ret['selected_wf_module'] = workflow.selected_wf_module
+
+    if modules:
+        ret['modules'] = ModuleSerializer(modules, many=True).data
 
     if request.user.is_authenticated():
         ret['loggedInUser'] = UserSerializer(request.user).data
@@ -93,7 +98,8 @@ def make_init_state(request, workflow=None):
 @login_required
 def render_workflows(request):
     init_state = make_init_state(request)
-    return TemplateResponse(request, 'workflows.html', {'initState': json.dumps(init_state)})
+    return TemplateResponse(request, 'workflows.html',
+                            {'initState': init_state})
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])
@@ -132,8 +138,11 @@ def render_workflow(request, pk=None):
     if workflow.lesson and workflow.owner == request.user:
         return redirect(workflow.lesson)
     else:
-        init_state = make_init_state(request, workflow=workflow)
-        return TemplateResponse(request, 'workflow.html', {'initState': json.dumps(init_state)})
+        modules = Module.objects.all()
+        init_state = make_init_state(request, workflow=workflow,
+                                     modules=modules)
+        return TemplateResponse(request, 'workflow.html',
+                                {'initState': init_state})
 
 # Retrieve or delete a workflow instance.
 # Or reorder modules

@@ -11,13 +11,24 @@ article.lesson {
     flex-grow: 1;
   }
 
+  img {
+    position:relative;
+    width: 32rem;
+    padding: 1rem;
+    background-color: $dark-accent--medium;
+    &.icon-insert {
+      padding:0;
+      background-color: transparent;
+    }
+  }
+
   section {
     cursor: default;
     display: flex;
     flex-direction: column;
     background-color: $table-element;
     height: calc(100vh - 8rem);
-    width: 32rem;
+    width: 36rem;
     padding:2rem;
     overflow-y: scroll;
     overflow-x: hidden;
@@ -40,6 +51,7 @@ article.lesson {
 
     h2 {
       color:#fff;
+      line-height: 3rem;
     }
 
     &>.description {
@@ -51,7 +63,63 @@ article.lesson {
       }
     }
 
+    %copy-txt {
+      position: relative;
+      width: 32rem;
+      margin: 1rem 0 2rem 0;
+      padding:1rem;
+      background-color: $dark-accent--medium;
+      word-break: break-all;
+      border-radius: .3rem;
+      cursor: text;
+      @extend %content-3;
+    }
+    .copy-txt {@extend %copy-txt;} // necessary in order to use @extend
+
+    .code-block {
+      @extend %copy-txt;
+      @extend %code-1;
+    }
+
+    .highlight {color:$brand-learn;}
+
+    figure {
+      margin: 1rem 0 2rem 0!important;
+      max-width: 100%;
+      margin: 0 auto; // in case image is too small
+
+      figcaption {
+        margin-top: 1rem;
+        @extend %info-1;
+        font-size: 1.3rem;
+        line-height: 2.5rem;
+        text-align: center;
+        margin: 0 1rem 1rem;
+      }
+    }
+
+    code {
+      @extend %code-1;
+      background-color: $dark-accent--medium;
+      color:white;
+      padding: 0.5rem;
+      border-radius:.3rem;
+    }
+
+    kbd {
+      @extend %lesson-content--1;
+      font-weight: 400;
+      color:$brand-learn;
+      background-color: transparent;
+    }
+
+    .icon-insert {
+      margin: 0 .5rem;
+      width:2.7rem;
+    }
+
     &>.instructions {
+      color:$white;
       margin-top: 1.5rem;
 
       h3 {
@@ -72,45 +140,28 @@ article.lesson {
         list-style-type: none;
         padding-left: 2rem;
 
-        .copy-txt {
+        .copy-txt, .image {left:-2rem;}
+
+        .instruction-detail {
           position: relative;
           left:-2rem;
-          width: 28rem;
-          margin: 1rem 0;
-          padding:1rem;
-          background-color: rgba(0,0,0,0.1);
-          border-radius: 3px;
-          word-break: break-all;
-          cursor: text;
+          margin-top: 2rem;
+          width:32rem;
+          &.highlight{
+            font-weight:400;
+            color: $white;
+          }
         }
 
+        figure img, figcaption {
+          margin-left:-2rem;
 
-        .lesson-note {
-          position: relative;
-          left:-2rem;
-          margin-top: 2.5rem;
-          width:28rem;
-          font-weight: 500;
-        }
-
-        .image{
-          position: relative;
-          left:-2rem;
-          margin:0.5rem 0 1rem 0;
-          width: 28rem;
-          background-color: $dark-accent--medium;
-          padding: 1.5rem;
-        }
-
-        .icon-insert {
-          margin: 0 .5rem;
-          width:2.7rem;
         }
 
         &::before {
           content: "\e938";
           color: $light-accent--Vstrong;
-          font-size: 0.8rem;
+          font-size: .8rem;
           font-family: Workbench;
           position: absolute;
           margin-left: -2rem;
@@ -150,6 +201,8 @@ article.lesson {
     }
 
     .current-and-total {
+      @extend .content-2;
+      color:$white;
       white-space: nowrap;
     }
   }

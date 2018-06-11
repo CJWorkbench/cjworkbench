@@ -29,7 +29,6 @@
 	color:$white;
 }
 
-
 .title-1 {
 	font-size: 2.5rem;
 	font-weight: 300;
@@ -98,17 +97,23 @@
   font-weight: 400;
 }
 
-.lesson-content--1 {
+%lesson-content--1 {
 	font-size: 1.6rem;
 	line-height: 2.8rem;
 	font-weight: 200;
+	@extend %font-nunito-regular;
 }
+.lesson-content--1 {@extend %lesson-content--1;}
 
-.code-1 {
+
+%code-1 {
   font-family: "PT Mono";
 	font-size: 1.4rem;
 	line-height: 2.4rem;
+	font-weight: 300;
 }
+.code-1 {@extend %code-1;}
+
 
 %info-1 {
 	font-size: 1.2rem;
@@ -124,11 +129,13 @@
   @extend %font-nunito-extra-light;
 }
 
-.info-3{
-  font-size: 1.6rem;
-	line-height: 1.2rem;
+%info-3 {
+  font-size: 1rem;
+	line-height: 1rem;
   @extend %font-nunito-extra-light;
+	cursor: pointer;
 }
+.info-3 {@extend %info-3;}
 
 .table-1 {
 	font-size: 1.3rem;
@@ -141,86 +148,65 @@
 	line-height: 1.1rem;
 }
 
-/* --- Colors ---  */
+/* --- Colors legacy, should get rid of in the code ---  */
 
-/* Text  */
-.t-white {
-  color: #FFFFFF;
-}
-
-.t-white-u {
-  cursor:pointer;
-  color: #FFFFFF;
-  text-decoration: underline !important;
-}
-
-.t-vl-gray {
-  color: #FFF;
-}
-.t-l-gray {
-  color: #F5F5F5;
-}
-.t-m-gray {
-  color: #B4B4B4;
-}
-
-.t-d-gray {
-  color: #686768;
-}
-.t-d-blue {
-  color: #577485;
-}
-.t-f-blue {
-  cursor: pointer;
-  color: $brand-workspace;
-}
-.t-f-blue:hover {
-  cursor: pointer;
-  color: #2D9DAA;
-}
-.t-orange {
-  color: #F8AA6D;
-}
-.t-o-red {
-  color: #e24f4a;
-}
-/* Backgrounds  */
-.b-vl-gray {
-  background-color: #FAFAFA;
-}
-.b-l-gray {
-  background-color: #F2F2F2;
-}
-.b-m-gray {
-  background-color: #B4B4B4;
-}
-.b-d-gray {
-  background-color: #686768;
-}
-.b-d-blue {
-  background-color: #577485;
-}
-.b-f-blue {
-  background-color: $brand-workspace;
-}
-.b-orange {
-  background-color: #F8AA6D;
-}
-.b-table-row {
-  background-color: #EDF4F6;
-}
-.b-table-column {
-  background-color: #E1E9EB;
-}
-.b-output-blue-1 {
-  background-color: #DBECF1;
-}
-.b-output-blue-2 {
-  background-color: #BFDDE4;
-}
-.b-output-red-1 {
-  background-color: #F3B9B7;
-}
-.b-output-red-2 {
-  background-color: #E24F4A;
-}
+// /* Text  */
+//
+// .t-white-u {
+//   cursor:pointer;
+//   color: #FFFFFF;
+//   text-decoration: underline !important;
+// }
+//
+//
+// .t-d-gray {
+//   color: $dark-gray;
+// }
+//
+// .t-d-blue {
+//   color: #577485;
+// }
+//
+// .t-o-red {
+//   color: #e24f4a;
+// }
+// /* Backgrounds  */
+// .b-vl-gray {
+//   background-color: #FAFAFA;
+// }
+// .b-l-gray {
+//   background-color: #F2F2F2;
+// }
+// .b-m-gray {
+//   background-color: #B4B4B4;
+// }
+// .b-d-gray {
+//   background-color: #686768;
+// }
+// .b-d-blue {
+//   background-color: #577485;
+// }
+// .b-f-blue {
+//   background-color: $brand-workspace;
+// }
+// .b-orange {
+//   background-color: #F8AA6D;
+// }
+// .b-table-row {
+//   background-color: #EDF4F6;
+// }
+// .b-table-column {
+//   background-color: #E1E9EB;
+// }
+// .b-output-blue-1 {
+//   background-color: #DBECF1;
+// }
+// .b-output-blue-2 {
+//   background-color: #BFDDE4;
+// }
+// .b-output-red-1 {
+//   background-color: #F3B9B7;
+// }
+// .b-output-red-2 {
+//   background-color: #E24F4A;
+// }

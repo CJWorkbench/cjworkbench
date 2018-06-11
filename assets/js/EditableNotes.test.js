@@ -69,7 +69,7 @@ describe('EditableNotes', () => {
     it('saves default text and closes if user enters blank note', () => {
       wrapper.find('TextareaAutosize').prop('onChange')({ target: { value: '' }})
       wrapper.find('TextareaAutosize').prop('onBlur')() // trigger save
-      expect(api.setWfModuleNotes).toHaveBeenCalledWith(808, 'Write notes here')
+      expect(api.setWfModuleNotes).toHaveBeenCalledWith(808, 'Type something')
     })
   })
 })
