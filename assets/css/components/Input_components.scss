@@ -73,9 +73,11 @@ textarea:focus, input:focus{
 
 // Shared style to all paramters in modules
 
-%parameter-base {
+.parameter-base {
   cursor: pointer;
   width:100%;
+  color: $brand-text--dark;
+  @extend .content-3;
   height:3.5rem;
   border-radius: 3px;
   border: 2px solid $Vlight-gray;
@@ -84,12 +86,11 @@ textarea:focus, input:focus{
   border: 2px solid $dark-accent--soft;
   }
 }
-.parameter-base {
-  @extend %parameter-base;
-}
+
 
 
 .text-field {
+  @extend .parameter-base;
   padding: 0 1rem;
   white-space: nowrap;
   display: flex;

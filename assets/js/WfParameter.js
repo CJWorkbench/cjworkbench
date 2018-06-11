@@ -338,7 +338,7 @@ export default class WfParameter extends React.Component {
         // Different size and style if it's a multiline string
         var sclass, srows;
         if (!this.props.p.parameter_spec.multiline) {
-          sclass='parameter-base t-d-gray content-2 text-field';
+          sclass='text-field';
           srows = 1;
         } else {
           sclass='parameter-base t-d-gray content-3 text-field-large';
