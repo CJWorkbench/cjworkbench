@@ -9,14 +9,14 @@
       <div class="navbar-wrapper"></div>
       <div class="container">
         <div class="mx-auto lessons-list">
-          <h3 class="lessons-list--title title-3 t-m-gray">TRAINING</h3>
+          <h3 class="lessons-list--title">TRAINING</h3>
           <ul class="lessons">
             {% for lesson in lessons %}
               <li class='lesson'>
                 <form class='container' method="post" action="{{lesson.get_absolute_url}}">{% csrf_token %}
                   <a class='lesson-button' onclick="this.parentElement.submit()">
                     <h2>{{lesson.title}}</h2>
-                    <div class="description content-3">{{lesson.header.html|safe}}</div>
+                    <div class="description">{{lesson.header.html|safe}}</div>
                   </a>
                 </form>
               </li>
