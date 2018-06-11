@@ -37,3 +37,7 @@
   margin-right: 0px;
   display: flex;
 }
+
+.workflow-root.in-lesson {
+  .publicPrivate, .separator {display: none}
+}
