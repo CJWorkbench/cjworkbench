@@ -116,10 +116,14 @@ export class EditableColumnName extends React.Component {
     this.handleInputFocus = this.handleInputFocus.bind(this);
   }
 
-  enterEditMode(mode=true) {
+  enterEditMode() {
     if(!this.props.isReadOnly) {
-      this.setState({editMode: mode});
+      this.setState({editMode: true});
     }
+  }
+
+  exitEditMode() {
+    this.setState({editMode: false});
   }
 
   handleInputChange(event) {
@@ -149,7 +153,7 @@ export class EditableColumnName extends React.Component {
       this.handleInputCommit();
     } else if (event.key == 'Escape') {
       this.setState({newName: this.props.columnKey});
-      this.enterEditMode(false);
+      this.exitEditMode();
     }
   }
 
@@ -535,7 +539,7 @@ export default class DataGrid extends React.Component {
     }
 
     if(this.props.isReadOnly) {
-      return;
+      throw new Error("Attempting to edit cells in a read-only workflow.");
     }
 
     if (this.props.onEditCell)

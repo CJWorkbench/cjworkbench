@@ -137,6 +137,10 @@ export default class WfParameter extends React.Component {
     this.props.setParamText('googlefileselect', json)
   }
 
+  changeRenameColumnsLoadAll = (val) => {
+    this.props.setParamText('display-all', val);
+  };
+
   render_secret_parameter() {
     const { id_name } = this.props.p.parameter_spec
     switch (id_name) {
@@ -274,11 +278,10 @@ export default class WfParameter extends React.Component {
         />
       )
     } else if (id_name == 'rename-entries') {
-      const changeLoadAll = ((val) => {this.props.setParamText('display-all', val)});
       return (
           <RenameEntries
               loadAll={this.props.getParamText('display-all')}
-              changeLoadAll={changeLoadAll}
+              changeLoadAll={this.changeRenameColumnsLoadAll}
               entries={this.props.p.value}
               wfModuleId={this.props.wf_module_id}
               paramId={this.props.p.id}
