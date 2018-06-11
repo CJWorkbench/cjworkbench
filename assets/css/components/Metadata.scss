@@ -8,6 +8,7 @@
   list-style: none;
   cursor: pointer;
   color:$light-gray;
+  cursor: default;
   @extend .content-3;
 
   .publicPrivate {
@@ -22,8 +23,14 @@
 }
 
 // Rendered in WF page
-.navbar .WF-meta {
+.navbar .metadata {
   cursor: default;
+
+  .publicPrivate {
+    color:$white;
+    cursor:pointer;
+    &:hover{text-decoration:underline;}
+  }
 }
 
 .WF-meta--item {
