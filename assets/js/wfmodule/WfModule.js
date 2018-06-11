@@ -302,7 +302,7 @@ export class WfModule extends React.PureComponent {
           {contextMenu}
         </div>
 
-    const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon mr-2';
+    const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon';
 
     // Putting it all together: name, status, parameters, output
     return (

@@ -200,6 +200,8 @@ article.lesson {
     }
 
     .current-and-total {
+      @extend .content-2;
+      color:$white;
       white-space: nowrap;
     }
   }
