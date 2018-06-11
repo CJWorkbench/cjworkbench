@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WorkBenchAPI from '../WorkbenchAPI'
+import {store, setSelectedWfModuleAction} from "../workflow-reducer";
 
 var api = WorkBenchAPI();
 export function mockAPI(mock_api) {
@@ -13,6 +14,7 @@ export class RenameEntry extends React.Component {
         newColname: PropTypes.string.isRequired,
         onColRename: PropTypes.func.isRequired,
         onEntryDelete: PropTypes.func.isRequired,
+        isReadOnly: PropTypes.bool.isRequired
     };
 
     constructor(props) {
@@ -65,18 +67,22 @@ export class RenameEntry extends React.Component {
         // Changing them would require updating the tests accordingly.
         return (
             <div>
-                <div className={'rename-column'} style={{width: '40%', float: 'left'}}>{this.props.colname}</div>
+                <div className={'rename-column'}>{this.props.colname}</div>
                 <input
                     className={'rename-input'}
-                    style={{width: '50%'}}
                     type={'text'}
                     value={this.state.inputValue}
                     onChange={this.handleChange}
                     onBlur={this.handleBlur}
                     onKeyPress={this.handleKeyPress}
                     onFocus={this.handleFocus}
+                    disabled={this.props.isReadOnly}
                 />
-                <button className={'rename-delete'} onClick={this.handleDelete}>X</button>
+                <button
+                    className={'rename-delete'}
+                    onClick={this.handleDelete}
+                    disabled={this.props.isReadOnly}
+                >X</button>
             </div>
         )
     }
@@ -90,6 +96,7 @@ export default class RenameEntries extends React.Component {
         wfModuleId: PropTypes.number.isRequired,
         revision: PropTypes.number,
         paramId: PropTypes.number.isRequired,
+        isReadOnly: PropTypes.bool.isRequired
     };
 
     constructor(props) {
@@ -162,7 +169,17 @@ export default class RenameEntries extends React.Component {
         if(prevName in newEntries) {
             delete newEntries[prevName];
             if(Object.keys(newEntries).length == 0) {
-                api.deleteModule(this.props.wfModuleId);
+                // Find the previous module to the current module, delete the current module
+                // and switch to the previous module
+                // We can always assume previous module exist as otherwise this module wouldn't have
+                // any data and would not encounter this situation
+                let state = store.getState();
+                let currentIdx = state.workflow.wf_modules.findIndex((wfm) => (wfm.id == this.props.wfModuleId));
+                let prevIdx = currentIdx - 1;
+                // I am intermixing actions and API calls here because somehow other combinations
+                // of them do not work
+                api.deleteModule(this.props.wfModuleId)
+                    .then(() => {store.dispatch(setSelectedWfModuleAction(state.workflow.wf_modules[prevIdx].id))});
             } else {
                 api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
             }
@@ -179,6 +196,7 @@ export default class RenameEntries extends React.Component {
                     newColname={this.state.entries[col]}
                     onColRename={this.onColRename}
                     onEntryDelete={this.onEntryDelete}
+                    isReadOnly={this.props.isReadOnly}
                 />
             );
         }

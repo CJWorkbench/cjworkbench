@@ -2,6 +2,7 @@ import React from 'react'
 import RenameEntries, {RenameEntry, mockAPI} from './RenameEntries'
 import {mount, shallow} from 'enzyme'
 import {jsonResponseMock} from "../test-utils";
+import {mockStore, mockAPI as mockStoreAPI} from "../workflow-reducer";
 
 
 describe('ReorderEntries rendering and interactions', () => {
@@ -16,12 +17,14 @@ describe('ReorderEntries rendering and interactions', () => {
     const PARAM_ID = 2;
 
     var api = undefined;
+    var store = undefined;
 
     beforeEach(() => {
         api = {
             inputColumns: jsonResponseMock(columns),
             onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
-            deleteModule: jest.fn().mockReturnValue(Promise.resolve())
+            deleteModule: jest.fn().mockReturnValue(Promise.resolve()),
+            setSelectedWfModule: jest.fn().mockReturnValue(Promise.resolve())
         };
         mockAPI(api);
     });
@@ -36,6 +39,7 @@ describe('ReorderEntries rendering and interactions', () => {
             entries={JSON.stringify({})}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
+            isReadOnly={false}
         />);
 
         setImmediate(() => {
@@ -67,6 +71,7 @@ describe('ReorderEntries rendering and interactions', () => {
             entries={JSON.stringify(testEntries)}
             wfModuleId={1}
             paramId={2}
+            isReadOnly={false}
         />);
 
         setImmediate(() => {
@@ -88,6 +93,7 @@ describe('ReorderEntries rendering and interactions', () => {
             entries={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
+            isReadOnly={false}
         />);
 
         setImmediate(() => {
@@ -116,6 +122,7 @@ describe('ReorderEntries rendering and interactions', () => {
             entries={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
+            isReadOnly={false}
         />);
 
         setImmediate(() => {
@@ -144,6 +151,7 @@ describe('ReorderEntries rendering and interactions', () => {
             entries={JSON.stringify(testEntries)}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
+            isReadOnly={false}
         />);
 
         setImmediate(() => {
@@ -168,12 +176,33 @@ describe('ReorderEntries rendering and interactions', () => {
     });
 
     it('Deletes itself if all entries are deleted', (done) => {
+
+        const state = {
+            workflow: {
+                wf_modules: [
+                    {
+                        id: WFM_ID - 1
+                    },
+                    {
+                        id: WFM_ID
+                    }
+                ]
+            }
+        };
+        var store = {
+            getState: () => state,
+            dispatch: jest.fn().mockReturnValue(Promise.resolve())
+        };
+        mockStoreAPI(api);
+        mockStore(store);
+
         let tree = mount(<RenameEntries
             loadAll={false}
             changeLoadAll={jest.fn()}
             entries={JSON.stringify({'name': 'host_name'})}
             wfModuleId={WFM_ID}
             paramId={PARAM_ID}
+            isReadOnly={false}
         />);
 
         setImmediate(() => {
@@ -186,8 +215,8 @@ describe('ReorderEntries rendering and interactions', () => {
                 expect(api.onParamChanged.mock.calls).toHaveLength(0);
                 expect(api.deleteModule.mock.calls).toHaveLength(1);
                 expect(api.deleteModule.mock.calls[0][0]).toBe(WFM_ID);
-                tree.unmount();
                 done();
+                tree.unmount();
             })
         })
     });
