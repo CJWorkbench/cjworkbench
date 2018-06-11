@@ -101,13 +101,13 @@ class TestLesson(LessonTest):
 
         b.assert_element('input[name="rename[Seattle - Tacoma]"]', wait=True)
         self._rename_column(
-            'San Jose-San Francisco-Oakland', 'San Francisco - Oakland'
+            'San Jose-San Francisco-Oakland', 'San Francisco - Bay Area'
         )
         self._rename_column('Austin', 'Austin - Round Rock')
-        self._rename_column('Bay Area', 'San Francisco - Oakland')
+        self._rename_column('Bay Area', 'San Francisco - Bay Area')
         self._rename_column('DallasFORTHWorth', 'Dallas - Fort Worth')
         self.expect_highlight(1) # _still_ not done this step
-        self._rename_column('SF - BAY AREA', 'San Francisco - Oakland')
+        self._rename_column('SF - BAY AREA', 'San Francisco - Bay Area')
 
         # Okay, we're done now
         self.expect_highlight(2, '.wf-module[data-module-name="Refine"]')

@@ -129,10 +129,21 @@ echo "'$PYTHON -m unittest -v integrationtests.[module]' to re-run the tests" >&
 
 if [ -z "$1" ]; then
   echo 'Running all tests' >&2
-  $PYTHON -m unittest discover -v integrationtests
+  TEST_COMMAND="$PYTHON -m unittest discover -v integrationtests"
 else
   echo "Running selected tests: $@" >&2
-  $PYTHON -m unittest -v "$@"
+  # Invalid escaping here, probably, but shouldn't affect anybody in practice
+  TEST_COMMAND='$PYTHON -m unittest -v '"$@"
+fi
+
+if !($TEST_COMMAND); then
+  echo >&2
+  echo 'Tests failed. Here is the failing command:' >&2
+  echo >&2
+  echo "$TEST_COMMAND" >&2
+  echo >&2
+  echo 'Run `pipenv run python -m unittest -v integrationtests.[module]` to re-run the failing test(s) in a visible browser window.' >&2
+  exit 1
 fi
 
 echo 'Success!' >&2
