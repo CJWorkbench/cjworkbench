@@ -36,8 +36,7 @@
     "redux-promise-middleware": "^5.1.1",
     "redux-thunk": "^2.3.0",
     "reselect": "^3.0.1",
-    "sizeof": "^1.0.0",
-    "superagent": "^3.8.3"
+    "sizeof": "^1.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.49",

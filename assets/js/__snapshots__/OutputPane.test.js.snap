@@ -72,12 +72,14 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
         Object {
           "id": 777,
           "public": true,
+          "read_only": false,
         }
       }
     />
     <TableView
       api={Object {}}
       currentModule={null}
+      isReadOnly={false}
       resizing={false}
       revision={1}
       setBusySpinner={[Function]}
@@ -158,6 +160,7 @@ exports[`OutputPane Renders 1`] = `
       }
       currentModule={null}
       id={100}
+      isReadOnly={false}
       resizing={false}
       revision={1}
       setBusySpinner={[Function]}
@@ -233,6 +236,7 @@ exports[`OutputPane Renders when no module id 1`] = `
     <TableView
       api={Object {}}
       currentModule={null}
+      isReadOnly={false}
       resizing={false}
       revision={1}
       setBusySpinner={[Function]}

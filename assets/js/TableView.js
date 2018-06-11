@@ -36,6 +36,7 @@ export default class TableView extends React.Component {
     id:                 PropTypes.number,             // not actually required, could have no selected module
     revision:           PropTypes.number.isRequired,
     api:                PropTypes.object.isRequired,
+    isReadOnly:         PropTypes.bool.isRequired,
     resizing:           PropTypes.bool,
     setBusySpinner:     PropTypes.func,
     onEditCell:         PropTypes.func
@@ -251,6 +252,7 @@ export default class TableView extends React.Component {
             showLetter={showColumnLetter}
             onReorderColumns={ReorderColumns.updateReorder}
             onRenameColumn={RenameColumns.updateRename}
+            isReadOnly={this.props.isReadOnly}
           />
         </div>
       // adds commas to row count
@@ -266,6 +268,7 @@ export default class TableView extends React.Component {
             totalRows={10}
             columns={['',' ','   ','    ']}
             getRow={() => {return {}}}
+            isReadOnly={this.props.isReadOnly}
           />
       </div>
     }

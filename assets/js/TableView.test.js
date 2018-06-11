@@ -51,7 +51,7 @@ describe('TableView', () => {
 
 
     const tree = mount(
-      <TableView id={100} revision={1} api={api}/>
+      <TableView id={100} revision={1} api={api} isReadOnly={false}/>
     )
 
     // wait for promise to resolve, then see what we get
@@ -93,7 +93,7 @@ describe('TableView', () => {
 
   it('Blank table when no module id', () => {
     const tree = mount(
-      <TableView id={undefined} revision={1} api={{}}/>
+      <TableView id={undefined} revision={1} api={{}} isReadOnly={false}/>
     );
     tree.update();
 
@@ -112,7 +112,7 @@ describe('TableView', () => {
     };
 
     const tree = mount(
-      <TableView id={100} revision={1} api={api}/>
+      <TableView id={100} revision={1} api={api} isReadOnly={false}/>
     );
     let tableView = tree.find('TableView').instance();
 
@@ -276,6 +276,7 @@ describe('TableView', () => {
           setBusySpinner={jest.fn()}
           resizing={false}
           currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SORT_MODULE_ID))}
+          isReadOnly={false}
       />
     );
 
@@ -295,6 +296,7 @@ describe('TableView', () => {
             setBusySpinner={jest.fn()}
             resizing={false}
             currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SORT_MODULE_ID))}
+            isReadOnly={false}
         />
       );
       setImmediate(() => {
@@ -367,6 +369,7 @@ describe('TableView', () => {
           setBusySpinner={jest.fn()}
           resizing={false}
           currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SHOWLETTER_ID))}
+          isReadOnly={false}
       />
     );
     setImmediate(() => {
@@ -384,6 +387,7 @@ describe('TableView', () => {
             setBusySpinner={jest.fn()}
             resizing={false}
             currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SHOWLETTER_ID))}
+            isReadOnly={false}
         />
       );
       setImmediate(() => {

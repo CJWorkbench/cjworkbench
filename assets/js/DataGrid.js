@@ -98,6 +98,7 @@ export class EditableColumnName extends React.Component {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     onRename: PropTypes.func.isRequired,
+    isReadOnly: PropTypes.bool.isRequired
   };
 
   constructor(props) {
@@ -111,12 +112,14 @@ export class EditableColumnName extends React.Component {
     this.enterEditMode = this.enterEditMode.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleInputBlur = this.handleInputBlur.bind(this);
-    this.handleInputKeyPress = this.handleInputKeyPress.bind(this);
+    this.handleInputKeyDown = this.handleInputKeyDown.bind(this);
     this.handleInputFocus = this.handleInputFocus.bind(this);
   }
 
-  enterEditMode() {
-    this.setState({editMode: true});
+  enterEditMode(mode=true) {
+    if(!this.props.isReadOnly) {
+      this.setState({editMode: mode});
+    }
   }
 
   handleInputChange(event) {
@@ -140,9 +143,13 @@ export class EditableColumnName extends React.Component {
     this.handleInputCommit();
   };
 
-  handleInputKeyPress(event) {
+  handleInputKeyDown(event) {
+    // Changed to keyDown as esc does not fire keyPress
     if(event.key == 'Enter') {
       this.handleInputCommit();
+    } else if (event.key == 'Escape') {
+      this.setState({newName: this.props.columnKey});
+      this.enterEditMode(false);
     }
   }
 
@@ -162,7 +169,7 @@ export class EditableColumnName extends React.Component {
           value={this.state.newName}
           onChange={this.handleInputChange}
           onBlur={this.handleInputBlur}
-          onKeyPress={this.handleInputKeyPress}
+          onKeyDown={this.handleInputKeyDown}
           onFocus={this.handleInputFocus}
         />
       );
@@ -184,6 +191,7 @@ class ColumnHeader extends React.PureComponent {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
+    isReadOnly: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     isSorted: PropTypes.bool.isRequired,
     sortDirection: PropTypes.oneOf([ 'NONE', 'ASC', 'DESC' ]), // not required, which is weird
@@ -193,7 +201,7 @@ class ColumnHeader extends React.PureComponent {
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
     onDropColumnIndexAtIndex: PropTypes.func.isRequired, // func(from, to) => undefined
     draggingColumnIndex: PropTypes.number, // if set, we are dragging
-    onRenameColumn: PropTypes.func
+    onRenameColumn: PropTypes.func,
   };
 
   constructor(props) {
@@ -206,7 +214,9 @@ class ColumnHeader extends React.PureComponent {
   }
 
   onClickSort = () => {
-    this.props.onSortColumn(this.props.columnKey, this.props.columnType);
+    if(!this.props.isReadOnly) {
+      this.props.onSortColumn(this.props.columnKey, this.props.columnType);
+    }
   }
 
   onMouseEnter = () => {
@@ -218,6 +228,11 @@ class ColumnHeader extends React.PureComponent {
   }
 
   onDragStart = (ev) => {
+    if(this.props.isReadOnly) {
+      ev.preventDefault();
+      return;
+    }
+
     if(ev.target.classList.contains('column-key-input')) {
       ev.preventDefault();
       return;
@@ -333,7 +348,7 @@ class ColumnHeader extends React.PureComponent {
           >
           {maybeDropZone('left', index)}
           <div className="sort-container">
-            <EditableColumnName columnKey={columnKey} onRename={this.props.onRenameColumn}/>
+            <EditableColumnName columnKey={columnKey} onRename={this.props.onRenameColumn} isReadOnly={this.props.isReadOnly}/>
             {sortArrowSection}
           </div>
           {maybeDropZone('right', index + 1)}
@@ -382,6 +397,7 @@ function makeFormattedCols(props) {
         draggingColumnIndex={props.draggingColumnIndex}
         onDropColumnIndexAtIndex={props.onDropColumnIndexAtIndex}
         onRenameColumn={props.onRenameColumn}
+        isReadOnly={props.isReadOnly}
         />
     ),
   }))
@@ -397,6 +413,7 @@ export default class DataGrid extends React.Component {
     totalRows:          PropTypes.number.isRequired,
     getRow:             PropTypes.func.isRequired,
     columns:            PropTypes.array.isRequired,
+    isReadOnly:         PropTypes.bool.isRequired,
     columnTypes:        PropTypes.array,     // not required if blank table
     wfModuleId:         PropTypes.number,    // not required if blank table
     revision:           PropTypes.number,
@@ -513,6 +530,10 @@ export default class DataGrid extends React.Component {
       console.log('More than one row changed at a time in DataGrid, how?')
     }
 
+    if(this.props.isReadOnly) {
+      return;
+    }
+
     if (this.props.onEditCell)
       var colKey = Object.keys(updated)[0];
       var newVal = updated[colKey];
@@ -560,6 +581,7 @@ export default class DataGrid extends React.Component {
         onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
         onSortColumn: this.props.onSortColumn || (() => {}),
         onRenameColumn: this.onRename,
+        isReadOnly: this.props.isReadOnly
       });
 
       return(

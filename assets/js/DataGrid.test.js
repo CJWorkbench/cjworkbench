@@ -58,6 +58,7 @@ describe('DataGrid tests,', () => {
         getRow={getRow}
         onEditCell={editCellMock}
         onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
+        isReadOnly={false}
       />
     );
 
@@ -107,6 +108,7 @@ describe('DataGrid tests,', () => {
         columns={[]}
         columnTypes={[]}
         getRow={() => {}}
+        isReadOnly={false}
       />
     );
     expect(tree.find('HeaderCell')).toHaveLength(0);
@@ -126,6 +128,7 @@ describe('DataGrid tests,', () => {
           columnTypes={testData.column_types}
           getRow={getRow}
           showLetter={true}
+          isReadOnly={false}
       />
     );
     expect(treeWithLetter.find('.column-letter')).toHaveLength(4);
@@ -145,6 +148,7 @@ describe('DataGrid tests,', () => {
         columnTypes={testData.column_types}
         getRow={getRow}
         showLetter={false}
+        isReadOnly={false}
       />);
     expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0);
 
@@ -163,6 +167,7 @@ describe('DataGrid tests,', () => {
           columnTypes={testData.column_types}
           getRow={getRow}
           onRenameColumn={mockRenameColumn}
+          isReadOnly={false}
       />
     );
 
