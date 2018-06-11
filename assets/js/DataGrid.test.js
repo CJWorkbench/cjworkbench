@@ -1,6 +1,6 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import DataGrid, {EditableColumnName} from "./DataGrid"
+import DataGrid, {ColumnHeader, EditableColumnName} from "./DataGrid"
 
 // TODO upgrade Enzyme. enzyme-adapter-react-16@1.1.1 does not support contexts.
 // https://github.com/airbnb/enzyme/issues/1509
@@ -192,6 +192,31 @@ describe('DataGrid tests,', () => {
         tree.unmount();
         done();
       });
+    });
+  });
+
+  it('Respects isReadOnly setting for rename columns', (done) => {
+    var tree = mount(
+      <DataGrid
+          wfModuleId={100}
+          revision={999}
+          totalRows={testData.totalRows}
+          columns={testData.columns}
+          columnTypes={testData.column_types}
+          getRow={getRow}
+          isReadOnly={true}
+      />
+    );
+
+    expect(tree.find('EditableColumnName')).toHaveLength(4);
+    // Tests rename on aaa column
+    let aaaColumn = tree.find('EditableColumnName').first();
+    aaaColumn.simulate('click');
+    setImmediate(() => {
+      // In the read-only case, the header should not turn into an input box
+      let newAaaColumn = tree.find('EditableColumnName').first();
+      expect(newAaaColumn.find('input.column-key-input')).toHaveLength(0);
+      done();
     });
   });
 });

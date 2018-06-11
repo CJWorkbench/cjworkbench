@@ -124,24 +124,16 @@ describe('RenameColumns actions', () => {
         // The entries that should be sent to server is {'cornerstone': 'cs'}
         setImmediate(() => {
             // Checks the module adding part
-            expect(api.addModule.mock.calls).toHaveLength(1);
-            // The id of the added module should be renameModuleId
-            expect(api.addModule.mock.calls[0][1]).toBe(initialState.renameModuleId);
-            // The index of the added module should be 1 as we are inserting after the 0th module (loadurl)
-            expect(api.addModule.mock.calls[0][2]).toBe(1);
+            expect(api.addModule).toHaveBeenCalledWith(WF_ID, initialState.renameModuleId, 1);
 
             // Checks the parameter setting part, which should have two parts:
             // 1. Setting loadAll to false
             // 2. Setting the new rename entries
             expect(api.onParamChanged.mock.calls).toHaveLength(2);
             // Check that we set loadAll to false
-            expect(api.onParamChanged.mock.calls[0][0]).toBe(NEW_RENAME_DISPLAY_ALL_PAR_ID);
-            expect(api.onParamChanged.mock.calls[0][1].value).toBe(false);
+            expect(api.onParamChanged).toHaveBeenCalledWith(NEW_RENAME_DISPLAY_ALL_PAR_ID, {value: false});
             // Check that we set the new entries
-            expect(api.onParamChanged.mock.calls[1][0]).toBe(NEW_RENAME_ENTRIES_ID);
-            let changedParams = JSON.parse(api.onParamChanged.mock.calls[1][1].value);
-            expect(Object.keys(changedParams)).toHaveLength(1);
-            expect(changedParams['cornerstone']).toBe('cs');
+            expect(api.onParamChanged).toHaveBeenCalledWith(NEW_RENAME_ENTRIES_ID, {value: JSON.stringify({'cornerstone': 'cs'})});
 
             done();
         });
@@ -167,12 +159,16 @@ describe('RenameColumns actions', () => {
             // Checks that we have added the new entry
             // We should only have one call that updates the entries
             expect(api.onParamChanged.mock.calls).toHaveLength(1);
-            expect(api.onParamChanged.mock.calls[0][0]).toBe(RENAME_ENTRIES_ID);
-            let changedParams = JSON.parse(api.onParamChanged.mock.calls[0][1].value);
-            expect(Object.keys(changedParams)).toHaveLength(3);
-            expect(changedParams['name']).toBe('host_name');
-            expect(changedParams['narrative']).toBe('nrtv');
-            expect(changedParams['cornerstone']).toBe('cs');
+            expect(api.onParamChanged).toHaveBeenCalledWith(
+                RENAME_ENTRIES_ID,
+                {
+                    value: JSON.stringify({
+                        'name': 'host_name',
+                        'narrative': 'nrtv',
+                        'cornerstone': 'cs'
+                    })
+                }
+            );
 
             done();
         });
@@ -194,14 +190,18 @@ describe('RenameColumns actions', () => {
             // No new module should be added as there is an existing rename module next to it
             expect(api.addModule.mock.calls).toHaveLength(0);
 
-            // Checks that we have added the new entry
+            // Checks that we have properly modified the entry
             // We should only have one call that updates the entries
             expect(api.onParamChanged.mock.calls).toHaveLength(1);
-            expect(api.onParamChanged.mock.calls[0][0]).toBe(RENAME_ENTRIES_ID);
-            let changedParams = JSON.parse(api.onParamChanged.mock.calls[0][1].value);
-            expect(Object.keys(changedParams)).toHaveLength(2);
-            expect(changedParams['name']).toBe('host');
-            expect(changedParams['narrative']).toBe('nrtv');
+            expect(api.onParamChanged).toHaveBeenCalledWith(
+                RENAME_ENTRIES_ID,
+                {
+                    value: JSON.stringify({
+                        'name': 'host',
+                        'narrative': 'nrtv',
+                    })
+                }
+            );
 
             done();
         })
@@ -227,12 +227,16 @@ describe('RenameColumns actions', () => {
             // Checks that we have added the new entry
             // We should only have one call that updates the entries
             expect(api.onParamChanged.mock.calls).toHaveLength(1);
-            expect(api.onParamChanged.mock.calls[0][0]).toBe(RENAME_ENTRIES_ID);
-            let changedParams = JSON.parse(api.onParamChanged.mock.calls[0][1].value);
-            expect(Object.keys(changedParams)).toHaveLength(3);
-            expect(changedParams['name']).toBe('host_name');
-            expect(changedParams['narrative']).toBe('nrtv');
-            expect(changedParams['cornerstone']).toBe('cs');
+            expect(api.onParamChanged).toHaveBeenCalledWith(
+                RENAME_ENTRIES_ID,
+                {
+                    value: JSON.stringify({
+                        'name': 'host_name',
+                        'narrative': 'nrtv',
+                        'cornerstone': 'cs'
+                    })
+                }
+            );
 
             done();
         });

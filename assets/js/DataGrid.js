@@ -187,7 +187,7 @@ export class EditableColumnName extends React.Component {
 }
 
 // Sort arrows, A-Z letter identifiers
-class ColumnHeader extends React.PureComponent {
+export class ColumnHeader extends React.PureComponent {
   static propTypes = {
     columnKey: PropTypes.string.isRequired,
     columnType: PropTypes.string.isRequired,
@@ -250,6 +250,10 @@ class ColumnHeader extends React.PureComponent {
   }
 
   renderSortArrow() {
+    if(this.props.isReadOnly) {
+      return '';
+    }
+
     const {
       columnKey,
       columnType,
