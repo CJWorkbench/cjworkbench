@@ -20,38 +20,34 @@ exports[`WorkflowMetadata - private mode modal operates 1`] = `
   }
 >
   <ul
-    className="WF-meta"
+    className="metadata-container"
   >
     <li
-      className="WF-meta--item content-3 t-m-gray attribution"
+      className="attribution"
     >
       <span
-        className="content-3 t-m-gray"
+        className="metadata"
       >
         by 
         Harry Harrison
       </span>
       <span
-        className="content-3 metadataSeparator t-m-gray"
+        className="separator"
       >
         -
       </span>
     </li>
-    <li
-      className="WF-meta--item content-3 t-m-gray"
-    >
+    <li>
       Updated 
       now
     </li>
-    <li
-      className="WF-meta--item content-3 t-m-gray"
-    >
+    <li>
       <div
-        className="WF-meta--item test-button"
+        className="metadata test-button"
         onClick={[Function]}
       >
         <span
-          className="content-3 metadataSeparator t-m-gray"
+          className="separator"
         >
           -
         </span>
@@ -439,38 +435,34 @@ exports[`WorkflowMetadata - private mode modal operates 2`] = `
   }
 >
   <ul
-    className="WF-meta"
+    className="metadata-container"
   >
     <li
-      className="WF-meta--item content-3 t-m-gray attribution"
+      className="attribution"
     >
       <span
-        className="content-3 t-m-gray"
+        className="metadata"
       >
         by 
         Harry Harrison
       </span>
       <span
-        className="content-3 metadataSeparator t-m-gray"
+        className="separator"
       >
         -
       </span>
     </li>
-    <li
-      className="WF-meta--item content-3 t-m-gray"
-    >
+    <li>
       Updated 
       now
     </li>
-    <li
-      className="WF-meta--item content-3 t-m-gray"
-    >
+    <li>
       <div
-        className="WF-meta--item test-button"
+        className="metadata test-button"
         onClick={[Function]}
       >
         <span
-          className="content-3 metadataSeparator t-m-gray"
+          className="separator"
         >
           -
         </span>
@@ -505,38 +497,34 @@ exports[`WorkflowMetadata - private mode renders correctly 1`] = `
   }
 >
   <ul
-    className="WF-meta"
+    className="metadata-container"
   >
     <li
-      className="WF-meta--item content-3 t-m-gray attribution"
+      className="attribution"
     >
       <span
-        className="content-3 t-m-gray"
+        className="metadata"
       >
         by 
         Harry Harrison
       </span>
       <span
-        className="content-3 metadataSeparator t-m-gray"
+        className="separator"
       >
         -
       </span>
     </li>
-    <li
-      className="WF-meta--item content-3 t-m-gray"
-    >
+    <li>
       Updated 
       now
     </li>
-    <li
-      className="WF-meta--item content-3 t-m-gray"
-    >
+    <li>
       <div
-        className="WF-meta--item test-button"
+        className="metadata test-button"
         onClick={[Function]}
       >
         <span
-          className="content-3 metadataSeparator t-m-gray"
+          className="separator"
         >
           -
         </span>
@@ -571,32 +559,28 @@ exports[`WorkflowMetadata - private mode renders correctly in read-only mode 1`]
   }
 >
   <ul
-    className="WF-meta"
+    className="metadata-container"
   >
     <li
-      className="WF-meta--item content-3 t-m-gray attribution"
+      className="attribution"
     >
       <span
-        className="content-3 t-m-gray"
+        className="metadata"
       >
         by 
         Harry Harrison
       </span>
       <span
-        className="content-3 metadataSeparator t-m-gray"
+        className="separator"
       >
         -
       </span>
     </li>
-    <li
-      className="WF-meta--item content-3 t-m-gray"
-    >
+    <li>
       Updated 
       now
     </li>
-    <li
-      className="WF-meta--item content-3 t-m-gray"
-    />
+    <li />
   </ul>
 </WorkflowMetadata>
 `;
