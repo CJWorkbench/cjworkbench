@@ -161,6 +161,7 @@
         display: inline-block;
         cursor: pointer;
         line-height:2.3;
+        &:hover{background-color: transparent;}
 
         i.icon-notification {
           font-size: 1.35rem;
