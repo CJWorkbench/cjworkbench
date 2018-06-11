@@ -1,9 +1,10 @@
 from django.conf import settings
 from server.tests.utils import LoggedInTestCase, load_and_add_module, get_param_by_id_name
 from server.modules.googlesheets import GoogleSheets
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from server.sanitizedataframe import sanitize_dataframe
 from collections import namedtuple
+from server import oauth
 import requests.exceptions
 import pandas as pd
 import os.path
@@ -23,17 +24,20 @@ class GoogleSheetsTests(LoggedInTestCase):
         super().setUp()
 
         # Set up auth
-        self.service_patch = patch.dict(
-            settings.PARAMETER_OAUTH_SERVICES,
-            { 'google_credentials': {
-                'token_url': 'http://token-url',
-                'refresh_url': 'http://refresh-url',
-                'client_id': 'client-id',
-                'client_secret': 'client-secret',
-                'redirect_url': 'http://my-redirect-server',
-            }}
+        self.requests = Mock()
+        self.requests.get = Mock(
+            return_value=MockResponse(404, 'Test not written')
         )
-        self.service_patch.start()
+        self.oauth_service = Mock()
+        self.oauth_service.requests_or_str_error = Mock(
+            return_value=self.requests
+        )
+        self.oauth_service_lookup_patch = patch.object(
+            oauth.OAuthService,
+            'lookup_or_none',
+            return_value=self.oauth_service
+        )
+        self.oauth_service_lookup_patch.start()
 
         # Create WfModule
         self.wf_module = load_and_add_module('googlesheets')
@@ -57,7 +61,7 @@ class GoogleSheetsTests(LoggedInTestCase):
 
 
     def tearDown(self):
-        self.service_patch.stop()
+        self.oauth_service_lookup_patch.stop()
 
         super().tearDown()
 
@@ -66,14 +70,13 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.assertIsNone(GoogleSheets.render(self.wf_module, None))
 
 
-    @patch('requests_oauthlib.OAuth2Session')
-    def test_event_fetch_file(self, oauth_patch):
-        oauth_patch.return_value.get.return_value = MockResponse(200, gdrive_file_contents)
+    def test_event_fetch_file(self):
+        self.requests.get.return_value = MockResponse(200,
+                                                      gdrive_file_contents)
 
         GoogleSheets.event(self.wf_module)
 
-        oauth_patch.return_value.refresh_token.assert_called_once()
-        oauth_patch.return_value.get.assert_called_once_with(
+        self.requests.get.assert_called_once_with(
             'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj/export?mimeType=text%2Fcsv'
         )
 
@@ -93,18 +96,16 @@ class GoogleSheetsTests(LoggedInTestCase):
                          'Not authorized. Please connect to Google Drive.')
 
 
-    @patch('requests_oauthlib.OAuth2Session')
-    def test_empty_table_on_http_error(self, oauth_patch):
-        oauth_patch.return_value.get.side_effect = requests.exceptions.ReadTimeout('read timeout')
+    def test_empty_table_on_http_error(self):
+        self.requests.get.side_effect = requests.exceptions.ReadTimeout('read timeout')
         GoogleSheets.event(self.wf_module)
 
         self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)
         self.assertEqual(self.wf_module.error_msg, 'read timeout')
 
 
-    @patch('requests_oauthlib.OAuth2Session')
-    def test_empty_table_on_missing_table(self, oauth_patch):
-        oauth_patch.return_value.get.return_value = MockResponse(404, 'not found')
+    def test_empty_table_on_missing_table(self):
+        self.requests.get.return_value = MockResponse(404, 'not found')
         GoogleSheets.event(self.wf_module)
 
         self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)

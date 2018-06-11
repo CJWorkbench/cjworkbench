@@ -1,6 +1,5 @@
 from .moduleimpl import ModuleImpl
 from django.conf import settings
-import requests_oauthlib
 from server.sanitizedataframe import sanitize_dataframe
 import io
 import json
@@ -8,6 +7,7 @@ import pandas as pd
 from pandas.io.common import CParserError
 from server.versions import save_fetched_table_if_changed
 from typing import Any, Dict, Tuple, Optional
+from server import oauth
 import requests
 
 
@@ -23,21 +23,12 @@ def get_spreadsheet(
     if not secret:
         return (None, 'Not authorized. Please connect to Google Drive.')
 
-    if 'refresh_token' not in secret:
-        return (None, 'Missing refresh token. Please reconnect to Google Drive.')
-
-    try:
-        service = settings.PARAMETER_OAUTH_SERVICES['google_credentials']
-    except KeyError:
+    service = oauth.OAuthService.lookup_or_none('google_credentials')
+    if not service:
         return (None, 'google_credentials not configured. Please restart Workbench with a Google secret.')
 
-    client = requests_oauthlib.OAuth2Session(client_id=service['client_id'],
-                                             token=secret)
-    temporary_token = client.refresh_token(
-        service['token_url'],
-        client_id=service['client_id'],
-        client_secret=service['client_secret']
-    ) # TODO handle exceptions: revoked token, HTTP error
+    client = service.requests_or_str_error(secret)
+    if isinstance(client, str): return (None, client)
 
     uri = f'https://www.googleapis.com/drive/v3/files/{sheet_id}/export?mimeType=text%2Fcsv'
     try:

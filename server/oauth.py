@@ -6,9 +6,7 @@ modules use these tokens to download data.
 At this module's level of abstraction:
 
     * A `service_id` references a service in `settings.py`
-    * `generate_redirect_and_state` returns a (url, state) pair.
-    * `receive_code` returns a long-term token.
-    * `generate_short_term_token` returns a short-term token.
+    * An `OAuthService` deals in tokens, not HTTP requests.
 """
 
 from django.conf import settings
@@ -68,7 +66,10 @@ class OAuthService:
 
         service = OAuthService.lookup_or_none('google_analytics')
         token = get_token_we_saved_in_step_2()
-        response = service.requests(token).get('https://some.api.server/endpoint')
+        requests = service.requests_or_str_error(token)
+        if isinstance(requests, str): return HttpResponseForbidden(requests)
+        # requests is the entire "requests" Python module API
+        response = requests.get('https://some.api.server/endpoint')
     """
 
     def generate_redirect_url_and_state(self) -> Tuple[str, str]:
@@ -218,7 +219,7 @@ class OAuth2(OAuthService):
 
     def requests_or_str_error(self, token: OfflineToken
                              ) -> Union[requests.Session, str]:
-        access_token = self.generate_access_token_or_str_error()
+        access_token = self.generate_access_token_or_str_error(token)
         if isinstance(access_token, str): return access_token
         return self._session(token=access_token)
 
