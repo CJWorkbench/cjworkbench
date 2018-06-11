@@ -16,7 +16,7 @@ exports[`WfParameter Renders string input field 1`] = `
     className="label-margin t-d-gray content-3"
   />
   <textarea
-    className="module-parameter t-d-gray content-2 text-field"
+    className="text-field"
     defaultValue="data.sfgov.org"
     name="url"
     onBlur={[Function]}
