@@ -33,7 +33,7 @@ exports[`DataVersionSelect Displays empty when no versions available 1`] = `
       Version
     </div>
     <div
-      className="open-modal t-f-blue content-3 ml-2"
+      className="open-modal action-link content-3 ml-2"
     >
       -
     </div>
@@ -109,7 +109,7 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
     </div>
     <div>
       <div
-        className="open-modal t-f-blue content-3 ml-2"
+        className="open-modal action-link content-3 ml-2"
         onClick={[Function]}
       >
         2 of 5
@@ -608,7 +608,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     </div>
     <div>
       <div
-        className="open-modal t-f-blue content-3 ml-2"
+        className="open-modal action-link content-3 ml-2"
         onClick={[Function]}
       >
         2 of 5
@@ -869,7 +869,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
     </div>
     <div>
       <div
-        className="open-modal t-f-blue content-3 ml-2"
+        className="open-modal action-link content-3 ml-2"
         onClick={[Function]}
       >
         2 of 5

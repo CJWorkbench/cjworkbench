@@ -10,8 +10,10 @@
   }
 
   button.disconnect {
-    @extend .btn;
+    @extend .info-1;
+    border:0;
     @extend .btn-link;
+    @extend .system-link;
   }
 
   .secret-name {
@@ -21,7 +23,6 @@
 
   .disconnect {
     @extend %content-3;
-    color: $brand-orange!important;
     padding: 0!important;
     margin-top:.3rem;
     font-weight: 400;

@@ -57,7 +57,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
       <div className='frequency-item'>
         <div>
           <span className='content-3 t-d-gray'>Update </span>
-          <a href="#" title="change auto-update settings" className='content-3 ml-1 t-f-blue' onClick={this.onOpenModal}>{autoOrManual}</a>
+          <a href="#" title="change auto-update settings" className='content-3 ml-1 action-link' onClick={this.onOpenModal}>{autoOrManual}</a>
         </div>
         {lastChecked}
         {maybeModal}

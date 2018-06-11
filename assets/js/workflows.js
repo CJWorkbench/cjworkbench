@@ -74,13 +74,13 @@ export default class Workflows extends React.Component {
             <button className='button-blue action-button new-workflow-button' onClick={this.click}>Create Workflow</button>
           </div>
           <div className="mx-auto workflows-list">
-            <h3 className="workflows-list--title title-3 t-m-gray">WORKFLOWS</h3>
+            <h3 className="workflows-list--title">WORKFLOWS</h3>
             <div className="workflows-item--wrap">
               {this.state.workflows.map( workflow => {
                 return (
                     <a href={"/workflows/" + workflow.id} className="workflow-item"key={workflow.id}>
                         <div className='mt-1'>
-                          <div className='t-d-gray mb-2 title-4'>{workflow.name}</div>
+                          <div className='workflow-title'>{workflow.name}</div>
                           <div className='wf-meta--id'>
                             <WorkflowMetadata
                               workflow={workflow}

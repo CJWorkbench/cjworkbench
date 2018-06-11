@@ -110,7 +110,7 @@ export default class DropZone extends Component {
                         multiple={false}
                         uploader={this.uploader}>
                         <div className={"content-3 ml-4 mr-2"}>Drag file here, or&nbsp;</div>
-                        <FileInput className={"content-3 t-f-blue"} multiple={false}
+                        <FileInput className={"content-3 action-link"} multiple={false}
                                    uploader={this.uploader}>Browse</FileInput>
                       </Dropzone>
                       {

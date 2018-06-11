@@ -290,7 +290,7 @@ export class WfModule extends React.PureComponent {
         <div className='context-buttons'>
           {wfModule.notifications &&
           <button
-            className={'notification-badge' + (wfModule.notification_count > 0 ? ' active t-f-blue' : '' )}
+            className={'notification-badge' + (wfModule.notification_count > 0 ? ' active action-link' : '' )}
             onClick={this.onClickNotification}
             >
             <i className="icon-notification"></i>

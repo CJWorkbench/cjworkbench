@@ -11,7 +11,7 @@ exports[`UpdateFrequencySelect shallow matches snapshot 1`] = `
       Update 
     </span>
     <a
-      className="content-3 ml-1 t-f-blue"
+      className="content-3 ml-1 action-link"
       href="#"
       onClick={[Function]}
       title="change auto-update settings"

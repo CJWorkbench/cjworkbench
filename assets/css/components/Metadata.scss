@@ -1,15 +1,27 @@
 // Metadata line for workflow list and workflow pages
 
-// Default rendered in WF list
-.WF-meta {
+//  WF list
+.metadata-container{
   margin-bottom: 0;
   display: flex;
   padding-left: 0;
   list-style: none;
   cursor: pointer;
+  color:$light-gray;
+  @extend .content-3;
+
+  .publicPrivate {
+    color:$brand-workspace;
+    &:hover{color:$link-hover-success;}
+  }
+
+  .separator {
+    margin:0 0.5rem 0 0.5rem;
+    text-align: center;
+  }
 }
 
-// Reneder in WF page
+// Rendered in WF page
 .navbar .WF-meta {
   cursor: default;
 }
@@ -17,9 +29,4 @@
 .WF-meta--item {
   margin-right: 0px;
   display: flex;
-}
-
-.metadataSeparator {
-  margin:0 0.5rem 0 0.5rem;
-  text-align: center;
 }

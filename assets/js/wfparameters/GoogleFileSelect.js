@@ -231,7 +231,7 @@ export default class GoogleFileSelect extends React.PureComponent {
     } else {
       button = (
         <button
-          className="change-file btn-link"
+          className="change-file action-link"
           onClick={this.openPicker}
           >{ fileId ? 'Change' : 'Choose' }</button>
       )

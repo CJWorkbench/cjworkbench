@@ -83,7 +83,7 @@ export default class ExportModal extends React.Component {
       );
     } else {
       return (
-        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='info-1 t-f-blue test-csv-copy'>
+        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='info-1 action-link test-csv-copy'>
           <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       );
@@ -99,7 +99,7 @@ export default class ExportModal extends React.Component {
       );
     } else {
       return (
-        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='info-1 t-f-blue test-json-copy'>
+        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='info-1 action-link test-json-copy'>
           <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       );

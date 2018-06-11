@@ -497,12 +497,12 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
                 </label>
               </Label>
               <CopyToClipboard
-                className="info-2 t-f-blue"
+                className="info-2 action-link"
                 onCopy={[Function]}
                 text="/workflows/808"
               >
                 <div
-                  className="info-2 t-f-blue"
+                  className="info-2 action-link"
                   onClick={[Function]}
                 >
                   Copy to clipboard
@@ -986,12 +986,12 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
                 </label>
               </Label>
               <CopyToClipboard
-                className="info-2 t-f-blue"
+                className="info-2 action-link"
                 onCopy={[Function]}
                 text="/workflows/808"
               >
                 <div
-                  className="info-2 t-f-blue"
+                  className="info-2 action-link"
                   onClick={[Function]}
                 >
                   Copy to clipboard

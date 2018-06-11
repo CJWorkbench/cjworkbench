@@ -45,21 +45,18 @@
   }
 
   .workflows-list--title {
+    @extend .title-3;
+    color:$light-gray;
     cursor: default;
     margin-left: 2.4rem;
     margin-bottom: 1rem;
   }
 
   // context buttons
-  .workflow-item .context-button {
-    width: 3rem;
-    height: 3rem;
-    &:hover {
-    background-color: #f0f0f0;
-    }
-    &.context-button.context-button.btn-secondary.active{
-      background-color: $Vlight-gray;
-    }
+  .workflow-item {
+
+
+
   }
 
   .workflows-list {
@@ -96,9 +93,21 @@
         margin-bottom: 0px;
       }
 
-      .publicPrivate {
-        color:$brand-workspace;
-        &:hover{color:$link-hover-success;}
+      .workflow-title {
+        @extend .title-4;
+        margin-bottom: .5rem;
+        color:$brand-text--dark;
+      }
+
+      .context-button {
+        width: 3rem;
+        height: 3rem;
+        &:hover {
+          background-color: #f0f0f0;
+        }
+        &.context-button.context-button.btn-secondary.active{
+          background-color: $Vlight-gray;
+        }
       }
     }
   }

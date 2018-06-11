@@ -7,6 +7,10 @@ button:focus { outline:0 !important; }
 
 /*overriding React styles for contextual button*/
 
+.btn {
+  animation: none;
+}
+
 .btn:focus {
   webkit-box-shadow:none;
   box-shadow: none;
@@ -131,18 +135,15 @@ button:focus { outline:0 !important; }
 
 %action-button {
   cursor: pointer;
-  text-align: center;
-  min-width: 7rem;
-	height: 3.5rem;
-  border-radius: 2.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
+  min-width: 7rem;
+	height: 3.5rem;
+  border-radius: 2.5rem;
 	font-size: 1.4rem;
   line-height: 1.4rem;
-  padding: 0 1.8rem 0 1.8rem;
-  -webkit-transition: opacity 0.1s;
-  transition: opacity 0.1s;
+  padding: 0 1.6rem;
 }
 
 .action-button { @extend %action-button; }
@@ -229,6 +230,14 @@ button:focus { outline:0 !important; }
   }
 }
 
+// Style for button with Icon within
+
+.button-icon {
+  text-decoration: none;
+  &:hover{text-decoration: none;}
+  font-size: 1.5rem;
+}
+
 
 /* help button --> Help center in the bottom left screen  */
 
@@ -238,7 +247,7 @@ button:focus { outline:0 !important; }
   position: fixed;
   bottom: 9rem;
   left: 4.5rem;
-  display: none;
+  display: none; // turned off for now do we need this? Pierre
 }
 
 // On Worklow page
@@ -442,4 +451,27 @@ to do this until we make larger architectural changes. */
 
 .show-sibling + .hide-with-sibling {
   display: block;
+}
+
+// Application links
+
+%action-link {
+  cursor: pointer;
+  color: $brand-workspace!important;
+	&:hover {
+		color: #2D9DAA!important;
+		text-decoration: none;
+	}
+}
+.action-link {
+	@extend %action-link;
+}
+
+.system-link {
+	@extend %action-link;
+  color: $brand-orange!important;
+	&:hover {
+		color: $dark-orange!important;
+		text-decoration: none;
+	}
 }

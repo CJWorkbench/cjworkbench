@@ -107,7 +107,7 @@ export default class WorkflowNavBar extends React.Component {
       );
     } else {
       return (
-        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='info-2 t-f-blue'>
+        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='info-2 action-link'>
           <div>Copy to clipboard</div>
         </CopyToClipboard>
       );
