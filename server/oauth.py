@@ -7,14 +7,30 @@ At this module's level of abstraction:
 
     * A `service_id` references a service in `settings.py`
     * An `OAuthService` deals in tokens, not HTTP requests.
+    * OAuth 1 and OAuth 2 behave the same way (though some methods will only
+      work with one or the other).
+    * A "refresh token" (or "OfflineToken") is a long-term token we must never
+      show the user. This is "oauth token" in OAuth 1 and "refresh token" in
+      OAuth 2.
+    * An "access token" is a short-term token. It's "access token" in OAuth 1
+      and there is no such concept in OAuth 2.
+
+Currently we support Twitter (OAuth 1.0a) and Google (OAuth 2). Each provider
+has peculiarities, so as we add more we'll need more hacks.
+
+TODO create a lovely HTTP-level test suite.
 """
 
 from django.conf import settings
 from typing import Union, Optional, Dict, Tuple
 from oauthlib.oauth2.rfc6749.errors import OAuth2Error
+from oauthlib.oauth1.rfc5849.errors import OAuth1Error
+from oauthlib.common import generate_nonce
 import jwt
 import requests
 import requests_oauthlib
+import json
+from urllib.parse import urlencode
 
 
 OfflineToken = Dict[str, str]
@@ -129,6 +145,66 @@ class OAuthService:
         return klass(service_id, **service_dict)
 
 
+class OAuth1a(OAuthService):
+    def __init__(self, service_id: str, *, consumer_key: str,
+                 consumer_secret: str, auth_url: str, request_token_url: str,
+                 access_token_url: str, redirect_url: str):
+        self.service_id = service_id
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
+        self.auth_url = auth_url
+        self.request_token_url = request_token_url
+        self.access_token_url = access_token_url
+        self.redirect_url = redirect_url
+
+
+    def _session(self, **kwargs) -> requests_oauthlib.OAuth1Session:
+        return requests_oauthlib.OAuth1Session(
+            client_key=self.consumer_key,
+            client_secret=self.consumer_secret
+        )
+
+
+    def generate_redirect_url_and_state(self) -> Tuple[str, str]:
+        session = self._session()
+
+        # TODO handle errors in this HTTP request
+        try:
+            request_token = session.fetch_request_token(self.request_token_url)
+        except OAuth1Error as err:
+            return str(err)
+
+        url = session.authorization_url(self.auth_url)
+
+        return (url, json.dumps(request_token))
+
+
+    def acquire_refresh_token_or_str_error(self, GET: Dict[str, str],
+                                           expect_state: str) -> Union[OfflineToken, str]:
+        if 'oauth_token' not in GET or 'oauth_verifier' not in GET:
+            return 'Missing oauth_token or oauth_verifier in URL'
+
+        try:
+            request_token = json.loads(expect_state)
+        except json.JSONDecodeError:
+            return 'Could not parse state'
+
+        session = self._session()
+        session.token = request_token
+        session.parse_authorization_response('http://foo?' + urlencode(GET))
+
+        try:
+            offline_token = session.fetch_access_token(self.access_token_url)
+        except OAuthkError as err:
+            return str(err)
+
+        return offline_token
+
+
+    def extract_username_from_token(self, token: OfflineToken) -> str:
+        return '@' + token['screen_name'] # Twitter-specific...
+
+
 class OAuth2(OAuthService):
     def __init__(self, service_id: str, *, client_id: str, client_secret: str,
                  auth_url: str, token_url: str, refresh_url: str, scope: str,
@@ -196,7 +272,7 @@ class OAuth2(OAuthService):
         return token
 
 
-    def extract_email_from_token(self, token: OfflineToken) -> str:
+    def extract_username_from_token(self, token: OfflineToken) -> str:
         data = jwt.decode(token['id_token'], verify=False)
         return data['email']
 
@@ -226,5 +302,5 @@ class OAuth2(OAuthService):
 
 _classes = {
     'OAuth2': OAuth2,
-    #'OAuth1a': OAuth1a,
+    'OAuth1a': OAuth1a,
 }

@@ -3,6 +3,7 @@ from tweepy import TweepError
 import pandas as pd
 import os, re
 from .moduleimpl import ModuleImpl
+from server import oauth
 from server.versions import save_fetched_table_if_changed
 
 # ---- Twitter import module ----
@@ -21,12 +22,14 @@ class Twitter(ModuleImpl):
 
     # Get from Twitter, return as dataframe
     @staticmethod
-    def get_new_tweets(wfm, querytype, query, old_tweets):
+    def get_new_tweets(access_token, querytype, query, old_tweets):
+        service = oauth.OAuthService.lookup_or_none('twitter_credentials')
+        if not service: raise Exception('credentials not set: user must log in to Twitter')
 
-        # Authenticate with "app authentication" mode (high rate limit, read only)
-        consumer_key = os.environ['CJW_TWITTER_CONSUMER_KEY']
-        consumer_secret = os.environ['CJW_TWITTER_CONSUMER_SECRET']
-        auth = tweepy.AppAuthHandler(consumer_key, consumer_secret)
+        auth = tweepy.OAuthHandler(service.consumer_key,
+                                   service.consumer_secret)
+        auth.set_access_token(access_token['oauth_token'],
+                              access_token['oauth_token_secret'])
         api = tweepy.API(auth)
 
         if old_tweets is not None and not old_tweets.empty:
@@ -97,9 +100,14 @@ class Twitter(ModuleImpl):
 
         querytype = wfm.get_param_menu_idx("querytype")
         query = wfm.get_param_string(param_names[querytype])
+        access_token = wfm.get_param_secret_secret('twitter_credentials')
 
         if query.strip() == '':
             wfm.set_error('Please enter a query')
+            return
+
+        if not access_token:
+            wfm.set_error('Please sign in to Twitter')
             return
 
         # fetching could take a while so notify clients/users that we're working on it
@@ -109,10 +117,10 @@ class Twitter(ModuleImpl):
 
             if wfm.get_param_checkbox('accumulate'):
                 old_tweets = Twitter.get_stored_tweets(wfm)
-                tweets = Twitter.get_new_tweets(wfm, querytype, query, old_tweets)
+                tweets = Twitter.get_new_tweets(access_token, querytype, query, old_tweets)
                 tweets = Twitter.merge_tweets(wfm, tweets)
             else:
-                tweets = Twitter.get_new_tweets(wfm, querytype, query, None)
+                tweets = Twitter.get_new_tweets(access_token, querytype, query, None)
 
         except TweepError as e:
             if e.response:

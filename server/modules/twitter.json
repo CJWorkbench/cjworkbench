@@ -8,6 +8,11 @@
   "help_url":"modules/add-data/twitter",
   "parameters": [
     {
+      "name": "Connect",
+      "id_name": "twitter_credentials",
+      "type": "secret"
+    },
+    {
       "name" : "Search for",
       "id_name" : "querytype",
       "type" : "menu",

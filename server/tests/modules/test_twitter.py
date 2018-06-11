@@ -44,6 +44,15 @@ class TwitterTests(LoggedInTestCase):
         super(TwitterTests, self).setUp()  # log in
         self.wf_module = load_and_add_module('twitter')
         self.query_pval = get_param_by_id_name('query')
+        self.auth_pval = get_param_by_id_name('twitter_credentials')
+        self.auth_pval.value = json.dumps({
+            'name': '@me',
+            'secret': {
+                'oauth_token': 'a-token',
+                'oauth_token_secret': 'a-token-secret',
+            }
+        })
+        self.auth_pval.save()
         self.username_pval = get_param_by_id_name('username')
         self.listurl_pval = get_param_by_id_name('listurl')
         self.type_pval = get_param_by_id_name('querytype')
@@ -56,17 +65,25 @@ class TwitterTests(LoggedInTestCase):
         self.mock_statuses2 = make_mock_statuses(user_timeline2_json)
         self.mock_tweet_table2 = make_mock_tweet_table(self.mock_statuses2)
 
-    # send fetch event to button to load data. Type=click forces version to update, which tests expect
-    def press_fetch_button(self):
-        Twitter.event(self.wf_module,  {'type': 'click'})
-
     def test_empty_query(self):
         self.query_pval.set_value('')
         self.query_pval.save()
-        self.press_fetch_button()
+        Twitter.event(self.wf_module)
         self.assertEqual(self.wf_module.status, WfModule.ERROR)
+        self.assertEqual(self.wf_module.error_msg, 'Please enter a query')
 
-    def test_user_timeline_and_accumulate(self):
+    def test_empty_secret(self):
+        self.query_pval.set_value('foo')
+        self.query_pval.save()
+        self.auth_pval.set_value('')
+        self.auth_pval.save()
+        Twitter.event(self.wf_module)
+        self.assertEqual(self.wf_module.status, WfModule.ERROR)
+        self.assertEqual(self.wf_module.error_msg, 'Please sign in to Twitter')
+
+    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('tweepy.Cursor')
+    def test_user_timeline_and_accumulate(self, cursor, auth_service):
         self.username_pval.set_value('foouser')
         self.username_pval.save()
         self.type_pval.set_value(0)  # user timeline, as opposed to search
@@ -77,85 +94,88 @@ class TwitterTests(LoggedInTestCase):
         self.assertIsNone(self.wf_module.retrieve_fetched_table())
         self.assertIsNone(self.wf_module.workflow.last_delta)
 
-        with patch.dict('os.environ', self.env_patch):
-            with mock.patch('tweepy.AppAuthHandler') as auth:
-                with mock.patch('tweepy.Cursor') as cursor:
-                    instance = cursor.return_value
-                    instance.pages.return_value = [self.mock_statuses]
+        instance = cursor.return_value
+        instance.pages.return_value = [self.mock_statuses]
 
-                    # Actually fetch!
-                    self.press_fetch_button()
-                    self.assertEqual(self.wf_module.status, WfModule.READY)
+        auth_service.return_value.consumer_key = 'a-key'
+        auth_service.return_value.consumer_secret = 'a-secret'
 
-                    # should create a new data version on the WfModule, and a new delta representing the change
-                    self.wf_module.refresh_from_db()
-                    self.wf_module.workflow.refresh_from_db()
-                    first_version = self.wf_module.get_fetched_data_version()
-                    first_delta = self.wf_module.workflow.last_delta
-                    self.assertIsNotNone(first_version)
-                    self.assertIsNotNone(first_delta)
+        # Actually fetch!
+        Twitter.event(self.wf_module)
+        self.assertEqual(self.wf_module.error_msg, '')
 
-                    # Check that render output is right
-                    table = Twitter.render(self.wf_module, None)
-                    self.assertTrue(table.equals(self.mock_tweet_table))
-                    self.assertEqual(len(table), 2)
+        # should create a new data version on the WfModule, and a new delta representing the change
+        self.wf_module.refresh_from_db()
+        self.wf_module.workflow.refresh_from_db()
+        first_version = self.wf_module.get_fetched_data_version()
+        first_delta = self.wf_module.workflow.last_delta
+        self.assertIsNotNone(first_version)
+        self.assertIsNotNone(first_delta)
 
-                    # now accumulate new tweets
-                    cursor.reset_mock()
-                    instance.pages.return_value = [ [self.mock_statuses2[0]] ]  # add only one tweet, mocking since_id
-                    self.press_fetch_button()
-                    self.assertEqual(cursor.mock_calls[0][2]['since_id'], self.mock_statuses[0].id)
-                    self.assertEqual(self.wf_module.status, WfModule.READY)
+        # Check that render output is right
+        table = Twitter.render(self.wf_module, None)
+        self.assertTrue(table.equals(self.mock_tweet_table))
+        self.assertEqual(len(table), 2)
 
-                    # output should be only new tweets (in this case, one new tweet) appended to old tweets
-                    table2 = Twitter.render(self.wf_module, None)
-                    merged_table = pd.concat([ self.mock_tweet_table2.iloc[[0]], self.mock_tweet_table ],ignore_index=True)
-                    self.assertTrue(table2.equals(merged_table))
-                    self.assertEqual(len(table2), 3)
+        # now accumulate new tweets
+        cursor.reset_mock()
+        instance.pages.return_value = [ [self.mock_statuses2[0]] ]  # add only one tweet, mocking since_id
+        Twitter.event(self.wf_module)
+        self.assertEqual(cursor.mock_calls[0][2]['since_id'], self.mock_statuses[0].id)
+        self.assertEqual(self.wf_module.status, WfModule.READY)
 
+        # output should be only new tweets (in this case, one new tweet) appended to old tweets
+        table2 = Twitter.render(self.wf_module, None)
+        merged_table = pd.concat([ self.mock_tweet_table2.iloc[[0]], self.mock_tweet_table ],ignore_index=True)
+        self.assertTrue(table2.equals(merged_table))
+        self.assertEqual(len(table2), 3)
 
-    def test_twitter_search(self):
+    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('tweepy.Cursor')
+    def test_twitter_search(self, cursor, auth_service):
         query = 'cat'
         self.query_pval.set_value(query)
         self.query_pval.save()
         self.type_pval.set_value(1)
         self.type_pval.save()
 
-        with patch.dict('os.environ', self.env_patch):
-            with mock.patch('tweepy.AppAuthHandler') as auth:
-                with mock.patch('tweepy.Cursor') as cursor:
-                    instance = cursor.return_value
-                    instance.items.return_value = self.mock_statuses
+        auth_service.return_value.consumer_key = 'a-key'
+        auth_service.return_value.consumer_secret = 'a-secret'
 
-                    # Actually fetch!
-                    self.press_fetch_button()
-                    self.assertEqual(self.wf_module.status, WfModule.READY)
-                    self.assertEqual(cursor.mock_calls[0][2]['q'], query)
+        instance = cursor.return_value
+        instance.items.return_value = self.mock_statuses
 
-                    # Check that render output is right
-                    table = Twitter.render(self.wf_module, None)
-                    self.assertTrue(table.equals(self.mock_tweet_table))
+        # Actually fetch!
+        Twitter.event(self.wf_module)
+        self.assertEqual(self.wf_module.status, WfModule.READY)
+        self.assertEqual(cursor.mock_calls[0][2]['q'], query)
+
+        # Check that render output is right
+        table = Twitter.render(self.wf_module, None)
+        self.assertTrue(table.equals(self.mock_tweet_table))
 
 
-    def test_twitter_list(self):
+    @patch('server.oauth.OAuthService.lookup_or_none')
+    @patch('tweepy.Cursor')
+    def test_twitter_list(self, cursor, auth_service):
         listurl = 'https://twitter.com/thatuser/lists/theirlist'
         self.listurl_pval.set_value(listurl)
         self.listurl_pval.save()
         self.type_pval.set_value(2)
         self.type_pval.save()
 
-        with patch.dict('os.environ', self.env_patch):
-            with mock.patch('tweepy.AppAuthHandler') as auth:
-                with mock.patch('tweepy.Cursor') as cursor:
-                    instance = cursor.return_value
-                    instance.pages.return_value = [self.mock_statuses]
+        auth_service.return_value.consumer_key = 'a-key'
+        auth_service.return_value.consumer_secret = 'a-secret'
 
-                    # Actually fetch!
-                    self.press_fetch_button()
-                    self.assertEqual(self.wf_module.status, WfModule.READY)
-                    self.assertEqual(cursor.mock_calls[0][2]['owner_screen_name'], 'thatuser')
-                    self.assertEqual(cursor.mock_calls[0][2]['slug'], 'theirlist')
+        instance = cursor.return_value
+        instance.pages.return_value = [self.mock_statuses]
 
-                    # Check that render output is right
-                    table = Twitter.render(self.wf_module, None)
-                    self.assertTrue(table.equals(self.mock_tweet_table))
+        # Actually fetch!
+        Twitter.event(self.wf_module)
+        self.assertEqual(self.wf_module.status, WfModule.READY)
+        self.assertEqual(cursor.mock_calls[0][2]['owner_screen_name'], 'thatuser')
+        self.assertEqual(cursor.mock_calls[0][2]['slug'], 'theirlist')
+
+        # Check that render output is right
+        table = Twitter.render(self.wf_module, None)
+        self.assertTrue(table.equals(self.mock_tweet_table))

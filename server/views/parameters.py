@@ -179,11 +179,11 @@ def parameterval_oauth_finish_authorize(request) -> HttpResponse:
     if isinstance(offline_token, str):
         return HttpResponseForbidden(offline_token)
 
-    email = service.extract_email_from_token(offline_token)
+    username = service.extract_username_from_token(offline_token)
 
     with param.wf_module.workflow.cooperative_lock():
         # TODO consider ChangeParameterCommand. It might not play nice with 'secret'
-        param.set_value({ 'name': email, 'secret': offline_token })
+        param.set_value({ 'name': username, 'secret': offline_token })
         # Copied from ChangeParameterCommand. Clear errors in case the connect fixed things
         param.wf_module.set_ready(notify=False)
 

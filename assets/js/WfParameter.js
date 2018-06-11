@@ -12,6 +12,7 @@ import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
 import GoogleConnect from './wfparameters/GoogleConnect'
 import GoogleFileSelect from './wfparameters/GoogleFileSelect'
+import TwitterConnect from './wfparameters/TwitterConnect'
 import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
@@ -138,12 +139,22 @@ export default class WfParameter extends React.Component {
 
   render_secret_parameter() {
     const { id_name } = this.props.p.parameter_spec
+    const { id, value } = this.props.p
+    const secretName = value ? (value.name || null) : null
+
     switch (id_name) {
       case 'google_credentials':
-        const { id, value } = this.props.p
-        const secretName = value ? (value.name || null) : null
         return (
           <GoogleConnect
+            paramId={id}
+            api={this.props.api}
+            secretName={secretName}
+            />
+        )
+
+      case 'twitter_credentials':
+        return (
+          <TwitterConnect
             paramId={id}
             api={this.props.api}
             secretName={secretName}
