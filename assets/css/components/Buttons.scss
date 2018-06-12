@@ -242,16 +242,14 @@ button:focus { outline:0 !important; }
   display: flex;
   align-items: center;
   justify-content: center;
-  color:$light-gray!important;
+  color:$medium-gray;
   border-radius: 0 3px 3px 0;
   font-size: 1.5rem;
   text-decoration: none;
   &:hover {
     background-color: $SuperLightGray;
     text-decoration:none;
-  }
-  a {
-    color:$brand-text--dark;
+    color: $brand-text--dark;
   }
 }
 
