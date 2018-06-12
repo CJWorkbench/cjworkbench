@@ -33,6 +33,11 @@ def get_spreadsheet(
     uri = f'https://www.googleapis.com/drive/v3/files/{sheet_id}/export?mimeType=text%2Fcsv'
     try:
         response = client.get(uri)
+        # Google Content-Type is broken. According to RFC2616, "Data in
+        # character sets other than "ISO-8859-1" or its subsets MUST be labeled
+        # with an appropriate charset value". Override Google Sheets' implicit
+        # "ISO-8859-1", because it _actually_ serves utf-8.
+        response.encoding = 'utf-8'
         body = response.text
 
         if response.status_code < 200 or response.status_code > 299:
