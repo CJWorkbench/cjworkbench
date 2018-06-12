@@ -109,11 +109,22 @@ export class EditableColumnName extends React.Component {
       editMode: false,
     };
 
+    this.inputRef = React.createRef();
+
     this.enterEditMode = this.enterEditMode.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleInputBlur = this.handleInputBlur.bind(this);
     this.handleInputKeyDown = this.handleInputKeyDown.bind(this);
-    this.handleInputFocus = this.handleInputFocus.bind(this);
+  }
+
+  componentDidUpdate(_, prevState) {
+    if (!prevState.editMode && this.state.editMode) {
+      const input = this.inputRef.current;
+      if (input) {
+        input.focus();
+        input.select();
+      }
+    }
   }
 
   enterEditMode() {
@@ -132,7 +143,6 @@ export class EditableColumnName extends React.Component {
 
   handleInputCommit() {
     this.setState({
-        newName: this.state.newName,
         editMode: false
     });
     if(this.state.newName != this.props.columnKey) {
@@ -145,7 +155,7 @@ export class EditableColumnName extends React.Component {
 
   handleInputBlur() {
     this.handleInputCommit();
-  };
+  }
 
   handleInputKeyDown(event) {
     // Changed to keyDown as esc does not fire keyPress
@@ -157,10 +167,6 @@ export class EditableColumnName extends React.Component {
     }
   }
 
-  handleInputFocus(event) {
-    event.target.select();
-  }
-
   render() {
     if(this.state.editMode) {
       // The class name 'column-key-input' is used in
@@ -168,13 +174,13 @@ export class EditableColumnName extends React.Component {
       // please keep it as-is.
       return (
         <input
-          className={'column-key column-key-input'}
-          type={'text'}
+          name='new-column-key'
+          type='text'
+          ref={this.inputRef}
           value={this.state.newName}
           onChange={this.handleInputChange}
           onBlur={this.handleInputBlur}
           onKeyDown={this.handleInputKeyDown}
-          onFocus={this.handleInputFocus}
         />
       );
     } else {

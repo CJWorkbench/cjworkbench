@@ -227,6 +227,15 @@
           overflow: hidden;
         }
 
+        input[name="new-column-key"] {
+          // padding: just 1px off from .column-key
+          padding-top: calc(.8rem - 1px);
+          padding-bottom: calc(.8rem - 1px);
+          padding-left: 1rem;
+          padding-right: 1rem;
+          flex: 1 1 auto;
+        }
+
         button {
           flex: 0 0 auto;
           font-size: 0.8rem;
