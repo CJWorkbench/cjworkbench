@@ -366,17 +366,6 @@ try:
             'access_token_url': 'https://api.twitter.com/oauth/access_token',
             'redirect_url': d['redirect_url'],
         }
-except FileNotFoundError:
-    if 'CJW_TWITTER_CONSUMER_KEY' in os.environ and 'CJW_TWITTER_CONSUMER_SECRET' in os.environ:
-        PARAMETER_OAUTH_SERVICES['twitter_credentials'] = {
-            'class': 'OAuth1a',
-            'consumer_key': os.environ['CJW_TWITTER_CONSUMER_KEY'],
-            'consumer_secret': os.environ['CJW_TWITTER_CONSUMER_SECRET'],
-            'auth_url': 'https://api.twitter.com/oauth/authorize',
-            'request_token_url': 'https://api.twitter.com/oauth/request_token',
-            'access_token_url': 'https://api.twitter.com/oauth/access_token',
-            'redirect_url': 'http://app.workbenchdata.com/oauth',
-        }
 
 # Various services for django-allauth
 
