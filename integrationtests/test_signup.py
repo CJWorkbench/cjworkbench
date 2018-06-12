@@ -1,11 +1,8 @@
-from integrationtests.utils import WorkbenchBase
-import re
+from integrationtests.utils import WorkbenchBase, find_url_in_email
 
 
 class TestSignup(WorkbenchBase):
     def test_signup(self):
-        url_regex = re.compile('http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+confirm-email(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
-
         b = self.browser
         # This will break when signup is open to the public
         b.visit(self.live_server_url + '/xyzzy/signup/')
@@ -24,14 +21,13 @@ class TestSignup(WorkbenchBase):
 
         # Test the email is right
         email = self.account_admin.latest_sent_email
-        self.assertTrue(email)
+        self.assertIsNotNone(email)
         self.assertEqual('user@example.org', email['To'])
-        body = email.get_payload()
-        url = url_regex.search(body)
-        self.assertTrue(url and url.group(0))
+        url = find_url_in_email(email)
+        self.assertIsNotNone(url)
 
         # Follow the link
-        b.visit(url.group(0))
+        b.visit(url)
         b.click_button('Confirm', wait=True)
 
         # Now log in with our new account

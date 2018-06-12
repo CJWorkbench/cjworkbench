@@ -2,9 +2,23 @@
 
 import subprocess
 import unittest
+import email.message
+from typing import Optional
+import re
 
 from integrationtests.browser import Browser
 from integrationtests.helpers import accounts
+
+
+_url_regex = re.compile('https?://[^\\s]+')
+
+def find_url_in_email(message: email.message.Message) -> Optional[str]:
+    """Return the first URL in the given message's payload, or None."""
+    body = message.get_payload()
+    match = _url_regex.search(body)
+
+    if not match: return None
+    return match.group(0)
 
 
 def _find_server_url():
