@@ -7,25 +7,16 @@ import { okResponseMock } from './test-utils'
 describe('EditableNotes', () => {
   let wrapper
 
-  let api
-  beforeEach(() => {
-    api = {
-      setWfModuleNotes: okResponseMock(),
-    }
-  })
-
   // Can't test "startsFocused" with shallow(), because there's no DOM element to focus
 
-  describe('Read-only', () => {
+  describe('read-only', () => {
     beforeEach(() => wrapper = shallow(
       <EditableNotes
-        value={'This is the best module'}
-        wfModuleId={808}
-        api={{}}
         isReadOnly={true}
-        hideNotes={ () => {} }
-        startFocused={false}
-      />
+        placeholder='placeholder'
+        value='This is the best module'
+        onCancel={jest.fn()}
+        />
     ))
 
     it('matches snapshot', () => {
@@ -33,43 +24,49 @@ describe('EditableNotes', () => {
     })
   
     it('renders plain note', () => {
-      expect(wrapper.find('div.editable-notes-field').text()).toEqual('This is the best module')
+      expect(wrapper.find('div.editable-notes-read-only').text()).toEqual('This is the best module')
     })
   })
 
-  describe('NOT Read-only', () => {
-    beforeEach(() => wrapper = shallow(
-      <EditableNotes
-        value={'This is the best module'}
-        wfModuleId={808}
-        api={api}
-        isReadOnly={false}
-        hideNotes={ () => {} }
-        startFocused={true}
-      />
-    ))
+  describe('editable', () => {
+    let inputRef
+
+    beforeEach(() => {
+      inputRef = React.createRef()
+
+      wrapper = shallow(
+        <EditableNotes
+          isReadOnly={false}
+          placeholder='placeholder'
+          value='This is the best module'
+          inputRef={inputRef}
+          onChange={jest.fn()}
+          onBlur={jest.fn()}
+          onCancel={jest.fn()}
+          />
+      )
+    })
 
     it('matches snapshot', () => {
       expect(wrapper).toMatchSnapshot()
     })
   
-    it('renders note in edit state at start', () => {
+    it('renders note in edit state', () => {
       expect(wrapper.find('TextareaAutosize').prop('value')).toEqual('This is the best module')
     })
 
     it('lets user enter and save a note', () => {
-      expect(wrapper.state().value).toEqual('This is the best module')
-      wrapper.find('TextareaAutosize').prop('onChange')({ target: { value: 'This is a mediocre module' } })
-      wrapper.find('TextareaAutosize').prop('onBlur')() // trigger save
-      // Check that the API was called
-      expect(api.setWfModuleNotes).toHaveBeenCalledWith(808, 'This is a mediocre module')
-      expect(wrapper.state().value).toEqual('This is a mediocre module')
+      wrapper.find('TextareaAutosize').simulate('change', { target: { value: 'This is a mediocre module' } })
+      wrapper.find('TextareaAutosize').simulate('blur')
+      expect(wrapper.prop('onChange')).toHaveBeenCalledWith({ target: { value: 'This is a mediocre module' } })
+      expect(wrapper.prop('onBlur')).toHaveBeenCalled()
     })
 
-    it('saves default text and closes if user enters blank note', () => {
-      wrapper.find('TextareaAutosize').prop('onChange')({ target: { value: '' }})
-      wrapper.find('TextareaAutosize').prop('onBlur')() // trigger save
-      expect(api.setWfModuleNotes).toHaveBeenCalledWith(808, 'Type something')
+    it('exits if user presses Escape', () => {
+      const tag = { tagName: 'TEXTAREA', blur: jest.fn() }
+      wrapper.find('TextareaAutosize').simulate('keydown', { target: tag, key: 'Escape' })
+      expect(wrapper.prop('onCancel')).toHaveBeenCalled()
+      expect(tag.blur).toHaveBeenCalled()
     })
   })
 })

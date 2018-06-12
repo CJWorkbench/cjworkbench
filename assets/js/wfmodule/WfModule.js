@@ -29,21 +29,17 @@ export class WfModule extends React.PureComponent {
     this.getParamText = this.getParamText.bind(this);
     this.getParamMenuItems = this.getParamMenuItems.bind(this);
     this.removeModule = this.removeModule.bind(this);
-    this.showNotes = this.showNotes.bind(this);
-    this.hideNotes = this.hideNotes.bind(this);
     this.setNotifications = this.setNotifications.bind(this);
     this.setClickNotification = this.setClickNotification.bind(this);
     this.onClickNotification = this.onClickNotification.bind(this);
     this.setModuleRef = this.setModuleRef.bind(this);
     this.moduleRef = null;
+    this.notesInputRef = React.createRef();
 
     this.state = {
       isCollapsed: this.props.wfModule.is_collapsed,
-      showNotes:  ( this.props.wfModule.notes
-                    && (this.props.wfModule.notes != "")
-                    && (this.props.wfModule.notes != "Type something")
-                  ),  // only show on load if a note exists & not default text
-      showEditableNotes: false,             // do not display in edit state on initial load
+      notes: this.props.wfModule.notes || '',
+      isNoteForcedVisible: false,
       notifications: this.props.wfModule.notifications,
       notification_count: this.props.wfModule.notification_count,
       isDragging: false,
@@ -187,13 +183,33 @@ export class WfModule extends React.PureComponent {
   }
 
   // when Notes icon is clicked, show notes and start in editable state if not read-only
-  showNotes(e) {
-    e.stopPropagation();
-    this.setState({ showNotes: true,  showEditableNotes: !this.props.isReadOnly });
+  focusNote = () => {
+    const ref = this.notesInputRef.current;
+    if (ref) {
+      this.setState({ isNoteForcedVisible: true });
+      ref.focus();
+      ref.select();
+    }
   }
 
-  hideNotes() {
-    this.setState({showNotes: false});
+  onChangeNote = (ev) => {
+    this.setState({ notes: ev.target.value });
+  }
+
+  onFocusNote = () => {
+    this.setState({ isNoteForcedVisible: true });
+  }
+
+  onBlurNote = (ev) => {
+    if (this.state.notes !== (this.props.wfModule.notes || '')) {
+      // TODO use a reducer action
+      this.props.api.setWfModuleNotes(this.props.wfModule.id, this.state.notes);
+    }
+    this.setState({ isNoteForcedVisible: false })
+  }
+
+  onCancelNote = (ev) => {
+    this.setState({ notes: this.props.wfModule.notes });
   }
 
   setNotifications() {
@@ -241,22 +257,20 @@ export class WfModule extends React.PureComponent {
         />)
       });
 
-    var notes;
-    var value = ( wfModule.notes && (wfModule.notes != "") )
-      ? wfModule.notes
-      : "Type something";
-
-    if (this.state.showNotes)
-      notes = <div className='module-notes'>
-                <EditableNotes
-                  api={this.props.api}
-                  isReadOnly={this.props.isReadOnly}
-                  value={value}
-                  hideNotes={ () => this.hideNotes() }
-                  wfModuleId={wfModule.id}
-                  startFocused={this.state.showEditableNotes}
-                />
-              </div>;
+    const notes = (
+      <div className={`module-notes${(!!this.state.notes || this.state.isNoteForcedVisible) ? ' visible' : ''}`}>
+        <EditableNotes
+          isReadOnly={this.props.isReadOnly}
+          inputRef={this.notesInputRef}
+          placeholder='Type something'
+          value={this.state.notes}
+          onChange={this.onChangeNote}
+          onFocus={this.onFocusNote}
+          onBlur={this.onBlurNote}
+          onCancel={this.onCancelNote}
+          />
+      </div>
+    );
 
     let helpIcon;
     if (!this.props.isReadOnly) {
@@ -267,11 +281,18 @@ export class WfModule extends React.PureComponent {
       );
     }
 
-    var notesIcon;
-    if (!this.state.showNotes && !this.props.isReadOnly)
-      notesIcon = <button title="Edit Note" className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')} onClick={this.showNotes}>
-                    <i className='icon-note'></i>
-                  </button>;
+    let notesIcon;
+    if (!this.props.isReadOnly) {
+      notesIcon = (
+        <button
+          title="Edit Note"
+          className={'btn edit-note' + (this.props.isLessonHighlightNotes ? ' lesson-highlight' : '')}
+          onClick={this.focusNote}
+          >
+          <i className='icon-note'></i>
+        </button>
+      );
+    }
 
     var contextMenu;
     if(!this.props.isReadOnly)

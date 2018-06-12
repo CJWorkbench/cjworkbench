@@ -1,33 +1,24 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`EditableNotes NOT Read-only matches snapshot 1`] = `
-<span
-  className="note-wrapper"
-  onClick={[Function]}
->
-  <TextareaAutosize
-    className="editable-notes-field"
-    inputRef={[Function]}
-    name="notes"
-    onBlur={[Function]}
-    onChange={[Function]}
-    onHeightChange={[Function]}
-    onKeyPress={[Function]}
-    useCacheForDOMMeasurements={false}
-    value="This is the best module"
-  />
-</span>
+exports[`EditableNotes editable matches snapshot 1`] = `
+<TextareaAutosize
+  inputRef={[Function]}
+  name="notes"
+  onBlur={[MockFunction]}
+  onCancel={[MockFunction]}
+  onChange={[MockFunction]}
+  onHeightChange={[Function]}
+  onKeyDown={[Function]}
+  placeholder="placeholder"
+  useCacheForDOMMeasurements={false}
+  value="This is the best module"
+/>
 `;
 
-exports[`EditableNotes Read-only matches snapshot 1`] = `
-<span
-  className="note-wrapper"
-  onClick={[Function]}
+exports[`EditableNotes read-only matches snapshot 1`] = `
+<div
+  className="editable-notes-read-only"
 >
-  <div
-    className="editable-notes-field content-3 t-d-gray"
-  >
-    This is the best module
-  </div>
-</span>
+  This is the best module
+</div>
 `;

@@ -7,6 +7,24 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
   onClick={[Function]}
 >
   <div
+    className="module-notes"
+  >
+    <EditableNotes
+      inputRef={
+        Object {
+          "current": null,
+        }
+      }
+      isReadOnly={false}
+      onBlur={[Function]}
+      onCancel={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      placeholder="Type something"
+      value=""
+    />
+  </div>
+  <div
     className="wf-card "
     draggable={true}
     onDragEnd={[Function]}
@@ -78,6 +96,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               Object {
                 "onParamChanged": [MockFunction],
                 "postParamEvent": [MockFunction],
+                "setWfModuleNotes": [MockFunction],
               }
             }
             changeParam={[Function]}
@@ -115,6 +134,7 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               Object {
                 "onParamChanged": [MockFunction],
                 "postParamEvent": [MockFunction],
+                "setWfModuleNotes": [MockFunction],
               }
             }
             changeParam={[Function]}

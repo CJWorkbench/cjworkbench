@@ -34,7 +34,7 @@ describe('WfModule, not read-only mode', () => {
   // A mock module that looks like LoadURL
   const wf_module = {
     'id' : 999,
-    'notes': [],
+    'notes': '',
     'is_collapsed': false,  // false because we render more, so better test
     'parameter_vals': [
       {
@@ -65,8 +65,9 @@ describe('WfModule, not read-only mode', () => {
   beforeEach(() => {
     // Reset mock functions before each test
     mockApi = {
-      'postParamEvent' : okResponseMock(),
-      'onParamChanged' : okResponseMock()
+      postParamEvent: okResponseMock(),
+      onParamChanged: okResponseMock(),
+      setWfModuleNotes: okResponseMock(),
     };
 
     props = buildShallowProps()
@@ -97,6 +98,40 @@ describe('WfModule, not read-only mode', () => {
     expect(props.changeParam).toHaveBeenCalledWith(100, { value: 'http://foocastle.ai' })
     // and the input prop should not be mutated
     expect(wf_module.parameter_vals[0].value).toEqual('http://some.URL.me')
+  })
+
+  it('renders a note', () => {
+    const wrapper = shallow(<WfModule {...props} wfModule={Object.assign({}, wf_module, { notes: 'some notes' })} />)
+    expect(wrapper.find('EditableNotes').prop('value')).toEqual('some notes')
+  })
+
+  it('adds a note', () => {
+    const wrapper = shallow(<WfModule {...props}/>)
+
+    expect(wrapper.find('.module-notes.visible')).toHaveLength(0)
+
+    wrapper.find('button.edit-note').simulate('click')
+    wrapper.find('EditableNotes').simulate('change', { target: { value: 'new note' } })
+    wrapper.find('EditableNotes').simulate('blur')
+
+    expect(wrapper.find('EditableNotes').prop('value')).toEqual('new note')
+    expect(mockApi.setWfModuleNotes).toHaveBeenCalledWith(wf_module.id, 'new note')
+
+    expect(wrapper.find('.module-notes.visible')).toHaveLength(1)
+  })
+
+  it('deletes a note', () => {
+    const wrapper = shallow(<WfModule {...props} wfModule={Object.assign({}, wf_module, { notes: 'some notes' })} />)
+
+    expect(wrapper.find('.module-notes.visible')).toHaveLength(1)
+
+    wrapper.find('EditableNotes').simulate('change', { target: { value: '' } })
+    wrapper.find('EditableNotes').simulate('blur')
+
+    expect(wrapper.find('EditableNotes').prop('value')).toEqual('')
+    expect(mockApi.setWfModuleNotes).toHaveBeenCalledWith(wf_module.id, '')
+
+    expect(wrapper.find('.module-notes.visible')).toHaveLength(0)
   })
 
   describe('lesson highlights', () => {

@@ -1,94 +1,68 @@
 import React from 'react';
-import Textarea from 'react-textarea-autosize';
+import TextareaAutosize from 'react-textarea-autosize';
 import PropTypes from 'prop-types'
 
-export default class EditableNotes extends React.Component {
-  constructor(props) {
-    super(props);
-    this.saveNotes = this.saveNotes.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.handleClick = this.handleClick.bind(this);
-    this.keyPress = this.keyPress.bind(this);
-    this.state = {
-      value: this.props.value
-    }
-
-    this.wrapperRef = React.createRef()
+export default class EditableNotes extends React.PureComponent {
+  static propTypes = {
+    isReadOnly: PropTypes.bool.isRequired,
+    placeholder: PropTypes.string.isRequired,
+    value: PropTypes.string,
+    inputRef: PropTypes.object,
+    onChange: PropTypes.func,
+    onBlur: PropTypes.func,
+    onCancel: PropTypes.func.isRequired,
   }
 
-  // Enter editing state upon mount
-  //    Have to target child through parent b/c TextArea cannot be directly referenced
-  componentDidMount() {
-    if (this.props.startFocused) {
-      if (this.textInput) this.textInput.childNodes[0].select()
-    }
-  }
+  // Make Enter key blur by default, instead of adding newline.
+  handleKeyDown = (ev) => {
+    if (this.props.onKeyDown) this.props.onKeyDown(ev);
 
-  // Make Enter key save the text in edit field, overriding default newline
-  keyPress(e) {
-    if (e.key == 'Enter' ) {
-      e.preventDefault()
-      // blur event will trigger a save
-      // Have to target child through parent b/c TextArea cannot be directly referenced
-      if (this.textInput) this.textInput.childNodes[0].blur()
+    if (ev.target.tagName === 'TEXTAREA' && ev.key === 'Enter') {
+      ev.preventDefault();
+      ev.target.blur(); // triggers this.props.onBlur, if set
+    }
+
+    if (ev.target.tagName === 'TEXTAREA' && ev.key === 'Escape') {
+      this.props.onCancel(ev);
+      ev.target.blur(); // ... which will do nothing
     }
   }
 
-  // If nothing entered, saves a default note and closes
-  saveNotes() {
-    let value = this.state.value;
-
-    if (!value || (value == "") || (value == "Type something")) {
-      this.props.api.setWfModuleNotes(this.props.wfModuleId, "Type something");
-      this.props.hideNotes();
-    } else {
-      this.props.api.setWfModuleNotes(this.props.wfModuleId, value);
+  hackAroundTextareaAutosizeObsoleteInputRef = (ref) => {
+    if (this.props.inputRef) {
+      this.props.inputRef.current = ref;
     }
   }
 
-  handleChange(event) {
-    this.setState({value: event.target.value})
-  }
-
-  // selects the text for editing on a click
-  handleClick(event) {
-    if (!this.props.isReadOnly) {
-      const ref = this.wrapperRef.current
-      if (ref) ref.childNodes[0].select()
+  componentWillUnmount() {
+    // see hackAroundTextareaAutosizeObsoleteInputRef()
+    if (this.props.inputRef) {
+      this.props.inputRef.current = null;
     }
   }
 
   render() {
+    // We pass most props to the <TextareaAutosize>.
+    const subprops = Object.assign({}, this.props);
+    delete subprops.isReadOnly
+    delete subprops.onKeyDown
+    subprops.inputRef = this.hackAroundTextareaAutosizeObsoleteInputRef
 
     // Saves a ref to parent to allow targeting of imported component
-    return <span className='note-wrapper'
-              // Saves a reference to parent to allow targeting of imported component
-              ref={this.wrapperRef}
-              onClick={this.handleClick}
-            >
-              {this.props.isReadOnly
-                ? ( <div className='editable-notes-field content-3 t-d-gray'>{this.props.value}</div> )
-                : (
-                    <Textarea
-                      name='notes'
-                      value={this.state.value}
-                      onChange={this.handleChange}
-                      onBlur={this.saveNotes}
-                      onKeyPress={this.keyPress}
-                      className='editable-notes-field'
-                    >
-                    </Textarea>
-                  )
-              }
-          </span>
+    if (this.props.isReadOnly) {
+      return (
+        <div className='editable-notes-read-only'>
+          {this.props.value}
+        </div>
+      )
+    } else {
+      return (
+        <TextareaAutosize
+          name='notes'
+          {...subprops}
+          onKeyDown={this.handleKeyDown}
+          />
+      )
+    }
   }
 }
-
-EditableNotes.propTypes = {
-  value:          PropTypes.string,
-  wfModuleId:     PropTypes.number.isRequired,
-  hideNotes:      PropTypes.func.isRequired,
-  api:            PropTypes.object.isRequired,
-  isReadOnly:     PropTypes.bool.isRequired,
-  startFocused:   PropTypes.bool.isRequired,
-};
