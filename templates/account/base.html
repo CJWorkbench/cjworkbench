@@ -30,7 +30,7 @@
     {% render_bundle 'style' 'css' %}
   </head>
 
-  <body>
+  <body class="accounts">
 
     <div class="login-fullscreen-container">
       <div class="container">
@@ -42,6 +42,15 @@
           </div>
           <div class="col"></div>
         </div>
+
+        {% if messages %}
+        <ul class="messages">
+          {% for message in messages %}
+          <li>{{message}}</li>
+          {% endfor %}
+        </ul>
+        {% endif %}
+
         <div class="card card-block login-card mx-auto drop-shadow">
            <!-- <h1 class="text-center title-1 t-d-gray">CJ Workbench</h1> -->
            {% block content %}{% endblock %}

@@ -1,5 +1,20 @@
 /* ---- Login ---- */
 
+body.accounts {
+  ul.messages {
+    margin: 2rem;
+    padding: 0;
+    list-style: none;
+    text-align: center;
+    @extend %font-nunito-regular;
+    font-size: 1.4rem;
+
+    li {
+      margin: 1rem;
+    }
+  }
+}
+
 .login-bigbrand .logo{
   width: 4.5rem;
 }
