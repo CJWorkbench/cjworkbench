@@ -161,7 +161,8 @@ class OAuth1a(OAuthService):
     def _session(self, **kwargs) -> requests_oauthlib.OAuth1Session:
         return requests_oauthlib.OAuth1Session(
             client_key=self.consumer_key,
-            client_secret=self.consumer_secret
+            client_secret=self.consumer_secret,
+            callback_uri=self.redirect_url
         )
 
 
