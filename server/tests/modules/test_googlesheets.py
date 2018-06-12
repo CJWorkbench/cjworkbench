@@ -3,7 +3,6 @@ from server.tests.utils import LoggedInTestCase, load_and_add_module, get_param_
 from server.modules.googlesheets import GoogleSheets
 from unittest.mock import patch, Mock
 from server.sanitizedataframe import sanitize_dataframe
-from collections import namedtuple
 from server import oauth
 import requests.exceptions
 import pandas as pd
@@ -15,7 +14,10 @@ gdrive_file = os.path.join(settings.BASE_DIR, 'server/tests/test_data/missing_va
 with open(gdrive_file, encoding='utf-8') as f: gdrive_file_contents = f.read()
 
 
-MockResponse = namedtuple('MockResponse', [ 'status_code', 'text' ])
+class MockResponse:
+    def __init__(self, status_code, text):
+        self.status_code = status_code
+        self.text = text
 
 
 class GoogleSheetsTests(LoggedInTestCase):
