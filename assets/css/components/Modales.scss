@@ -59,29 +59,6 @@
         background-color:$Vlight-gray;
         &:focus{box-shadow: none}
       }
-
-      .download-icon-box {
-        cursor: pointer;
-      	height: 3.5rem;
-      	width: 6rem;
-      	border-top: 1px solid $Vlight-gray;
-        border-right: 1px solid $Vlight-gray;
-        border-bottom: 1px solid $Vlight-gray;
-        background-color: $white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color:$light-gray!important;
-        border-radius: 0 3px 3px 0;
-        font-size: 1.4rem;
-        &:hover {
-          background-color: $SuperLightGray;
-          text-decoration:none;
-        }
-        a {
-          color:$brand-text--dark;
-        }
-      }
     }
 
     //When a list is the content of the modal body

@@ -66,23 +66,25 @@ export class RenameEntry extends React.Component {
         // The class names below are used in testing.
         // Changing them would require updating the tests accordingly.
         return (
-            <div>
+            <div className="wf-parameter">
                 <div className={'rename-column'}>{this.props.colname}</div>
-                <input
-                    className={'rename-input'}
-                    type={'text'}
-                    value={this.state.inputValue}
-                    onChange={this.handleChange}
-                    onBlur={this.handleBlur}
-                    onKeyPress={this.handleKeyPress}
-                    onFocus={this.handleFocus}
-                    disabled={this.props.isReadOnly}
-                />
-                <button
-                    className={'rename-delete'}
-                    onClick={this.handleDelete}
-                    disabled={this.props.isReadOnly}
-                >X</button>
+                <div className="rename-container">
+                  <input
+                      className={'rename-input'}
+                      type={'text'}
+                      value={this.state.inputValue}
+                      onChange={this.handleChange}
+                      onBlur={this.handleBlur}
+                      onKeyPress={this.handleKeyPress}
+                      onFocus={this.handleFocus}
+                      disabled={this.props.isReadOnly}
+                  />
+                  <button
+                      className={'rename-delete icon-close'}
+                      onClick={this.handleDelete}
+                      disabled={this.props.isReadOnly}
+                  ></button>
+                </div>
             </div>
         )
     }

@@ -1,0 +1,35 @@
+.rename-column {
+  @extend .wf-parameter;
+  @extend .content-3;
+}
+
+.rename-container {
+  display: flex;
+  &:hover .rename-delete {
+    opacity: 1;
+    background-color: $Vlight-gray;
+  }
+
+  .rename-input {
+    @extend .text-field;
+    border-radius: 3px 0 0 3px;
+  }
+
+  .rename-delete {
+    @extend .button-icon;
+    font-size: 1.3rem;
+    position: absolute;
+    right:1.7rem;
+    margin-top: .2rem;
+    background-color: $Vlight-gray;
+    opacity:0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width:2rem;
+    height:3rem;
+    &:hover::before {
+      color:$brand-text--dark;
+    }
+  }
+}

@@ -233,12 +233,28 @@ button:focus { outline:0 !important; }
 }
 
 // Style for button with Icon within
-
 .button-icon {
-  text-decoration: none;
-  &:hover{text-decoration: none;}
+  cursor: pointer;
+  height: 3.5rem;
+  width: 6rem;
+  border: 2px solid $Vlight-gray;
+  background-color: $white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color:$light-gray!important;
+  border-radius: 0 3px 3px 0;
   font-size: 1.5rem;
+  text-decoration: none;
+  &:hover {
+    background-color: $SuperLightGray;
+    text-decoration:none;
+  }
+  a {
+    color:$brand-text--dark;
+  }
 }
+
 
 
 /* help button --> Help center in the bottom left screen  */
