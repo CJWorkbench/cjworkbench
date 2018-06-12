@@ -182,6 +182,8 @@ export default class OutputPane extends React.Component {
     // Checks if the current module is a sort module. If yes, set sortColumn and sortDirection in props
     let currentModule = this.findCurrentModuleInWorkflow(this.props.workflow);
 
+    let isReadOnly = this.props.workflow ? this.props.workflow.read_only : false;
+
     // Make a table component even if no module ID (should still show an empty table)
     var tableView =
       <TableView
@@ -191,6 +193,7 @@ export default class OutputPane extends React.Component {
         api={this.props.api}
         setBusySpinner={this.setBusySpinner}
         currentModule={currentModule}
+        isReadOnly={isReadOnly}
       />
 
     // This iframe holds the module HTML output, e.g. a visualization
@@ -265,6 +268,7 @@ OutputPane.propTypes = {
   id:                 PropTypes.number,             // can be undefined, if no selected module
   revision:           PropTypes.number.isRequired,
   api:                PropTypes.object.isRequired,
+  workflow:           PropTypes.object,
   selectedWfModuleId: PropTypes.number,
   htmlOutput:         PropTypes.bool,
 };

@@ -52,7 +52,7 @@ describe('OutputPane', () => {
     const tree = shallow(
           <OutputPane
             id={undefined}
-            workflow={{id:777,public:true}}
+            workflow={{id:777,public:true,read_only:false}}
             selectedWfModuleId={999}
             revision={1}
             htmlOutput={true}

@@ -58,6 +58,20 @@ def reorder_module_id():
 reorder_module_id.id = None
 
 
+# Deal with rename from table the same way we deal with EditCells
+def rename_module_id():
+    if rename_module_id.id is None:
+        try:
+            rename_module_id.id = Module.objects.get(id_name='rename-columns').id
+        except Module.DoesNotExist:
+            return None
+
+    return rename_module_id.id
+
+
+rename_module_id.id = None
+
+
 # Data that is embedded in the initial HTML, so we don't need to call back server for it
 def make_init_state(request, workflow=None, modules=None):
     ret = {}
@@ -75,6 +89,7 @@ def make_init_state(request, workflow=None, modules=None):
         ret['editCellsModuleId'] = edit_cells_module_id()
         ret['sortModuleId'] = sort_module_id()
         ret['reorderModuleId'] = reorder_module_id()
+        ret['renameModuleId'] = rename_module_id()
 
     return ret
 

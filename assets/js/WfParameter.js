@@ -16,6 +16,7 @@ import WorkbenchAceEditor from './wfparameters/AceEditor'
 import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
+import RenameEntries from './wfparameters/RenameEntries'
 import { csrfToken } from './utils'
 import { store, setWfModuleStatusAction } from './workflow-reducer'
 import lessonSelector from './lessons/lessonSelector'
@@ -135,6 +136,10 @@ export default class WfParameter extends React.Component {
   onChangeGoogleFileSelectJson = (json) => {
     this.props.setParamText('googlefileselect', json)
   }
+
+  changeRenameColumnsLoadAll = (val) => {
+    this.props.setParamText('display-all', val);
+  };
 
   render_secret_parameter() {
     const { id_name } = this.props.p.parameter_spec
@@ -273,6 +278,18 @@ export default class WfParameter extends React.Component {
         <ReorderHistory
           history={this.props.getParamText('reorder-history')}
         />
+      )
+    } else if (id_name == 'rename-entries') {
+      return (
+          <RenameEntries
+              loadAll={this.props.getParamText('display-all')}
+              changeLoadAll={this.changeRenameColumnsLoadAll}
+              entries={this.props.p.value}
+              wfModuleId={this.props.wf_module_id}
+              paramId={this.props.p.id}
+              revision={this.props.revision}
+              isReadOnly={this.props.isReadOnly}
+          />
       )
     } else {
       return (<p className="error">Custom type {id_name} not handled</p>)

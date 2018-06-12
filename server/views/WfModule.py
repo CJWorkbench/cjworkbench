@@ -176,6 +176,12 @@ def wfmodule_render(request, pk, format=None):
     if request.method == 'GET':
         wf_module = get_object_or_404(WfModule, pk=pk)
 
+        # A clutch fix for deleting a module from within itself
+        # triggering a 500 error because wf_module.workflow is None
+        if not wf_module.workflow:
+            empty_table_json = make_render_json(pd.DataFrame(), 0, 0)
+            return HttpResponse(empty_table_json, content_type="application/json")
+
         if not wf_module.workflow.user_authorized_read(request.user):
             return HttpResponseForbidden()
 

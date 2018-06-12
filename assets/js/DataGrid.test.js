@@ -1,6 +1,6 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import DataGrid from "./DataGrid"
+import DataGrid, {ColumnHeader, EditableColumnName} from "./DataGrid"
 
 // TODO upgrade Enzyme. enzyme-adapter-react-16@1.1.1 does not support contexts.
 // https://github.com/airbnb/enzyme/issues/1509
@@ -58,17 +58,22 @@ describe('DataGrid tests,', () => {
         getRow={getRow}
         onEditCell={editCellMock}
         onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
+        isReadOnly={false}
       />
     );
 
     // Check that we ended up with five columns (first is row number), with the right names
     // If rows values are not present, ensure intial DataGrid state.gridHeight > 0
     expect(tree.find('HeaderCell')).toHaveLength(5);
+
+    // We now test the headers separately
+    expect(tree.find('EditableColumnName')).toHaveLength(4);
+    expect(tree.find('EditableColumnName').get(0).props.columnKey).toBe('aaa');
+    expect(tree.find('EditableColumnName').get(1).props.columnKey).toBe('bbbb');
+    expect(tree.find('EditableColumnName').get(2).props.columnKey).toBe('ccccc');
+    expect(tree.find('EditableColumnName').get(3).props.columnKey).toBe('rn_');
+
     let text = tree.text();
-    expect(text).toContain('aaa');      // columns
-    expect(text).toContain('bbbb');
-    expect(text).toContain('ccccc');
-    expect(text).toContain('rn_');
 
     expect(text).toContain('foo');      // some cell values
     expect(text).toContain('someval');
@@ -80,6 +85,8 @@ describe('DataGrid tests,', () => {
     expect(testData.columns.includes(tree.find('DataGrid').instance().rowNumKey)).toBeFalsy();
 
     expect(tree).toMatchSnapshot();
+
+    tree.unmount();
 
     // Double click on a cell, enter text, enter, and ensure onCellEdit is called
     // Sadly, can't get this to work
@@ -101,11 +108,14 @@ describe('DataGrid tests,', () => {
         columns={[]}
         columnTypes={[]}
         getRow={() => {}}
+        isReadOnly={false}
       />
     );
     expect(tree.find('HeaderCell')).toHaveLength(0);
 
     expect(tree).toMatchSnapshot();
+
+    tree.unmount();
   });
 
   it('Shows/hides letters in the header according to props', () => {
@@ -118,6 +128,7 @@ describe('DataGrid tests,', () => {
           columnTypes={testData.column_types}
           getRow={getRow}
           showLetter={true}
+          isReadOnly={false}
       />
     );
     expect(treeWithLetter.find('.column-letter')).toHaveLength(4);
@@ -125,6 +136,8 @@ describe('DataGrid tests,', () => {
     expect(treeWithLetter.find('.column-letter').at(1).text()).toEqual('B');
     expect(treeWithLetter.find('.column-letter').at(2).text()).toEqual('C');
     expect(treeWithLetter.find('.column-letter').at(3).text()).toEqual('D');
+
+    treeWithLetter.unmount();
 
     const treeWithoutLetter = mount(
       <DataGrid
@@ -135,8 +148,76 @@ describe('DataGrid tests,', () => {
         columnTypes={testData.column_types}
         getRow={getRow}
         showLetter={false}
+        isReadOnly={false}
       />);
     expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0);
+
+    treeWithoutLetter.unmount();
+  });
+
+  it('Calls column rename upon editing a column header', (done) => {
+    var mockRenameColumn = jest.fn();
+
+    var tree = mount(
+      <DataGrid
+          wfModuleId={100}
+          revision={999}
+          totalRows={testData.totalRows}
+          columns={testData.columns}
+          columnTypes={testData.column_types}
+          getRow={getRow}
+          onRenameColumn={mockRenameColumn}
+          isReadOnly={false}
+      />
+    );
+
+    expect(tree.find('EditableColumnName')).toHaveLength(4);
+    // Tests rename on aaaColumn
+    let aaaColumn = tree.find('EditableColumnName').first();
+    aaaColumn.simulate('click');
+    setImmediate(() => {
+      //tree.update();
+      let newAaaColumn = tree.find('EditableColumnName').first();
+      expect(newAaaColumn.find('input[value="aaa"]')).toHaveLength(1);
+      let aaaInput = newAaaColumn.find('input[value="aaa"]');
+      aaaInput.simulate('change', {target: {value: 'aaaa'}});
+      aaaInput.simulate('blur');
+      setImmediate(() => {
+        expect(mockRenameColumn.mock.calls).toHaveLength(1);
+        // First argument should be wfModuleId (100)
+        expect(mockRenameColumn.mock.calls[0][0]).toBe(100);
+        // Second argument should be the new entry, {prevName: 'aaa', newName: 'aaaa'}
+        expect(mockRenameColumn.mock.calls[0][1].prevName).toBe('aaa');
+        expect(mockRenameColumn.mock.calls[0][1].newName).toBe('aaaa');
+        tree.unmount();
+        done();
+      });
+    });
+  });
+
+  it('Respects isReadOnly setting for rename columns', (done) => {
+    var tree = mount(
+      <DataGrid
+          wfModuleId={100}
+          revision={999}
+          totalRows={testData.totalRows}
+          columns={testData.columns}
+          columnTypes={testData.column_types}
+          getRow={getRow}
+          isReadOnly={true}
+      />
+    );
+
+    expect(tree.find('EditableColumnName')).toHaveLength(4);
+    // Tests rename on aaa column
+    let aaaColumn = tree.find('EditableColumnName').first();
+    aaaColumn.simulate('click');
+    setImmediate(() => {
+      // In the read-only case, the header should not turn into an input box
+      let newAaaColumn = tree.find('EditableColumnName').first();
+      expect(newAaaColumn.find('input.column-key-input')).toHaveLength(0);
+      done();
+    });
   });
 });
 
