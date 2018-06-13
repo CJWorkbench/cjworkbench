@@ -19,8 +19,8 @@
     >Add the module 'Twitter'.
   </li>
   <li
-    data-highlight='[{"type":"Module","index":0,"name":"Twitter"}]'
-    data-test="return workflow.wfModules[0] && workflow.wfModules[0].moduleName === 'Twitter'"
+    data-highlight='[{"type":"WfModule","name":"Twitter"}]'
+    data-test="const json = workflow.wfModules[0].parameters.get('twitter_credentials'); return json && json.name && json.name.indexOf('@') !== -1;"
     >Click <kbd>Connect account</kbd>. In the following pop up window, click <kbd>Authorize app.</kbd>
   </li>
 
@@ -33,13 +33,13 @@
 <ol class="steps">
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+    data-test="const param = workflow.wfModules[0].parameters.get('querytype'); return param === 0"
     >Select 'User tweets' in the first drop down, and paste in the following user name.
-    <div class="copy-txt">realdonaldtrump</div>
+    <div class="copy-txt">nytimes</div>
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+    data-test="const param = workflow.wfModules[0].parameters.get('username'); return (param || '').toLowerCase() === 'nytimes'"
     >Click 'Update' to load tweets from that account.
   <p class="instruction-detail">Because of the limits of the <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, the number of past Tweets you can collect from a specific user is capped. You should be able to load about 3,000 of them, which is a good way to start.</p>
   </li>
@@ -59,21 +59,21 @@
     </p>
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-    >Select the column <kbd>Text</kbd> to search in. Choose <kbd>Text contains</kbd> as a condition, and seach for 'Russia'.
+    data-highlight='[{"type":"WfModule","moduleName":"Filter"}]',
+    data-test="const params = workflow.wfModules[1].parameters; return params.get('column') === 'text' && params.get('condition') === 2 && (params.get('value') || '').toLowerCase() === 'russia'"
+    >Select the column <kbd>Text</kbd> to search in. Choose <kbd>Text contains</kbd> as a condition, and search for 'Russia'.
     <p class="instruction-detail">
       Now let's group the resulting tweets by date.
     </p>
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Group by date"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+    data-highlight='[{"type":"Module","index":2,"name":"Group by date"}]',
+    data-test="return workflow.wfModules[2] && workflow.wfModules[2].moduleName === 'Group by date'"
     >Add the module 'Group by date'.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+    data-highlight='[{"type":"WfModule","moduleName":"Group by date"}]',
+    data-test="const params = workflow.wfModules[2].parameters; return params.get('column') === 'created_at' && params.get('groupby') === 4"
     >Choose <kbd>created_at</kbd> as the date column, and group rows by <kbd>Month</kbd>.
   </li>
 </ol>
@@ -84,16 +84,16 @@
 <h3 class="instructions">Instructions</h3>
 <ol class="steps">
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+    data-highlight='[{"type":"Module","index":3,"name":"Column Chart"}]',
+    data-test="return workflow.wfModules[3] && workflow.wfModules[3].moduleName === 'Column Chart'"
     >Add the module 'Column Chart'.
   </li>
   <li
-    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-    >In the moduel, add a <kbd>title</kbd> to the chart.
+    data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]',
+    data-test="const p = workflow.wfModules[3].parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
+    >In the module, add a <kbd>title</kbd> to the chart.
     <p class="instruction-detail highlight">
-      Next, let's make this chart update everytime our user tweets using the word we chose.
+      Next, let's make this chart update every time our user tweets using the word we chose.
     </p>
   </li>
   </li>
