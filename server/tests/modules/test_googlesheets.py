@@ -10,16 +10,27 @@ import os.path
 import io
 import json
 
-
-example_csv = 'foo,bar\n1,2\n2,3'
-example_tsv = 'foo\tbar\n1\t2\n2\t3'
+# example_csv, example_tsv, example_xls, example_xlsx: same spreadsheet, four
+# binary representations
+example_csv = b'foo,bar\n1,2\n2,3'
+example_tsv = b'foo\tbar\n1\t2\n2\t3'
+with open(os.path.join(os.path.dirname(__file__), '..', 'test_data',
+                       'example.xls'), 'rb') as f:
+    example_xls = f.read()
+with open(os.path.join(os.path.dirname(__file__), '..', 'test_data',
+                       'example.xlsx'), 'rb') as f:
+    example_xlsx = f.read()
 
 
 class MockResponse:
     def __init__(self, status_code, text):
         self.status_code = status_code
-        self.text = text
-        self.content = text.encode('utf-8')
+
+        if isinstance(text, str):
+            self.text = text
+            self.content = text.encode('utf-8')
+        else:
+            self.content = text
 
 
 class GoogleSheetsTests(LoggedInTestCase):
@@ -56,14 +67,20 @@ class GoogleSheetsTests(LoggedInTestCase):
             "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
             "name": "Police Data",
             "url": "http://example.org/police-data",
-            "type": "document",
             "mimeType": "application/vnd.google-apps.spreadsheet",
         })
         self.file_param.save()
 
         # our test data
-        self.test_table = pd.read_csv(io.StringIO(example_csv))
+        self.test_table = pd.read_csv(io.BytesIO(example_csv), encoding='utf-8')
         sanitize_dataframe(self.test_table)
+
+
+    def _set_file_type(self, mime_type):
+        data = json.loads(self.file_param.value)
+        data['mimeType'] = mime_type
+        self.file_param.value = json.dumps(data)
+        self.file_param.save()
 
 
     def tearDown(self):
@@ -90,46 +107,41 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
 
 
+    def _assert_file_event_happy_path(self):
+        GoogleSheets.event(self.wf_module)
+
+        self.requests.get.assert_called_with(
+            'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media'
+        )
+
+        self.assertEqual(self.wf_module.error_msg, '')
+        self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
+
+
     def test_event_fetch_csv(self):
-        self.file_param.value = json.dumps({
-            "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
-            "name": "Police Data",
-            "url": "http://example.org/police-data",
-            "type": "file",
-            "mimeType": "text/csv",
-        })
-        self.file_param.save()
+        self._set_file_type('text/csv')
         self.requests.get.return_value = MockResponse(200, example_csv)
-
-        GoogleSheets.event(self.wf_module)
-
-        self.requests.get.assert_called_with(
-            'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media'
-        )
-
-        self.assertEqual(self.wf_module.error_msg, '')
-        self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
+        self._assert_file_event_happy_path()
 
 
-    def test_event_fetch_csv(self):
-        self.file_param.value = json.dumps({
-            "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
-            "name": "Police Data",
-            "url": "http://example.org/police-data",
-            "type": "file",
-            "mimeType": "text/tab-separated-values",
-        })
-        self.file_param.save()
+    def test_event_fetch_tsv(self):
+        self._set_file_type('text/tab-separated-values')
         self.requests.get.return_value = MockResponse(200, example_tsv)
+        self._assert_file_event_happy_path()
 
-        GoogleSheets.event(self.wf_module)
 
-        self.requests.get.assert_called_with(
-            'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media'
+    def test_event_fetch_xls(self):
+        self._set_file_type('application/vnd.ms-excel')
+        self.requests.get.return_value = MockResponse(200, example_xls)
+        self._assert_file_event_happy_path()
+
+
+    def test_event_fetch_xlsx(self):
+        self._set_file_type(
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
         )
-
-        self.assertEqual(self.wf_module.error_msg, '')
-        self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
+        self.requests.get.return_value = MockResponse(200, example_xlsx)
+        self._assert_file_event_happy_path()
 
 
     def test_empty_table_on_missing_auth(self):

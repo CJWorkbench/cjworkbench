@@ -6,8 +6,8 @@ const MimeTypesString = [
   'application/vnd.google-apps.spreadsheet',
   'text/csv',
   'text/tab-separated-values',
-  //'application/vnd.ms-excel',
-  //'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+  'application/vnd.ms-excel',
+  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 ].join(',')
 
 
@@ -28,7 +28,6 @@ class PickerFactory {
    * name: `"My filename"`
    * mimeType: `"application/vnd.google-apps.spreadsheet"`, `"text/csv"`
    * url: `"https://docs.google.com/.../edit?usp=drive_web"`
-   * type: `"file"`, `"document"`
    *
    * If the singleton Picker is already open, this is a no-op.
    */
@@ -41,8 +40,8 @@ class PickerFactory {
           break
 
         case 'picked':
-          const { id, name, url, mimeType, type } = data.docs[0]
-          onPick({ id, name, url, mimeType, type })
+          const { id, name, url, mimeType } = data.docs[0]
+          onPick({ id, name, url, mimeType })
           this.close()
           break
 
