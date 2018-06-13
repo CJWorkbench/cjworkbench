@@ -63,7 +63,7 @@ article.lesson {
       }
     }
 
-    %copy-txt {
+    .copy-txt {
       position: relative;
       width: 32rem;
       margin: 1rem 0 2rem 0;
@@ -74,14 +74,16 @@ article.lesson {
       cursor: text;
       @extend %content-3;
     }
-    .copy-txt {@extend %copy-txt;} // necessary in order to use @extend
 
     .code-block {
-      @extend %copy-txt;
-      @extend %code-1;
+      @extend .copy-txt;
+      @extend .code-1;
     }
 
-    .highlight {color:$brand-learn;}
+    .highlight {
+      font-weight: 400;
+      color:$brand-learn;
+    }
 
     figure {
       margin: 1rem 0 2rem 0!important;
@@ -99,7 +101,7 @@ article.lesson {
     }
 
     code {
-      @extend %code-1;
+      @extend .code-1;
       background-color: $dark-accent--medium;
       color:white;
       padding: 0.5rem;
@@ -107,7 +109,7 @@ article.lesson {
     }
 
     kbd {
-      @extend %lesson-content--1;
+      @extend .lesson-content--1;
       font-weight: 400;
       color:$brand-learn;
       background-color: transparent;
@@ -147,9 +149,10 @@ article.lesson {
           left:-2rem;
           margin-top: 2rem;
           width:32rem;
+          font-weight:400;
+          color: $white;
           &.highlight{
-            font-weight:400;
-            color: $white;
+
           }
         }
 

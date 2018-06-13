@@ -8,10 +8,9 @@
   <p></p>
 </section>
 <section>
-<h2>1. Loading Tweets from a user account</h2>
-<p>We'll start by loading the 200 most recent tweets from a user. </p>
-<p>Why 200? Because of the limit of the <a href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>. However the module will capture all future tweets from our user.</p>
-
+<h2>1. Connect your Twitter account</h2>
+<p>You will need a Twitter account to follow along this tutorial. If you do not have one, you can create on <a href="https://twitter.com/i/flow/signup?lang=en" class="highlight" target="_blank">here</a>.
+</p>
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":0,"name":"Twitter"}]'
@@ -19,73 +18,106 @@
     >Add the module 'Twitter'.
   </li>
   <li
+    data-highlight='[{"type":"Module","index":0,"name":"Twitter"}]'
+    data-test="return workflow.wfModules[0] && workflow.wfModules[0].moduleName === 'Twitter'"
+    >Click <kbd>Connect account</kbd>. In the following pop up window, click <kbd>Authorize app.</kbd>
+  </li>
+
+</ol>
+</section>
+<section>
+<h2>2. Loading Tweets from a user account</h2>
+<p>We'll start by loading the most recent tweets from a user. </p>
+<ol class="steps">
+  <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
     data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-  > Select 'User tweets' in the first drop down, and paste in the following user name.
-  <div class="copy-txt content-3 t-white">realdonaldtrump</div>
-  Click 'Update' to load the tweets.
+    >Select 'User tweets' in the first drop down, and paste in the following user name.
+    <div class="copy-txt">realdonaldtrump</div>
+  </li>
+  <li
+    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
+    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+    >Click 'Update' to load tweets from that account.
+  <p class="instruction-detail">Because of the limits of the <a class="highlight" href='https://developer.twitter.com/en/docs/basics/rate-limiting.html' target="_blank" className="backToLessons info-1">Twitter API</a>, the number of past Tweets you can collect from a specific user is capped. You should be able to load about 3,000 of them, which is a good way to start.</p>
   </li>
 </ol>
 </section>
 <section>
-<h2>2. Filtering tweets for content</h2>
-<p>Let's filter and group the tweets to find out how often a specific word is used.</p>
+<h2>3. Filtering and grouping tweets</h2>
+<p>Let's find out how often our user is using a specific word.</p>
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
     data-test="return workflow.wfModules[1] && workflow.wfModules[1].moduleName === 'Filter'"
     >Add the module 'Filter'.
-
+    <p class="instruction-detail">
+      First, we filter tweets to find the one using the word 'Russia'.
+    </p>
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
     data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-  > Choose the column 'Text', select 'Text contains' as a condition and seach for 'Russia'.
-  <p class="lesson-note">Let's group the resulting rows by day.</p>
+    >Select the column <kbd>Text</kbd> to search in. Choose <kbd>Text contains</kbd> as a condition, and seach for 'Russia'.
+    <p class="instruction-detail">
+      Now let's group the resulting tweets by date.
+    </p>
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Group by date"}]',
     data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-  > Add the module 'Group by date'.
+    >Add the module 'Group by date'.
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
     data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-  > Choose 'created_at' as the date column, and group rows by day.
+    >Choose <kbd>created_at</kbd> as the date column, and group rows by <kbd>Month</kbd>.
   </li>
 </ol>
 </section>
 <section>
-<h2>3. Visualizing tweets on a timeline.</h2>
-<p class="lesson-note">We can now visualize our result by using a simple column chart.</p>
+<h2>4. Visualize tweets on a timeline.</h2>
+<p>We can now put the tweets on a timeline by using a simple column chart.</p>
 <ol class="steps">
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
     data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-  > Add the module 'Column Chart'.
-  <p class="lesson-note">Next, let's make this chart update when new tweets are published.</p>
+    >Add the module 'Column Chart'.
+  </li>
+  <li
+    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
+    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+    >In the moduel, add a <kbd>title</kbd> to the chart.
+    <p class="instruction-detail highlight">
+      Next, let's make this chart update everytime our user tweets using the word we chose.
+    </p>
+  </li>
   </li>
 </ol>
 </section>
 <section>
-<h2>4. Automatic updates</h2>
-<p class="lesson-note">Let's set the entire workflow to update when new tweets are published.</p>
-<ol class="steps">
-  <li
-    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-  >Click on 'manual' in the Twitter module to open the Workflow Settings window.
-  </li>
-  <li
-    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-  >Turn  the feature 'On', set the frequency to '5 hours' and click 'Apply'.
-  </li>
-  <li
-    data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-    data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-  >Make sure that the option 'Accumulate tweets' is checked, so that the new data gets appended to the existing table.
-  <p class="lesson-note">Your worfklow is now live! If new tweets are published, all the modules will update to reflect changes in the data.</p>
-  </li>
-</ol>
+  <h2>4. Automatic updates</h2>
+  <p>Let's set the entire workflow to update when new tweets are published. New conent will be filtered and the chart will update accordingly.</p>
+  <ol class="steps">
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]',
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.isEmailUpdates"
+      >In the module, click <kbd>manual</kbd> to open the Workflow Update window.
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
+      data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+      >Turn  the feature <kbd>On</kbd> set the frequency to <kbd>5 hours</kbd> and click <kbd>Apply</kbd>.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
+      data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+      >Check <kbd>Accumulate tweets</kbd> so that the new data gets added to the existing table.
+      <p class="instruction-detail">
+        Your worfklow is now live! If new tweets are published, all the modules will update to reflect changes in the data.</p>
+      <p class="instruction-detail">Get the embed code by clicking on the <span>
+        <img class="icon-insert" src="/static/images/url_chart_lesson/embbed_button.svg">
+        </span> button at the top right of the chart panel.
+      </p>
+    </li>
+  </ol>
 </section>
