@@ -347,7 +347,7 @@ const mapStateToProps = (state) => {
   const { testHighlight } = lessonSelector(state)
   return {
     wf_modules: state.workflow.wf_modules,
-    isReadOnly: !state.loggedInUser,
+    isReadOnly: state.workflow.read_only,
     testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', index: index }),
   }
 }
