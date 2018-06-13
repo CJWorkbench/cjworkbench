@@ -83,7 +83,7 @@ export default class ChartSeriesChooser extends React.Component {
         <InputGroup size="lg" className="color-picker d-flex align-items-center wf-parameter">
           <InputGroupAddon addonType="prepend">
             <Button onClick={this.handleClick} className="color-picker button color" style={{ background: this.state.color }}>
-              <i className="icon-sort-down-vl-gray button-icon color-picker"/>
+              <i className="color-picker"/>
             </Button>
           </InputGroupAddon>
           <Input bsSize="lg" type="text" value={this.state.label} onChange={this.handleTextChange} />
