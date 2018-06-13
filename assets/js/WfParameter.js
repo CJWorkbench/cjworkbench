@@ -135,6 +135,7 @@ export default class WfParameter extends React.Component {
 
   onChangeGoogleFileSelectJson = (json) => {
     this.props.setParamText('googlefileselect', json)
+    this.props.api.postParamEvent(this.props.getParamId('version_select'), {})
   }
 
   changeRenameColumnsLoadAll = (val) => {
