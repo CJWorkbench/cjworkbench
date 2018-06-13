@@ -2,6 +2,15 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 
+const MimeTypesString = [
+  'application/vnd.google-apps.spreadsheet',
+  'text/csv',
+  //'text/tab-separated-values',
+  //'application/vnd.ms-excel',
+  //'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+].join(',')
+
+
 class PickerFactory {
   constructor() {
     this.picker = null
@@ -10,7 +19,16 @@ class PickerFactory {
   /**
    * Opens a singleton Picker, calling onPick and onCancel.
    *
-   * Calls onPick({ id, name }) or onCancel() and then destroys the picker.
+   * Calls onPick({ id, name, url, mimeType, type }) or onCancel()
+   * and then destroys the picker.
+   *
+   * Example values:
+   *
+   * id: `"0BS58NKO6eAjKchvRVkhpVYZFL1lSXRaa3VIbFczR0pZX4dJN"`
+   * name: `"My filename"`
+   * mimeType: `"application/vnd.google-apps.spreadsheet"`, `"text/csv"`
+   * url: `"https://docs.google.com/.../edit?usp=drive_web"`
+   * type: `"file"`, `"document"`
    *
    * If the singleton Picker is already open, this is a no-op.
    */
@@ -23,8 +41,8 @@ class PickerFactory {
           break
 
         case 'picked':
-          const { id, name, url } = data.docs[0]
-          onPick({ id, name, url })
+          const { id, name, url, mimeType, type } = data.docs[0]
+          onPick({ id, name, url, mimeType, type })
           this.close()
           break
 
@@ -38,8 +56,9 @@ class PickerFactory {
       }
     }
 
-    const view = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
+    const view = new google.picker.DocsView(google.picker.ViewId.DOCS)
       .setIncludeFolders(true)
+      .setMimeTypes(MimeTypesString)
 
     this.picker = new google.picker.PickerBuilder()
       .addView(view)

@@ -7,17 +7,18 @@ from server import oauth
 import requests.exceptions
 import pandas as pd
 import os.path
+import io
 import json
 
 
-gdrive_file = os.path.join(settings.BASE_DIR, 'server/tests/test_data/missing_values.csv')
-with open(gdrive_file, encoding='utf-8') as f: gdrive_file_contents = f.read()
+example_csv = 'foo,bar\n1,2\n2,3'
 
 
 class MockResponse:
     def __init__(self, status_code, text):
         self.status_code = status_code
         self.text = text
+        self.content = text.encode('utf-8')
 
 
 class GoogleSheetsTests(LoggedInTestCase):
@@ -54,11 +55,13 @@ class GoogleSheetsTests(LoggedInTestCase):
             "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
             "name": "Police Data",
             "url": "http://example.org/police-data",
+            "type": "document",
+            "mimeType": "application/vnd.google-apps.spreadsheet",
         })
         self.file_param.save()
 
         # our test data
-        self.test_table = pd.read_csv(gdrive_file)
+        self.test_table = pd.read_csv(io.StringIO(example_csv))
         sanitize_dataframe(self.test_table)
 
 
@@ -72,19 +75,39 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.assertIsNone(GoogleSheets.render(self.wf_module, None))
 
 
-    def test_event_fetch_file(self):
-        self.requests.get.return_value = MockResponse(200,
-                                                      gdrive_file_contents)
+    def test_event_fetch_google_sheet(self):
+        self.requests.get.return_value = MockResponse(200, example_csv)
 
         GoogleSheets.event(self.wf_module)
 
-        self.requests.get.assert_called_once_with(
+        self.requests.get.assert_called_with(
             'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj/export?mimeType=text%2Fcsv'
         )
 
         # Check that the data was actually stored
-        self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
         self.assertEqual(self.wf_module.error_msg, '')
+        self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
+
+
+    def test_event_fetch_csv(self):
+        self.file_param.value = json.dumps({
+            "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
+            "name": "Police Data",
+            "url": "http://example.org/police-data",
+            "type": "file",
+            "mimeType": "text/csv",
+        })
+        self.file_param.save()
+        self.requests.get.return_value = MockResponse(200, example_csv)
+
+        GoogleSheets.event(self.wf_module)
+
+        self.requests.get.assert_called_with(
+            'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media'
+        )
+
+        self.assertEqual(self.wf_module.error_msg, '')
+        self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
 
 
     def test_empty_table_on_missing_auth(self):

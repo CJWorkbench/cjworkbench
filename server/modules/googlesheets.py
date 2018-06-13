@@ -3,49 +3,124 @@ from django.conf import settings
 from server.sanitizedataframe import sanitize_dataframe
 import io
 import json
-import pandas as pd
-from pandas.io.common import CParserError
+import pandas
+from pandas import DataFrame
+import pandas.errors
 from server.versions import save_fetched_table_if_changed
-from typing import Any, Dict, Tuple, Optional
+from typing import Any, Dict, Tuple, Optional, Union
 from server import oauth
 import requests
 
 
-def get_spreadsheet(
-        sheet_id: str,
-        secret: Optional[Dict[str,Any]]) -> Tuple[Optional[str], Optional[str]]:
-    """HTTP-request, bailing on error or if secret is invalid.
+_Secret = Dict[str,Any]
 
-    Return (DataFrame, None) if everything worked.
 
-    Return (None, 'message') if something went wrong.
+def _parse_csv(blob: bytes) -> Union[DataFrame, str]:
+    """Build a DataFrame or str error message.
+
+    Peculiarities:
+
+    * The file encoding is UTF-8. This is correct when we export a CSV from
+      Google Sheets (type 'document') -- despite Google's incorrect
+      Content-Type header. But when we download a 'file' CSV from Google, we
+      don't know the encoding.
+    * Data types. This is a CSV, so every value is a string ... _but_ we do the
+      pandas default auto-detection.
     """
-    if not secret:
-        return (None, 'Not authorized. Please connect to Google Drive.')
+    try:
+        return pandas.read_csv(io.BytesIO(blob), encoding='utf-8')
+    except pandas.errors.ParserError as err:
+        return str(err)
 
+
+def _build_requests_session(secret: _Secret) -> Union[requests.Session,str]:
+    """Prepare a Requests session, so caller can then call
+    `session.get(url)`.
+    """
     service = oauth.OAuthService.lookup_or_none('google_credentials')
     if not service:
-        return (None, 'google_credentials not configured. Please restart Workbench with a Google secret.')
+        return 'google_credentials not configured. Please restart Workbench with a Google secret.'
 
-    client = service.requests_or_str_error(secret)
-    if isinstance(client, str): return (None, client)
+    session = service.requests_or_str_error(secret)
+    return session # even if it's an error
 
-    uri = f'https://www.googleapis.com/drive/v3/files/{sheet_id}/export?mimeType=text%2Fcsv'
+
+def _download_bytes(session: requests.Session, url: str) -> Union[bytes,str]:
+    """Download bytes from `url` or return a str error message.
+    """
     try:
-        response = client.get(uri)
-        # Google Content-Type is broken. According to RFC2616, "Data in
-        # character sets other than "ISO-8859-1" or its subsets MUST be labeled
-        # with an appropriate charset value". Override Google Sheets' implicit
-        # "ISO-8859-1", because it _actually_ serves utf-8.
-        response.encoding = 'utf-8'
-        body = response.text
+        response = session.get(url)
 
         if response.status_code < 200 or response.status_code > 299:
-            return (None, f'HTTP {response.status_code} from Google: {body}')
-    except requests.RequestException as err:
-        return (None, str(err))
+            return f'HTTP {response.status_code} from Google: {response.text}'
 
-    return (body, None)
+        return response.content
+    except requests.RequestException as err:
+        return str(err)
+
+
+def _download_google_sheet(session: requests.Session,
+                           sheet_id: str) -> Union[DataFrame,str]:
+    """Download a Google Sheet or return a str error message.
+
+    The strategy: export the document as CSV, and parse the CSV.
+    """
+    # Google Content-Type header is broken. According to RFC2616, "Data in
+    # character sets other than "ISO-8859-1" or its subsets MUST be labeled
+    # with an appropriate charset value". Google Sheets does not specify a
+    # charset (implying ISO-8859-1), but the text it serves is utf-8.
+    #
+    # Workaround: download the bytes, and parse them manually.
+    url = f'https://www.googleapis.com/drive/v3/files/{sheet_id}/export?mimeType=text%2Fcsv'
+
+    blob = _download_bytes(session, url)
+    if isinstance(blob, str): return blob
+
+    return _parse_csv(blob)
+
+
+def _download_gdrive_file(session: requests.Session, sheet_id: str,
+                          mime_type: str) -> Union[DataFrame,str]:
+    """Download and parse from Google Drive, or return a str error message.
+    """
+    url = f'https://www.googleapis.com/drive/v3/files/{sheet_id}?alt=media'
+
+    blob = _download_bytes(session, url)
+    if isinstance(blob, str): return blob
+
+    return _Parsers[mime_type](blob)
+
+
+def download_data_frame(sheet_id: str, sheet_type: str, sheet_mime_type: str,
+                        secret: Optional[_Secret]) -> Union[DataFrame, str]:
+    """Download spreadsheet from Google, or return a str error message.
+
+    Arguments decide how the download and parse will occur:
+
+    * If `secret` is not set, return an error.
+    * If `sheet_type` is 'document', export a CSV from Google and parse. If
+      it's 'file', request a download URL and then download the raw bytes.
+    * If `sheet_type` is 'file', choose a DataFrame parser using
+      `sheet_mime_type`.
+    """
+    if not secret:
+        return 'Not authorized. Please connect to Google Drive.'
+
+    session = _build_requests_session(secret)
+    if isinstance(session, str): return session
+
+    if sheet_type == 'document':
+        return _download_google_sheet(session, sheet_id)
+    else:
+        return _download_gdrive_file(session, sheet_id, sheet_mime_type)
+
+
+_Parsers = {
+    'text/csv': _parse_csv,
+#    'text/tab-separated-values': _parse_tsv,
+#    'application/cnd.ms-excel': _parse_xls,
+#    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': _parse_xlsx,
+}
 
 
 class GoogleSheets(ModuleImpl):
@@ -60,22 +135,22 @@ class GoogleSheets(ModuleImpl):
         if not file_meta_json: return
         file_meta = json.loads(file_meta_json)
         sheet_id = file_meta['id']
+        # backwards-compat for old entries without 'type', 2018-06-13
+        sheet_type = file_meta.get('type', 'document')
+        # backwards-compat for old entries without 'mimeType', 2018-06-13
+        sheet_mime_type = file_meta.get('mimeType', '')
+
         # Ignore file_meta['url']. That's for the client's web browser, not for
         # an API request.
 
         if sheet_id:
             secret = wfmodule.get_param_secret_secret('google_credentials')
-            new_data, error = get_spreadsheet(sheet_id, secret)
-
-            if error:
-                table = pd.DataFrame()
+            result = download_data_frame(sheet_id, sheet_type, sheet_mime_type,
+                                         secret)
+            if isinstance(result, str):
+                table, error = (DataFrame(), result)
             else:
-                try:
-                    table = pd.read_csv(io.StringIO(new_data))
-                    error = ''
-                except CParserError as e:
-                    table = pd.DataFrame()
-                    error = str(e)
+                table, error = (result, '')
+                sanitize_dataframe(table)
 
-            sanitize_dataframe(table)
             save_fetched_table_if_changed(wfmodule, table, error)
