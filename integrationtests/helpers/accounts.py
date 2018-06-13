@@ -99,7 +99,7 @@ class AccountAdmin:
             bufsize=0, # no buffer on subprocess stdin/stdout/stderr
             universal_newlines=False
         )
-        os.close(pty_slave)
+        os.close(pty_slave) # the child process owns it now
 
         self._finalizer = weakref.finalize(
             self,

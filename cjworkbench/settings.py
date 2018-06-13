@@ -367,7 +367,8 @@ try:
             'redirect_url': d['redirect_url'],
         }
 except FileNotFoundError:
-    print(f'Missing {CJW_TWITTER_CLIENT_SECRETS_PATH}. Twitter auth will not work')
+    # Cannot print(): integration tests parse stdout/stderr.
+    #print(f'Missing {CJW_TWITTER_CLIENT_SECRETS_PATH}. Twitter auth will not work')
     pass
 
 # Various services for django-allauth
