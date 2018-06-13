@@ -100,6 +100,14 @@ article.lesson {
       }
     }
 
+    .instruction-detail {
+      position: relative;
+      margin-top: 3rem;
+      width:32rem;
+      color: $white;
+      &.highlight {font-weight:400;}
+    }
+
     code {
       @extend .code-1;
       background-color: $dark-accent--medium;
@@ -122,8 +130,8 @@ article.lesson {
 
     h3.instructions {
       color: $white;
-      margin-top: 1.5rem;
-      margin-bottom: 1.5rem;
+      margin-top: 3rem;
+      margin-bottom: 3rem;
     }
 
     &>.instructions {
@@ -139,28 +147,16 @@ article.lesson {
       }
 
       li {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         list-style-type: none;
         padding-left: 2rem;
 
-        .copy-txt, .image {left:-2rem;}
-
-        .instruction-detail {
-          position: relative;
+        // off setting those elements to make them larger
+        figure img, figcaption, .instruction-detail, .image {
           left:-2rem;
-          margin-top: 2rem;
-          width:32rem;
-          font-weight:400;
-          color: $white;
-          &.highlight{
-
-          }
         }
 
-        figure img, figcaption {
-          margin-left:-2rem;
-
-        }
+        .copy-txt {width:30rem;}
 
         &::before {
           content: "\e938";

@@ -27,7 +27,7 @@
 </ol>
 </section>
 <section>
-<h2>2. Loading Tweets from a user account</h2>
+<h2>2. Load Tweets from a user account</h2>
 <p>We'll start by loading the most recent tweets from a user. </p>
 <h3 class="instructions">Instructions</h3>
 <ol class="steps">
@@ -46,17 +46,17 @@
 </ol>
 </section>
 <section>
-<h2>3. Filtering and grouping tweets</h2>
+<h2>3. Filter and group tweets</h2>
 <p>Let's find out how often our user is using a specific word.</p>
 <h3 class="instructions">Instructions</h3>
+<p class="instruction-detail">
+  First, we filter tweets to find the one containing the word 'Russia'.
+</p>
 <ol class="steps">
   <li
     data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
     data-test="return workflow.wfModules[1] && workflow.wfModules[1].moduleName === 'Filter'"
     >Add the module 'Filter'.
-    <p class="instruction-detail">
-      First, we filter tweets to find the one using the word 'Russia'.
-    </p>
   </li>
   <li
     data-highlight='[{"type":"WfModule","moduleName":"Filter"}]',
@@ -80,7 +80,7 @@
 </section>
 <section>
 <h2>4. Visualize tweets on a timeline.</h2>
-<p>We can now put the tweets on a timeline by using a simple column chart.</p>
+<p>We can now put the tweets on a timeline by using a column chart.</p>
 <h3 class="instructions">Instructions</h3>
 <ol class="steps">
   <li
@@ -92,8 +92,8 @@
     data-highlight='[{"type":"WfModule","moduleName":"Column Chart"}]',
     data-test="const p = workflow.wfModules[3].parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
     >In the module, add a <kbd>title</kbd> to the chart.
-    <p class="instruction-detail highlight">
-      Next, let's make this chart update every time our user tweets using the word we chose.
+    <p class="instruction-detail">
+      Next, let's make this chart update every time our user tweets contain the word we chose.
     </p>
   </li>
   </li>
@@ -101,8 +101,8 @@
 </section>
 <section>
   <h2>4. Automatic updates</h2>
+  <p>Let's set the entire workflow to update when new tweets are published.</p>
   <h3 class="instructions">Instructions</h3>
-  <p>Let's set the entire workflow to update when new tweets are published. New conent will be filtered and the chart will update accordingly.</p>
   <ol class="steps">
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]',
@@ -111,12 +111,12 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
       data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-      >Turn  the feature <kbd>On</kbd> set the frequency to <kbd>5 hours</kbd> and click <kbd>Apply</kbd>.
+      >Turn  the feature <kbd>On</kbd> set the frequency to <kbd>5 hours</kbd>.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
       data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-      >Check <kbd>Accumulate tweets</kbd> so that the new data gets added to the existing table.
+      >Check <kbd>Accumulate tweets</kbd> so that new data gets added to the existing table, and click <kbd>Apply</kbd>.
       <p class="instruction-detail">
         Your worfklow is now live! If new tweets are published, all the modules will update to reflect changes in the data.</p>
       <p class="instruction-detail">Get the embed code by clicking on the <span>
