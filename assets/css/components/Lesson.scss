@@ -120,13 +120,14 @@ article.lesson {
       width:2.7rem;
     }
 
+    h3.instructions {
+      color: $white;
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
     &>.instructions {
       color:$white;
-      margin-top: 1.5rem;
-
-      h3 {
-        margin-bottom: 1.5rem;
-      }
 
       .steps {
         list-style-position:inside;

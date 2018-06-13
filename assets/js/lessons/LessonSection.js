@@ -41,7 +41,6 @@ export default class LessonSection extends React.PureComponent {
     } else {
       return (
         <div className="instructions">
-          <h3 className="instructions">Instructions</h3>
           <ol className="steps lesson-content--1">
             {steps.map((s, i) => this.renderStep(s, i))}
           </ol>

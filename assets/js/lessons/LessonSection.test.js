@@ -37,7 +37,6 @@ describe('LessonSection', () => {
 
   it('renders steps', () => {
     const w = wrapper()
-    expect(w.find('h3.instructions')).toHaveLength(1)
     expect(w.find('ol.steps')).toHaveLength(1)
     expect(w.find('LessonStep')).toHaveLength(3)
   })
