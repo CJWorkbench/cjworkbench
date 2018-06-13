@@ -131,38 +131,54 @@ export default class GoogleFileSelect extends React.PureComponent {
 
     this.state = {
       pickerFactory: null,
-      accessToken: null,
       loadingAccessToken: false,
-      secretNameThatLedToAccessToken: null,
+      unauthenticated: false, // true after the server says we're unauthenticated
     }
   }
 
-  refreshAccessToken() {
+  /**
+   * Return a Promise of an access token or null ("unauthenticated").
+   *
+   * Manages state: loadingAccessToken and unauthenticated.
+   *
+   * Access tokens are time-sensitive, so we can't just cache the return value:
+   * we need to refresh from time to time. Simplest is to load on demand.
+   *
+   * Each call returns a new token. Only the most-recent returned token is
+   * valid.
+   */
+  fetchAccessToken() {
     const googleCredentialsSecretName = this.props.googleCredentialsSecretName
 
     if (googleCredentialsSecretName === null) {
       this.setState({
-        accessToken: null,
-        secretNameThatLedToAccessToken: null,
         loadingAccessToken: false,
+        unauthenticated: true,
       })
-      return
+      return Promise.resolve(null)
     }
 
     this.setState({
-      accessToken: null,
-      secretNameThatLedToAccessToken: googleCredentialsSecretName,
       loadingAccessToken: true,
+      unauthenticated: false,
     })
 
-    this.props.api.paramOauthGenerateAccessToken(this.props.googleCredentialsParamId)
-      .then(access_token_or_null => {
-        if (googleCredentialsSecretName === this.state.secretNameThatLedToAccessToken) { // avoid race
-          this.setState({
-            accessToken: access_token_or_null,
-            loadingAccessToken: false,
-          })
+    return this.props.api.paramOauthGenerateAccessToken(this.props.googleCredentialsParamId)
+      .then(accessTokenOrNull => {
+        if (googleCredentialsSecretName !== this.props.googleCredentialsSecretName) {
+          // avoid race: another race is happening
+          return null
         }
+        if (!this._isMounted) {
+          // avoid race: we're closed
+          return null
+        }
+
+        this.setState({
+          loadingAccessToken: false,
+          unauthenticated: accessTokenOrNull === null,
+        })
+        return accessTokenOrNull
       })
   }
 
@@ -178,7 +194,6 @@ export default class GoogleFileSelect extends React.PureComponent {
 
   componentDidMount() {
     this.loadPickerFactory()
-    this.refreshAccessToken()
 
     this._isMounted = true
   }
@@ -194,23 +209,22 @@ export default class GoogleFileSelect extends React.PureComponent {
       // floating about. Ignore the response when it arrives.
       this.setState({
         loadingAccessToken: false,
-        accessToken: null,
-        secretNameThatLedToAccessToken: null,
+        unauthenticated: false,
       })
     }
 
     this._isMounted = false
   }
 
-  componentDidUpdate() {
-    if (this.props.googleCredentialsSecretName !== this.state.secretNameThatLedToAccessToken) {
-      this.refreshAccessToken()
-    }
-  }
-
   openPicker = () => {
-    const { pickerFactory, accessToken } = this.state
-    pickerFactory.open(accessToken, this.onPick, this.onCancel)
+    const { pickerFactory } = this.state
+    this.fetchAccessToken()
+      .then(accessTokenOrNull => {
+        if (accessTokenOrNull) {
+          pickerFactory.open(accessTokenOrNull, this.onPick, this.onCancel)
+        }
+        // otherwise, we've set this.state.unauthenticated
+      })
   }
 
   onPick = (data) => {
@@ -222,8 +236,8 @@ export default class GoogleFileSelect extends React.PureComponent {
   }
 
   render() {
-    const { pickerFactory, accessToken, loadingAccessToken } = this.state
-    const { fileMetadataJson } = this.props
+    const { pickerFactory, loadingAccessToken, unauthenticated } = this.state
+    const { fileMetadataJson, googleCredentialsSecretName } = this.props
 
     const defaultFileName = '(no file chosen)'
     const fileMetadata = fileMetadataJson ? JSON.parse(fileMetadataJson) : null
@@ -236,16 +250,14 @@ export default class GoogleFileSelect extends React.PureComponent {
       button = (
         <p className="loading">Loading...</p>
       )
-    } else if (!accessToken) {
-      if (this.props.googleCredentialsSecretName) {
-        button = (
-          <p className="sign-in-error">failure: please reconnect</p>
-        )
-      } else {
-        button = (
-          <p className="not-signed-in">(not signed in)</p>
-        )
-      }
+    } else if (unauthenticated) {
+      button = (
+        <p className="sign-in-error">failure: please reconnect</p>
+      )
+    } else if (!googleCredentialsSecretName) {
+      button = (
+        <p className="not-signed-in">(not signed in)</p>
+      )
     } else {
       button = (
         <button

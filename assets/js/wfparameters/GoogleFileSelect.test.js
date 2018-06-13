@@ -77,28 +77,25 @@ describe('GoogleFileSelect', () => {
     expect(w.find('.loading')).toHaveLength(1)
   })
 
-  it('shows loading when access token has not loaded', async () => {
+  it('shows loading when fetching access token', async () => {
     loadAccessToken.mockReturnValue(new Promise(_ => {}))
     const w = wrapper()
     await tick()
     w.update()
+    w.find('button.change-file').simulate('click')
     expect(w.find('.loading')).toHaveLength(1)
   })
 
-  it('shows errors when accessToken is missing but googleCredentialsSecretName is set', async () => {
+  it('shows errors when unauthenticated', async () => {
     googleCredentialsSecretName = 'hi'
     loadAccessToken.mockReturnValue(Promise.resolve(null))
     const w = wrapper()
     await tick()
     w.update()
-    expect(w.find('.sign-in-error')).toHaveLength(1)
-  })
-
-  it('refreshes access token when changing googleCredentialsSecretName', async () => {
-    const w = wrapper()
+    w.find('button.change-file').simulate('click')
     await tick()
-    w.setProps({ googleCredentialsSecretName: 'user1@example.org' })
-    expect(loadAccessToken).toHaveBeenCalledTimes(2)
+    w.update()
+    expect(w.find('.sign-in-error')).toHaveLength(1)
   })
 
   it('allows Change of existing file', async () => {
@@ -118,6 +115,7 @@ describe('GoogleFileSelect', () => {
     })
 
     w.find('button').simulate('click')
+    await tick() // let fetchAccessToken() return
     expect(onChangeJson).toHaveBeenCalledWith(JSON.stringify({
       id: 'newid',
       name: 'new file',
@@ -134,6 +132,7 @@ describe('GoogleFileSelect', () => {
     })
 
     w.find('button').simulate('click')
+    await tick() // let fetchAccessToken() return
     expect(onChangeJson).not.toHaveBeenCalled()
   })
 
