@@ -25,9 +25,9 @@ export default class ReorderHistory extends React.Component {
                 <thead>
                     <tr>
                         <td className={'reorder-info'}>#</td>
-                        <td className={'reorder-info'}>Column</td>
-                        <td className={'reorder-position'}>From</td>
-                        <td className={'reorder-position'}>To</td>
+                        <td className={'reorder-info'}>COLUMN</td>
+                        <td className={'reorder-position'}>FROM</td>
+                        <td className={'reorder-position'}>TO</td>
                     </tr>
                 </thead>
                 <tbody>

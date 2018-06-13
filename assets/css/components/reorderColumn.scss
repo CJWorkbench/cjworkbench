@@ -2,7 +2,7 @@
 
   //header
   thead tr {
-    height:3.5rem;
+    height:2.5rem;
   }
 
   //body
@@ -20,11 +20,11 @@
 
 
   .reorder-info {
-    @extend .info-1;
+    @extend .info-3;
   }
 
   .reorder-position  {
-    @extend .info-1;
+    @extend .info-3;
     text-align: center;
   }
 
