@@ -22,7 +22,7 @@ def import_from_github(request):
     except ValidationError as error:
         response = HttpResponse(json.dumps({'error': error.message}),
                                 content_type='application/json')
-        response.status_code = 400
+        response.status_code = 200  # should really be 400, but we want the WorkbenchAPI.js to pass error messages through
         return response
 
 @api_view(['POST'])
