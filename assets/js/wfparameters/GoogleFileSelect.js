@@ -5,7 +5,7 @@ import PropTypes from 'prop-types'
 const MimeTypesString = [
   'application/vnd.google-apps.spreadsheet',
   'text/csv',
-  //'text/tab-separated-values',
+  'text/tab-separated-values',
   //'application/vnd.ms-excel',
   //'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 ].join(',')

@@ -12,6 +12,7 @@ import json
 
 
 example_csv = 'foo,bar\n1,2\n2,3'
+example_tsv = 'foo\tbar\n1\t2\n2\t3'
 
 
 class MockResponse:
@@ -99,6 +100,27 @@ class GoogleSheetsTests(LoggedInTestCase):
         })
         self.file_param.save()
         self.requests.get.return_value = MockResponse(200, example_csv)
+
+        GoogleSheets.event(self.wf_module)
+
+        self.requests.get.assert_called_with(
+            'https://www.googleapis.com/drive/v3/files/aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj?alt=media'
+        )
+
+        self.assertEqual(self.wf_module.error_msg, '')
+        self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
+
+
+    def test_event_fetch_csv(self):
+        self.file_param.value = json.dumps({
+            "id": "aushwyhtbndh7365YHALsdfsdf987IBHJB98uc9uisdj",
+            "name": "Police Data",
+            "url": "http://example.org/police-data",
+            "type": "file",
+            "mimeType": "text/tab-separated-values",
+        })
+        self.file_param.save()
+        self.requests.get.return_value = MockResponse(200, example_tsv)
 
         GoogleSheets.event(self.wf_module)
 

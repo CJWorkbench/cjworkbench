@@ -33,6 +33,22 @@ def _parse_csv(blob: bytes) -> Union[DataFrame, str]:
         return str(err)
 
 
+def _parse_tsv(blob: bytes) -> Union[DataFrame, str]:
+    """Build a DataFrame or str error message.
+
+    Peculiarities:
+
+    * The file encoding is UTF-8, always. When we download a 'file' TSV from
+      Google, we don't know the encoding. (TODO consider chardet)
+    * Data types. This is a TSV, so every value is a string ... _but_ we do the
+      pandas default auto-detection.
+    """
+    try:
+        return pandas.read_table(io.BytesIO(blob), encoding='utf-8')
+    except pandas.errors.ParserError as err:
+        return str(err)
+
+
 def _build_requests_session(secret: _Secret) -> Union[requests.Session,str]:
     """Prepare a Requests session, so caller can then call
     `session.get(url)`.
@@ -117,7 +133,7 @@ def download_data_frame(sheet_id: str, sheet_type: str, sheet_mime_type: str,
 
 _Parsers = {
     'text/csv': _parse_csv,
-#    'text/tab-separated-values': _parse_tsv,
+    'text/tab-separated-values': _parse_tsv,
 #    'application/cnd.ms-excel': _parse_xls,
 #    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet': _parse_xlsx,
 }
