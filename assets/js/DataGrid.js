@@ -10,7 +10,6 @@ import {idxToLetter} from "./utils";
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 
-
 // --- Row and column formatting ---
 
 // Custom Formatter component, to render row number in a different style
@@ -383,9 +382,15 @@ function makeFormattedCols(props) {
     formatter: RowNumberFormatter,
     width: 40,
     locked: true,
-  }
+  };
 
-  const columns = props.columns.map((columnKey, index) => ({
+  // We can have an empty table, but we need to give these props to ColumnHeader anyway
+  const safeColumns = props.columns || [];
+  const columnTypes = props.columnTypes || safeColumns.map(_ => '');
+  const showLetter = props.showLetter || false;
+  const onSortColumn = props.onSortColumn || (() => {});
+
+  const columns = safeColumns.map((columnKey, index) => ({
     key: columnKey,
     name: columnKey,
     resizable: true,
@@ -400,12 +405,12 @@ function makeFormattedCols(props) {
     headerRenderer: (
       <ColumnHeader
         columnKey={columnKey}
-        columnType={props.columnTypes[index]}
+        columnType={columnTypes[index]}
         index={index}
         isSorted={props.sortColumn === columnKey}
         sortDirection={props.sortDirection}
-        onSortColumn={props.onSortColumn}
-        showLetter={props.showLetter}
+        onSortColumn={onSortColumn}
+        showLetter={showLetter}
         onDragStartColumnIndex={props.onDragStartColumnIndex}
         onDragEnd={props.onDragEnd}
         draggingColumnIndex={props.draggingColumnIndex}
@@ -582,21 +587,16 @@ export default class DataGrid extends React.Component {
 
   render() {
     if (this.props.totalRows > 0) {
-      const columns = makeFormattedCols({
-        columns: this.props.columns || [],
-        columnTypes: this.props.columnTypes || this.props.columns.map(_ => ''),
-        showLetter: this.props.showLetter || false,
-        sortColumn: this.props.sortColumn,
-        sortDirection: this.props.sortDirection,
+      const draggingProps = {
+        ...this.props,
         rowNumKey: this.rowNumKey,
         onDragStartColumnIndex: this.onDragStartColumnIndex,
         onDragEnd: this.onDragEnd,
         draggingColumnIndex: this.state.draggingColumnIndex,
         onDropColumnIndexAtIndex: this.onDropColumnIndexAtIndex,
-        onSortColumn: this.props.onSortColumn || (() => {}),
         onRenameColumn: this.onRename,
-        isReadOnly: this.props.isReadOnly
-      });
+      };
+      let columns = makeFormattedCols(draggingProps);
 
       return(
         <ReactDataGrid

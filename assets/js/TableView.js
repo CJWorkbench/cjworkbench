@@ -39,7 +39,6 @@ export default class TableView extends React.Component {
     isReadOnly:         PropTypes.bool.isRequired,
     resizing:           PropTypes.bool,
     setBusySpinner:     PropTypes.func,
-    onEditCell:         PropTypes.func
   };
 
   constructor(props) {
