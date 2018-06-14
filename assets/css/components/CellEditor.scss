@@ -1,30 +1,38 @@
 
 // module (not cells in table)
 .cell-edits--column {
-	margin-bottom: 1rem;
-}
+	margin-bottom: 1.5rem;
+	@extend .content-3;
+	color:$brand-text--dark;
+	overflow-x: hidden;
 
-.cell-edits--row {
-	background-color: #fff;
-	width:none;
-	display: flex;
-}
+	.edited-column {
+		margin-left: .7rem;
+	}
 
-.cell-edits--row .text-field {
-	white-space: normal;
-	padding:0;
-	line-height:2rem;
-	width:17rem;
-	padding: 0.7rem;
+	.cell-edits--row {
+		border-top: 1px solid $dark-accent--soft;
+		background-color: transparent;
+		line-height:2rem;
+		height: 3.5rem;
+		width:none;
+		display: flex;
 
-}
+		.edited-row {
+			width:2rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding:0;
+			overflow-x: hidden;
+		}
 
-.cell-edits--row .number-field{
-	display: flex;
-	justify-content: center;
-	align-items: flex-start;
-	padding:0.7rem;
-	line-height:2rem;
-	width: 5rem;
-	color:$light-gray;
+		.edited-text {
+			display: flex;
+			align-items: center;
+			padding:0.7rem;
+			line-height:2rem;
+			width: 5rem;
+		}
+	}
 }

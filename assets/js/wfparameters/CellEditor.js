@@ -64,17 +64,17 @@ export default class CellEditor extends React.Component {
       let rows = colEdits['edits'].map( (row, idx) => {
         return (
           <div className='cell-edits--row' key={idx}>
-            <div className='number-field'>{row['row']+1}</div>
-            <div className='text-field'>{row['value']}</div>
+            <div className='edited-row'>{row['row']+1}</div>
+            <div className='edited-text'>{row['value']}</div>
           </div>
         );
       });
 
       let colName = colEdits['col'];
       return (
-        <div className='cell-edits--column content-3 label-margin' key={colName}>
-          { colName }
-          <div className='cell-edits--rows t-d-gray content-3 '>
+        <div className='cell-edits--column' key={colName}>
+          <div className='edited-column'>{ colName }</div>
+          <div className='cell-edits--rows'>
             { rows }
           </div>
         </div>
