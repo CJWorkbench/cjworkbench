@@ -279,13 +279,28 @@
     }
 
     .react-grid-Cell{
-      padding-right:1rem;
-      padding-left:1rem;
+      padding-right:0rem;
+      padding-left:0rem;
       border-right: 1px solid $table-border;
       border-bottom: 1px solid $table-border;
+      //Click and edit a cell
+      &:focus {
+        padding-left: 0;
+        border-radius: 0;
+      	outline: 2px solid $brand-orange;
+        font-size: 1.2rem;
+      }
+      & input {
+        padding-left: 0.8rem;
+        background-color: $white;
+        border-radius: 0;
+      	outline: 2px solid $brand-orange;
+        font-size: 1.2rem;
+      }
     }
 
     .react-grid-Cell:not(.editing) .react-grid-Cell__value{
+      margin-left: 1rem;
       font-size: 1.2rem;
     }
 
@@ -296,13 +311,6 @@
 
     .react-grid-Row--odd:hover .react-grid-Cell,.react-grid-Row--even:hover .react-grid-Cell{
       background-color: #DBEBF3;
-    }
-
-    //Click and edit a cell
-    .react-grid-Cell:focus,
-    .react-grid-Cell input.editor-main {
-    	border-radius: 0;
-    	outline: 2px solid $brand-orange;
     }
 
     /* This div may be superfluous wrt .outputpane */
