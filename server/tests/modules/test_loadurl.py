@@ -95,6 +95,18 @@ class LoadFromURLTests(LoggedInTestCase):
             self.assertEqual(self.wfmodule.status, WfModule.ERROR)
 
 
+    def test_load_csv_bad_content_type(self):
+        # return text/plain type and rely on filename detection, as https://raw.githubusercontent.com/ does
+        url = 'https://raw.githubusercontent.com/user/repo/branch/the.csv'
+        self.url_pval.set_value(url)
+        self.url_pval.save()
+        with requests_mock.Mocker() as m:
+            m.get(url, text=mock_csv_text, headers={'content-type':'text/plain'})
+            self.press_fetch_button()
+            response = self.get_render()
+            self.assertEqual(response.content.decode('utf-8'), make_render_json(mock_csv_table))
+
+
     def test_load_json(self):
         url = 'http://test.com/the.json'
         self.url_pval.set_value(url)

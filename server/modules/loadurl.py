@@ -13,6 +13,39 @@ from django.core.exceptions import ValidationError
 
 # ---- LoadURL ----
 
+
+excel_types = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
+csv_types = ['text/csv']
+json_types = ['application/json']
+
+
+def simple_get_file_type(content_type, url):
+    """
+        Returns file type, as one of 'csv', 'xlsx', 'json', or None if unknown
+    """
+    if content_type in csv_types:
+        return 'csv'
+
+    if content_type in excel_types:
+        return 'xlsx'
+
+    if content_type in json_types:
+        return 'json'
+
+    extensions = {
+        '.xls'  : 'xlsx',
+        '.xlsx' : 'xlsx',
+        '.csv'  : 'csv',
+        '.json' : 'json'
+    }
+    lurl = url.lower()
+    for k,v in extensions.items():
+        if k in lurl:
+            return v
+    return None
+
+
+
 class LoadURL(ModuleImpl):
 
     # Input table ignored.
@@ -36,9 +69,6 @@ class LoadURL(ModuleImpl):
         # fetching could take a while so notify clients/users that we're working on it
         wfm.set_busy()
 
-        excel_types = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']
-        csv_types = ['text/csv']
-        json_types = ['application/json']
         mimetypes = ','.join(excel_types + csv_types + json_types)
 
         try:
@@ -53,22 +83,23 @@ class LoadURL(ModuleImpl):
 
         # get content type, ignoring charset for now
         content_type = res.headers.get('content-type').split(';')[0]
+        filetype = simple_get_file_type(content_type, url)
 
-        if content_type in csv_types:
+        if filetype == 'csv':
             try:
                 table = pd.read_csv(io.StringIO(res.text))
             except CParserError as e:
                 wfm.set_error(str(e))
                 table = pd.DataFrame([{'result':res.text}])
 
-        elif content_type in excel_types:
+        elif filetype == 'xlsx':
             try:
                 table = pd.read_excel(io.BytesIO(res.content))
             except XLRDError as e:
                 wfm.set_error(str(e))
                 return
 
-        elif content_type in json_types:
+        elif filetype == 'json':
             try:
                 json_string = res.text
 
@@ -77,13 +108,6 @@ class LoadURL(ModuleImpl):
             except ValueError as e:
                 wfm.set_error(str(e))
                 table = pd.DataFrame([{'result': res.text}])
-                return
-
-        elif content_type == "application/octet-stream" and '.xls' in url:
-            try:
-                table = pd.read_excel(io.BytesIO(res.content))
-            except XLRDError as e:
-                wfm.set_error(str(e))
                 return
 
         else:
