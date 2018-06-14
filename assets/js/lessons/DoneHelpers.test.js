@@ -90,6 +90,27 @@ describe('DoneHelpers', () => {
       expect(wfModule.selectedVersion).toBe(null)
     })
 
+    it('should have .updateInterval return `null` if auto_update_data is false', () => {
+      expect(new WorkflowModuleWithHelpers({
+        auto_update_data: false,
+        update_interval: 1,
+        update_units: 'days',
+      }).updateInterval).toBe(null)
+    })
+
+    it('should return a concise .updateInterval String', () => {
+      const go = (interval, units) => new WorkflowModuleWithHelpers({
+        auto_update_data: true,
+        update_interval: interval,
+        update_units: units,
+      }).updateInterval
+
+      expect(go(1, 'minutes')).toEqual('1m')
+      expect(go(2, 'hours')).toEqual('2h')
+      expect(go(3, 'days')).toEqual('3d')
+      expect(go(4, 'weeks')).toEqual('4w')
+    })
+
     it('should have .isEmailUpdates if workflow update is on and email is on', () => {
       const on = new WorkflowModuleWithHelpers({
         auto_update_data: true,

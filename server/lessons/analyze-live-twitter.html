@@ -100,22 +100,18 @@
 </ol>
 </section>
 <section>
-  <h2>4. Automatic updates</h2>
+  <h2>5. Automatic updates</h2>
   <p>Let's set the entire workflow to update when new tweets are published.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
-      data-highlight='[{"type":"WfModule","moduleName":"Scrape with Xpath"}]',
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule.isEmailUpdates"
-      >Back in the 'Twitter' module, click <kbd>manual</kbd> to open the Workflow Update window.
-    <li
       data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-      data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
-      >Turn  the feature <kbd>On</kbd> set the frequency to <kbd>5 hours</kbd>, and click <kbd>Apply</kbd>.
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.updateInterval === '5h'"
+      >Back in the 'Twitter' module, click <kbd>manual</kbd> to open the Workflow Update window. Turn the feature <kbd>On</kbd> set the frequency to <kbd>5 hours</kbd>, and click <kbd>Apply</kbd>.
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Twitter"}]',
-      data-test="return workflow.wfModules[1].parameters.get('colnames') === 'User tweets'"
+      data-test="return workflow.wfModules[0].parameters.get('accumulate') === true"
       >Make sure the option <kbd>Accumulate tweets</kbd> is checked so that new data gets added to the existing table.
       <p class="instruction-detail">
         Your worfklow is now live! If new tweets are published, all the modules will update to reflect changes in the data.</p>
