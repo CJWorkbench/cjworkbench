@@ -104,33 +104,44 @@
         font-size: 1.5rem;
       }
     }
+    .react-grid-Cell--locked:last-of-type {
+      border-right: 1px solid rgba(113,155,176,.2);
 
-    .row-number {
-      color:$light-gray;
-      text-align: center;
-      font-size: 1.1rem!important;
+      .row-number {
+        color:$light-gray;
+        @extend .content-3;
+        text-align: center;
+        font-size: 1.2rem!important;
+        line-height: 1.2rem!important;
+      }
+      // Shrinking font sizes based on number of digits
+      // TODO: Can we make the font size a variable?
+      .row-number-3 {
+        @extend .row-number;
+        font-size: 1.0rem!important;
+      }
+      .row-number-4 {
+        @extend .row-number;
+        font-size: 0.9rem!important;
+      }
+      .row-number-5 {
+        @extend .row-number;
+        font-size: 0.8rem!important;
+      }
+      .row-number-6 {
+        @extend .row-number;
+        font-size: 0.7rem!important;
+      }
     }
-    // Shrinking font sizes based on number of digits
-    // TODO: Can we make the font size a variable?
-    .row-number-3 {
-      color:$light-gray;
-      text-align: center;
-      font-size: 1.0rem!important;
+
+    .react-grid-Cell--locked {
+      .react-grid-Cell__value {
+        margin-left: 0rem!important;
+      }
     }
-    .row-number-4 {
-      color:$light-gray;
-      text-align: center;
-      font-size: 0.9rem!important;
-    }
-    .row-number-5 {
-      color:$light-gray;
-      text-align: center;
-      font-size: 0.8rem!important;
-    }
-    .row-number-6 {
-      color:$light-gray;
-      text-align: center;
-      font-size: 0.7rem!important;
+
+    .react-grid-Cell.react-grid-Cell--locked:focus{
+      outline: 0px;
     }
 
     // This is the only way to disable a react-data-grid editing feature we don't want
@@ -229,17 +240,18 @@
 
         input[name="new-column-key"] {
           // padding: just 1px off from .column-key
-          padding-top: calc(.8rem - 1px);
-          padding-bottom: calc(.8rem - 1px);
+          padding-top: .9rem;
+          padding-bottom: .9rem;
+          outline: 2px solid $brand-orange;
           padding-left: 1rem;
           padding-right: 1rem;
           flex: 1 1 auto;
+          border: 0;
         }
 
         button {
           flex: 0 0 auto;
-          font-size: 0.8rem;
-          padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
+          font-size: .7rem;
           margin-top:.5rem ;
           border: 0;
           cursor: pointer;
@@ -261,14 +273,6 @@
     .react-grid-HeaderCell__draggable:hover,
     .react-grid-HeaderCell__draggable:active {
       background-color: #95B5C9;
-    }
-
-    .react-grid-Cell--locked:last-of-type{
-      border-right: 1px solid rgba(113,155,176,.2);
-    }
-
-    .react-grid-Cell.react-grid-Cell--locked:focus{
-      outline: 0px;
     }
 
     .react-grid-Grid{
@@ -333,8 +337,6 @@
       bottom:0;
     }
 
-
-
     .overlapping .outputpane.focus .outputpane-box {
       z-index: 2;
       box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
@@ -373,29 +375,29 @@
 }
 
 
-
-// Table in modules (Such as Rename columns)
-.module-content {
-
-  .react-grid-Grid {
-    @extend %font-nunito-regular;
-    font-size: 1.2rem;
-    height: 4rem;
-
-  }
-  .table-module-wrapper {
-    resize: vertical;
-    border-radius: 3px;
-    max-height: 26rem;
-    overflow: auto;
-    overflow-x: hidden;
-
-    .react-grid-Main{
-      outline:0px;
-
-      .react-grid-Canvas {
-        background-color: $table-background;
-      }
-    }
-  }
-}
+///// June 13 2018 - Pierre
+// // Table in modules (Such as Rename columns)
+// .module-content {
+//
+//   .react-grid-Grid {
+//     @extend %font-nunito-regular;
+//     font-size: 1.2rem;
+//     height: 4rem;
+//
+//   }
+//   .table-module-wrapper {
+//     resize: vertical;
+//     border-radius: 3px;
+//     max-height: 26rem;
+//     overflow: auto;
+//     overflow-x: hidden;
+//
+//     .react-grid-Main{
+//       outline:0px;
+//
+//       .react-grid-Canvas {
+//         background-color: $table-background;
+//       }
+//     }
+//   }
+// }
