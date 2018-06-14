@@ -1,5 +1,98 @@
 /* ---- Login ---- */
 
+.login-fullscreen-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: radial-gradient(#31D9ED 25%, #068CB9); /*fallback*/
+  background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #068CB9);
+  background-size: 100% auto;
+
+
+  .login-bigbrand {
+    @extend .title-2;
+    margin-bottom: 1rem;
+     display: flex;
+     align-items: center;
+
+    .logo {
+      width: 4.5rem;
+    }
+
+    h1, h1 a {
+      font-size: 5rem!important;
+      color:#fff;
+      margin: 1rem;
+      @extend %font-lato-regular;
+      letter-spacing: -0.2rem;
+      &:hover {text-decoration: none;}
+    }
+  }
+
+  .login-card {
+    background: rgba(250,250,250,0.3);
+    height: auto;
+    width: 40rem;
+    padding: 3rem 5rem;
+    border: none;
+    border-radius: 0px;
+
+    .content-4 {
+      cursor: default;
+    }
+  }
+
+  .sign-in {
+    @extend .title-1;
+    text-align: center;
+    color: $brand-text--dark
+  }
+
+  a {
+    @extend .content-2;
+    color:$white;
+    &:hover {
+    }
+  }
+
+  input {cursor: pointer;}
+
+  // Social logins //
+  .socialLoginWrap{
+    width:100%;
+    display: flex;
+    justify-content: center;
+
+    a {
+      color:$brand-text--dark;
+      text-decoration:none;
+    }
+
+    .socialLoginButton{
+      background-color: #fff;
+      border:2px solid transparent;
+      border-radius: 10rem;
+      margin-bottom: 1rem;
+      padding:0 1.5rem;
+      height: 4rem;
+      width:22rem;
+      font-size: 1.4rem;
+      &:hover {
+        background-color:$SuperLightGray;
+      }
+    }
+  }
+
+  .byline{
+    @extend .title-1;
+    color:$white;
+    text-align:center;
+    margin:3rem 0;
+  }
+}
+
+
 body.accounts {
   ul.messages {
     margin: 2rem;
@@ -15,51 +108,7 @@ body.accounts {
   }
 }
 
-.login-bigbrand .logo{
-  width: 4.5rem;
-}
 
-.login-bigbrand{
-  margin-bottom: 1rem;
-}
-
-.login-bigbrand h1 a {
-  font-size: 5rem;
-  color:#fff;
-  margin: 1rem;
-  padding: 1.3rem 0 1 0;
-  @extend %font-lato-regular;
-  letter-spacing: -0.2rem;
-}
-
-.login-bigbrand h1 a:hover {
-  text-decoration: none;
-}
-
-.login-fullscreen-container {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-image: radial-gradient(#31D9ED 25%, #068CB9); /*fallback*/
-  background-image: url("/static/images/signin-icons-bgd.png"), radial-gradient(#31D9ED 25%, #068CB9);
-  background-size: 100% auto;
-}
-
-.login-card {
-  background: rgba(250,250,250,0.3);
-  height: auto;
-  width: 40rem;
-  padding: 3rem 5rem;
-  border: none;
-  border-radius: 0px;
-}
-
-.login-card a:hover{
-  text-decoration: none;
-}
-
-.img.logo
 
 .login-card :-webkit-input-placeholder {
   color: #ccc
@@ -121,33 +170,6 @@ body.accounts {
 
 /* Registration form */
 
-// Social logins //
-
-.socialLoginWrap{
-  width:100%;
-  display: flex;
-  justify-content: center;
-}
-
-.socialLoginWrap a{
-  text-decoration:none;
-}
-
-.socialLoginButton{
-  background-color: #fff;
-  border-radius: 10rem;
-  margin-bottom: 1rem;
-  padding:0 1.5rem;
-  height: 4rem;
-  width:22rem;
-  font-size: 1.4rem;
-}
-
-.socialLoginButton:hover{
-  background-color:$SuperLightGray;
-}
-
-
 .account_form input[type="text"], .account_form input[type="password"], .account_form input[type="email"], .code-field {
   width: 100%;
   height:4rem;
@@ -176,5 +198,3 @@ body.accounts {
 .account_form .action-button {
   margin-top: 1rem;
 }
-
-// 404
