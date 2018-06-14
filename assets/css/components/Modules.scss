@@ -294,15 +294,14 @@
 }
 
 .wf-module--placeholder{
-  width: 18rem;
+  width: 26rem;
   display: flex;
   padding-left:1.5rem;
   align-items: center;
   margin-bottom: 0.5rem;
-  background-color:$table-element;
+  background-color:$module-action;
   position: relative;
-  height:4rem;
-  box-shadow: $menu-shadow;
+  height:1rem;
   font-size: 1.2rem;
 }
 
