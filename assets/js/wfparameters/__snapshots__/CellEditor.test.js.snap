@@ -12,24 +12,28 @@ exports[`CellEditor Renders correctly 1`] = `
 >
   <div>
     <div
-      className="cell-edits--column content-3 label-margin"
+      className="cell-edits--column"
       key="foo"
     >
-      foo
       <div
-        className="cell-edits--rows t-d-gray content-3 "
+        className="edited-column"
+      >
+        foo
+      </div>
+      <div
+        className="cell-edits--rows"
       >
         <div
           className="cell-edits--row"
           key="0"
         >
           <div
-            className="number-field"
+            className="edited-row"
           >
             4
           </div>
           <div
-            className="text-field"
+            className="edited-text"
           >
             bar
           </div>
@@ -39,12 +43,12 @@ exports[`CellEditor Renders correctly 1`] = `
           key="1"
         >
           <div
-            className="number-field"
+            className="edited-row"
           >
             6
           </div>
           <div
-            className="text-field"
+            className="edited-text"
           >
             gak
           </div>
@@ -52,24 +56,28 @@ exports[`CellEditor Renders correctly 1`] = `
       </div>
     </div>
     <div
-      className="cell-edits--column content-3 label-margin"
+      className="cell-edits--column"
       key="food"
     >
-      food
       <div
-        className="cell-edits--rows t-d-gray content-3 "
+        className="edited-column"
+      >
+        food
+      </div>
+      <div
+        className="cell-edits--rows"
       >
         <div
           className="cell-edits--row"
           key="0"
         >
           <div
-            className="number-field"
+            className="edited-row"
           >
             7
           </div>
           <div
-            className="text-field"
+            className="edited-text"
           >
             sandwich
           </div>
@@ -79,12 +87,12 @@ exports[`CellEditor Renders correctly 1`] = `
           key="1"
         >
           <div
-            className="number-field"
+            className="edited-row"
           >
             18
           </div>
           <div
-            className="text-field"
+            className="edited-text"
           >
             pizza
           </div>
