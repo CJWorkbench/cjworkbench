@@ -273,7 +273,7 @@ def import_module_from_directory(url, reponame, version, importdir, force_reload
             if source == '':
                 source = "Internal"
             raise ValidationError(
-                "Module {} has already been loaded, and its source is {}.".format(module_config["id_name"], source))
+                "Module {} has already been loaded from a different repo: {}.".format(module_config["id_name"], source))
 
         module_config["source_version"] = version
         module_config["link"] = url
