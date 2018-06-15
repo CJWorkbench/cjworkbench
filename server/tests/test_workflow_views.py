@@ -202,7 +202,6 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Workflow 1')
         self.assertEqual(response.data['public'], False)
-        self.assertEqual(response.data['module_library_collapsed'], False)
 
         # bad ID should give 404
         request = self.factory.get('/api/workflows/%d/' % 10000)
@@ -303,19 +302,6 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         workflow.refresh_from_db()
         self.assertEqual(workflow.public, True)
-
-
-    def test_workflow_library_collapse_post(self):
-        workflow = Workflow.objects.get(name='Workflow 1')
-        self.assertEqual(workflow.module_library_collapsed, False)
-        pk_workflow = workflow.id
-        request = self.factory.post('/api/workflows/%d' % pk_workflow,
-                                   {'module_library_collapsed': True})
-        force_authenticate(request, user=self.user)
-        response = workflow_detail(request, pk=pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
-        workflow.refresh_from_db()
-        self.assertEqual(workflow.module_library_collapsed, True)
 
 
     def test_workflow_selected_wf_module_post(self):

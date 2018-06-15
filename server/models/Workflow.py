@@ -15,7 +15,6 @@ class Workflow(models.Model):
     example = models.BooleanField(default=False)    # if set, will be duplicated for new users
     lesson_slug = models.CharField('lesson_slug', max_length=100, null=True)
 
-    module_library_collapsed = models.BooleanField(default=False)
     selected_wf_module = models.IntegerField(default=None, null=True, blank=True)
 
     last_delta = models.ForeignKey('server.Delta',                # specify as string to avoid circular import

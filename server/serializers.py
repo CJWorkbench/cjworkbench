@@ -140,7 +140,7 @@ class WorkflowSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Workflow
-        fields = ('id', 'name', 'revision', 'wf_modules', 'public', 'read_only', 'last_update', 'owner_name', 'module_library_collapsed', 'selected_wf_module')
+        fields = ('id', 'name', 'revision', 'wf_modules', 'public', 'read_only', 'last_update', 'owner_name', 'selected_wf_module')
 
 
 # Lite Workflow: Don't include any of the modules, just name and ID. For /workflows page

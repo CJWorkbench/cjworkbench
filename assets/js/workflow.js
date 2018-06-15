@@ -16,9 +16,8 @@ class Workflow extends React.Component {
     super(props);
     this.state = {
         isPublic: false,
-        focus: false,
+        isFocusModuleStack: false,
         overlapping: false, // Does the right pane overlap the left pane? Used to set focus, draw shadows, etc
-        libraryOpen: false 
     };
   }
 
@@ -30,7 +29,6 @@ class Workflow extends React.Component {
 
     this.setState({
       isPublic: nextProps.workflow.public,
-      libraryOpen: (!nextProps.isReadOnly && !nextProps.workflow.module_library_collapsed)
     });
   }
 
@@ -40,10 +38,16 @@ class Workflow extends React.Component {
     });
   }
 
-  setLibraryOpen = (libraryOpen, cb) => {
+  setFocusModuleStack = () => {
     this.setState({
-      libraryOpen
-    }, cb);
+      isFocusModuleStack: true,
+    });
+  }
+
+  setFocusOutputPane = () => {
+    this.setState({
+      isFocusModuleStack: false,
+    });
   }
 
   render() {
@@ -84,8 +88,8 @@ class Workflow extends React.Component {
                 loggedInUser={this.props.loggedInUser}
                 isOver={this.props.isOver}
                 dragItem={this.props.dragItem}
-                focus={this.state.focus}
-                setFocus={(e) => { this.setState({ focus: true }) }}
+                focus={this.state.isFocusModuleStack}
+                setFocus={this.setFocusModuleStack}
               />
               <OutputPane
                 id={this.props.selected_wf_module}
@@ -94,11 +98,9 @@ class Workflow extends React.Component {
                 htmlOutput={(selectedWorkflowModuleRef && selectedWorkflowModuleRef.html_output)}
                 selectedWfModuleId={this.props.selected_wf_module}
                 workflow={this.props.workflow}
-                focus={!this.state.focus}
-                setFocus={(e) => { this.setState({ focus: false }) }}
-                libraryOpen={this.state.libraryOpen}
+                focus={!this.state.isFocusModuleStack}
+                setFocus={this.setFocusOutputPane}
                 setOverlapping={this.setOverlapping}
-                setLibraryOpen={this.setLibraryOpen}
               />
             </div>
           </div>

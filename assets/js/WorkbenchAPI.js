@@ -166,10 +166,6 @@ class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}`, { newName: newName })
   }
 
-  setWfLibraryCollapse(workflowId, isCollapsed) {
-    return this._post(`/api/workflows/${workflowId}`, { module_library_collapsed: isCollapsed })
-  }
-
   setSelectedWfModule(workflowId, wfModuleId) {
     return this._post(`/api/workflows/${workflowId}`, { selected_wf_module: wfModuleId })
   }

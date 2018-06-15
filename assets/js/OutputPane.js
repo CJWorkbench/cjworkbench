@@ -29,7 +29,6 @@ export default class OutputPane extends React.Component {
     this.resizePaneStart = this.resizePaneStart.bind(this);
     this.resizePane = this.resizePane.bind(this);
     this.resizePaneEnd = this.resizePaneEnd.bind(this);
-    this.setResizePaneRelativeDimensions = this.setResizePaneRelativeDimensions.bind(this);
 
     this.spinnerEl = null;
     this.spinning = false;
@@ -53,14 +52,8 @@ export default class OutputPane extends React.Component {
   }
 
   componentDidMount() {
-    window.addEventListener("resize", debounce(() => { this.setResizePaneRelativeDimensions(this.props.libraryOpen) }, 200));
-    this.setResizePaneRelativeDimensions(this.props.libraryOpen);
-  }
-
-  componentWillReceiveProps(nextProps) {
-    if (nextProps.libraryOpen !== this.props.libraryOpen) {
-        this.setResizePaneRelativeDimensions(nextProps.libraryOpen, true);
-    }
+    window.addEventListener("resize", debounce(() => { this.setResizePaneRelativeDimensions() }, 200));
+    this.setResizePaneRelativeDimensions();
   }
 
   getWindowWidth() {
@@ -95,45 +88,22 @@ export default class OutputPane extends React.Component {
       this.props.setOverlapping((this.state.leftOffset < 0));
   }
 
-  /* Set the width and left offset of the resize pane relative to the window size and collapsed state of the
-        module library. Deals with the following cases:
-
-  1. Window resize -- re-position and resize right pane to new relative position with new maximum width relative to
-        window size while maintaining the same visual offset from the left edge
-
-  2. Open/close module library while right pane is at "0" -- re-position and resize right pane to "0" position relative
-        to ML state
-
-  3. Open/close module library while right pane is expanded but less than max: re-position and resize right pane so
-        it maintains the same visual position on the screen
-
-  4. Open module library while right pane is at max width relative to closed ML: re-position and re-size right pane to
-        max width relative to open ML position
+  /**
+   * Set the width and left offset of the resize pane.
+   *
+   * Re-position and resize right pane to new relative position with new
+   * maximum width relative to window size while maintaining the same
+   * visual offset from the left edge.
    */
-
-  setResizePaneRelativeDimensions(libraryState, libraryToggle) {
-      let libraryOffset = 0;
+  setResizePaneRelativeDimensions = () => {
       let resetWidth;
       let resetOffset;
       let maxWidthOffset = 0;
       let resetMaxWidth;
 
-      if (libraryState === true) {
-          maxWidthOffset = 240;
-          if (libraryToggle === true) {
-              libraryOffset = -140;
-          }
-      }
+      maxWidthOffset = 100;
 
-      if (libraryState === false) {
-          maxWidthOffset = 100;
-          if (libraryToggle === true) {
-              libraryOffset = 140;
-          }
-
-      }
-
-      resetOffset = this.state.leftOffset + libraryOffset;
+      resetOffset = this.state.leftOffset;
 
       const parentBase = this.parentBase.current;
       const parentWidth = parentBase ? parentBase.width : 100;

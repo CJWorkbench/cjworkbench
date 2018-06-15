@@ -180,7 +180,7 @@ def workflow_detail(request, pk, format=None):
             return HttpResponseForbidden()
 
         try:
-            if not set(request.data.keys()).intersection({"newName", "public", "module_library_collapsed", "selected_wf_module"}):
+            if not set(request.data.keys()).intersection({"newName", "public", "selected_wf_module"}):
                 raise ValueError('Unknown fields: {}'.format(request.data))
 
             with workflow.cooperative_lock():
@@ -190,10 +190,6 @@ def workflow_detail(request, pk, format=None):
                 if 'public' in request.data:
                     # TODO this should be a command, so it's undoable
                     workflow.public = request.data['public']
-                    workflow.save()
-
-                if 'module_library_collapsed' in request.data:
-                    workflow.module_library_collapsed = request.data['module_library_collapsed']
                     workflow.save()
 
                 if 'selected_wf_module' in request.data:
