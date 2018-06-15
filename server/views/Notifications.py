@@ -11,7 +11,7 @@ def notifications_delete_by_wfmodule(request, pk, format=None):
     except WfModule.DoesNotExist:
         return HttpResponseNotFound()
 
-    if not wf_module.user_authorized_write(request.user):
+    if not wf_module.request_authorized_write(request):
         return HttpResponseForbidden()
 
     notification_list = wf_module.notification_set.all()

@@ -1,15 +1,22 @@
 from contextlib import contextmanager
 from django.db import models, transaction
 from django.contrib.auth.models import User
+from django.http import HttpRequest
 from server.models.WfModule import WfModule
 from django.urls import reverse
 from server.models.Lesson import Lesson
+import warnings
 
 # A Workflow is the user's "document," a series of Modules
 class Workflow(models.Model):
     name = models.CharField('name',max_length=200)
     creation_date = models.DateTimeField(auto_now_add=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    anonymous_owner_session_key = models.CharField(
+        'anonymous_owner_session_key',
+        max_length=40,
+        null=True
+    )
 
     public = models.BooleanField(default=False)
     example = models.BooleanField(default=False)    # if set, will be duplicated for new users
@@ -54,14 +61,46 @@ class Workflow(models.Model):
 
             yield
 
-    def user_authorized_read(self, user):
-        return user == self.owner or self.public == True
+    def request_authorized_read(self, request: HttpRequest) -> bool:
+        """True if the Django request may read workflow data."""
+        return self.user_session_authorized_read(request.user,
+                                                 request.session)
 
-    def user_authorized_write(self, user):
-        return user == self.owner
+    def request_authorized_write(self, request: HttpRequest) -> bool:
+        """True if the Django request may write workflow data."""
+        return (
+            request.user == self.owner \
+            or request.session.session_key == self.anonymous_owner_session_key
+        )
+
+    def request_read_only(self, request: HttpRequest) -> bool:
+        return self.request_authorized_read(request) \
+                and not self.request_authorized_write(request)
+
+    @property
+    def is_anonymous(self) -> bool:
+        """
+        True if the owner is an anonymous session, not a User.
+
+        With an anonymous workflow:
+
+        * The user can't enable auto-update
+        * The user can't add notifications
+        * The user can't add eval-style modules
+        * We display a banner across the page suggesting the user log in
+        """
+        return self.anonymous_owner_session_key is not None
+
+    def user_session_authorized_read(self, user, session):
+        return (
+            user == self.owner \
+            or session.session_key == self.anonymous_owner_session_key \
+            or self.public
+        )
 
     def read_only(self, user):
-        return self.user_authorized_read(user) and not self.user_authorized_write(user)
+        warnings.warn("FIXME read_only() should be request_read_only()")
+        return user != self.owner
 
     def last_update(self):
         if not self.last_delta:

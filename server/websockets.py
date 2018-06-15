@@ -40,7 +40,8 @@ class WorkflowConsumer(AsyncJsonWebsocketConsumer):
         except Workflow.DoesNotExist:
             return None
 
-        if not ret.user_authorized_read(self.scope['user']):
+        if not ret.user_session_authorized_read(self.scope['user'],
+                                                self.scope['session']):
             # failed auth. Don't leak any info: behave exactly as we would if
             # the workflow didn't exist
             return None

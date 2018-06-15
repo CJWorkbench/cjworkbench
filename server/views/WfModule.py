@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseNotFound, HttpResponseForbidden
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseForbidden
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.response import Response
@@ -16,6 +16,60 @@ from server.utils import units_to_seconds
 import json, datetime, pytz, re
 import pandas as pd
 from django.views.decorators.clickjacking import xframe_options_exempt
+from typing import Tuple, Union
+
+_LookupResponse = Union[HttpResponse, WfModule]
+
+
+def _lookup_wf_module_no_access_control(pk: int) -> _LookupResponse:
+    """Find a Workflow and WfModule based on pk (no access control).
+
+    Returns HttpResponseNotFound if pk is not in the database.
+    """
+    try:
+        wf_module = WfModule.objects.get(pk=pk)
+    except WfModule.DoesNotExist:
+        return HttpResponseNotFound()
+
+    try:
+        # Look up workflow now, so we don't look it up later
+        workflow = wf_module.workflow
+    except Workflow.DoesNotExist: # race
+        return HttpResponseNotFound()
+
+    return wf_module
+
+
+def _lookup_wf_module_for_read(
+        pk: int, request: HttpRequest) -> _LookupResponse:
+    """Find a WfModule based on pk.
+
+    Returns HttpResponseNotFound if pk is not in the database, or
+    HttpResponseForbidden if the person requesting does not have access.
+    """
+    wf_module = _lookup_wf_module_no_access_control(pk)
+    if isinstance(wf_module, HttpResponse): return wf_module
+
+    if not workflow.request_authorized_read(request):
+        return HttpResponseForbidden()
+
+    return wf_module
+
+
+def _lookup_wf_module_for_write(
+        pk: int, request: HttpRequest) -> _LookupResponse:
+    """Find a WfModule based on pk.
+
+    Returns HttpResponseNotFound if pk is not in the database, or
+    HttpResponseForbidden if the person requesting does not have access.
+    """
+    wf_module = _lookup_wf_module_no_access_control(pk)
+    if isinstance(wf_module, HttpResponse): return wf_module
+
+    if not workflow.request_authorized_write(request):
+        return HttpResponseForbidden()
+
+    return wf_module
 
 
 # The guts of patch commands for various WfModule fields
@@ -65,17 +119,12 @@ def get_simple_column_types(table):
 @renderer_classes((JSONRenderer,))
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_detail(request, pk, format=None):
-    try:
-        wf_module = WfModule.objects.get(pk=pk)
-    except WfModule.DoesNotExist:
-        return HttpResponseNotFound()
+    if request.method in ['HEAD', 'GET']:
+        wf_module = _lookup_wf_module_for_read(pk, request)
+    else:
+        wf_module = _lookup_wf_module_for_write(pk, request)
 
-    if request.method in ['POST', 'DELETE', 'PATCH']:
-        if not wf_module.user_authorized_write(request.user):
-            return HttpResponseForbidden()
-
-    if not wf_module.user_authorized_read(request.user):
-        return HttpResponseNotFound()
+    if isinstance(wf_module, HttpResponse): return wf_module
 
     if request.method == 'GET':
         with wf_module.workflow.cooperative_lock():
@@ -182,7 +231,7 @@ def wfmodule_render(request, pk, format=None):
             empty_table_json = make_render_json(pd.DataFrame(), 0, 0)
             return HttpResponse(empty_table_json, content_type="application/json")
 
-        if not wf_module.workflow.user_authorized_read(request.user):
+        if not wf_module.workflow.request_authorized_read(request):
             return HttpResponseForbidden()
 
         return table_result(request, wf_module)
@@ -195,7 +244,7 @@ def wfmodule_output(request, pk, format=None):
         except WfModule.DoesNotExist:
             return HttpResponseNotFound()
 
-        if not wf_module.workflow.user_authorized_read(request.user):
+        if not wf_module.workflow.request_authorized_read(request):
             return HttpResponseForbidden()
 
         table = execute_wfmodule(wf_module)
@@ -236,7 +285,7 @@ def wfmodule_histogram(request, pk, col, format=None):
         except WfModule.DoesNotExist:
             return HttpResponseNotFound()
 
-        if not wf_module.workflow.user_authorized_read(request.user):
+        if not wf_module.workflow.request_authorized_read(request):
             return HttpResponseForbidden()
 
         INTERNAL_COUNT_COLNAME = '__internal_count_column__'
@@ -266,7 +315,7 @@ def wfmodule_input(request, pk, format=None):
         except WfModule.DoesNotExist:
             return HttpResponseNotFound()
 
-        if not wf_module.user_authorized_read(request.user):
+        if not wf_module.request_authorized_read(request):
             return HttpResponseForbidden()
 
         with wf_module.workflow.cooperative_lock():
@@ -289,7 +338,7 @@ def wfmodule_columns(request, pk, format=None):
         except WfModule.DoesNotExist:
             return HttpResponseNotFound()
 
-        if not wf_module.workflow.user_authorized_read(request.user):
+        if not wf_module.workflow.request_authorized_read(request):
             return HttpResponseForbidden()
 
         with wf_module.workflow.cooperative_lock():
@@ -324,7 +373,7 @@ def wfmodule_public_output(request, pk, type, format=None):
     except WfModule.DoesNotExist:
         return HttpResponseNotFound()
 
-    if not wf_module.user_authorized_read(request.user):
+    if not wf_module.request_authorized_read(request):
         return HttpResponseNotFound()
 
     with wf_module.workflow.cooperative_lock():
@@ -350,7 +399,7 @@ def wfmodule_dataversion(request, pk, format=None):
         return HttpResponseNotFound()
 
     if request.method == 'GET':
-        if not wf_module.user_authorized_read(request.user):
+        if not wf_module.request_authorized_read(request):
             return HttpResponseNotFound()
 
         with wf_module.workflow.cooperative_lock():
@@ -360,7 +409,7 @@ def wfmodule_dataversion(request, pk, format=None):
             return Response(response)
 
     elif request.method == 'PATCH':
-        if not wf_module.user_authorized_write(request.user):
+        if not wf_module.request_authorized_write(request):
             return HttpResponseForbidden()
 
         with wf_module.workflow.cooperative_lock():
@@ -383,7 +432,7 @@ def wfmodule_dataversion_read(request, pk):
     except WfModule.DoesNotExist:
         return HttpResponseNotFound()
 
-    if not wf_module.user_authorized_write(request.user):
+    if not wf_module.request_authorized_write(request):
         return HttpResponseForbidden()
 
     with wf_module.workflow.cooperative_lock():

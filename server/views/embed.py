@@ -12,7 +12,7 @@ def embed(request, wfmodule_id):
     except WfModule.DoesNotExist:
         wf_module = None
 
-    if not wf_module.workflow.user_authorized_read(request.user) or not wf_module.module_version.html_output:
+    if not wf_module.workflow.request_authorized_read(request) or not wf_module.module_version.html_output:
         wf_module = None
 
     if wf_module:

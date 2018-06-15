@@ -132,7 +132,7 @@ def render_workflow(request, pk=None):
     # Workflow must exist and be readable by this user
     workflow = get_object_or_404(Workflow, pk=pk)
 
-    if not workflow.user_authorized_read(request.user):
+    if not workflow.request_authorized_read(request):
         raise Http404()
 
     if workflow.lesson and workflow.owner == request.user:
@@ -153,7 +153,7 @@ def workflow_detail(request, pk, format=None):
 
     workflow = get_object_or_404(Workflow, pk=pk)
 
-    if not workflow.user_authorized_read(request.user):
+    if not workflow.request_authorized_read(request):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
@@ -165,7 +165,7 @@ def workflow_detail(request, pk, format=None):
 
     # We use PATCH to set the order of the modules when the user drags.
     elif request.method == 'PATCH':
-        if not workflow.user_authorized_write(request.user):
+        if not workflow.request_authorized_write(request):
             return HttpResponseForbidden()
 
         try:
@@ -176,7 +176,7 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'POST':
-        if not workflow.user_authorized_write(request.user):
+        if not workflow.request_authorized_write(request):
             return HttpResponseForbidden()
 
         try:
@@ -201,7 +201,7 @@ def workflow_detail(request, pk, format=None):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     elif request.method == 'DELETE':
-        if not workflow.user_authorized_write(request.user):
+        if not workflow.request_authorized_write(request):
             return HttpResponseForbidden()
 
         workflow.delete()
@@ -214,7 +214,7 @@ def workflow_detail(request, pk, format=None):
 def workflow_addmodule(request, pk, format=None):
     workflow = get_object_or_404(Workflow, pk=pk)
 
-    if not workflow.user_authorized_write(request.user):
+    if not workflow.request_authorized_write(request):
         return HttpResponseForbidden()
 
     module_id = request.data['moduleId']
@@ -252,7 +252,7 @@ def workflow_duplicate(request, pk):
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not workflow.user_authorized_read(request.user):
+    if not workflow.request_authorized_read(request):
         return HttpResponseForbidden()
 
     workflow2 = workflow.duplicate(request.user)
@@ -272,7 +272,7 @@ def workflow_undo_redo(request, pk, action, format=None):
     except Workflow.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    if not workflow.user_authorized_write(request.user):
+    if not workflow.request_authorized_write(request):
         return HttpResponseForbidden()
 
     if action=='undo':
