@@ -169,6 +169,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
         mapping = validate_module_structure(test_dir)
         self.assertEqual(mapping['py'], 'importable.py')
 
+
     def test_extract_version_hash(self):
         test_dir = self.fake_github_clone()
         os.rename(os.path.join(test_dir, 'git'),
@@ -291,6 +292,28 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         # should replace existing module_version, not add a new one
         self.assertEqual(ModuleVersion.objects.filter(module__id_name=self.importable_id_name).count(), 1)
+
+
+    # all exsting wf_modules should get bumped to new version when we import a new version of the module
+    def test_updates_module_version(self):
+        test_dir = self.fake_github_clone()
+        import_module_from_directory("https://test_url_of_test_module", "importable", "111111", test_dir)
+        module_version_q = ModuleVersion.objects.filter(module__id_name=self.importable_id_name)
+        self.assertEqual(module_version_q.count(), 1)
+
+        # Create a test workflow that uses this imported module
+        module_version = module_version_q.first()
+        workflow = add_new_workflow('updates_module_version workflow')
+        wfm = add_new_wf_module(workflow, module_version, order=1)
+
+        # import "new" version (different version hash)
+        test_dir = self.fake_github_clone()
+        import_module_from_directory("https://test_url_of_test_module", "importable", "222222", test_dir)
+        self.assertEqual(module_version_q.count(), 2)
+
+        # should have updated the wfm to newly imported version
+        wfm.refresh_from_db()
+        self.assertEqual(wfm.module_version.source_version_hash, "222222")
 
 
     # don't allow loading the same id_name from a different URL. Prevents module replacement attacks, and user confusion

@@ -47,7 +47,7 @@ def load_module_from_file(fname):
 
 # Create a module from dictionary of properties, corresponding to the json in the config file
 # testable entrypoint
-# returns Module
+# returns module_version
 def load_module_from_dict(d):
 
     with transaction.atomic():

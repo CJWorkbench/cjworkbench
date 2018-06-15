@@ -1,5 +1,5 @@
-from .initmodules import load_module_from_dict
-from server.models import Module, ModuleVersion
+from server.initmodules import load_module_from_dict, update_wfm_parameters_to_new_version
+from server.models import Module, ModuleVersion, WfModule
 from server.utils import log_message
 from django.forms import URLField
 from django.core.exceptions import ValidationError
@@ -291,16 +291,14 @@ def import_module_from_directory(url, reponame, version, importdir, force_reload
         validate_python_functions(destination_directory, python_file)
 
         # If that succeeds, initialise module in our database
-        load_module_from_dict(module_config)
+        module_version = load_module_from_dict(module_config)
 
         # clean-up
         shutil.rmtree(importdir)
 
-        # data that we probably want displayed in the UI.
-        ui_info["category"] = module_config["category"]
-        ui_info["project"] = reponame
-        ui_info["author"] = module_config["author"]
-        ui_info["name"] = module_config["name"]
+        # For now, our policy is to update all wfmodules to this just-imported version
+        for wfm in WfModule.objects.filter(module_version__module=module_version.module):
+            update_wfm_parameters_to_new_version(wfm, module_version)
 
     except Exception as e:
         log_message('Error importing module %s: %s' % (url, str(e)))
@@ -315,6 +313,11 @@ def import_module_from_directory(url, reponame, version, importdir, force_reload
                 pass
         raise
 
+    # return data that we probably want displayed in the UI.
+    ui_info["category"] = module_config["category"]
+    ui_info["project"] = reponame
+    ui_info["author"] = module_config["author"]
+    ui_info["name"] = module_config["name"]
     return ui_info
 
 
