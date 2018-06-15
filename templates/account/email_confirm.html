@@ -9,7 +9,7 @@
         <legend class='t-d-gray title-1 text-center mb-3'>{% trans "Confirm Email" %}</legend>
         <fieldset>
             {% csrf_token %}
-            <p class='t-d-gray content-3 text-center mb-3'>{% blocktrans with email=confirmation.email_address.email %}Confirm email address <b>{{ email }}</b>?{% endblocktrans %}</p>
+            <p class='message-body'>{% blocktrans with email=confirmation.email_address.email %}<b>{{ email }}</b>{% endblocktrans %}</p>
             <button type="submit" class="button-white action-button mx-auto mt-3">{% trans "Confirm" %}</button>
         </fieldset>
     </form>
