@@ -2,6 +2,10 @@ import warnings
 from django.conf import settings
 from django.contrib.sessions.models import Session
 from server.models import Workflow
+from server.utils import get_console_logger
+
+
+_logger = get_console_logger()
 
 
 def delete_expired_anonymous_workflows() -> None:
@@ -22,6 +26,8 @@ def delete_expired_anonymous_workflows() -> None:
         warnings.warn('WARNING: not deleting anonymous workflows because we do not know which sessions are expired. Rewrite delete_expired_anonymous_workflows() to fix this problem.')
         return
 
+    _logger.info('Scanning for anonymous workflows with expired sessions')
+
     active_session_keys = Session.objects.all().values_list('session_key',
                                                             flat=True)
     workflows = Workflow.objects \
@@ -30,4 +36,5 @@ def delete_expired_anonymous_workflows() -> None:
 
     for workflow in workflows:
         with workflow.cooperative_lock():
+            _logger.info(f'Deleting workflow {workflow}')
             workflow.delete()

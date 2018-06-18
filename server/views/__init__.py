@@ -4,6 +4,5 @@ from .lessons import *
 from .WfModule import *
 from .parameters import *
 from .importfromgithub import *
-from .runcron import *
 from .Notifications import *
 from .embed import *

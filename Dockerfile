@@ -3,9 +3,8 @@
 FROM python:3 AS pybuild
 
 # We probably don't want these, long-term.
-# cron: because we run cron on production
 # nano: because we edit files on production
-RUN apt-get update && apt-get install --no-install-recommends -y cron nano postgresql-client
+RUN apt-get update && apt-get install --no-install-recommends -y nano postgresql-client
 
 RUN pip install pipenv
 
@@ -58,8 +57,5 @@ COPY --from=jsbuild /app/webpack-stats.json /app/webpack-stats.json
 # Inject unit tests into our continuous integration
 # This is how Travis tests
 RUN ./manage.py test
-
-# Start cron to hit our "update data" endpoint once per minute
-RUN echo "* * * * * /usr/bin/curl http://localhost:8000/runcron" | crontab
 
 CMD [ "./start-prod.sh" ]

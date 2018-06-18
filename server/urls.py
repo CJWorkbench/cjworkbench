@@ -64,9 +64,6 @@ urlpatterns = [
     # Embeds
     url(r'^embed/(?P<wfmodule_id>[0-9]+)/?$', views.embed),
 
-    # URL endpoint to trigger internal cron jobs
-    url(r'^runcron$', views.runcron),
-
     # Preloader testing
     url(r'^preloader/$', TemplateView.as_view(template_name='preloader.html')),
 
