@@ -3,7 +3,6 @@ from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from django.utils import timezone
 from django.shortcuts import get_object_or_404
 from server.models import WfModule, StoredObject
@@ -117,7 +116,6 @@ def get_simple_column_types(table):
 # Main /api/wfmodule/xx call. Can do a lot of different things depending on request type
 @api_view(['GET', 'DELETE', 'PATCH'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_detail(request, pk, format=None):
     if request.method in ['HEAD', 'GET']:
         wf_module = _lookup_wf_module_for_read(pk, request)
@@ -219,7 +217,6 @@ def table_result(request, wf_module):
 # /render: return output table of this module
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_render(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
     if isinstance(wf_module, HttpResponse): return wf_module
@@ -264,7 +261,6 @@ def wfmodule_output(request, pk, format=None):
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_histogram(request, pk, col, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
     if isinstance(wf_module, HttpResponse): return wf_module
@@ -288,7 +284,6 @@ def wfmodule_histogram(request, pk, col, format=None):
 # /input is just /render on the previous wfmodule
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_input(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
     if isinstance(wf_module, HttpResponse): return wf_module
@@ -305,7 +300,6 @@ def wfmodule_input(request, pk, format=None):
 # returns a list of columns and their simplified types
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_columns(request, pk, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
     if isinstance(wf_module, HttpResponse): return wf_module
@@ -335,7 +329,6 @@ def wfmodule_columns(request, pk, format=None):
 # NOTE: does not support startrow/endrow at the moment
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_public_output(request, pk, type, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
     if isinstance(wf_module, HttpResponse): return wf_module
@@ -355,7 +348,6 @@ def wfmodule_public_output(request, pk, type, format=None):
 # Get list of data versions, or set current data version
 @api_view(['GET', 'PATCH'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_dataversion(request, pk, format=None):
     if request.method == 'GET':
         wf_module = _lookup_wf_module_for_read(pk, request)

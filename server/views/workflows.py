@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.utils import *
@@ -139,13 +138,18 @@ def _get_anonymous_workflow_for(workflow: Workflow,
     The duplicate will be married to `request.session.session_key`, and its
     `.is_anonymous` will return `True`.
     """
+    if not request.session.session_key:
+        request.session.create()
     session_key = request.session.session_key
-    print(f'Session key: {session_key}')
 
     try:
         return Workflow.objects.get(original_workflow_id=workflow.id,
                                     anonymous_owner_session_key=session_key)
     except Workflow.DoesNotExist:
+        if workflow.example:
+            log_user_event(request.user or 'Anonymous',
+                           'Opened Demo Workflow',
+                           {'name': workflow.name})
         return workflow.duplicate_anonymous(session_key)
 
 
@@ -174,17 +178,13 @@ def render_workflow(request, pk=None):
 # Or reorder modules
 @api_view(['GET', 'PATCH', 'POST', 'DELETE'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def workflow_detail(request, pk, format=None):
-
     workflow = get_object_or_404(Workflow, pk=pk)
 
     if not workflow.request_authorized_read(request):
-        return Response(status=status.HTTP_404_NOT_FOUND)
+        return HttpResponseForbidden()
 
     if request.method == 'GET':
-        if workflow.name.startswith('Demo'):
-            log_user_event(request.user, 'Opened Demo Workflow', {'name': workflow.name})
         with workflow.cooperative_lock():
             serializer = WorkflowSerializer(workflow,
                                             context={'request': request})
@@ -239,6 +239,7 @@ def workflow_detail(request, pk, format=None):
 @api_view(['PUT'])
 @renderer_classes((JSONRenderer,))
 def workflow_addmodule(request, pk, format=None):
+    print("WORKFLOW!")
     workflow = get_object_or_404(Workflow, pk=pk)
 
     if not workflow.request_authorized_write(request):

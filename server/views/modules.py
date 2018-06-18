@@ -7,18 +7,15 @@ from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
 from server.models import Module
 from server.serializers import ModuleSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 # List of modules. Used to populate module library
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
-@permission_classes((IsAuthenticatedOrReadOnly, ))
 def module_list(request, format=None):
-    if request.method == 'GET':
-        modules = Module.objects.all()
-        serializer = ModuleSerializer(modules, many=True)
-        return Response(serializer.data)
+    modules = Module.objects.all()
+    serializer = ModuleSerializer(modules, many=True)
+    return Response(serializer.data)
 
 
 # Details on a particular module
