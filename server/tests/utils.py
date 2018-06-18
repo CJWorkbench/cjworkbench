@@ -1,5 +1,6 @@
 # Utilities for testing, mostly around constructing test Workflows
 
+from django.db import connection
 from django.test import TestCase
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -34,10 +35,41 @@ def create_test_user(username='username', email='user@example.org', password='pa
 
 
 def clear_db():
-    ParameterVal.objects.all().delete()
-    WfModule.objects.all().delete()
-    Workflow.objects.all().delete()
-    User.objects.all().delete()
+    Tables = [
+        'server_addmodulecommand',
+        'server_changedataversioncommand',
+        'server_changeparametercommand',
+        'server_changewfmodulenotescommand',
+        'server_changewfmoduleupdatesettingscommand',
+        'server_changeworkflowtitlecommand',
+        'server_deletemodulecommand',
+        'server_delta',
+        'server_module',
+        'server_moduleversion',
+        'server_notification',
+        'server_parameterspec',
+        'server_parameterval',
+        'server_reordermodulescommand',
+        'server_storedobject',
+        'server_uploadedfile',
+        'server_wfmodule',
+        'server_workflow',
+        'django_session',
+        'auth_group',
+        'auth_group_permissions',
+        'auth_permission',
+        'auth_user',
+        'auth_user_groups',
+        'auth_user_user_permissions',
+    ]
+
+    with connection.cursor() as c:
+        c.execute('BEGIN')
+        # Could be faster if we used Postgres; but currently, tests are in
+        # SQLite.
+        for table in Tables:
+            c.execute(f'DELETE FROM {table}')
+        c.execute('COMMIT')
 
 
 # ---- Setting up workflows ----

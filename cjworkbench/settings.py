@@ -109,7 +109,6 @@ if DEBUG==False:
         'account/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
         'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
     }
-    SESSION_ENGINE='django.contrib.sessions.backends.db'
 
 else:
     # We are running in debug
@@ -181,6 +180,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ]
+
+SESSION_ENGINE='django.contrib.sessions.backends.db'
 
 ROOT_URLCONF = 'cjworkbench.urls'
 
