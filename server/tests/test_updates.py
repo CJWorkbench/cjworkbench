@@ -51,12 +51,11 @@ class UpdatesTests(LoggedInTestCase):
         self.wfm3.update_interval = 1200
         self.wfm3.save()
 
-        mock_request = {}
-        update_wfm_data_scan(mock_request)
+        update_wfm_data_scan()
 
         # only wfm2 should have been updated, to update ten minutes from now
         self.assertEqual(mock_dispatch.call_count,1)
-        self.assertTrue(mock_dispatch.call_args == ((self.wfm2,),{'request':mock_request}))  # module_dispatch_event(wfm, request) call
+        self.assertTrue(mock_dispatch.call_args == ((self.wfm2,),{}))  # module_dispatch_event(wfm) call
         self.wfm2.refresh_from_db()
         self.assertEqual(self.wfm2.last_update_check, self.nowtime)
         self.assertEqual(self.wfm2.next_update, due_for_update + timedelta(seconds=600))
@@ -92,8 +91,7 @@ class UpdatesTests(LoggedInTestCase):
         self.wfm2.update_interval = 600
         self.wfm2.save()
 
-        mock_request = {}
-        update_wfm_data_scan(mock_request)
+        update_wfm_data_scan()
 
         # First module should not have updated, but both should have next update time incremented
         self.assertEqual(mock_dispatch.call_count,2)
