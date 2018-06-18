@@ -29,13 +29,14 @@ def check_for_wfm_data_update(wfm):
     now = timezone.now()
     if now > wfm.next_update:
         logger.debug('updating wfm ' + str(wfm) + ' - interval ' +  str(wfm.update_interval))
-        try:
-            module_dispatch_event(wfm)
-        except Exception as e:
-            # Log exceptions but keep going
-            update_next_update_time(wfm, now)     # Avoid throwing same exception until time for next update
-            logger.exception("Error updating data for module " + str(wfm))
-        else:
-            # It worked, update the checked time
-            wfm.last_update_check = now
-            update_next_update_time(wfm, now)
+        with wfm.workflow.cooperative_lock():
+            try:
+                module_dispatch_event(wfm)
+            except Exception as e:
+                # Log exceptions but keep going
+                update_next_update_time(wfm, now)     # Avoid throwing same exception until time for next update
+                logger.exception("Error updating data for module " + str(wfm))
+            else:
+                # It worked, update the checked time
+                wfm.last_update_check = now
+                update_next_update_time(wfm, now)
