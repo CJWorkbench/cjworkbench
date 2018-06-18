@@ -134,7 +134,7 @@ class WorkflowSerializer(serializers.ModelSerializer):
         request = self.context['request']
         if obj.request_authorized_write(request):
             return workbench_user_display(obj.owner)
-        elif workflow.example:
+        elif obj.example:
             return 'Demo Workflow'
         else:
             # don't leak user info (e.g. email) if viewer is not owner.

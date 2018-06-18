@@ -1,11 +1,12 @@
-from server.views import workflow_list, workflow_addmodule, workflow_detail, embed
-from rest_framework.test import APIRequestFactory, force_authenticate
+from collections import namedtuple
+from unittest.mock import patch
+from allauth.account.utils import user_display
+from django.contrib.auth.models import AnonymousUser
 from rest_framework import status
+from rest_framework.test import APIRequestFactory, force_authenticate
 from server.serializers import WfModuleSerializer
 from server.tests.utils import *
-from allauth.account.utils import user_display
-from unittest.mock import patch
-from collections import namedtuple
+from server.views import workflow_list, workflow_addmodule, workflow_detail, embed
 
 
 FakeSession = namedtuple('FakeSession', [ 'session_key' ])
@@ -87,7 +88,7 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertFalse(self.workflow1.public)
         self.client.force_login(self.otheruser)
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
     def test_workflow_init_state(self):
@@ -250,10 +251,11 @@ class WorkflowViewTests(LoggedInTestCase):
         response = workflow_detail(request, pk = 10000)
         self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        # not authenticated should also give 404 so we don't expose an attack surface
+        # not authenticated should give 403
         request = self._build_get('/api/workflows/%d/' % pk_workflow,
-                                  user=self.user)
-        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
+                                  user=AnonymousUser())
+        response = workflow_detail(request, pk = pk_workflow)
+        self.assertEqual(response.status_code, 403)
 
         # someone else's public workflow should be gettable
         request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id,
@@ -262,11 +264,11 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Other workflow public')
 
-        # someone else's private workflow should 404
+        # someone else's private workflow should 403
         request = self._build_get('/api/workflows/%d/' % self.other_workflow_private.id,
                                   user=self.user)
         response = workflow_detail(request, pk=self.other_workflow_private.id)
-        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, 403)
 
 
     def test_email_leakage(self):

@@ -161,7 +161,7 @@ class Workflow(models.Model):
 
         return new_wf
 
-    def duplicate(self, user: User) -> 'Workflow':
+    def duplicate(self, owner: User) -> 'Workflow':
         """
         Save and return a duplicate Workflow owned by `user`.
 

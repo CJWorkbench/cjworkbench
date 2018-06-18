@@ -239,7 +239,6 @@ def workflow_detail(request, pk, format=None):
 @api_view(['PUT'])
 @renderer_classes((JSONRenderer,))
 def workflow_addmodule(request, pk, format=None):
-    print("WORKFLOW!")
     workflow = get_object_or_404(Workflow, pk=pk)
 
     if not workflow.request_authorized_write(request):
