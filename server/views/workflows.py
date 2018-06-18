@@ -14,8 +14,6 @@ from server.models import Module, ModuleVersion, Workflow
 from server.models import AddModuleCommand, ReorderModulesCommand, ChangeWorkflowTitleCommand
 from server.serializers import WorkflowSerializer, ModuleSerializer, WorkflowSerializerLite, WfModuleSerializer, UserSerializer
 from server.versions import WorkflowUndo, WorkflowRedo
-from django.db.models import Q
-import json
 
 # Cache this because we need it on every Workflow page load, and it never changes
 def edit_cells_module_id():
@@ -78,7 +76,7 @@ def make_init_state(request, workflow=None, modules=None):
 
     if workflow:
         ret['workflowId'] = workflow.id
-        ret['workflow'] = WorkflowSerializer(workflow, context={'user' : request.user}).data
+        ret['workflow'] = WorkflowSerializer(workflow, context={'request' : request}).data
         ret['selected_wf_module'] = workflow.selected_wf_module
 
     if modules:
@@ -103,12 +101,16 @@ def render_workflows(request):
 
 # List all workflows, or create a new workflow.
 @api_view(['GET', 'POST'])
+@login_required
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     if request.method == 'GET':
-        workflows = Workflow.objects.filter(Q(owner=request.user))
+        workflows = Workflow.objects.filter(owner=request.user)
 
         # turn queryset into array so we can sort it ourselves by reverse chron
+        # (this is because 'last update' is a property of the delta, not the
+        # Workflow. [2018-06-18, adamhooper] TODO make workflow.last_update a
+        # column.
         workflows = workflows.all()
         workflows = sorted(workflows, key=lambda wf: wf.last_update(), reverse=True)
 
@@ -116,13 +118,12 @@ def workflow_list(request, format=None):
         return Response(serializer.data)
 
     elif request.method == 'POST':
-        serializer = WorkflowSerializer(data=request.data, context={'user': request.user})
-        if serializer.is_valid():
-            serializer.save(owner=request.user)
-            log_user_event(request.user, 'Create Workflow')
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        workflow = Workflow.objects.create(
+            name='New Workflow',
+            owner=request.user
+        )
+        serializer = WorkflowSerializerLite(workflow)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
 
 
 # ---- Workflow ----
@@ -160,7 +161,8 @@ def workflow_detail(request, pk, format=None):
         if workflow.name.startswith('Demo'):
             log_user_event(request.user, 'Opened Demo Workflow', {'name': workflow.name})
         with workflow.cooperative_lock():
-            serializer = WorkflowSerializer(workflow, context={'user' : request.user})
+            serializer = WorkflowSerializer(workflow,
+                                            context={'request': request})
             return Response(serializer.data)
 
     # We use PATCH to set the order of the modules when the user drags.
@@ -245,6 +247,7 @@ def workflow_addmodule(request, pk, format=None):
 
 # Duplicate a workflow. Returns new wf as json in same format as wf list
 @api_view(['GET'])
+@login_required
 @renderer_classes((JSONRenderer,))
 def workflow_duplicate(request, pk):
     try:

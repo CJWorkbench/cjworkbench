@@ -5,10 +5,16 @@ from aiounittest import async_test
 from channels.testing import WebsocketCommunicator
 import json
 from unittest import TestCase
+from collections import namedtuple
 
 from cjworkbench.asgi import create_url_router
+from server.models import Workflow
 from server.websockets import ws_client_rerender_workflow_async, ws_client_wf_module_status_async, WorkflowConsumer
 from server.tests.utils import add_new_workflow, add_new_module_version, add_new_wf_module, LoggedInTestCase, create_test_user, clear_db
+
+
+FakeSession = namedtuple('FakeSession', [ 'session_key' ])
+
 
 class ChannelTests(TestCase):
     def setUp(self):
@@ -31,6 +37,7 @@ class ChannelTests(TestCase):
     def mock_auth_middleware(self, application):
         def inner(scope):
             scope['user'] = self.user
+            scope['session'] = FakeSession('a-key')
             return application(scope)
         return inner
 
@@ -49,6 +56,28 @@ class ChannelTests(TestCase):
                 owner=create_test_user('other', 'other@example.org')
         )
         comm = WebsocketCommunicator(self.application, f'/workflows/{other_workflow.id}/')
+        connected, _ = await comm.connect()
+        self.assertFalse(connected)
+
+
+    @async_test
+    async def test_allow_anonymous_workflow(self):
+        workflow = Workflow.objects.create(
+            anonymous_owner_session_key='a-key'
+        )
+        comm = WebsocketCommunicator(self.application,
+                                     f'/workflows/{workflow.id}/')
+        connected, _ = await comm.connect()
+        self.assertTrue(connected)
+
+
+    @async_test
+    async def test_deny_other_users_anonymous_workflow(self):
+        workflow = Workflow.objects.create(
+            anonymous_owner_session_key='some-other-key'
+        )
+        comm = WebsocketCommunicator(self.application,
+                                     f'/workflows/{workflow.id}/')
         connected, _ = await comm.connect()
         self.assertFalse(connected)
 

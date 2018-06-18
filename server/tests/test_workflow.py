@@ -1,5 +1,7 @@
+from django.contrib.auth.models import User
 from django.test import TestCase
-from server.tests.utils import *
+from server.tests.utils import LoggedInTestCase, add_new_wf_module, add_new_module_version, create_testdata_workflow
+from server.models import Workflow
 
 
 class WorkflowTests(LoggedInTestCase):
@@ -17,7 +19,7 @@ class WorkflowTests(LoggedInTestCase):
         self.assertNotEqual(wf1.owner, self.otheruser) # should owned by user created by LoggedInTestCase
         module_version1 = add_new_module_version('Module 1')
         add_new_wf_module(wf1, module_version1, 1) # order=1
-        self.assertEqual(WfModule.objects.filter(workflow=wf1).count(), 2)
+        self.assertEqual(wf1.wf_modules.count(), 2)
 
         wf2 = wf1.duplicate(self.otheruser)
 
@@ -26,4 +28,4 @@ class WorkflowTests(LoggedInTestCase):
         self.assertEqual(wf2.name, "Copy of " + wf1.name)
         self.assertIsNone(wf2.last_delta)  # no undo history
         self.assertFalse(wf2.public)
-        self.assertEqual(WfModule.objects.filter(workflow=wf1).count(), WfModule.objects.filter(workflow=wf2).count())
+        self.assertEqual(wf1.wf_modules.count(), wf2.wf_modules.count())

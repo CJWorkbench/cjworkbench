@@ -19,11 +19,11 @@ export default class Workflows extends React.Component {
 
   // Make a new workflow when button clicked, and navigate to its Module List page
   click(e) {
-    this.props.api.newWorkflow('New Workflow')
-    .then(json => {
-      // navigate to new WF page
-      goToUrl('/workflows/' + json.id);
-    })
+    this.props.api.newWorkflow()
+      .then(json => {
+        // navigate to new WF page
+        goToUrl('/workflows/' + json.id);
+      })
   }
 
   // Ask the user if they really wanna do this. If sure, post DELETE to server

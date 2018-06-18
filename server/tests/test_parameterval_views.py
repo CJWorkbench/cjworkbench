@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from server.tests.test_parameterval import ParameterValTestsBase
 from server.models import ParameterVal, ParameterSpec, Module, WfModule
 from server.views import parameterval_detail, workflow_detail
@@ -5,6 +6,11 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
 from server.tests.utils import LoggedInTestCase, add_new_workflow, load_and_add_module, get_param_by_id_name
 import mock
+from collections import namedtuple
+
+
+FakeSession = namedtuple('FakeSession', [ 'session_key' ])
+
 
 # Test views that ultimately get/set ParameterVal
 class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
@@ -14,10 +20,32 @@ class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
         self.createTestWorkflow()
         self.factory = APIRequestFactory()
 
+
+    def _augment_request(self, request, user: User,
+                         session_key: str) -> None:
+        if user:
+            force_authenticate(request, user=user)
+        request.session = FakeSession(session_key)
+
+
+    def _build_get(self, *args, user: User=None, session_key: str='a-key',
+                   **kwargs):
+        request = self.factory.get(*args, **kwargs)
+        self._augment_request(request, user, session_key)
+        return request
+
+
+    def _build_patch(self, *args, user: User=None, session_key: str='a-key',
+                     **kwargs):
+        request = self.factory.patch(*args, **kwargs)
+        self._augment_request(request, user, session_key)
+        return request
+
+
     # Workflow API must return correct values for parameters
     def test_parameterval_detail_get(self):
-        request = self.factory.get('/api/workflows/%d/' % self.workflowID)
-        force_authenticate(request, user=self.user)
+        request = self._build_get('/api/workflows/%d/' % self.workflowID,
+                                  user=self.user)
         response = workflow_detail(request, pk = self.workflowID)
         self.assertIs(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data['name'], 'Test Workflow')
@@ -77,9 +105,8 @@ class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
     def test_parameterval_detail_patch(self):
         old_rev  = self.workflow.revision()
 
-        request = self.factory.patch('/api/parameters/%d/' % self.floatID,
-                                   {'value': '50.456' })
-        force_authenticate(request, user=self.user)
+        request = self._build_patch('/api/parameters/%d/' % self.floatID,
+                                    {'value': '50.456' }, user=self.user)
         response = parameterval_detail(request, pk=self.floatID)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -99,8 +126,9 @@ class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
 
         with mock.patch('server.modules.loadurl.LoadURL.event') as event_call:
 
-            request = self.factory.patch('/api/parameters/%d/' % url_param.id, {'value': '50.456', 'pressed_enter':True })
-            force_authenticate(request, user=self.user)
+            request = self._build_patch('/api/parameters/%d/' % url_param.id,
+                                        {'value': '50.456', 'pressed_enter':True },
+                                        user=self.user)
             response = parameterval_detail(request, pk=url_param.id)
             self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 

@@ -71,8 +71,8 @@ class WorkbenchAPI {
     return this._fetch(`/api/workflows/${workflowId}`)
   }
 
-  newWorkflow(newWorkflowName) {
-    return this._post('/api/workflows', { name: newWorkflowName })
+  newWorkflow() {
+    return this._post('/api/workflows', {})
   }
 
   deleteWorkflow(workflowId) {

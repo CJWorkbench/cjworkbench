@@ -50,7 +50,7 @@ def _lookup_wf_module_for_read(
     wf_module = _lookup_wf_module_no_access_control(pk)
     if isinstance(wf_module, HttpResponse): return wf_module
 
-    if not workflow.request_authorized_read(request):
+    if not wf_module.workflow.request_authorized_read(request):
         return HttpResponseForbidden()
 
     return wf_module
@@ -66,7 +66,7 @@ def _lookup_wf_module_for_write(
     wf_module = _lookup_wf_module_no_access_control(pk)
     if isinstance(wf_module, HttpResponse): return wf_module
 
-    if not workflow.request_authorized_write(request):
+    if not wf_module.workflow.request_authorized_write(request):
         return HttpResponseForbidden()
 
     return wf_module
@@ -211,9 +211,8 @@ def table_result(request, wf_module):
     except ValueError:
         return Response({'message': 'bad row number', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
 
-    with wf_module.workflow.cooperative_lock():
-        table = execute_wfmodule(wf_module)
-        j = make_render_json(table, startrow, endrow)
+    table = execute_wfmodule(wf_module)
+    j = make_render_json(table, startrow, endrow)
     return HttpResponse(j, content_type="application/json")
 
 
@@ -222,86 +221,68 @@ def table_result(request, wf_module):
 @renderer_classes((JSONRenderer,))
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_render(request, pk, format=None):
-    if request.method == 'GET':
-        wf_module = get_object_or_404(WfModule, pk=pk)
+    wf_module = _lookup_wf_module_for_read(pk, request)
+    if isinstance(wf_module, HttpResponse): return wf_module
 
-        # A clutch fix for deleting a module from within itself
-        # triggering a 500 error because wf_module.workflow is None
-        if not wf_module.workflow:
-            empty_table_json = make_render_json(pd.DataFrame(), 0, 0)
-            return HttpResponse(empty_table_json, content_type="application/json")
+    with wf_module.workflow.cooperative_lock():
+        response = table_result(request, wf_module)
+    return response
 
-        if not wf_module.workflow.request_authorized_read(request):
-            return HttpResponseForbidden()
-
-        return table_result(request, wf_module)
-
+@api_view(['GET'])
 @xframe_options_exempt
 def wfmodule_output(request, pk, format=None):
-    if request.method == 'GET':
-        try:
-            wf_module = WfModule.objects.get(pk=pk)
-        except WfModule.DoesNotExist:
-            return HttpResponseNotFound()
+    wf_module = _lookup_wf_module_for_read(pk, request)
+    if isinstance(wf_module, HttpResponse): return wf_module
 
-        if not wf_module.workflow.request_authorized_read(request):
-            return HttpResponseForbidden()
+    table = execute_wfmodule(wf_module)
 
-        table = execute_wfmodule(wf_module)
+    html, input_data, params = module_dispatch_output(wf_module, table, request=request)
 
-        html, input_data, params = module_dispatch_output(wf_module, table, request=request)
+    input_data_json = make_render_json(input_data)
 
-        input_data_json = make_render_json(input_data)
+    init_data =  json.dumps({
+        'input': json.loads(input_data_json),
+        'params': params
+    })
 
-        init_data =  json.dumps({
-            'input': json.loads(input_data_json),
-            'params': params
-        })
+    js="""
+    <script>
+    var workbench = %s
+    </script>""" % init_data
 
-        js="""
-        <script>
-        var workbench = %s
-        </script>""" % init_data
+    head_tag_pattern = re.compile('<\w*[H|h][E|e][A|a][D|d]\w*>')
+    result = head_tag_pattern.search(html)
 
-        head_tag_pattern = re.compile('<\w*[H|h][E|e][A|a][D|d]\w*>')
-        result = head_tag_pattern.search(html)
+    modified_html = '%s %s %s' % (
+        html[:result.end()],
+        js,
+        html[result.end():]
+    )
 
-        modified_html = '%s %s %s' % (
-            html[:result.end()],
-            js,
-            html[result.end():]
-        )
-
-        return HttpResponse(content=modified_html)
+    return HttpResponse(content=modified_html)
 
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_histogram(request, pk, col, format=None):
-    if request.method == 'GET':
-        try:
-            wf_module = WfModule.objects.get(pk=pk)
-        except WfModule.DoesNotExist:
-            return HttpResponseNotFound()
+    wf_module = _lookup_wf_module_for_read(pk, request)
+    if isinstance(wf_module, HttpResponse): return wf_module
 
-        if not wf_module.workflow.request_authorized_read(request):
-            return HttpResponseForbidden()
+    INTERNAL_COUNT_COLNAME = '__internal_count_column__'
 
-        INTERNAL_COUNT_COLNAME = '__internal_count_column__'
+    prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
+    if not prev_modules:
+        return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
+    table = execute_wfmodule(prev_modules.last())
+    if col not in table.columns:
+        return Response({'message': 'Column does not exist in module input', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
+    hist_table = table.groupby(col).size().reset_index()
+    hist_table.columns = [col, INTERNAL_COUNT_COLNAME]
+    hist_table = hist_table.sort_values(by=[INTERNAL_COUNT_COLNAME, col], ascending=[False, True])
+    hist_table[col] = hist_table[col].astype(str)
 
-        prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
-        if not prev_modules:
-            return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
-        table = execute_wfmodule(prev_modules.last())
-        if col not in table.columns:
-            return Response({'message': 'Column does not exist in module input', 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
-        hist_table = table.groupby(col).size().reset_index()
-        hist_table.columns = [col, INTERNAL_COUNT_COLNAME]
-        hist_table = hist_table.sort_values(by=[INTERNAL_COUNT_COLNAME, col], ascending=[False, True])
-        hist_table[col] = hist_table[col].astype(str)
-
-        return HttpResponse(make_render_json(hist_table), content_type="application/json")
+    return HttpResponse(make_render_json(hist_table), content_type="application/json")
 
 
 # /input is just /render on the previous wfmodule
@@ -309,57 +290,45 @@ def wfmodule_histogram(request, pk, col, format=None):
 @renderer_classes((JSONRenderer,))
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_input(request, pk, format=None):
-    if request.method == 'GET':
-        try:
-            wf_module = WfModule.objects.get(pk=pk)
-        except WfModule.DoesNotExist:
-            return HttpResponseNotFound()
+    wf_module = _lookup_wf_module_for_read(pk, request)
+    if isinstance(wf_module, HttpResponse): return wf_module
 
-        if not wf_module.request_authorized_read(request):
-            return HttpResponseForbidden()
-
-        with wf_module.workflow.cooperative_lock():
-            # return empty table if this is the first module in the stack
-            prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
-            if not prev_modules:
-                return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
-            else:
-                return table_result(request, prev_modules.last())
-
+    with wf_module.workflow.cooperative_lock():
+        # return empty table if this is the first module in the stack
+        prev_modules = WfModule.objects.filter(workflow=wf_module.workflow, order__lt=wf_module.order)
+        if not prev_modules:
+            return HttpResponse(make_render_json(pd.DataFrame()), content_type="application/json")
+        else:
+            response = table_result(request, prev_modules.last())
+    return response
 
 # returns a list of columns and their simplified types
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_columns(request, pk, format=None):
-    if request.method == 'GET':
-        try:
-            wf_module = WfModule.objects.get(pk=pk)
-        except WfModule.DoesNotExist:
-            return HttpResponseNotFound()
+    wf_module = _lookup_wf_module_for_read(pk, request)
+    if isinstance(wf_module, HttpResponse): return wf_module
 
-        if not wf_module.workflow.request_authorized_read(request):
-            return HttpResponseForbidden()
+    with wf_module.workflow.cooperative_lock():
+        table = execute_wfmodule(wf_module)
+        dtypes = table.dtypes.to_dict()
 
-        with wf_module.workflow.cooperative_lock():
-            table = execute_wfmodule(wf_module)
-            dtypes = table.dtypes.to_dict()
-
-        ret_types = []
-        for col in dtypes:
-            # We are simplifying the data types here.
-            # More stuff can be added to these lists if we run into anything new.
-            stype = "String"
-            if str(dtypes[col]) in ['int64', 'float64', 'bool']:
-                stype = "Number"
-            elif str(dtypes[col]) in ['datetime64[ns]']:
-                ret_types.append((col, "Date"))
-                stype = "Date"
-            ret_types.append({
-                "name": col,
-                "type": stype
-            })
-        return HttpResponse(json.dumps(ret_types), content_type="application/json")
+    ret_types = []
+    for col in dtypes:
+        # We are simplifying the data types here.
+        # More stuff can be added to these lists if we run into anything new.
+        stype = "String"
+        if str(dtypes[col]) in ['int64', 'float64', 'bool']:
+            stype = "Number"
+        elif str(dtypes[col]) in ['datetime64[ns]']:
+            ret_types.append((col, "Date"))
+            stype = "Date"
+        ret_types.append({
+            "name": col,
+            "type": stype
+        })
+    return HttpResponse(json.dumps(ret_types), content_type="application/json")
 
 
 # Public access to wfmodule output. Basically just /render with different auth and output format
@@ -368,13 +337,8 @@ def wfmodule_columns(request, pk, format=None):
 @renderer_classes((JSONRenderer,))
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_public_output(request, pk, type, format=None):
-    try:
-        wf_module = WfModule.objects.get(pk=pk)
-    except WfModule.DoesNotExist:
-        return HttpResponseNotFound()
-
-    if not wf_module.request_authorized_read(request):
-        return HttpResponseNotFound()
+    wf_module = _lookup_wf_module_for_read(pk, request)
+    if isinstance(wf_module, HttpResponse): return wf_module
 
     with wf_module.workflow.cooperative_lock():
         table = execute_wfmodule(wf_module)
@@ -393,24 +357,20 @@ def wfmodule_public_output(request, pk, type, format=None):
 @renderer_classes((JSONRenderer,))
 @permission_classes((IsAuthenticatedOrReadOnly, ))
 def wfmodule_dataversion(request, pk, format=None):
-    try:
-        wf_module = WfModule.objects.get(pk=pk)
-    except WfModule.DoesNotExist:
-        return HttpResponseNotFound()
-
     if request.method == 'GET':
-        if not wf_module.request_authorized_read(request):
-            return HttpResponseNotFound()
+        wf_module = _lookup_wf_module_for_read(pk, request)
+        if isinstance(wf_module, HttpResponse): return wf_module
 
         with wf_module.workflow.cooperative_lock():
             versions = wf_module.list_fetched_data_versions()
             current_version = wf_module.get_fetched_data_version()
             response = {'versions': versions, 'selected': current_version}
-            return Response(response)
+
+        return Response(response)
 
     elif request.method == 'PATCH':
-        if not wf_module.request_authorized_write(request):
-            return HttpResponseForbidden()
+        wf_module = _lookup_wf_module_for_write(pk, request)
+        if isinstance(wf_module, HttpResponse): return wf_module
 
         with wf_module.workflow.cooperative_lock():
             ChangeDataVersionCommand.create(wf_module, datetime.datetime.strptime(request.data['selected'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=pytz.UTC))
@@ -421,19 +381,14 @@ def wfmodule_dataversion(request, pk, format=None):
                 stored_object_at_version.read = True
                 stored_object_at_version.save()
 
-            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 @api_view(['PATCH'])
 @renderer_classes((JSONRenderer,))
 def wfmodule_dataversion_read(request, pk):
-    try:
-        wf_module = WfModule.objects.get(pk=pk)
-    except WfModule.DoesNotExist:
-        return HttpResponseNotFound()
-
-    if not wf_module.request_authorized_write(request):
-        return HttpResponseForbidden()
+    wf_module = _lookup_wf_module_for_write(pk, request)
+    if isinstance(wf_module, HttpResponse): return wf_module
 
     with wf_module.workflow.cooperative_lock():
         stored_objects = StoredObject.objects.filter(wf_module=wf_module, \

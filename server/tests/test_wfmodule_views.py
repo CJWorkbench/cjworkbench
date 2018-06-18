@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
 import json
 import pandas as pd
 import io
@@ -7,17 +8,43 @@ from rest_framework.test import APIRequestFactory
 from rest_framework import status
 from server.models import Module, ModuleVersion, WfModule, Workflow, ParameterSpec, ParameterVal
 from rest_framework.test import force_authenticate
-from server.tests.utils import *
 from server.tests.test_wfmodule import WfModuleTestsBase
 from operator import itemgetter
+from collections import namedtuple
+from server.tests.utils import LoggedInTestCase, mock_csv_table, mock_csv_table2, add_new_workflow, add_new_wf_module
+
+
+FakeSession = namedtuple('FakeSession', [ 'session_key' ])
+
 
 class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
-
     # Test workflow with modules that implement a simple pipeline on test data
     def setUp(self):
         super(WfModuleTests, self).setUp()  # log in
         self.createTestWorkflow()
         self.factory = APIRequestFactory()
+
+
+    def _augment_request(self, request, user: User,
+                         session_key: str) -> None:
+        if user:
+            force_authenticate(request, user=user)
+        request.session = FakeSession(session_key)
+
+
+    def _build_patch(self, *args, user: User=None, session_key: str='a-key',
+                     **kwargs):
+        request = self.factory.patch(*args, **kwargs)
+        self._augment_request(request, user, session_key)
+        return request
+
+
+    def _build_put(self, *args, user: User=None, session_key: str='a-key',
+                   **kwargs):
+        request = self.factory.put(*args, **kwargs)
+        self._augment_request(request, user, session_key)
+        return request
+
 
     # TODO test parameter values returned from this call
     def test_wf_module_detail_get(self):
@@ -246,9 +273,9 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         # set the version back to latest through API.
         # using factory.patch as trouble getting client.patch to work (400 -- authentication?)
         # More or less the same thing, but does skip urls.py
-        request = self.factory.patch('/api/wfmodules/%d/dataversion' % self.wfmodule1.id,
-                                     {'selected': secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")})
-        force_authenticate(request, user=self.user)
+        request = self._build_patch('/api/wfmodules/%d/dataversion' % self.wfmodule1.id,
+                                    {'selected': secondver.strftime("%Y-%m-%dT%H:%M:%S.%fZ")},
+                                    user=self.user)
         response = wfmodule_dataversion(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
         self.wfmodule1.refresh_from_db()
@@ -257,9 +284,9 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
 
     # test Wf Module Notes change API
     def test_wf_module_notes_post(self):
-        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id,
-                                     {'notes': 'wow such doge'})
-        force_authenticate(request, user=self.user)
+        request = self._build_patch('/api/wfmodules/%d' % self.wfmodule1.id,
+                                    {'notes': 'wow such doge'},
+                                    user=self.user)
         response = wfmodule_detail(request, pk=self.wfmodule1.id)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -269,9 +296,9 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertEqual(response.data['notes'], 'wow such doge')
 
         # Test for error on missing notes field (and no other patachable fields)
-        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id,
-                                     {'notnotes': 'forthcoming error'})
-        force_authenticate(request, user=self.user)
+        request = self._build_patch('/api/wfmodules/%d' % self.wfmodule1.id,
+                                    {'notnotes': 'forthcoming error'},
+                                    user=self.user)
         response = wfmodule_detail(request, pk=self.wfmodule1.id)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -281,8 +308,8 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
                     'update_interval': 5,
                     'update_units': 'weeks'}
 
-        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, settings)
-        force_authenticate(request, user=self.user)
+        request = self._build_patch('/api/wfmodules/%d' % self.wfmodule1.id,
+                                    settings, user=self.user)
         response = wfmodule_detail(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_204_NO_CONTENT)
 
@@ -299,21 +326,21 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
                     'update_interval': 5,
                     }
 
-        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, settings)
-        force_authenticate(request, user=self.user)
+        request = self._build_patch('/api/wfmodules/%d' % self.wfmodule1.id,
+                                    settings, user=self.user)
         response = wfmodule_detail(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_wf_module_update_settings_missing_interval(self):
         settings = {'auto_update_data': True, 'update_units': 'days'}
-        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, settings)
-        force_authenticate(request, user=self.user)
+        request = self._build_patch('/api/wfmodules/%d' % self.wfmodule1.id,
+                                    settings, user=self.user)
         response = wfmodule_detail(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_wf_module_update_settings_bad_units(self):
         settings = {'auto_update_data': True, 'update_interval': 66, 'update_units': 'pajama'}
-        request = self.factory.patch('/api/wfmodules/%d' % self.wfmodule1.id, settings)
-        force_authenticate(request, user=self.user)
+        request = self._build_patch('/api/wfmodules/%d' % self.wfmodule1.id,
+                                    settings, user=self.user)
         response = wfmodule_detail(request, pk=self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
