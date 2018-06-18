@@ -15,12 +15,13 @@ class Workflow(models.Model):
     anonymous_owner_session_key = models.CharField(
         'anonymous_owner_session_key',
         max_length=40,
-        null=True
+        null=True, blank=True
     )
 
     public = models.BooleanField(default=False)
     example = models.BooleanField(default=False)    # if set, will be duplicated for new users
-    lesson_slug = models.CharField('lesson_slug', max_length=100, null=True)
+    lesson_slug = models.CharField('lesson_slug', max_length=100,
+                                   null=True, blank=True)
 
     selected_wf_module = models.IntegerField(default=None, null=True, blank=True)
 
