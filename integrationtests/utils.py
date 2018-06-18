@@ -8,6 +8,7 @@ import re
 
 from integrationtests.browser import Browser
 from integrationtests.helpers import accounts
+from integrationtests.helpers.modules import import_workbench_module
 
 
 _url_regex = re.compile('https?://[^\\s]+')
@@ -81,3 +82,73 @@ class LoggedInIntegrationTest(WorkbenchBase):
         self.account_admin.destroy_modules()
 
         super().tearDown()
+
+
+    # -- Helpers for building workflows ---
+
+
+    def add_csv_data_module(self, csv=None):
+        """Adds Paste Data module to the workflow with given data
+
+           csv -- Text of csv.. if not set, use default three column, two row test data
+        """
+        if csv is None:
+            csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson\n'
+
+        self.browser.click_button('Add Module')
+        self.browser.fill_in('moduleQ', 'Paste data')
+        self.browser.click_whatever('.module-search-result', text='Paste data')
+
+        # wait for wfmodule to appear
+        self.browser.fill_in('csv', csv, wait=True)
+        # blur, to begin saving result to server
+        self.browser.click_whatever('ul.metadata-container', text='by')
+        # and for some reason, that doesn't do the trick! Focus again?
+        self.browser.click_whatever('textarea[name="csv"]')
+
+
+    def import_module(self, slug: str) -> None:
+        import_workbench_module(self.browser, slug)
+
+
+
+    def add_wf_module(self, name: str, position=None) -> None:
+        """Adds module with name 'name' to the workflow.
+
+        Keyword arguments:
+        position -- if set, add after the 'position'th existing module.
+        """
+        b = self.browser
+
+        if position is None:
+            with b.scope('.in-between-modules:last-child'):
+                b.click_button('Add Module')
+        else:
+            i = position * 2 + 1
+            with b.scope(f'.in-between-modules:nth-child({i})'):
+                b.click_button('Add Module')
+
+        # Search. That way, we won't need to worry about overflow:auto
+        b.fill_in('moduleQ', name)
+
+        b.click_whatever('li.module-search-result', text=name)
+
+        b.assert_element(f'.wf-module[data-module-name="{name}"]', wait=True)
+
+
+    def select_column(self, name: str, text: str, **kwargs) -> None:
+        """Selects 'text' in the ColumnSelect box with name 'name'.
+
+        Waits for '.loading' to disappear before filling in the text.
+
+        Note: unlike browser.select(), this does _not_ handle id or
+        label locators.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self.browser.assert_element(
+            f'select[name="{name}"]:not(.loading)',
+            wait=True
+        )
+        self.browser.select(name, text, **kwargs)

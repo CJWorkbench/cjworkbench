@@ -22,13 +22,11 @@ def embed(request, wfmodule_id):
             'workflow': workflow_serializer.data,
             'wf_module': workflow_module_serializer.data
         }
-        # json.dumps barfs on datetime objects, and it's not needed here
-        del (init_state['workflow'])['last_update']
     else:
         init_state = {
             'workflow': None,
             'wf_module': None
         }
 
-    response = TemplateResponse(request, 'embed.html', {'initState': json.dumps(init_state)})
+    response = TemplateResponse(request, 'embed.html', {'initState': init_state})
     return response
