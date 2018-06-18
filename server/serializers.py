@@ -134,6 +134,8 @@ class WorkflowSerializer(serializers.ModelSerializer):
         request = self.context['request']
         if obj.request_authorized_write(request):
             return workbench_user_display(obj.owner)
+        elif workflow.example:
+            return 'Demo Workflow'
         else:
             # don't leak user info (e.g. email) if viewer is not owner.
             return workbench_user_display_public(obj.owner)
@@ -142,6 +144,7 @@ class WorkflowSerializer(serializers.ModelSerializer):
         model = Workflow
         fields = (
             'id',
+            'url_id',
             'name',
             'revision',
             'wf_modules',
@@ -158,7 +161,12 @@ class WorkflowSerializer(serializers.ModelSerializer):
 class WorkflowSerializerLite(serializers.ModelSerializer):
     owner_name = serializers.SerializerMethodField()
     def get_owner_name(self, obj):
-        return user_display(obj.owner)
+        if obj.example:
+            return 'Demo Workflow'
+        else:
+            # Different from WorkflowSerializer because WorkflowSerializer
+            # takes an extra context['request'] argument, and we don't.
+            return user_display(obj.owner)
 
     last_update = serializers.SerializerMethodField()
     def get_last_update(self, obj):

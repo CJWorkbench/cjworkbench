@@ -1,7 +1,8 @@
-from django.http import HttpResponseForbidden, Http404
+from django.http import HttpRequest, HttpResponseForbidden, Http404
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
+from django.db.models import Q
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.decorators import renderer_classes
@@ -84,10 +85,11 @@ def make_init_state(request, workflow=None, modules=None):
 
     if request.user.is_authenticated():
         ret['loggedInUser'] = UserSerializer(request.user).data
-        ret['editCellsModuleId'] = edit_cells_module_id()
-        ret['sortModuleId'] = sort_module_id()
-        ret['reorderModuleId'] = reorder_module_id()
-        ret['renameModuleId'] = rename_module_id()
+
+    ret['editCellsModuleId'] = edit_cells_module_id()
+    ret['sortModuleId'] = sort_module_id()
+    ret['reorderModuleId'] = reorder_module_id()
+    ret['renameModuleId'] = rename_module_id()
 
     return ret
 
@@ -105,7 +107,8 @@ def render_workflows(request):
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     if request.method == 'GET':
-        workflows = Workflow.objects.filter(owner=request.user)
+        workflows = Workflow.objects.filter(Q(owner=request.user)
+                                            | Q(example=True))
 
         # turn queryset into array so we can sort it ourselves by reverse chron
         # (this is because 'last update' is a property of the delta, not the
@@ -128,7 +131,25 @@ def workflow_list(request, format=None):
 
 # ---- Workflow ----
 
-# no login_required as logged out users can view public workflows
+
+def _get_anonymous_workflow_for(workflow: Workflow,
+                                request: HttpRequest) -> Workflow:
+    """If not owner, return a cached duplicate of `workflow`.
+
+    The duplicate will be married to `request.session.session_key`, and its
+    `.is_anonymous` will return `True`.
+    """
+    session_key = request.session.session_key
+    print(f'Session key: {session_key}')
+
+    try:
+        return Workflow.objects.get(original_workflow_id=workflow.id,
+                                    anonymous_owner_session_key=session_key)
+    except Workflow.DoesNotExist:
+        return workflow.duplicate_anonymous(session_key)
+
+
+# no login_required as logged out users can view example/public workflows
 def render_workflow(request, pk=None):
     # Workflow must exist and be readable by this user
     workflow = get_object_or_404(Workflow, pk=pk)
@@ -139,9 +160,13 @@ def render_workflow(request, pk=None):
     if workflow.lesson and workflow.owner == request.user:
         return redirect(workflow.lesson)
     else:
+        if workflow.example and workflow.owner != request.user:
+            workflow = _get_anonymous_workflow_for(workflow, request)
+
         modules = Module.objects.all()
         init_state = make_init_state(request, workflow=workflow,
                                      modules=modules)
+
         return TemplateResponse(request, 'workflow.html',
                                 {'initState': init_state})
 
