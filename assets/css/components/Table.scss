@@ -25,11 +25,11 @@
     }
     .outputpane-iframe-control-overlay {
       position: absolute;
-      top:1.5rem;
       right:6rem;
       width: 4rem;
       height: 4rem;
       background-color: transparent;
+      i {color:$brand-text--dark;}
     }
     .outputpane-iframe-control-overlay .btn {
       position: absolute;
