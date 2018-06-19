@@ -12,7 +12,8 @@ def embed(request, wfmodule_id):
     except WfModule.DoesNotExist:
         wf_module = None
 
-    if not wf_module.workflow.request_authorized_read(request) or not wf_module.module_version.html_output:
+    if wf_module and (not wf_module.workflow.request_authorized_read(request)
+                      or not wf_module.module_version.html_output):
         wf_module = None
 
     if wf_module:
@@ -28,5 +29,5 @@ def embed(request, wfmodule_id):
             'wf_module': None
         }
 
-    response = TemplateResponse(request, 'embed.html', {'initState': json.dumps(init_state)})
+    response = TemplateResponse(request, 'embed.html', {'initState': init_state})
     return response

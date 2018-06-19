@@ -128,7 +128,7 @@ export default class ExportModal extends React.Component {
               {csvCopyLink}
             </div>
             <div className='d-flex justify-content-between flex-row mb-3'>
-              <Input type='url' className='url-link t-d-gray content-2 test-csv-field' placeholder={csvString}
+              <Input type='url' className='url-link t-d-gray content-2 test-csv-field' value={csvString}
                      readOnly/>
               <div className='download-icon-box'>
                 <a href={csvString} onClick={() => this.logExport('CSV')}
@@ -140,7 +140,7 @@ export default class ExportModal extends React.Component {
               {jsonCopyLink}
             </div>
             <div className='d-flex justify-content-between flex-row'>
-              <Input type='url' className='url-link t-d-gray content-2 test-json-field' placeholder={jsonString}
+              <Input type='url' className='url-link t-d-gray content-2 test-json-field' value={jsonString}
                      readOnly/>
               <div className='download-icon-box'>
                 <a href={jsonString} onClick={() => this.logExport('JSON')}

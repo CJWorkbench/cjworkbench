@@ -94,9 +94,9 @@ exports[`ExportModal should match snapshot 1`] = `
                       >
                         <input
                           class="url-link t-d-gray content-2 test-csv-field form-control"
-                          placeholder="/public/moduledata/live/415.csv"
                           readonly=""
                           type="url"
+                          value="/public/moduledata/live/415.csv"
                         />
                         <div
                           class="download-icon-box"
@@ -127,9 +127,9 @@ exports[`ExportModal should match snapshot 1`] = `
                       >
                         <input
                           class="url-link t-d-gray content-2 test-json-field form-control"
-                          placeholder="/public/moduledata/live/415.json"
                           readonly=""
                           type="url"
+                          value="/public/moduledata/live/415.json"
                         />
                         <div
                           class="download-icon-box"
@@ -304,15 +304,15 @@ exports[`ExportModal should match snapshot 1`] = `
                           >
                             <Input
                               className="url-link t-d-gray content-2 test-csv-field"
-                              placeholder="/public/moduledata/live/415.csv"
                               readOnly={true}
                               type="url"
+                              value="/public/moduledata/live/415.csv"
                             >
                               <input
                                 className="url-link t-d-gray content-2 test-csv-field form-control"
-                                placeholder="/public/moduledata/live/415.csv"
                                 readOnly={true}
                                 type="url"
+                                value="/public/moduledata/live/415.csv"
                               />
                             </Input>
                             <div
@@ -366,15 +366,15 @@ exports[`ExportModal should match snapshot 1`] = `
                           >
                             <Input
                               className="url-link t-d-gray content-2 test-json-field"
-                              placeholder="/public/moduledata/live/415.json"
                               readOnly={true}
                               type="url"
+                              value="/public/moduledata/live/415.json"
                             >
                               <input
                                 className="url-link t-d-gray content-2 test-json-field form-control"
-                                placeholder="/public/moduledata/live/415.json"
                                 readOnly={true}
                                 type="url"
+                                value="/public/moduledata/live/415.json"
                               />
                             </Input>
                             <div

@@ -12,27 +12,8 @@ class TestWfModule(LoggedInIntegrationTest):
         b.assert_element('input[name="name"][value="New Workflow"]', wait=True)
 
 
-    def _add_paste_data_module(self):
-        self.browser.click_button('Add Module')
-        self.browser.fill_in('moduleQ', 'Paste data')
-        self.browser.click_whatever('.module-search-result', text='Paste data')
-
-
-    def _add_csv_data(self):
-        csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson\n'
-
-        self._add_paste_data_module()
-
-        # wait for wfmodule to appear
-        self.browser.fill_in('csv', csv, wait=True)
-        # blur, to begin saving result to server
-        self.browser.click_whatever('ul.metadata-container', text='by')
-        # and for some reason, that doesn't do the trick! Focus again?
-        self.browser.click_whatever('textarea[name="csv"]')
-
-
     def test_paste_csv_workflow(self):
-        self._add_csv_data()
+        self.add_csv_data_module()
 
         b = self.browser
 
@@ -51,7 +32,7 @@ class TestWfModule(LoggedInIntegrationTest):
     def test_module_buttons_exist(self):
         b = self.browser
 
-        self._add_paste_data_module()
+        self.add_csv_data_module()
 
         # Wait for wfmodule to appear
         b.hover_over_element('.module-card-header', wait=True)
@@ -63,7 +44,7 @@ class TestWfModule(LoggedInIntegrationTest):
 
 
     def test_export(self):
-        self._add_csv_data()
+        self.add_csv_data_module()
 
         b = self.browser
         b.hover_over_element('.module-card-header', wait=True)

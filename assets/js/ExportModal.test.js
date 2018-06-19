@@ -39,11 +39,11 @@ describe('ExportModal', () => {
   it('should render download links', () => {
     const csvField = wrapper.find('input.test-csv-field');
     expect(csvField.length).toBe(1);
-    expect(csvField.props().placeholder).toBe("/public/moduledata/live/415.csv");
+    expect(csvField.props().value).toBe("/public/moduledata/live/415.csv");
 
     const jsonField =wrapper.find('input.test-json-field');
     expect(jsonField.length).toBe(1);
-    expect(jsonField.props().placeholder).toBe("/public/moduledata/live/415.json");
+    expect(jsonField.props().value).toBe("/public/moduledata/live/415.json");
   });
 
   it('renders copy to clipboard buttons', () => {

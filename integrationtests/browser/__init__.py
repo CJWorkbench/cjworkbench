@@ -231,6 +231,19 @@ class Browser:
         self.assert_element(*selector, **kwargs)
 
 
+    def text(self, *selector, **kwargs) -> str:
+        """Returns text of element matching selector.
+        See 'assert_element()' for selector syntax.
+
+        Keyword arguments:
+        wait -- seconds to poll (default 0)
+        text -- text the element must contain
+        """
+        self._capybarize_kwargs(kwargs)
+        a = self.page.find(*selector, **kwargs)
+        return self.page.find(*selector, **kwargs).all_text
+
+
     @contextmanager
     def scope(self, selector: str) -> None:
         """Within the given block, scopes all selectors within 'selector'.

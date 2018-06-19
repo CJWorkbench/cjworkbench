@@ -68,11 +68,12 @@ class WorkbenchBase(unittest.TestCase):
     def create_browser(self):
         return Browser(base_url=self.live_server_url)
 
-
+    # TODO move to a helper .py file
     def import_module(self, slug: str) -> None:
         import_workbench_module(self.browser, slug)
 
 
+    # TODO move to a helper .py file
     def add_wf_module(self, name: str, position=None) -> None:
         """Adds module with name 'name' to the workflow.
 
@@ -97,6 +98,7 @@ class WorkbenchBase(unittest.TestCase):
         b.assert_element(f'.wf-module[data-module-name="{name}"]', wait=True)
 
 
+    # TODO move to a helper .py file
     def delete_wf_module(self, position: int) -> None:
         """Deletes module at index `position` from the workflow.
 
@@ -107,6 +109,46 @@ class WorkbenchBase(unittest.TestCase):
         with b.scope(f'.wf-module:nth-child({position * 2 + 2})'):
             b.click_button('more')
             b.click_button('Delete')
+
+
+    # TODO move to a helper .py file
+    def add_csv_data_module(self, csv=None):
+        """Adds Paste Data module to the workflow with given data
+
+           csv -- Text of csv.. if not set, use default three column, two row test data
+        """
+        if csv is None:
+            csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson\n'
+
+        self.browser.click_button('Add Module')
+        self.browser.fill_in('moduleQ', 'Paste data')
+        self.browser.click_whatever('.module-search-result', text='Paste data')
+
+        # wait for wfmodule to appear
+        self.browser.fill_in('csv', csv, wait=True)
+        # blur, to begin saving result to server
+        self.browser.click_whatever('ul.metadata-container', text='by')
+        # and for some reason, that doesn't do the trick! Focus again?
+        self.browser.click_whatever('textarea[name="csv"]')
+
+
+    # TODO move to a helper .py file
+    def select_column(self, name: str, text: str, **kwargs) -> None:
+        """Selects 'text' in the ColumnSelect box with name 'name'.
+
+        Waits for '.loading' to disappear before filling in the text.
+
+        Note: unlike browser.select(), this does _not_ handle id or
+        label locators.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self.browser.assert_element(
+            f'select[name="{name}"]:not(.loading)',
+            wait=True
+        )
+        self.browser.select(name, text, **kwargs)
 
 
 # Derive from this to perform all tests logged in
