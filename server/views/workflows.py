@@ -78,6 +78,7 @@ def make_init_state(request, workflow=None, modules=None):
         ret['workflowId'] = workflow.id
         ret['workflow'] = WorkflowSerializer(workflow, context={'request' : request}).data
         ret['selected_wf_module'] = workflow.selected_wf_module
+        del ret['workflow']['selected_wf_module']
 
     if modules:
         ret['modules'] = ModuleSerializer(modules, many=True).data
@@ -85,10 +86,11 @@ def make_init_state(request, workflow=None, modules=None):
     if request.user.is_authenticated():
         ret['loggedInUser'] = UserSerializer(request.user).data
 
-    ret['editCellsModuleId'] = edit_cells_module_id()
-    ret['sortModuleId'] = sort_module_id()
-    ret['reorderModuleId'] = reorder_module_id()
-    ret['renameModuleId'] = rename_module_id()
+    if workflow and not workflow.request_read_only(request):
+        ret['editCellsModuleId'] = edit_cells_module_id()
+        ret['sortModuleId'] = sort_module_id()
+        ret['reorderModuleId'] = reorder_module_id()
+        ret['renameModuleId'] = rename_module_id()
 
     return ret
 
@@ -159,7 +161,7 @@ def render_workflow(request, pk=None):
     workflow = get_object_or_404(Workflow, pk=pk)
 
     if not workflow.request_authorized_read(request):
-        raise Http404()
+        return HttpResponseForbidden()
 
     if workflow.lesson and workflow.owner == request.user:
         return redirect(workflow.lesson)

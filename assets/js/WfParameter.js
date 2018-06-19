@@ -267,6 +267,7 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'refine') {
         return (
           <Refine
+            api={this.props.api}
             wfModuleId={this.props.wf_module_id}
             selectedColumn={this.props.getParamText('column')}
             existingEdits={this.props.p.value}
@@ -283,6 +284,7 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'rename-entries') {
       return (
           <RenameEntries
+              api={this.props.api}
               loadAll={this.props.getParamText('display-all')}
               changeLoadAll={this.changeRenameColumnsLoadAll}
               entries={this.props.p.value}

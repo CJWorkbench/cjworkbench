@@ -1,7 +1,7 @@
 import React from 'react'
-import {store, setSelectedWfModuleAction} from "./workflow-reducer";
+import {store} from "./workflow-reducer";
 import {getPageID} from './utils'
-import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId} from "./utils";
+import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId, DEPRECATED_ensureSelectedWfModule} from "./utils";
 import WorkBenchAPI from './WorkbenchAPI'
 
 var api = WorkBenchAPI();
@@ -44,24 +44,22 @@ function updateRenameModule(module, renameInfo, isNew=false) {
 }
 
 export function updateRename(wfModuleId, renameInfo) {
-    var state = store.getState();
+    const state = store.getState();
     const workflowId = state.workflow ? state.workflow.id : null;
 
-    var existingRenameModule = findModuleWithIdAndIdName(state, wfModuleId, 'rename-columns');
-    if(existingRenameModule) {
-        if(existingRenameModule.id != wfModuleId) {
-            store.dispatch(setSelectedWfModuleAction(existingRenameModule.id));
-        }
+    const existingRenameModule = findModuleWithIdAndIdName(state, wfModuleId, 'rename-columns');
+    if (existingRenameModule) {
         updateRenameModule(existingRenameModule, renameInfo);
+        DEPRECATED_ensureSelectedWfModule(store, existingRenameModule);
     } else {
-        let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
+        const wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
         api.addModule(workflowId, state.renameModuleId, wfModuleIdx + 1)
             .then((newWfm) => {
                 // We set the parameters first and then switch to the new module
                 // to prevent it loading all columns in its initial rendering
                 // (which would be the case if it's added from the module library)
                 updateRenameModule(newWfm, renameInfo, true);
-                store.dispatch(setSelectedWfModuleAction(newWfm.id));
+                DEPRECATED_ensureSelectedWfModule(store, newWfm);
             });
     }
 }

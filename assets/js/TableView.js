@@ -33,7 +33,7 @@ export const deltaRows = 200;     // get this many rows at a time (must be > pre
 export default class TableView extends React.Component {
 
  static propTypes = {
-    id:                 PropTypes.number,             // not actually required, could have no selected module
+    selectedWfModuleId: PropTypes.number,             // not actually required, could have no selected module
     revision:           PropTypes.number.isRequired,
     api:                PropTypes.object.isRequired,
     isReadOnly:         PropTypes.bool.isRequired,
@@ -76,14 +76,14 @@ export default class TableView extends React.Component {
 
 
   // Completely reload table data -- puts up spinner, preserves visibility of old data while we wait
-  refreshTable(id) {
-    if (id) {
+  refreshTable() {
+    if (this.props.selectedWfModuleId) {
       this.loading = true;
       this.highestRowRequested = 0;
       this.emptyRowCache = null;
       this.setBusySpinner(true);
 
-      this.props.api.render(id, 0, initialRows)
+      this.props.api.render(this.props.selectedWfModuleId, 0, initialRows)
         .then(json => {
           this.loading = false;
           this.setBusySpinner(false);
@@ -97,8 +97,8 @@ export default class TableView extends React.Component {
 
 
   // Load more table data from render API. Spinner if we're going to see blanks.
-  loadTable(id, toRow) {
-    if (id) {
+  loadTable(toRow) {
+    if (this.props.selectedWfModuleId) {
       this.loading = true;
 
       // Spinner if we've used up all our preloaded rows (we're now seeing blanks)
@@ -106,7 +106,7 @@ export default class TableView extends React.Component {
         this.setBusySpinner(true);
       }
 
-      this.props.api.render(id, this.state.lastLoadedRow, toRow)
+      this.props.api.render(this.props.selectedWfModuleId, this.state.lastLoadedRow, toRow)
         .then(json => {
 
           // Add just retrieved rows to current data, if any
@@ -127,15 +127,15 @@ export default class TableView extends React.Component {
 
 
   componentDidMount() {
-    this.refreshTable(this.props.id);  // refresh, not load, so we get the spinner
+    this.refreshTable();  // refresh, not load, so we get the spinner
   }
 
   // If the revision changes from under us, or we are displaying a different output, reload the table
-  componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
       //console.log("Table props:");
       //console.log(nextProps);
-    if (this.props.revision !== nextProps.revision || this.props.id !== nextProps.id) {
-        this.refreshTable(nextProps.id);
+    if (this.props.revision !== prevProps.revision || this.props.selectedWfModuleId !== prevProps.selectedWfModuleId) {
+        this.refreshTable();
     }
   }
 
@@ -158,7 +158,7 @@ export default class TableView extends React.Component {
         target = Math.min(target, this.state.tableData.total_rows-1);  // don't try to load past end of data
         if (target >= this.state.lastLoadedRow) {
           target += deltaRows;
-          this.loadTable(this.props.id, target);
+          this.loadTable(target);
         }
       }
 
@@ -187,14 +187,14 @@ export default class TableView extends React.Component {
         let newTableData = update(this.state.tableData, {$merge: {rows: newRows}});
         this.setState({tableData: newTableData});
 
-        EditCells.addCellEdit(this.props.id, {row: row, col: colName, value: newVal})
+        EditCells.addCellEdit(this.props.selectedWfModuleId, {row: row, col: colName, value: newVal})
       }
     }
   }
 
   onSort(sortCol, sortType) {
-      SortFromTable.updateSort(this.props.id, sortCol, sortType);
-      this.refreshTable(this.props.id);
+      SortFromTable.updateSort(this.props.selectedWfModuleId, sortCol, sortType);
+      this.refreshTable();
   }
 
   render() {
@@ -204,7 +204,7 @@ export default class TableView extends React.Component {
     var nrows = 0;
     var ncols = 0;
     var gridView = null;
-    if (this.props.id && this.state.tableData && this.state.tableData.total_rows>0) {
+    if (this.props.selectedWfModuleId && this.state.tableData && this.state.tableData.total_rows>0) {
       // Expand the list of letter-showing modules by changing the array here
       let showLetterWfModuleIdNames = ['formula', 'reorder-columns'];
 
@@ -240,7 +240,7 @@ export default class TableView extends React.Component {
             totalRows={this.state.tableData.total_rows}
             columns={this.state.tableData.columns}
             columnTypes={this.state.tableData.column_types}
-            wfModuleId={this.props.id}
+            wfModuleId={this.props.selectedWfModuleId}
             revision={this.props.revision}
             getRow={this.getRow}
             resizing={this.props.resizing}
@@ -285,9 +285,9 @@ export default class TableView extends React.Component {
                   <div className='value'>{ncols}</div>
               </div>
             </div>
-            {this.props.id ? (
+            {this.props.selectedWfModuleId ? (
               <div className="export-table icon-download" onClick={this.toggleExportModal}>
-                <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.id} onClose={this.toggleExportModal}/>
+                <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.selectedWfModuleId} onClose={this.toggleExportModal}/>
               </div>
             ) : null}
           </div>

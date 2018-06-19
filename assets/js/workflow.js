@@ -56,9 +56,7 @@ class Workflow extends React.Component {
       return null;
     }
 
-    const selectedWorkflowModuleRef = this.props.workflow.wf_modules.find((wf) => {
-      return wf.id === this.props.selected_wf_module;
-    });
+    const selectedWfModule = this.props.workflow.wf_modules[this.props.selected_wf_module];
 
     let className = 'workflow-root'
     if (this.props.lesson) {
@@ -92,11 +90,10 @@ class Workflow extends React.Component {
                 setFocus={this.setFocusModuleStack}
               />
               <OutputPane
-                id={this.props.selected_wf_module}
+                selectedWfModuleId={selectedWfModule ? selectedWfModule.id : null}
                 revision={this.props.workflow.revision}
                 api={this.props.api}
-                htmlOutput={(selectedWorkflowModuleRef && selectedWorkflowModuleRef.html_output)}
-                selectedWfModuleId={this.props.selected_wf_module}
+                htmlOutput={selectedWfModule ? selectedWfModule.html_output : null}
                 workflow={this.props.workflow}
                 focus={!this.state.isFocusModuleStack}
                 setFocus={this.setFocusOutputPane}

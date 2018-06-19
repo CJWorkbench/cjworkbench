@@ -130,7 +130,7 @@ describe('lessonSelector', () => {
           { id: 1, module_version: { module: { name: 'foo' } } },
         ]
       } },
-      selected_wf_module: { $set: 1 },
+      selected_wf_module: { $set: 0 },
     })
     expect(lessonSelector(state).activeStepIndex).toBe(1)
   })
@@ -157,7 +157,7 @@ describe('lessonSelector', () => {
             { id: 1, module_version: { module: { name: 'foo' } } },
           ]
         } },
-        selected_wf_module: { $set: 0 }, // makes selectedWfModule null
+        selected_wf_module: { $set: null }, // makes selectedWfModule null
       })
       expect(lessonSelector(state).activeStepIndex).toBe(0)
       expect(console.error).toHaveBeenCalled()

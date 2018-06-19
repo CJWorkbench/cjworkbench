@@ -63,7 +63,7 @@ class Browser:
 
 
     def _capybarize_kwargs(self, kwargs):
-        """In-place modifies kwargs.
+        """Modify kwargs in-place.
 
         Conversions:
         - Converts 'wait':True to 'wait':default_wait_timeout.
@@ -73,14 +73,13 @@ class Browser:
 
 
     def visit(self, url: str) -> None:
-        """Types 'url' into the address bar, presses Enter, and awaits onload.
-        """
+        """Type 'url' into the address bar, press Enter, and await onload."""
         if url[0] == '/': url = self.base_url + url
         self.page.visit(url)
 
 
     def fill_in(self, locator: str, text: str, **kwargs) -> None:
-        """Types 'text' into field with name/label/id 'locator'.
+        """Type 'text' into field with name/label/id 'locator'.
 
         Raises ValueError if text is empty. (Empty text is usually an error in
         test code.)
@@ -105,7 +104,7 @@ class Browser:
 
 
     def uncheck(self, locator: str, **kwargs) -> None:
-        """Unheck the checkbox with name/label/id 'locator'.
+        """Uncheck the checkbox with name/label/id 'locator'.
 
         Keyword arguments:
         wait -- True or number of seconds to wait until element appears
@@ -115,7 +114,7 @@ class Browser:
 
 
     def select(self, locator: str, text: str, **kwargs) -> None:
-        """Selects 'text' in the select box with name/label/id 'locator'.
+        """Select 'text' in the select box with name/label/id 'locator'.
 
         Keyword arguments:
         wait -- True or number of seconds to wait until element appears
@@ -126,7 +125,7 @@ class Browser:
 
 
     def click_button(self, locator: str, **kwargs) -> None:
-        """Clicks the button with name/id/text 'locator'.
+        """Click the button with name/id/text 'locator'.
 
         Keyword arguments:
         wait -- True or number of seconds to wait until element appears
@@ -136,7 +135,7 @@ class Browser:
 
 
     def click_link(self, locator: str, **kwargs) -> None:
-        """Clicks the <a> with id/text/title 'locator'.
+        """Click the <a> with id/text/title 'locator'.
 
         Keyword arguments:
         wait -- True or number of seconds to wait until element appears
@@ -146,7 +145,7 @@ class Browser:
 
 
     def click_whatever(self, *selector, **kwargs) -> None:
-        """Clicks the selected element.
+        """Click the selected element.
 
         Raises unless 1 element matches the selector.
 
@@ -187,7 +186,7 @@ class Browser:
 
 
     def assert_element(self, *selector, **kwargs) -> None:
-        """Tests that 'selector' matches, or throws an error.
+        """Test that 'selector' matches, or throws an error.
 
         Example selectors:
         - 'div.foo'
@@ -204,7 +203,7 @@ class Browser:
 
 
     def assert_no_element(self, *selector, **kwargs) -> None:
-        """Tests that 'selector' does _not_ match, or throws an error.
+        """Test that 'selector' does _not_ match, or throws an error.
 
         Example selectors:
         - 'div.foo'
@@ -243,6 +242,16 @@ class Browser:
         """
         with self.page.scope(selector):
             yield
+
+
+    def clear_cookies(self) -> None:
+        """Delete all cookies and navigates to a blank page."""
+        self.page.reset()
+
+
+    def get_url(self) -> str:
+        """Find the URL in the browser's address bar."""
+        return self.page.current_url
 
 
     def quit(self) -> None:

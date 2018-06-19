@@ -135,7 +135,7 @@ class WorkflowSerializer(serializers.ModelSerializer):
         if obj.request_authorized_write(request):
             return workbench_user_display(obj.owner)
         elif obj.example:
-            return 'Demo Workflow'
+            return 'Workbench'
         else:
             # don't leak user info (e.g. email) if viewer is not owner.
             return workbench_user_display_public(obj.owner)
@@ -162,7 +162,7 @@ class WorkflowSerializerLite(serializers.ModelSerializer):
     owner_name = serializers.SerializerMethodField()
     def get_owner_name(self, obj):
         if obj.example:
-            return 'Demo Workflow'
+            return 'Workbench'
         else:
             # Different from WorkflowSerializer because WorkflowSerializer
             # takes an extra context['request'] argument, and we don't.

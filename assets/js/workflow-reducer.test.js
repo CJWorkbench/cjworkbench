@@ -1,7 +1,50 @@
 import * as wfr from './workflow-reducer'
-import { jsonResponseMock, genericTestModules } from './test-utils'
+import { jsonResponseMock } from './test-utils'
 
 const workflowReducer = wfr.workflowReducer;
+
+// Test module data
+export const genericTestModules = [
+  {
+    "id":1,
+    "name":"Chartbuilder",
+    "category":"Visualize",
+    "description":"Create line, column and scatter plot charts.",
+    "icon":"chart"
+  },
+  {
+    "id":2,
+    "name":"Load from Facebork",
+    "category":"Add data",
+    "description":"Import from your favorite snowshall media",
+    "icon":"url"
+  },
+  {
+    "id":3,
+    "name":"Load from Enigma",
+    "category":"Add data",
+    "description":"Connect a dataset from Enigma's collection via URL.",
+    "icon":"url"
+  },
+  {
+    "id":4,
+    "name":"Other Module 1",
+    "category":"other category",    // test modules outside the predefined categories
+    "icon":"url"
+  },
+  {
+    "id":5,
+    "name":"Other Module 2",
+    "category":"x category",
+    "icon":"url"
+  },
+  {
+    "id":6,
+    "name":"Other Module 3",
+    "category":"other category",
+    "icon":"url"
+  },
+];
 
 // Sets a specfic function for reduver mockAPI, with optional json return
 function installMockApiCall(key, response) {
@@ -18,7 +61,7 @@ describe('Reducer actions', () => {
   // Stripped down workflow object, only what we need for testing actions
   const test_workflow = {
     id: 999,
-    selected_wf_module: 30,  // different than test_state.selected_wf_module so we can test setting state.selected_wf_module
+    selected_wf_module: 2,  // different than test_state.selected_wf_module so we can test setting state.selected_wf_module
     wf_modules: [
       {
         id: 10,
@@ -53,7 +96,7 @@ describe('Reducer actions', () => {
   // test state has second module selected
   const test_state = {
     workflow: test_workflow,
-    selected_wf_module: 20
+    selected_wf_module: 1
   };
 
   // many action creators reference the current store
@@ -104,7 +147,6 @@ describe('Reducer actions', () => {
       payload: mock_add_wf_module_result,
     });
     expect(state.workflow.wf_modules[2].id).toEqual(40);
-    expect(state.selected_wf_module).toEqual(40);
   });
 
   it('Deletes a module', () => {
@@ -120,9 +162,9 @@ describe('Reducer actions', () => {
   it('Sets the selected module to a module in state', () => {
     const state = workflowReducer(test_state, {
      type: 'SET_SELECTED_MODULE',
-     payload: 32,
+     payload: 1,
     });
-    expect(state.selected_wf_module).toBe(32);
+    expect(state.selected_wf_module).toBe(1);
   });
 
   it('Updates the workflow module with the specified data', () => {

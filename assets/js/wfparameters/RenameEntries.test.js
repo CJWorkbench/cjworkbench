@@ -1,6 +1,6 @@
 import React from 'react'
 import RenameEntries, {RenameEntry, mockAPI} from './RenameEntries'
-import {mount, shallow} from 'enzyme'
+import {mount} from 'enzyme'
 import {jsonResponseMock} from "../test-utils";
 import {mockStore, mockAPI as mockStoreAPI} from "../workflow-reducer";
 
@@ -16,17 +16,15 @@ describe('ReorderEntries rendering and interactions', () => {
     const WFM_ID = 1;
     const PARAM_ID = 2;
 
-    var api = undefined;
-    var store = undefined;
+    let api = null;
 
     beforeEach(() => {
         api = {
             inputColumns: jsonResponseMock(columns),
             onParamChanged: jest.fn().mockReturnValue(Promise.resolve()),
             deleteModule: jest.fn().mockReturnValue(Promise.resolve()),
-            setSelectedWfModule: jest.fn().mockReturnValue(Promise.resolve())
+            setSelectedWfModule: jest.fn().mockReturnValue(Promise.resolve(null))
         };
-        mockAPI(api);
     });
 
     it('Adds all columns to entries and turns off loadAll when loadAll is set to true', (done) => {
@@ -34,6 +32,7 @@ describe('ReorderEntries rendering and interactions', () => {
         var changeLoadAllMock = jest.fn().mockReturnValue(Promise.resolve());
 
         let tree = mount(<RenameEntries
+            api={api}
             loadAll={true}
             changeLoadAll={changeLoadAllMock}
             entries={JSON.stringify({})}
@@ -66,6 +65,7 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Displays all columns in entries after loadAll is set to false', (done) => {
         let tree = mount(<RenameEntries
+            api={api}
             loadAll={false}
             changeLoadAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
@@ -88,6 +88,7 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon input completion via blur', (done) => {
         let tree = mount(<RenameEntries
+            api={api}
             loadAll={false}
             changeLoadAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
@@ -117,6 +118,7 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon input completion via enter key', (done) => {
         let tree = mount(<RenameEntries
+            api={api}
             loadAll={false}
             changeLoadAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
@@ -146,6 +148,7 @@ describe('ReorderEntries rendering and interactions', () => {
 
     it('Updates parameter upon deleting an entry', (done) => {
         let tree = mount(<RenameEntries
+            api={api}
             loadAll={false}
             changeLoadAll={jest.fn()}
             entries={JSON.stringify(testEntries)}
@@ -189,7 +192,7 @@ describe('ReorderEntries rendering and interactions', () => {
                 ]
             }
         };
-        var store = {
+        let store = {
             getState: () => state,
             dispatch: jest.fn().mockReturnValue(Promise.resolve())
         };
@@ -197,6 +200,7 @@ describe('ReorderEntries rendering and interactions', () => {
         mockStore(store);
 
         let tree = mount(<RenameEntries
+            api={api}
             loadAll={false}
             changeLoadAll={jest.fn()}
             entries={JSON.stringify({'name': 'host_name'})}

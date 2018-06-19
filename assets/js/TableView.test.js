@@ -51,7 +51,7 @@ describe('TableView', () => {
 
 
     const tree = mount(
-      <TableView id={100} revision={1} api={api} isReadOnly={false}/>
+      <TableView selectedWfModuleId={100} revision={1} api={api} isReadOnly={false}/>
     )
 
     // wait for promise to resolve, then see what we get
@@ -93,7 +93,7 @@ describe('TableView', () => {
 
   it('Blank table when no module id', () => {
     const tree = mount(
-      <TableView id={undefined} revision={1} api={{}} isReadOnly={false}/>
+      <TableView selectedWfModuleId={undefined} revision={1} api={{}} isReadOnly={false}/>
     );
     tree.update();
 
@@ -112,15 +112,12 @@ describe('TableView', () => {
     };
 
     const tree = mount(
-      <TableView id={100} revision={1} api={api} isReadOnly={false}/>
+      <TableView selectedWfModuleId={100} revision={1} api={api} isReadOnly={false}/>
     );
     let tableView = tree.find('TableView').instance();
 
     // Should load 0..initialRows at first
-    expect(api.render.mock.calls.length).toBe(1);
-    expect(api.render.mock.calls[0][0]).toBe(tree.find('TableView').props().id);
-    expect(api.render.mock.calls[0][1]).toBe(0);
-    expect(api.render.mock.calls[0][2]).toBe(initialRows);
+    expect(api.render).toHaveBeenCalledWith(100, 0, initialRows);
 
     // let rows load
     setImmediate(() => {
@@ -271,7 +268,7 @@ describe('TableView', () => {
     var tree = mount(
       <TableView
           revision={1}
-          id={100}
+          selectedWfModuleId={100}
           api={api}
           setBusySpinner={jest.fn()}
           resizing={false}
@@ -291,7 +288,7 @@ describe('TableView', () => {
       tree = mount(
         <TableView
             revision={1}
-            id={100}
+            selectedWfModuleId={100}
             api={api}
             setBusySpinner={jest.fn()}
             resizing={false}
@@ -364,7 +361,7 @@ describe('TableView', () => {
     var tree = mount(
       <TableView
           revision={1}
-          id={100}
+          selectedWfModuleId={100}
           api={api}
           setBusySpinner={jest.fn()}
           resizing={false}
@@ -382,7 +379,7 @@ describe('TableView', () => {
       tree = mount(
         <TableView
             revision={1}
-            id={100}
+            selectedWfModuleId={100}
             api={api}
             setBusySpinner={jest.fn()}
             resizing={false}

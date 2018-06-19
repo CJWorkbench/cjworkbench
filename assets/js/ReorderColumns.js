@@ -1,7 +1,7 @@
 import React from 'react'
-import {store, setSelectedWfModuleAction} from "./workflow-reducer";
+import {store} from "./workflow-reducer";
 import {getPageID} from './utils'
-import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId} from "./utils";
+import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId, DEPRECATED_ensureSelectedWfModule} from "./utils";
 import WorkbenchAPI from "./WorkbenchAPI";
 
 var api = WorkbenchAPI();
@@ -21,21 +21,19 @@ function updateReorderModule(module, reorderInfo) {
 }
 
 export function updateReorder(wfModuleId, reorderInfo) {
-    var state = store.getState();
+    const state = store.getState();
     const workflowId = state.workflow ? state.workflow.id : null;
 
-    var existingReorderModule = findModuleWithIdAndIdName(state, wfModuleId, 'reorder-columns');
-    if(existingReorderModule) {
-        if(existingReorderModule.id != wfModuleId) {
-            store.dispatch(setSelectedWfModuleAction(existingReorderModule.id));
-        }
+    const existingReorderModule = findModuleWithIdAndIdName(state, wfModuleId, 'reorder-columns');
+    if (existingReorderModule) {
         updateReorderModule(existingReorderModule, reorderInfo);
+        DEPRECATED_ensureSelectedWfModule(store, existingReorderModule);
     } else {
-        let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
+        const wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
         api.addModule(workflowId, state.reorderModuleId, wfModuleIdx + 1)
             .then((newWfm) => {
-                store.dispatch(setSelectedWfModuleAction(newWfm.id));
                 updateReorderModule(newWfm, reorderInfo);
+                DEPRECATED_ensureSelectedWfModule(store, newWfm);
             });
     }
 }

@@ -156,7 +156,7 @@ describe('DoneHelpers', () => {
             { id: 3, module_version: { module: { name: 'Bar' } } },
           ],
         },
-        selected_wf_module: 3,
+        selected_wf_module: 1,
       })
 
       expect(state.selectedWfModule.moduleName).toEqual('Bar')

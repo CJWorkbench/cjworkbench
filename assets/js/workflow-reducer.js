@@ -1,6 +1,5 @@
 // Reducer for Workflow page.
 // That is, provides all the state transition functions that are executed on user command
-import { nonce } from './utils'
 import WorkbenchAPI from './WorkbenchAPI'
 import { createStore, applyMiddleware, compose } from 'redux'
 import promiseMiddleware from 'redux-promise-middleware'
@@ -64,35 +63,18 @@ const registerReducerFunc = (key, func) => {
   reducerFunc[key] = func;
 };
 
-const nonces = [];
+let _nonce = 0;
 const generateNonce = (prefix) => {
   // Generate a nonce with some prefix from
   // the object we're creating the nonce for
-  let returnNonce = nonce(prefix);
-  // If it's not in the list,
-  if (nonces.indexOf(returnNonce) === -1) {
-    // Add it (since we know it's unique)
-    nonces.push(returnNonce);
-    // And return it
-    return returnNonce;
-  // Otherwise,
-  } else {
-    // try again
-    return generateNonce(prefix);
-  }
-};
-const removeNonce = (nonce) => {
-  let nonceIndex = nonces.indexOf(nonce);
-  if (nonceIndex !== -1) {
-    nonces.splice(nonceIndex, 1);
-  }
+  _nonce += 1;
+  return `${prefix}_${_nonce}`
 };
 
 const update = newContext();
 update.extend('$reorder', function(value, original) {
-  let oldIndex, newIndex;
-  [oldIndex, newIndex] = value;
-  let newArray = original.slice();
+  const [oldIndex, newIndex] = value;
+  const newArray = original.slice();
   newArray.splice(newIndex, 0, newArray.splice(oldIndex, 1)[0]);
   return newArray;
 });
@@ -236,6 +218,20 @@ registerReducerFunc(MOVE_MODULE + '_PENDING', (state, action) => {
 
 // ADD_MODULE
 export function addModuleAction(moduleId, insertBefore, placeholder) {
+  // [adamhooper, 2018-06-19] I do believe this nonce accomplishes nothing useful.
+  // We're guaranteed below that `typeof action.payload.pendingId !== 'undefined'`,
+  // and we _aren't_ guaranteed that methods are called or return values are
+  // received in order.
+  //
+  // Two correct solutions:
+  // 1. Use WebSockets: write changes blindly, and add info to server's messages
+  //    so we can always merge state from the server.
+  // 2. Serialize actions.
+  //
+  // Both are hard. In the meantime, `pendingId` doesn't solve any theoretical
+  // problem. (It may reduce the _odds_ of some specific race hurting the user
+  // -- I haven't researched -- but it doesn't fix the race.)
+
   let nonce = generateNonce(moduleId);
 
   let payload = {
@@ -274,7 +270,8 @@ registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
   return update(state, {
     workflow: {
       wf_modules: { $splice:[ [insertBefore, 0, action.payload] ] }
-    }
+    },
+    selected_wf_module: { $set: insertBefore },
   });
 });
 registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
@@ -288,13 +285,11 @@ registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
     insertBefore = action.payload.insert_before;
   } else {
     insertBefore = findIdxByProp(state.workflow.wf_modules, 'pendingId', action.payload.pendingId);
-    removeNonce(action.payload.pendingId);
   }
 
   delete action.payload.insert_before;
 
   return update(state, {
-    selected_wf_module: {$set: action.payload.id},  // set selected to just-added module
     workflow: {
       wf_modules: { $splice:[ [insertBefore, overwrite, action.payload] ] }
     }
@@ -323,45 +318,38 @@ registerReducerFunc(DELETE_MODULE + '_PENDING', (state, action) => {
     return state;
   }
 
-  let wf_modules = state.workflow.wf_modules.filter(w => w.id !== wfModuleId);
+  const wf_modules = state.workflow.wf_modules.filter(w => w.id !== wfModuleId);
 
-  // If we are deleting the selected module, then set previous module in stack as selected
-  let selected_wf_module = state.selected_wf_module;
-  if (selected_wf_module === wfModuleId) {
-    if (wf_modules.length === 0) {
-      selected_wf_module = null;
-    } else {
-      const newIdx = Math.max(0, wfModuleIdx - 1);
-      selected_wf_module = wf_modules[newIdx].id;
-    }
+  // If we are deleting the selected module, then set the previous module
+  // in stack as selected (behavior same as in models/Commands.py)
+  let selected = state.selected_wf_module;
+  if (selected !== null && selected >= wfModuleIdx) {
+    selected -= 1;
+    if (selected < 0) selected = null;
   }
 
   return update(state, {
     workflow: {
       wf_modules: { $set: wf_modules },
     },
-    selected_wf_module: { $set: selected_wf_module },
+    selected_wf_module: { $set: selected },
   });
 });
 
 
 // SET_SELECTED_MODULE
 // Set the selected module in the workflow
-export function setSelectedWfModuleAction(wfModuleId) {
+export function setSelectedWfModuleAction(index) {
   const state = store.getState()
 
-  if (wfModuleId === state.selected_wf_module) {
-    return NOP
-  } else {
-    // Fire-and-forget: tell the server about this new selected_wf_module,
-    // so next time we load the page it will pass it in initState.
-    api.setSelectedWfModule(WorkflowId, wfModuleId)
-      .catch(console.warn)
+  // Fire-and-forget: tell the server about this new selected_wf_module,
+  // so next time we load the page it will pass it in initState.
+  api.setSelectedWfModule(WorkflowId, index)
+    .catch(console.warn)
 
-    return {
-      type: SET_SELECTED_MODULE,
-      payload: wfModuleId,
-    }
+  return {
+    type: SET_SELECTED_MODULE,
+    payload: index,
   }
 }
 registerReducerFunc(SET_SELECTED_MODULE, (state, action) => {

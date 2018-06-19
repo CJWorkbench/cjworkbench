@@ -166,8 +166,8 @@ class WorkbenchAPI {
     return this._post(`/api/workflows/${workflowId}`, { newName: newName })
   }
 
-  setSelectedWfModule(workflowId, wfModuleId) {
-    return this._post(`/api/workflows/${workflowId}`, { selected_wf_module: wfModuleId })
+  setSelectedWfModule(workflowId, index) {
+    return this._post(`/api/workflows/${workflowId}`, { selected_wf_module: index })
   }
 
   updateWfModule(wfModuleId, params) {

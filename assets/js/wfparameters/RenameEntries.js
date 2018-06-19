@@ -1,12 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import WorkBenchAPI from '../WorkbenchAPI'
 import {store, setSelectedWfModuleAction} from "../workflow-reducer";
-
-var api = WorkBenchAPI();
-export function mockAPI(mock_api) {
-    api = mock_api;
-}
 
 export class RenameEntry extends React.Component {
     static propTypes = {
@@ -92,6 +86,11 @@ export class RenameEntry extends React.Component {
 
 export default class RenameEntries extends React.Component {
     static propTypes = {
+        api: PropTypes.shape({
+          inputColumns: PropTypes.func.isRequired,
+          onParamChanged: PropTypes.func.isRequired,
+          deleteModule: PropTypes.func.isRequired,
+        }).isRequired,
         loadAll: PropTypes.bool.isRequired,
         changeLoadAll: PropTypes.func.isRequired,
         entries: PropTypes.string.isRequired,
@@ -119,8 +118,8 @@ export default class RenameEntries extends React.Component {
     }
 
     refreshColumns(props) {
-        if(props.loadAll) {
-            api.inputColumns(props.wfModuleId)
+        if (props.loadAll) {
+            this.props.api.inputColumns(props.wfModuleId)
                 .then((columns) => {
                     this.setState({columns: columns});
                 });
@@ -146,13 +145,13 @@ export default class RenameEntries extends React.Component {
     componentDidMount() {
         //this.refreshColumns(this.props);
         if(this.props.loadAll) {
-            api.inputColumns(this.props.wfModuleId)
+            this.props.api.inputColumns(this.props.wfModuleId)
                 .then((columns) => {
                     var entries = {};
                     for(var idx in columns) {
                         entries[columns[idx]] = columns[idx];
                     }
-                    api.onParamChanged(this.props.paramId, {value: JSON.stringify(entries)})
+                    this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(entries)})
                         .then(() => {
                             this.props.changeLoadAll(false);
                         })
@@ -163,7 +162,7 @@ export default class RenameEntries extends React.Component {
     onColRename(prevName, nextName) {
         var newEntries = Object.assign({}, this.state.entries);
         newEntries[prevName] = nextName;
-        api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
+        this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
     }
 
     onEntryDelete(prevName) {
@@ -180,10 +179,10 @@ export default class RenameEntries extends React.Component {
                 let prevIdx = currentIdx - 1;
                 // I am intermixing actions and API calls here because somehow other combinations
                 // of them do not work
-                api.deleteModule(this.props.wfModuleId)
-                    .then(() => {store.dispatch(setSelectedWfModuleAction(state.workflow.wf_modules[prevIdx].id))});
+                store.dispatch(setSelectedWfModuleAction(prevIdx))
+                this.props.api.deleteModule(this.props.wfModuleId)
             } else {
-                api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
+                this.props.api.onParamChanged(this.props.paramId, {value: JSON.stringify(newEntries)});
             }
         }
     }

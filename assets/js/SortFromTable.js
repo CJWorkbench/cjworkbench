@@ -1,8 +1,8 @@
 import React from 'react'
-import {store, setSelectedWfModuleAction, addModuleAction, setParamValueAction} from "./workflow-reducer";
+import {store, addModuleAction, setParamValueAction} from "./workflow-reducer";
 import {getPageID} from "./utils";
 import WorkbenchAPI from './WorkbenchAPI'
-import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId} from "./utils";
+import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId, DEPRECATED_ensureSelectedWfModule} from "./utils";
 
 var api = WorkbenchAPI();
 export function mockAPI(mock_api) {
@@ -55,27 +55,25 @@ function updateSortModule(wfm, sortColumn, sortType) {
 }
 
 export function updateSort(wfModuleId, sortColumn, sortType) {
-    var state = store.getState();
+    const state = store.getState();
     const workflowId = state.workflow ? state.workflow.id : null;
 
     // Must be kept in sync with sortfromtable.json
-    let sortTypes = "String|Number|Date".split("|")
-    let sortTypeIdx = sortTypes.indexOf(sortType);
-    var existingSortModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
+    const sortTypes = "String|Number|Date".split("|")
+    const sortTypeIdx = sortTypes.indexOf(sortType);
+    const existingSortModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
     if(existingSortModule) {
-        if(existingSortModule.id != wfModuleId) {
-            store.dispatch(setSelectedWfModuleAction(existingSortModule.id));
-        }
         updateSortModule(existingSortModule, sortColumn, sortTypeIdx);
+        DEPRECATED_ensureSelectedWfModule(store, existingSortModule);
     } else {
-        let wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
+        const wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
         // I have tried but using the reducer introduces odd bugs
         // w.r.t selecting the new sort module, it bounces to the new module
         // and then bounces back
         api.addModule(workflowId, state.sortModuleId, wfModuleIdx + 1)
             .then((newWfm) => {
-                store.dispatch(setSelectedWfModuleAction(newWfm.id));
                 updateSortModule(newWfm, sortColumn, sortTypeIdx);
+                DEPRECATED_ensureSelectedWfModule(store, newWfm);
             });
     }
 }

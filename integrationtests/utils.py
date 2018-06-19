@@ -8,6 +8,7 @@ import re
 
 from integrationtests.browser import Browser
 from integrationtests.helpers import accounts
+from integrationtests.helpers.modules import import_workbench_module
 
 
 _url_regex = re.compile('https?://[^\\s]+')
@@ -62,6 +63,50 @@ class WorkbenchBase(unittest.TestCase):
 
     def tearDown(self):
         self.browser.quit()
+
+
+    def create_browser(self):
+        return Browser(base_url=self.live_server_url)
+
+
+    def import_module(self, slug: str) -> None:
+        import_workbench_module(self.browser, slug)
+
+
+    def add_wf_module(self, name: str, position=None) -> None:
+        """Adds module with name 'name' to the workflow.
+
+        Keyword arguments:
+        position -- if set, add after the 'position'th existing module.
+        """
+        b = self.browser
+
+        if position is None:
+            with b.scope('.in-between-modules:last-child'):
+                b.click_button('Add Module')
+        else:
+            i = position * 2 + 1
+            with b.scope(f'.in-between-modules:nth-child({i})'):
+                b.click_button('Add Module')
+
+        # Search. That way, we won't need to worry about overflow:auto
+        b.fill_in('moduleQ', name)
+
+        b.click_whatever('li.module-search-result', text=name)
+
+        b.assert_element(f'.wf-module[data-module-name="{name}"]', wait=True)
+
+
+    def delete_wf_module(self, position: int) -> None:
+        """Deletes module at index `position` from the workflow.
+
+        The first module has `position == 0`.
+        """
+        b = self.browser
+
+        with b.scope(f'.wf-module:nth-child({position * 2 + 2})'):
+            b.click_button('more')
+            b.click_button('Delete')
 
 
 # Derive from this to perform all tests logged in

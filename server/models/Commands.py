@@ -59,16 +59,24 @@ class AddModuleCommand(Delta):
     selected_wf_module = models.IntegerField(null=True, blank=True)     # what was selected before we were added?
 
     def forward_impl(self):
+        self.selected_wf_module = self.workflow.selected_wf_module
         insert_wf_module(self.wf_module, self.workflow, self.order)     # may alter wf_module.order without saving
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
-        self.selected_wf_module = self.workflow.selected_wf_module
+        self.workflow.selected_wf_module = self.wf_module.order
+        self.workflow.save()
         self.applied = True
         self.save()
 
     def backward_impl(self):
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
+        # [adamhooper, 2018-06-19] I don't think there's any hope we can
+        # actually restore selected_wf_module correctly, because sometimes we
+        # update it without a command. But we still need to set
+        # workflow.selected_wf_module to a _valid_ integer if the
+        # currently-selected module is the one we're deleting now and is also
+        # the final wf_module in the list.
         self.workflow.selected_wf_module = self.selected_wf_module      # go back to old selection when deleted
         self.workflow.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
@@ -113,12 +121,20 @@ class DeleteModuleCommand(Delta):
     applied = models.BooleanField(default=True, null=False)             # is this command currently applied?
 
     def forward_impl(self):
+        # If we are deleting the selected module, then set the previous module
+        # in stack as selected (behavior same as in workflow-reducer.js)
+        selected = self.workflow.selected_wf_module
+        if selected is not None and selected >= self.wf_module.order:
+            selected -= 1
+            if selected >= 0:
+                self.workflow.selected_wf_module = selected
+            else:
+                self.workflow.selected_wf_module = None
+            self.workflow.save()
+
         self.wf_module.workflow = None                                  # detach from workflow
         self.wf_module.save()
         renumber_wf_modules(self.workflow)                              # fix up ordering on the rest
-        if self.workflow.selected_wf_module == self.wf_module.id:
-            self.workflow.selected_wf_module = None                     # deselect if we're deleting selected
-            self.workflow.save()
         self.applied = True
         self.save()
 
@@ -126,9 +142,12 @@ class DeleteModuleCommand(Delta):
         insert_wf_module(self.wf_module, self.workflow, self.wf_module.order)
         self.wf_module.workflow = self.workflow                         # attach to workflow
         self.wf_module.save()
-        if self.selected_wf_module == self.wf_module.id:
-            self.workflow.selected_wf_module = self.selected_wf_module  # reselect if we're restoring selected
-            self.workflow.save()
+        # [adamhooper, 2018-06-19] I don't think there's any hope we can
+        # actually restore selected_wf_module correctly, because sometimes we
+        # update it without a command. But I think focusing the restored module
+        # is something a user could expect.
+        self.workflow.selected_wf_module = self.selected_wf_module
+        self.workflow.save()
         self.applied = False
         self.save()
 

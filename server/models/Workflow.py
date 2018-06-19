@@ -122,14 +122,18 @@ class Workflow(models.Model):
         * The user can't add notifications
         * The user can't add eval-style modules
         * We display a banner across the page suggesting the user log in
+
+        Even logged-in users can hold anonymous workflows: these will have
+        owner=None.
         """
         return self.anonymous_owner_session_key is not None
 
     def user_session_authorized_read(self, user, session):
         return (
-            user == self.owner \
-            or session.session_key == self.anonymous_owner_session_key \
-            or self.public
+            self.public \
+            or user == self.owner \
+            or (session.session_key \
+                and session.session_key == self.anonymous_owner_session_key)
         )
 
     def read_only(self, user):
@@ -155,6 +159,7 @@ class Workflow(models.Model):
             new_wf = Workflow.objects.create(name=name, owner=owner,
                                              original_workflow_id=self.pk,
                                              anonymous_owner_session_key=session_key,
+                                             selected_wf_module=self.selected_wf_module,
                                              public=False, last_delta=None)
             for wfm in self.wf_modules.all():
                 wfm.duplicate(new_wf)

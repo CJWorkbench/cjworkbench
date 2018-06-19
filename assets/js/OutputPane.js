@@ -157,7 +157,7 @@ export default class OutputPane extends React.Component {
     // Make a table component even if no module ID (should still show an empty table)
     var tableView =
       <TableView
-        id={this.props.id}
+        selectedWfModuleId={this.props.selectedWfModuleId}
         revision={this.props.revision}
         resizing={this.state.resizing}
         api={this.props.api}

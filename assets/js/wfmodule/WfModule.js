@@ -79,7 +79,7 @@ export class WfModule extends React.PureComponent {
 
   // We become the selected module on any click
   click(e) {
-    store.dispatch(setSelectedWfModuleAction(this.props.wfModule.id));
+    store.dispatch(setSelectedWfModuleAction(this.props.index));
   }
 
   changeParam(id, payload) {

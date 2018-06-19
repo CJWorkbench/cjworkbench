@@ -7064,9 +7064,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
       },
     }
   }
-  id={100}
   isReadOnly={false}
   revision={1}
+  selectedWfModuleId={100}
 >
   <div
     className="outputpane-table"

@@ -133,7 +133,7 @@ if [ -z "$1" ]; then
 else
   echo "Running selected tests: $@" >&2
   # Invalid escaping here, probably, but shouldn't affect anybody in practice
-  TEST_COMMAND='$PYTHON -m unittest -v '"$@"
+  TEST_COMMAND="$PYTHON -m unittest -v ""$@"
 fi
 
 if !($TEST_COMMAND); then

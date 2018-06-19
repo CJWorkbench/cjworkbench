@@ -116,7 +116,7 @@ class AccountAdmin:
             'django.setup()',
             'from allauth.account.models import EmailAddress',
             'from cjworkbench.models.Profile import UserProfile',
-            'from server.models import User, ModuleVersion, Module',
+            'from server.models import User, ModuleVersion, Module, Workflow',
             'from server import dynamicdispatch',
         ]))
         self.clear_data_from_previous_tests()
@@ -128,6 +128,7 @@ class AccountAdmin:
             '_ = EmailAddress.objects.all().delete()',
             '_ = UserProfile.objects.all().delete()',
             '_ = User.objects.all().delete()',
+            '_ = Workflow.objects.all().delete()',
         ]))
         self.destroy_modules()
 
@@ -215,9 +216,9 @@ class AccountAdmin:
         return var
 
 
-    def create_user(
-        self, email: str, username: str=None, password: str=None
-    ) -> UserHandle:
+    def create_user(self, email: str, username: str=None,
+                    password: str=None, is_staff: bool=False,
+                    is_superuser: bool=False) -> UserHandle:
         """Add the specified user to the database.
 
         When done with the User, `account_admin.destroy_user(user)`
@@ -225,6 +226,8 @@ class AccountAdmin:
         Keyword arguments:
         username -- string (default user portion of email)
         password -- string (default email)
+        is_staff -- bool (default False)
+        is_superuser -- bool (default False)
         """
         if username is None: username = email.split('@')[0]
         if password is None: password = email
@@ -232,7 +235,9 @@ class AccountAdmin:
             f'VAR = User.objects.create_user(',
             f'    username={repr(username)},',
             f'    password={repr(password)},',
-            f'    email={repr(email)}',
+            f'    email={repr(email)},',
+            f'    is_staff={repr(is_staff)},',
+            f'    is_superuser={repr(is_superuser)}'
             f')',
         ]))
         return UserHandle(var, username, password, email)

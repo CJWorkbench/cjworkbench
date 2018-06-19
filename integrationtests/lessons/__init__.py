@@ -1,11 +1,6 @@
-from integrationtests.helpers.modules import import_workbench_module
 from integrationtests.utils import LoggedInIntegrationTest
 
 class LessonTest(LoggedInIntegrationTest):
-    def import_module(self, slug: str) -> None:
-        import_workbench_module(self.browser, slug)
-
-
     def expect_highlight_next(self, **kwargs) -> None:
         """Assert highlight on the "Next" button at the lesson's footer.
         
@@ -51,6 +46,7 @@ class LessonTest(LoggedInIntegrationTest):
         """
         self.browser.assert_no_element('.lesson-highlight')
 
+
     def select_column(self, name: str, text: str, **kwargs) -> None:
         """Selects 'text' in the ColumnSelect box with name 'name'.
 
@@ -67,26 +63,3 @@ class LessonTest(LoggedInIntegrationTest):
             wait=True
         )
         self.browser.select(name, text, **kwargs)
-
-    def add_wf_module(self, name: str, position=None) -> None:
-        """Adds module with name 'name' to the workflow.
-
-        Keyword arguments:
-        position -- if set, add after the 'position'th existing module.
-        """
-        b = self.browser
-
-        if position is None:
-            with b.scope('.in-between-modules:last-child'):
-                b.click_button('Add Module')
-        else:
-            i = position * 2 + 1
-            with b.scope(f'.in-between-modules:nth-child({i})'):
-                b.click_button('Add Module')
-
-        # Search. That way, we won't need to worry about overflow:auto
-        b.fill_in('moduleQ', name)
-
-        b.click_whatever('li.module-search-result', text=name)
-
-        b.assert_element(f'.wf-module[data-module-name="{name}"]', wait=True)

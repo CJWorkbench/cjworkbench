@@ -312,7 +312,7 @@ class ModuleStack extends React.Component {
               changeParam={this.props.changeParam}
               removeModule={this.props.removeModule}
               revision={this.props.workflow.revision}
-              selected={item.id === this.props.selected_wf_module}
+              selected={i === this.props.selected_wf_module}
               api={this.props.api}
               user={this.props.loggedInUser}
               loads_data={item.moduleVersion && item.module_version.module.loads_data}

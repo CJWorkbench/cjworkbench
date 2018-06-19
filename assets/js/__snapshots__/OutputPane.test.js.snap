@@ -82,6 +82,7 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
       isReadOnly={false}
       resizing={false}
       revision={1}
+      selectedWfModuleId={999}
       setBusySpinner={[Function]}
     />
   </Resizable>
@@ -159,7 +160,6 @@ exports[`OutputPane Renders 1`] = `
         }
       }
       currentModule={null}
-      id={100}
       isReadOnly={false}
       resizing={false}
       revision={1}

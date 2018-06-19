@@ -2,11 +2,49 @@ import React from 'react'
 import { DataVersionSelectTest as DataVersionSelect }  from './DataVersionSelect'
 import { mapStateToProps }  from './DataVersionSelect'
 import { mount, ReactWrapper } from 'enzyme'
-import { okResponseMock, jsonResponseMock, genericTestWorkflow } from '../test-utils'
+import { okResponseMock, jsonResponseMock } from '../test-utils'
 import * as workflowReducer from '../workflow-reducer'
 import {findIdxByProp} from "../workflow-reducer";
 
 jest.useFakeTimers();
+
+// Guarantees for writing tests:
+// - At least three modules
+// - Module ids increment by 10
+// - First module adds data and has data versions and unread notifications
+export const genericTestWorkflow = {
+  id: 999,
+  selected_wf_module: 2,  // different than test_state.selected_wf_module so we can test setting state.selected_wf_module
+  wf_modules: [
+    {
+      id: 10,
+      parameter_vals: [
+        {
+          id: 1,
+          parameter_spec : {
+            id_name: 'data',
+          },
+          value: 'Some Data'
+        }
+      ],
+      versions: {
+        selected: "2018-02-21T03:09:20.214054Z",
+        versions: [
+          ["2018-02-21T03:09:20.214054Z", true],
+          ["2018-02-21T03:09:15.214054Z", false],
+          ["2018-02-21T03:09:10.214054Z", false]
+        ]
+      },
+      notification_count: 2
+    },
+    {
+      id: 20
+    },
+    {
+      id: 30
+    },
+  ],
+};
 
 describe('DataVersionSelect', () => {
 
