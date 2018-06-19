@@ -4,42 +4,11 @@ import React from 'react'
 import ReactDOM from 'react-dom'
 import { Provider, connect } from 'react-redux'
 import * as Actions from '../workflow-reducer'
-import Workflow from '../workflow'
-import workbenchAPI from '../WorkbenchAPI'
+import Workflow from '../Workflow'
+import WorkbenchAPI from '../WorkbenchAPI'
 
 // Global API object, encapsulates all calls to the server
-const api = workbenchAPI();
-
-// ---- Workflow container ----
-
-// Handles addModule (and any other actions that change top level workflow state)
-const mapStateToProps = (state) => {
-  return {
-    workflow: state.workflow,
-    selected_wf_module: state.selected_wf_module,
-    loggedInUser: state.loggedInUser,
-    // This is the top level dependency injection for all API calls on this page
-    api: api
-  }
-};
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    removeModule: (wfModuleId) => {
-      dispatch(Actions.deleteModuleAction(wfModuleId))
-    },
-    changeParam: (paramId, newVal) => {
-      dispatch(Actions.setParamValueAction(paramId, newVal))
-    }
-  }
-};
-
-const WorkflowContainer = connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Workflow)
-
-
+const api = WorkbenchAPI();
 
 // --- Websocket handling ----
 function buildSocket() {
@@ -70,7 +39,7 @@ const socket = buildSocket() // Start listening for events
 ReactDOM.render(
   (
     <Provider store={Actions.store}>
-      <WorkflowContainer lesson={window.initState.lessonData} />
+      <Workflow api={api} lesson={window.initState.lessonData} />
     </Provider>
   ),
   document.getElementById('root')

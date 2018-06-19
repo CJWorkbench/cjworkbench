@@ -156,7 +156,10 @@ describe('WfModule, not read-only mode', () => {
 
       // Store just needs to change, to trigger mapStateToProps. We don't care
       // about its value
-      store = createStore((_, action) => action.payload)
+      store = createStore((_, action) => ({
+        workflow: { read_only: false },
+        ...action.payload
+      }))
 
       highlight([])
 

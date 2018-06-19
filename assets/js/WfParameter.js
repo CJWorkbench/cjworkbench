@@ -1,12 +1,12 @@
 // WfParameter - a single editable parameter
 
 import React from 'react'
+import PropTypes from 'prop-types'
 import MenuParam from './wfparameters/MenuParam'
 import ChartEditor from './wfparameters/charts/ChartEditor'
 import ColumnParam from './wfparameters/ColumnParam'
 import ColumnSelector from './wfparameters/ColumnSelector'
 import ColumnRenamer from './wfparameters/ColumnRenamer'
-import PropTypes from 'prop-types'
 import DataVersionSelect from './wfparameters/DataVersionSelect'
 import DropZone from './wfparameters/DropZone'
 import UpdateFrequencySelect from './wfparameters/UpdateFrequencySelect'
@@ -17,10 +17,6 @@ import CellEditor from './wfparameters/CellEditor'
 import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
-import { csrfToken } from './utils'
-import { store, setWfModuleStatusAction } from './workflow-reducer'
-import lessonSelector from './lessons/lessonSelector'
-import { connect } from 'react-redux'
 
 const PRESSED_ENTER = true;
 const DIDNT_PRESS_ENTER = false;
@@ -498,6 +494,7 @@ WfParameter.propTypes = {
   revision:       PropTypes.number.isRequired,
   api:            PropTypes.object.isRequired,
   updateSettings: PropTypes.object,             // only for modules that load data
+  isReadOnly:     PropTypes.bool.isRequired,
   changeParam:    PropTypes.func.isRequired,
   getParamId:     PropTypes.func.isRequired,
   getParamText:   PropTypes.func.isRequired,

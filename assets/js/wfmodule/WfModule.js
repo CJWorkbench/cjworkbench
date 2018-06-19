@@ -20,6 +20,23 @@ import lessonSelector from '../lessons/lessonSelector'
 
 // ---- WfModule ----
 export class WfModule extends React.PureComponent {
+  static propTypes = {
+    isReadOnly:         PropTypes.bool.isRequired,
+    index:              PropTypes.number.isRequired,
+    wfModule:           PropTypes.object,
+    selected:           PropTypes.bool,
+    changeParam:        PropTypes.func,
+    removeModule:       PropTypes.func,
+    api:                PropTypes.object.isRequired,
+    onDragStart:        PropTypes.func.isRequired, // func({ type:'WfModule',id,index }) => undefined
+    onDragEnd:          PropTypes.func.isRequired, // func() => undefined
+    focusModule:        PropTypes.func,
+    isLessonHighlight: PropTypes.bool.isRequired,
+    isLessonHighlightNotes: PropTypes.bool.isRequired,
+    isLessonHighlightCollapse: PropTypes.bool.isRequired,
+    revision:           PropTypes.number.isRequired,
+  }
+
   constructor(props) {
     super(props);
 
@@ -253,7 +270,6 @@ export class WfModule extends React.PureComponent {
           setParamText={this.setParamText}
           setClickNotification={this.setClickNotification}
           notifications={wfModule.notifications}
-          loggedInUser={this.props.user}
         />)
       });
 
@@ -353,33 +369,11 @@ export class WfModule extends React.PureComponent {
                 {paramdivs}
               </div>
             </div>
-            <div className={
-              'drop-alert ' +
-              ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.dragItem) ? 'active ' : '' ) +
-              ( (this.props.dragItemType === 'notification' && this.props.canDrop && this.props.isOver) ? 'over ' : '')
-              } />
-
           </div>
         </div>
       </div>
     ) || null;
   }
-}
-WfModule.propTypes = {
-  isReadOnly:         PropTypes.bool.isRequired,
-  index:              PropTypes.number.isRequired,
-  wfModule:           PropTypes.object,
-  revison:            PropTypes.number,
-  selected:           PropTypes.bool,
-  changeParam:        PropTypes.func,
-  removeModule:       PropTypes.func,
-  api:                PropTypes.object.isRequired,
-  onDragStart:        PropTypes.func.isRequired, // func({ type:'WfModule',id,index }) => undefined
-  onDragEnd:          PropTypes.func.isRequired, // func() => undefined
-  focusModule:        PropTypes.func,
-  isLessonHighlight: PropTypes.bool.isRequired,
-  isLessonHighlightNotes: PropTypes.bool.isRequired,
-  isLessonHighlightCollapse: PropTypes.bool.isRequired,
 }
 
 class WfModuleCollapseButton extends React.PureComponent {
@@ -422,6 +416,8 @@ function mapStateToProps(state, ownProps) {
     isLessonHighlight: testHighlight({ type: 'WfModule', moduleName }),
     isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', moduleName }),
     isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', moduleName }),
+    isReadOnly: state.workflow.read_only,
+
   }
 }
 

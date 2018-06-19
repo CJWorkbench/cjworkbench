@@ -23,6 +23,7 @@ exports[`WfParameter Renders string input field 1`] = `
     onClick={[Function]}
     onKeyPress={[Function]}
     placeholder=""
+    readOnly={false}
     rows={1}
   />
 </div>

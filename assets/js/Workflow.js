@@ -7,10 +7,17 @@ import Lesson from './lessons/Lesson'
 import PropTypes from 'prop-types'
 import ModuleStack from './ModuleStack'
 import { logUserEvent } from './utils'
+import { connect } from 'react-redux'
 
 // ---- WorkflowMain ----
 
-class Workflow extends React.Component {
+export class Workflow extends React.Component {
+  static propTypes = {
+    api:                PropTypes.object.isRequired,
+    workflow:           PropTypes.object.isRequired,
+    selected_wf_module: PropTypes.number,             // null means no selected module
+    loggedInUser:       PropTypes.object,             // undefined if no one logged in (viewing public wf)
+  }
 
   constructor(props) {
     super(props);
@@ -51,11 +58,6 @@ class Workflow extends React.Component {
   }
 
   render() {
-    // Wait until we have a workflow to render
-    if (this.props.workflow === undefined) {
-      return null;
-    }
-
     const selectedWfModule = this.props.workflow.wf_modules[this.props.selected_wf_module];
 
     let className = 'workflow-root'
@@ -78,14 +80,7 @@ class Workflow extends React.Component {
 
             <div className={"workflow-columns" + (this.state.overlapping ? " overlapping" : "")}>
               <ModuleStack
-                workflow={this.props.workflow}
-                selected_wf_module={this.props.selected_wf_module}
-                changeParam={this.props.changeParam}
-                removeModule={this.props.removeModule}
                 api={this.props.api}
-                loggedInUser={this.props.loggedInUser}
-                isOver={this.props.isOver}
-                dragItem={this.props.dragItem}
                 focus={this.state.isFocusModuleStack}
                 setFocus={this.setFocusModuleStack}
               />
@@ -114,13 +109,16 @@ class Workflow extends React.Component {
   }
 }
 
-export default Workflow;
-
-Workflow.propTypes = {
-  api:                PropTypes.object.isRequired,
-  workflow:           PropTypes.object,             // not required as fetched after page loads
-  selected_wf_module: PropTypes.number,
-  changeParam:        PropTypes.func.isRequired,
-  removeModule:       PropTypes.func.isRequired,
-  loggedInUser:       PropTypes.object,             // undefined if no one logged in (viewing public wf)
+// Handles addModule (and any other actions that change top level workflow state)
+const mapStateToProps = (state) => {
+  return {
+    workflow: state.workflow,
+    selected_wf_module: state.selected_wf_module,
+    loggedInUser: state.loggedInUser,
+  }
 };
+
+
+export default connect(
+  mapStateToProps
+)(Workflow);

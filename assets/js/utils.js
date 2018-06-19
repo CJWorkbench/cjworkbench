@@ -41,7 +41,7 @@ export function DEPRECATED_ensureSelectedWfModule(store, wfModule) {
 
   const current = state.workflow ? state.workflow.selected_wf_module : null
   let wanted = state.workflow ? state.workflow.wf_modules.indexOf(wfModule) : null
-  if (wanted === -1) next = null
+  if (wanted === -1) wanted = null
 
   if (wanted !== current) {
     store.dispatch(setSelectedWfModuleAction(wanted));

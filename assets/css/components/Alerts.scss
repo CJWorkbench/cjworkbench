@@ -1,29 +1,4 @@
-
-
-
 //custom alerts and data notifications
-
-.drop-alert{
-  display: none;
-}
-
-.drop-alert.active {
-  position: absolute;
-  z-index: 3;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: $brand-orange;
-  opacity: 0.3;
-  display: block;
-}
-
-.drop-alert.over {
-  opacity: 0.5;
-}
-
-
 // Promtp: notify user of unexpected event
 
 .alert {

@@ -4,7 +4,7 @@ import ModuleSearch from './ModuleSearch'
 import WfModule from './wfmodule/WfModule'
 import WfModuleHeader from './wfmodule/WfModuleHeader'
 import debounce from 'lodash/debounce'
-import { addModuleAction, moveModuleAction } from './workflow-reducer'
+import { addModuleAction, deleteModuleAction, moveModuleAction, setParamValueAction } from './workflow-reducer'
 import { scrollTo } from './utils'
 import { connect } from 'react-redux';
 import lessonSelector from './lessons/lessonSelector'
@@ -227,7 +227,6 @@ class ModuleStack extends React.Component {
     addModule:          PropTypes.func.isRequired, // func(moduleId, index) => undefined
     moveModuleByIndex:  PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
     removeModule:       PropTypes.func.isRequired,
-    loggedInUser:       PropTypes.object,            // undefined if no one logged in (viewing public wf)
     testLessonHighlightIndex: PropTypes.func.isRequired, // func(int) => boolean
     isReadOnly:         PropTypes.bool.isRequired,
   }
@@ -314,7 +313,6 @@ class ModuleStack extends React.Component {
               revision={this.props.workflow.revision}
               selected={i === this.props.selected_wf_module}
               api={this.props.api}
-              user={this.props.loggedInUser}
               loads_data={item.moduleVersion && item.module_version.module.loads_data}
               index={i}
               onDragStart={this.onDragStart}
@@ -346,6 +344,8 @@ class ModuleStack extends React.Component {
 const mapStateToProps = (state) => {
   const { testHighlight } = lessonSelector(state)
   return {
+    workflow: state.workflow,
+    selected_wf_module: state.selected_wf_module,
     wf_modules: state.workflow.wf_modules,
     isReadOnly: state.workflow.read_only,
     testLessonHighlightIndex: (index) => testHighlight({ type: 'Module', index: index }),
@@ -363,6 +363,16 @@ const mapDispatchToProps = (dispatch, ownProps) => {
       const action = moveModuleAction(oldIndex, newIndex)
       dispatch(action)
     },
+
+    removeModule(wfModuleId) {
+      const action = deleteModuleAction(wfModuleId)
+      dispatch(action)
+    },
+
+    changeParam(paramId, newVal) {
+      const action = setParamValueAction(paramId, newVal)
+      dispatch(action)
+    }
   }
 }
 
