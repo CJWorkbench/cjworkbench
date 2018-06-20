@@ -32,6 +32,9 @@ def json_in_script_tag(serialized_data):
         2. Replace `<` with `\u003c`, to prevent injection of `</script>` in
            the JSON.
     """
+    if not serialized_data:
+        return mark_safe('null')
+
     raw = DjangoJSONEncoder().encode(serialized_data)
     escaped = potential_hack_chars.sub(escape_potential_hack_char, raw)
     return mark_safe(escaped)
