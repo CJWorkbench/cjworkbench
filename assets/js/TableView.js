@@ -13,18 +13,6 @@ import * as ReorderColumns from './ReorderColumns'
 import * as RenameColumns from './RenameColumns'
 import {findParamValByIdName} from "./utils";
 
-export function mockAddCellEdit(fn) {
-  EditCells.addCellEdit = fn;
-}
-
-export function mockSortColumn(fn) {
-  SortFromTable.updateSort = fn;
-}
-
-export function mockReorderColumns(fn) {
-  ReorderColumns.updateReorder = fn;
-}
-
 // Constants to control loading behaviour. Exported so they are accessible to tests
 export const initialRows = 200;   // because react-data-grid seems to preload to 100
 export const preloadRows = 100;    // load when we have less then this many rows ahead
@@ -180,11 +168,11 @@ export default class TableView extends React.Component {
     if (row<this.state.lastLoadedRow && this.state.tableData) {    // should always be true if user clicked on cell to edit it
 
       // Add an edit if the data has actually changed. Cast everything to string for comparisons.
-      let oldVal = this.state.tableData.rows[row][colName];
-      if (newVal !== String(oldVal)) {
+      const oldVal = this.state.tableData.rows[row][colName];
+      if (newVal !== (oldVal || '')) {
         // Change just this one row, keeping as much of the old tableData as possible
-        let newRows = update(this.state.tableData.rows, {[row]: {$merge: {[colName]: newVal}}});
-        let newTableData = update(this.state.tableData, {$merge: {rows: newRows}});
+        const newRows = update(this.state.tableData.rows, {[row]: {$merge: {[colName]: newVal}}});
+        const newTableData = update(this.state.tableData, {$merge: {rows: newRows}});
         this.setState({tableData: newTableData});
 
         EditCells.addCellEdit(this.props.selectedWfModuleId, {row: row, col: colName, value: newVal})
