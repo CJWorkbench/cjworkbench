@@ -27,6 +27,17 @@ export function okResponseMock () {
   return jsonResponseMock(null)
 }
 
+// Helper function to return a promise that resolves after all other promise mocks,
+// even if they are chained like Promise.resolve().then(...).then(...)
+// Technically: this is designed to resolve on the next macrotask
+// https://stackoverflow.com/questions/25915634/difference-between-microtask-and-macrotask-within-an-event-loop-context
+export function tick() {
+  return new Promise(resolve => {
+    setTimeout(resolve, 0);
+  })
+}
+
+
 /**
  * Like enzyme's `shallow()`, but child components that depend on redux
  * don't crash the mount.

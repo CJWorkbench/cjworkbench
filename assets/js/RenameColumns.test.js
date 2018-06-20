@@ -1,13 +1,9 @@
 import {updateRename} from "./RenameColumns";
+import {tick} from "./test-utils"
 
-jest.mock('./workflow-reducer')
+jest.mock('./workflow-reducer');
 import { store, addModuleAction, setParamValueAction, setSelectedWfModuleAction } from './workflow-reducer'
 
-function tick() {
-  return new Promise(resolve => {
-    setTimeout(resolve, 0);
-  })
-}
 
 describe('RenameColumns actions', () => {
   // A few parameter id constants for readability
