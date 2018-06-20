@@ -456,7 +456,6 @@ export default class DataGrid extends React.Component {
     };
 
     this.updateSize = this.updateSize.bind(this);
-    this.getRow = this.getRow.bind(this);
     this.onGridRowsUpdated = this.onGridRowsUpdated.bind(this);
   }
 
@@ -537,10 +536,11 @@ export default class DataGrid extends React.Component {
   }
 
   // Add row number as first column, when we look up data
-  getRow(i) {
-    var row = this.props.getRow(i);
-    row[this.rowNumKey] = i+1;            // 1 based row numbers
-    return row;
+  getRow = (i) => {
+    const row = this.props.getRow(i);
+    if (row === null) return null;
+    // 1 based row numbers
+    return { [this.rowNumKey]: i + 1, ...row }
   }
 
   onGridRowsUpdated({ fromRow, toRow, updated }) {
