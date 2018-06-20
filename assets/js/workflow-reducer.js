@@ -485,6 +485,9 @@ registerReducerFunc(SET_WF_MODULE_COLLAPSED + '_PENDING', (state, action) => {
 
 // Internal API, requires all indices
 function setParamValueAction_base(state, wfModuleIdx, paramIdx, paramId, newValue) {
+  if (!newValue.hasOwnProperty('value')) {
+    newValue = { value: newValue }
+  }
 
   // Suppress changing to the same value (don't trigger expensive HTTP request)
   let oldValue = state.workflow.wf_modules[wfModuleIdx].parameter_vals[paramIdx].value;

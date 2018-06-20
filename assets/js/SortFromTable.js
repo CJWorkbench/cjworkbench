@@ -1,13 +1,7 @@
-import React from 'react'
-import {store, addModuleAction, setParamValueAction} from "./workflow-reducer";
-import {getPageID} from "./utils";
-import WorkbenchAPI from './WorkbenchAPI'
+import {store, addModuleAction, setParamValueAction, setParamValueActionByIdName} from "./workflow-reducer";
 import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId, DEPRECATED_ensureSelectedWfModule} from "./utils";
 
-var api = WorkbenchAPI();
-export function mockAPI(mock_api) {
-  api = mock_api;
-}
+const SortTypes = "String|Number|Date".split("|")
 
 function getNextSortDirection(current, sortType) {
     // Determines what the next sort direction is based on current direction
@@ -28,30 +22,21 @@ function getNextSortDirection(current, sortType) {
 }
 
 // Wrapper function for changing sort direction, since it needs to be used twice.
-function updateSortDirection(wfm, sortColumn, sortType, reset=false) {
+function toggleSortDirection(wfm, sortType, reset=false) {
     var directionParam = findParamValByIdName(wfm, "direction");
     let currentDirection = reset ? 0 : parseInt(directionParam.value);
-    var nextDirection = getNextSortDirection(currentDirection, sortType)
+    var nextDirection = getNextSortDirection(currentDirection, sortType);
 
-    api.onParamChanged(directionParam.id, {value: nextDirection});
+    store.dispatch(setParamValueAction(directionParam.id, nextDirection));
 }
 
 function updateSortModule(wfm, sortColumn, sortType) {
-    var column = sortColumn;
-    var columnParam = findParamValByIdName(wfm, "column");
-    var typeParam = findParamValByIdName(wfm, "dtype");
-    // If column changes then we need to change both sort column and type
-    if(columnParam.value != column) {
-        api.onParamChanged(columnParam.id, {value: column})
-            .then(() => {
-                api.onParamChanged(typeParam.id, {value: sortType})
-                    .then(() => {
-                        updateSortDirection(wfm, sortColumn, sortType, true);
-                    });
-            });
-    } else {
-        updateSortDirection(wfm, sortColumn, sortType, false);
-    }
+    const columnParam = findParamValByIdName(wfm, "column");
+    const isDifferentColumn = columnParam.value !== sortColumn;
+
+    store.dispatch(setParamValueActionByIdName(wfm.id, 'column', sortColumn));
+    store.dispatch(setParamValueActionByIdName(wfm.id, 'dtype', sortType));
+    toggleSortDirection(wfm, sortType, isDifferentColumn);
 }
 
 export function updateSort(wfModuleId, sortColumn, sortType) {
@@ -59,21 +44,17 @@ export function updateSort(wfModuleId, sortColumn, sortType) {
     const workflowId = state.workflow ? state.workflow.id : null;
 
     // Must be kept in sync with sortfromtable.json
-    const sortTypes = "String|Number|Date".split("|")
-    const sortTypeIdx = sortTypes.indexOf(sortType);
+    const sortTypeIdx = SortTypes.indexOf(sortType);
     const existingSortModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
-    if(existingSortModule) {
-        updateSortModule(existingSortModule, sortColumn, sortTypeIdx);
-        DEPRECATED_ensureSelectedWfModule(store, existingSortModule);
+    if (existingSortModule) {
+        DEPRECATED_ensureSelectedWfModule(store, existingSortModule); // before state's existingSortModule changes
+        updateSortModule(existingSortModule, sortColumn, sortTypeIdx); // ... changing state's existingSortModule
     } else {
-        const wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
-        // I have tried but using the reducer introduces odd bugs
-        // w.r.t selecting the new sort module, it bounces to the new module
-        // and then bounces back
-        api.addModule(workflowId, state.sortModuleId, wfModuleIdx + 1)
-            .then((newWfm) => {
+        const wfModuleIndex = getWfModuleIndexfromId(state, wfModuleId);
+        store.dispatch(addModuleAction(state.sortModuleId, wfModuleIndex + 1))
+            .then(fulfilled => {
+                const newWfm = fulfilled.value;
                 updateSortModule(newWfm, sortColumn, sortTypeIdx);
-                DEPRECATED_ensureSelectedWfModule(store, newWfm);
             });
     }
 }
