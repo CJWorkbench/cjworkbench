@@ -166,13 +166,13 @@ class Browser:
 
 
     def hover_over_element(self, *selector, **kwargs) -> None:
-        """Clicks the selected element.
+        """Hover over the selected element.
 
         Raises unless 1 element matches the selector.
 
         Calling this method usually means the site has an accessibility
         problem. Not all users can hover.
-        
+
         See 'assert_element()' for syntax.
 
         Keyword arguments:
@@ -180,9 +180,9 @@ class Browser:
         text -- text the element must contain
         """
         self._capybarize_kwargs(kwargs)
-        # There's a race here between find() and click(). If we get an error
+        # There's a race here between find() and hover(). If we get an error
         # about "missing element", write the exception handler we need.
-        self.page.find(*selector, **kwargs).click()
+        self.page.find(*selector, **kwargs).hover()
 
 
     def assert_element(self, *selector, **kwargs) -> None:
