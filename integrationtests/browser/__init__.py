@@ -95,6 +95,29 @@ class Browser:
         self.page.fill_in(locator, **kwargs)
 
 
+    def fill_text_in_whatever(self, text: str, *selector, **kwargs) -> None:
+        """Type 'text' into field matching selector.
+
+        Raises ValueError if text is empty. (Empty text is usually an error in
+        test code.)
+
+        See 'assert_element()' for syntax.
+
+        Prefer `fill_in`. All our HTML fields should have names or titles;
+        anything else is an accessibility issue we should fix. Notice that
+        this method's arguments are reversed from `fill_in`'s arguments.
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        if not text: raise ValueError("fill_in() called without text")
+        kwargs['value'] = text
+        self._capybarize_kwargs(kwargs)
+        # There's a race here between find() and fill_in(). If we get an error
+        # about "missing element", write the exception handler we need.
+        self.page.find(*selector, **kwargs).set(text)
+
+
     def send_keys(self, locator: str, *keys: str, **kwargs) -> None:
         """Press `keys` in field with name/label/id 'locator'.
 
@@ -167,7 +190,7 @@ class Browser:
         Calling this method usually means the site has an accessibility
         problem. Prefer click_link() and click_button(): the user should be
         clicking on links and buttons to make things happen.
-        
+
         See 'assert_element()' for syntax.
 
         Keyword arguments:
@@ -178,6 +201,40 @@ class Browser:
         # There's a race here between find() and click(). If we get an error
         # about "missing element", write the exception handler we need.
         self.page.find(*selector, **kwargs).click()
+
+
+    def double_click_whatever(self, *selector, **kwargs) -> None:
+        """Double-click the selected element.
+
+        Raises unless 1 element matches the selector.
+
+        See 'assert_element()' for syntax.
+
+        Keyword arguments:
+        wait -- seconds to poll (default 0)
+        text -- text the element must contain
+        """
+        self._capybarize_kwargs(kwargs)
+
+        # There's a race here between find() and execute(). If we get an
+        # error about "missing element", write the exception handler we need.
+        native_node = self.page.find(*selector, **kwargs).native
+
+        # https://github.com/mozilla/geckodriver/issues/661 means we can't just
+        # double_click(). We need to dispatch a JS event.
+        #
+        # [adamhooper, 2018-06-20] bug reproduced as late as today, which is
+        # odd because the GitHub issue is marked resolved. I gave up
+        # investigating.
+        script = """
+            var ev = new MouseEvent(
+                'dblclick',
+                { bubbles: true, cancelable: true, view: window }
+            )
+            arguments[0].dispatchEvent(ev);
+        """
+        self.page.driver.browser.execute_script(script, native_node)
+
 
 
     def hover_over_element(self, *selector, **kwargs) -> None:

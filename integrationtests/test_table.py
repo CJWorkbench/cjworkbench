@@ -3,6 +3,10 @@ from integrationtests.utils import LoggedInIntegrationTest
 from integrationtests.browser import Keys
 
 class TestTable(LoggedInIntegrationTest):
+    def _blur(self):
+        self.browser.click_whatever('div.table-info', text='ROWS')
+
+
     def _create_simple_workflow(self):
         b = self.browser
 
@@ -15,8 +19,7 @@ class TestTable(LoggedInIntegrationTest):
         self.add_wf_module('Paste data')
         b.fill_in('csv', 'string,int\nfoo,1\nbar,3\nbaz,2', wait=True)
 
-        # Blur, to load table
-        b.click_whatever('div.table-info', text='ROWS')
+        self._blur()  # to load table
 
         # Wait for table to load
         b.assert_element('.column-key', text='string', wait=True)
@@ -86,3 +89,41 @@ class TestTable(LoggedInIntegrationTest):
         # Select new output to check new column names
         b.click_whatever('.module-name', text='Rename columns')
         b.assert_element('.react-grid-Header', text=re.compile('Column A.*Column B'), wait=True)
+
+
+    def _carefully_double_click_element(self, *selector, **kwargs):
+        """Work around react-data-grid by slowwwwly double-clicking.
+
+        Often, double-clicks don't open an input. [adamhooper, 2018-06-20] I
+        can't figure out why. But handling hover and click beforehand seems to
+        fix the issue.
+
+        It probably has to do with react-data-grid re-rendering the cell when
+        it changes. This sequence means the double-click will happen after all
+        re-renders.
+        """
+        self.browser.hover_over_element(*selector, **kwargs)
+        self.browser.click_whatever(*selector, **kwargs)
+        self.browser.double_click_whatever(*selector, **kwargs)
+
+
+    def test_edit_cell(self):
+        b = self.browser
+
+        self._create_simple_workflow()
+
+        self._carefully_double_click_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='1')
+        b.fill_text_in_whatever('4', '.react-grid-Cell input', wait=True)  # wait for prompt
+        self._blur()  # commit
+
+        # Wait for edit module to appear, selected and set
+        b.assert_element('.wf-module[data-module-name="Edit Cells"] .module-output--selected', wait=True)
+        b.assert_no_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='1', wait=True)
+        b.assert_element('.react-grid-Cell', text='4', wait=True)
+
+        # Fill in one more edit
+        self._carefully_double_click_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='3')
+        b.fill_text_in_whatever('5', '.react-grid-Cell input', wait=True)  # wait for prompt
+
+        b.click_whatever('i.context-collapse-button.icon-sort-right')
+        b.assert_element('.edited-column', text='int', wait=True)
