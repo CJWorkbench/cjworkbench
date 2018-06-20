@@ -134,10 +134,6 @@ export default class WfParameter extends React.Component {
     this.props.api.postParamEvent(this.props.getParamId('version_select'), {})
   }
 
-  changeRenameColumnsLoadAll = (val) => {
-    this.props.setParamText('display-all', val);
-  };
-
   render_secret_parameter() {
     const { id_name } = this.props.p.parameter_spec
     const { id, value } = this.props.p
@@ -281,9 +277,7 @@ export default class WfParameter extends React.Component {
       return (
           <RenameEntries
               api={this.props.api}
-              loadAll={this.props.getParamText('display-all')}
-              changeLoadAll={this.changeRenameColumnsLoadAll}
-              entries={this.props.p.value}
+              entriesJsonString={this.props.p.value}
               wfModuleId={this.props.wf_module_id}
               paramId={this.props.p.id}
               revision={this.props.revision}

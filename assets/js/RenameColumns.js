@@ -1,65 +1,51 @@
-import React from 'react'
-import {store} from "./workflow-reducer";
-import {getPageID} from './utils'
+import {store, addModuleAction, setParamValueAction} from "./workflow-reducer";
 import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId, DEPRECATED_ensureSelectedWfModule} from "./utils";
-import WorkBenchAPI from './WorkbenchAPI'
-
-var api = WorkBenchAPI();
-export function mockAPI(mock_api) {
-    api = mock_api;
-}
 
 //renameInfo format: {prevName: <current column name in table>, newName: <new name>}
 
 function updateRenameModule(module, renameInfo, isNew=false) {
-    var entriesParam = findParamValByIdName(module, 'rename-entries');
-    var existingEntries = {}
-    try {
-        existingEntries = JSON.parse(entriesParam.value.trim());
-    } catch(e) {}
+    const entriesParam = findParamValByIdName(module, 'rename-entries');
+    let entries;
+    if (entriesParam.value) {
+        try {
+            entries = JSON.parse(entriesParam.value);
+        } catch (e) {
+            console.warn(e);
+            entries = {};
+        }
+    } else {
+        entries = {};
+    }
     // If "prevName" in renameInfo exists as a value in edit entries,
     // update that entry (since we are renaming a renamed column)
-    var entryExists = false;
-    for(let k in existingEntries) {
-        if(existingEntries[k] == renameInfo.prevName) {
-            existingEntries[k] = renameInfo.newName;
+    let entryExists = false;
+    for (let k in entries) {
+        if (entries[k] == renameInfo.prevName) {
+            entries[k] = renameInfo.newName;
             entryExists = true;
             break;
         }
     }
     // Otherwise, add the new entry to existing entries.
-    if(!entryExists) {
-        existingEntries[renameInfo.prevName] = renameInfo.newName;
+    if (!entryExists) {
+        entries[renameInfo.prevName] = renameInfo.newName;
     }
-    if(isNew) {
-        var showAllParam = findParamValByIdName(module, 'display-all');
-        try {
-            api.onParamChanged(showAllParam.id, {value: false})
-                .then(api.onParamChanged(entriesParam.id, {value: JSON.stringify(existingEntries)}));
-        } catch(e) {}
-    }
-    else {
-        api.onParamChanged(entriesParam.id, {value: JSON.stringify(existingEntries)});
-    }
+    store.dispatch(setParamValueAction(entriesParam.id, JSON.stringify(entries)));
 }
 
 export function updateRename(wfModuleId, renameInfo) {
     const state = store.getState();
-    const workflowId = state.workflow ? state.workflow.id : null;
 
-    const existingRenameModule = findModuleWithIdAndIdName(state, wfModuleId, 'rename-columns');
-    if (existingRenameModule) {
-        updateRenameModule(existingRenameModule, renameInfo);
-        DEPRECATED_ensureSelectedWfModule(store, existingRenameModule);
+    const existingModule = findModuleWithIdAndIdName(state, wfModuleId, 'rename-columns');
+    if (existingModule) {
+        DEPRECATED_ensureSelectedWfModule(store, existingModule); // before state's existingModule changes
+        updateRenameModule(existingModule, renameInfo, false); // ... changing state's existingModule
     } else {
-        const wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId);
-        api.addModule(workflowId, state.renameModuleId, wfModuleIdx + 1)
-            .then((newWfm) => {
-                // We set the parameters first and then switch to the new module
-                // to prevent it loading all columns in its initial rendering
-                // (which would be the case if it's added from the module library)
+        const wfModuleIndex = getWfModuleIndexfromId(state, wfModuleId);
+        store.dispatch(addModuleAction(state.renameModuleId, wfModuleIndex + 1))
+            .then(fulfilled => {
+                const newWfm = fulfilled.value;
                 updateRenameModule(newWfm, renameInfo, true);
-                DEPRECATED_ensureSelectedWfModule(store, newWfm);
             });
     }
 }

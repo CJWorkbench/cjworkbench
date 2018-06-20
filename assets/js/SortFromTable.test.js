@@ -1,5 +1,4 @@
 import { updateSort } from "./SortFromTable";
-import { jsonResponseMock } from './test-utils'
 
 jest.mock('./workflow-reducer')
 import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'

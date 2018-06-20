@@ -8,13 +8,6 @@
   "parameters": [
     {
       "name": "",
-      "id_name": "display-all",
-      "type": "checkbox",
-      "visible": false,
-      "default": "True"
-    },
-    {
-      "name": "",
       "id_name": "rename-entries",
       "type": "custom"
     }

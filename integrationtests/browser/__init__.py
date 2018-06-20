@@ -3,6 +3,8 @@ from capybara.session import Session
 from contextlib import contextmanager
 import os
 
+from selenium.webdriver.common.keys import Keys  # for Browser.send_keys
+
 
 # DISABLE capybara's default wait time! We're more explicit about timeouts in
 # our tests, so our behavior is more predictable. (We try to avoid tests that
@@ -91,6 +93,19 @@ class Browser:
         kwargs['value'] = text
         self._capybarize_kwargs(kwargs)
         self.page.fill_in(locator, **kwargs)
+
+
+    def send_keys(self, locator: str, *keys: str, **kwargs) -> None:
+        """Press `keys` in field with name/label/id 'locator'.
+
+        Raises ValueError if text is empty. (Empty text is usually an error in
+        test code.)
+
+        Keyword arguments:
+        wait -- True or number of seconds to wait until element appears
+        """
+        self._capybarize_kwargs(kwargs)
+        self.page.find('fillable_field', locator, **kwargs).send_keys(*keys)
 
 
     def check(self, locator: str, **kwargs) -> None:

@@ -41,14 +41,13 @@ function updateSortModule(wfm, sortColumn, sortType) {
 
 export function updateSort(wfModuleId, sortColumn, sortType) {
     const state = store.getState();
-    const workflowId = state.workflow ? state.workflow.id : null;
 
     // Must be kept in sync with sortfromtable.json
     const sortTypeIdx = SortTypes.indexOf(sortType);
-    const existingSortModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
-    if (existingSortModule) {
-        DEPRECATED_ensureSelectedWfModule(store, existingSortModule); // before state's existingSortModule changes
-        updateSortModule(existingSortModule, sortColumn, sortTypeIdx); // ... changing state's existingSortModule
+    const existingModule = findModuleWithIdAndIdName(state, wfModuleId, 'sort-from-table')
+    if (existingModule) {
+        DEPRECATED_ensureSelectedWfModule(store, existingModule); // before state's existingModule changes
+        updateSortModule(existingModule, sortColumn, sortTypeIdx); // ... changing state's existingModule
     } else {
         const wfModuleIndex = getWfModuleIndexfromId(state, wfModuleId);
         store.dispatch(addModuleAction(state.sortModuleId, wfModuleIndex + 1))
