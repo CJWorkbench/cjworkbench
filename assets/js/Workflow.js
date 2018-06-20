@@ -9,11 +9,53 @@ import ModuleStack from './ModuleStack'
 import { logUserEvent } from './utils'
 import { connect } from 'react-redux'
 
+export function MaybeNotYourWorkflow(props) {
+  if (!props.isReadOnly && !props.isAnonymous) {
+    return null // it's your workflow
+  }
+
+  const F = React.Fragment
+
+  let suggestion = null
+  if (props.isLoggedIn) {
+    suggestion = <p className="suggestion"><strong>Duplicate</strong> this workflow to save changes.</p>
+  } else {
+    suggestion = <p className="suggestion"><a href={`/account/login/?next=/workflows/${props.workflowId}`}>Sign in or sign up</a> to save workflows.</p>
+  }
+
+  let inner, className
+  if (props.isAnonymous) {
+    className = 'is-anonymous'
+    inner = (
+      <F>
+        <h3>Demo Workflow</h3>
+        <p className="message">Changes won't be saved.</p>
+        {suggestion}
+      </F>
+    )
+  } else if (props.isReadOnly) {
+    className = 'is-read-only'
+    inner = (
+      <F>
+        <h3>Read-Only Workflow</h3>
+        <p className="message">You are viewing a shared workflow.</p>
+        {suggestion}
+      </F>
+    )
+  }
+
+  return (
+    <div className={`not-your-workflow ${className}`}>{inner}</div>
+  )
+}
+
 // ---- WorkflowMain ----
 
 export class Workflow extends React.Component {
   static propTypes = {
     api:                PropTypes.object.isRequired,
+    isReadOnly:         PropTypes.bool.isRequired,
+    isAnonymous:        PropTypes.bool.isRequired,
     workflow:           PropTypes.object.isRequired,
     selected_wf_module: PropTypes.number,             // null means no selected module
     loggedInUser:       PropTypes.object,             // undefined if no one logged in (viewing public wf)
@@ -21,22 +63,11 @@ export class Workflow extends React.Component {
 
   constructor(props) {
     super(props);
+
     this.state = {
-        isPublic: false,
         isFocusModuleStack: false,
         overlapping: false, // Does the right pane overlap the left pane? Used to set focus, draw shadows, etc
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-
-    if (nextProps.workflow === undefined) {
-      return false;
-    }
-
-    this.setState({
-      isPublic: nextProps.workflow.public,
-    });
   }
 
   setOverlapping = (overlapping) => {
@@ -70,7 +101,6 @@ export class Workflow extends React.Component {
           { this.props.lesson ? <Lesson {...this.props.lesson} logUserEvent={logUserEvent} /> : '' }
 
           <div className="workflow-container">
-
             <WorkflowNavBar
               workflow={this.props.workflow}
               api={this.props.api}
@@ -95,6 +125,13 @@ export class Workflow extends React.Component {
                 setOverlapping={this.setOverlapping}
               />
             </div>
+
+            <MaybeNotYourWorkflow
+              workflowId={this.props.workflow.url_id}
+              isLoggedIn={!!this.props.loggedInUser}
+              isReadOnly={this.props.isReadOnly}
+              isAnonymous={this.props.isAnonymous}
+              />
           </div>
           <div className='help-container'>
             <a target="_blank" href="http://help.workbenchdata.com/getting-started/build-your-first-workflow" >
@@ -115,6 +152,8 @@ const mapStateToProps = (state) => {
     workflow: state.workflow,
     selected_wf_module: state.selected_wf_module,
     loggedInUser: state.loggedInUser,
+    isAnonymous: state.workflow.is_anonymous,
+    isReadOnly: state.workflow.read_only,
   }
 };
 

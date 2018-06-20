@@ -23,6 +23,31 @@
     flex-direction: column;
     height: 100vh;
     overflow: hidden;
+
+    &>.not-your-workflow {
+      display: flex;
+      justify-content: center;
+      align-items: baseline;
+      flex-wrap: wrap;
+      background: $brand-learn;
+      color: white;
+      font-weight: bold;
+
+      &>* {
+        line-height: 2rem;
+        margin: 0;
+        padding: 1rem .5rem;
+      }
+
+      h3 {
+        font-size: 1.8rem;
+        text-transform: uppercase;
+      }
+
+      p {
+        font-size: 1.3rem;
+      }
+    }
   }
 
   /* Contains Modulestack and Outputpane */
