@@ -12,7 +12,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
     className="embed-footer"
   >
     <div
-      className="d-flex align-items-center"
+      className="metadata-stack"
     >
       <div
         className="embed-footer-logo"
@@ -30,7 +30,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
         className="embed-footer-meta"
       >
         <div
-          className="t-d-gray mb-1 title-4"
+          className="title"
         >
           <a
             href="/workflows/1"
@@ -55,7 +55,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
               </a>
             </div>
             <li
-              className="content-3 metadataSeparator t-m-gray"
+              className="separator"
             >
               -
             </li>
