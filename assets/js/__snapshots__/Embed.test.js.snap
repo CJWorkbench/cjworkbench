@@ -9,13 +9,13 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
     src="/api/wfmodules/1/output"
   />
   <div
-    className="embed-info"
+    className="embed-footer"
   >
     <div
       className="d-flex align-items-center"
     >
       <div
-        className="embed-info-logo"
+        className="embed-footer-logo"
       >
         <a
           href="/"
@@ -27,7 +27,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
         </a>
       </div>
       <div
-        className="embed-info-meta"
+        className="embed-footer-meta"
       >
         <div
           className="t-d-gray mb-1 title-4"
@@ -77,7 +77,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       </div>
     </div>
     <div
-      className="embed-info-button"
+      className="embed-footer-button"
       onClick={[Function]}
     >
       <i
@@ -120,10 +120,10 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
     </h1>
   </div>
   <div
-    className="embed-info"
+    className="embed-footer"
   >
     <div
-      className="embed-info-logo"
+      className="embed-footer-logo"
     >
       <img
         src="/static/images/logo.png"
@@ -131,14 +131,14 @@ exports[`Embed Unavailable workflow Renders the embed widget with the correct in
       />
     </div>
     <div
-      className="embed-info-meta"
+      className="embed-footer-meta"
     >
       <h1>
         WORKBENCH
       </h1>
     </div>
     <div
-      className="embed-info-button"
+      className="embed-footer-button"
     >
       <i
         className="icon icon-share"

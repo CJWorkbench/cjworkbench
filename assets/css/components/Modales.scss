@@ -80,12 +80,13 @@
       .info {
         @extend .info-2;
         color:$medium-gray;
-        margin-bottom: .5rem;
+
       }
       .code-snippet{
+        margin-top: .5rem;
         background-color: $dark-accent--medium;
         border-radius: 3px;
-        padding: 1rem;
+        padding: 1.5rem;
 
         .chart-embed {
           color: $brand-text--dark;

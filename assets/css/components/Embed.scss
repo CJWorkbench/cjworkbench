@@ -12,8 +12,8 @@
   position: absolute;
 }
 
-.embed_container .embed-info {
-  height: 5.5rem;
+.embed_container .embed-footer {
+  height: 6rem;
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -22,39 +22,71 @@
   align-items: center;
 }
 
-.embed-info-meta {
-  height: 3rem;
-  margin-left: 1rem;
-}
+// Footer
 
-.embed-info-meta a{
-  text-decoration: none;
-  color:#686768;
-}
-
-.embed-info-meta a:hover{
-  text-decoration: none;
-  color:$brand-workspace;
-}
-
-.embed-info-logo{
+.embed-footer {
+  display: flex;
   align-items: center;
-  margin-left: 1rem;
+  background-color: $white;
+  border-top: 1px solid $dark-accent--medium;
+
+  .metadata-stack {
+    display: flex;
+    margin-left: 1rem;
+    .embed-footer-meta {
+      height: 3rem;
+      margin-left: 2rem;
+      & a {
+        text-decoration: none;
+        color:#686768;
+        &:hover {
+          text-decoration: none;
+          color:$brand-workspace;
+        }
+      }
+      .title {
+        @extend .title-4;
+        font-weight: 400;
+        color: $brand-text--dark;
+      }
+      .WF-meta {
+        color:$medium-gray;
+        font-weight: 100;
+        display: flex;
+        align-items: center;
+        margin-top: .3rem;
+        padding:0;
+
+        .separator {
+          margin:0 .5rem;
+        }
+      }
+    }
+
+    .embed-footer-logo{
+      align-items: center;
+      margin-left: 1rem;
+    }
+
+  }
+
+
+  .embed-footer-button {
+    margin-right: 1rem;
+  }
+
+  .embed-footer-button .icon{
+    font-size: 2rem;
+    cursor: pointer;
+  }
+
+  .embed-footer-button .icon :hover{
+    font-size: 2rem;
+    color:$brand-workspace;
+  }
+
 }
 
-.embed-info-button {
-  margin-right: 1rem;
-}
-
-.embed-info-button .icon{
-  font-size: 2rem;
-  cursor: pointer;
-}
-
-.embed-info-button .icon :hover{
-  font-size: 2rem;
-  color:$brand-workspace;
-}
 
 .embed--share-code{
   color: #fff;

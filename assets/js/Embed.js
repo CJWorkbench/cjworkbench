@@ -23,14 +23,14 @@ export default class Embed extends React.Component {
         <div className="embed-not-available">
           <h1>This workflow is not available</h1>
         </div>
-        <div className="embed-info">
-          <div className="embed-info-logo">
+        <div className="embed-footer">
+          <div className="embed-footer-logo">
             <img src="/static/images/logo.png" width="21" />
           </div>
-          <div className="embed-info-meta">
+          <div className="embed-footer-meta">
             <h1>WORKBENCH</h1>
           </div>
-          <div className="embed-info-button">
+          <div className="embed-footer-button">
             <i className="icon icon-share"/>
           </div>
         </div>
@@ -47,15 +47,15 @@ export default class Embed extends React.Component {
     return(
       <div className="embed-wrapper">
         <iframe src={"/api/wfmodules/" + this.props.wf_module.id + "/output"} frameborder="0"/>
-        <div className="embed-info">
-          <div className="d-flex align-items-center">
-            <div className="embed-info-logo">
+        <div className="embed-footer">
+          <div className="metadata-stack">
+            <div className="embed-footer-logo">
               <a href="/">
                 <img src="/static/images/logo.png" width="35" />
               </a>
             </div>
-            <div className="embed-info-meta">
-              <div className="t-d-gray mb-1 title-4">
+            <div className="embed-footer-meta">
+              <div className="title">
                 <a href={"/workflows/" + this.props.workflow.id }>
                   {this.props.workflow.name}
                 </a>
@@ -67,7 +67,7 @@ export default class Embed extends React.Component {
                     by {this.props.workflow.owner_name}
                     </a>
                   </div>
-                  <li className="content-3 metadataSeparator t-m-gray">-</li>
+                  <li className="separator">-</li>
                   <li className="WF-meta--item content-3 t-m-gray">
                     <a href={"/workflows/" + this.props.workflow.id }>
                     Updated {timeDifference(this.props.workflow.last_update, new Date())}
@@ -79,7 +79,7 @@ export default class Embed extends React.Component {
               </div>
             </div>
           </div>
-          <div onClick={this.toggleOverlay} className="embed-info-button">
+          <div onClick={this.toggleOverlay} className="embed-footer-button">
             <i className="icon icon-share"/>
           </div>
         </div>
