@@ -3,24 +3,34 @@
   //header
   thead tr {
     height:2.5rem;
+    .reorder-info {
+      @extend .info-3;
+      text-align: left;
+    }
   }
 
   //body
   tbody tr {
     @extend .content-3;
+    font-weight: 400;
     height:3.5rem;
     border-top: 1px solid $dark-accent--soft;
   }
 
   .table td {
-    max-width: 15rem;
+    max-width: 13.5rem;
     overflow-x: hidden;
     border:0;
+
+    .reorder-column{
+      text-align: left;
+    }
   }
 
 
   .reorder-info {
     @extend .info-3;
+    text-align: left;
   }
 
   .reorder-position  {
