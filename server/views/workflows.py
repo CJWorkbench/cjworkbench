@@ -108,15 +108,16 @@ def render_workflows(request):
 @renderer_classes((JSONRenderer,))
 def workflow_list(request, format=None):
     if request.method == 'GET':
-        workflows = Workflow.objects.filter(Q(owner=request.user)
-                                            | Q(example=True))
+        workflows = Workflow.objects \
+                .filter(Q(owner=request.user) | Q(example=True)) \
+                .filter(Q(lesson_slug__isnull=True) | Q(lesson_slug=''))
 
-        # turn queryset into array so we can sort it ourselves by reverse chron
+        # turn queryset into list so we can sort it ourselves by reverse chron
         # (this is because 'last update' is a property of the delta, not the
         # Workflow. [2018-06-18, adamhooper] TODO make workflow.last_update a
         # column.
-        workflows = workflows.all()
-        workflows = sorted(workflows, key=lambda wf: wf.last_update(), reverse=True)
+        workflows = list(workflows)
+        workflows.sort(key=lambda wf: wf.last_update(), reverse=True)
 
         serializer = WorkflowSerializerLite(workflows, many=True)
         return Response(serializer.data)

@@ -162,6 +162,26 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.data[1]['id'], self.workflow1.id)
 
 
+    def test_workflow_list_include_example(self):
+        self.other_workflow_public.example = True
+        self.other_workflow_public.save()
+
+        request = self._build_get('/api/workflows/', user=self.user)
+        response = workflow_list(request)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+
+
+    def test_workflow_list_exclude_lesson(self):
+        self.workflow1.lesson_slug = 'some-lesson'
+        self.workflow1.save()
+
+        request = self._build_get('/api/workflows/', user=self.user)
+        response = workflow_list(request)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+
     def test_workflow_list_post(self):
         start_count = Workflow.objects.count()
         request = self._build_post('/api/workflows/', user=self.user)
