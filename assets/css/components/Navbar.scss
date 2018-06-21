@@ -209,14 +209,17 @@
 //// Readonly signout navbar
 
 .nav--link {
+  @extend .content-3;
+  font-size: 1.4rem;
   cursor: pointer;
   margin-right: 5rem;
   width:5rem;
-}
+  color:$white;
 
-.nav--link:hover{
-  text-decoration: underline;
-  color: #fff;
+  &:hover {
+    text-decoration: underline;
+    color: #fff;
+  }
 }
 
 
