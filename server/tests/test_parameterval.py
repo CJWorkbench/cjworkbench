@@ -175,3 +175,14 @@ class ParameterValTests(ParameterValTestsBase):
         val.set_value({ 'name': 'foo', 'secret': 'foo' })
         val.set_value(None)
         self.assertIs(val.get_value(), None)
+
+    def test_secret_not_duplicated(self):
+        val1 = self.secret_val()
+        val1.set_value({ 'name': 'foo', 'secret': 'foo' })
+
+        workflow2 = add_new_workflow("Test Workflow 2")
+        wfmodule2 = WfModule.objects.create(module_version=self.module_version, workflow=workflow2, order=0)
+
+        val2 = val1.duplicate(wfmodule2)
+        self.assertEqual(val2.get_value(), None)
+        self.assertEqual(val2.get_secret(), None)

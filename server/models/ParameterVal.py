@@ -27,13 +27,18 @@ class ParameterVal(models.Model):
         self.visible = self.parameter_spec.def_visible
 
     def duplicate(self, to_wf_module):
+        if self.parameter_spec.type == ParameterSpec.SECRET:
+            value = ''
+        else:
+            value = self.value
+
         newval = ParameterVal.objects.create(
-            wf_module = to_wf_module,
-            parameter_spec = self.parameter_spec,
-            order = self.order,
-            value = self.value,
-            menu_items = self.menu_items,
-            visible = self.visible
+            wf_module=to_wf_module,
+            parameter_spec=self.parameter_spec,
+            order=self.order,
+            value=value,
+            menu_items=self.menu_items,
+            visible=self.visible
         )
         return newval
 
@@ -158,7 +163,10 @@ class ParameterVal(models.Model):
     def get_secret(self):
         ptype = self.parameter_spec.type
         if ptype == ParameterSpec.SECRET:
-            return json.loads(self.value)['secret']
+            if self.value:
+                return json.loads(self.value)['secret']
+            else:
+                return None
 
 
     def __str__(self):
