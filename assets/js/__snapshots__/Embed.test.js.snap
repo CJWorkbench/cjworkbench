@@ -81,7 +81,7 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       onClick={[Function]}
     >
       <i
-        className="icon icon-share"
+        className="icon icon-code"
       />
     </div>
   </div>
@@ -94,15 +94,20 @@ exports[`Embed Available workflow Renders the embed widget with the correct info
       onClick={[Function]}
     >
       <h1>
-        Embed live chart using this code:
+        EMBED THIS CHART
       </h1>
-      <pre>
+      <h2>
+        Paste this code into any webpage HTML
+      </h2>
+      <div
+        className="code-snippet"
+      >
         <code
           className="embed--share-code"
         >
           &lt;iframe src="about:///embed/1" width="560" height="315" frameborder="0" /&gt;
         </code>
-      </pre>
+      </div>
     </div>
   </div>
 </div>

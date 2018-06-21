@@ -24,7 +24,7 @@ describe('Embed', () => {
 
     it('Renders the embed widget with the correct information', () => {
       expect(wrapper).toMatchSnapshot();
-      expect(wrapper.find('.embed-footer-meta .t-d-gray.mb-1.title-4').text()).toBe('Workflow Title');
+      expect(wrapper.find('.embed-footer-meta .title').text()).toBe('Workflow Title');
     });
 
     it('Displays the sharing overlay', () => {
