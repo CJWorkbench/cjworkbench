@@ -80,7 +80,7 @@ export default class Embed extends React.Component {
             </div>
           </div>
           <div onClick={this.toggleOverlay} className="embed-footer-button">
-            <i className="icon icon-share"/>
+            <i className="icon icon-code"/>
           </div>
         </div>
         <div className={"embed-overlay" + (this.state.overlayOpen ? ' open' : '')} onClick={this.toggleOverlay}>
