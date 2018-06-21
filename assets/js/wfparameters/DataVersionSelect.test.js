@@ -35,7 +35,7 @@ export const genericTestWorkflow = {
           ["2018-02-21T03:09:10.214054Z", false]
         ]
       },
-      notification_count: 2
+      has_unseen_notification: true,
     },
     {
       id: 20

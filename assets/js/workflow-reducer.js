@@ -647,7 +647,7 @@ registerReducerFunc(CLEAR_NOTIFICATIONS + '_PENDING', (state, action) => {
       workflow: {
         wf_modules: {
           [wfModuleIdx]: {
-            notification_count: {$set: 0}
+            has_unseen_notification: { $set: false }
           }
         }
       }

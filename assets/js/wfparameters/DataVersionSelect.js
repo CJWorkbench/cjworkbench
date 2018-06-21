@@ -19,7 +19,6 @@ class DataVersionSelect extends React.Component {
       dialogSelected: null
     };
     this.toggleModal = this.toggleModal.bind(this);
-    this.toggleDropdown = this.toggleDropdown.bind(this);
     this.setSelected = this.setSelected.bind(this);
     this.changeVersions = this.changeVersions.bind(this);
   }
@@ -67,12 +66,6 @@ class DataVersionSelect extends React.Component {
         modalOpen: !this.state.modalOpen,
         dialogSelected: this.props.versions.selected
       });
-    }
-  }
-
-  toggleDropdown() {
-    if (this.props.isReadOnly) {
-      this.setState(Object.assign({}, this.state, { dropdownOpen: !this.state.dropdownOpen }));
     }
   }
 

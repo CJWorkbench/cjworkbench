@@ -14,6 +14,7 @@ def notifications_delete_by_wfmodule(request, pk, format=None):
     if not wf_module.request_authorized_write(request):
         return HttpResponseForbidden()
 
-    notification_list = wf_module.notification_set.all()
-    deleted_num, deleted_list = notification_list.delete()
-    return JsonResponse(deleted_list, status=200)
+    wf_module.has_unseen_notification = False
+    wf_module.save()
+
+    return JsonResponse({}, status=200)

@@ -72,7 +72,7 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertEqual(response.data['update_interval'], 1)       # defaults here to avoid time unit conversion
         self.assertEqual(response.data['update_units'], 'days')
         self.assertEqual(response.data['notifications'], wf_module.notifications)
-        self.assertEqual(response.data['notification_count'], wf_module.notification_set.count())
+        self.assertEqual(response.data['has_unseen_notification'], False)
         self.assertEqual(response.data['versions'], wf_module_versions)
         self.assertEqual(response.data['html_output'], wf_module.module_version.html_output)
 

@@ -1,11 +1,13 @@
 # Undo, redo, and other version related things
 import datetime
-from pandas import DataFrame
-from server.models import Delta, Workflow, WfModule
-from server.models import ChangeDataVersionCommand, Notification, StoredObject
-from server.triggerrender import notify_client_workflow_version_changed
 from django.utils import timezone
 from django.conf import settings
+from pandas import DataFrame
+from server.models import Delta, Workflow, WfModule
+from server.models import ChangeDataVersionCommand, StoredObject
+from server.notifications import find_output_deltas_to_notify_from_fetched_tables, email_output_delta
+from server.triggerrender import notify_client_workflow_version_changed
+
 
 # Undo is pretty much just running workflow.last_delta backwards
 def WorkflowUndo(workflow):
@@ -65,11 +67,20 @@ def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
         wfm.last_update_check = timezone.now()
 
         # Store this data only if it's different from most recent data
+        old_table = wfm.retrieve_fetched_table()
         version_added = wfm.store_fetched_table_if_different(new_table)
 
         if version_added:
             enforce_storage_limits(wfm)
 
+            output_deltas = \
+                    find_output_deltas_to_notify_from_fetched_tables(wfm,
+                                                                   old_table,
+                                                                   new_table)
+        else:
+            output_deltas = []
+
+        wfm.has_unseen_notification = bool(output_deltas)
         wfm.error_msg = error_message or ''
         wfm.status = (WfModule.ERROR if error_message else WfModule.READY)
         wfm.save()
@@ -77,8 +88,9 @@ def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
     # un-indent: COMMIT, so we can notify the client and the client sees changes
     if version_added:
         ChangeDataVersionCommand.create(wfm, version_added)  # also notifies client
-        if wfm.notifications == True:
-            Notification.create(wfm, "New data version available")
+
+        for output_delta in output_deltas:
+            notifications.email_output_delta(output_delta)
     else:
         # no new data version, but we still want client to update WfModule status and last update check time
         notify_client_workflow_version_changed(wfm.workflow)

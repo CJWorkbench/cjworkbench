@@ -22,6 +22,7 @@ import lessonSelector from '../lessons/lessonSelector'
 export class WfModule extends React.PureComponent {
   static propTypes = {
     isReadOnly:         PropTypes.bool.isRequired,
+    isAnonymous:        PropTypes.bool.isRequired,
     index:              PropTypes.number.isRequired,
     wfModule:           PropTypes.object,
     selected:           PropTypes.bool,
@@ -58,7 +59,7 @@ export class WfModule extends React.PureComponent {
       notes: this.props.wfModule.notes || '',
       isNoteForcedVisible: false,
       notifications: this.props.wfModule.notifications,
-      notification_count: this.props.wfModule.notification_count,
+      hasUnseenNotification: this.props.wfModule.has_unseen_notification,
       isDragging: false,
     }
   }
@@ -288,6 +289,21 @@ export class WfModule extends React.PureComponent {
       </div>
     );
 
+    let alertButton;
+    if (!this.props.isReadOnly && !this.props.isAnonymous) {
+      let className = 'notifications'
+      if (this.state.notifications) className += ' enabled'
+      if (this.state.hasUnseenNotification) className += ' has-unseen'
+      const title = this.state.notifications ? 'Email alerts enabled' : 'Email alerts disabled'
+
+      alertButton = (
+        <button title={title} className={className} onClick={this.onClickNotification}>
+          <i className="icon-notification"></i>
+          { this.state.hasUnseenNotification ? <span className="has-unseen"></span> : null }
+        </button>
+      );
+    }
+
     let helpIcon;
     if (!this.props.isReadOnly) {
       helpIcon = (
@@ -325,15 +341,7 @@ export class WfModule extends React.PureComponent {
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     const contextBtns =
         <div className='context-buttons'>
-          {wfModule.notifications &&
-          <button
-            className={'notification-badge' + (wfModule.notification_count > 0 ? ' active action-link' : '' )}
-            onClick={this.onClickNotification}
-            >
-            <i className="icon-notification"></i>
-            { wfModule.notification_count > 0 && <span className="count">{wfModule.notification_count}</span> }
-          </button>
-          }
+          {alertButton}
           {helpIcon}
           {notesIcon}
           {contextMenu}

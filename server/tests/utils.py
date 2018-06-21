@@ -46,7 +46,6 @@ def clear_db():
         'server_delta',
         'server_module',
         'server_moduleversion',
-        'server_notification',
         'server_parameterspec',
         'server_parameterval',
         'server_reordermodulescommand',

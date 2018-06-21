@@ -1,12 +1,12 @@
+import os
+import uuid
+from shutil import copyfile
 from django.db import models
 from django.core.files.storage import default_storage
 from django.dispatch import receiver
 from django.utils import timezone
-from pandas.util import hash_pandas_object
 import pandas as pd
-import os
-import uuid
-from shutil import copyfile
+from server.pandas_util import hash_table
 
 # StoredObject is our persistence layer.
 # Allows WfModules to store keyed, versioned binary objects
@@ -54,17 +54,11 @@ class StoredObject(models.Model):
         return default_storage.path(fname)
 
     @staticmethod
-    def _hash_table(table):
-        h = hash_pandas_object(table).sum()  # xor would be nice, but whatevs
-        h = h if h>0 else -h              # stay positive (sum often overflows)
-        return str(h)
-
-    @staticmethod
     def create_table(wf_module, type, table, metadata=None):
         if table is None or table.empty:
             return StoredObject.__create_empty_table(wf_module, type, metadata)
         else:
-            hash = StoredObject._hash_table(table)
+            hash = hash_table(table)
             return StoredObject.__create_table_internal(wf_module, type, table, metadata, hash)
 
     # Create a new StoredObject if it's going to store different data than the previous one. Otherwise null
@@ -77,7 +71,7 @@ class StoredObject(models.Model):
         if type != old_so.type:
             ValueError('Cannot change StoredObject type when checking for changes')
 
-        hash = StoredObject._hash_table(table)
+        hash = hash_table(table)
         if hash != old_so.hash:
             return StoredObject.create_table(wf_module, type, table, metadata=metadata)
         else:

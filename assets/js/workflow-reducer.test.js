@@ -82,7 +82,7 @@ describe('Reducer actions', () => {
             ["2018-02-21T03:09:10.214054Z", false]
           ]
         },
-        notification_count: 2
+        has_unseen_notification: true
       },
       {
         id: 20
@@ -299,6 +299,6 @@ describe('Reducer actions', () => {
         wfModuleId: 10
       }
     });
-    expect(state.workflow.wf_modules[0].notification_count).toBe(0);
+    expect(state.workflow.wf_modules[0].has_unseen_notification).toBe(false);
   });
 });
