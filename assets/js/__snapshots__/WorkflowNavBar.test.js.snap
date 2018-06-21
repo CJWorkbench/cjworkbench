@@ -1182,7 +1182,7 @@ exports[`WorkflowNavBar With user NOT logged in, Duplicate button sends user to 
         Share
       </button>
       <a
-        className="nav--link t-white content-2"
+        className="nav--link"
         href="/account/login"
       >
         Sign in
