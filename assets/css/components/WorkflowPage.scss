@@ -25,26 +25,35 @@
     overflow: hidden;
 
     &>.not-your-workflow {
+      cursor: default;
+      position: absolute;
+      bottom:0;
+      left: 0;
+      right:0;
       display: flex;
       justify-content: center;
-      align-items: baseline;
+      align-items: center;
       flex-wrap: wrap;
       background: $brand-learn;
       color: white;
       font-weight: bold;
+      height: 5rem;
+
 
       &>* {
         line-height: 2rem;
         margin: 0;
-        padding: 1rem .5rem;
+
       }
 
       h3 {
         font-size: 1.8rem;
         text-transform: uppercase;
+        margin-right: 1rem;
       }
 
       p {
+        text-transform: uppercase;
         font-size: 1.3rem;
       }
     }

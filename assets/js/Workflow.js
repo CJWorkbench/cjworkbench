@@ -18,9 +18,9 @@ export function MaybeNotYourWorkflow(props) {
 
   let suggestion = null
   if (props.isLoggedIn) {
-    suggestion = <p className="suggestion"><strong>Duplicate</strong> this workflow to save changes.</p>
+    suggestion = <p className="suggestion">Duplicate it to save your changes</p>
   } else {
-    suggestion = <p className="suggestion"><a href={`/account/login/?next=/workflows/${props.workflowId}`}>Sign in or sign up</a> to save workflows.</p>
+    suggestion = <p className="suggestion"><a href={`/account/login/?next=/workflows/${props.workflowId}`}>Sign in</a> to save your changes</p>
   }
 
   let inner, className
@@ -28,8 +28,8 @@ export function MaybeNotYourWorkflow(props) {
     className = 'is-anonymous'
     inner = (
       <F>
-        <h3>Demo Workflow</h3>
-        <p className="message">Changes won't be saved.</p>
+        <h3>This is a Demo workflow -</h3>
+        <p className="message"></p>
         {suggestion}
       </F>
     )
@@ -37,8 +37,8 @@ export function MaybeNotYourWorkflow(props) {
     className = 'is-read-only'
     inner = (
       <F>
-        <h3>Read-Only Workflow</h3>
-        <p className="message">You are viewing a shared workflow.</p>
+        <h3>You are viewing a shared workflow -</h3>
+        <p className="message"></p>
         {suggestion}
       </F>
     )
