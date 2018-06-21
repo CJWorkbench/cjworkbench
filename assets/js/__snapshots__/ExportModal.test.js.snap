@@ -60,7 +60,7 @@ exports[`ExportModal should match snapshot 1`] = `
                       class="modal-title"
                     >
                       <div
-                        class="t-d-gray title-4"
+                        class="modal-title"
                       >
                         EXPORT DATA
                       </div>
@@ -241,7 +241,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         className="modal-title"
                       >
                         <div
-                          className="t-d-gray title-4"
+                          className="modal-title"
                         >
                           EXPORT DATA
                         </div>

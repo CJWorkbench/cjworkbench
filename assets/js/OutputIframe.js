@@ -66,7 +66,7 @@ class OutputIframe extends React.Component {
     return (
       <Modal isOpen={this.state.setPublicModalOpen} toggle={this.toggleModals} className='test-setpublic-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
-          <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
+          <div className='modal-title'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
         <ModalBody >
           <div className='title-3 mb-3'>This workflow is currently private</div>
@@ -86,17 +86,18 @@ class OutputIframe extends React.Component {
     return (
       <Modal isOpen={this.state.embedIframeModalOpen} toggle={this.toggleModals} className='test-setpublic-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
-          <div className='t-d-gray title-4'>EMBED THIS WORKFLOW</div>
+          <div className='modal-title'>EMBED THIS CHART</div>
         </ModalHeader>
         <ModalBody >
-          <pre>
-            <code className="content-3 t-d-gray">
+          <span className="info">Paste this code into any webpage HTML</span>
+          <div className="code-snippet">
+            <code className="chart-embed">
               {iframeCode}
             </code>
-          </pre>
+          </div>
         </ModalBody>
-        <div className="modal-footer ">
-          <div onClick={this.toggleEmbedIframeModal} className='button-gray action-button mr-4'>OK</div>
+        <div className="modal-footer">
+          <div onClick={this.toggleEmbedIframeModal} className='button-gray action-button'>OK</div>
         </div>
       </Modal>
     )

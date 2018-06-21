@@ -127,7 +127,7 @@ export default class WorkflowNavBar extends React.Component {
     var setPublicModal =
       <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-setpublic-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
-          <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
+          <div className='modal-title'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
         <ModalBody >
           <div className='title-3 mb-3'>This workflow is currently private</div>
@@ -144,7 +144,7 @@ export default class WorkflowNavBar extends React.Component {
     var shareModal =
       <Modal isOpen={this.state.modalsOpen} toggle={this.toggleModals} className='test-share-modal'>
         <ModalHeader toggle={this.toggleModals} className='dialog-header modal-header d-flex align-items-center' >
-          <div className='t-d-gray title-4'>SHARE THIS WORKFLOW</div>
+          <div className='modal-title'>SHARE THIS WORKFLOW</div>
         </ModalHeader>
         <ModalBody >
           <FormGroup>

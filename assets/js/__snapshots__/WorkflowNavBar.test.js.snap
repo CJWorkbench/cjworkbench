@@ -360,7 +360,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
           className="modal-title"
         >
           <div
-            className="t-d-gray title-4"
+            className="modal-title"
           >
             SHARE THIS WORKFLOW
           </div>
@@ -439,7 +439,7 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
           className="modal-title"
         >
           <div
-            className="t-d-gray title-4"
+            className="modal-title"
           >
             SHARE THIS WORKFLOW
           </div>
@@ -924,7 +924,7 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
           className="modal-title"
         >
           <div
-            className="t-d-gray title-4"
+            className="modal-title"
           >
             SHARE THIS WORKFLOW
           </div>

@@ -118,7 +118,7 @@ export default class ExportModal extends React.Component {
     return (
       <Modal isOpen={true} className={this.props.className}>
         <ModalHeader className='dialog-header modal-header d-flex align-items-center'>
-          <div className='t-d-gray title-4'>EXPORT DATA</div>
+          <div className='modal-title'>EXPORT DATA</div>
           <div className='icon-close' onClick={this.props.onClose}></div>
         </ModalHeader>
         <ModalBody>

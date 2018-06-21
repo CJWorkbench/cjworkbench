@@ -33,6 +33,7 @@
 	font-size: 2.5rem;
 	font-weight: 300;
 	line-height: 2.5rem;
+	@extend %font-nunito-regular;
 }
 
 .title-2 {

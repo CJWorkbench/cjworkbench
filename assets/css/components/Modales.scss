@@ -13,26 +13,42 @@
     border-radius:0px;
 
     .modal-header {
+      border-radius: 0px;
       height: 6rem;
       padding: 2rem;
       background-color: $modal-color;
-      border-bottom: 1px solid $Vlight-gray;
+      border-bottom: 0;
       display: flex;
       align-items: center;
 
       .modal-title {
+      @extend .title-3;
+      font-weight: bold;
+      color: $white;
+      opacity: .9;
       width: 100%;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
       align-items: center;
+
+        //Close modal button
+        .icon-close {
+          cursor: pointer;
+          font-size:1.5rem;
+          color:$white;
+          opacity: .6;
+          &:hover{opacity: 1}
+        }
       }
 
-      //Close modal button
       .close {
-        font-size:2rem;
-        color:$light-gray;
-        &:hover{color:$dark-gray;}
+        cursor: pointer;
+        font-size:2.5rem;
+        color:$white;
+        opacity: .6;
+        &:hover{opacity: 1}
+
       }
     }
 
@@ -59,6 +75,26 @@
         background-color:$Vlight-gray;
         &:focus{box-shadow: none}
       }
+
+      .info {
+        @extend .info-2;
+        color:$medium-gray;
+        margin-bottom: .5rem;
+      }
+      .code-snippet{
+        background-color: $dark-accent--medium;
+        border-radius: 3px;
+        padding: 1rem;
+
+        .chart-embed {
+          color: $brand-text--dark;
+          @extend .content-3;
+          margin-bottom: 0;
+          border-radius: 3px;
+          word-wrap:break-word;
+        }
+      }
+
     }
 
     //When a list is the content of the modal body
@@ -78,7 +114,7 @@
     display: flex;
     justify-content: flex-end;
     border-top: 1px solid $Vlight-gray;
-    background-color: $modal-color;
+
 
     /* Option to toggle alert in modal footer in version select */
     .alert-setting-modal {
