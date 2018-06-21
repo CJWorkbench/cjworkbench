@@ -133,14 +133,14 @@ textarea:focus, input:focus{
   color:#686768;
 }
 
-// focus states
+
 
 .custom-select {
   background-size: 0px;
-}
-
-.custom-select:focus{
+  &:focus{
   border: 2px solid $brand-workspace;
+  box-shadow: none;
+  }
 }
 
 .module-parameter:focus{
@@ -215,7 +215,7 @@ select.form-control {
   // By default, notes aren't shown. We only show them if they are in focused or
   // if they are non-empty. But we cannot set display:none, because the user
   // may call notesInputRef.current.focus() before they become visible.
-  padding: .5rem 0;
+  padding: .5rem 0 .2rem 0;
   &:not(.visible) {
     overflow: hidden;
     margin: 0;
