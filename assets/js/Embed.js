@@ -85,12 +85,13 @@ export default class Embed extends React.Component {
         </div>
         <div className={"embed-overlay" + (this.state.overlayOpen ? ' open' : '')} onClick={this.toggleOverlay}>
           <div className="embed-share-links" onClick={(e) => {e.stopPropagation()}}>
-            <h1>Embed live chart using this code:</h1>
-            <pre>
+            <h1>EMBED THIS CHART</h1>
+            <h2>Paste this code into any webpage HTML</h2>
+            <div className ="code-snippet">
               <code className="embed--share-code">
                 {iframeCode}
               </code>
-            </pre>
+            </div>
           </div>
         </div>
       </div>

@@ -96,12 +96,36 @@
 
 }
 
+.embed-share-links {
+  color:white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
 
-.embed--share-code{
-  color: #fff;
-  font-size: 1.5rem;
-  margin-top: 1rem;
+  .embed-share-links--list {
+    padding:0;
+    margin:0;
+    li {
+      display: inline-block;
+    }
+  }
+  .code-snippet {
+    padding: 1.5rem;
+    border-radius: 3px;
+    background-color: $white;
+    width:75%;
+    display: flex;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-top: 1rem;
+    .embed--share-code {
+      color:$brand-workspace;
+    }
+  }
 }
+
 
 .embed-overlay {
   justify-content: center;
@@ -115,16 +139,5 @@
   display: none;
   &.open {
     display:flex;
-  }
-}
-.embed-share-links {
-  color: white;
-  text-align: center;
-  .embed-share-links--list {
-    padding:0;
-    margin:0;
-    li {
-      display: inline-block;
-    }
   }
 }
