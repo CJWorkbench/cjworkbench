@@ -61,12 +61,11 @@ class TestLesson(LessonTest):
         self.expect_highlight(1, '.wf-module[data-module-name="Filter"]')
         self.select_column('column', 'affordable_units', wait=True) # wait for module load
         b.select('condition', 'Greater than')
-        b.fill_in('value', 200)
+        b.fill_in('value', 200, wait=True)  # wait for field to appear
         b.click_whatever('h2') # blur, to commit data
 
-        time.sleep(5) # FIXME this gets around a server race condition, which seems to appear only on Mac (not Linux)
-
-        self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]')
+        self.expect_highlight(2, '.wf-module[data-module-name="Column Chart"]',
+                             wait=True)  # wait for lesson to update
         # bug in the test: it's hard to click the column chart without changing
         # anything. But we'll try.
         b.click_whatever(
