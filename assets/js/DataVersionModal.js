@@ -190,6 +190,7 @@ export class DataVersionModal extends React.PureComponent {
             onSubmit={this.onChangeNotificationsEnabled}
             />
           <button
+            name="load"
             disabled={this.state.selectedFetchVersionId === this.props.selectedFetchVersionId}
             onClick={this.onSubmit}
             >Load</button>
