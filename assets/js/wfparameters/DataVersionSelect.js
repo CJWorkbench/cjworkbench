@@ -76,11 +76,6 @@ class DataVersionSelect extends React.Component {
     );
   }
 
-  // Set action to take when a user clicks on the notification icon
-  componentDidMount() {
-    this.props.setClickNotification(this.toggleModal);
-  }
-
   // If the workflow revision changes, reload the versions in case they've changed too
   // TODO: Is this still necessary?
   componentWillReceiveProps(nextProps) {
@@ -236,7 +231,6 @@ DataVersionSelect.propTypes = {
   wfModuleId:           PropTypes.number.isRequired,
   revision:             PropTypes.number.isRequired,
   api:                  PropTypes.object.isRequired,
-  setClickNotification: PropTypes.func.isRequired,
   notifications:        PropTypes.bool,
   testing:              PropTypes.bool            // for testing only
 };

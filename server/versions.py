@@ -90,7 +90,7 @@ def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
         ChangeDataVersionCommand.create(wfm, version_added)  # also notifies client
 
         for output_delta in output_deltas:
-            notifications.email_output_delta(output_delta)
+            email_output_delta(output_delta)
     else:
         # no new data version, but we still want client to update WfModule status and last update check time
         notify_client_workflow_version_changed(wfm.workflow)

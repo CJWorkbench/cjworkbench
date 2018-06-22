@@ -1,9 +1,9 @@
-from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseForbidden
+from django.http import HttpRequest, HttpResponse, HttpResponseNotFound, HttpResponseForbidden, HttpResponseBadRequest
 from rest_framework import status
 from rest_framework.decorators import api_view, renderer_classes, permission_classes
 from rest_framework.response import Response
 from rest_framework.renderers import JSONRenderer
-from django.utils import timezone
+from django.utils import dateparse, timezone
 from django.shortcuts import get_object_or_404
 from server.models import WfModule, StoredObject
 from server.serializers import WfModuleSerializer
@@ -88,14 +88,6 @@ def patch_update_settings(wf_module, data):
     ChangeWfModuleUpdateSettingsCommand.create(wf_module, auto_update_data, next_update, interval)
 
 
-def patch_wfmodule(wf_module, data):
-    # Just patch it using the built-in Django Rest Framework methods.
-    with wf_module.workflow.cooperative_lock():
-        serializer = WfModuleSerializer(wf_module, data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-
-
 def get_simple_column_types(table):
     # Get simplified column types of a table
     # and return as a list in the order of the columns
@@ -154,7 +146,8 @@ def wfmodule_detail(request, pk, format=None):
                     wf_module.set_is_collapsed(request.data['collapsed'], notify=False)
 
                 if 'notifications' in request.data:
-                    patch_wfmodule(wf_module, request.data)
+                    wf_module.notifications = bool(request.data['notifications'])
+                    wf_module.save()
 
         except Exception as e:
             return Response({'message': str(e), 'status_code': 400}, status=status.HTTP_400_BAD_REQUEST)
@@ -365,13 +358,35 @@ def wfmodule_dataversion(request, pk, format=None):
         if isinstance(wf_module, HttpResponse): return wf_module
 
         with wf_module.workflow.cooperative_lock():
-            ChangeDataVersionCommand.create(wf_module, datetime.datetime.strptime(request.data['selected'], "%Y-%m-%dT%H:%M:%S.%fZ").replace(tzinfo=pytz.UTC))
+            date_s = request.data.get('selected', '')
+            date = dateparse.parse_datetime(date_s)
 
-            stored_object_at_version = StoredObject.objects.filter(wf_module=wf_module).get(stored_at=request.data['selected'])
+            if not date:
+                return HttpResponseBadRequest(f'"selected" parameter must be an ISO8601 date; got "{date_s}"')
 
-            if not stored_object_at_version.read:
-                stored_object_at_version.read = True
-                stored_object_at_version.save()
+            try:
+                # TODO maybe let's not use microsecond-precision numbers as
+                # StoredObject IDs and then send the client
+                # millisecond-precision identifiers. We _could_ just pass
+                # clients the IDs, for instance.
+                #
+                # Select a version within 1ms of the (rounded _or_ truncated)
+                # version we sent the client.
+                #
+                # (Let's not change the way we JSON-format dates just to avoid
+                # this hack. That would be even worse.)
+                stored_object = wf_module.stored_objects.get(
+                    stored_at__gte=date - timedelta(microseconds=500),
+                    stored_at__lt=date + timedelta(milliseconds=1)
+                )
+            except StoredObject.DoesNotExist:
+                return HttpResponseNotFound(f'No StoredObject with stored_at={date_s}')
+
+            ChangeDataVersionCommand.create(wf_module, stored_object.stored_at)
+
+            if not stored_object.read:
+                stored_object.read = True
+                stored_object.save()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 

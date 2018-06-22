@@ -1,6 +1,7 @@
 // UI for a single module within a workflow
 
 import React from 'react'
+import DataVersionModal from '../DataVersionModal'
 import WfParameter from '../WfParameter'
 import WfModuleContextMenu from '../WfModuleContextMenu'
 import EditableNotes from '../EditableNotes'
@@ -36,6 +37,7 @@ export class WfModule extends React.PureComponent {
     isLessonHighlightNotes: PropTypes.bool.isRequired,
     isLessonHighlightCollapse: PropTypes.bool.isRequired,
     revision:           PropTypes.number.isRequired,
+    onClearNotifications: PropTypes.func.isRequired, // func() => undefined
   }
 
   constructor(props) {
@@ -48,8 +50,6 @@ export class WfModule extends React.PureComponent {
     this.getParamMenuItems = this.getParamMenuItems.bind(this);
     this.removeModule = this.removeModule.bind(this);
     this.setNotifications = this.setNotifications.bind(this);
-    this.setClickNotification = this.setClickNotification.bind(this);
-    this.onClickNotification = this.onClickNotification.bind(this);
     this.setModuleRef = this.setModuleRef.bind(this);
     this.moduleRef = null;
     this.notesInputRef = React.createRef();
@@ -60,24 +60,20 @@ export class WfModule extends React.PureComponent {
       isNoteForcedVisible: false,
       notifications: this.props.wfModule.notifications,
       hasUnseenNotification: this.props.wfModule.has_unseen_notification,
+      isDataVersionModalOpen: false,
       isDragging: false,
     }
-  }
-
-  // pass a function to all wf_parameters to allow them to overload
-  // the function that runs when a user clicks on the notification
-  // icon
-  setClickNotification(cb) {
-    this.clickNotification = cb;
   }
 
   clickNotification() {
     return false;
   }
 
-  onClickNotification() {
-    store.dispatch(clearNotificationsAction(this.props.wfModule.id));
-    this.clickNotification();
+  onClickNotification = () => {
+    this.props.onClearNotifications(this.props.wfModule.id)
+    this.setState({
+      isDataVersionModalOpen: true,
+    })
   }
 
   componentWillReceiveProps(newProps) {
@@ -238,6 +234,12 @@ export class WfModule extends React.PureComponent {
     ));
   }
 
+  onCloseDataVersionModal = () => {
+    this.setState({
+      isDataVersionModalOpen: false,
+    })
+  }
+
   setModuleRef(ref) {
     this.moduleRef = ref;
   }
@@ -269,7 +271,6 @@ export class WfModule extends React.PureComponent {
           getParamText={this.getParamText}
           getParamMenuItems={this.getParamMenuItems}
           setParamText={this.setParamText}
-          setClickNotification={this.setClickNotification}
           notifications={wfModule.notifications}
         />)
       });
@@ -349,6 +350,17 @@ export class WfModule extends React.PureComponent {
 
     const moduleIcon = 'icon-' + module.icon + ' WFmodule-icon';
 
+    let maybeDataVersionModal = null
+    if (this.state.isDataVersionModalOpen) {
+      maybeDataVersionModal = (
+        <DataVersionModal
+          wfModuleId={wfModule.id}
+          notificationsEnabled={wfModule.notifications}
+          onClose={this.onCloseDataVersionModal}
+          />
+      )
+    }
+
     // Putting it all together: name, status, parameters, output
     return (
       <div onClick={this.click} className={'wf-module' + (this.props.isLessonHighlight ? ' lesson-highlight' : '') + (this.state.isCollapsed ? ' collapsed' : ' expanded')} data-module-name={module.name}>
@@ -379,8 +391,9 @@ export class WfModule extends React.PureComponent {
             </div>
           </div>
         </div>
+        {maybeDataVersionModal}
       </div>
-    ) || null;
+    )
   }
 }
 
@@ -425,12 +438,20 @@ function mapStateToProps(state, ownProps) {
     isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', moduleName }),
     isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', moduleName }),
     isReadOnly: state.workflow.read_only,
-
+    isAnonymous: state.workflow.is_anonymous,
   }
 }
 
-// TODO replace "store.dispatch" with mapDispatchToProps()
+// TODO replace all "store.dispatch" above with mapDispatchToProps()
+function mapDispatchToProps(dispatch) {
+  return {
+    onClearNotifications(wfModuleId) {
+      store.dispatch(clearNotificationsAction(wfModuleId))
+    },
+  }
+}
 
 export default connect(
   mapStateToProps,
+  mapDispatchToProps
 )(WfModule)
