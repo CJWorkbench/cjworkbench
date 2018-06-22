@@ -65,7 +65,7 @@ export default class Workflows extends React.Component {
               <div className="content-3">NEW</div>
               <div className="d-flex">
                 <span className="icon-star"></span>
-                <div className=" title-2 ">TRAINING</div>
+                <div className=" title-2 ">TUTORIALS</div>
               </div>
             </div>
             <p className="content-2">Learn how to work with data without coding</p>

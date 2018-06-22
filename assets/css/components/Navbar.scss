@@ -52,6 +52,7 @@
 
     .LS-toggle--link,
     .WF-toggle--link {
+      text-transform: uppercase;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -73,7 +74,7 @@
       }
 
       .LS-link--under{
-        width:7rem;
+        width:8.5rem;
       }
     }
   }
