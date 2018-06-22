@@ -117,7 +117,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             revision={707}
-            setClickNotification={[Function]}
             setParamText={[Function]}
             updateSettings={
               Object {
@@ -154,7 +153,6 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
               }
             }
             revision={707}
-            setClickNotification={[Function]}
             setParamText={[Function]}
             updateSettings={
               Object {
