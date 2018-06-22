@@ -10,13 +10,13 @@ import StatusLine from './StatusLine'
 import {
   store,
   setWfModuleCollapsedAction,
-  updateWfModuleAction,
   clearNotificationsAction,
   setSelectedWfModuleAction
 } from '../workflow-reducer'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import lessonSelector from '../lessons/lessonSelector'
+import { createSelector } from 'reselect'
 
 
 // ---- WfModule ----
@@ -38,6 +38,7 @@ export class WfModule extends React.PureComponent {
     isLessonHighlightCollapse: PropTypes.bool.isRequired,
     revision:           PropTypes.number.isRequired,
     onClearNotifications: PropTypes.func.isRequired, // func() => undefined
+    fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
   }
 
   constructor(props) {
@@ -49,7 +50,6 @@ export class WfModule extends React.PureComponent {
     this.getParamText = this.getParamText.bind(this);
     this.getParamMenuItems = this.getParamMenuItems.bind(this);
     this.removeModule = this.removeModule.bind(this);
-    this.setNotifications = this.setNotifications.bind(this);
     this.setModuleRef = this.setModuleRef.bind(this);
     this.moduleRef = null;
     this.notesInputRef = React.createRef();
@@ -226,14 +226,6 @@ export class WfModule extends React.PureComponent {
     this.setState({ notes: this.props.wfModule.notes });
   }
 
-  setNotifications() {
-    store.dispatch(
-      updateWfModuleAction(
-        this.props.wfModule.id,
-        { notifications: !this.props.wfModule.notifications }
-    ));
-  }
-
   onCloseDataVersionModal = () => {
     this.setState({
       isDataVersionModalOpen: false,
@@ -291,7 +283,7 @@ export class WfModule extends React.PureComponent {
     );
 
     let alertButton;
-    if (!this.props.isReadOnly && !this.props.isAnonymous) {
+    if (this.props.fetchModuleExists && (!this.props.isReadOnly && !this.props.isAnonymous)) {
       let className = 'notifications'
       if (this.state.notifications) className += ' enabled'
       if (this.state.hasUnseenNotification) className += ' has-unseen'
@@ -430,6 +422,16 @@ function propsToModuleName(props) {
   )
 }
 
+const getWorkflow = ({ workflow }) => workflow
+/**
+ * Find first WfModule that has a `.loads_data` ModuleVersion.
+ */
+const hasFetchWfModule = createSelector([ getWorkflow ], (workflow) => {
+  return (workflow.wf_modules || []).some(wfModule => {
+    return wfModule.module_version && wfModule.module_version.module && wfModule.module_version.module.loads_data
+  }) || null
+})
+
 function mapStateToProps(state, ownProps) {
   const { testHighlight } = lessonSelector(state)
   const moduleName = propsToModuleName(ownProps)
@@ -439,6 +441,7 @@ function mapStateToProps(state, ownProps) {
     isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', moduleName }),
     isReadOnly: state.workflow.read_only,
     isAnonymous: state.workflow.is_anonymous,
+    fetchModuleExists: hasFetchWfModule(state),
   }
 }
 

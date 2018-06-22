@@ -227,14 +227,18 @@ const getFetchVersions = memoize(versions => {
   })
 })
 
-function mapStateToProps(state) {
+function mapStateToProps(state, { wfModuleId }) {
   const fetchWfModule = getFetchWfModule(state)
+
+  const wfModule = state.workflow.wf_modules.find(m => m.id === wfModuleId)
+  const notificationsEnabled = wfModule ? wfModule.notifications : false
 
   return {
     fetchWfModuleId: fetchWfModule ? fetchWfModule.id : null,
     fetchWfModuleName: fetchWfModule ? fetchWfModule.module_version.module.name : null,
     fetchVersions: fetchWfModule ? getFetchVersions(fetchWfModule.versions.versions || []) : null,
     selectedFetchVersionId: fetchWfModule ? fetchWfModule.versions.selected : null,
+    notificationsEnabled,
   }
 }
 

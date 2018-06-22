@@ -1,6 +1,8 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import { DataVersionModal } from './DataVersionModal'
+import ConnectedDataVersionModal, { DataVersionModal } from './DataVersionModal'
+import { Provider } from 'react-redux'
+import configureMockStore from 'redux-mock-store'
 
 describe('DataVersionModal', () => {
   const Versions = [
@@ -79,5 +81,62 @@ describe('DataVersionModal', () => {
     expect(w.prop('onChangeNotificationsEnabled')).toHaveBeenCalledWith(124, true)
     w.setProps({ notificationsEnabled: false }) // simulate onChangeNotificationsEnabled()
     expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(false)
+  })
+
+  describe('mapStateToProps', () => {
+    // Assume this modal is never shown if there is no fetch module
+    const IdealState = {
+      workflow: {
+        wf_modules: [
+          {
+            id: 123,
+            notifications: true,
+            module_version: { module: { loads_data: true, name: 'Fetch Stuff' } },
+            versions: {
+              versions: [ 
+                [ '2018-06-22T20:09:41.649Z', true ],
+                [ '2018-06-23T20:09:41.649Z', false ],
+              ],
+              selected: '2018-06-22T20:09:41.649Z',
+            }
+          },
+          {
+            id: 124,
+            name: 'Filter Stuff',
+            notifications: true,
+            module_version: { module: { loads_data: false, name: 'Filter Stuff' } },
+          }
+        ]
+      }
+    }
+
+    const connectedWrapper = (state) => {
+      const store = configureMockStore([])(state)
+      return _wrapper = mount(
+        <Provider store={store}>
+          <ConnectedDataVersionModal
+            wfModuleId={124}
+            onClose={jest.fn()}
+            />
+        </Provider>
+      )
+    }
+
+    it('should find notificationsEnabled', () => {
+      const w = connectedWrapper(IdealState)
+      expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(true)
+    })
+
+    it('should set fetchModuleName', () => {
+      const w = connectedWrapper(IdealState)
+      expect(w.find('p.introduction').text()).toMatch(/“Fetch Stuff”/)
+    })
+
+    it('should set fetchVersions', () => {
+      const w = connectedWrapper(IdealState)
+
+      expect(w.find('label.selected time[time="2018-06-22T20:09:41.649Z"]').length).toBe(1)
+      expect(w.find('label.unseen time[time="2018-06-23T20:09:41.649Z"]').length).toBe(1)
+    })
   })
 })
