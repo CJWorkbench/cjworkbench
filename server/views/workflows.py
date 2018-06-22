@@ -150,7 +150,7 @@ def _get_anonymous_workflow_for(workflow: Workflow,
                                     anonymous_owner_session_key=session_key)
     except Workflow.DoesNotExist:
         if workflow.example:
-            log_user_event(request.user or 'Anonymous',
+            log_user_event(request.user,
                            'Opened Demo Workflow',
                            {'name': workflow.name})
         return workflow.duplicate_anonymous(session_key)
@@ -257,12 +257,7 @@ def workflow_addmodule(request, pk, format=None):
     # always add the latest version of a module (do we need ordering on the objects to ensure last is always latest?)
     module_version = ModuleVersion.objects.filter(module=module).last()
 
-    log_user_event(request.user, 'Add Module', {'name': module.name, 'id_name':module.id_name})
-
-    watch_list = ['columnchart', 'linechart', 'loadurl', 'twitter', 'googlesheets']
-
-    if module.id_name in watch_list:
-        log_user_event(request.user, 'Add ' + module.name, {'name': module.name, 'id_name':module.id_name})
+    log_user_event(request.user, 'Add Module ' + module.name, {'name': module.name, 'id_name':module.id_name})
 
     with workflow.cooperative_lock():
         delta = AddModuleCommand.create(workflow, module_version, insert_before)
