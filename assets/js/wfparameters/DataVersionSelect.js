@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import DataVersionModal from '../DataVersionModal'
 import { connect } from 'react-redux';
 
-class DataVersionSelect extends React.PureComponent {
+export class DataVersionSelect extends React.PureComponent {
   static propTypes = {
     wfModuleId: PropTypes.number.isRequired,
     currentVersionIndex: PropTypes.number, // or null for no selected version
@@ -25,7 +25,12 @@ class DataVersionSelect extends React.PureComponent {
     let inner
 
     if (nVersions === 0) {
-      inner = <div className="no-versions">No data loaded</div>
+      inner = (
+        <React.Fragment>
+          <div className="label">Version</div>
+          <div className="no-versions">–</div>
+        </React.Fragment>
+      )
     } else if (isReadOnly) {
       inner = (
         <div className="read-only">Version {nVersions - currentVersionIndex} of {nVersions}</div>
@@ -54,11 +59,14 @@ class DataVersionSelect extends React.PureComponent {
 }
 
 function mapStateToProps(state, { wfModuleId }) {
+  const isReadOnly = state.workflow.read_only
+
   const wfModule = state.workflow.wf_modules.find(m => m.id === wfModuleId)
   if (!wfModule || !wfModule.versions || !wfModule.versions.selected) {
     return {
       currentVersionIndex: null,
       nVersions: 0,
+      isReadOnly,
     }
   }
 
@@ -68,6 +76,7 @@ function mapStateToProps(state, { wfModuleId }) {
   return {
     currentVersionIndex: index,
     nVersions: versions.length,
+    isReadOnly,
   }
 }
 
