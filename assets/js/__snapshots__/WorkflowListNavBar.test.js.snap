@@ -37,7 +37,7 @@ exports[`WorkflowListNavBar Renders correctly 1`] = `
         href="/lessons/"
       >
         <div>
-          TRAINING
+          Tutorials
         </div>
         <div
           className="LS-link--under"
