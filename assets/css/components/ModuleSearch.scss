@@ -101,7 +101,10 @@
   }
 
   h4 {
+    @extend .info-2;
     color: $light-gray;
+    margin-top: 1rem;
+    text-transform: uppercase;
   }
 
   .module-search-result {
