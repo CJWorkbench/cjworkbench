@@ -1,11 +1,11 @@
 {
   "name": "Scrape HTML",
   "id_name": "urlscraper" ,
-  "category" : "Add data",
+  "category" : "Scrape",
   "icon" : "scraper",
   "description" : "",
   "loads_data": true,
-  "help_url":"modules/add-data/url-scraper",
+  "help_url":"modules/scrapers/url-scraper",
   "parameters": [
     {
       "name": "URLs",

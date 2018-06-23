@@ -1,11 +1,11 @@
 {
   "name": "Scrape table",
   "id_name": "scrapetable" ,
-  "category" : "Add data",
+  "category" : "Scrape",
   "icon" : "scraper",
   "description" : "Scrape an HTML table on a web page",
   "loads_data": true,
-  "help_url":"modules/add-data/scrape-table",
+  "help_url":"modules/scrapers/scrape-table",
   "parameters": [
     {
       "name": "",
