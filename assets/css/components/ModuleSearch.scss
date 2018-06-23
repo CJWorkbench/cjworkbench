@@ -88,8 +88,9 @@
     overflow-y: auto;
   }
 
-  .module-search-result-group + .module-search-result-group {
+  .module-search-result-group  {
     border-top: 1px solid $dark-accent--soft;
+    margin-bottom: 1.5rem;
   }
 
   h4, .module-search-result {
