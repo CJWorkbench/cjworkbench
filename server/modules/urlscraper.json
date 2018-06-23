@@ -5,7 +5,7 @@
   "icon" : "scraper",
   "description" : "",
   "loads_data": true,
-  "help_url":"modules/scrapers/url-scraper",
+  "help_url":"modules/scrape/url-scraper",
   "parameters": [
     {
       "name": "URLs",

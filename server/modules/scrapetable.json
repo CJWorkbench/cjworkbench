@@ -5,7 +5,7 @@
   "icon" : "scraper",
   "description" : "Scrape an HTML table on a web page",
   "loads_data": true,
-  "help_url":"modules/scrapers/scrape-table",
+  "help_url":"modules/scrape/scrape-table",
   "parameters": [
     {
       "name": "",
