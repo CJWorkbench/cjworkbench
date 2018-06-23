@@ -144,9 +144,9 @@ export class ImportModuleFromGitHub extends React.Component {
 
     return (
       <div >
-        <Modal isOpen={true} className='modal-dialog'>
-          <ModalHeader>
-            <div className='title-4 t-d-gray'>IMPORT CUSTOM MODULE</div>
+        <Modal isOpen={true}>
+          <ModalHeader toggle={this.props.closeModal} className='dialog-header'>
+            <span className="modal-title">IMPORT CUSTOM MODULE</span>
           </ModalHeader>
           <ModalBody >
             <form onSubmit={this.handleSubmit}>

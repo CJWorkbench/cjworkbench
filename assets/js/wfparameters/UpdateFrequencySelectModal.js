@@ -69,95 +69,97 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
     const { isAutoUpdate, isEmailUpdates, timeNumber, timeUnit } = this.state
 
     return (
-      <Modal isOpen={true} onClosed={this.props.onCancel} className='modal-dialog'>
-        <ModalHeader toggle={this.toggleModal} className='dialog-header'>
-          <span className='title-4 t-d-gray'>WORKFLOW UPDATE</span>
-        </ModalHeader>
-        <ModalBody className="update-frequency-form">
-          <form
-            id="updateFrequencySelectModalForm"
-            method="post"
-            action="#"
-            onCancel={this.props.onCancel}
-            onSubmit={this.onSubmit}
-            >
-            <div className={`big-radio big-radio-auto-update-true ${isAutoUpdate ? 'big-radio-checked' : 'big-radio-unchecked'}`}>
-              <label>
-                <input
-                type="radio"
-                name="isAutoUpdate"
-                value="true"
-                checked={isAutoUpdate}
-                onChange={this.onChangeAutoUpdate}
-                />
-                <span>On</span>
-              </label>
-              <div className="big-radio-details">
-                <p>Automatically update this workflow with the newest data (old versions will be saved).</p>
-                <Label for="updateFrequencySelectTimeNumber">Check for update every</Label>
-                <FormGroup className='update-freq-settings'>
-                  <Input
-                    type="number"
-                    name="timeNumber"
-                    value={timeNumber}
-                    onChange={this.onChangeTimeNumber}
-                    disabled={!isAutoUpdate}
-                    min='1'
-                    max='60'
-                    id="updateFrequencySelectTimeNumber"
-                    className='number-field t-d-gray content-2'>
-                  </Input>
-                  <Input
-                    type="select"
-                    name="timeUnit"
-                    value={timeUnit}
-                    onChange={this.onChangeTimeUnit}
-                    disabled={!isAutoUpdate}
-                    className='ml-3 input-dropdown'
-                  >
-                    <option value="minutes">minutes</option>
-                    <option value="hours">hours</option>
-                    <option value="days">days</option>
-                    <option value="weeks">weeks</option>
-                  </Input>
-                </FormGroup>
-                <FormGroup check>
-                  <Label check>
+    
+        <Modal isOpen={true}>
+          <ModalHeader toggle={this.props.closeModal} className='dialog-header'>
+            <span className="modal-title">WORKFLOW UPDATE</span>
+          </ModalHeader>
+          <ModalBody className="update-frequency-form">
+            <form
+              id="updateFrequencySelectModalForm"
+              method="post"
+              action="#"
+              onCancel={this.props.onCancel}
+              onSubmit={this.onSubmit}
+              >
+              <div className={`big-radio big-radio-auto-update-true ${isAutoUpdate ? 'big-radio-checked' : 'big-radio-unchecked'}`}>
+                <label>
+                  <input
+                  type="radio"
+                  name="isAutoUpdate"
+                  value="true"
+                  checked={isAutoUpdate}
+                  onChange={this.onChangeAutoUpdate}
+                  />
+                  <span>On</span>
+                </label>
+                <div className="big-radio-details">
+                  <p>Automatically update this workflow with the newest data (old versions will be saved).</p>
+                  <Label for="updateFrequencySelectTimeNumber">Check for update every</Label>
+                  <FormGroup className='update-freq-settings'>
                     <Input
-                      type="checkbox"
-                      name="isEmailUpdates"
-                      checked={isEmailUpdates}
-                      onChange={this.onChangeEmailUpdates}
+                      type="number"
+                      name="timeNumber"
+                      value={timeNumber}
+                      onChange={this.onChangeTimeNumber}
                       disabled={!isAutoUpdate}
-                      />{' '}
-                    Email me when data changes
-                  </Label>
-                </FormGroup>
+                      min='1'
+                      max='60'
+                      id="updateFrequencySelectTimeNumber"
+                      className='number-field t-d-gray content-2'>
+                    </Input>
+                    <Input
+                      type="select"
+                      name="timeUnit"
+                      value={timeUnit}
+                      onChange={this.onChangeTimeUnit}
+                      disabled={!isAutoUpdate}
+                      className='ml-3 input-dropdown'
+                    >
+                      <option value="minutes">minutes</option>
+                      <option value="hours">hours</option>
+                      <option value="days">days</option>
+                      <option value="weeks">weeks</option>
+                    </Input>
+                  </FormGroup>
+                  <FormGroup check>
+                    <Label check>
+                      <Input
+                        type="checkbox"
+                        name="isEmailUpdates"
+                        checked={isEmailUpdates}
+                        onChange={this.onChangeEmailUpdates}
+                        disabled={!isAutoUpdate}
+                        />{' '}
+                      Email me when data changes
+                    </Label>
+                  </FormGroup>
+                </div>
               </div>
-            </div>
 
-            <div className={`big-radio big-radio-auto-update-false ${isAutoUpdate ? 'big-radio-unchecked' : 'big-radio-checked'}`}>
-              <label>
-                <input
-                type="radio"
-                name="isAutoUpdate"
-                value="false"
-                checked={!isAutoUpdate}
-                onChange={this.onChangeAutoUpdate}
-                />
-                <span>Off</span>
-              </label>
-              <div className="big-radio-details">
-                <p>Check for new data manually.</p>
+              <div className={`big-radio big-radio-auto-update-false ${isAutoUpdate ? 'big-radio-unchecked' : 'big-radio-checked'}`}>
+                <label>
+                  <input
+                  type="radio"
+                  name="isAutoUpdate"
+                  value="false"
+                  checked={!isAutoUpdate}
+                  onChange={this.onChangeAutoUpdate}
+                  />
+                  <span>Off</span>
+                </label>
+                <div className="big-radio-details">
+                  <p>Check for new data manually.</p>
+                </div>
               </div>
-            </div>
-          </form>
-        </ModalBody>
-        <ModalFooter>
-          <button type="cancel" className="action-button button-gray" form="updateFrequencySelectModalForm">Cancel</button>
-          <button type="submit" className="action-button button-blue button-ok" form="updateFrequencySelectModalForm">Apply</button>
-        </ModalFooter>
-      </Modal>
+            </form>
+          </ModalBody>
+          <ModalFooter>
+            <button type="cancel" className="action-button button-gray" form="updateFrequencySelectModalForm">Cancel</button>
+            <button type="submit" className="action-button button-blue button-ok" form="updateFrequencySelectModalForm">Apply</button>
+          </ModalFooter>
+        </Modal>
+
     )
   }
 }
