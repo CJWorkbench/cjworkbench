@@ -145,10 +145,10 @@ class DataVersionSelect extends React.Component {
           <div className='open-modal action-link content-3 ml-2' onClick={this.toggleModal}>
             {versionText}
           </div>
-        
+
           <Modal isOpen={this.state.modalOpen} toggle={this.toggleModal} className='modal-dialog'>
             <ModalHeader toggle={this.toggleModal} className='dialog-header'>
-              <div className='title-4 t-d-gray'>DATA VERSIONS</div>
+              <div>DATA VERSIONS</div>
             </ModalHeader>
             <ModalBody className='list-body'>
               <div>
