@@ -14,6 +14,12 @@
       "default": "0"
     },
     {
+      "name": "Output column",
+      "id_name" : "out_column",
+      "type": "string",
+      "default": "formula output"
+    },
+    {
       "name": "Formula",
       "id_name" : "formula_excel",
       "type": "string",
@@ -28,7 +34,7 @@
       "name": "Apply to all rows",
       "id_name" : "all_rows",
       "type": "checkbox",
-      "default": "True",
+      "default": "False",
       "visible_if": {
         "id_name": "syntax",
         "value": "Excel"
@@ -44,12 +50,6 @@
         "id_name": "syntax",
         "value": "Python"
       }
-    },
-    {
-      "name": "Output column",
-      "id_name" : "out_column",
-      "type": "string",
-      "default": "formula output"
     }
   ]
 }
