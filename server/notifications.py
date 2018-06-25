@@ -35,6 +35,8 @@ def find_output_deltas_to_notify_from_fetched_tables(
     Assumes `old_table` and `new_table` are different.
 
     Must be called within a workflow.cooperative_lock().
+
+    TODO make this easier to unit-test, and then unit-test it.
     """
     # Import here, to prevent recursive import
     from server.dispatch import module_dispatch_render
