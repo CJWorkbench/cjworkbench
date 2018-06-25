@@ -2,9 +2,27 @@
 
 
 .version-item {
+  font-size: 1.3rem;
+  color: $brand-text--dark;
   display: flex;
   align-items: center;
-  width:14.5rem;
+
+  button {
+    // button looks like a link
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: inline;
+    background: inherit;
+    font: inherit;
+    color: $brand-workspace;
+    cursor: pointer;
+    margin-left: .5rem;
+
+    &:hover {
+      color: $link-hover-success;
+    }
+  }
 }
 
 .frequency-item {
@@ -124,7 +142,7 @@
     padding: 0;
     list-style: none;
     max-height: 20rem;
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
     color: $brand-text--dark;
     background: white;
