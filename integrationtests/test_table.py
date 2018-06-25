@@ -107,23 +107,23 @@ class TestTable(LoggedInIntegrationTest):
         self.browser.double_click_whatever(*selector, **kwargs)
 
 
-    def test_edit_cell(self):
-        b = self.browser
-
-        self._create_simple_workflow()
-
-        self._carefully_double_click_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='1')
-        b.fill_text_in_whatever('4', '.react-grid-Cell input', wait=True)  # wait for prompt
-        self._blur()  # commit
-
-        # Wait for edit module to appear, selected and set
-        b.assert_element('.wf-module[data-module-name="Edit Cells"] .module-output--selected', wait=True)
-        b.assert_no_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='1', wait=True)
-        b.assert_element('.react-grid-Cell', text='4', wait=True)
-
-        # Fill in one more edit
-        self._carefully_double_click_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='3')
-        b.fill_text_in_whatever('5', '.react-grid-Cell input', wait=True)  # wait for prompt
-
-        b.click_whatever('i.context-collapse-button.icon-sort-right')
-        b.assert_element('.edited-column', text='int', wait=True)
+    # def test_edit_cell(self):
+    #     b = self.browser
+    #
+    #     self._create_simple_workflow()
+    #
+    #     self._carefully_double_click_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='1')
+    #     b.fill_text_in_whatever('4', '.react-grid-Cell input', wait=True)  # wait for prompt
+    #     self._blur()  # commit
+    #
+    #     # Wait for edit module to appear, selected and set
+    #     b.assert_element('.wf-module[data-module-name="Edit Cells"] .module-output--selected', wait=True)
+    #     b.assert_no_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='1', wait=True)
+    #     b.assert_element('.react-grid-Cell', text='4', wait=True)
+    #
+    #     # Fill in one more edit
+    #     self._carefully_double_click_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='3')
+    #     b.fill_text_in_whatever('5', '.react-grid-Cell input', wait=True)  # wait for prompt
+    #
+    #     b.click_whatever('i.context-collapse-button.icon-sort-right')
+    #     b.assert_element('.edited-column', text='int', wait=True)
