@@ -138,7 +138,7 @@
   }
 
   ol {
-    margin: 0 -2rem;
+    margin: -2rem -2rem 0 -2rem;
     padding: 0;
     list-style: none;
     max-height: 20rem;
@@ -165,7 +165,7 @@
 
       &.selected {
         color: white;
-        background: $brand-workspace;
+        background: $brand-workspace--medium;
       }
 
       &.unseen {
@@ -203,6 +203,25 @@
         p:last-child {
           margin-bottom: 0;
         }
+        .status {
+          font-size: 1.6rem;
+          display: flex;
+          align-items: center;
+
+          .on {color:$brand-workspace;}
+
+          i {
+            margin-top: 0rem;
+            margin-right:.5rem;
+          }
+
+          .icon-notification {color:$brand-workspace;}
+          .icon-no-notification {color:$brand-red;}
+          strong {
+            text-transform: uppercase;
+            margin-left: .5rem;
+          }
+        }
       }
 
       .options {
@@ -213,6 +232,7 @@
         label {
           @extend %action-button;
           @extend %button-gray;
+          margin-bottom: 0;
 
           input[type="checkbox"] { display: none; }
         }

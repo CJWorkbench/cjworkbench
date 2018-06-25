@@ -8,7 +8,7 @@
     &:hover {background:#fcfcfc;}
 
     &.wf-card:hover .context-buttons {
-      a.help-button, button.edit-note, button.context-button {
+      a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled) {
         opacity: 1;
       }
     }
@@ -99,7 +99,7 @@
       flex: 1 0 auto; // grow to the right
       text-align: right;
       white-space: nowrap;
-      margin-right: 1rem;
+      margin-right: .5rem;
 
       &>a, &>button, &>.dropdown>button {
         // Beware: we're highlighting .dropdown _and_ .dropdown>button. So be
@@ -137,7 +137,7 @@
         }
       }
 
-      a.help-button, button.edit-note, button.context-button {
+      a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled) {
         opacity: 0; // only show context buttons when hovering over wf-card
       }
 
@@ -165,6 +165,13 @@
           top:.1rem;
         }
       }
+
+      i.icon-notification {
+        position: relative;
+        font-size: 1.35rem;
+        top: .1rem;
+      }
+
       // Alert icons in modules when notifications are set
       .notification-badge{
         display: inline-block;

@@ -97,13 +97,6 @@ exports[`DataVersionModal matches snapshot 1`] = `
                     class="modal-body"
                   >
                     <form>
-                      <p
-                        class="introduction"
-                      >
-                        These are the versions of “
-                        fetch
-                        ” that we have stored:
-                      </p>
                       <ol>
                         <li>
                           <label
@@ -153,11 +146,11 @@ exports[`DataVersionModal matches snapshot 1`] = `
                           class="status"
                         >
                           <i
-                            class="icon icon-notification"
+                            class="icon icon-no-notification"
                           />
                            Alerts are 
                           <strong>
-                            off
+                             off
                           </strong>
                         </p>
                         <p
@@ -305,13 +298,6 @@ exports[`DataVersionModal matches snapshot 1`] = `
                       <form
                         onSubmit={[Function]}
                       >
-                        <p
-                          className="introduction"
-                        >
-                          These are the versions of “
-                          fetch
-                          ” that we have stored:
-                        </p>
                         <ol>
                           <li
                             key="2000"
@@ -393,11 +379,11 @@ exports[`DataVersionModal matches snapshot 1`] = `
                               className="status"
                             >
                               <i
-                                className="icon icon-notification"
+                                className="icon icon-no-notification"
                               />
                                Alerts are 
                               <strong>
-                                off
+                                 off
                               </strong>
                             </p>
                             <p

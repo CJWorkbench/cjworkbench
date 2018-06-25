@@ -105,12 +105,14 @@ class NotificationsForm extends React.PureComponent {
 
     const className = checked ? 'notifications-enabled' : 'notifications-disabled'
 
+    const iconAlert = checked ? 'icon-notification' : 'icon-no-notification'
+
     return (
       <form onSubmit={this.onSubmit} className={`notifications ${className}`}>
         <div className="text">
-          <p className="status"><i className="icon icon-notification"/> Alerts are <strong>{checked ? 'on' : 'off'}</strong></p>
+          <p className="status"><i className={`icon ${iconAlert}`}/> Alerts are <strong>{checked ? ' on' : ' off'}</strong></p>
           <p className="description">{ checked ? (
-            'If the output of this module changes, I will receive an email'
+            'You will receive and email if the output of this module changes'
           ) : (
             'Turn alerts ON to receive an email if the output of this module changes'
           )}</p>
@@ -180,7 +182,7 @@ export class DataVersionModal extends React.PureComponent {
         <ModalHeader toggle={onClose}>Data Versions </ModalHeader>
         <ModalBody>
           <form onSubmit={this.onSubmit} onCancel={this.onClose}>
-            <p className="introduction">These are the versions of “{fetchWfModuleName}” that we have stored:</p>
+            {/* <p className="introduction">These are the versions of “{fetchWfModuleName}” that we have stored:</p> */}
             <ol>
               {fetchVersions.map(v => <li key={v.id}><FetchVersion
                 onSelect={this.setSelectedFetchVersionId}
