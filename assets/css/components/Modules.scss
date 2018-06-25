@@ -128,6 +128,15 @@
         color:$dark-gray;
       }
 
+      button.notifications {
+        cursor: pointer;
+        color: $medium-gray;
+
+        &.enabled {
+          color: $brand-workspace;
+        }
+      }
+
       a.help-button, button.edit-note, button.context-button {
         opacity: 0; // only show context buttons when hovering over wf-card
       }
