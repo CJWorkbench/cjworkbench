@@ -19,6 +19,7 @@ class OutputDelta:
         self.fetched_table_version = fetched_table_version
         self.user = workflow.owner
         self.workflow_name = workflow.name
+        self.module_name = wf_module.get_module_name()
         self.workflow_url = get_absolute_url(workflow.get_absolute_url())
         self.old_table = old_table
         self.new_table = new_table
@@ -85,6 +86,7 @@ def email_output_delta(output_delta: OutputDelta):
 
     ctx = {
         'user_name': user_display(user),
+        'module_name': output_delta.module_name,
         'workflow_name': output_delta.workflow_name,
         'workflow_url': output_delta.workflow_url,
         'date': output_delta.fetched_table_version.strftime('%b %-d, %Y at %-I:%M %p')
