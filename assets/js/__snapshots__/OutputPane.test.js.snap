@@ -65,25 +65,19 @@ exports[`OutputPane Iframe when htmloutput set 1`] = `
       </div>
     </div>
     <OutputIframe
-      api={Object {}}
+      isPublic={false}
       revision={1}
-      selectedWfModuleId={999}
-      workflow={
-        Object {
-          "id": 777,
-          "public": true,
-          "read_only": false,
-        }
-      }
+      selectedWfModuleId={987}
+      workflowId={123}
     />
     <TableView
       api={Object {}}
-      currentModule={null}
       isReadOnly={false}
       resizing={false}
       revision={1}
-      selectedWfModuleId={999}
+      selectedWfModuleId={987}
       setBusySpinner={[Function]}
+      showColumnLetter={false}
     />
   </Resizable>
 </div>
@@ -154,16 +148,13 @@ exports[`OutputPane Renders 1`] = `
       </div>
     </div>
     <TableView
-      api={
-        Object {
-          "render": [MockFunction],
-        }
-      }
-      currentModule={null}
+      api={Object {}}
       isReadOnly={false}
       resizing={false}
       revision={1}
+      selectedWfModuleId={987}
       setBusySpinner={[Function]}
+      showColumnLetter={false}
     />
   </Resizable>
 </div>
@@ -235,11 +226,12 @@ exports[`OutputPane Renders when no module id 1`] = `
     </div>
     <TableView
       api={Object {}}
-      currentModule={null}
       isReadOnly={false}
       resizing={false}
       revision={1}
+      selectedWfModuleId={null}
       setBusySpinner={[Function]}
+      showColumnLetter={false}
     />
   </Resizable>
 </div>

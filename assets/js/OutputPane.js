@@ -1,13 +1,14 @@
 // Display of output from currently selected module
 
 import React from 'react'
-import TableView from './TableView'
 import PropTypes from 'prop-types'
+import TableView from './TableView'
 import { OutputIframe } from './OutputIframe'
 import Resizable from 're-resizable'
 import debounce from 'lodash/debounce'
+import { connect } from 'react-redux'
 
-export default class OutputPane extends React.Component {
+export class OutputPane extends React.Component {
 
   constructor(props) {
     super(props);
@@ -132,27 +133,8 @@ export default class OutputPane extends React.Component {
       });
   }
 
-  // We have to leave it here for now as it currently uses this.props
-  findCurrentModuleInWorkflow(wf) {
-    if(!wf) {
-      return null;
-    }
-    if(!wf.wf_modules) {
-      return null;
-    }
-    return wf.wf_modules.find((wfm) => {return wfm.id == this.props.selectedWfModuleId});
-  }
-
   render() {
-    // We figure out whether we need to indicate sort status here so that we don't have to
-    // pass a ton of data to the TableView
-
-    // Checks whether we need to set table view props depending on the module
-    // Currently it's about sort and showing column letters
-    // Checks if the current module is a sort module. If yes, set sortColumn and sortDirection in props
-    let currentModule = this.findCurrentModuleInWorkflow(this.props.workflow);
-
-    let isReadOnly = this.props.workflow ? this.props.workflow.read_only : false;
+    const { isReadOnly, sortColumn, sortDirection, showColumnLetter } = this.props;
 
     // Make a table component even if no module ID (should still show an empty table)
     var tableView =
@@ -162,17 +144,19 @@ export default class OutputPane extends React.Component {
         resizing={this.state.resizing}
         api={this.props.api}
         setBusySpinner={this.setBusySpinner}
-        currentModule={currentModule}
         isReadOnly={isReadOnly}
+        sortColumn={sortColumn}
+        sortDirection={sortDirection}
+        showColumnLetter={showColumnLetter}
       />
 
     // This iframe holds the module HTML output, e.g. a visualization
     var outputIFrame = null;
     if (this.props.htmlOutput) {
       outputIFrame = <OutputIframe
-          api={this.props.api}
           selectedWfModuleId={this.props.selectedWfModuleId}
-          workflow={this.props.workflow}
+          workflowId={this.props.workflowId}
+          isPublic={this.props.isPublic}
           revision={this.props.revision}
       />
     }
@@ -235,10 +219,49 @@ export default class OutputPane extends React.Component {
 }
 
 OutputPane.propTypes = {
-  id:                 PropTypes.number,             // can be undefined, if no selected module
-  revision:           PropTypes.number.isRequired,
   api:                PropTypes.object.isRequired,
-  workflow:           PropTypes.object,
+  workflowId:         PropTypes.number.isRequired,
+  revision:           PropTypes.number.isRequired,
   selectedWfModuleId: PropTypes.number,
+  isPublic:           PropTypes.bool.isRequired,
+  isReadOnly:         PropTypes.bool.isRequired,
+  showColumnLetter:   PropTypes.bool.isRequired,
+  sortColumn:         PropTypes.string,
+  sortDirection:      PropTypes.string, // NONE, ASC, DESC or undefined
   htmlOutput:         PropTypes.bool,
 };
+
+function mapStateToProps(state, ownProps) {
+  const workflow = state.workflow;
+  const wfModule = workflow.wf_modules[state.selected_wf_module];
+
+  const id_name = wfModule && wfModule.module_version && wfModule.module_version.module && wfModule.module_version.module.id_name || null;
+
+  const showColumnLetter = id_name === 'formula' || id_name === 'reorder-columns';
+
+  let sortColumn, sortDirection
+
+  if (id_name === 'sort-from-table') {
+    const columnParam = findParamValByIdName(wfModule, 'column');
+    const directionParam = findParamValByIdName(wfModule, 'direction');
+
+    sortColumn = columnParam && columnParam.value || null;
+    sortDirection = [ 'NONE', 'ASC', 'DESC' ][directionParam] || 'NONE'
+  }
+
+  return {
+    workflowId: workflow.id,
+    revision: workflow.revision,
+    selectedWfModuleId: wfModule ? wfModule.id : null,
+    isPublic: workflow.public,
+    isReadOnly: workflow.read_only,
+    htmlOutput: wfModule ? wfModule.html_output : false,
+    showColumnLetter,
+    sortColumn,
+    sortDirection,
+  }
+}
+
+export default connect(
+  mapStateToProps
+)(OutputPane);

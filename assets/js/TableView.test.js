@@ -11,17 +11,13 @@ import { addCellEdit } from './EditCells';
 import { updateSort } from './SortFromTable';
 import { updateReorder } from './ReorderColumns';
 
-// TODO upgrade Enzyme. enzyme-adapter-react-16@1.1.1 does not support contexts.
-// https://github.com/airbnb/enzyme/issues/1509
-jest.mock('./DataGridDragDropContext', () => {
-  const context = {}
-  return {
-    Consumer: (props) => props.children(context),
-    Provider: (props) => props.children,
-  }
-})
-
 describe('TableView', () => {
+  const defaultProps = {
+    resizing: false,
+    showColumnLetter: false,
+    isReadOnly: false,
+  }
+
   beforeEach(() => {
     addCellEdit.mockReset()
     updateSort.mockReset()
@@ -53,7 +49,7 @@ describe('TableView', () => {
     };
 
     const tree = mount(
-      <TableView selectedWfModuleId={100} revision={1} api={api} isReadOnly={false}/>
+      <TableView {...defaultProps} selectedWfModuleId={100} revision={1} api={api} isReadOnly={false}/>
     )
 
     // wait for promise to resolve, then see what we get
@@ -94,7 +90,7 @@ describe('TableView', () => {
 
   it('Blank table when no module id', () => {
     const tree = mount(
-      <TableView selectedWfModuleId={undefined} revision={1} api={{}} isReadOnly={false}/>
+      <TableView {...defaultProps} selectedWfModuleId={undefined} revision={1} api={{}} isReadOnly={false}/>
     );
     tree.update();
 
@@ -113,7 +109,7 @@ describe('TableView', () => {
     };
 
     const tree = mount(
-      <TableView selectedWfModuleId={100} revision={1} api={api} isReadOnly={false}/>
+      <TableView {...defaultProps} selectedWfModuleId={100} revision={1} api={api} isReadOnly={false}/>
     );
     let tableView = tree.find('TableView').instance();
 
@@ -223,88 +219,26 @@ describe('TableView', () => {
       render: jsonResponseMock(testData),
     };
 
-    const NON_SORT_MODULE_ID = 28;
-    const SORT_MODULE_ID = 135;
-
-    // A barebones workflow for testing the sort stuff
-    var workflow = {
-      wf_modules: [
-          {
-            id: NON_SORT_MODULE_ID,
-            module_version: {
-              module: {
-                id_name: 'loadurl'
-              }
-            }
-          },
-          {
-            id: SORT_MODULE_ID,
-            module_version: {
-              module: {
-                id_name: 'sort-from-table'
-              }
-            },
-            parameter_vals: [
-                {
-                  // column
-                  parameter_spec: {id_name: 'column'},
-                  value: 'b',
-                },
-                {
-                  // dtype
-                  parameter_spec: {id_name: 'dtype'},
-                  value: 1
-                },
-                {
-                  //direction
-                  parameter_spec: {id_name: 'direction'},
-                  value: 2 // Descending
-                }
-            ]
-          },
-      ]
-    }
-
     // Try a mount with the sort module selected, should have sortColumn and sortDirection
     var tree = mount(
       <TableView
+          {...defaultProps}
           revision={1}
           selectedWfModuleId={100}
           api={api}
           setBusySpinner={jest.fn()}
-          resizing={false}
-          currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SORT_MODULE_ID))}
           isReadOnly={false}
+          sortColumn={'b'}
+          sortDirection={'DESC'}
       />
     );
 
     setImmediate(() => {
       tree.update();
-      var dataGrid = tree.find(DataGrid);
-      expect(dataGrid).toHaveLength(1);
+      const dataGrid = tree.find(DataGrid);
       expect(dataGrid.prop('sortColumn')).toBe('b');
       expect(dataGrid.prop('sortDirection')).toBe('DESC');
-
-      // Try a mount with a non-sort module selected, sortColumn and sortDirection should be undefined
-      tree = mount(
-        <TableView
-            revision={1}
-            selectedWfModuleId={100}
-            api={api}
-            setBusySpinner={jest.fn()}
-            resizing={false}
-            currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SORT_MODULE_ID))}
-            isReadOnly={false}
-        />
-      );
-      setImmediate(() => {
-        tree.update();
-        dataGrid = tree.find(DataGrid);
-        expect(dataGrid).toHaveLength(1);
-        expect(dataGrid.prop('sortColumn')).toBeUndefined();
-        expect(dataGrid.prop('sortDirection')).toBeUndefined();
-        done();
-      })
+      done();
     });
   });
 
@@ -336,65 +270,23 @@ describe('TableView', () => {
     const NON_SHOWLETTER_ID = 28;
     const SHOWLETTER_ID = 135;
 
-    // A barebones workflow for testing the sort stuff
-    var workflow = {
-      wf_modules: [
-          {
-            id: NON_SHOWLETTER_ID,
-            module_version: {
-              module: {
-                id_name: 'loadurl'
-              }
-            }
-          },
-          {
-            id: SHOWLETTER_ID,
-            module_version: {
-              module: {
-                id_name: 'formula'
-              }
-            },
-          },
-      ]
-    };
-
     // Try a mount with the formula module selected, should show letter
     var tree = mount(
       <TableView
+          {...defaultProps}
+          showColumnLetter={true}
           revision={1}
           selectedWfModuleId={100}
           api={api}
           setBusySpinner={jest.fn()}
-          resizing={false}
-          currentModule={workflow.wf_modules.find((wfm) => (wfm.id == SHOWLETTER_ID))}
-          isReadOnly={false}
       />
     );
     setImmediate(() => {
       tree.update();
-      var dataGrid = tree.find(DataGrid);
+      const dataGrid = tree.find(DataGrid);
       expect(dataGrid).toHaveLength(1);
       expect(dataGrid.prop('showLetter')).toBe(true);
-
-      // Try a mount with a non-formula module selected, should not show letter
-      tree = mount(
-        <TableView
-            revision={1}
-            selectedWfModuleId={100}
-            api={api}
-            setBusySpinner={jest.fn()}
-            resizing={false}
-            currentModule={workflow.wf_modules.find((wfm) => (wfm.id == NON_SHOWLETTER_ID))}
-            isReadOnly={false}
-        />
-      );
-      setImmediate(() => {
-        tree.update();
-        dataGrid = tree.find(DataGrid);
-        expect(dataGrid).toHaveLength(1);
-        expect(dataGrid.prop('showLetter')).toBe(false);
-        done();
-      })
+      done();
     });
   });
 });

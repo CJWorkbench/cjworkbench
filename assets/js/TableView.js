@@ -18,15 +18,17 @@ export const initialRows = 200;   // because react-data-grid seems to preload to
 export const preloadRows = 100;    // load when we have less then this many rows ahead
 export const deltaRows = 200;     // get this many rows at a time (must be > preloadRows)
 
-export default class TableView extends React.Component {
-
- static propTypes = {
+export default class TableView extends React.PureComponent {
+  static propTypes = {
     selectedWfModuleId: PropTypes.number,             // not actually required, could have no selected module
     revision:           PropTypes.number.isRequired,
     api:                PropTypes.object.isRequired,
     isReadOnly:         PropTypes.bool.isRequired,
-    resizing:           PropTypes.bool,
+    resizing:           PropTypes.bool.isRequired,
     setBusySpinner:     PropTypes.func,
+    showColumnLetter:   PropTypes.bool.isRequired,
+    sortColumn:         PropTypes.string,
+    sortDirection:      PropTypes.string, // NONE, ASC or DESC (or null)
   };
 
   constructor(props) {
@@ -190,30 +192,9 @@ export default class TableView extends React.Component {
     var nrows = 0;
     var ncols = 0;
     var gridView = null;
+
     if (this.props.selectedWfModuleId && this.state.tableData && this.state.tableData.total_rows>0) {
-      // Expand the list of letter-showing modules by changing the array here
-      let showLetterWfModuleIdNames = ['formula', 'reorder-columns'];
-
-      var moduleIsSort = false;
-      var showColumnLetter = false;
-      if(this.props.currentModule) {
-          if(this.props.currentModule.module_version) {
-              if(this.props.currentModule.module_version.module) {
-                  moduleIsSort = (this.props.currentModule.module_version.module.id_name == "sort-from-table");
-                  showColumnLetter = (showLetterWfModuleIdNames.indexOf(this.props.currentModule.module_version.module.id_name) >= 0);
-              }
-          }
-      }
-
-      // Maps sort direction to ReactDataGrid direction names
-      let sortDirectionTranslator = ["NONE", "ASC", "DESC"];
-      var sortColumn = undefined;
-      var sortDirection = undefined;
-
-      if(moduleIsSort) {
-        sortColumn = findParamValByIdName(this.props.currentModule, 'column').value;
-        sortDirection = sortDirectionTranslator[findParamValByIdName(this.props.currentModule, 'direction').value];
-      }
+      const { sortColumn, sortDirection, showColumnLetter } = this.props
 
       // DataGrid is the heaviest DOM tree we have, and it effects the
       // performance of the custom drag layer (and probably everything else). By

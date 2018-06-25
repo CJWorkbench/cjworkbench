@@ -115,11 +115,7 @@ export class Workflow extends React.Component {
                 setFocus={this.setFocusModuleStack}
               />
               <OutputPane
-                selectedWfModuleId={selectedWfModule ? selectedWfModule.id : null}
-                revision={this.props.workflow.revision}
                 api={this.props.api}
-                htmlOutput={selectedWfModule ? selectedWfModule.html_output : null}
-                workflow={this.props.workflow}
                 focus={!this.state.isFocusModuleStack}
                 setFocus={this.setFocusOutputPane}
                 setOverlapping={this.setOverlapping}

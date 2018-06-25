@@ -27,8 +27,8 @@ class OutputIframe extends React.Component {
       src: ("/api/wfmodules/" + nextProps.selectedWfModuleId + "/output?rev=" + nextProps.revision)
     });
     if (this.state.setPublicModalOpen
-      && nextProps.workflow.public
-      && (nextProps.workflow.public !== this.props.workflow.public)) {
+      && nextProps.isPublic
+      && (nextProps.isPublic !== this.props.isPublic)) {
       this.toggleSetPublicModal();
       this.toggleEmbedIframeModal();
     }
@@ -51,7 +51,7 @@ class OutputIframe extends React.Component {
   }
 
   toggleModal() {
-    if (!this.props.workflow.public) {
+    if (!this.props.isPublic) {
       this.toggleSetPublicModal();
     } else {
       this.toggleEmbedIframeModal();
@@ -59,7 +59,7 @@ class OutputIframe extends React.Component {
   }
 
   setPublic() {
-    store.dispatch(setWorkflowPublicAction(this.props.workflow.id, true));
+    store.dispatch(setWorkflowPublicAction(this.props.workflowId, true));
   }
 
   renderSetPublicModal() {
@@ -121,9 +121,9 @@ class OutputIframe extends React.Component {
 
 OutputIframe.propTypes = {
   revision: PropTypes.number,
-  api: PropTypes.object.isRequired,
   selectedWfModuleId: PropTypes.number.isRequired,
-  workflow: PropTypes.object.isRequired,
+  isPublic: PropTypes.bool.isRequired,
+  workflowId: PropTypes.number.isRequired,
 };
 
 export {OutputIframe, OutputIframeCtrl}

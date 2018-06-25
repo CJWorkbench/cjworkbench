@@ -611,7 +611,7 @@ export default class DataGrid extends React.Component {
           key={this.state.componentKey}
           />
       )
-    }  else {
+    } else {
       return null;
     }
   }

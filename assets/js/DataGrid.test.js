@@ -2,17 +2,6 @@ import React from 'react'
 import { mount } from 'enzyme'
 import DataGrid, {ColumnHeader, EditableColumnName} from "./DataGrid"
 
-// TODO upgrade Enzyme. enzyme-adapter-react-16@1.1.1 does not support contexts.
-// https://github.com/airbnb/enzyme/issues/1509
-jest.mock('./DataGridDragDropContext', () => {
-  const context = {}
-  return {
-    Consumer: (props) => props.children(context),
-    Provider: (props) => props.children,
-  }
-})
-
-
 describe('DataGrid tests,', () => {
   var testData = {
     totalRows : 2,
