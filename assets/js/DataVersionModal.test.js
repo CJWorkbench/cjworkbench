@@ -1,13 +1,16 @@
 import React from 'react'
 import { mount } from 'enzyme'
-import ConnectedDataVersionModal, { DataVersionModal } from './DataVersionModal'
+import ConnectedDataVersionModal, { DataVersionModal, formatDateUTCForTesting } from './DataVersionModal'
 import { Provider } from 'react-redux'
 import configureMockStore from 'redux-mock-store'
 
 describe('DataVersionModal', () => {
+  // Make formatDate in DataVersionModal always print out UTC times
+  formatDateUTCForTesting()
+
   const Versions = [
     { id: '2000', date: new Date(234567890), isSeen: false },
-    { id: '1000', date: new Date(123456789), isSeen: true },
+    { id: '1000', date: new Date(123456789), isSeen: true }
   ]
 
   let _wrapper = null

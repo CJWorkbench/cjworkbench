@@ -25,6 +25,13 @@ const Months = [
   'Dec.',
 ]
 
+// Always print as if our time zone is UTC, when testing
+// (all other solutions are worse, including env vars and pre-adjusted test data)
+let _formatDateUTCforTesting = false
+export function formatDateUTCForTesting() {
+  _formatDateUTCforTesting = true
+}
+
 /**
  * Return AP-style date in the user's time zone, but with the date before the
  * time.
@@ -32,11 +39,20 @@ const Months = [
  * For instance: "June 22, 2018 – 10:35 a.m."
  */
 function formatDate(date) {
-  const mon = Months[date.getMonth()]
-  const dd = date.getDate()
-  const yyyy = date.getFullYear()
-  let hh = date.getHours()
-  const mm = String(100 + date.getMinutes()).slice(1) // 0-padded
+  let mon, dd, yyyy, hh, mm
+  if (_formatDateUTCforTesting) {
+    mon = Months[date.getUTCMonth()]
+    dd = date.getUTCDate()
+    yyyy = date.getUTCFullYear()
+    hh = date.getUTCHours()
+    mm = String(100 + date.getUTCMinutes()).slice(1) // 0-padded
+  } else {
+    mon = Months[date.getMonth()]
+    dd = date.getDate()
+    yyyy = date.getFullYear()
+    hh = date.getHours()
+    mm = String(100 + date.getMinutes()).slice(1) // 0-padded
+  }
   let ampm = 'a.m.'
 
   if (hh === 0) {
