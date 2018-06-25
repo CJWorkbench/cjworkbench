@@ -186,8 +186,6 @@ export default class TableView extends React.Component {
   }
 
   render() {
-    var tableData = this.props.tableData;
-
     // Make a table component if we have the data
     var nrows = 0;
     var ncols = 0;
