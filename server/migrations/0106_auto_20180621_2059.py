@@ -15,19 +15,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='wfmodule',
             name='has_unseen_notification',
-            field=models.BooleanField(default=False),
-        ),
-        migrations.RunSQL(['''
-            UPDATE server_wfmodule
-            SET has_unseen_notification = id IN (
-                SELECT wf_module_id FROM server_notification
-            )
-        ''']),
-        migrations.RemoveField(
-            model_name='notification',
-            name='wf_module',
-        ),
-        migrations.DeleteModel(
-            name='Notification',
+            field=models.BooleanField(default=False, null=True),
         ),
     ]
