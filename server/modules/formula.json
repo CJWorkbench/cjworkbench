@@ -32,6 +32,16 @@
       }
     },
     {
+      "name": "Apply to all rows",
+      "id_name" : "all_rows",
+      "type": "checkbox",
+      "default": "True",
+      "visible_if": {
+        "id_name": "syntax",
+        "value": "Excel"
+      }
+    },
+    {
       "name": "",
       "id_name" : "formula_python",
       "type": "string",
