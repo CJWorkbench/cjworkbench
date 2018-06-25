@@ -28,7 +28,9 @@ class TestNotifications(LoggedInIntegrationTest):
         # Enable notifications
         with b.scope('.wf-module[data-module-name="Filter"]'):
             b.click_button('Email alerts disabled')
-        b.check('Turn on', wait=True) # wait for modal to appear
+        # 'Turn on' is a checkbox, but it has display:none so Webdriver can't
+        # see it.
+        b.click_whatever('label', text='Turn on', wait=True) # wait for modal
         b.click_button('×')
 
         # Now change the fetched data
