@@ -67,7 +67,7 @@ def eval_excel_all_rows(code, table, newcol):
         # Missing row number?
         # with only A-Z. But just in case:
         if obj is None:
-            raise _('Bad cell reference %s' % token)
+            raise ValueError(_('Bad cell reference %s') % token)
 
         ranges = obj.ranges
         to_index = []
@@ -75,9 +75,8 @@ def eval_excel_all_rows(code, table, newcol):
             # r1 and r2 refer to which rows are referenced by the range.
             # cr shows up in the range object whenever the reference is to
             # an entire row.
-            if (rng['r1'] != '1' and rng['r2'] != '1') and rng['cr'] != '1':
-                raise _(
-                    "Currently only references to entire columns or the first row of a column are supported for excel formulas")
+            if rng['r1'] != '1' or rng['r2'] != '1':
+                raise ValueError(_('Excel formulas can only reference the first row when applied to all rows'))
 
             col_first = rng['n1']
             col_last = rng['n2']

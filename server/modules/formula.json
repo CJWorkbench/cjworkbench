@@ -14,16 +14,9 @@
       "default": "0"
     },
     {
-      "name": "Output column",
-      "id_name" : "out_column",
-      "type": "string",
-      "default": "formula output"
-    },
-    {
-      "name": "",
+      "name": "Formula",
       "id_name" : "formula_excel",
       "type": "string",
-      "multiline": "True",
       "default": "",
       "placeholder": "e.g. =SUM(A:B)",
       "visible_if": {
@@ -42,16 +35,21 @@
       }
     },
     {
-      "name": "",
+      "name": "Formula",
       "id_name" : "formula_python",
       "type": "string",
-      "multiline": "True",
       "default": "",
       "placeholder": "e.g. col1 * (col2 + colu3)",
       "visible_if": {
         "id_name": "syntax",
         "value": "Python"
       }
+    },
+    {
+      "name": "Output column",
+      "id_name" : "out_column",
+      "type": "string",
+      "default": "formula output"
     }
   ]
 }

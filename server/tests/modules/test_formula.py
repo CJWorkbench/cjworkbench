@@ -128,11 +128,6 @@ class FormulaTests(LoggedInTestCase):
         table['output'] = table['output'].astype(object)
         self._assert_module_result(table)
 
-        # formula: horizontal range, without row numbers
-        self._set_excel_formula('=SUM(B:C)', all_rows=True)
-        self._assert_module_result(table)
-
-
     def test_excel_text_formula(self):
         self._set_excel_formula('=LEFT(D1,5)', all_rows=True)
         table = mock_csv_table.copy()
@@ -144,6 +139,14 @@ class FormulaTests(LoggedInTestCase):
     def test_bad_excel_formulas(self):
         # column without row number
         self._set_excel_formula('=B*2', all_rows=True)
+        self._assert_module_result(mock_csv_table, WfModule.ERROR)
+
+        # also without row numbers
+        self._set_excel_formula('=SUM(B:C)', all_rows=True)
+        self._assert_module_result(mock_csv_table, WfModule.ERROR)
+
+        # attempted reference to another row
+        self._set_excel_formula('=B2*2', all_rows=True)
         self._assert_module_result(mock_csv_table, WfModule.ERROR)
 
         # bad formula should produce error
