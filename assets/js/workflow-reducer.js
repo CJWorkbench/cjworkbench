@@ -271,7 +271,6 @@ registerReducerFunc(ADD_MODULE + '_PENDING', (state, action) => {
     workflow: {
       wf_modules: { $splice:[ [insertBefore, 0, action.payload] ] }
     },
-    selected_wf_module: { $set: insertBefore },
   });
 });
 registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
@@ -292,7 +291,8 @@ registerReducerFunc(ADD_MODULE + '_FULFILLED', (state, action) => {
   return update(state, {
     workflow: {
       wf_modules: { $splice:[ [insertBefore, overwrite, action.payload] ] }
-    }
+    },
+    selected_wf_module: { $set: insertBefore },
   });
 });
 
