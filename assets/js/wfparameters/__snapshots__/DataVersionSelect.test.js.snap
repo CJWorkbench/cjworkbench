@@ -167,9 +167,7 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
                         <h5
                           class="modal-title"
                         >
-                          <div
-                            class="title-4 t-d-gray"
-                          >
+                          <div>
                             DATA VERSIONS
                           </div>
                         </h5>
@@ -364,9 +362,7 @@ exports[`DataVersionSelect Does not save selection when user hits Cancel 1`] = `
                           <h5
                             className="modal-title"
                           >
-                            <div
-                              className="title-4 t-d-gray"
-                            >
+                            <div>
                               DATA VERSIONS
                             </div>
                           </h5>
@@ -664,9 +660,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
         <h5
           className="modal-title"
         >
-          <div
-            className="title-4 t-d-gray"
-          >
+          <div>
             DATA VERSIONS
           </div>
         </h5>
@@ -927,9 +921,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
                         <h5
                           class="modal-title"
                         >
-                          <div
-                            class="title-4 t-d-gray"
-                          >
+                          <div>
                             DATA VERSIONS
                           </div>
                         </h5>
@@ -1124,9 +1116,7 @@ exports[`DataVersionSelect Renders correctly when in Private mode, and selection
                           <h5
                             className="modal-title"
                           >
-                            <div
-                              className="title-4 t-d-gray"
-                            >
+                            <div>
                               DATA VERSIONS
                             </div>
                           </h5>
