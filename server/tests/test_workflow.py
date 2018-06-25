@@ -4,9 +4,32 @@ from server.tests.utils import LoggedInTestCase, add_new_wf_module, add_new_modu
 from server.models import Workflow
 
 
+class MockSession:
+    def __init__(self, session_key):
+        self.session_key = session_key
+
+
+class MockRequest:
+    def __init__(self, user, session_key):
+        self.user = user
+        self.session = MockSession(session_key)
+
+    @staticmethod
+    def logged_in(user):
+        return MockRequest(user, 'user-' + user.username)
+
+    @staticmethod
+    def anonymous(session_key):
+        return MockRequest(None, session_key)
+
+    @staticmethod
+    def uninitialized():
+        return MockRequest(None, None)
+
+
 class WorkflowTests(LoggedInTestCase):
     def setUp(self):
-        super(WorkflowTests, self).setUp()
+        super().setUp()
 
         # Add another user, with one public and one private workflow
         self.otheruser = User.objects.create(username='user2', email='user2@users.com', password='password')
@@ -29,3 +52,52 @@ class WorkflowTests(LoggedInTestCase):
         self.assertIsNone(wf2.last_delta)  # no undo history
         self.assertFalse(wf2.public)
         self.assertEqual(wf1.wf_modules.count(), wf2.wf_modules.count())
+
+    def test_auth_shared_workflow(self):
+        wf = Workflow.objects.create(owner=self.user, public=True)
+
+        # Read: anybody
+        self.assertTrue(wf.request_authorized_read(MockRequest.logged_in(self.user)))
+        self.assertTrue(wf.request_authorized_read(MockRequest.logged_in(self.otheruser)))
+        self.assertTrue(wf.request_authorized_read(MockRequest.anonymous('session1')))
+        self.assertTrue(wf.request_authorized_read(MockRequest.uninitialized()))
+
+        # Write: only owner
+        self.assertTrue(wf.request_authorized_write(MockRequest.logged_in(self.user)))
+        self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.otheruser)))
+        self.assertFalse(wf.request_authorized_write(MockRequest.anonymous('session1')))
+        self.assertFalse(wf.request_authorized_write(MockRequest.uninitialized()))
+
+    def test_auth_private_workflow(self):
+        wf = Workflow.objects.create(owner=self.user, public=False)
+
+        # Read: anybody
+        self.assertTrue(wf.request_authorized_read(MockRequest.logged_in(self.user)))
+        self.assertFalse(wf.request_authorized_read(MockRequest.logged_in(self.otheruser)))
+        self.assertFalse(wf.request_authorized_read(MockRequest.anonymous('session1')))
+        self.assertFalse(wf.request_authorized_read(MockRequest.uninitialized()))
+
+        # Write: only owner
+        self.assertTrue(wf.request_authorized_write(MockRequest.logged_in(self.user)))
+        self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.otheruser)))
+        self.assertFalse(wf.request_authorized_write(MockRequest.anonymous('session1')))
+        self.assertFalse(wf.request_authorized_write(MockRequest.uninitialized()))
+
+    def test_auth_anonymous_workflow(self):
+        wf = Workflow.objects.create(owner=None,
+                                     anonymous_owner_session_key='session1',
+                                     public=False)
+
+        # Read: just the anonymous user, logged in or not
+        self.assertTrue(wf.request_authorized_read(MockRequest.anonymous('session1')))
+        self.assertTrue(wf.request_authorized_read(MockRequest(self.user, 'session1')))
+        self.assertFalse(wf.request_authorized_read(MockRequest.logged_in(self.user)))
+        self.assertFalse(wf.request_authorized_read(MockRequest.anonymous('session2')))
+        self.assertFalse(wf.request_authorized_read(MockRequest.uninitialized()))
+
+        # Write: ditto
+        self.assertTrue(wf.request_authorized_write(MockRequest.anonymous('session1')))
+        self.assertTrue(wf.request_authorized_write(MockRequest(self.user, 'session1')))
+        self.assertFalse(wf.request_authorized_write(MockRequest.logged_in(self.user)))
+        self.assertFalse(wf.request_authorized_write(MockRequest.anonymous('session2')))
+        self.assertFalse(wf.request_authorized_read(MockRequest.uninitialized()))

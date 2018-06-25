@@ -103,8 +103,9 @@ class Workflow(models.Model):
     def request_authorized_write(self, request: HttpRequest) -> bool:
         """True if the Django request may write workflow data."""
         return (
-            request.user == self.owner \
-            or request.session.session_key == self.anonymous_owner_session_key
+            (request.user and request.user == self.owner) \
+            or (request.session.session_key \
+                and request.session.session_key == self.anonymous_owner_session_key)
         )
 
     def request_read_only(self, request: HttpRequest) -> bool:
@@ -131,7 +132,7 @@ class Workflow(models.Model):
     def user_session_authorized_read(self, user, session):
         return (
             self.public \
-            or user == self.owner \
+            or (user and user == self.owner) \
             or (session.session_key \
                 and session.session_key == self.anonymous_owner_session_key)
         )
