@@ -8,7 +8,6 @@ import EditableNotes from '../EditableNotes'
 import StatusBar from './StatusBar'
 import StatusLine from './StatusLine'
 import {
-  store,
   setWfModuleCollapsedAction,
   clearNotificationsAction,
   setSelectedWfModuleAction
@@ -37,14 +36,15 @@ export class WfModule extends React.PureComponent {
     isLessonHighlightNotes: PropTypes.bool.isRequired,
     isLessonHighlightCollapse: PropTypes.bool.isRequired,
     revision:           PropTypes.number.isRequired,
-    onClearNotifications: PropTypes.func.isRequired, // func() => undefined
     fetchModuleExists: PropTypes.bool.isRequired, // there is a fetch module anywhere in the workflow
+    clearNotifications: PropTypes.func.isRequired, // func() => undefined
+    setSelectedWfModule: PropTypes.func.isRequired, // func(index) => undefined
+    setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
   }
 
   constructor(props) {
     super(props);
 
-    this.click = this.click.bind(this);
     this.changeParam = this.changeParam.bind(this);
     this.setParamText = this.setParamText.bind(this);
     this.getParamText = this.getParamText.bind(this);
@@ -70,7 +70,8 @@ export class WfModule extends React.PureComponent {
   }
 
   onClickNotification = () => {
-    this.props.onClearNotifications(this.props.wfModule.id)
+    this.props.clearNotifications(this.props.wfModule.id)
+
     this.setState({
       isDataVersionModalOpen: true,
     })
@@ -92,8 +93,8 @@ export class WfModule extends React.PureComponent {
   }
 
   // We become the selected module on any click
-  click(e) {
-    store.dispatch(setSelectedWfModuleAction(this.props.index));
+  click = (e) => {
+    this.props.setSelectedWfModule(this.props.index);
   }
 
   changeParam(id, payload) {
@@ -181,11 +182,7 @@ export class WfModule extends React.PureComponent {
       isCollapsed,
     })
 
-    store.dispatch(setWfModuleCollapsedAction(
-      this.props.wfModule.id,
-      isCollapsed,
-      this.props.isReadOnly
-    ))
+    this.props.setWfModuleCollapsed(this.props.wfModule.id, isCollapsed, this.props.isReadOnly)
   }
 
   collapse = () => {
@@ -283,7 +280,7 @@ export class WfModule extends React.PureComponent {
     );
 
     let alertButton;
-    if (this.props.fetchModuleExists && (!this.props.isReadOnly && !this.props.isAnonymous)) {
+    if (this.props.fetchModuleExists && !this.props.isReadOnly && !this.props.isAnonymous) {
       let className = 'notifications'
       if (this.state.notifications) className += ' enabled'
       if (this.state.hasUnseenNotification) className += ' has-unseen'
@@ -429,7 +426,7 @@ const getWorkflow = ({ workflow }) => workflow
 const hasFetchWfModule = createSelector([ getWorkflow ], (workflow) => {
   return (workflow.wf_modules || []).some(wfModule => {
     return wfModule.module_version && wfModule.module_version.module && wfModule.module_version.module.loads_data
-  }) || null
+  })
 })
 
 function mapStateToProps(state, ownProps) {
@@ -445,11 +442,18 @@ function mapStateToProps(state, ownProps) {
   }
 }
 
-// TODO replace all "store.dispatch" above with mapDispatchToProps()
 function mapDispatchToProps(dispatch) {
   return {
-    onClearNotifications(wfModuleId) {
-      store.dispatch(clearNotificationsAction(wfModuleId))
+    clearNotifications(wfModuleId) {
+      dispatch(clearNotificationsAction(wfModuleId));
+    },
+
+    setSelectedWfModule(index) {
+      dispatch(setSelectedWfModuleAction(index));
+    },
+
+    setWfModuleCollapsed(wfModuleId, isCollapsed, isReadOnly) {
+      dispatch(setWfModuleCollapsedAction(wfModuleId, isCollapsed, isReadOnly));
     },
   }
 }

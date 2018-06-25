@@ -2,6 +2,7 @@ jest.mock('../lessons/lessonSelector', () => jest.fn()) // same mock in every te
 
 import React from 'react'
 import ConnectedWfModule, { WfModule } from './WfModule'
+import DataVersionModal from '../DataVersionModal'
 import { okResponseMock } from '../test-utils'
 import { shallow, mount } from 'enzyme'
 import deepEqual from 'fast-deep-equal'
@@ -15,6 +16,7 @@ describe('WfModule, not read-only mode', () => {
 
   const buildShallowProps = () => ({
     isReadOnly: false,
+    isAnonymous: false,
     name: 'TestModule',
     wfModule: wf_module,
     changeParam: mockApi.onParamChanged,
@@ -29,6 +31,10 @@ describe('WfModule, not read-only mode', () => {
     isLessonHighlight: false,
     isLessonHighlightCollapse: false,
     isLessonHighlightNotes: false,
+    fetchModuleExists: false,
+    clearNotifications: jest.fn(),
+    setSelectedWfModule: jest.fn(),
+    setWfModuleCollapsed: jest.fn(),
   });
 
   // A mock module that looks like LoadURL
@@ -105,6 +111,33 @@ describe('WfModule, not read-only mode', () => {
     expect(wrapper.find('EditableNotes').prop('value')).toEqual('some notes')
   })
 
+  it('renders notifications, opening and closing a modal', () => {
+    const wrapper = shallow(<WfModule {...props} fetchModuleExists={true} isReadOnly={false} isAnonymous={false} />)
+
+    wrapper.find('button.notifications').simulate('click')
+    expect(props.clearNotifications).toHaveBeenCalledWith(999)
+    expect(wrapper.find(DataVersionModal).length).toBe(1)
+
+    wrapper.find(DataVersionModal).prop('onClose')()
+    wrapper.update()
+    expect(wrapper.find(DataVersionModal).length).toBe(0)
+  })
+
+  it('hides notifications when isAnonymous', () => {
+    const wrapper = shallow(<WfModule {...props} fetchModuleExists={true} isReadOnly={false} isAnonymous={true} />)
+    expect(wrapper.find('button.notifications').length).toBe(0)
+  })
+
+  it('hides notifications when isReadOnly', () => {
+    const wrapper = shallow(<WfModule {...props} fetchModuleExists={true} isReadOnly={true} isAnonymous={false} />)
+    expect(wrapper.find('button.notifications').length).toBe(0)
+  })
+
+  it('hides notifications when there is no fetch module', () => {
+    const wrapper = shallow(<WfModule {...props} fetchModuleExists={false} isReadOnly={false} isAnonymous={false} />)
+    expect(wrapper.find('button.notifications').length).toBe(0)
+  })
+
   it('adds a note', () => {
     const wrapper = shallow(<WfModule {...props}/>)
 
@@ -157,7 +190,7 @@ describe('WfModule, not read-only mode', () => {
       // Store just needs to change, to trigger mapStateToProps. We don't care
       // about its value
       store = createStore((_, action) => ({
-        workflow: { read_only: false },
+        workflow: { read_only: false, is_anonymous: false, wf_modules: [] },
         ...action.payload
       }))
 
