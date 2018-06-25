@@ -16,6 +16,7 @@ describe('UpdateFrequencySelect', () => {
     const defaultProps = {
       wfModuleId: 212,
       isReadOnly: false,
+      isAnonymous: false,
       lastCheckDate: new Date(Date.parse('2018-05-28T19:00:54.154Z')),
       settings: {
         isAutoUpdate: false, // start in Manual mode
@@ -83,6 +84,12 @@ describe('UpdateFrequencySelect', () => {
       w.find('a[title="change auto-update settings"]').simulate('click')
       expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
     })
+
+    it('does not open modal when anonymous', () => {
+      const w = wrapper({ isAnonymous: true })
+      w.find('a[title="change auto-update settings"]').simulate('click')
+      expect(w.find('UpdateFrequencySelectModal')).toHaveLength(0)
+    })
   })
 
   describe('connected to state', () => {
@@ -96,6 +103,8 @@ describe('UpdateFrequencySelect', () => {
 
     const sampleState = {
       workflow: {
+        read_only: false,
+        is_anonymous: false,
         wf_modules: [
           { id: 1, name: 'Ignore this one' },
           { id: 212, auto_update_data: true, update_interval: 10, update_units: 'days', notifications: false, last_update_check: '2018-05-28T19:00:54.154141Z' },
@@ -126,7 +135,7 @@ describe('UpdateFrequencySelect', () => {
     it('should not crash on a placeholder', () => {
       const store = {
         getState: () => ({
-          workflow: { wf_modules: [ { id: 212, placeholder: true } ] },
+          workflow: { read_only: false, is_anonymous: false, wf_modules: [ { id: 212, placeholder: true } ] },
         }),
         dispatch: jest.fn(),
         subscribe: jest.fn(),
