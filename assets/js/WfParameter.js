@@ -183,14 +183,7 @@ export default class WfParameter extends React.Component {
             isReadOnly={this.props.isReadOnly}
           />
           <div className="d-flex justify-content-between mt-2">
-            <DataVersionSelect
-              isReadOnly={this.props.isReadOnly}
-              wfModuleId={this.props.wf_module_id}
-              revision={this.props.revision}
-              api={this.props.api}
-              setClickNotification={this.props.setClickNotification}
-              notifications={this.props.notifications}
-            />
+            <DataVersionSelect wfModuleId={this.props.wf_module_id} />
             {button}
           </div>
 
@@ -200,14 +193,7 @@ export default class WfParameter extends React.Component {
 
       return (
         <div className='versionSelect--uploadFile'>
-          <DataVersionSelect
-            isReadOnly={this.props.isReadOnly}
-            wfModuleId={this.props.wf_module_id}
-            revision={this.props.revision}
-            api={this.props.api}
-            setClickNotification={this.props.setClickNotification}
-            notifications={this.props.notifications}
-          />
+          <DataVersionSelect wfModuleId={this.props.wf_module_id} />
         </div>
       );
     } else if (id_name == 'colrename') {

@@ -58,8 +58,6 @@ export class WfModule extends React.PureComponent {
       isCollapsed: this.props.wfModule.is_collapsed,
       notes: this.props.wfModule.notes || '',
       isNoteForcedVisible: false,
-      notifications: this.props.wfModule.notifications,
-      hasUnseenNotification: this.props.wfModule.has_unseen_notification,
       isDataVersionModalOpen: false,
       isDragging: false,
     }
@@ -260,7 +258,6 @@ export class WfModule extends React.PureComponent {
           getParamText={this.getParamText}
           getParamMenuItems={this.getParamMenuItems}
           setParamText={this.setParamText}
-          notifications={wfModule.notifications}
         />)
       });
 
@@ -281,15 +278,17 @@ export class WfModule extends React.PureComponent {
 
     let alertButton;
     if (this.props.fetchModuleExists && !this.props.isReadOnly && !this.props.isAnonymous) {
+      const notifications = this.props.wfModule.notifications
+      const hasUnseen = this.props.wfModule.has_unseen_notification
       let className = 'notifications'
-      if (this.state.notifications) className += ' enabled'
-      if (this.state.hasUnseenNotification) className += ' has-unseen'
+      if (notifications) className += ' enabled'
+      if (hasUnseen) className += ' has-unseen'
       const title = this.state.notifications ? 'Email alerts enabled' : 'Email alerts disabled'
 
       alertButton = (
         <button title={title} className={className} onClick={this.onClickNotification}>
           <i className="icon-notification"></i>
-          { this.state.hasUnseenNotification ? <span className="has-unseen"></span> : null }
+          { hasUnseen ? <span className="has-unseen"></span> : null }
         </button>
       );
     }
@@ -344,7 +343,6 @@ export class WfModule extends React.PureComponent {
       maybeDataVersionModal = (
         <DataVersionModal
           wfModuleId={wfModule.id}
-          notificationsEnabled={wfModule.notifications}
           onClose={this.onCloseDataVersionModal}
           />
       )
