@@ -71,9 +71,9 @@
     "webpack-cli": "^2.1.5"
   },
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test": "TZ=UTC jest",
+    "test:watch": "TZ=UTC jest --watch",
+    "test:coverage": "TZ=UTC jest --coverage",
     "watchjs": "webpack --mode development --watch",
     "compilejs": "webpack --mode production"
   },
