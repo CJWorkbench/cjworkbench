@@ -183,7 +183,7 @@ button:focus { outline:0 !important; }
   }
 }
 
-.button-gray {
+%button-gray {
   color: $medium-gray;
   border: 1px solid $medium-gray;
   background-color: transparent;
@@ -192,6 +192,8 @@ button:focus { outline:0 !important; }
     background-color:$dark-accent--soft;
   }
 }
+
+.button-gray { @extend %button-gray; }
 
 %button-blue {
   color: $brand-workspace;

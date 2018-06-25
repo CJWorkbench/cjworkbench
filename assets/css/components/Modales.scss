@@ -116,22 +116,6 @@
     display: flex;
     justify-content: flex-end;
     border-top: 1px solid $brand-workspace;
-
-
-    /* Option to toggle alert in modal footer in version select */
-    .alert-setting-modal {
-      width: 75%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-right: 4rem;
-      border-right: 1px solid $Vlight-gray;
-
-      .alert-setting {
-        margin-right: 1rem;
-        width:60%;
-      }
-    }
   }
 }
 
@@ -183,34 +167,6 @@
 
 .test-button{
   cursor: pointer;
-}
-
-// Data version select
-
-.line-item--data-version {
-  height: 4rem;
-  background-color: #FFFFFF;
-  color: #686768;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-left: 2rem;
-  cursor: pointer;
-  margin-bottom: 1px;
-}
-
-.line-item--data-version:hover {
-  background-color: #F5F5F5;
-}
-
-.line-item--data-version--selected {
-  height: 4rem;
-  background-color: $brand-workspace--medium;
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding-left: 2rem;
 }
 
 .input-dropdown {

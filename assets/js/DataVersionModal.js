@@ -107,16 +107,20 @@ class NotificationsForm extends React.PureComponent {
 
     return (
       <form onSubmit={this.onSubmit} className={`notifications ${className}`}>
-        <p className="status"><i className="icon icon-notification"/> Alerts are <strong>{checked ? 'on' : 'off'}</strong></p>
-        <p className="description">{ checked ? (
-          'If the output of this module changes, I will receive an email'
-        ) : (
-          'Turn alerts ON to receive an email if the output of this module changes'
-        )}</p>
-        <label>
-          <input name="notifications-enabled" type="checkbox" checked={checked} onChange={this.onChange}/>
-          <span className="action">{checked ? 'Turn off' : 'Turn on'}</span>
-        </label>
+        <div className="text">
+          <p className="status"><i className="icon icon-notification"/> Alerts are <strong>{checked ? 'on' : 'off'}</strong></p>
+          <p className="description">{ checked ? (
+            'If the output of this module changes, I will receive an email'
+          ) : (
+            'Turn alerts ON to receive an email if the output of this module changes'
+          )}</p>
+        </div>
+        <div className="options">
+          <label>
+            <input name="notifications-enabled" type="checkbox" checked={checked} onChange={this.onChange}/>
+            <span className="action">{checked ? 'Turn off' : 'Turn on'}</span>
+          </label>
+        </div>
       </form>
     )
   }
@@ -189,11 +193,13 @@ export class DataVersionModal extends React.PureComponent {
             notificationsEnabled={notificationsEnabled}
             onSubmit={this.onChangeNotificationsEnabled}
             />
-          <button
-            name="load"
-            disabled={this.state.selectedFetchVersionId === this.props.selectedFetchVersionId}
-            onClick={this.onSubmit}
-            >Load</button>
+          <div className="actions">
+            <button
+              name="load"
+              disabled={this.state.selectedFetchVersionId === this.props.selectedFetchVersionId}
+              onClick={this.onSubmit}
+              >Load</button>
+          </div>
         </ModalFooter>
       </Modal>
     )
