@@ -19,13 +19,13 @@ from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth_views
 from django.views.defaults import page_not_found
-from django.http import Http404
-#from cjworkbench.views.signup import SignupView
+from django.views.generic.base import RedirectView
 from allauth.account.views import SignupView
 
 urlpatterns = [
     url(r'^admin/?', admin.site.urls),
     url(r'^account/signup/$', SignupView.as_view(), name='account_signup'),
+    url(r'^xyzzy/signup/$', RedirectView.as_view(url='/account/signup/', permanent=True), name='index'),
     url(r'^account/', include('allauth.urls')),
     url(r'^', include('server.urls')),
 ]
