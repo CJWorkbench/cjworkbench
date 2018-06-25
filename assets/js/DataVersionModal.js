@@ -137,6 +137,7 @@ export class DataVersionModal extends React.PureComponent {
     })).isRequired,
     selectedFetchVersionId: PropTypes.string.isRequired,
     wfModuleId: PropTypes.number.isRequired,
+    isAnonymous: PropTypes.bool.isRequired,
     notificationsEnabled: PropTypes.bool.isRequired, // whether enabled on selectedWfModule
     onClose: PropTypes.func.isRequired, // func() => undefined
     onChangeFetchVersionId: PropTypes.func.isRequired, // func(wfModuleId, versionId) => undefined
@@ -170,6 +171,7 @@ export class DataVersionModal extends React.PureComponent {
       fetchWfModuleName,
       fetchVersions,
       onClose,
+      isAnonymous,
       notificationsEnabled,
     } = this.props
 
@@ -189,10 +191,12 @@ export class DataVersionModal extends React.PureComponent {
           </form>
         </ModalBody>
         <ModalFooter>
-          <NotificationsForm
-            notificationsEnabled={notificationsEnabled}
-            onSubmit={this.onChangeNotificationsEnabled}
-            />
+          { isAnonymous ? null : (
+            <NotificationsForm
+              notificationsEnabled={notificationsEnabled}
+              onSubmit={this.onChangeNotificationsEnabled}
+              />
+          )}
           <div className="actions">
             <button
               name="load"
@@ -244,6 +248,7 @@ function mapStateToProps(state, { wfModuleId }) {
     fetchWfModuleName: fetchWfModule ? fetchWfModule.module_version.module.name : null,
     fetchVersions: fetchWfModule ? getFetchVersions(fetchWfModule.versions.versions || []) : null,
     selectedFetchVersionId: fetchWfModule ? fetchWfModule.versions.selected : null,
+    isAnonymous: state.workflow.is_anonymous,
     notificationsEnabled,
   }
 }

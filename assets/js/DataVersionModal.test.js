@@ -27,6 +27,7 @@ describe('DataVersionModal', () => {
         fetchVersions={Versions}
         selectedFetchVersionId={'1000'}
         wfModuleId={124}
+        isAnonymous={false}
         notificationsEnabled={false}
         onClose={jest.fn()}
         onChangeFetchVersionId={jest.fn()}
@@ -83,10 +84,16 @@ describe('DataVersionModal', () => {
     expect(w.find('input[name="notifications-enabled"]').prop('checked')).toBe(false)
   })
 
+  it('omits notifications settings when isAnonymous', () => {
+    const w = wrapper({ isAnonymous: true })
+    expect(w.find('form.notifications').length).toBe(0)
+  })
+
   describe('mapStateToProps', () => {
     // Assume this modal is never shown if there is no fetch module
     const IdealState = {
       workflow: {
+        is_anonymous: false,
         wf_modules: [
           {
             id: 123,

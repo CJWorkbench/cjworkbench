@@ -18,6 +18,7 @@ exports[`DataVersionModal matches snapshot 1`] = `
   }
   fetchWfModuleId={123}
   fetchWfModuleName="fetch"
+  isAnonymous={false}
   notificationsEnabled={false}
   onChangeFetchVersionId={[MockFunction]}
   onChangeNotificationsEnabled={[MockFunction]}

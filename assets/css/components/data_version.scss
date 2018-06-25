@@ -193,6 +193,9 @@
     form.notifications {
       display: flex;
       margin: 0;
+      margin-right: 2rem;
+      padding-right: 2rem;
+      border-right: 1px solid $Vlight-gray;
 
       .text {
         flex: 1 1 auto;
@@ -218,9 +221,6 @@
 
     .actions {
       flex: 0 0 auto;
-      margin-left: 2rem;
-      padding-left: 2rem;
-      border-left: 1px solid $Vlight-gray;
 
       button {
         @extend %action-button;
