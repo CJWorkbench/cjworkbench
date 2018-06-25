@@ -283,7 +283,7 @@ export class WfModule extends React.PureComponent {
       let className = 'notifications'
       if (notifications) className += ' enabled'
       if (hasUnseen) className += ' has-unseen'
-      const title = this.state.notifications ? 'Email alerts enabled' : 'Email alerts disabled'
+      const title = notifications ? 'Email alerts enabled' : 'Email alerts disabled'
 
       alertButton = (
         <button title={title} className={className} onClick={this.onClickNotification}>
