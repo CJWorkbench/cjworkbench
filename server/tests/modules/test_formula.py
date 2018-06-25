@@ -55,6 +55,7 @@ class FormulaTests(LoggedInTestCase):
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
         self.assertTrue(out.equals(mock_csv_table))  # NOP on error
 
+
     def test_spaces_to_underscores(self):
         # column names with spaces should be referenced with underscores in the formula
         underscore_csv = 'Month,The Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
@@ -128,6 +129,7 @@ class FormulaTests(LoggedInTestCase):
         table['output'] = table['output'].astype(object)
         self._assert_module_result(table)
 
+
     def test_excel_text_formula(self):
         self._set_excel_formula('=LEFT(D1,5)', all_rows=True)
         table = mock_csv_table.copy()
@@ -167,5 +169,6 @@ class FormulaTests(LoggedInTestCase):
         self._set_excel_formula('=SUM(B1:B2)', all_rows=False)
         table = mock_csv_table.copy()
         table['output'] = pd.Series([sum(table['Amount']), None], dtype=object)
-        sanitize_dataframe(table)  # force consistent representation of an int in an otherwise empty column
+        sanitize_dataframe(table)  # force representation of [int,None] to be same as what we get from rendering
+                                   # (could be [10, None] or ["10",None]  or [10.0, NaN])
         self._assert_module_result(table)

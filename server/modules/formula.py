@@ -40,7 +40,7 @@ def eval_excel_one_row(code, table):
     for token, obj in code.inputs.items():
         ranges = obj.ranges
         if len(ranges) != 1:
-            return _('Excel range must be a rectangular block of values')  # ...how to get here?
+            return _('Excel range must be a rectangular block of values')  # ...not sure what input would get us here
         range = ranges[0]
 
         # Unpack start/end row/col
@@ -73,8 +73,6 @@ def eval_excel_all_rows(code, table, newcol):
         to_index = []
         for rng in ranges:
             # r1 and r2 refer to which rows are referenced by the range.
-            # cr shows up in the range object whenever the reference is to
-            # an entire row.
             if rng['r1'] != '1' or rng['r2'] != '1':
                 raise ValueError(_('Excel formulas can only reference the first row when applied to all rows'))
 
