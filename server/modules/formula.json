@@ -14,34 +14,42 @@
       "default": "0"
     },
     {
-      "name": "Output column",
-      "id_name" : "out_column",
-      "type": "string",
-      "default": "formula output"
-    },
-    {
-      "name": "",
+      "name": "Formula",
       "id_name" : "formula_excel",
       "type": "string",
-      "multiline": "True",
       "default": "",
-      "placeholder": "e.g. =SUM(A:B)",
+      "placeholder": "e.g. =A1+B1",
       "visible_if": {
         "id_name": "syntax",
         "value": "Excel"
       }
     },
     {
-      "name": "",
+      "name": "Apply to all rows",
+      "id_name" : "all_rows",
+      "type": "checkbox",
+      "default": "True",
+      "visible_if": {
+        "id_name": "syntax",
+        "value": "Excel"
+      }
+    },
+    {
+      "name": "Formula",
       "id_name" : "formula_python",
       "type": "string",
-      "multiline": "True",
       "default": "",
-      "placeholder": "e.g. col1 * (col2 + colu3)",
+      "placeholder": "e.g. col1 * (col2 + col3)",
       "visible_if": {
         "id_name": "syntax",
         "value": "Python"
       }
+    },
+    {
+      "name": "Output column",
+      "id_name" : "out_column",
+      "type": "string",
+      "default": "formula output"
     }
   ]
 }

@@ -55,7 +55,7 @@ exports[`Workflow list page renders correctly 1`] = `
               href="/lessons/"
             >
               <div>
-                TRAINING
+                Tutorials
               </div>
               <div
                 className="LS-link--under"
@@ -182,7 +182,7 @@ exports[`Workflow list page renders correctly 1`] = `
             <div
               className=" title-2 "
             >
-              TRAINING
+              TUTORIALS
             </div>
           </div>
         </div>

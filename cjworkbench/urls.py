@@ -25,8 +25,7 @@ from allauth.account.views import SignupView
 
 urlpatterns = [
     url(r'^admin/?', admin.site.urls),
-    url(r'^xyzzy/signup/$', SignupView.as_view(), name='account_signup'),
-    url(r'^account/signup/$', page_not_found,  {'exception': Http404()}),
+    url(r'^account/signup/$', SignupView.as_view(), name='account_signup'),
     url(r'^account/', include('allauth.urls')),
     url(r'^', include('server.urls')),
 ]

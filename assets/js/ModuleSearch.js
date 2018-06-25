@@ -12,10 +12,11 @@ import lessonSelector from './lessons/lessonSelector'
 const GroupOrder = {
   // dont use 0 -- we use the "||" operator to detect misses
   'Add data': 1,
-  'Clean': 2,
-  'Analyze': 3,
-  'Visualize': 4,
-  'Code': 5,
+  'Scrape': 2,
+  'Clean': 3,
+  'Analyze': 4,
+  'Visualize': 5,
+  'Code': 6,
 }
 
 function compareGroups(a, b) {
