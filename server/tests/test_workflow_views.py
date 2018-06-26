@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
 from server.serializers import WfModuleSerializer
 from server.tests.utils import *
-from server.views import workflow_list, workflow_addmodule, workflow_detail, embed
+from server.views import workflow_list, workflow_addmodule, workflow_detail, render_workflow
 
 
 FakeSession = namedtuple('FakeSession', [ 'session_key' ])
@@ -28,11 +28,11 @@ class WorkflowViewTests(LoggedInTestCase):
         self.other_workflow_public = Workflow.objects.create(name="Other workflow public", owner=self.otheruser, public=True)
 
 
-    def _augment_request(self, request, user: User,
-                         session_key: str) -> None:
+    def _augment_request(self, request, user: User, session_key: str) -> None:
         if user:
             force_authenticate(request, user=user)
         request.session = FakeSession(session_key)
+        request.user = user
 
 
     def _build_delete(self, *args, user: User=None, session_key: str='a-key',
@@ -111,6 +111,26 @@ class WorkflowViewTests(LoggedInTestCase):
 
             self.assertContains(response, 'myIntercomId')
             self.assertContains(response, 'myGaId')
+
+
+    def test_workflow_anonymous_user(self):
+        # Looking at an example workflow as an anonymous user should create a new workflow
+        num_workflows = Workflow.objects.count()
+
+        self.other_workflow_public.example = True
+        self.other_workflow_public.save()
+
+        # Also ensure the anonymous users can't access the Python module; first we need to load it
+        load_module_version('pythoncode')
+
+        request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id, user=AnonymousUser())
+        response = render_workflow(request, pk=self.other_workflow_public.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        self.assertEqual(Workflow.objects.count(), num_workflows + 1)  # should have duplicated the  wf with this API call
+
+        # Ensure the anonymous users can't access the Python module
+        self.assertNotContains(response, '"pythoncode"')
 
 
     def test_workflow_duplicate_view(self):

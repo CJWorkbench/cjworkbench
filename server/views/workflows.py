@@ -156,6 +156,14 @@ def _get_anonymous_workflow_for(workflow: Workflow,
         return workflow.duplicate_anonymous(session_key)
 
 
+# Restrict the modules that are available, based on the user
+def visible_modules(request):
+    if request.user.is_authenticated:
+        return Module.objects.all()
+    else:
+        return Module.objects.all().exclude(id_name='pythoncode')  # need to log in to write Python code
+
+
 # no login_required as logged out users can view example/public workflows
 def render_workflow(request, pk=None):
     # Workflow must exist and be readable by this user
@@ -170,12 +178,12 @@ def render_workflow(request, pk=None):
         if workflow.example and workflow.owner != request.user:
             workflow = _get_anonymous_workflow_for(workflow, request)
 
-        modules = Module.objects.all()
-        init_state = make_init_state(request, workflow=workflow,
-                                     modules=modules)
+        modules = visible_modules(request)
+        init_state = make_init_state(request, workflow=workflow, modules=modules)
 
         return TemplateResponse(request, 'workflow.html',
                                 {'initState': init_state})
+
 
 # Retrieve or delete a workflow instance.
 # Or reorder modules
@@ -254,15 +262,18 @@ def workflow_addmodule(request, pk, format=None):
     except Module.DoesNotExist:
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    # don't allow python code module in anonymous workflow
+    if module.id_name == 'pythoncode' and workflow.is_anonymous:
+        return HttpResponseForbidden()
+
     # always add the latest version of a module (do we need ordering on the objects to ensure last is always latest?)
     module_version = ModuleVersion.objects.filter(module=module).last()
 
     log_user_event(request.user, 'Add Module ' + module.name, {'name': module.name, 'id_name':module.id_name})
 
-    with workflow.cooperative_lock():
-        delta = AddModuleCommand.create(workflow, module_version, insert_before)
-        serializer = WfModuleSerializer(delta.wf_module)
-        wfmodule_data = serializer.data
+    delta = AddModuleCommand.create(workflow, module_version, insert_before)
+    serializer = WfModuleSerializer(delta.wf_module)
+    wfmodule_data = serializer.data
     wfmodule_data['insert_before'] = request.data['insertBefore']
 
     return Response(wfmodule_data, status.HTTP_201_CREATED)
