@@ -82,6 +82,7 @@ if DEBUG==False:
             'HOST': os.environ['CJW_DB_HOST'],
             'PASSWORD': os.environ['CJW_DB_PASSWORD'],
             'PORT': '5432',
+            'CONN_MAX_AGE': 30,
         }
     }
 
