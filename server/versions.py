@@ -80,10 +80,14 @@ def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
         else:
             output_deltas = []
 
-        wfm.has_unseen_notification = bool(output_deltas)
         wfm.error_msg = error_message or ''
         wfm.status = (WfModule.ERROR if error_message else WfModule.READY)
         wfm.save()
+
+        # Mark has_unseen_notifications via direct SQL
+        WfModule.objects \
+            .filter(id__in=[ od.wf_module_id for od in output_deltas ]) \
+            .update(has_unseen_notification=True)
 
     # un-indent: COMMIT, so we can notify the client and the client sees changes
     if version_added:

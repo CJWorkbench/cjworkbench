@@ -19,6 +19,7 @@ class OutputDelta:
         self.fetched_table_version = fetched_table_version
         self.user = workflow.owner
         self.workflow_name = workflow.name
+        self.wf_module_id = wf_module.id
         self.module_name = wf_module.get_module_name()
         self.workflow_url = get_absolute_url(workflow.get_absolute_url())
         self.old_table = old_table
