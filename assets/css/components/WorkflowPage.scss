@@ -49,7 +49,6 @@
       h3 {
         font-size: 1.8rem;
         text-transform: uppercase;
-        margin-right: 1rem;
       }
 
       p {
@@ -59,6 +58,16 @@
         a {
           color:$white;
           text-decoration: underline;
+        }
+      }
+      .suggestion {
+        display: flex;
+        align-items: center;
+
+        .action-button {
+          @extend .button-white--fill;
+          color: $brand-learn;
+          margin: 0 2rem;
         }
       }
     }

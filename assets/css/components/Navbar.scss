@@ -211,10 +211,10 @@
 
 .nav--link {
   @extend .content-3;
+  text-transform: uppercase;
   font-size: 1.4rem;
   cursor: pointer;
   margin-right: 5rem;
-  width:5rem;
   color:$white;
 
   &:hover {
