@@ -5,6 +5,7 @@ import os, re
 from .moduleimpl import ModuleImpl
 from server import oauth
 from server.versions import save_fetched_table_if_changed
+from django.utils.translation import gettext as _
 
 # ---- Twitter import module ----
 
@@ -125,20 +126,23 @@ class Twitter(ModuleImpl):
         except TweepError as e:
             if e.response:
                 if querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==401:
-                    wfm.set_error('User %s\'s tweets are protected' % query)
+                    wfm.set_error(_('User %s\'s tweets are protected') % query)
                     return
                 elif querytype==Twitter.QUERY_TYPE_USER and e.response.status_code==404:
-                    wfm.set_error('User %s does not exist' % query)
+                    wfm.set_error(_('User %s does not exist') % query)
+                    return
+                elif e.response.status_code==429:
+                    wfm.set_error(_('Twitter API rate limit exceeded. Please wait a few minutes and try again.'))
                     return
                 else:
-                    wfm.set_error('HTTP error %s fetching tweets' % str(e.response.status_code))
+                    wfm.set_error(_('HTTP error %s fetching tweets' % str(e.response.status_code)))
                     return
             else:
-                wfm.set_error('Error fetching tweets: ' + str(e))
+                wfm.set_error(_('Error fetching tweets: ' + str(e)))
                 return
 
         except Exception as e:
-            wfm.set_error('Error fetching tweets: ' + str(e))
+            wfm.set_error(_('Error fetching tweets: ' + str(e)))
             return
 
 
