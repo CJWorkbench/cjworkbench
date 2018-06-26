@@ -23,10 +23,11 @@ class ReorderFromTable(ModuleImpl):
         for entry in history_entries:
             from_idx = int(entry['from'])
             to_idx = int(entry['to'])
-            if from_idx >= len(columns) or to_idx >= len(columns):
-                return CORRUPT_HISTORY_ERROR
-            if columns[from_idx] != entry['column']:
-                return CORRUPT_HISTORY_ERROR
+            # Disabled because the notification is worth than the error (reorder works, only the log is corrupted) --- Pierre
+            # if from_idx >= len(columns) or to_idx >= len(columns):
+            #     return CORRUPT_HISTORY_ERROR
+            # if columns[from_idx] != entry['column']:
+            #     return CORRUPT_HISTORY_ERROR
             moved = columns.pop(from_idx)
             if to_idx < from_idx:
                 columns.insert(to_idx, moved)
