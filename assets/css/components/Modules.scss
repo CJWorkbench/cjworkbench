@@ -166,28 +166,28 @@
         }
       }
 
-      i.icon-notification {
+      i.icon-notification, .has-unseen {
         position: relative;
         font-size: 1.35rem;
         top: .1rem;
-        &.alert-triggered {color:$brand-orange!important;}
       }
+
 
       // Alert icons in modules when notifications are set
-      .notification-badge{
-        display: inline-block;
-        cursor: pointer;
-        line-height:2.3;
-        &:hover{background-color: transparent;}
-
-        i.icon-notification {
-          font-size: 1.35rem;
-        }
-
-        span.count {
-          font-size: 1rem;
-        }
-      }
+      // .notification-badge{
+      //   display: inline-block;
+      //   cursor: pointer;
+      //   line-height:2.3;
+      //   &:hover{background-color: transparent;}
+      //
+      //   i.icon-notification {
+      //     font-size: 1.35rem;
+      //   }
+      //
+      //   span.count {
+      //     font-size: 1rem;
+      //   }
+      // }
     }
   }
 
