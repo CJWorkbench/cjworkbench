@@ -287,8 +287,7 @@ export class WfModule extends React.PureComponent {
 
       alertButton = (
         <button title={title} className={className} onClick={this.onClickNotification}>
-          <i className="icon-notification"></i>
-          { hasUnseen ? <span className="has-unseen"></span> : null }
+          <i className={`icon-notification ${hasUnseen ? 'alert-triggered' : ''}`}></i>
         </button>
       );
     }

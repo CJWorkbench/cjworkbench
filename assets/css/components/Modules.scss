@@ -170,6 +170,7 @@
         position: relative;
         font-size: 1.35rem;
         top: .1rem;
+        &.alert-triggered {color:$brand-orange!important;}
       }
 
       // Alert icons in modules when notifications are set
