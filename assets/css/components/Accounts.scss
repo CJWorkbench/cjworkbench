@@ -69,7 +69,7 @@
       text-decoration:none;
     }
 
-    .socialLoginButton{
+    .socialLoginButton {
       background-color: #fff;
       border:2px solid transparent;
       border-radius: 10rem;
@@ -135,16 +135,13 @@ body.accounts {
 
 // Signup page
 
-.signup-card-left{
-  width: 20%;
-  background-color: transparent;
-  border-radius: 0;
-  border: 0;
-  padding-left: 0;
-  margin: auto;
+.signup-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-.signup-card-right{
+.signup-card{
   background: rgba(250,250,250,0.3);
   height: auto;
   padding: 3rem 5rem;
