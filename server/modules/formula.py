@@ -19,18 +19,26 @@ def letter_ref_to_number(letter_ref):
     return return_number - 1  # 0-indexed
 
 
-def python_formula(table, formula, newcol):
+def python_formula(table, formula):
     colnames = [x.replace(" ", "_") for x in table.columns]  # spaces to underscores in column names
 
     code = compile(formula, '<string>', 'eval')
 
     # Much experimentation went into the form of this loop for good performance.
     # Note we don't use iterrows or any pandas indexing, and construct the values dict ourselves
+    newcol = pd.Series(list(itertools.repeat(None, len(table))))
     for i,row in enumerate(table.values):
         newcol[i] = eval(code, custom_code_globals, dict(zip(colnames, row)))
 
     return newcol
 
+
+def flatten_single_element_lists(x):
+    """ If passed a list with only one element, returns that element, else the original list"""
+    if isinstance(x, list) and len(x)==1:
+        return x[0]
+    else:
+        return x
 
 def eval_excel_one_row(code, table):
 
@@ -55,7 +63,7 @@ def eval_excel_one_row(code, table):
             return '#REF!' # expression references non-existent data
 
         table_part = list(table.iloc[r1:r2,c1:c2].values.flat)
-        formula_args.append(table_part)
+        formula_args.append(flatten_single_element_lists(table_part))
 
     # evaluate the formula just once
     try:
@@ -68,7 +76,7 @@ def eval_excel_one_row(code, table):
     return val
 
 
-def eval_excel_all_rows(code, table, newcol):
+def eval_excel_all_rows(code, table):
     col_idx = []
     for token, obj in code.inputs.items():
         # If the formula is valid but no object comes back it means the reference is no good
@@ -78,7 +86,6 @@ def eval_excel_all_rows(code, table, newcol):
             raise ValueError(_('Bad cell reference %s') % token)
 
         ranges = obj.ranges
-        to_index = []
         for rng in ranges:
             # r1 and r2 refer to which rows are referenced by the range.
             if rng['r1'] != '1' or rng['r2'] != '1':
@@ -87,29 +94,19 @@ def eval_excel_all_rows(code, table, newcol):
             col_first = rng['n1']
             col_last = rng['n2']
 
-            if col_first != col_last:
-                to_index.append([n for n in range((col_first - 1), col_last)])
-            else:
-                to_index.append(col_first - 1)
+            col_idx.append(list(range(col_first - 1, col_last)))
 
-        if len(to_index) == 1:
-            col_idx.append(to_index[0])
-        else:
-            col_idx.append(to_index)
-
+    newcol = []
     for i, row in enumerate(table.values):
         args_to_excel = []
         for col in col_idx:
-            if isinstance(col, list):
-                args_to_excel.append([row[idx] for idx in col])
-            else:
-                args_to_excel.append(row[col])
-        newcol[i] = code(*args_to_excel)
+            args_to_excel.append(flatten_single_element_lists([row[idx] for idx in col]))
+        newcol.append(code(*args_to_excel))
 
     return newcol
 
 
-def excel_formula(table, formula, all_rows, newcol):
+def excel_formula(table, formula, all_rows):
     try:
         # 0 is a list of tokens, 1 is the function builder object
         code = Parser().ast(formula)[1].compile()
@@ -117,8 +114,9 @@ def excel_formula(table, formula, all_rows, newcol):
         raise  ValueError(_("Couldn't parse formula: %s") % str(e))
 
     if all_rows:
-        newcol = eval_excel_all_rows(code, table, newcol)
+        newcol = eval_excel_all_rows(code, table)
     else:
+        newcol = list(itertools.repeat(None, len(table))) # the whole column is blank except first row
         newcol[0] = eval_excel_one_row(code, table)
 
     return newcol
@@ -131,8 +129,6 @@ class Formula(ModuleImpl):
         if table is None:
             return None     # no rows to process
 
-        newcol = pd.Series(list(itertools.repeat(None, len(table))))
-
         syntax = wf_module.get_param_menu_idx('syntax')
         if syntax== 0:
             formula = wf_module.get_param_string('formula_excel').strip()
@@ -140,7 +136,7 @@ class Formula(ModuleImpl):
                 return table
             all_rows = wf_module.get_param_checkbox('all_rows')
             try:
-                newcol = excel_formula(table, formula, all_rows, newcol)
+                newcol = excel_formula(table, formula, all_rows)
             except Exception as e:
                 return str(e)
         else:
@@ -148,7 +144,7 @@ class Formula(ModuleImpl):
             if formula=='':
                 return table
             try:
-                newcol = python_formula(table, formula, newcol)
+                newcol = python_formula(table, formula)
             except Exception as e:
                 return str(e)
 

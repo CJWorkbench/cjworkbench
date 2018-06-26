@@ -107,17 +107,15 @@ class FormulaTests(LoggedInTestCase):
 
         table = mock_csv_table.copy()
         table['result'] = table['Amount'] * 2
-        table['result'] = table['result'].astype(object)
 
         self._assert_module_result(table)
 
 
-    def test_excel_range_types(self):
-        # We have custom range handling logic and syntax, so this test exercises many types of ranges
-        # All of these tests operate on all rows
+    # --- Formulas which write to all rows ---
+
+    def test_excel_all_rows(self):
         table = mock_csv_table.copy()
         table['output'] = table['Amount'] * 2
-        table['output'] = table['output'].astype(object)
 
         # formula: single-column reference
         self._set_excel_formula('=B1*2', all_rows=True)
@@ -126,7 +124,6 @@ class FormulaTests(LoggedInTestCase):
         # formula: horizontal range
         self._set_excel_formula('=SUM(B1:C1)', all_rows=True)
         table['output'] = table['Amount'] + table['Amount2']
-        table['output'] = table['output'].astype(object)
         self._assert_module_result(table)
 
 
@@ -136,6 +133,34 @@ class FormulaTests(LoggedInTestCase):
         table['output'] = table['Name'].apply(lambda x: x[:5])
         table['output'] = table['output'].astype(object)
         self._assert_module_result(table)
+
+
+    # --- Formulas which write only to a single row ---
+
+    def test_excel_divide_two_rows(self):
+        self._set_excel_formula('=B1/B2', all_rows=False)
+        table = mock_csv_table.copy()
+        table['output'] = [table['Amount'][0]/table['Amount'][1], None]
+        table = sanitize_dataframe(table)
+        self._assert_module_result(table)
+
+    def test_excel_add_two_columns(self):
+        self._set_excel_formula('=B1+C1', all_rows=False)
+        table = mock_csv_table.copy()
+        table['output'] = [table['Amount'][0]+table['Amount2'][0], None]
+        table = sanitize_dataframe(table)
+        self._assert_module_result(table)
+
+    def test_excel_sum_column(self):
+        self._set_excel_formula('=SUM(B1:B2)', all_rows=False)
+        table = mock_csv_table.copy()
+        table['output'] = [sum(table['Amount']), None]
+        sanitize_dataframe(table)  # force representation of [int,None] to be same as what we get from rendering
+                                   # (could be [10, None] or ["10",None]  or [10.0, NaN])
+        self._assert_module_result(table)
+
+
+
 
 
     def test_bad_excel_formulas(self):
@@ -164,11 +189,3 @@ class FormulaTests(LoggedInTestCase):
         self._assert_module_result(mock_csv_table, WfModule.ERROR)
 
 
-    # Formula which writes only to a single row
-    def test_excel_single_row(self):
-        self._set_excel_formula('=SUM(B1:B2)', all_rows=False)
-        table = mock_csv_table.copy()
-        table['output'] = pd.Series([sum(table['Amount']), None], dtype=object)
-        sanitize_dataframe(table)  # force representation of [int,None] to be same as what we get from rendering
-                                   # (could be [10, None] or ["10",None]  or [10.0, NaN])
-        self._assert_module_result(table)
