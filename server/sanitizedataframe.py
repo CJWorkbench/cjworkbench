@@ -5,7 +5,9 @@ from django.conf import settings
 # convert numbers to string, replacing NaN with '' (naive conversion results in 'Nan' string cells)
 def safe_column_to_string(col):
     def string_or_null(val):
-        if pd.isnull(val):
+        if isinstance(val, list) or isinstance(val, dict):
+            return str(val)
+        elif pd.isnull(val):  # this expression won't work on containers
             return ''
         else:
             return str(val)

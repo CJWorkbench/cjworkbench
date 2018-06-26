@@ -37,6 +37,19 @@ class SantizeDataframeTestCase(TestCase):
         self.assertTrue(numempty > 0)
 
 
+    def test_lists_and_dicts(self):
+        # By assigning through Series it is possible to store lists and dicts in a DataFrame.
+        # True fact. Fucks people up. But not us.
+        t = pd.DataFrame([[1, 2, 3],[4,5,6]], columns=['a','b','c'])
+        s = pd.Series([None, None])
+        s[0] = [5,6,7]
+        s[1] = {8:9}
+        t['s']=s
+        sanitize_dataframe(t)
+        self.assertEqual(t['s'][0], '[5, 6, 7]')
+        self.assertEqual(t['s'][1], '{8: 9}')
+
+
     def test_duplicate_colnames(self):
         # check that duplicate cols are renamed, and that non-string names are converted to string
         t = pd.DataFrame([[1, 2, 3],[4,5,6]], columns=['a',20.0,'a'])

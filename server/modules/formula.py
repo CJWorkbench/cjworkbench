@@ -2,7 +2,6 @@ from .moduleimpl import ModuleImpl
 from .utils import *
 import pandas as pd
 from formulas import Parser
-from formulas.errors import FormulaError
 import re, itertools
 from django.utils.translation import gettext as _
 
@@ -10,7 +9,7 @@ from django.utils.translation import gettext as _
 
 def letter_ref_to_number(letter_ref):
     if re.search(r"[^a-zA-Z]+", letter_ref):
-        raise FormulaError(_("%s is not a valid reference" % letter_ref))
+        raise ValueError(_("%s is not a valid reference" % letter_ref))
 
     return_number = 0
 
@@ -38,9 +37,11 @@ def eval_excel_one_row(code, table):
     # Generate a list of input table values for each range in the expression
     formula_args = []
     for token, obj in code.inputs.items():
+        if obj is None:
+            raise ValueError(_('Invalid cell range: %s') % token)
         ranges = obj.ranges
         if len(ranges) != 1:
-            return _('Excel range must be a rectangular block of values')  # ...not sure what input would get us here
+            raise ValueError(_('Excel range must be a rectangular block of values'))  # ...not sure what input would get us here
         range = ranges[0]
 
         # Unpack start/end row/col
@@ -57,7 +58,14 @@ def eval_excel_one_row(code, table):
         formula_args.append(table_part)
 
     # evaluate the formula just once
-    return code(*formula_args)
+    try:
+        val = code(*formula_args)
+    except Exception as e:
+        if type(e).__name__ == 'DispatcherError':
+            raise ValueError(_('Unknown function: %s') % e.args[1])
+        else:
+            raise
+    return val
 
 
 def eval_excel_all_rows(code, table, newcol):
@@ -106,13 +114,14 @@ def excel_formula(table, formula, all_rows, newcol):
         # 0 is a list of tokens, 1 is the function builder object
         code = Parser().ast(formula)[1].compile()
     except Exception as e:
-        raise  _("Couldn't parse formula: %s" % str(e))
+        raise  ValueError(_("Couldn't parse formula: %s") % str(e))
 
     if all_rows:
-        return eval_excel_all_rows(code, table, newcol)
+        newcol = eval_excel_all_rows(code, table, newcol)
     else:
         newcol[0] = eval_excel_one_row(code, table)
-        return newcol
+
+    return newcol
 
 
 class Formula(ModuleImpl):
