@@ -7,6 +7,7 @@ import { OutputIframe } from './OutputIframe'
 import Resizable from 're-resizable'
 import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
+import { findParamValByIdName} from './utils'
 
 export class OutputPane extends React.Component {
 
@@ -243,7 +244,7 @@ function mapStateToProps(state, ownProps) {
 
   if (id_name === 'sort-from-table') {
     const columnParam = findParamValByIdName(wfModule, 'column');
-    const directionParam = findParamValByIdName(wfModule, 'direction');
+    const directionParam = findParamValByIdName(wfModule, 'direction').value;
 
     sortColumn = columnParam && columnParam.value || null;
     sortDirection = [ 'NONE', 'ASC', 'DESC' ][directionParam] || 'NONE'
