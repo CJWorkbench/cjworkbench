@@ -5,9 +5,6 @@ import json
 class ReorderFromTable(ModuleImpl):
     @staticmethod
     def render(wf_module, table):
-        # Error message for when reorder history is corrupted
-        CORRUPT_HISTORY_ERROR = 'Reorder history is corrupted. Did you remove one of the input columns?'
-
         history = wf_module.get_param_raw('reorder-history', 'custom')
 
         # NOP if history is empty
@@ -23,15 +20,12 @@ class ReorderFromTable(ModuleImpl):
         for entry in history_entries:
             from_idx = int(entry['from'])
             to_idx = int(entry['to'])
-            # Disabled because the notification is worth than the error (reorder works, only the log is corrupted) --- Pierre
-            # if from_idx >= len(columns) or to_idx >= len(columns):
-            #     return CORRUPT_HISTORY_ERROR
-            # if columns[from_idx] != entry['column']:
-            #     return CORRUPT_HISTORY_ERROR
+
+            # Our original input columns can get moved or deleted, but we'll give it a shot if indices are in range
+            if from_idx >= len(columns) or to_idx >= len(columns):
+                continue
+
             moved = columns.pop(from_idx)
-            if to_idx < from_idx:
-                columns.insert(to_idx, moved)
-            else:
-                columns.insert(to_idx - 1, moved)
+            columns.insert(to_idx, moved)
 
         return table[columns]
