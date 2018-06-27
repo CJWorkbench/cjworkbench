@@ -41,7 +41,7 @@ class ReorderFromTableTests(LoggedInTestCase):
         self.assertTrue(out.equals(self.table))
 
     def test_reorder(self):
-        # In chronological order
+        # In chronological order, starting with ['name', 'date', 'count', 'float']
         reorder_ops = [
             {
                 'column': 'count',
@@ -51,27 +51,27 @@ class ReorderFromTableTests(LoggedInTestCase):
             {
                 'column': 'name',
                 'from': 1,
-                'to': 3
+                'to': 2
             },  # gives ['count', 'date', 'name', 'float']
             {
                 'column': 'float',
                 'from': 3,
-                'to': 2
-            },  # gives ['count', 'date', 'float', 'name']
+                'to': 1
+            },  # gives ['count', 'float', 'date', 'name']
         ]
         self.history_pval.value = json.dumps(reorder_ops)
         self.history_pval.save()
         out = execute_nocache(self.wf_module)
-        ref_cols = ['count', 'date', 'float', 'name']
+        ref_cols = ['count', 'float', 'date', 'name']
         self.assertEqual(out.columns.tolist(), ref_cols)
         for col in ref_cols:
             self.assertTrue(out[col].equals(self.table[col]))
 
-    def test_corrupt_reorder(self):
+    def test_missing_column(self):
         # If an input column is removed (e.g. via select columns)
-        # then the entire reorder history becomes incoherent
-        # and the module should report error
+        # then reorders which refer to it simply do nothing
         reorder_ops = [
+            # starts from ['name', 'date', 'count', 'float']
             {
                 'column': 'count',
                 'from': 2,
@@ -79,17 +79,24 @@ class ReorderFromTableTests(LoggedInTestCase):
             },  # gives ['count', 'name', 'date', 'float']
             {
                 'column': 'nonexistent-name',
-                'from': 1,
-                'to': 3
-            },  # invalid
+                'from': 4,
+                'to': 1
+            },  # invalid, nop
+            {
+                'column': 'count',
+                'from': 0,
+                'to': 4
+            },  # invalid, nop
             {
                 'column': 'float',
                 'from': 3,
                 'to': 2
-            },
+            }, # gives ['count', 'name', 'float', 'date']
         ]
         self.history_pval.value = json.dumps(reorder_ops)
         self.history_pval.save()
-        _ = execute_nocache(self.wf_module)
+        out = execute_nocache(self.wf_module)
         self.wf_module.refresh_from_db()
-        # self.assertEqual(self.wf_module.status, WfModule.ERROR) Turned off the error for now -- Pierre
+        self.assertEqual(self.wf_module.status, WfModule.READY)
+        ref_cols = ['count', 'name', 'float', 'date']
+        self.assertEqual(out.columns.tolist(), ref_cols)
