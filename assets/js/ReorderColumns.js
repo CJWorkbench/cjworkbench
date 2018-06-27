@@ -1,4 +1,4 @@
-import {store} from './workflow-reducer';
+import { addModuleAction, setParamValueAction, setParamValueActionByIdName, store } from './workflow-reducer'
 import {findModuleWithIdAndIdName, findParamValByIdName, getWfModuleIndexfromId, DEPRECATED_ensureSelectedWfModule} from './utils';
 import WorkbenchAPI from './WorkbenchAPI';
 
@@ -24,7 +24,7 @@ function updateReorderModule(module, reorderInfo) {
   }
 
   historyEntries.push(reorderInfo)
-  api.onParamChanged(historyParam.id, {value: JSON.stringify(historyEntries)})
+  store.dispatch(setParamValueAction(historyParam.id, JSON.stringify(historyEntries)))
 }
 
 export function updateReorder(wfModuleId, reorderInfo) {
@@ -36,11 +36,11 @@ export function updateReorder(wfModuleId, reorderInfo) {
     updateReorderModule(existingReorderModule, reorderInfo)
     DEPRECATED_ensureSelectedWfModule(store, existingReorderModule)
   } else {
-    const wfModuleIdx = getWfModuleIndexfromId(state, wfModuleId)
-    api.addModule(workflowId, state.reorderModuleId, wfModuleIdx + 1)
-      .then((newWfm) => {
+    const wfModuleIndex = getWfModuleIndexfromId(state, wfModuleId)
+    store.dispatch(addModuleAction(state.reorderModuleId, wfModuleIndex + 1))
+      .then(fulfilled => {
+        const newWfm = fulfilled.value
         updateReorderModule(newWfm, reorderInfo)
-        DEPRECATED_ensureSelectedWfModule(store, newWfm)
       })
   }
 }

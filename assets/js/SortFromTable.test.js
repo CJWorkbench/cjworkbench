@@ -1,9 +1,8 @@
-import { updateSort } from "./SortFromTable";
-import {tick} from "./test-utils"
-
-jest.mock('./workflow-reducer');
+import { updateSort } from './SortFromTable'
+import {tick} from './test-utils'
 import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'
 
+jest.mock('./workflow-reducer');
 
 describe("SortFromTable actions", () => {
   // A few parameter id constants for better readability
