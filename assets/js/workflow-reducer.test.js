@@ -127,6 +127,25 @@ describe('Reducer actions', () => {
     expect(state.workflow).toEqual(test_workflow);
   });
 
+  it('does not overwrite is_collapsed when reloading workflow', () => {
+    // https://www.pivotaltracker.com/story/show/158620575
+    const workflow1 = JSON.parse(JSON.stringify(test_workflow))
+    workflow1.wf_modules[1].is_collapsed = false
+    workflow1.wf_modules[2].is_collapsed = true
+
+    const workflow2 = JSON.parse(JSON.stringify(test_workflow))
+    workflow2.wf_modules[1].is_collapsed = true
+    workflow2.wf_modules[2].is_collapsed = false
+
+    const state = workflowReducer({ workflow: workflow1 }, {
+      type: 'RELOAD_WORKFLOW_FULFILLED',
+      payload: workflow2
+    })
+
+    expect(state.workflow.wf_modules[1].is_collapsed).toBe(false)
+    expect(state.workflow.wf_modules[2].is_collapsed).toBe(true)
+  })
+
    // LOAD_MODULES
    it('loadModules', () => {
      let api = installMockApiCall('getModules', genericTestModules);

@@ -55,7 +55,6 @@ export class WfModule extends React.PureComponent {
     this.notesInputRef = React.createRef();
 
     this.state = {
-      isCollapsed: this.props.wfModule.is_collapsed,
       notes: this.props.wfModule.notes || '',
       isNoteForcedVisible: false,
       isDataVersionModalOpen: false,
@@ -73,14 +72,6 @@ export class WfModule extends React.PureComponent {
     this.setState({
       isDataVersionModalOpen: true,
     })
-  }
-
-  componentWillReceiveProps(newProps) {
-    if (newProps.wfModule.is_collapsed !== this.state.isCollapsed) {
-      this.setState({
-        isCollapsed: newProps.wfModule.is_collapsed
-      })
-    }
   }
 
   // Scroll when we create a new wfmodule
@@ -176,10 +167,6 @@ export class WfModule extends React.PureComponent {
   // Optimistically updates the state, and then sends the new state to the server,
   // where it's persisted across sessions and through time.
   setCollapsed(isCollapsed) {
-    this.setState({
-      isCollapsed,
-    })
-
     this.props.setWfModuleCollapsed(this.props.wfModule.id, isCollapsed, this.props.isReadOnly)
   }
 
@@ -349,7 +336,7 @@ export class WfModule extends React.PureComponent {
 
     // Putting it all together: name, status, parameters, output
     return (
-      <div onClick={this.click} className={'wf-module' + (this.props.isLessonHighlight ? ' lesson-highlight' : '') + (this.state.isCollapsed ? ' collapsed' : ' expanded')} data-module-name={module.name}>
+      <div onClick={this.click} className={'wf-module' + (this.props.isLessonHighlight ? ' lesson-highlight' : '') + (wfModule.is_collapsed ? ' collapsed' : ' expanded')} data-module-name={module.name}>
         {notes}
         <div className={'wf-card '+ (this.state.isDragging ? 'dragging ' : '')} ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
 
@@ -360,7 +347,7 @@ export class WfModule extends React.PureComponent {
             <div className='module-content'>
               <div className='module-card-header'>
                 <WfModuleCollapseButton
-                  isCollapsed={this.state.isCollapsed}
+                  isCollapsed={wfModule.is_collapsed}
                   isLessonHighlight={this.props.isLessonHighlightCollapse}
                   onCollapse={this.collapse}
                   onExpand={this.expand}
