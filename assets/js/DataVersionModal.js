@@ -153,7 +153,7 @@ export class DataVersionModal extends React.PureComponent {
       date: PropTypes.instanceOf(Date).isRequired,
       isSeen: PropTypes.bool.isRequired,
     })).isRequired,
-    selectedFetchVersionId: PropTypes.string.isRequired,
+    selectedFetchVersionId: PropTypes.string, // null for no selection
     wfModuleId: PropTypes.number.isRequired,
     isAnonymous: PropTypes.bool.isRequired,
     notificationsEnabled: PropTypes.bool.isRequired, // whether enabled on selectedWfModule
