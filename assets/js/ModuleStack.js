@@ -291,7 +291,7 @@ class ModuleStack extends React.Component {
       // If this item is replacing a placeholder, disable the enter animations
       if (item.placeholder) {
         return (
-          <React.Fragment key={i}>
+          <React.Fragment key={`placeholder-${i}`}>
             {this.moduleStackInsertSpot(i)}
             <WfModuleHeader
               moduleName={item.name}
@@ -303,7 +303,7 @@ class ModuleStack extends React.Component {
         )
       } else {
         return (
-          <React.Fragment key={i}>
+          <React.Fragment key={`module-${item.id}`}>
             {this.moduleStackInsertSpot(i)}
             <WfModule
               isReadOnly={this.props.workflow.read_only}
