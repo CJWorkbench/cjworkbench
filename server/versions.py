@@ -3,9 +3,10 @@ import datetime
 from django.utils import timezone
 from django.conf import settings
 from pandas import DataFrame
-from server.models import Delta, Workflow, WfModule
+from server.models import Delta, WfModule
 from server.models import ChangeDataVersionCommand, StoredObject
-from server.notifications import find_output_deltas_to_notify_from_fetched_tables, email_output_delta
+from server.notifications import \
+        find_output_deltas_to_notify_from_fetched_tables, email_output_delta
 from server.triggerrender import notify_client_workflow_version_changed
 
 
@@ -17,7 +18,7 @@ def WorkflowUndo(workflow):
         # Undo, if not at the very beginning of undo chain
         if delta:
             delta.backward()
-            workflow.refresh_from_db() # backward() may change it
+            workflow.refresh_from_db()  # backward() may change it
             workflow.last_delta = delta.prev_delta
             workflow.save()
 
@@ -32,12 +33,13 @@ def WorkflowRedo(workflow):
         if workflow.last_delta:
             next_delta = workflow.last_delta.next_delta
         else:
-            next_delta = Delta.objects.filter(workflow=workflow).order_by('datetime').first()
+            next_delta = Delta.objects.filter(workflow=workflow) \
+                    .order_by('datetime').first()
 
         # Redo, if not at very end of undo chain
         if next_delta:
             next_delta.forward()
-            workflow.refresh_from_db() # forward() may change it
+            workflow.refresh_from_db()  # forward() may change it
             workflow.last_delta = next_delta
             workflow.save()
 
@@ -50,7 +52,7 @@ def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
     """Store retrieved data table, if it is a change from wfm's existing data.
 
     "Change" here means either a changed table or changed error message.
-    
+
     The WfModule's `status` and `error_msg` will be set, according to
     `error_message`.
 
@@ -74,9 +76,9 @@ def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
             enforce_storage_limits(wfm)
 
             output_deltas = \
-                    find_output_deltas_to_notify_from_fetched_tables(wfm,
-                                                                   old_table,
-                                                                   new_table)
+                find_output_deltas_to_notify_from_fetched_tables(wfm,
+                                                                 old_table,
+                                                                 new_table)
         else:
             output_deltas = []
 
@@ -86,17 +88,18 @@ def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
 
         # Mark has_unseen_notifications via direct SQL
         WfModule.objects \
-            .filter(id__in=[ od.wf_module_id for od in output_deltas ]) \
+            .filter(id__in=[od.wf_module_id for od in output_deltas]) \
             .update(has_unseen_notification=True)
 
-    # un-indent: COMMIT, so we can notify the client and the client sees changes
+    # un-indent: COMMIT so we notify the client _after_ COMMIT
     if version_added:
-        ChangeDataVersionCommand.create(wfm, version_added)  # also notifies client
+        ChangeDataVersionCommand.create(wfm, version_added)  # notifies client
 
         for output_delta in output_deltas:
-            email_output_delta(output_delta)
+            email_output_delta(output_delta, version_added)
     else:
-        # no new data version, but we still want client to update WfModule status and last update check time
+        # no new data version, but we still want client to update WfModule
+        # status and last update check time
         notify_client_workflow_version_changed(wfm.workflow)
 
     return version_added

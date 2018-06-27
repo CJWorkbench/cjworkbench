@@ -1,22 +1,20 @@
 import datetime
 from typing import List, Optional
 from allauth.account.utils import user_display
-from django.core.mail import send_mail, EmailMultiAlternatives
+from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
 from pandas import DataFrame
 from django.conf import settings
 from server.utils import get_absolute_url
-from server.pandas_util import are_tables_equal
+from server.pandas_util import are_tables_equal, copy_table
 
 
 class OutputDelta:
     """Description of changes between two versions of WfModule output."""
-    def __init__(self, fetched_table_version: datetime.datetime,
-                 wf_module: 'WfModule', old_table: Optional[DataFrame],
+    def __init__(self, wf_module: 'WfModule', old_table: Optional[DataFrame],
                  new_table: Optional[DataFrame]):
         workflow = wf_module.workflow
 
-        self.fetched_table_version = fetched_table_version
         self.user = workflow.owner
         self.workflow_name = workflow.name
         self.wf_module_id = wf_module.id
@@ -24,6 +22,16 @@ class OutputDelta:
         self.workflow_url = get_absolute_url(workflow.get_absolute_url())
         self.old_table = old_table
         self.new_table = new_table
+
+    def __repr__(self):
+        return 'OutputDelta' + repr((self.wf_module_id, self.old_table,
+                                     self.new_table))
+
+    def __eq__(self, other):
+        return isinstance(other, OutputDelta) \
+                and self.wf_module_id == other.wf_module_id \
+                and are_tables_equal(self.old_table, other.old_table) \
+                and are_tables_equal(self.new_table, other.new_table)
 
 
 def find_output_deltas_to_notify_from_fetched_tables(
@@ -58,12 +66,10 @@ def find_output_deltas_to_notify_from_fetched_tables(
         # remove wf_module itself
         all_modules.pop(0)
 
-    fetched_version = wf_module.stored_data_version
-
     if wf_module.notifications:
         # Notify on wf_module itself
-        output_deltas.append(OutputDelta(fetched_version, wf_module,
-                                         old_table.copy(), new_table.copy()))
+        output_deltas.append(OutputDelta(wf_module, copy_table(old_table),
+                                         copy_table(new_table)))
 
     # Now iterate through dependent modules: calculate tables and compare
     for wf_module in all_modules:
@@ -76,13 +82,14 @@ def find_output_deltas_to_notify_from_fetched_tables(
             return output_deltas
 
         if wf_module.notifications:
-            output_deltas.append(OutputDelta(fetched_version, wf_module,
-                                             old_table.copy(),
-                                             new_table.copy()))
+            output_deltas.append(OutputDelta(wf_module, copy_table(old_table),
+                                             copy_table(new_table)))
 
     return output_deltas
 
-def email_output_delta(output_delta: OutputDelta):
+
+def email_output_delta(output_delta: OutputDelta,
+                       updated_at: datetime.datetime):
     user = output_delta.user
 
     ctx = {
@@ -90,9 +97,10 @@ def email_output_delta(output_delta: OutputDelta):
         'module_name': output_delta.module_name,
         'workflow_name': output_delta.workflow_name,
         'workflow_url': output_delta.workflow_url,
-        'date': output_delta.fetched_table_version.strftime('%b %-d, %Y at %-I:%M %p')
+        'date': updated_at.strftime('%b %-d, %Y at %-I:%M %p'),
     }
-    subject = render_to_string("notifications/new_data_version_subject.txt", ctx)
+    subject = render_to_string("notifications/new_data_version_subject.txt",
+                               ctx)
     subject = "".join(subject.splitlines())
     message = render_to_string("notifications/new_data_version.txt", ctx)
     mail = EmailMultiAlternatives(
