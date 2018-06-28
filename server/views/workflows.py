@@ -1,4 +1,4 @@
-from django.http import HttpRequest, HttpResponseForbidden, Http404
+from django.http import HttpRequest, HttpResponseForbidden, HttpResponseNotFound
 from django.template.response import TemplateResponse
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect
@@ -169,8 +169,9 @@ def render_workflow(request, pk=None):
     # Workflow must exist and be readable by this user
     workflow = get_object_or_404(Workflow, pk=pk)
 
+    # 404 if trying to access an object without even read authorization, to prevent leakage of object ids
     if not workflow.request_authorized_read(request):
-        return HttpResponseForbidden()
+        return HttpResponseNotFound()
 
     if workflow.lesson and workflow.owner == request.user:
         return redirect(workflow.lesson)
@@ -192,8 +193,9 @@ def render_workflow(request, pk=None):
 def workflow_detail(request, pk, format=None):
     workflow = get_object_or_404(Workflow, pk=pk)
 
+    # 404 if trying to access an object without even read authorization, to prevent leakage of object ids
     if not workflow.request_authorized_read(request):
-        return HttpResponseForbidden()
+        return HttpResponseNotFound()
 
     if request.method == 'GET':
         with workflow.cooperative_lock():

@@ -70,7 +70,64 @@ class WorkflowViewTests(LoggedInTestCase):
         return request
 
 
-    def workflow_view(self):
+    # --- Workflow list ---
+
+    def test_workflow_list_get(self):
+        # set dates to test reverse chron ordering
+        self.workflow1.creation_date = "2010-10-20 1:23Z"
+        self.workflow1.save()
+        self.workflow2.creation_date = "2015-09-18 2:34Z"
+        self.workflow2.save()
+
+        request = self._build_get('/api/workflows/', user=self.user)
+        response = workflow_list(request)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 2) # should not pick up other user's workflows, even public ones
+
+        self.assertEqual(response.data[0]['name'], 'Workflow 2')
+        self.assertEqual(response.data[0]['id'], self.workflow2.id)
+        self.assertEqual(response.data[0]['public'], self.workflow1.public)
+        self.assertEqual(response.data[0]['read_only'], False)  # if we can list it, it's ours and we can edit it
+        self.assertIsNotNone(response.data[0]['last_update'])
+        self.assertEqual(response.data[0]['owner_name'], user_display(self.workflow2.owner))
+
+        self.assertEqual(response.data[1]['name'], 'Workflow 1')
+        self.assertEqual(response.data[1]['id'], self.workflow1.id)
+
+
+    def test_workflow_list_include_example(self):
+        self.other_workflow_public.example = True
+        self.other_workflow_public.save()
+
+        request = self._build_get('/api/workflows/', user=self.user)
+        response = workflow_list(request)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 3)
+
+
+    def test_workflow_list_exclude_lesson(self):
+        self.workflow1.lesson_slug = 'some-lesson'
+        self.workflow1.save()
+
+        request = self._build_get('/api/workflows/', user=self.user)
+        response = workflow_list(request)
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+
+
+    def test_workflow_list_post(self):
+        start_count = Workflow.objects.count()
+        request = self._build_post('/api/workflows/', user=self.user)
+        response = workflow_list(request)
+        self.assertIs(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Workflow.objects.count(), start_count+1)
+        self.assertEqual(Workflow.objects.filter(name='New Workflow').count(), 1)
+
+
+    # --- Workflow ---
+
+    # This is the HTTP response, as opposed to the API
+    def test_workflow_view(self):
         # View own non-public workflow
         response = self.client.get('/workflows/%d/' % self.workflow1.id)  # need trailing slash or 301
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -84,11 +141,11 @@ class WorkflowViewTests(LoggedInTestCase):
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
 
-        # 404 viewing someone else' private workflow
+        # 404 viewing someone else' private workflow (don't 403 as we don't want to leak urls)
         self.assertFalse(self.workflow1.public)
         self.client.force_login(self.otheruser)
         response = self.client.get('/workflows/%d/' % self.workflow1.id)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
     def test_workflow_init_state(self):
@@ -159,57 +216,59 @@ class WorkflowViewTests(LoggedInTestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
 
-    def test_workflow_list_get(self):
-        # set dates to test reverse chron ordering
-        self.workflow1.creation_date = "2010-10-20 1:23Z"
-        self.workflow1.save()
-        self.workflow2.creation_date = "2015-09-18 2:34Z"
-        self.workflow2.save()
-
-        request = self._build_get('/api/workflows/', user=self.user)
-        response = workflow_list(request)
+    def test_workflow_detail_get(self):
+        # Should be able to get your own workflow
+        pk_workflow = self.workflow1.id
+        request = self._build_get('/api/workflows/%d/' % pk_workflow,
+                                  user=self.user)
+        response = workflow_detail(request, pk = pk_workflow)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 2) # should not pick up other user's workflows, even public ones
+        self.assertEqual(response.data['name'], 'Workflow 1')
+        self.assertEqual(response.data['public'], False)
 
-        self.assertEqual(response.data[0]['name'], 'Workflow 2')
-        self.assertEqual(response.data[0]['id'], self.workflow2.id)
-        self.assertEqual(response.data[0]['public'], self.workflow1.public)
-        self.assertEqual(response.data[0]['read_only'], False)  # if we can list it, it's ours and we can edit it
-        self.assertIsNotNone(response.data[0]['last_update'])
-        self.assertEqual(response.data[0]['owner_name'], user_display(self.workflow2.owner))
+        # bad ID should give 404
+        request = self._build_get('/api/workflows/%d/' % 10000,
+                                  user=self.user)
+        response = workflow_detail(request, pk = 10000)
+        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
 
-        self.assertEqual(response.data[1]['name'], 'Workflow 1')
-        self.assertEqual(response.data[1]['id'], self.workflow1.id)
-
-
-    def test_workflow_list_include_example(self):
-        self.other_workflow_public.example = True
-        self.other_workflow_public.save()
-
-        request = self._build_get('/api/workflows/', user=self.user)
-        response = workflow_list(request)
+        # someone else's public workflow should be gettable
+        request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id,
+                                  user=self.user)
+        response = workflow_detail(request, pk = self.other_workflow_public.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 3)
+        self.assertEqual(response.data['name'], 'Other workflow public')
+
+        # not authenticated should give 404 (not 403, so we don't leak urls, and so we have a nice 404 page)
+        request = self._build_get('/api/workflows/%d/' % pk_workflow,
+                                  user=AnonymousUser())
+        response = workflow_detail(request, pk = pk_workflow)
+        self.assertEqual(response.status_code, 404)
+
+        # similarly, someone else's private workflow should 404
+        request = self._build_get('/api/workflows/%d/' % self.other_workflow_private.id,
+                                  user=self.user)
+        response = workflow_detail(request, pk=self.other_workflow_private.id)
+        self.assertEqual(response.status_code, 404)
 
 
-    def test_workflow_list_exclude_lesson(self):
-        self.workflow1.lesson_slug = 'some-lesson'
-        self.workflow1.save()
+    def test_email_leakage(self):
+        # We user email as display name if the user has not set first,last
+        # But don't ever give this out for a public workflow, either through page or API
+        request = self._build_get('/workflows/%d/' % self.other_workflow_public.id,
+                                  user=None)
+        response = workflow_detail(request, pk=self.other_workflow_public.id)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertNotContains(response, self.otheruser.email)
 
-        request = self._build_get('/api/workflows/', user=self.user)
-        response = workflow_list(request)
+        request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id,
+                                  user=self.user)
+        response = workflow_detail(request, pk = self.other_workflow_public.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)
+        self.assertNotContains(response, self.otheruser.email)
 
 
-    def test_workflow_list_post(self):
-        start_count = Workflow.objects.count()
-        request = self._build_post('/api/workflows/', user=self.user)
-        response = workflow_list(request)
-        self.assertIs(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Workflow.objects.count(), start_count+1)
-        self.assertEqual(Workflow.objects.filter(name='New Workflow').count(), 1)
-
+    # --- Writing to workflows ---
 
     def test_workflow_addmodule_put(self):
         pk_workflow = Workflow.objects.get(name='Workflow 1').id
@@ -274,57 +333,6 @@ class WorkflowViewTests(LoggedInTestCase):
                                   user=self.user)
         response = workflow_addmodule(request, pk=Workflow.objects.get(name='Workflow 1').id)
         self.assertIs(response.status_code, status.HTTP_400_BAD_REQUEST)
-
-
-    def test_workflow_detail_get(self):
-        pk_workflow = self.workflow1.id
-        request = self._build_get('/api/workflows/%d/' % pk_workflow,
-                                  user=self.user)
-        response = workflow_detail(request, pk = pk_workflow)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'Workflow 1')
-        self.assertEqual(response.data['public'], False)
-
-        # bad ID should give 404
-        request = self._build_get('/api/workflows/%d/' % 10000,
-                                  user=self.user)
-        response = workflow_detail(request, pk = 10000)
-        self.assertIs(response.status_code, status.HTTP_404_NOT_FOUND)
-
-        # not authenticated should give 403
-        request = self._build_get('/api/workflows/%d/' % pk_workflow,
-                                  user=AnonymousUser())
-        response = workflow_detail(request, pk = pk_workflow)
-        self.assertEqual(response.status_code, 403)
-
-        # someone else's public workflow should be gettable
-        request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id,
-                                  user=self.user)
-        response = workflow_detail(request, pk = self.other_workflow_public.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'Other workflow public')
-
-        # someone else's private workflow should 403
-        request = self._build_get('/api/workflows/%d/' % self.other_workflow_private.id,
-                                  user=self.user)
-        response = workflow_detail(request, pk=self.other_workflow_private.id)
-        self.assertEqual(response.status_code, 403)
-
-
-    def test_email_leakage(self):
-        # We user email as display name if the user has not set first,last
-        # But don't ever give this out for a public workflow, either through page or API
-        request = self._build_get('/workflows/%d/' % self.other_workflow_public.id,
-                                  user=None)
-        response = workflow_detail(request, pk=self.other_workflow_public.id)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertNotContains(response, self.otheruser.email)
-
-        request = self._build_get('/api/workflows/%d/' % self.other_workflow_public.id,
-                                  user=self.user)
-        response = workflow_detail(request, pk = self.other_workflow_public.id)
-        self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertNotContains(response, self.otheruser.email)
 
 
     def test_workflow_reorder_modules(self):
