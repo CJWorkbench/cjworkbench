@@ -79,12 +79,12 @@ exports[`ExportModal should match snapshot 1`] = `
                         class="d-flex justify-content-between flex-row"
                       >
                         <label
-                          class="t-d-gray info-1 "
+                          class="dl-file "
                         >
                           CSV
                         </label>
                         <div
-                          class="info-1 action-link test-csv-copy"
+                          class="clipboard test-csv-copy"
                         >
                           COPY LIVE LINK
                         </div>
@@ -112,12 +112,12 @@ exports[`ExportModal should match snapshot 1`] = `
                         class="d-flex justify-content-between flex-row"
                       >
                         <label
-                          class="t-d-gray info-1 "
+                          class="dl-file "
                         >
                           JSON
                         </label>
                         <div
-                          class="info-1 action-link test-json-copy"
+                          class="clipboard test-json-copy"
                         >
                           COPY LIVE LINK
                         </div>
@@ -268,7 +268,7 @@ exports[`ExportModal should match snapshot 1`] = `
                             className="d-flex justify-content-between flex-row"
                           >
                             <Label
-                              className="t-d-gray info-1"
+                              className="dl-file"
                               tag="label"
                               widths={
                                 Array [
@@ -281,18 +281,18 @@ exports[`ExportModal should match snapshot 1`] = `
                               }
                             >
                               <label
-                                className="t-d-gray info-1 "
+                                className="dl-file "
                               >
                                 CSV
                               </label>
                             </Label>
                             <CopyToClipboard
-                              className="info-1 action-link test-csv-copy"
+                              className="clipboard test-csv-copy"
                               onCopy={[Function]}
                               text="/public/moduledata/live/415.csv"
                             >
                               <div
-                                className="info-1 action-link test-csv-copy"
+                                className="clipboard test-csv-copy"
                                 onClick={[Function]}
                               >
                                 COPY LIVE LINK
@@ -330,7 +330,7 @@ exports[`ExportModal should match snapshot 1`] = `
                             className="d-flex justify-content-between flex-row"
                           >
                             <Label
-                              className="t-d-gray info-1"
+                              className="dl-file"
                               tag="label"
                               widths={
                                 Array [
@@ -343,18 +343,18 @@ exports[`ExportModal should match snapshot 1`] = `
                               }
                             >
                               <label
-                                className="t-d-gray info-1 "
+                                className="dl-file "
                               >
                                 JSON
                               </label>
                             </Label>
                             <CopyToClipboard
-                              className="info-1 action-link test-json-copy"
+                              className="clipboard test-json-copy"
                               onCopy={[Function]}
                               text="/public/moduledata/live/415.json"
                             >
                               <div
-                                className="info-1 action-link test-json-copy"
+                                className="clipboard test-json-copy"
                                 onClick={[Function]}
                               >
                                 COPY LIVE LINK
