@@ -57,6 +57,7 @@ To see what Workbench does, try our [public server](http://workbenchdata.org), n
 
 # User Documentation
 
+- [Imagining the data journalism workflow of the future](https://medium.com/@Workbench/seriously-no-more-spreadsheets-imagining-the-data-journalism-workflow-of-the-future-386336e12048)
 - [What workbench can do for data](https://medium.com/@Workbench/what-workbench-can-do-for-data-c8534384c978)
 - [A different approach to transparent data journalism](https://medium.com/@Workbench/a-different-approach-to-transparent-data-journalism-a019d23595f2)
 - [Data journalism made easier, faster, and more collaborative](https://medium.com/@Workbench/data-journalism-made-easier-faster-and-more-collaborative-e33081bf0080)
