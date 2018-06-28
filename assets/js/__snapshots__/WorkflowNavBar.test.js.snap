@@ -509,13 +509,13 @@ exports[`WorkflowNavBar In Private mode, Share button invites user to set to Pub
               className="mb-3"
             >
               <Input
-                className="url-link t-d-gray content-2 test-link-field"
+                className="url-link test-link-field"
                 placeholder="/workflows/808"
                 readOnly={true}
                 type="url"
               >
                 <input
-                  className="url-link t-d-gray content-2 test-link-field form-control"
+                  className="url-link test-link-field form-control"
                   placeholder="/workflows/808"
                   readOnly={true}
                   type="url"
@@ -994,13 +994,13 @@ exports[`WorkflowNavBar In Public mode, Share button opens modal with links 2`] 
               className="mb-3"
             >
               <Input
-                className="url-link t-d-gray content-2 test-link-field"
+                className="url-link test-link-field"
                 placeholder="/workflows/808"
                 readOnly={true}
                 type="url"
               >
                 <input
-                  className="url-link t-d-gray content-2 test-link-field form-control"
+                  className="url-link test-link-field form-control"
                   placeholder="/workflows/808"
                   readOnly={true}
                   type="url"

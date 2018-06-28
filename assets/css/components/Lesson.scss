@@ -41,10 +41,14 @@ article.lesson {
     &.not-current { display: none; }
 
     .backToLessons {
+      @extend .info-1;
       color:$white;
+      opacity: .8;
+      text-transform: uppercase;
       text-decoration: none;
       margin-bottom: 1rem;
       &:hover{
+        opacity: 1;
         text-decoration: underline;
       }
     }

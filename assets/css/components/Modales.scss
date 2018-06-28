@@ -60,13 +60,15 @@
       padding:2rem;
       border: 0;
       max-height: 40rem;
-      overflow: scroll;
+      overflow: auto;
 
       .info-2 {cursor: default;}
 
       /* from Export Data modal, in WfModuleContextMenu  */
 
       .url-link{
+        color: $brand-text--dark;
+        @extend .content-2;
         width: 100%;
         padding: 1.3rem 1.5rem 1.3rem 1.5rem;
         margin-bottom: 1rem;
@@ -104,7 +106,7 @@
       background-color: $Vlight-gray;
       border: 0;
       max-height: 40rem;
-      overflow: scroll;
+      overflow: auto;
       padding: 0;
     }
   }
@@ -115,89 +117,106 @@
     padding: 1.5rem 2rem;
     display: flex;
     justify-content: flex-end;
-    border-top: 1px solid $brand-workspace;
+    border-top: 1px solid $Vlight-gray;
   }
-}
 
 
-/* ImportModuleFromGitHub */
+  /* ImportModuleFromGitHub */
 
-.import-module {
-  border-bottom: 1px solid rgba(255,255,255, .1);
-}
+  .import-module {
+    border-bottom: 1px solid rgba(255,255,255, .1);
+  }
 
-.import-module-button {
-  cursor: pointer;
-  color: #FAFAFA;
-  padding-top: 2rem;
-  opacity: 0.7;
-  display:flex;
-  justify-content: center;
-}
+  .import-module-button {
+    cursor: pointer;
+    color: #FAFAFA;
+    padding-top: 2rem;
+    opacity: 0.7;
+    display:flex;
+    justify-content: center;
+  }
 
-.import-module-button:hover {
-  cursor: pointer;
-  color: #FFFFFF;
-  opacity: 1;
-}
+  .import-module-button:hover {
+    cursor: pointer;
+    color: #FFFFFF;
+    opacity: 1;
+  }
 
-.workflow-root.in-lesson .import-module-button {
-  visibility: hidden;
-}
+  .workflow-root.in-lesson .import-module-button {
+    visibility: hidden;
+  }
 
-.import-github-error {
-  height: 4rem;
-  color: #E24F4A;
-  margin-top:2rem;
-  padding-left:0rem;
-  font-size: 1.3rem;
-  @extend %font-nunito-extra-light;
-  line-height: 1.9rem;
-}
+  .import-github-error {
+    height: 4rem;
+    color: #E24F4A;
+    margin-top:2rem;
+    padding-left:0rem;
+    font-size: 1.3rem;
+    @extend %font-nunito-extra-light;
+    line-height: 1.9rem;
+  }
 
-.import-github-success {
-  height: 4rem;
-  color: $link-hover-success;
-  margin-top: 2rem;
-  padding-left: 0rem;
-  font-size: 1.3rem;
-  @extend %font-nunito-extra-light;
-  line-height: 1.9rem;
-}
+  .import-github-success {
+    height: 4rem;
+    color: $link-hover-success;
+    margin-top: 2rem;
+    padding-left: 0rem;
+    font-size: 1.3rem;
+    @extend %font-nunito-extra-light;
+    line-height: 1.9rem;
+  }
 
-.test-button{
-  cursor: pointer;
-}
+  .test-button{
+    cursor: pointer;
+  }
 
-.input-dropdown {
-  height: 4rem !important;
-  color: #686768;
-  background-color: #FFFFFF;
-	font-size: 1.4rem;
-	font-weight: 500;
-	line-height: 1.4rem;
-  border-radius:0px;
-  border: 1px solid $Vlight-gray
-}
+  .input-dropdown {
+    height: 4rem !important;
+    color: #686768;
+    background-color: #FFFFFF;
+  	font-size: 1.4rem;
+  	font-weight: 500;
+  	line-height: 1.4rem;
+    border-radius:0px;
+    border: 1px solid $Vlight-gray
+  }
 
-// Share workflow modal
+  // Share workflow modal
 
-.facebook-share {
-  height: 2rem;
-  width:6.5rem;
-  background-color: #3c5b97;
-  color:#fff;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  border-radius:3px;
-  @extend %font-nunito-regular;
-  font-size: 1.2rem;
-  padding: 0 0.5rem;
-}
+  .dl-file {
+    @extend .info-1;
+    color: $medium-gray;
+  }
 
-.facebook-share:hover{
-  background-color:#2f4e87;
-  color:#fff;
-  text-decoration: none;
+
+  .clipboard {
+    @extend .info-1;
+    margin-bottom:.5rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    color:$brand-workspace;
+    &.copied {
+    color: $brand-orange;
+    }
+  }
+
+  .facebook-share {
+    height: 2rem;
+    width:6.5rem;
+    background-color: #3c5b97;
+    color:#fff;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    border-radius:3px;
+    @extend %font-nunito-regular;
+    font-size: 1.2rem;
+    padding: 0 0.5rem;
+  }
+
+  .facebook-share:hover{
+    background-color:#2f4e87;
+    color:#fff;
+    text-decoration: none;
+  }
 }

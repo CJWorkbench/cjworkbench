@@ -369,8 +369,8 @@ button:focus { outline:0 !important; }
 input[type=checkbox]
 {
   -webkit-appearance: none;
-	background-color: #fff;
-	border: 1px solid $Vlight-gray;
+	background-color: transparent;
+	border: 1px solid $dark-accent--medium;
 	padding: 0.7rem;
 	border-radius: 3px;
 	display: inline-block;

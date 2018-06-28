@@ -79,11 +79,11 @@ export default class ExportModal extends React.Component {
 
     if (this.state.csvCopied) {
       return (
-        <div className='info-2 t-orange mt-3' onMouseLeave={this.onCsvLeave}>CSV LINK COPIED TO CLIPBOARD</div>
+        <div className='clipboard copied' onMouseLeave={this.onCsvLeave}>CSV LINK COPIED TO CLIPBOARD</div>
       );
     } else {
       return (
-        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='info-1 action-link test-csv-copy'>
+        <CopyToClipboard text={csvString} onCopy={this.onCsvCopy} className='clipboard test-csv-copy'>
           <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       );
@@ -95,11 +95,11 @@ export default class ExportModal extends React.Component {
 
     if (this.state.jsonCopied) {
       return (
-        <div className='info-2 t-orange mt-3' onMouseLeave={this.onJsonLeave}>JSON LINK COPIED TO CLIPBOARD</div>
+        <div className='clipboard copied' onMouseLeave={this.onJsonLeave}>JSON LINK COPIED TO CLIPBOARD</div>
       );
     } else {
       return (
-        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='info-1 action-link test-json-copy'>
+        <CopyToClipboard text={jsonString} onCopy={this.onJsonCopy} className='clipboard test-json-copy'>
           <div>COPY LIVE LINK</div>
         </CopyToClipboard>
       );
@@ -124,11 +124,11 @@ export default class ExportModal extends React.Component {
         <ModalBody>
           <FormGroup>
             <div className='d-flex justify-content-between flex-row'>
-              <Label className='t-d-gray info-1'>CSV</Label>
+              <Label className='dl-file'>CSV</Label>
               {csvCopyLink}
             </div>
             <div className='d-flex justify-content-between flex-row mb-3'>
-              <Input type='url' className='url-link t-d-gray content-2 test-csv-field' value={csvString}
+              <Input type='url' className='url-link test-csv-field' value={csvString}
                      readOnly/>
               <div className='download-icon-box'>
                 <a href={csvString} onClick={() => this.logExport('CSV')}
@@ -136,11 +136,11 @@ export default class ExportModal extends React.Component {
               </div>
             </div>
             <div className='d-flex justify-content-between flex-row'>
-              <Label className='t-d-gray info-1'>JSON</Label>
+              <Label className='dl-file'>JSON</Label>
               {jsonCopyLink}
             </div>
             <div className='d-flex justify-content-between flex-row'>
-              <Input type='url' className='url-link t-d-gray content-2 test-json-field' value={jsonString}
+              <Input type='url' className='url-link test-json-field' value={jsonString}
                      readOnly/>
               <div className='download-icon-box'>
                 <a href={jsonString} onClick={() => this.logExport('JSON')}

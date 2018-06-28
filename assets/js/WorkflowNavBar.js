@@ -103,12 +103,12 @@ export default class WorkflowNavBar extends React.Component {
 
     if (this.state.linkCopied) {
       return (
-        <div className='info-2 t-orange' >Link copied to clipboard</div>
+        <div className='clipboard copied' >Link copied to clipboard</div>
       );
     } else {
       return (
-        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='info-2 action-link'>
-          <div>Copy to clipboard</div>
+        <CopyToClipboard text={linkString} onCopy={this.onLinkCopy} className='clipboard'>
+          <div>COPY TO CLIPBOARD</div>
         </CopyToClipboard>
       );
     }
@@ -149,11 +149,11 @@ export default class WorkflowNavBar extends React.Component {
         <ModalBody >
           <FormGroup>
             <div className='d-flex align-items-center justify-content-between flex-row'>
-              <Label className='label-margin info-1'>Public link</Label>
+              <Label className='dl-file'>PUBLIC URL</Label>
               {copyLink}
             </div>
             <div className='mb-3'>
-              <Input type='url' className='url-link t-d-gray content-2 test-link-field' placeholder={linkString} readOnly/>
+              <Input type='url' className='url-link test-link-field' value={linkString} readOnly/>
             </div>
           </FormGroup>
 
