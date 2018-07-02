@@ -61,8 +61,8 @@ class DynamicModule:
         Exceptions become error messages. This method cannot produce an
         exception.
         """
+        method = getattr(self.module, method_name)
         try:
-            method = getattr(self.module, method_name)
             out = method(*args, **kwargs)
         except Exception as e:
             # Catch exceptions in the module render function, and return error
