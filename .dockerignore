@@ -18,3 +18,4 @@ tmp/
 webpack-stats.json
 .DS_Store
 integrationtests/
+stresstest/
