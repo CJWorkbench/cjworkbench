@@ -1,9 +1,6 @@
 import capybara
 from capybara.session import Session
 from contextlib import contextmanager
-import os
-
-from selenium.webdriver.common.keys import Keys  # for Browser.send_keys
 
 
 # DISABLE capybara's default wait time! We're more explicit about timeouts in
@@ -12,17 +9,18 @@ from selenium.webdriver.common.keys import Keys  # for Browser.send_keys
 capybara.default_max_wait_time = 0
 
 
-#@capybara.register_driver('selenium')
-#def init_selenium_driver(app):
-#    from capybara.selenium.driver import Driver
-#    return Driver(app, browser="chrome")
+# @capybara.register_driver('selenium')
+# def init_selenium_driver(app):
+#     from capybara.selenium.driver import Driver
+#     return Driver(app, browser="chrome")
 @capybara.register_driver('selenium')
 def init_selenium_driver(app):
     from capybara.selenium.driver import Driver
-    from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+    from selenium.webdriver.common.desired_capabilities \
+        import DesiredCapabilities
     capabilities = DesiredCapabilities.FIREFOX.copy()
     capabilities['moz:firefoxOptions'] = {
-        'log': { 'level': 'trace' },
+        'log': {'level': 'trace'},
         'args': [],
     }
     return Driver(app, browser="firefox", desired_capabilities=capabilities)
@@ -30,7 +28,8 @@ def init_selenium_driver(app):
 
 def _sanitize_base_url(url: str) -> str:
     # self.base_url: always a string, never ending with '/'
-    if url and url[-1] == '/': uyrl = url[0:-2]
+    if url and url[-1] == '/':
+        url = url[0:-2]
     return url
 
 
@@ -63,7 +62,6 @@ class Browser:
         # default wait timeout -- None means forever
         self.default_wait_timeout = kwargs.get('default_wait_timeout', 5)
 
-
     def _capybarize_kwargs(self, kwargs):
         """Modify kwargs in-place.
 
@@ -73,12 +71,11 @@ class Browser:
         if kwargs.get('wait') is True:
             kwargs['wait'] = self.default_wait_timeout
 
-
     def visit(self, url: str) -> None:
         """Type 'url' into the address bar, press Enter, and await onload."""
-        if url[0] == '/': url = self.base_url + url
+        if url[0] == '/':
+            url = self.base_url + url
         self.page.visit(url)
-
 
     def fill_in(self, locator: str, text: str, **kwargs) -> None:
         """Type 'text' into field with name/label/id 'locator'.
@@ -89,11 +86,11 @@ class Browser:
         Keyword arguments:
         wait -- True or number of seconds to wait until element appears
         """
-        if not text: raise ValueError("fill_in() called without text")
+        if not text:
+            raise ValueError("fill_in() called without text")
         kwargs['value'] = text
         self._capybarize_kwargs(kwargs)
         self.page.fill_in(locator, **kwargs)
-
 
     def fill_text_in_whatever(self, text: str, *selector, **kwargs) -> None:
         """Type 'text' into field matching selector.
@@ -110,13 +107,13 @@ class Browser:
         Keyword arguments:
         wait -- True or number of seconds to wait until element appears
         """
-        if not text: raise ValueError("fill_in() called without text")
+        if not text:
+            raise ValueError("fill_in() called without text")
         kwargs['value'] = text
         self._capybarize_kwargs(kwargs)
         # There's a race here between find() and fill_in(). If we get an error
         # about "missing element", write the exception handler we need.
         self.page.find(*selector, **kwargs).set(text)
-
 
     def send_keys(self, locator: str, *keys: str, **kwargs) -> None:
         """Press `keys` in field with name/label/id 'locator'.
@@ -130,7 +127,6 @@ class Browser:
         self._capybarize_kwargs(kwargs)
         self.page.find('fillable_field', locator, **kwargs).send_keys(*keys)
 
-
     def check(self, locator: str, **kwargs) -> None:
         """Check the checkbox with name/label/id 'locator'.
 
@@ -140,7 +136,6 @@ class Browser:
         self._capybarize_kwargs(kwargs)
         self.page.check(locator, **kwargs)
 
-
     def uncheck(self, locator: str, **kwargs) -> None:
         """Uncheck the checkbox with name/label/id 'locator'.
 
@@ -149,7 +144,6 @@ class Browser:
         """
         self._capybarize_kwargs(kwargs)
         self.page.uncheck(locator, **kwargs)
-
 
     def select(self, locator: str, text: str, **kwargs) -> None:
         """Select 'text' in the select box with name/label/id 'locator'.
@@ -161,7 +155,6 @@ class Browser:
         kwargs['field'] = locator
         self.page.select(text, **kwargs)
 
-
     def click_button(self, locator: str, **kwargs) -> None:
         """Click the button with name/id/text 'locator'.
 
@@ -171,7 +164,6 @@ class Browser:
         self._capybarize_kwargs(kwargs)
         self.page.click_button(locator, **kwargs)
 
-
     def click_link(self, locator: str, **kwargs) -> None:
         """Click the <a> with id/text/title 'locator'.
 
@@ -180,7 +172,6 @@ class Browser:
         """
         self._capybarize_kwargs(kwargs)
         self.page.click_link(locator, **kwargs)
-
 
     def click_whatever(self, *selector, **kwargs) -> None:
         """Click the selected element.
@@ -201,7 +192,6 @@ class Browser:
         # There's a race here between find() and click(). If we get an error
         # about "missing element", write the exception handler we need.
         self.page.find(*selector, **kwargs).click()
-
 
     def double_click_whatever(self, *selector, **kwargs) -> None:
         """Double-click the selected element.
@@ -235,8 +225,6 @@ class Browser:
         """
         self.page.driver.browser.execute_script(script, native_node)
 
-
-
     def hover_over_element(self, *selector, **kwargs) -> None:
         """Hover over the selected element.
 
@@ -256,7 +244,6 @@ class Browser:
         # about "missing element", write the exception handler we need.
         self.page.find(*selector, **kwargs).hover()
 
-
     def assert_element(self, *selector, **kwargs) -> None:
         """Test that 'selector' matches, or throws an error.
 
@@ -272,7 +259,6 @@ class Browser:
         """
         self._capybarize_kwargs(kwargs)
         self.page.assert_selector(*selector, **kwargs)
-
 
     def assert_no_element(self, *selector, **kwargs) -> None:
         """Test that 'selector' does _not_ match, or throws an error.
@@ -290,7 +276,6 @@ class Browser:
         self._capybarize_kwargs(kwargs)
         self.page.assert_no_selector(*selector, **kwargs)
 
-
     def wait_for_element(self, *selector, **kwargs) -> None:
         """Polls until 'selector' matches; throws error on timeout.
 
@@ -302,7 +287,6 @@ class Browser:
             kwargs['wait'] = self.default_wait_timeout
         self.assert_element(*selector, **kwargs)
 
-
     def text(self, *selector, **kwargs) -> str:
         """Returns text of element matching selector.
         See 'assert_element()' for selector syntax.
@@ -312,9 +296,7 @@ class Browser:
         text -- text the element must contain
         """
         self._capybarize_kwargs(kwargs)
-        a = self.page.find(*selector, **kwargs)
         return self.page.find(*selector, **kwargs).all_text
-
 
     @contextmanager
     def scope(self, selector: str) -> None:
@@ -328,18 +310,15 @@ class Browser:
         with self.page.scope(selector):
             yield
 
-
     def clear_cookies(self) -> None:
         """Delete all cookies and navigates to a blank page."""
         self.page.reset()
-
 
     def get_url(self) -> str:
         """Find the URL in the browser's address bar."""
         return self.page.current_url
 
-
     def quit(self) -> None:
         """Destroys the browser and everything it created.
         """
-        self.page.driver.browser.quit() # hack Capybara's internals
+        self.page.driver.browser.quit()  # hack Capybara's internals
