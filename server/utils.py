@@ -75,6 +75,13 @@ def get_google_analytics_id():
         return None
 
 
+def get_mixpanel_id():
+    try:
+        return os.environ['CJW_MIXPANEL_ID']
+    except KeyError:
+        return None
+
+
 def _setup_intercom_client():
     try:
         token = os.environ['CJW_INTERCOM_ACCESS_TOKEN']

@@ -84,6 +84,9 @@ export function logUserEvent(name, metadata) {
   if (window.APP_ID) {
     window.Intercom("trackEvent", name, metadata);
   }
+  if (window.mixpanel) {
+    window.mixpanel.track(name);
+  }
 }
 
 export function timeDifference (start, end) {
