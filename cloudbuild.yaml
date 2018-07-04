@@ -1,5 +1,12 @@
 steps:
 - name: 'gcr.io/cloud-builders/docker'
+  args: [ 'pull',
+          'gcr.io/$PROJECT_ID/migrate:latest',
+          'gcr.io/$PROJECT_ID/backend:latest',
+          'gcr.io/$PROJECT_ID/frontend:latest',
+          'gcr.io/$PROJECT_ID/integration-test:latest'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
           '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
           '--target', 'migrate',
