@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: saveddata-pv
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - readWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /app/media
+    server: nfs
+    readOnly: false

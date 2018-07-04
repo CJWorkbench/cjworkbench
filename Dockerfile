@@ -4,7 +4,10 @@ FROM python:3 AS pybuild
 
 # We probably don't want these, long-term.
 # nano: because we edit files on production
-RUN apt-get update && apt-get install --no-install-recommends -y nano postgresql-client
+# postgresql-client: because we poll the DB on prod before ./manage.py migrate
+RUN apt-get update && apt-get install --no-install-recommends -y \
+        nano \
+        postgresql-client
 
 RUN pip install pipenv
 
@@ -20,6 +23,28 @@ RUN pipenv install --dev --system --deploy
 
 # nltk models (for sentiment)
 RUN python -m nltk.downloader -d /usr/local/share/nltk_data vader_lexicon
+
+
+# 1.1 integration-test deps
+# Depends on pybuild because integration tests run Django shell to fiddle
+# with database.
+FROM pybuild AS integration-test-deps
+
+RUN pip install capybara-py selenium
+# FF deps
+RUN apt-get update && apt-get install --no-install-recommends -y \
+        xauth \
+        xvfb \
+        libnss3-tools \
+        libgtk-3-common \
+        libdbus-glib-1-2
+RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0/linux-x86_64/en-US/firefox-61.0.tar.bz2 \
+        | tar jx -C /opt \
+        && ln -s /opt/firefox/firefox /usr/bin/firefox
+RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz \
+        | tar zx -C /usr/bin/ \
+        && chmod +x /usr/bin/geckodriver
+
 
 # 2. Node deps -- completely independent
 FROM node:10.1.0-slim AS jsbuild
@@ -40,22 +65,41 @@ RUN npm test
 RUN node_modules/.bin/webpack -p
 
 
-# 3. Complete app
-FROM pybuild AS app
+# 3. Three prod servers will all be based on the same stuff:
+FROM pybuild AS base
 
-EXPOSE 8000
-
-COPY --from=jsbuild /app/assets/ /app/assets/
+# assets/ is static files. TODO nix them here; host them elsewhere
+COPY assets/ /app/assets/
+COPY --from=jsbuild /app/assets/bundles/ /app/assets/bundles/
+COPY --from=jsbuild /app/webpack-stats.json /app/
 COPY cjworkbench/ /app/cjworkbench/
 COPY server/ /app/server/
+COPY bin/ /app/bin/
 COPY templates/ /app/templates/
-COPY database.yml manage.py start-prod.sh /app/
-
-# needed for django to load correctly
-COPY --from=jsbuild /app/webpack-stats.json /app/webpack-stats.json
-
+COPY manage.py /app/
 # Inject unit tests into our continuous integration
 # This is how Travis tests
-RUN ./manage.py test
+RUN ./manage.py test -v2
 
-CMD [ "./start-prod.sh" ]
+# 3.1. migrate: runs ./manage.py migrate
+FROM base AS migrate
+CMD [ "bin/migrate-prod" ]
+
+# 3.2. backend: runs background tasks
+FROM base AS backend
+CMD [ "./manage.py", "run-background-loop" ]
+
+# 3.3. frontend: serves website
+FROM base AS frontend
+# 8080 is Kubernetes' conventional web-server port
+EXPOSE 8080
+# TODO nix --insecure; serve static files elsewhere
+CMD [ "./manage.py", "runserver", "--insecure", "0.0.0.0:8080" ]
+
+# 4. integration-test: tests all the above
+FROM integration-test-deps AS integration-test
+WORKDIR /app
+COPY cjworkbench/ /app/cjworkbench/
+COPY server/ /app/server/
+COPY integrationtests/ /app/integrationtests/
+CMD [ "sh", "-c", "xvfb-run -a -s '-screen 0 1200x768x24' python -m unittest discover -v integrationtests" ]

@@ -1,0 +1,14 @@
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: importedmodules-pv
+spec:
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - readWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  nfs:
+    path: /app/importedmodules
+    server: nfs
+    readOnly: false

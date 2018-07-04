@@ -6,10 +6,12 @@ import select
 import string
 import subprocess
 import termios
+from typing import Optional
+from urllib.request import urlopen
 import weakref
-from typing import Tuple, Optional
 
 from integrationtests.browser import Browser
+
 
 def login(browser: Browser, email: str, password: str) -> None:
     """Log in through `/account/login` as the given user."""
@@ -31,8 +33,80 @@ def _close_shell(shell, pty_master):
         shell.kill()
         stdout, stderr = shell.communicate()
 
-    if len(stdout): print(f"STDOUT (wanted empty): {stdout}")
-    if len(stderr): print(f"STDERR (wanted empty): {stderr}")
+    if stdout.strip():
+        print(f"STDOUT (wanted empty): {stdout}")
+    if stderr.strip():
+        print(f"STDERR (wanted empty): {stderr}")
+
+
+def _open_python_in_docker(pty_slave):
+    return subprocess.Popen(
+        [
+            'docker', 'exec', '-it',
+            '-e', 'CJW_PRODUCTION=True',
+            '-e', 'CJW_DB_HOST=workbench-db',
+            '-e', 'CJW_DB_PASSWORD=cjworkbench',
+            'cjworkbench_integrationtest_django',
+            'sh', '-c', ' '.join([
+                # do not convert \n to \r\n
+                # https://github.com/moby/moby/issues/8513
+                'stty -onlcr -echo;',
+                'echo "import sys; sys.ps1 = sys.ps2 = str()" >/tmp/pystart;',
+                'chmod +x /tmp/pystart;',
+                'PYTHONSTARTUP=/tmp/pystart',
+                'python',  # not ./manage.py shell, because it isn't quiet
+                '-q',  # no copyright
+            ])
+        ],
+        stdin=pty_slave,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        bufsize=0,  # no buffer on subprocess stdin/stdout/stderr
+        universal_newlines=False
+    )
+
+
+def _open_python_no_docker(pty_slave):
+    with open('/tmp/pystart', 'w') as f:
+        f.write('import sys; sys.ps1 = sys.ps2 = str()')
+    os.chmod('/tmp/pystart', 0o755)
+
+    env = dict(os.environ)
+    env['PYTHONSTARTUP'] = '/tmp/pystart'
+
+    return subprocess.Popen(
+        [
+            'sh',
+            '-c',
+            'stty -onlcr -echo; python -q -u',
+        ],
+        env=env,
+        stdin=pty_slave,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        bufsize=0,  # no buffer on subprocess stdin/stdout/stderr
+        universal_newlines=False
+    )
+
+
+def _open_python_manage_shell(pty_slave):
+    """Open a subprocess controlling a Python shell.
+
+    You should close pty_slave after calling this method; thereafter, reading
+    or writing on pty_master will communicate with a Python interactive shell.
+
+    There are two modes this function can run in: within Docker and
+    outside Docker. Within Docker, the `docker` executable does not exist, so
+    we invoke `python` directly and assume the project code is in the current
+    working directory. Outside docker, the `docker` executable does exist, so
+    we invoke `python` within a `docker exec` on the
+    `cjworkbench_integrationtest_django` container, which we assume is running.
+    """
+
+    try:
+        return _open_python_in_docker(pty_slave)
+    except FileNotFoundError:
+        return _open_python_no_docker(pty_slave)
 
 
 class UserHandle:
@@ -65,7 +139,7 @@ class AccountAdmin:
         account_admin.destroy_user_email(user_email)
         account_admin.destroy_user(user)
     """
-    def __init__(self):
+    def __init__(self, live_server_url):
         """Open a Django shell, using Docker.
 
         Rather than log in using the web admin interface, we log in using the
@@ -76,30 +150,11 @@ class AccountAdmin:
 
         Call _execute() to run a Python command in the subprocess.
         """
+        self.live_server_url = live_server_url
+
         (self.pty_master, pty_slave) = os.openpty()
-        self.shell = subprocess.Popen(
-            [
-                'docker', 'exec', '-it',
-                    '-e', 'CJW_PRODUCTION=True',
-                    '-e', 'CJW_DB_HOST=workbench-db',
-                    '-e', 'CJW_DB_PASSWORD=cjworkbench',
-                'cjworkbench_integrationtest_django',
-                'sh', '-c', ' '.join([
-                    'stty -onlcr;', # do not convert \n to \r\n https://github.com/moby/moby/issues/8513
-                    'echo "import sys; sys.ps1 = str(); sys.ps2 = str(); import termios; fd = sys.stdin.fileno(); new = termios.tcgetattr(fd); new[3] = new[3] & ~termios.ECHO; termios.tcsetattr(fd, termios.TCSANOW, new)" > /tmp/pystart;',
-                    'chmod +x /tmp/pystart;',
-                    'PYTHONSTARTUP=/tmp/pystart',
-                    'python', # not ./manage.py shell, because it isn't quiet
-                    '-q', # no copyright
-                ])
-            ],
-            stdin=pty_slave,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            bufsize=0, # no buffer on subprocess stdin/stdout/stderr
-            universal_newlines=False
-        )
-        os.close(pty_slave) # the child process owns it now
+        self.shell = _open_python_manage_shell(pty_slave)
+        os.close(pty_slave)  # the child process owns it now
 
         self._finalizer = weakref.finalize(
             self,
@@ -112,7 +167,9 @@ class AccountAdmin:
             'import os',
             'import django',
             'import shutil',
-            "_ = os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cjworkbench.settings')",
+            '_ = os.environ.setdefault(',
+            "    'DJANGO_SETTINGS_MODULE', 'cjworkbench.settings'",
+            ')',
             'django.setup()',
             'from allauth.account.models import EmailAddress',
             'from cjworkbench.models.Profile import UserProfile',
@@ -120,7 +177,6 @@ class AccountAdmin:
             'from server import dynamicdispatch',
         ]))
         self.clear_data_from_previous_tests()
-
 
     def clear_data_from_previous_tests(self):
         """Delete all accounts and related data."""
@@ -132,20 +188,18 @@ class AccountAdmin:
         ]))
         self.destroy_modules()
 
-
     def _ensure_empty_stdout_and_stderr(self) -> None:
         """Raise RuntimeError if self.shell wrote to stdout or stderr."""
         r, _, _ = select.select(
-            [ self.shell.stdout, self.shell.stderr ],
+            [self.shell.stdout, self.shell.stderr],
             [],
             [],
-            1
+            0.05
         )
         if r:
             raise RuntimeError(
                 f'Unexpected data on stdout or stderr: {r[0].read(1024)}'
             )
-
 
     def _execute(self, code: str, timeout: float=5) -> None:
         """Run the given Python code.
@@ -169,16 +223,16 @@ class AccountAdmin:
         os.write(self.pty_master, message)
         termios.tcdrain(self.pty_master)
         r, _, _ = select.select(
-            [ self.shell.stdout, self.shell.stderr ],
+            [self.shell.stdout, self.shell.stderr],
             [],
             [],
             timeout
         )
         b = b''
-        if r == [ self.shell.stdout ]:
+        if r == [self.shell.stdout]:
             b = r[0].read(4)
             if b == b"_ok\n":
-                return # we're done!
+                return  # we're done!
             raise RuntimeError(
                 f'Expected b"_ok\\n"; got: {b}\nCode was:\n{code}'
             )
@@ -190,9 +244,8 @@ class AccountAdmin:
                     'Python wrote to stderr while executing code:',
                     code,
                     'STDERR:',
-                    str(r[0].read()),
+                    str(r[0].read(1024)),
                 ]))
-
 
     def _execute_setvar(self, code: str, timeout: float=5) -> str:
         """Execute code, replacing 'VAR = ' with a random variable name.
@@ -215,7 +268,6 @@ class AccountAdmin:
 
         return var
 
-
     def create_user(self, email: str, username: str=None,
                     password: str=None, is_staff: bool=False,
                     is_superuser: bool=False) -> UserHandle:
@@ -229,8 +281,10 @@ class AccountAdmin:
         is_staff -- bool (default False)
         is_superuser -- bool (default False)
         """
-        if username is None: username = email.split('@')[0]
-        if password is None: password = email
+        if username is None:
+            username = email.split('@')[0]
+        if password is None:
+            password = email
         var = self._execute_setvar('\n'.join([
             f'VAR = User.objects.create_user(',
             f'    username={repr(username)},',
@@ -242,12 +296,10 @@ class AccountAdmin:
         ]))
         return UserHandle(var, username, password, email)
 
-
     def destroy_user(self, user: UserHandle) -> None:
         """Clean up the return value of create_user().
         """
         self._execute(f'_ = {user._var}.delete(); del {user._var}')
-
 
     def verify_user_email(self, user: UserHandle) -> EmailAddressHandle:
         """Verify a user's email address.
@@ -266,11 +318,9 @@ class AccountAdmin:
         ]))
         return EmailAddressHandle(var)
 
-
     def destroy_user_email(self, email: EmailAddressHandle) -> None:
         """Clean up the return value of verify_user_email()."""
         self._execute(f'_ = {email._var}.delete(); del {email._var}')
-
 
     def destroy_modules(self) -> None:
         """Clean up any modules imported during test."""
@@ -281,21 +331,12 @@ class AccountAdmin:
             'shutil.rmtree("importedmodules", ignore_errors=True)',
         ]))
 
-
     @property
     def latest_sent_email(self) -> Optional[email.message.Message]:
-        """The last sent email, or None."""
-        script = ';'.join([
-            'basename=$(ls local_mail -t | head -n1)',
-            'test -z "$basename" && echo -n "" || cat local_mail/$basename'
-        ])
-        completed = subprocess.run([
-            'docker',
-            'exec',
-            'cjworkbench_integrationtest_django',
-            'sh', '-c', script
-        ], stdout=subprocess.PIPE)
-        if completed.stdout.strip():
-            return email.message_from_bytes(completed.stdout)
-        else:
-            return None
+        """The last sent email, or None.
+
+        FIXME make None work, if we need it. (Right now it'll give an error.)
+        """
+        url = self.live_server_url + '/last-sent-email'
+        with urlopen(url) as f:
+            return email.message_from_bytes(f.read())

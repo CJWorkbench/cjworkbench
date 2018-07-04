@@ -1,0 +1,45 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          '--target', 'migrate',
+          '-t', 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/migrate:latest',
+          '.'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          '--target', 'backend',
+          '-t', 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/backend:latest',
+          '.'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          '--target', 'frontend',
+          '-t', 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/frontend:latest',
+          '.'
+        ]
+- name: 'gcr.io/cloud-builders/docker'
+  args: [ 'build',
+          '--target', 'integration-test',
+          '-t', 'gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA',
+          '.'
+        ]
+- name: 'docker/compose:1.21.2'
+  args: [ '-f', 'integrationtests/docker-compose.yml',
+          'run',
+          'migrate'
+        ]
+- name: 'docker/compose:1.21.2'
+  args: [ '-f', 'integrationtests/docker-compose.yml',
+          'run',
+          'integration-test'
+        ]
+images:
+- 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/migrate:latest'
+- 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/backend:latest'
+- 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA'
+- 'gcr.io/$PROJECT_ID/frontend:latest'

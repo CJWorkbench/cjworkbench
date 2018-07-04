@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+spec:
+  selector:
+    matchLabels:
+      app: frontend-app
+  template:
+    metadata:
+      labels:
+        app: frontend-app
+    spec:
+      containers:
+        - name: frontend
+          image: "gcr.io/cj-workbench/frontend:latest"
+          resources:
+            requests:
+              cpu: 0.25
+              memory: 256Mi
+            limits:
+              cpu: 1
+              memory: 768Mi
+          volumeMounts:
+            - name: 
+          ports:
+            - name: http
+              containerPort: 8080
+      volumes:
+        - name: 

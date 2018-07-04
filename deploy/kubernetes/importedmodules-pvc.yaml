@@ -1,0 +1,11 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: importedmodules-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: 'standard'
+  resources:
+    requests:
+      storage: 2Gi
