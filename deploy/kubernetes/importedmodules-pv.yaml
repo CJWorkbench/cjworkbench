@@ -6,9 +6,9 @@ spec:
   capacity:
     storage: 2Gi
   accessModes:
-    - readWriteMany
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   nfs:
-    path: /app/importedmodules
-    server: nfs
+    server: nfs-server
+    path: /importedmodules
     readOnly: false

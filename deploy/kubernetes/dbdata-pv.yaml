@@ -1,7 +1,0 @@
-kind: PersistentVolume
-apiVersion: v1
-metadata:
-  name: dbdata-pv
-spec:
-  accessModes:
-    - ReadWriteOnce

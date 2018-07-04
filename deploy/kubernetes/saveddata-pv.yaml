@@ -4,9 +4,9 @@ metadata:
   name: saveddata-pv
 spec:
   capacity:
-    storage: 2Gi
+    storage: 18Gi
   accessModes:
-    - readWriteMany
+    - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   nfs:
     path: /app/media

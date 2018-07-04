@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: migrate-app
+    spec:
+      containers:
+        - name: migrate
+          image: "gcr.io/cj-workbench/migrate:latest"
+      restartPolicy: Never
