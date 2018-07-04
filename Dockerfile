@@ -8,6 +8,7 @@ FROM python:3.6.6-slim-stretch AS pybuild
 RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
     && apt-get update \
     && apt-get install --no-install-recommends -y \
+        git \
         nano \
         postgresql-client \
     && rm -rf /var/lib/apt/lists/*
@@ -25,12 +26,10 @@ WORKDIR /app
 COPY Pipfile Pipfile.lock /app/
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
-      git \
       build-essential \
       libpq-dev \
-    && pipenv install --dev --system --deploy --verbose \
+    && pipenv install --dev --system --deploy \
     && apt-get remove --purge -y \
-      git \
       libpq-dev \
       build-essential \
     && rm -rf /var/lib/apt/lists/*
