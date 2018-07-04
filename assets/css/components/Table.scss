@@ -89,19 +89,25 @@
 
       .export-table {
         display: flex;
-        justify-content: center;
+        padding:0 1.5rem;
         align-items: center;
-        width:3.5rem;
         height: 3.5rem;
         border-radius: 2rem;
-        border:2px solid $table-element--light;
+        // border:2px solid $table-element--light;
         color:$table-element;
         background-color: $white;
         cursor: pointer;
         &:hover{
-          border:2px solid $table-element;
+          background-color: $dark-accent--soft;
         }
         font-size: 1.5rem;
+
+        .icon-download {margin-right:1rem;}
+        .feed {
+          margin-left: 1rem;
+          padding-left: 1rem;
+          border-left: .2rem solid $table-element--light;
+        }
       }
     }
     .react-grid-Cell--locked:last-of-type {
