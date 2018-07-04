@@ -75,9 +75,9 @@ def get_google_analytics_id():
         return None
 
 
-def get_mixpanel_id():
+def get_heap_analytics_id():
     try:
-        return os.environ['CJW_MIXPANEL_ID']
+        return os.environ['CJW_HEAP_ANALYTICS_ID']
     except KeyError:
         return None
 
