@@ -1,3 +1,4 @@
+timeout: 1200s
 steps:
 # `docker pull` all our previous images, to speed up new builds
 # This works for the same reason it works on dev: we don't need to re-run
@@ -8,13 +9,15 @@ steps:
   args: [ 'pull', 'gcr.io/$PROJECT_ID/backend:latest' ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'pull', 'gcr.io/$PROJECT_ID/frontend:latest' ]
-# TODO make integration tests pass, then uncomment:
 #- name: 'gcr.io/cloud-builders/docker'
 #  args: [ 'pull', 'gcr.io/$PROJECT_ID/integration-test:latest' ]
 # Build new Docker images
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
           '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'migrate',
           '-t', 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/migrate:latest',
@@ -22,7 +25,10 @@ steps:
         ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
+          '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
           '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'backend',
           '-t', 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/backend:latest',
@@ -30,7 +36,10 @@ steps:
         ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
+          '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
           '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'frontend',
           '-t', 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/frontend:latest',
@@ -38,7 +47,10 @@ steps:
         ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'integration-test',
           '-t', 'gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA',
           '.'
