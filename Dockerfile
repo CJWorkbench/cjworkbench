@@ -23,7 +23,17 @@ WORKDIR /app
 # We install them to the local system, not to a virtualenv. That means in
 # production, we don't use pipenv.
 COPY Pipfile Pipfile.lock /app/
-RUN pipenv install --dev --system --deploy --verbose
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
+      git \
+      build-essential \
+      libpq-dev \
+    && pipenv install --dev --system --deploy --verbose \
+    && apt-get remove --purge -y \
+      git \
+      libpq-dev \
+      build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 # nltk models (for sentiment)
 RUN python -m nltk.downloader -d /usr/local/share/nltk_data vader_lexicon
@@ -38,6 +48,7 @@ RUN pip install capybara-py selenium
 # FF deps
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
+        curl \
         xauth \
         xvfb \
         libnss3-tools \
