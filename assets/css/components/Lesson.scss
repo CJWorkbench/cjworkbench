@@ -2,6 +2,7 @@ article.lesson {
   display: flex;
   flex-direction: column;
   height: 100vh;
+  flex: 0 0 auto;
   min-width: 20rem;
 
   h1 { display: none; }
@@ -107,7 +108,6 @@ article.lesson {
     .instruction-detail {
       position: relative;
       margin-top: 3rem;
-      width:32rem;
       color: $white;
       &.highlight {font-weight:400;}
     }
