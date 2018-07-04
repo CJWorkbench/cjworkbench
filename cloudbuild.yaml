@@ -53,6 +53,7 @@ steps:
           #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'integration-test',
           '-t', 'gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA',
+          '-t', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '.'
         ]
 ## Integration-test: migrate, then run the integration-test image
