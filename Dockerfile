@@ -58,7 +58,8 @@ COPY package.json package-lock.json /app/
 RUN npm install
 
 COPY webpack.config.js setupJest.js /app/
-COPY assets /app/assets/
+COPY __mocks__/ /app/__mocks__/
+COPY assets/ /app/assets/
 # Inject unit tests into our continuous integration
 # This is how Travis tests
 RUN npm test
