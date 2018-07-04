@@ -1,13 +1,17 @@
 # 1. Python deps -- which rarely change, so this part of the Dockerfile will be
 # cached (when building locally)
-FROM python:3 AS pybuild
+FROM python:3.6.6-slim-stretch AS pybuild
 
 # We probably don't want these, long-term.
 # nano: because we edit files on production
 # postgresql-client: because we poll the DB on prod before ./manage.py migrate
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y \
         nano \
-        postgresql-client
+        postgresql-client \
+    && rm -rf /var/lib/apt/lists/*
+
 
 RUN pip install pipenv
 
@@ -19,7 +23,7 @@ WORKDIR /app
 # We install them to the local system, not to a virtualenv. That means in
 # production, we don't use pipenv.
 COPY Pipfile Pipfile.lock /app/
-RUN pipenv install --dev --system --deploy
+RUN pipenv install --dev --system --deploy --verbose
 
 # nltk models (for sentiment)
 RUN python -m nltk.downloader -d /usr/local/share/nltk_data vader_lexicon
@@ -32,12 +36,14 @@ FROM pybuild AS integration-test-deps
 
 RUN pip install capybara-py selenium
 # FF deps
-RUN apt-get update && apt-get install --no-install-recommends -y \
+RUN apt-get update \
+    && apt-get install --no-install-recommends -y \
         xauth \
         xvfb \
         libnss3-tools \
         libgtk-3-common \
-        libdbus-glib-1-2
+        libdbus-glib-1-2 \
+    && rm -rf /var/lib/apt/lists/*
 RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0/linux-x86_64/en-US/firefox-61.0.tar.bz2 \
         | tar jx -C /opt \
         && ln -s /opt/firefox/firefox /usr/bin/firefox
@@ -48,8 +54,6 @@ RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.21.0/gec
 
 # 2. Node deps -- completely independent
 FROM node:10.1.0-slim AS jsbuild
-
-RUN apt-get update && apt-get install --no-install-recommends -y git
 
 RUN mkdir /app
 WORKDIR /app
