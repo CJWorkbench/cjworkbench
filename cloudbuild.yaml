@@ -26,6 +26,22 @@ steps:
           '-t', 'gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA',
           '.'
         ]
+- name: 'docker/compose:1.21.2'
+  args: [ '-f', 'integrationtests/docker-compose.yml',
+          'run',
+          'migrate'
+        ]
+  env:
+    - 'PROJECT_ID=$PROJECT_ID'
+    - 'COMMIT_SHA=$COMMIT_SHA'
+- name: 'docker/compose:1.21.2'
+  args: [ '-f', 'integrationtests/docker-compose.yml',
+          'run',
+          'integration-test'
+        ]
+  env:
+    - 'PROJECT_ID=$PROJECT_ID'
+    - 'COMMIT_SHA=$COMMIT_SHA'
 images:
 - 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA'
 - 'gcr.io/$PROJECT_ID/migrate:latest'
