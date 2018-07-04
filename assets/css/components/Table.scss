@@ -93,7 +93,6 @@
         align-items: center;
         height: 3.5rem;
         border-radius: 2rem;
-        // border:2px solid $table-element--light;
         color:$table-element;
         background-color: $white;
         cursor: pointer;
@@ -102,7 +101,10 @@
         }
         font-size: 1.5rem;
 
-        .icon-download {margin-right:1rem;}
+        span {font-size: 1.4rem;}
+        .icon-download {
+          margin-right:1rem;
+        }
         .feed {
           margin-left: 1rem;
           padding-left: 1rem;
