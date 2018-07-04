@@ -86,7 +86,7 @@
           }
         }
       }
-      
+
 
       .export-table {
         display: flex;
@@ -375,9 +375,9 @@
     .outputpane-header{
 
       .export-table {
-        border:2px solid $table-element;
+
         color:$table-element;
-        &:hover {background-color: $brand-learn--Vlight;}
+        &:hover {background-color: $dark-accent--soft;}
       }
     }
   }
