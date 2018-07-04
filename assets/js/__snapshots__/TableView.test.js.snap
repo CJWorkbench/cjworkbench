@@ -7111,9 +7111,20 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
         </div>
       </div>
       <div
-        className="export-table icon-download"
+        className="export-table"
         onClick={[Function]}
       >
+        <div
+          className="icon-download"
+        />
+        <span>
+          CSV
+        </span>
+        <span
+          className="feed"
+        >
+          JSON FEED
+        </span>
         <ExportModal
           onClose={[Function]}
           open={false}
