@@ -88,4 +88,6 @@ kubectl -n production apply -f frontend-service.yaml
 kubectl -n production apply -f frontend-deployment.yaml
 
 # 6. Set up ingress to terminate SSL and direct traffic to frontend
+cert-manager/init.sh
+kubectl apply -f frontend-production-ingress.yaml
 ???
