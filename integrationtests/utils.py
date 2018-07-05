@@ -67,9 +67,7 @@ class WorkbenchBase(unittest.TestCase):
         self.browser = Browser(base_url=self.live_server_url)
 
     def tearDown(self):
-        os.system('tail -n50 geckodriver.log')
         self.browser.quit()
-        os.system('tail -n50 geckodriver.log')
 
     def create_browser(self):
         return Browser(base_url=self.live_server_url)

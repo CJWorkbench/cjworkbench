@@ -44,15 +44,15 @@ RUN python -m nltk.downloader -d /usr/local/share/nltk_data vader_lexicon
 FROM pybuild AS integration-test-deps
 
 RUN pip install capybara-py selenium
-# FF deps
+# Install Firefox deps (and curl and xvfb). Debian Stretch has Firefox v52,
+# which is way too old; but we'll install 52's dependencies and hope they
+# satisfy Firefox v61
 RUN apt-get update \
+    && bash -c 'apt-get install -y --no-install-recommends $(apt-cache depends firefox-esr | awk "/Depends:/{print\$2}")' \
     && apt-get install --no-install-recommends -y \
         curl \
         xauth \
         xvfb \
-        libnss3-tools \
-        libgtk-3-common \
-        libdbus-glib-1-2 \
     && rm -rf /var/lib/apt/lists/*
 RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0/linux-x86_64/en-US/firefox-61.0.tar.bz2 \
         | tar jx -C /opt \
