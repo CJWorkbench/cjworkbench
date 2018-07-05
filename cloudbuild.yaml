@@ -14,10 +14,10 @@ steps:
 # Build new Docker images
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'migrate',
           '-t', 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/migrate:latest',
@@ -25,10 +25,10 @@ steps:
         ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'backend',
           '-t', 'gcr.io/$PROJECT_ID/backend:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/backend:latest',
@@ -36,10 +36,10 @@ steps:
         ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'frontend',
           '-t', 'gcr.io/$PROJECT_ID/frontend:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/frontend:latest',
@@ -47,10 +47,10 @@ steps:
         ]
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'integration-test',
           '-t', 'gcr.io/$PROJECT_ID/integration-test:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/integration-test:latest',
