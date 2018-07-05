@@ -1,4 +1,4 @@
-timeout: 1200s
+timeout: 1800s
 steps:
 # `docker pull` all our previous images, to speed up new builds
 # This works for the same reason it works on dev: we don't need to re-run
