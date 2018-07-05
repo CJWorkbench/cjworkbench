@@ -32,6 +32,7 @@ nltk = "*"
 requests = "*"
 requests-oauthlib = "*"
 pyjwt = "*"
+fastparquet = "*"
 
 [dev-packages]
 mock = "==2.0.0"
