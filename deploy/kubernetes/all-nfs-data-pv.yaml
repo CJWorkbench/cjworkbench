@@ -1,10 +1,10 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: saveddata-pv
+  name: all-nfs-data-pv
 spec:
   capacity:
-    storage: 18Gi
+    storage: 20Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
@@ -19,5 +19,5 @@ spec:
     # 2. `kubectl -n staging apply -f ...`
     # 3. Undo the edit
     server: nfs-server-service.production.svc.cluster.local
-    path: /saveddata
+    path: /
     readOnly: false

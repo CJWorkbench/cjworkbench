@@ -16,15 +16,97 @@ spec:
           image: "gcr.io/cj-workbench/frontend:latest"
           resources:
             requests:
-              cpu: 0.25
+              cpu: 0.2
               memory: 256Mi
             limits:
-              cpu: 1
+              cpu: 0.9
               memory: 768Mi
-          volumeMounts:
-            - name: 
           ports:
             - name: http
               containerPort: 8080
+          env:
+            - name: CJW_GOOGLE_ANALYTICS
+              value: UA-104106561-1
+            - name: CJW_HEAP_ANALYTICS_ID
+              value: '70406982'
+            - name: CJW_PRODUCTION
+              value: 'True'
+            - name: CJW_DB_HOST
+              value: database-service
+            - name: CJW_DB_PASSWORD
+              value: cjworkbench
+            - name: CJW_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-secret-key
+                  key: value
+            - name: CJW_INTERCOM_APP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-intercom-secret
+                  key: APP_ID
+            - name: CJW_INTERCOM_ACCESS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-intercom-secret
+                  key: ACCESS_TOKEN
+            - name: CJW_SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-sendgrid-api-key
+                  key: value
+            - name: CJW_SENDGRID_INVITATION_ID
+              value: b22cb75d-2673-4efe-88d3-22239eaf403c
+            - name: CJW_SENDGRID_CONFIRMATION_ID
+              value: 86182412-e2bd-4d9f-be7d-a535a9f8e50b
+            - name: CJW_SENDGRID_PASSWORD_CHANGE_ID
+              value: 049f32e5-06ef-42e5-847d-ca30f52bf816
+            - name: CJW_SENDGRID_PASSWORD_RESET_ID
+              value: 0946d35d-5763-4a22-b17d-ed9cb42bf096
+            - name: HTTPS
+              value: 'on'
+            - name: CJW_GOOGLE_CLIENT_SECRETS
+              value: secrets/google-oauth-secret/google-oauth-secret.json
+            - name: CJW_SOCIALACCOUNT_SECRETS
+              value: secrets/socialaccount-secrets/socialaccount-secrets.json
+            - name: CJW_TWITTER_CLIENT_SECRETS
+              value: secrets/twitter-oauth-secret/twitter-oauth-secret.json
+          volumeMounts:
+            - mountPath: /app/importedmodules
+              name: importedmodules-pv
+            - mountPath: /app/saveddata
+              name: saveddata-pv
+            - mountPath: /app/secrets/google-oauth-secret
+              name: google-oauth-secret
+              readOnly: true
+            - mountPath: /app/secrets/socialaccount-secrets
+              name: socialaccount-secrets
+              readOnly: true
+            - mountPath: /app/secrets/twitter-oauth-secret
+              name: twitter-oauth-secret
+              readOnly: true
       volumes:
-        - name: 
+        - name: importedmodules-pv
+          persistentVolumeClaim:
+            claimName: importedmodules-pvc
+        - name: saveddata-pv
+          persistentVolumeClaim:
+            claimName: saveddata-pvc
+        - name: google-oauth-secret
+          secret:
+            secretName: google-oauth-secret
+            items:
+              - key: json
+                path: google-oauth-secret.json
+        - name: socialaccount-secrets
+          secret:
+            secretName: socialaccount-secrets
+            items:
+              - key: json
+                path: socialaccount-secrets.json
+        - name: twitter-oauth-secret
+          secret:
+            secretName: twitter-oauth-secret
+            items:
+              - key: json
+                path: twitter-oauth-secret.json

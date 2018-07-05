@@ -9,6 +9,15 @@ spec:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
   nfs:
-    server: nfs-server
+    # Need absolute URL, not relative one: mount.nfs is run on the _node_,
+    # not the pod, so the namespace ("production"/"staging") is not in the
+    # DNS search domain. https://github.com/kubernetes/kubernetes/issues/44528
+    #
+    # To deploy to staging (which you'll only need to do once):
+    #
+    # 1. Edit the next line: s/production/staging
+    # 2. `kubectl -n staging apply -f ...`
+    # 3. Undo the edit
+    server: nfs-server-service.production.svc.cluster.local
     path: /importedmodules
     readOnly: false

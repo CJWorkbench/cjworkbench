@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nfs-server-dpeloyment
+  name: nfs-server-deployment
 spec:
   selector:
     matchLabels:
