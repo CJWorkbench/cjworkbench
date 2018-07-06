@@ -25,6 +25,8 @@ spec:
             - name: http
               containerPort: 8080
           env:
+            - name: PYTHONUNBUFFERED
+              value: '1'
             - name: CJW_GOOGLE_ANALYTICS
               value: UA-104106561-1
             - name: CJW_HEAP_ANALYTICS_ID
@@ -74,7 +76,7 @@ spec:
           volumeMounts:
             - mountPath: /app/importedmodules
               name: importedmodules-pv
-            - mountPath: /app/saveddata
+            - mountPath: /app/media
               name: saveddata-pv
             - mountPath: /app/secrets/google-oauth-secret
               name: google-oauth-secret

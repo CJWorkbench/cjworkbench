@@ -50,7 +50,7 @@ spec:
           volumeMounts:
             - mountPath: /app/importedmodules
               name: importedmodules-pv
-            - mountPath: /app/saveddata
+            - mountPath: /app/media
               name: saveddata-pv
       volumes:
         - name: importedmodules-pv

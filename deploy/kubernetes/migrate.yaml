@@ -29,7 +29,7 @@ spec:
             # TODO make sure no migrations depend on mounted volumes, then nix mounts
             - mountPath: /app/importedmodules
               name: importedmodules-pv
-            - mountPath: /app/saveddata
+            - mountPath: /app/media
               name: saveddata-pv
             # TODO Find a way to load_socialaccounts? Depending on a secret takes a lot of config
             - mountPath: /app/secrets/socialaccount-secrets
