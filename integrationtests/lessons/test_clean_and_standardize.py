@@ -149,24 +149,4 @@ class TestLesson(LessonTest):
         )
         self.select_column('varcol', 'MetroArea')
 
-        self.expect_highlight_next(wait=True) # wait for click to register
-        self.click_next()
-
-        self.expect_highlight(
-            0,
-            '.in-between-modules:last-child .add-module-search'
-        )
-
-        self.add_wf_module('Line Chart')
-
-        # Wait for module to load
-        self.expect_highlight(
-            1,
-            '.wf-module[data-module-name="Line Chart"]',
-            wait=True
-        )
-
-        b.fill_in('title', 'Title', wait=True) # wait for module contents
-        b.click_whatever('h2') # blur, to register title change
-
         b.assert_no_element('.lesson-highlight')
