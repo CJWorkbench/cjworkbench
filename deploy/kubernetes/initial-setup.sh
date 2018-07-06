@@ -88,6 +88,21 @@ kubectl -n production apply -f frontend-service.yaml
 kubectl -n production apply -f frontend-deployment.yaml
 
 # 6. Set up ingress to terminate SSL and direct traffic to frontend
+
+# 6.1 Cluster-wide config: create one nginx controller and one SSL cert manager
 cert-manager/init.sh
+kubectl apply -f nginx-mandatory.yaml # creates+uses ingress-nginx namespace
+kubectl apply -f static-ip-svc.yaml
+echo -n 'Waiting for external IP... ' >&2
+EXTERNAL_IP='<none>'
+while [ "$EXTERNAL_IP" = "<none>" ]; do
+  sleep 1
+  EXTERNAL_IP=$(kubectl -n ingress-nginx get service nginx-ingress-lb -o custom-columns=x:status.loadBalancer.ingress[0].ip | tail -n1)
+done
+echo "$EXTERNAL_IP"
+# Make static IP persist. https://github.com/kubernetes/ingress-nginx/tree/master/docs/examples/static-ip
+kubectl -n ingress-nginx patch service nginx-ingress-lb -p '{"spec":{"loadBalancerIP":"'$EXTERNAL_IP'"}}'
+gcloud compute addresses create nginx-ingress-lb --addresses "$EXTERNAL_IP" --region us-central1
+
 kubectl apply -f frontend-production-ingress.yaml
 ???
