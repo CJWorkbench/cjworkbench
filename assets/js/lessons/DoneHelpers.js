@@ -76,7 +76,7 @@ export class WorkflowModuleWithHelpers {
   }
 
   get isEmailUpdates() {
-    return !!this.wfModule.auto_update_data && !!this.wfModule.notifications
+    return !!this.wfModule.notifications
   }
 
   /**

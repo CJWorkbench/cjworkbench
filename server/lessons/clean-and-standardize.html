@@ -41,7 +41,7 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Drop empty rows"}]',
       data-test="return workflow.wfModules[2].parameters.get('colnames') === 'MetroArea,Population'"
-      >Select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing values in those columns will be deleted.
+      >Select columns <kbd>MetroArea</kbd> and <kbd>Population</kbd>. The rows missing value s in those columns will be deleted.
     </li>
   </ol>
 </section>
@@ -100,30 +100,9 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Reshape"}]'
       data-test="return workflow.wfModules[4].parameters.get('varcol') == 'MetroArea'"
-      >Choose <kbd>MetroArea</kbd> as the Variable column. Those values will be used as column names in the wide table.</li>
-  </ol>
-</section>
-<section>
-  <h2>4. Making a line Chart with series</h2>
-  <p>Let’s create a line chart to compare the growth of population between each geographic area.</p>
-  <h3 class="instructions">Instructions</h3>
-  <ol class="steps">
-    <li
-      data-highlight='[{"type":"Module","index":5,"name":"Line Chart"}]'
-      data-test="return workflow.wfModules.length > 5 && workflow.wfModules[5].moduleName === 'Line Chart'"
-      >Add the module ‘Line Chart’ using the search in the module library.</li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
-      data-test="const wfModule = workflow.wfModules[5]; const p = wfModule.parameters.get('chart_editor'); if (!p) return false; const json = JSON.parse(p); if (!json.metadata) return false; return !!json.metadata.title"
-      >Add a title to the chart.
-    </li>
-    <li
-      data-highlight='[{"type":"WfModule","moduleName":"Line Chart"}]'
-      data-test="return state.selectedWfModule.moduleName === 'Line Chart'"
-      >Get the embed code by clicking on the <span>
-      <img class="icon-insert" src="/static/images/url_chart_lesson/embbed_button.svg">
-    </span> button at the top right of the chart panel.
-    <p class="instruction-detail highlight">Your chart is live! Any changes in the data will be reflected in the embedded chart.</p>
+      >Choose <kbd>MetroArea</kbd> as the Variable column. Those values will be used as column names in the wide table.
+      <p class="instruction-detail highlight">Congratulation! Your data and ready for analysis.</p>
+      <span class="instruction-detail"> Next, learn <a href="https://app.workbenchdata.com/lessons/scrape-using-xpath/" class="highlight" target="_blank">how to scrape and monitor content on a web page.</a></span>
     </li>
   </ol>
 </section>

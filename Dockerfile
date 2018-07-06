@@ -32,6 +32,7 @@ RUN apt-get update \
     && apt-get remove --purge -y \
       libpq-dev \
       build-essential \
+    && apt-get autoremove -y \
     && rm -rf /var/lib/apt/lists/*
 
 # nltk models (for sentiment)
@@ -53,6 +54,7 @@ RUN apt-get update \
         curl \
         xauth \
         xvfb \
+        bzip2 \
     && rm -rf /var/lib/apt/lists/*
 RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0/linux-x86_64/en-US/firefox-61.0.tar.bz2 \
         | tar jx -C /opt \

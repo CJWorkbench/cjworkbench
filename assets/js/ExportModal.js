@@ -95,7 +95,7 @@ export default class ExportModal extends React.Component {
 
     if (this.state.jsonCopied) {
       return (
-        <div className='clipboard copied' onMouseLeave={this.onJsonLeave}>JSON LINK COPIED TO CLIPBOARD</div>
+        <div className='clipboard copied' onMouseLeave={this.onJsonLeave}>JSON FEED LINK COPIED TO CLIPBOARD</div>
       );
     } else {
       return (
@@ -136,7 +136,7 @@ export default class ExportModal extends React.Component {
               </div>
             </div>
             <div className='d-flex justify-content-between flex-row'>
-              <Label className='dl-file'>JSON</Label>
+              <Label className='dl-file'>JSON FEED</Label>
               {jsonCopyLink}
             </div>
             <div className='d-flex justify-content-between flex-row'>

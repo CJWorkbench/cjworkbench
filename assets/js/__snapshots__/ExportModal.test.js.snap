@@ -114,7 +114,7 @@ exports[`ExportModal should match snapshot 1`] = `
                         <label
                           class="dl-file "
                         >
-                          JSON
+                          JSON FEED
                         </label>
                         <div
                           class="clipboard test-json-copy"
@@ -345,7 +345,7 @@ exports[`ExportModal should match snapshot 1`] = `
                               <label
                                 className="dl-file "
                               >
-                                JSON
+                                JSON FEED
                               </label>
                             </Label>
                             <CopyToClipboard

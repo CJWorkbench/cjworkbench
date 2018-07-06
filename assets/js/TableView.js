@@ -253,7 +253,10 @@ export default class TableView extends React.PureComponent {
               </div>
             </div>
             {this.props.selectedWfModuleId ? (
-              <div className="export-table icon-download" onClick={this.toggleExportModal}>
+              <div className="export-table" onClick={this.toggleExportModal}>
+                <div className="icon-download"></div>
+                <span>CSV</span>
+                <span className="feed">JSON FEED</span>
                 <ExportModal open={this.state.exportModalOpen} wfModuleId={this.props.selectedWfModuleId} onClose={this.toggleExportModal}/>
               </div>
             ) : null}
