@@ -362,7 +362,7 @@ export default class Refine extends React.Component {
                             </div>
                         ) : ''
                     }
-                    <div className='t-d-gray content-3 label-margin'>Select and edit values</div>
+                    <div className='t-d-gray content-3 mt-2 label-margin'>Select and edit values</div>
                     <div className='container list-wrapper'>
                         <div className='row list-scroll'>
                             { checkboxes }
