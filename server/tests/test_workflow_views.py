@@ -165,6 +165,7 @@ class WorkflowViewTests(LoggedInTestCase):
             self.assertContains(response, '"editCellsModuleId": ' + str(edit_cells_module_id))
             self.assertContains(response, '"workflow"')
             self.assertContains(response, '"modules"')
+            self.assertNotContains(response, '"reorder-column"')
 
             self.assertContains(response, 'myIntercomId')
             self.assertContains(response, 'myGaId')

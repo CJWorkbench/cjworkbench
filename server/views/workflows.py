@@ -158,10 +158,11 @@ def _get_anonymous_workflow_for(workflow: Workflow,
 
 # Restrict the modules that are available, based on the user
 def visible_modules(request):
+    modules = Module.objects.all().exclude(id_name='reorder-columns') # excluding because no functional UI
     if request.user.is_authenticated:
-        return Module.objects.all()
+        return modules
     else:
-        return Module.objects.all().exclude(id_name='pythoncode')  # need to log in to write Python code
+        return modules.exclude(id_name='pythoncode')  # need to log in to write Python code
 
 
 # no login_required as logged out users can view example/public workflows
