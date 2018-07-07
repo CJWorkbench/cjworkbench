@@ -69,7 +69,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
     const { isAutoUpdate, isEmailUpdates, timeNumber, timeUnit } = this.state
 
     return (
-    
+
         <Modal isOpen={true}>
           <ModalHeader toggle={this.props.closeModal} className='dialog-header'>
             <span className="modal-title">WORKFLOW UPDATE</span>
@@ -91,7 +91,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                   checked={isAutoUpdate}
                   onChange={this.onChangeAutoUpdate}
                   />
-                  <span>On</span>
+                  <span>Auto</span>
                 </label>
                 <div className="big-radio-details">
                   <p>Automatically update this workflow with the newest data (old versions will be saved).</p>
@@ -146,7 +146,7 @@ export default class UpdateFrequencySelectModal extends React.PureComponent {
                   checked={!isAutoUpdate}
                   onChange={this.onChangeAutoUpdate}
                   />
-                  <span>Off</span>
+                  <span>Manual</span>
                 </label>
                 <div className="big-radio-details">
                   <p>Check for new data manually.</p>

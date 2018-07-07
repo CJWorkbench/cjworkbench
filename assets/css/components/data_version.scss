@@ -57,14 +57,13 @@
     }
 
     &>label {
-      width: 7rem;
+      width: 8rem;
       margin-right: 1rem;
       flex: 0 0 auto;
       cursor: pointer;
 
       input { display: none; }
       color: $brand-workspace;
-      text-transform: uppercase;
       font-weight: bold;
       font-size: 1.5rem;
       line-height: 1;
