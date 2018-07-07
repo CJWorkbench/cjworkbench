@@ -59,7 +59,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
             value="true"
           />
           <span>
-            On
+            Auto
           </span>
         </label>
         <div
@@ -170,7 +170,7 @@ exports[`UpdateFrequencySelectModal should match snapshot 1`] = `
             value="false"
           />
           <span>
-            Off
+            Manual
           </span>
         </label>
         <div

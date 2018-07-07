@@ -167,6 +167,16 @@ exports[`WfModule, not read-only mode matches snapshot 1`] = `
         </div>
       </div>
     </div>
+    <div
+      className="module-link"
+    >
+      <div
+        className="left"
+      />
+      <div
+        className="right"
+      />
+    </div>
   </div>
 </div>
 `;
