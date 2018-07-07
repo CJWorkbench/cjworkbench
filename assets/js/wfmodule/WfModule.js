@@ -363,6 +363,10 @@ export class WfModule extends React.PureComponent {
               </div>
             </div>
           </div>
+          <div className="module-link">
+            <div className="left"></div>
+            <div className="right"></div>
+          </div>
         </div>
         {maybeDataVersionModal}
       </div>

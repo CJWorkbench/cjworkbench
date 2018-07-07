@@ -19,6 +19,17 @@
       cursor: -moz-grabbing;
       cursor: -webkit-grabbing;
     }
+
+    .module-link {
+      display: flex;
+      justify-content: center;
+      position: relative;
+      top:1.4rem;
+
+      .right, .left {height:1.4rem}
+      .right {border-left:1px solid $module-action}
+      .left {border-right:1px solid $module-action}
+    }
   }
 
   .module-card-params {
