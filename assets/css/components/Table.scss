@@ -245,6 +245,17 @@
           padding: .8rem 1rem; // .8rem dictated by react-data-grid JS
           flex: 1 1 auto;
           overflow: hidden;
+          height:100%;
+        }
+
+        .column-sort-arrow {
+          position:absolute;
+          height: 3.6rem;
+          background: $heading-bg;
+          top:-.5rem;
+          right:0;
+          border-left: 1px solid $dark-accent--medium;
+
         }
 
         input[name="new-column-key"] {
