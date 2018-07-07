@@ -5,6 +5,7 @@
     margin: 0 $module-margin; // most of the in-between margin comes from .add-module-in-between-search
     background-color: #f8f8f8;
     position: relative;
+    z-index: 1;
     &:hover {background:#fcfcfc;}
 
     &.wf-card:hover .context-buttons {
@@ -20,11 +21,13 @@
       cursor: -webkit-grabbing;
     }
 
+    // vertical bar between module to show the vertical flow of data
     .module-link {
+      position: absolute;
+      left:13rem;
       display: flex;
       justify-content: center;
-      position: relative;
-      top:1.4rem;
+      z-index: 0;
 
       .right, .left {height:1.4rem}
       .right {border-left:1px solid $module-action}
