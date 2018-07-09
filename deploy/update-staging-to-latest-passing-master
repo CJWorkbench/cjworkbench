@@ -1,5 +1,12 @@
 #!/bin/bash
 
+set -e
+# test for needed commands; "set -e" means we'll exit if any are missing
+type curl >/dev/null
+type jq >/dev/null
+type sed >/dev/null
+type kubectl >/dev/null
+
 find_latest_passing_sha1_on_master() {
   echo 'Finding latest passing sha1 on master...' >&2
   commits=$(curl -s 'https://api.github.com/repos/CJWorkbench/cjworkbench/commits' | jq -r '.[] | .sha')
@@ -18,31 +25,6 @@ find_latest_passing_sha1_on_master() {
   exit 1
 }
 
-set -e
-# test for needed commands; "set -e" means we'll exit if any are missing
-type curl >/dev/null
-type jq >/dev/null
-type sed >/dev/null
-type kubectl >/dev/null
-
 SHA=$(find_latest_passing_sha1_on_master)
 
-echo -n "Running migrations for $SHA..." >&2
-kubectl -n staging delete job migrate-job 2>/dev/null || true
-kubectl -n staging delete pod -lapp=migrate-job 2>/dev/null || true
-cat deploy/kubernetes/migrate.yaml \
-      | sed -e "s/:latest/:$SHA/" \
-      | kubectl -n staging apply -f -
-until [ "$(kubectl -n staging get jobs migrate-job --no-headers -o custom-columns=status:status.succeeded)" = "1" ]; do
-  echo -n '.' >&2
-  sleep 1
-done
-echo ' done' >&2
-
-echo -n "Setting frontend and backend images to $SHA..." >&2
-kubectl -n staging set image deployment/frontend-deployment frontend=gcr.io/cj-workbench/$SHA
-echo -n ' done' >&2
-echo -n >&2
-echo 'Watch deployment at: ' >&2
-echo 'Backend: https://console.cloud.google.com/kubernetes/deployment/us-central1-b/workbench/production/backend-deployment?project=cj-workbench' >&2
-echo 'Frontend: https://console.cloud.google.com/kubernetes/deployment/us-central1-b/workbench/production/frontend-deployment?project=cj-workbench' >&2
+"$(dirname "$0")"/advanced-deploy staging $SHA
