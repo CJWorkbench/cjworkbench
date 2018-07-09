@@ -226,7 +226,6 @@ select.form-control {
 
 textarea[name="notes"], .editable-notes-read-only {
   @extend %content-3;
-  color: $dark-gray;
   border: none;
   outline: none;
   width: 25rem;
