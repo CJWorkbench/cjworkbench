@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -e
+# test for needed commands; "set -e" means we'll exit if any are missing
+type tail >/dev/null
+type cut >/dev/null
+type kubectl >/dev/null
+
+find_sha1_on_staging() {
+  kubectl -n staging get deployment frontend-deployment \
+      -o custom-columns=x:'{.spec.template.spec.containers[0].image}' \
+    | tail -n1 \
+    | cut -d: -f2
+}
+
+SHA=$(find_sha1_on_staging)
+
+"$(dirname "$0")"/advanced-deploy production $SHA

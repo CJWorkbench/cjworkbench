@@ -16,7 +16,8 @@ done
 echo ' done' >&2
 
 echo -n "Setting frontend and backend images to $SHA on $ENV..." >&2
-kubectl -n $ENV set image deployment/frontend-deployment frontend=gcr.io/cj-workbench/$SHA
+kubectl -n $ENV set image deployment/backend-deployment backend=gcr.io/cj-workbench/backend:$SHA
+kubectl -n $ENV set image deployment/frontend-deployment frontend=gcr.io/cj-workbench/frontend:$SHA
 echo -n ' done' >&2
 echo -n >&2
 echo 'Watch deployment at: ' >&2
