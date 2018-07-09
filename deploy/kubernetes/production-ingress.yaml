@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
     - hosts:
-      - app2.workbenchdata.com
-      secretName: app2.workbenchdata.com-secret
+      - app.workbenchdata.com
+      secretName: app.workbenchdata.com-secret
   rules:
-    - host: app2.workbenchdata.com
+    - host: app.workbenchdata.com
       http:
         paths:
           - path: /
