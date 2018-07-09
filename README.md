@@ -3,16 +3,6 @@
 </div>
 
 <table>
-
-
-<tr>
-  <td>Build Status</td>
-  <td>
-    <a href="https://travis-ci.org/CJWorkbench/cjworkbench">
-      <img src="https://travis-ci.org/CJWorkbench/cjworkbench.svg?branch=master" alt="travis build status" />
-    </a>
-  </td>
-</tr>
 <tr>
   <td>License</td>
   <td>
