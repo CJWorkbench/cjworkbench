@@ -1,10 +1,13 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: importedmodules-pv
+  name: saveddata-pv-staging
+  namespace: staging
+  labels:
+    implementation: nfs-server
 spec:
   capacity:
-    storage: 2Gi
+    storage: 18Gi
   accessModes:
     - ReadWriteMany
   persistentVolumeReclaimPolicy: Retain
@@ -20,6 +23,6 @@ spec:
     #    volumes are not namespaced, it would appear....
     # 3. `kubectl -n staging apply -f ...`
     # 4. Undo the edits
-    server: nfs-server-service.production.svc.cluster.local
-    path: /importedmodules
+    server: nfs-server-service.staging.svc.cluster.local
+    path: /saveddata
     readOnly: false

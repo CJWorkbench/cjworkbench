@@ -9,3 +9,6 @@ spec:
   resources:
     requests:
       storage: 18Gi
+  selector:
+    matchLabels:
+      implementation: nfs-server

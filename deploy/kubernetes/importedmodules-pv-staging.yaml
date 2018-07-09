@@ -1,7 +1,8 @@
 kind: PersistentVolume
 apiVersion: v1
 metadata:
-  name: importedmodules-pv
+  name: importedmodules-pv-staging
+  namespace: staging
 spec:
   capacity:
     storage: 2Gi
@@ -20,6 +21,6 @@ spec:
     #    volumes are not namespaced, it would appear....
     # 3. `kubectl -n staging apply -f ...`
     # 4. Undo the edits
-    server: nfs-server-service.production.svc.cluster.local
+    server: nfs-server-service.staging.svc.cluster.local
     path: /importedmodules
     readOnly: false

@@ -76,8 +76,8 @@ kubectl -n production create secret generic google-oauth-secret --from-file=json
 [ -f twitter-oauth-secret.json ] # we're set -e, so this will exit if missing
 kubectl -n production create secret generic twitter-oauth-secret --from-file=json=twitter-oauth-secret.json
 
-[ -f socialaccounts-secrets.json ] # we're set -e, so this will exit if missing
-kubectl -n production create secret generic socialaccounts-secrets --from-file=json=socialaccounts-secrets.json
+[ -f socialaccount-secrets.json ] # we're set -e, so this will exit if missing
+kubectl -n production create secret generic socialaccount-secrets --from-file=json=socialaccount-secrets.json
 
 # 4. Migrate database
 kubectl -n production apply -f migrate.yaml

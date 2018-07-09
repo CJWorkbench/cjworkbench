@@ -1,0 +1,21 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: public-ingress
+  namespace: staging
+  annotations:
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+spec:
+  tls:
+    - hosts:
+      - staging.workbenchdata.com
+      secretName: staging.workbenchdata.com-secret
+  rules:
+    - host: staging.workbenchdata.com
+      http:
+        paths:
+          - path: /
+            backend:
+              serviceName: frontend-service
+              servicePort: 80

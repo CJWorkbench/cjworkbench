@@ -2,6 +2,7 @@ kind: PersistentVolume
 apiVersion: v1
 metadata:
   name: saveddata-pv
+  namespace: production
 spec:
   capacity:
     storage: 18Gi
@@ -16,8 +17,10 @@ spec:
     # To deploy to staging (which you'll only need to do once):
     #
     # 1. Edit the next line: s/production/staging
-    # 2. `kubectl -n staging apply -f ...`
-    # 3. Undo the edit
+    # 2. Edit the `name` (in `metadata`) to add `-staging` to the end: these
+    #    volumes are not namespaced, it would appear....
+    # 3. `kubectl -n staging apply -f ...`
+    # 4. Undo the edits
     server: nfs-server-service.production.svc.cluster.local
     path: /saveddata
     readOnly: false
