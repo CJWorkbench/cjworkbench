@@ -1,23 +1,23 @@
 timeout: 1800s
 steps:
-# `docker pull` all our previous images, to speed up new builds
-# This works for the same reason it works on dev: we don't need to re-run
-# slow commands when the files that triggered them don't change.
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'pull', 'gcr.io/$PROJECT_ID/migrate:latest' ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'pull', 'gcr.io/$PROJECT_ID/backend:latest' ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'pull', 'gcr.io/$PROJECT_ID/frontend:latest' ]
-- name: 'gcr.io/cloud-builders/docker'
-  args: [ 'pull', 'gcr.io/$PROJECT_ID/integration-test:latest' ]
+## `docker pull` all our previous images, to speed up new builds
+## This works for the same reason it works on dev: we don't need to re-run
+## slow commands when the files that triggered them don't change.
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: [ 'pull', 'gcr.io/$PROJECT_ID/migrate:latest' ]
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: [ 'pull', 'gcr.io/$PROJECT_ID/backend:latest' ]
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: [ 'pull', 'gcr.io/$PROJECT_ID/frontend:latest' ]
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: [ 'pull', 'gcr.io/$PROJECT_ID/integration-test:latest' ]
 # Build new Docker images
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'migrate',
           '-t', 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/migrate:latest',
