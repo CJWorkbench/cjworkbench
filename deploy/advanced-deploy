@@ -4,11 +4,12 @@ ENV=${1:?"Usage: $0 ENVIRONMENT SHA"}
 SHA=${2:?"Usage: $0 ENVIRONMENT SHA"}
 
 echo -n "Running migrations for $SHA on $ENV..." >&2
-kubectl -n $ENV delete job migrate-job 2>/dev/null || true
-kubectl -n $ENV delete pod -lapp=migrate-job 2>/dev/null || true
+kubectl -n $ENV delete job migrate-job >/dev/null || true
+kubectl -n $ENV delete pod -lapp=migrate-job >/dev/null || true
 cat "$(dirname "$0")"/kubernetes/migrate.yaml \
       | sed -e "s/:latest/:$SHA/" \
-      | kubectl -n $ENV apply -f -
+      | kubectl -n $ENV apply -f - \
+      >/dev/null
 until [ "$(kubectl -n $ENV get jobs migrate-job --no-headers -o custom-columns=status:status.succeeded)" = "1" ]; do
   echo -n '.' >&2
   sleep 1
@@ -16,10 +17,15 @@ done
 echo ' done' >&2
 
 echo -n "Setting frontend and backend images to $SHA on $ENV..." >&2
-kubectl -n $ENV set image deployment/backend-deployment backend=gcr.io/cj-workbench/backend:$SHA
-kubectl -n $ENV set image deployment/frontend-deployment frontend=gcr.io/cj-workbench/frontend:$SHA
-echo -n ' done' >&2
-echo -n >&2
-echo 'Watch deployment at: ' >&2
-echo 'Backend: https://console.cloud.google.com/kubernetes/deployment/us-central1-b/workbench/$ENV/backend-deployment?project=cj-workbench' >&2
-echo 'Frontend: https://console.cloud.google.com/kubernetes/deployment/us-central1-b/workbench/$ENV/frontend-deployment?project=cj-workbench' >&2
+kubectl -n $ENV set image deployment/backend-deployment backend=gcr.io/cj-workbench/backend:$SHA >/dev/null
+kubectl -n $ENV set image deployment/frontend-deployment frontend=gcr.io/cj-workbench/frontend:$SHA >/dev/null
+echo ' done' >&2
+
+echo -n 'Waiting for rollout to finish...' >&2
+kubectl -n $ENV rollout status deployment/backend-deployment >/dev/null
+echo -n '.' >&2
+kubectl -n $ENV rollout status deployment/frontend-deployment >/dev/null
+echo ' done' >&2
+
+echo >&2
+echo 'Inspect services at https://console.cloud.google.com/kubernetes/workload?project=cj-workbench' >&2
