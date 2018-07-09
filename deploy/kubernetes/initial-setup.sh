@@ -1,5 +1,9 @@
 #!/bin/sh
 
+echo 'This is more of a _log_ than an actual script you should run.'
+echo 'Exiting, to avoid breaking things in production.'
+exit 1
+
 set -e
 set -x
 
@@ -49,10 +53,12 @@ kubectl -n production apply -f saveddata-pv.yaml
 kubectl -n production apply -f importedmodules-pvc.yaml
 kubectl -n production apply -f importedmodules-pv.yaml
 
-# 2. Start database
+# 2. Start database+redis
 kubectl -n production apply -f dbdata-pvc.yaml
 kubectl -n production apply -f database-service.yaml
 kubectl -n production apply -f database-deployment.yaml
+kubectl -n production apply -f redis-service.yaml
+kubectl -n production apply -f redis-deployment.yaml
 
 # 3. Create secrets! You'll need to be very careful here....
 : ${CJW_SECRET_KEY:?"Must set CJW_SECRET_KEY"}

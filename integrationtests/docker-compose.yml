@@ -13,6 +13,9 @@ services:
     volumes:
       - dbdata:/var/lib/postgresql/data
 
+  redis:
+    image: redis:4.0.10
+
   migrate:
     image: 'gcr.io/${PROJECT_ID}/migrate:${COMMIT_SHA}'
     depends_on: [ 'db' ]
@@ -30,6 +33,7 @@ services:
     image: 'gcr.io/${PROJECT_ID}/backend:${COMMIT_SHA}'
     depends_on: [ 'db' ]
     environment:
+      CJW_REDIS_HOST: redis
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
       CJW_DB_PASSWORD: cjworkbench
@@ -44,6 +48,7 @@ services:
     ports: [ '8080:8000' ] # 8080 is Kubernetes standard web server port
     depends_on: [ 'db' ]
     environment:
+      CJW_REDIS_HOST: redis
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
       CJW_DB_PASSWORD: cjworkbench

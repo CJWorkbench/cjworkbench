@@ -43,7 +43,7 @@ pulled_or_cached_image_id() {
 
 start_database() {
   echo -n 'Starting database… ' >&2 # `docker run` will output container id
-  image_id="$(pulled_or_cached_image_id "postgres:9.6.9")"
+  image_id="$(pulled_or_cached_image_id "postgres:10.4")"
   docker run \
     --detach \
     --env POSTGRES_USER=cjworkbench \
@@ -52,6 +52,17 @@ start_database() {
     --network "$NETWORK_NAME" \
     --network-alias "workbench-db" \
     --name "${PREFIX}_database" \
+    "$image_id"
+}
+
+start_redis() {
+  echo -n 'Starting redis… ' >&2 # `docker run` will output container id
+  image_id="$(pulled_or_cached_image_id "redis:4.0.10")"
+  docker run \
+    --detach \
+    --network "$NETWORK_NAME" \
+    --network-alias "redis" \
+    --name "${PREFIX}_redis" \
     "$image_id"
 }
 
@@ -90,6 +101,7 @@ start_django() {
   echo -n 'Starting Django… ' >&2 # `docker run` will output container id
   docker run \
     --detach \
+    --env CJW_REDIS_HOST=redis \
     --env CJW_PRODUCTION=True \
     --env CJW_DB_HOST=workbench-db \
     --env CJW_DB_PASSWORD=cjworkbench \
@@ -113,9 +125,10 @@ find_django_url() {
 }
 
 cleanup() {
-  stop_container_if_running database
-  stop_container_if_running git
   stop_container_if_running django
+  stop_container_if_running database
+  stop_container_if_running redis
+  stop_container_if_running git
   docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 && docker network rm "$NETWORK_NAME" || true
 }
 
@@ -126,6 +139,7 @@ echo 'Setting up network…' >&2
 docker network create "${PREFIX}_network"
 
 start_database
+start_redis
 start_git
 do_migrate
 start_django

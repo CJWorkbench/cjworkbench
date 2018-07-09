@@ -25,9 +25,6 @@ spec:
             limits:
               cpu: 0.75
               memory: 768Mi
-          ports:
-            - name: http
-              containerPort: 8080
           env:
             # PGDATA should be a subdir of the mount, so there's no lost+found.
             # Make it include version number, so we can pg_upgrade using

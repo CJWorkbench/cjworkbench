@@ -31,6 +31,7 @@ nltk = "*"
 requests = "*"
 requests-oauthlib = "*"
 pyjwt = "*"
+channels-redis = "*"
 
 [dev-packages]
 mock = "==2.0.0"

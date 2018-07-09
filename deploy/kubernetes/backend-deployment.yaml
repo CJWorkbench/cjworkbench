@@ -28,6 +28,8 @@ spec:
           env:
             - name: CJW_PRODUCTION
               value: 'True'
+            - name: CJW_REDIS_HOST
+              value: redis-service
             - name: CJW_DB_HOST
               value: database-service
             - name: CJW_DB_PASSWORD
