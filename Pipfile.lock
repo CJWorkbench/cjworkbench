@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b616d3b9969b3bc2d63a092afe5686d7efae21e4b4a1e5027f9cc58cadc48fc9"
+            "sha256": "faa83910637b456e9733784b26fa7db60b03bc0c512cfa7bad7c869d7e8f2fc1"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -343,9 +343,6 @@
             ],
             "index": "pypi",
             "version": "==1.14.5"
-        },
-        "oauth2client": {
-            "git": "https://github.com/CJWorkbench/oauth2client.git"
         },
         "oauthlib": {
             "hashes": [

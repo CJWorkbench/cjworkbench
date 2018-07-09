@@ -18,7 +18,8 @@ echo 'Building django (`docker build .`), which may take 30 minutes…' >&2
 # docker build . --no-cache # watch a cold build
 # or
 # docker build . # watch build steps after you've edited .js or .py files
-DJANGO_IMAGE_ID="$(docker build . -q)"
+DJANGO_IMAGE_ID="$(docker build --target frontend . -q)"
+MIGRATE_IMAGE_ID="$(docker build --target migrate . -q)"
 
 PREFIX=cjworkbench_integrationtest
 NETWORK_NAME="${PREFIX}_network"
@@ -67,10 +68,31 @@ start_git() {
     "$GIT_IMAGE_ID"
 }
 
+do_migrate() {
+  echo 'Migrating database…' >&2
+  docker run --rm \
+    --env CJW_PRODUCTION=True \
+    --env CJW_DB_HOST=workbench-db \
+    --env CJW_DB_PASSWORD=cjworkbench \
+    --env CJW_MOCK_EMAIL=true \
+    --env CJW_SECRET_KEY=notasecret \
+    --env CJW_SENDGRID_API_KEY=notasecret \
+    --env CJW_SENDGRID_INVITATION_ID=notanid \
+    --env CJW_SENDGRID_CONFIRMATION_ID=notanid \
+    --env CJW_SENDGRID_PASSWORD_CHANGE_ID=notanid \
+    --env CJW_SENDGRID_PASSWORD_RESET_ID=notanid \
+    --network "$NETWORK_NAME" \
+    --name "${PREFIX}_migrate" \
+    "$MIGRATE_IMAGE_ID"
+}
+
 start_django() {
   echo -n 'Starting Django… ' >&2 # `docker run` will output container id
   docker run \
     --detach \
+    --env CJW_PRODUCTION=True \
+    --env CJW_DB_HOST=workbench-db \
+    --env CJW_DB_PASSWORD=cjworkbench \
     --env CJW_MOCK_EMAIL=true \
     --env CJW_SECRET_KEY=notasecret \
     --env CJW_SENDGRID_API_KEY=notasecret \
@@ -85,7 +107,7 @@ start_django() {
 }
 
 find_django_url() {
-  port=$(docker port cjworkbench_integrationtest_django 8000/tcp | cut -d: -f2)
+  port=$(docker port cjworkbench_integrationtest_django 8080/tcp | cut -d: -f2)
   echo "http://localhost:$port"
 }
 
@@ -104,10 +126,11 @@ docker network create "${PREFIX}_network"
 
 start_database
 start_git
+do_migrate
 start_django
 
 echo -n 'Waiting for Django to start its database and HTTP server… ' >&2
-docker exec cjworkbench_integrationtest_django sh -c 'until curl -sf localhost:8000; do echo -n "."; sleep 1; done; echo'
+docker exec cjworkbench_integrationtest_django sh -c 'until curl -sf localhost:8080; do echo -n "."; sleep 1; done; echo'
 # No need to wait for git to start: django is 1,000,000 times slower
 
 url=$(find_django_url)

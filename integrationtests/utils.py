@@ -1,9 +1,9 @@
 # Utilities for integration tests
-
 import subprocess
 import unittest
 import email.message
 from typing import Optional
+import os
 import re
 
 from integrationtests.browser import Browser
@@ -13,22 +13,28 @@ from integrationtests.helpers.modules import import_workbench_module
 
 _url_regex = re.compile('https?://[^\\s]+')
 
+
 def find_url_in_email(message: email.message.Message) -> Optional[str]:
     """Return the first URL in the given message's payload, or None."""
     body = message.get_payload()
     match = _url_regex.search(body)
 
-    if not match: return None
+    if not match:
+        return None
     return match.group(0)
 
 
 def _find_server_url():
-    """Get URL using `docker port`"""
+    """Get URL using `docker port` or env.env['SERVER_URL']"""
+    env_url = os.getenv('SERVER_URL')
+    if env_url:
+        return env_url
+
     process = subprocess.run([
         'docker',
         'port',
         'cjworkbench_integrationtest_django',
-        '8000/tcp'
+        '8080/tcp'
     ], stdout=subprocess.PIPE)
     port_str = process.stdout.decode('ascii').split(':')[1].strip()
     return f"http://localhost:{port_str}"
@@ -36,34 +42,32 @@ def _find_server_url():
 
 class WorkbenchBase(unittest.TestCase):
     serve_static = True
-    account_admin = accounts.AccountAdmin()
     live_server_url = _find_server_url()
+    account_admin = accounts.AccountAdmin(live_server_url)
 
     def setUp(self):
         super().setUp()
 
         self.account_admin.clear_data_from_previous_tests()
 
-        #self.current_site = Site.objects.get_current()
-        #self.SocialApp1 = self.current_site.socialapp_set.create(
-        #    provider="facebook",
-        #    name="Facebook",
-        #    client_id="1234567890",
-        #    secret="0987654321",
-        #)
-        #self.SocialApp2 = self.current_site.socialapp_set.create(
-        #    provider="google",
-        #    name="Google",
-        #    client_id="1234567890",
-        #    secret="0987654321",
-        #)
+        # self.current_site = Site.objects.get_current()
+        # self.SocialApp1 = self.current_site.socialapp_set.create(
+        #     provider="facebook",
+        #     name="Facebook",
+        #     client_id="1234567890",
+        #     secret="0987654321",
+        # )
+        # self.SocialApp2 = self.current_site.socialapp_set.create(
+        #     provider="google",
+        #     name="Google",
+        #     client_id="1234567890",
+        #     secret="0987654321",
+        # )
 
         self.browser = Browser(base_url=self.live_server_url)
 
-
     def tearDown(self):
         self.browser.quit()
-
 
     def create_browser(self):
         return Browser(base_url=self.live_server_url)
@@ -71,7 +75,6 @@ class WorkbenchBase(unittest.TestCase):
     # TODO move to a helper .py file
     def import_module(self, slug: str) -> None:
         import_workbench_module(self.browser, slug)
-
 
     # TODO move to a helper .py file
     def add_wf_module(self, name: str, position=None) -> None:
@@ -97,7 +100,6 @@ class WorkbenchBase(unittest.TestCase):
 
         b.assert_element(f'.wf-module[data-module-name="{name}"]', wait=True)
 
-
     # TODO move to a helper .py file
     def delete_wf_module(self, position: int) -> None:
         """Deletes module at index `position` from the workflow.
@@ -110,15 +112,18 @@ class WorkbenchBase(unittest.TestCase):
             b.click_button('more')
             b.click_button('Delete')
 
-
     # TODO move to a helper .py file
     def add_csv_data_module(self, csv=None):
         """Adds Paste Data module to the workflow with given data
 
-           csv -- Text of csv.. if not set, use default three column, two row test data
+        csv -- Text of csv. If not set, use default data.
         """
         if csv is None:
-            csv = 'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson\n'
+            csv = '\n'.join([
+                'Month,Amount,Name',
+                'Jan,10,Alicia Aliciason',
+                'Feb,666,Fred Frederson',
+            ])
 
         self.browser.click_button('Add Module')
         self.browser.fill_in('moduleQ', 'Paste data')
@@ -130,7 +135,6 @@ class WorkbenchBase(unittest.TestCase):
         self.browser.click_whatever('ul.metadata-container', text='by')
         # and for some reason, that doesn't do the trick! Focus again?
         self.browser.click_whatever('textarea[name="csv"]')
-
 
     # TODO move to a helper .py file
     def select_column(self, name: str, text: str, **kwargs) -> None:
@@ -160,7 +164,6 @@ class LoggedInIntegrationTest(WorkbenchBase):
         self.user_email = self.account_admin.verify_user_email(self.user)
 
         accounts.login(self.browser, self.user.email, self.user.email)
-
 
     def tearDown(self):
         self.account_admin.destroy_user_email(self.user_email)

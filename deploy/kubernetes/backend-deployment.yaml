@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+spec:
+  selector:
+    matchLabels:
+      app: backend-app
+  strategy:
+    type: Recreate
+  replicas: 1
+  revisionHistoryLimit: 20
+  template:
+    metadata:
+      labels:
+        app: backend-app
+    spec:
+      containers:
+        - name: backend
+          image: "gcr.io/cj-workbench/backend:latest"
+          resources:
+            requests:
+              cpu: 0.1
+              memory: 256Mi
+            limits:
+              cpu: 0.5
+              memory: 768Mi
+          env:
+            - name: CJW_PRODUCTION
+              value: 'True'
+            - name: CJW_DB_HOST
+              value: database-service
+            - name: CJW_DB_PASSWORD
+              value: cjworkbench
+            - name: CJW_SECRET_KEY
+              value: backend-needs-no-secret-key
+            - name: CJW_SENDGRID_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: cjw-sendgrid-api-key
+                  key: value
+            - name: CJW_SENDGRID_INVITATION_ID
+              value: b22cb75d-2673-4efe-88d3-22239eaf403c
+            - name: CJW_SENDGRID_CONFIRMATION_ID
+              value: 86182412-e2bd-4d9f-be7d-a535a9f8e50b
+            - name: CJW_SENDGRID_PASSWORD_CHANGE_ID
+              value: 049f32e5-06ef-42e5-847d-ca30f52bf816
+            - name: CJW_SENDGRID_PASSWORD_RESET_ID
+              value: 0946d35d-5763-4a22-b17d-ed9cb42bf096
+          volumeMounts:
+            - mountPath: /app/importedmodules
+              name: importedmodules-pv
+            - mountPath: /app/media
+              name: saveddata-pv
+      volumes:
+        - name: importedmodules-pv
+          persistentVolumeClaim:
+            claimName: importedmodules-pvc
+        - name: saveddata-pv
+          persistentVolumeClaim:
+            claimName: saveddata-pvc

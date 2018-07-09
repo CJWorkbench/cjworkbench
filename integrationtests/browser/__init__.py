@@ -2,6 +2,9 @@ import capybara
 from capybara.session import Session
 from contextlib import contextmanager
 
+# for Browser.send_keys
+from selenium.webdriver.common.keys import Keys  # noqa: F401
+
 
 # DISABLE capybara's default wait time! We're more explicit about timeouts in
 # our tests, so our behavior is more predictable. (We try to avoid tests that

@@ -1,0 +1,10 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: database-service
+spec:
+  selector:
+    app: database-app
+  ports:
+    - protocol: TCP
+      port: 5432

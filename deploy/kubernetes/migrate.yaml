@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-job
+spec:
+  template:
+    metadata:
+      labels:
+        app: migrate-app
+    spec:
+      restartPolicy: Never
+      containers:
+        - name: migrate
+          image: "gcr.io/cj-workbench/migrate:latest"
+          env:
+            - name: CJW_PRODUCTION
+              value: 'True'
+            - name: CJW_DB_HOST
+              value: database-service
+            - name: CJW_DB_PASSWORD
+              value: cjworkbench
+            - name: CJW_SECRET_KEY
+              value: migrate-needs-no-secret-key
+            - name: CJW_MOCK_EMAIL
+              value: 'True'
+            - name: CJW_SOCIALACCOUNT_SECRETS
+              value: secrets/socialaccount-secrets/socialaccount-secrets.json
+          volumeMounts:
+            # TODO make sure no migrations depend on mounted volumes, then nix mounts
+            - mountPath: /app/importedmodules
+              name: importedmodules-pv
+            - mountPath: /app/media
+              name: saveddata-pv
+            # TODO Find a way to load_socialaccounts? Depending on a secret takes a lot of config
+            - mountPath: /app/secrets/socialaccount-secrets
+              name: socialaccount-secrets
+              readOnly: true
+      volumes:
+        - name: importedmodules-pv
+          persistentVolumeClaim:
+            claimName: importedmodules-pvc
+        - name: saveddata-pv
+          persistentVolumeClaim:
+            claimName: saveddata-pvc
+        - name: socialaccount-secrets
+          secret:
+            secretName: socialaccount-secrets
+            items:
+              - key: json
+                path: socialaccount-secrets.json

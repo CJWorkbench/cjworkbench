@@ -1,0 +1,75 @@
+version: '3'
+
+services:
+  db:
+    image: postgres:9
+    networks:
+      default:
+        aliases: [ 'workbench-db' ]
+    environment:
+      POSTGRES_USER: 'cjworkbench'
+      POSTGRES_PASSWORD: 'cjworkbench'
+      POSTGRES_DB: 'cjworkbench'
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+
+  migrate:
+    image: 'gcr.io/${PROJECT_ID}/migrate:${COMMIT_SHA}'
+    depends_on: [ 'db' ]
+    environment:
+      CJW_PRODUCTION: 'True'
+      CJW_DB_HOST: workbench-db
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      CJW_MOCK_EMAIL: 'True'
+
+  git-server:
+    build: ./git-server
+
+  backend:
+    image: 'gcr.io/${PROJECT_ID}/backend:${COMMIT_SHA}'
+    depends_on: [ 'db' ]
+    environment:
+      CJW_PRODUCTION: 'True'
+      CJW_DB_HOST: workbench-db
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      CJW_MOCK_EMAIL: 'True'
+    volumes:
+      - importedmodules:/app/importedmodules
+      - saveddata:/app/media
+
+  frontend:
+    image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
+    ports: [ '8080:8000' ] # 8080 is Kubernetes standard web server port
+    depends_on: [ 'db' ]
+    environment:
+      CJW_PRODUCTION: 'True'
+      CJW_DB_HOST: workbench-db
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      CJW_MOCK_EMAIL: 'True'
+    volumes:
+      - importedmodules:/app/importedmodules
+      - saveddata:/app/media
+
+  integration-test:
+    image: 'gcr.io/${PROJECT_ID}/integration-test:${COMMIT_SHA}'
+    depends_on: [ 'backend', 'frontend', 'git-server' ]
+    shm_size: 2g # prevent Firefox crashing ~5% of startups
+    environment:
+      SERVER_URL: 'http://frontend:8080'
+      # Integration tests run Django code, so they need these vars
+      CJW_PRODUCTION: 'True'
+      CJW_DB_HOST: workbench-db
+      CJW_DB_PASSWORD: cjworkbench
+      CJW_SECRET_KEY: cjw-secret-key
+      CJW_MOCK_EMAIL: 'True'
+
+volumes:
+  dbdata: {}
+  importedmodules: {}
+  saveddata: {}
+
+networks:
+  default: {}
