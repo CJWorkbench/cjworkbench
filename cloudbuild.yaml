@@ -14,10 +14,10 @@ steps:
 # Build new Docker images
 - name: 'gcr.io/cloud-builders/docker'
   args: [ 'build',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
-          #'--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/migrate:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/backend:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/frontend:latest',
+          '--cache-from', 'gcr.io/$PROJECT_ID/integration-test:latest',
           '--target', 'migrate',
           '-t', 'gcr.io/$PROJECT_ID/migrate:$COMMIT_SHA',
           '-t', 'gcr.io/$PROJECT_ID/migrate:latest',
