@@ -33,9 +33,8 @@ def _close_shell(shell, pty_master):
         shell.kill()
         stdout, stderr = shell.communicate()
 
-    if stdout.strip():
+    if stdout.strip() or stderr.strip():
         print(f"STDOUT (wanted empty): {stdout}")
-    if stderr.strip():
         print(f"STDERR (wanted empty): {stderr}")
 
 
