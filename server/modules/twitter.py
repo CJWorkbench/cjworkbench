@@ -25,7 +25,8 @@ class Twitter(ModuleImpl):
     @staticmethod
     def get_new_tweets(access_token, querytype, query, old_tweets):
         service = oauth.OAuthService.lookup_or_none('twitter_credentials')
-        if not service: raise Exception('credentials not set: user must log in to Twitter')
+        if not service:
+            raise Exception('Twitter connection misconfigured')
 
         auth = tweepy.OAuthHandler(service.consumer_key,
                                    service.consumer_secret)
