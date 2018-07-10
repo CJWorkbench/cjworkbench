@@ -82,6 +82,7 @@ start_git() {
 do_migrate() {
   echo 'Migrating database…' >&2
   docker run --rm \
+    --env PYTHONUNBUFFERED=1 \
     --env CJW_PRODUCTION=True \
     --env CJW_DB_HOST=workbench-db \
     --env CJW_DB_PASSWORD=cjworkbench \
@@ -101,6 +102,7 @@ start_django() {
   echo -n 'Starting Django… ' >&2 # `docker run` will output container id
   docker run \
     --detach \
+    --env PYTHONUNBUFFERED=1 \
     --env CJW_REDIS_HOST=redis \
     --env CJW_PRODUCTION=True \
     --env CJW_DB_HOST=workbench-db \
