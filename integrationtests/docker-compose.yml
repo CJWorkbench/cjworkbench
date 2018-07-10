@@ -20,6 +20,7 @@ services:
     image: 'gcr.io/${PROJECT_ID}/migrate:${COMMIT_SHA}'
     depends_on: [ 'db' ]
     environment:
+      PYTHONUNBUFFERED: '1'
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
       CJW_DB_PASSWORD: cjworkbench
@@ -33,6 +34,7 @@ services:
     image: 'gcr.io/${PROJECT_ID}/backend:${COMMIT_SHA}'
     depends_on: [ 'db' ]
     environment:
+      PYTHONUNBUFFERED: '1'
       CJW_REDIS_HOST: redis
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
@@ -48,6 +50,7 @@ services:
     ports: [ '8080:8000' ] # 8080 is Kubernetes standard web server port
     depends_on: [ 'db' ]
     environment:
+      PYTHONUNBUFFERED: '1'
       CJW_REDIS_HOST: redis
       CJW_PRODUCTION: 'True'
       CJW_DB_HOST: workbench-db
@@ -63,6 +66,7 @@ services:
     depends_on: [ 'backend', 'frontend', 'git-server' ]
     shm_size: 2g # prevent Firefox crashing ~5% of startups
     environment:
+      PYTHONUNBUFFERED: '1'
       SERVER_URL: 'http://frontend:8080'
       # Integration tests run Django code, so they need these vars
       CJW_PRODUCTION: 'True'
