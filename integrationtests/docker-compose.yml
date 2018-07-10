@@ -32,7 +32,7 @@ services:
 
   backend:
     image: 'gcr.io/${PROJECT_ID}/backend:${COMMIT_SHA}'
-    depends_on: [ 'db' ]
+    depends_on: [ 'db', 'redis' ]
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_REDIS_HOST: redis
@@ -48,7 +48,7 @@ services:
   frontend:
     image: 'gcr.io/${PROJECT_ID}/frontend:${COMMIT_SHA}'
     ports: [ '8080:8000' ] # 8080 is Kubernetes standard web server port
-    depends_on: [ 'db' ]
+    depends_on: [ 'db', 'redis' ]
     environment:
       PYTHONUNBUFFERED: '1'
       CJW_REDIS_HOST: redis
