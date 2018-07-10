@@ -56,7 +56,7 @@ RUN apt-get update \
         xvfb \
         bzip2 \
     && rm -rf /var/lib/apt/lists/*
-RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0/linux-x86_64/en-US/firefox-61.0.tar.bz2 \
+RUN curl -L https://download-installer.cdn.mozilla.net/pub/firefox/releases/61.0.1/linux-x86_64/en-US/firefox-61.0.1.tar.bz2 \
         | tar jx -C /opt \
         && ln -s /opt/firefox/firefox /usr/bin/firefox
 RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.21.0/geckodriver-v0.21.0-linux64.tar.gz \
