@@ -112,3 +112,6 @@ gcloud compute addresses create nginx-ingress-lb --addresses "$EXTERNAL_IP" --re
 
 kubectl apply -f frontend-production-ingress.yaml
 ???
+
+# 7. Backups
+backups/init.sh
