@@ -35,7 +35,7 @@ Workbench is a platform that combines data tools and training for journalists. I
 - Connect to Google Drive, Twitter, and API endpoints.
 - Every action is recorded, so all workflows are repeatable and transparent
 - All data is live and versioned, and you can monitor for changes.
-- Write custom modules in Python + Javascript and add them to the module library
+- Write custom modules in Python and add them to the module library
 
 # Try it
 
