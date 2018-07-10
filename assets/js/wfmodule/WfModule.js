@@ -415,11 +415,12 @@ const hasFetchWfModule = createSelector([ getWorkflow ], (workflow) => {
 
 function mapStateToProps(state, ownProps) {
   const { testHighlight } = lessonSelector(state)
+  const { index } = ownProps
   const moduleName = propsToModuleName(ownProps)
   return {
-    isLessonHighlight: testHighlight({ type: 'WfModule', moduleName }),
-    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', moduleName }),
-    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', moduleName }),
+    isLessonHighlight: testHighlight({ type: 'WfModule', index, moduleName }),
+    isLessonHighlightCollapse: testHighlight({ type: 'WfModuleContextButton', button: 'collapse', index, moduleName }),
+    isLessonHighlightNotes: testHighlight({ type: 'WfModuleContextButton', button: 'notes', index, moduleName }),
     isReadOnly: state.workflow.read_only,
     isAnonymous: state.workflow.is_anonymous,
     fetchModuleExists: hasFetchWfModule(state),

@@ -1,3 +1,4 @@
+/* global describe, expect, it */
 import PropTypes from 'prop-types'
 import { matchLessonHighlight, LessonHighlightsType } from './LessonHighlight'
 
@@ -5,7 +6,7 @@ const isValid = (obj) => {
   const globalConsole = global.console
   let ret = true
   global.console = {
-    error: function(s) { ret = false }
+    error: (s) => { ret = false }
   }
 
   const displayName = 'LessonHighlight' + Math.floor(99999999 * Math.random()) // random name => React never hides logs
@@ -32,6 +33,7 @@ describe('LessonHighlight', () => {
   it('should allow WfModule', () => {
     const valid = { type: 'WfModule', moduleName: 'Foo' }
     expect(isValid([ valid ])).toBe(true)
+    expect(isValid([ { ...valid, index: 2 } ])).toBe(true)
     expect(isValid([ { type: 'WfModule', foo: 'bar' } ])).toBe(false)
   })
 
@@ -56,7 +58,7 @@ describe('LessonHighlight', () => {
   })
 
   it('should partial-match', () => {
-    const valid = [ { type: 'Module', name: 'Foo', index: 2 }, { type: 'EditableNotes' } ]
-    expect(matchLessonHighlight(valid, { type: 'Module', index: 2 })).toBe(true)
+    const valid = [ { type: 'Module', name: 'Foo' }, { type: 'EditableNotes' } ]
+    expect(matchLessonHighlight(valid, { type: 'Module', name: 'Foo', index: 2 })).toBe(true)
   })
 })

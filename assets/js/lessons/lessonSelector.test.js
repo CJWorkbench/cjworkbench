@@ -1,3 +1,4 @@
+/* globals afterEach, beforeEach, describe, expect, it, jest */
 import lessonSelector from './lessonSelector'
 import update from 'immutability-helper'
 
@@ -7,7 +8,7 @@ describe('lessonSelector', () => {
       slug: 'a-lesson',
       header: {
         title: 'Lesson Title',
-        html: '<p>Lesson HTML</p>',
+        html: '<p>Lesson HTML</p>'
       },
       sections: [
         {
@@ -15,26 +16,26 @@ describe('lessonSelector', () => {
           html: '<p>Section One HTML</p>',
           steps: [
             { html: 'Step One-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-            { html: 'Step One-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' },
-          ],
+            { html: 'Step One-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' }
+          ]
         },
         {
           title: 'Section Two',
           html: '<p>Section Two HTML</p>',
           steps: [
             { html: 'Step Two-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-            { html: 'Step Two-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' },
-          ],
+            { html: 'Step Two-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' }
+          ]
         },
         {
           title: 'Last Section',
           html: '<p>Section Three HTML</p>',
           steps: [
             { html: 'Step Three-Ay', highlight: [ { type: 'EditableNotes' } ], testJs: 'return false' },
-            { html: 'Step Three-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' },
-          ],
-        },
-      ],
+            { html: 'Step Three-<strong>Bee</strong>', highlight: [ { type: 'WfModule', moduleName: 'Foo' } ], testJs: 'return false' }
+          ]
+        }
+      ]
     },
     workflow: {
     }
@@ -65,7 +66,7 @@ describe('lessonSelector', () => {
   it('should find activeSectionIndex', () => {
     const state = update(initialState, { lessonData: { sections: { 0: { steps: {
       0: { $merge: { testJs: 'return true' } },
-      1: { $merge: { testJs: 'return true' } },
+      1: { $merge: { testJs: 'return true' } }
     } } } } })
     const { activeSectionIndex, activeStepIndex } = lessonSelector(state)
     expect(activeSectionIndex).toBe(1)
@@ -74,7 +75,7 @@ describe('lessonSelector', () => {
 
   it('should find activeStepIndex', () => {
     const state = update(initialState, { lessonData: { sections: { 0: { steps: {
-      0: { $merge: { testJs: 'return true' } },
+      0: { $merge: { testJs: 'return true' } }
     } } } } })
     const { activeSectionIndex, activeStepIndex } = lessonSelector(state)
     expect(activeSectionIndex).toBe(0)
@@ -85,16 +86,16 @@ describe('lessonSelector', () => {
     const state = update(initialState, { lessonData: { sections: {
       0: { steps: {
         0: { $merge: { testJs: 'return true' } },
-        1: { $merge: { testJs: 'return true' } },
+        1: { $merge: { testJs: 'return true' } }
       } },
       1: { steps: {
         0: { $merge: { testJs: 'return true' } },
-        1: { $merge: { testJs: 'return true' } },
+        1: { $merge: { testJs: 'return true' } }
       } },
       2: { steps: {
         0: { $merge: { testJs: 'return true' } },
-        1: { $merge: { testJs: 'return true' } },
-      } },
+        1: { $merge: { testJs: 'return true' } }
+      } }
     } } })
     const { activeSectionIndex, activeStepIndex } = lessonSelector(state)
     expect(activeSectionIndex).toBe(null)
@@ -106,14 +107,14 @@ describe('lessonSelector', () => {
       lessonData: { sections: {
         0: { steps: {
           0: { $merge: { testJs: 'return workflow.wfModuleNames[0] === "foo"' } },
-          1: { $merge: { testJs: 'return workflow.wfModuleNames[1] === "foo"' } },
+          1: { $merge: { testJs: 'return workflow.wfModuleNames[1] === "foo"' } }
         } }
       } },
       workflow: { $set: {
         wf_modules: [
-          { module_version: { module: { name: 'foo' } } },
+          { module_version: { module: { name: 'foo' } } }
         ]
-      } },
+      } }
     })
     expect(lessonSelector(state).activeStepIndex).toBe(1)
   })
@@ -122,15 +123,15 @@ describe('lessonSelector', () => {
     const state = update(initialState, {
       lessonData: { sections: {
         0: { steps: {
-          0: { $merge: { testJs: 'return state.selectedWfModule.moduleName === "foo"' } },
+          0: { $merge: { testJs: 'return state.selectedWfModule.moduleName === "foo"' } }
         } }
       } },
       workflow: { $set: {
         wf_modules: [
-          { id: 1, module_version: { module: { name: 'foo' } } },
+          { id: 1, module_version: { module: { name: 'foo' } } }
         ]
       } },
-      selected_wf_module: { $set: 0 },
+      selected_wf_module: { $set: 0 }
     })
     expect(lessonSelector(state).activeStepIndex).toBe(1)
   })
@@ -149,15 +150,15 @@ describe('lessonSelector', () => {
       const state = update(initialState, {
         lessonData: { sections: {
           0: { steps: {
-            0: { $merge: { testJs: 'return state.selectedWfModule.moduleName === "foo"' } },
+            0: { $merge: { testJs: 'return state.selectedWfModule.moduleName === "foo"' } }
           } }
         } },
         workflow: { $set: {
           wf_modules: [
-            { id: 1, module_version: { module: { name: 'foo' } } },
+            { id: 1, module_version: { module: { name: 'foo' } } }
           ]
         } },
-        selected_wf_module: { $set: null }, // makes selectedWfModule null
+        selected_wf_module: { $set: null } // makes selectedWfModule null
       })
       expect(lessonSelector(state).activeStepIndex).toBe(0)
       expect(console.error).toHaveBeenCalled()
