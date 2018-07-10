@@ -98,6 +98,7 @@ kubectl -n production apply -f frontend-deployment.yaml
 # 6.1 Cluster-wide config: create one nginx controller and one SSL cert manager
 cert-manager/init.sh
 kubectl apply -f nginx-mandatory.yaml # creates+uses ingress-nginx namespace
+kubectl apply -f nginx-config.yaml # StackDriver-friendly logging
 kubectl apply -f static-ip-svc.yaml
 echo -n 'Waiting for external IP... ' >&2
 EXTERNAL_IP='<none>'
