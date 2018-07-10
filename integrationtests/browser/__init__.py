@@ -56,14 +56,14 @@ class Browser:
     Keyword arguments:
     base_url -- automatic prefix to 'visit()' urls (default '')
     default_wait_timeout -- default timeout for 'wait_for_element()' etc, in s
-                            (default 5)
+                            (default 9)
     """
     def __init__(self, **kwargs):
         self.page = Session("selenium", None)
         self.base_url = _sanitize_base_url(kwargs.get('base_url') or '')
 
         # default wait timeout -- None means forever
-        self.default_wait_timeout = kwargs.get('default_wait_timeout', 5)
+        self.default_wait_timeout = kwargs.get('default_wait_timeout', 9)
 
     def _capybarize_kwargs(self, kwargs):
         """Modify kwargs in-place.
