@@ -7,6 +7,7 @@ import string
 import subprocess
 import termios
 from typing import Optional
+from urllib.error import HTTPError
 from urllib.request import urlopen
 import weakref
 
@@ -337,5 +338,11 @@ class AccountAdmin:
         FIXME make None work, if we need it. (Right now it'll give an error.)
         """
         url = self.live_server_url + '/last-sent-email'
-        with urlopen(url) as f:
-            return email.message_from_bytes(f.read())
+        try:
+            with urlopen(url) as f:
+                return email.message_from_bytes(f.read())
+        except HTTPError as err:
+            if err.code == 404:
+                return None
+            else:
+                raise
