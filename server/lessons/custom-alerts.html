@@ -1,16 +1,17 @@
 <header>
-  <h1>VI. Monitor data and set custom alerts</h1>
-  <p>Coming soon</p>
+  <h1>V. Monitor data and set custom alerts</h1>
+  <p>Monitor a data feed and receive an email notification if a condition is true.</p>
   <img src="/static/images/lesson_banners/monitor_public_data.svg">
 </header>
 <section>
   <h2>OVERVIEW</h2>
-  <p>For the purpose of this lesson we'll work with data on Police Incidents from the City of San Francisco.</p>
+  <p>In this tutorial you will learn how to monitor a data feed to receive an alert if a condition is true.</p>
+  <p>You will work with data on Police Incidents from the City of San Francisco, updated daily. You will analyse that data and set up an alert to be notified if the number of reported incidents in any district in 2018 is greater than 8,000.</p>
 </section>
 <section>
-  <h2>1. Automatic updates</h2>
-  <p>First, we need to check the source data periodically, and download any new version available to keep the workflow up-to-date.</p>
-  <p>The source dataset is published <a href="https://data.sfgov.org/Public-Safety/-Change-Notice-Police-Department-Incidents/tmnf-yvry" class="highlight" target="_blank">here</a>.</p>
+  <h2>1. Set up automatic updates</h2>
+  <p>First, connect to the data source and set up the module to download any new available data. </p>
+  <p>The dataset 'Police department Incidents' from the City of San Francisco is published and documented <a href="https://data.sfgov.org/Public-Safety/-Change-Notice-Police-Department-Incidents/tmnf-yvry" class="highlight" target="_blank">here</a>.</p>
   <h3 class="instructions">Instructions</h3>
   <ol class="steps">
     <li
@@ -20,25 +21,38 @@
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]'
-      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://data.sfgov.org/resource/cuks-n6tp.json' && wfModule.selectedVersion"
+      data-test="const wfModule = workflow.wfModules[0]; return wfModule.parameters.get('url') === 'https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&$limit=50000' && wfModule.selectedVersion"
       >Paste in the following URL and click <kbd>Update</kbd> to load the data.
-      <div class="copy-txt content-3 t-white">https://data.sfgov.org/resource/cuks-n6tp.json</div>
+      <div class="copy-txt content-3 t-white">https://data.sfgov.org/resource/cuks-n6tp.json?$order=date%20DESC&$limit=50000</div>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Add from URL"}]',
       data-test="const wfModule = workflow.wfModules[0]; return wfModule.updateInterval === '5h'"
       >Click <kbd>manual</kbd> to open the Workflow Update dialog. Turn the feature <kbd>ON</kbd>, set the frequency to 5 hours, and click <kbd>Apply.</kbd>
     </li>
+
   </ol>
 </section>
 <section>
-  <h2>2. Receive and email if a certain condition is met</h2>
-  <p>We want to receive a notification if the number of reported police incidents exceeds 190 in any district.</p>
+  <h2>2. Add modules to find insight</h2>
+  <p>Let's count the number of incidents reported so far in 2018, per district.</p>
   <h3 class="instructions">Instructions</h3>
   <p class="instruction-detail">
-    Group all rows by police district
+    Keep all incidents reported since January 01 2018.
   </p>
   <ol class="steps">
+    <li
+      data-highlight='[{"type":"Module","index":1,"name":"Filter"}]'
+      data-test="return workflow.wfModules[1] && workflow.wfModules[1].moduleName === 'Filter'"
+      >Add the module 'Filter'.
+    </li>
+    <li
+      data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
+      data-test="const params = workflow.wfModules[2].parameters; return params.get('column') === 'Date' && params.get('condition') === 10 && params.get('value') === '30'"
+      >Select the column <kbd>Date</kbd> to filter by. Choose <kbd>Date is after</kbd> as a condition, and type in <kbd>2018-01</kbd>
+      <p class="instruction-detail">
+        Group the result by police district, and count the number of incidents for each of them.
+      </p>
     <li
       data-highlight='[{"type":"Module","index":1,"name":"Group"}]'
       data-test="return workflow.wfModules[1] && workflow.wfModules[1].moduleName === 'Group'"
@@ -48,8 +62,13 @@
       data-highlight='[{"type":"WfModule","moduleName":"Group"}]'
       data-test="const params = workflow.wfModules[1].parameters; return params.get('groupby|groupby|0') === 'pddistrict' && params.get('operation|operation|0') === 0"
       >Choose <kbd>pddistrict</kbd> to group by, and leave the operation set on <kbd>Count</kbd>.
-      <p class="instruction-detail"> Use the filter to create a condition.</p>
     </li>
+  </ol>
+</section>
+<section>
+  <h2>3. Receive an email if a condition is met</h2>
+  <p>We want to receive an email if more than 8,000 incidents are reported in any district since the beginning of the year.</p>
+  <ol class="steps">
     <li
       data-highlight='[{"type":"Module","index":2,"name":"Filter"}]'
       data-test="return workflow.wfModules[2] && workflow.wfModules[2].moduleName === 'Filter'"
@@ -58,16 +77,17 @@
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
       data-test="const params = workflow.wfModules[2].parameters; return params.get('column') === 'Group Size' && params.get('condition') === 10 && params.get('value') === '30'"
-      >Select the column <kbd>group size</kbd> to filter by. Choose <kbd>greater than</kbd> as a condition, and type in <kbd>150</kbd>
+      >Select the column <kbd>group size</kbd> to filter by. Choose <kbd>greater than</kbd> as a condition, and type in <kbd>8000</kbd>
       <p class="instruction-detail">
-        The output of the Filter module will now display any row with a count > 190. Let's turn this module's alert on:
+        Turn this module's alert on to be notified if the list of neighborhoods matching the condition changes
       </p>
     </li>
     <li
       data-highlight='[{"type":"WfModule","moduleName":"Filter"}]'
       data-test="return workflow.wfModules[2].isEmailUpdates"
-      >In the filter module, click on the bell icon. Turn on the alert and close the window.
-      <p class="instruction-detail">Congrats message! You're now a full stack developer! Another blurb about version and link to knowledge base</p>
+      >In the filter module, click on the <span>
+      <img class="icon-insert" src="/static/images/monitor_lesson/alert_button.svg">icon. Turn the alert <kbd>ON</kbd>and close the window.
+      <p class="instruction-detail highlight">Congratulation! The workflow will automatically update to reflect changes in the data and send you an email if the output of the filter module changes! </p>
     </li>
   </ol>
 </section>
