@@ -1,4 +1,17 @@
 .code-editor {
+  .help {
+    font-size: 1.3rem;
+    color: $dark-gray;
+
+    kbd {
+      background: inherit;
+      color: inherit;
+      border: 0;
+      padding: 0;
+      margin: 0;
+    }
+  }
+
   .ace-aspect-ratio-container {
     margin-top: 1.6rem;
     position: relative;
