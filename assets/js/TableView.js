@@ -28,7 +28,7 @@ export default class TableView extends React.PureComponent {
     setBusySpinner:     PropTypes.func,
     showColumnLetter:   PropTypes.bool.isRequired,
     sortColumn:         PropTypes.string,
-    sortDirection:      PropTypes.string, // NONE, ASC or DESC (or null)
+    sortDirection:      PropTypes.number,
   };
 
   constructor(props) {
@@ -45,7 +45,7 @@ export default class TableView extends React.PureComponent {
 
     this.getRow = this.getRow.bind(this);
     this.onEditCell = this.onEditCell.bind(this);
-    this.onSort = this.onSort.bind(this);
+    this.setSortDirection = this.setSortDirection.bind(this);
     this.toggleExportModal = this.toggleExportModal.bind(this);
 
     this.loading = false;
@@ -182,8 +182,8 @@ export default class TableView extends React.PureComponent {
     }
   }
 
-  onSort(sortCol, sortType) {
-      SortFromTable.updateSort(this.props.selectedWfModuleId, sortCol, sortType);
+  setSortDirection(sortCol, sortType, sortDirection) {
+    SortFromTable.updateSort(this.props.selectedWfModuleId, sortCol, sortType, sortDirection);
       this.refreshTable();
   }
 
@@ -212,7 +212,7 @@ export default class TableView extends React.PureComponent {
             getRow={this.getRow}
             resizing={this.props.resizing}
             onEditCell={this.onEditCell}
-            onSortColumn={this.onSort}
+            setSortDirection={this.setSortDirection}
             sortColumn={sortColumn}
             sortDirection={sortDirection}
             showLetter={showColumnLetter}
@@ -235,6 +235,7 @@ export default class TableView extends React.PureComponent {
             columns={['',' ','   ','    ']}
             getRow={() => {return {}}}
             isReadOnly={this.props.isReadOnly}
+            setSortDirection={this.setSortDirection}
           />
       </div>
     }
