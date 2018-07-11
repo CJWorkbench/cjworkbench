@@ -19,6 +19,7 @@ import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
 import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
 import MapTokenSelector from './wfparameters/choropleth/MapTokenSelector'
+import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
 import { csrfToken } from './utils'
 import { store, setWfModuleStatusAction } from './workflow-reducer'
 import lessonSelector from './lessons/lessonSelector'
@@ -297,6 +298,7 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'map-geojson') {
       return (
           <MapLocationDropZone
+              name={this.props.p.parameter_spec.name}
               paramData={this.props.p.value}
               paramId={this.props.p.id}
           />
@@ -304,8 +306,17 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'map-token') {
       return (
           <MapTokenSelector
+              name={this.props.p.parameter_spec.name}
               paramId={this.props.p.id}
               paramData={this.props.p.value}
+              isReadOnly={this.props.isReadOnly}
+          />
+      )
+    } else if (id_name == 'map-layers') {
+      return (
+          <MapLayerEditor
+              paramId={this.props.p.id}
+              wfModuleId={this.props.wf_module_id}
               isReadOnly={this.props.isReadOnly}
           />
       )

@@ -6,6 +6,7 @@ var api = WorkbenchAPI();
 
 export default class MapTokenSelector extends React.Component {
     static propTypes = {
+        name: PropTypes.string.isRequired,
         paramId: PropTypes.number.isRequired,
         paramData: PropTypes.string.isRequired,
         isReadOnly: PropTypes.bool.isRequired
@@ -127,6 +128,7 @@ export default class MapTokenSelector extends React.Component {
     render() {
         return (
             <div>
+                <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
                 <select
                     className={'custom-select module-parameter dropdown-selector'}
                     value={this.state.sourceVal}

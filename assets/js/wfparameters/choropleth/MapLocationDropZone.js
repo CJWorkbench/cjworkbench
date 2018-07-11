@@ -16,6 +16,7 @@ export default class MapLocationDropZone extends Component {
     // The GeoJSON data is stored as a string in the wfModule
 
     static propTypes = {
+        name: PropTypes.string.isRequired,
         paramData: PropTypes.string.isRequired,
         paramId: PropTypes.number.isRequired
     };
@@ -110,6 +111,7 @@ export default class MapLocationDropZone extends Component {
 
         return (
             <div>
+                <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
                 <Dropzone
                     onDrop={this.onDrop}
                 >
