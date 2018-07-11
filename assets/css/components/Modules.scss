@@ -25,7 +25,7 @@
     &:hover {background:#fcfcfc;}
 
     &.wf-card:hover .context-buttons {
-      a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled) {
+      a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled), label.toggle-zen-mode:not(.is-zen-mode) {
         opacity: 1;
       }
     }
@@ -118,7 +118,7 @@
       white-space: nowrap;
       margin-right: .5rem;
 
-      &>a, &>button, &>.dropdown>button {
+      &>a, &>button, &>label, &>.dropdown>button {
         // Beware: we're highlighting .dropdown _and_ .dropdown>button. So be
         // sure these rules don't conflict when nested. (e.g., no `opacity`)
         display: inline-block;
@@ -154,7 +154,25 @@
         }
       }
 
-      a.help-button, button.edit-note, button.context-button, button.notifications:not(.enabled) {
+      label.toggle-zen-mode {
+        cursor: pointer;
+
+        input[type="checkbox"] {
+          display: none;
+        }
+
+        i.icon-full-screen {
+          vertical-align: -.6rem; // icky glyph sizing in the font?
+          font-size: 1.25rem;
+        }
+
+        &.is-zen-mode {
+          color: $brand-text--dark;
+          background-color: $dark-accent--soft;
+        }
+      }
+
+      a.help-button, button.edit-note, button.context-button, label.toggle-zen-mode:not(.is-zen-mode), button.notifications:not(.enabled) {
         opacity: 0; // only show context buttons when hovering over wf-card
       }
 

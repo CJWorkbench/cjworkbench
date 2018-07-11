@@ -18,6 +18,7 @@ describe('WfModule, not read-only mode', () => {
   const buildShallowProps = () => ({
     isReadOnly: false,
     isAnonymous: false,
+    isZenMode: false,
     name: 'TestModule',
     wfModule: wfModule,
     changeParam: mockApi.onParamChanged,
@@ -35,7 +36,8 @@ describe('WfModule, not read-only mode', () => {
     fetchModuleExists: false,
     clearNotifications: jest.fn(),
     setSelectedWfModule: jest.fn(),
-    setWfModuleCollapsed: jest.fn()
+    setWfModuleCollapsed: jest.fn(),
+    setZenMode: jest.fn()
   })
 
   // A mock module that looks like LoadURL
@@ -109,6 +111,39 @@ describe('WfModule, not read-only mode', () => {
   it('renders a note', () => {
     const wrapper = shallow(<WfModule {...props} wfModule={Object.assign({}, wfModule, { notes: 'some notes' })} />)
     expect(wrapper.find('EditableNotes').prop('value')).toEqual('some notes')
+  })
+
+  it('renders in Zen mode', () => {
+    const wrapper = shallow(<WfModule {...props} isZenMode />)
+    expect(wrapper.prop('className')).toMatch(/\bzen-mode\b/)
+    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true ])
+  })
+
+  it('has an "enter zen mode" button', () => {
+    const aWfModule = Object.assign({}, wfModule, {
+      module_version: {
+        module: {
+          id_name: 'pythoncode',
+          name: 'Python Code'
+        }
+      }
+    })
+
+    const wrapper = shallow(<WfModule {...props} wfModule={aWfModule} />)
+    let checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
+    expect(checkbox.prop('checked')).toBe(false)
+    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ false, false ])
+
+    checkbox.simulate('change', { target: { checked: true } })
+    expect(props.setZenMode).toHaveBeenCalledWith(aWfModule.id, true)
+    wrapper.setProps({ isZenMode: true })
+
+    checkbox = wrapper.find('input[type="checkbox"][name="zen-mode"]')
+    expect(checkbox.prop('checked')).toBe(true)
+    expect(wrapper.find('WfParameter').map(n => n.prop('isZenMode'))).toEqual([ true, true ])
+
+    checkbox.simulate('change', { target: { checked: false } })
+    expect(props.setZenMode).toHaveBeenCalledWith(aWfModule.id, false)
   })
 
   it('renders notifications, opening and closing a modal', () => {

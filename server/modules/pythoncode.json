@@ -3,19 +3,15 @@
   "id_name": "pythoncode",
   "category" : "Code",
   "icon" : "code",
-  "description" : "Write a function that takes a Pandas dataframe called 'table' and returns another dataframe.",
+  "description" : "Write a 'render' function that takes a Pandas dataframe called 'table' and returns a dataframe.",
   "help_url":"modules/code/python-editor",
   "parameters": [
     {
-      "name": "Write a function that takes a Pandas dataframe called 'table' and returns another dataframe.",
-      "id_name": "description_statictext",
-      "type": "statictext"
-    },
-    {
-    "name": "def process(table):",
-    "id_name": "code",
-    "type": "custom",
-    "multiline": true
+      "name": "Define a 'render' function that takes a Pandas dataframe called 'table' and returns another dataframe. You may not import modules; the environment provides 'math', 'pd' (Pandas) and 'np' (Numpy).",
+      "id_name": "code",
+      "type": "custom",
+      "multiline": true,
+      "default": "def process(table, params):\u000a    return pd.DataFrame(table)"
     },
     {
       "name": "Run",

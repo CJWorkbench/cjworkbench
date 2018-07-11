@@ -1,8 +1,8 @@
+import itertools
+import re
 from .moduleimpl import ModuleImpl
-from .utils import *
 import pandas as pd
 from formulas import Parser
-import re, itertools
 from django.utils.translation import gettext as _
 
 # ---- Formula ----

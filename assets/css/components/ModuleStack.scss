@@ -149,4 +149,21 @@
       right: 0;
     }
   }
+
+  &.zen-mode {
+    .wf-module:not(.zen-mode),
+    .in-between-modules {
+      display: none;
+    }
+
+    .wf-module.zen-mode {
+      .wf-card {
+        width: 50rem;
+      }
+
+      &::after {
+        display: none; // nix the little line after each module
+      }
+    }
+  }
 }

@@ -23,6 +23,7 @@ export class WfModule extends React.PureComponent {
   static propTypes = {
     isReadOnly:         PropTypes.bool.isRequired,
     isAnonymous:        PropTypes.bool.isRequired,
+    isZenMode:          PropTypes.bool.isRequired,
     index:              PropTypes.number.isRequired,
     wfModule:           PropTypes.object,
     selected:           PropTypes.bool,
@@ -40,6 +41,7 @@ export class WfModule extends React.PureComponent {
     clearNotifications: PropTypes.func.isRequired, // func() => undefined
     setSelectedWfModule: PropTypes.func.isRequired, // func(index) => undefined
     setWfModuleCollapsed: PropTypes.func.isRequired, // func(wfModuleId, isCollapsed, isReadOnly) => undefined
+    setZenMode: PropTypes.func.isRequired, // func(wfModuleId, bool) => undefined
   }
 
   constructor(props) {
@@ -218,6 +220,28 @@ export class WfModule extends React.PureComponent {
     this.moduleRef = ref;
   }
 
+  onChangeIsZenMode = (ev) => {
+    this.props.setZenMode(this.props.wfModule.id, ev.target.checked)
+  }
+
+  renderZenModeButton() {
+    const { wfModule, isZenMode } = this.props
+    const module = wfModule.module_version.module
+    const zenModeAllowed = module.id_name === 'pythoncode'
+
+    if (!zenModeAllowed) return null
+
+    let className = `toggle-zen-mode ${isZenMode ? 'is-zen-mode' : 'not-zen-mode'}`
+    let title = isZenMode ? 'exit Zen mode' : 'enter Zen mode'
+
+    return (
+      <label className={className}>
+        <input type="checkbox" name="zen-mode" checked={isZenMode} onChange={this.onChangeIsZenMode} />
+        <i className='icon-full-screen'></i>
+      </label>
+    )
+  }
+
   render() {
     let wfModule = this.props.wfModule;
     let module = wfModule.module_version.module;
@@ -235,6 +259,7 @@ export class WfModule extends React.PureComponent {
           api={this.props.api}
           moduleName={module.name}
           isReadOnly={this.props.isReadOnly}
+          isZenMode={this.props.isZenMode}
           key={i}
           p={ps}
           changeParam={this.changeParam}
@@ -263,7 +288,7 @@ export class WfModule extends React.PureComponent {
       </div>
     );
 
-    let alertButton;
+    let alertButton
     if (this.props.fetchModuleExists && !this.props.isReadOnly && !this.props.isAnonymous) {
       const notifications = this.props.wfModule.notifications
       const hasUnseen = this.props.wfModule.has_unseen_notification
@@ -279,7 +304,7 @@ export class WfModule extends React.PureComponent {
       );
     }
 
-    let helpIcon;
+    let helpIcon
     if (!this.props.isReadOnly) {
       helpIcon = (
         <a title='Help for this module' className='help-button' href={module.help_url} target='_blank'>
@@ -288,7 +313,7 @@ export class WfModule extends React.PureComponent {
       );
     }
 
-    let notesIcon;
+    let notesIcon
     if (!this.props.isReadOnly) {
       notesIcon = (
         <button
@@ -316,6 +341,7 @@ export class WfModule extends React.PureComponent {
     // Fixes https://www.pivotaltracker.com/story/show/154033690
     const contextBtns =
         <div className='context-buttons'>
+          {this.renderZenModeButton()}
           {alertButton}
           {helpIcon}
           {notesIcon}
@@ -334,9 +360,14 @@ export class WfModule extends React.PureComponent {
       )
     }
 
+    let className = 'wf-module'
+    className += wfModule.is_collapsed ? ' collapsed' : ' expanded'
+    if (this.props.isLessonHighlight) className += ' lesson-highlight'
+    if (this.props.isZenMode) className += ' zen-mode'
+
     // Putting it all together: name, status, parameters, output
     return (
-      <div onClick={this.click} className={'wf-module' + (this.props.isLessonHighlight ? ' lesson-highlight' : '') + (wfModule.is_collapsed ? ' collapsed' : ' expanded')} data-module-name={module.name}>
+      <div onClick={this.click} className={className} data-module-name={module.name}>
         {notes}
         <div className={'wf-card '+ (this.state.isDragging ? 'dragging ' : '')} ref={this.setModuleRef} draggable={!this.props.isReadOnly} onDragStart={this.onDragStart} onDragEnd={this.onDragEnd}>
 
