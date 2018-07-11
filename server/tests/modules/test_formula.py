@@ -33,6 +33,7 @@ class FormulaTests(LoggedInTestCase):
 
         out = execute_nocache(self.wfmodule)
         self.wfmodule.refresh_from_db()
+        self.assertEqual(self.wfmodule.error_msg, '')
         self.assertEqual(self.wfmodule.status, WfModule.READY)
         self.assertTrue(out.equals(table))
 

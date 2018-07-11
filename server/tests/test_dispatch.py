@@ -68,7 +68,7 @@ class DispatchTests(TestCase):
         self.assertTrue(wfm.status == WfModule.ERROR)
         self.assertEqual(
             wfm.error_msg,
-            'invalid syntax (<string>, line 2) at line 1'
+            'Line 1: invalid syntax (<string>, line 1)'
         )
         self.assertTrue(out.equals(self.test_table))
 

@@ -1,63 +1,8 @@
 from inspect import signature
+from .utils import PythonFeatureDisabledError, build_globals_for_eval
 from .moduleimpl import ModuleImpl
 import sys
 import traceback
-from typing import Any, Dict
-
-
-class PythonFeatureDisabledError(Exception):
-    def __init__(self, name):
-        super().__init__(self)
-        self.name = name
-        self.message = f'{name} disabled in Python Code module'
-
-
-def build_globals() -> Dict[str, Any]:
-    """Builds a __globals__ for use in custom code.
-    """
-    # Start with _this_ module's __builtins__
-    builtins = dict()
-    for key in dir(__builtins__):
-        if key.startswith('__'):
-            pass
-
-        try:
-            builtins[key] = __builtins__[key]
-        except KeyError:
-            pass
-
-    # Disable "dangerous" builtins.
-    #
-    # This doesn't increase security: it just helps module authors.
-    def disable_func(name):
-        def _disabled(*args, **kwargs):
-            raise PythonFeatureDisabledError(name)
-        return _disabled
-    to_disable = [
-        '__import__',
-        'breakpoint',
-        'compile',
-        'eval',
-        'exec',
-        'open',
-    ]
-    for name in to_disable:
-        builtins[name] = disable_func(name)
-
-    # Hard-code modules we provide the user
-    import math
-    import pandas as pd
-    import numpy as np
-
-    return {
-        '__builtins__': builtins,
-        'math': math,
-        'np': np,
-        'pd': pd,
-    }
-
-
-custom_code_globals = build_globals()
 
 
 # ---- PythonCode ----
@@ -80,6 +25,8 @@ class PythonCode(ModuleImpl):
 
         # Catch errors with the code and display to user
         try:
+            # New globals each run
+            custom_code_globals = build_globals_for_eval()
             exec(code, custom_code_globals, inner_locals)
 
             if 'process' not in inner_locals:
