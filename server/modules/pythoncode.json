@@ -7,7 +7,12 @@
   "help_url":"modules/code/python-editor",
   "parameters": [
     {
-      "name": "Define a 'render' function that takes a Pandas dataframe called 'table' and returns another dataframe. You may not import modules; the environment provides 'math', 'pd' (Pandas) and 'np' (Numpy).",
+      "name": "Define a 'render' function that takes a Pandas dataframe called 'table' and returns another dataframe. We provide the 'math', 'pd' (Pandas) and 'np' (Numpy) modules; imports are disabled.",
+      "id_name": "description_statictext",
+      "type": "statictext"
+    },
+    {
+      "name": "",
       "id_name": "code",
       "type": "custom",
       "multiline": true,
