@@ -233,6 +233,7 @@ export default class WfParameter extends React.Component {
         <WorkbenchAceEditor
           name={this.props.p.parameter_spec.name}
           isZenMode={this.props.isZenMode}
+          wfModuleError={this.props.wfModuleError}
           save={this.paramChanged}
           defaultValue={this.props.p.value}
           />
@@ -241,7 +242,7 @@ export default class WfParameter extends React.Component {
       return (
         <CellEditor
           edits={this.props.p.value}
-          onSave={paramChanged}
+          onSave={this.paramChanged}
         />
       )
     } else if (id_name == 'refine') {
@@ -472,6 +473,7 @@ WfParameter.propTypes = {
     }).isRequired,
   }).isRequired,
   moduleName:     PropTypes.string.isRequired,
+  wfModuleError:  PropTypes.string, // module-level error message
   wf_module_id:   PropTypes.number.isRequired,
   revision:       PropTypes.number.isRequired,
   api:            PropTypes.object.isRequired,

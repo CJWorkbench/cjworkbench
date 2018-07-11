@@ -260,6 +260,7 @@ export class WfModule extends React.PureComponent {
           moduleName={module.name}
           isReadOnly={this.props.isReadOnly}
           isZenMode={this.props.isZenMode}
+          wfModuleError={wfModule.error_msg}
           key={i}
           p={ps}
           changeParam={this.changeParam}

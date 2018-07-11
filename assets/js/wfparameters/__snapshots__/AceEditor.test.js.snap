@@ -1,70 +1,64 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`AceEditor Mounts correctly and saves on blur 1`] = `
-<WorkbenchAceEditor
-  defaultValue="return table"
-  name="def process(table)"
-  onSave={[Function]}
+exports[`AceEditor matches snapshot 1`] = `
+<div
+  className="code-editor"
 >
   <div
-    className=""
+    className="label-margin t-d-gray content-3"
+  >
+    code
+  </div>
+  <div
+    className="ace-aspect-ratio-container"
   >
     <div
-      className="label-margin t-d-gray content-3"
+      className="ace-wrapper"
     >
-      def process(table)
-    </div>
-    <ReactAce
-      cursorStart={1}
-      editorProps={
-        Object {
-          "$blockScrolling": Infinity,
-        }
-      }
-      enableBasicAutocompletion={false}
-      enableLiveAutocompletion={false}
-      focus={false}
-      fontSize={12}
-      height="10rem"
-      highlightActiveLine={true}
-      maxLines={null}
-      minLines={null}
-      mode="python"
-      name="code-editor"
-      onBlur={[Function]}
-      onChange={[Function]}
-      onLoad={null}
-      onPaste={null}
-      onScroll={null}
-      readOnly={false}
-      scrollMargin={
-        Array [
-          0,
-          0,
-          0,
-          0,
-        ]
-      }
-      setOptions={Object {}}
-      showGutter={true}
-      showPrintMargin={true}
-      style={Object {}}
-      tabSize={4}
-      theme="tomorrow"
-      value="return table"
-      width="100%"
-      wrapEnabled={false}
-    >
-      <div
-        id="code-editor"
-        style={
+      <ReactAce
+        annotations={Array []}
+        cursorStart={1}
+        editorProps={
           Object {
-            "height": "10rem",
-            "width": "100%",
+            "$blockScrolling": Infinity,
           }
         }
+        enableBasicAutocompletion={false}
+        enableLiveAutocompletion={false}
+        focus={false}
+        fontSize={12}
+        height="100%"
+        highlightActiveLine={true}
+        maxLines={null}
+        minLines={null}
+        mode="python"
+        name="code-editor"
+        onBlur={[Function]}
+        onChange={[Function]}
+        onLoad={null}
+        onPaste={null}
+        onScroll={null}
+        readOnly={false}
+        scrollMargin={
+          Array [
+            0,
+            0,
+            0,
+            0,
+          ]
+        }
+        setOptions={Object {}}
+        showGutter={false}
+        showPrintMargin={true}
+        style={Object {}}
+        tabSize={4}
+        theme="tomorrow"
+        value="def process(table)
+    return table"
+        width="100%"
+        wrapEnabled={true}
       />
-    </ReactAce>
+    </div>
   </div>
-</WorkbenchAceEditor>
+</div>
 `;

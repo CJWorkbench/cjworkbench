@@ -1,20 +1,28 @@
+/* global describe, it, expect, jest */
 import React from 'react'
-import WorkbenchAceEditor  from './AceEditor'
-import { mount, ReactWrapper } from 'enzyme'
-import AceEditor from 'react-ace';
+import WorkbenchAceEditor from './AceEditor'
+import { shallow } from 'enzyme'
+import AceEditor from 'react-ace/lib/ace'
 
-// This is a dumb test, we can't test the blur or
-// change events and I can't nail down why yet
 describe('AceEditor', () => {
-  it('Mounts correctly and saves on blur', (done) => {
-    var mockOnSave = jest.fn();
-    var wrapper = mount(<WorkbenchAceEditor
-      name="def process(table)"
-      defaultValue="return table"
-      onSave={(val) => {mockOnSave(val)}}
-    />);
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.state().value).toBe('return table');
-    done();
-  });
-});
+  const defaultProps = {
+    name: 'code',
+    defaultValue: 'def process(table)\n    return table',
+    isZenMode: false
+  }
+
+  it('matches snapshot', () => {
+    const wrapper = shallow(
+      <WorkbenchAceEditor {...defaultProps} save={jest.fn()} />
+    )
+    expect(wrapper).toMatchSnapshot()
+  })
+
+  it('annotates an error', () => {
+    const wrapper = shallow(
+      <WorkbenchAceEditor {...defaultProps} save={jest.fn()} wfModuleError='Line 1: Foo happened' />
+    )
+    expect(wrapper.find(AceEditor).prop('annotations'))
+      .toEqual([ { row: 0, type: 'error', text: 'Foo happened' } ])
+  })
+})

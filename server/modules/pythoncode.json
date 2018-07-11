@@ -11,7 +11,7 @@
       "id_name": "code",
       "type": "custom",
       "multiline": true,
-      "default": "def process(table, params):\u000a    return pd.DataFrame(table)"
+      "default": "def process(table):\u000a    return pd.DataFrame(table)"
     },
     {
       "name": "Run",

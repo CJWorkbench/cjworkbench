@@ -1,11 +1,14 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import AceEditor from 'react-ace/lib/ace'
+import memoize from 'memoize-one'
 
 import 'brace/mode/python'
 import 'brace/theme/tomorrow'
 
+// Globals -- so each render(), they're equal according to ===
 const EditorProps = {
+  // $blockScrolling fixes a console.warn() we'd otherwise see
   $blockScrolling: Infinity
 }
 
@@ -13,6 +16,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
   static propTypes = {
     // When isZenMode changes, we'll call componentDidUpdate()
     isZenMode: PropTypes.bool.isRequired,
+    wfModuleError: PropTypes.string,
     name: PropTypes.string.isRequired,
     defaultValue: PropTypes.string.isRequired,
     save: PropTypes.func.isRequired // func(value) => undefined
@@ -63,9 +67,23 @@ export default class WorkbenchAceEditor extends React.PureComponent {
     this.props.save(this.state.value)
   }
 
+  getAnnotations = memoize(wfModuleError => {
+    const m = /^Line (\d+): (.*)/.exec(wfModuleError)
+    if (!m) {
+      return []
+    } else {
+      return [
+        {
+          row: +m[1] - 1,
+          type: 'error',
+          text: m[2]
+        }
+      ]
+    }
+  })
+
   // Render editor
   render () {
-    // $blockScrolling fixes a console.warn() we'd otherwise see
     return (
       <div className='code-editor'>
         <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
@@ -78,6 +96,7 @@ export default class WorkbenchAceEditor extends React.PureComponent {
               mode='python'
               theme='tomorrow'
               wrapEnabled={true}
+              annotations={this.getAnnotations(this.props.wfModuleError)}
               showGutter={this.props.isZenMode}
               name='code-editor'
               onChange={this.onChange}
