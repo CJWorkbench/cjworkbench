@@ -3,6 +3,7 @@
 set -e
 # test for needed commands; "set -e" means we'll exit if any are missing
 type curl >/dev/null
+type git >/dev/null
 type jq >/dev/null
 type sed >/dev/null
 type kubectl >/dev/null

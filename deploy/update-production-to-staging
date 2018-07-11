@@ -3,6 +3,7 @@
 set -e
 # test for needed commands; "set -e" means we'll exit if any are missing
 type tail >/dev/null
+type git >/dev/null
 type cut >/dev/null
 type kubectl >/dev/null
 
