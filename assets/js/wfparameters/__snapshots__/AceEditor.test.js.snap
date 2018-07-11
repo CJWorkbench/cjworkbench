@@ -5,9 +5,56 @@ exports[`AceEditor matches snapshot 1`] = `
   className="code-editor"
 >
   <div
-    className="label-margin t-d-gray content-3"
+    className="help"
   >
-    code
+    Define a 
+    <kbd>
+      render
+    </kbd>
+     function that accepts a 
+    <kbd>
+      pd.DataFrame
+    </kbd>
+     and returns a 
+    <kbd>
+      pd.DataFrame
+    </kbd>
+    . You may use the 
+    <a
+      href="https://docs.python.org/3/library/math.html"
+      target="_blank"
+    >
+      <kbd>
+        math
+      </kbd>
+    </a>
+    , 
+    <kbd>
+      pd
+    </kbd>
+     (
+    <a
+      href="https://pandas.pydata.org/pandas-docs/stable/api.html#dataframe"
+      target="_blank"
+    >
+      Pandas
+    </a>
+    ) and 
+    <kbd>
+      np
+    </kbd>
+     (
+    <a
+      href="https://docs.scipy.org/doc/numpy/reference/routines.html"
+      target="_blank"
+    >
+      Numpy
+    </a>
+    ) modules; 
+    <kbd>
+      import
+    </kbd>
+     is disabled.
   </div>
   <div
     className="ace-aspect-ratio-container"
