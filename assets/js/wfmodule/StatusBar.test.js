@@ -1,3 +1,4 @@
+/* globals describe, it, expect */
 import React from 'react'
 import StatusBar from './StatusBar'
 import { shallow } from 'enzyme'
@@ -6,66 +7,66 @@ describe('Status bar', () => {
   it('Renders the error color', () => {
     let wrapper = shallow(
       <StatusBar
-        isSelected={true}
-        status="error"
+        isSelected
+        status='error'
       />
-    );
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output--error-selected");
-  });
+    )
+    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.find('div').first().props().className).toEqual('module-output--error-selected')
+  })
 
   it('Renders the unselected error color', () => {
     let wrapper = shallow(
       <StatusBar
         isSelected={false}
-        status="error"
+        status='error'
       />
-    );
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output--error");
-  });
+    )
+    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.find('div').first().props().className).toEqual('module-output--error')
+  })
 
   it('Renders the busy color', () => {
     let wrapper = shallow(
       <StatusBar
         isSelected={false}
-        status="busy"
+        status='busy'
       />
-    );
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output-bar-orange");
-  });
+    )
+    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.find('div').first().props().className).toEqual('module-output-bar-orange')
+  })
 
   it('Renders the selected ready color', () => {
     let wrapper = shallow(
       <StatusBar
-        isSelected={true}
-        status="ready"
+        isSelected
+        status='ready'
       />
-    );
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output--selected");
-  });
+    )
+    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.find('div').first().props().className).toEqual('module-output--selected')
+  })
 
   it('Renders the unselected ready color', () => {
     let wrapper = shallow(
       <StatusBar
         isSelected={false}
-        status="ready"
+        status='ready'
       />
-    );
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output-bar-white");
-  });
+    )
+    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.find('div').first().props().className).toEqual('module-output-bar-white')
+  })
 
   it('Renders the default color', () => {
     let wrapper = shallow(
       <StatusBar
         isSelected={false}
-        status="garbage_return_status"
+        status='garbage_return_status'
       />
-    );
-    expect(wrapper).toMatchSnapshot();
-    expect(wrapper.find('div').first().props().className).toEqual("module-output-bar-white");
-  });
-});
+    )
+    expect(wrapper).toMatchSnapshot()
+    expect(wrapper.find('div').first().props().className).toEqual('module-output-bar-white')
+  })
+})
