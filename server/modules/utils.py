@@ -1,3 +1,4 @@
+import builtins
 from typing import Any, Dict
 
 
@@ -12,15 +13,7 @@ def build_globals_for_eval() -> Dict[str, Any]:
     """Builds a __globals__ for use in custom code.
     """
     # Start with _this_ module's __builtins__
-    builtins = dict()
-    for key in dir(__builtins__):
-        if key.startswith('__'):
-            pass
-
-        try:
-            builtins[key] = __builtins__[key]
-        except KeyError:
-            pass
+    eval_builtins = dict(builtins.__dict__)
 
     # Disable "dangerous" builtins.
     #
@@ -38,7 +31,7 @@ def build_globals_for_eval() -> Dict[str, Any]:
         'open',
     ]
     for name in to_disable:
-        builtins[name] = disable_func(name)
+        eval_builtins[name] = disable_func(name)
 
     # Hard-code modules we provide the user
     import math
@@ -46,7 +39,7 @@ def build_globals_for_eval() -> Dict[str, Any]:
     import numpy as np
 
     return {
-        '__builtins__': builtins,
+        '__builtins__': eval_builtins,
         'math': math,
         'np': np,
         'pd': pd,
