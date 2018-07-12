@@ -48,15 +48,15 @@ class WorkbenchAPI {
   }
 
   _patch(url, body, options) {
-    return this._submit('patch', url, body, options)
+    return this._submit('PATCH', url, body, options)
   }
 
   _put(url, body, options) {
-    return this._submit('put', url, body, options)
+    return this._submit('PUT', url, body, options)
   }
 
   _post(url, body, options) {
-    return this._submit('post', url, body, options)
+    return this._submit('POST', url, body, options)
   }
 
   _delete(url, options) {

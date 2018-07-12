@@ -232,14 +232,17 @@ export default class WfParameter extends React.Component {
       return (
         <WorkbenchAceEditor
           name={this.props.p.parameter_spec.name}
-          onSave={ (val) => { this.paramChanged( val ) } }
-          defaultValue={this.props.p.value} />
+          isZenMode={this.props.isZenMode}
+          wfModuleError={this.props.wfModuleError}
+          save={this.paramChanged}
+          defaultValue={this.props.p.value}
+          />
       )
     } else if (id_name == 'celledits') {
       return (
         <CellEditor
           edits={this.props.p.value}
-          onSave={(val) => { this.paramChanged(val) }}
+          onSave={this.paramChanged}
         />
       )
     } else if (id_name == 'refine') {
@@ -249,7 +252,7 @@ export default class WfParameter extends React.Component {
             wfModuleId={this.props.wf_module_id}
             selectedColumn={this.props.getParamText('column')}
             existingEdits={this.props.p.value}
-            saveEdits={(val) => this.paramChanged(val)}
+            saveEdits={this.paramChanged}
             revision={this.props.revision}
             />
         )
@@ -416,7 +419,7 @@ export default class WfParameter extends React.Component {
               items={this.props.p.menu_items}
               selectedIdx={parseInt(this.props.p.value)}
               isReadOnly={this.props.isReadOnly}
-              onChange={ idx => { this.paramChanged(idx) }}
+              onChange={this.paramChanged}
             />
           </div> );
 
@@ -431,7 +434,7 @@ export default class WfParameter extends React.Component {
               noSelectionText={this.props.p.parameter_spec.placeholder}
               isReadOnly={this.props.isReadOnly}
               revision={this.props.revision}
-              onChange={ col => { this.paramChanged(col) }}
+              onChange={this.paramChanged}
             />
           </div> );
 
@@ -470,11 +473,13 @@ WfParameter.propTypes = {
     }).isRequired,
   }).isRequired,
   moduleName:     PropTypes.string.isRequired,
+  wfModuleError:  PropTypes.string, // module-level error message
   wf_module_id:   PropTypes.number.isRequired,
   revision:       PropTypes.number.isRequired,
   api:            PropTypes.object.isRequired,
   updateSettings: PropTypes.object,             // only for modules that load data
   isReadOnly:     PropTypes.bool.isRequired,
+  isZenMode:      PropTypes.bool.isRequired,
   changeParam:    PropTypes.func.isRequired,
   getParamId:     PropTypes.func.isRequired,
   getParamText:   PropTypes.func.isRequired,

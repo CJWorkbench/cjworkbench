@@ -58,7 +58,7 @@ export class UpdateFrequencySelect extends React.PureComponent {
       </div>
     ) : null
 
-    const autoOrManual = this.props.settings.isAutoUpdate ? 'auto' : 'manual'
+    const autoOrManual = this.props.settings.isAutoUpdate ? 'Auto' : 'Manual'
 
     const maybeModal = this.state.isModalOpen ? (
         <UpdateFrequencySelectModal

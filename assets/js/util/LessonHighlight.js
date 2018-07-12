@@ -12,17 +12,19 @@ function Shape(type, propTypes) {
 const LessonHighlightType = P.oneOfType([
   Shape('Module', {
     index: P.number.isRequired, // index in ModuleStack where we want to add the module
-    name: P.string.isRequired,  // name of the Module
+    name: P.string.isRequired // name of the Module
   }),
   Shape('WfModule', {
     moduleName: P.string.isRequired,
+    index: P.number
   }),
   Shape('WfModuleContextButton', {
     moduleName: P.string.isRequired,
     button: P.oneOf([ 'notes', 'collapse' ]).isRequired,
+    index: P.number
   }),
   Shape('EditableNotes', {
-  }),
+  })
 ])
 
 /**
@@ -39,7 +41,7 @@ const LessonHighlightType = P.oneOfType([
 export const LessonHighlightsType = P.arrayOf(LessonHighlightType)
 
 const matchOneLessonHighlight = (lessonHighlight, test) => {
-  return !Object.keys(test).some(key => test[key] !== lessonHighlight[key])
+  return !Object.keys(lessonHighlight).some(key => test[key] !== lessonHighlight[key])
 }
 
 /**

@@ -17,12 +17,8 @@ class ModuleDropSpot extends React.PureComponent {
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      isDragHovering: false,
-    }
+  state = {
+    isDragHovering: false
   }
 
   canDrop() {
@@ -93,15 +89,11 @@ class BaseModuleStackInsertSpot extends React.PureComponent {
     index: PropTypes.number.isRequired,
     isDraggingModuleAtIndex: PropTypes.number, // or null if not dragging
     moveModuleByIndex: PropTypes.func.isRequired, // func(oldIndex, newIndex) => undefined
-    isReadOnly: PropTypes.bool.isRequired,
+    isReadOnly: PropTypes.bool.isRequired
   }
 
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      isSearching: false,
-    }
+  state = {
+    isSearching: false
   }
 
   onClickSearch = () => {
@@ -216,8 +208,6 @@ class LastModuleStackInsertSpot extends BaseModuleStackInsertSpot {
   }
 }
 
-const FixmeIKilledDragAndDrop = () => {}
-
 class ModuleStack extends React.Component {
   static propTypes = {
     api:                PropTypes.object.isRequired,
@@ -232,18 +222,49 @@ class ModuleStack extends React.Component {
   }
 
   constructor(props) {
-    super(props);
-    this.scrollRef = React.createRef();
+    super(props)
+
+    this.scrollRef = React.createRef()
     // Debounced so that execution is cancelled if we start
     // another animation. See note on focusModule definition.
-    this.focusModule = debounce(this.focusModule.bind(this), 200);
+    this.focusModule = debounce(this.focusModule.bind(this), 200)
 
     this.state = {
       isDraggingModuleAtIndex: null,
+      zenModeWfModuleId: null
     }
   }
 
-  focusModule(module) {
+  /**
+   * Sets which module has "Zen mode" (extra size+focus).
+   *
+   * setZenMode(2, true) // module with ID 2 gets "Zen mode"
+   * setZenMode(2, false) // module with ID 2 gets _not_ "Zen mode"
+   *
+   * Only one module can have Zen mode. When module 2 enters Zen mode, Zen
+   * mode is "locked" to module 2: no other modules can set it until module
+   * 2 exits Zen mode.
+   */
+  setZenMode = (wfModuleId, isZenMode) => {
+    const oldId = this.state.zenModeWfModuleId
+    if (!isZenMode && wfModuleId === oldId) {
+      this.setState({ zenModeWfModuleId: null })
+    } else if (isZenMode && oldId === null) {
+      this.setState({ zenModeWfModuleId: wfModuleId })
+    }
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    // If we delete a zen-mode while in zen mode, exit zen mode
+    const zenId = state.zenModeWfModuleId
+    if (zenId && !props.workflow.wf_modules.some(m => m.id === zenId)) {
+      return { zenModeWfModuleId: null }
+    } else {
+      return null
+    }
+  }
+
+  focusModule = (module) => {
     // Wait for the next two browser repaints before animating, because
     // two repaints gets it about right.
     // This is a bad hack that's here because JavaScript doesn't have
@@ -307,6 +328,7 @@ class ModuleStack extends React.Component {
             {this.moduleStackInsertSpot(i)}
             <WfModule
               isReadOnly={this.props.workflow.read_only}
+              isZenMode={this.state.zenModeWfModuleId === item.id}
               wfModule={item}
               changeParam={this.props.changeParam}
               removeModule={this.props.removeModule}
@@ -315,6 +337,7 @@ class ModuleStack extends React.Component {
               api={this.props.api}
               loads_data={item.moduleVersion && item.module_version.module.loads_data}
               index={i}
+              setZenMode={this.setZenMode}
               onDragStart={this.onDragStart}
               onDragEnd={this.onDragEnd}
               focusModule={this.focusModule}
@@ -324,8 +347,11 @@ class ModuleStack extends React.Component {
       }
     })
 
+    let className = 'module-stack'
+    if (this.state.zenModeWfModuleId !== null) className += ' zen-mode'
+
     return (
-      <div className="module-stack">
+      <div className={className}>
         {spotsAndItems}
         <LastModuleStackInsertSpot
           key="last"

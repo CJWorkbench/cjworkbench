@@ -1,0 +1,16 @@
+#!/bin/bash
+
+DIR="$(dirname "$0")"/..
+
+set -e
+
+# Sleep until Postgres is available. Otherwise, manage.py will crash.
+until PGPASSWORD="$CJW_DB_PASSWORD" psql -q --host="$CJW_DB_HOST" --username=cjworkbench cjworkbench -c 'SELECT 1' >/dev/null; do
+	echo "Postgres database $CJW_DB_HOST/cjworkbench not yet available. Will retry in 1s." >&2
+	sleep 1
+done
+
+"$DIR"/manage.py migrate sites
+"$DIR"/manage.py migrate
+"$DIR"/manage.py load_socialaccounts
+"$DIR"/manage.py reload-internal-modules

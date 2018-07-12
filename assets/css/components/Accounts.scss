@@ -148,6 +148,16 @@ body.accounts {
   border: none;
   border-radius: 0px;
   margin:auto;
+  width:40rem;
+
+  .consent {
+    @extend .content-3;
+    color:$brand-text--dark;
+    font-size: 1.3rem;
+    margin-top: 1rem;
+
+  }
+
 }
 
 .demoSignup{

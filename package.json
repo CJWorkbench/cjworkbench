@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Computational Journalism Workbench",
   "main": "index.js",
-  "comments": [
-    "enzyme-adapter-react-16@git is because of https://github.com/airbnb/enzyme/issues/1509"
-  ],
   "dependencies": {
     "bootstrap": "^4.1.1",
     "classnames": "^2.2.5",

@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
+
 import os
 import sys
 import json
@@ -86,30 +87,31 @@ if DEBUG==False:
         }
     }
 
-    if 'CJW_SENDGRID_API_KEY' not in os.environ:
-        sys.exit('Must set CJW_SENDGRID_API_KEY in production')
-
-    if not all(x in os.environ for x in [
-        'CJW_SENDGRID_INVITATION_ID',
-        'CJW_SENDGRID_CONFIRMATION_ID',
-        'CJW_SENDGRID_PASSWORD_CHANGE_ID',
-        'CJW_SENDGRID_PASSWORD_RESET_ID'
-        ]):
-        sys.exit('Must set Sendgrid template IDs for all system emails')
-
     if os.environ.get('CJW_MOCK_EMAIL'): # e.g., integration tests
-        EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
-        EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'local_mail')
+        EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
     else:
         EMAIL_BACKEND = 'sgbackend.SendGridBackend'
+        # ACCOUNT_ADAPTER is specifically for sendgrid and nothing else
+        ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
 
-    SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
-    ACCOUNT_ADAPTER = 'cjworkbench.views.account_adapter.WorkbenchAccountAdapter'
-    SENDGRID_TEMPLATE_IDS = {
-        'account/email/email_confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'account/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
-        'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
-    }
+        if 'CJW_SENDGRID_API_KEY' not in os.environ:
+            sys.exit('Must set CJW_SENDGRID_API_KEY in production')
+
+        if not all(x in os.environ for x in [
+            'CJW_SENDGRID_INVITATION_ID',
+            'CJW_SENDGRID_CONFIRMATION_ID',
+            'CJW_SENDGRID_PASSWORD_CHANGE_ID',
+            'CJW_SENDGRID_PASSWORD_RESET_ID'
+            ]):
+            sys.exit('Must set Sendgrid template IDs for all system emails')
+
+        SENDGRID_API_KEY = os.environ['CJW_SENDGRID_API_KEY']
+
+        SENDGRID_TEMPLATE_IDS = {
+            'account/email/email_confirmation': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+            'account/email/email_confirmation_signup': os.environ['CJW_SENDGRID_CONFIRMATION_ID'],
+            'account/email/password_reset_key': os.environ['CJW_SENDGRID_PASSWORD_RESET_ID'],
+        }
 
 else:
     # We are running in debug
@@ -212,13 +214,21 @@ REST_FRAMEWORK = {
 WSGI_APPLICATION = 'cjworkbench.wsgi.application'
 ASGI_APPLICATION = 'cjworkbench.asgi.application'
 
-CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    },
-}
-
-
+if 'CJW_REDIS_HOST' in os.environ:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [(os.environ['CJW_REDIS_HOST'], 6379)],
+            },
+        },
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
 
 
 # Password validation

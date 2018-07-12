@@ -1,8 +1,9 @@
+import itertools
+import re
 from .moduleimpl import ModuleImpl
-from .utils import *
+from .utils import build_globals_for_eval
 import pandas as pd
 from formulas import Parser
-import re, itertools
 from django.utils.translation import gettext as _
 
 # ---- Formula ----
@@ -23,11 +24,12 @@ def python_formula(table, formula):
     colnames = [x.replace(" ", "_") for x in table.columns]  # spaces to underscores in column names
 
     code = compile(formula, '<string>', 'eval')
+    custom_code_globals = build_globals_for_eval()
 
     # Much experimentation went into the form of this loop for good performance.
     # Note we don't use iterrows or any pandas indexing, and construct the values dict ourselves
     newcol = pd.Series(list(itertools.repeat(None, len(table))))
-    for i,row in enumerate(table.values):
+    for i, row in enumerate(table.values):
         newcol[i] = eval(code, custom_code_globals, dict(zip(colnames, row)))
 
     return newcol
