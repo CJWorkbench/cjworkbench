@@ -10,6 +10,7 @@ import {idxToLetter} from "./utils";
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
 import ColumnContextMenu from './ColumnContextMenu'
+import { sortDirectionNone } from './SortFromTable'
 
 // --- Row and column formatting ---
 
@@ -263,7 +264,8 @@ export class ColumnHeader extends React.PureComponent {
     }
     
     return (
-      <ColumnContextMenu setSortDirection={this.onSetSortDirection} sortDirection={this.props.sortDirection}/>
+      <ColumnContextMenu setSortDirection={this.onSetSortDirection} sortDirection={this.props.isSorted == true
+        ? this.props.sortDirection : sortDirectionNone}/>
       );
   }
 

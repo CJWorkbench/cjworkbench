@@ -8,7 +8,7 @@ jest.mock('./EditCells');
 jest.mock('./SortFromTable');
 jest.mock('./ReorderColumns');
 import { addCellEdit } from './EditCells';
-import { updateSort } from './SortFromTable';
+import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateSort } from './SortFromTable'
 import { updateReorder } from './ReorderColumns';
 
 describe('TableView', () => {
@@ -76,8 +76,8 @@ describe('TableView', () => {
       expect(addCellEdit).toHaveBeenCalledWith(100, { row: 1, col: 'b', value: '1000' });
 
       // Calls SortFromTable
-      tree.find(TableView).instance().onSort('a', 'Number');
-      expect(updateSort).toHaveBeenCalledWith(100, 'a', 'Number');
+      tree.find(TableView).instance().setSortDirection('a', 'Number', sortDirectionAsc);
+      expect(updateSort).toHaveBeenCalledWith(100, 'a', 'Number', sortDirectionAsc);
 
       // Calls ReorderColumns
       tree.find(DataGrid).instance().onDropColumnIndexAtIndex(0, 1);
@@ -229,7 +229,7 @@ describe('TableView', () => {
           setBusySpinner={jest.fn()}
           isReadOnly={false}
           sortColumn={'b'}
-          sortDirection={'DESC'}
+          sortDirection={sortDirectionDesc}
       />
     );
 
@@ -237,7 +237,7 @@ describe('TableView', () => {
       tree.update();
       const dataGrid = tree.find(DataGrid);
       expect(dataGrid.prop('sortColumn')).toBe('b');
-      expect(dataGrid.prop('sortDirection')).toBe('DESC');
+      expect(dataGrid.prop('sortDirection')).toBe(sortDirectionDesc);
       done();
     });
   });
