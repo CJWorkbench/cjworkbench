@@ -1,11 +1,13 @@
 from server.importmodulefromgithub import *
 from server.dispatch import module_dispatch_render
+from server.modules.types import ProcessResult
 from server.tests.utils import *
 from pathlib import Path
 import pandas as pd
-import io, types
+import io
 import mock
 import logging, os, shutil
+
 
 # Patch get_already_imported from importmodulefromgithub
 def overriden_get_already_imported():
@@ -16,19 +18,20 @@ def overriden_get_already_imported():
 
 class ImportFromGitHubTest(LoggedInTestCase):
     def setUp(self):
-        super(ImportFromGitHubTest, self).setUp()  # log in
+        super().setUp()  # log in
 
-        self.importable_repo_name = 'importable'
-        self.importable_id_name ='importable_not_repo_name'  # must match importable.json test data file
+        # must match importable.json test data file
+        self.importable_id_name = 'importable_not_repo_name'
 
         self.cleanup()
 
-        #  several tests are supposed to log an exception, but don't print that every test
+        # several tests are supposed to log an exception, but don't print that
+        # every test
         logging.disable(logging.CRITICAL)
 
     def tearDown(self):
-        super(ImportFromGitHubTest, self).tearDown()
         self.cleanup()
+        super().tearDown()
 
     def cleanup(self):
         # remove any directories we may have created during the last test
@@ -45,11 +48,11 @@ class ImportFromGitHubTest(LoggedInTestCase):
         return os.path.join(pwd, 'importedmodules-test')
 
     # Where do we install the files?
-    # Actual final location has version number added to the end of this, e.g. imported_dir() + "/123456"
+    # Actual final location has version number added to the end of this,
+    # e.g. imported_dir() + "/123456"
     def imported_dir(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
         return os.path.join(pwd, '..', '..', 'importedmodules', self.importable_id_name)
-
 
     # fills clone_dir() with a set of module files in "freshly cloned from github" state
     # erases anything previously there
@@ -359,23 +362,20 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         colparam.set_value('M') # double this
         multicolparam.set_value('F,Other') # triple these
-        out = module_dispatch_render(wfm, test_table)
-        self.assertEqual(wfm.error_msg, '')
-        self.assertEqual(wfm.status, WfModule.READY)
-        self.assertTrue(out.equals(test_table_out))
+        result = module_dispatch_render(wfm, test_table)
+        self.assertEqual(result, ProcessResult(test_table_out))
 
         # Test that bad column parameter values are removed
         colparam.set_value('missing_column_name')
         multicolparam.set_value('Other,junk_column_name')
         test_table_out = test_table.copy()
         test_table_out[['Other']] *= 3   # multicolumn parameter has only one valid col
-        out = module_dispatch_render(wfm, test_table)
-        self.assertEqual(wfm.status, WfModule.READY)
-        self.assertTrue(out.equals(test_table_out))
+        result = module_dispatch_render(wfm, test_table)
+        self.assertEqual(result, ProcessResult(test_table_out))
 
         # if the module crashes, we should get an error with a line number
         stringparam.set_value('crashme')
-        out = module_dispatch_render(wfm, test_table)
-        self.assertEqual(wfm.status, WfModule.ERROR)
-
-
+        result = module_dispatch_render(wfm, test_table)
+        self.assertEqual(result, ProcessResult(
+            error='ValueError: we crashed! at line 7 of importable.py'
+        ))

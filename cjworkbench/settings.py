@@ -294,11 +294,11 @@ LOGGING = {
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
         },
-        #'debug_console': {
-        #    'level': 'DEBUG',
-        #    'class': 'logging.StreamHandler',
-        #    'formatter': 'simple'
-        #},
+        'debug_console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+        },
     },
     'loggers': {
         'django': {
@@ -306,10 +306,10 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
-        #'django.db.backends': { # only gets messages when settings.DEBUG is True
-        #    'level': 'DEBUG',
-        #    'handlers': [ 'debug_console' ],
-        #},
+        'django.db.backends': { # only gets messages when settings.DEBUG is True
+            'level': 'DEBUG',
+            'handlers': [ 'debug_console' ],
+        },
     }
 }
 

@@ -85,6 +85,7 @@ class Delta(PolymorphicModel):
             # Point workflow to us
             self.workflow.last_delta = self
             self.workflow.save()
+            print('Saved last_delta for ' + str(self.workflow.id) + ': ' + str(self.id))
         else:
             # we're already in the linked list, just save
             super(Delta, self).save(*args, **kwargs)

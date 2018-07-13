@@ -1,20 +1,13 @@
-from .moduleimpl import ModuleImpl
-from server.versions import save_fetched_table_if_changed
-from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
-from django.conf import settings
-import pandas as pd
-import datetime
 import aiohttp
 import asyncio
 import re
-
-
-# Resolve circular import: execute -> dispatch -> urlscraper -> execute
-class URLScraperExecuteCallbacks:
-    execute_wfmodule = None
-
-urlscraper_execute_callbacks = URLScraperExecuteCallbacks()
+from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
+from django.conf import settings
+from django.utils import timezone
+import pandas as pd
+from .moduleimpl import ModuleImpl
+from .types import ProcessResult
 
 
 # --- Asynchornous URL scraping ---
@@ -22,11 +15,12 @@ urlscraper_execute_callbacks = URLScraperExecuteCallbacks()
 # get or create an event loop for the current thread.
 def get_thread_event_loop():
     try:
-        loop = asyncio.get_event_loop()  # gets previously set event loop, if possible
+        loop = asyncio.get_event_loop()  # try to get previously set event loop
     except RuntimeError:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
     return loop
+
 
 def is_valid_url(url):
     validate = URLValidator()
@@ -35,6 +29,7 @@ def is_valid_url(url):
         return True
     except ValidationError:
         return False
+
 
 async def async_get_url(url):
     """Returns a Future { 'status': ..., 'text': ... } dict.
@@ -52,15 +47,18 @@ async def async_get_url(url):
     text = await response.text()
     return {'status': response.status, 'text': text}
 
+
 # Parses the HTTP response object and stores it as a row in our table
 def add_result_to_table(table, i, response):
     table.loc[i,'status'] = str(response['status'])
     table.loc[i,'html'] = response['text']
 
+
 # Server didn't get back to us in time
 def add_error_to_table(table, i, errmsg):
     table.loc[i,'status'] = errmsg
     table.loc[i,'html'] = ''
+
 
 # Asynchronously scrape many urls, and store the results in the table
 async def scrape_urls(urls, result_table):
@@ -113,9 +111,6 @@ class URLScraper(ModuleImpl):
     STATUS_TIMEOUT = "No response"
     STATUS_NO_CONNECTION = "Can't connect"
 
-    # class method, so we can mock this out for tests
-    _mynow = datetime.datetime.now
-
     @staticmethod
     def render(wf_module, table):
         urlsource = wf_module.get_param_menu_string('urlsource')
@@ -137,10 +132,11 @@ class URLScraper(ModuleImpl):
                 return table
 
     # Scrapy scrapy scrapy
+    #
+    # TODO this should be in .render(), right?
     @staticmethod
-    def event(wfm, event=None, **kwargs):
-
-        # fetching could take a while so notify clients/users that we're working on it
+    def event(wfm, **kwargs):
+        # fetching could take a while so notify clients/users we're working
         wfm.set_busy()
 
         urls = []
@@ -153,7 +149,7 @@ class URLScraper(ModuleImpl):
                 s_url = url.strip()
                 if len(s_url) == 0:
                     continue
-                # Attempt to fix an URL in case user adds an URL without http(s) prefix
+                # Fix in case user adds an URL without http(s) prefix
                 if not re.match('^https?://.*', s_url):
                     urls.append('http://{}'.format(s_url))
                 else:
@@ -163,14 +159,19 @@ class URLScraper(ModuleImpl):
             urlcol = wfm.get_param_column('urlcol')
             if urlcol == '':
                 return
-            prev_table = urlscraper_execute_callbacks.execute_wfmodule(wfm.previous_in_stack())
+            from server.execute import execute_wfmodule
+            prev_table = execute_wfmodule(wfm.previous_in_stack()).dataframe
 
-            # column parameters are not sanitized here, could be missing this col
+            # column parameters are not sanitized here, could be missing
+            # this col
             if urlcol in prev_table.columns:
                 urls = prev_table[urlcol].tolist()
 
         if len(urls) > 0:
-            table = pd.DataFrame({'url': urls, 'status': ''}, columns=['url', 'date', 'status', 'html'])
+            table = pd.DataFrame(
+                {'url': urls, 'status': ''},
+                columns=['url', 'date', 'status', 'html']
+            )
 
             event_loop = get_thread_event_loop()
             event_loop.run_until_complete(scrape_urls(urls, table))
@@ -178,6 +179,11 @@ class URLScraper(ModuleImpl):
         else:
             table = pd.DataFrame()
 
-        table['date'] = URLScraper._mynow().strftime('%Y-%m-%d %H:%M:%S')
+        table['date'] = timezone.now().isoformat(timespec='seconds') \
+                .replace('+00:00', 'Z')
 
-        save_fetched_table_if_changed(wfm, table, '')
+        result = ProcessResult(dataframe=table)
+        # No need to truncate: input is already truncated
+        # No need to sanitize: we only added text+date+status
+
+        ModuleImpl.commit_result(wfm, result)

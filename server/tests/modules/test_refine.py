@@ -1,10 +1,21 @@
-from django.test import TestCase
-from server.tests.utils import *
-from server.execute import execute_nocache
+import io
 import json
 import pandas as pd
-import io
+from server.tests.utils import LoggedInTestCase, create_testdata_workflow, \
+        load_and_add_module, get_param_by_id_name
+from server.execute import execute_nocache
 from server.modules.refine import Refine
+from server.modules.types import ProcessResult
+
+
+test_csv = '\n'.join([
+    'name,date,count',
+    'Dolores,1524355200000,3',
+    'Bernard,1524355200000,5',
+    'Ford,1475366400000,5',
+    'Dolores,1475366400000,4',
+])
+reference_table = pd.read_csv(io.StringIO(test_csv))
 
 
 class MockModule:
@@ -34,12 +45,7 @@ class MockModule:
 class RefineTests(LoggedInTestCase):
     def setUp(self):
         super(RefineTests, self).setUp()
-        self.test_csv = 'name,date,count\nDolores,1524355200000,3\nBernard,1524355200000,5\nFord,1475366400000,5\nDolores,1475366400000,4'
-        # A reference table for correctness checking
-        # Performing date conversion here does not help tests as default test WF does not parse dates
-        # self.table = pd.read_csv(io.StringIO(self.test_csv), parse_dates=['date'])
-        self.table = pd.read_csv(io.StringIO(self.test_csv))
-        self.workflow = create_testdata_workflow(csv_text=self.test_csv)
+        self.workflow = create_testdata_workflow(csv_text=test_csv)
         self.wf_module = load_and_add_module('refine', workflow=self.workflow)
         self.edits_pval = get_param_by_id_name('refine')
         self.column_pval = get_param_by_id_name('column')
@@ -58,10 +64,11 @@ class RefineTests(LoggedInTestCase):
         })
         self.edits_pval.value = json.dumps(self.edits)
         self.edits_pval.save()
-        out = execute_nocache(self.wf_module)
-        ref_table = self.table[[False, True, True, False]]
-        ref_table.index = pd.RangeIndex(len(ref_table.index))  # reset to contiguous indices
-        self.assertTrue(out.equals(ref_table))
+        result = execute_nocache(self.wf_module)
+        expected_table = reference_table[[False, True, True, False]]
+        # reset to contiguous indices
+        expected_table.index = pd.RangeIndex(len(expected_table.index))
+        self.assertEqual(result, ProcessResult(expected_table))
 
         # Perform a selection on the same value, table should be back to normal
         self.edits.append({
@@ -73,9 +80,9 @@ class RefineTests(LoggedInTestCase):
         })
         self.edits_pval.value = json.dumps(self.edits)
         self.edits_pval.save()
-        out = execute_nocache(self.wf_module)
-        ref_table = self.table[[True, True, True, True]]
-        self.assertTrue(out.equals(ref_table))
+        result = execute_nocache(self.wf_module)
+        expected_table = reference_table[[True, True, True, True]]
+        self.assertEqual(result, ProcessResult(expected_table))
 
     def test_render_edit(self):
         # Perform a single edit on a string
@@ -91,10 +98,11 @@ class RefineTests(LoggedInTestCase):
         })
         self.edits_pval.value = json.dumps(self.edits)
         self.edits_pval.save()
-        out = execute_nocache(self.wf_module)
-        ref_table = self.table.copy()
-        ref_table.loc[ref_table['name'] == 'Dolores', 'name'] = 'Wyatt'
-        self.assertTrue(out.equals(ref_table))
+        result = execute_nocache(self.wf_module)
+        expected_table = reference_table.copy()
+        expected_table \
+            .loc[expected_table['name'] == 'Dolores', 'name'] = 'Wyatt'
+        self.assertEqual(result, ProcessResult(expected_table))
 
         # Perform a single edit on a number
         self.column_pval.value = 'count'
@@ -110,15 +118,15 @@ class RefineTests(LoggedInTestCase):
         }]
         self.edits_pval.value = json.dumps(self.edits)
         self.edits_pval.save()
-        out = execute_nocache(self.wf_module)
-        ref_table = self.table.copy()
-        ref_table.loc[ref_table['count'] == 5, 'count'] = 4
-        self.assertTrue(out.equals(ref_table))
+        result = execute_nocache(self.wf_module)
+        expected_table = reference_table.copy()
+        expected_table.loc[expected_table['count'] == 5, 'count'] = 4
+        self.assertEqual(result, ProcessResult(expected_table))
 
     def test_render_date(self):
-        # Since we don't have a upstream module that can feed dates with minimal fuss
-        # we will directly test Refine's render() function here.
-        dates_table = pd.read_csv(io.StringIO(self.test_csv))
+        # Since we don't have a upstream module that can feed dates with
+        # minimal fuss we will directly test Refine's render() function here.
+        dates_table = reference_table.copy()
         dates_table['date'] = pd.to_datetime(dates_table['date'], unit='ms')
 
         # Perform a single edit on a date
@@ -134,10 +142,12 @@ class RefineTests(LoggedInTestCase):
             'column': 'date',
             'refine': json.dumps(self.edits)
         })
-        out = Refine.render(mock_refine, dates_table.copy())
-        ref = dates_table.copy()
-        ref.loc[ref['date'] == pd.Timestamp('2016-10-02 00:00:00'), 'date'] = pd.Timestamp('2016-12-04 00:00:00')
-        self.assertTrue(out.equals(ref))
+        result = Refine.render(mock_refine, dates_table.copy())
+        expected_table = dates_table.copy()
+        expected_table \
+            .loc[expected_table['date'] == pd.Timestamp('2016-10-02 00:00:00'),
+                 'date'] = pd.Timestamp('2016-12-04 00:00:00')
+        self.assertEqual(result, ProcessResult(expected_table))
 
         # Perform a single selection on a date
         self.edits = [{
@@ -151,6 +161,6 @@ class RefineTests(LoggedInTestCase):
             'column': 'date',
             'refine': json.dumps(self.edits)
         })
-        out = Refine.render(mock_refine, dates_table.copy())
-        ref = dates_table[[True, True, False, False]]
-        self.assertTrue(out.equals(ref))
+        result = Refine.render(mock_refine, dates_table.copy())
+        expected_table = dates_table[[True, True, False, False]]
+        self.assertEqual(result, ProcessResult(expected_table))

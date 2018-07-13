@@ -1,20 +1,64 @@
-from django.test import TestCase
 from django.contrib.auth.models import User
 import json
 import pandas as pd
 import io
-from server.views.WfModule import wfmodule_detail, wfmodule_render, wfmodule_dataversion, make_render_json
+from server.views.WfModule import wfmodule_detail, wfmodule_dataversion
 from rest_framework.test import APIRequestFactory
 from rest_framework import status
-from server.models import Module, ModuleVersion, WfModule, Workflow, ParameterSpec, ParameterVal
+from server.models import Module, WfModule, Workflow
 from rest_framework.test import force_authenticate
 from server.tests.test_wfmodule import WfModuleTestsBase
-from operator import itemgetter
 from collections import namedtuple
-from server.tests.utils import LoggedInTestCase, mock_csv_table, mock_csv_table2, add_new_workflow, add_new_wf_module
+from server.tests.utils import LoggedInTestCase, mock_csv_table, \
+        mock_csv_table2, add_new_workflow, add_new_wf_module, \
+        create_testdata_workflow
 
 
-FakeSession = namedtuple('FakeSession', [ 'session_key' ])
+FakeSession = namedtuple('FakeSession', ['session_key'])
+
+test_data_json = {
+    'total_rows': 4,
+    'start_row': 0,
+    'end_row': 4,
+    'columns': ['Class', 'M', 'F'],
+    'rows': [
+        {'Class': 'math', 'F': 12, 'M': 10.0},
+        {'Class': 'english', 'F': 7, 'M': None},
+        {'Class': 'history', 'F': 13, 'M': 11.0},
+        {'Class': 'economics', 'F': 20, 'M': 20.0}
+    ],
+    'column_types': [
+        'String',
+        'Number',
+        'Number'
+    ]
+}
+
+test_histogram_data_json = {
+    'total_rows': 4,
+    'start_row': 0,
+    'end_row': 4,
+    'columns': ['Class', '__internal_count_column__'],
+    'rows': [
+        {'Class': 'economics', '__internal_count_column__': 1},
+        {'Class': 'english', '__internal_count_column__': 1},
+        {'Class': 'history', '__internal_count_column__': 1},
+        {'Class': 'math', '__internal_count_column__': 1},
+    ],
+    'column_types': [
+        'String',
+        'Number',
+    ]
+}
+
+empty_data_json = {
+    'total_rows': 0,
+    'start_row': 0,
+    'end_row': 0,
+    'columns': [],
+    'rows': [],
+    'column_types': [],
+}
 
 
 class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
@@ -24,13 +68,11 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.createTestWorkflow()
         self.factory = APIRequestFactory()
 
-
     def _augment_request(self, request, user: User,
                          session_key: str) -> None:
         if user:
             force_authenticate(request, user=user)
         request.session = FakeSession(session_key)
-
 
     def _build_patch(self, *args, user: User=None, session_key: str='a-key',
                      **kwargs):
@@ -38,21 +80,21 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self._augment_request(request, user, session_key)
         return request
 
-
     def _build_put(self, *args, user: User=None, session_key: str='a-key',
                    **kwargs):
         request = self.factory.put(*args, **kwargs)
         self._augment_request(request, user, session_key)
         return request
 
-
     # TODO test parameter values returned from this call
     def test_wf_module_detail_get(self):
         # Also tests [Workflow, Module, WfModule].get
         workflow = Workflow.objects.get(name='Workflow 1')
         module_id = Module.objects.get(name='Module 1').id
-        module_version = ModuleVersion.objects.get(module=Module.objects.get(name='Module 1'))
-        wf_module = WfModule.objects.get(workflow_id=workflow.id, module_version=module_version)
+        wf_module = WfModule.objects.get(
+            workflow_id=workflow.id,
+            module_version__module__name='Module 1'
+        )
         wf_module_versions = {
             'versions': wf_module.list_fetched_data_versions(),
             'selected': wf_module.get_fetched_data_version()
@@ -63,117 +105,117 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         self.assertEqual(response.data['id'], wf_module.id)
         self.assertEqual(response.data['workflow'], workflow.id)
         self.assertEqual(response.data['notes'], wf_module.notes)
-        self.assertEqual(response.data['module_version']['module']['id'], module_id)
+        self.assertEqual(response.data['module_version']['module']['id'],
+                         module_id)
         self.assertEqual(response.data['status'], wf_module.status)
         self.assertEqual(response.data['error_msg'], wf_module.error_msg)
         self.assertEqual(response.data['is_collapsed'], wf_module.is_collapsed)
-        self.assertEqual(response.data['auto_update_data'], wf_module.auto_update_data)
-        self.assertEqual(response.data['last_update_check'], wf_module.last_update_check)
-        self.assertEqual(response.data['update_interval'], 1)       # defaults here to avoid time unit conversion
+        self.assertEqual(response.data['auto_update_data'],
+                         wf_module.auto_update_data)
+        self.assertEqual(response.data['last_update_check'],
+                         wf_module.last_update_check)
+        # defaults here to avoid time unit conversion
+        self.assertEqual(response.data['update_interval'], 1)
         self.assertEqual(response.data['update_units'], 'days')
-        self.assertEqual(response.data['notifications'], wf_module.notifications)
+        self.assertEqual(response.data['notifications'],
+                         wf_module.notifications)
         self.assertEqual(response.data['has_unseen_notification'], False)
         self.assertEqual(response.data['versions'], wf_module_versions)
-        self.assertEqual(response.data['html_output'], wf_module.module_version.html_output)
+        self.assertEqual(response.data['html_output'],
+                         wf_module.module_version.html_output)
 
-        response = self.client.get('/api/wfmodules/%d/' % 10000)
+        response = self.client.get('/api/wfmodules/10000/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-
     def test_missing_module(self):
-        # If the WfModule references a Module that does not exist, we should get a placeholder
+        # If the WfModule references a Module that does not exist, we should
+        # get a placeholder
         workflow = add_new_workflow('Missing module')
         wfm = add_new_wf_module(workflow, None, 0)
         response = self.client.get('/api/wfmodules/%d/' % wfm.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['module_version']['module']['name'], 'Missing module')
-        self.assertEqual(response.data['module_version']['module']['loads_data'], False)
+
+        parsed = json.loads(response.content)
+        self.assertEqual(parsed['module_version']['module']['name'],
+                         'Missing module')
+        self.assertEqual(parsed['module_version']['module']['loads_data'],
+                         False)
 
         response = self.client.get('/api/wfmodules/%d/render' % wfm.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        empty_table = make_render_json(pd.DataFrame())
-        self.assertEqual(response.content.decode('utf-8'), empty_table)
+        self.assertEqual(json.loads(response.content), empty_data_json)
 
+    # Test some json conversion gotchas we encountered during development
+    def test_pandas_13258(self):
+        # simple test case where Pandas produces int64 column type, and json
+        # conversion throws ValueError
+        # https://github.com/pandas-dev/pandas/issues/13258#issuecomment-326671257
+        workflow = create_testdata_workflow(csv_text='A,B,C,D\n1,2,3,4')
+        response = self.client.get('/api/wfmodules/%d/render' %
+                                   workflow.wf_modules.first().id)
+        self.assertIs(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['column_types'],
+                         ['Number', 'Number', 'Number', 'Number'])
 
-    # this constrains the output API format, detects changes that would break client code
-    def test_make_render_json(self):
-        # test our basic test data
-        output = make_render_json(self.test_table)
-        self.assertTrue(isinstance(output,str))
-        d1 = json.loads(output)
-        d2 = {
-            'total_rows': 4,
-            'start_row': 0,
-            'end_row': 4,
-            'columns': ['Class', 'M', 'F'],
-            'rows': [
-                { 'Class': 'math', 'F': 12, 'M': 10.0},
-                { 'Class': 'english', 'F': 7, 'M': None},
-                { 'Class': 'history', 'F': 13, 'M': 11.0},
-                { 'Class': 'economics', 'F': 20, 'M': 20.0}
-            ],
-            'column_types': [
-                'String',
-                'Number',
-                'Number'
-            ]
-        }
-        self.assertEqual(d1, d2)
-
-        # Test some json conversion gotchas we encountered during development
-
-        # simple test case where Pandas produces int64 column type, and json conversion throws ValueError
-        # see https://github.com/pandas-dev/pandas/issues/13258#issuecomment-326671257
-        int64csv = 'A,B,C,D\n1,2,3,4'
-        int64table = pd.read_csv(io.StringIO(int64csv), header=0)
-        output = make_render_json(int64table)
-
-        # When no header row, Pandas uses int64s as column names, and json.dumps(list(table)) throws ValueError
-        int64table = pd.read_csv(io.StringIO(int64csv), header=None)
-        output = make_render_json(int64table)
-
+    def test_pandas_no_header(self):
+        # When no header row, Pandas uses int64s as column names, and
+        # json.dumps(list(table)) throws ValueError
+        workflow = create_testdata_workflow(csv_text='1,2,3,4\n1,2,3,4')
+        response = self.client.get('/api/wfmodules/%d/render' %
+                                   workflow.wf_modules.first().id)
+        self.assertIs(response.status_code, 200)
+        self.assertEqual(json.loads(response.content)['columns'],
+                         ['1', '2', '3', '4'])
+        self.assertEqual(json.loads(response.content)['column_types'],
+                         ['Number', 'Number', 'Number', 'Number'])
 
     def test_wf_module_render_get(self):
         # First module: creates test data
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(self.test_table)
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        self.assertEqual(json.loads(response.content), test_data_json)
 
         # second module: NOP
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        self.assertEqual(json.loads(response.content), test_data_json)
 
         # Third module: doubles M column
         response = self.client.get('/api/wfmodules/%d/render' % self.wfmodule3.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        double_test_data = self.test_table.copy()
-        double_test_data['M'] *= 2
-        double_test_data = make_render_json(double_test_data)
-        self.assertEqual(response.content.decode('utf-8'), double_test_data)
+        test_data_json1 = json.loads(json.dumps(test_data_json))
+        for row in test_data_json1['rows']:
+            if row['M'] is not None:
+                row['M'] *= 2
+        self.assertEqual(json.loads(response.content), test_data_json1)
 
         # Now test retrieving specified rows only
         response = self.client.get('/api/wfmodules/%d/render?startrow=1' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(self.test_table, startrow=1)
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        test_data_json2 = json.loads(json.dumps(test_data_json))
+        test_data_json2['start_row'] = 1
+        test_data_json2['rows'] = test_data_json2['rows'][1:]
+        self.assertEqual(json.loads(response.content), test_data_json2)
 
         response = self.client.get('/api/wfmodules/%d/render?startrow=1&endrow=3' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(self.test_table, startrow=1, endrow=3)
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        test_data_json3 = json.loads(json.dumps(test_data_json))
+        test_data_json3['start_row'] = 1
+        test_data_json3['end_row'] = 3
+        test_data_json3['rows'] = test_data_json3['rows'][1:3]
+        self.assertEqual(json.loads(response.content), test_data_json3)
 
         response = self.client.get('/api/wfmodules/%d/render?endrow=3' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(self.test_table, endrow=3)
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        test_data_json4 = json.loads(json.dumps(test_data_json))
+        test_data_json4['end_row'] = 3
+        test_data_json4['rows'] = test_data_json4['rows'][0:3]
+        self.assertEqual(json.loads(response.content), test_data_json4)
 
         # index out of bounds should clip
         response = self.client.get('/api/wfmodules/%d/render?startrow=-1&endrow=500' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(self.test_table)
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        self.assertEqual(json.loads(response.content), test_data_json)
 
         # index not a number -> bad request
         response = self.client.get('/api/wfmodules/%d/render?startrow=0&endrow=frog' % self.wfmodule1.id)
@@ -201,19 +243,17 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         # First module: no prior input, should be empty result
         response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(pd.DataFrame())
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        self.assertEqual(json.loads(response.content), empty_data_json)
 
         # Second module: input should be test data produced by first module
         response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(self.test_table)
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        self.assertEqual(json.loads(response.content), test_data_json)
 
         # Third module: should be same as second, as second module is NOP
         response = self.client.get('/api/wfmodules/%d/input' % self.wfmodule3.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        self.assertEqual(json.loads(response.content), test_data_json)
 
     # tests for the /histogram API
     def test_wf_module_histogram(self):
@@ -223,17 +263,12 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         # First module: no prior input, should be empty result
         response = self.client.get('/api/wfmodules/%d/histogram/Class' % self.wfmodule1.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data_json = make_render_json(pd.DataFrame())
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        self.assertEqual(json.loads(response.content), empty_data_json)
 
         # Second module: histogram should be count 1 for each column
         response = self.client.get('/api/wfmodules/%d/histogram/Class' % self.wfmodule2.id)
         self.assertIs(response.status_code, status.HTTP_200_OK)
-        test_data = self.test_table.groupby('Class').size().reset_index()
-        test_data.columns = ['Class', INTERNAL_COUNT_COLNAME]
-        test_data = test_data.sort_values(by=[INTERNAL_COUNT_COLNAME, 'Class'], ascending=[False, True])
-        test_data_json = make_render_json(test_data)
-        self.assertEqual(response.content.decode('utf-8'), test_data_json)
+        self.assertEqual(json.loads(response.content), test_histogram_data_json)
 
         # Test for non-existent column; should return a 204 code
         response = self.client.get('/api/wfmodules/%d/histogram/O' % self.wfmodule2.id)
@@ -244,14 +279,12 @@ class WfModuleTests(LoggedInTestCase, WfModuleTestsBase):
         # We only need to check for one module since the output is pretty much the same
         # Dates are not tested here because the test WF cannot be fed date data
         response = self.client.get('/api/wfmodules/%d/columns' % self.wfmodule1.id)
-        ref_columns = sorted([
+        self.assertIs(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(json.loads(response.content), [
             {"name": "Class", "type": "String"},
             {"name": "M", "type": "Number"},
             {"name": "F", "type": "Number"}
-        ], key=itemgetter("name"))
-        returned_columns = sorted(json.loads(response.content.decode('utf-8')), key=itemgetter("name"))
-        self.assertEqual(returned_columns, ref_columns)
-
+        ])
 
     # test stored versions of data: create, retrieve, set, list, and views
     def test_wf_module_data_versions(self):

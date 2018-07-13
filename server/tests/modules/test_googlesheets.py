@@ -1,14 +1,15 @@
-from django.conf import settings
-from server.tests.utils import LoggedInTestCase, load_and_add_module, get_param_by_id_name
-from server.modules.googlesheets import GoogleSheets
-from unittest.mock import patch, Mock
-from server.sanitizedataframe import sanitize_dataframe
-from server import oauth
-import requests.exceptions
-import pandas as pd
 import os.path
 import io
 import json
+from unittest.mock import patch, Mock
+import requests.exceptions
+import pandas as pd
+from server.sanitizedataframe import sanitize_dataframe
+from server import oauth
+from server.modules.googlesheets import GoogleSheets
+from server.modules.types import ProcessResult
+from server.tests.utils import LoggedInTestCase, load_and_add_module, \
+        get_param_by_id_name
 
 # example_csv, example_tsv, example_xls, example_xlsx: same spreadsheet, four
 # binary representations
@@ -59,7 +60,7 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.credentials_param = get_param_by_id_name('google_credentials')
         self.credentials_param.value = json.dumps({
             'name': 'file',
-            'secret': { 'refresh_token': 'a-refresh-token' },
+            'secret': {'refresh_token': 'a-refresh-token'},
         })
         self.credentials_param.save()
         self.file_param = get_param_by_id_name('googlefileselect')
@@ -72,9 +73,11 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.file_param.save()
 
         # our test data
-        self.test_table = pd.read_csv(io.BytesIO(example_csv), encoding='utf-8')
+        self.test_table = pd.read_csv(
+            io.BytesIO(example_csv),
+            encoding='utf-8'
+        )
         sanitize_dataframe(self.test_table)
-
 
     def _set_file_type(self, mime_type):
         data = json.loads(self.file_param.value)
@@ -82,16 +85,14 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.file_param.value = json.dumps(data)
         self.file_param.save()
 
-
     def tearDown(self):
         self.oauth_service_lookup_patch.stop()
 
         super().tearDown()
 
-
     def test_render_no_file(self):
-        self.assertIsNone(GoogleSheets.render(self.wf_module, None))
-
+        result = GoogleSheets.render(self.wf_module, None)
+        self.assertEqual(result, ProcessResult(pd.DataFrame()))
 
     def test_event_fetch_google_sheet(self):
         self.requests.get.return_value = MockResponse(200, example_csv)
@@ -106,7 +107,6 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.assertEqual(self.wf_module.error_msg, '')
         self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
 
-
     def _assert_file_event_happy_path(self):
         GoogleSheets.event(self.wf_module)
 
@@ -117,24 +117,20 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.assertEqual(self.wf_module.error_msg, '')
         self.assertTrue(self.wf_module.retrieve_fetched_table().equals(self.test_table))
 
-
     def test_event_fetch_csv(self):
         self._set_file_type('text/csv')
         self.requests.get.return_value = MockResponse(200, example_csv)
         self._assert_file_event_happy_path()
-
 
     def test_event_fetch_tsv(self):
         self._set_file_type('text/tab-separated-values')
         self.requests.get.return_value = MockResponse(200, example_tsv)
         self._assert_file_event_happy_path()
 
-
     def test_event_fetch_xls(self):
         self._set_file_type('application/vnd.ms-excel')
         self.requests.get.return_value = MockResponse(200, example_xls)
         self._assert_file_event_happy_path()
-
 
     def test_event_fetch_xlsx(self):
         self._set_file_type(
@@ -143,40 +139,36 @@ class GoogleSheetsTests(LoggedInTestCase):
         self.requests.get.return_value = MockResponse(200, example_xlsx)
         self._assert_file_event_happy_path()
 
-
-    def test_empty_table_on_missing_auth(self):
+    def test_no_table_on_missing_auth(self):
         self.credentials_param.value = ''
         self.credentials_param.save()
 
         GoogleSheets.event(self.wf_module)
 
-        self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)
+        self.assertIsNone(self.wf_module.retrieve_fetched_table())
         self.assertEqual(self.wf_module.error_msg,
                          'Not authorized. Please connect to Google Drive.')
 
-
-    def test_empty_table_on_http_error(self):
+    def test_no_table_on_http_error(self):
         self.requests.get.side_effect = requests.exceptions.ReadTimeout('read timeout')
         GoogleSheets.event(self.wf_module)
 
-        self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)
+        self.assertIsNone(self.wf_module.retrieve_fetched_table())
         self.assertEqual(self.wf_module.error_msg, 'read timeout')
 
-
-    def test_empty_table_on_missing_table(self):
+    def test_no_table_on_missing_table(self):
         self.requests.get.return_value = MockResponse(404, 'not found')
         GoogleSheets.event(self.wf_module)
 
-        self.assertEqual(len(self.wf_module.retrieve_fetched_table()), 0)
+        self.assertIsNone(self.wf_module.retrieve_fetched_table())
         self.assertEqual(
             self.wf_module.error_msg,
             'HTTP 404 from Google: not found'
         )
 
-
     def test_render(self):
         stored_datetime = self.wf_module.store_fetched_table(self.test_table)
         self.wf_module.set_fetched_data_version(stored_datetime)
         self.wf_module.save()
-        render = GoogleSheets.render(self.wf_module, None)
-        self.assertTrue(render.equals(self.test_table))
+        result = GoogleSheets.render(self.wf_module, None)
+        self.assertEqual(result, ProcessResult(self.test_table))

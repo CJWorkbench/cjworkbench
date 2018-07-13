@@ -1,17 +1,16 @@
-from .models import WfModule
-
-import importlib
-import os
-import importlib.util
-from pandas import DataFrame
-from types import ModuleType
-from typing import Any, Dict, Optional, Tuple
 from functools import lru_cache
+import importlib
+import importlib.util
+import os
 import sys
 import traceback
-from .importmodulefromgithub import original_module_lineno
-from . import sanitizedataframe
-from . import versions
+from types import ModuleType
+from typing import Any, Dict, Optional
+from pandas import DataFrame
+from server.importmodulefromgithub import original_module_lineno
+from server.models import WfModule
+from server.modules.types import ProcessResult
+from server.modules.moduleimpl import ModuleImpl
 
 
 # the base directory where all modules imported should be stored, i.e. the
@@ -38,25 +37,23 @@ class DynamicModule:
         """
         return hasattr(self.module, 'fetch')
 
-    def _default_render(self, wf_module, table):
+    def _default_render(self, wf_module, table) -> ProcessResult:
         """Render cached value, or pass-through input.
         """
         stored_table = wf_module.retrieve_fetched_table()
         if stored_table is not None:
             # Return cached value
-            return (stored_table, wf_module.error_msg)
+            return ProcessResult(
+                dataframe=stored_table,
+                error=wf_module.error_msg
+            )
         else:
             # Pass-through input
-            return (table, '')
+            return ProcessResult(dataframe=table)
 
-    def _call_method(self, method_name: str, *args,
-                     **kwargs) -> Tuple[DataFrame, str]:
-        """Calls `module.method_name(*params, **kwargs)` and ensures a sane
-        return value.
-
-        The method's return value will be coerced into a
-        ``(data_frame, error_string)`` tuple. data_frame may be empty, but it
-        will not be None.
+    def _call_method(self, method_name: str, *args, **kwargs) -> ProcessResult:
+        """
+        Call module.method_name(*params, **kwargs) and coerce result.
 
         Exceptions become error messages. This method cannot produce an
         exception.
@@ -74,57 +71,19 @@ class DynamicModule:
             fname = os.path.split(tb[0])[1]
             lineno = original_module_lineno(tb[1])
             error = f'{exc_name}: {str(e)} at line {lineno} of {fname}'
-            return (DataFrame(), error)
+            return ProcessResult(error=error)
 
-        if isinstance(out, DataFrame):
-            table, error = out, ''
-        elif isinstance(out, str):
-            table, error = DataFrame(), out
-        elif not isinstance(out, tuple):
-            error = f'Expected {method_name} to return tuple; got {type(out)}'
-            return (DataFrame(), error)
-        elif len(out) != 2:
-            error = (
-                f'Expected {method_name} to return 2-tuple;'
-                f' got {len(out)}-tuple'
-            )
-            return (DataFrame(), error)
-        elif isinstance(out[0], DataFrame) and isinstance(out[1], str):
-            table, error = out
-        elif isinstance(out[0], DataFrame) and out[1] is None:
-            table, error = out[0], ''
-        elif out[0] is None and isinstance(out[1], str):
-            table, error = DataFrame(), out[1]
-        else:
-            error = (
-                f'Expected {method_name} to return (DataFrame,str) tuple;'
-                f' got ({type(out[0])},{type(out[1])})'
-            )
-            return (DataFrame(), error)
-
-        len_before = len(table)
-        if sanitizedataframe.truncate_table_if_too_big(table):
-            warning = \
-                f'Truncated output from {len_before} rows to {len(table)}'
-            if error:
-                error = f'{error}\n{warning}'
-            else:
-                error = warning
-
-        table = sanitizedataframe.sanitize_dataframe(table)
-
-        return (table, error)
+        out = ProcessResult.coerce(out)
+        out.truncate_in_place_if_too_big()
+        out.sanitize_in_place()
+        return out
 
     def render(self, wf_module: WfModule,
-               table: Optional[DataFrame]) -> Tuple[DataFrame, str]:
-        """Process `table` with module `render` method, to build a new
-        DataFrame.
+               table: Optional[DataFrame]) -> ProcessResult:
+        """Process `table` with module `render` method, for a ProcessResult.
 
         If the `render` method raises an exception, this method will return an
         error string. It is always an error for a module to raise an exception.
-
-        The `render` method's return value will be coerced into a
-        ``(output_frame, error_string)`` format. At least one will be non-None.
         """
         if table is None:
             return None  # TODO disallow?
@@ -136,15 +95,12 @@ class DynamicModule:
 
         return self._call_method('render', table, params)
 
-    def call_fetch(self, params: Dict[str, Any]) -> Tuple[DataFrame, str]:
-        """Process `params` with module `fetch` method, to build a new
-        DataFrame.
+    def call_fetch(self, params: Dict[str, Any]) -> ProcessResult:
+        """
+        Process `params` with module `fetch` method, to build a ProcessResult.
 
         If the `fetch` method raises an exception, this method will return an
         error string. It is always an error for a module to raise an exception.
-
-        The `render` method's return value will be coerced into a
-        ``(output_frame, error_string)`` format. At least one will be non-None.
         """
         return self._call_method('fetch', params)
 
@@ -163,9 +119,11 @@ class DynamicModule:
 
         wf_module.set_busy(notify=False)
 
-        (table, error) = self.call_fetch(params)
+        result = self.call_fetch(params)
+        result.truncate_in_place_if_too_big()
+        result.sanitize_in_place()
 
-        versions.save_fetched_table_if_changed(wf_module, table, error)
+        ModuleImpl.commit_result(wf_module, result)
 
 
 @lru_cache(maxsize=None)
