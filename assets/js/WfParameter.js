@@ -315,9 +315,12 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'map-layers') {
       return (
           <MapLayerEditor
+              name={this.props.p.parameter_spec.name}
               paramId={this.props.p.id}
+              keyColumn={this.props.getParamText("key-column")}
               wfModuleId={this.props.wf_module_id}
               isReadOnly={this.props.isReadOnly}
+              paramData={this.props.p.value}
           />
       )
     } else {

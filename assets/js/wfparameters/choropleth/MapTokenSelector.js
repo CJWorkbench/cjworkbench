@@ -109,7 +109,7 @@ export default class MapTokenSelector extends React.Component {
         }
         return (
             <div>
-                <div className='label-margin t-d-gray content-3'>Mapbox API token</div>
+                <div className='label-margin t-d-gray content-3'>{this.props.name}</div>
                 <textarea
                     onBlur={this.onInputBlur}
                     onKeyPress={this.onInputKeyPress}
