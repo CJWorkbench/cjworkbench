@@ -40,7 +40,7 @@ class AddDeleteModuleCommandTests(TestCase):
         # undo! undo! ahhhhh everything is on fire! undo!
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(WfModule.objects.first(), existing_module)
+        self.assertEqual(WfModule.objects.filter(workflow=self.workflow).first(), existing_module)
 
         # wait no, we wanted that module
         cmd.forward()
@@ -53,7 +53,7 @@ class AddDeleteModuleCommandTests(TestCase):
         # Undo and test deleting the un-applied command. Should delete dangling WfModule too
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(WfModule.objects.first(), existing_module)
+        self.assertEqual(WfModule.objects.filter(workflow=self.workflow).first(), existing_module)
         cmd.delete()
         self.assertFalse(WfModule.objects.filter(pk=added_module.id).exists()) # should be gone
 
@@ -129,7 +129,7 @@ class AddDeleteModuleCommandTests(TestCase):
         # undo
         cmd.backward()
         self.assertEqual(all_modules.count(), 1)
-        self.assertEqual(WfModule.objects.first(), existing_module)
+        self.assertEqual(WfModule.objects.filter(workflow=self.workflow).first(), existing_module)
 
         # nevermind, redo
         cmd.forward()
