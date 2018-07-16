@@ -106,7 +106,7 @@ start_database() {
       --env PGDATA=/var/lib/postgresql/data/10.4 \
       --volume "$DBDATA_VOLUME_NAME:/var/lib/postgresql/data" \
       --network "$NETWORK_NAME" \
-      --publish-all
+      --publish-all \
       --network-alias "workbench-db" \
       --name "${PREFIX}_database" \
       $(pulled_or_cached_image_id "postgres:10.4")
@@ -282,12 +282,14 @@ start_testdb() {
   )
 }
 
+# Usage: 'unittest server.tests.modules'
 run_unittest() {
   [ "$(get_container_status testdb)" = 'running' ] && echo 'testdb already running' >&2 || start_testdb
+  shift # "unittest" is not a command
   run_python \
     --env CJW_DB_HOST=testdb \
     --name "${PREFIX}_unittest" \
-    -- python ./manage.py test "$@"
+    -- python ./manage.py test --keepdb "$@"
 }
 
 print_usage() {
