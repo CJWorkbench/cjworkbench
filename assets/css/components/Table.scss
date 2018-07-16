@@ -393,31 +393,3 @@
     }
   }
 }
-
-
-///// June 13 2018 - Pierre
-// // Table in modules (Such as Rename columns)
-// .module-content {
-//
-//   .react-grid-Grid {
-//     @extend %font-nunito-regular;
-//     font-size: 1.2rem;
-//     height: 4rem;
-//
-//   }
-//   .table-module-wrapper {
-//     resize: vertical;
-//     border-radius: 3px;
-//     max-height: 26rem;
-//     overflow: auto;
-//     overflow-x: hidden;
-//
-//     .react-grid-Main{
-//       outline:0px;
-//
-//       .react-grid-Canvas {
-//         background-color: $table-background;
-//       }
-//     }
-//   }
-// }
