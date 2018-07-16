@@ -177,6 +177,7 @@ article.lesson {
         &.done::before {
           content: "\e904"; // icon-check
           color:$brand-learn;
+          font-size: 1rem;
         }
       }
     }
