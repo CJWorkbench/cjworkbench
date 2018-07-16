@@ -170,6 +170,12 @@
 
       .module-card-header {height: 4.5rem;}
 
+      // Notes are the same width as module-stack
+
+      textarea[name="notes"], .editable-notes-read-only {
+        width: 50rem;
+      }
+
 
       /* a dummy div around output status bar, for positioning purposes  */
       .output-bar-container {
