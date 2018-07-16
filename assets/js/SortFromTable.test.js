@@ -1,4 +1,4 @@
-import { updateSort } from './SortFromTable'
+import { sortDirectionAsc, sortDirectionDesc, sortDirectionNone, updateSort } from './SortFromTable'
 import {tick} from './test-utils'
 import { store, addModuleAction, setParamValueAction, setParamValueActionByIdName, setSelectedWfModuleAction } from './workflow-reducer'
 
@@ -155,13 +155,14 @@ describe("SortFromTable actions", () => {
 
   it('adds new sort module after the given module and sets sort parameters', async () => {
     addModuleAction.mockImplementation(() => () => addModuleResponse);
-    updateSort(19, 'num_col', 'Number');
+    updateSort(19, 'num_col', 'Number', sortDirectionNone);
 
     await tick();
     expect(addModuleAction).toHaveBeenCalledWith(initialState.sortModuleId, 3);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'column', 'num_col' ]);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'dtype', 1 ]);
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', DIRECTION_PAR_ID_1, 2 ]);
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 23, 'direction', sortDirectionNone ]);
+    //expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', DIRECTION_PAR_ID_1, 2 ]);
   });
 
   it('selects the existing sort module when updating it', async () => {
@@ -172,31 +173,31 @@ describe("SortFromTable actions", () => {
 
   it('orders a String column ascending by default', async () => {
     // Click on 'str_col' once, which should give us ascending order
-    updateSort(17, 'str_col', 'String');
+    updateSort(17, 'str_col', 'String', sortDirectionAsc);
     await tick();
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'column', 'str_col' ]);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'dtype', 0 ]);
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', DIRECTION_PAR_ID_2, 1 ]);
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'direction', sortDirectionAsc ]);
   });
 
   it('orders a Number column descending by default', async () => {
-    updateSort(17, 'num_col', 'Number');
+    updateSort(17, 'num_col', 'Number', sortDirectionDesc);
     await tick();
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', DIRECTION_PAR_ID_2, 2 ]);
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'direction', sortDirectionDesc ]);
   });
 
   it('orders a Data column descending by default', async () => {
-    updateSort(17, 'date_col', 'Date');
+    updateSort(17, 'date_col', 'Date', sortDirectionDesc);
     await tick();
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', DIRECTION_PAR_ID_2, 2 ]);
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 7, 'direction', sortDirectionDesc ]);
   });
 
   it('resets ordering state when changing sort column', async () => {
     // sort 79 is for 'num_col' in initial state. Change to 'str_col' and expect ascending order
-    updateSort(79, 'str_col', 'String');
+    updateSort(79, 'str_col', 'String', sortDirectionAsc);
     await tick();
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 79, 'column', 'str_col' ]);
     expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 79, 'dtype', 0 ]);
-    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueAction', DIRECTION_PAR_ID_2, 1 ]);
+    expect(store.dispatch).toHaveBeenCalledWith([ 'setParamValueActionByIdName', 79, 'direction', sortDirectionAsc ]);
   });
 });

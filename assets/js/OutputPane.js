@@ -8,6 +8,7 @@ import Resizable from 're-resizable'
 import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
 import { findParamValByIdName} from './utils'
+import { sortDirectionNone } from './SortFromTable'
 
 export class OutputPane extends React.Component {
 
@@ -228,7 +229,7 @@ OutputPane.propTypes = {
   isReadOnly:         PropTypes.bool.isRequired,
   showColumnLetter:   PropTypes.bool.isRequired,
   sortColumn:         PropTypes.string,
-  sortDirection:      PropTypes.string, // NONE, ASC, DESC or undefined
+  sortDirection:      PropTypes.number,
   htmlOutput:         PropTypes.bool,
 };
 
@@ -240,14 +241,14 @@ function mapStateToProps(state, ownProps) {
 
   const showColumnLetter = id_name === 'formula' || id_name === 'reorder-columns';
 
-  let sortColumn, sortDirection
+  let sortColumn, sortDirection = sortDirectionNone
 
   if (id_name === 'sort-from-table') {
     const columnParam = findParamValByIdName(wfModule, 'column');
     const directionParam = findParamValByIdName(wfModule, 'direction').value;
 
     sortColumn = columnParam && columnParam.value || null;
-    sortDirection = [ 'NONE', 'ASC', 'DESC' ][directionParam] || 'NONE'
+    sortDirection = directionParam || sortDirectionNone
   }
 
   return {

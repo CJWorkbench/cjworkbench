@@ -9,6 +9,8 @@ import ReactDataGrid, { HeaderCell } from 'react-data-grid'
 import {idxToLetter} from "./utils";
 import PropTypes from 'prop-types'
 import debounce from 'lodash/debounce'
+import ColumnContextMenu from './ColumnContextMenu'
+import { sortDirectionNone } from './SortFromTable'
 
 // --- Row and column formatting ---
 
@@ -203,8 +205,8 @@ export class ColumnHeader extends React.PureComponent {
     isReadOnly: PropTypes.bool.isRequired,
     index: PropTypes.number.isRequired,
     isSorted: PropTypes.bool.isRequired,
-    sortDirection: PropTypes.oneOf([ 'NONE', 'ASC', 'DESC' ]), // not required, which is weird
-    onSortColumn: PropTypes.func.isRequired,
+    sortDirection: PropTypes.number, // not required, which is weird
+    setSortDirection: PropTypes.func.isRequired,
     showLetter: PropTypes.bool.isRequired,
     onDragStartColumnIndex: PropTypes.func.isRequired, // func(index) => undefined
     onDragEnd: PropTypes.func.isRequired, // func() => undefined
@@ -222,10 +224,8 @@ export class ColumnHeader extends React.PureComponent {
     };
   }
 
-  onClickSort = () => {
-    if(!this.props.isReadOnly) {
-      this.props.onSortColumn(this.props.columnKey, this.props.columnType);
-    }
+  onSetSortDirection = (sortDirection) => {
+    this.props.setSortDirection(this.props.columnKey, this.props.columnType, sortDirection);
   }
 
   onMouseEnter = () => {
@@ -258,48 +258,15 @@ export class ColumnHeader extends React.PureComponent {
     this.props.onDragEnd()
   }
 
-  renderSortArrow() {
+  renderColumnMenu() {
     if(this.props.isReadOnly) {
-      return '';
+      return null;
     }
-
-    const {
-      columnKey,
-      columnType,
-      isSorted,
-      sortDirection,
-      index,
-    } = this.props
-
-    let sortDirectionClass = '';
-
-    // If we change the sort icon, change the class names here.
-    const sortDirectionDict = {
-      'NONE': '',
-      'ASC': 'icon-sort-up',
-      'DESC': 'icon-sort-down',
-    };
-
-    if (isSorted && (sortDirection != 'NONE')) {
-      // If column is sorted, set the direction to current sort direction
-      sortDirectionClass = sortDirectionDict[sortDirection];
-    } else if (this.state.isHovered) {
-      // If there is no sort but column is hovered, set to "default" sort direction
-      if (['Number', 'Date'].indexOf(columnType) >= 0) {
-        sortDirectionClass = sortDirectionDict['DESC'];
-      } else if (['String'].indexOf(columnType) >= 0) {
-        sortDirectionClass = sortDirectionDict['ASC'];
-      }
-    }
-
-    if (sortDirectionClass.length > 0) {
-      return (
-        <button title="Sort" className='column-sort-arrow' onClick={this.onClickSort}>
-          <i className={sortDirectionClass}></i>
-        </button>
+    
+    return (
+      <ColumnContextMenu setSortDirection={this.onSetSortDirection} sortDirection={this.props.isSorted == true
+        ? this.props.sortDirection : sortDirectionNone}/>
       );
-    }
-    return '';
   }
 
   renderLetter() {
@@ -324,7 +291,7 @@ export class ColumnHeader extends React.PureComponent {
       draggingColumnIndex,
     } = this.props
 
-    const sortArrowSection = this.renderSortArrow();
+    const columnMenuSection = this.renderColumnMenu();
     const letterSection = this.renderLetter();
 
     function maybeDropZone(leftOrRight, toIndex) {
@@ -362,7 +329,7 @@ export class ColumnHeader extends React.PureComponent {
           {maybeDropZone('left', index)}
           <div className="sort-container">
             <EditableColumnName columnKey={columnKey} onRename={this.props.onRenameColumn} isReadOnly={this.props.isReadOnly}/>
-            {sortArrowSection}
+            {columnMenuSection}
           </div>
           {maybeDropZone('right', index + 1)}
         </div>
@@ -388,7 +355,6 @@ function makeFormattedCols(props) {
   const safeColumns = props.columns || [];
   const columnTypes = props.columnTypes || safeColumns.map(_ => '');
   const showLetter = props.showLetter || false;
-  const onSortColumn = props.onSortColumn || (() => {});
 
   const columns = safeColumns.map((columnKey, index) => ({
     key: columnKey,
@@ -409,7 +375,7 @@ function makeFormattedCols(props) {
         index={index}
         isSorted={props.sortColumn === columnKey}
         sortDirection={props.sortDirection}
-        onSortColumn={onSortColumn}
+        setSortDirection={props.setSortDirection}
         showLetter={showLetter}
         onDragStartColumnIndex={props.onDragStartColumnIndex}
         onDragEnd={props.onDragEnd}
@@ -438,9 +404,9 @@ export default class DataGrid extends React.Component {
     revision:           PropTypes.number,
     resizing:           PropTypes.bool,
     onEditCell:         PropTypes.func,
-    onSortColumn:       PropTypes.func,
+    setSortDirection:   PropTypes.func.isRequired,
     sortColumn:         PropTypes.string,
-    sortDirection:      PropTypes.string,
+    sortDirection:      PropTypes.number,
     showLetter:         PropTypes.bool,
     onReorderColumns:   PropTypes.func,
     onRenameColumn:     PropTypes.func,
