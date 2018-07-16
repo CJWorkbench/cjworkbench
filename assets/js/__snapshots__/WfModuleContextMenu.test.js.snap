@@ -75,8 +75,8 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
           <Portal>
             <DropdownMenu
               flip={true}
-              left={true}
               persist={true}
+              position="left"
               tag="div"
             >
               <Popper
@@ -84,9 +84,9 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                 className="dropdown-menu"
                 component="div"
                 eventsEnabled={true}
-                left={true}
                 modifiers={Object {}}
                 placement="bottom-start"
+                position="left"
                 positionFixed={false}
                 role="menu"
                 tabIndex="-1"
@@ -95,7 +95,7 @@ exports[`WfModuleContextMenu should match snapshot 1`] = `
                 <div
                   aria-hidden={true}
                   className="dropdown-menu"
-                  left={true}
+                  position="left"
                   role="menu"
                   style={
                     Object {

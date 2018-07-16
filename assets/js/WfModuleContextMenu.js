@@ -37,7 +37,7 @@ export default class WfModuleContextMenu extends React.Component {
           <i className='context-button--icon icon-more'></i>
         </DropdownToggle>
         <Portal>
-          <DropdownMenu persist left>
+          <DropdownMenu persist position='left'>
             <DropdownItem key={1} onClick={this.toggleExportModal} className='test-export-button'>
               <i className='icon-download'></i>
               <span>Export data</span>
