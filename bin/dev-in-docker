@@ -20,7 +20,14 @@ set -e
 #set -x
 
 cd "$(dirname "$0")"/..
-ABSDIR="$(realpath .)"
+
+if type PowerShell.exe >/dev/null 2>&1; then
+  # Windows
+  ABSDIR="$(PowerShell.exe -NoLogo -Command " (Resolve-Path .\).Path")"
+else
+  # UNIX
+  ABSDIR="$(realpath "$0")"
+fi
 
 PREFIX=cjworkbench_dev
 NETWORK_NAME="${PREFIX}_network"
@@ -255,10 +262,11 @@ run_node() {
     docker_args+=(--volume "$ABSDIR"/"$rw_file":/app/"$rw_file":rw)
   done
 
+  # --workdir //app (with the extra slash) circumvents https://github.com/moby/moby/issues/24029 on Git for Windows Bash
   docker run \
     -i -t --rm \
     --volume "$NODE_MODULES_VOLUME_NAME":/app/node_modules:rw \
-    --workdir /app \
+    --workdir //app \
     "${docker_args[@]}" \
     $(pulled_or_cached_image_id node:10.1.0-slim) \
     "$@"
