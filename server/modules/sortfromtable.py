@@ -1,52 +1,60 @@
 from .moduleimpl import ModuleImpl
+from .types import ProcessResult
 import pandas as pd
 
-# ---- SelectColumns ----
+
+def _do_render(table, column, column_type, is_ascending):
+    if not column or column not in table.columns:
+        return ProcessResult(table)
+
+    if is_ascending is None:  # Why do we even _have_ that lever?
+        return ProcessResult(table)
+
+    untyped_values = table[column]
+    if column_type == 'String':
+        typed_values = untyped_values.astype(str)
+    elif column_type == 'Number':
+        typed_values = pd.to_numeric(untyped_values, errors='coerce')
+    elif column_type == 'Date':
+        typed_values = pd.to_datetime(untyped_values, errors='coerce')
+    else:
+        typed_values = untyped_values
+
+    # Add temporary column for sorting. Pick unique name: just take the last
+    # name and add a letter.
+    tmp_sort_col = max(table.columns) + 'ZZZ'
+    table[tmp_sort_col] = typed_values
+    table.sort_values(
+        by=tmp_sort_col,
+        ascending=is_ascending,
+        inplace=True,
+        na_position='last'
+    )
+    table.drop(columns=[tmp_sort_col], inplace=True)
+    table.reset_index(inplace=True, drop=True)
+
+    return ProcessResult(table)
+
+
+_SortTypes = {
+    0: 'String',
+    1: 'Number',
+    2: 'Date',
+}
+_SortAscendings = {
+    0: True,
+    1: False
+}
+
 
 class SortFromTable(ModuleImpl):
     def render(wf_module, table):
-        sort_col = wf_module.get_param_column('column')
-        # NOP if column is not selected
-        if sort_col == '':
-            return table
-        if sort_col not in table.columns:
-            wf_module.set_error("Sort column no longer exists. Please select a new column.")
-            return table
+        column = wf_module.get_param_column('column')
 
-        # Current options: "String|Number|Date"
-        sort_type_idx = int(wf_module.get_param_menu_idx('dtype'))
+        sort_type_int = int(wf_module.get_param_menu_idx('dtype'))
+        sort_type = _SortTypes.get(sort_type_int, 'String')
 
-        # Current options: "Ascending|Descending"
-        sort_dir_idx = int(wf_module.get_param_menu_idx('direction'))
-        # NOP if we are not sorting at all
-        if sort_dir_idx == 0:
-            return table
-        sort_ascending = (sort_dir_idx == 1)
+        is_ascending_int = int(wf_module.get_param_menu_idx('direction'))
+        is_ascending = _SortAscendings.get(is_ascending_int, None)  # yep: None
 
-        # A "constant" for our policy on where "NA" should go
-        NA_POS = 'last'
-
-        # A temporary column is created for typecast and sorting in the operations below.
-        # This column is removed after the sorting so that sort does not modify the data.
-        SORTED_SUFFIX = '___sort___'
-        tmp_sort_col = sort_col + SORTED_SUFFIX
-        if sort_type_idx == 0:
-            # Sort as string
-            table[tmp_sort_col] = table[sort_col].astype(str)
-        elif sort_type_idx == 1:
-            # Sort as number
-            table[tmp_sort_col] = pd.to_numeric(table[sort_col], errors='coerce')
-        elif sort_type_idx == 2:
-            # Sort as datetime
-            table[tmp_sort_col] = pd.to_datetime(table[sort_col], errors='coerce')
-
-        table.sort_values(
-            by=tmp_sort_col,
-            ascending=sort_ascending,
-            inplace=True,
-            na_position=NA_POS)
-
-        table.drop(columns=[tmp_sort_col], inplace=True)
-        table.reset_index(inplace=True, drop=True)
-
-        return table
+        return _do_render(table, column, sort_type, is_ascending)

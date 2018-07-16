@@ -80,6 +80,10 @@ class Workflow(models.Model):
             #
             # list() executes the query
             list(Workflow.objects.select_for_update().filter(id=self.id))
+            # save() overwrites all fields, so make sure we have the latest
+            # versions.
+            # https://code.djangoproject.com/ticket/28344#comment:10
+            self.refresh_from_db()
 
             yield
 

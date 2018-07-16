@@ -1,14 +1,10 @@
 # Module dispatch table and implementations
-import inspect
-import os
 import pandas as pd
-from django.conf import settings
+from typing import Optional
 from server.models import WfModule
+from server.modules.types import ProcessResult
 from .dynamicdispatch import get_module_render_fn, \
         get_module_html_path, wf_module_to_dynamic_module
-from .sanitizedataframe import sanitize_dataframe, truncate_table_if_too_big
-from django.utils.translation import gettext as _
-
 from .modules.counybydate import CountByDate
 from .modules.formula import Formula
 from .modules.loadurl import LoadURL
@@ -74,62 +70,36 @@ module_dispatch_tbl = {
 # TODO make all modules look like the ones in dynamicdispatch.py, then nix
 # this method.
 def _module_dispatch_render_static(dispatch, wf_module, table):
-    tableout = dispatch.render(wf_module, table)
-    error = None
-
-    if isinstance(tableout, str):
-        # a string is an error message, and there is no table
-        (tableout, error) = (table, tableout)  # weird? output = input
-
-    if isinstance(tableout, tuple) and len(tableout) == 2:
-        # a tuple is what we expect: (table, error)
-        (tableout, error) = tableout
-
-    if (tableout is not None) and (not isinstance(tableout, pd.DataFrame)):
-        # if it's not a string or a tuple it needs to be a table
-        error = _('Module did not return a table or an error message')
-        tableout = None
-
-    if tableout is None:
-        tableout = pd.DataFrame()
-
-    # Restrict to row limit. We set an error, but still return the output table
-    nrows = len(tableout)
-    if truncate_table_if_too_big(tableout):
-        error = _('Output has %(nrows)d rows, truncated to %(maxnrows)d') % {
-            'nrows': nrows,
-            'maxnrows': settings.MAX_ROWS_PER_TABLE,
-        }
-
-    # Ensure correct column types etc.
-    tableout = sanitize_dataframe(tableout)
-
-    return (tableout, error)
+    result = dispatch.render(wf_module, table)
+    result = ProcessResult.coerce(result)
+    result.truncate_in_place_if_too_big()
+    result.sanitize_in_place()
+    return result
 
 
 # Main render entrypoint.
 def module_dispatch_render(wf_module: WfModule,
-                           table: pd.DataFrame) -> pd.DataFrame:
-    """Sets wf_module error/status and returns its DataFrame data.
+                           table: pd.DataFrame) -> ProcessResult:
+    """Sets wf_module error/status and returns its ProcessResult.
     """
     if wf_module.module_version is None:
-        return pd.DataFrame()  # happens if module deleted
+        return ProcessResult(pd.DataFrame())  # happens if module deleted
 
     render_fn = None
 
     dispatch = wf_module.module_version.module.dispatch
     if dispatch in module_dispatch_tbl:
-        tableout, error = _module_dispatch_render_static(
+        result = _module_dispatch_render_static(
             module_dispatch_tbl[dispatch],
             wf_module,
             table
         )
     else:
         render_fn = get_module_render_fn(wf_module)
-        tableout, error = render_fn(wf_module, table)
+        result = render_fn(wf_module, table)
 
-    if error:
-        wf_module.set_error(error, notify=True)
+    if result.error:
+        wf_module.set_error(result.error, notify=True)
     else:
         if wf_module.status != WfModule.READY:
             # set notify=True to fix #157160567 if bad input is fixed, then
@@ -140,7 +110,7 @@ def module_dispatch_render(wf_module: WfModule,
             # get two refreshes (the other is from ChangeParameterCommand)
             wf_module.set_ready(notify=True)
 
-    return tableout
+    return result
 
 
 def module_dispatch_event(wf_module, **kwargs):
@@ -155,23 +125,12 @@ def module_dispatch_event(wf_module, **kwargs):
         dynamic_module.fetch(wf_module)
 
 
-def module_dispatch_output(wf_module, table, **kwargs):
+def module_get_html_bytes(wf_module) -> Optional[bytes]:
     dispatch = wf_module.module_version.module.dispatch
-    if dispatch not in module_dispatch_tbl.keys():
-        html_file_path = get_module_html_path(wf_module)
-    else:
-        file_path = inspect.getfile(module_dispatch_tbl[dispatch])
-        module_path = os.path.dirname(file_path)
-        for f in os.listdir(module_path):
-            if f.endswith(".html"):
-                html_file_path = os.path.join(module_path, f)
-                break
+    if dispatch in module_dispatch_tbl:
+        # No internal modules have HTML outputs
+        return None
 
-    tableout = module_dispatch_render(wf_module, table)
-    params = wf_module.create_parameter_dict(table)
-    # got some error handling in here if, for some reason, someone tries to
-    # call output on this and it doesn't have any defined html output
-    html_file = open(html_file_path, 'r+', encoding="utf-8")
-    html_str = html_file.read()
-
-    return (html_str, tableout, params)
+    html_file_path = get_module_html_path(wf_module)
+    with open(html_file_path, 'rb') as f:
+        return f.read()

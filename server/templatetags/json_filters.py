@@ -6,13 +6,23 @@ import re
 register = template.Library()
 
 potential_hack_chars = re.compile('[<>&]')
+
+
 def escape_potential_hack_char(m):
     c = m.group(0)
 
-    if   c == '<': return '\\u003c'
-    elif c == '<': return '\\u003e'
-    elif c == '&': return '\\u0026'
-    else: return c # should never happen
+    if c == '<':
+        return '\\u003c'
+    elif c == '<':
+        return '\\u003e'
+    elif c == '&':
+        return '\\u0026'
+    else:
+        return c  # should never happen
+
+
+def escape_potential_hack_chars(s):
+    return potential_hack_chars.sub(escape_potential_hack_char, s)
 
 
 @register.filter
@@ -36,5 +46,5 @@ def json_in_script_tag(serialized_data):
         return mark_safe('null')
 
     raw = DjangoJSONEncoder().encode(serialized_data)
-    escaped = potential_hack_chars.sub(escape_potential_hack_char, raw)
+    escaped = escape_potential_hack_chars(raw)
     return mark_safe(escaped)

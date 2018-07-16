@@ -104,7 +104,7 @@ class CountByDate(ModuleImpl):
                 CountByDate.TIME_ONLY = True
 
         except (ValueError, TypeError):
-            return('The column \'%s\' does not appear to be dates or time.' % col)
+            return('The column \'%s\' does not appear to be dates or time' % col)
 
         # Figure out our groupby options and groupby
         # behavior based on the input format.

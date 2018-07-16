@@ -2,9 +2,9 @@
 import datetime
 from django.utils import timezone
 from django.conf import settings
-from pandas import DataFrame
 from server.models import Delta, WfModule
 from server.models import ChangeDataVersionCommand, StoredObject
+from server.modules.types import ProcessResult
 from server.notifications import \
         find_output_deltas_to_notify_from_fetched_tables, email_output_delta
 from server.triggerrender import notify_client_workflow_version_changed
@@ -47,8 +47,8 @@ def WorkflowRedo(workflow):
     notify_client_workflow_version_changed(workflow)
 
 
-def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
-                                  error_message: str) -> datetime.datetime:
+def save_result_if_changed(wfm: WfModule,
+                           new_result: ProcessResult) -> datetime.datetime:
     """Store retrieved data table, if it is a change from wfm's existing data.
 
     "Change" here means either a changed table or changed error message.
@@ -64,12 +64,12 @@ def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
 
     Return the timestamp (if changed) or None (if not).
     """
-
     with wfm.workflow.cooperative_lock():
         wfm.last_update_check = timezone.now()
 
         # Store this data only if it's different from most recent data
         old_table = wfm.retrieve_fetched_table()
+        new_table = new_result.dataframe
         version_added = wfm.store_fetched_table_if_different(new_table)
 
         if version_added:
@@ -82,8 +82,8 @@ def save_fetched_table_if_changed(wfm: WfModule, new_table: DataFrame,
         else:
             output_deltas = []
 
-        wfm.error_msg = error_message or ''
-        wfm.status = (WfModule.ERROR if error_message else WfModule.READY)
+        wfm.error_msg = new_result.error
+        wfm.status = (WfModule.ERROR if new_result.error else WfModule.READY)
         wfm.save()
 
         # Mark has_unseen_notifications via direct SQL

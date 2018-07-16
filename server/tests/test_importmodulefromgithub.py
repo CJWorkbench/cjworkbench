@@ -8,8 +8,10 @@ import tempfile
 from server.importmodulefromgithub import *
 from server.importmodulefromgithub import sanitise_url
 from server.dispatch import module_dispatch_render
+from server.modules.types import ProcessResult
 from server.tests.utils import *
 import pandas as pd
+
 
 # Patch get_already_imported from importmodulefromgithub
 def overriden_get_already_imported():
@@ -22,7 +24,6 @@ class ImportFromGitHubTest(LoggedInTestCase):
     def setUp(self):
         super().setUp()  # log in
 
-        self.importable_repo_name = 'importable'
         # must match importable.json test data file
         self.importable_id_name = 'importable_not_repo_name'
 
@@ -36,6 +37,7 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
     def tearDown(self):
         self.cleanup()
+        super().tearDown()
 
         try:
             self.clone_temp_dir.cleanup()
@@ -55,15 +57,15 @@ class ImportFromGitHubTest(LoggedInTestCase):
         return self.clone_temp_dir.name
 
     # Where do we install the files?
-    # Actual final location has version number added to the end of this
+    # Actual final location has version number added to the end of this,
     # e.g. imported_dir() + "/123456"
     def imported_dir(self):
         pwd = os.path.dirname(os.path.abspath(__file__))
         return os.path.join(pwd, '..', '..', 'importedmodules',
                             self.importable_id_name)
 
-    # fills clone_dir() with a set of module files in "freshly cloned from
-    # github" state. erases anything previously there
+    # fills clone_dir() with a set of module files in "freshly cloned from github" state
+    # erases anything previously there
     def fake_github_clone(self, source_dir='test_data/importable'):
         clonedir = self.clone_dir()
         if os.path.isdir(clonedir):
@@ -368,23 +370,20 @@ class ImportFromGitHubTest(LoggedInTestCase):
 
         colparam.set_value('M') # double this
         multicolparam.set_value('F,Other') # triple these
-        out = module_dispatch_render(wfm, test_table)
-        self.assertEqual(wfm.error_msg, '')
-        self.assertEqual(wfm.status, WfModule.READY)
-        self.assertTrue(out.equals(test_table_out))
+        result = module_dispatch_render(wfm, test_table)
+        self.assertEqual(result, ProcessResult(test_table_out))
 
         # Test that bad column parameter values are removed
         colparam.set_value('missing_column_name')
         multicolparam.set_value('Other,junk_column_name')
         test_table_out = test_table.copy()
         test_table_out[['Other']] *= 3   # multicolumn parameter has only one valid col
-        out = module_dispatch_render(wfm, test_table)
-        self.assertEqual(wfm.status, WfModule.READY)
-        self.assertTrue(out.equals(test_table_out))
+        result = module_dispatch_render(wfm, test_table)
+        self.assertEqual(result, ProcessResult(test_table_out))
 
         # if the module crashes, we should get an error with a line number
         stringparam.set_value('crashme')
-        out = module_dispatch_render(wfm, test_table)
-        self.assertEqual(wfm.status, WfModule.ERROR)
-
-
+        result = module_dispatch_render(wfm, test_table)
+        self.assertEqual(result, ProcessResult(
+            error='ValueError: we crashed! at line 7 of importable.py'
+        ))

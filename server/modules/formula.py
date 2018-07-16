@@ -61,10 +61,11 @@ def eval_excel_one_row(code, table):
         c2 = int(range['n2'])
 
         nrows, ncols = table.shape
-        if r1<0 or r1>=nrows or c1<0 or c1>=ncols:
-            return '#REF!' # expression references non-existent data
+        if r1 < 0 or r1 >= nrows or c1 < 0 or c1 >= ncols:
+            # expression references non-existent data
+            return '#REF!'
 
-        table_part = list(table.iloc[r1:r2,c1:c2].values.flat)
+        table_part = list(table.iloc[r1:r2, c1:c2].values.flat)
         formula_args.append(flatten_single_element_lists(table_part))
 
     # evaluate the formula just once
@@ -72,7 +73,7 @@ def eval_excel_one_row(code, table):
         val = code(*formula_args)
     except Exception as e:
         if type(e).__name__ == 'DispatcherError':
-            raise ValueError(_('Unknown function: %s') % e.args[1])
+            raise ValueError('Unknown function: {e.args[1]}')
         else:
             raise
     return val
@@ -81,17 +82,21 @@ def eval_excel_one_row(code, table):
 def eval_excel_all_rows(code, table):
     col_idx = []
     for token, obj in code.inputs.items():
-        # If the formula is valid but no object comes back it means the reference is no good
+        # If the formula is valid but no object comes back it means the
+        # reference is no good
         # Missing row number?
         # with only A-Z. But just in case:
         if obj is None:
-            raise ValueError(_('Bad cell reference %s') % token)
+            raise ValueError(f'Bad cell reference {token}')
 
         ranges = obj.ranges
         for rng in ranges:
             # r1 and r2 refer to which rows are referenced by the range.
             if rng['r1'] != '1' or rng['r2'] != '1':
-                raise ValueError(_('Excel formulas can only reference the first row when applied to all rows'))
+                raise ValueError(
+                    'Excel formulas can only reference '
+                    'the first row when applied to all rows'
+                )
 
             col_first = rng['n1']
             col_last = rng['n2']
@@ -102,7 +107,9 @@ def eval_excel_all_rows(code, table):
     for i, row in enumerate(table.values):
         args_to_excel = []
         for col in col_idx:
-            args_to_excel.append(flatten_single_element_lists([row[idx] for idx in col]))
+            args_to_excel.append(
+                flatten_single_element_lists([row[idx] for idx in col])
+            )
         newcol.append(code(*args_to_excel))
 
     return newcol
@@ -113,12 +120,13 @@ def excel_formula(table, formula, all_rows):
         # 0 is a list of tokens, 1 is the function builder object
         code = Parser().ast(formula)[1].compile()
     except Exception as e:
-        raise  ValueError(_("Couldn't parse formula: %s") % str(e))
+        raise ValueError(f"Couldn't parse formula: {str(e)}")
 
     if all_rows:
         newcol = eval_excel_all_rows(code, table)
     else:
-        newcol = list(itertools.repeat(None, len(table))) # the whole column is blank except first row
+        # the whole column is blank except first row
+        newcol = list(itertools.repeat(None, len(table)))
         newcol[0] = eval_excel_one_row(code, table)
 
     return newcol
@@ -132,9 +140,9 @@ class Formula(ModuleImpl):
             return None     # no rows to process
 
         syntax = wf_module.get_param_menu_idx('syntax')
-        if syntax== 0:
+        if syntax == 0:
             formula = wf_module.get_param_string('formula_excel').strip()
-            if formula=='':
+            if formula == '':
                 return table
             all_rows = wf_module.get_param_checkbox('all_rows')
             try:
@@ -143,7 +151,7 @@ class Formula(ModuleImpl):
                 return str(e)
         else:
             formula = wf_module.get_param_string('formula_python').strip()
-            if formula=='':
+            if formula == '':
                 return table
             try:
                 newcol = python_formula(table, formula)
@@ -157,9 +165,9 @@ class Formula(ModuleImpl):
                 out_column = 'result'
             else:
                 n = 0
-                while 'result' + str(n) in colnames:
+                while f'result{n}' in table.columns:
                     n += 1
-                out_column = 'result' + str(n)
+                out_column = f'result{n}'
         table[out_column] = newcol
 
         wf_module.set_ready(notify=False)

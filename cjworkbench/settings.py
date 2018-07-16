@@ -315,9 +315,9 @@ LOGGING = {
             # Ignore those WARNINGs and only log ERRORs.
             'level': 'ERROR',
         },
-        #'django.db.backends': { # only gets messages when settings.DEBUG is True
+        #'django.db.backends': {  # only gets messages when settings.DEBUG==True
         #    'level': 'DEBUG',
-        #    'handlers': [ 'debug_console' ],
+        #    'handlers': ['debug_console'],
         #},
     }
 }

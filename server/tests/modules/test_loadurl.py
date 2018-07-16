@@ -1,19 +1,59 @@
-from server.views.WfModule import make_render_json
-from server.tests.utils import *
-import requests_mock
-import pandas as pd
-import os
-import json
-import tempfile
-from django.test import override_settings
-from server.sanitizedataframe import sanitize_dataframe
 from collections import OrderedDict
+import io
+import json
+import os
+import tempfile
+from unittest.mock import patch
+from django.conf import settings
+from django.test import override_settings
+import requests
+import pandas as pd
+from server.execute import execute_nocache
+from server.models import WfModule, ParameterVal
+from server.modules.types import ProcessResult
+from server.tests.utils import LoggedInTestCase, load_and_add_module, \
+        mock_xlsx_path
 
-mock_json_text = '[ {"Month" : "Jan", "Amount": 10},\n {"Month" : "Feb", "Amount": 20} ]'
-mock_json_table = pd.DataFrame(json.loads(mock_json_text))
+XLSX_MIME_TYPE = \
+        'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 
-mock_json_path = 'data.series[1]'
-mock_json_path_text = '{"data": {"junk":"aaa", "series": [ {"key":"value"}, [ {"Month" : "Jan", "Amount": 10},\n {"Month" : "Feb", "Amount": 20} ] ] } }'
+mock_csv_text = 'Month,Amount\nJan,10\nFeb,20'
+mock_csv_raw = io.BytesIO(mock_csv_text.encode('utf-8'))
+mock_csv_table = pd.read_csv(mock_csv_raw)
+mock_csv_text2 = \
+        'Month,Amount,Name\nJan,10,Alicia Aliciason\nFeb,666,Fred Frederson'
+mock_csv_raw2 = io.BytesIO(mock_csv_text2.encode('utf-8'))
+mock_csv_table2 = pd.read_csv(mock_csv_raw2)
+
+
+def mock_text_response(text, content_type):
+    response = requests.Response()
+    response.encoding = 'utf-8'
+    response.headers['Content-Type'] = content_type
+    response.raw = io.BytesIO(text.encode('utf-8'))
+    response.reason = 'OK'
+    response.status_code = 200
+    return response
+
+
+def mock_bytes_response(b, content_type):
+    response = requests.Response()
+    response.headers['Content-Type'] = content_type
+    response.raw = io.BytesIO(b)
+    response.reason = 'OK'
+    response.status_code = 200
+    return response
+
+
+def mock_404_response(text):
+    response = requests.Response()
+    response.encoding = 'utf-8'
+    response.headers['Content-Type'] = 'text/plain; charset=utf-8'
+    response.raw = io.BytesIO(text.encode('utf-8'))
+    response.reason = 'Not Found'
+    response.status_code = 404
+    return response
+
 
 # ---- LoadURL ----
 @override_settings(MEDIA_ROOT=tempfile.gettempdir())
@@ -23,18 +63,14 @@ class LoadFromURLTests(LoggedInTestCase):
         self.wfmodule = load_and_add_module('loadurl')
 
         # save references to our parameter values so we can tweak them later
-        self.url_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='url'))
-        self.fetch_pval = ParameterVal.objects.get(parameter_spec=ParameterSpec.objects.get(id_name='version_select'))
+        self.url_pval = ParameterVal.objects.get(parameter_spec__id_name='url')
+        self.fetch_pval = ParameterVal.objects.get(
+            parameter_spec__id_name='version_select'
+        )
 
     # send fetch event to button to load data
     def press_fetch_button(self):
-        self.client.post('/api/parameters/%d/event' % self.fetch_pval.id, {'type': 'click'})
-
-    # get rendered result
-    # TODO this should be replaced with calls to execute_nocache, getting render through the view is deprecated
-    def get_render(self):
-        return self.client.get('/api/wfmodules/%d/render' % self.wfmodule.id)
-
+        self.client.post('/api/parameters/%d/event' % self.fetch_pval.id)
 
     def test_load_csv(self):
         url = 'http://test.com/the.csv'
@@ -47,13 +83,14 @@ class LoadFromURLTests(LoggedInTestCase):
         self.assertIsNone(self.wfmodule.workflow.last_delta)
 
         # success case
-        with requests_mock.Mocker() as m:
-            m.get(url, text=mock_csv_text, headers={'content-type':'text/csv'})
+        with patch('requests.get') as get:
+            get.return_value = mock_text_response(mock_csv_text, 'text/csv')
             self.press_fetch_button()
-            response = self.get_render()
-            self.assertEqual(response.content.decode('utf-8'), make_render_json(mock_csv_table))
+            result = execute_nocache(self.wfmodule)
+            self.assertEqual(result, ProcessResult(mock_csv_table))
 
-            # should create a new data version on the WfModule, and a new delta representing the change
+            # should create a new data version on the WfModule, and a new delta
+            # representing the change
             self.wfmodule.refresh_from_db()
             self.wfmodule.workflow.refresh_from_db()
             first_version = self.wfmodule.get_fetched_data_version()
@@ -62,50 +99,53 @@ class LoadFromURLTests(LoggedInTestCase):
             self.assertIsNotNone(first_version)
             self.assertIsNotNone(first_delta)
 
-        # retrieving exactly the same data should not create a new data version or delta, should update check time
-        with requests_mock.Mocker() as m:
-            m.get(url, text=mock_csv_text, headers={'content-type': 'text/csv'})
+        # retrieving exactly the same data should not create a new data version
+        # or delta, should update check time
+        with patch('requests.get') as get:
+            get.return_value = mock_text_response(mock_csv_text, 'text/csv')
             self.press_fetch_button()
 
             self.wfmodule.refresh_from_db()
             self.wfmodule.workflow.refresh_from_db()
-            self.assertEqual(self.wfmodule.get_fetched_data_version(), first_version)
+            self.assertEqual(self.wfmodule.get_fetched_data_version(),
+                             first_version)
             self.assertEqual(self.wfmodule.workflow.last_delta, first_delta)
             second_check_time = self.wfmodule.last_update_check
             self.assertNotEqual(second_check_time, first_check_time)
 
         # Retrieving different data should create a new data version and delta
-        with requests_mock.Mocker() as m:
-            m.get(url, text=mock_csv_text2, headers={'content-type': 'text/csv'})
+        with patch('requests.get') as get:
+            get.return_value = mock_text_response(mock_csv_text2, 'text/csv')
             self.press_fetch_button()
-            response = self.get_render()
-            self.assertEqual(response.content.decode('utf-8'), make_render_json(mock_csv_table2))
+            result = execute_nocache(self.wfmodule)
+            self.assertEqual(result, ProcessResult(mock_csv_table2))
 
             self.wfmodule.refresh_from_db()
             self.wfmodule.workflow.refresh_from_db()
-            self.assertNotEqual(self.wfmodule.get_fetched_data_version(), first_version)
+            self.assertNotEqual(self.wfmodule.get_fetched_data_version(),
+                                first_version)
             self.assertNotEqual(self.wfmodule.workflow.last_delta, first_delta)
-            self.assertNotEqual(self.wfmodule.last_update_check, second_check_time)
+            self.assertNotEqual(self.wfmodule.last_update_check,
+                                second_check_time)
 
         # malformed CSV should put module in error state
-        with requests_mock.Mocker() as m:
-            m.get(url, text = 'a,b\n"1', headers={'content-type':'text/csv'})
+        with patch('requests.get') as get:
+            get.return_value = mock_text_response('a,b\n"1', 'text/csv')
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
             self.assertEqual(self.wfmodule.status, WfModule.ERROR)
 
-
     def test_load_csv_bad_content_type(self):
-        # return text/plain type and rely on filename detection, as https://raw.githubusercontent.com/ does
+        # return text/plain type and rely on filename detection, as
+        # https://raw.githubusercontent.com/ does
         url = 'https://raw.githubusercontent.com/user/repo/branch/the.csv'
         self.url_pval.set_value(url)
         self.url_pval.save()
-        with requests_mock.Mocker() as m:
-            m.get(url, text=mock_csv_text, headers={'content-type':'text/plain'})
+        with patch('requests.get') as get:
+            get.return_value = mock_text_response(mock_csv_text, 'text/plain')
             self.press_fetch_button()
-            response = self.get_render()
-            self.assertEqual(response.content.decode('utf-8'), make_render_json(mock_csv_table))
-
+            result = execute_nocache(self.wfmodule)
+            self.assertEqual(result, ProcessResult(mock_csv_table))
 
     def test_load_json(self):
         url = 'http://test.com/the.json'
@@ -113,21 +153,27 @@ class LoadFromURLTests(LoggedInTestCase):
         self.url_pval.save()
 
         # use a complex example with nested data
-        fname = os.path.join(settings.BASE_DIR, 'server/tests/test_data/sfpd.json')
+        fname = os.path.join(settings.BASE_DIR,
+                             'server/tests/test_data/sfpd.json')
         sfpd_json = open(fname).read()
-        sfpd_table = pd.DataFrame(json.loads(sfpd_json, object_pairs_hook=OrderedDict)) # OrderedDict otherwise cols get sorted
-        sanitize_dataframe(sfpd_table)
+        # OrderedDict otherwise cols get sorted
+        sfpd_table = pd.DataFrame(json.loads(sfpd_json,
+                                             object_pairs_hook=OrderedDict))
+        expected = ProcessResult(sfpd_table)
+        expected.sanitize_in_place()
 
         # success case
-        with requests_mock.Mocker() as m:
-            m.get(url, text=sfpd_json, headers={'content-type': 'application/json'})
+        with patch('requests.get') as get:
+            get.return_value = mock_text_response(sfpd_json,
+                                                  'application/json')
             self.press_fetch_button()
-            response = self.get_render()
-            self.assertEqual(response.content.decode('utf-8'), make_render_json(sfpd_table))
+            result = execute_nocache(self.wfmodule)
+            self.assertEqual(result, expected)
 
         # malformed json should put module in error state
-        with requests_mock.Mocker() as m:
-            m.get(url, text="there's just no way this is json", headers={'content-type': 'application/json'})
+        with patch('requests.get') as get:
+            get.return_value = mock_text_response('not json',
+                                                  'application/json')
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
             self.assertEqual(self.wfmodule.status, WfModule.ERROR)
@@ -141,19 +187,18 @@ class LoadFromURLTests(LoggedInTestCase):
         xlsx_table = pd.read_excel(mock_xlsx_path)
 
         # success case
-        with requests_mock.Mocker() as m:
-            m.get(url, content=xlsx_bytes, headers={'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+        with patch('requests.get') as get:
+            get.return_value = mock_bytes_response(xlsx_bytes, XLSX_MIME_TYPE)
             self.press_fetch_button()
-            response = self.get_render()
-            self.assertEqual(response.content.decode('utf-8'), make_render_json(xlsx_table))
+            result = execute_nocache(self.wfmodule)
+            self.assertEqual(result, ProcessResult(xlsx_table))
 
         # malformed file  should put module in error state
-        with requests_mock.Mocker() as m:
-            m.get(url, content=b"there's just no way this is xlsx", headers={'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
+        with patch('requests.get') as get:
+            get.return_value = mock_bytes_response(b'hi', XLSX_MIME_TYPE)
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
             self.assertEqual(self.wfmodule.status, WfModule.ERROR)
-
 
     def test_load_404(self):
         url = 'http://test.com/the.csv'
@@ -161,8 +206,8 @@ class LoadFromURLTests(LoggedInTestCase):
         self.url_pval.save()
 
         # 404 error should put module in error state
-        with requests_mock.Mocker() as m:
-            m.get(url, text='Not Found', status_code=404)
+        with patch('requests.get') as get:
+            get.return_value = mock_404_response('Foobar')
             self.press_fetch_button()
             self.wfmodule.refresh_from_db()
             self.assertEqual(self.wfmodule.status, WfModule.ERROR)
@@ -175,3 +220,4 @@ class LoadFromURLTests(LoggedInTestCase):
         self.press_fetch_button()
         self.wfmodule.refresh_from_db()
         self.assertEqual(self.wfmodule.status, WfModule.ERROR)
+        self.assertEqual(self.wfmodule.error_msg, 'Invalid URL')
