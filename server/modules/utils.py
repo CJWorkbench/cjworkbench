@@ -1,5 +1,6 @@
 import builtins
 from collections import OrderedDict
+from contextlib import contextmanager
 import io
 import json
 from typing import Any, Dict, Callable, Optional
@@ -75,6 +76,21 @@ def _safe_parse(bytesio: io.BytesIO, parser: Callable[[bytes], DataFrame],
         return ProcessResult(error=str(err))
 
 
+@contextmanager
+def _wrap_text(bytesio: io.BytesIO, text_encoding: _TextEncoding):
+    """Yields the given BytesIO as a TextIO.
+
+    Peculiarities:
+
+    * The file encoding defaults to UTF-8.
+    * Encoding errors are converted to unicode replacement characters.
+    """
+    encoding = text_encoding or 'utf-8'
+    with io.TextIOWrapper(bytesio, encoding=encoding,
+                          errors='replace') as textio:
+        yield textio
+
+
 def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     """Build a DataFrame or raise parse error.
 
@@ -84,8 +100,7 @@ def _parse_csv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     * Data types. This is a CSV, so every value is a string ... _but_ we do the
       pandas default auto-detection.
     """
-    with io.TextIOWrapper(bytesio, encoding=(text_encoding or 'utf-8'),
-                          errors='replace') as textio:
+    with _wrap_text(bytesio, text_encoding) as textio:
         return pandas.read_csv(textio)
 
 
@@ -98,8 +113,7 @@ def _parse_tsv(bytesio: io.BytesIO, text_encoding: _TextEncoding) -> DataFrame:
     * Data types. This is a CSV, so every value is a string ... _but_ we do the
       pandas default auto-detection.
     """
-    with io.TextIOWrapper(bytesio, encoding=(text_encoding or 'utf-8'),
-                          errors='replace') as textio:
+    with _wrap_text(bytesio, text_encoding) as textio:
         return pandas.read_table(textio)
 
 
@@ -115,8 +129,7 @@ def _parse_json(bytesio: io.BytesIO,
       Array of Objects.
     * We may raise json.decoder.JSONDecodeError or pandas.errors.ParserError.
     """
-    with io.TextIOWrapper(bytesio, encoding=(text_encoding or 'utf-8'),
-                          errors='replace') as textio:
+    with _wrap_text(bytesio, text_encoding) as textio:
         data = json.load(textio, object_pairs_hook=OrderedDict)
         return pandas.DataFrame(data)
 
