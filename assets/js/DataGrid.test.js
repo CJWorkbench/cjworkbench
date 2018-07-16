@@ -36,6 +36,7 @@ describe('DataGrid tests,', () => {
 
     var editCellMock = jest.fn();
     var sortMock = jest.fn();
+    var sortDirectionMock = jest.fn()
 
     const tree = mount(
       <DataGrid
@@ -46,6 +47,7 @@ describe('DataGrid tests,', () => {
         columnTypes={testData.column_types}
         getRow={getRow}
         onEditCell={editCellMock}
+        setSortDirection={sortDirectionMock}
         onGridSort={sortMock} // I tried but could not get this to work, similar to onEditCell
         isReadOnly={false}
       />
@@ -89,6 +91,8 @@ describe('DataGrid tests,', () => {
 
   it('matches snapshot without data', () => {
 
+    var sortDirectionMock = jest.fn()
+
     const tree = mount(
       <DataGrid
         wfModuleId={100}
@@ -98,6 +102,7 @@ describe('DataGrid tests,', () => {
         columnTypes={[]}
         getRow={() => {}}
         isReadOnly={false}
+        setSortDirection={sortDirectionMock}
       />
     );
     expect(tree.find('HeaderCell')).toHaveLength(0);
@@ -108,6 +113,9 @@ describe('DataGrid tests,', () => {
   });
 
   it('Shows/hides letters in the header according to props', () => {
+
+    var sortDirectionMock = jest.fn()
+
     const treeWithLetter = mount(
       <DataGrid
           wfModuleId={100}
@@ -118,6 +126,7 @@ describe('DataGrid tests,', () => {
           getRow={getRow}
           showLetter={true}
           isReadOnly={false}
+          setSortDirection={sortDirectionMock}
       />
     );
     expect(treeWithLetter.find('.column-letter')).toHaveLength(4);
@@ -138,6 +147,7 @@ describe('DataGrid tests,', () => {
         getRow={getRow}
         showLetter={false}
         isReadOnly={false}
+        setSortDirection={sortDirectionMock}
       />);
     expect(treeWithoutLetter.find('.column-letter')).toHaveLength(0);
 
@@ -146,6 +156,7 @@ describe('DataGrid tests,', () => {
 
   it('Calls column rename upon editing a column header', (done) => {
     var mockRenameColumn = jest.fn();
+    var sortDirectionMock = jest.fn();
 
     var tree = mount(
       <DataGrid
@@ -157,6 +168,7 @@ describe('DataGrid tests,', () => {
           getRow={getRow}
           onRenameColumn={mockRenameColumn}
           isReadOnly={false}
+          setSortDirection={sortDirectionMock}
       />
     );
 
@@ -185,6 +197,8 @@ describe('DataGrid tests,', () => {
   });
 
   it('Respects isReadOnly setting for rename columns', (done) => {
+    var sortDirectionMock = jest.fn();
+
     var tree = mount(
       <DataGrid
           wfModuleId={100}
@@ -194,6 +208,7 @@ describe('DataGrid tests,', () => {
           columnTypes={testData.column_types}
           getRow={getRow}
           isReadOnly={true}
+          setSortDirection={sortDirectionMock}
       />
     );
 
