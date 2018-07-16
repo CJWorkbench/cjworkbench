@@ -1,6 +1,5 @@
-# 1. Python deps -- which rarely change, so this part of the Dockerfile will be
-# cached (when building locally)
-FROM python:3.6.6-slim-stretch AS pybuild
+# 0. The barest Python: used in dev and prod
+FROM python:3.6.6-slim-stretch AS pybase
 
 # We probably don't want these, long-term.
 # nano: because we edit files on production
@@ -13,12 +12,26 @@ RUN mkdir -p /usr/share/man/man1 /usr/share/man/man7 \
         postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-
 RUN pip install pipenv
 
 # Set up /app
 RUN mkdir /app
 WORKDIR /app
+
+# 0.1 Pydev: just for the development environment
+FROM pybase AS pydev
+
+RUN mkdir -p /root/.local/share/virtualenvs \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y \
+      build-essential \
+      libpq-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# 1. Python deps -- which rarely change, so this part of the Dockerfile will be
+# cached (when building locally)
+FROM pybase AS pybuild
 
 # Install Python dependencies. They rarely change.
 # We install them to the local system, not to a virtualenv. That means in
