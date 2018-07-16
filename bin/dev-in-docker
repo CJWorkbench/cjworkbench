@@ -102,8 +102,21 @@ stop_all() {
   docker network inspect "$NETWORK_NAME" >/dev/null 2>&1 && docker network rm "$NETWORK_NAME" || true
 }
 
-start_database() {
-  echo 'Starting database…' >&2
+start_database_with_name_alias() {
+  name="$1"
+  shift
+  alias="$1"
+  shift
+
+  # Separate arguments: pre-"--" are for Docker, the rest are commandline
+  declare -a docker_args=()
+  while [ "$1" != "--" ]; do
+    docker_args+=($1)
+    shift
+  done
+  shift # nix "--"
+
+  echo "Starting $name…" >&2
   image_id=$(
     docker run \
       --detach \
@@ -111,13 +124,18 @@ start_database() {
       --env POSTGRES_PASSWORD=cjworkbench \
       --env POSTGRES_DB=cjworkbench \
       --env PGDATA=/var/lib/postgresql/data/10.4 \
-      --volume "$DBDATA_VOLUME_NAME:/var/lib/postgresql/data" \
+      "${docker_args[@]}" \
       --network "$NETWORK_NAME" \
       --publish-all \
-      --network-alias "workbench-db" \
-      --name "${PREFIX}_database" \
-      $(pulled_or_cached_image_id "postgres:10.4")
+      --network-alias "$alias" \
+      --name "${PREFIX}_${name}" \
+      $(pulled_or_cached_image_id "postgres:10.4") \
+      postgres "$@"
   )
+}
+
+start_database() {
+  start_database_with_name_alias database workbench-db --volume "$DBDATA_VOLUME_NAME" -- -c synchronous_commit=off
 }
 
 start_redis() {
@@ -262,7 +280,8 @@ run_node() {
     docker_args+=(--volume "$ABSDIR"/"$rw_file":/app/"$rw_file":rw)
   done
 
-  # --workdir //app (with the extra slash) circumvents https://github.com/moby/moby/issues/24029 on Git for Windows Bash
+  # --workdir //app (with the extra slash) circumvents
+  # https://github.com/moby/moby/issues/24029 on Git for Windows Bash
   docker run \
     -i -t --rm \
     --volume "$NODE_MODULES_VOLUME_NAME":/app/node_modules:rw \
@@ -273,21 +292,7 @@ run_node() {
 }
 
 start_testdb() {
-  echo 'Starting testdb…' >&2
-  image_id=$(
-    docker run \
-      --detach \
-      --env POSTGRES_USER=cjworkbench \
-      --env POSTGRES_PASSWORD=cjworkbench \
-      --env POSTGRES_DB=cjworkbench \
-      --env PGDATA=/var/lib/postgresql/data/10.4 \
-      --volume "$DBDATA_VOLUME_NAME:/var/lib/postgresql/data" \
-      --publish-all \
-      --network "$NETWORK_NAME" \
-      --network-alias "testdb" \
-      --name "${PREFIX}_testdb" \
-      $(pulled_or_cached_image_id "postgres:10.4")
-  )
+  start_database_with_name_alias testdb testdb -- -c fsync=off -c full_page_writes=off
 }
 
 # Usage: 'unittest server.tests.modules'
