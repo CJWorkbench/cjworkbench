@@ -164,6 +164,42 @@
       &::after {
         display: none; // nix the little line after each module
       }
+
+      // No need to collapse the epxanded python module - this is solo module display
+      .context-collapse-button {display: none;}
+
+      .module-card-header {height: 4.5rem;}
+
+
+      /* a dummy div around output status bar, for positioning purposes  */
+      .output-bar-container {
+        position: absolute;
+        height: 100%;
+        width:100%;
+
+        /* all good & selected */
+        .module-output--selected {
+          &:after {
+          margin-left: 50.2rem
+          }
+        }
+
+        /* standby  */
+        .module-output-bar-orange {
+          :after {
+          margin-left: 50.3rem
+          }
+        }
+
+        /* error  */
+        .module-output--error, .module-output--error-selected {
+          &:after {
+            margin-left: 50.5rem;
+            height: 4rem;
+          }
+        }
+      }
+
     }
   }
 }
