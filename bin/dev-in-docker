@@ -292,6 +292,7 @@ start_testdb() {
 
 # Usage: 'unittest server.tests.modules'
 run_unittest() {
+  [ "$(get_container_status redis)" = 'running' ] && echo 'Redis already running' >&2 || start_redis
   [ "$(get_container_status testdb)" = 'running' ] && echo 'testdb already running' >&2 || start_testdb
   shift # "unittest" is not a command
   run_python \
@@ -309,6 +310,7 @@ print_usage() {
   echo '  python ARGS -- runs "pipenv run python ARGS..." in a Python environment' >&2
   echo '  start -- starts database, Redis, Webpack and Python' >&2
   echo '  stop -- stops services created by start' >&2
+  echo '  unittest ARGS -- runs "./manage.py test ARGS..."' >&2
 }
 
 follow_all_logs() {
