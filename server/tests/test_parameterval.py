@@ -1,11 +1,11 @@
-from django.test import TestCase
-from server.models import ParameterVal, ParameterSpec, Module, WfModule, ModuleVersion
-from server.tests.utils import *
+from server.models import ParameterVal, ParameterSpec, WfModule
+from server.tests.utils import DbTestCase, add_new_module_version, \
+        add_new_workflow
 
 
-# Base class sets up a workflow for testing, shared between this file and test_parameterval_views.py
-class ParameterValTestsBase(TestCase):
-
+# Mixin class sets up a workflow for testing, shared between this file
+# and test_parameterval_views.py
+class ParameterValTestHelpers:
     def createTestWorkflow(self):
         # Create a WfModule with one parameter of each type
 
@@ -77,11 +77,11 @@ class ParameterValTestsBase(TestCase):
 
 
 # Unit tests on ParameterVal
-class ParameterValTests(ParameterValTestsBase):
-
+class ParameterValTests(DbTestCase, ParameterValTestHelpers):
     def setUp(self):
-        self.createTestWorkflow()
+        super().setUp()
 
+        self.createTestWorkflow()
 
     def secret_val(self):
         spec = ParameterSpec.objects.create(
@@ -90,9 +90,9 @@ class ParameterValTests(ParameterValTestsBase):
             module_version=self.module_version,
             type=ParameterSpec.SECRET
         )
-        val = ParameterVal.objects.create(parameter_spec=spec, wf_module=self.wfmodule, value='')
+        val = ParameterVal.objects.create(parameter_spec=spec,
+                                          wf_module=self.wfmodule, value='')
         return val
-
 
     # Value retrieval methods must return correct values and enforce type
     def test_parameter_get_values(self):
@@ -134,10 +134,10 @@ class ParameterValTests(ParameterValTestsBase):
         with self.assertRaises(ValueError):
             self.wfmodule.get_param_string('FooParam')
 
-
     def test_duplicate(self):
         # Create a new WfModule of the same type, that has no parametervals yet
-        # This is the context where duplicate is normally called, when duplicating a WfModule
+        # This is the context where duplicate is normally called, when
+        # duplicating a WfModule
         workflow2 = add_new_workflow("Test Workflow 2")
         wfmodule2 = WfModule.objects.create(module_version=self.module_version, workflow=workflow2, order=0)
 

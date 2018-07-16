@@ -1,8 +1,11 @@
-from server.models import AddModuleCommand,ChangeParameterCommand, ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand
-from server.tests.utils import *
-from server.versions import *
+from server.models import AddModuleCommand, ChangeParameterCommand, \
+        ChangeWorkflowTitleCommand, ChangeWfModuleNotesCommand, \
+        WfModule, Delta
+from server.tests.utils import DbTestCase, load_module_version, \
+        add_new_workflow, get_param_by_id_name
+from server.versions import WorkflowUndo, WorkflowRedo
 
-class UndoRedoTests(TestCase):
+class UndoRedoTests(DbTestCase):
     def setUp(self):
         # Define two types of modules we are going to use
         self.csv = load_module_version('pastecsv')

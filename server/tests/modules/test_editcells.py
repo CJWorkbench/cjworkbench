@@ -1,13 +1,16 @@
-from server.tests.utils import *
+import json
+from server.tests.utils import DbTestCase, create_testdata_workflow, \
+        load_and_add_module, get_param_by_id_name
 import pandas as pd
 import numpy as np
+from server.models import WfModule
 from server.modules.editcells import EditCells
 import logging
 
-class EditCellsTests(TestCase):
+class EditCellsTests(DbTestCase):
 
     def setUp(self):
-        super(EditCellsTests, self).setUp()
+        super().setUp()
 
         workflow = create_testdata_workflow()
         self.wf_module = load_and_add_module('editcells', workflow=workflow)
