@@ -87,6 +87,7 @@ start_all() {
 
 stop_all() {
   stop_container_if_running database
+  stop_container_if_running testdb
   stop_container_if_running redis
   stop_container_if_running backend
   stop_container_if_running frontend
@@ -104,6 +105,7 @@ start_database() {
       --env POSTGRES_DB=cjworkbench \
       --env PGDATA=/var/lib/postgresql/data/10.4 \
       --volume "$DBDATA_VOLUME_NAME:/var/lib/postgresql/data" \
+      --network "$NETWORK_NAME" \
       --publish-all
       --network-alias "workbench-db" \
       --name "${PREFIX}_database" \
@@ -255,12 +257,37 @@ run_node() {
 
   docker run \
     -i -t --rm \
-    --network "$NETWORK_NAME" \
     --volume "$NODE_MODULES_VOLUME_NAME":/app/node_modules:rw \
     --workdir /app \
     "${docker_args[@]}" \
     $(pulled_or_cached_image_id node:10.1.0-slim) \
     "$@"
+}
+
+start_testdb() {
+  echo 'Starting testdb…' >&2
+  image_id=$(
+    docker run \
+      --detach \
+      --env POSTGRES_USER=cjworkbench \
+      --env POSTGRES_PASSWORD=cjworkbench \
+      --env POSTGRES_DB=cjworkbench \
+      --env PGDATA=/var/lib/postgresql/data/10.4 \
+      --volume "$DBDATA_VOLUME_NAME:/var/lib/postgresql/data" \
+      --publish-all \
+      --network "$NETWORK_NAME" \
+      --network-alias "testdb" \
+      --name "${PREFIX}_testdb" \
+      $(pulled_or_cached_image_id "postgres:10.4")
+  )
+}
+
+run_unittest() {
+  [ "$(get_container_status testdb)" = 'running' ] && echo 'testdb already running' >&2 || start_testdb
+  run_python \
+    --env CJW_DB_HOST=testdb \
+    --name "${PREFIX}_unittest" \
+    -- python ./manage.py test "$@"
 }
 
 print_usage() {
@@ -291,11 +318,20 @@ case "$1" in
     run_pipenv -- "$@"
     ;;
 
+  "unittest")
+    run_unittest "$@"
+    ;;
+
   "start")
     case "$2" in
       "database")
         stop_container_if_running "$2"
         start_database
+        ;;
+
+      "testdb")
+        stop_container_if_running "$2"
+        start_testdb
         ;;
 
       "redis")
@@ -330,7 +366,7 @@ case "$1" in
 
   "stop")
     case "$2" in
-      "database" | "frontend" | "backend" | "redis" | "webpack")
+      "database" | "frontend" | "backend" | "redis" | "webpack" | "testdb")
         stop_container_if_running "$2"
         ;;
 
