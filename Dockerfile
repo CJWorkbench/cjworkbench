@@ -78,10 +78,14 @@ RUN curl -L https://github.com/mozilla/geckodriver/releases/download/v0.21.0/gec
 
 
 # 2. Node deps -- completely independent
-FROM node:10.1.0-slim AS jsbuild
+# 2.1 jsbase: what we use in dev-in-docker
+FROM node:10.1.0-slim as jsbase
 
 RUN mkdir /app
 WORKDIR /app
+
+# 2.2 jsbuild: where we build JavaScript assets
+FROM jsbase AS jsbuild
 
 COPY package.json package-lock.json /app/
 RUN npm install

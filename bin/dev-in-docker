@@ -26,7 +26,7 @@ if type PowerShell.exe >/dev/null 2>&1; then
   ABSDIR="$(PowerShell.exe -NoLogo -Command " (Resolve-Path .\).Path")"
 else
   # UNIX
-  ABSDIR="$(realpath "$0")"
+  ABSDIR="$(pwd)"
 fi
 
 PREFIX=cjworkbench_dev
@@ -262,7 +262,7 @@ run_node() {
   # Add volumes to $docker_args...:
   # 1. Read-only paths
   for ro_path in \
-    __mocks__ \
+    __mocks__/ \
     setupJest.js \
     webpack.config.js; do
     touch "$ro_path"
@@ -272,22 +272,21 @@ run_node() {
   # 2. Read-write paths
   # package.json and package-lock.json are written by npm; assets and
   # webpack-stats.json are written by Webpack
-  for rw_file in \
-    assets \
+  for rw_path in \
+    assets/ \
     package.json \
     package-lock.json \
     webpack-stats.json; do
-    docker_args+=(--volume "$ABSDIR"/"$rw_file":/app/"$rw_file":rw)
+    docker_args+=(--volume "$ABSDIR"/"$rw_path":/app/"$rw_path":rw)
   done
 
-  # --workdir //app (with the extra slash) circumvents
-  # https://github.com/moby/moby/issues/24029 on Git for Windows Bash
+  node_image_id="$(docker build -q . --target=jsbase)"
+
   docker run \
     -i -t --rm \
     --volume "$NODE_MODULES_VOLUME_NAME":/app/node_modules:rw \
-    --workdir //app \
     "${docker_args[@]}" \
-    $(pulled_or_cached_image_id node:10.1.0-slim) \
+    "$node_image_id" \
     "$@"
 }
 
