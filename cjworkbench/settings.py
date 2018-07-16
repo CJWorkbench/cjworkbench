@@ -308,6 +308,13 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
+        'django.request': {
+            # Django prints WARNINGs for 400-level HTTP responses. That's
+            # wrong: our code is _meant_ to output 400-level HTTP responses in
+            # some cases -- that's exactly why 400-level HTTP responses exist!
+            # Ignore those WARNINGs and only log ERRORs.
+            'level': 'ERROR',
+        },
         #'django.db.backends': { # only gets messages when settings.DEBUG is True
         #    'level': 'DEBUG',
         #    'handlers': [ 'debug_console' ],

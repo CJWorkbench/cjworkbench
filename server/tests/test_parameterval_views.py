@@ -1,25 +1,25 @@
 from django.contrib.auth.models import User
-from server.tests.test_parameterval import ParameterValTestsBase
-from server.models import ParameterVal, ParameterSpec, Module, WfModule
+from server.tests.test_parameterval import ParameterValTestHelpers
+from server.models import ParameterSpec
 from server.views import parameterval_detail, workflow_detail
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework import status
-from server.tests.utils import LoggedInTestCase, add_new_workflow, load_and_add_module, get_param_by_id_name
+from server.tests.utils import LoggedInTestCase, load_and_add_module, \
+        get_param_by_id_name
 import mock
 from collections import namedtuple
 
 
-FakeSession = namedtuple('FakeSession', [ 'session_key' ])
+FakeSession = namedtuple('FakeSession', ['session_key'])
 
 
 # Test views that ultimately get/set ParameterVal
-class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
-
+class ParameterValTests(LoggedInTestCase, ParameterValTestHelpers):
     def setUp(self):
-        super(ParameterValTests, self).setUp()  # log in
+        super().setUp()
+
         self.createTestWorkflow()
         self.factory = APIRequestFactory()
-
 
     def _augment_request(self, request, user: User,
                          session_key: str) -> None:
@@ -27,20 +27,17 @@ class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
             force_authenticate(request, user=user)
         request.session = FakeSession(session_key)
 
-
     def _build_get(self, *args, user: User=None, session_key: str='a-key',
                    **kwargs):
         request = self.factory.get(*args, **kwargs)
         self._augment_request(request, user, session_key)
         return request
 
-
     def _build_patch(self, *args, user: User=None, session_key: str='a-key',
                      **kwargs):
         request = self.factory.patch(*args, **kwargs)
         self._augment_request(request, user, session_key)
         return request
-
 
     # Workflow API must return correct values for parameters
     def test_parameterval_detail_get(self):
@@ -52,7 +49,7 @@ class ParameterValTests(ParameterValTestsBase, LoggedInTestCase):
 
         # workflow has correct wfmodule
         self.assertEqual(len(response.data['wf_modules']), 1)
-        self.assertEqual(response.data['wf_modules'][0]['id'], self.moduleID)
+        self.assertEqual(response.data['wf_modules'][0]['id'], self.wfmoduleID)
 
         # wfmodule has correct parameters
         self.assertEqual(len(response.data['wf_modules'][0]['parameter_vals']), 6)

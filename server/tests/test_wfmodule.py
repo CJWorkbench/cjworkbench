@@ -1,11 +1,15 @@
+import io
+import pandas as pd
 from server.models import StoredObject
 from django.core.exceptions import ValidationError
-from server.tests.utils import *
+from server.models import ParameterSpec, WfModule, ParameterVal
+from server.tests.utils import DbTestCase, create_testdata_workflow, \
+        add_new_module_version, add_new_parameter_spec, add_new_wf_module, \
+        mock_csv_table, mock_csv_table2, add_new_workflow
 
 # Set up a simple pipeline on test data
 # Our WfModule unit tests derive from this, below, and WfModule view tests also use this
-class WfModuleTestsBase(TestCase):
-
+class WfModuleTestsBase(DbTestCase):
     def createTestWorkflow(self):
         # Create a standard test workflow, but it has only one module so add two more to test render pipeline
         # Throw a missing value in there to test handling of NA values

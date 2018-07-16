@@ -1,17 +1,21 @@
-from server.models import StoredObject
-from server.sanitizedataframe import sanitize_dataframe
-from server.tests.utils import *
-from django.test import override_settings
-import tempfile
-import pandas as pd
+import io
 import os
 import json
+import tempfile
+import pandas as pd
+from django.conf import settings
+from server.models import StoredObject, WfModule, ModuleVersion
+from server.sanitizedataframe import sanitize_dataframe
+from server.tests.utils import DbTestCase, create_testdata_workflow, \
+        add_new_wf_module, mock_csv_table, mock_csv_table2
+from django.test import override_settings
 
 # don't clutter media directory with our tests (and don't accidentally succeed because of files there)
 @override_settings(MEDIA_ROOT=tempfile.gettempdir())
-class StoredObjectTests(TestCase):
-
+class StoredObjectTests(DbTestCase):
     def setUp(self):
+        super().setUp()
+
         self.workflow = create_testdata_workflow()
         self.wfm1 = WfModule.objects.first()
         self.wfm2 = add_new_wf_module(self.workflow, ModuleVersion.objects.first(), 1)  # order = 1
