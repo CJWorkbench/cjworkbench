@@ -1127,13 +1127,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   x-placement="bottom-start"
                                                 >
                                                   <DropdownItem
-                                                    className="test-sort-ascending"
+                                                    className="sort-ascending"
                                                     onClick={[Function]}
                                                     tag="button"
                                                     toggle={true}
                                                   >
                                                     <button
-                                                      className="test-sort-ascending dropdown-item"
+                                                      className="sort-ascending dropdown-item"
                                                       onClick={[Function]}
                                                       tabIndex="0"
                                                       type="button"
@@ -1147,13 +1147,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     </button>
                                                   </DropdownItem>
                                                   <DropdownItem
-                                                    className="test-sort-descending"
+                                                    className="sort-descending"
                                                     onClick={[Function]}
                                                     tag="button"
                                                     toggle={true}
                                                   >
                                                     <button
-                                                      className="test-sort-descending dropdown-item"
+                                                      className="sort-descending dropdown-item"
                                                       onClick={[Function]}
                                                       tabIndex="0"
                                                       type="button"
@@ -1465,13 +1465,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   x-placement="bottom-start"
                                                 >
                                                   <DropdownItem
-                                                    className="test-sort-ascending"
+                                                    className="sort-ascending"
                                                     onClick={[Function]}
                                                     tag="button"
                                                     toggle={true}
                                                   >
                                                     <button
-                                                      className="test-sort-ascending dropdown-item"
+                                                      className="sort-ascending dropdown-item"
                                                       onClick={[Function]}
                                                       tabIndex="0"
                                                       type="button"
@@ -1485,13 +1485,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     </button>
                                                   </DropdownItem>
                                                   <DropdownItem
-                                                    className="test-sort-descending"
+                                                    className="sort-descending"
                                                     onClick={[Function]}
                                                     tag="button"
                                                     toggle={true}
                                                   >
                                                     <button
-                                                      className="test-sort-descending dropdown-item"
+                                                      className="sort-descending dropdown-item"
                                                       onClick={[Function]}
                                                       tabIndex="0"
                                                       type="button"
@@ -1803,13 +1803,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   x-placement="bottom-start"
                                                 >
                                                   <DropdownItem
-                                                    className="test-sort-ascending"
+                                                    className="sort-ascending"
                                                     onClick={[Function]}
                                                     tag="button"
                                                     toggle={true}
                                                   >
                                                     <button
-                                                      className="test-sort-ascending dropdown-item"
+                                                      className="sort-ascending dropdown-item"
                                                       onClick={[Function]}
                                                       tabIndex="0"
                                                       type="button"
@@ -1823,13 +1823,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     </button>
                                                   </DropdownItem>
                                                   <DropdownItem
-                                                    className="test-sort-descending"
+                                                    className="sort-descending"
                                                     onClick={[Function]}
                                                     tag="button"
                                                     toggle={true}
                                                   >
                                                     <button
-                                                      className="test-sort-descending dropdown-item"
+                                                      className="sort-descending dropdown-item"
                                                       onClick={[Function]}
                                                       tabIndex="0"
                                                       type="button"
@@ -2141,13 +2141,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   x-placement="bottom-start"
                                                 >
                                                   <DropdownItem
-                                                    className="test-sort-ascending"
+                                                    className="sort-ascending"
                                                     onClick={[Function]}
                                                     tag="button"
                                                     toggle={true}
                                                   >
                                                     <button
-                                                      className="test-sort-ascending dropdown-item"
+                                                      className="sort-ascending dropdown-item"
                                                       onClick={[Function]}
                                                       tabIndex="0"
                                                       type="button"
@@ -2161,13 +2161,13 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     </button>
                                                   </DropdownItem>
                                                   <DropdownItem
-                                                    className="test-sort-descending"
+                                                    className="sort-descending"
                                                     onClick={[Function]}
                                                     tag="button"
                                                     toggle={true}
                                                   >
                                                     <button
-                                                      className="test-sort-descending dropdown-item"
+                                                      className="sort-descending dropdown-item"
                                                       onClick={[Function]}
                                                       tabIndex="0"
                                                       type="button"
