@@ -1107,7 +1107,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-caret-down"
+                                                          className="icon-more"
                                                         />
                                                       </button>
                                                     </Button>
@@ -1162,37 +1162,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         x-placement="bottom-start"
                                                       >
                                                         <DropdownItem
-                                                          className="test-sort-none"
-                                                          onClick={[Function]}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <button
-                                                            className="test-sort-none dropdown-item"
-                                                            onClick={[Function]}
-                                                            tabIndex="0"
-                                                            type="button"
-                                                          >
-                                                            <i
-                                                              className="icon-check"
-                                                            />
-                                                            <span>
-                                                              Not Sorted
-                                                            </span>
-                                                          </button>
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                          divider={true}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <div
-                                                            className="dropdown-divider"
-                                                            onClick={[Function]}
-                                                            tabIndex="-1"
-                                                          />
-                                                        </DropdownItem>
-                                                        <DropdownItem
                                                           className="test-sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
@@ -1204,8 +1173,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-up"
+                                                            />
                                                             <span>
-                                                              Sort Ascending
+                                                              Sort ascending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -1221,8 +1193,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-down"
+                                                            />
                                                             <span>
-                                                              Sort Descending
+                                                              Sort descending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -1470,7 +1445,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-caret-down"
+                                                          className="icon-more"
                                                         />
                                                       </button>
                                                     </Button>
@@ -1525,37 +1500,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         x-placement="bottom-start"
                                                       >
                                                         <DropdownItem
-                                                          className="test-sort-none"
-                                                          onClick={[Function]}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <button
-                                                            className="test-sort-none dropdown-item"
-                                                            onClick={[Function]}
-                                                            tabIndex="0"
-                                                            type="button"
-                                                          >
-                                                            <i
-                                                              className="icon-check"
-                                                            />
-                                                            <span>
-                                                              Not Sorted
-                                                            </span>
-                                                          </button>
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                          divider={true}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <div
-                                                            className="dropdown-divider"
-                                                            onClick={[Function]}
-                                                            tabIndex="-1"
-                                                          />
-                                                        </DropdownItem>
-                                                        <DropdownItem
                                                           className="test-sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
@@ -1567,8 +1511,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-up"
+                                                            />
                                                             <span>
-                                                              Sort Ascending
+                                                              Sort ascending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -1584,8 +1531,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-down"
+                                                            />
                                                             <span>
-                                                              Sort Descending
+                                                              Sort descending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -1833,7 +1783,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-caret-down"
+                                                          className="icon-more"
                                                         />
                                                       </button>
                                                     </Button>
@@ -1888,37 +1838,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         x-placement="bottom-start"
                                                       >
                                                         <DropdownItem
-                                                          className="test-sort-none"
-                                                          onClick={[Function]}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <button
-                                                            className="test-sort-none dropdown-item"
-                                                            onClick={[Function]}
-                                                            tabIndex="0"
-                                                            type="button"
-                                                          >
-                                                            <i
-                                                              className="icon-check"
-                                                            />
-                                                            <span>
-                                                              Not Sorted
-                                                            </span>
-                                                          </button>
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                          divider={true}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <div
-                                                            className="dropdown-divider"
-                                                            onClick={[Function]}
-                                                            tabIndex="-1"
-                                                          />
-                                                        </DropdownItem>
-                                                        <DropdownItem
                                                           className="test-sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
@@ -1930,8 +1849,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-up"
+                                                            />
                                                             <span>
-                                                              Sort Ascending
+                                                              Sort ascending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -1947,8 +1869,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-down"
+                                                            />
                                                             <span>
-                                                              Sort Descending
+                                                              Sort descending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -2196,7 +2121,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-caret-down"
+                                                          className="icon-more"
                                                         />
                                                       </button>
                                                     </Button>
@@ -2251,37 +2176,6 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         x-placement="bottom-start"
                                                       >
                                                         <DropdownItem
-                                                          className="test-sort-none"
-                                                          onClick={[Function]}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <button
-                                                            className="test-sort-none dropdown-item"
-                                                            onClick={[Function]}
-                                                            tabIndex="0"
-                                                            type="button"
-                                                          >
-                                                            <i
-                                                              className="icon-check"
-                                                            />
-                                                            <span>
-                                                              Not Sorted
-                                                            </span>
-                                                          </button>
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                          divider={true}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <div
-                                                            className="dropdown-divider"
-                                                            onClick={[Function]}
-                                                            tabIndex="-1"
-                                                          />
-                                                        </DropdownItem>
-                                                        <DropdownItem
                                                           className="test-sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
@@ -2293,8 +2187,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-up"
+                                                            />
                                                             <span>
-                                                              Sort Ascending
+                                                              Sort ascending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -2310,8 +2207,11 @@ exports[`TableView Blank table when no module id 1`] = `
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-down"
+                                                            />
                                                             <span>
-                                                              Sort Descending
+                                                              Sort descending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -8921,7 +8821,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-caret-down"
+                                                          className="icon-more"
                                                         />
                                                       </button>
                                                     </Button>
@@ -8976,37 +8876,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         x-placement="bottom-start"
                                                       >
                                                         <DropdownItem
-                                                          className="test-sort-none"
-                                                          onClick={[Function]}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <button
-                                                            className="test-sort-none dropdown-item"
-                                                            onClick={[Function]}
-                                                            tabIndex="0"
-                                                            type="button"
-                                                          >
-                                                            <i
-                                                              className="icon-check"
-                                                            />
-                                                            <span>
-                                                              Not Sorted
-                                                            </span>
-                                                          </button>
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                          divider={true}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <div
-                                                            className="dropdown-divider"
-                                                            onClick={[Function]}
-                                                            tabIndex="-1"
-                                                          />
-                                                        </DropdownItem>
-                                                        <DropdownItem
                                                           className="test-sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
@@ -9018,8 +8887,11 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-up"
+                                                            />
                                                             <span>
-                                                              Sort Ascending
+                                                              Sort ascending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -9035,8 +8907,11 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-down"
+                                                            />
                                                             <span>
-                                                              Sort Descending
+                                                              Sort descending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -9284,7 +9159,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-caret-down"
+                                                          className="icon-more"
                                                         />
                                                       </button>
                                                     </Button>
@@ -9339,37 +9214,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         x-placement="bottom-start"
                                                       >
                                                         <DropdownItem
-                                                          className="test-sort-none"
-                                                          onClick={[Function]}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <button
-                                                            className="test-sort-none dropdown-item"
-                                                            onClick={[Function]}
-                                                            tabIndex="0"
-                                                            type="button"
-                                                          >
-                                                            <i
-                                                              className="icon-check"
-                                                            />
-                                                            <span>
-                                                              Not Sorted
-                                                            </span>
-                                                          </button>
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                          divider={true}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <div
-                                                            className="dropdown-divider"
-                                                            onClick={[Function]}
-                                                            tabIndex="-1"
-                                                          />
-                                                        </DropdownItem>
-                                                        <DropdownItem
                                                           className="test-sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
@@ -9381,8 +9225,11 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-up"
+                                                            />
                                                             <span>
-                                                              Sort Ascending
+                                                              Sort ascending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -9398,8 +9245,11 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-down"
+                                                            />
                                                             <span>
-                                                              Sort Descending
+                                                              Sort descending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -9647,7 +9497,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-caret-down"
+                                                          className="icon-more"
                                                         />
                                                       </button>
                                                     </Button>
@@ -9702,37 +9552,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         x-placement="bottom-start"
                                                       >
                                                         <DropdownItem
-                                                          className="test-sort-none"
-                                                          onClick={[Function]}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <button
-                                                            className="test-sort-none dropdown-item"
-                                                            onClick={[Function]}
-                                                            tabIndex="0"
-                                                            type="button"
-                                                          >
-                                                            <i
-                                                              className="icon-check"
-                                                            />
-                                                            <span>
-                                                              Not Sorted
-                                                            </span>
-                                                          </button>
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                          divider={true}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <div
-                                                            className="dropdown-divider"
-                                                            onClick={[Function]}
-                                                            tabIndex="-1"
-                                                          />
-                                                        </DropdownItem>
-                                                        <DropdownItem
                                                           className="test-sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
@@ -9744,8 +9563,11 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-up"
+                                                            />
                                                             <span>
-                                                              Sort Ascending
+                                                              Sort ascending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -9761,8 +9583,11 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-down"
+                                                            />
                                                             <span>
-                                                              Sort Descending
+                                                              Sort descending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -10010,7 +9835,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-caret-down"
+                                                          className="icon-more"
                                                         />
                                                       </button>
                                                     </Button>
@@ -10065,37 +9890,6 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         x-placement="bottom-start"
                                                       >
                                                         <DropdownItem
-                                                          className="test-sort-none"
-                                                          onClick={[Function]}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <button
-                                                            className="test-sort-none dropdown-item"
-                                                            onClick={[Function]}
-                                                            tabIndex="0"
-                                                            type="button"
-                                                          >
-                                                            <i
-                                                              className="icon-check"
-                                                            />
-                                                            <span>
-                                                              Not Sorted
-                                                            </span>
-                                                          </button>
-                                                        </DropdownItem>
-                                                        <DropdownItem
-                                                          divider={true}
-                                                          tag="button"
-                                                          toggle={true}
-                                                        >
-                                                          <div
-                                                            className="dropdown-divider"
-                                                            onClick={[Function]}
-                                                            tabIndex="-1"
-                                                          />
-                                                        </DropdownItem>
-                                                        <DropdownItem
                                                           className="test-sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
@@ -10107,8 +9901,11 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-up"
+                                                            />
                                                             <span>
-                                                              Sort Ascending
+                                                              Sort ascending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
@@ -10124,8 +9921,11 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                             tabIndex="0"
                                                             type="button"
                                                           >
+                                                            <i
+                                                              className="icon-sort-down"
+                                                            />
                                                             <span>
-                                                              Sort Descending
+                                                              Sort descending
                                                             </span>
                                                           </button>
                                                         </DropdownItem>
