@@ -1,6 +1,7 @@
 import unittest
 from unittest.mock import patch
 from pandas import DataFrame
+from server.modules.types import ProcessResult
 from server.notifications import \
         OutputDelta, \
         find_output_deltas_to_notify_from_fetched_tables as find_output_deltas
@@ -64,8 +65,8 @@ class TestFindOutputDeltas(unittest.TestCase):
             (2, False),
         ])
         deltas = find_output_deltas(workflow.wf_modules[0],
-                                    DataFrame({'a': ['b']}),
-                                    DataFrame({'b': ['c']}))
+                                    ProcessResult(DataFrame({'a': ['b']})),
+                                    ProcessResult(DataFrame({'b': ['c']})))
         self.assertListEqual(deltas, [])
         mock_render.assert_not_called()
 
@@ -78,21 +79,22 @@ class TestFindOutputDeltas(unittest.TestCase):
 
         def render(wf_module, table):
             if table.equals(DataFrame({'a': ['b']})):
-                return DataFrame({'a': ['1']})
+                return ProcessResult(DataFrame({'a': ['1']}))
             elif table.equals(DataFrame({'b': ['c']})):
-                return DataFrame({'a': ['2']})
+                return ProcessResult(DataFrame({'a': ['2']}))
             else:
                 raise Exception("???")
         mock_render.side_effect = render
 
         deltas = find_output_deltas(workflow.wf_modules[0],
-                                    DataFrame({'a': ['b']}),
-                                    DataFrame({'b': ['c']}))
+                                    ProcessResult(DataFrame({'a': ['b']})),
+                                    ProcessResult(DataFrame({'b': ['c']})))
         self.assertEqual(len(deltas), 1)
         self.assertEqual(
             deltas[0],
-            OutputDelta(workflow.wf_modules[1], DataFrame({'a': ['1']}),
-                        DataFrame({'a': ['2']}))
+            OutputDelta(workflow.wf_modules[1],
+                        ProcessResult(DataFrame({'a': ['1']})),
+                        ProcessResult(DataFrame({'a': ['2']})))
         )
 
     @patch('server.dispatch.module_dispatch_render')
@@ -106,16 +108,16 @@ class TestFindOutputDeltas(unittest.TestCase):
 
         def render(wf_module, table):
             if table.equals(DataFrame({'a': ['b']})):
-                return DataFrame({'a': ['c']})
+                return ProcessResult(DataFrame({'a': ['c']}))
             elif table.equals(DataFrame({'b': ['c']})):
-                return DataFrame({'a': ['c']})
+                return ProcessResult(DataFrame({'a': ['c']}))
             else:
                 raise Exception("???")
         mock_render.side_effect = render
 
         deltas = find_output_deltas(workflow.wf_modules[0],
-                                    DataFrame({'a': ['b']}),
-                                    DataFrame({'b': ['c']}))
+                                    ProcessResult(DataFrame({'a': ['b']})),
+                                    ProcessResult(DataFrame({'b': ['c']})))
         self.assertListEqual(deltas, [])
 
     def test_notify_when_fetch_output_differs(self):
@@ -123,11 +125,12 @@ class TestFindOutputDeltas(unittest.TestCase):
             (1, True),
         ])
         deltas = find_output_deltas(workflow.wf_modules[0],
-                                    DataFrame({'a': ['b']}),
-                                    DataFrame({'b': ['c']}))
+                                    ProcessResult(DataFrame({'a': ['b']})),
+                                    ProcessResult(DataFrame({'b': ['c']})))
         self.assertListEqual(deltas, [
             OutputDelta(workflow.wf_modules[0],
-                        DataFrame({'a': ['b']}), DataFrame({'b': ['c']})),
+                        ProcessResult(DataFrame({'a': ['b']})),
+                        ProcessResult(DataFrame({'b': ['c']}))),
         ])
 
     def test_notify_when_fetch_output_becomes_non_none(self):
@@ -135,10 +138,10 @@ class TestFindOutputDeltas(unittest.TestCase):
             (1, True),
         ])
         deltas = find_output_deltas(workflow.wf_modules[0], None,
-                                    DataFrame({'b': ['c']}))
+                                    ProcessResult(DataFrame({'b': ['c']})))
         self.assertListEqual(deltas, [
             OutputDelta(workflow.wf_modules[0], None,
-                        DataFrame({'b': ['c']})),
+                        ProcessResult(DataFrame({'b': ['c']}))),
         ])
 
     @patch('server.dispatch.module_dispatch_render')
@@ -150,17 +153,18 @@ class TestFindOutputDeltas(unittest.TestCase):
         ])
 
         def render(wf_module, table):
-            if table is None:
-                return None
+            if table.empty:
+                return ProcessResult(None)
             if table.equals(DataFrame({'a': ['b']})):
-                return DataFrame({'a': ['1']})
+                return ProcessResult(DataFrame({'a': ['1']}))
             else:
                 raise Exception("???")
         mock_render.side_effect = render
 
         deltas = find_output_deltas(workflow.wf_modules[0], None,
-                                    DataFrame({'a': ['b']}))
+                                    ProcessResult(DataFrame({'a': ['b']})))
         self.assertListEqual(deltas, [
-            OutputDelta(workflow.wf_modules[1], None,
-                        DataFrame({'a': ['1']})),
+            OutputDelta(workflow.wf_modules[1],
+                        ProcessResult(None),
+                        ProcessResult(DataFrame({'a': ['1']}))),
         ])

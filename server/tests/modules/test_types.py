@@ -5,6 +5,9 @@ from server.modules.types import ProcessResult
 
 
 class ProcessResultTests(unittest.TestCase):
+    def test_eq_none(self):
+        self.assertNotEqual(ProcessResult(), None)
+
     def test_coerce_processresult(self):
         expected = ProcessResult()
         result = ProcessResult.coerce(expected)

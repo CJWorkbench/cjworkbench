@@ -46,7 +46,8 @@ class ProcessResult:
     def __eq__(self, other) -> bool:
         # self.dataframe == other.dataframe returns a dataframe. Use .equals.
         return (
-            self.dataframe.equals(other.dataframe)
+            isinstance(other, ProcessResult)
+            and self.dataframe.equals(other.dataframe)
             and self.error == other.error
             and self.json == other.json
         )

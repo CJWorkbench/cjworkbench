@@ -3,16 +3,16 @@ from typing import List, Optional
 from allauth.account.utils import user_display
 from django.core.mail import EmailMultiAlternatives
 from django.template.loader import render_to_string
-from pandas import DataFrame
 from django.conf import settings
 from server.utils import get_absolute_url
-from server.pandas_util import are_tables_equal, copy_table
+from server.modules.types import ProcessResult
 
 
 class OutputDelta:
     """Description of changes between two versions of WfModule output."""
-    def __init__(self, wf_module: 'WfModule', old_table: Optional[DataFrame],
-                 new_table: Optional[DataFrame]):
+    def __init__(self, wf_module: 'WfModule',
+                 old_result: Optional[ProcessResult],
+                 new_result: ProcessResult):
         workflow = wf_module.workflow
 
         self.user = workflow.owner
@@ -20,29 +20,29 @@ class OutputDelta:
         self.wf_module_id = wf_module.id
         self.module_name = wf_module.get_module_name()
         self.workflow_url = get_absolute_url(workflow.get_absolute_url())
-        self.old_table = old_table
-        self.new_table = new_table
+        self.old_result = old_result
+        self.new_result = new_result
 
     def __repr__(self):
-        return 'OutputDelta' + repr((self.wf_module_id, self.old_table,
-                                     self.new_table))
+        return 'OutputDelta' + repr((self.wf_module_id, self.old_result,
+                                     self.new_result))
 
     def __eq__(self, other):
         return isinstance(other, OutputDelta) \
                 and self.wf_module_id == other.wf_module_id \
-                and are_tables_equal(self.old_table, other.old_table) \
-                and are_tables_equal(self.new_table, other.new_table)
+                and self.old_result == other.old_result \
+                and self.new_result == other.new_result
 
 
 def find_output_deltas_to_notify_from_fetched_tables(
-        wf_module: 'WfModule', old_table: Optional[DataFrame],
-        new_table: Optional[DataFrame]) -> List[OutputDelta]:
+        wf_module: 'WfModule', old_result: Optional[ProcessResult],
+        new_result: ProcessResult) -> List[OutputDelta]:
     """Compute a list of OutputDeltas to email to the owner.
 
     `wf_module` is the fetch module whose data just changed from `old_table` to
     `new_table`. (Either may be `None` or empty.)
 
-    Assumes `old_table` and `new_table` are different.
+    Assumes `old_result` and `new_result` are different.
 
     Must be called within a workflow.cooperative_lock().
 
@@ -68,22 +68,24 @@ def find_output_deltas_to_notify_from_fetched_tables(
 
     if wf_module.notifications:
         # Notify on wf_module itself
-        output_deltas.append(OutputDelta(wf_module, copy_table(old_table),
-                                         copy_table(new_table)))
+        output_deltas.append(OutputDelta(wf_module, old_result, new_result))
+
+    if old_result is None:
+        old_result = ProcessResult()
 
     # Now iterate through dependent modules: calculate tables and compare
     for wf_module in all_modules:
-        old_table = module_dispatch_render(wf_module, old_table)
-        new_table = module_dispatch_render(wf_module, new_table)
+        old_result = module_dispatch_render(wf_module, old_result.dataframe)
+        new_result = module_dispatch_render(wf_module, new_result.dataframe)
 
-        if are_tables_equal(old_table, new_table):
+        if old_result == new_result:
             # From this point forward, tables will never diverge so we should
             # never notify the user.
             return output_deltas
 
         if wf_module.notifications:
-            output_deltas.append(OutputDelta(wf_module, copy_table(old_table),
-                                             copy_table(new_table)))
+            output_deltas.append(OutputDelta(wf_module, old_result,
+                                             new_result))
 
     return output_deltas
 

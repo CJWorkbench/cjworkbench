@@ -72,7 +72,10 @@ def save_result_if_changed(wfm: WfModule,
         wfm.last_update_check = timezone.now()
 
         # Store this data only if it's different from most recent data
-        old_table = wfm.retrieve_fetched_table()
+        old_result = ProcessResult(
+            dataframe=wfm.retrieve_fetched_table(),
+            error=wfm.error_msg
+        )
         new_table = new_result.dataframe
         version_added = wfm.store_fetched_table_if_different(
             new_table,
@@ -84,8 +87,8 @@ def save_result_if_changed(wfm: WfModule,
 
             output_deltas = \
                 find_output_deltas_to_notify_from_fetched_tables(wfm,
-                                                                 old_table,
-                                                                 new_table)
+                                                                 old_result,
+                                                                 new_result)
         else:
             output_deltas = []
 
