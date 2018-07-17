@@ -413,7 +413,7 @@ class WfModuleCollapseButton extends React.PureComponent {
   render() {
     const { isCollapsed, isLessonHighlight, onCollapse, onExpand } = this.props
 
-    const iconClass = isCollapsed ? 'icon-sort-right' : 'icon-sort-down'
+    const iconClass = isCollapsed ? 'icon-caret-right' : 'icon-caret-down'
     const onClick = isCollapsed ? onExpand : onCollapse
     const name = isCollapsed ? 'expand module' : 'collapse module'
     const lessonHighlightClass = isLessonHighlight ? 'lesson-highlight' : ''

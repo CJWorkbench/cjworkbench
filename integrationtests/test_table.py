@@ -127,5 +127,5 @@ class TestTable(LoggedInIntegrationTest):
     #     self._carefully_double_click_element('.react-grid-Cell:not(.react-grid-Cell--locked)', text='3')
     #     b.fill_text_in_whatever('5', '.react-grid-Cell input', wait=True)  # wait for prompt
     #
-    #     b.click_whatever('i.context-collapse-button.icon-sort-right')
+    #     b.click_whatever('i.context-collapse-button.icon-caret-right')
     #     b.assert_element('.edited-column', text='int', wait=True)

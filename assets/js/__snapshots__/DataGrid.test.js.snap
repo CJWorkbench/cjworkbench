@@ -1072,7 +1072,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   type="button"
                                                 >
                                                   <i
-                                                    className="icon-sort-down"
+                                                    className="icon-caret-down"
                                                   />
                                                 </button>
                                               </Button>
@@ -1435,7 +1435,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   type="button"
                                                 >
                                                   <i
-                                                    className="icon-sort-down"
+                                                    className="icon-caret-down"
                                                   />
                                                 </button>
                                               </Button>
@@ -1798,7 +1798,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   type="button"
                                                 >
                                                   <i
-                                                    className="icon-sort-down"
+                                                    className="icon-caret-down"
                                                   />
                                                 </button>
                                               </Button>
@@ -2161,7 +2161,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                   type="button"
                                                 >
                                                   <i
-                                                    className="icon-sort-down"
+                                                    className="icon-caret-down"
                                                   />
                                                 </button>
                                               </Button>

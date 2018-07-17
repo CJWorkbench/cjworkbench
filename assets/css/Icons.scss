@@ -129,18 +129,18 @@
 .icon-sigma:before {
   content: "\e91d";
 }
-.icon-sort-down:before {
+.icon-caret-down:before {
   content: "\e91e";
 }
 
-.icon-sort-up:before {
+.icon-caret-up:before {
   content: "\e921";
 }
 
-.icon-sort-left:before {
+.icon-caret-left:before {
   content: "\e91f";
 }
-.icon-sort-right:before {
+.icon-caret-right:before {
   content: "\e920";
 }
 
@@ -227,4 +227,11 @@
 
 .icon-no-notification:before {
   content::"\e93f";
+}
+
+.icon-sort-up:before {
+  content::"\e940";
+}
+.icon-sort-down:before {
+  content::"\e941";
 }

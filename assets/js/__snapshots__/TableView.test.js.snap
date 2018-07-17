@@ -1107,7 +1107,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-sort-down"
+                                                          className="icon-caret-down"
                                                         />
                                                       </button>
                                                     </Button>
@@ -1470,7 +1470,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-sort-down"
+                                                          className="icon-caret-down"
                                                         />
                                                       </button>
                                                     </Button>
@@ -1833,7 +1833,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-sort-down"
+                                                          className="icon-caret-down"
                                                         />
                                                       </button>
                                                     </Button>
@@ -2196,7 +2196,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-sort-down"
+                                                          className="icon-caret-down"
                                                         />
                                                       </button>
                                                     </Button>
@@ -8921,7 +8921,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-sort-down"
+                                                          className="icon-caret-down"
                                                         />
                                                       </button>
                                                     </Button>
@@ -9284,7 +9284,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-sort-down"
+                                                          className="icon-caret-down"
                                                         />
                                                       </button>
                                                     </Button>
@@ -9647,7 +9647,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-sort-down"
+                                                          className="icon-caret-down"
                                                         />
                                                       </button>
                                                     </Button>
@@ -10010,7 +10010,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                         type="button"
                                                       >
                                                         <i
-                                                          className="icon-sort-down"
+                                                          className="icon-caret-down"
                                                         />
                                                       </button>
                                                     </Button>

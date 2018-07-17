@@ -55,7 +55,7 @@ exports[`ColumnContextMenu should match snapshot 1`] = `
                   type="button"
                 >
                   <i
-                    className="icon-sort-down"
+                    className="icon-caret-down"
                   />
                 </button>
               </Button>
