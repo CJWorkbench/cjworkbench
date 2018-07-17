@@ -267,7 +267,8 @@ def wfmodule_output(request, pk, format=None):
 
     html_with_js = _html_head_start_re.sub(
         lambda m: m.group(0) + script_bytes,
-        html
+        html,
+        count=1  # so a '<head>' in comments and code won't be replaced
     )
 
     return HttpResponse(content=html_with_js)
