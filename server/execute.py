@@ -1,6 +1,5 @@
 # Run the workflow, generating table output
 
-from server.models.StoredObject import StoredObject
 from server.dispatch import module_dispatch_render
 from server.websockets import ws_client_rerender_workflow
 from server.modules.types import ProcessResult
@@ -11,17 +10,12 @@ def notify_client_workflow_version_changed(workflow):
     ws_client_rerender_workflow(workflow)
 
 
-def get_render_cache(wfm, revision):
-    # There can be more than one cached table for the same rev, if we did
-    # simultaneous renders on two different threads. This is inefficient, but
-    # not harmful. So filter().first() not get()
-    obj = wfm.stored_objects.filter(type=StoredObject.CACHED_TABLE,
-                                    metadata=revision).first()
-    if obj is None:
+def get_render_cache(wfm, revision) -> ProcessResult:
+    cached_result = wfm.get_cached_render_result()
+    if cached_result and cached_result.workflow_revision == revision:
+        return cached_result.result
+    else:
         return None
-
-    table = obj.get_table()
-    return ProcessResult(table, error=wfm.error_msg)
 
 
 # Return the output of a particular module. Gets from cache if possible
@@ -54,11 +48,9 @@ def execute_wfmodule(wfmodule, nocache=False) -> ProcessResult:
         if cache:
             result = cache
         else:
-            # previous revisions are dead to us now (well, maybe good for undo, but we can re-render)
-            StoredObject.objects.filter(wf_module=wfm, type=StoredObject.CACHED_TABLE).delete()
             result = module_dispatch_render(wfm, result.dataframe)
-            StoredObject.create_table(wfm, StoredObject.CACHED_TABLE,
-                                      result.dataframe, metadata=target_rev)
+            wfm.cache_render_result(target_rev, result)
+            wfm.save()
 
         # found the module we were looking for, all done
         if wfm == wfmodule:

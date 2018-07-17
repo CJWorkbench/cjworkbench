@@ -34,6 +34,8 @@ NETWORK_NAME="${PREFIX}_network"
 VIRTUALENV_VOLUME_NAME="${PREFIX}_virtualenvs"
 NODE_MODULES_VOLUME_NAME="${PREFIX}_node_modules"
 DBDATA_VOLUME_NAME="${PREFIX}_dbdata"
+TEST_MEDIA_VOLUME_NAME="${PREFIX}_test_media"
+TEST_IMPORTEDMODULES_VOLUME_NAME="${PREFIX}_test_importedmodules"
 PYBASE_IMAGE_ID=""
 
 stop_container_if_running() {
@@ -63,7 +65,7 @@ start_all() {
     echo -n "Creating $NETWORK_NAME… " >&2 # ID will appear after
     docker network create "$NETWORK_NAME" >&2
   fi
-  for volume in $VIRTUALENV_VOLUME_NAME $NODE_MODULES_VOLUME_NAME $DBDATA_VOLUME_NAME; do
+  for volume in $VIRTUALENV_VOLUME_NAME $NODE_MODULES_VOLUME_NAME $DBDATA_VOLUME_NAME $TEST_MEDIA_VOLUME_NAME $TEST_IMPORTEDMODULES_VOLUME_NAME; do
     if ! docker volume inspect "$volume" >/dev/null 2>&1; then
       echo -n "Creating $volume… " >&2 # ID will appear after
       docker volume create "$volume" >&2
@@ -197,8 +199,6 @@ run_pipenv() {
   touch webpack-stats.json
   for ro_path in \
     assets \
-    cjworkbench \
-    server \
     templates \
     manage.py \
     webpack-stats.json \
@@ -212,15 +212,22 @@ run_pipenv() {
 
   # 2. Read-write files, always present.
   # Pipfile and Pipfile.lock are managed by the 'pipenv' command.
-  for rw_file in Pipfile Pipfile.lock; do
-    touch "$rw_file"
-    docker_args+=(--volume "$ABSDIR"/"$rw_file":/app/"$rw_file":rw)
+  # cjworkbench/migrations and server/migrations are written by manage.py
+  for rw_path in cjworkbench server Pipfile Pipfile.lock; do
+    touch "$rw_path"
+    docker_args+=(--volume "$ABSDIR"/"$rw_path":/app/"$rw_path":rw)
   done
 
   # 3. Read-write directories, which we must ensure are present.
   for rw_dir in importedmodules local_mail media; do
-    mkdir -p "$rw_dir"
-    docker_args+=(--volume "$ABSDIR"/"$rw_dir":/app/"$rw_dir":rw)
+    if [[ "${docker_args[@]}" =~ ":/app/$rw_dir:rw " ]]; then
+        # We're calling this with the --volume already specified
+        # e.g., unittest already mounts importedmodules+media
+        sleep 0
+    else
+        mkdir -p "$rw_dir"
+        docker_args+=(--volume "$ABSDIR"/"$rw_dir":/app/"$rw_dir":rw)
+    fi
   done
 
   docker run \
@@ -301,6 +308,8 @@ run_unittest() {
   shift # "unittest" is not a command
   run_python \
     --env CJW_DB_HOST=testdb \
+    --volume "$TEST_IMPORTEDMODULES_VOLUME_NAME:/app/importedmodules:rw" \
+    --volume "$TEST_MEDIA_VOLUME_NAME:/app/media:rw" \
     --name "${PREFIX}_unittest" \
     -- python ./manage.py test --keepdb "$@"
 }

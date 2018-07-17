@@ -112,11 +112,6 @@ class WfModuleTests(WfModuleTestsBase):
         correct_verlist = [secondver, firstver] # sorted by creation date, latest first
         self.assertListEqual([ver[0] for ver in verlist], correct_verlist)
 
-        # Cached tables should not appear in listed data versions.
-        StoredObject.create_table(self.wfmodule1, StoredObject.CACHED_TABLE, table1)
-        verlist = self.wfmodule1.list_fetched_data_versions()
-        self.assertListEqual([ver[0] for ver in verlist], correct_verlist)
-
         # but like, none of this should have created versions on any other wfmodule
         self.assertEqual(self.wfmodule2.list_fetched_data_versions(), [])
 
