@@ -27,7 +27,7 @@ describe('ColumnContextMenu', () => {
     let wrapper = mountMenu(sortDirectionNone, jest.fn())
     expect(wrapper).toMatchSnapshot() //stores file which represents tree of component
     })
-    //NO MORE CHECK ICON -- PIERRE
+  //   NO MORE CHECK ICON -- PIERRE
   // it('should have check icon: ' + classNameMap[sortDirection], () => {
   //   for (let sortDirectionToCheck of sortDirectionArray) {
   //     let wrapper = mountMenu(sortDirectionToCheck, jest.fn())
@@ -38,7 +38,7 @@ describe('ColumnContextMenu', () => {
   //         ? expect(dropDownItem).toHaveLength(1) : expect(dropDownItem).toHaveLength(0)
   //     }
   //   }
-  })
+  // })
 
   // only checking the call to set the sort direction, not the actual sort
   it('should call setSortDirection', async () => {
