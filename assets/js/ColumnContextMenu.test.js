@@ -11,6 +11,7 @@ describe('ColumnContextMenu', () => {
   var sortDirection // global variable used for iterations
 
   // Can't initialize with JSON because numeric keys.
+  classNameMap[sortDirectionNone] = 'test-sort-none'
   classNameMap[sortDirectionAsc] = 'test-sort-ascending'
   classNameMap[sortDirectionDesc] = 'test-sort-descending'
 
@@ -27,18 +28,18 @@ describe('ColumnContextMenu', () => {
     let wrapper = mountMenu(sortDirectionNone, jest.fn())
     expect(wrapper).toMatchSnapshot() //stores file which represents tree of component
     })
-  //   NO MORE CHECK ICON -- PIERRE
-  // it('should have check icon: ' + classNameMap[sortDirection], () => {
-  //   for (let sortDirectionToCheck of sortDirectionArray) {
-  //     let wrapper = mountMenu(sortDirectionToCheck, jest.fn())
-  //
-  //     let dropDownItem = wrapper.find('DropdownItem.' + classNameMap[sortDirectionToCheck] + '.icon-sort-up')
-  //     for (let s of sortDirectionArray) {
-  //       s === sortDirection
-  //         ? expect(dropDownItem).toHaveLength(1) : expect(dropDownItem).toHaveLength(0)
-  //     }
-  //   }
-  // })
+
+  it('should have check icon: ' + classNameMap[sortDirection], () => {
+    for (let sortDirectionToCheck of sortDirectionArray) {
+      let wrapper = mountMenu(sortDirectionToCheck, jest.fn())
+
+      let dropDownItem = wrapper.find('DropdownItem.' + classNameMap[sortDirectionToCheck] + '.icon-check')
+      for (let s of sortDirectionArray) {
+        s === sortDirection
+          ? expect(dropDownItem).toHaveLength(1) : expect(dropDownItem).toHaveLength(0)
+      }
+    }
+  })
 
   // only checking the call to set the sort direction, not the actual sort
   it('should call setSortDirection', async () => {
