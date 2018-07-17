@@ -11,7 +11,6 @@ describe('ColumnContextMenu', () => {
   var sortDirection // global variable used for iterations
 
   // Can't initialize with JSON because numeric keys.
-  classNameMap[sortDirectionNone] = 'test-sort-none'
   classNameMap[sortDirectionAsc] = 'test-sort-ascending'
   classNameMap[sortDirectionDesc] = 'test-sort-descending'
 
@@ -33,7 +32,7 @@ describe('ColumnContextMenu', () => {
     for (let sortDirectionToCheck of sortDirectionArray) {
       let wrapper = mountMenu(sortDirectionToCheck, jest.fn())
 
-      let dropDownItem = wrapper.find('DropdownItem.' + classNameMap[sortDirectionToCheck] + '.icon-check')
+      let dropDownItem = wrapper.find('DropdownItem.' + classNameMap[sortDirectionToCheck] + '.icon-sort-up')
       for (let s of sortDirectionArray) {
         s === sortDirection
           ? expect(dropDownItem).toHaveLength(1) : expect(dropDownItem).toHaveLength(0)
