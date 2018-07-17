@@ -1,161 +1,56 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`ColumnContextMenu should match snapshot 1`] = `
-<ColumnContextMenu
-  setSortDirection={[MockFunction]}
-  sortDirection={0}
->
-  <UncontrolledDropdown>
-    <Dropdown
-      active={false}
-      addonType={false}
-      direction="down"
-      inNavbar={false}
-      isOpen={false}
-      nav={false}
-      setActiveFromChild={false}
-      toggle={[Function]}
+<UncontrolledDropdown>
+  <DropdownToggle
+    aria-haspopup={true}
+    className="context-button"
+    color="secondary"
+  >
+    <i
+      className="icon-more"
+    />
+  </DropdownToggle>
+  <Portal>
+    <DropdownMenu
+      flip={false}
+      modifiers={
+        Object {
+          "preventOverflow": Object {
+            "enabled": false,
+          },
+        }
+      }
+      persist={true}
+      tag="div"
     >
-      <Manager
-        className="dropdown"
-        onKeyDown={[Function]}
-        tag="div"
+      <DropdownItem
+        className="sort-ascending"
+        onClick={[Function]}
+        tag="button"
+        toggle={true}
       >
-        <div
-          className="dropdown"
-          onKeyDown={[Function]}
-        >
-          <DropdownToggle
-            aria-haspopup={true}
-            className="context-button"
-            color="secondary"
-          >
-            <Target
-              aria-expanded={false}
-              aria-haspopup={true}
-              className="context-button"
-              color="secondary"
-              component={[Function]}
-              onClick={[Function]}
-            >
-              <Button
-                aria-expanded={false}
-                aria-haspopup={true}
-                className="context-button"
-                color="secondary"
-                innerRef={[Function]}
-                onClick={[Function]}
-                tag="button"
-              >
-                <button
-                  aria-expanded={false}
-                  aria-haspopup={true}
-                  className="context-button btn btn-secondary"
-                  onClick={[Function]}
-                  type="button"
-                >
-                  <i
-                    className="icon-more"
-                  />
-                </button>
-              </Button>
-            </Target>
-          </DropdownToggle>
-          <Portal>
-            <DropdownMenu
-              flip={false}
-              modifiers={
-                Object {
-                  "preventOverflow": Object {
-                    "enabled": false,
-                  },
-                }
-              }
-              persist={true}
-              tag="div"
-            >
-              <Popper
-                aria-hidden={true}
-                className="dropdown-menu"
-                component="div"
-                eventsEnabled={true}
-                modifiers={
-                  Object {
-                    "flip": Object {
-                      "enabled": false,
-                    },
-                    "preventOverflow": Object {
-                      "enabled": false,
-                    },
-                  }
-                }
-                placement="bottom-start"
-                positionFixed={false}
-                role="menu"
-                tabIndex="-1"
-                x-placement="bottom-start"
-              >
-                <div
-                  aria-hidden={true}
-                  className="dropdown-menu"
-                  role="menu"
-                  style={
-                    Object {
-                      "opacity": 0,
-                      "pointerEvents": "none",
-                      "position": "absolute",
-                    }
-                  }
-                  tabIndex="-1"
-                  x-placement="bottom-start"
-                >
-                  <DropdownItem
-                    className="test-sort-ascending"
-                    onClick={[Function]}
-                    tag="button"
-                    toggle={true}
-                  >
-                    <button
-                      className="test-sort-ascending dropdown-item"
-                      onClick={[Function]}
-                      tabIndex="0"
-                      type="button"
-                    >
-                      <i
-                        className="icon-sort-up"
-                      />
-                      <span>
-                        Sort ascending
-                      </span>
-                    </button>
-                  </DropdownItem>
-                  <DropdownItem
-                    className="test-sort-descending"
-                    onClick={[Function]}
-                    tag="button"
-                    toggle={true}
-                  >
-                    <button
-                      className="test-sort-descending dropdown-item"
-                      onClick={[Function]}
-                      tabIndex="0"
-                      type="button"
-                    >
-                      <i
-                        className="icon-sort-down"
-                      />
-                      <span>
-                        Sort descending
-                      </span>
-                    </button>
-                  </DropdownItem>
-                </div>
-              </Popper>
-            </DropdownMenu>
-          </Portal>
-        </div>
-      </Manager>
-    </Dropdown>
-  </UncontrolledDropdown>
-</ColumnContextMenu>
+        <i
+          className="icon-sort-up"
+        />
+        <span>
+          Sort ascending
+        </span>
+      </DropdownItem>
+      <DropdownItem
+        className="sort-descending"
+        onClick={[Function]}
+        tag="button"
+        toggle={true}
+      >
+        <i
+          className="icon-sort-down"
+        />
+        <span>
+          Sort descending
+        </span>
+      </DropdownItem>
+    </DropdownMenu>
+  </Portal>
+</UncontrolledDropdown>
 `;
