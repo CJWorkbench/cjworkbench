@@ -25,21 +25,24 @@ export default class ColumnContextMenu extends React.Component {
     return (
       <UncontrolledDropdown>
         <DropdownToggle className='context-button'>
-          <i className='icon-sort-down'></i>
+          <i className='icon-more'></i>
         </DropdownToggle>
         <Portal>
           <DropdownMenu persist flip={false} modifiers={{preventOverflow: {enabled: false}}}>
-            <DropdownItem onClick={this.setSortDirectionNone} className='test-sort-none'>
+            {/* <DropdownItem onClick={this.setSortDirectionNone} className='test-sort-none'>
               {this.props.sortDirection == sortDirectionNone ? <i className='icon-check' /> : null}
               <span>Not Sorted</span>
-            </DropdownItem>
-            <DropdownItem divider />
+            </DropdownItem> */}
+            {/* <DropdownItem divider /> */}
             <DropdownItem onClick={this.setSortDirectionAsc} className='test-sort-ascending'>
               {this.props.sortDirection == sortDirectionAsc ? <i className='icon-check' /> : null}
+              <i className="icon-check"></i>
               <span>Sort Ascending</span>
+
             </DropdownItem>
             <DropdownItem onClick={this.setSortDirectionDesc} className='test-sort-descending'>
               {this.props.sortDirection == sortDirectionDesc ? <i className='icon-check' /> : null}
+              <i className="icon-check"></i>
               <span>Sort Descending</span>
             </DropdownItem>
           </DropdownMenu>

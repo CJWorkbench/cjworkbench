@@ -182,7 +182,7 @@
       }
     }
 
-    .react-grid-HeaderCell{
+    .react-grid-HeaderCell {
       background-color: $heading-bg;
       color:white;
       border-right:1px solid rgba(0,0,0,0.1);
@@ -255,7 +255,18 @@
           top:-.5rem;
           right:0;
           border-left: 1px solid $dark-accent--medium;
+        }
 
+        button {
+          flex: 0 0 auto;
+          font-size: 1.2rem;
+          margin-top:.5rem ;
+          border: 0;
+          cursor: pointer;
+          background-color: transparent;
+          color: inherit;
+          opacity: 0;
+          &:hover {opacity: 1}
         }
 
         input[name="new-column-key"] {
@@ -268,17 +279,11 @@
           flex: 1 1 auto;
           border: 0;
         }
-
-        button {
-          flex: 0 0 auto;
-          font-size: .7rem;
-          margin-top:.5rem ;
-          border: 0;
-          cursor: pointer;
-          background-color: transparent;
-          color: inherit;
-        }
       }
+    }
+
+    .react-grid-HeaderCell:hover button {
+      opacity: 0.7;
     }
 
 
