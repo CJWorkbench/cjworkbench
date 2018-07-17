@@ -1118,6 +1118,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                                     flip={false}
                                                     modifiers={
                                                       Object {
+                                                        "hide": Object {
+                                                          "enabled": false,
+                                                        },
                                                         "preventOverflow": Object {
                                                           "enabled": false,
                                                         },
@@ -1134,6 +1137,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       modifiers={
                                                         Object {
                                                           "flip": Object {
+                                                            "enabled": false,
+                                                          },
+                                                          "hide": Object {
                                                             "enabled": false,
                                                           },
                                                           "preventOverflow": Object {
@@ -1165,7 +1171,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           className="sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-ascending dropdown-item"
@@ -1185,7 +1191,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           className="sort-descending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-descending dropdown-item"
@@ -1456,6 +1462,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                                     flip={false}
                                                     modifiers={
                                                       Object {
+                                                        "hide": Object {
+                                                          "enabled": false,
+                                                        },
                                                         "preventOverflow": Object {
                                                           "enabled": false,
                                                         },
@@ -1472,6 +1481,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       modifiers={
                                                         Object {
                                                           "flip": Object {
+                                                            "enabled": false,
+                                                          },
+                                                          "hide": Object {
                                                             "enabled": false,
                                                           },
                                                           "preventOverflow": Object {
@@ -1503,7 +1515,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           className="sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-ascending dropdown-item"
@@ -1523,7 +1535,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           className="sort-descending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-descending dropdown-item"
@@ -1794,6 +1806,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                                     flip={false}
                                                     modifiers={
                                                       Object {
+                                                        "hide": Object {
+                                                          "enabled": false,
+                                                        },
                                                         "preventOverflow": Object {
                                                           "enabled": false,
                                                         },
@@ -1810,6 +1825,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       modifiers={
                                                         Object {
                                                           "flip": Object {
+                                                            "enabled": false,
+                                                          },
+                                                          "hide": Object {
                                                             "enabled": false,
                                                           },
                                                           "preventOverflow": Object {
@@ -1841,7 +1859,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           className="sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-ascending dropdown-item"
@@ -1861,7 +1879,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           className="sort-descending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-descending dropdown-item"
@@ -2132,6 +2150,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                                     flip={false}
                                                     modifiers={
                                                       Object {
+                                                        "hide": Object {
+                                                          "enabled": false,
+                                                        },
                                                         "preventOverflow": Object {
                                                           "enabled": false,
                                                         },
@@ -2148,6 +2169,9 @@ exports[`TableView Blank table when no module id 1`] = `
                                                       modifiers={
                                                         Object {
                                                           "flip": Object {
+                                                            "enabled": false,
+                                                          },
+                                                          "hide": Object {
                                                             "enabled": false,
                                                           },
                                                           "preventOverflow": Object {
@@ -2179,7 +2203,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           className="sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-ascending dropdown-item"
@@ -2199,7 +2223,7 @@ exports[`TableView Blank table when no module id 1`] = `
                                                           className="sort-descending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-descending dropdown-item"
@@ -8832,6 +8856,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                     flip={false}
                                                     modifiers={
                                                       Object {
+                                                        "hide": Object {
+                                                          "enabled": false,
+                                                        },
                                                         "preventOverflow": Object {
                                                           "enabled": false,
                                                         },
@@ -8848,6 +8875,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                       modifiers={
                                                         Object {
                                                           "flip": Object {
+                                                            "enabled": false,
+                                                          },
+                                                          "hide": Object {
                                                             "enabled": false,
                                                           },
                                                           "preventOverflow": Object {
@@ -8879,7 +8909,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                           className="sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-ascending dropdown-item"
@@ -8899,7 +8929,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                           className="sort-descending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-descending dropdown-item"
@@ -9170,6 +9200,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                     flip={false}
                                                     modifiers={
                                                       Object {
+                                                        "hide": Object {
+                                                          "enabled": false,
+                                                        },
                                                         "preventOverflow": Object {
                                                           "enabled": false,
                                                         },
@@ -9186,6 +9219,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                       modifiers={
                                                         Object {
                                                           "flip": Object {
+                                                            "enabled": false,
+                                                          },
+                                                          "hide": Object {
                                                             "enabled": false,
                                                           },
                                                           "preventOverflow": Object {
@@ -9217,7 +9253,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                           className="sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-ascending dropdown-item"
@@ -9237,7 +9273,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                           className="sort-descending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-descending dropdown-item"
@@ -9508,6 +9544,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                     flip={false}
                                                     modifiers={
                                                       Object {
+                                                        "hide": Object {
+                                                          "enabled": false,
+                                                        },
                                                         "preventOverflow": Object {
                                                           "enabled": false,
                                                         },
@@ -9524,6 +9563,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                       modifiers={
                                                         Object {
                                                           "flip": Object {
+                                                            "enabled": false,
+                                                          },
+                                                          "hide": Object {
                                                             "enabled": false,
                                                           },
                                                           "preventOverflow": Object {
@@ -9555,7 +9597,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                           className="sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-ascending dropdown-item"
@@ -9575,7 +9617,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                           className="sort-descending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-descending dropdown-item"
@@ -9846,6 +9888,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                     flip={false}
                                                     modifiers={
                                                       Object {
+                                                        "hide": Object {
+                                                          "enabled": false,
+                                                        },
                                                         "preventOverflow": Object {
                                                           "enabled": false,
                                                         },
@@ -9862,6 +9907,9 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                       modifiers={
                                                         Object {
                                                           "flip": Object {
+                                                            "enabled": false,
+                                                          },
+                                                          "hide": Object {
                                                             "enabled": false,
                                                           },
                                                           "preventOverflow": Object {
@@ -9893,7 +9941,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                           className="sort-ascending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-ascending dropdown-item"
@@ -9913,7 +9961,7 @@ exports[`TableView Fetches, renders, edits cells, sorts columns and reorders col
                                                           className="sort-descending"
                                                           onClick={[Function]}
                                                           tag="button"
-                                                          toggle={true}
+                                                          toggle={false}
                                                         >
                                                           <button
                                                             className="sort-descending dropdown-item"

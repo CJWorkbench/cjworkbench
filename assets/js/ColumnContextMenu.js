@@ -10,13 +10,22 @@ import DropdownMenu from 'reactstrap/lib/DropdownMenu'
 import DropdownItem from 'reactstrap/lib/DropdownItem'
 import { sortDirectionNone, sortDirectionAsc, sortDirectionDesc} from './SortFromTable'
 
+// Modifiers disabled to prevent menu flipping (occurs even when flip=false)
+var dropdownModifiers = {
+  preventOverflow: {
+    enabled: false
+  },
+  hide: {
+    enabled: false
+  }
+}
+
 export default class ColumnContextMenu extends React.Component {
   static propTypes = {
     setSortDirection: PropTypes.func.isRequired,
     sortDirection: PropTypes.oneOf([sortDirectionNone, sortDirectionAsc, sortDirectionDesc]).isRequired
   }
 
-  setSortDirectionNone = () => this.props.setSortDirection(sortDirectionNone)
   setSortDirectionAsc = () => this.props.setSortDirection(sortDirectionAsc)
   setSortDirectionDesc = () => this.props.setSortDirection(sortDirectionDesc)
 
@@ -28,12 +37,12 @@ export default class ColumnContextMenu extends React.Component {
           <i className='icon-more'></i>
         </DropdownToggle>
         <Portal>
-          <DropdownMenu persist flip={false} modifiers={{preventOverflow: {enabled: false}}}>
-            <DropdownItem onClick={this.setSortDirectionAsc} className='sort-ascending'>
+          <DropdownMenu persist flip={false} modifiers={dropdownModifiers} >
+            <DropdownItem onClick={this.setSortDirectionAsc} className='sort-ascending' toggle={false}>
               <i className="icon-sort-up"></i>
               <span>Sort ascending</span>
             </DropdownItem>
-            <DropdownItem onClick={this.setSortDirectionDesc} className='sort-descending'>
+            <DropdownItem onClick={this.setSortDirectionDesc} className='sort-descending' toggle={false}>
               <i className="icon-sort-down"></i>
               <span>Sort descending</span>
             </DropdownItem>

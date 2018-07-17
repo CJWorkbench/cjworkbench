@@ -1083,6 +1083,9 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               flip={false}
                                               modifiers={
                                                 Object {
+                                                  "hide": Object {
+                                                    "enabled": false,
+                                                  },
                                                   "preventOverflow": Object {
                                                     "enabled": false,
                                                   },
@@ -1099,6 +1102,9 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                 modifiers={
                                                   Object {
                                                     "flip": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "hide": Object {
                                                       "enabled": false,
                                                     },
                                                     "preventOverflow": Object {
@@ -1130,7 +1136,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     className="sort-ascending"
                                                     onClick={[Function]}
                                                     tag="button"
-                                                    toggle={true}
+                                                    toggle={false}
                                                   >
                                                     <button
                                                       className="sort-ascending dropdown-item"
@@ -1150,7 +1156,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     className="sort-descending"
                                                     onClick={[Function]}
                                                     tag="button"
-                                                    toggle={true}
+                                                    toggle={false}
                                                   >
                                                     <button
                                                       className="sort-descending dropdown-item"
@@ -1421,6 +1427,9 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               flip={false}
                                               modifiers={
                                                 Object {
+                                                  "hide": Object {
+                                                    "enabled": false,
+                                                  },
                                                   "preventOverflow": Object {
                                                     "enabled": false,
                                                   },
@@ -1437,6 +1446,9 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                 modifiers={
                                                   Object {
                                                     "flip": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "hide": Object {
                                                       "enabled": false,
                                                     },
                                                     "preventOverflow": Object {
@@ -1468,7 +1480,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     className="sort-ascending"
                                                     onClick={[Function]}
                                                     tag="button"
-                                                    toggle={true}
+                                                    toggle={false}
                                                   >
                                                     <button
                                                       className="sort-ascending dropdown-item"
@@ -1488,7 +1500,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     className="sort-descending"
                                                     onClick={[Function]}
                                                     tag="button"
-                                                    toggle={true}
+                                                    toggle={false}
                                                   >
                                                     <button
                                                       className="sort-descending dropdown-item"
@@ -1759,6 +1771,9 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               flip={false}
                                               modifiers={
                                                 Object {
+                                                  "hide": Object {
+                                                    "enabled": false,
+                                                  },
                                                   "preventOverflow": Object {
                                                     "enabled": false,
                                                   },
@@ -1775,6 +1790,9 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                 modifiers={
                                                   Object {
                                                     "flip": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "hide": Object {
                                                       "enabled": false,
                                                     },
                                                     "preventOverflow": Object {
@@ -1806,7 +1824,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     className="sort-ascending"
                                                     onClick={[Function]}
                                                     tag="button"
-                                                    toggle={true}
+                                                    toggle={false}
                                                   >
                                                     <button
                                                       className="sort-ascending dropdown-item"
@@ -1826,7 +1844,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     className="sort-descending"
                                                     onClick={[Function]}
                                                     tag="button"
-                                                    toggle={true}
+                                                    toggle={false}
                                                   >
                                                     <button
                                                       className="sort-descending dropdown-item"
@@ -2097,6 +2115,9 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                               flip={false}
                                               modifiers={
                                                 Object {
+                                                  "hide": Object {
+                                                    "enabled": false,
+                                                  },
                                                   "preventOverflow": Object {
                                                     "enabled": false,
                                                   },
@@ -2113,6 +2134,9 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                 modifiers={
                                                   Object {
                                                     "flip": Object {
+                                                      "enabled": false,
+                                                    },
+                                                    "hide": Object {
                                                       "enabled": false,
                                                     },
                                                     "preventOverflow": Object {
@@ -2144,7 +2168,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     className="sort-ascending"
                                                     onClick={[Function]}
                                                     tag="button"
-                                                    toggle={true}
+                                                    toggle={false}
                                                   >
                                                     <button
                                                       className="sort-ascending dropdown-item"
@@ -2164,7 +2188,7 @@ exports[`DataGrid tests, Renders the grid 1`] = `
                                                     className="sort-descending"
                                                     onClick={[Function]}
                                                     tag="button"
-                                                    toggle={true}
+                                                    toggle={false}
                                                   >
                                                     <button
                                                       className="sort-descending dropdown-item"

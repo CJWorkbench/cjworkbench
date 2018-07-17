@@ -42,8 +42,9 @@ _SortTypes = {
     2: 'Date',
 }
 _SortAscendings = {
-    0: True,
-    1: False
+    0: None,
+    1: True,
+    2: False
 }
 
 
