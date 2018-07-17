@@ -257,6 +257,7 @@ def wfmodule_output(request, pk, format=None):
     init_data = {
         'input': input_dict,
         'params': params,
+        'embeddata': result.json,
     }
     init_data_bytes = escape_potential_hack_chars(json.dumps(init_data)) \
         .encode('utf-8')
@@ -276,6 +277,19 @@ def wfmodule_output(request, pk, format=None):
 
 @api_view(['GET'])
 @renderer_classes((JSONRenderer,))
+def wfmodule_embeddata(request, pk):
+    wf_module = _lookup_wf_module_for_read(pk, request)
+    if isinstance(wf_module, HttpResponse):
+        return wf_module
+
+    with wf_module.workflow.cooperative_lock():
+        result = execute_wfmodule(wf_module)
+
+    return JsonResponse(result.json)
+
+
+@api_view(['GET'])
+@renderer_classes((JSONRenderer,))
 def wfmodule_histogram(request, pk, col, format=None):
     wf_module = _lookup_wf_module_for_read(pk, request)
     if isinstance(wf_module, HttpResponse):
@@ -288,7 +302,9 @@ def wfmodule_histogram(request, pk, col, format=None):
     if not prev_modules:
         return JsonResponse(_make_render_dict(pd.DataFrame()))
 
-    result = execute_wfmodule(prev_modules.last())
+    with wf_module.workflow.cooperative_lock():
+        result = execute_wfmodule(prev_modules.last())
+
     if col not in result.dataframe.columns:
         return JsonResponse({
             'message': 'Column does not exist in module input',
@@ -362,12 +378,12 @@ def wfmodule_public_output(request, pk, type, format=None):
         return wf_module
 
     with wf_module.workflow.cooperative_lock():
-        table = execute_wfmodule(wf_module)
-        if type=='json':
-            d = table.to_json(orient='records')
+        result = execute_wfmodule(wf_module)
+        if type == 'json':
+            d = result.dataframe.to_json(orient='records')
             return HttpResponse(d, content_type="application/json")
-        elif type=='csv':
-            d = table.to_csv(index=False)
+        elif type == 'csv':
+            d = result.dataframe.to_csv(index=False)
             return HttpResponse(d, content_type="text/csv")
         else:
             return HttpResponseNotFound()
