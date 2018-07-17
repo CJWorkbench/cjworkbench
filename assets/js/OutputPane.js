@@ -3,7 +3,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import TableView from './TableView'
-import { OutputIframe } from './OutputIframe'
+import OutputIframe from './OutputIframe'
 import Resizable from 're-resizable'
 import debounce from 'lodash/debounce'
 import { connect } from 'react-redux'
@@ -250,6 +250,8 @@ function mapStateToProps(state, ownProps) {
     sortColumn = columnParam && columnParam.value || null;
     sortDirection = directionParam || sortDirectionNone
   }
+
+  console.log(workflow)
 
   return {
     workflowId: workflow.id,

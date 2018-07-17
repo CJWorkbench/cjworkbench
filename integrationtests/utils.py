@@ -110,6 +110,9 @@ class WorkbenchBase(unittest.TestCase):
 
         with b.scope(f'.wf-module:nth-child({position * 2 + 2})'):
             b.click_button('more')
+
+        # Dropdown menu is at root of document (in a <Portal>)
+        with b.scope('.dropdown-menu'):
             b.click_button('Delete')
 
     # TODO move to a helper .py file

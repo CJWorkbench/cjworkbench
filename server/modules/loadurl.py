@@ -34,7 +34,7 @@ class LoadURL(ModuleImpl):
     # Input table ignored.
     @staticmethod
     def render(wf_module, table):
-        return wf_module.retrieve_fetched_table()
+        return ProcessResult(wf_module.retrieve_fetched_table())
 
     # Load a CSV from file when fetch pressed
     @staticmethod
