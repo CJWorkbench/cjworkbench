@@ -1,89 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`OutputPane Iframe when htmloutput set 1`] = `
-<div
-  className="outputpane"
->
-  <Resizable
-    className="outputpane-box"
-    enable={
-      Object {
-        "bottom": false,
-        "bottomLeft": false,
-        "bottomRight": false,
-        "left": true,
-        "right": false,
-        "top": false,
-        "topLeft": false,
-        "topRight": false,
-      }
-    }
-    grid={
-      Array [
-        1,
-        1,
-      ]
-    }
-    lockAspectRatio={false}
-    lockAspectRatioExtraHeight={0}
-    lockAspectRatioExtraWidth={0}
-    maxWidth="924%"
-    minWidth="100%"
-    onResize={[Function]}
-    onResizeStart={[Function]}
-    onResizeStop={[Function]}
-    size={
-      Object {
-        "height": "100%",
-        "width": "100%",
-      }
-    }
-    style={
-      Object {
-        "transform": "translateX(0px)",
-      }
-    }
-  >
-    <div
-      id="spinner-container-transparent"
-      style={
-        Object {
-          "display": "none",
-        }
-      }
-    >
-      <div
-        id="spinner-l1"
-      >
-        <div
-          id="spinner-l2"
-        >
-          <div
-            id="spinner-l3"
-          />
-        </div>
-      </div>
-    </div>
-    <OutputIframe
-      isPublic={false}
-      revision={1}
-      selectedWfModuleId={987}
-      workflowId={123}
-    />
-    <TableView
-      api={Object {}}
-      isReadOnly={false}
-      resizing={false}
-      revision={1}
-      selectedWfModuleId={987}
-      setBusySpinner={[Function]}
-      showColumnLetter={false}
-    />
-  </Resizable>
-</div>
-`;
-
-exports[`OutputPane Renders 1`] = `
+exports[`OutputPane matches snapshot 1`] = `
 <div
   className="outputpane"
 >
@@ -160,7 +77,7 @@ exports[`OutputPane Renders 1`] = `
 </div>
 `;
 
-exports[`OutputPane Renders when no module id 1`] = `
+exports[`OutputPane renders when no module id 1`] = `
 <div
   className="outputpane"
 >

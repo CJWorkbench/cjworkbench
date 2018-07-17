@@ -1,7 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import ColumnColorPicker from  './ColumnColorPicker'
-import {setParamValueActionByIdName, setWfModuleStatusAction, store} from "../../workflow-reducer";
+import ColumnColorPicker from './ColumnColorPicker'
+import { setParamValueActionByIdName, setWfModuleStatusAction, store } from '../../workflow-reducer'
 import { OutputIframeCtrl } from '../../OutputIframe'
 import update from 'immutability-helper'
 
@@ -10,35 +10,47 @@ import validateDataInput from './chartbuilder/util/validate-data-input'
 import Errors from './errors'
 
 // Data format adapter, would eventually be obsolete with a CSV format /input endpoint
-function JSONtoCSV(d) {
+function JSONtoCSV (d) {
   if (d && d.length > 0) {
-    var colnames = Object.keys(d[0]).filter(key => key != 'index');
-    var text = colnames.join(',') + '\n';
+    var colnames = Object.keys(d[0]).filter(key => key !== 'index')
+    var text = colnames.join(',') + '\n'
     for (var row of d) {
-      text += colnames.map((name) => {return "\"" + row[name] + "\""}).join(',') + '\n';
+      text += colnames.map((name) => {
+        return `"${row[name]}"`
+      }).join(',') + '\n'
     }
-    return text;
+    return text
   } else {
-    return '';
+    return ''
   }
 }
 
 export default class ChartEditor extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      loading: true,
-      model: null,      // Chartbuilder model object. Also where we store/update current parameter values
-      inputData: null,
-    };
-    this.lastWfModuleStatus = null
-    this.onChangeChartSettings = this.onChangeChartSettings.bind(this);
-    this.onChangeTitle = this.onChangeTitle.bind(this);
-    this.onChangePrefix = this.onChangePrefix.bind(this);
-    this.onChangeSuffix = this.onChangeSuffix.bind(this);
+  static propTypes = {
+    isReadOnly: PropTypes.bool.isRequired,
+    revision: PropTypes.number.isRequired,
+    wfModuleId: PropTypes.number.isRequired,
+    modelText: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    api: PropTypes.object.isRequired
   }
 
-  ickyDispatchSideEffect() {
+  constructor (props) {
+    super(props)
+
+    this.state = {
+      loading: true,
+      model: null, // Chartbuilder model object. Also where we store/update current parameter values
+      inputData: null
+    }
+    this.lastWfModuleStatus = null
+    this.onChangeChartSettings = this.onChangeChartSettings.bind(this)
+    this.onChangeTitle = this.onChangeTitle.bind(this)
+    this.onChangePrefix = this.onChangePrefix.bind(this)
+    this.onChangeSuffix = this.onChangeSuffix.bind(this)
+  }
+
+  ickyDispatchSideEffect () {
     const { messages, valid } = this.state.model.errors
     if (!valid) {
       const errorMessage = messages.map(e => e.text).join('\n')
@@ -53,16 +65,16 @@ export default class ChartEditor extends React.Component {
   }
 
   // Rehydrate saved chart state text into a model object that Chartbuilder can use
-  loadChartProps() {
+  loadChartProps () {
     const modelText = this.props.modelText
 
     let model
-    if (modelText !== "") {
-      model = JSON.parse(modelText);
+    if (modelText !== '') {
+      model = JSON.parse(modelText)
     } else {
       model = update(ChartConfig.defaultProps, {
         chartProps: {
-          scale: { typeSettings: { maxLength: { $set: 7 } } },
+          scale: { typeSettings: { maxLength: { $set: 7 } } }
         }
       })
     }
@@ -76,7 +88,7 @@ export default class ChartEditor extends React.Component {
   }
 
   // Go from input data + saved model text to a Chartbuilder model, handling data parser errors if any
-  parseInputData(data) {
+  parseInputData (data) {
     const model = this.loadChartProps()
     model.chartProps.input = { raw: data }
 
@@ -91,54 +103,54 @@ export default class ChartEditor extends React.Component {
 
     model.errors = {
       messages: errors, // ChartBuilder should have named this "objects", not "messages"
-      valid,
+      valid
     }
 
     return model
   }
 
   // Retreive the data we want to chart from the server, then chart it
-  loadChartState() {
-    this.setState({loading: true});
+  loadChartState () {
+    this.setState({loading: true})
     this.props.api.input(this.props.wfModuleId).then((json) => {
-      const inputData = JSONtoCSV(json.rows);
+      const inputData = JSONtoCSV(json.rows)
       this.setState({
         loading: false,
         inputData,
-        model: this.parseInputData(inputData),
+        model: this.parseInputData(inputData)
       })
       this.ickyDispatchSideEffect()
     })
   }
 
   // When the model state changes (when a parameter is changed) the chart needs to update, and we need to store to the server
-  saveState(state) {
+  saveState (state) {
     if (OutputIframeCtrl) {
-      OutputIframeCtrl.postMessage({model: state}, '*');
+      OutputIframeCtrl.postMessage({model: state}, '*')
     }
-    this.saveStateToDatabase(state);
+    this.saveStateToDatabase(state)
   }
 
   // Push new state to server, sans the data we are charting (which comes from the previous module)
-  saveStateToDatabase(state) {
+  saveStateToDatabase (state) {
     // Make a copy so we can remove the inpit data
-    let stateCopy = this.deepCopyState(state);
-    Object.assign(stateCopy.chartProps, {data: undefined, input: undefined});
-    let newState = {value: JSON.stringify(state)};
-    store.dispatch(setParamValueActionByIdName(this.props.wfModuleId, 'chart_editor', newState));
+    let stateCopy = this.deepCopyState(state)
+    Object.assign(stateCopy.chartProps, {data: undefined, input: undefined})
+    let newState = {value: JSON.stringify(state)}
+    store.dispatch(setParamValueActionByIdName(this.props.wfModuleId, 'chart_editor', newState))
   }
 
-  deepCopyState(state) {
-    return JSON.parse(JSON.stringify(state));
+  deepCopyState (state) {
+    return JSON.parse(JSON.stringify(state))
   }
 
-  componentDidMount() {
-    this.loadChartState();
+  componentDidMount () {
+    this.loadChartState()
   }
 
-  componentWillReceiveProps(nextProps) {
+  componentWillReceiveProps (nextProps) {
     if (nextProps.revision !== this.props.revision) {
-      this.loadChartState();
+      this.loadChartState()
     }
   }
 
@@ -146,72 +158,72 @@ export default class ChartEditor extends React.Component {
   // All parameters must both setState on this component so that we get a re-render with new settings,
   // and saveState so that the chart re-renders and we save the change to the server.
 
-  onChangeChartSettings(state) {
-    let stateCopy = this.deepCopyState(this.state.model);
-    stateCopy.chartProps.chartSettings = state;
-    this.setState({model: stateCopy});
-    this.saveState(stateCopy);
+  onChangeChartSettings (state) {
+    let stateCopy = this.deepCopyState(this.state.model)
+    stateCopy.chartProps.chartSettings = state
+    this.setState({model: stateCopy})
+    this.saveState(stateCopy)
   }
 
-  onChangeTitle(e) {
-    let stateCopy = this.deepCopyState(this.state.model);
-    stateCopy.metadata.title = e.target.value;
-    this.setState({model: stateCopy});
-    this.saveState(stateCopy);
+  onChangeTitle (e) {
+    let stateCopy = this.deepCopyState(this.state.model)
+    stateCopy.metadata.title = e.target.value
+    this.setState({model: stateCopy})
+    this.saveState(stateCopy)
   }
 
-  onChangePrefix(e) {
-    let stateCopy = this.deepCopyState(this.state.model);
-    stateCopy.chartProps.scale.primaryScale.prefix = e.target.value;
-    this.setState({model: stateCopy});
-    this.saveState(stateCopy);
+  onChangePrefix (e) {
+    let stateCopy = this.deepCopyState(this.state.model)
+    stateCopy.chartProps.scale.primaryScale.prefix = e.target.value
+    this.setState({model: stateCopy})
+    this.saveState(stateCopy)
   }
 
-  onChangeSuffix(e) {
-    let stateCopy = this.deepCopyState(this.state.model);
-    stateCopy.chartProps.scale.primaryScale.suffix = e.target.value;
-    this.setState({model: stateCopy});
-    this.saveState(stateCopy);
+  onChangeSuffix (e) {
+    let stateCopy = this.deepCopyState(this.state.model)
+    stateCopy.chartProps.scale.primaryScale.suffix = e.target.value
+    this.setState({model: stateCopy})
+    this.saveState(stateCopy)
   }
 
-  render() {
+  render () {
     if (this.state.model && this.state.model.errors && this.state.model.errors.valid) {
       return (
         <React.Fragment>
           <ColumnColorPicker
             series={this.state.model.chartProps.chartSettings}
-            saveState={this.onChangeChartSettings}/>
-
-          <div className="param-line-margin">
-            <div className="label-margin t-d-gray content-3">
+            saveState={this.onChangeChartSettings}
+          />
+          <div className='param-line-margin'>
+            <div className='label-margin t-d-gray content-3'>
               Title
             </div>
             <input
-              type="text"
-              name="title"
-              className="wfmoduleStringInput module-parameter t-d-gray content-2 text-field"
+              type='text'
+              name='title'
+              className='wfmoduleStringInput module-parameter t-d-gray content-2 text-field'
               value={this.state.model.metadata.title}
               onChange={this.onChangeTitle} />
           </div>
 
           <div >
-            <div className="label-margin t-d-gray content-3">
+            <div className='label-margin t-d-gray content-3'>
               Prefix
             </div>
             <input
-              type="text"
-              className="wfmoduleStringInput t-d-gray module-parameter content-2 text-field"
+              type='text'
+              className='wfmoduleStringInput t-d-gray module-parameter content-2 text-field'
               value={this.state.model.chartProps.scale.primaryScale.prefix}
               onChange={this.onChangePrefix} />
           </div>
 
           <div >
-            <div className="label-margin t-d-gray content-3">
+            <div className='label-margin t-d-gray content-3'>
               Suffix
             </div>
             <input
-              type="text"
-              className="wfmoduleStringInput t-d-gray module-parameter content-2 text-field"
+              type='text'
+              className='wfmoduleStringInput t-d-gray module-parameter content-2 text-field'
               value={this.state.model.chartProps.scale.primaryScale.suffix}
               onChange={this.onChangeSuffix} />
           </div>
@@ -223,12 +235,3 @@ export default class ChartEditor extends React.Component {
     }
   }
 }
-
-ChartEditor.propTypes = {
-  isReadOnly: PropTypes.bool.isRequired,
-  revision:   PropTypes.number.isRequired,
-  wfModuleId: PropTypes.number.isRequired,
-  modelText:  PropTypes.string.isRequired,
-  type:       PropTypes.string.isRequired,
-  api:        PropTypes.object.isRequired
-};
