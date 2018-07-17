@@ -32,6 +32,7 @@ requests-oauthlib = "*"
 pyjwt = "*"
 channels-redis = "*"
 workbenchdata-pandas = "==0.24.0a2"
+cchardet = "*"
 
 [dev-packages]
 mock = "==2.0.0"
