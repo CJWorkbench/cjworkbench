@@ -1,5 +1,7 @@
 # Undo, redo, and other version related things
 import datetime
+import json
+from typing import Optional, Dict, Any
 from django.utils import timezone
 from django.conf import settings
 from server.models import Delta, WfModule
@@ -48,7 +50,9 @@ def WorkflowRedo(workflow):
 
 
 def save_result_if_changed(wfm: WfModule,
-                           new_result: ProcessResult) -> datetime.datetime:
+                           new_result: ProcessResult,
+                           stored_object_json: Optional[Dict[str, Any]]=None
+                           ) -> datetime.datetime:
     """Store retrieved data table, if it is a change from wfm's existing data.
 
     "Change" here means either a changed table or changed error message.
@@ -70,7 +74,10 @@ def save_result_if_changed(wfm: WfModule,
         # Store this data only if it's different from most recent data
         old_table = wfm.retrieve_fetched_table()
         new_table = new_result.dataframe
-        version_added = wfm.store_fetched_table_if_different(new_table)
+        version_added = wfm.store_fetched_table_if_different(
+            new_table,
+            metadata=json.dumps(stored_object_json)
+        )
 
         if version_added:
             enforce_storage_limits(wfm)

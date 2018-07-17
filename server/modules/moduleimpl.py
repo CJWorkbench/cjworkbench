@@ -1,3 +1,4 @@
+from typing import Optional, Dict, Any
 from django.utils import timezone
 from server.models import WfModule
 from server.versions import save_result_if_changed
@@ -16,7 +17,9 @@ class ModuleImpl:
         pass
 
     @staticmethod
-    def commit_result(wf_module: WfModule, result: ProcessResult) -> None:
+    def commit_result(wf_module: WfModule, result: ProcessResult,
+                      stored_object_json: Optional[Dict[str, Any]]=None
+                      ) -> None:
         """Store retrieved data table, if it is a change from wfm's existing data.
 
         Save the WfModule's `status` and `error_msg`.
@@ -36,4 +39,8 @@ class ModuleImpl:
                 wf_module.save()
             websockets.ws_client_rerender_workflow(wf_module.workflow)
         else:
-            save_result_if_changed(wf_module, result)
+            save_result_if_changed(
+                wf_module,
+                result,
+                stored_object_json=stored_object_json
+            )

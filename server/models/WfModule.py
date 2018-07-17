@@ -178,12 +178,15 @@ class WfModule(models.Model):
 
     # Compares against latest version (which may not be current version)
     # Note: does not switch to new version automatically
-    def store_fetched_table_if_different(self, table):
+    def store_fetched_table_if_different(self, table, metadata=''):
         reference_so = StoredObject.objects.filter(
             wf_module=self
         ).order_by('-stored_at').first()
 
-        new_version = StoredObject.create_table_if_different(self, reference_so, table)
+        new_version = StoredObject.create_table_if_different(self,
+                                                             reference_so,
+                                                             table,
+                                                             metadata=metadata)
         return new_version.stored_at if new_version else None
 
     def retrieve_fetched_table(self):

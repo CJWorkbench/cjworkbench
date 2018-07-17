@@ -1,82 +1,63 @@
 from django.conf import settings
-from server.models.UploadedFile import UploadedFile
 from server.models.StoredObject import StoredObject
-from server.sanitizedataframe import sanitize_dataframe,truncate_table_if_too_big
-from server.models import ChangeDataVersionCommand, StoredObject
+from server.models import ChangeDataVersionCommand
 from django.utils.translation import gettext as _
 from .moduleimpl import ModuleImpl
+from .types import ProcessResult
+from .utils import parse_bytesio
 import pandas as pd
-from pandas.errors import ParserError
-from xlrd import XLRDError
 import os
 import json
 
+
+_ExtensionMimeTypes = {
+    '.xls': 'application/vnd.ms-excel',
+    '.xlsx': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    '.csv': 'text/csv',
+    '.tsv': 'text/tab-separated-values',
+    '.json': 'application/json',
+}
+
+
 # --- Parse UploadedFile ---
 # When files come in, they are stored in temporary UploadedFile objects
-# This code parses the file into a table, and stores as a "fetched" StoredObject
+# This code parses the file into a table, and stores as a StoredObject
 
 # Read an UploadedFile, parse it, store it as the WfModule's "fetched table"
 # Public entrypoint, called by the view
 def upload_to_table(wf_module, uploaded_file):
-    try:
-        table = __parse_uploaded_file(uploaded_file)
-    except Exception as e:
-        wf_module.set_error(str(e), notify=True)
-        uploaded_file.delete()  # delete uploaded file, we probably can't ever use it
-        return
-
-    # Cut this file down to size to prevent reading in the hugest data on every render
-    nrows = len(table)
-    if truncate_table_if_too_big(table):
-        error = _('File has %d rows, truncated to %d' % (nrows, settings.MAX_ROWS_PER_TABLE))
-        wf_module.set_error(error, notify=False)
+    ext = '.' + uploaded_file.name.split('.')[-1]
+    mime_type = _ExtensionMimeTypes.get(ext, None)
+    if mime_type:
+        uploaded_file.file.open()  # Django FileField weirdness
+        bytesio = uploaded_file.file
+        try:
+            result = parse_bytesio(bytesio, mime_type, None)
+        except:
+            uploaded_file.file.close()
     else:
-        # start of file upload sets module busy status on client side; undo this.
-        wf_module.set_ready(notify=False)
+        result = ProcessResult(error=(
+            f'Error parsing {uploaded_file.file.name}: '
+            'unknown content type'
+        ))
 
-    sanitize_dataframe(table)
+    if result.error:
+        # delete uploaded file, we probably can't ever use it
+        uploaded_file.delete()
 
-    # Save the new output, creating and switching to a new data version
-    version_added = wf_module.store_fetched_table(table)
+    result.truncate_in_place_if_too_big()
+    result.sanitize_in_place()
 
-    # set new StoredObject metadata to the json response the client expects, containing filename and uuid
-    # (see views.UploadedFile.get)
-    new_so = StoredObject.objects.get(wf_module=wf_module, stored_at=version_added)
-    result = [{'uuid': uploaded_file.uuid, 'name': uploaded_file.name}]
-    new_so.metadata = json.dumps(result)
-    new_so.save()
+    ModuleImpl.commit_result(wf_module, result, stored_object_json=[
+        {'uuid': uploaded_file.uuid, 'name': uploaded_file.name}
+    ])
 
-    ChangeDataVersionCommand.create(wf_module, version_added)  # also notifies client
-
-    # don't delete UploadedFile, so that we can reparse later or allow higher row limit or download origina, etc.
+    # don't delete UploadedFile, so that we can reparse later or allow higher
+    # row limit or download original, etc.
     return
 
 
-# private
-def __parse_uploaded_file(ufile):
-    filename, file_ext = os.path.splitext(ufile.name)  # original upload name, not the name of our cache file
-    file_ext = file_ext.lower()
-
-    if file_ext == '.xlsx' or file_ext == '.xls':
-        table = pd.read_excel(ufile.file)
-
-    elif file_ext == '.csv':
-        table = pd.read_csv(ufile.file)
-
-    else:
-        raise Exception(_('Unknown file type %s' % file_ext))
-
-    return table
-
-
-# --- Upload module ---
-# Nothing to it, much like LoadURL
-
 class UploadFile(ModuleImpl):
-
     @staticmethod
     def render(wf_module, table):
-        return wf_module.retrieve_fetched_table()
-
-
-
+        return ProcessResult(wf_module.retrieve_fetched_table())
