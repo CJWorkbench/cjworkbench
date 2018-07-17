@@ -37,13 +37,13 @@ export default class ColumnContextMenu extends React.Component {
             <DropdownItem onClick={this.setSortDirectionAsc} className='test-sort-ascending'>
               {this.props.sortDirection == sortDirectionAsc ? <i className='icon-check' /> : null}
               <i className="icon-sort-up"></i>
-              <span>Sort Ascending</span>
+              <span>Sort ascending</span>
 
             </DropdownItem>
             <DropdownItem onClick={this.setSortDirectionDesc} className='test-sort-descending'>
               {this.props.sortDirection == sortDirectionDesc ? <i className='icon-check' /> : null}
               <i className="icon-sort-down"></i>
-              <span>Sort Descending</span>
+              <span>Sort descending</span>
             </DropdownItem>
           </DropdownMenu>
         </Portal>
