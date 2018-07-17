@@ -27,17 +27,17 @@ describe('ColumnContextMenu', () => {
     let wrapper = mountMenu(sortDirectionNone, jest.fn())
     expect(wrapper).toMatchSnapshot() //stores file which represents tree of component
     })
-
-  it('should have check icon: ' + classNameMap[sortDirection], () => {
-    for (let sortDirectionToCheck of sortDirectionArray) {
-      let wrapper = mountMenu(sortDirectionToCheck, jest.fn())
-
-      let dropDownItem = wrapper.find('DropdownItem.' + classNameMap[sortDirectionToCheck] + '.icon-sort-up')
-      for (let s of sortDirectionArray) {
-        s === sortDirection
-          ? expect(dropDownItem).toHaveLength(1) : expect(dropDownItem).toHaveLength(0)
-      }
-    }
+    //NO MORE CHECK ICON -- PIERRE
+  // it('should have check icon: ' + classNameMap[sortDirection], () => {
+  //   for (let sortDirectionToCheck of sortDirectionArray) {
+  //     let wrapper = mountMenu(sortDirectionToCheck, jest.fn())
+  //
+  //     let dropDownItem = wrapper.find('DropdownItem.' + classNameMap[sortDirectionToCheck] + '.icon-sort-up')
+  //     for (let s of sortDirectionArray) {
+  //       s === sortDirection
+  //         ? expect(dropDownItem).toHaveLength(1) : expect(dropDownItem).toHaveLength(0)
+  //     }
+  //   }
   })
 
   // only checking the call to set the sort direction, not the actual sort
