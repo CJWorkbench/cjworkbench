@@ -147,7 +147,7 @@ do_migrate
 start_django
 
 echo -n 'Waiting for Django to start its database and HTTP server… ' >&2
-docker run -it --network "$NETWORK_NAME" --rm busybox sh -c 'until wget -q http://frontend:8080/workflows/ -O/dev/null 2>/dev/null; do echo -n "."; sleep 1; done; echo'
+docker run -it --network "$NETWORK_NAME" --rm alpine:3.8 sh -c 'until wget -q http://frontend:8080/workflows/ -O/dev/null >/dev/null 2>/dev/null; do echo -n "."; sleep 1; done; echo'
 # No need to wait for git to start: django is 1,000,000 times slower
 
 url=$(find_django_url)
