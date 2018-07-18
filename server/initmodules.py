@@ -211,5 +211,6 @@ def update_wfm_parameters_to_new_version(wfm, new_version):
                 if not ParameterSpec.objects.filter(module_version=new_version, id_name=old_spec.id_name).exists():
                     ParameterVal.objects.get(wf_module=wfm, parameter_spec=old_spec).delete() # must exist b/c wfm exists
 
+            wfm.cache_render_result(None, None)
             wfm.module_version = new_version
             wfm.save()
