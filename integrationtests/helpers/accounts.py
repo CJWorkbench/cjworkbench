@@ -201,7 +201,7 @@ class AccountAdmin:
                 f'Unexpected data on stdout or stderr: {r[0].read(1024)}'
             )
 
-    def _execute(self, code: str, timeout: float=5) -> None:
+    def _execute(self, code: str, timeout: float=10) -> None:
         """Run the given Python code.
 
         To make sure the code returns, we do the following:
