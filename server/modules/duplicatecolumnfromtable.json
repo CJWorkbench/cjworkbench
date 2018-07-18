@@ -1,5 +1,5 @@
 {
- "name": "Duplicate Columns frt",
+ "name": "Duplicate Columns",
  "id_name": "duplicate-column-from-table",
  "category" : "Clean",
  "description" : "Duplicate a column from the table or from the module",
