@@ -7,7 +7,6 @@ import traceback
 from types import ModuleType
 from typing import Any, Dict, Optional
 from pandas import DataFrame
-from server.importmodulefromgithub import original_module_lineno
 from server.models import WfModule
 from server.modules.types import ProcessResult
 from server.modules.moduleimpl import ModuleImpl
@@ -62,6 +61,7 @@ class DynamicModule:
         try:
             out = method(*args, **kwargs)
         except Exception as e:
+            from server.importmodulefromgithub import original_module_lineno
             # Catch exceptions in the module render function, and return error
             # message + line number to user
             exc_name = type(e).__name__
