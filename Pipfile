@@ -40,6 +40,7 @@ mock = "==2.0.0"
 "capybara-py" = "*"
 aiounittest = "*"
 selenium = "*"
+watchdog = "*"
 
 [requires]
 python_version = "3.6"
