@@ -27,6 +27,18 @@ def edit_cells_module_id():
 
 edit_cells_module_id.id = None
 
+# Deal with duplicate from table the same way we deal with EditCells
+def duplicate_module_id():
+    if duplicate_module_id.id is None:
+        try:
+            duplicate_module_id.id = Module.objects.get(id_name='duplicate-column-from-table').id
+        except Module.DoesNotExist:
+            return None
+
+    return duplicate_module_id.id
+
+
+duplicate_module_id.id = None
 
 # Deal with sort from table the same way we deal with EditCells
 def sort_module_id():
@@ -91,6 +103,7 @@ def make_init_state(request, workflow=None, modules=None):
         ret['sortModuleId'] = sort_module_id()
         ret['reorderModuleId'] = reorder_module_id()
         ret['renameModuleId'] = rename_module_id()
+        ret['duplicateModuleId'] = duplicate_module_id()
 
     return ret
 

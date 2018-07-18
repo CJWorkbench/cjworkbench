@@ -22,6 +22,7 @@ var dropdownModifiers = {
 
 export default class ColumnContextMenu extends React.Component {
   static propTypes = {
+    duplicateColumn: PropTypes.func.isRequired,
     setSortDirection: PropTypes.func.isRequired,
     sortDirection: PropTypes.oneOf([sortDirectionNone, sortDirectionAsc, sortDirectionDesc]).isRequired
   }
@@ -38,6 +39,11 @@ export default class ColumnContextMenu extends React.Component {
         </DropdownToggle>
         <Portal>
           <DropdownMenu persist flip={false} modifiers={dropdownModifiers} >
+            <DropdownItem onClick={this.props.duplicateColumn} className='duplicate-column' toggle={false}>
+              <i className="icon-duplicate"></i>
+              <span>Duplicate</span>
+            </DropdownItem>
+            <DropdownItem divider />
             <DropdownItem onClick={this.setSortDirectionAsc} className='sort-ascending' toggle={false}>
               <i className="icon-sort-up"></i>
               <span>Sort ascending</span>
