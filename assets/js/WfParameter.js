@@ -18,6 +18,7 @@ import Refine from './wfparameters/Refine'
 import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
 import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
+import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
 import MapTokenSelector from './wfparameters/choropleth/MapTokenSelector'
 import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
 import { csrfToken } from './utils'
@@ -298,6 +299,14 @@ export default class WfParameter extends React.Component {
     } else if (id_name == 'map-geojson') {
       return (
           <MapLocationDropZone
+              name={this.props.p.parameter_spec.name}
+              paramData={this.props.p.value}
+              paramId={this.props.p.id}
+          />
+      )
+    } else if (id_name == 'map-presets') {
+      return (
+          <MapLocationPresets
               name={this.props.p.parameter_spec.name}
               paramData={this.props.p.value}
               paramId={this.props.p.id}
