@@ -30,6 +30,9 @@ def mock_text_response(text, content_type):
     response = requests.Response()
     response.encoding = 'utf-8'
     response.headers['Content-Type'] = content_type
+    # In requests, `response.raw` does not behave like a file-like object
+    # as we would expect. But it does happen to give us a correct
+    # `response.content` in the code that uses that.
     response.raw = io.BytesIO(text.encode('utf-8'))
     response.reason = 'OK'
     response.status_code = 200

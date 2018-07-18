@@ -1,3 +1,4 @@
+import io
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 import requests
@@ -54,27 +55,26 @@ class LoadURL(ModuleImpl):
         mimetypes = ','.join(_ExtensionMimeTypes.values())
 
         try:
-            with requests.get(url, headers={'Accept': mimetypes},
-                              stream=True) as response:
-                if response.status_code == requests.codes.ok:
-                    # get content type
-                    content_type = response.headers.get('content-type', '') \
-                            .split(';')[0] \
-                            .strip()
-                    mime_type = guess_mime_type_or_none(content_type, url)
+            response = requests.get(url, headers={'Accept': mimetypes})
+            if response.status_code == requests.codes.ok:
+                # get content type
+                content_type = response.headers.get('content-type', '') \
+                        .split(';')[0] \
+                        .strip()
+                mime_type = guess_mime_type_or_none(content_type, url)
 
-                    if mime_type:
-                        result = parse_bytesio(response.raw, mime_type,
-                                               response.encoding)
-                    else:
-                        result = ProcessResult(error=(
-                            f'Error fetching {url}: '
-                            f'unknown content type {content_type}'
-                        ))
+                if mime_type:
+                    result = parse_bytesio(io.BytesIO(response.content),
+                                           mime_type, response.encoding)
                 else:
-                    result = ProcessResult(
-                        error=f'Error {response.status_code} fetching url'
-                    )
+                    result = ProcessResult(error=(
+                        f'Error fetching {url}: '
+                        f'unknown content type {content_type}'
+                    ))
+            else:
+                result = ProcessResult(
+                    error=f'Error {response.status_code} fetching url'
+                )
         except requests.exceptions.RequestException as err:
             result = ProcessResult(error=str(err))
 
