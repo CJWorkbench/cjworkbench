@@ -23,6 +23,14 @@ pre {
 pre:empty {
   padding: 0;
 }
+
+pre:not(:empty)::before {
+  content: 'Python console output';
+  padding-bottom: .5rem;
+  display: block;
+  text-decoration: underline;
+  font-weight: bold;
+}
     </style>
   </head>
   <body>
