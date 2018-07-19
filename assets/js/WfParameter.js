@@ -19,7 +19,6 @@ import ReorderHistory from './wfparameters/ReorderHistory'
 import RenameEntries from './wfparameters/RenameEntries'
 import MapLocationDropZone from './wfparameters/choropleth/MapLocationDropZone'
 import MapLocationPresets from './wfparameters/choropleth/MapLocationPresets'
-import MapTokenSelector from './wfparameters/choropleth/MapTokenSelector'
 import MapLayerEditor from './wfparameters/choropleth/MapLayerEditor'
 import { csrfToken } from './utils'
 import { store, setWfModuleStatusAction } from './workflow-reducer'
@@ -310,15 +309,6 @@ export default class WfParameter extends React.Component {
               name={this.props.p.parameter_spec.name}
               paramData={this.props.p.value}
               paramId={this.props.p.id}
-          />
-      )
-    } else if (id_name == 'map-token') {
-      return (
-          <MapTokenSelector
-              name={this.props.p.parameter_spec.name}
-              paramId={this.props.p.id}
-              paramData={this.props.p.value}
-              isReadOnly={this.props.isReadOnly}
           />
       )
     } else if (id_name == 'map-layers') {

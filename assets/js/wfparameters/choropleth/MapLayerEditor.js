@@ -1,9 +1,15 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import WorkbenchAPI from '../../WorkbenchAPI'
-import {GithubPicker, CirclePicker} from 'react-color'
+import {CirclePicker} from 'react-color'
 
 var api = WorkbenchAPI();
+export function mockAPI(mock_api) {
+    api = mock_api;
+}
+
+// Classes in these modules are used in testing.
+// If they are changed, please update the tests accordingly.
 
 export class SingleMapLayerEditor extends React.Component {
     static propTypes = {
@@ -79,6 +85,7 @@ export class SingleMapLayerEditor extends React.Component {
                         type={"checkbox"}
                         checked={this.state.selected}
                         onChange={this.handleCheckboxClick}
+                        className={"map-layer-checkbox"}
                     />
                     <span>{this.props.column}</span>
                     <input
@@ -88,8 +95,9 @@ export class SingleMapLayerEditor extends React.Component {
                         onBlur={this.handleInputBlur}
                         onFocus={this.handleInputFocus}
                         onKeyPress={this.handleInputKeyPress}
+                        className={"map-layer-levels-input"}
                     />
-                    <span className={"map-single-layer-editor-levels"}>levels</span>
+                    <span className={"map-layer-levels-label"}>levels</span>
                 </div>
                 <CirclePicker
                     width={"240px"}
@@ -106,8 +114,11 @@ export class SingleMapLayerEditor extends React.Component {
 
 export default class MapLayerEditor extends React.Component {
     /*
-        ParamData format: (after JSON parsing) dictionary of
-        <colname>: selected, levels, color
+        ParamData format after JSON parsing:
+        {
+            lastEdited: <column>
+            layers: <dictionary of <colname>: selected, levels, color>
+        }
      */
 
     static propTypes = {
@@ -134,7 +145,12 @@ export default class MapLayerEditor extends React.Component {
         let data = {};
         try {
             data = JSON.parse(dataStr)
-        } catch(e) {}
+        } catch(e) {
+            data = {
+                lastEdited: undefined,
+                layers: {}
+            }
+        }
 
         return data;
     }
@@ -147,8 +163,8 @@ export default class MapLayerEditor extends React.Component {
             // including when the module first loads.
             let updateData = false;
             result.forEach((col) => {
-                if(!(col in newData)) {
-                    newData[col] = {
+                if(!(col in newData.layers)) {
+                    newData.layers[col] = {
                         selected: true,
                         levels: 5,
                         color: '#F44336'
@@ -171,12 +187,18 @@ export default class MapLayerEditor extends React.Component {
 
     handleLayerEdit = (col, props) => {
         let newData = Object.assign({}, this.state.data);
-        newData[col] = Object.assign({}, props);
+        newData.layers[col] = Object.assign({}, props);
+        newData.lastEdited = col;
         this.setState({data: newData});
         api.onParamChanged(this.props.paramId, {value: JSON.stringify(newData)});
     };
 
     render() {
+        // We don't render anything visible if no location column is selected
+        if(this.props.keyColumn.trim() == '') {
+            return (<div></div>);
+        }
+
         const columns = this.state.columns.filter((col) => {
             return (col !== this.props.keyColumn);
         }).map((col) => {
@@ -184,9 +206,9 @@ export default class MapLayerEditor extends React.Component {
                 <SingleMapLayerEditor
                     key={col}
                     column={col}
-                    color={this.state.data[col].color}
-                    levels={this.state.data[col].levels}
-                    selected={this.state.data[col].selected}
+                    color={this.state.data.layers[col].color}
+                    levels={this.state.data.layers[col].levels}
+                    selected={this.state.data.layers[col].selected}
                     onEdit={this.handleLayerEdit}
                 />
             )
