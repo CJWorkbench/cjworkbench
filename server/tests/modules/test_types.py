@@ -8,6 +8,11 @@ class ProcessResultTests(unittest.TestCase):
     def test_eq_none(self):
         self.assertNotEqual(ProcessResult(), None)
 
+    def test_coerce_none(self):
+        result = ProcessResult.coerce(None)
+        expected = ProcessResult(dataframe=DataFrame())
+        self.assertEqual(result, expected)
+
     def test_coerce_processresult(self):
         expected = ProcessResult()
         result = ProcessResult.coerce(expected)
@@ -86,30 +91,20 @@ class ProcessResultTests(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_coerce_bad_tuple(self):
-        expected = ProcessResult(
-            error='expected 2-tuple or 3-tuple; got 4-tuple'
-        )
         result = ProcessResult.coerce(('foo', 'bar', 'baz', 'moo'))
-        self.assertEqual(result, expected)
+        self.assertIsNotNone(result.error)
 
     def test_coerce_2tuple_no_dataframe(self):
-        expected = ProcessResult(
-            error='expected (DataFrame, str); got (str, str)'
-        )
         result = ProcessResult.coerce(('foo', 'bar'))
-        self.assertEqual(result, expected)
+        self.assertIsNotNone(result.error)
 
     def test_coerce_3tuple_no_dataframe(self):
-        expected = ProcessResult(
-            error='expected (DataFrame, str, dict); got (str, str, dict)'
-        )
         result = ProcessResult.coerce(('foo', 'bar', {'a': 'b'}))
-        self.assertEqual(result, expected)
+        self.assertIsNotNone(result.error)
 
     def test_coerce_invalid_value(self):
-        expected = ProcessResult(error='expected tuple; got list')
         result = ProcessResult.coerce([None, 'foo'])
-        self.assertEqual(result, expected)
+        self.assertIsNotNone(result.error)
 
     def test_truncate_too_big_no_error(self):
         expected_df = DataFrame({'foo': ['bar', 'baz']})

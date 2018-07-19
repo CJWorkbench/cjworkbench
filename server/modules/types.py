@@ -1,6 +1,7 @@
 from typing import Any, Dict
 from pandas import DataFrame
 from server import sanitizedataframe
+from django.utils.translation import gettext as _
 
 
 class ProcessResult:
@@ -58,10 +59,7 @@ class ProcessResult:
         """Truncate dataframe in-place and add to self.error if truncated."""
         len_before = len(self.dataframe)
         if sanitizedataframe.truncate_table_if_too_big(self.dataframe):
-            warning = (
-                f'Truncated output from {len_before} rows '
-                f'to {len(self.dataframe)}'
-            )
+            warning = _('Truncated output from %d rows to %d') % (len_before, len(self.dataframe))
             if self.error:
                 self.error = f'{self.error}\n{warning}'
             else:
@@ -78,13 +76,16 @@ class ProcessResult:
 
         The rules:
 
+        * value is None => return empty dataframe
         * value is a ProcessResult => return it
         * value is a DataFrame => empty error and json
-        * value is a str => empty dataframe and json
+        * value is a str => error=str, empty dataframe and json
         * value is a (DataFrame, err) => empty json (either may be None)
         * value is a (DataFrame, err, dict) => obvious (any may be None)
         * else we generate an error with empty dataframe and json
         """
+        if value is None:
+            return ProcessResult(dataframe=DataFrame())
         if isinstance(value, ProcessResult):
             return value
         if isinstance(value, DataFrame):
@@ -101,8 +102,8 @@ class ProcessResult:
                 if not isinstance(dataframe, DataFrame) \
                    or not isinstance(error, str):
                     return ProcessResult(error=(
-                        'expected (DataFrame, str); got '
-                        f'({type(dataframe).__name__}, {type(error).__name__})'
+                        _('There is a bug in this module: expected (DataFrame, str) return type, got (%s,%s)') %
+                        (type(dataframe).__name__, type(error).__name__)
                     ))
                 return ProcessResult(dataframe=dataframe, error=error)
             elif len(value) == 3:
@@ -117,18 +118,15 @@ class ProcessResult:
                    or not isinstance(error, str) \
                    or not isinstance(json, dict):
                     return ProcessResult(error=(
-                        'expected (DataFrame, str, dict); got ('
-                        f'{type(dataframe).__name__}, '
-                        f'{type(error).__name__}, '
-                        f'{type(json).__name__})'
+                        _('There is a bug in this module: expected (DataFrame, str, dict) return value, got (%s, %s, %s)') %
+                        ( type(dataframe).__name__, type(error).__name__, type(json).__name__)
                     ))
                 return ProcessResult(dataframe=dataframe, error=error,
                                      json=json)
             return ProcessResult(error=(
-                'expected 2-tuple or 3-tuple; got '
-                f'{len(value)}-tuple'
+                _('There is a bug in this module: expected 2-tuple or 3-tuple return value; got %d-tuple ') % len(value)
             ))
 
         return ProcessResult(
-            error=f'expected tuple; got {type(value).__name__}'
+            error=_('There is a bug in this module: invalid return type %s') % type(value).__name__
         )
